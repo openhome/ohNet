@@ -100,6 +100,7 @@ TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
 
 void CodecController::CodecThread()
 {
+    iRecognising = true;
     iStreamStarted = false;
     iQuit = false;
     while (!iQuit) {
@@ -126,6 +127,7 @@ void CodecController::CodecThread()
                 break;
             }
             iQueueTrackData = true;
+            iRecognising = true;
             iStreamStarted = iStreamEnded = false;
 
             // Read audio data then attempt to recognise it
@@ -154,6 +156,7 @@ void CodecController::CodecThread()
                 CodecBase* codec = iCodecs[i];
                 if (codec->Recognise(recogBuf)) {
                     iActiveCodec = codec;
+                    iRecognising = false;
                     break;
                 }
             }
@@ -232,6 +235,7 @@ void CodecController::ReleaseAudioEncoded()
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
+    ASSERT(!iRecognising); // codec isn't allowed to consume data while recognising
     if (iPendingMsg != NULL) {
         if (DoRead(aBuf, aBytes)) {
             return;

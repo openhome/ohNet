@@ -123,6 +123,7 @@ def build(bld):
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
+                'OpenHome/Media/Codec/Mpeg4.cpp',
                 'OpenHome/Media/Codec/Container.cpp',
                 'OpenHome/Media/Codec/Id3v2.cpp',
                 'OpenHome/Media/Codec/CodecController.cpp',

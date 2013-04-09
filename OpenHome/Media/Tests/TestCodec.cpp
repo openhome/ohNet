@@ -495,6 +495,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iElementUpstream->Reset();
     iElementUpstream->Initialise(aFilename);
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
+    // These can be re-ordered to check for problems in the recognise function of each codec.
     iController->AddCodec(new CodecWav());
     iController->AddCodec(new CodecFlac());
     iController->AddCodec(new CodecMp3());

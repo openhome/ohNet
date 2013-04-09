@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
@@ -15,162 +16,7 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-EXCEPTION(MediaMpeg4FileInvalid);
-
-const TUint kReadReqBytes = 4096;
-
 int host_bigendian;     // used by alac.c
-
-class Mpeg4Box
-{
-public:
-    Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL);
-    ~Mpeg4Box();
-    void Read(Bwx& aData, TUint aBytes);
-    void SkipEntry();
-    void Skip(TUint32 aBytes);
-    TBool Match(const TChar* aIdName);
-    TBool FindBox(const TChar* aIdName);
-    TBool Empty();
-    const Brx& Id() const { return iId; }
-    TUint32 BoxSize() const { return iBoxSize; }
-    TUint32 BytesRead() const { return iBytesRead; }
-private:
-    void ExtractHeaderId();
-    void Reset();
-    void UpdateParent(TUint aBytes);
-private:
-    ICodecController& iController;
-    Mpeg4Box *iParent;
-    Bws<4> iId;            // ID of box.
-    Bws<32> iBuf;          // Local buffer.
-    TUint32 iBytesRead;    // Bytes read for current entry.
-    TUint32 iBoxSize;      // Size of current box.
-};
-
-Mpeg4Box::Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent, const TChar* aIdName)
-    : iController(aController)
-    , iParent(aParent)
-    , iBytesRead(0)
-    , iBoxSize(0)
-{
-    ExtractHeaderId();
-    if (aIdName != NULL)
-        FindBox(aIdName);
-}
-
-Mpeg4Box::~Mpeg4Box()
-{
-}
-
-TBool Mpeg4Box::FindBox(const TChar* aIdName)
-{
-    if (iParent == NULL) { // We don't have a parent, so we don't know our search bounds.
-        return false;
-    }
-    while (!iParent->Empty()) {
-        if (Match(aIdName)) {
-            //            LOG(kCodec, "Mpeg4 box found %d (", iDataBytes);
-            //            LOG_HEX(kCodec, iId);
-            //            LOG(kCodec, ")\n");
-            return true;              // found required id
-        }
-        SkipEntry();                  // skip over this entry
-        Reset();
-        ExtractHeaderId();
-    }
-    return false;
-}
-
-void Mpeg4Box::Reset()
-{
-    // No need to reset parent; only want to reset box-specific data.
-    iId.SetBytes(0);
-    iBytesRead = 0;
-    iBoxSize = 0;
-}
-
-TBool Mpeg4Box::Empty()
-{ 
-//    LOG(kCodec, "  Empty? %d > %d \n", iBoxSize, BytesRead());
-    if (iBoxSize == 0 && iBytesRead == 0) {
-        return false;
-    }
-    return (iBoxSize > iBytesRead ? false : true);
-}
-
-void Mpeg4Box::ExtractHeaderId()
-{
-    iBuf.SetBytes(0);
-    Read(iBuf, 4);
-    iBoxSize = Converter::BeUint32At(iBuf, 0);
-    Read(iId, 4);
-    //LOG(kCodec, "Mpeg4 header %d (", iDataBytes);
-    //LOG(kCodec, iId);
-    //LOG(kCodec, ")\n");
-}
-
-void Mpeg4Box::Read(Bwx& aData, TUint aBytes)
-{
-   iController.Read(aData, aBytes);
-   iBytesRead += aBytes;
-   if (iParent != NULL) {
-       UpdateParent(aBytes);
-   }
-}
-
-void Mpeg4Box::UpdateParent(TUint aBytes)
-{
-    if (iParent != NULL)
-    {
-        iParent->iBytesRead += aBytes;
-        iParent->UpdateParent(aBytes);
-    }
-}
-
-void Mpeg4Box::SkipEntry()
-{
-    //LOG(kCodec, " SkipEntry %d, %d\n", iDataBytes, iBytesRead);
-    TUint bytesRemaining = iBoxSize - iBytesRead;
-
-    if (bytesRemaining > 0) {
-        Skip(bytesRemaining);
-    }
-}
-
-void Mpeg4Box::Skip(TUint32 aBytes)
-{
-    TUint bytesRemaining = aBytes;
-    TUint readBytes;
-
-    if (iBytesRead == iBoxSize) {
-        return;
-    }
-
-    while (bytesRemaining > 0) {
-        iBuf.SetBytes(0);
-        readBytes = iBuf.MaxBytes();
-        if (bytesRemaining < iBuf.MaxBytes()) {
-            readBytes = bytesRemaining;
-        }
-        Read(iBuf, readBytes);
-        bytesRemaining -= readBytes;
-    }
-}
-
-TBool Mpeg4Box::Match(const TChar* aIdName)
-{
-
-    if (iId == Brn(aIdName)) {
-        //LOG(kCodec, " Match \"%s\" {", aIdName);
-        //LOG(kCodec, iId);
-        //LOG(kCodec, "}\n");
-        return true;
-    }
-    else {
-        return false;   
-    }
-}
 
 
 // SampleSizeTable
@@ -421,203 +267,192 @@ CodecAlac::~CodecAlac()
     iSeekTable.Deinitialise();
 }
 
-TBool CodecAlac::Recognise(const Brx& /*aMsg*/)
+void CodecAlac::ProcessHeader()
 {
-    //LOG(kCodec, "CodecAlac::Recognise\n");
     Bws<100> data;
     Bws<4> codec;
 
-    Mpeg4Box BoxL0(*iController);
-    if (!BoxL0.Match("ftyp")) {
-        //LOG(kCodec, " no ftyp found at start of file\n");
-        return false;
-    }
-    BoxL0.SkipEntry();
-
-    // data could be stored in different orders in the file but ftyp & moov must come before mdat
-    //This loop terminates when:
-    // - we find the start of data
-    // - Selector throws an exception (eos, flush)
-
-    for (;;) {                              // keep on reading until start of data found
-        Mpeg4Box BoxL1(*iController);
-        if(BoxL1.Match("mdat")) {
-        //LOG(kCodec, "Mpeg4 data found\n");
-        // some files contain extra text at start of the data section which needs to be skipped
+    for (;;) {
+        Mpeg4Box BoxL4(*iController);
+        if(BoxL4.Match("mdat")) {
+            //LOG(kCodec, "Mpeg4 data found\n");
+            // some files contain extra text at start of the data section which needs to be skipped
             //data.SetBytes(0);
             //BoxL1.Read(data, 16);
             //TByte* datap = (TUint8*)data.Ptr();
             //if((datap[3] == 0x08) && (Brn(&datap[4], 4) == Brn("wide")) && (Brn(&datap[12], 4) == Brn("mdat"))) {
             //    //LOG(kCodec, "extra mdat info found - skip\n");
-            //    //iContainerSize += 16;
             //}
             break;
-        } else if(BoxL1.Match("moov")) {
-            //LOG(kCodec, "Mpeg4 moov found\n");
-            // now search through levels for stsd for audio info
-
-            Mpeg4Box BoxL2(*iController, &BoxL1, "trak");
-            Mpeg4Box BoxL3(*iController, &BoxL2, "mdia");
-            //
-            while (!BoxL3.Empty()) {        // while box L3 still contains children
-                Mpeg4Box BoxL4(*iController, &BoxL3);
-                if(BoxL4.Match("mdhd")) {
-                    data.SetBytes(0);
-                    BoxL4.Read(data, 4);
-                    if(Converter::BeUint32At(data, 0)) {
-                        // read as 64 bit values  - ToDo !!!!
-                        return false;
-                    }
-                    else {
-                        BoxL4.Skip(8);
-                        data.SetBytes(0);
-                        BoxL4.Read(data, 4);
-                        iTimescale = Converter::BeUint32At(data, 0);
-                        data.SetBytes(0);
-                        BoxL4.Read(data, 4);
-                        iSamplesTotal = Converter::BeUint32At(data, 0);
-                    }
-                } else if(BoxL4.Match("minf")) {
-                    Mpeg4Box BoxL5(*iController, &BoxL4, "stbl");
-                    while (!BoxL5.Empty()) {
-                        Mpeg4Box BoxL6(*iController, &BoxL5);
-                        if(BoxL6.Match("stsd")) {
-                            BoxL6.Skip(12);
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);
-                            codec.Append(data.Split(0,4));
-
-                            BoxL6.Skip(16);
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 2);
-                            iChannels = Converter::BeUint16At(data, 0);
-
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 2);
-                            iBitDepth = Converter::BeUint16At(data, 0);
-
-                            BoxL6.Skip(4);
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 2);
-
-                            iSampleRate = Converter::BeUint16At(data, 0);
-                            BoxL6.Skip(2);              // LSB's of sample rate are ignored
-
-                            if(!BoxL6.Empty()) {
-                                Mpeg4Box BoxL7(*iController, &BoxL6);         // any codec specific info should follow immediately
-                                if(BoxL7.Match("alac")) {
-                                    // extract alac specific info
-                                    data.SetBytes(0);
-                                    BoxL7.Read(data, BoxL7.BoxSize() - 8);
-                                    iCodecSpecificData.Replace(data);
-                                    BoxL7.SkipEntry();
-                                }
-                                else if(BoxL7.Match("esds")) {
-                                    // extract aac specific info
-                                    data.SetBytes(0);
-                                    BoxL7.Read(data, BoxL7.BoxSize() - 8);
-                                    iCodecSpecificData.Replace(data);
-                                    BoxL7.SkipEntry();
-                                }
-                            }
-
-                        } else if(BoxL6.Match("stts")) {        // table of audio samples per sample - used to convert audio samples to codec samples
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);                // skip version id
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);                // extract number of entries
-                            TUint entries = Converter::BeUint32At(data, 0);
-                            iSeekTable.InitialiseAudioSamplesPerSample(entries);
-                            while(entries--) {
-                                data.SetBytes(0);
-                                BoxL6.Read(data, 8);
-                                iSeekTable.SetAudioSamplesPerSample(Converter::BeUint32At(data, 0), Converter::BeUint32At(data, 4));
-                            }
-                        } else if(BoxL6.Match("stsc")) {             // table of samples per chunk - used to seek to specific sample
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);                // skip version id
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);                // extract number of entries
-                            TUint entries = Converter::BeUint32At(data, 0);
-                            iSeekTable.InitialiseSamplesPerChunk(entries);
-                            while(entries--) {
-                                data.SetBytes(0);
-                                BoxL6.Read(data, 12);
-                                iSeekTable.SetSamplesPerChunk(Converter::BeUint32At(data, 0), Converter::BeUint32At(data, 4));
-                            }
-                        } else if(BoxL6.Match("stco")) {             // table of file offsets for each chunk   (repeat for 'co64' using 64bit offsets)
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);                // skip version id
-                            data.SetBytes(0);
-                            BoxL6.Read(data, 4);                // extract number of entries
-                            TUint entries = Converter::BeUint32At(data, 0);
-
-                            iSeekTable.InitialiseOffsets(entries);
-                            for(TUint i = 0; i < entries; i++) {
-                                data.SetBytes(0);
-                                BoxL6.Read(data, 4);
-                                iSeekTable.SetOffset((TUint64)Converter::BeUint32At(data, 0));
-                            }
-                        } else if(BoxL6.Match("stsz")) {             // size of each input sample
-                                data.SetBytes(0);
-                                BoxL6.Read(data, 4);                // skip version id
-                                data.SetBytes(0);
-                                BoxL6.Read(data, 4);                // default sample size expected to be 0 - else a table won't exist
-                                if(Converter::BeUint32At(data, 0) != 0) {
-                                    return false;
-                                }
-                                data.SetBytes(0);
-                                BoxL6.Read(data, 4);
-                                TUint entries = Converter::BeUint32At(data, 0);
-                                TUint sampleSize;
-
-                                // allocate table for sample size entries, needed by alac decoder - remember to delete when finished - ToDo !!!
-                                iSampleSizeTable.Initialise(entries);
-
-                                Bwx* sampleSizeTable = new Bwh(entries*4);
-                                BoxL6.Read(*sampleSizeTable, entries*4);
-                                for(TUint i = 0; i < entries; i++) {
-                                    sampleSize = Converter::BeUint32At(*sampleSizeTable, i*4);
-                                    iSampleSizeTable.SetSampleSize(sampleSize);
-                                }
-                                delete sampleSizeTable;
-                        }
-                        BoxL6.SkipEntry();
-                    }
-                    BoxL5.SkipEntry();
-                }
-                BoxL4.SkipEntry();                    // skip to next entry
-            }
-            BoxL3.SkipEntry();
-            //BoxL2.SkipEntry();
-            //BoxL1.SkipEntry();
-        } else if(BoxL1.Match("pdin")) {
-                                                // ignore this one
-        } else if(BoxL1.Match("moof")) {
-                                                // ignore this one
-        } else if(BoxL1.Match("mfra")) {
-                                                // ignore this one
-        } else if(BoxL1.Match("free")) {
-                                                // ignore this one
-        } else if(BoxL1.Match("skip")) {
-                                                // ignore this one
-        } else if(BoxL1.Match("meta")) {
-                                                // ignore this one
-        } else {
-            //LOG(kCodec, "Mpeg4 Invalid File\n");
-            return false;
         }
-        BoxL1.SkipEntry();                    // skip to next entry
-    }
+        else if(BoxL4.Match("mdhd")) {
+            data.SetBytes(0);
+            BoxL4.Read(data, 4);
+            if(Converter::BeUint32At(data, 0)) {
+                // read as 64 bit values  - ToDo !!!!
+                THROW(MediaMpeg4FileInvalid);
+            }
+            else {
+                BoxL4.Skip(8);
+                data.SetBytes(0);
+                BoxL4.Read(data, 4);
+                iTimescale = Converter::BeUint32At(data, 0);
+                data.SetBytes(0);
+                BoxL4.Read(data, 4);
+                iSamplesTotal = Converter::BeUint32At(data, 0);
+            }
+        } else if(BoxL4.Match("minf")) {
+            Mpeg4Box BoxL5(*iController, &BoxL4, "stbl");
+            while (!BoxL5.Empty()) {
+                Mpeg4Box BoxL6(*iController, &BoxL5);
+                if(BoxL6.Match("stsd")) {
+                    BoxL6.Skip(12);
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);
+                    codec.Append(data.Split(0,4));
 
-    //iCodecContainer->SetContainerSize(iCodecContainer->ContainerSize() + mpeg4.ContainerSize());
+                    BoxL6.Skip(16);
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 2);
+                    iChannels = Converter::BeUint16At(data, 0);
+
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 2);
+                    iBitDepth = Converter::BeUint16At(data, 0);
+
+                    BoxL6.Skip(4);
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 2);
+
+                    iSampleRate = Converter::BeUint16At(data, 0);
+                    BoxL6.Skip(2);              // LSB's of sample rate are ignored
+
+                    if(!BoxL6.Empty()) {
+                        Mpeg4Box BoxL7(*iController, &BoxL6);         // any codec specific info should follow immediately
+                        if(BoxL7.Match("alac")) {
+                            // extract alac specific info
+                            data.SetBytes(0);
+                            BoxL7.Read(data, BoxL7.BoxSize() - 8);
+                            iCodecSpecificData.Replace(data);
+                            BoxL7.SkipEntry();
+                        }
+                        //else if(BoxL7.Match("esds")) {
+                        //    // extract aac specific info
+                        //    data.SetBytes(0);
+                        //    BoxL7.Read(data, BoxL7.BoxSize() - 8);
+                        //    iCodecSpecificData.Replace(data);
+                        //    BoxL7.SkipEntry();
+                        //}
+                    }
+
+                } else if(BoxL6.Match("stts")) {        // table of audio samples per sample - used to convert audio samples to codec samples
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // skip version id
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // extract number of entries
+                    TUint entries = Converter::BeUint32At(data, 0);
+                    iSeekTable.InitialiseAudioSamplesPerSample(entries);
+                    while(entries--) {
+                        data.SetBytes(0);
+                        BoxL6.Read(data, 8);
+                        iSeekTable.SetAudioSamplesPerSample(Converter::BeUint32At(data, 0), Converter::BeUint32At(data, 4));
+                    }
+                } else if(BoxL6.Match("stsc")) {             // table of samples per chunk - used to seek to specific sample
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // skip version id
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // extract number of entries
+                    TUint entries = Converter::BeUint32At(data, 0);
+                    iSeekTable.InitialiseSamplesPerChunk(entries);
+                    while(entries--) {
+                        data.SetBytes(0);
+                        BoxL6.Read(data, 12);
+                        iSeekTable.SetSamplesPerChunk(Converter::BeUint32At(data, 0), Converter::BeUint32At(data, 4));
+                    }
+                } else if(BoxL6.Match("stco")) {             // table of file offsets for each chunk   (repeat for 'co64' using 64bit offsets)
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // skip version id
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // extract number of entries
+                    TUint entries = Converter::BeUint32At(data, 0);
+
+                    iSeekTable.InitialiseOffsets(entries);
+                    for(TUint i = 0; i < entries; i++) {
+                        data.SetBytes(0);
+                        BoxL6.Read(data, 4);
+                        iSeekTable.SetOffset((TUint64)Converter::BeUint32At(data, 0));
+                    }
+                } else if(BoxL6.Match("stsz")) {             // size of each input sample
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // skip version id
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);                // default sample size expected to be 0 - else a table won't exist
+                    if(Converter::BeUint32At(data, 0) != 0) {
+                        THROW(MediaMpeg4FileInvalid);
+                    }
+                    data.SetBytes(0);
+                    BoxL6.Read(data, 4);
+                    TUint entries = Converter::BeUint32At(data, 0);
+                    TUint sampleSize;
+
+                    iSampleSizeTable.Initialise(entries);
+                    Bwx* sampleSizeTable = new Bwh(entries*4);
+                    BoxL6.Read(*sampleSizeTable, entries*4);
+                    for(TUint i = 0; i < entries; i++) {
+                        sampleSize = Converter::BeUint32At(*sampleSizeTable, i*4);
+                        iSampleSizeTable.SetSampleSize(sampleSize);
+                    }
+                    delete sampleSizeTable;
+                }
+                BoxL6.SkipEntry();
+            }
+            BoxL5.SkipEntry();
+        }
+        BoxL4.SkipEntry();                    // skip to next entry
+    }
+}
+
+TBool CodecAlac::Recognise(const Brx& aData)
+{
+    //LOG(kCodec, "CodecAlac::Recognise\n");
+    TUint offset = 0;
+    TBool codecFound = false;
+    Bws<4> codec;
+
+    try {
+        for (;;) {
+            Mpeg4Box BoxL4(aData, NULL, NULL, offset);
+            if(BoxL4.Match("minf")) {
+                Mpeg4Box BoxL5(aData, &BoxL4, "stbl");
+                while (!BoxL5.Empty()) {
+                    Mpeg4Box BoxL6(aData, &BoxL5);
+                    if(BoxL6.Match("stsd")) {
+                        BoxL6.Skip(12);
+                        // Read the codec value.
+                        codec.SetBytes(0);
+                        BoxL6.Read(codec, 4);
+                        codecFound = true;
+                        break;
+                    }
+                }
+            }
+            if (codecFound) {
+                break;
+            }
+            BoxL4.SkipEntry();
+            offset += BoxL4.BytesRead();
+        }
+    }
+    catch (MediaMpeg4FileInvalid) {
+        // We couldn't recognise this as an MPEG4/ALAC file.
+        return false;
+    }
 
     if (codec == kCodecAlac) {
         //LOG(kCodec, "CodecAlac::Recognise alac\n");
         return true;
     }
-    //LOG(kMedia, "CodecAlac::Recognise, end Mpeg4 header stripping size %d\n",mpeg4.ContainerSize());
-    return false;           
+    return false;
 }
 
 void CodecAlac::StreamInitialise()
@@ -629,6 +464,7 @@ void CodecAlac::StreamInitialise()
     host_bigendian = false;
 #endif
 
+    ProcessHeader();
     alac = create_alac(iBitDepth, iChannels);
 
     // We initialised codec-specific data in the recognise function.

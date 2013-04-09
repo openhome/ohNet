@@ -103,6 +103,7 @@ private:
     MsgQueue iQueue;
     Msg* iPendingMsg;
     TBool iQueueTrackData;
+    TBool iRecognising;
     TBool iStreamStarted;
     TBool iStreamEnded;
     TBool iQuit;

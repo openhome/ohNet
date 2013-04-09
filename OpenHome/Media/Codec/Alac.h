@@ -77,11 +77,12 @@ private: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 private:
+    void ProcessHeader();
     void BigEndianData(TUint toWrite, TUint aSamplesWritten);
 private:
     static const TUint kMaxCSDSize = 100;    // 100 bytes of code specific data can be stored
     Bws<kMaxCSDSize> iCodecSpecificData;
-    Brn	iName;
+    Brn iName;
     Bws<4*10240> iInBuf;          // how big can these go and need to go ?
     Bws<16*10240> iDecodedBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
