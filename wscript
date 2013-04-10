@@ -121,6 +121,7 @@ def build(bld):
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline.cpp',
+                'OpenHome/Media/IdProvider.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Container.cpp',
@@ -216,6 +217,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
+                'OpenHome/Media/Tests/TestIdProvider.cpp',
             ],
             use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac'],
             target='ohMediaPlayerTestUtils')
@@ -312,6 +314,10 @@ def build(bld):
                 source='OpenHome/Media/Tests/TestCodecMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'CodecWav', 'CodecFlac', 'CodecMp3', 'ohMediaPlayerTestUtils'],
                 target='TestCodec')
+        bld.program(
+                source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestIdProvider')
 
     # Bundles
     #header_files = gather_files(bld, '{top}/src', ['*.h'])
@@ -342,6 +348,7 @@ def test(tst):
                       ,['TestStore', [], True]
                       ,['TestProtocolHttp', [], True]
                       ,['TestCodec', [], True]
+                      ,['TestIdProvider', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
         tst.add_group() # Don't start another test until previous has finished.
