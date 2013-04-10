@@ -46,14 +46,89 @@ private:
     TUint iOffset;          // Read offset from start of file.
 };
 
-class Mpeg4
+class SampleSizeTable
 {
 public:
-    Mpeg4(IContainer& aContainer);
-    ~Mpeg4();
+    SampleSizeTable();
+    ~SampleSizeTable();
+    void Initialise(TUint aTableSize);
+    void Deinitialise();
+    void SetSampleSize(TUint32 aSamplesize);
+    TUint32 SampleSize(TUint aEntry);
+    TUint Count();
+private:
+    TUint   iCount;
+    TUint   iEntry;
+    Bwx*    iTable;
+};
+
+class SeekTable
+{
+public:
+    SeekTable();
+    ~SeekTable();
+    void InitialiseSamplesPerChunk(TUint aEntries);
+    void InitialiseAudioSamplesPerSample(TUint aEntries);
+    void InitialiseOffsets(TUint aEntries);
+    void Deinitialise();
+    void SetSamplesPerChunk(TUint aFirstChunk, TUint aSamplesPerChunk);
+    void SetAudioSamplesPerSample(TUint32 aSampleCount, TUint32 aAudioSamples);
+    void SetOffset(TUint64 aOffset);
+    TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);
+    typedef struct {
+        TUint   iFirstChunk;
+        TUint   iSamples;
+    } TSamplesPerChunkEntry;
+    typedef struct {
+        TUint   iSampleCount;
+        TUint   iAudioSamples;
+    } TAudioSamplesPerSampleEntry;
+private:
+    TUint   iSPCEntries;
+    TUint   iSPCEntry;
+    Bwx*    iSamplesPerChunk;
+    TUint   iASPSEntries;
+    TUint   iASPSEntry;
+    Bwx*    iAudioSamplesPerSample;
+    TUint   iOffsetEntries;
+    TUint   iOffsetEntry;
+    Bwx*    iOffsets;
+};
+
+class Mpeg4Start
+{
+public:
+    Mpeg4Start(IContainer& aContainer);
+    ~Mpeg4Start();
     TUint ContainerSize() const;
 private:
     TUint iContainerSize;
+};
+
+class Mpeg4MediaInfo
+{
+public:
+    static const TUint kMaxCSDSize = 100;    // 100 bytes of code specific data can be stored
+public:
+    Mpeg4MediaInfo(ICodecController& aController);
+    ~Mpeg4MediaInfo();
+    const Brx& CodecSpecificData() const;
+    SampleSizeTable& GetSampleSizeTable();
+    SeekTable& GetSeekTable();
+    TUint32 SampleRate() const;
+    TUint64 Timescale() const;
+    TUint16 Channels() const;
+    TUint16 BitDepth() const;
+    TUint64 SamplesTotal() const;
+private:
+    Bws<kMaxCSDSize> iCodecSpecificData;
+    SampleSizeTable iSampleSizeTable;
+    SeekTable iSeekTable;
+    TUint32 iSampleRate;
+    TUint64 iTimescale;
+    TUint16 iChannels;
+    TUint16 iBitDepth;
+    TUint64 iSamplesTotal;
 };
 
 } // namespace Codec

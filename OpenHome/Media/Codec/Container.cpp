@@ -66,7 +66,7 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
         if (iCheckForContainer) {
             try {
                 // Check for an MPEG4 header.
-                Mpeg4 mp4(*this);
+                Mpeg4Start mp4(*this);
                 LOG(kMedia, "Container::ProcessMsg found MPEG4 header of %u bytes -- skipping\n", mp4.ContainerSize());
                 iContainerSize = 0;
                 iRemainingContainerSize = mp4.ContainerSize();
