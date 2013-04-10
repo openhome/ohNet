@@ -108,7 +108,7 @@ private:
 class Mpeg4MediaInfo
 {
 public:
-    static const TUint kMaxCSDSize = 100;    // 100 bytes of code specific data can be stored
+    static const TUint kMaxCSDSize = 100;    // 100 bytes of codec specific data can be stored
 public:
     Mpeg4MediaInfo(ICodecController& aController);
     ~Mpeg4MediaInfo();
@@ -120,6 +120,8 @@ public:
     TUint16 Channels() const;
     TUint16 BitDepth() const;
     TUint64 SamplesTotal() const;
+public:
+    static void GetCodec(const Brx& aData, Bwx& aCodec);
 private:
     Bws<kMaxCSDSize> iCodecSpecificData;
     SampleSizeTable iSampleSizeTable;

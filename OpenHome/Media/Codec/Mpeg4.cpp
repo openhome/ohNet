@@ -717,3 +717,36 @@ TUint64 Mpeg4MediaInfo::SamplesTotal() const
 {
     return iSamplesTotal;
 }
+
+void Mpeg4MediaInfo::GetCodec(const Brx& aData, Bwx& aCodec)
+{
+    //LOG(kCodec, "Mpeg4MediaInfo::GetCodec\n");
+
+    // May throw a MediaMpeg4FileInvalid exception.
+
+    TUint offset = 0;
+    TBool codecFound = false;
+
+    for (;;) {
+        Mpeg4Box BoxL4(aData, NULL, NULL, offset);
+        if(BoxL4.Match("minf")) {
+            Mpeg4Box BoxL5(aData, &BoxL4, "stbl");
+            while (!BoxL5.Empty()) {
+                Mpeg4Box BoxL6(aData, &BoxL5);
+                if(BoxL6.Match("stsd")) {
+                    BoxL6.Skip(12);
+                    // Read the codec value.
+                    aCodec.SetBytes(0);
+                    BoxL6.Read(aCodec, 4);
+                    codecFound = true;
+                    break;
+                }
+            }
+        }
+        if (codecFound) {
+            break;
+        }
+        BoxL4.SkipEntry();
+        offset += BoxL4.BytesRead();
+    }
+}

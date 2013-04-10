@@ -29,7 +29,6 @@ private: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 private:
-    void ProcessHeader();
     void BigEndianData(TUint toWrite, TUint aSamplesWritten);
 private:
     Bws<4*10240> iInBuf;          // how big can these go and need to go ?

@@ -40,33 +40,10 @@ CodecAlac::~CodecAlac()
 TBool CodecAlac::Recognise(const Brx& aData)
 {
     //LOG(kCodec, "CodecAlac::Recognise\n");
-    TUint offset = 0;
-    TBool codecFound = false;
     Bws<4> codec;
 
     try {
-        for (;;) {
-            Mpeg4Box BoxL4(aData, NULL, NULL, offset);
-            if(BoxL4.Match("minf")) {
-                Mpeg4Box BoxL5(aData, &BoxL4, "stbl");
-                while (!BoxL5.Empty()) {
-                    Mpeg4Box BoxL6(aData, &BoxL5);
-                    if(BoxL6.Match("stsd")) {
-                        BoxL6.Skip(12);
-                        // Read the codec value.
-                        codec.SetBytes(0);
-                        BoxL6.Read(codec, 4);
-                        codecFound = true;
-                        break;
-                    }
-                }
-            }
-            if (codecFound) {
-                break;
-            }
-            BoxL4.SkipEntry();
-            offset += BoxL4.BytesRead();
-        }
+        Mpeg4MediaInfo::GetCodec(aData, codec);
     }
     catch (MediaMpeg4FileInvalid) {
         // We couldn't recognise this as an MPEG4/ALAC file.
