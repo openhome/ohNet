@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
+#include <OpenHome/Media/Codec/Mpeg4.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -55,10 +56,25 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
         try {
             //Attempt to construct an id3 tag -- this will throw if not present
             Id3v2 id3(*this);
-            LOG(kMedia, "Selector::DoRecognise found id3 tag of %d bytes -- skipping\n", id3.ContainerSize());
+            LOG(kMedia, "Container::ProcessMsg found id3 tag of %u bytes -- skipping\n", id3.ContainerSize());
             iContainerSize = iRemainingContainerSize = id3.ContainerSize();
+            iCheckForContainer = false;
         }
         catch(MediaCodecId3v2NotFound) { //thrown from Id3v2 constructor
+            LOG(kMedia, "Container::ProcessMsg MediaCodecId3v2NotFound\n");
+        }
+        if (iCheckForContainer) {
+            try {
+                // Check for an MPEG4 header.
+                Mpeg4Start mp4(*this);
+                LOG(kMedia, "Container::ProcessMsg found MPEG4 header of %u bytes -- skipping\n", mp4.ContainerSize());
+                iContainerSize = 0;
+                iRemainingContainerSize = mp4.ContainerSize();
+                iCheckForContainer = false;
+            }
+            catch (MediaMpeg4FileInvalid) { // thrown from Mpeg4 constructor
+                LOG(kMedia, "Container::ProcessMsg MediaMpeg4FileInvalid\n");
+            }
         }
 
         iCheckForContainer = false;

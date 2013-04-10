@@ -4,52 +4,133 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Media/Codec/CodecController.h>
 
 EXCEPTION(MediaMpeg4FileInvalid);
-EXCEPTION(MediaContainerMpeg4Found);
 
 namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-class Mpeg4
-{
-public:
-    Mpeg4(Selector& aSelector);
-    ~Mpeg4();
-    TUint32 ContainerSize() const;
-private:
-	TUint32 iContainerSize;
-};
-
-
 class Mpeg4Box
 {
 public:
-    Mpeg4Box(Selector& aSelector, TUint32 aOffset, TUint32 aBoxSize, const TChar* aIdName = NULL);
+    Mpeg4Box(IContainer& aContainer, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL, TUint aOffset = 0);
+    Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL);
+    Mpeg4Box(const Brx& aBuffer, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL, TUint aOffset = 0);
     ~Mpeg4Box();
-    void ExtractHeaderId();
     void Read(Bwx& aData, TUint aBytes);
     void SkipEntry();
     void Skip(TUint32 aBytes);
-    void AddBytesRead(TUint32 aBytes);
+    TBool Empty();
     TBool Match(const TChar* aIdName);
     TBool FindBox(const TChar* aIdName);
-    TBool Empty();
-
-    const Brx& Id() const { return iId; }
-    TUint32 DataBytes() const { return iDataBytes; }
-    TUint32 BytesRead() const { return iBoxBytesRead + iBytesRead; }
-    TUint32 TotalOffset() const { return iOffset + iBoxBytesRead + iBytesRead; }
-
+    const Brx& Id() const;
+    TUint BoxSize() const;
+    TUint BytesRead() const;
+    TUint Offset() const;
+    TUint FileOffset() const;
 private:
-    Selector& iSelector;
-    Bws<4> iId;
-    TUint32 iOffset;                // offset from start of file - required for Peek()
-    TUint32 iDataBytes;
-    TUint32 iBytesRead;             // bytes read for current entry
-    TUint32 iBoxBytesRead;          // bytes read for current box
-    TUint32 iBoxSize;               // size of current box
+    void ExtractHeaderId();
+    void Reset();
+    void UpdateBytesRead(TUint aBytes);
+private:
+    IContainer* iContainer;
+    ICodecController* iController;
+    const Brx* iInput;
+    Mpeg4Box *iParent;
+    Bws<4> iId;             // ID of box.
+    Bws<32> iBuf;           // Local buffer.
+    TUint iBytesRead;       // Bytes read for current entry.
+    TUint iBoxSize;         // Size of current box.
+    TUint iOffset;          // Read offset from start of file.
+};
+
+class SampleSizeTable
+{
+public:
+    SampleSizeTable();
+    ~SampleSizeTable();
+    void Initialise(TUint aTableSize);
+    void Deinitialise();
+    void SetSampleSize(TUint32 aSamplesize);
+    TUint32 SampleSize(TUint aEntry);
+    TUint Count();
+private:
+    TUint   iCount;
+    TUint   iEntry;
+    Bwx*    iTable;
+};
+
+class SeekTable
+{
+public:
+    SeekTable();
+    ~SeekTable();
+    void InitialiseSamplesPerChunk(TUint aEntries);
+    void InitialiseAudioSamplesPerSample(TUint aEntries);
+    void InitialiseOffsets(TUint aEntries);
+    void Deinitialise();
+    void SetSamplesPerChunk(TUint aFirstChunk, TUint aSamplesPerChunk);
+    void SetAudioSamplesPerSample(TUint32 aSampleCount, TUint32 aAudioSamples);
+    void SetOffset(TUint64 aOffset);
+    TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);
+    typedef struct {
+        TUint   iFirstChunk;
+        TUint   iSamples;
+    } TSamplesPerChunkEntry;
+    typedef struct {
+        TUint   iSampleCount;
+        TUint   iAudioSamples;
+    } TAudioSamplesPerSampleEntry;
+private:
+    TUint   iSPCEntries;
+    TUint   iSPCEntry;
+    Bwx*    iSamplesPerChunk;
+    TUint   iASPSEntries;
+    TUint   iASPSEntry;
+    Bwx*    iAudioSamplesPerSample;
+    TUint   iOffsetEntries;
+    TUint   iOffsetEntry;
+    Bwx*    iOffsets;
+};
+
+class Mpeg4Start
+{
+public:
+    Mpeg4Start(IContainer& aContainer);
+    ~Mpeg4Start();
+    TUint ContainerSize() const;
+private:
+    TUint iContainerSize;
+};
+
+class Mpeg4MediaInfo
+{
+public:
+    static const TUint kMaxCSDSize = 100;    // 100 bytes of codec specific data can be stored
+public:
+    Mpeg4MediaInfo(ICodecController& aController);
+    ~Mpeg4MediaInfo();
+    const Brx& CodecSpecificData() const;
+    SampleSizeTable& GetSampleSizeTable();
+    SeekTable& GetSeekTable();
+    TUint32 SampleRate() const;
+    TUint64 Timescale() const;
+    TUint16 Channels() const;
+    TUint16 BitDepth() const;
+    TUint64 SamplesTotal() const;
+public:
+    static void GetCodec(const Brx& aData, Bwx& aCodec);
+private:
+    Bws<kMaxCSDSize> iCodecSpecificData;
+    SampleSizeTable iSampleSizeTable;
+    SeekTable iSeekTable;
+    TUint32 iSampleRate;
+    TUint64 iTimescale;
+    TUint16 iChannels;
+    TUint16 iBitDepth;
+    TUint64 iSamplesTotal;
 };
 
 } // namespace Codec

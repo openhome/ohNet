@@ -478,6 +478,43 @@ void SuiteMsgAudioEncoded::Test()
     }
     msg2->RemoveRef();
 
+     // create chained msg, try split at various positions, including message boundaries
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    msg1Size = msg->Bytes();
+    msg2 = iMsgFactory->CreateMsgAudioEncoded(buf2);
+    msg2Size = msg2->Bytes();
+    msg->Add(msg2);
+    TEST(msg->Bytes() == msg1Size + msg2Size);
+    // try split at start of message
+    TEST_THROWS(msg->Split(0), AssertionFailed);
+    // try split at end of message
+    TEST_THROWS(msg->Split(msg->Bytes()), AssertionFailed);
+    // try split beyond end of message
+    TEST_THROWS(msg->Split(msg->Bytes()+1), AssertionFailed);
+
+    // try split at boundary between two messages
+    splitPos = msg1Size;
+    msg2 = msg->Split(splitPos);
+    TEST(msg->Bytes() == msg1Size);
+    TEST(msg2->Bytes() == msg2Size);
+    (void)memset(output, 0xde, sizeof(output));
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        TEST(output[i] == buf[i]);
+    }
+    msg->RemoveRef();
+    (void)memset(output, 0xde, sizeof(output));
+    msg2->CopyTo(output);
+    for (TUint i=0; i<msg2->Bytes(); i++) {
+        if (i < buf.Bytes() - splitPos) {
+            TEST(output[i] == buf[i + splitPos]);
+        }
+        else {
+            TEST(output[i] == buf2[i - buf.Bytes() + splitPos]);
+        }
+    }
+    msg2->RemoveRef();
+
     // clean shutdown implies no leaked msgs
 }
 
