@@ -101,7 +101,7 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
     try {        
         iTcpClient.Connect(endpoint, kConnectTimeoutMs);
     }
-    catch (NetworkError&) {
+    catch (NetworkTimeout&) {
         Close();
         LOG(kMedia, "<ProtocolNetwork::Connect error connecting\n");
         return false;
