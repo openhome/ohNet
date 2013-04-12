@@ -63,6 +63,16 @@ private:
     IPipelineIdProvider* iIdProvider;
 };
 
+class SuitePlayLater : public Suite, private IStopper
+{
+public:
+    SuitePlayLater();
+    ~SuitePlayLater();
+    void Test();
+private: // from IStopper
+    void RemoveStream(TUint aTrackId, TUint aStreamId);
+};
+
 class SuiteMaxStreams : public Suite, private IStopper
 {
     static const Brn kStyle;
@@ -230,7 +240,7 @@ void SuiteSingleStream::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
 void SuiteSingleStream::Setup()
 {
     iPipelineIdProvider = new PipelineIdProvider(*this);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId);
+    iPipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId, true);
     iIdProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
 }
 
@@ -284,6 +294,35 @@ void SuiteSingleStream::InvalidateAfterNoMatch()
 }
 
 
+// SuitePlayLater
+
+SuitePlayLater::SuitePlayLater()
+    : Suite("Play later")
+{
+}
+
+SuitePlayLater::~SuitePlayLater()
+{
+}
+
+void SuitePlayLater::Test()
+{
+    const Brn style("teststyle");
+    const Brn providerId("testProviderId");
+    const TUint trackId = 4;
+    const TUint streamId = 0;
+    PipelineIdProvider* pipelineIdProvider = new PipelineIdProvider(*this);
+    pipelineIdProvider->AddStream(style, providerId, trackId, streamId, false);
+    TEST(static_cast<IPipelineIdProvider*>(pipelineIdProvider)->OkToPlay(trackId, streamId) == ePlayLater);
+    delete pipelineIdProvider;
+}
+
+void SuitePlayLater::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS();
+}
+
+
 // SuiteMaxStreams
 
 const Brn SuiteMaxStreams::kStyle("TestStyle");
@@ -307,7 +346,7 @@ void SuiteMaxStreams::Test()
     PipelineIdProvider* pipelineIdProvider = new PipelineIdProvider(*this);
     const TUint max = pipelineIdProvider->MaxStreams()-1;
     for (TUint streamId = kStreamId; streamId<max; streamId++) {
-        pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, streamId);
+        pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, streamId, true);
     }
     IPipelineIdProvider* idProvider = static_cast<IPipelineIdProvider*>(pipelineIdProvider);
     for (TUint streamId = kStreamId; streamId<max; streamId++) {
@@ -315,9 +354,9 @@ void SuiteMaxStreams::Test()
     }
     TEST(idProvider->OkToPlay(kTrackId, kStreamId) == ePlayNo);
 
-    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId);
-    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId+1);
-    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId+2);
+    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId, true);
+    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId+1, true);
+    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId+2, true);
     TEST(idProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
     TEST(idProvider->OkToPlay(kTrackId, kStreamId+1) == ePlayYes);
     TEST(idProvider->OkToPlay(kTrackId, kStreamId+2) == ePlayYes);
@@ -362,10 +401,10 @@ void SuiteMultiStreams::RemoveStream(TUint aTrackId, TUint aStreamId)
 void SuiteMultiStreams::Setup()
 {
     iPipelineIdProvider = new PipelineIdProvider(*this);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId1, kTrackId1, kStreamId1);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId1, kTrackId1, kStreamId2);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId2, kTrackId2, kStreamId1);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId3, kTrackId3, kStreamId1);
+    iPipelineIdProvider->AddStream(kStyle, kProviderId1, kTrackId1, kStreamId1, true);
+    iPipelineIdProvider->AddStream(kStyle, kProviderId1, kTrackId1, kStreamId2, true);
+    iPipelineIdProvider->AddStream(kStyle, kProviderId2, kTrackId2, kStreamId1, true);
+    iPipelineIdProvider->AddStream(kStyle, kProviderId3, kTrackId3, kStreamId1, true);
     iIdProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
     iRemoveTrackId = kIdInvalid;
     iRemoveStreamId = kIdInvalid;
@@ -505,6 +544,7 @@ void TestIdProvider()
     Runner runner("Basic IdProvider tests\n");
     runner.Add(new SuiteIdsAreUnique());
     runner.Add(new SuiteSingleStream());
+    runner.Add(new SuitePlayLater());
     runner.Add(new SuiteMaxStreams());
     runner.Add(new SuiteMultiStreams());
     runner.Run();

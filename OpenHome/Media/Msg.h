@@ -752,6 +752,12 @@ public:
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
 };
 
+class IStopper
+{
+public:
+    virtual void RemoveStream(TUint aTrackId, TUint aStreamId) = 0;
+};
+
 class IPipelineElementUpstream
 {
 public:
