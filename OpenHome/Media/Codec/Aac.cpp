@@ -602,9 +602,8 @@ void CodecAac::FlushOutput()
 void CodecAac::DecodeFrame(TBool aParseOnly)
 {
     TUint error = false;
-    TInt16 numChannelsLast = 0;
     TInt16 frameSize;
-    TInt32 sampleRate, outputSampleRate = 0;
+    TInt32 sampleRate;
     TInt16 numChannels;
     TInt16 numOutSamples;
     TBool bDownSample = 0;
@@ -685,12 +684,9 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
     /* end sbr decoder */
 
 
-    outputSampleRate = sampleRate;
     numOutSamples = frameSize;
 
     //LOG(kCodec, "sampleRate = %d, iSampleRate = %d\n", sampleRate, iSampleRate);
-
-    numChannelsLast = numChannels;
 
     /* end spline resampler */
 

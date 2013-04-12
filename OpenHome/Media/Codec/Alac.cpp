@@ -206,10 +206,16 @@ void CodecAlac::Process()
         }
     }
     else {
+        streamEnded = true;
+    }
+
+    if (newStreamStarted || streamEnded) {
         // flush remaining samples
-        iTrackOffset += iController->OutputAudioPcm(iOutBuf, iMp4->Channels(), iMp4->SampleRate(),
-            iBitDepth, EMediaDataBigEndian, iTrackOffset);
-        iOutBuf.SetBytes(0);
+        if (iOutBuf.Bytes() > 0) {
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iMp4->Channels(), iMp4->SampleRate(),
+                iBitDepth, EMediaDataBigEndian, iTrackOffset);
+            iOutBuf.SetBytes(0);
+	}
         if (newStreamStarted) {
             THROW(CodecStreamStart);
         }
