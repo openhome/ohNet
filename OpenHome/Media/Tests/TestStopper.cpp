@@ -36,7 +36,7 @@ private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
 private: // from IStreamHandler
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
@@ -363,9 +363,9 @@ void SuiteStopper::PipelineFlushed()
     iPipelineFlushedCount++;
 }
 
-TBool SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return true;
+    return ePlayYes;
 }
 
 TUint SuiteStopper::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)

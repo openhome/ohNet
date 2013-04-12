@@ -1,5 +1,5 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Private/Thread.h>
@@ -28,7 +28,7 @@ public:
 private: // from Thread
     void Run();
 private: // from IStreamHandler
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
@@ -83,7 +83,7 @@ private: // from IMsgProcessor
 private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
-    PipelineManager* iPipelineManager;
+    Pipeline* iPipeline;
     IPipelineElementUpstream* iPipelineEnd;
     TUint iSampleRate;
     TUint iNumChannels;
@@ -173,9 +173,9 @@ void Supplier::Run()
     }
 }
 
-TBool Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return true;
+    return ePlayYes;
 }
 
 TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -205,22 +205,22 @@ SuitePipeline::SuitePipeline()
     , iSemFlushed("TPSF", 0)
     , iQuitReceived(false)
 {
-    iPipelineManager = new PipelineManager(iInfoAggregator, *this, kDriverMaxAudioJiffies);
-    iSupplier = new Supplier(*iPipelineManager);
-    iPipelineManager->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
-    iPipelineManager->Start();
-    iPipelineEnd = iPipelineManager;
+    iPipeline = new Pipeline(iInfoAggregator, *this, kDriverMaxAudioJiffies);
+    iSupplier = new Supplier(*iPipeline);
+    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
+    iPipeline->Start();
+    iPipelineEnd = iPipeline;
 }
 
 SuitePipeline::~SuitePipeline()
 {
     delete iSupplier; // stop generating pipeline msgs
-    // PipelineManager d'tor will block until the driver pulls a Quit msg
+    // Pipeline d'tor will block until the driver pulls a Quit msg
     // we've been cheating by running a driver in this thread up until now
     // ...so we cheat some more by creating a worker thread to pull until Quit is read
     ThreadFunctor* th = new ThreadFunctor("QUIT", MakeFunctor(*this, &SuitePipeline::PullUntilQuit));
     th->Start();
-    delete iPipelineManager;
+    delete iPipeline;
     delete th;
 }
 
@@ -231,26 +231,26 @@ void SuitePipeline::Test()
         Push audio.  Repeat until our dummy driver can start pulling.
         Check audio ramps up for kStopperRampDuration jiffies.
         Check that pipeline status goes from Buffering to Playing.
-        Duration of ramp should have been PipelineManager::kStopperRampDuration.
+        Duration of ramp should have been Pipeline::kStopperRampDuration.
         Check that subsequent audio isn't ramped.
         Stop pushing audio.  Check that pipeline status eventually goes from Playing to Buffering.
-        Check that audio then ramps down in ~PipelineManager::kStarvationMonitorStarvationThreshold.
+        Check that audio then ramps down in ~Pipeline::kStarvationMonitorStarvationThreshold.
         ...will actually take up to duration of 1 MsgAudioPcm extra.
-        Push audio again.  Check that it ramps up in PipelineManager::kStarvationMonitorRampUpDuration.
-        Set 1s delay.  Check for ramp down in PipelineManager::kVariableDelayRampDuration then 1s seilence then ramp up.
-        Reduce delay to 0.  Check for ramp down then up, each in in PipelineManager::kVariableDelayRampDuration.
-        Pause.  Check for ramp down in PipelineManager::kStopperRampDuration.
-        Resume.  Check for ramp up in PipelineManager::kStopperRampDuration.
-        Stop.  Check for ramp down in PipelineManager::kStopperRampDuration.
-        Quit happens when iPipelineManager is deleted in d'tor.
+        Push audio again.  Check that it ramps up in Pipeline::kStarvationMonitorRampUpDuration.
+        Set 1s delay.  Check for ramp down in Pipeline::kVariableDelayRampDuration then 1s seilence then ramp up.
+        Reduce delay to 0.  Check for ramp down then up, each in in Pipeline::kVariableDelayRampDuration.
+        Pause.  Check for ramp down in Pipeline::kStopperRampDuration.
+        Resume.  Check for ramp up in Pipeline::kStopperRampDuration.
+        Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
+        Quit happens when iPipeline is deleted in d'tor.
     */
 
     // Push audio.  Repeat until our dummy driver can start pulling.
     // Check audio ramps up for kStopperRampDuration jiffies.
     // Check that pipeline status goes from Buffering to Playing.
-    // There should not be any ramp        Duration of ramp should have been PipelineManager::kStopperRampDuration.
+    // There should not be any ramp        Duration of ramp should have been Pipeline::kStopperRampDuration.
     Print("Run until ramped up\n");
-    iPipelineManager->Play();
+    iPipeline->Play();
     do {
         iPipelineEnd->Pull()->Process(*this);
     } while (!iLastMsgWasAudio);
@@ -260,56 +260,56 @@ void SuitePipeline::Test()
 
     // Check that subsequent audio isn't ramped.
     // Stop pushing audio.  Check that pipeline status eventually goes from Playing to Buffering.
-    // Check that audio then ramps down in ~PipelineManager::kStarvationMonitorStarvationThreshold.
+    // Check that audio then ramps down in ~Pipeline::kStarvationMonitorStarvationThreshold.
     // ...will actually take up to duration of 1 MsgAudioPcm extra.
     Print("\nSimulate starvation\n");
     iJiffies = 0;
     iSupplier->Block();
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelineBuffering);
-    TEST((iJiffies >= PipelineManager::kStarvationMonitorStarvationThreshold) &&
-         (iJiffies <=  PipelineManager::kStarvationMonitorStarvationThreshold + iLastMsgJiffies + kDriverMaxAudioJiffies));
+    TEST((iJiffies >= Pipeline::kStarvationMonitorStarvationThreshold) &&
+         (iJiffies <=  Pipeline::kStarvationMonitorStarvationThreshold + iLastMsgJiffies + kDriverMaxAudioJiffies));
 
-    // Push audio again.  Check that it ramps up in PipelineManager::kStarvationMonitorRampUpDuration.
+    // Push audio again.  Check that it ramps up in Pipeline::kStarvationMonitorRampUpDuration.
     Print("\nRecover from starvation\n");
     iJiffies = 0;
     iSupplier->Unblock();
     PullUntilEnd(ERampUp);
     TEST(iPipelineState == EPipelinePlaying);
-    TestJiffies(PipelineManager::kStarvationMonitorRampUpDuration);
+    TestJiffies(Pipeline::kStarvationMonitorRampUpDuration);
 
-    // Set 1s delay.  Check for ramp down in PipelineManager::kVariableDelayRampDuration then 1s silence then ramp up.
-    // FIXME - can't set VariableDelay via PipelineManager
+    // Set 1s delay.  Check for ramp down in Pipeline::kVariableDelayRampDuration then 1s silence then ramp up.
+    // FIXME - can't set VariableDelay via Pipeline
 
-    // Reduce delay to 0.  Check for ramp down then up, each in in PipelineManager::kVariableDelayRampDuration.
-    // FIXME - can't set VariableDelay via PipelineManager
+    // Reduce delay to 0.  Check for ramp down then up, each in in Pipeline::kVariableDelayRampDuration.
+    // FIXME - can't set VariableDelay via Pipeline
 
-    // Pause.  Check for ramp down in PipelineManager::kStopperRampDuration.
+    // Pause.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nPause\n");
     iJiffies = 0;
-    iPipelineManager->Pause();
+    iPipeline->Pause();
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelinePaused);
-    TestJiffies(PipelineManager::kStopperRampDuration);
+    TestJiffies(Pipeline::kStopperRampDuration);
 
-    // Resume.  Check for ramp up in PipelineManager::kStopperRampDuration.
+    // Resume.  Check for ramp up in Pipeline::kStopperRampDuration.
     Print("\nResume\n");
     iJiffies = 0;
-    iPipelineManager->Play();
+    iPipeline->Play();
     PullUntilEnd(ERampUp);
     TEST(iPipelineState == EPipelinePlaying);
-    TestJiffies(PipelineManager::kStopperRampDuration);
+    TestJiffies(Pipeline::kStopperRampDuration);
 
-    // Stop.  Check for ramp down in PipelineManager::kStopperRampDuration.
+    // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
     iJiffies = 0;
-    iPipelineManager->Stop();
+    iPipeline->Stop();
     PullUntilEnd(ERampDownDeferred);
     iSemFlushed.Wait();
     TEST(iPipelineState == EPipelineStopped);
-    TestJiffies(PipelineManager::kStopperRampDuration);
+    TestJiffies(Pipeline::kStopperRampDuration);
 
-    // Quit happens when iPipelineManager is deleted in d'tor.
+    // Quit happens when iPipeline is deleted in d'tor.
     Print("\nQuit\n");
 }
 

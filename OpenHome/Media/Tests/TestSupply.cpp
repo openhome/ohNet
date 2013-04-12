@@ -16,7 +16,7 @@ namespace Media {
 class DummyStreamHandler : public IStreamHandler
 {
 private: // from IStreamHandler
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 };
@@ -82,10 +82,10 @@ private:
 
 // DummyStreamHandler
 
-TBool DummyStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay DummyStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
-    return false;
+    return ePlayNo;
 }
 
 TUint DummyStreamHandler::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)

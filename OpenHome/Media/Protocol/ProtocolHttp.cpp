@@ -140,10 +140,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     return res;
 }
 
-TBool ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    const TBool canPlay = iIdProvider->OkToPlay(aTrackId);
-    if (canPlay && iLive && iStreamId == aStreamId) {
+    const EStreamPlay canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
+    if (canPlay != ePlayNo && iLive && iStreamId == aStreamId) {
         iSem.Signal();
     }
     return canPlay;

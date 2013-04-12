@@ -1,4 +1,4 @@
-#include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Supply.h>
@@ -20,9 +20,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// PipelineManager
+// Pipeline
 
-PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
+Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
     : iObserver(aObserver)
     , iLock("PLMG")
     , iLoggerSupply(NULL)
@@ -113,7 +113,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, IPipeline
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
 }
 
-PipelineManager::~PipelineManager()
+Pipeline::~Pipeline()
 {
     Quit();
 
@@ -143,17 +143,17 @@ PipelineManager::~PipelineManager()
     delete iMsgFactory;
 }
 
-void PipelineManager::AddCodec(Codec::CodecBase* aCodec)
+void Pipeline::AddCodec(Codec::CodecBase* aCodec)
 {
     iCodecController->AddCodec(aCodec);
 }
 
-void PipelineManager::Start()
+void Pipeline::Start()
 {
     iCodecController->Start();
 }
 
-void PipelineManager::Quit()
+void Pipeline::Quit()
 {
     iQuitting = true;
     /*if (iStatus != EPlaying) */ { // always send quit message and ensure pipeline is playing.
@@ -163,7 +163,7 @@ void PipelineManager::Quit()
     }
 }
 
-void PipelineManager::NotifyStatus()
+void Pipeline::NotifyStatus()
 {
     EPipelineState state;
     iLock.Wait();
@@ -191,12 +191,12 @@ void PipelineManager::NotifyStatus()
     iObserver.NotifyPipelineState(state);
 }
 
-MsgFactory& PipelineManager::Factory()
+MsgFactory& Pipeline::Factory()
 {
     return *iMsgFactory;
 }
 
-void PipelineManager::Play()
+void Pipeline::Play()
 {
     iLock.Wait();
     if (iStatus == EPlaying) {
@@ -216,7 +216,7 @@ void PipelineManager::Play()
     NotifyStatus();
 }
 
-void PipelineManager::Pause()
+void Pipeline::Pause()
 {
     AutoMutex a(iLock);
     if (iTargetStatus != EPlaying) {
@@ -229,7 +229,7 @@ void PipelineManager::Pause()
     iStatus = EHalting;
 }
 
-void PipelineManager::Stop()
+void Pipeline::Stop()
 {
     AutoMutex a(iLock);
     if (iTargetStatus == EFlushed || iTargetStatus == EQuit) {
@@ -246,48 +246,48 @@ void PipelineManager::Stop()
     }
 }
 
-TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
     // FIXME - update iTargetStatus
     return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
-void PipelineManager::OutputTrack(const Brx& aUri, TUint aTrackId)
+void Pipeline::OutputTrack(const Brx& aUri, TUint aTrackId)
 {
     iSupply->OutputTrack(aUri, aTrackId);
 }
 
-void PipelineManager::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+void Pipeline::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
     iSupply->OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
 }
 
-void PipelineManager::OutputData(const Brx& aData)
+void Pipeline::OutputData(const Brx& aData)
 {
     iSupply->OutputData(aData);
 }
 
-void PipelineManager::OutputMetadata(const Brx& aMetadata)
+void Pipeline::OutputMetadata(const Brx& aMetadata)
 {
     iSupply->OutputMetadata(aMetadata);
 }
 
-void PipelineManager::OutputFlush(TUint aFlushId)
+void Pipeline::OutputFlush(TUint aFlushId)
 {
     iSupply->OutputFlush(aFlushId);
 }
 
-void PipelineManager::OutputQuit()
+void Pipeline::OutputQuit()
 {
     iSupply->OutputQuit();
 }
 
-Msg* PipelineManager::Pull()
+Msg* Pipeline::Pull()
 {
     return iPipelineEnd->Pull();
 }
 
-void PipelineManager::PipelineHalted()
+void Pipeline::PipelineHalted()
 {
     iLock.Wait();
     if (iHaltCompletedIgnoreCount > 0) {
@@ -317,7 +317,7 @@ void PipelineManager::PipelineHalted()
     }
 }
 
-TUint PipelineManager::NextFlushId()
+TUint Pipeline::NextFlushId()
 {
     iLock.Wait();
     TUint id = iNextFlushId++;
@@ -325,7 +325,7 @@ TUint PipelineManager::NextFlushId()
     return id;
 }
 
-void PipelineManager::PipelineFlushed()
+void Pipeline::PipelineFlushed()
 {
     iLock.Wait();
     if (iFlushCompletedIgnoreCount > 0) {
@@ -350,27 +350,27 @@ void PipelineManager::PipelineFlushed()
     }
 }
 
-void PipelineManager::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void Pipeline::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
 {
     iObserver.NotifyTrack(aUri, aIdPipeline);
 }
 
-void PipelineManager::NotifyMetaText(const Brx& aText)
+void Pipeline::NotifyMetaText(const Brx& aText)
 {
     iObserver.NotifyMetaText(aText);
 }
 
-void PipelineManager::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+void Pipeline::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
     iObserver.NotifyTime(aSeconds, aTrackDurationSeconds);
 }
 
-void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+void Pipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     iObserver.NotifyStreamInfo(aStreamInfo);
 }
 
-void PipelineManager::NotifyStarvationMonitorBuffering(TBool aBuffering)
+void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
 {
     iLock.Wait();
     iBuffering = aBuffering;

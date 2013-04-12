@@ -42,9 +42,9 @@ TBool Protocol::Active() const
     return iActive;
 }
 
-TBool Protocol::OkToPlay(TUint aTrackId, TUint /*aStreamId*/)
+EStreamPlay Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId);
+    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -101,7 +101,7 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
     try {        
         iTcpClient.Connect(endpoint, kConnectTimeoutMs);
     }
-    catch (NetworkError&) {
+    catch (NetworkTimeout&) {
         Close();
         LOG(kMedia, "<ProtocolNetwork::Connect error connecting\n");
         return false;

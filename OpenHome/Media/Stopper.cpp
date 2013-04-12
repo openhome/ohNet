@@ -148,7 +148,7 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     IStreamHandler* sh = streamInfo.StreamHandler();
-    if (!sh->OkToPlay(iTrackId, streamInfo.StreamId())) {
+    if (sh->OkToPlay(iTrackId, streamInfo.StreamId()) == ePlayNo) {
         /*TUint flushId = */sh->TryStop(iTrackId, streamInfo.StreamId());
         iFlushStream = true;
         aMsg->RemoveRef();

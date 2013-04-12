@@ -53,7 +53,7 @@ public:
 protected:
     Protocol(Environment& aEnv);
 private: // from IStreamHandler
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
 private:
     virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;

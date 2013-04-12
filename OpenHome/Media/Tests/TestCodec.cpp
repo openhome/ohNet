@@ -80,7 +80,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 public: // from IStreamHandler
-    TBool OkToPlay(TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
@@ -371,10 +371,10 @@ Msg* TestCodecPipelineElementUpstream::Pull()
     return msg;
 }
 
-TBool TestCodecPipelineElementUpstream::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay TestCodecPipelineElementUpstream::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
-    return false;
+    return ePlayNo;
 }
 
 TUint TestCodecPipelineElementUpstream::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 aOffset)

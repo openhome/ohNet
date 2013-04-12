@@ -5,7 +5,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Media/Protocol/ProtocolFile.h>
-#include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/Aac.h>
 #include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/Flac.h>
@@ -76,7 +76,9 @@ private: // from Thread
 private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
-    TBool OkToPlay(TUint aTrackId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
 private:
     ProtocolManager* iProtocolManager;
     Brn iUrl;
@@ -102,7 +104,7 @@ private: // from IPipelineObserver
 private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
-    PipelineManager* iPipeline;
+    Pipeline* iPipeline;
     Net::DvDeviceStandard* iDevice;
     DriverSongcastSender* iDriver;
     Brh iUrl;
@@ -157,9 +159,19 @@ TUint DummyFiller::NextStreamId()
     return iNextStreamId++;
 }
 
-TBool DummyFiller::OkToPlay(TUint /*aTrackId*/)
+EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return true;
+    return ePlayYes;
+}
+
+void DummyFiller::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+{
+    ASSERTS();
+}
+
+void DummyFiller::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+{
+    ASSERTS();
 }
 
 
@@ -169,7 +181,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     : iUrl(aUrl)
     , iStreamId(0)
 {
-    iPipeline = new PipelineManager(iInfoAggregator, *this, kMaxDriverJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());

@@ -11,7 +11,7 @@ namespace Media {
 
 /*
 Left-most pipeline element.
-Creates pipeline messages based on requests from protocol modules or PipelineManager
+Creates pipeline messages based on requests from protocol modules or Pipeline
 */
 
 class Supply : public ISupply, private INonCopyable

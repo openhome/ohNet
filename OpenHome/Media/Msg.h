@@ -726,18 +726,28 @@ public:
     virtual TUint NextFlushId() = 0;
 };
 
+enum EStreamPlay
+{
+    ePlayYes
+   ,ePlayNo
+   ,ePlayLater
+};
+
 class IPipelineIdProvider
 {
 public:
+    virtual ~IPipelineIdProvider() {}
     virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;
-    virtual TBool OkToPlay(TUint aTrackId) = 0;
+    virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void InvalidateAt(const Brx& aStyle, const Brx& aProviderId) = 0;
+    virtual void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId) = 0;
 };
 
 class IStreamHandler
 {
 public:
-    virtual TBool OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
 };
