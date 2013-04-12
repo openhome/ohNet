@@ -7,7 +7,7 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Msg.h>
 
-#include <alac_decoder/alac.h>
+#include <alac.h>
 
 extern void alac_free_buffers(alac_file *alac);
 

@@ -82,6 +82,6 @@ private:
 
 } //namespace Codec
 } //namespace Media
-} //namespace Linn
+} //namespace OpenHome
 
 #endif //HEADER_PIPELINE_CODEC_AAC
