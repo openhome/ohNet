@@ -1,5 +1,6 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Codec/Aac.h>
 #include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
@@ -27,20 +28,26 @@ class AudioFileDescriptor
 public:
     enum ECodec
     {
-        eCodecWav = 0,
-        eCodecFlac = 1,
-        eCodecMp3 = 2,
-        eCodecAlac = 3,
-        eCodecUnknown = 4,
+        eCodecUnknown = 0,
+        eCodecWav = 1,
+        eCodecFlac = 2,
+        eCodecMp3 = 3,
+        eCodecAlac = 4,
+        eCodecAac = 5,
     };
 public:
-    AudioFileDescriptor(const Brx& aFilename, TUint aBitDepth, TUint aChannels, ECodec aCodec);
+    AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec);
     const Brx& Filename() const;
+    TUint SampleRate() const;
+    TUint Samples() const;
+    TUint64 Jiffies() const;
     TUint BitDepth() const;
     TUint Channels() const;
     ECodec Codec() const;
 private:
     Brn iFilename;
+    TUint iSampleRate;
+    TUint iSamples;
     TUint iBitDepth;
     TUint iChannels;
     ECodec iCodec;
@@ -185,6 +192,7 @@ public:
     SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles);
 private:
     ~SuiteCodecZeroCrossings();
+    void TestCrossingDelta();
     Msg* TestSimilarity(MsgAudioPcm* aMsg);
 private: // from Suite
     void Test();
@@ -193,10 +201,13 @@ private: // from SuiteCodecStream
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
 private:
+    TUint iSampleRate;
     TUint iBitDepth;
     TUint iChannels;
+    TUint iBytesProcessed;
+    TUint iLastCrossingByte;
     TUint iZeroCrossings;
-    TBool iCrossingDeltaAcceptable;
+    TUint iUnacceptableCrossingDeltas;
     AudioFileDescriptor::ECodec iCodec;
 };
 
@@ -217,8 +228,10 @@ private: // from Suite
 
 // AudioFileDescriptor
 
-AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aBitDepth, TUint aChannels, ECodec aCodec)
+AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec)
     : iFilename(aFilename)
+    , iSampleRate(aSampleRate)
+    , iSamples(aSamples)
     , iBitDepth(aBitDepth)
     , iChannels(aChannels)
     , iCodec(aCodec)
@@ -227,6 +240,29 @@ AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aBitDepth, 
 const Brx& AudioFileDescriptor::Filename() const
 {
     return iFilename;
+}
+
+TUint AudioFileDescriptor::SampleRate() const
+{
+    return iSampleRate;
+}
+
+TUint AudioFileDescriptor::Samples() const
+{
+    return iSamples;
+}
+
+TUint64 AudioFileDescriptor::Jiffies() const
+{
+    const TUint jiffiesPerSecond = Jiffies::kJiffiesPerSecond;
+    TUint64 jiffies = 0;
+    TUint wholeSecs = iSamples/iSampleRate;
+    TUint remainingSamples = iSamples - iSampleRate*wholeSecs;
+    TUint jiffiesPerSample = jiffiesPerSecond/iSampleRate;
+
+    jiffies = wholeSecs*jiffiesPerSecond + remainingSamples*jiffiesPerSample;
+    //LOG(kMedia, "wholeSecs: %u, remainingSamples: %u, jiffiesPerSample: %u, jiffies: %llu\n", wholeSecs, remainingSamples, jiffiesPerSample, jiffies);
+    return jiffies;
 }
 
 TUint AudioFileDescriptor::BitDepth() const
@@ -482,6 +518,7 @@ void SuiteCodecStream::Init()
 Msg* SuiteCodecStream::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iJiffies += aMsg->Jiffies();
+    //LOG(kMedia, "iJiffies: %u\n", iJiffies);
     return aMsg;
 }
 
@@ -500,6 +537,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iController->AddCodec(new CodecFlac());
     iController->AddCodec(new CodecMp3());
     iController->AddCodec(new CodecAlac());
+    iController->AddCodec(new CodecAac());
     iController->Start();
 }
 
@@ -508,7 +546,6 @@ void SuiteCodecStream::Test()
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
         Brn filename((*it).Filename());
-        AudioFileDescriptor::ECodec codec = (*it).Codec();
 
         // Try streaming a full file.
         Log::Print("SuiteCodecStream: ");
@@ -516,19 +553,10 @@ void SuiteCodecStream::Test()
         Log::Print("\n");
         Reinitialise(filename);
         iSem.Wait();
-        if (codec == AudioFileDescriptor::eCodecMp3) {
-            // LAME FAQ suggests at least ~1057 and ~288 samples can be added to start and end of track, respectively.
-            // For our 44.1KHz tracks, we have 1368 extra samples, ~1751040 extra jiffies.
-            TUint totalJiffies = TestCodecPipelineElementUpstream::kTotalJiffies + 1751040;
-            LOG(kMedia, "iJiffies: %u, totalJiffies: %u\n", iJiffies, totalJiffies);
-            //Log::Print("iJiffies: %u, totalJiffies: %u\n", iJiffies, totalJiffies);
-            TEST(iJiffies == totalJiffies);
-        }
-        else {
-            LOG(kMedia, "iJiffies: %u, totalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
-            //Log::Print("iJiffies: %u, totalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
-            TEST(iJiffies == TestCodecPipelineElementUpstream::kTotalJiffies);
-        }
+
+        //LOG(kMedia, "iJiffies: %u, track jiffies: %u\n", iJiffies, (*it).Jiffies());
+        //Log::Print("iJiffies: %u, track jiffies: %u\n", iJiffies, (*it).Jiffies());
+        TEST(iJiffies == (*it).Jiffies());
     }
 }
 
@@ -586,7 +614,7 @@ void SuiteCodecSeek::TestSeeking(const Brx& aFilename, TUint aDuration, TUint aS
     Reinitialise(aFilename);
     iSem.Wait();
     TUint expectedJiffies = ExpectedJiffies(aDuration, aDuration/2, iSeekPos);
-    LOG(kMedia, "iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
+    //LOG(kMedia, "iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
     //Log::Print("iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
     // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
@@ -656,7 +684,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(const Brx& aFilename, TUint a
     Reinitialise(aFilename);
     iSem.Wait();
     TUint expectedJiffies = ExpectedJiffies(aDuration, 0, iSeekPos);
-    LOG(kMedia, "iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
+    //LOG(kMedia, "iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
     //Log::Print("iJiffies: %u, expectedJiffies: %u\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
     // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
@@ -691,10 +719,13 @@ void SuiteCodecSeekFromStart::Test()
 
 SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles)
     : SuiteCodecStream("Codec zero crossing tests", aFiles)
+    , iSampleRate(0)
     , iBitDepth(0)
     , iChannels(0)
+    , iBytesProcessed(0)
+    , iLastCrossingByte(0)
     , iZeroCrossings(0)
-    , iCrossingDeltaAcceptable(true)
+    , iUnacceptableCrossingDeltas(0)
     , iCodec(AudioFileDescriptor::eCodecUnknown)
 {
 }
@@ -706,25 +737,40 @@ SuiteCodecZeroCrossings::~SuiteCodecZeroCrossings()
 void SuiteCodecZeroCrossings::Reinitialise(const Brx& aFilename)
 {
     SuiteCodecStream::Reinitialise(aFilename);
+    iBytesProcessed = 0;
+    iLastCrossingByte = 0;
     iZeroCrossings = 0;
-    iCrossingDeltaAcceptable = true;
+    iUnacceptableCrossingDeltas = 0;
+}
+
+void SuiteCodecZeroCrossings::TestCrossingDelta()
+{
+    const TUint bytesPerSample = (iBitDepth * iChannels) / 8;
+    const TUint bytesPerSec = bytesPerSample * 44100;
+    const TUint bytesPerSine = bytesPerSec/TestCodecPipelineElementUpstream::kFrequencyHz;
+    const TUint bytesPerCrossing = bytesPerSine/2;
+    TUint byteDelta = iBytesProcessed - iLastCrossingByte;
+
+    iZeroCrossings++;
+    //LOG(kMedia, "byteDelta: %u, bytesPerCrossing: %u\n", byteDelta, bytesPerCrossing);
+    if (iLastCrossingByte != 0 && byteDelta != bytesPerCrossing)
+    {
+        if (byteDelta < bytesPerCrossing-6 || byteDelta > bytesPerCrossing+6) {
+            iUnacceptableCrossingDeltas++;
+        }
+    }
+    iLastCrossingByte = iBytesProcessed;
 }
 
 Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
 {
-    TUint byteCount = 0;
-    TUint lastCrossingByte = 0;
     TBool negative = false;
     TBool positive = false;
 
     MsgPlayable* msg = aMsg->CreatePlayable();
     TUint bytes = msg->Bytes();
     ProcessorPcmBufPacked pcmProcessor;
-    TUint increment = (iBitDepth/8) * iChannels;
-    TUint bytesPerSec = (44100 * iBitDepth * iChannels) / 8;
-    TUint bytesPerSine = bytesPerSec/TestCodecPipelineElementUpstream::kFrequencyHz;
-    TUint bytesPerCrossing = bytesPerSine/2;
-    TUint byteDelta = 0;
+    const TUint increment = (iBitDepth/8) * iChannels;
 
     msg->Read(pcmProcessor);
     const TByte* ptr = (TByte*)pcmProcessor.Ptr();
@@ -751,40 +797,27 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
             if (j == 0) { // Only do subsample comparison on a single channel.
                 if (subsample < 0) {
                     if (positive && !negative) {
-                        iZeroCrossings++;
-                        byteDelta = byteCount - lastCrossingByte;
-                        if (lastCrossingByte != 0 && byteDelta != bytesPerCrossing)
-                        {
-                            if (iCodec != AudioFileDescriptor::eCodecMp3) { // MP3 has problems with zero crossings.
-                                if (byteDelta < bytesPerCrossing-10 || byteDelta > bytesPerCrossing+10) {
-                                    iCrossingDeltaAcceptable = false;
-                                }
-                            }
-                        }
-                        lastCrossingByte = byteCount;
+                        TestCrossingDelta();
                     }
                     negative = true;
                     positive = false;
                 }
                 else if (subsample > 0) {
                     if (negative && !positive) {
-                        iZeroCrossings++;
-                        byteDelta = byteCount - lastCrossingByte;
-                        if (lastCrossingByte != 0 && byteDelta != bytesPerCrossing)
-                        {
-                            if (iCodec != AudioFileDescriptor::eCodecMp3) { // MP3 has problems with zero crossings.
-                                if (byteDelta < bytesPerCrossing-10 || byteDelta > bytesPerCrossing+10) {
-                                    iCrossingDeltaAcceptable = false;
-                                }
-                            }
-                        }
-                        lastCrossingByte = byteCount;
+                        TestCrossingDelta();
                     }
                     negative = false;
                     positive = true;
                 }
+                else {
+                    if (negative || positive) {
+                        TestCrossingDelta();
+                    }
+                    negative = false;
+                    positive = false;
+                }
             }
-            byteCount += iBitDepth/8;
+            iBytesProcessed += iBitDepth/8;
         }
     }
 
@@ -794,20 +827,22 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
 Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
 {
     //aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
-    // This isn't really a MsgAudioPcm! (But it's fine, as all that should be done after is RemoveRef()).
-    aMsg = (MsgAudioPcm*) TestSimilarity(aMsg);
-    aMsg->RemoveRef();
-    aMsg = NULL;
-    return aMsg;
+    Msg* msgOut = TestSimilarity(aMsg);
+    msgOut->RemoveRef();
+    msgOut = NULL;
+    return msgOut;
 }
 
 void SuiteCodecZeroCrossings::Test()
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
-        const TUint sineWaves = TestCodecPipelineElementUpstream::kFrequencyHz * TestCodecPipelineElementUpstream::kDuration;
+        const TUint jiffiesPerSine = Jiffies::kJiffiesPerSecond / TestCodecPipelineElementUpstream::kFrequencyHz;
+        const TUint sineWaves = (TUint)((*it).Jiffies())/jiffiesPerSine;
         const TUint expectedZeroCrossings = sineWaves*2 - 1;
+
         Brn filename((*it).Filename());
+        iSampleRate = (*it).SampleRate();
         iBitDepth = (*it).BitDepth();
         iChannels = (*it).Channels();
         iCodec = (*it).Codec();
@@ -817,19 +852,20 @@ void SuiteCodecZeroCrossings::Test()
         Log::Print("\n");
         Reinitialise(filename);
         iSem.Wait();
-        LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
-        Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u\n", iZeroCrossings, expectedZeroCrossings);
+        //LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
+        //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
         TEST(iZeroCrossings >= expectedZeroCrossings-20);
         if (iCodec == AudioFileDescriptor::eCodecMp3) {
             // MP3 encoders/decoders add silence and some samples of random data to
             // start and end of tracks for filter routines.
             // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
-            TEST(iZeroCrossings <= expectedZeroCrossings+130);
+            TEST(iZeroCrossings <= expectedZeroCrossings+70);
         }
         else {
             TEST(iZeroCrossings <= expectedZeroCrossings+15);
         }
-        TEST(iCrossingDeltaAcceptable);
+        // Test that less than 1% of the zero crossings have an unnaceptable spacing.
+        TEST(iUnacceptableCrossingDeltas < expectedZeroCrossings/100);
     }
 }
 
@@ -858,7 +894,7 @@ void SuiteCodecInvalidType::Test()
         Log::Print("\n");
         Reinitialise(filename);
         iSem.Wait();
-        LOG(kMedia, "iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+        //LOG(kMedia, "iJiffies: %u, kTotalJiffies: %u\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
         TEST(iJiffies == 0); // If we don't exit cleanly and with 0 jiffies of output audio, something is misbehaving.
     }
 }
@@ -902,21 +938,33 @@ void TestCodecInfoAggregator::Register(Av::IInfoProvider& /*aProvider*/, std::ve
 void TestCodec()
 {
     std::vector<AudioFileDescriptor> stdFiles;
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono.wav"), 16, 1, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo.wav"), 16, 2, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-16bit.flac"), 16, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-16bit.flac"), 16, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-24bit.flac"), 24, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-24bit.flac"), 24, 2, AudioFileDescriptor::eCodecFlac));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-128k.mp3"), 24, 1, AudioFileDescriptor::eCodecMp3));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 24, 2, AudioFileDescriptor::eCodecMp3));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.m4a"), 16, 1, AudioFileDescriptor::eCodecAlac));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 16, 2, AudioFileDescriptor::eCodecAlac));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-24bit.m4a"), 24, 2, AudioFileDescriptor::eCodecAlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
+
+    //// MP3 encoders/decoders can add extra samples at start of tracks, which are used for their routines.
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-128k.mp3"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecMp3));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecMp3));
+
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-24bit.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
+
+    // AAC encoders can add/drop samples from start of files.
+    // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-aac-moov_start.m4a"), 44100, 438272-1024, 16, 2, AudioFileDescriptor::eCodecAac));
+
 
     std::vector<AudioFileDescriptor> invalidFiles;
-    invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 16, 1, AudioFileDescriptor::eCodecUnknown));          // Large invalid file.
-    invalidFiles.push_back(AudioFileDescriptor(Brn("dependencies.json"), 16, 1, AudioFileDescriptor::eCodecUnknown));   // Short invalid file.
+    invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.
+    invalidFiles.push_back(AudioFileDescriptor(Brn("dependencies.json"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));       // Short invalid file.
+
+    // MP4 with moov atom after mdat atom.
+    // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
+    //invalidFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
 
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles));

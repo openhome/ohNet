@@ -39,7 +39,6 @@ private:
 
     TUint16 iBitDepth;      // alac decoder may redefine the bit depth
     TUint16 iBytesPerSample;
-    TUint64 iStartSample;
     TUint64 iCurrentSample;
     TUint64 iSamplesWrittenTotal;
     TUint64 iTrackLengthJiffies;

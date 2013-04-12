@@ -79,7 +79,6 @@ TBool Mpeg4Box::FindBox(const TChar* aIdName)
             return true;            // found required id
         }
         SkipEntry();                // skip over this entry
-        iOffset += iBytesRead;      // Starting a new box, so update offset.
         Reset();
         ExtractHeaderId();
     }
@@ -118,19 +117,25 @@ void Mpeg4Box::ExtractHeaderId()
 void Mpeg4Box::Read(Bwx& aData, TUint aBytes)
 {
    if (iContainer) {
-       iContainer->Read(aData, iOffset+iBytesRead, aBytes);
+       iContainer->Read(aData, iOffset, aBytes);
+       if (aData.Bytes() < aBytes) {
+           THROW(MediaMpeg4FileInvalid);
+       }
    }
    else if (iController) {
        iController->Read(aData, aBytes);
+       if (aData.Bytes() < aBytes) {
+           THROW(MediaMpeg4FileInvalid);
+       }
    }
    else { // Reading from a buffer.
        // If we're reading from a buffer, check we have enough data for this read.
        // Otherwise, we're likely trying to process a non-MPEG4 file.
-       if (iOffset+iBytesRead+aBytes > iInput->Bytes()) {
+       if (iOffset+aBytes > iInput->Bytes()) {
            //LOG(kCodec, "Mpeg4Box::ExtractHeaderId bytes read: %u, iInput: %u\n", iOffset+iBytesRead+aBytes, iInput->Bytes());
            THROW(MediaMpeg4FileInvalid);
        }
-       aData.Replace(iInput->Ptr()+iOffset+iBytesRead, aBytes);
+       aData.Replace(iInput->Ptr()+iOffset, aBytes);
    }
    UpdateBytesRead(aBytes);
 }
@@ -138,6 +143,7 @@ void Mpeg4Box::Read(Bwx& aData, TUint aBytes)
 void Mpeg4Box::UpdateBytesRead(TUint aBytes)
 {
    iBytesRead += aBytes;
+   iOffset += aBytes;
    if (iParent != NULL) {
        iParent->UpdateBytesRead(aBytes);
    }
@@ -209,7 +215,7 @@ TUint Mpeg4Box::Offset() const
 
 TUint Mpeg4Box::FileOffset() const
 {
-    return iOffset+iBytesRead;
+    return iOffset;//+iBytesRead;
 }
 
 
@@ -474,8 +480,8 @@ Mpeg4Start::Mpeg4Start(IContainer& aContainer)
 
     // data could be stored in different orders in the file but ftyp & moov must come before mdat
 
-    for (;;) {                              // keep on reading until start of data found
-        Mpeg4Box BoxL1(aContainer, NULL, NULL, BoxL0.FileOffset());
+    for (;;) {      // keep on reading until start of data found
+        Mpeg4Box BoxL1(aContainer, &BoxL0, NULL, BoxL0.FileOffset());
         if(BoxL1.Match("moov")) {
             // Search through levels until we find mdia box;
             // the container for media info.
@@ -698,7 +704,7 @@ TUint32 Mpeg4MediaInfo::SampleRate() const
     return iSampleRate;
 }
 
-TUint64 Mpeg4MediaInfo::Timescale() const
+TUint32 Mpeg4MediaInfo::Timescale() const
 {
     return iTimescale;
 }
@@ -713,7 +719,7 @@ TUint16 Mpeg4MediaInfo::BitDepth() const
     return iBitDepth;
 }
 
-TUint64 Mpeg4MediaInfo::SamplesTotal() const
+TUint64 Mpeg4MediaInfo::Duration() const
 {
     return iSamplesTotal;
 }
