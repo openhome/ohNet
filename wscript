@@ -66,6 +66,27 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.DEFINES_MAD.append('inline=__inline')
     conf.env.INCLUDES_MAD = ['libmad-0.15.1b']
+    
+    # Setup ALAC lib options
+    conf.env.INCLUDES_ALAC = [
+        'alac_decoder',
+        ]
+
+    # Setup AAC lib options
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.DEFINES_AAC = ['WIN32', 'MONO_ONLY', 'LP_SBR_ONLY']
+    else:
+        conf.env.DEFINES_AAC = ['linux', 'i386', 'MONO_ONLY', 'LP_SBR_ONLY']
+    conf.env.INCLUDES_AAC = [
+        'ETSI_aacPlusdec/src',
+        'ETSI_aacPlusdec/etsiop_aacdec',
+        'ETSI_aacPlusdec/etsiop_aacdec/src',
+        'ETSI_aacPlusdec/etsiop_bitbuf',
+        'ETSI_aacPlusdec/etsiop_ffrlib',
+        'ETSI_aacPlusdec/etsiop_sbrdec',
+        'ETSI_aacPlusdec/etsiop_sbrdec/src',
+        'ETSI_aacPlusdec/etsioplib',
+        ]
 
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
@@ -195,12 +216,68 @@ def build(bld):
 
     # Alac
     bld.stlib(
-             source=[
+            source=[
                  'OpenHome/Media/Codec/Alac.cpp',
                  'alac_decoder/alac.cpp',
-             ],
-             use=['ALAC', 'OHNET'],
-             target='CodecAlac')
+            ],
+            use=['ALAC', 'OHNET'],
+            target='CodecAlac')
+
+    # AAC
+    bld.stlib(
+            source=[
+                'OpenHome/Media/Codec/Aac.cpp',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/aacdecoder.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/shortblock.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/longblock.c',
+
+                'ETSI_aacPlusdec/etsiop_aacdec/src/aac_ram.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/aac_rom.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/bitstream.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/block.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/channel.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/channelinfo.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/conceal.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/datastream.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/imdct.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/pns.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/pulsedata.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/stereo.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/streaminfo.c',
+                'ETSI_aacPlusdec/etsiop_aacdec/src/tns.c',
+
+                'ETSI_aacPlusdec/etsiop_bitbuf/src/bitbuffer.c',
+
+                'ETSI_aacPlusdec/etsiop_ffrlib/src/dsp_fft32x32s.c',
+                'ETSI_aacPlusdec/etsiop_ffrlib/src/intrinsics-native.c',
+                'ETSI_aacPlusdec/etsiop_ffrlib/src/transcendent.c',
+                'ETSI_aacPlusdec/etsiop_ffrlib/src/transcendent_enc.c',
+                'ETSI_aacPlusdec/etsiop_ffrlib/src/vector.c',
+
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/aacpluscheck.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/env_calc.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/env_dec.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/env_extr.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/freq_sca.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/hybrid.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/lpp_tran.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/ps_bitdec.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/ps_dec.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/qmf_dec.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_crc.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_dec.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_ram.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbr_rom.c',
+                'ETSI_aacPlusdec/etsiop_sbrdec/src/sbrdecoder.c',
+
+                'ETSI_aacPlusdec/etsioplib/basicop2.c',
+                'ETSI_aacPlusdec/etsioplib/count.c',
+                'ETSI_aacPlusdec/etsioplib/oper_32b.c',
+
+                'ETSI_aacPlusdec/src/spline_resampler.c',
+            ],
+            use=['AAC', 'OHNET'],
+            target='CodecAac')
 
     # Tests
     bld.stlib(
@@ -222,7 +299,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
             ],
-            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac'],
+            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac'],
             target='ohMediaPlayerTestUtils')
 
     # Copy files for codec tests.

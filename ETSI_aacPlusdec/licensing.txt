@@ -1,0 +1,16 @@
+There is no licence required to use the 3gpp source code, however the patent licence
+for MPEG-2 HE-AAC is required from Via Licencing.
+
+See http://www.3gpp.org/faq/faq_2005_2.htm#A3.8
+
+"3.8    Can I use computer code included with a 3GPP TS to implement a product ?
+Yes.  Some 3GPP Technical Specifications include computer code such as ASN.1 or XML (protocols), C language (codecs), ...; and some include test patterns (codecs) for verifying implementations.  These are published to allow users of these TSs to implement real-world products.  No permission is required from 3GPP or its Organizational Partners (OPs) to use this code in the design of products - e.g. to compile the C to implement a codec in machine code.  
+
+Nevertheless, there may be essential IPR involved with such a design, and implementors are obliged to seek licences to use that technology.  See FAQ 3.2."
+
+
+Also, If AAC+ V2 (Parametric Stereo) is required an additional licence is required from Codingtechnologies.  This is not enabled in our build.
+
+
+JR
+3/9/08

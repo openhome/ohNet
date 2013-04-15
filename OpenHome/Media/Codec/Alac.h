@@ -7,7 +7,7 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Msg.h>
 
-#include <alac_decoder/alac.h>
+#include <alac.h>
 
 extern void alac_free_buffers(alac_file *alac);
 
@@ -39,7 +39,6 @@ private:
 
     TUint16 iBitDepth;      // alac decoder may redefine the bit depth
     TUint16 iBytesPerSample;
-    TUint64 iStartSample;
     TUint64 iCurrentSample;
     TUint64 iSamplesWrittenTotal;
     TUint64 iTrackLengthJiffies;

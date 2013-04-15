@@ -116,10 +116,10 @@ public:
     SampleSizeTable& GetSampleSizeTable();
     SeekTable& GetSeekTable();
     TUint32 SampleRate() const;
-    TUint64 Timescale() const;
+    TUint32 Timescale() const;
     TUint16 Channels() const;
     TUint16 BitDepth() const;
-    TUint64 SamplesTotal() const;
+    TUint64 Duration() const;
 public:
     static void GetCodec(const Brx& aData, Bwx& aCodec);
 private:
@@ -127,7 +127,7 @@ private:
     SampleSizeTable iSampleSizeTable;
     SeekTable iSeekTable;
     TUint32 iSampleRate;
-    TUint64 iTimescale;
+    TUint32 iTimescale;
     TUint16 iChannels;
     TUint16 iBitDepth;
     TUint64 iSamplesTotal;
