@@ -744,6 +744,12 @@ public:
     virtual void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId) = 0;
 };
 
+class IPipelineIdTracker
+{
+public:
+    virtual void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow) = 0;
+};
+
 class IStreamHandler
 {
 public:

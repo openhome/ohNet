@@ -13,13 +13,14 @@ namespace Media {
 typedef Bws<32> BwsStyle;
 typedef Bws<32> BwsProviderId;
 
-class PipelineIdProvider : public IPipelineIdProvider
+class PipelineIdProvider : public IPipelineIdProvider, public IPipelineIdTracker
 {
     static const TUint kMaxActiveStreams = 100;
 public:
     PipelineIdProvider(IStopper& aStopper);
-    void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
     TUint MaxStreams() const;
+public: // from IPipelineIdTracker
+    void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
 private:
     static inline void UpdateIndex(TUint& aIndex);
     TUint UpdateId(TUint& aId);
