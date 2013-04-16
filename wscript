@@ -398,8 +398,9 @@ def build(bld):
                 target='TestIdProvider')
 
     # Bundles
-    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h'])
-    lib_files = gather_files(bld, '{bld}', [bld.env.cxxstlib_PATTERN % 'ohMediaPlayer'])
+    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h', 'flac-1.2.1/include/**/*.h'])
+    lib_names = ['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3']
+    lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
         'ohMediaPlayer/include' : header_files
