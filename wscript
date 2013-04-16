@@ -398,17 +398,13 @@ def build(bld):
                 target='TestIdProvider')
 
     # Bundles
-    #header_files = gather_files(bld, '{top}/src', ['*.h'])
-    #lib_files = gather_files(bld, '{bld}', [bld.env.cxxstlib_PATTERN % 'ohTopology'])
-    #bundle_dev_files = build_tree({
-    #    'ohTopology/lib' : lib_files,
-    #    'ohTopology/include' : header_files
-    #    })
-    #bundle_files = build_tree({
-    #    'ohTopology/lib' : lib_files,
-    #    })
-    #bundle_dev_files.create_tgz_task(bld, 'ohTopology-dev.tar.gz')
-    #bundle_files.create_tgz_task(bld, 'ohTopology.tar.gz')
+    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h'])
+    lib_files = gather_files(bld, '{bld}', [bld.env.cxxstlib_PATTERN % 'ohMediaPlayer'])
+    bundle_dev_files = build_tree({
+        'ohMediaPlayer/lib' : lib_files,
+        'ohMediaPlayer/include' : header_files
+        })
+    bundle_dev_files.create_tgz_task(bld, 'ohMediaPlayer.tar.gz')
 
 # == Command for invoking unit tests ==
 
