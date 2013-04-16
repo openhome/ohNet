@@ -48,7 +48,7 @@ class DummyUriStreamer : public IUriStreamer, private IStreamHandler, private IN
 {
 public:
     DummyUriStreamer(ISupply& aSupply, Semaphore& aTrackAddedSem, Semaphore& aTrackCompleteSem);
-    ~DummyUriStreamer();
+    virtual ~DummyUriStreamer();
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer

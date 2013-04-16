@@ -21,6 +21,10 @@ UriProvider::UriProvider(const TChar* aStyle)
 {
 }
 
+UriProvider::~UriProvider()
+{
+}
+
 
 // Filler
 

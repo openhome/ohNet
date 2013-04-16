@@ -28,6 +28,7 @@ public:
     virtual EStreamPlay GetPrev(BwsTrackUri& aUrl, BwsProviderId& aProviderId) = 0;
 protected:
     UriProvider(const TChar* aStyle);
+    virtual ~UriProvider();
 private:
     BwsStyle iStyle;
 };
