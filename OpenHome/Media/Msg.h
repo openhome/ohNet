@@ -541,6 +541,7 @@ private: // from Msg
 class IMsgProcessor
 {
 public:
+    virtual ~IMsgProcessor() {}
     virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
@@ -560,6 +561,7 @@ public:
 class IPcmProcessor
 {
 public:
+    virtual ~IPcmProcessor() {}
     /**
      * Called once per call to MsgPlayable::ProcessAudio.
      *
@@ -712,6 +714,7 @@ private:
 class ISupply
 {
 public:
+    virtual ~ISupply() {}
     virtual void OutputTrack(const Brx& aUri, TUint aTrackId) = 0;
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
@@ -723,6 +726,7 @@ public:
 class IFlushIdProvider
 {
 public:
+    virtual ~IFlushIdProvider() {}
     virtual TUint NextFlushId() = 0;
 };
 
@@ -747,12 +751,14 @@ public:
 class IPipelineIdTracker
 {
 public:
+    virtual ~IPipelineIdTracker() {}
     virtual void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow) = 0;
 };
 
 class IStreamHandler
 {
 public:
+    virtual ~IStreamHandler() {}
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
@@ -761,18 +767,21 @@ public:
 class IStopper
 {
 public:
+    virtual ~IStopper() {}
     virtual void RemoveStream(TUint aTrackId, TUint aStreamId) = 0;
 };
 
 class IPipelineElementUpstream
 {
 public:
+    virtual ~IPipelineElementUpstream() {}
     virtual Msg* Pull() = 0;
 };
 
 class IPipelineElementDownstream
 {
 public:
+    virtual ~IPipelineElementDownstream() {}
     virtual void Push(Msg* aMsg) = 0;
 };
 
