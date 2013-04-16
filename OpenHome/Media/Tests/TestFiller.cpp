@@ -39,7 +39,7 @@ private: // from UriProvider
 private:
     void Get(BwsTrackUri& aUrl, BwsProviderId& aProviderId) const;
 private:
-    static const TUint kNumEntries = 3;
+    static const TInt kNumEntries = 3;
     DummyTrack iTracks[kNumEntries];
     TInt iIndex;
 };
@@ -160,7 +160,7 @@ const Brx& DummyUriProvider::ProviderIdByIndex(TUint aIndex) const
 
 void DummyUriProvider::Begin(const Brx& aProviderId)
 {
-    TUint index = 0;
+    TInt index = 0;
     while (index < kNumEntries && iTracks[index].ProviderId() != aProviderId) {
         index++;
     }
