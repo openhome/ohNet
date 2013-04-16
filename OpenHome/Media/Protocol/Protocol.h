@@ -22,6 +22,12 @@ enum ProtocolStreamResult
    ,EProtocolStreamErrorUnrecoverable
 };
 
+class IUriStreamer
+{
+public:
+    virtual TBool DoStream(const Brx& aUri) = 0;
+};
+
 class IProtocolSet
 {
 public:
@@ -86,7 +92,6 @@ protected:
 	ProtocolNetwork(Environment& aEnv);
     TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
 protected: // from Protocol
-    TBool REVIEW_ME_DoStream(const Brx& aUri);
     void Interrupt(TBool aInterrupt);
 protected:
     void Open();
@@ -122,7 +127,7 @@ private:
     TBool iActive;
 };
 
-class ProtocolManager : private IProtocolManager, private INonCopyable
+class ProtocolManager : public IUriStreamer, private IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
@@ -132,6 +137,7 @@ public:
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
+public: // from IUriStreamer
     TBool DoStream(const Brx& aUri);
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);

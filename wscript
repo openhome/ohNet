@@ -148,6 +148,7 @@ def build(bld):
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdProvider.cpp',
+                'OpenHome/Media/Filler.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Mpeg4.cpp',
@@ -323,6 +324,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
+                'OpenHome/Media/Tests/TestFiller.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -423,24 +425,26 @@ def build(bld):
                 source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestIdProvider')
+        bld.program(
+                source='OpenHome/Media/Tests/TestFillerMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestFiller')
 
     # Bundles
-    #header_files = gather_files(bld, '{top}/src', ['*.h'])
-    #lib_files = gather_files(bld, '{bld}', [bld.env.cxxstlib_PATTERN % 'ohTopology'])
-    #bundle_dev_files = build_tree({
-    #    'ohTopology/lib' : lib_files,
-    #    'ohTopology/include' : header_files
-    #    })
-    #bundle_files = build_tree({
-    #    'ohTopology/lib' : lib_files,
-    #    })
-    #bundle_dev_files.create_tgz_task(bld, 'ohTopology-dev.tar.gz')
-    #bundle_files.create_tgz_task(bld, 'ohTopology.tar.gz')
+    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h', 'flac-1.2.1/include/**/*.h'])
+    lib_names = ['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3']
+    lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
+    bundle_dev_files = build_tree({
+        'ohMediaPlayer/lib' : lib_files,
+        'ohMediaPlayer/include' : header_files
+        })
+    bundle_dev_files.create_tgz_task(bld, 'ohMediaPlayer.tar.gz')
 
 # == Command for invoking unit tests ==
 
 def test(tst):
-    for t, a, when in [['TestMsg', [], True]
+    for t, a, when in [['TestStore', [], True]
+                      ,['TestMsg', [], True]
                       ,['TestSupply', [], True]
                       ,['TestAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
@@ -450,10 +454,10 @@ def test(tst):
                       ,['TestPreDriver', [], True]
                       ,['TestContentProcessor', [], True]
                       ,['TestPipeline', [], True]
-                      ,['TestStore', [], True]
                       ,['TestProtocolHttp', [], True]
                       ,['TestCodec', [], True]
                       ,['TestIdProvider', [], True]
+                      ,['TestFiller', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
         tst.add_group() # Don't start another test until previous has finished.
