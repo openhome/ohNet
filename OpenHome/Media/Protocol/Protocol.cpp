@@ -111,22 +111,6 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
     return true;
 }
 
-// Returns true if protocol enabled
-/*TBool ProtocolNetwork::REVIEW_ME_DoStream(const Brx& aUri)
-{
-    try {
-        if (Protocol::REVIEW_ME_DoStream(aUri)) {
-            Close();
-            return true;
-        }
-        return false;
-    }
-    catch (...) {
-        Close();
-        throw;
-    }
-}*/
-    
 void ProtocolNetwork::Interrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolNetwork::Interrupt\n");

@@ -19,10 +19,10 @@ PipelineIdProvider::PipelineIdProvider(IStopper& aStopper)
 {
 }
 
-void PipelineIdProvider::AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId)
+void PipelineIdProvider::AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow)
 {
     iLock.Wait();
-    iActiveStreams[iIndexTail].Set(aStyle, aProviderId, aTrackId, aStreamId);
+    iActiveStreams[iIndexTail].Set(aStyle, aProviderId, aTrackId, aStreamId, aPlayNow);
     UpdateIndex(iIndexTail);
     ASSERT(iIndexHead != iIndexTail); // OkToPlay can't tell the difference between a full and empty list
                                       // ...so we assume the list contains at most kMaxActiveStreams-1 elements
@@ -71,7 +71,7 @@ EStreamPlay PipelineIdProvider::OkToPlay(TUint aTrackId, TUint aStreamId)
     }
     iPlaying.Set(as);
     UpdateIndex(iIndexHead);
-    return ePlayYes;
+    return iPlaying.PlayNow()? ePlayYes : ePlayLater;
 }
 
 void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
@@ -154,17 +154,18 @@ PipelineIdProvider::ActiveStream::ActiveStream()
 {
 }
 
-void PipelineIdProvider::ActiveStream::Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId)
+void PipelineIdProvider::ActiveStream::Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow)
 {
     iStyle.Replace(aStyle);
     iProviderId.Replace(aProviderId);
     iTrackId = aTrackId;
     iStreamId = aStreamId;
+    iPlayNow = aPlayNow;
 }
 
 void PipelineIdProvider::ActiveStream::Set(const ActiveStream& aActiveStream)
 {
-    Set(aActiveStream.Style(), aActiveStream.ProviderId(), aActiveStream.TrackId(), aActiveStream.StreamId());
+    Set(aActiveStream.Style(), aActiveStream.ProviderId(), aActiveStream.TrackId(), aActiveStream.StreamId(), aActiveStream.PlayNow());
 }
 
 TBool PipelineIdProvider::ActiveStream::Matches(const Brx& aStyle, const Brx& aProviderId) const

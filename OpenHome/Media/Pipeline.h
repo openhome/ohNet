@@ -32,6 +32,7 @@ enum EPipelineState
 class IPipelineObserver
 {
 public:
+    virtual ~IPipelineObserver() {}
     virtual void NotifyPipelineState(EPipelineState aState) = 0;
     virtual void NotifyTrack(const Brx& aUri, TUint aIdPipeline) = 0;
     virtual void NotifyMetaText(const Brx& aText) = 0;
