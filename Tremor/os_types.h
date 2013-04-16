@@ -78,10 +78,16 @@
    typedef unsigned int ogg_uint32_t;
    typedef long long ogg_int64_t;
 
+#elif defined(__linux__)
+
+    #  include <sys/types.h>
+    #  include <endian.h>
+    #  include "config_types.h"
+
 #else
 
 #  include <sys/types.h>
-#  include <endian.h>
+#  include <machine/endian.h>
 #  include "config_types.h"
 
 #endif
