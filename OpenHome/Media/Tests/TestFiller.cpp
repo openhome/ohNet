@@ -69,6 +69,7 @@ class DummySupply : public ISupply
 {
 public:
     DummySupply();
+    ~DummySupply();
     const Brx& LastTrackUri() const;
     TUint LastTrackId() const;
     TUint LastStreamId() const;
@@ -257,6 +258,10 @@ TUint DummyUriStreamer::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 // DummySupply
 
 DummySupply::DummySupply()
+{
+}
+
+DummySupply::~DummySupply()
 {
 }
 
