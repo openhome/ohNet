@@ -88,6 +88,11 @@ def configure(conf):
         'ETSI_aacPlusdec/etsioplib',
         ]
 
+    # Setup Vorbis lib options
+    conf.env.INCLUDES_VORBIS = [
+        'Tremor',
+        ]
+
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
         return node_or_filename
@@ -278,6 +283,28 @@ def build(bld):
             use=['AAC', 'OHNET'],
             target='CodecAac')
 
+    # Vorbis
+    bld.stlib(
+            source=[
+                'OpenHome/Media/Codec/Vorbis.cpp',
+                'Tremor/mdct.c',
+                'Tremor/block.c',
+                'Tremor/window.c',
+                'Tremor/synthesis.c',
+                'Tremor/info.c',
+                'Tremor/floor1.c',
+                'Tremor/floor0.c',
+                'Tremor/vorbisfile.c',
+                'Tremor/res012.c',
+                'Tremor/mapping0.c',
+                'Tremor/registry.c',
+                'Tremor/codebook.c',
+                'Tremor/sharedbook.c',
+                'Tremor/framing.c',
+                'Tremor/bitwise.c',
+            ],
+            use=['VORBIS', 'OHNET'],
+            target='CodecVorbis')
     # Tests
     bld.stlib(
             source=[
@@ -297,7 +324,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
             ],
-            use=['ohMediaPlayer', 'FLAC', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
     # Copy files for codec tests.
@@ -378,7 +405,7 @@ def build(bld):
                 target='TestPipeline')
         bld.program(
                 source='OpenHome/Media/Tests/TestProtocol.cpp',
-                use=['OHNET', 'FLAC', 'ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'ohMediaPlayerTestUtils'],
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestProtocol')
         bld.program(
                 source='OpenHome/Av/Tests/TestStore.cpp',
@@ -390,7 +417,7 @@ def build(bld):
                 target='TestProtocolHttp')
         bld.program(
                 source='OpenHome/Media/Tests/TestCodecMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'CodecWav', 'CodecFlac', 'CodecMp3', 'ohMediaPlayerTestUtils'],
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestCodec')
         bld.program(
                 source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
