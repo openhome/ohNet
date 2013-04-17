@@ -444,6 +444,13 @@ DviSubscriptionManager::~DviSubscriptionManager()
         delete iPublishers[i];
     }
     free(iPublishers);
+
+    std::list<DviSubscription*>::iterator it = iList.begin();
+    while (it != iList.end()) {
+        (*it)->RemoveRef();
+        it++;
+    }
+
     LOG(kDvEvent, "< ~DviSubscriptionManager\n");
 }
 
