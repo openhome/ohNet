@@ -116,6 +116,7 @@ TestProtocol::TestProtocol(Environment& aEnv, const Brx& aUrl)
     iPipeline->AddCodec(new Codec::CodecMp3());
     iPipeline->AddCodec(new Codec::CodecAlac());
     iPipeline->AddCodec(new Codec::CodecAac());
+    iPipeline->AddCodec(new Codec::CodecVorbis());
     iPipeline->Start();
 }
 

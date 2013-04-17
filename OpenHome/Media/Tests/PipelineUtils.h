@@ -11,6 +11,7 @@
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Wav.h>
 #include <OpenHome/Media/Codec/Mp3.h>
+#include <OpenHome/Media/Codec/Vorbis.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
