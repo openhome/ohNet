@@ -101,8 +101,7 @@ def choose_platform(context):
 def setup_universal(context):
     env = context.env
     env.update(
-        OHNET_ARTIFACTS=context.options.artifacts or 'http://www.openhome.org/releases/artifacts',
-        OH_PUBLISHDIR="releases@www.openhome.org:/home/releases/www/artifacts",
+        OH_PUBLISHDIR="artifacts@core.linn.co.uk:/home/artifacts/artifacts/",
         OH_PROJECT="ohMediaPlayer",
         OH_DEBUG=context.options.debugmode,
         BUILDDIR='buildhudson',
@@ -172,9 +171,6 @@ def test(context):
 
 @build_step("publish", optional=True, default=False)
 def publish(context):
-    devtargetpath = "{OH_PUBLISHDIR}/{OH_PROJECT}/{OH_PROJECT}-{OH_VERSION}-{OH_PLATFORM}-dev-{OH_DEBUG}.tar.gz".format(**context.env)
     targetpath    = "{OH_PUBLISHDIR}/{OH_PROJECT}/{OH_PROJECT}-{OH_VERSION}-{OH_PLATFORM}-{OH_DEBUG}.tar.gz".format(**context.env)
-    devsourcepath = "{BUILDDIR}/{OH_PROJECT}-dev.tar.gz".format(**context.env)
     sourcepath    = "{BUILDDIR}/{OH_PROJECT}.tar.gz".format(**context.env)
     scp(sourcepath,    targetpath)
-    scp(devsourcepath, devtargetpath)
