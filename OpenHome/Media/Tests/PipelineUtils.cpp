@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 
+
+int mygetch();
+
 #ifdef _WIN32
 
 # define CDECL __cdecl
@@ -16,11 +19,6 @@ int mygetch()
 #elif defined(NOTERMIOS)
 
 #define CDECL
-
-int mygetch()
-{
-    return 0;
-}
 
 #else
 
@@ -107,7 +105,7 @@ void DummyFiller::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderI
 
 // TestProtocol
 
-TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocol::TestProtocol(Environment& aEnv, const Brx& aUrl)
     : iUrl(aUrl)
     , iStreamId(0)
 {
@@ -119,31 +117,22 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     iPipeline->AddCodec(new Codec::CodecAlac());
     iPipeline->AddCodec(new Codec::CodecAac());
     iPipeline->Start();
+}
 
-    iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
-    iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
-    iDevice->SetAttribute("Upnp.Type", "Sender");
-    iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", aSenderFriendlyName);
-    iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
-    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer TestProtocol");
-    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer TestProtocol");
-    iDevice->SetAttribute("Upnp.ModelNumber", "1");
-    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.SerialNumber", "");
-    iDevice->SetAttribute("Upnp.Upc", "");
+IPipelineElementUpstream& TestProtocol::GetPipeline() const
+{
+    return *iPipeline;
+}
 
-    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, false /*unicast*/);
-    iDevice->SetEnabled();
+TUint TestProtocol::GetMaxDriverJiffies() const
+{
+    return kMaxDriverJiffies;
 }
 
 TestProtocol::~TestProtocol()
 {
     delete iPipeline;
     delete iFiller;
-    delete iDriver;
-    delete iDevice;
 }
 
 int TestProtocol::Run()
@@ -211,6 +200,41 @@ int TestProtocol::Run()
     } while (!quit);
 
     return 0;
+}
+
+PipelineSongcast::PipelineSongcast(TestProtocol* aTestProtocol, Environment& aEnv, Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+    : iTestProtocol(aTestProtocol)
+    , iDevice(0)
+    , iDriver(0)
+{
+    iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
+    iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
+    iDevice->SetAttribute("Upnp.Type", "Sender");
+    iDevice->SetAttribute("Upnp.Version", "1");
+    iDevice->SetAttribute("Upnp.FriendlyName", aSenderFriendlyName);
+    iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
+    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
+    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer TestProtocol");
+    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer TestProtocol");
+    iDevice->SetAttribute("Upnp.ModelNumber", "1");
+    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
+    iDevice->SetAttribute("Upnp.SerialNumber", "");
+    iDevice->SetAttribute("Upnp.Upc", "");
+
+    iDriver = new DriverSongcastSender(iTestProtocol->GetPipeline(), iTestProtocol->GetMaxDriverJiffies(), aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, false);
+    iDevice->SetEnabled();
+}
+
+PipelineSongcast::~PipelineSongcast()
+{
+    delete iTestProtocol;
+    delete iDriver;
+    delete iDevice;
+}
+
+int PipelineSongcast::Run()
+{
+    return iTestProtocol->Run();
 }
 
 #define LOG_PIPELINE_OBSERVER

@@ -57,10 +57,12 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocol* tph = new TestProtocol(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
-    const int ret = tph->Run();
-    delete tph;
-    
+    PipelineSongcast* psc = new PipelineSongcast( new TestProtocol(lib->Env(), optionUrl.Value()),
+        lib->Env(), *dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+
+    const int ret = psc->Run();
+
+    delete psc;
     delete lib;
 
     return ret;

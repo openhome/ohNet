@@ -48,9 +48,11 @@ class TestProtocol : private IPipelineObserver
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
     static const TUint kSeekStepSeconds = 10;
 public:
-    TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    TestProtocol(Environment& aEnv, const Brx& aUrl);
     virtual ~TestProtocol();
     int Run();
+    IPipelineElementUpstream& GetPipeline() const;
+    TUint GetMaxDriverJiffies() const;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
     void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
@@ -61,13 +63,24 @@ private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
     Pipeline* iPipeline;
-    Net::DvDeviceStandard* iDevice;
-    DriverSongcastSender* iDriver;
     Brh iUrl;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
     TUint iStreamId;
 };
+
+class PipelineSongcast
+{
+public:
+    PipelineSongcast(TestProtocol* aTestProtocol, Environment& aEnv, Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aChannel);
+    int Run();
+    ~PipelineSongcast();
+private:
+    TestProtocol* iTestProtocol;
+    Net::DvDeviceStandard* iDevice;
+    DriverSongcastSender* iDriver;
+};
+
 
 } // namespace Media
 } // namespace OpenHome
