@@ -405,8 +405,8 @@ def build(bld):
                 target='TestFiller')
 
     # Bundles
-    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h', 'flac-1.2.1/include/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3']
+    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h', 'flac-1.2.1/include/**/*.h', 'alac_decoder/*.h'])
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAlac', 'CodecFlac', 'CodecMp3', 'CodecWav']
     lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
