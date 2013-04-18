@@ -15,17 +15,13 @@ EXCEPTION(UriProviderInvalidId);
 namespace OpenHome {
 namespace Media {
 
-typedef Bws<32> BwsStyle;
-typedef Bws<32> BwsProviderId;
-typedef Bws<1024> BwsTrackUri;
-
 class UriProvider
 {
 public:
     const Brx& Style() const;
     virtual void Begin(const Brx& aProviderId) = 0;
-    virtual EStreamPlay GetNext(BwsTrackUri& aUrl, BwsProviderId& aProviderId) = 0;
-    virtual EStreamPlay GetPrev(BwsTrackUri& aUrl, BwsProviderId& aProviderId) = 0;
+    virtual EStreamPlay GetNext(Track*& aTrack) = 0;
+    virtual EStreamPlay GetPrev(Track*& aTrack) = 0;
 protected:
     UriProvider(const TChar* aStyle);
     virtual ~UriProvider();
@@ -47,7 +43,7 @@ public:
 private: // from Thread
     void Run();
 private: // from ISupply
-    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -60,10 +56,8 @@ private:
     std::vector<UriProvider*> iUriProviders;
     UriProvider* iActiveUriProvider;
     IUriStreamer* iUriStreamer;
-    BwsTrackUri iTrackUri;
+    Track* iTrack;
     TUint iTrackId;
-    BwsStyle iStyle;
-    BwsProviderId iProviderId;
     TBool iStopped;
     TBool iGetPrevious;
     TBool iQuit;

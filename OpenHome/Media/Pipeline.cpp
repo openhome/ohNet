@@ -252,9 +252,9 @@ TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
     return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
-void Pipeline::OutputTrack(const Brx& aUri, TUint aTrackId)
+void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId)
 {
-    iSupply->OutputTrack(aUri, aTrackId);
+    iSupply->OutputTrack(aTrack, aTrackId);
 }
 
 void Pipeline::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
@@ -350,9 +350,9 @@ void Pipeline::PipelineFlushed()
     }
 }
 
-void Pipeline::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void Pipeline::NotifyTrack(Track& aTrack, TUint aIdPipeline)
 {
-    iObserver.NotifyTrack(aUri, aIdPipeline);
+    iObserver.NotifyTrack(aTrack, aIdPipeline);
 }
 
 void Pipeline::NotifyMetaText(const Brx& aText)

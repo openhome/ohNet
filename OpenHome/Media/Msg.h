@@ -441,6 +441,33 @@ private:
     DecodedStreamInfo iStreamInfo;
 };
 
+typedef Bws<32> BwsStyle;
+typedef Bws<32> BwsProviderId;
+typedef Bws<1024> BwsTrackUri;
+typedef Bws<1024> BwsTrackMetaData;
+
+class Track : public Allocated
+{
+    friend class TrackFactory;
+public:
+    Track(AllocatorBase& aAllocator);
+    const Brx& Uri() const;
+    const Brx& MetaData() const;
+    const Brx& Style() const;
+    const Brx& ProviderId() const;
+    TAny* UserData() const;
+private:
+    void Initialise(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData);
+private: // from Allocated
+    void Clear();
+private:
+    BwsTrackUri iUri;
+    BwsTrackMetaData iMetaData;
+    BwsStyle iStyle;
+    BwsProviderId iProviderId;
+    TAny* iUserData;
+};
+
 class MsgTrack : public Msg
 {
     friend class MsgFactory;
@@ -448,15 +475,15 @@ public:
     static const TUint kMaxUriBytes = 1024;
 public:
     MsgTrack(AllocatorBase& aAllocator);
-    const Brx& Uri() const;
+    Media::Track& Track() const;
     TUint IdPipeline() const;
 private:
-    void Initialise(const Brx& aUri, TUint aIdPipeline);
+    void Initialise(Media::Track& aTrack, TUint aIdPipeline);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
-    Bws<kMaxUriBytes> iUri;
+    Media::Track* iTrack;
     TUint iIdPipeline;
 };
 
@@ -715,7 +742,7 @@ class ISupply
 {
 public:
     virtual ~ISupply() {}
-    virtual void OutputTrack(const Brx& aUri, TUint aTrackId) = 0;
+    virtual void OutputTrack(Track& Track, TUint aTrackId) = 0;
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
@@ -785,6 +812,15 @@ public:
     virtual void Push(Msg* aMsg) = 0;
 };
 
+class TrackFactory
+{
+public:
+    TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount);
+    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData);
+private:
+    Allocator<Track> iAllocatorTrack;
+};
+
 class MsgFactory
 {
 public:
@@ -799,7 +835,7 @@ public:
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
-    MsgTrack* CreateMsgTrack(const Brx& aUri, TUint aIdPipeline);
+    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();

@@ -35,6 +35,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
     , iPipelineIdTracker(aIdTracker)
     , iActiveUriProvider(NULL)
     , iUriStreamer(NULL)
+    , iTrack(NULL)
     , iStopped(true)
     , iGetPrevious(false)
     , iQuit(false)
@@ -45,6 +46,9 @@ Filler::~Filler()
 {
     Kill();
     Join();
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
 }
 
 void Filler::Add(UriProvider& aUriProvider)
@@ -123,9 +127,12 @@ void Filler::Run()
             iLock.Signal();
             continue;
         }
-        iStyle.Replace(iActiveUriProvider->Style());
-        iTrackPlayStatus = (iGetPrevious? iActiveUriProvider->GetPrev(iTrackUri, iProviderId) :
-                                          iActiveUriProvider->GetNext(iTrackUri, iProviderId));
+        if (iTrack != NULL) {
+            iTrack->RemoveRef();
+            iTrack = NULL;
+        }
+        iTrackPlayStatus = (iGetPrevious? iActiveUriProvider->GetPrev(iTrack) :
+                                          iActiveUriProvider->GetNext(iTrack));
         iGetPrevious = false;
         iLock.Signal();
         if (iTrackPlayStatus == ePlayNo) {
@@ -133,20 +140,20 @@ void Filler::Run()
             iStopped = true;
         }
         else {
-            (void)iUriStreamer->DoStream(iTrackUri);
+            (void)iUriStreamer->DoStream(*iTrack);
         }
     }
 }
 
-void Filler::OutputTrack(const Brx& aUri, TUint aTrackId)
+void Filler::OutputTrack(Track& aTrack, TUint aTrackId)
 {
     iTrackId = aTrackId;
-    iSupply.OutputTrack(aUri, aTrackId);
+    iSupply.OutputTrack(aTrack, aTrackId);
 }
 
 void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
-    iPipelineIdTracker.AddStream(iStyle, iProviderId, iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
+    iPipelineIdTracker.AddStream(iTrack->Style(), iTrack->ProviderId(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
     iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
 }
 

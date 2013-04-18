@@ -120,6 +120,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
 };
 
@@ -155,6 +156,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
 };
 
@@ -203,6 +205,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
 };
 
@@ -215,6 +218,7 @@ public:
     void Test();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
 };
 
@@ -1243,38 +1247,70 @@ SuiteTrack::SuiteTrack()
     : Suite("MsgTrack tests")
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgTrackCount, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
 SuiteTrack::~SuiteTrack()
 {
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteTrack::Test()
 {
     // create Track msg, check its uri/id can be retrieved
     Brn uri("http://host:port/folder/file.ext");
+    Brn metadata("metadata#1");
+    Brn style("style#1");
+    Brn providerId("2");
+    TAny* userData = &uri;
+    Track* track = iTrackFactory->CreateTrack(uri, metadata, style, providerId, userData);
     TUint id = 3;
-    MsgTrack* msg = iMsgFactory->CreateMsgTrack(uri, id);
+    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, id);
+    track->RemoveRef();
     TEST(msg != NULL);
-    TEST(msg->Uri() == uri);
+    TEST(msg->Track().Uri() == uri);
+    TEST(msg->Track().MetaData() == metadata);
+    TEST(msg->Track().Style() == style);
+    TEST(msg->Track().ProviderId() == providerId);
+    TEST(msg->Track().UserData() == userData);
     TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
     // access freed msg (doesn't bother valgrind as this is still allocated memory).  Check uri/id have been cleared.
-    TEST(msg->Uri() != uri);
+    TEST_THROWS(msg->Track(), AssertionFailed);
+    TEST(track->Uri() != uri);
+    TEST(track->MetaData() != metadata);
+    TEST(track->Style() != style);
+    TEST(track->ProviderId() != providerId);
+    TEST(track->UserData() != userData);
     TEST(msg->IdPipeline() != id);
 #endif
 
     // create second Track msg, check its uri/id can be retrieved
     uri.Set("http://newhost:newport/newfolder/newfile.newext");
+    metadata.Set("metadata#2");
+    style.Set("style#2");
+    providerId.Set("3");
+    userData = &providerId;
+    track = iTrackFactory->CreateTrack(uri, metadata, style, providerId, userData);
     id = 6209;
-    msg = iMsgFactory->CreateMsgTrack(uri, id);
+    msg = iMsgFactory->CreateMsgTrack(*track, id);
     TEST(msg != NULL);
-    TEST(msg->Uri() == uri);
+    TEST(msg->Track().Uri() == uri);
+    TEST(msg->Track().MetaData() == metadata);
+    TEST(msg->Track().Style() == style);
+    TEST(msg->Track().ProviderId() == providerId);
+    TEST(msg->Track().UserData() == userData);
     TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
+    TEST(track->Uri() == uri);
+    TEST(track->MetaData() == metadata);
+    TEST(track->Style() == style);
+    TEST(track->ProviderId() == providerId);
+    TEST(track->UserData() == userData);
+    track->RemoveRef();
 }
 
 
@@ -1402,11 +1438,13 @@ SuiteMsgProcessor::SuiteMsgProcessor()
     : Suite("IMsgProcessor tests")
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
 SuiteMsgProcessor::~SuiteMsgProcessor()
 {
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteMsgProcessor::Test()
@@ -1445,7 +1483,9 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    track->RemoveRef();
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
     msg->RemoveRef();
@@ -1562,11 +1602,13 @@ SuiteMsgQueue::SuiteMsgQueue()
     : Suite("MsgQueue tests")
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
 SuiteMsgQueue::~SuiteMsgQueue()
 {
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteMsgQueue::Test()
@@ -1584,7 +1626,9 @@ void SuiteMsgQueue::Test()
     dequeued->RemoveRef();
 
     // queue can be emptied then reused
-    msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    track->RemoveRef();
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
     dequeued = queue->Dequeue();
@@ -1660,11 +1704,13 @@ SuiteMsgQueueFlushable::SuiteMsgQueueFlushable()
     : Suite("MsgQueueFlushable tests")
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
 SuiteMsgQueueFlushable::~SuiteMsgQueueFlushable()
 {
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteMsgQueueFlushable::Test()
@@ -1678,7 +1724,9 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::ENone);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    track->RemoveRef();
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
@@ -1785,7 +1833,9 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgFlush);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);*/
     queue->Enqueue(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs));
-    queue->Enqueue(iMsgFactory->CreateMsgTrack(Brx::Empty(), 0));
+    track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    queue->Enqueue(iMsgFactory->CreateMsgTrack(*track, 0));
+    track->RemoveRef();
     queue->Enqueue(iMsgFactory->CreateMsgSilence(2 * Jiffies::kJiffiesPerMs));
     TEST(queue->Jiffies() == 3 * Jiffies::kJiffiesPerMs);
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgSilence);

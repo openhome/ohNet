@@ -1,4 +1,5 @@
 #include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/Aac.h>
 #include <OpenHome/Media/Codec/Alac.h>
@@ -85,6 +86,8 @@ public: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     IFile* iFile;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
     Brhz iFilename;
     MsgFactory& iMsgFactory;
     Bws<EncodedAudio::kMaxBytes> iBuf;
@@ -144,6 +147,7 @@ protected:
     TUint iJiffies;
     Semaphore iSem;
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     TestCodecPipelineElementUpstream* iElementUpstream;
     TestCodecPipelineElementDownstream* iElementDownstream;
     TestCodecInfoAggregator* iInfoAggregator;
@@ -291,13 +295,13 @@ TestCodecPipelineElementUpstream::TestCodecPipelineElementUpstream(MsgFactory& a
     , iSeekFlush(false)
     , iFlushId(MsgFlush::kIdInvalid)
 {
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
 TestCodecPipelineElementUpstream::~TestCodecPipelineElementUpstream()
 {
-    if (iFile != NULL) {
-        delete iFile;
-    }
+    delete iTrackFactory;
+    delete iFile;
 }
 
 void TestCodecPipelineElementUpstream::Initialise(const Brx& aFilename)
@@ -339,7 +343,9 @@ Msg* TestCodecPipelineElementUpstream::Pull()
     Msg* msg = NULL;
 
     if (iPullCount == 0) {
-        msg = iMsgFactory.CreateMsgTrack(Brn("10.2.0.1/someplaylistfile"), kTrackId);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+        msg = iMsgFactory.CreateMsgTrack(*track, 0);
+        track->RemoveRef();
     }
     else if (iPullCount == 1) {
         msg = iMsgFactory.CreateMsgEncodedStream(Brn("10.2.0.1/somefile"),
@@ -501,6 +507,7 @@ SuiteCodecStream::~SuiteCodecStream()
     }
     delete iContainer;
     delete iMsgFactory;
+    delete iTrackFactory;
     delete iInfoAggregator;
     delete iElementDownstream;
     delete iElementUpstream;
@@ -510,6 +517,7 @@ void SuiteCodecStream::Init()
 {
     iInfoAggregator = new TestCodecInfoAggregator();
     iMsgFactory = new MsgFactory(*iInfoAggregator, 5, 5, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(*iInfoAggregator, 1);
     iElementDownstream = new TestCodecPipelineElementDownstream(*this);
     iElementUpstream = new TestCodecPipelineElementUpstream(*iMsgFactory);
     iContainer = new Container(*iMsgFactory, *iElementUpstream);

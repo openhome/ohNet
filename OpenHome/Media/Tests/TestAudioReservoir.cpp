@@ -72,6 +72,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     AudioReservoir* iReservoir;
     ThreadFunctor* iThread;
@@ -98,6 +99,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
@@ -111,6 +113,7 @@ SuiteAudioReservoir::~SuiteAudioReservoir()
     delete iThread;
     delete iReservoir;
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteAudioReservoir::Test()
@@ -237,7 +240,11 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
         break;
     case EMsgTrack:
-        msg = iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+    {
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+        msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        track->RemoveRef();
+    }
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, NULL);

@@ -1,5 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Filler.h>
+#include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Thread.h>
 
@@ -14,33 +16,22 @@ namespace OpenHome {
 namespace Media {
 namespace TestFiller {
 
-class DummyTrack
-{
-public:
-    DummyTrack();
-    void Set(const TChar* aProviderId, const TChar* aUri);
-    const Brx& ProviderId() const;
-    const Brx& Uri() const;
-private:
-    BwsProviderId iProviderId;
-    BwsTrackUri iUri;
-};
-
 class DummyUriProvider : public UriProvider
 {
 public:
     DummyUriProvider();
+    ~DummyUriProvider();
     const Brx& TrackUriByIndex(TUint aIndex) const;
     const Brx& ProviderIdByIndex(TUint aIndex) const;
 private: // from UriProvider
     void Begin(const Brx& aProviderId);
-    EStreamPlay GetNext(BwsTrackUri& aUrl, BwsProviderId& aProviderId);
-    EStreamPlay GetPrev(BwsTrackUri& aUrl, BwsProviderId& aProviderId);
-private:
-    void Get(BwsTrackUri& aUrl, BwsProviderId& aProviderId) const;
+    EStreamPlay GetNext(Track*& aTrack);
+    EStreamPlay GetPrev(Track*& aTrack);
 private:
     static const TInt kNumEntries = 3;
-    DummyTrack iTracks[kNumEntries];
+    TrackFactory* iTrackFactory;
+    AllocatorInfoLogger iInfoAggregator;
+    Track* iTracks[kNumEntries];
     TInt iIndex;
 };
 
@@ -52,7 +43,7 @@ public:
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer
-    TBool DoStream(const Brx& aUri);
+    TBool DoStream(Track& aTrack);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -74,7 +65,7 @@ public:
     TUint LastTrackId() const;
     TUint LastStreamId() const;
 private: // from ISupply
-    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -115,54 +106,40 @@ private:
 
 using namespace OpenHome::Media::TestFiller;
 
-// DummyTrack
-
-DummyTrack::DummyTrack()
-{
-}
-
-void DummyTrack::Set(const TChar* aProviderId, const TChar* aUri)
-{
-    iProviderId.Append(aProviderId);
-    iUri.Append(aUri);
-}
-
-const Brx& DummyTrack::ProviderId() const
-{
-    return iProviderId;
-}
-
-const Brx& DummyTrack::Uri() const
-{
-    return iUri;
-}
-
-
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider()
     : UriProvider("Dummy")
     , iIndex(-1)
 {
-    iTracks[0].Set("1", "http://addr:port/path/file1");
-    iTracks[1].Set("2", "http://addr:port/path/file2");
-    iTracks[2].Set("3", "http://addr:port/path/file3");
+    iTrackFactory = new TrackFactory(iInfoAggregator, 3);
+    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), Style(), Brn("1"), 0);
+    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), Style(), Brn("2"), 0);
+    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), Style(), Brn("3"), 0);
+}
+
+DummyUriProvider::~DummyUriProvider()
+{
+    iTracks[0]->RemoveRef();
+    iTracks[1]->RemoveRef();
+    iTracks[2]->RemoveRef();
+    delete iTrackFactory;
 }
 
 const Brx& DummyUriProvider::TrackUriByIndex(TUint aIndex) const
 {
-    return iTracks[aIndex].Uri();
+    return iTracks[aIndex]->Uri();
 }
 
 const Brx& DummyUriProvider::ProviderIdByIndex(TUint aIndex) const
 {
-    return iTracks[aIndex].ProviderId();
+    return iTracks[aIndex]->ProviderId();
 }
 
 void DummyUriProvider::Begin(const Brx& aProviderId)
 {
     TInt index = 0;
-    while (index < kNumEntries && iTracks[index].ProviderId() != aProviderId) {
+    while (index < kNumEntries && iTracks[index]->ProviderId() != aProviderId) {
         index++;
     }
     if (index == kNumEntries) {
@@ -171,31 +148,26 @@ void DummyUriProvider::Begin(const Brx& aProviderId)
     iIndex = index-1;
 }
 
-EStreamPlay DummyUriProvider::GetNext(BwsTrackUri& aUrl, BwsProviderId& aProviderId)
+EStreamPlay DummyUriProvider::GetNext(Track*& aTrack)
 {
     const TBool firstCall = (iIndex<0);
     if (++iIndex == kNumEntries) {
         iIndex = 0;
     }
-    Get(aUrl, aProviderId);
+    aTrack = iTracks[iIndex];
+    aTrack->AddRef();
     return (!firstCall && iIndex == 0? ePlayLater : ePlayYes);
 }
 
-EStreamPlay DummyUriProvider::GetPrev(BwsTrackUri& aUrl, BwsProviderId& aProviderId)
+EStreamPlay DummyUriProvider::GetPrev(Track*& aTrack)
 {
     const TBool firstCall = (iIndex<0);
     if (--iIndex < 0) {
         iIndex = kNumEntries - 1;
     }
-    Get(aUrl, aProviderId);
+    aTrack = iTracks[iIndex];
+    aTrack->AddRef();
     return (!firstCall && iIndex == kNumEntries - 1? ePlayLater : ePlayYes);
-}
-
-void DummyUriProvider::Get(BwsTrackUri& aUrl, BwsProviderId& aProviderId) const
-{
-    const DummyTrack& track = iTracks[iIndex];
-    aUrl.Replace(track.Uri());
-    aProviderId.Replace(track.ProviderId());
 }
 
 
@@ -225,12 +197,12 @@ TUint DummyUriStreamer::StreamId() const
     return iStreamId;
 }
 
-TBool DummyUriStreamer::DoStream(const Brx& aUri)
+TBool DummyUriStreamer::DoStream(Track& aTrack)
 {
     iTrackId++;
     iStreamId++;
-    iSupply.OutputTrack(aUri, iTrackId);
-    iSupply.OutputStream(aUri, 1LL, false, false, *this, iStreamId);
+    iSupply.OutputTrack(aTrack, iTrackId);
+    iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
     return true;
@@ -280,9 +252,9 @@ TUint DummySupply::LastStreamId() const
     return iLastStreamId;
 }
 
-void DummySupply::OutputTrack(const Brx& aUri, TUint aTrackId)
+void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId)
 {
-    iLastTrackUri.Replace(aUri);
+    iLastTrackUri.Replace(aTrack.Uri());
     iLastTrackId = aTrackId;
 }
 
@@ -329,8 +301,8 @@ SuiteFiller::SuiteFiller()
 SuiteFiller::~SuiteFiller()
 {
     delete iUriStreamer;
-    delete iUriProvider;
     delete iFiller;
+    delete iUriProvider;
     delete iDummySupply;
 }
 
