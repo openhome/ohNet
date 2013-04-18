@@ -375,6 +375,7 @@ int CDECL main(int aArgc, char* aArgv[])
     file:///c:/test.wav
     http://10.2.11.131:9000/disk/NON-DLNA/music/O0$1$4I4009/Waiting%20for%20the%207.18.m4a  // alac
     http://10.2.11.174:26125/content/c2/b16/f48000/d2599-co459.m4a                          // aac
+    http://10.2.11.174:26125/content/c2/b16/f44100/d3220-co459.ogg
     */
     OptionParser parser;
     OptionString optionUrl("", "--url", Brn("file:///c:/test.wav"), "[url] http url of file to play");

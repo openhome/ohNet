@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Flac.h>
 #include <OpenHome/Media/Codec/Mp3.h>
+#include <OpenHome/Media/Codec/Vorbis.h>
 #include <OpenHome/Media/Codec/Wav.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Private/File.h>
@@ -35,6 +36,7 @@ public:
         eCodecMp3 = 3,
         eCodecAlac = 4,
         eCodecAac = 5,
+        eCodecVorbis = 6,
     };
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec);
@@ -314,6 +316,7 @@ void TestCodecPipelineElementUpstream::Initialise(const Brx& aFilename)
     // Try opening the file.
     try {
         iFile = IFile::Open(iFilename.CString(), eFileReadOnly);
+        //Log::Print("iFile->Bytes(): %u\n", iFile->Bytes());
     }
     catch (FileOpenError) {
         ASSERTS();
@@ -546,6 +549,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iController->AddCodec(new CodecMp3());
     iController->AddCodec(new CodecAlac());
     iController->AddCodec(new CodecAac());
+    iController->AddCodec(new CodecVorbis());
     iController->Start();
 }
 
@@ -637,30 +641,37 @@ void SuiteCodecSeek::Test()
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
         TUint duration = TestCodecPipelineElementUpstream::kDuration;
         Brn filename((*it).Filename());
+        AudioFileDescriptor::ECodec codec = (*it).Codec();
 
-        // Try seeking back to start of file.
-        Log::Print("SuiteCodecSeek seeking to start: ");
-        Log::Print(filename);
-        Log::Print("\n");
-        TestSeeking(filename, duration, 0);
+        if (codec != AudioFileDescriptor::eCodecVorbis) {
+            // Vorbis (and MP3) seeking is isn't particularly accurate
+            // for VBR, especially when seeking towards end of stream
+            // - don't bother with tests.
 
-        // Try seeking forward to end of file.
-        Log::Print("SuiteCodecSeek seeking to end: ");
-        Log::Print(filename);
-        Log::Print("\n");
-        TestSeeking(filename, duration, duration);
+            // Try seeking back to start of file.
+            Log::Print("SuiteCodecSeek seeking to start: ");
+            Log::Print(filename);
+            Log::Print("\n");
+            TestSeeking(filename, duration, 0);
 
-        // Try seeking backwards in file.
-        Log::Print("SuiteCodecSeek seeking backwards: ");
-        Log::Print(filename);
-        Log::Print("\n");
-        TestSeeking(filename, duration, duration/4);
+            // Try seeking forward to end of file.
+            Log::Print("SuiteCodecSeek seeking to end: ");
+            Log::Print(filename);
+            Log::Print("\n");
+            TestSeeking(filename, duration, duration);
 
-        // Try seeking forwards in file.
-        Log::Print("SuiteCodecSeek seeking forwards: ");
-        Log::Print(filename);
-        Log::Print("\n");
-        TestSeeking(filename, duration, duration - duration/4);
+            // Try seeking backwards in file.
+            Log::Print("SuiteCodecSeek seeking backwards: ");
+            Log::Print(filename);
+            Log::Print("\n");
+            TestSeeking(filename, duration, duration/4);
+
+            // Try seeking forwards in file.
+            Log::Print("SuiteCodecSeek seeking forwards: ");
+            Log::Print(filename);
+            Log::Print("\n");
+            TestSeeking(filename, duration, duration - duration/4);
+        }
     }
 }
 
@@ -707,6 +718,7 @@ void SuiteCodecSeekFromStart::Test()
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
         TUint duration = TestCodecPipelineElementUpstream::kDuration;
         Brn filename((*it).Filename());
+        AudioFileDescriptor::ECodec codec = (*it).Codec();
 
         // Try seeking from start to middle of file.
         Log::Print("SuiteCodecSeekFromStart seeking to middle: ");
@@ -715,10 +727,12 @@ void SuiteCodecSeekFromStart::Test()
         TestSeekingFromStart(filename, duration, duration/2);
 
         // Try seeking from start to end of file.
-        Log::Print("SuiteCodecSeekFromStart seeking to end: ");
-        TestSeekingFromStart(filename, duration, duration);
-        Log::Print(filename);
-        Log::Print("\n");
+        if (codec != AudioFileDescriptor::eCodecVorbis) {
+            Log::Print("SuiteCodecSeekFromStart seeking to end: ");
+            Log::Print(filename);
+            Log::Print("\n");
+            TestSeekingFromStart(filename, duration, duration);
+        }
     }
 }
 
@@ -964,6 +978,10 @@ void TestCodec()
     // AAC encoders can add/drop samples from start of files.
     // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
     //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-aac-moov_start.m4a"), 44100, 438272-1024, 16, 2, AudioFileDescriptor::eCodecAac));
+
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono_q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo_q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
 
 
     std::vector<AudioFileDescriptor> invalidFiles;
