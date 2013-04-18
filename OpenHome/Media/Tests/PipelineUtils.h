@@ -25,7 +25,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
+    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -38,6 +38,7 @@ private: // from IPipelineIdProvider
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
 private:
     ProtocolManager* iProtocolManager;
+    TrackFactory* iTrackFactory;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;

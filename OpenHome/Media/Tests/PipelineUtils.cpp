@@ -51,7 +51,7 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider)
+DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
@@ -59,11 +59,13 @@ DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& 
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     iProtocolManager->Add(new ProtocolHttp(aEnv));
     iProtocolManager->Add(new ProtocolFile(aEnv));
+    iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
 DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
+    delete iTrackFactory;
 }
 
 void DummyFiller::Start(const Brx& aUrl)
@@ -74,7 +76,9 @@ void DummyFiller::Start(const Brx& aUrl)
 
 void DummyFiller::Run()
 {
-    iProtocolManager->DoStream(iUrl);
+    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    iProtocolManager->DoStream(*track);
+    track->RemoveRef();
 }
 
 TUint DummyFiller::NextTrackId()
@@ -110,7 +114,7 @@ TestProtocol::TestProtocol(Environment& aEnv, const Brx& aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline);
+    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(new Codec::CodecFlac());
     iPipeline->AddCodec(new Codec::CodecWav());
     iPipeline->AddCodec(new Codec::CodecMp3());
