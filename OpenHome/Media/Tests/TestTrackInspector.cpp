@@ -2,11 +2,9 @@
 #include <OpenHome/Media/TrackInspector.h>
 #include <OpenHome/Media/Msg.h>
 #include "AllocatorInfoLogger.h"
+#include "SuiteUnitTest.h"
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Ascii.h>
-
-#include <vector>
-#include <algorithm>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -15,21 +13,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteUnitTest2 : public Suite
-{
-protected:
-    SuiteUnitTest2(const TChar* aName);
-    void AddTest(Functor aTest);
-private: // from Suite
-    void Test();
-private:
-    virtual void Setup() = 0;
-    virtual void TearDown() = 0;
-private:
-    std::vector<Functor> iTests;
-};
-
-class SuiteTrackInspector : public SuiteUnitTest2, private ITrackObserver, private IPipelineElementUpstream
+class SuiteTrackInspector : public SuiteUnitTest, private ITrackObserver, private IPipelineElementUpstream
 {
 public:
     SuiteTrackInspector();
@@ -116,32 +100,10 @@ private:
 } // namespace Media
 } // namespace OpenHome
 
-// SuiteUnitTest2
-
-SuiteUnitTest2::SuiteUnitTest2(const TChar* aName)
-    : Suite(aName)
-{
-}
-
-void SuiteUnitTest2::AddTest(Functor aTest)
-{
-    iTests.push_back(aTest);
-}
-
-void SuiteUnitTest2::Test()
-{
-    for (TUint i=0; i<iTests.size(); i++) {
-        Setup();
-        iTests[i]();
-        TearDown();
-    }
-}
-
-
 // SuiteTrackInspector
 
 SuiteTrackInspector::SuiteTrackInspector()
-    : SuiteUnitTest2("TrackInspector tests")
+    : SuiteUnitTest("TrackInspector tests")
 {
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamAudioReportsPlay));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamAudioReportsPlay));

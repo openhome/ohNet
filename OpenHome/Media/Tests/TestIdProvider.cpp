@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/IdProvider.h>
-#include <OpenHome/Functor.h>
+#include "SuiteUnitTest.h"
 
 #include <vector>
 #include <algorithm>
@@ -12,20 +12,6 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteUnitTest : public Suite
-{
-protected:
-    SuiteUnitTest(const TChar* aName);
-    void AddTest(Functor aTest);
-private: // from Suite
-    void Test();
-private:
-    virtual void Setup() = 0;
-    virtual void TearDown() = 0;
-private:
-    std::vector<Functor> iTests;
-};
-    
 class SuiteIdsAreUnique : public Suite, private IStopper
 {
 public:
@@ -157,28 +143,6 @@ Create Id provider, add 3 elements (2 streams in first track, 1 in second track)
     check first can be OkToPlay'd, call InvalidateAt for first with incorrect providerId, check OkToPlay for second succeeds
 */
 
-// SuiteUnitTest
-
-SuiteUnitTest::SuiteUnitTest(const TChar* aName)
-    : Suite(aName)
-{
-}
-
-void SuiteUnitTest::AddTest(Functor aTest)
-{
-    iTests.push_back(aTest);
-}
-
-void SuiteUnitTest::Test()
-{
-    for (TUint i=0; i<iTests.size(); i++) {
-        Setup();
-        iTests[i]();
-        TearDown();
-    }
-}
-
-    
 // SuiteIdsAreUnique
 
 SuiteIdsAreUnique::SuiteIdsAreUnique()
