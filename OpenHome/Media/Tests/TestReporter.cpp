@@ -284,7 +284,6 @@ void SuiteReporter::NotifyTrack(Track& aTrack, TUint aIdPipeline)
 
 void SuiteReporter::NotifyMetaText(const Brx& aText)
 {
-    Print("NotifyMetaText\n");
     iMetaTextUpdates++;
     iMetaText.Replace(aText);
 }
