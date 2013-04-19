@@ -115,12 +115,12 @@ TestProtocol::TestProtocol(Environment& aEnv, const Brx& aUrl)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
-    iPipeline->AddCodec(new Codec::CodecFlac());
-    iPipeline->AddCodec(new Codec::CodecWav());
-    iPipeline->AddCodec(new Codec::CodecMp3());
-    iPipeline->AddCodec(new Codec::CodecAlac());
-    iPipeline->AddCodec(new Codec::CodecAac());
-    iPipeline->AddCodec(new Codec::CodecVorbis());
+    iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewWav());
+    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
     iPipeline->Start();
 }
 

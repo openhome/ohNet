@@ -1,14 +1,9 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/Codec/Aac.h>
-#include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
-#include <OpenHome/Media/Codec/Flac.h>
-#include <OpenHome/Media/Codec/Mp3.h>
-#include <OpenHome/Media/Codec/Vorbis.h>
-#include <OpenHome/Media/Codec/Wav.h>
+#include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/TestFramework.h>
@@ -544,12 +539,12 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iElementUpstream->Initialise(aFilename);
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
     // These can be re-ordered to check for problems in the recognise function of each codec.
-    iController->AddCodec(new CodecWav());
-    iController->AddCodec(new CodecFlac());
-    iController->AddCodec(new CodecMp3());
-    iController->AddCodec(new CodecAlac());
-    iController->AddCodec(new CodecAac());
-    iController->AddCodec(new CodecVorbis());
+    iController->AddCodec(CodecFactory::NewWav());
+    iController->AddCodec(CodecFactory::NewFlac());
+    iController->AddCodec(CodecFactory::NewMp3());
+    iController->AddCodec(CodecFactory::NewAlac());
+    iController->AddCodec(CodecFactory::NewAac());
+    iController->AddCodec(CodecFactory::NewVorbis());
     iController->Start();
 }
 

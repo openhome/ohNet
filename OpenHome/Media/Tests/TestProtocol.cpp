@@ -6,11 +6,7 @@
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Media/Protocol/ProtocolFile.h>
 #include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/Codec/Aac.h>
-#include <OpenHome/Media/Codec/Alac.h>
-#include <OpenHome/Media/Codec/Flac.h>
-#include <OpenHome/Media/Codec/Wav.h>
-#include <OpenHome/Media/Codec/Mp3.h>
+#include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
@@ -188,11 +184,12 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
-    iPipeline->AddCodec(new Codec::CodecFlac());
-    iPipeline->AddCodec(new Codec::CodecWav());
-    iPipeline->AddCodec(new Codec::CodecMp3());
-    iPipeline->AddCodec(new Codec::CodecAlac());
-    iPipeline->AddCodec(new Codec::CodecAac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewWav());
+    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
     iPipeline->Start();
 
     iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
