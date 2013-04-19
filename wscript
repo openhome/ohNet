@@ -145,6 +145,7 @@ def build(bld):
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
                 'OpenHome/Media/Supply.cpp',
+                'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdProvider.cpp',
@@ -318,6 +319,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
+                'OpenHome/Media/Tests/TestTrackInspector.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestContentProcessor.cpp',
@@ -391,6 +393,10 @@ def build(bld):
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestVariableDelay')
         bld.program(
+                source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestTrackInspector')
+        bld.program(
                 source='OpenHome/Media/Tests/TestReporterMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestReporter')
@@ -450,6 +456,7 @@ def test(tst):
                       ,['TestAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
                       ,['TestStopper', [], True]
+                      ,['TestTrackInspector', [], True]
                       ,['TestReporter', [], True]
                       ,['TestStarvationMonitor', [], True]
                       ,['TestPreDriver', [], True]
