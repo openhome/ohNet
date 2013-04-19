@@ -154,9 +154,10 @@ void Environment::MulticastListenerRelease(TIpAddress aInterface)
         Environment::MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             if (listener->RemoveRef()) {
-                delete listener;
                 iMulticastListeners.erase(iMulticastListeners.begin() + i);
-                break;
+                iPrivateLock->Signal();
+                delete listener;
+                return;
             }
         }
     }
