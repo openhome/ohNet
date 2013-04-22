@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
 
+#include <climits>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
@@ -82,6 +84,7 @@ void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
     if (iPlaying.Matches(aStyle, aProviderId)) {
         matched = true;
         iStopper.RemoveStream(iPlaying.TrackId(), iPlaying.StreamId());
+        iPlaying.Clear();
     }
     TBool updateHead = matched;
 
@@ -126,6 +129,8 @@ void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
 
 void PipelineIdProvider::InvalidateAfter(const Brx& aStyle, const Brx& aProviderId)
 {
+    AutoMutex a(iLock);
+
     // find first matching instance
     TUint index = iIndexHead;
     TBool matched = iPlaying.Matches(aStyle, aProviderId);
@@ -147,11 +152,20 @@ void PipelineIdProvider::InvalidateAfter(const Brx& aStyle, const Brx& aProvider
     }
 }
 
+void PipelineIdProvider::InvalidateAll()
+{
+    AutoMutex a(iLock);
+    iStopper.RemoveStream(iPlaying.TrackId(), iPlaying.StreamId());
+    iPlaying.Clear();
+    iIndexTail = iIndexHead;
+}
+
 
 //  PipelineIdProvider::ActiveStream
 
 PipelineIdProvider::ActiveStream::ActiveStream()
 {
+    Clear();
 }
 
 void PipelineIdProvider::ActiveStream::Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow)
@@ -166,6 +180,15 @@ void PipelineIdProvider::ActiveStream::Set(const Brx& aStyle, const Brx& aProvid
 void PipelineIdProvider::ActiveStream::Set(const ActiveStream& aActiveStream)
 {
     Set(aActiveStream.Style(), aActiveStream.ProviderId(), aActiveStream.TrackId(), aActiveStream.StreamId(), aActiveStream.PlayNow());
+}
+
+void PipelineIdProvider::ActiveStream::Clear()
+{
+    iStyle.Replace(Brx::Empty());
+    iProviderId.Replace(Brx::Empty());
+    iTrackId = UINT_MAX;
+    iStreamId = UINT_MAX;
+    iPlayNow = false;
 }
 
 TBool PipelineIdProvider::ActiveStream::Matches(const Brx& aStyle, const Brx& aProviderId) const

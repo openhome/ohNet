@@ -31,6 +31,7 @@ private: // from IPipelineIdProvider
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAll();
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;

@@ -106,6 +106,12 @@ void DummyFiller::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderI
     ASSERTS();
 }
 
+void DummyFiller::InvalidateAll()
+{
+    ASSERTS();
+}
+
+
 
 // TestProtocol
 

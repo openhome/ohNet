@@ -30,6 +30,7 @@ private: // from IPipelineIdProvider
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAll();
 private:
     class ActiveStream : public INonCopyable
     {
@@ -37,6 +38,7 @@ private:
         ActiveStream();
         void Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
         void Set(const ActiveStream& aActiveStream);
+        void Clear();
         TBool Matches(const Brx& aStyle, const Brx& aProviderId) const;
         const Brx& Style() const { return iStyle; }
         const Brx& ProviderId() const { return iProviderId; }

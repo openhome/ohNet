@@ -224,6 +224,7 @@ public: // from IPipelineIdProvider
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAll();
 private:
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -817,6 +818,11 @@ void TestHttpPipelineProvider::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*
 }
 
 void TestHttpPipelineProvider::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+{
+    ASSERTS();
+}
+
+void TestHttpPipelineProvider::InvalidateAll()
 {
     ASSERTS();
 }

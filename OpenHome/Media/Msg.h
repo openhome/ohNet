@@ -773,6 +773,7 @@ public:
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     virtual void InvalidateAt(const Brx& aStyle, const Brx& aProviderId) = 0;
     virtual void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId) = 0;
+    virtual void InvalidateAll() = 0;
 };
 
 class IPipelineIdTracker

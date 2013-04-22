@@ -105,6 +105,7 @@ private:
     void SecondPlaysThenInvalidateAfter();
     void InvalidateAtWithInvalidStyle();
     void InvalidateAtWithInvalidProviderId();
+    void InvalidateAll();
 private:
     PipelineIdProvider* iPipelineIdProvider;
     IPipelineIdProvider* iIdProvider;
@@ -354,6 +355,7 @@ SuiteMultiStreams::SuiteMultiStreams()
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::SecondPlaysThenInvalidateAfter));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAtWithInvalidStyle));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAtWithInvalidProviderId));
+    AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAll));
 }
 
 void SuiteMultiStreams::RemoveStream(TUint aTrackId, TUint aStreamId)
@@ -499,6 +501,17 @@ void SuiteMultiStreams::InvalidateAtWithInvalidProviderId()
     TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
     TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
     TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+}
+
+void SuiteMultiStreams::InvalidateAll()
+{
+    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
+    iIdProvider->InvalidateAll();
+    TEST(iRemoveTrackId == kTrackId1);
+    TEST(iRemoveStreamId == kStreamId1);
+    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayNo);
 }
 
 
