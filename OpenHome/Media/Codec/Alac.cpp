@@ -84,7 +84,7 @@ void CodecAlac::StreamInitialise()
     iTrackLengthJiffies = (iMp4->Duration() * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
     iTrackOffset = 0;
 
-    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iSamplesTotal %lld, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iMp4->Duration(), iMp4->Channels(), iTrackLengthJiffies);
+    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iMp4->SampleRate(), iMp4->Duration(), iMp4->Channels(), iTrackLengthJiffies);
     iController->OutputDecodedStream(0, iBitDepth, iMp4->SampleRate(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
@@ -92,11 +92,11 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     //LOG(kCodec, "CodecAlac::TrySeek(%lld)\n", aSample);
     TUint64 startSample = 0;
-    iSamplesWrittenTotal = aSample;
     TUint64 bytes = iMp4->GetSeekTable().Offset(iSamplesWrittenTotal, startSample);     // find file offset relating to given audio sample
     //LOG(kCodec, "CodecAlac::TrySeek to sample: %llu, byte: %lld\n", startSample, bytes);
     TBool canSeek = iController->TrySeek(aStreamId, bytes);
     if (canSeek) {
+        iSamplesWrittenTotal = aSample;
         iCurrentSample = startSample;
         iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
         iController->OutputDecodedStream(0, iBitDepth, iMp4->SampleRate(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, aSample, true);
