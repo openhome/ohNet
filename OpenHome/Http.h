@@ -244,12 +244,15 @@ private:
     std::vector<IHttpHeader*> iHeaders;
 };
 
+class Timer;
+
 class ReaderHttpRequest : public ReaderHttpHeader
 {
     static const TUint kMaxMethodBytes = 20;
     static const TUint kMaxUriBytes = 200;
 public:    
     ReaderHttpRequest(Environment& aEnv, IReader& aReader);
+    ~ReaderHttpRequest();
     void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();
@@ -265,6 +268,7 @@ private:
     void ReadTimeout();
 protected:
     IReader& iReader;
+    Timer* iTimer;
     std::vector<const Brx*> iMethods;
     const Brx* iMethod;
     Bws<kMaxUriBytes> iUri;
@@ -278,6 +282,7 @@ public:
     static const TUint kMaxUriBytes = 200;
 public:
     ReaderHttpResponse(Environment& aEnv, IReader& aReader);
+    ~ReaderHttpResponse();
     void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();
@@ -296,6 +301,7 @@ protected:
     };
 protected:
     IReader& iReader;
+    Timer* iTimer;
     Http::EVersion iVersion;
     StatusWritable iStatus;
     Bws<kMaxDescriptionBytes> iDescription;

@@ -306,6 +306,12 @@ ReaderHttpRequest::ReaderHttpRequest(Environment& aEnv, IReader& aReader)
     : ReaderHttpHeader(aEnv)
     , iReader(aReader)
 {
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout));
+}
+
+ReaderHttpRequest::~ReaderHttpRequest()
+{
+    delete iTimer;
 }
 
 void ReaderHttpRequest::Read(TUint aTimeoutMs)
@@ -317,12 +323,11 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
     for (;;) {
         Brn line;
         {
-            Timer timer(iEnv, MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout));
             if (aTimeoutMs > 0) {
-                timer.FireIn(aTimeoutMs);
+                iTimer->FireIn(aTimeoutMs);
             }
             line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
-            timer.Cancel();
+            iTimer->Cancel();
         }
 //        LOG(kHttp, "HTTP Read Request   ");
 //        LOG(kHttp, line);
@@ -438,6 +443,12 @@ ReaderHttpResponse::ReaderHttpResponse(Environment& aEnv, IReader& aReader)
     : ReaderHttpHeader(aEnv)
     , iReader(aReader)
 {
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout));
+}
+
+ReaderHttpResponse::~ReaderHttpResponse()
+{
+    delete iTimer;
 }
 
 Http::EVersion ReaderHttpResponse::Version() const
@@ -458,12 +469,11 @@ void ReaderHttpResponse::Read(TUint aTimeoutMs)
     for (;;) {
         Brn line;
         {
-            Timer timer(iEnv, MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout));
             if (aTimeoutMs > 0) {
-                timer.FireIn(aTimeoutMs);
+                iTimer->FireIn(aTimeoutMs);
             }
             line.Set(Ascii::Trim(iReader.ReadUntil(Ascii::kLf)));
-            timer.Cancel();
+            iTimer->Cancel();
         }
         LOG(kHttp, "HTTP Read Response  ");
         LOG(kHttp, line);
