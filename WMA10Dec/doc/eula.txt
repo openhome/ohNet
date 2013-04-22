@@ -1,0 +1,4 @@
+If you do not have a fully executed Master Porting Agreement ("Porting Agreement") or Source Development Agreement with Microsoft Corporation regarding the use of all components of this Microsoft Windows Media Porting Kit ("Kit"), you are not authorized to install, copy or otherwise use the Kit or any component thereof, including without limitation documentation provided to you for use with the Kit. Your use of each component in the Kit may be subject to a separate agreement.  If you do not have valid agreements for all components provided with this Kit, promptly return the Kit and accompanying items, including written materials, binders or other containers, to Microsoft Corporation. 
+
+If you have any questions, please send an email with your question to: wmla@microsoft.com                        
+

@@ -8,6 +8,7 @@
 #include <OpenHome/Media/Codec/Mp3.h>
 #include <OpenHome/Media/Codec/Vorbis.h>
 #include <OpenHome/Media/Codec/Wav.h>
+#include <OpenHome/Media/Codec/Wma.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/TestFramework.h>
@@ -36,6 +37,7 @@ public:
         eCodecAlac = 4,
         eCodecAac = 5,
         eCodecVorbis = 6,
+        eCodecWma = 7,
     };
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec);
@@ -542,6 +544,7 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iController->AddCodec(new CodecAlac());
     iController->AddCodec(new CodecAac());
     iController->AddCodec(new CodecVorbis());
+    iController->AddCodec(new CodecWma());
     iController->Start();
 }
 
@@ -975,6 +978,9 @@ void TestCodec()
     //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo_q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
     //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
 
+    // WMA encoder omits some samples, then adds extra for its own use. Decoder then strips samples to less than original PCM.
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
 
     std::vector<AudioFileDescriptor> invalidFiles;
     invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.

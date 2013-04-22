@@ -1,0 +1,4 @@
+#ifndef __X86_MACROS_H
+#define __X86_MACROS_H
+
+#endif  // __X86_MACROS_H

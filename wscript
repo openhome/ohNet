@@ -93,6 +93,42 @@ def configure(conf):
         'Tremor',
         ]
 
+    # Setup WMA lib options
+    conf.env.DEFINES_WMA = [
+        'WMAAPI_NO_DRM',
+        'WMAAPI_NO_DRM_STREAM',
+        'INCLUDE_BASEPLUS',
+        'BUILD_WMASTD',
+        'BUILD_WMAPRO',
+        'BUILD_WMAPRO_PLLM',
+        'BUILD_WMALSL',
+        'ENABLE_ALL_ENCOPT',
+        'ENABLE_LPC',
+        'BUILD_INTEGER',
+        'DISABLE_UES',
+        'WMA_DECPK_BUILD',
+        ]
+    if conf.options.dest_platform not in ['Windows-x86', 'Windows-x64']:
+        conf.env.DEFINES_WMA.append('__stdcall')
+        conf.env.DEFINES_WMA.append('OPENHOME')
+        if conf.options.debugmode == 'Debug':
+            conf.env.CFLAGS_WMA = ['-O1', '-finline-functions']
+    if conf.options.dest_platform in ['Core-ppc32']:
+        conf.env.DEFINES_WMA.append('__powerpc__')
+    conf.env.INCLUDES_WMA = [
+        'WMA10Dec/audio/wmaudio/v10/decoder',
+        'WMA10Dec/audio/wmaudio/v10/include',
+        'WMA10Dec/audio/wmaudio/v10/common',
+        'WMA10Dec/audio/wmaudio/v10/asfparse_s',
+        'WMA10Dec/audio/wmaudio/v10/win32',
+        'WMA10Dec/audio/common/include',
+        'WMA10Dec/common/include',
+        'WMA10Dec/common/cpudetect',
+        'WMA10Dec/common/logging',
+        ]
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.LIB_WMA=['advapi32', 'user32']
+
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
         return node_or_filename
@@ -306,6 +342,72 @@ def build(bld):
             ],
             use=['VORBIS', 'OHNET'],
             target='CodecVorbis')
+
+        # WMA
+    bld.stlib(
+             source=[
+                 'OpenHome/Media/Codec/Wma.cpp',
+                 'WMA10Dec/audio/wmaudio/v10/asfparse_s/wmaudio.c',
+                 'WMA10Dec/audio/wmaudio/v10/asfparse_s/wmaudio_parse.c',
+                 'WMA10Dec/audio/wmaudio/v10/asfparse_s/wmaudio_audec.c',
+                 'WMA10Dec/audio/common/primitive/wmapcmacc.c',
+                 'WMA10Dec/audio/common/primitive/wmamalloc.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/chexpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudio.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/fex.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/fft.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/dectablespro.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/dectablesstdpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/lpcprolsl.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/lowrate_commonstd.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudiopro.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/drccommonpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/AutoProfile.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/lpcstd.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/dectables.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/lowrate_common.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudioprotemplate.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/configcommon.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudiostd.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/dectablesstd.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudiostdpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudiotemplate.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/downmix.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/lpclsl.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/lpc.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/msaudiolsl.c',
+                 'WMA10Dec/audio/wmaudio/v10/common/float.c',
+
+                 'WMA10Dec/audio/common/chanmtx/wmaltrt.c',
+                 'WMA10Dec/audio/common/chanmtx/wmachmtx.c',
+                 'WMA10Dec/audio/common/chanmtx/wmabuffilt.c',
+                 'WMA10Dec/audio/common/pcmfmt/pcmfmt.c',
+                 'WMA10Dec/audio/common/primitive/wmaerror.c',
+
+                 'WMA10Dec/audio/wmaudio/v10/fmthlpr/wmafmt.c',
+
+                 'WMA10Dec/audio/wmaudio/v10/decoder/wmaprodecS_api.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/losslessdecpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/entropydecpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/entropydecprolsl.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/entropydecstd.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/fexdec.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/huffdec.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/losslessdeclsl.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/losslessdecprolsl.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/msaudiodec.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/strmdec_wma.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/baseplusdecpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/chexdecpro.c',
+                 'WMA10Dec/audio/wmaudio/v10/decoder/entropydec.c',
+
+                 'WMA10Dec/audio/wmaudio/v10/win32/decoder/win32.c',
+                 'WMA10Dec/common/cpudetect/cpudetect.c',
+           ],
+           use=['WMA', 'OHNET', 'advapi32.lib'],
+           target='CodecWma',
+           )
+
     # Tests
     bld.stlib(
             source=[
@@ -326,7 +428,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
 
     # Copy files for codec tests.
@@ -335,6 +437,7 @@ def build(bld):
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
         '')
 
+    # Invalid audio files for TestCodec
     create_copy_task(
         bld,
         bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
@@ -350,6 +453,7 @@ def build(bld):
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
         'TestShell_resources')
 
+    # Invalid audio files for TestCodec
     create_copy_task(
         bld,
         bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
@@ -432,7 +536,7 @@ def build(bld):
 
     # Bundles
     header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h', 'flac-1.2.1/include/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3']
+    lib_names = ['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma']
     lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
