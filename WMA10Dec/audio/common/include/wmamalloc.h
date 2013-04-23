@@ -100,7 +100,7 @@ extern Int g_size;
 void *mallocAligned(size_t size, WMA_I32 iAlignToBytes);
 void freeAligned(void *ptr);
 
-#ifdef VOLKANO
+#ifdef OPENHOME
 void *  auMalloc(const size_t iSize);
 void  auFree(void *pFree);
 #else

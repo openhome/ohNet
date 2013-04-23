@@ -6404,7 +6404,7 @@ exit:
 
 #include "reverbfilter.c"
 
-#if !defined(VOLKANO) && (defined(_DEBUG) || !defined(UNDER_CE))
+#if !defined(OPENHOME) && (defined(_DEBUG) || !defined(UNDER_CE))
 Void chexDumpCodedParams(CAudioObject *pau, ReconTileInfo *prti, FILE *fp)
 {
     Int i;

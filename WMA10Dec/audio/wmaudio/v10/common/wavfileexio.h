@@ -23,7 +23,7 @@
 
 #ifndef _WAV_FILE_EX_IO_H_
 #define _WAV_FILE_EX_IO_H_
-#if !defined(WMA_TARGET_MACOS) && !defined(__arm) && !defined(VOLKANO)
+#if !defined(WMA_TARGET_MACOS) && !defined(__arm) && !defined(OPENHOME)
 #    include <tchar.h>
 #endif
 

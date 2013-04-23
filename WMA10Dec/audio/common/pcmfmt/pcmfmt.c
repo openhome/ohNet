@@ -9,7 +9,7 @@
 #include "wmawfxdefs.h"
 #include "pcmfmt.h"
 
-#if defined(_XBOX) || defined(VOLKANO)
+#if defined(_XBOX) || defined(OPENHOME)
 #define DISABLEWMDSPLOGGING
 #endif // _XBOX
 

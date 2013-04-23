@@ -24,7 +24,7 @@
 
 #include "wmawintypes.h"
 #include "configcommon.h"
-#if !defined(_XBOX) && !defined(VOLKANO)
+#if !defined(_XBOX) && !defined(OPENHOME)
 #include "wmdsplogging.h"
 #else
 #define WMDSPLOGMSG(a,...)

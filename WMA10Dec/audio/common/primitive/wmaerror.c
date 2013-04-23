@@ -24,14 +24,15 @@ Revision History:
 
 
 *************************************************************************/
+#ifdef _WIN32
 
 #ifdef WMA_TARGET_ANSI
 #include "ansiwin.h"
 #else   // WMA_TARGET_ANSI
 
-#ifndef _WIN32
-#define _WIN32  // We need this when including windows.h
-#endif  // !_WIN32
+//#ifndef _WIN32
+//#define _WIN32  // We need this when including windows.h
+//#endif  // !_WIN32
 
 #ifndef __arm 
 #ifdef _XBOX
@@ -49,7 +50,7 @@ Revision History:
 #define OUTPUT_DEBUG_STRING(sz) OutputDebugString(sz)
 #endif  // PLATFORM_SPECIFIC_OUTPUTDEBUGSTRING
 
-#if (!defined(_XBOX) && !defined(_NO_TRACERESULT_) && !defined(OPENHOME))
+#if (!defined(_XBOX) && !defined(_NO_TRACERESULT_))
 
 #if !defined(PLATFORM_SPECIFIC_DEBUGINFRASTRUCTURE) && defined(_DEBUG)
 #include <stdarg.h>
@@ -131,3 +132,5 @@ WMARESULT MyOutputDbgStr(WMARESULT wmaReturn, const char *pszFmt, ...)
 #endif
 
 #endif // !defined(_XBOX) && !defined(_NO_TRACERESULT_)
+
+#endif // _WIN32
