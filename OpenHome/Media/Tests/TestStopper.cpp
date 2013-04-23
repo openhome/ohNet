@@ -52,7 +52,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from ISupply
-    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -87,6 +87,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     Stopper* iStopper;
     EMsgType iNextGeneratedMsg;
@@ -124,6 +125,7 @@ SuiteStopper::SuiteStopper()
     , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iStopper = new Stopper(*iMsgFactory, *this, *this, *this, *this, kRampDuration);
 }
 
@@ -131,6 +133,7 @@ SuiteStopper::~SuiteStopper()
 {
     delete iStopper;
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteStopper::Test()
@@ -315,7 +318,12 @@ Msg* SuiteStopper::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, this);
     case EMsgTrack:
-        return iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+    {
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        track->RemoveRef();
+        return msg;
+    }
     case EMsgEncodedStream:
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
     case EMsgMetaText:
@@ -471,7 +479,7 @@ Msg* SuiteStopper::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-void SuiteStopper::OutputTrack(const Brx& /*aUri*/, TUint /*aTrackId*/)
+void SuiteStopper::OutputTrack(Track& /*aTrack*/, TUint /*aTrackId*/)
 {
     ASSERTS();
 }

@@ -34,7 +34,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -57,6 +57,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     Reporter* iReporter;
     EMsgType iNextGeneratedMsg;
@@ -90,6 +91,7 @@ SuiteReporter::SuiteReporter()
     , iTrackDurationSeconds(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReporter = new Reporter(*this, *this);
 }
 
@@ -97,6 +99,7 @@ SuiteReporter::~SuiteReporter()
 {
     delete iReporter;
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteReporter::Test()
@@ -241,7 +244,12 @@ Msg* SuiteReporter::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false, NULL);
     case EMsgTrack:
-        return iMsgFactory->CreateMsgTrack(Brn(KTrackUri), kTrackId);
+    {
+        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
+        track->RemoveRef();
+        return msg;
+    }
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn(kMetaText));
     case EMsgHalt:
@@ -267,16 +275,15 @@ MsgAudio* SuiteReporter::CreateAudio()
     return audio;
 }
 
-void SuiteReporter::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void SuiteReporter::NotifyTrack(Track& aTrack, TUint aIdPipeline)
 {
     iTrackUpdates++;
-    iTrackUri.Replace(aUri);
+    iTrackUri.Replace(aTrack.Uri());
     iTrackIdPipeline = aIdPipeline;
 }
 
 void SuiteReporter::NotifyMetaText(const Brx& aText)
 {
-    Print("NotifyMetaText\n");
     iMetaTextUpdates++;
     iMetaText.Replace(aText);
 }

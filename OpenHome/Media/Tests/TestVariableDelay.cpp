@@ -64,6 +64,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     VariableDelay* iVariableDelay;
     EMsgType iNextGeneratedMsg;
@@ -89,6 +90,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iTrackOffset(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);
 }
 
@@ -96,6 +98,7 @@ SuiteVariableDelay::~SuiteVariableDelay()
 {
     delete iVariableDelay;
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteVariableDelay::Test()
@@ -215,7 +218,12 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
     case EMsgTrack:
-        return iMsgFactory->CreateMsgTrack(Brx::Empty(), 0);
+    {
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        track->RemoveRef();
+        return msg;
+    }
     case EMsgEncodedStream:
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
     case EMsgMetaText:

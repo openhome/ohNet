@@ -34,7 +34,7 @@ class IPipelineObserver
 public:
     virtual ~IPipelineObserver() {}
     virtual void NotifyPipelineState(EPipelineState aState) = 0;
-    virtual void NotifyTrack(const Brx& aUri, TUint aIdPipeline) = 0;
+    virtual void NotifyTrack(Track& aTrack, TUint aIdPipeline) = 0;
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
@@ -77,7 +77,7 @@ public:
     void Stop();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 public: // from ISupply
-    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -94,7 +94,7 @@ private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

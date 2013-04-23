@@ -1,6 +1,8 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
+#include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>
@@ -194,7 +196,7 @@ public:
     TUint StreamCount();
     TUint DataTotal();
 public: // from ISupply
-    void OutputTrack(const Brx& aUri, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -265,6 +267,8 @@ protected:
     TestHttpSession* iHttpSession;
     TestHttpSupplier* iSupply;
     ProtocolManager* iProtocolManager;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
 };
 
 class SuiteHttpStreamFull : public SuiteHttp
@@ -733,7 +737,7 @@ TUint TestHttpSupplier::DataTotal()
     return iDataTotal;
 }
 
-void TestHttpSupplier::OutputTrack(const Brx& /*aUri*/, TUint aTrackId)
+void TestHttpSupplier::OutputTrack(Track& /*aTrack*/, TUint aTrackId)
 {
     //Log::Print("TestHttpSupplier::OutputTrack %u\n", aTrackId);
     iTrackId = aTrackId;
@@ -881,10 +885,13 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iProtocolManager = new ProtocolManager(*iSupply, *iProvider, *iFlushId);
     iProtocolHttp = new ProtocolHttp(*gEnv);
     iProtocolManager->Add(iProtocolHttp);
+
+    iTrackFactory= new TrackFactory(iInfoAggregator, 1);
 }
 
 SuiteHttp::~SuiteHttp()
 {
+    delete iTrackFactory;
     delete iProtocolManager;
     //delete iProtocolHttp;    // Owned by iProtocolManager.
     delete iProvider;
@@ -905,7 +912,9 @@ SuiteHttpStreamFull::SuiteHttpStreamFull()
 void SuiteHttpStreamFull::Test()
 {
     // Test if streaming is successful.
-    TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    TBool boolStream = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
     TEST(boolStream == 1);
 
     // Test if a single track message is received.
@@ -934,7 +943,9 @@ SuiteHttpReject::SuiteHttpReject()
 void SuiteHttpReject::Test()
 {
     // Test if streaming is successful.
-    TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    TBool boolStream = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
     TEST(boolStream == 1);
 
     // Test if a single track message is received.
@@ -959,7 +970,9 @@ SuiteHttpReconnect::SuiteHttpReconnect()
 void SuiteHttpReconnect::Test()
 {
     // Test if streaming is successful.
-    TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    TBool boolStream = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
     TEST(boolStream == 1);
 
     // Test if a single track message is received.
@@ -988,7 +1001,9 @@ SuiteHttpStreamLive::SuiteHttpStreamLive()
 void SuiteHttpStreamLive::Test()
 {
     // Test if streaming is successful.
-    TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    TBool boolStream = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
     TEST(boolStream == false);
 
     // Test if a single track message is received.
@@ -1017,7 +1032,9 @@ SuiteHttpLiveReconnect::SuiteHttpLiveReconnect()
 void SuiteHttpLiveReconnect::Test()
 {
     // Test if streaming is successful.
-    TBool boolStream = iProtocolManager->DoStream(iServer->ServingUri().AbsoluteUri());
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    TBool boolStream = iProtocolManager->DoStream(*track);
+    track->RemoveRef();
     TEST(boolStream == false);
 
     // Test if a single track message is received.

@@ -1,14 +1,9 @@
 #include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/Codec/Aac.h>
-#include <OpenHome/Media/Codec/Alac.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
-#include <OpenHome/Media/Codec/Flac.h>
-#include <OpenHome/Media/Codec/Mp3.h>
-#include <OpenHome/Media/Codec/Vorbis.h>
-#include <OpenHome/Media/Codec/Wav.h>
-#include <OpenHome/Media/Codec/Wma.h>
+#include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/TestFramework.h>
@@ -89,6 +84,8 @@ public: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     IFile* iFile;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
     Brhz iFilename;
     MsgFactory& iMsgFactory;
     Bws<EncodedAudio::kMaxBytes> iBuf;
@@ -148,6 +145,7 @@ protected:
     TUint iJiffies;
     Semaphore iSem;
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     TestCodecPipelineElementUpstream* iElementUpstream;
     TestCodecPipelineElementDownstream* iElementDownstream;
     TestCodecInfoAggregator* iInfoAggregator;
@@ -295,13 +293,13 @@ TestCodecPipelineElementUpstream::TestCodecPipelineElementUpstream(MsgFactory& a
     , iSeekFlush(false)
     , iFlushId(MsgFlush::kIdInvalid)
 {
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
 TestCodecPipelineElementUpstream::~TestCodecPipelineElementUpstream()
 {
-    if (iFile != NULL) {
-        delete iFile;
-    }
+    delete iTrackFactory;
+    delete iFile;
 }
 
 void TestCodecPipelineElementUpstream::Initialise(const Brx& aFilename)
@@ -344,7 +342,9 @@ Msg* TestCodecPipelineElementUpstream::Pull()
     Msg* msg = NULL;
 
     if (iPullCount == 0) {
-        msg = iMsgFactory.CreateMsgTrack(Brn("10.2.0.1/someplaylistfile"), kTrackId);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+        msg = iMsgFactory.CreateMsgTrack(*track, 0);
+        track->RemoveRef();
     }
     else if (iPullCount == 1) {
         msg = iMsgFactory.CreateMsgEncodedStream(Brn("10.2.0.1/somefile"),
@@ -506,6 +506,7 @@ SuiteCodecStream::~SuiteCodecStream()
     }
     delete iContainer;
     delete iMsgFactory;
+    delete iTrackFactory;
     delete iInfoAggregator;
     delete iElementDownstream;
     delete iElementUpstream;
@@ -515,6 +516,7 @@ void SuiteCodecStream::Init()
 {
     iInfoAggregator = new TestCodecInfoAggregator();
     iMsgFactory = new MsgFactory(*iInfoAggregator, 5, 5, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(*iInfoAggregator, 1);
     iElementDownstream = new TestCodecPipelineElementDownstream(*this);
     iElementUpstream = new TestCodecPipelineElementUpstream(*iMsgFactory);
     iContainer = new Container(*iMsgFactory, *iElementUpstream);
@@ -538,13 +540,13 @@ void SuiteCodecStream::Reinitialise(const Brx& aFilename)
     iElementUpstream->Initialise(aFilename);
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
     // These can be re-ordered to check for problems in the recognise function of each codec.
-    iController->AddCodec(new CodecWav());
-    iController->AddCodec(new CodecFlac());
-    iController->AddCodec(new CodecMp3());
-    iController->AddCodec(new CodecAlac());
-    iController->AddCodec(new CodecAac());
-    iController->AddCodec(new CodecVorbis());
-    iController->AddCodec(new CodecWma());
+    iController->AddCodec(CodecFactory::NewWav());
+    iController->AddCodec(CodecFactory::NewFlac());
+    iController->AddCodec(CodecFactory::NewMp3());
+    iController->AddCodec(CodecFactory::NewAlac());
+    iController->AddCodec(CodecFactory::NewAac());
+    iController->AddCodec(CodecFactory::NewVorbis());
+    iController->AddCodec(CodecFactory::NewWma());
     iController->Start();
 }
 

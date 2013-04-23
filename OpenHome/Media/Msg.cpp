@@ -1343,6 +1343,60 @@ Msg* MsgDecodedStream::Process(IMsgProcessor& aProcessor)
     return aProcessor.ProcessMsg(this);
 }
 
+ 
+// Track
+
+Track::Track(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
+{
+    Clear();
+}
+
+const Brx& Track::Uri() const
+{
+    return iUri;
+}
+
+const Brx& Track::MetaData() const
+{
+    return iMetaData;
+}
+
+const Brx& Track::Style() const
+{
+    return iStyle;
+}
+
+const Brx& Track::ProviderId() const
+{
+    return iProviderId;
+}
+
+TAny* Track::UserData() const
+{
+    return iUserData;
+}
+
+void Track::Initialise(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData)
+{
+    iUri.Replace(aUri);
+    iMetaData.Replace(aMetaData);
+    iStyle.Replace(aStyle);
+    iProviderId.Replace(aProviderId);
+    iUserData = aUserData;
+}
+
+void Track::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iUri.SetBytes(0);
+    iMetaData.SetBytes(0);
+    iStyle.SetBytes(0);
+    iProviderId.SetBytes(0);
+    iUserData = NULL;
+#endif // DEFINE_DEBUG
+}
+
     
 // MsgTrack
 
@@ -1351,9 +1405,10 @@ MsgTrack::MsgTrack(AllocatorBase& aAllocator)
 {
 }
 
-const Brx& MsgTrack::Uri() const
+Media::Track& MsgTrack::Track() const
 {
-    return iUri;
+    ASSERT(iTrack != NULL);
+    return *iTrack;
 }
 
 TUint MsgTrack::IdPipeline() const
@@ -1361,15 +1416,17 @@ TUint MsgTrack::IdPipeline() const
     return iIdPipeline;
 }
 
-void MsgTrack::Initialise(const Brx& aUri, TUint aIdPipeline)
+void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline)
 {
-    iUri.Replace(aUri);
+    iTrack = &aTrack;
+    iTrack->AddRef();
     iIdPipeline = aIdPipeline;
 }
 
 void MsgTrack::Clear()
 {
-    iUri.SetBytes(0);
+    iTrack->RemoveRef();
+    iTrack = NULL;
     iIdPipeline = UINT_MAX;
 }
 
@@ -1946,6 +2003,21 @@ AutoMsgRef::~AutoMsgRef()
 }
 
     
+// TrackFactory
+
+TrackFactory::TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount)
+    : iAllocatorTrack("Track", aTrackCount, aInfoAggregator)
+{
+}
+
+Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData)
+{
+    Track* track = iAllocatorTrack.Allocate();
+    track->Initialise(aUri, aMetaData, aStyle, aProviderId, aUserData);
+    return track;
+}
+
+
 // MsgFactory
 
 MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
@@ -2002,10 +2074,10 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBit
     return msg;
 }
 
-MsgTrack* MsgFactory::CreateMsgTrack(const Brx& aUri, TUint aIdPipeline)
+MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
-    msg->Initialise(aUri, aIdPipeline);
+    msg->Initialise(aTrack, aIdPipeline);
     return msg;
 }
 

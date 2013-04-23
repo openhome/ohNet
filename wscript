@@ -181,6 +181,7 @@ def build(bld):
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
                 'OpenHome/Media/Supply.cpp',
+                'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdProvider.cpp',
@@ -413,12 +414,15 @@ def build(bld):
             source=[
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
+                'OpenHome/Media/Tests/PipelineUtils.cpp',
+                'OpenHome/Media/Tests/SuiteUnitTest.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
                 'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
+                'OpenHome/Media/Tests/TestTrackInspector.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestContentProcessor.cpp',
@@ -494,6 +498,10 @@ def build(bld):
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestVariableDelay')
         bld.program(
+                source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestTrackInspector')
+        bld.program(
                 source='OpenHome/Media/Tests/TestReporterMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestReporter')
@@ -535,8 +543,8 @@ def build(bld):
                 target='TestFiller')
 
     # Bundles
-    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h', 'flac-1.2.1/include/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma']
+    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h'])
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAlac', 'CodecFlac', 'CodecMp3', 'CodecVorbis', 'CodecWav', 'CodecWma']
     lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
@@ -553,6 +561,7 @@ def test(tst):
                       ,['TestAudioReservoir', [], True]
                       ,['TestVariableDelay', [], True]
                       ,['TestStopper', [], True]
+                      ,['TestTrackInspector', [], True]
                       ,['TestReporter', [], True]
                       ,['TestStarvationMonitor', [], True]
                       ,['TestPreDriver', [], True]

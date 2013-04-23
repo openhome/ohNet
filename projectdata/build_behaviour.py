@@ -66,8 +66,8 @@ require_version(22)
 # Command-line options. See documentation for Python's optparse module.
 add_option("-t", "--target", help="Target platform.")
 add_option("-a", "--artifacts", help="Build artifacts directory. Used to fetch dependencies.")
-add_option("--debug", action="store_const", const="debug", dest="debugmode", default="Debug", help="Build debug version.")
-add_option("--release", action="store_const", const="release", dest="debugmode", help="Build release version.")
+add_option("--debug", action="store_const", const="Debug", dest="debugmode", default="Debug", help="Build debug version.")
+add_option("--release", action="store_const", const="Release", dest="debugmode", help="Build release version.")
 add_option("--steps", default="default", help="Steps to run, comma separated. (all,default,fetch,configure,build,tests,publish)")
 add_option("--publish-version", action="store", help="Specify version string.")
 add_option("--fetch-only", action="store_const", const="fetch", dest="steps", help="Fetch dependencies only.")
@@ -101,8 +101,7 @@ def choose_platform(context):
 def setup_universal(context):
     env = context.env
     env.update(
-        OHNET_ARTIFACTS=context.options.artifacts or 'http://www.openhome.org/releases/artifacts',
-        OH_PUBLISHDIR="releases@www.openhome.org:/home/releases/www/artifacts",
+        OH_PUBLISHDIR="artifacts@core.linn.co.uk:/home/artifacts/public_html/artifacts/",
         OH_PROJECT="ohMediaPlayer",
         OH_DEBUG=context.options.debugmode,
         BUILDDIR='buildhudson',
@@ -172,9 +171,6 @@ def test(context):
 
 @build_step("publish", optional=True, default=False)
 def publish(context):
-    devtargetpath = "{OH_PUBLISHDIR}/{OH_PROJECT}/{OH_PROJECT}-{OH_VERSION}-{OH_PLATFORM}-dev-{OH_DEBUG}.tar.gz".format(**context.env)
     targetpath    = "{OH_PUBLISHDIR}/{OH_PROJECT}/{OH_PROJECT}-{OH_VERSION}-{OH_PLATFORM}-{OH_DEBUG}.tar.gz".format(**context.env)
-    devsourcepath = "{BUILDDIR}/{OH_PROJECT}-dev.tar.gz".format(**context.env)
     sourcepath    = "{BUILDDIR}/{OH_PROJECT}.tar.gz".format(**context.env)
     scp(sourcepath,    targetpath)
-    scp(devsourcepath, devtargetpath)

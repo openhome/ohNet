@@ -69,6 +69,7 @@ private:
     MsgAudio* CreateAudio();
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     Supply* iSupply;
     DummyStreamHandler iDummyStreamHandler;
@@ -109,6 +110,7 @@ SuiteSupply::SuiteSupply()
     , iMsgPushCount(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new Supply(*iMsgFactory, *this);
 }
 
@@ -116,12 +118,15 @@ SuiteSupply::~SuiteSupply()
 {
     delete iSupply;
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
-    iSupply->OutputTrack(Brn(kUri), kTrackId);
+    Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    iSupply->OutputTrack(*track, kTrackId);
+    track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);
@@ -182,7 +187,7 @@ Msg* SuiteSupply::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
-    TEST(aMsg->Uri() == Brn(kUri));
+    TEST(aMsg->Track().Uri() == Brn(kUri));
     TEST(aMsg->IdPipeline() == kTrackId);
     return aMsg;
 }

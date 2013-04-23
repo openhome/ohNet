@@ -21,7 +21,7 @@ namespace Media {
 class Supplier : public Thread, private IStreamHandler
 {
 public:
-    Supplier(ISupply& aSupply);
+    Supplier(ISupply& aSupply, Av::IInfoAggregator& aInfoAggregator);
     ~Supplier();
     void Block();
     void Unblock();
@@ -37,6 +37,7 @@ private:
     Semaphore iBlocker;
     Msg* iPendingMsg;
     TBool iBlock;
+    TrackFactory* iTrackFactory;
 };
 
 class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor
@@ -64,7 +65,7 @@ private:
     void PullUntilQuit();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -127,13 +128,14 @@ private:
 
 // Supplier
 
-Supplier::Supplier(ISupply& aSupply)
+Supplier::Supplier(ISupply& aSupply, Av::IInfoAggregator& aInfoAggregator)
     : Thread("TSUP")
     , iSupply(aSupply)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
     , iBlock(false)
 {
+    iTrackFactory = new TrackFactory(aInfoAggregator, 1);
     Start();
 }
 
@@ -141,6 +143,7 @@ Supplier::~Supplier()
 {
     Kill();
     Join();
+    delete iTrackFactory;
 }
 
 void Supplier::Block()
@@ -161,7 +164,9 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    iSupply.OutputTrack(Brx::Empty(), 1);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    iSupply.OutputTrack(*track, 1);
+    track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
     for (;;) {
         CheckForKill();
@@ -206,7 +211,7 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kDriverMaxAudioJiffies);
-    iSupplier = new Supplier(*iPipeline);
+    iSupplier = new Supplier(*iPipeline, iInfoAggregator);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
     iPipeline->Start();
     iPipelineEnd = iPipeline;
@@ -423,11 +428,17 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void SuitePipeline::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void SuitePipeline::NotifyTrack(Track& aTrack, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Print("Pipeline report property: TRACK {uri=");
-    Print(aUri);
+    Print(aTrack.Uri());
+    Print("; metadata=");
+    Print(aTrack.MetaData());
+    Print("; style=");
+    Print(aTrack.Style());
+    Print("; providerId=");
+    Print(aTrack.ProviderId());
     Print("; idPipeline=%u}\n", aIdPipeline);
 #endif
 }

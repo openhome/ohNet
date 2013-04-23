@@ -6,13 +6,7 @@
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Media/Protocol/ProtocolFile.h>
 #include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/Codec/Aac.h>
-#include <OpenHome/Media/Codec/Alac.h>
-#include <OpenHome/Media/Codec/Flac.h>
-#include <OpenHome/Media/Codec/Wav.h>
-#include <OpenHome/Media/Codec/Mp3.h>
-#include <OpenHome/Media/Codec/Vorbis.h>
-#include <OpenHome/Media/Codec/Wma.h>
+#include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
@@ -71,7 +65,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
+    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -84,6 +78,7 @@ private: // from IPipelineIdProvider
     void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
 private:
     ProtocolManager* iProtocolManager;
+    TrackFactory* iTrackFactory;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -100,7 +95,7 @@ public:
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -126,7 +121,7 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider)
+DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
@@ -134,11 +129,13 @@ DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& 
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     iProtocolManager->Add(new ProtocolHttp(aEnv));
     iProtocolManager->Add(new ProtocolFile(aEnv));
+    iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
 DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
+    delete iTrackFactory;
 }
 
 void DummyFiller::Start(const Brx& aUrl)
@@ -149,7 +146,9 @@ void DummyFiller::Start(const Brx& aUrl)
 
 void DummyFiller::Run()
 {
-    iProtocolManager->DoStream(iUrl);
+    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    iProtocolManager->DoStream(*track);
+    track->RemoveRef();
 }
 
 TUint DummyFiller::NextTrackId()
@@ -185,14 +184,14 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline);
-    iPipeline->AddCodec(new Codec::CodecFlac());
-    iPipeline->AddCodec(new Codec::CodecWav());
-    iPipeline->AddCodec(new Codec::CodecMp3());
-    iPipeline->AddCodec(new Codec::CodecAlac());
-    iPipeline->AddCodec(new Codec::CodecAac());
-    iPipeline->AddCodec(new Codec::CodecVorbis());
-    iPipeline->AddCodec(new Codec::CodecWma());
+    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
+    iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewWav());
+    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
+    iPipeline->AddCodec(Codec::CodecFactory::NewWma());
     iPipeline->Start();
 
     iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
@@ -319,11 +318,17 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void TestProtocol::NotifyTrack(Track& aTrack, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
-    Log::Print(aUri);
+    Log::Print(aTrack.Uri());
+    Log::Print("; metadata=");
+    Log::Print(aTrack.MetaData());
+    Log::Print("; style=");
+    Log::Print(aTrack.Style());
+    Log::Print("; providerId=");
+    Log::Print(aTrack.ProviderId());
     Log::Print("; idPipeline=%u}\n", aIdPipeline);
 #endif
 }
@@ -370,7 +375,8 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.11.131:9000/disk/NON-DLNA/music/O0$1$4I4009/Waiting%20for%20the%207.18.m4a  // alac
     http://10.2.11.174:26125/content/c2/b16/f48000/d2599-co459.m4a                          // aac
     http://10.2.11.174:26125/content/c2/b16/f44100/d3220-co459.ogg
-    http://10.2.11.174:26125/content/c2/b16/f44100/d3403-co993.wma
+    http://10.2.11.174:26125/content/c2/b16/f44100/d3450-co475.wma
+    http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // exhausts wma recognise buffer
     */
     OptionParser parser;
     OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");

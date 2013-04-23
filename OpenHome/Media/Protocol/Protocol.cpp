@@ -262,13 +262,13 @@ void ProtocolManager::Add(ContentProcessor* aProcessor)
     aProcessor->Initialise(*this);
 }
 
-TBool ProtocolManager::DoStream(const Brx& aUri)
+TBool ProtocolManager::DoStream(Track& aTrack)
 {
     iLock.Wait();
     iTrackId = iIdProvider.NextTrackId();
     iLock.Signal();
-    iSupply.OutputTrack(aUri, iTrackId);
-    ProtocolStreamResult res = Stream(aUri);
+    iSupply.OutputTrack(aTrack, iTrackId);
+    ProtocolStreamResult res = Stream(aTrack.Uri());
     return (res != EProtocolStreamStopped);
 }
 
