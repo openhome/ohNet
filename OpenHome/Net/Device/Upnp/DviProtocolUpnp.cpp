@@ -182,7 +182,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
         AutoNetworkAdapterRef ref(iDvStack.Env(), "DviProtocolUpnp::HandleInterfaceChange");
         const NetworkAdapter* current = ref.Adapter();
         TUint i = 0;
-        if (current != 0) {
+        if (current != NULL) {
             // remove listeners whose interface is no longer available
             while (i<iAdapters.size()) {
                 if (iAdapters[i]->Interface() == current->Address()) {
@@ -317,7 +317,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
         Brn rem = parser.Remaining();
         if (buf == DviDevice::kResourceDir) {
             IResourceManager* resMgr = iDevice.ResourceManager();
-            if (resMgr != 0) {
+            if (resMgr != NULL) {
                 resMgr->WriteResource(rem, aAdapter, aLanguageList, aResourceWriter);
             }
         }
@@ -363,12 +363,12 @@ void DviProtocolUpnp::Enable()
         root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
         adapter->UpdateUriBase(uriBase);
         adapter->ClearDeviceXml();
-        if (iDevice.ResourceManager() != 0) {
+        if (iDevice.ResourceManager() != NULL) {
             const TChar* name = 0;
             GetAttribute("FriendlyName", &name);
             adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
             GetAttribute("MdnsHostName", &name);
-            if (name != 0) {
+            if (name != NULL) {
                 iDvStack.MdnsProvider()->MdnsSetHostName(name);
                 Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
                 redirectedPath.Append('/');
@@ -411,7 +411,7 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     }
     const TChar* name = 0;
     GetAttribute("MdnsHostName", &name);
-    if (name != 0) {
+    if (name != NULL) {
         iDvStack.MdnsProvider()->MdnsSetHostName("");
     }
 }
@@ -428,8 +428,8 @@ void DviProtocolUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)
         return;
     }
     if (strcmp(aKey, "MdnsHostName") == 0) {
-        ASSERT(iDevice.ResourceManager() != 0);
-        ASSERT(iDvStack.MdnsProvider() != 0);
+        ASSERT(iDevice.ResourceManager() != NULL);
+        ASSERT(iDvStack.MdnsProvider() != NULL);
     }
 
     iAttributeMap.Set(aKey, aValue);
@@ -699,7 +699,7 @@ void DviProtocolUpnpAdapterSpecificData::Destroy()
 
 DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
 {
-    if (iBonjourWebPage != 0) {
+    if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
         delete iBonjourWebPage;
     }
@@ -764,14 +764,14 @@ void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
 {
-    if (aName != 0) {
+    if (aName != NULL) {
         if (iBonjourWebPage == 0) {
             IMdnsProvider* mdnsProvider = iDvStack.MdnsProvider();
-            if (mdnsProvider != 0) {
+            if (mdnsProvider != NULL) {
                 iBonjourWebPage = new BonjourWebPage(*mdnsProvider);
             }
         }
-        if (iBonjourWebPage != 0) {
+        if (iBonjourWebPage != NULL) {
             Bwh path(aUdn.Bytes() + aProtocol.Bytes() + aResourceDir.Bytes() + 5);
             path.Append('/');
             path.Append(aUdn);
@@ -788,7 +788,7 @@ void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, con
 
 void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 {
-    if (iBonjourWebPage != 0) {
+    if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
     }
 }
@@ -823,7 +823,7 @@ IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
 {
     IUpnpMsearchHandler* handler = Handler();
-    if (handler != 0) {
+    if (handler != NULL) {
         handler->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
     }
 }
@@ -831,7 +831,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
 {
     IUpnpMsearchHandler* handler = Handler();
-    if (handler != 0) {
+    if (handler != NULL) {
         handler->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
     }
 }
@@ -839,7 +839,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoin
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
 {
     IUpnpMsearchHandler* handler = Handler();
-    if (handler != 0) {
+    if (handler != NULL) {
         handler->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
     }
 }
@@ -847,7 +847,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoin
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     IUpnpMsearchHandler* handler = Handler();
-    if (handler != 0) {
+    if (handler != NULL) {
         handler->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
     }
 }
@@ -855,7 +855,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aE
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     IUpnpMsearchHandler* handler = Handler();
-    if (handler != 0) {
+    if (handler != NULL) {
         handler->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
     }
 }
@@ -1010,7 +1010,7 @@ void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar
 {
     const TChar* val;
     iDeviceUpnp.GetAttribute(aAttributeKey, &val);
-    if (val != 0) {
+    if (val != NULL) {
         iWriter.Write('<');
         iWriter.Write(aTagName);
         iWriter.Write('>');
@@ -1037,8 +1037,8 @@ void DviProtocolUpnpDeviceXmlWriter::WritePresentationUrlTag(TIpAddress aAdapter
     const TChar* attributeVal;
     iDeviceUpnp.GetAttribute("PresentationUrl", &attributeVal);
 
-    bool hasAttribute = attributeVal != 0;
-    bool hasResMgr = iDeviceUpnp.iDevice.ResourceManager() != 0;
+    bool hasAttribute = attributeVal != NULL;
+    bool hasResMgr = iDeviceUpnp.iDevice.ResourceManager() != NULL;
 
     if (!hasAttribute && !hasResMgr)
     {
@@ -1668,7 +1668,7 @@ DviMsgNotify::DviMsgNotify(DvStack& aDvStack, IUpnpAnnouncementData& aAnnounceme
 
 DviMsgNotify::~DviMsgNotify()
 {
-    if (iCompleted != 0) {
+    if (iCompleted) {
         iCompleted();
     }
 }
