@@ -76,6 +76,7 @@ class TestThread(threading.Thread):
 def run_test_server(cmdline, testfilepath, bldpath, host, port):
     server_thread = TestThread(host, port, bldpath)
     server_thread.start()
+    cherrypy.server.wait()
     subprocess.check_call(cmdline, executable=testfilepath, cwd=bldpath)
     server_thread.stop()
 
