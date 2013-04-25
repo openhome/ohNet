@@ -10,6 +10,7 @@ sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location
+from fileserver import invoke_test_fileserver
 
 def options(opt):
     opt.load('msvc')
@@ -139,7 +140,7 @@ def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relativ
     if keep_relative_paths:
         cwd_node = build_context.path.find_dir(cwd)
         target_filenames = [
-                path.join(target_dir, source_node.path_from(cwd_node))
+                os.path.join(target_dir, source_node.path_from(cwd_node))
                 for source_node in source_file_nodes]
     else:
         target_filenames = [
@@ -435,6 +436,19 @@ def build(bld):
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
 
+    # Copy CherryPy to build dir
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('dependencies/AnyPlatform/CherryPy/cherrypy/**/*'),
+        'cherrypy',
+        cwd='dependencies/AnyPlatform/CherryPy/cherrypy',
+        keep_relative_paths=True,
+        name=None)
+    create_copy_task(
+        bld,
+        bld.path.ant_glob('fileserver.py'),
+        '')
+    
     # Copy files for codec tests.
     create_copy_task(
         bld,
@@ -469,10 +483,10 @@ def build(bld):
         'TestShell_resources')
 
     if not bld.env.nolink:
-        bld.program(
-                source='OpenHome/Media/Tests/TestShell.cpp',
-                use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestShell')
+        #bld.program(
+        #        source='OpenHome/Media/Tests/TestShell.cpp',
+        #        use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+        #        target='TestShell')
         bld.program(
                 source='OpenHome/Media/Tests/TestMsgMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -568,13 +582,14 @@ def test(tst):
                       ,['TestContentProcessor', [], True]
                       ,['TestPipeline', [], True]
                       ,['TestProtocolHttp', [], True]
-                      ,['TestCodec', [], True]
+                      #,['TestCodec', [], True]
                       ,['TestIdProvider', [], True]
                       ,['TestFiller', [], True]
                       ]:
         tst(rule=invoke_test, test=t, args=a, always=when)
         tst.add_group() # Don't start another test until previous has finished.
-
+    tst(rule=invoke_test_fileserver, test='TestCodec', args=['127.0.0.1', '8080'], always=True)
+    tst.add_group()
 
 # == Contexts to make 'waf test' work ==
 

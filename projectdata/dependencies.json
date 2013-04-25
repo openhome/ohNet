@@ -20,11 +20,17 @@
         "version": "0.0.36",
         "archive-filename": "${name}-${version}.tar.gz"
     },
-	{
-		"name": "TestTones",
-		"type": "external",
-		"version": "1.1",
-		"archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
-		"dest": "dependencies/AnyPlatform/TestTones/"
-	}
+    {
+        "name": "TestTones",
+        "type": "external",
+        "version": "1.1",
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
+        "dest": "dependencies/AnyPlatform/TestTones/"
+    },
+    {   "name": "CherryPy",
+        "type": "external",
+        "version": "3.2.2",
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/cherrypy/${name}-${version}.zip",
+        "dest": "dependencies/AnyPlatform/CherryPy"
+    }
 ]
