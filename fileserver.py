@@ -33,7 +33,7 @@ def run_static_fileserver(host, port):
     config={'/':
         {
          'tools.staticdir.on': True,
-         'tools.staticdir.dir': current_dir + '/build',
+         'tools.staticdir.dir': os.path.join(current_dir, 'build'),
         }
     }
 
@@ -74,6 +74,7 @@ class TestThread(threading.Thread):
 def run_test_server(cmdline, testfilepath, bldpath, host, port):
     server_thread = TestThread(host, port)
     server_thread.start()
+    cherrypy.server.wait()
     subprocess.check_call(cmdline, executable=testfilepath, cwd=bldpath)
     server_thread.stop()
 
