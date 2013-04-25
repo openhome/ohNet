@@ -1,7 +1,9 @@
 import os.path
 import subprocess
+import sys
 import threading
-import time
+
+sys.path.insert(0, os.path.abspath('dependencies/AnyPlatform/CherryPy'))
 
 import cherrypy
 
