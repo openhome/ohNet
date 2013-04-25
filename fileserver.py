@@ -13,7 +13,7 @@ import cherrypy
     CherryPy guide for serving static files can be found here:
     http://docs.cherrypy.org/stable/progguide/files/static.html
 """
-def run_static_fileserver(host, port):
+def run_static_fileserver(host, port, path):
     # get the current directory
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -33,7 +33,7 @@ def run_static_fileserver(host, port):
     config={'/':
         {
          'tools.staticdir.on': True,
-         'tools.staticdir.dir': current_dir + '/build',
+         'tools.staticdir.dir': path,
         }
     }
 
@@ -46,6 +46,7 @@ def run_static_fileserver(host, port):
 
 # cmds for invoking from waf to start/stop server
 def invoke_test_fileserver(tsk):
+    print tsk.env.BUILDDIR
     testfile = tsk.env.cxxprogram_PATTERN % tsk.generator.test
     testargs = tsk.generator.args
     bldpath = tsk.generator.bld.bldnode.abspath()
@@ -61,18 +62,19 @@ def invoke_test_fileserver(tsk):
 
 # thread for running a server in
 class TestThread(threading.Thread):
-    def __init__(self, host, port):
+    def __init__(self, host, port, path):
         self.__host = host
         self.__port = port
+        self.__path = path
         threading.Thread.__init__(self)
     def run(self):
-        run_static_fileserver(self.__host, self.__port)
+        run_static_fileserver(self.__host, self.__port, self.__path)
     def stop(self):
         cherrypy.engine.exit()
 
 # run a test server, invoke the given test file, then exit the server
 def run_test_server(cmdline, testfilepath, bldpath, host, port):
-    server_thread = TestThread(host, port)
+    server_thread = TestThread(host, port, bldpath)
     server_thread.start()
     subprocess.check_call(cmdline, executable=testfilepath, cwd=bldpath)
     server_thread.stop()
