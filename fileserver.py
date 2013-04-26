@@ -25,7 +25,7 @@ def run_static_fileserver(host, port, path):
         {'server.socket_host': host,
          'server.socket_port': port,
          'log.screen': None,
-         'log.access_file': 'fileserver.log',
+         'log.access_file': os.path.join(path, 'fileserver.log'),
         }
     )
 
