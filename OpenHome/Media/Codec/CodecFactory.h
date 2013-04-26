@@ -17,6 +17,7 @@ public:
     static CodecBase* NewMp3();
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
+    static CodecBase* NewWma();
 };
 
 } // namespace Codec

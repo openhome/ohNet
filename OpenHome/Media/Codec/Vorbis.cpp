@@ -99,19 +99,20 @@ void PrintCallback (void *datasource, char *message);
 size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
 {
     TUint bytes = size * nmemb;
-    LOG(kCodec,"CodecVorbis::CallbackRead: attempt to read %u bytes\n", bytes);
+    //LOG(kCodec,"CodecVorbis::CallbackRead: attempt to read %u bytes\n", bytes);
     Bwn buf((TByte *)ptr, bytes);
     try{
         if(iRecognising) {
             ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
-            if (iRecogBuf.Bytes()-iPeekOffset < bytes) {
+            if ((iRecogBuf.Bytes() < iPeekOffset) || (iRecogBuf.Bytes()-iPeekOffset < bytes)) {
                 // our buffer is incorrectly sized (programmer error)
                 // OR we've exhausted the recognise buffer and still not recognised stream,
                 // so probably not a valid Vorbis stream
+                //ASSERTS();
                 buf.SetBytes(0);
             }
             else {
-                LOG(kCodec,"CodecVorbis::CallbackRead: buf.Bytes: %u, iPeekOffset: %u, bytes: %u\n", buf.Bytes(), iPeekOffset, bytes);
+                //LOG(kCodec,"CodecVorbis::CallbackRead: buf.Bytes: %u, iPeekOffset: %u, bytes: %u\n", buf.Bytes(), iPeekOffset, bytes);
                 Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(iPeekOffset), bytes);
                 buf.Replace(tmpBuf);
                 iPeekOffset += bytes;
@@ -134,7 +135,7 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
         buf.SetBytes(0);
     }
 
-    LOG(kCodec,"CodecVorbis::CallbackRead: read %u bytes\n", buf.Bytes());
+    //LOG(kCodec,"CodecVorbis::CallbackRead: read %u bytes\n", buf.Bytes());
 
     return buf.Bytes();
 }
@@ -276,7 +277,6 @@ void CodecVorbis::StreamCompleted()
 TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     LOG(kCodec, "CodecVorbis::Seek(%u, %llu)\n", aStreamId, aSample);
-    iTotalSamplesOutput = aSample;
 
     // convert to approximate byte position in file
     TUint64 bytes = aSample * iController->StreamLength()/iSamplesTotal;
@@ -287,6 +287,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
     LOG(kCodec, "CodecVorbis::Seek to sample: %lld, byte: %llu\n", aSample, bytes);
     TBool canSeek = iController->TrySeek(aStreamId, bytes);
     if (canSeek) {
+        iTotalSamplesOutput = aSample;
         iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
         iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
