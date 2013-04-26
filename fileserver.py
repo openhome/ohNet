@@ -81,4 +81,4 @@ def run_test_server(cmdline, testfilepath, bldpath, host, port):
     server_thread.stop()
 
 if __name__=="__main__":
-    run_test_server('TestCodec.exe', '127.0.0.1', 8080)
+    run_static_fileserver('127.0.0.1', 8080, os.path.dirname(os.path.abspath(__file__)))

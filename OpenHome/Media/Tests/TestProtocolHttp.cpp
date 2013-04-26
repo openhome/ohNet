@@ -844,7 +844,7 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     : Suite(aSuiteName)
 {
     // The file to be served.
-    Brn serveFile("1k_tone-10s-stereo.wav");
+    Brn serveFile("10s-stereo-44k.wav");
 
     // Get a list of network adapters (using loopback, so first one should do).
     std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackUse, "Loopback");
