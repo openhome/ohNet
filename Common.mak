@@ -163,6 +163,7 @@ headers = \
 	$(inc_build)/OpenHome/Net/Private/DviServerUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/DviServerWebSocket.h \
 	$(inc_build)/OpenHome/Net/Private/DviService.h \
+	$(inc_build)/OpenHome/Net/Private/DviSsdpNotifier.h \
 	$(inc_build)/OpenHome/Net/Private/DviStack.h \
 	$(inc_build)/OpenHome/Net/Private/DviSubscription.h \
 	$(inc_build)/OpenHome/Net/Private/DviPropertyUpdateCollection.h \
