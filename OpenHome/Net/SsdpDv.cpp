@@ -32,16 +32,22 @@ void Ssdp::WriteNextBootId(DvStack& aDvStack, IWriterHttpHeader& aWriter)
 
 // SsdpNotifier
 
-SsdpNotifier::SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConfigId)
+SsdpNotifier::SsdpNotifier(DvStack& aDvStack)
     : iDvStack(aDvStack)
-    , iSocket(aDvStack.Env(), 0, aInterface)
+    , iSocket(aDvStack.Env())
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocketWriter)
     , iWriter(iBuffer)
-    , iInterface(aInterface)
-    , iConfigId(aConfigId)
+    , iInterface(0)
+    , iConfigId(0)
 {
+}
+
+void SsdpNotifier::Start(TIpAddress aInterface, TUint aConfigId)
+{
+    iSocket.ReBind(0, aInterface);
     iSocket.SetTtl(iDvStack.Env().InitParams().MsearchTtl()); 
+    iConfigId = aConfigId;
 }
 
 void SsdpNotifier::SsdpNotify(const Brx& aUri, ENotificationType aNotificationType)
@@ -187,17 +193,18 @@ void SsdpNotifierUpdate::SsdpNotifyServiceType(const Brx& aDomain, const Brx& aT
 
 // SsdpMsearchResponder
 
-SsdpMsearchResponder::SsdpMsearchResponder(DvStack& aDvStack, TUint aConfigId)
+SsdpMsearchResponder::SsdpMsearchResponder(DvStack& aDvStack)
     : iDvStack(aDvStack)
     , iBuffer(iResponse)
     , iWriter(iBuffer)
-    , iConfigId(aConfigId)
+    , iConfigId(0)
 {
 }
 
-void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint)
+void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint, TUint aConfigId)
 {
     iRemote.Replace(aEndpoint);
+    iConfigId = aConfigId;
 }
 
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)

@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/Discovery.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Uri.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Ssdp.h>
@@ -46,16 +47,10 @@ public:
     virtual TUint Version() const = 0;
 };
 
-class IUpnpMsgListener
-{
-public:
-    virtual void NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler) = 0;
-};
-
-
-class DviProtocolUpnp : public IDvProtocol, private IUpnpMsearchHandler, private IUpnpAnnouncementData, private IUpnpMsgListener
+class DviProtocolUpnp : public IDvProtocol, private IUpnpMsearchHandler, private IUpnpAnnouncementData
 {
     friend class DviProtocolUpnpDeviceXmlWriter;
+    static const TUint kMaxUriBytes = 256;
 public:
     static const Brn kProtocolName;
     static const Brn kDeviceXmlName;
@@ -75,8 +70,6 @@ public: // from IUpnpAnnouncementData
     TUint Version() const;
     void SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Functor aCompleted);
     void SendAlives(TIpAddress aAdapter, const Brx& aUriBase);
-private: // from IUpnpMsgListener
-    void NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler);
 private:
     DviProtocolUpnpAdapterSpecificData* AddInterface(const NetworkAdapter& aAdapter);
     void HandleInterfaceChange();
@@ -88,7 +81,7 @@ private:
     void SendAliveNotifications();
     void QueueAliveTimer();
     void SendUpdateNotifications();
-    void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
+    void GetUriDeviceXml(Bwx& aUri, const Brx& aUriBase);
     void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
     void LogMulticastNotification(const char* aType);
     void LogUnicastNotification(const char* aType);
@@ -207,147 +200,6 @@ private:
     static void GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName);
     static void WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction);
     static void WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams);
-};
-
-class DviMsg;
-
-class DviMsgScheduler : private INonCopyable
-{
-    static const TInt kMinTimerIntervalMs   = 10;
-    static const TUint kMsgIntervalMsAlive  = 40;
-    static const TUint kMsgIntervalMsByeBye = 10;
-    static const TUint kMsgIntervalMsUpdate = 20;
-public:
-    static DviMsgScheduler* NewMsearchAll(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                          const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchRoot(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                           const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchUuid(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                           const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchDeviceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                                 const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewMsearchServiceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener, const Endpoint& aRemote,
-                                                  TUint aMx, const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewNotifyAlive(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                           TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-    static DviMsgScheduler* NewNotifyByeBye(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                            TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    static DviMsgScheduler* NewNotifyUpdate(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
-                                            TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    ~DviMsgScheduler();
-    void Stop();
-private:
-    DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener, TUint aMx);
-    DviMsgScheduler(DvStack& aDvStack, IUpnpMsgListener& aListener);
-    void Construct();
-    void SetDuration(TUint aDuration);
-    void NextMsg();
-    void ScheduleNextTimer(TUint aRemainingMsgs) const;
-private:
-    DviMsg* iMsg;
-    Timer* iTimer;
-    DvStack& iDvStack;
-    TUint iEndTimeMs;
-    IUpnpMsgListener& iListener;
-    TBool iStop;
-};
-
-class DviMsg : private INonCopyable
-{
-public:
-    virtual ~DviMsg();
-    virtual TUint TotalMsgCount() const;
-    virtual TUint NextMsg();
-protected:
-    DviMsg(IUpnpAnnouncementData& aAnnouncementData, Bwh& aUri);
-protected:
-    IUpnpAnnouncementData& iAnnouncementData;
-    ISsdpNotify* iNotifier;
-    Brh iUri;
-private:
-    TUint iTotal;
-    TUint iIndex;
-    TUint iEndTimeMs;
-    TBool iStop;
-};
-
-class DviMsgMsearch : public DviMsg
-{
-protected:
-    DviMsgMsearch(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                  const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
-};
-
-class DviMsgMsearchAll : public DviMsgMsearch
-{
-private:
-    friend class DviMsgScheduler;
-    DviMsgMsearchAll(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                     const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
-};
-
-class DviMsgMsearchRoot : public DviMsgMsearch
-{
-private:
-    friend class DviMsgScheduler;
-    DviMsgMsearchRoot(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
-private: // from DviMsg
-    TUint TotalMsgCount() const;
-    TUint NextMsg();
-};
-
-class DviMsgMsearchUuid : public DviMsgMsearch
-{
-private:
-    friend class DviMsgScheduler;
-    DviMsgMsearchUuid(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
-private: // from DviMsg
-    TUint TotalMsgCount() const;
-    TUint NextMsg();
-};
-
-class DviMsgMsearchDeviceType : public DviMsgMsearch
-{
-private:
-    friend class DviMsgScheduler;
-    DviMsgMsearchDeviceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                            const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
-private: // from DviMsg
-    TUint TotalMsgCount() const;
-    TUint NextMsg();
-};
-
-class DviMsgMsearchServiceType : public DviMsgMsearch
-{
-private:
-    friend class DviMsgScheduler;
-    DviMsgMsearchServiceType(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
-                             const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
-private: // from DviMsg
-    TUint TotalMsgCount() const;
-    TUint NextMsg();
-private:
-    const OpenHome::Net::ServiceType& iServiceType;
-};
-
-class DviMsgNotify : public DviMsg
-{
-private:
-    friend class DviMsgScheduler;
-    static DviMsgNotify* NewAlive(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-    static DviMsgNotify* NewByeBye(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
-                                   Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    static DviMsgNotify* NewUpdate(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
-                                   Bwh& aUri, TUint aConfigId, Functor& aCompleted);
-    DviMsgNotify(DvStack& aDvStack, IUpnpAnnouncementData& aAnnouncementData,
-                 TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-    ~DviMsgNotify();
-private:
-    SsdpNotifier iSsdpNotifier;
-    Functor iCompleted;
 };
 
 } // namespace Net

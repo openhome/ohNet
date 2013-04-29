@@ -261,7 +261,8 @@ public:
        ,EUpdate
     };
 public:
-    SsdpNotifier(DvStack& aDvStack, TIpAddress aInterface, TUint aConfigId);
+    SsdpNotifier(DvStack& aDvStack);
+    void Start(TIpAddress aInterface, TUint aConfigId);
     // ISsdpNotify-based services
     void SsdpNotifyRoot(const Brx& aUuid, const Brx& aUri, ENotificationType aNotificationType);
     void SsdpNotifyUuid(const Brx& aUuid, const Brx& aUri, ENotificationType aNotificationType);
@@ -333,8 +334,8 @@ private:
 class SsdpMsearchResponder : public ISsdpNotify
 {
 public:
-    SsdpMsearchResponder(DvStack& aDvStack, TUint aConfigId);
-    void SetRemote(const Endpoint& aEndpoint);
+    SsdpMsearchResponder(DvStack& aDvStack);
+    void SetRemote(const Endpoint& aEndpoint, TUint aConfigId);
     // ISsdpNotify
     void SsdpNotifyRoot(const Brx& aUuid, const Brx& aUri);
     void SsdpNotifyUuid(const Brx& aUuid, const Brx& aUri);

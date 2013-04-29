@@ -56,6 +56,7 @@ objects_core = \
 	$(objdir)DviServerUpnp.$(objext) \
 	$(objdir)DviServerWebSocket.$(objext) \
 	$(objdir)DviService.$(objext) \
+	$(objdir)DviSsdpNotifier.$(objext) \
 	$(objdir)DviStack.$(objext) \
 	$(objdir)DviSubscription.$(objext) \
 	$(objdir)DviPropertyUpdateCollection.$(objext) \
@@ -292,6 +293,8 @@ $(objdir)DviServerWebSocket.$(objext) : OpenHome/Net/Device/Upnp/DviServerWebSoc
 	$(compiler)DviServerWebSocket.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp
 $(objdir)DviService.$(objext) : OpenHome/Net/Device/DviService.cpp $(headers)
 	$(compiler)DviService.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviService.cpp
+$(objdir)DviSsdpNotifier.$(objext) : OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp $(headers)
+	$(compiler)DviSsdpNotifier.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp
 $(objdir)DviStack.$(objext) : OpenHome/Net/Device/DviStack.cpp $(headers)
 	$(compiler)DviStack.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviStack.cpp
 $(objdir)DviSubscription.$(objext) : OpenHome/Net/Device/DviSubscription.cpp $(headers)

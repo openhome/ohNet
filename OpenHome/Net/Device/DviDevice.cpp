@@ -219,7 +219,7 @@ TUint DviDevice::ServiceCount() const
 
 DviService& DviDevice::Service(TUint aIndex) const
 {
-    ASSERT(aIndex < ServiceCount());
+    if (aIndex >= ServiceCount()) _asm int 3;//ASSERT(aIndex < ServiceCount());
     return *(iServices[aIndex]);
 }
 

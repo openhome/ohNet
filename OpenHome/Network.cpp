@@ -677,10 +677,10 @@ SocketTcpSession::~SocketTcpSession()
 // SocketUdpBase
 
 SocketUdpBase::SocketUdpBase(Environment& aEnv)
+    : iEnv(aEnv)
 {
     LOGF(kNetwork, "> SocketUdpBase::SocketUdpBase\n");
-    iHandle = SocketCreate(aEnv, eSocketTypeDatagram);
-    OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
+    Create();
     LOGF(kNetwork, "< SocketUdpBase::SocketUdpBase H = %d\n", iHandle);
 }
 
@@ -716,6 +716,18 @@ Endpoint SocketUdpBase::Receive(Bwx& aBuffer)
     return endpoint;
 }
 
+void SocketUdpBase::ReCreate()
+{
+    Close();
+    Create();
+}
+
+void SocketUdpBase::Create()
+{
+    iHandle = SocketCreate(iEnv, eSocketTypeDatagram);
+    OpenHome::Os::NetworkSocketSetReuseAddress(iHandle);
+}
+
 
 // SocketUdp
 
@@ -741,6 +753,12 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface)
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
     Bind(aPort, aInterface);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+}
+
+void SocketUdp::ReBind(TUint aPort, TIpAddress aInterface)
+{
+    ReCreate();
+    Bind(aPort, aInterface);
 }
 
 void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)

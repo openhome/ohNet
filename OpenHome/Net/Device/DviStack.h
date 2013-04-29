@@ -16,6 +16,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
+#include <OpenHome/Net/Private/DviSsdpNotifier.h>
 #include <OpenHome/Private/Standard.h>
 
 #include <vector>
@@ -36,6 +37,7 @@ public:
     DviSubscriptionManager& SubscriptionManager();
     IMdnsProvider* MdnsProvider();
     DviPropertyUpdateCollection& PropertyUpdateCollection();
+    DviDiscoveryManager& DiscoveryManager();
 private:
     ~DvStack();
 private:
@@ -48,6 +50,7 @@ private:
     DviServerWebSocket* iDviServerWebSocket;
     IMdnsProvider* iMdns;
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
+    DviDiscoveryManager* iDiscoveryManager;
 };
 
 } // namespace Net

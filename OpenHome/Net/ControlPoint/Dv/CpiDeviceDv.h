@@ -10,11 +10,11 @@
 #include <OpenHome/Net/Private/CpiService.h>
 
 namespace OpenHome {
+class Uri;
 namespace Net {
 
 class DviDevice;
 class CpiSubscription;
-class Uri;
 class IEventProcessor;
 
 class CpiDeviceDv : private INonCopyable, private ICpiProtocol, private ICpiDeviceObserver, private IPropertyWriterFactory
