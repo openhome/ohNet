@@ -37,7 +37,7 @@ public:
     DviSubscriptionManager& SubscriptionManager();
     IMdnsProvider* MdnsProvider();
     DviPropertyUpdateCollection& PropertyUpdateCollection();
-    DviDiscoveryManager& DiscoveryManager();
+    DviSsdpNotifierManager& SsdpNotifierManager();
 private:
     ~DvStack();
 private:
@@ -50,7 +50,7 @@ private:
     DviServerWebSocket* iDviServerWebSocket;
     IMdnsProvider* iMdns;
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
-    DviDiscoveryManager* iDiscoveryManager;
+    DviSsdpNotifierManager* iSsdpNotifierManager;
 };
 
 } // namespace Net

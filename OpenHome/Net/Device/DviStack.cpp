@@ -21,7 +21,7 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     , iMdns(NULL)
 {
     iEnv.SetDvStack(this);
-    iDiscoveryManager = new DviDiscoveryManager(*this);
+    iSsdpNotifierManager = new DviSsdpNotifierManager(*this);
     iPropertyUpdateCollection = new DviPropertyUpdateCollection(*this);
     TUint port = iEnv.InitParams().DvUpnpServerPort();
     iDviServerUpnp = new DviServerUpnp(*this, port);
@@ -41,7 +41,7 @@ DvStack::~DvStack()
     delete iDviDeviceMap;
     delete iSubscriptionManager;
     delete iPropertyUpdateCollection;
-    delete iDiscoveryManager;
+    delete iSsdpNotifierManager;
 }
 
 TUint DvStack::BootId()
@@ -96,7 +96,7 @@ DviPropertyUpdateCollection& DvStack::PropertyUpdateCollection()
     return *iPropertyUpdateCollection;
 }
 
-DviDiscoveryManager& DvStack::DiscoveryManager()
+DviSsdpNotifierManager& DvStack::SsdpNotifierManager()
 {
-    return *iDiscoveryManager;
+    return *iSsdpNotifierManager;
 }

@@ -238,16 +238,16 @@ void DeviceAnnouncement::NotifyComplete()
 }
 
 
-// DviDiscoveryManager
+// DviSsdpNotifierManager
 
-DviDiscoveryManager::DviDiscoveryManager(DvStack& aDvStack)
+DviSsdpNotifierManager::DviSsdpNotifierManager(DvStack& aDvStack)
     : iDvStack(aDvStack)
     , iLock("DVDM")
     , iShutdownSem("DVDM", 1)
 {
 }
 
-DviDiscoveryManager::~DviDiscoveryManager()
+DviSsdpNotifierManager::~DviSsdpNotifierManager()
 {
     iShutdownSem.Wait();
     
@@ -261,7 +261,7 @@ DviDiscoveryManager::~DviDiscoveryManager()
     Delete(iFreeAnnouncers);
 }
 
-void DviDiscoveryManager::AnnouncementAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::AnnouncementAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
 {
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
@@ -270,7 +270,7 @@ void DviDiscoveryManager::AnnouncementAlive(IUpnpAnnouncementData& aAnnouncement
     }
 }
 
-void DviDiscoveryManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
+void DviSsdpNotifierManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
 {
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
@@ -279,7 +279,7 @@ void DviDiscoveryManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncemen
     }
 }
 
-void DviDiscoveryManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
+void DviSsdpNotifierManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
 {
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
@@ -288,42 +288,42 @@ void DviDiscoveryManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncemen
     }
 }
 
-void DviDiscoveryManager::MsearchResponseAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
     responder->Response().StartAll(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
 }
 
-void DviDiscoveryManager::MsearchResponseRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
     responder->Response().StartRoot(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
 }
 
-void DviDiscoveryManager::MsearchResponseUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
     responder->Response().StartUuid(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
 }
 
-void DviDiscoveryManager::MsearchResponseDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
     responder->Response().StartDeviceType(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
 }
 
-void DviDiscoveryManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
     responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId);
 }
 
-void DviDiscoveryManager::Stop(const Brx& aUdn)
+void DviSsdpNotifierManager::Stop(const Brx& aUdn)
 {
     iLock.Wait();
     Stop(iActiveResponders, aUdn);
@@ -331,7 +331,7 @@ void DviDiscoveryManager::Stop(const Brx& aUdn)
     iLock.Signal();
 }
 
-void DviDiscoveryManager::Stop(std::list<Notifier*>& aList, const Brx& aUdn)
+void DviSsdpNotifierManager::Stop(std::list<Notifier*>& aList, const Brx& aUdn)
 {
     std::list<Notifier*>::iterator it = aList.begin();
     while (it != aList.end()) {
@@ -342,7 +342,7 @@ void DviDiscoveryManager::Stop(std::list<Notifier*>& aList, const Brx& aUdn)
     }
 }
 
-void DviDiscoveryManager::Delete(std::list<Notifier*>& aList)
+void DviSsdpNotifierManager::Delete(std::list<Notifier*>& aList)
 {
     std::list<Notifier*>::iterator it = aList.begin();
     while (it != aList.end()) {
@@ -351,33 +351,33 @@ void DviDiscoveryManager::Delete(std::list<Notifier*>& aList)
     }
 }
 
-DviDiscoveryManager::Responder* DviDiscoveryManager::GetResponder(IUpnpAnnouncementData& aAnnouncementData)
+DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnnouncementData& aAnnouncementData)
 {
     if (iActiveResponders.size() == 0 && iActiveAnnouncers.size() == 0) {
-        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviDiscoveryManager
+        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
         iShutdownSem.Wait();
     }
-    DviDiscoveryManager::Responder* responder;
+    DviSsdpNotifierManager::Responder* responder;
     if (iFreeResponders.size() == 0) {
         MsearchResponse* msr = new MsearchResponse(iDvStack, *this);
         responder = new Responder(msr);
         iActiveResponders.push_back(responder);
     }
     else {
-        responder = static_cast<DviDiscoveryManager::Responder*>(iFreeResponders.front());
+        responder = static_cast<DviSsdpNotifierManager::Responder*>(iFreeResponders.front());
         iActiveResponders.splice(iActiveResponders.end(), iFreeResponders, iFreeResponders.begin());
     }
     responder->SetActive(aAnnouncementData.Udn());
     return responder;
 }
 
-DviDiscoveryManager::Announcer* DviDiscoveryManager::GetAnnouncer(IUpnpAnnouncementData& aAnnouncementData)
+DviSsdpNotifierManager::Announcer* DviSsdpNotifierManager::GetAnnouncer(IUpnpAnnouncementData& aAnnouncementData)
 {
     if (iActiveResponders.size() == 0 && iActiveAnnouncers.size() == 0) {
-        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviDiscoveryManager
+        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
         iShutdownSem.Wait();
     }
-    DviDiscoveryManager::Announcer* announcer;
+    DviSsdpNotifierManager::Announcer* announcer;
     if (iFreeAnnouncers.size() == 0) {
         try {
             DeviceAnnouncement* da = new DeviceAnnouncement(iDvStack, *this);
@@ -389,14 +389,14 @@ DviDiscoveryManager::Announcer* DviDiscoveryManager::GetAnnouncer(IUpnpAnnouncem
         }
     }
     else {
-        announcer = static_cast<DviDiscoveryManager::Announcer*>(iFreeAnnouncers.front());
+        announcer = static_cast<DviSsdpNotifierManager::Announcer*>(iFreeAnnouncers.front());
         iActiveAnnouncers.splice(iActiveAnnouncers.end(), iFreeAnnouncers, iFreeAnnouncers.begin());
     }
     announcer->SetActive(aAnnouncementData.Udn());
     return announcer;
 }
 
-void DviDiscoveryManager::NotifySchedulerComplete(SsdpNotifierScheduler* aScheduler)
+void DviSsdpNotifierManager::NotifySchedulerComplete(SsdpNotifierScheduler* aScheduler)
 {
     iLock.Wait();
     if (!TryMove(aScheduler, iActiveResponders, iFreeResponders)) {
@@ -406,13 +406,13 @@ void DviDiscoveryManager::NotifySchedulerComplete(SsdpNotifierScheduler* aSchedu
         }
     }
     if (iActiveResponders.size() == 0 && iActiveAnnouncers.size() == 0) {
-        // No active Notifiers so its currently safe to delete DviDiscoveryManager
+        // No active Notifiers so its currently safe to delete DviSsdpNotifierManager
         iShutdownSem.Signal();
     }
     iLock.Signal();
 }
 
-TBool DviDiscoveryManager::TryMove(SsdpNotifierScheduler* aScheduler, std::list<Notifier*>& aFrom, std::list<Notifier*>& aTo)
+TBool DviSsdpNotifierManager::TryMove(SsdpNotifierScheduler* aScheduler, std::list<Notifier*>& aFrom, std::list<Notifier*>& aTo)
 {
     std::list<Notifier*>::iterator it = aFrom.begin();
     while (it != aFrom.end()) {
@@ -427,60 +427,60 @@ TBool DviDiscoveryManager::TryMove(SsdpNotifierScheduler* aScheduler, std::list<
 }
 
 
-// DviDiscoveryManager::Notifier
+// DviSsdpNotifierManager::Notifier
 
-DviDiscoveryManager::Notifier::~Notifier()
+DviSsdpNotifierManager::Notifier::~Notifier()
 {
     delete iScheduler;
 }
 
-SsdpNotifierScheduler* DviDiscoveryManager::Notifier::Scheduler()
+SsdpNotifierScheduler* DviSsdpNotifierManager::Notifier::Scheduler()
 {
     return iScheduler;
 }
 
-TBool DviDiscoveryManager::Notifier::MatchesDevice(const Brx& aUdn) const
+TBool DviSsdpNotifierManager::Notifier::MatchesDevice(const Brx& aUdn) const
 {
     return iUdn==aUdn;
 }
 
-void DviDiscoveryManager::Notifier::SetActive(const Brx& aUdn)
+void DviSsdpNotifierManager::Notifier::SetActive(const Brx& aUdn)
 {
     iUdn.Set(aUdn);
 }
 
-void DviDiscoveryManager::Notifier::SetInactive()
+void DviSsdpNotifierManager::Notifier::SetInactive()
 {
     iUdn.Set(Brx::Empty());
 }
 
-DviDiscoveryManager::Notifier::Notifier(SsdpNotifierScheduler* aScheduler)
+DviSsdpNotifierManager::Notifier::Notifier(SsdpNotifierScheduler* aScheduler)
     : iScheduler(aScheduler)
 {
 }
 
 
-// DviDiscoveryManager::Responder
+// DviSsdpNotifierManager::Responder
 
-DviDiscoveryManager::Responder::Responder(MsearchResponse* aResponder)
-    : DviDiscoveryManager::Notifier(aResponder)
+DviSsdpNotifierManager::Responder::Responder(MsearchResponse* aResponder)
+    : DviSsdpNotifierManager::Notifier(aResponder)
 {
 }
 
-MsearchResponse& DviDiscoveryManager::Responder::Response()
+MsearchResponse& DviSsdpNotifierManager::Responder::Response()
 {
     return *static_cast<MsearchResponse*>(iScheduler);
 }
 
 
-// DviDiscoveryManager::Announcer
+// DviSsdpNotifierManager::Announcer
 
-DviDiscoveryManager::Announcer::Announcer(DeviceAnnouncement* aAnnouncer)
-    : DviDiscoveryManager::Notifier(aAnnouncer)
+DviSsdpNotifierManager::Announcer::Announcer(DeviceAnnouncement* aAnnouncer)
+    : DviSsdpNotifierManager::Notifier(aAnnouncer)
 {
 }
 
-DeviceAnnouncement& DviDiscoveryManager::Announcer::Announcement()
+DeviceAnnouncement& DviSsdpNotifierManager::Announcer::Announcement()
 {
     return *static_cast<DeviceAnnouncement*>(iScheduler);
 }

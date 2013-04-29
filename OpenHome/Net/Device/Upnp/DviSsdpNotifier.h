@@ -93,11 +93,11 @@ private:
     TUint iNextMsgIndex;
 };
 
-class DviDiscoveryManager : private ISsdpNotifyListener
+class DviSsdpNotifierManager : private ISsdpNotifyListener
 {
 public:
-    DviDiscoveryManager(DvStack& aDvStack);
-    ~DviDiscoveryManager();
+    DviSsdpNotifierManager(DvStack& aDvStack);
+    ~DviSsdpNotifierManager();
     void AnnouncementAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId);
     void AnnouncementByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted);
     void AnnouncementUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted);
