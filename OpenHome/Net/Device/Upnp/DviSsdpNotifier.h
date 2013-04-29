@@ -138,11 +138,8 @@ private:
 private:
     void Stop(std::list<Notifier*>& aList, const Brx& aUdn);
     void Delete(std::list<Notifier*>& aList);
-    Responder* GetResponder();
-    Announcer* GetAnnouncer();
-    void SetActive(Responder* aResponder, IUpnpAnnouncementData& aAnnouncementData);
-    void SetActive(Announcer* aAnnouncer, IUpnpAnnouncementData& aAnnouncementData);
-    void SetActive(std::list<Notifier*>& aList, Notifier* aNotifier, IUpnpAnnouncementData& aAnnouncementData);
+    Responder* GetResponder(IUpnpAnnouncementData& aAnnouncementData);
+    Announcer* GetAnnouncer(IUpnpAnnouncementData& aAnnouncementData);
     TBool TryMove(SsdpNotifierScheduler* aScheduler, std::list<Notifier*>& aFrom, std::list<Notifier*>& aTo);
 private: // from ISsdpNotifyListener
     void NotifySchedulerComplete(SsdpNotifierScheduler* aScheduler);
