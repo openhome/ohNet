@@ -9,6 +9,8 @@
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Printer.h>
 
+#include <climits>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
@@ -64,7 +66,15 @@ void SsdpNotifierScheduler::SendNextMsg()
 void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
-    TInt remaining = iEndTimeMs - Os::TimeInMs(iDvStack.Env().OsCtx());
+    const TUint timeNow = Os::TimeInMs(iDvStack.Env().OsCtx());
+    TInt remaining;
+    if (timeNow > iEndTimeMs && timeNow-iEndTimeMs > UINT_MAX/2) {
+        // clock may wrap during this series of announcements but it hasn't wrapped yet
+        remaining = (UINT_MAX - timeNow) + iEndTimeMs;
+    }
+    else {
+        remaining = iEndTimeMs - timeNow;
+    }
     TInt maxUpdateTimeMs = (TInt)iDvStack.Env().InitParams().DvMaxUpdateTimeSecs() * 1000;
     ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
