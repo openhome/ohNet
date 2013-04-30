@@ -47,6 +47,7 @@ class MsearchResponse : public SsdpNotifierScheduler
 {
 public:
     MsearchResponse(DvStack& aDvStack, ISsdpNotifyListener& aListener);
+    ~MsearchResponse();
     void StartAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId);
     void StartRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId);
     void StartUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId);

@@ -104,6 +104,11 @@ MsearchResponse::MsearchResponse(DvStack& aDvStack, ISsdpNotifyListener& aListen
     iNotifier = new SsdpMsearchResponder(aDvStack);
 }
 
+MsearchResponse::~MsearchResponse()
+{
+    delete iNotifier;
+}
+
 void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
     TUint nextMsgIndex = NEXT_MSG_ROOT;
