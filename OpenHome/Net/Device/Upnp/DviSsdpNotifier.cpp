@@ -155,7 +155,7 @@ void MsearchResponse::Start(IUpnpAnnouncementData& aAnnouncementData, TUint aTot
     iRemainingMsgs = aTotalMsgs;
     static_cast<SsdpMsearchResponder*>(iNotifier)->SetRemote(aRemote, aConfigId);
     iUri.Replace(aUri);
-    SsdpNotifierScheduler::Start(aMx, iRemainingMsgs);
+    SsdpNotifierScheduler::Start(aMx * 1000, iRemainingMsgs);
 }
 
 TUint MsearchResponse::NextMsg()
