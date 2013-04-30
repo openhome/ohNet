@@ -18,6 +18,7 @@ using namespace OpenHome::Net;
 
 SsdpNotifierScheduler::~SsdpNotifierScheduler()
 {
+    delete iTimer;
 }
 
 SsdpNotifierScheduler::SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener)
