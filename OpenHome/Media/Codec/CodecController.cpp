@@ -101,6 +101,7 @@ TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
 void CodecController::CodecThread()
 {
     iRecognising = true;
+    iRecogniseRead = false;
     iStreamStarted = false;
     iQuit = false;
     while (!iQuit) {
@@ -161,6 +162,10 @@ void CodecController::CodecThread()
                 }
             }
             iAudioEncoded->Add(remaining);
+            if (iRecogniseRead) {
+                TrySeek(iStreamId, 0);
+                iRecogniseRead = false;
+            }
             if (iActiveCodec == NULL) {
                 // FIXME - send error indication down the pipeline?
                 iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
@@ -235,7 +240,9 @@ void CodecController::ReleaseAudioEncoded()
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
-    ASSERT(!iRecognising); // codec isn't allowed to consume data while recognising
+    if (iRecognising) {
+        iRecogniseRead = true;
+    }
     if (iPendingMsg != NULL) {
         if (DoRead(aBuf, aBytes)) {
             return;

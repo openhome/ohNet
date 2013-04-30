@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Os.h>
@@ -17,6 +18,7 @@ extern "C" {
 //#include <wmawintypes.h>
 #include <pcmfmt.h>
 #include <wmaudio.h>
+#include <wmaguids.h>
 
 #define MAX_SAMPLES 16384
 short g_pLeft [MAX_SAMPLES * 2]; // expand the container for 24-bit samples
@@ -40,7 +42,7 @@ public:
     CodecWma();
     ~CodecWma();
     void CopyToBigEndian(TUint aSamples, TUint aBytesPerSample);
-    TUint32 Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aPeek);
+    TUint32 Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset);
 private:
     private: // from CodecBase
     TBool Recognise(const Brx& aData);
@@ -70,6 +72,11 @@ private:
     TUint64 iSeekOffset;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
+//private:
+//    static const TUint16 kWmaCodecId = 0x0161;
+//    static const TUint kGuidSize = 16;
+//    static const TUint kHeaderSizeBytes = kGuidSize + 8;   // number of bytes for guid + header size info
+//    static const TUint kAsfHeaderSize = 30;
 };
 
 } //namespace Codec
@@ -115,8 +122,6 @@ TUint16 wMBRTotalStreams = 0;
 
 tWMAFileContDesc const *pdesc = 0;
 
-TBool peekData = FALSE;
-
 CodecWma* iWma = 0;
 
 TBool CodecWma::Recognise(const Brx& aData)
@@ -133,8 +138,6 @@ TBool CodecWma::Recognise(const Brx& aData)
     nMBRTargetStream = 1;
     wMBRTotalStreams = 0;
     pdesc = 0;
-
-    peekData = TRUE;    // just peek during recognise
 
     // from original main() for arm...
     // fold-down to 2 channels, -cm 0x03
@@ -153,6 +156,52 @@ TBool CodecWma::Recognise(const Brx& aData)
     memset ((void *)&g_hdr, 0, sizeof(g_hdr));
 
     LOG(kCodec, "CodecWma::Recognise\n");
+
+    //TBool isWma = false;
+    //TByte* ptr = const_cast<TByte*>(aData.Ptr());
+    //TUint offset = 0;
+    //if (WMA_IsEqualGUID(&CLSID_CAsfHeaderObjectV0, ptr)) { // check ASF_Header_Object guid
+    //    LOG(kCodec, "CodecWma::Recognise Found ASF_Header_Object\n");
+    //    offset = kAsfHeaderSize;    // skip past asf header object
+    //    for (;;) {
+    //        if(aData.Bytes() >= offset + kHeaderSizeBytes) {   // check we have at least enough data to read next header guid + size
+    //            TByte* ptrHeader = const_cast<TByte*>(aData.Ptr()+offset);
+    //            if (WMA_IsEqualGUID(&CLSID_CAsfStreamPropertiesObjectV1, ptrHeader)) { // check ASF_Header_Stream_Properties_Object guid
+    //                LOG(kCodec, "CodecWma::Recognise Found ASF_Stream_Properties_Object\n");
+
+    //                // check stream type
+    //                offset += kHeaderSizeBytes;
+    //                ptrHeader += kHeaderSizeBytes;
+    //                if (aData.Bytes() < offset + kGuidSize) {
+    //                    break;
+    //                }
+    //                if (!WMA_IsEqualGUID(&CLSID_CAsfAudioMedia, ptrHeader)) {
+    //                    break;  // check we have audio data
+    //                }
+
+    //                // get length of type-specific data
+    //                offset += 54; // stream type + error corr type + time offset + type-specific data len + error data len + flags + reserved
+    //                if (aData.Bytes() < offset + 2) {
+    //                    break;
+    //                }
+    //                TUint16 codec = SwapEndian16(Converter::BeUint16At(aData, offset));
+    //                LOG(kCodec, "CodecWma::Recognise codec 0x%x\n", codec);
+    //                if (codec == kWmaCodecId) {
+    //                    isWma = true;
+    //                    break;
+    //                }
+    //            }
+    //            else {  // skip past this object, recording its size for bounds checking
+    //                offset += kGuidSize;   // skip past guid
+    //                TUint64 size = TUint64(SwapEndian32(Converter::BeUint32At(aData, offset+4))) << 32 | SwapEndian32(Converter::BeUint32At(aData, offset));
+    //                offset += static_cast<TUint>(size-kGuidSize);
+    //            }
+    //        }
+    //        else {  // exhausted buffer and not found WMA header
+    //            break;
+    //        }
+    //    }
+    //}
 
     iRecogBuf.Replace(aData);
 
@@ -182,8 +231,8 @@ TBool CodecWma::Recognise(const Brx& aData)
 
 void CodecWma::StreamInitialise()
 {
-    peekData = FALSE;
     iSeekOffset = 0;
+    iWmaReadOffset = 0; // stream will have been pulled back to start after recognition
 
     // Check for MBR
     rc = WMAFileMBRAudioStreams(&g_hdrstate, &wMBRTotalStreams);
@@ -479,42 +528,29 @@ void CodecWma::CopyToBigEndian(TUint aSamples, TUint aBytesPerSample)
     iOutBuf.SetBytes(aSamples*aBytesPerSample);
 }
 
-TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aPeek)
+TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset)
 {
-    // LOG(kCodec, ">Wma::Read %u bytes at %llu. Peek %d\n", aBytes, aOffset, aPeek);
+    //LOG(kCodec, ">Wma::Read %u bytes at %llu.\n", aBytes, aOffset);
     aOffset -= static_cast<TUint32>(iSeekOffset); // offset to the seeked position
     iInBuf.SetBytes(0);
-    if(aPeek) {
-            ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
-            if (iRecogBuf.Bytes() < aOffset || iRecogBuf.Bytes()-aOffset < aBytes) {
-                // exhausted the recognise buffer and still not recognised stream
-                ASSERTS();  // Shouldn't happen normally, but assert if we exhaust buffer and it maybe needs resized.
-                iInBuf.SetBytes(0);
-            }
-            else {
-                Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(aOffset), aBytes);
-                iInBuf.Replace(tmpBuf);
-            }
-    }
-    else {
-        if(aOffset != iWmaReadOffset) {
-            // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
-            // reading of the stream is sequential so dump any sections that are not required
-            TUint64 skipTotal = aOffset-iWmaReadOffset;
+    if(aOffset != iWmaReadOffset) {
+        // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
+        // reading of the stream is sequential so dump any sections that are not required
+        TUint64 skipTotal = aOffset-iWmaReadOffset;
+        while (skipTotal > 0) {
             TUint64 skipBytes = skipTotal;
-            while (skipTotal > 0) {
-                if (skipBytes > iInBuf.MaxBytes()) {
-                    skipBytes = iInBuf.MaxBytes();
-                }
-                iController->Read(iInBuf, static_cast<TUint>(skipBytes));
-                iInBuf.SetBytes(0);
-                skipTotal -= skipBytes;
+            if (skipBytes > iInBuf.MaxBytes()) {
+                skipBytes = iInBuf.MaxBytes();
             }
-            iWmaReadOffset = aOffset;
+            iController->Read(iInBuf, static_cast<TUint>(skipBytes));
+            iInBuf.SetBytes(0);
+            skipTotal -= skipBytes;
         }
-        iController->Read(iInBuf, aBytes);
-        iWmaReadOffset += iInBuf.Bytes();
+        iWmaReadOffset = aOffset;
     }
+    iController->Read(iInBuf, aBytes);
+    iWmaReadOffset += iInBuf.Bytes();
+    //}
     *aDataPtr = iInBuf.Ptr();
 
     // LOG(kCodec, "<CodecWma::Read: [%x][%x], next read at %llu\n", (int)**aDataPtr, (int)*(*aDataPtr+1), iWmaReadOffset);
@@ -530,7 +566,7 @@ tWMA_U32 WMAFileCBGetData(
 {
     LOG(kCodec, "WMAFileCBGetData state %d, offset %llu, num_bytes %u\n", state, offset, num_bytes);
     ASSERT(iWma);
-    TUint32 bytes = iWma->Read((const TUint8 **)ppData, num_bytes, offset, peekData);
+    TUint32 bytes = iWma->Read((const TUint8 **)ppData, num_bytes, offset);
     LOG(kCodec, "WMAFileCBGetData bytes %d\n", bytes);
     return(bytes);
 }

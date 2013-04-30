@@ -1124,11 +1124,23 @@ void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
     // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
     invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
 
+
+    // Files to check behaviour of codec wrappers, other than their decoding behaviour.
+    std::vector<AudioFileDescriptor> streamOnlyFiles;
+    //// Test different combinations of ID3 tags.
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-no_tags.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v1.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v2.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-dual_tags.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //// A file that does not play on existing DS's.
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
+
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles, aLib.Env(), uri));
     runner.Add(new SuiteCodecSeek(stdFiles, aLib.Env(), uri));
     runner.Add(new SuiteCodecSeekFromStart(stdFiles, aLib.Env(), uri));
     runner.Add(new SuiteCodecZeroCrossings(stdFiles, aLib.Env(), uri));
     runner.Add(new SuiteCodecInvalidType(invalidFiles, aLib.Env(), uri));
+    runner.Add(new SuiteCodecStream(streamOnlyFiles, aLib.Env(), uri));
     runner.Run();
 }

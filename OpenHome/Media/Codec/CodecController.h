@@ -104,6 +104,7 @@ private:
     Msg* iPendingMsg;
     TBool iQueueTrackData;
     TBool iRecognising;
+    TBool iRecogniseRead;
     TBool iStreamStarted;
     TBool iStreamEnded;
     TBool iQuit;
