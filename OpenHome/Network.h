@@ -86,7 +86,7 @@ private:
     static const uint32_t kLogPlainText = 1;
     static const uint32_t kLogHex       = 2;
     uint32_t iLog;
-    mutable Mutex iLogLock;
+    mutable Mutex iLock;
 };
 
 /**
