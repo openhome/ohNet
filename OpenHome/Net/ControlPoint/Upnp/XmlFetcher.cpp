@@ -83,13 +83,21 @@ void XmlFetch::Fetch()
         Endpoint endpoint(iUri->Port(), iUri->Host());
         TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
         socket.Connect(endpoint, timeout);
+        WriteRequest(socket);
+        Read(socket);
     }
     catch (NetworkTimeout&) {
         SetError(Error::eSocket, Error::eCodeTimeout, Error::kDescriptionSocketTimeout);
-        THROW(NetworkTimeout);
     }
-    WriteRequest(socket);
-    Read(socket);
+    catch (HttpError&) {
+        SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown);
+    }
+    catch (WriterError&) {
+        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+    }
+    catch (ReaderError&) {
+        SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
+    }
     iLock.Wait();
     iSocket = NULL;
     iLock.Signal();
@@ -270,7 +278,6 @@ void XmlFetcher::Run()
             }
         }
         catch (HttpError&) {
-            iFetch->SetError(Error::eHttp, Error::kCodeUnknown, Error::kDescriptionUnknown);
             LogError("Http");
         }
         catch (NetworkTimeout&) {
@@ -282,7 +289,6 @@ void XmlFetcher::Run()
             LogError("Network");
         }
         catch (WriterError&) {
-            iFetch->SetError(Error::eSocket, Error::kCodeUnknown, Error::kDescriptionUnknown);
             LogError("Writer");
         }
         catch (ReaderError&) {
