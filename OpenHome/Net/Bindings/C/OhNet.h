@@ -809,6 +809,12 @@ DllExport void STDCALL OhNetFreeExternal(void* aPtr);
  */
 DllExport void STDCALL OhNetDebugSetLevel(uint32_t aLevel);
 
+/**
+ * Terminate the ohNet process after a fatal error. On some platforms, this call
+ * may invoke a debugger or produce a crash dump.
+ */
+DllExport void STDCALL OhNetAbortProcess();
+
 /* @} */
 
 #ifdef __cplusplus

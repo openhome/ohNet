@@ -1044,6 +1044,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetAbortProcess();
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
         private bool iIsDisposed;
@@ -1203,6 +1209,14 @@ namespace OpenHome.Net.Core
         public static void SetDebugLevel(DebugLevel aLevel)
         {
             OhNetDebugSetLevel((uint)aLevel);
+        }
+
+        /// <summary>
+        /// Terminate the process after a fatal error.
+        /// </summary>
+        public static void AbortProcess()
+        {
+            OhNetAbortProcess();
         }
 
 #if IOS

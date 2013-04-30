@@ -79,6 +79,14 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAda
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetDebugSetLevel
   (JNIEnv *, jclass, jint);
 
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetAbortProcess
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetAbortProcess
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

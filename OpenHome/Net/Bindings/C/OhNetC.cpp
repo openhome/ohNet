@@ -477,3 +477,8 @@ void STDCALL OhNetDebugSetLevel(uint32_t aLevel)
 {
     Debug::SetLevel(aLevel);
 }
+
+void STDCALL OhNetAbortProcess()
+{
+    Os::Quit(gEnv->OsCtx());
+}

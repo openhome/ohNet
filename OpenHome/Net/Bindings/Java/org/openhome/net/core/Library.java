@@ -15,6 +15,7 @@ public class Library
     private static native void OhNetSetCurrentSubnet(long aSubnet);
     private static native long OhNetCurrentSubnetAdapter();
     private static native void OhNetDebugSetLevel(int aLevel);
+    private static native void OhNetAbortProcess();
 
     static
     {
@@ -173,6 +174,15 @@ public class Library
     public void setDebugLevel(int aLevel)
     {
         OhNetDebugSetLevel(aLevel);
+    }
+    
+    /**
+     * Terminate the ohNet process after a fatal error. On some platforms, this call
+     * may invoke a debugger or produce a crash dump.
+     */
+    public void abortProcess()
+    {
+        OhNetAbortProcess();
     }
     
     /**

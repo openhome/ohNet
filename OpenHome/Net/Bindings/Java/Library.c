@@ -14,10 +14,10 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialise
   (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
-	aEnv = aEnv;
-	aClass = aClass;
-	
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    aEnv = aEnv;
+    aClass = aClass;
+    
     return (jlong) OhNetLibraryInitialise(params);
 }
 
@@ -29,11 +29,11 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialis
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialiseMinimal
   (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
-	aEnv = aEnv;
-	aClass = aClass;
-	
-	return (jlong) OhNetLibraryInitialiseMinimal(params);
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    aEnv = aEnv;
+    aClass = aClass;
+    
+    return (jlong) OhNetLibraryInitialiseMinimal(params);
 }
 
 /*
@@ -47,14 +47,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
 #ifdef DEFINE_LITTLE_ENDIAN
     TIpAddress subnet = (TIpAddress) SwapEndian32(aSubnet);
 #elif defined DEFINE_BIG_ENDIAN
-	TIpAddress subnet = (TIpAddress) aSubnet;
+    TIpAddress subnet = (TIpAddress) aSubnet;
 #else
 # error Endianness not defined
 #endif
-	aEnv = aEnv;
-	aClass = aClass;
-	
-	return (jint) OhNetLibraryStartCp(subnet);
+    aEnv = aEnv;
+    aClass = aClass;
+    
+    return (jint) OhNetLibraryStartCp(subnet);
 }
 
 /*
@@ -65,10 +65,10 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
 JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartDv
   (JNIEnv *aEnv, jclass aClass)
 {
-	aEnv = aEnv;
-	aClass = aClass;
+    aEnv = aEnv;
+    aClass = aClass;
 
-	return (jint) OhNetLibraryStartDv();
+    return (jint) OhNetLibraryStartDv();
 }
 
 /*
@@ -87,9 +87,9 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombi
  #error Endianness not defined
 #endif
     aEnv = aEnv;
-	aClass = aClass;
-	
-	return (jint) OhNetLibraryStartCombined(subnet);
+    aClass = aClass;
+    
+    return (jint) OhNetLibraryStartCombined(subnet);
 }
 
 /*
@@ -100,10 +100,10 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombi
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryClose
   (JNIEnv *aEnv, jclass aClass)
 {
-	aEnv = aEnv;
-	aClass = aClass;
+    aEnv = aEnv;
+    aClass = aClass;
 
-	OhNetLibraryClose();
+    OhNetLibraryClose();
 }
 
 /*
@@ -114,12 +114,12 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryClose
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
   (JNIEnv *aEnv, jclass aClass, jlong aSubnet)
 {
-	OhNetHandleNetworkAdapter subnet = (OhNetHandleNetworkAdapter) (size_t)aSubnet;
-	TIpAddress subnetAddress = OhNetNetworkAdapterSubnet(subnet);
-	aEnv = aEnv;
-	aClass = aClass;
+    OhNetHandleNetworkAdapter subnet = (OhNetHandleNetworkAdapter) (size_t)aSubnet;
+    TIpAddress subnetAddress = OhNetNetworkAdapterSubnet(subnet);
+    aEnv = aEnv;
+    aClass = aClass;
 
-	OhNetSetCurrentSubnet(subnetAddress);
+    OhNetSetCurrentSubnet(subnetAddress);
 }
 
 /*
@@ -144,10 +144,24 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetDebugSetLevel
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAdapter
   (JNIEnv *aEnv, jclass aClass)
 {
-	aEnv = aEnv;
-	aClass = aClass;
+    aEnv = aEnv;
+    aClass = aClass;
 
-	return (jlong) (size_t)OhNetCurrentSubnetAdapter("Java client");
+    return (jlong) (size_t)OhNetCurrentSubnetAdapter("Java client");
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetAbortProcess
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetAbortProcess
+  (JNIEnv *aEnv, jclass aClass)
+{
+    aEnv = aEnv;
+    aClass = aClass;
+
+    OhNetAbortProcess();
 }
 
 #ifdef __cplusplus
