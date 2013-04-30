@@ -11,14 +11,8 @@
 
 extern "C" {
 
-//#define i386
-//#define linux
-
-//#include <wmatypes.h>
-//#include <wmawintypes.h>
 #include <pcmfmt.h>
 #include <wmaudio.h>
-#include <wmaguids.h>
 
 #define MAX_SAMPLES 16384
 short g_pLeft [MAX_SAMPLES * 2]; // expand the container for 24-bit samples
@@ -72,11 +66,6 @@ private:
     TUint64 iSeekOffset;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
-//private:
-//    static const TUint16 kWmaCodecId = 0x0161;
-//    static const TUint kGuidSize = 16;
-//    static const TUint kHeaderSizeBytes = kGuidSize + 8;   // number of bytes for guid + header size info
-//    static const TUint kAsfHeaderSize = 30;
 };
 
 } //namespace Codec
@@ -156,52 +145,6 @@ TBool CodecWma::Recognise(const Brx& aData)
     memset ((void *)&g_hdr, 0, sizeof(g_hdr));
 
     LOG(kCodec, "CodecWma::Recognise\n");
-
-    //TBool isWma = false;
-    //TByte* ptr = const_cast<TByte*>(aData.Ptr());
-    //TUint offset = 0;
-    //if (WMA_IsEqualGUID(&CLSID_CAsfHeaderObjectV0, ptr)) { // check ASF_Header_Object guid
-    //    LOG(kCodec, "CodecWma::Recognise Found ASF_Header_Object\n");
-    //    offset = kAsfHeaderSize;    // skip past asf header object
-    //    for (;;) {
-    //        if(aData.Bytes() >= offset + kHeaderSizeBytes) {   // check we have at least enough data to read next header guid + size
-    //            TByte* ptrHeader = const_cast<TByte*>(aData.Ptr()+offset);
-    //            if (WMA_IsEqualGUID(&CLSID_CAsfStreamPropertiesObjectV1, ptrHeader)) { // check ASF_Header_Stream_Properties_Object guid
-    //                LOG(kCodec, "CodecWma::Recognise Found ASF_Stream_Properties_Object\n");
-
-    //                // check stream type
-    //                offset += kHeaderSizeBytes;
-    //                ptrHeader += kHeaderSizeBytes;
-    //                if (aData.Bytes() < offset + kGuidSize) {
-    //                    break;
-    //                }
-    //                if (!WMA_IsEqualGUID(&CLSID_CAsfAudioMedia, ptrHeader)) {
-    //                    break;  // check we have audio data
-    //                }
-
-    //                // get length of type-specific data
-    //                offset += 54; // stream type + error corr type + time offset + type-specific data len + error data len + flags + reserved
-    //                if (aData.Bytes() < offset + 2) {
-    //                    break;
-    //                }
-    //                TUint16 codec = SwapEndian16(Converter::BeUint16At(aData, offset));
-    //                LOG(kCodec, "CodecWma::Recognise codec 0x%x\n", codec);
-    //                if (codec == kWmaCodecId) {
-    //                    isWma = true;
-    //                    break;
-    //                }
-    //            }
-    //            else {  // skip past this object, recording its size for bounds checking
-    //                offset += kGuidSize;   // skip past guid
-    //                TUint64 size = TUint64(SwapEndian32(Converter::BeUint32At(aData, offset+4))) << 32 | SwapEndian32(Converter::BeUint32At(aData, offset));
-    //                offset += static_cast<TUint>(size-kGuidSize);
-    //            }
-    //        }
-    //        else {  // exhausted buffer and not found WMA header
-    //            break;
-    //        }
-    //    }
-    //}
 
     iRecogBuf.Replace(aData);
 
@@ -494,7 +437,7 @@ TBool CodecWma::TrySeek(TUint aStreamId, TUint64 aSample)
     tWMA_U32 actualSeconds;
     tWMAFileStatus rv;
     // this will read a few bytes from the start of the file and determine the approximate offset into
-    // the file that corresponds to the supplied time, iSelector->Seek() will then GET from that offset
+    // the file that corresponds to the supplied time, will then seek from that offset
     // The decoder expects to be working on a flat file structure and uses absolute positioning in the file,
     // so use iSeekOffset to compensate for the partial get offset.
     rv = WMAFileSeek (g_state, seconds*1000, &actualSeconds, &iSeekOffset); // sets pInt->hdr_parse.nextPacketOffset to start of decode
@@ -550,7 +493,6 @@ TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset)
     }
     iController->Read(iInBuf, aBytes);
     iWmaReadOffset += iInBuf.Bytes();
-    //}
     *aDataPtr = iInBuf.Ptr();
 
     // LOG(kCodec, "<CodecWma::Read: [%x][%x], next read at %llu\n", (int)**aDataPtr, (int)*(*aDataPtr+1), iWmaReadOffset);
