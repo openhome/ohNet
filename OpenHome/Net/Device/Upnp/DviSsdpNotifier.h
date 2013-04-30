@@ -16,6 +16,7 @@ class SsdpNotifierScheduler;
 class ISsdpNotifyListener
 {
 public:
+    virtual ~ISsdpNotifyListener() {}
     virtual void NotifySchedulerComplete(SsdpNotifierScheduler* aScheduler) = 0;
 };
 
