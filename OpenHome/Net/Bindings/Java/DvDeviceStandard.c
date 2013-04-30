@@ -41,6 +41,7 @@ int32_t STDCALL CallbackResourceManager(void* aUserData, const char* aUriTail, T
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "writeResource", "(JLjava/lang/String;IJJJJJ)V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("Method ID writeResource() not found.\n");
 		fflush(stdout);

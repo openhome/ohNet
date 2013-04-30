@@ -39,6 +39,7 @@ void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceAdded", "(J)V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("CpDeviceListJNI: Method ID \"deviceAdded()\" not found.\n");
 		fflush(stdout);
@@ -75,6 +76,7 @@ void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceRemoved", "(J)V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("CpDeviceListJNI: Method ID \"deviceRemoved()\" not found.\n");
 		fflush(stdout);

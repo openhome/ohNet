@@ -37,12 +37,14 @@ static void STDCALL CallbackMessage(void* aPtr, const char* aMsg)
     }
     cls = (*env)->GetObjectClass(env, ref->callbackObj);
     mid = (*env)->GetMethodID(env, cls, "message", "(Ljava/lang/String;)V");
+    (*env)->DeleteLocalRef(env, cls);
     if (mid == 0) {
         printf("Method ID message() not found.\n");
         return;
     }
     msg = (*env)->NewStringUTF(env, aMsg);
     (*env)->CallVoidMethod(env, ref->callbackObj, mid, msg);
+    (*env)->DeleteLocalRef(env, msg);
 
     // leave daemon thread attached to the VM
 }

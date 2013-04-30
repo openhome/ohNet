@@ -37,6 +37,7 @@ static void STDCALL CallbackDeviceDisabled(void* aPtr)
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceDisabled", "()V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("Method ID deviceDisabled() not found.\n");
 		return;

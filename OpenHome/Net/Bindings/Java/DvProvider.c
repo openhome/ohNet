@@ -36,6 +36,7 @@ static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation)
     }
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "actionInvoked", "(J)V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("Method ID actionInvoked() not found.\n");
 		return;

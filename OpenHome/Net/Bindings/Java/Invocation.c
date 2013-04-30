@@ -40,6 +40,7 @@ void STDCALL AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
 	
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "asyncComplete", "(JJ)V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0)
 	{
 		printf("Method ID not found.\n");

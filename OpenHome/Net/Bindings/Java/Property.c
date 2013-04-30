@@ -39,6 +39,7 @@ void STDCALL ChangeCallback(void* aPtr)
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("PropertyJNI: Method ID notifyChange() not found.\n");
 		return;

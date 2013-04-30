@@ -37,6 +37,7 @@ static void STDCALL CallbackChange(void* aPtr)
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("Method ID notifyChange() not found.\n");
 		return;
@@ -73,6 +74,7 @@ static void STDCALL CallbackInitial(void* aPtr)
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
+    (*env)->DeleteLocalRef(env, cls);
 	if (mid == 0) {
 		printf("Method ID notifyChange() not found.\n");
 		return;
