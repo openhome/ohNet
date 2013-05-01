@@ -51,6 +51,8 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
+    MsgAudioEncoded* StripContainer(MsgAudioEncoded* aMsg);
+private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     TBool iCheckForContainer;
