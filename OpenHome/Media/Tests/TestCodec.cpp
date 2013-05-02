@@ -151,7 +151,6 @@ protected:
     ~SuiteCodecStream();
     Brx* StartStreaming(const Brx& aTestName, const Brx& aFilename);
 private:
-    void Init();
     void TestJiffies();
 protected: // from SuiteUnitTest
     virtual void Setup();
@@ -509,7 +508,6 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecStream::TestJiffies));
     }
-    Init();
 }
 
 SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
@@ -524,37 +522,27 @@ SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFil
     , iFiles(aFiles)
     , iFileNum(0)
 {
-    Init();
 }
 
 SuiteCodecStream::~SuiteCodecStream()
 {
-    delete iContainer;
-    delete iMsgFactory;
-    delete iInfoAggregator;
-    delete iElementDownstream;
-    delete iSupply;
-    delete iReservoir;
-    delete iFlushIdProvider;
-}
-
-void SuiteCodecStream::Init()
-{
-    iInfoAggregator = new TestCodecInfoAggregator();
-    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
-    // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
-    iElementDownstream = new TestCodecPipelineElementDownstream(*this);
-    iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
-    iSupply = new Supply(*iMsgFactory, *iReservoir);
-    iFlushIdProvider = new TestCodecFlushIdProvider();
-    iContainer = new Container(*iMsgFactory, *iReservoir);
 }
 
 void SuiteCodecStream::Setup()
 {
     iJiffies = 0;
-    iFiller = new TestCodecFiller(iEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
+
+    iInfoAggregator = new TestCodecInfoAggregator();
+    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
+    iElementDownstream = new TestCodecPipelineElementDownstream(*this);
+    iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    iContainer = new Container(*iMsgFactory, *iReservoir);
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
+    iSupply = new Supply(*iMsgFactory, *iReservoir);
+    iFlushIdProvider = new TestCodecFlushIdProvider();
+    iFiller = new TestCodecFiller(iEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
+
     // These can be re-ordered to check for problems in the recognise function of each codec.
     iController->AddCodec(CodecFactory::NewWav());
     iController->AddCodec(CodecFactory::NewFlac());
@@ -569,8 +557,15 @@ void SuiteCodecStream::Setup()
 
 void SuiteCodecStream::TearDown()
 {
-    delete iController;
     delete iFiller;
+    delete iFlushIdProvider;
+    delete iSupply;
+    delete iController;
+    delete iContainer;
+    delete iMsgFactory;
+    delete iReservoir;
+    delete iElementDownstream;
+    delete iInfoAggregator;
 }
 
 Msg* SuiteCodecStream::ProcessMsg(MsgAudioPcm* aMsg)
