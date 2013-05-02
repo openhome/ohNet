@@ -19,6 +19,7 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     , iCheckForContainer(false)
     , iContainerSize(0)
     , iRemainingContainerSize(0)
+    , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iStreamHandler(NULL)
     , iAudioEncoded(NULL)
 {
@@ -75,6 +76,12 @@ MsgAudioEncoded* Container::StripContainer(MsgAudioEncoded* aMsg)
 
 Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+        // throw away buffered data
+        aMsg->RemoveRef();
+        return NULL;
+    }
+
     if (iAudioEncoded != NULL) {    // pulling more data in as iAudioEncoded->Bytes()<EncodedAudio::kMaxBytes
         iAudioEncoded->Add(aMsg);
         return NULL;
@@ -84,6 +91,8 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
     // potentially allowing check below for subsequent containers.
     // Otherwise, if only did this at end of function, could pass data with a container down to codec.
     aMsg = StripContainer(aMsg);
+
+    //iCheckForContainer = true;
 
     if (aMsg != NULL) { // don't do anything if we're still processing the previous container
         if (iCheckForContainer) {
@@ -119,7 +128,9 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
                     // Check for an MPEG4 header.
                     Mpeg4Start mp4(*this);
                     LOG(kMedia, "Container::ProcessMsg found MPEG4 header of %u bytes -- skipping\n", mp4.ContainerSize());
-                    iRemainingContainerSize += mp4.ContainerSize();
+                    // only size of partial MPEG4 container, up to mdhd atom (codec-specific data is contained after this point)
+                    iContainerSize += 0;
+                    iRemainingContainerSize = mp4.ContainerSize();
                     iCheckForContainer = false;
                 }
                 catch (MediaMpeg4FileInvalid) { // thrown from Mpeg4 constructor
@@ -194,6 +205,10 @@ Msg* Container::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Container::ProcessMsg(MsgFlush* aMsg)
 {
+    if (iExpectedFlushId == aMsg->Id()) {
+        iExpectedFlushId = MsgFlush::kIdInvalid;
+        iCheckForContainer = true; // need to reset containersize here too?
+    }
     return aMsg;
 }
 
@@ -209,7 +224,8 @@ EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 
 TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset + iContainerSize);
+    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset + iContainerSize);
+    return iExpectedFlushId;
 }
 
 TUint Container::TryStop(TUint aTrackId, TUint aStreamId)

@@ -182,7 +182,6 @@ protected:
     static const TUint kDuration = 10;          // Test file duration (in seconds).
     static const TUint kTotalJiffies = kDuration * Jiffies::kJiffiesPerSecond;
     static const TUint kFrequencyHz = 1000;
-
 };
 
 class SuiteCodecSeek : public SuiteCodecStream
@@ -303,8 +302,8 @@ TUint64 AudioFileDescriptor::Jiffies() const
     TUint remainingSamples = iSamples - iSampleRate*wholeSecs;
     TUint jiffiesPerSample = jiffiesPerSecond/iSampleRate;
 
-    jiffies = wholeSecs*jiffiesPerSecond + remainingSamples*jiffiesPerSample;
-    //LOG(kMedia, "wholeSecs: %u, remainingSamples: %u, jiffiesPerSample: %u, jiffies: %llu\n", wholeSecs, remainingSamples, jiffiesPerSample, jiffies);
+    jiffies = wholeSecs*static_cast<TUint64>(jiffiesPerSecond) + remainingSamples*jiffiesPerSample;
+    //LOG(kMedia, "AudioFileDescriptor::Jiffies wholeSecs: %u, remainingSamples: %u, jiffiesPerSample: %u, jiffies: %llu\n", wholeSecs, remainingSamples, jiffiesPerSample, jiffies);
     return jiffies;
 }
 
@@ -559,11 +558,12 @@ void SuiteCodecStream::Setup()
     // These can be re-ordered to check for problems in the recognise function of each codec.
     iController->AddCodec(CodecFactory::NewWav());
     iController->AddCodec(CodecFactory::NewFlac());
+    iController->AddCodec(CodecFactory::NewWma());
+    iController->AddCodec(CodecFactory::NewAac());
     iController->AddCodec(CodecFactory::NewMp3());
     iController->AddCodec(CodecFactory::NewAlac());
-    iController->AddCodec(CodecFactory::NewAac());
     iController->AddCodec(CodecFactory::NewVorbis());
-    iController->AddCodec(CodecFactory::NewWma());
+
     iController->Start();
 }
 
@@ -1125,15 +1125,19 @@ void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
     invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
 
 
-    // Files to check behaviour of codec wrappers, other than their decoding behaviour.
+    // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.
     std::vector<AudioFileDescriptor> streamOnlyFiles;
-    //// Test different combinations of ID3 tags.
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-no_tags.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v1.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v2.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-dual_tags.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
-    //// A file that does not play on existing DS's.
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 44100, 134784, 24, 2, AudioFileDescriptor::eCodecMp3));
+    // Test different combinations of ID3 tags.
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-no_tags.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v1.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v2.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-dual_tags.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
+    // Files with two sets of ID3v2 tags
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-two_id3v2_headers.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
+    // Second ID3v2 header on a msg boundary (assuming MsgAudioEncoded is normally 6144 bytes) to test container checking/pulling on demand
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-two_id3v2_headers_msg_boundary.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
+    // A file that does not play on existing DS's (is recognised as AAC ADTS)
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::eCodecMp3));
 
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles, aLib.Env(), uri));

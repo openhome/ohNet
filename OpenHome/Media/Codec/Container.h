@@ -58,10 +58,9 @@ private:
     TBool iCheckForContainer;
     TUint iContainerSize;
     TUint iRemainingContainerSize; // number of bytes of container (that shouldn't be passed downstream)
+    TUint iExpectedFlushId;
     IStreamHandler* iStreamHandler;
-    MsgAudioEncoded* iAudioEncoded; /* FIXME - restricting container processing to a single Msg seems
-                                       risky but its consistent with volkano so is hopefully safe
-                                       in practice... */
+    MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[EncodedAudio::kMaxBytes];
 };
 
