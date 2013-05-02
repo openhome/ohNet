@@ -780,7 +780,11 @@ SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface,
     , iAddress(aEndpoint.Address())
 {
     LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, iAddress, iPort);
-    OpenHome::Os::NetworkBindMulticast(iHandle, aInterface, aEndpoint);
+    const TUint err = OpenHome::Os::NetworkBindMulticast(iHandle, aInterface, aEndpoint);
+    if (err != 0) {
+        LOG2(kError, kNetwork, "NetworkBindMulticast for socket %u\n", iHandle);
+        THROW(NetworkError);
+    }
     GetPort(iPort);
     OpenHome::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
     LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
