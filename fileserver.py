@@ -18,14 +18,19 @@ def run_static_fileserver(host, port, path):
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     # create a dummy app for CherryPy
-    class RootStatic(object): pass
+    class RootStatic(object):
+    
+        # this lets the server be shutdown by visiting "http://<server:port>/shutdown"
+        @cherrypy.expose
+        def shutdown(self):  
+            cherrypy.engine.exit()
     
     # set the global config
     cherrypy.config.update(
         {'server.socket_host': host,
          'server.socket_port': port,
          'log.screen': None,
-         'log.access_file': 'fileserver.log',
+         'log.access_file': os.path.join(path, 'fileserver.log'),
         }
     )
 
@@ -57,10 +62,10 @@ def invoke_test_fileserver(tsk):
     cmdline.append(testfile)
     run_test_server(cmdline, testfilepath, bldpath, testargs[0], int(testargs[1]))
 
-#def stop_test_fileserver(tsk):
-#    cherrypy.engine.stop()
+def stop_test_fileserver():
+    cherrypy.engine.exit()
 
-# thread for running a server in
+# thread for running a server in when using localhost
 class TestThread(threading.Thread):
     def __init__(self, host, port, path):
         self.__host = host
@@ -81,4 +86,4 @@ def run_test_server(cmdline, testfilepath, bldpath, host, port):
     server_thread.stop()
 
 if __name__=="__main__":
-    run_test_server('TestCodec.exe', '127.0.0.1', 8080)
+    run_static_fileserver('127.0.0.1', 8080, os.path.dirname(os.path.abspath(__file__)))

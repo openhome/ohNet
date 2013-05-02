@@ -8,9 +8,6 @@
 
 extern "C" {
 
-//#define i386
-//#define linux
-
 #include <aacdecoder.h>
 #include <aac_ram.h>
 #include <aac_rom.h>
@@ -29,6 +26,24 @@ extern "C" {
 #include <overlapadd.h>
 #include <defines.h>
 #include <spline_resampler.h>
+
+#define SAMPLES_PER_FRAME 1024
+
+    // global AAC decoder variables
+  Flag frameOk = 1;                                 /*!< frameOk flag */
+  Flag lastFrameOk = 1;
+  Word8 channelMode = 0;
+  struct BIT_BUF bitBuf, *hBitBuf;
+  AACDECODER aacDecoderInfo = 0;                    /*!< pointer to aacdecoder structure */
+  SBRBITSTREAM streamSBR[2];                        /*!< pointer to sbr bitstream buffer */
+  SBRDECODER sbrDecoderInfo = 0;                    /*!< pointer to sbrdecoder structure */
+  HANDLE_SPLINE_RESAMPLER splineResampler = 0;      /*!< pointer to spline resampler instance */ 
+  Word16 pTimeDataPcm[4*SAMPLES_PER_FRAME];         /*!< required only for interfacing with 
+                                                         audio output library, thus not counted
+                                                         for RAM usage */
+  Word16 timeData[4*SAMPLES_PER_FRAME];                  /*!< Output buffer */
+}
+
 
 namespace OpenHome {
 namespace Media {
@@ -110,23 +125,6 @@ private:
 } //namespace Media
 } //namespace OpenHome
 
-#define SAMPLES_PER_FRAME 1024
-
-    // global AAC decoder variables
-  Flag frameOk = 1;                                 /*!< frameOk flag */
-  Flag lastFrameOk = 1;
-  Word8 channelMode = 0;
-  struct BIT_BUF bitBuf, *hBitBuf;
-  AACDECODER aacDecoderInfo = 0;                    /*!< pointer to aacdecoder structure */
-  SBRBITSTREAM streamSBR[2];                        /*!< pointer to sbr bitstream buffer */
-  SBRDECODER sbrDecoderInfo = 0;                    /*!< pointer to sbrdecoder structure */
-  HANDLE_SPLINE_RESAMPLER splineResampler = 0;      /*!< pointer to spline resampler instance */ 
-  Word16 pTimeDataPcm[4*SAMPLES_PER_FRAME];         /*!< required only for interfacing with 
-                                                         audio output library, thus not counted
-                                                         for RAM usage */
-  Word16 timeData[4*SAMPLES_PER_FRAME];                  /*!< Output buffer */
-}
-
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -136,8 +134,6 @@ CodecBase* CodecFactory::NewAac()
 { // static
     return new CodecAac();
 }
-
-
 
 
 const Brn CodecAac::kCodecAac("mp4a");
@@ -496,7 +492,7 @@ Section 6
     iTrackOffset = 0;
 
     //LOG(kCodec, "CodecAac::StreamInitialise  iBitDepth %u, iSamplesTotal %lld, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iMp4->Duration(), iChannels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
 }
 
 void CodecAac::StreamCompleted()
@@ -509,14 +505,14 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
     //LOG(kCodec, "CodecAac::Seek(%lld)\n", aSample);
     TUint64 startSample;
 
-    TUint64 bytes = iMp4->GetSeekTable().Offset(iTotalSamplesOutput, startSample);     // find file offset relating to given audio sample
+    TUint64 bytes = iMp4->GetSeekTable().Offset(aSample, startSample);     // find file offset relating to given audio sample
     //LOG(kCodec, "CodecAac::Seek to sample: %lld, byte: %lld\n", iStartSample, bytes);
     TBool canSeek = iController->TrySeek(aStreamId, bytes);
     if (canSeek) {
         iTotalSamplesOutput = aSample;
         iCurrentSample = startSample;
         iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
-        iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iMp4->SampleRate(), iMp4->Channels(), kCodecAac, iTrackLengthJiffies, aSample, false);
+        iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iMp4->SampleRate(), iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
 }
@@ -525,7 +521,6 @@ void CodecAac::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
 {
     TByte* dst = const_cast<TByte*>(iOutBuf.Ptr()) + iOutBuf.Bytes();
     TByte* src = const_cast<TByte*>(iDecodedBuf.Ptr()) + (aSamplesWritten * iBytesPerSample);
-
     TUint i=0;
 
     switch(iBitDepth) {
@@ -788,19 +783,19 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
     TUint samplesToWrite = iDecodedBuf.Bytes()/iBytesPerSample;
     TUint samplesWritten = 0;
     while (samplesToWrite > 0) {
-        TUint bytes = samplesToWrite * (iBitDepth/8) * iMp4->Channels();
+        TUint bytes = samplesToWrite * (iBitDepth/8) * iChannels;
         TUint samples = samplesToWrite;
         TUint outputSpace = iOutBuf.MaxBytes() - iOutBuf.Bytes();
         if (bytes > outputSpace) {
-            samples = outputSpace / (iMp4->Channels() * (iBitDepth/8));
-            bytes = samples * (iBitDepth/8) * iMp4->Channels();
+            samples = outputSpace / (iChannels * (iBitDepth/8));
+            bytes = samples * (iBitDepth/8) * iChannels;
         }
 
         // read from iDecodedBuf into iOutBuf
         BigEndianData(samples, samplesWritten);
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
-        if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iMp4->Channels()) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iMp4->Channels(), iMp4->SampleRate(),
+        if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iChannels) {
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iMp4->SampleRate(),
                 iBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutBuf.SetBytes(0);
         }

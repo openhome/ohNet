@@ -455,32 +455,11 @@ def build(bld):
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
         '')
 
-    # Invalid audio files for TestCodec
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
-        '')
-
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('projectdata/dependencies.json'),
-        '')
-
     create_copy_task(
         bld,
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
         'TestShell_resources')
 
-    # Invalid audio files for TestCodec
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/ohWafHelpers/filetasks.py'),
-        'TestShell_resources')
-
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('projectdata/dependencies.json'),
-        'TestShell_resources')
 
     if not bld.env.nolink:
         #bld.program(

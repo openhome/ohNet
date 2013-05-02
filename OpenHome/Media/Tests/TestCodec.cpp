@@ -199,7 +199,7 @@ private: // from SuiteUnitTest
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
 private:
-    void TestSeeking(TUint aDuration, TUint aSeekPos);
+    void TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec);
     void TestSeekingToStart();
     void TestSeekingToEnd();
     void TestSeekingBackwards();
@@ -221,7 +221,7 @@ public:
     SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
 private:
     ~SuiteCodecSeekFromStart();
-    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos);
+    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec);
     void TestSeekingToMiddle();
     void TestSeekingToEnd();
 public: // from MsgProcessor
@@ -633,18 +633,10 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
-        Brn filename((*it).Filename());
-        AudioFileDescriptor::ECodec codec = (*it).Codec();
-
-        if (codec != AudioFileDescriptor::eCodecVorbis) {
-            // Vorbis (and MP3) seeking is isn't particularly accurate
-            // for VBR, especially when seeking towards end of stream
-            // - don't bother with tests.
-            AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToStart));
-            AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToEnd));
-            AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBackwards));
-            AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingForwards));
-        }
+        AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToStart));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToEnd));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBackwards));
+        AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingForwards));
     }
 }
 
@@ -688,7 +680,7 @@ TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint 
     return jiffies;
 }
 
-void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos)
+void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec)
 {
     // Try seeking forward to end of file.
     iSeekPos = aSeekPos;
@@ -697,19 +689,25 @@ void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos)
     //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
-    // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
-    TEST(iJiffies >= expectedJiffies - Jiffies::kJiffiesPerSecond);   // Lower bound.
-    TEST(iJiffies <= expectedJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
 
+    if (aCodec != AudioFileDescriptor::eCodecVorbis) {
+        // Vorbis (and MP3) seeking is isn't particularly accurate
+
+        // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
+        TEST(iJiffies >= expectedJiffies - Jiffies::kJiffiesPerSecond);   // Lower bound.
+        TEST(iJiffies <= expectedJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
+    }
 }
 
 void SuiteCodecSeek::TestSeekingToStart()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumStart].Filename());
+    AudioFileDescriptor::ECodec codec = iFiles[iFileNumStart].Codec();
     iFileNumStart++;
+
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to start"), filename);
-    TestSeeking(duration, 0);
+    TestSeeking(duration, 0, codec);
     delete fileLocation;
 }
 
@@ -717,10 +715,11 @@ void SuiteCodecSeek::TestSeekingToEnd()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
+    AudioFileDescriptor::ECodec codec = iFiles[iFileNumEnd].Codec();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to end"), filename);
-    TestSeeking(duration, duration);
+    TestSeeking(duration, duration, codec);
     delete fileLocation;
 }
 
@@ -728,10 +727,11 @@ void SuiteCodecSeek::TestSeekingBackwards()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumBack].Filename());
+    AudioFileDescriptor::ECodec codec = iFiles[iFileNumBack].Codec();
     iFileNumBack++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking backwards"), filename);
-    TestSeeking(duration, duration/4);
+    TestSeeking(duration, duration/4, codec);
     delete fileLocation;
 }
 
@@ -739,10 +739,11 @@ void SuiteCodecSeek::TestSeekingForwards()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumForward].Filename());
+    AudioFileDescriptor::ECodec codec = iFiles[iFileNumForward].Codec();
     iFileNumForward++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking forwards"), filename);
-    TestSeeking(duration, duration - duration/4);
+    TestSeeking(duration, duration - duration/4, codec);
     delete fileLocation;
 }
 
@@ -775,7 +776,7 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
     return aMsg;
 }
 
-void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos)
+void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec)
 {
     iSeekPos = aSeekPos;
     iSem.Wait();
@@ -783,19 +784,25 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekP
     //LOG(kMedia, "iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
-    // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
-    TEST(iJiffies >= 0);   // Lower bound.
-    TEST(iJiffies <= expectedJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
+
+    if (aCodec != AudioFileDescriptor::eCodecVorbis) {
+        // Vorbis (and MP3) seeking is isn't particularly accurate
+
+        // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
+        TEST(iJiffies >= 0);   // Lower bound.
+        TEST(iJiffies <= expectedJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
+    }
 }
 
 void SuiteCodecSeekFromStart::TestSeekingToMiddle()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumMiddle].Filename());
+    AudioFileDescriptor::ECodec codec = iFiles[iFileNumMiddle].Codec();
     iFileNumMiddle++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to middle"), filename);
-    TestSeekingFromStart(duration, duration/2);
+    TestSeekingFromStart(duration, duration/2, codec);
     delete fileLocation;
 }
 
@@ -803,10 +810,11 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
+    AudioFileDescriptor::ECodec codec = iFiles[iFileNumEnd].Codec();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
-    TestSeekingFromStart(duration, duration);
+    TestSeekingFromStart(duration, duration, codec);
     delete fileLocation;
 }
 
@@ -953,7 +961,7 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
 
     //LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
-    TEST(iZeroCrossings >= expectedZeroCrossings-20);
+    TEST(iZeroCrossings >= expectedZeroCrossings-100);
     if (iCodec == AudioFileDescriptor::eCodecMp3) {
         // MP3 encoders/decoders add silence and some samples of random data to
         // start and end of tracks for filter routines.
@@ -1084,40 +1092,43 @@ void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
 
     // test files
     std::vector<AudioFileDescriptor> stdFiles;
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
 
     //// MP3 encoders/decoders can add extra samples at start of tracks, which are used for their routines.
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono-128k.mp3"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecMp3));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo-128k.mp3"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecMp3));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-128k.mp3"), 44100, 442368, 24, 1, AudioFileDescriptor::eCodecMp3));
+    //stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-128k.mp3"), 44100, 442368, 24, 2, AudioFileDescriptor::eCodecMp3));
 
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-24bit.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
 
     // AAC encoders can add/drop samples from start of files.
     // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-aac-moov_start.m4a"), 44100, 438272-1024, 16, 2, AudioFileDescriptor::eCodecAac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac.m4a"), 44100, 443392-1024, 16, 2, AudioFileDescriptor::eCodecAac));
 
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-mono_q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k_tone-10s-stereo_q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    // Vorbis files
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
 
     // WMA encoder omits some samples, then adds extra for its own use. Decoder then strips samples to less than original PCM.
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
-    //stdFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
+    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
 
+
+    // Some files that shouldn't play with any codec.
     std::vector<AudioFileDescriptor> invalidFiles;
-    invalidFiles.push_back(AudioFileDescriptor(Brn("filetasks.py"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.
-    invalidFiles.push_back(AudioFileDescriptor(Brn("dependencies.json"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));       // Short invalid file.
+    invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_long_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.
+    invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_short_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));       // Small invalid file.
 
     // MP4 with moov atom after mdat atom.
     // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
-    //invalidFiles.push_back(AudioFileDescriptor(Brn("1k-10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
+    invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
 
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles, aLib.Env(), uri));
