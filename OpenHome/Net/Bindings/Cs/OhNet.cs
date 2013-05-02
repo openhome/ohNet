@@ -1196,6 +1196,7 @@ namespace OpenHome.Net.Core
             Media          = 1<<16,
             Bonjour        = 1<<17,
             DvDevice       = 1<<18,
+            Codec          = 1<<19,
             Error          = 1<<30,
             All            = 0x7FFFFFFF,
             Verbose        = 0x80000000

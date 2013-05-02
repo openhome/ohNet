@@ -103,6 +103,11 @@ public enum DebugLevel {
     DvDevice(1<<18),
 
     /**
+     * Enable <tt>Codec</tt> messages.
+     */
+    Codec(1<<19),
+
+    /**
      * Enable <tt>Error</tt> messages.
      */
     Error(1<<30),
