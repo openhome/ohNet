@@ -14,6 +14,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+#undef NOTIFIER_LOG_ENABLE
+
 // SsdpNotifierScheduler
 
 SsdpNotifierScheduler::~SsdpNotifierScheduler()
@@ -22,7 +24,8 @@ SsdpNotifierScheduler::~SsdpNotifierScheduler()
 }
 
 SsdpNotifierScheduler::SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListener& aListener)
-    : iDvStack(aDvStack)
+    : iType(NULL)
+    , iDvStack(aDvStack)
     , iListener(aListener)
 {
     Functor functor = MakeFunctor(*this, &SsdpNotifierScheduler::SendNextMsg);
@@ -55,6 +58,9 @@ void SsdpNotifierScheduler::SendNextMsg()
     catch (WriterError&) {}
     catch (NetworkError&) {}
     if (stop) {
+#ifdef NOTIFIER_LOG_ENABLE
+        Log::Print("++ Notifier completed - %s (%p)\n", iType, this);
+#endif
         NotifyComplete();
         iListener.NotifySchedulerComplete(this);
         return;
@@ -89,6 +95,14 @@ void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
     iTimer->FireIn(interval);
 }
 
+void SsdpNotifierScheduler::LogNotifierStart(const TChar* aType)
+{
+    iType = aType;
+#ifdef NOTIFIER_LOG_ENABLE
+    Log::Print("++ %s (%p)\n", iType, this);
+#endif
+}
+
 
 // MsearchResponse
 
@@ -111,6 +125,7 @@ MsearchResponse::~MsearchResponse()
 
 void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
+    LogNotifierStart("StartAll");
     TUint nextMsgIndex = NEXT_MSG_ROOT;
     TUint msgCount = 3 + aAnnouncementData.ServiceCount();
     if (!aAnnouncementData.IsRoot()) {
@@ -122,21 +137,25 @@ void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const E
 
 void MsearchResponse::StartRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
+    LogNotifierStart("StartRoot");
     Start(aAnnouncementData, 1, NEXT_MSG_ROOT, aRemote, aMx, aUri, aConfigId);
 }
 
 void MsearchResponse::StartUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
+    LogNotifierStart("StartUuid");
     Start(aAnnouncementData, 1, NEXT_MSG_UUID, aRemote, aMx, aUri, aConfigId);
 }
 
 void MsearchResponse::StartDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
 {
+    LogNotifierStart("StartDeviceType");
     Start(aAnnouncementData, 1, NEXT_MSG_DEVICE_TYPE, aRemote, aMx, aUri, aConfigId);
 }
 
 void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId)
 {
+    LogNotifierStart("StartServiceType");
     TUint index = 0;
     for (;;) {
         const OpenHome::Net::ServiceType& st = aAnnouncementData.Service(index).ServiceType();
@@ -196,18 +215,21 @@ DeviceAnnouncement::DeviceAnnouncement(DvStack& aDvStack, ISsdpNotifyListener& a
 
 void DeviceAnnouncement::StartAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId)
 {
+    LogNotifierStart("StartAlive");
     iCompleted = Functor();
     Start(iNotifierAlive, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsAlive);
 }
 
 void DeviceAnnouncement::StartByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
 {
+    LogNotifierStart("StartByeBye");
     iCompleted = aCompleted;
     Start(iNotifierByeBye, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsByeBye);
 }
 
 void DeviceAnnouncement::StartUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, const Brx& aUri, TUint aConfigId, Functor& aCompleted)
 {
+    LogNotifierStart("StartUpdate");
     iCompleted = aCompleted;
     Start(iNotifierUpdate, aAnnouncementData, aAdapter, aUri, aConfigId, kMsgIntervalMsUpdate);
 }

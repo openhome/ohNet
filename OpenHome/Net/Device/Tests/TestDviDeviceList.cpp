@@ -13,6 +13,7 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 
 #include <stdlib.h>
+#include <time.h>
 #include <vector>
 
 using namespace OpenHome;
@@ -29,10 +30,11 @@ static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
+    time_t t = time(NULL);
+    int seed = gmtime(&t)->tm_sec;
+    SetRandomSeed(seed);
     std::vector<NetworkAdapter*>* subnetList = aDvStack.Env().NetworkAdapterList().CreateSubnetList();
     TUint max = (*subnetList)[0]->Address();
-    TUint seed = aDvStack.ServerUpnp().Port((*subnetList)[0]->Address());
-    SetRandomSeed(seed);
     aDvStack.Env().NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
@@ -180,6 +182,18 @@ void CpDevices::Validate(std::vector<const char*>& aExpectedUdns)
                 break;
             }
         }
+        if (!found) {
+            Print("Failed to find target device amongst %u candidates\n", iList.size());
+            for (TUint i=0; i<iList.size(); i++) {
+                Print("    ");
+                Print(iList[i]->Udn());
+            }
+            Print("\nExpected:");
+            for (TUint i=0; i<aExpectedUdns.size(); i++) {
+                Print("    %s", aExpectedUdns[i]);
+            }
+            Print("\n");
+        }
         ASSERT(found);
     }
     ASSERT(aExpectedUdns.size() == 0);
@@ -199,8 +213,23 @@ void CpDevices::Added(CpDevice& aDevice)
     iLock.Signal();
 }
 
-void CpDevices::Removed(CpDevice& /*aDevice*/)
+void CpDevices::Removed(CpDevice& aDevice)
 {
+    /* A device sends out byebye messages before alives after being enabled.
+    (This is required for many buggy control points which don't spot a change of location otherwise.)
+    Its possible that the last of these byebyes may get interleaved with the first msearch responses,
+    leading to a device being added, removed, then added again.
+    Accept that this is possible and cope with devices being removed. */
+    iLock.Wait();
+    const Brx& udn = aDevice.Udn();
+    for (TUint i=0; i<iList.size(); i++) {
+        if (iList[i]->Udn() == udn) {
+            iList[i]->RemoveRef();
+            iList.erase(iList.begin() + i);
+            break;
+        }
+    }
+    iLock.Signal();
 }
 
 

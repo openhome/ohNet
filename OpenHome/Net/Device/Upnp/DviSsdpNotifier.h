@@ -34,6 +34,9 @@ private:
     virtual void NotifyComplete();
     void SendNextMsg();
     void ScheduleNextTimer(TUint aRemainingMsgs) const;
+protected:
+    void LogNotifierStart(const TChar* aType);
+    const TChar* iType;
 private:
     Timer* iTimer;
     DvStack& iDvStack;
