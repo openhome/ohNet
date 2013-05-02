@@ -36,7 +36,7 @@ public:
     CodecWma();
     ~CodecWma();
     void CopyToBigEndian(TUint aSamples, TUint aBytesPerSample);
-    TUint32 Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset);
+    TUint32 Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aRecognisingFromBuf);
 private:
     private: // from CodecBase
     TBool Recognise(const Brx& aData);
@@ -111,6 +111,8 @@ TUint16 wMBRTotalStreams = 0;
 
 tWMAFileContDesc const *pdesc = 0;
 
+TBool recognising = FALSE;
+
 CodecWma* iWma = 0;
 
 TBool CodecWma::Recognise(const Brx& aData)
@@ -127,6 +129,8 @@ TBool CodecWma::Recognise(const Brx& aData)
     nMBRTargetStream = 1;
     wMBRTotalStreams = 0;
     pdesc = 0;
+
+    recognising = TRUE;
 
     // from original main() for arm...
     // fold-down to 2 channels, -cm 0x03
@@ -174,6 +178,7 @@ TBool CodecWma::Recognise(const Brx& aData)
 
 void CodecWma::StreamInitialise()
 {
+    recognising = FALSE;
     iSeekOffset = 0;
     iWmaReadOffset = 0; // stream will have been pulled back to start after recognition
 
@@ -471,28 +476,43 @@ void CodecWma::CopyToBigEndian(TUint aSamples, TUint aBytesPerSample)
     iOutBuf.SetBytes(aSamples*aBytesPerSample);
 }
 
-TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset)
+TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aRecognisingFromBuf)
 {
     //LOG(kCodec, ">Wma::Read %u bytes at %llu.\n", aBytes, aOffset);
     aOffset -= static_cast<TUint32>(iSeekOffset); // offset to the seeked position
     iInBuf.SetBytes(0);
-    if(aOffset != iWmaReadOffset) {
-        // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
-        // reading of the stream is sequential so dump any sections that are not required
-        TUint64 skipTotal = aOffset-iWmaReadOffset;
-        while (skipTotal > 0) {
-            TUint64 skipBytes = skipTotal;
-            if (skipBytes > iInBuf.MaxBytes()) {
-                skipBytes = iInBuf.MaxBytes();
-            }
-            iController->Read(iInBuf, static_cast<TUint>(skipBytes));
-            iInBuf.SetBytes(0);
-            skipTotal -= skipBytes;
-        }
-        iWmaReadOffset = aOffset;
+
+    if (iRecogBuf.Bytes() < aOffset || iRecogBuf.Bytes()-aOffset < aBytes) {
+        // going to exhaust buffer, so should read from controller instead
+        aRecognisingFromBuf = false;
     }
-    iController->Read(iInBuf, aBytes);
-    iWmaReadOffset += iInBuf.Bytes();
+
+    if (aRecognisingFromBuf) {
+        //LOG(kCodec, "CodecWma::Read peeking from buffer\n");
+        ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
+        Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(aOffset), aBytes);
+        iInBuf.Replace(tmpBuf);
+    }
+    else {
+        //LOG(kCodec, "CodecWma::Read reading from controller\n");
+        if (aOffset != iWmaReadOffset) {
+            // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
+            // reading of the stream is sequential so dump any sections that are not required
+            TUint64 skipTotal = aOffset-iWmaReadOffset;
+            while (skipTotal > 0) {
+                TUint64 skipBytes = skipTotal;
+                if (skipBytes > iInBuf.MaxBytes()) {
+                    skipBytes = iInBuf.MaxBytes();
+                }
+                iController->Read(iInBuf, static_cast<TUint>(skipBytes));
+                iInBuf.SetBytes(0);
+                skipTotal -= skipBytes;
+            }
+            iWmaReadOffset = aOffset;
+        }
+        iController->Read(iInBuf, aBytes);
+        iWmaReadOffset += iInBuf.Bytes();
+    }
     *aDataPtr = iInBuf.Ptr();
 
     // LOG(kCodec, "<CodecWma::Read: [%x][%x], next read at %llu\n", (int)**aDataPtr, (int)*(*aDataPtr+1), iWmaReadOffset);
@@ -508,7 +528,7 @@ tWMA_U32 WMAFileCBGetData(
 {
     LOG(kCodec, "WMAFileCBGetData state %d, offset %llu, num_bytes %u\n", state, offset, num_bytes);
     ASSERT(iWma);
-    TUint32 bytes = iWma->Read((const TUint8 **)ppData, num_bytes, offset);
+    TUint32 bytes = iWma->Read((const TUint8 **)ppData, num_bytes, offset, recognising);
     LOG(kCodec, "WMAFileCBGetData bytes %d\n", bytes);
     return(bytes);
 }
