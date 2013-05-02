@@ -240,8 +240,8 @@ void DeviceAnnouncement::Start(ISsdpNotify& aNotifier, IUpnpAnnouncementData& aA
     iAnnouncementData = &aAnnouncementData;
     iNextMsgIndex = (iAnnouncementData->IsRoot()? 0 : 1);
     iTotalMsgs = 3 + iAnnouncementData->ServiceCount();
-    iSsdpNotifier.Start(aAdapter, aConfigId);
     iUri.Replace(aUri);
+    iSsdpNotifier.Start(aAdapter, aConfigId);
     SsdpNotifierScheduler::Start(aMsgInterval * iTotalMsgs, iTotalMsgs);
 }
 
@@ -304,7 +304,13 @@ void DviSsdpNotifierManager::AnnouncementAlive(IUpnpAnnouncementData& aAnnouncem
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
     if (announcer != NULL) {
-        announcer->Announcement().StartAlive(aAnnouncementData, aAdapter, aUri, aConfigId);
+        try {
+            announcer->Announcement().StartAlive(aAnnouncementData, aAdapter, aUri, aConfigId);
+        }
+        catch (NetworkError& ) {
+            ASSERT(TryMove(announcer->Scheduler(), iActiveAnnouncers, iFreeAnnouncers));
+            throw;
+        }
     }
 }
 
@@ -313,7 +319,13 @@ void DviSsdpNotifierManager::AnnouncementByeBye(IUpnpAnnouncementData& aAnnounce
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
     if (announcer != NULL) {
-        announcer->Announcement().StartByeBye(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+        try {
+            announcer->Announcement().StartByeBye(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+        }
+        catch (NetworkError& ) {
+            ASSERT(TryMove(announcer->Scheduler(), iActiveAnnouncers, iFreeAnnouncers));
+            throw;
+        }
     }
 }
 
@@ -322,7 +334,13 @@ void DviSsdpNotifierManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnounce
     AutoMutex a(iLock);
     Announcer* announcer = GetAnnouncer(aAnnouncementData);
     if (announcer != NULL) {
-        announcer->Announcement().StartUpdate(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+        try {
+            announcer->Announcement().StartUpdate(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+        }
+        catch (NetworkError& ) {
+            ASSERT(TryMove(announcer->Scheduler(), iActiveAnnouncers, iFreeAnnouncers));
+            throw;
+        }
     }
 }
 

@@ -358,25 +358,37 @@ void DviProtocolUpnp::Enable()
 
 void DviProtocolUpnp::Disable(Functor& aComplete)
 {
-    AutoMutex a(iLock);
-    iDisableComplete = aComplete;
-    TUint i;
-    iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
-    iSubnetDisableCount = (TUint)iAdapters.size();
-    Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetDisabled);
-    for (i=0; i<iSubnetDisableCount; i++) {
-        LogMulticastNotification("byebye");
-        Bws<kMaxUriBytes> uri;
-        GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iDvStack.SsdpNotifierManager().AnnouncementByeBye(*this, iAdapters[i]->Interface(), uri, iDevice.ConfigId(), functor);
+    TBool completeNow = false;
+    {
+        AutoMutex a(iLock);
+        iDisableComplete = aComplete;
+        TUint i;
+        iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
+        iSubnetDisableCount = (TUint)iAdapters.size();
+        Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetDisabled);
+        for (i=0; i<iSubnetDisableCount; i++) {
+            LogMulticastNotification("byebye");
+            Bws<kMaxUriBytes> uri;
+            GetUriDeviceXml(uri, iAdapters[i]->UriBase());
+            try {
+                iDvStack.SsdpNotifierManager().AnnouncementByeBye(*this, iAdapters[i]->Interface(), uri, iDevice.ConfigId(), functor);
+            }
+            catch (NetworkError&) {
+                completeNow = true;
+            }
+        }
+        for (TUint i=0; i<iAdapters.size(); i++) {
+            iAdapters[i]->BonjourDeregister();
+        }
+        const TChar* name = 0;
+        GetAttribute("MdnsHostName", &name);
+        if (name != NULL) {
+            iDvStack.MdnsProvider()->MdnsSetHostName("");
+        }
     }
-    for (TUint i=0; i<iAdapters.size(); i++) {
-        iAdapters[i]->BonjourDeregister();
-    }
-    const TChar* name = 0;
-    GetAttribute("MdnsHostName", &name);
-    if (name != NULL) {
-        iDvStack.MdnsProvider()->MdnsSetHostName("");
+    if (completeNow) {
+        iSubnetDisableCount = 0;
+        iDisableComplete();
     }
 }
 
@@ -465,7 +477,10 @@ void DviProtocolUpnp::SendAliveNotifications()
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bws<kMaxUriBytes> uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iDvStack.SsdpNotifierManager().AnnouncementAlive(*this, iAdapters[i]->Interface(), uri, iDevice.ConfigId());
+        try {
+            iDvStack.SsdpNotifierManager().AnnouncementAlive(*this, iAdapters[i]->Interface(), uri, iDevice.ConfigId());
+        }
+        catch (NetworkError&) {}
     }
     QueueAliveTimer();
 }
@@ -483,7 +498,8 @@ void DviProtocolUpnp::SendUpdateNotifications()
     iAliveTimer->Cancel();
     AutoMutex a(iLock);
     iDvStack.UpdateBootId();
-    iUpdateCount += (TUint)iAdapters.size(); // its possible this'll be called while previous updates are still being processed
+    const TUint numAdapters = (TUint)iAdapters.size();
+    iUpdateCount += numAdapters; // its possible this'll be called while previous updates are still being processed
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bws<kMaxUriBytes> uri;
@@ -504,7 +520,10 @@ void DviProtocolUpnp::SendAlives(TIpAddress aAdapter, const Brx& aUriBase)
     AutoMutex a(iLock);
     Bws<kMaxUriBytes> uri;
     GetUriDeviceXml(uri, aUriBase);
-    iDvStack.SsdpNotifierManager().AnnouncementAlive(*this, aAdapter, uri, iDevice.ConfigId());
+    try {
+        iDvStack.SsdpNotifierManager().AnnouncementAlive(*this, aAdapter, uri, iDevice.ConfigId());
+    }
+    catch (NetworkError&) {}
 }
 
 void DviProtocolUpnp::GetUriDeviceXml(Bwx& aUri, const Brx& aUriBase)
