@@ -536,16 +536,16 @@ def build(bld):
                 target='TestFiller')
 
 # Bundles
-def bundle(bld):
+def bundle(ctx):
     print 'bundle binaries'
-    header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h'])
+    header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
     lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAlac', 'CodecFlac', 'CodecMp3', 'CodecVorbis', 'CodecWav', 'CodecWma']
-    lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
+    lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
         'ohMediaPlayer/include' : header_files
         })
-    bundle_dev_files.create_tgz_task(bld, 'ohMediaPlayer.tar.gz')
+    bundle_dev_files.create_tgz_task(ctx, 'ohMediaPlayer.tar.gz')
 
 # == Command for invoking unit tests ==
 
