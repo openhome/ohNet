@@ -34,7 +34,7 @@ private:
     // IInterruptHandler
     void Interrupt();
 private:
-    static const TUint kMaxReadBytes = 4096;
+    static const TUint kMaxReadBytes = 16 * 1024;
     static const TUint kResponseTimeoutMs = 60 * 1000;
     CpStack& iCpStack;
     Invocation& iInvocation;

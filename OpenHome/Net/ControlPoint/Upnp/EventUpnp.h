@@ -24,7 +24,7 @@ private:
     virtual void Run();
     void ProcessNotification(IEventProcessor& aEventProcessor, const Brx& aEntity);
 private:
-    static const TUint kMaxReadBytes = 1024;
+    static const TUint kMaxReadBytes = 16 * 1024;
     static const TUint kReadTimeoutMs = 5 * 1000;
     static const Brn kMethodNotify;
     static const Brn kExpectedNt;
