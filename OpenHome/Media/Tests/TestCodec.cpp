@@ -1029,7 +1029,7 @@ void TestCodecInfoAggregator::Register(Av::IInfoProvider& /*aProvider*/, std::ve
 {
 }
 
-void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
+void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
 {
     Log::Print("TestCodec\n");
 
@@ -1050,7 +1050,7 @@ void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
     else {
         loopback = Net::InitialisationParams::ELoopbackExclude;
     }
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(aLib.Env(), loopback, "TestCodec");
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(aEnv, loopback, "TestCodec");
     ASSERT(ifs->size() > 0);
     TIpAddress addr = (*ifs)[0]->Address(); // assume we are only on one subnet (or using loopback)
     for (TUint i=0; i<ifs->size(); i++) {
@@ -1141,11 +1141,11 @@ void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecStream(stdFiles, aLib.Env(), uri));
-    runner.Add(new SuiteCodecSeek(stdFiles, aLib.Env(), uri));
-    runner.Add(new SuiteCodecSeekFromStart(stdFiles, aLib.Env(), uri));
-    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aLib.Env(), uri));
-    runner.Add(new SuiteCodecInvalidType(invalidFiles, aLib.Env(), uri));
-    runner.Add(new SuiteCodecStream(streamOnlyFiles, aLib.Env(), uri));
+    runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));
+    runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
+    runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
+    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
+    runner.Add(new SuiteCodecInvalidType(invalidFiles, aEnv, uri));
+    runner.Add(new SuiteCodecStream(streamOnlyFiles, aEnv, uri));
     runner.Run();
 }
