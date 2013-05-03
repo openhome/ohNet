@@ -10,9 +10,6 @@
 namespace OpenHome {
 namespace Media {
 
-typedef Bws<32> BwsStyle;
-typedef Bws<32> BwsProviderId;
-
 class PipelineIdProvider : public IPipelineIdProvider, public IPipelineIdTracker
 {
     static const TUint kMaxActiveStreams = 100;
