@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Os.h>
@@ -10,11 +11,6 @@
 
 extern "C" {
 
-//#define i386
-//#define linux
-
-//#include <wmatypes.h>
-//#include <wmawintypes.h>
 #include <pcmfmt.h>
 #include <wmaudio.h>
 
@@ -40,7 +36,7 @@ public:
     CodecWma();
     ~CodecWma();
     void CopyToBigEndian(TUint aSamples, TUint aBytesPerSample);
-    TUint32 Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aPeek);
+    TUint32 Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aRecognisingFromBuf);
 private:
     private: // from CodecBase
     TBool Recognise(const Brx& aData);
@@ -115,7 +111,7 @@ TUint16 wMBRTotalStreams = 0;
 
 tWMAFileContDesc const *pdesc = 0;
 
-TBool peekData = FALSE;
+TBool recognising = FALSE;
 
 CodecWma* iWma = 0;
 
@@ -134,7 +130,7 @@ TBool CodecWma::Recognise(const Brx& aData)
     wMBRTotalStreams = 0;
     pdesc = 0;
 
-    peekData = TRUE;    // just peek during recognise
+    recognising = TRUE;
 
     // from original main() for arm...
     // fold-down to 2 channels, -cm 0x03
@@ -182,8 +178,9 @@ TBool CodecWma::Recognise(const Brx& aData)
 
 void CodecWma::StreamInitialise()
 {
-    peekData = FALSE;
+    recognising = FALSE;
     iSeekOffset = 0;
+    iWmaReadOffset = 0; // stream will have been pulled back to start after recognition
 
     // Check for MBR
     rc = WMAFileMBRAudioStreams(&g_hdrstate, &wMBRTotalStreams);
@@ -445,7 +442,7 @@ TBool CodecWma::TrySeek(TUint aStreamId, TUint64 aSample)
     tWMA_U32 actualSeconds;
     tWMAFileStatus rv;
     // this will read a few bytes from the start of the file and determine the approximate offset into
-    // the file that corresponds to the supplied time, iSelector->Seek() will then GET from that offset
+    // the file that corresponds to the supplied time, will then seek from that offset
     // The decoder expects to be working on a flat file structure and uses absolute positioning in the file,
     // so use iSeekOffset to compensate for the partial get offset.
     rv = WMAFileSeek (g_state, seconds*1000, &actualSeconds, &iSeekOffset); // sets pInt->hdr_parse.nextPacketOffset to start of decode
@@ -479,30 +476,31 @@ void CodecWma::CopyToBigEndian(TUint aSamples, TUint aBytesPerSample)
     iOutBuf.SetBytes(aSamples*aBytesPerSample);
 }
 
-TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aPeek)
+TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aRecognisingFromBuf)
 {
-    // LOG(kCodec, ">Wma::Read %u bytes at %llu. Peek %d\n", aBytes, aOffset, aPeek);
+    //LOG(kCodec, ">Wma::Read %u bytes at %llu.\n", aBytes, aOffset);
     aOffset -= static_cast<TUint32>(iSeekOffset); // offset to the seeked position
     iInBuf.SetBytes(0);
-    if(aPeek) {
-            ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
-            if (iRecogBuf.Bytes() < aOffset || iRecogBuf.Bytes()-aOffset < aBytes) {
-                // exhausted the recognise buffer and still not recognised stream
-                ASSERTS();  // Shouldn't happen normally, but assert if we exhaust buffer and it maybe needs resized.
-                iInBuf.SetBytes(0);
-            }
-            else {
-                Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(aOffset), aBytes);
-                iInBuf.Replace(tmpBuf);
-            }
+
+    if (iRecogBuf.Bytes() < aOffset || iRecogBuf.Bytes()-aOffset < aBytes) {
+        // going to exhaust buffer, so should read from controller instead
+        aRecognisingFromBuf = false;
     }
-    else {
-        if(aOffset != iWmaReadOffset) {
+
+    if (aRecognisingFromBuf) {
+        //LOG(kCodec, "CodecWma::Read peeking from buffer\n");
+        ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
+        Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(aOffset), aBytes);
+        iInBuf.Replace(tmpBuf);
+    }
+    else if (!aRecognisingFromBuf && (iController->StreamLength() > 0)) {
+        //LOG(kCodec, "CodecWma::Read reading from controller\n");
+        if (aOffset != iWmaReadOffset) {
             // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
             // reading of the stream is sequential so dump any sections that are not required
             TUint64 skipTotal = aOffset-iWmaReadOffset;
-            TUint64 skipBytes = skipTotal;
             while (skipTotal > 0) {
+                TUint64 skipBytes = skipTotal;
                 if (skipBytes > iInBuf.MaxBytes()) {
                     skipBytes = iInBuf.MaxBytes();
                 }
@@ -530,7 +528,7 @@ tWMA_U32 WMAFileCBGetData(
 {
     LOG(kCodec, "WMAFileCBGetData state %d, offset %llu, num_bytes %u\n", state, offset, num_bytes);
     ASSERT(iWma);
-    TUint32 bytes = iWma->Read((const TUint8 **)ppData, num_bytes, offset, peekData);
+    TUint32 bytes = iWma->Read((const TUint8 **)ppData, num_bytes, offset, recognising);
     LOG(kCodec, "WMAFileCBGetData bytes %d\n", bytes);
     return(bytes);
 }

@@ -455,17 +455,11 @@ def build(bld):
         bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
         '')
 
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
-        'TestShell_resources')
-
-
     if not bld.env.nolink:
-        #bld.program(
-        #        source='OpenHome/Media/Tests/TestShell.cpp',
-        #        use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-        #        target='TestShell')
+        bld.program(
+               source='OpenHome/Media/Tests/TestShell.cpp',
+               use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+               target='TestShell')
         bld.program(
                 source='OpenHome/Media/Tests/TestMsgMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

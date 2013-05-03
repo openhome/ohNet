@@ -24,7 +24,13 @@ SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestStopper);
 SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
-SIMPLE_TEST_DECLARATION(TestCodec);
+
+extern void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs);
+static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
+{
+    TestCodec(aCpStack.Env(), aArgs);
+}
+
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
@@ -71,4 +77,3 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     delete lib;
 }
-

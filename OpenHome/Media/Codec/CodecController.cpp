@@ -101,6 +101,7 @@ TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
 void CodecController::CodecThread()
 {
     iRecognising = true;
+    iRecogniseRead = false;
     iStreamStarted = false;
     iQuit = false;
     while (!iQuit) {
@@ -131,13 +132,7 @@ void CodecController::CodecThread()
             iStreamStarted = iStreamEnded = false;
 
             // Read audio data then attempt to recognise it
-            do {
-                Msg* msg = iUpstreamElement.Pull();
-                msg = msg->Process(*this);
-                if (msg != NULL) {
-                    Queue(msg);
-                }
-            } while ((!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes)) && !iQuit);
+            PullAudio(kMaxRecogniseBytes);
             if (iQuit) {
                 break;
             }
@@ -145,22 +140,38 @@ void CodecController::CodecThread()
                 continue;
             }
             /* we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than this, 
-                split the msg, select a codec then add the fragments back together before processing */
+               split the msg, select a codec then add the fragments back together before processing */
             MsgAudioEncoded* remaining = NULL;
             if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {
                 remaining = iAudioEncoded->Split(kMaxRecogniseBytes);
             }
             iAudioEncoded->CopyTo(iReadBuf);
+            iAudioEncoded->Add(remaining);  // reconstitute audio msg
             Brn recogBuf(iReadBuf, kMaxRecogniseBytes);
             for (size_t i=0; i<iCodecs.size(); i++) {
                 CodecBase* codec = iCodecs[i];
-                if (codec->Recognise(recogBuf)) {
+                TBool recognised = codec->Recognise(recogBuf);
+                if (iRecogniseRead) {    // seek back to start of data
+                    iRecogniseRead = false;
+                    iConsumeExpectedFlush = true;
+                    if (!TrySeek(iStreamId, 0)) {
+                        break;
+                    }
+                    // pull a new message through to ensure the flush is pulled
+                    PullAudio(kMaxRecogniseBytes);
+                    if (iQuit) {
+                        break;
+                    }
+                    if (iStreamEnded) {
+                        continue;
+                    }
+                }
+                if (recognised) {
                     iActiveCodec = codec;
                     iRecognising = false;
                     break;
                 }
             }
-            iAudioEncoded->Add(remaining);
             if (iActiveCodec == NULL) {
                 // FIXME - send error indication down the pipeline?
                 iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
@@ -208,6 +219,17 @@ void CodecController::CodecThread()
     }
 }
 
+void CodecController::PullAudio(TUint aBytes) {
+    // pull audio data until we have aBytes of data, or reach a stop condition
+    do {
+        Msg* msg = iUpstreamElement.Pull();
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            Queue(msg);
+        }
+    } while ((!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) && !iQuit);
+}
+
 void CodecController::PullMsg()
 {
     Msg* msg = iUpstreamElement.Pull();
@@ -235,7 +257,12 @@ void CodecController::ReleaseAudioEncoded()
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
-    ASSERT(!iRecognising); // codec isn't allowed to consume data while recognising
+    if (iRecognising && !iSeekable) {
+        ASSERTS();  // shouldn't be trying to read during recognise for non-seekable streams
+    }
+    if (iRecognising && iSeekable) {
+        iRecogniseRead = true;
+    }
     if (iPendingMsg != NULL) {
         if (DoRead(aBuf, aBytes)) {
             return;

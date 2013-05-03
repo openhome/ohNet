@@ -67,6 +67,7 @@ public:
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 private:
     void CodecThread();
+    void PullAudio(TUint aBytes);
     void PullMsg();
     void Queue(Msg* aMsg);
     TBool QueueTrackData() const;
@@ -104,6 +105,7 @@ private:
     Msg* iPendingMsg;
     TBool iQueueTrackData;
     TBool iRecognising;
+    TBool iRecogniseRead;
     TBool iStreamStarted;
     TBool iStreamEnded;
     TBool iQuit;
