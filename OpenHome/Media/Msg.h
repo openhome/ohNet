@@ -442,7 +442,7 @@ private:
 };
 
 typedef Bws<32> BwsStyle;
-typedef Bws<32> BwsProviderId;
+typedef Bws<1024> BwsProviderId;
 typedef Bws<1024> BwsTrackUri;
 typedef Bws<1024> BwsTrackMetaData;
 

@@ -199,6 +199,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
                 'OpenHome/Media/Protocol/ContentPls.cpp',
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
+                'OpenHome/Media/UriProviderSingleTrack.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
