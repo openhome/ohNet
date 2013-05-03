@@ -30,6 +30,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
+    , iStreamHandler(NULL)
 {
 }
 
@@ -67,8 +68,14 @@ void Stopper::BeginFlush()
     ASSERT(iState == EHalted);
     iLock.Wait();
     iState = EFlushing;
-    iTargetFlushId = iIdProvider.NextFlushId();
-    iSupply.OutputFlush(iTargetFlushId);
+    iTargetFlushId = MsgFlush::kIdInvalid;
+    if (iStreamHandler != NULL) {
+        iTargetFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+    }
+    if (iTargetFlushId == MsgFlush::kIdInvalid) {
+        iTargetFlushId = iIdProvider.NextFlushId();
+        iSupply.OutputFlush(iTargetFlushId);
+    }
     iSem.Signal();
     iLock.Signal();
 }
@@ -165,9 +172,9 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iStreamId = streamInfo.StreamId();
-    IStreamHandler* sh = streamInfo.StreamHandler();
-    if (sh->OkToPlay(iTrackId, streamInfo.StreamId()) == ePlayNo) {
-        /*TUint flushId = */sh->TryStop(iTrackId, streamInfo.StreamId());
+    iStreamHandler = streamInfo.StreamHandler();
+    if (iStreamHandler->OkToPlay(iTrackId, streamInfo.StreamId()) == ePlayNo) {
+        /*TUint flushId = */iStreamHandler->TryStop(iTrackId, streamInfo.StreamId());
         iFlushStream = true;
         aMsg->RemoveRef();
         return NULL;

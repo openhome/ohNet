@@ -325,6 +325,11 @@ TUint Pipeline::NextFlushId()
     return id;
 }
 
+void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)
+{
+    iStopper->RemoveStream(aTrackId, aStreamId);
+}
+
 void Pipeline::PipelineFlushed()
 {
     iLock.Wait();

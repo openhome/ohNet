@@ -1,5 +1,5 @@
-#ifndef HEADER_PIPELINE_MANAGER
-#define HEADER_PIPELINE_MANAGER
+#ifndef HEADER_PIPELINE
+#define HEADER_PIPELINE
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -40,7 +40,7 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
     
-class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountEncodedAudio    = 512;
@@ -87,6 +87,8 @@ public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IFlushIdProvider
     TUint NextFlushId();
+private: // from IStopper
+    void RemoveStream(TUint aTrackId, TUint aStreamId);
 private:
     void Quit();
     void NotifyStatus();
@@ -170,4 +172,4 @@ private: // from IPipelineObserver
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_MANAGER
+#endif // HEADER_PIPELINE

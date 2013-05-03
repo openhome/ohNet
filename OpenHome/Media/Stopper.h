@@ -87,6 +87,7 @@ private:
     TUint iTargetFlushId;
     TUint iTrackId;
     TUint iStreamId;
+    IStreamHandler* iStreamHandler;
 };
 
 } // namespace Media
