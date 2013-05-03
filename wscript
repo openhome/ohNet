@@ -535,7 +535,9 @@ def build(bld):
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestFiller')
 
-    # Bundles
+# Bundles
+def bundle(bld):
+    print 'bundle binaries'
     header_files = gather_files(bld, '{top}', ['OpenHome/**/*.h'])
     lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAlac', 'CodecFlac', 'CodecMp3', 'CodecVorbis', 'CodecWav', 'CodecWma']
     lib_files = gather_files(bld, '{bld}', (bld.env.cxxstlib_PATTERN % x for x in lib_names))
@@ -577,5 +579,9 @@ from waflib.Build import BuildContext
 class TestContext(BuildContext):
     cmd = 'test'
     fun = 'test'
+
+class BundleContext(BuildContext):
+    cmd = 'bundle'
+    fun = 'bundle'
 
 # vim: set filetype=python softtabstop=4 expandtab shiftwidth=4 tabstop=4:

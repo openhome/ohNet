@@ -68,7 +68,7 @@ add_option("-t", "--target", help="Target platform.")
 add_option("-a", "--artifacts", help="Build artifacts directory. Used to fetch dependencies.")
 add_option("--debug", action="store_const", const="Debug", dest="debugmode", default="Debug", help="Build debug version.")
 add_option("--release", action="store_const", const="Release", dest="debugmode", help="Build release version.")
-add_option("--steps", default="default", help="Steps to run, comma separated. (all,default,fetch,configure,build,tests,publish)")
+add_option("--steps", default="default", help="Steps to run, comma separated. (all,default,fetch,configure,build,bundle,tests,publish)")
 add_option("--publish-version", action="store", help="Specify version string.")
 add_option("--fetch-only", action="store_const", const="fetch", dest="steps", help="Fetch dependencies only.")
 
@@ -163,7 +163,11 @@ def clean(context):
 
 @build_step("build", optional=True)
 def build(context):
-    python("waf")
+    python("waf", "build")
+
+@build_step("bundle", optional=True)
+def bundle(context):
+    python("waf", "bundle")
 
 @build_step("test", optional=True)
 def test(context):
