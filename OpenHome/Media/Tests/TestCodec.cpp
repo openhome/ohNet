@@ -1134,6 +1134,9 @@ void TestCodec(Net::Library& aLib, const std::vector<Brn>& aArgs)
     // A file that does not play on existing DS's (is recognised as AAC ADTS)
     //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::eCodecMp3));
 
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+
     Runner runner("Codec tests\n");
     runner.Add(new SuiteCodecStream(stdFiles, aLib.Env(), uri));
     runner.Add(new SuiteCodecSeek(stdFiles, aLib.Env(), uri));

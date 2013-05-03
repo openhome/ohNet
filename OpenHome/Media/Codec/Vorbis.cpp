@@ -65,7 +65,7 @@ private:
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
-    TBool iRecognising;
+    TBool iRecognisingFromBuf;
     TUint64 iPeekOffset;
     TInt iLink;
 
@@ -102,24 +102,32 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
     //LOG(kCodec,"CodecVorbis::CallbackRead: attempt to read %u bytes\n", bytes);
     Bwn buf((TByte *)ptr, bytes);
     try{
-        if(iRecognising) {
-            ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
-            if ((iRecogBuf.Bytes() < iPeekOffset) || (iRecogBuf.Bytes()-iPeekOffset < bytes)) {
-                // our buffer is incorrectly sized (programmer error)
-                // OR we've exhausted the recognise buffer and still not recognised stream,
-                // so probably not a valid Vorbis stream
-                //ASSERTS();
-                buf.SetBytes(0);
-            }
-            else {
-                //LOG(kCodec,"CodecVorbis::CallbackRead: buf.Bytes: %u, iPeekOffset: %u, bytes: %u\n", buf.Bytes(), iPeekOffset, bytes);
-                Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(iPeekOffset), bytes);
-                buf.Replace(tmpBuf);
-                iPeekOffset += bytes;
-            }
+        if (iRecognisingFromBuf && ((iRecogBuf.Bytes() < iPeekOffset) || (iRecogBuf.Bytes()-iPeekOffset < bytes))) {
+            iRecognisingFromBuf = false;   // not enough data in buffer
         }
-        else {
+        if(iRecognisingFromBuf) {
+            ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
+            //LOG(kCodec,"CodecVorbis::CallbackRead: buf.Bytes: %u, iPeekOffset: %u, bytes: %u\n", buf.Bytes(), iPeekOffset, bytes);
+            Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(iPeekOffset), bytes);
+            buf.Replace(tmpBuf);
+            iPeekOffset += bytes;
+        }
+        else if (!iRecognisingFromBuf && (iController->StreamLength() > 0)) {   // reading during recognise requires a seekable stream
             if (!iController->StreamLength() || (iController->StreamPos() < iController->StreamLength())) {
+                while (iPeekOffset > 0) {  // previously recognising from buf
+                    TUint64 totalBytes = iPeekOffset;
+                    TUint bytes = 0;
+                    if (totalBytes > buf.MaxBytes()) {
+                        bytes = buf.MaxBytes();
+                    }
+                    else {
+                        bytes = static_cast<TUint>(iPeekOffset);    // buffers can't have a size >TUint
+                    }
+                    iController->Read(buf, bytes);
+                    buf.SetBytes(0);
+                    iPeekOffset -= bytes;
+                }
+
                 // Tremor pulls more data after stream exhaustion, as it is looking
                 // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
                 // than requested bytes; any subsequent pulls may pull a quit msg.
@@ -156,7 +164,7 @@ int CodecVorbis::CloseCallback()
 long CodecVorbis::TellCallback()
 {
     TUint64 tell;
-    if(iRecognising) {
+    if(iRecognisingFromBuf) {
         tell = iPeekOffset;
     }
     else {
@@ -202,7 +210,7 @@ void PrintCallback(void *datasource, char *message)
 
 
 CodecVorbis::CodecVorbis()
-    : iRecognising(false)
+    : iRecognisingFromBuf(false)
 {
     iDataSource = this;
     iCallbacks.read_func = ::ReadCallback;
@@ -223,14 +231,15 @@ TBool CodecVorbis::Recognise(const Brx& aData)
     LOG(kCodec, "CodecVorbis::Recognise\n");
 
     iPeekOffset = 0;
-    iRecognising = true;
+    iRecognisingFromBuf = true;
     iSamplesTotal = 0;
     ASSERT(aData.Bytes() <= EncodedAudio::kMaxBytes); // check we don't try overflow the buffer capacity
     iRecogBuf.Replace(aData);
 
-    TBool isVorbis = (ov_open_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
+    TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
 
-    iRecognising = false;
+    iRecognisingFromBuf = false;
+    iPeekOffset = 0;
     iRecogBuf.SetBytes(0);
 
     return isVorbis;
@@ -242,6 +251,8 @@ void CodecVorbis::StreamInitialise()
     iLink = 0;
     iStreamEnded = false;
     iNewStreamStarted = false;
+
+    ov_test_open(&iVf);
 
     iInfo = ov_info(&iVf, -1);
     iChannels = (TUint16)iInfo->channels;

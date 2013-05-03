@@ -375,8 +375,9 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.11.131:9000/disk/NON-DLNA/music/O0$1$4I4009/Waiting%20for%20the%207.18.m4a  // alac
     http://10.2.11.174:26125/content/c2/b16/f48000/d2599-co459.m4a                          // aac
     http://10.2.11.174:26125/content/c2/b16/f44100/d3220-co459.ogg
+    http://10.2.11.174:26125/content/c2/b16/f44100/d4505-co2377.ogg // ogg with cover art - exhausts recognise buf
     http://10.2.11.174:26125/content/c2/b16/f44100/d3450-co475.wma
-    http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // exhausts wma recognise buffer
+    http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // wma (with cover art?) - exhausts recognise buf
     */
     OptionParser parser;
     OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
