@@ -462,10 +462,10 @@ def build(bld):
 
 
     if not bld.env.nolink:
-        #bld.program(
-        #        source='OpenHome/Media/Tests/TestShell.cpp',
-        #        use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-        #        target='TestShell')
+        bld.program(
+               source='OpenHome/Media/Tests/TestShell.cpp',
+               use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+               target='TestShell')
         bld.program(
                 source='OpenHome/Media/Tests/TestMsgMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
