@@ -493,7 +493,7 @@ TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset,
         Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(aOffset), aBytes);
         iInBuf.Replace(tmpBuf);
     }
-    else {
+    else if (!aRecognisingFromBuf && (iController->StreamLength() > 0)) {
         //LOG(kCodec, "CodecWma::Read reading from controller\n");
         if (aOffset != iWmaReadOffset) {
             // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
