@@ -98,6 +98,8 @@ private:
     TUint iAudioMsgsDue;
     TUint iFlushMsgsDue;
     TUint iNextFlushId;
+    TUint iTrackId;
+    TUint iStreamId;
     MsgFlush* iFlush;
     Semaphore iFlushThreadExit;
     TUint64 iTrackOffset;
@@ -120,6 +122,8 @@ SuiteStopper::SuiteStopper()
     , iAudioMsgsDue(0)
     , iFlushMsgsDue(0)
     , iNextFlushId(MsgFlush::kIdInvalid + 1000)
+    , iTrackId(0)
+    , iStreamId(0)
     , iFlush(NULL)
     , iFlushThreadExit("HACK", 0)
     , iTrackOffset(0)
@@ -140,38 +144,30 @@ void SuiteStopper::Test()
 {
     /*
     Test goes something like
-        Create Stopper.  Start() then deliver 0x7f filled audio until ramp up completes.  
-        Check that ramp size matches kRampDuration and that the final msg was Split to ensure this.
-        Check that remaining audio is not ramped.
+        Start().  Check that audio isn't ramped.
+Check that ramp size matches kRampDuration and that the final msg was Split to ensure this.
+Check that remaining audio is not ramped.
         Deliver Track, Metatext, Quit msgs.  Check they're passed through.
         BeginHalt.  Deliver more audio, checking it ramps down
         BeginFlush.  Deliver other msgs, check none are delivered and PipelineFlushed is called.
         Start() then deliver 0x7f filled audio.  Check it ramps up.
         Halt then re-Start soon after.  Check no halt msg is output
         Send halt msg.  Check there was no previous ramping down.
+        Start() then deliver 0x7f filled audio.  Check initial audio isn't ramped.
+        RemoveStream().  Check that audio ramps down then flushes.
+        Check that subsequent audio is discarded.
+        Check that subsequent stream plays.
     */
 
     TEST(iStopper->iState == Stopper::EHalted);
     iStopper->Start();
     TEST(iStopper->iState == Stopper::EStarting);
-    iNextGeneratedMsg = EMsgAudioPcm;
-    Msg* msg;
-    // Pull (audio) until state changes to ERunning.  Check we've ramped over kRampDuration.
-    do {
-        TEST(iStopper->iState == Stopper::EStarting);
-        TEST(iStopper->iQueue.IsEmpty());
-        msg = iStopper->Pull();
-        msg = msg->Process(*this);
-        if (msg != NULL) {
-            msg->RemoveRef();
-        }
-        TEST(iLastMsg == EMsgAudioPcm);
-    } while(iJiffies < kRampDuration);
-    TEST(iJiffies == kRampDuration);
+    iNextGeneratedMsg = EMsgDecodedStream;
+    Msg* msg = iStopper->Pull();
+    (void)msg->Process(*this);
+    msg->RemoveRef();
     TEST(iStopper->iState == Stopper::ERunning);
-    TEST(!iStopper->iQueue.IsEmpty());
-
-    // Check that remaining audio is not ramped.
+    iNextGeneratedMsg = EMsgAudioPcm;
     msg = iStopper->Pull();
     (void)msg->Process(*this);
     TEST(iLastMsg == EMsgAudioPcm);
@@ -289,6 +285,38 @@ void SuiteStopper::Test()
     (void)msg->Process(*this);
     msg->RemoveRef();
     TEST(iLastMsg == EMsgHalt);
+
+    // Start() then deliver 0x7f filled audio without ramping.
+    iStopper->Start();
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iStopper->Pull();
+    (void)msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iStopper->iState == Stopper::ERunning);
+
+    // RemoveStream().  Check that audio ramps down then flushes.
+    iStopper->RemoveStream(iTrackId, iStreamId);
+    iNextGeneratedMsg = EMsgAudioPcm;
+    iJiffies = 0;
+    do {
+        TEST(iStopper->iState == Stopper::EHalting);
+        TEST(iStopper->iQueue.IsEmpty());
+        msg = iStopper->Pull();
+        (void)msg->Process(*this);
+        TEST(iLastMsg == EMsgAudioPcm);
+    } while(iJiffies < kRampDuration);
+    TEST(iJiffies == kRampDuration);
+
+    // Check that subsequent audio is discarded.
+    // Check that subsequent stream plays.
+    iAudioMsgsDue = 100;
+    iStreamId++;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    msg = iStopper->Pull();
+    (void)msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastMsg == EMsgDecodedStream);
+    TEST(iStopper->iState == Stopper::ERunning);
 }
 
 void SuiteStopper::FlushThread()
@@ -316,11 +344,11 @@ Msg* SuiteStopper::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, this);
+        return iMsgFactory->CreateMsgDecodedStream(iStreamId, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, this);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), NULL);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iTrackId);
         track->RemoveRef();
         return msg;
     }

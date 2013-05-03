@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 
+#include <climits>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
@@ -24,7 +26,10 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iReportHalted(false)
     , iReportFlushed(false)
     , iFlushStream(false)
+    , iRemovingStream(false)
     , iTargetFlushId(MsgFlush::kIdInvalid)
+    , iTrackId(UINT_MAX)
+    , iStreamId(UINT_MAX)
 {
 }
 
@@ -36,7 +41,10 @@ void Stopper::Start()
 {
     iLock.Wait();
     ASSERT_DEBUG(iState != ERunning && iState != EFlushing);
-    if (iRemainingRampSize == iRampDuration) {
+    if (iRemovingStream) {
+        ;
+    }
+    else if (iRemainingRampSize == iRampDuration || iFlushStream) {
         iState = ERunning;
     }
     else {
@@ -50,9 +58,7 @@ void Stopper::Start()
 void Stopper::BeginHalt()
 {
     iLock.Wait();
-    ASSERT_DEBUG(iState != EFlushing);
-    iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
-    iState = EHalting;
+    DoBeginHalt();
     iLock.Signal();
 }
 
@@ -110,6 +116,16 @@ Msg* Stopper::Pull()
     return msg;
 }
 
+void Stopper::RemoveStream(TUint aTrackId, TUint aStreamId)
+{
+    iLock.Wait();
+    if (iTrackId == aTrackId && iStreamId == aStreamId) {
+        iRemovingStream = true;
+        DoBeginHalt();
+    }
+    iLock.Signal();
+}
+
 Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
@@ -144,9 +160,11 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
-    iFlushStream = false;
+    iFlushStream = iRemovingStream = false;
+    iState = ERunning;
 
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
+    iStreamId = streamInfo.StreamId();
     IStreamHandler* sh = streamInfo.StreamHandler();
     if (sh->OkToPlay(iTrackId, streamInfo.StreamId()) == ePlayNo) {
         /*TUint flushId = */sh->TryStop(iTrackId, streamInfo.StreamId());
@@ -223,7 +241,14 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
     case EHalting:
         Ramp(aMsg, Ramp::EDown);
         if (iRemainingRampSize == 0) {
-            iState = EHaltPending;
+            if (iRemovingStream) {
+                iState = ERunning;
+                iRemovingStream = false;
+                iFlushStream = true;
+            }
+            else {
+                iState = EHaltPending;
+            }
             // FIXME - may need to empty/delete iQueue
             // ... or could hang onto them and see whether they're still relevant if we restart playing?
         }
@@ -254,4 +279,11 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
         iQueue.EnqueueAtHead(split);
     }
     iRemainingRampSize -= aMsg->Jiffies();
+}
+
+void Stopper::DoBeginHalt()
+{
+    ASSERT_DEBUG(iState != EFlushing);
+    iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+    iState = EHalting;
 }

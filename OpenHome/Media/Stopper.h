@@ -28,7 +28,7 @@ Flush msgs are not propogated.  Any audio which gets past this element is guaran
 Note that Flush msg can only be added to pipeline once it is halted (when PipelineHalted() has been called)
 */
 
-class Stopper : public IPipelineElementUpstream, private IMsgProcessor
+class Stopper : public IPipelineElementUpstream, public IStopper, private IMsgProcessor
 {
     friend class SuiteStopper;
 public:
@@ -39,6 +39,8 @@ public:
     void BeginFlush();
 public: // from IPipelineElementUpstream
     Msg* Pull();
+public: // from IStopper
+    void RemoveStream(TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -54,6 +56,7 @@ private: // from IMsgProcessor
 private:
     Msg* ProcessMsgAudio(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
+    void DoBeginHalt();
 private:
     enum EState
     {
@@ -80,8 +83,10 @@ private:
     TBool iReportHalted;
     TBool iReportFlushed;
     TBool iFlushStream;
+    TBool iRemovingStream;
     TUint iTargetFlushId;
     TUint iTrackId;
+    TUint iStreamId;
 };
 
 } // namespace Media
