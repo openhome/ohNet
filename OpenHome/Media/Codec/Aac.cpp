@@ -2,6 +2,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Printer.h>
 
 #include <string.h>
@@ -531,16 +532,20 @@ void CodecAac::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
             break;
         case 16:
             for(i=0 ; i<aToWrite*iChannels; i++) {
-                *dst++ = src[1];
-                *dst++ = src[0];
+                TInt16 tmp = Arch::BigEndian2((src[1] << 8) | src[0]);
+                TByte* tmpPtr = reinterpret_cast<TByte*>(&tmp);
+                *dst++ = *tmpPtr++;
+                *dst++ = *tmpPtr++;
                 src += 2;
             }
             break;
         case 24:
             for(i=0 ; i<aToWrite*iChannels; i++) {
-                *dst++ = src[2];
+                TInt16 tmp = Arch::BigEndian2((src[2] << 8) | src[0]);
+                TByte* tmpPtr = reinterpret_cast<TByte*>(&tmp);
+                *dst++ = *tmpPtr++;
                 *dst++ = src[1];
-                *dst++ = src[0];
+                *dst++ = *tmpPtr++;
                 src += 3;
             }
             break;
