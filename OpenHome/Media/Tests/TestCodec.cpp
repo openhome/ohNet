@@ -955,7 +955,7 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     delete fileLocation;
 
     //LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
-    //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
+    Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     TEST(iZeroCrossings >= expectedZeroCrossings-100);
     if (iCodec == AudioFileDescriptor::eCodecMp3) {
         // MP3 encoders/decoders add silence and some samples of random data to
