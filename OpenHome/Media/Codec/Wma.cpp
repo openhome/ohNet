@@ -464,14 +464,26 @@ TBool CodecWma::TrySeek(TUint aStreamId, TUint64 aSample)
 // copy audio data from decoded buffer to output buffer, converting to big endian if required.
 void CodecWma::CopyToBigEndian(TUint aSamples, TUint aBytesPerSample)
 {
-    // FIXME - adapt for 24 bit streams too
     TByte* dstByte = const_cast<TByte*>(iOutBuf.Ptr());
-    TInt16* dst = reinterpret_cast<TInt16*>(dstByte);
     TByte* srcByte = const_cast<TByte*>(iDecodedBuf.Ptr());
-    TInt16* src = reinterpret_cast<TInt16*>(srcByte);
     TUint samples = aSamples*iChannels;
+
     while(samples--) {
-        *dst++ = Arch::BigEndian2(*src++);
+        switch (iBitDepth) {
+        case 8:
+            *dstByte++ = *srcByte++;
+            break;
+        case 16:
+            *dstByte++ = srcByte[0];
+            *dstByte++ = srcByte[1];
+            break;
+        case 24:
+            *dstByte++ = srcByte[0];
+            *dstByte++ = srcByte[1];
+            *dstByte++ = srcByte[2];
+        default:
+            ASSERTS();
+        }
     }
     iOutBuf.SetBytes(aSamples*aBytesPerSample);
 }
