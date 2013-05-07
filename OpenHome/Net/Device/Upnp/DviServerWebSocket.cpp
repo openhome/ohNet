@@ -243,6 +243,7 @@ PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession)
     : iSession(aSession)
     , iWriter(kWriteBufGranularity)
 {
+    SetWriter(iWriter);
 }
 
 PropertyWriterWs::~PropertyWriterWs()
