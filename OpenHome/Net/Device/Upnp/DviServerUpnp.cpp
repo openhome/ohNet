@@ -332,9 +332,9 @@ PropertyWriterUpnp* PropertyWriterUpnp::Create(DvStack& aDvStack, const Endpoint
 
 PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack)
     : iDvStack(aDvStack)
-    , iWriterChunked(NULL)
     , iWriteBuffer(NULL)
     , iWriterEvent(NULL)
+    , iWriterChunked(NULL)
 {
 }
 
