@@ -307,12 +307,46 @@ void SubscriptionDataUpnp::Release()
 
 // PropertyWriterUpnp
 
-PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
-                                       const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber)
+PropertyWriterUpnp* PropertyWriterUpnp::Create(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
+                                               const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber)
+{ // static
+    PropertyWriterUpnp* self = new PropertyWriterUpnp(aDvStack);
+    try {
+        self->Connect(aSubscriber);
+        self->WriteHeaders(aPublisher, aSubscriberPath, aHttpVersion, aSid, aSequenceNumber);
+    }
+    catch (NetworkTimeout&) {
+        delete self;
+        throw;
+    }
+    catch (NetworkError&) {
+        delete self;
+        throw;
+    }
+    catch (WriterError&) {
+        delete self;
+        throw;
+    }
+    return self;
+}
+
+PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack)
     : iDvStack(aDvStack)
+    , iWriterChunked(NULL)
+    , iWriteBuffer(NULL)
+    , iWriterEvent(NULL)
 {
-    iSocket.Open(aDvStack.Env());
-    iSocket.Connect(aSubscriber, aDvStack.Env().InitParams().TcpConnectTimeoutMs());
+}
+
+void PropertyWriterUpnp::Connect(const Endpoint& aSubscriber)
+{
+    iSocket.Open(iDvStack.Env());
+    iSocket.Connect(aSubscriber, iDvStack.Env().InitParams().TcpConnectTimeoutMs());
+}
+
+void PropertyWriterUpnp::WriteHeaders(const Endpoint& aPublisher, const Brx& aSubscriberPath,
+                                      const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber)
+{
     iWriterChunked = new WriterHttpChunked(iSocket);
     iWriteBuffer = new Sws<kMaxRequestBytes>(*iWriterChunked);
     iWriterEvent = new WriterHttpRequest(*iWriteBuffer);
@@ -435,7 +469,7 @@ IPropertyWriter* PropertyWriterFactory::CreateWriter(const IDviSubscriptionUserD
     }
     Endpoint publisher(iPort, iAdapter);
     const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
-    return new PropertyWriterUpnp(iDvStack, publisher, data->Subscriber(), data->SubscriberPath(), data->HttpVersion(), aSid, aSequenceNumber);
+    return PropertyWriterUpnp::Create(iDvStack, publisher, data->Subscriber(), data->SubscriberPath(), data->HttpVersion(), aSid, aSequenceNumber);
 }
 
 void PropertyWriterFactory::NotifySubscriptionCreated(const Brx& /*aSid*/)

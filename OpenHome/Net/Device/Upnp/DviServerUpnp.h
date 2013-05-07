@@ -103,8 +103,13 @@ private:
 class PropertyWriterUpnp : public PropertyWriter
 {
 public:
-    PropertyWriterUpnp(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
-                       const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber);
+    static PropertyWriterUpnp* Create(DvStack& aDvStack, const Endpoint& aPublisher, const Endpoint& aSubscriber,
+                                      const Brx& aSubscriberPath, const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber);
+private:
+    PropertyWriterUpnp(DvStack& aDvStack);
+    void Connect(const Endpoint& aSubscriber);
+    void WriteHeaders(const Endpoint& aPublisher, const Brx& aSubscriberPath,
+                      const Http::EVersion aHttpVersion, const Brx& aSid, TUint aSequenceNumber);
 private: // IPropertyWriter
     ~PropertyWriterUpnp();
     void PropertyWriteEnd();

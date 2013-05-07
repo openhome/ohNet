@@ -226,11 +226,31 @@ void WsHeaderVersion::Process(const Brx& aValue)
 
 // PropertyWriterWs
 
-PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber)
+PropertyWriterWs* PropertyWriterWs::Create(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber)
+{ // static
+    PropertyWriterWs* self = new PropertyWriterWs(aSession);
+    try {
+        self->WriteHeaders(aSid, aSequenceNumber);
+    }
+    catch (WriterError&) {
+        delete self;
+        throw;
+    }
+    return self;
+}
+
+PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession)
     : iSession(aSession)
     , iWriter(kWriteBufGranularity)
 {
-    SetWriter(iWriter);
+}
+
+PropertyWriterWs::~PropertyWriterWs()
+{
+}
+
+void PropertyWriterWs::WriteHeaders(const Brx& aSid, TUint aSequenceNumber)
+{
     iWriter.Write(Brn("<?xml version=\"1.0\"?>"));
     iWriter.Write(Brn("<root>"));
     iWriter.Write('<');
@@ -244,10 +264,6 @@ PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSi
     (void)Ascii::AppendDec(seq, aSequenceNumber);
     WriteTag(iWriter, WebSocket::kTagSeq, seq);
     iWriter.Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
-}
-
-PropertyWriterWs::~PropertyWriterWs()
-{
 }
 
 void PropertyWriterWs::PropertyWriteEnd()
@@ -953,7 +969,7 @@ void DviSessionWebSocket::WritePropertyUpdates()
 
 IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/, const Brx& aSid, TUint aSequenceNumber)
 {
-    return new PropertyWriterWs(*this, aSid, aSequenceNumber);
+    return PropertyWriterWs::Create(*this, aSid, aSequenceNumber);
 }
 
 void DviSessionWebSocket::NotifySubscriptionCreated(const Brx& /*aSid*/)

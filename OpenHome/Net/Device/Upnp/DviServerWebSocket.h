@@ -139,7 +139,10 @@ class DviSessionWebSocket;
 class PropertyWriterWs : public PropertyWriter
 {
 public:
-    PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber);
+    static PropertyWriterWs* Create(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber);
+private:
+    PropertyWriterWs(DviSessionWebSocket& aSession);
+    void WriteHeaders(const Brx& aSid, TUint aSequenceNumber);
 private: // IPropertyWriter
     ~PropertyWriterWs();
     void PropertyWriteEnd();
