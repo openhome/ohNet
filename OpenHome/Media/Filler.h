@@ -18,13 +18,13 @@ namespace Media {
 class UriProvider
 {
 public:
+    virtual ~UriProvider();
     const Brx& Style() const;
     virtual void Begin(const Brx& aProviderId) = 0;
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
     virtual EStreamPlay GetPrev(Track*& aTrack) = 0;
 protected:
     UriProvider(const TChar* aStyle);
-    virtual ~UriProvider();
 private:
     BwsStyle iStyle;
 };
