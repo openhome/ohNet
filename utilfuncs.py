@@ -123,15 +123,24 @@ def configure_toolchain(conf):
             conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
         # Options for Core-ppc32 and Core-armv6
         if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
-            if conf.options.dest_platform == 'Core-ppc32':
+
+            platform = conf.options.dest_platform
+
+            if platform == 'Core-ppc32':
                 cpu = '403'
-            if conf.options.dest_platform == 'Core-armv6':
+            if platform == 'Core-armv6':
                 cpu = 'arm926ej-s'
                 # core2 is arm based - pass no-psabi flag to avoid excessive noise during compilation.
                 conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
                 conf.env.append_value('CFLAGS',   ['-Wno-psabi'])
 
-            conf.env.append_value('LINKFLAGS', os.environ.get('CROSS_LINKFLAGS', '').split())
+            linkflags = [   '-B', '../dependencies/' + platform + '/libplatform/lib/',
+                            '-B', '../dependencies/' + platform + '/libosa/lib/',
+                            '../dependencies/' + platform + '/libplatform/lib/FileOpen.o',
+                            '-specs', 'bsp_specs',
+                            '-lplatform']
+
+            conf.env.append_value('LINKFLAGS', linkflags)
             conf.env.append_value('LINKFLAGS',  ['-mcpu=' + cpu])
             conf.env.append_value('CXXFLAGS',  ['-mcpu=' + cpu])
             conf.env.append_value('CFLAGS',    ['-mcpu=' + cpu])
