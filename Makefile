@@ -275,15 +275,19 @@ rmdir = rm -rf
 uset4 = no
 
 ifeq ($(native_only), yes)
-build_targets = $(native_targets)
+build_targets_base = $(native_targets)
 else
 ifeq ($(no_shared_objects), yes)
-build_targets = $(native_targets) ohNet.net.dll
+build_targets_base = $(native_targets) ohNet.net.dll
 else
-build_targets = $(all_targets)
+build_targets_base = $(all_targets)
 endif
 endif
-
+ifeq ($(uset4), yes)
+build_targets = $(build_targets_base) tt
+else
+build_targets = $(build_targets_base)
+endif
 default : all
 
 
