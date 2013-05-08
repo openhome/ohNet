@@ -201,7 +201,6 @@ def build(bld):
             src_xml_node = bld.root.find_resource(service.xml)
             tgt = bld.path.find_or_declare(os.path.join('Generated', 'Dv' + service.target + ext))
             bld(
-                #rule="${MONO} ${SRC[0].abspath()} -o ${TGT} ${SRC[1].abspath()} -a xml:${SRC[2]} -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version,
                 rule="${MONO} " + text_transform_exe_node.abspath() + " -o " + tgt.abspath() + " " + t4_template_node.abspath() + " -a xml:../" + service.xml + " -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version + " " + args,
                 source=[text_transform_exe_node, t4_template_node, service.xml],
                 target=tgt
