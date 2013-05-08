@@ -183,8 +183,8 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/AVTransport1.xml', 'upnp.org', 'AVTransport', '1', 'UpnpOrgAVTransport1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org', 'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/RenderingControl1.xml', 'upnp.org', 'RenderingControl', '1', 'UpnpOrgRenderingControl1'),
-        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenHomeOrgProduct1'),
-        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenHomeOrgSender1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenhomeOrgProduct1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenhomeOrgSender1'),
     ]
 
 def build(bld):
@@ -215,10 +215,10 @@ def build(bld):
                 'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
                 'OpenHome/Av/Product.cpp',
-                'Generated/DvAvOpenHomeOrgProduct1.cpp',
+                'Generated/DvAvOpenhomeOrgProduct1.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
                 'OpenHome/Av/Source.cpp',
-                'Generated/DvAvOpenHomeOrgSender1.cpp',
+                'Generated/DvAvOpenhomeOrgSender1.cpp',
                 'OpenHome/Av/Songcast/Ohm.cpp',
                 'OpenHome/Av/Songcast/OhmMsg.cpp',
                 'OpenHome/Av/Songcast/OhmProtocolMulticast.cpp',
