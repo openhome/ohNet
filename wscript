@@ -254,6 +254,8 @@ def build(bld):
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
+                'Generated/DvUpnpOrgConnectionManager1.cpp',
+                'OpenHome/Av/UpnpAv/ProviderConnectionManager.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
