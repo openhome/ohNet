@@ -195,6 +195,20 @@ def guess_ohnet_location(conf):
         ],
         message='Specify --ohnet-lib-dir or --ohnet')
     )
+    set_env_verbose(conf, 'TEXT_TRANSFORM_PATH', match_path(
+        [
+            '{options.ohnet}/Build/Tools',
+            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/lib/t4',
+        ],
+        message='Specify --ohnet')
+    )
+    set_env_verbose(conf, 'T4_TEMPLATE_PATH', match_path(
+        [
+            '{options.ohnet}/OpenHome/Net/T4/Templates',
+            'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/lib/t4',
+        ],
+        message='Specify --ohnet')
+    )
 
 def get_platform_info(dest_platform):
     platforms = {
