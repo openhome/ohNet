@@ -7,15 +7,19 @@
 #include <vector>
 
 namespace OpenHome {
+namespace Av {
+    class IInfoAggregator;
+}
 namespace Media {
 
-class Av::IInfoAggregator;
 class IPipelineObserver; // FIXME - define this (or equivalent) in this header
 class Pipeline;
 class ProtocolManager;
 class Filler;
 class PipelineIdProvider;
-class Codec::CodecBase;
+namespace Codec {
+    class CodecBase;
+}
 class Protocol;
 class ContentProcessor;
 class UriProvider;
