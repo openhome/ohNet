@@ -180,11 +180,11 @@ class GeneratedFile(object):
         self.target = target
 
 upnp_services = [
-        GeneratedFile('Openhome/Av/ServiceXml/Upnp/AVTransport1.xml', 'upnp.org', 'AVTransport', '1', 'UpnpOrgAVTransport1'),
-        GeneratedFile('Openhome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org', 'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
-        GeneratedFile('Openhome/Av/ServiceXml/Upnp/RenderingControl1.xml', 'upnp.org', 'RenderingControl', '1', 'UpnpOrgRenderingControl1'),
-        GeneratedFile('Openhome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenHomeOrgProduct1'),
-        GeneratedFile('Openhome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenHomeOrgSender1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/Upnp/AVTransport1.xml', 'upnp.org', 'AVTransport', '1', 'UpnpOrgAVTransport1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org', 'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/Upnp/RenderingControl1.xml', 'upnp.org', 'RenderingControl', '1', 'UpnpOrgRenderingControl1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenHomeOrgProduct1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenHomeOrgSender1'),
     ]
 
 def build(bld):
