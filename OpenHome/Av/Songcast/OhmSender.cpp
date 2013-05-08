@@ -1,5 +1,5 @@
 #include "OhmSender.h"
-#include <OpenHome/Net/Core/DvAvOpenhomeOrgSender1.h>
+#include <Generated/DvAvOpenhomeOrgSender1.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Arch.h>

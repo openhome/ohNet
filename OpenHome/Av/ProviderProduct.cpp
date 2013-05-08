@@ -1,6 +1,6 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Net/Core/DvAvOpenhomeOrgProduct1.h>
+#include <Generated/DvAvOpenhomeOrgProduct1.h>
 #include <OpenHome/Av/ProviderProduct.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Source.h>

@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+
+    <actionList>
+        <action>
+            <name>PresentationUrl</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PresentationUrl</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Metadata</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Metadata</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Audio</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Audio</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Status</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Status</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Attributes</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Attributes</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+    
+    <serviceStateTable>
+        <stateVariable sendEvents="yes">
+            <name>PresentationUrl</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Metadata</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Audio</name>
+            <dataType>boolean</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Status</name>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>Enabled</allowedValue>
+                <allowedValue>Disabled</allowedValue>
+                <allowedValue>Blocked</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Attributes</name>
+            <dataType>string</dataType>
+        </stateVariable>        
+    </serviceStateTable>
+</scpd>

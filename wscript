@@ -5,6 +5,9 @@ import os
 
 from waflib.Node import Node
 
+from wafmodules.filetasks import (
+    find_resource_or_fail)
+
 import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
@@ -26,6 +29,16 @@ def options(opt):
     opt.add_option('--nolink', action='store_true', dest="nolink", default=False)
 
 def configure(conf):
+
+    def set_env(conf, varname, value):
+        conf.msg(
+                'Setting %s to' % varname,
+                "True" if value is True else
+                "False" if value is False else
+                value)
+        setattr(conf.env, varname, value)
+        return value
+
     conf.msg("debugmode:", conf.options.debugmode)
     if conf.options.dest_platform is None:
         try:
@@ -36,16 +49,21 @@ def configure(conf):
     configure_toolchain(conf)
     guess_ohnet_location(conf)
 
-    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+    if conf.options.dest_platform.startswith('Windows'):
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
-    conf.env.STLIB_OHNET=['ohNetProxies', 'ohNetDevices', 'TestFramework', 'ohNetCore']
+    conf.env.STLIB_OHNET=['TestFramework', 'ohNetCore']
 
     if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
 
     conf.env.nolink = conf.options.nolink
 
-    conf.env.INCLUDES = conf.path.find_node('.').abspath()
+    conf.env.INCLUDES = [
+        '.',
+        conf.path.find_node('.').abspath()
+        ]
+
+    mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
 
     # Setup FLAC lib options 
     conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL']
@@ -153,7 +171,42 @@ def create_copy_task(build_context, files, target_dir='', cwd=None, keep_relativ
             target=target_filenames,
             name=name)
 
+class GeneratedFile(object):
+    def __init__(self, xml, domain, type, version, target):
+        self.xml = xml
+        self.domain = domain
+        self.type = type
+        self.version = version
+        self.target = target
+
+upnp_services = [
+        GeneratedFile('Openhome/Av/ServiceXml/Upnp/AVTransport1.xml', 'upnp.org', 'AVTransport', '1', 'UpnpOrgAVTransport1'),
+        GeneratedFile('Openhome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org', 'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
+        GeneratedFile('Openhome/Av/ServiceXml/Upnp/RenderingControl1.xml', 'upnp.org', 'RenderingControl', '1', 'UpnpOrgRenderingControl1'),
+        GeneratedFile('Openhome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenHomeOrgProduct1'),
+        GeneratedFile('Openhome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenHomeOrgSender1'),
+    ]
+
 def build(bld):
+
+    # Generated provider base classes
+    t4templatedir = bld.env['T4_TEMPLATE_PATH']
+    text_transform_exe_node = find_resource_or_fail(bld, bld.root, os.path.join(bld.env['TEXT_TRANSFORM_PATH'], 'TextTransform.exe'))
+    for service in upnp_services:
+        for t4Template, ext, args in [
+                ('DvUpnpCppCoreHeader.tt', '.h', '-a buffer:1'),
+                ('DvUpnpCppCoreSource.tt', '.cpp', '')
+                ]:
+            t4_template_node = find_resource_or_fail(bld, bld.root, os.path.join(t4templatedir, t4Template))
+            src_xml_node = bld.root.find_resource(service.xml)
+            tgt = bld.path.find_or_declare(os.path.join('Generated', 'Dv' + service.target + ext))
+            bld(
+                #rule="${MONO} ${SRC[0].abspath()} -o ${TGT} ${SRC[1].abspath()} -a xml:${SRC[2]} -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version,
+                rule="${MONO} " + text_transform_exe_node.abspath() + " -o " + tgt.abspath() + " " + t4_template_node.abspath() + " -a xml:../" + service.xml + " -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version + " " + args,
+                source=[text_transform_exe_node, t4_template_node, service.xml],
+                target=tgt
+                )
+    bld.add_group()
 
     # Library
     bld.stlib(
@@ -162,8 +215,10 @@ def build(bld):
                 'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
                 'OpenHome/Av/Product.cpp',
+                'Generated/DvAvOpenHomeOrgProduct1.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
                 'OpenHome/Av/Source.cpp',
+                'Generated/DvAvOpenHomeOrgSender1.cpp',
                 'OpenHome/Av/Songcast/Ohm.cpp',
                 'OpenHome/Av/Songcast/OhmMsg.cpp',
                 'OpenHome/Av/Songcast/OhmProtocolMulticast.cpp',

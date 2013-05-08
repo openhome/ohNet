@@ -4,7 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/Net/Core/DvAvOpenhomeOrgProduct1.h>
+#include <Generated/DvAvOpenhomeOrgProduct1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Av/Product.h>
 
