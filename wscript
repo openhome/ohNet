@@ -198,7 +198,6 @@ def build(bld):
                 ('DvUpnpCppCoreSource.tt', '.cpp', '')
                 ]:
             t4_template_node = find_resource_or_fail(bld, bld.root, os.path.join(t4templatedir, t4Template))
-            src_xml_node = bld.root.find_resource(service.xml)
             tgt = bld.path.find_or_declare(os.path.join('Generated', 'Dv' + service.target + ext))
             bld(
                 rule="${MONO} " + text_transform_exe_node.abspath() + " -o " + tgt.abspath() + " " + t4_template_node.abspath() + " -a xml:../" + service.xml + " -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version + " " + args,
