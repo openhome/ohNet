@@ -389,9 +389,15 @@ void PropertyWriterUpnp::WriteHeaders(const Endpoint& aPublisher, const Brx& aSu
 
 PropertyWriterUpnp::~PropertyWriterUpnp()
 {
-    delete iWriterEvent;
-    delete iWriteBuffer;
-    delete iWriterChunked;
+    if (iWriterEvent != NULL) {
+        delete iWriterEvent;
+    }
+    if (iWriteBuffer != NULL) {
+        delete iWriteBuffer;
+    }
+    if (iWriterChunked != NULL) {
+        delete iWriterChunked;
+    }
     iSocket.Close();
 }
 
