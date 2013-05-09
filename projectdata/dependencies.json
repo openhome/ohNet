@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.36",
+        "version": "0.0.38",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {
@@ -32,5 +32,25 @@
         "version": "3.2.2",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/cherrypy/${name}-${version}.zip",
         "dest": "dependencies/AnyPlatform/CherryPy"
+    },
+    {   "name": "libplatform",
+        "type": "internal",
+        "version": "0.0.36",
+        "archive-suffix": "-Release",
+        "platform-ignore": {
+            "Core-armv6": false,
+            "Core-ppc32": false,
+            "*": true },
+        "ignore": "${platform-ignore[$platform]}"
+    },
+    {   "name": "libosa",
+        "type": "internal",
+        "version": "0.0.135",
+        "archive-suffix": "-Release",
+        "platform-ignore": {
+            "Core-armv6": false,
+            "Core-ppc32": false,
+            "*": true },
+        "ignore": "${platform-ignore[$platform]}"
     }
 ]
