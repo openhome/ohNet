@@ -1010,6 +1010,8 @@ void OsNetworkFreeInterfaces(OsNetworkAdapter* aInterfaces)
 DWORD interfaceChangeThread(LPVOID aArg)
 {
     InterfaceChangeObserver* obs = (InterfaceChangeObserver*)aArg;
+    DWORD callback = 0;
+
     while (obs->iShutdown == 0) {
         DWORD ret = WAIT_FAILED;
         DWORD bytes;
@@ -1019,11 +1021,17 @@ DWORD interfaceChangeThread(LPVOID aArg)
             HANDLE handles[2];
             handles[0] = obs->iEvent;
             handles[1] = obs->iShutdownEvent;
+
+            if (callback)
+            {
+                (obs->iCallback)(obs->iArg);
+                callback = 0;
+            }
+
             ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, INFINITE, FALSE);
         }
         if (WAIT_OBJECT_0 == ret) {
-            (obs->iCallback)(obs->iArg);
-            (void)WSAResetEvent(obs->iEvent);
+            callback = 1;
         }
     }
     (void)ReleaseSemaphore(obs->iSem, 1, NULL);
@@ -1044,8 +1052,8 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
 
     icobs->iSocket = socket(AF_INET, SOCK_DGRAM, 0);
     SetSocketBlocking(icobs->iSocket);
-    icobs->iEvent = WSACreateEvent();
-    icobs->iShutdownEvent = WSACreateEvent();
+    icobs->iEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    icobs->iShutdownEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     icobs->iCallback = aCallback;
     icobs->iArg = aArg;
     icobs->iShutdown = 0;
