@@ -134,11 +134,14 @@ def configure_toolchain(conf):
                 conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
                 conf.env.append_value('CFLAGS',   ['-Wno-psabi'])
 
-            linkflags = [   '-B', '../dependencies/' + platform + '/libplatform/lib/',
-                            '-B', '../dependencies/' + platform + '/libosa/lib/',
-                            '../dependencies/' + platform + '/libplatform/lib/FileOpen.o',
-                            '-specs', 'bsp_specs',
-                            '-lplatform']
+            try:
+                linkflags = os.environ['CROSS_LINKFLAGS'].split()
+            except KeyError:
+                linkflags = [   '-B', '../dependencies/' + platform + '/libplatform/lib/',
+                                '-B', '../dependencies/' + platform + '/libosa/lib/',
+                                '../dependencies/' + platform + '/libplatform/lib/FileOpen.o',
+                                '-specs', 'bsp_specs',
+                                '-lplatform']
 
             conf.env.append_value('LINKFLAGS', linkflags)
             conf.env.append_value('LINKFLAGS',  ['-mcpu=' + cpu])
