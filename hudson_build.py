@@ -231,6 +231,9 @@ class JenkinsBuild():
         for release in release_targets:
             openhome_configuration = release.title()
             build = []
+            if platform_args != []:
+                build.extend(platform_args)
+                build.append('&&')
             build.append('make')
             build.append('tt')
             build.append('uset4=yes')
