@@ -409,10 +409,6 @@ void DviSsdpNotifierManager::Delete(std::list<Notifier*>& aList)
 
 DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnnouncementData& aAnnouncementData)
 {
-    if (iActiveResponders.size() == 0 && iActiveAnnouncers.size() == 0) {
-        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
-        iShutdownSem.Wait();
-    }
     DviSsdpNotifierManager::Responder* responder;
     if (iFreeResponders.size() == 0) {
         MsearchResponse* msr = new MsearchResponse(iDvStack, *this);
@@ -423,16 +419,16 @@ DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnn
         responder = static_cast<DviSsdpNotifierManager::Responder*>(iFreeResponders.front());
         iActiveResponders.splice(iActiveResponders.end(), iFreeResponders, iFreeResponders.begin());
     }
+    if (iActiveResponders.size() + iActiveAnnouncers.size() == 1) {
+        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
+        iShutdownSem.Wait();
+    }
     responder->SetActive(aAnnouncementData.Udn());
     return responder;
 }
 
 DviSsdpNotifierManager::Announcer* DviSsdpNotifierManager::GetAnnouncer(IUpnpAnnouncementData& aAnnouncementData)
 {
-    if (iActiveResponders.size() == 0 && iActiveAnnouncers.size() == 0) {
-        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
-        iShutdownSem.Wait();
-    }
     DviSsdpNotifierManager::Announcer* announcer;
     if (iFreeAnnouncers.size() == 0) {
         try {
@@ -447,6 +443,10 @@ DviSsdpNotifierManager::Announcer* DviSsdpNotifierManager::GetAnnouncer(IUpnpAnn
     else {
         announcer = static_cast<DviSsdpNotifierManager::Announcer*>(iFreeAnnouncers.front());
         iActiveAnnouncers.splice(iActiveAnnouncers.end(), iFreeAnnouncers, iFreeAnnouncers.begin());
+    }
+    if (iActiveResponders.size() + iActiveAnnouncers.size() == 1) {
+        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
+        iShutdownSem.Wait();
     }
     announcer->SetActive(aAnnouncementData.Udn());
     return announcer;
