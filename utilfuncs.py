@@ -127,16 +127,23 @@ def configure_toolchain(conf):
             platform = conf.options.dest_platform
 
             if platform == 'Core-ppc32':
+                default_cross = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
                 cpu = '403'
             if platform == 'Core-armv6':
+                default_cross = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
                 cpu = 'arm926ej-s'
                 # core2 is arm based - pass no-psabi flag to avoid excessive noise during compilation.
                 conf.env.append_value('CXXFLAGS', ['-Wno-psabi'])
                 conf.env.append_value('CFLAGS',   ['-Wno-psabi'])
 
+            if conf.options.cross == None:
+                conf.options.cross = default_cross
+
             try:
                 linkflags = os.environ['CROSS_LINKFLAGS'].split()
             except KeyError:
+                # This is a bit pants - we should configure wag with libosa/libplatform paths,
+                # and use that path here.
                 linkflags = [   '-B', '../dependencies/' + platform + '/libplatform/lib/',
                                 '-B', '../dependencies/' + platform + '/libosa/lib/',
                                 '../dependencies/' + platform + '/libplatform/lib/FileOpen.o',
