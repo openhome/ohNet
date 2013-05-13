@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.38",
+        "version": "0.0.40",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {
@@ -33,6 +33,12 @@
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/cherrypy/${name}-${version}.zip",
         "dest": "dependencies/AnyPlatform/CherryPy"
     },
+    {   "name":             "testharness",
+        "version":          "0.0.1",
+        "type":             "internal",
+        "archive-filename": "${name}-${version}.tar.gz",
+        "dest":             "dependencies/AnyPlatform/"
+    },
     {   "name": "libplatform",
         "type": "internal",
         "version": "0.0.36",
@@ -43,14 +49,36 @@
             "*": true },
         "ignore": "${platform-ignore[$platform]}"
     },
-    {   "name": "libosa",
-        "type": "internal",
-        "version": "0.0.135",
-        "archive-suffix": "-Release",
+    {   "name":             "libosa",
+        "type":             "internal",
+        "version":          "0.0.135",
+        "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv6": false,
             "Core-ppc32": false,
             "*": true },
-        "ignore": "${platform-ignore[$platform]}"
+        "ignore":           "${platform-ignore[$platform]}"
+    },
+    {   "name":             "transmute",
+        "version":          "0.0.6",
+        "type":             "internal",
+        "archive-filename": "${name}-${version}.tar.gz",
+        "platform-ignore": {
+            "Core-armv6": false,
+            "Core-ppc32": false,
+            "*": true },
+        "ignore":           "${platform-ignore[$platform]}",
+        "dest":             "dependencies/AnyPlatform/"
+    },
+    {   "name":             "volkano-tools",
+        "version":          "0.0.4",
+        "type":             "internal",
+        "archive-filename": "${name}-${version}.tar.gz",
+        "platform-ignore": {
+            "Core-armv6": false,
+            "Core-ppc32": false,
+            "*": true },
+        "ignore":           "${platform-ignore[$platform]}",
+        "dest":             "dependencies/AnyPlatform/${name}/"
     }
 ]

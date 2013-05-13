@@ -1,0 +1,34 @@
+from testharness.testsuite import MakeSuiteRunner
+from testharness.servers   import StaticWebServer
+
+suiteRunner = MakeSuiteRunner(GetPlatform())
+
+tests='''
+    #TestStore
+    TestMsg
+    TestSupply
+    TestAudioReservoir
+    #TestVariableDelay
+    #TestStopper
+    #TestTrackInspector
+    TestReporter
+    TestStarvationMonitor
+    TestPreDriver
+    #TestContentProcessor
+    TestPipeline
+    #TestProtocolHttp
+    #TestCodec               -s {ws_hostname} -p {ws_port}
+    #TestIdProvider
+    #TestFiller
+    '''
+
+#w = StaticWebServer('dependencies/AnyPlatform/TestTones/')
+#w.start()
+
+suiteRunner.run(tests) #.format(
+#    ws_hostname = w.host,
+#    ws_port = w.port
+#    ))
+
+#w.stop()
+
