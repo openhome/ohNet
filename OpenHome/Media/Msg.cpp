@@ -1379,10 +1379,15 @@ TAny* Track::UserData() const
 
 void Track::Initialise(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData)
 {
-    iUri.Replace(aUri);
-    iMetaData.Replace(aMetaData);
-    iStyle.Replace(aStyle);
-    iProviderId.Replace(aProviderId);
+    iUri.ReplaceThrow(aUri);
+    if (aMetaData.Bytes() > iMetaData.MaxBytes()) {
+        iMetaData.Replace(aMetaData.Split(0, iMetaData.MaxBytes()));
+    }
+    else {
+        iMetaData.Replace(aMetaData);
+    }
+    iStyle.ReplaceThrow(aStyle);
+    iProviderId.ReplaceThrow(aProviderId);
     iUserData = aUserData;
 }
 

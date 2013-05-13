@@ -1,0 +1,510 @@
+#include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <Generated/DvUpnpOrgAvTransport1.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Stream.h>
+#include <OpenHome/Private/Converter.h>
+#include <OpenHome/Av/FaultCode.h>
+#include <climits>
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+using namespace OpenHome::Av;
+
+// For a MediaRenderer device with no ConnectionManager.PrepareForConnection()
+// action, the only valid AVTransportID is 0
+static const TUint kInstanceId = 0;
+
+static const TUint kSeekModeNotSupportedCode = 710;
+static const Brn kSeekModeNotSupportedMsg("Seek Mode Not Supported");
+static const TUint kResourceNotFoundCode = 716;
+static const Brn kResourceNotFoundMsg("Resource not found");
+static const TUint kInvalidInstanceIdCode = 718;
+static const Brn kInvalidInstanceIdMsg("Invalid InstanceID");
+static const TUint kInvalidArgsCode = 402;
+static const Brn kInvalidArgsMsg("Invalid Args");
+static const TUint kDeviceBusyCode = 715;
+static const Brn kDeviceBusyMsg("Device busy");
+static const TUint kInvalidSeekModeCode = 710;
+static const Brn kInvalidSeekModeMsg("Seek mode not supported");
+static const TUint kIllegalSeekTargetCode = 711;
+static const Brn kIllegalSeekTargetMsg("Illegal seek target");
+static const TUint kUnsupportedPlaySpeedCode = 717;
+static const Brn kUnsupportedPlaySpeedMsg("Play speed not supported");
+
+static const Brn kNotImplemented("NOT_IMPLEMENTED");
+static const Brn kTransportStateStopped("STOPPED");
+static const Brn kTransportStatePlaying("PLAYING");
+static const Brn kTransportStatePausedPlayback("PAUSED_PLAYBACK");
+static const Brn kTransportStateTransitioning("TRANSITIONING");
+static const Brn kTransportStateNoMediaPresent("NO_MEDIA_PRESENT");
+static const Brn kTransportStatusOk("OK");
+static const Brn kTransportStatusErrorOccurred("ERROR_OCCURRED");
+static const Brn kCurrentMediaCategoryNoMedia("NO_MEDIA");
+static const Brn kCurrentMediaCategoryTrackAware("TRACK_AWARE");
+static const Brn kCurrentMediaCategoryTrackUnaware("TRACK_UNAWARE");
+static const Brn kPlaybackStorageMediumNone("NONE");
+static const Brn kPlaybackStorageMediumNetwork("NETWORK");
+static const Brn kRecordStorageMediumNotImplemented("NOT_IMPLEMENTED");
+static const Brn kCurrentPlayModeNormal("NORMAL");
+static const Brn kTransportPlaySpeed1("1");
+static const Brn kRecordMediumWriteStatusNotImplemented("NOT_IMPLEMENTED");
+static const Brn kCurrentRecordQualityModeNotImplemented("NOT_IMPLEMENTED");
+static const Brn kSeekModeTrackNr("TRACK_NR");
+static const Brn kSeekModeAbsTime("ABS_TIME");
+static const Brn kSeekModeRelTime("REL_TIME");
+
+static const Brn kTimeNone("0:00:00");
+static const TUint kCounterNotImplemented = 2147483647;
+
+static const TUint kEventModerationMs = 200;
+
+ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aEnv, ISourceUpnpAv& aSourceUpnpAv)
+    : DvProviderUpnpOrgAVTransport1(aDevice)
+    , iSourceUpnpAv(aSourceUpnpAv)
+    , iLock("UpAv")
+    , iTransportState(kTransportStateNoMediaPresent)
+    , iTransportStatus(kTransportStatusOk)
+    , iCurrentMediaCategory(kCurrentMediaCategoryNoMedia)
+    , iPlaybackStorageMedium(kPlaybackStorageMediumNone)
+    , iNumberOfTracks(0)
+    , iCurrentTrack(0)
+    , iTrackDuration(kTimeNone)
+    , iCurrentTrackUri(Brx::Empty())
+    , iAvTransportUri(Brx::Empty())
+    , iCurrentTrackMetaData(Brx::Empty())
+    , iAvTransportUriMetaData(Brx::Empty())
+    , iPossiblePlaybackStorageMedia(kPlaybackStorageMediumNetwork)
+    , iCurrentPlayMode(kCurrentPlayModeNormal)
+    , iTransportPlaySpeed(kTransportPlaySpeed1)
+    , iNextAvTransportUri(kNotImplemented)
+    , iNextAvTransportUriMetaData(kNotImplemented)
+    , iRecordStorageMedium(kNotImplemented)
+    , iPossibleRecordStorageMedia(kNotImplemented)
+    , iRecordMediumWriteStatus(kNotImplemented)
+    , iCurrentRecordQualityMode(kNotImplemented)
+    , iPossibleRecordQualityModes(kNotImplemented)
+    , iRelativeTimeSeconds(0)
+    , iAbsoluteTimePosition(kNotImplemented)
+    , iRelativeCounterPosition(kCounterNotImplemented)
+    , iAbsoluteCounterPosition(kCounterNotImplemented)
+{
+    iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderAvTransport::ModerationTimerExpired));
+
+    EnablePropertyLastChange();
+    
+    EnableActionSetAVTransportURI();
+    EnableActionGetMediaInfo();
+    EnableActionGetTransportInfo();
+    EnableActionGetPositionInfo();
+    EnableActionGetDeviceCapabilities();
+    EnableActionGetTransportSettings();
+    EnableActionStop();
+    EnableActionPlay();
+    EnableActionPause();
+    EnableActionSeek();
+    EnableActionNext();
+    EnableActionPrevious();
+
+    UpdateEventedState();
+}
+
+ProviderAvTransport::~ProviderAvTransport()
+{
+    delete iModerationTimer;
+}
+
+void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    Brn metaData(aCurrentURIMetaData);
+    if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
+        metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
+    }
+    {
+        AutoMutex a(iLock);
+        iSourceUpnpAv.SetTrack(aCurrentURI, metaData);
+        iCurrentTrackUri.Replace(aCurrentURI);
+        iCurrentTrackMetaData.Replace(metaData);
+        iAvTransportUri.Replace(iCurrentTrackUri);
+        iAvTransportUriMetaData.Replace(iCurrentTrackMetaData);
+        iCurrentMediaCategory.Set(kCurrentMediaCategoryTrackAware);
+        iPlaybackStorageMedium.Set(kPlaybackStorageMediumNetwork);
+        iNumberOfTracks = 1;
+        iCurrentTrack = 1;
+        iRelativeTimeSeconds = 0;
+        iTrackDuration.Replace(kTimeNone);
+
+        UpdateEventedState();
+    }
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::GetMediaInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aNrTracks,
+                                       IDvInvocationResponseString& aMediaDuration, IDvInvocationResponseString& aCurrentURI,
+                                       IDvInvocationResponseString& aCurrentURIMetaData, IDvInvocationResponseString& aNextURI,
+                                       IDvInvocationResponseString& aNextURIMetaData, IDvInvocationResponseString& aPlayMedium,
+                                       IDvInvocationResponseString& aRecordMedium, IDvInvocationResponseString& aWriteStatus)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        aNrTracks.Write(iNumberOfTracks);
+        aMediaDuration.Write(iTrackDuration);
+        aCurrentURI.Write(iAvTransportUri);
+        aCurrentURIMetaData.Write(iAvTransportUriMetaData);
+        aNextURI.Write(iNextAvTransportUri);
+        aNextURIMetaData.Write(iNextAvTransportUriMetaData);
+        aPlayMedium.Write(iPlaybackStorageMedium);
+        aRecordMedium.Write(iRecordStorageMedium);
+        aWriteStatus.Write(iRecordMediumWriteStatus);
+    }
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::GetTransportInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentTransportState,
+                                           IDvInvocationResponseString& aCurrentTransportStatus, IDvInvocationResponseString& aCurrentSpeed)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        aCurrentTransportState.Write(iTransportState);
+        aCurrentTransportStatus.Write(iTransportStatus);
+        aCurrentSpeed.Write(iTransportPlaySpeed);
+    }
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::GetPositionInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aTrack,
+                                          IDvInvocationResponseString& aTrackDuration, IDvInvocationResponseString& aTrackMetaData,
+                                          IDvInvocationResponseString& aTrackURI, IDvInvocationResponseString& aRelTime, IDvInvocationResponseString& aAbsTime,
+                                          IDvInvocationResponseInt& aRelCount, IDvInvocationResponseInt& aAbsCount)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        aTrack.Write(iCurrentTrack);
+        aTrackDuration.Write(iTrackDuration);
+        aTrackMetaData.Write(iCurrentTrackMetaData);
+        aTrackURI.Write(iCurrentTrackUri);
+        BwsTime time;
+        SecondsToTimeString(iRelativeTimeSeconds, time);
+        aRelTime.Write(time);
+        aAbsTime.Write(iAbsoluteTimePosition);
+        aRelCount.Write(iRelativeCounterPosition);
+        aAbsCount.Write(iAbsoluteCounterPosition);
+    }
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::GetDeviceCapabilities(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMedia,
+                                                IDvInvocationResponseString& aRecMedia, IDvInvocationResponseString& aRecQualityModes)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        aPlayMedia.Write(iPossiblePlaybackStorageMedia);
+        aRecMedia.Write(iPossibleRecordStorageMedia);
+        aRecQualityModes.Write(iPossibleRecordQualityModes);
+    }
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::GetTransportSettings(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMode, IDvInvocationResponseString& aRecQualityMode)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        aPlayMode.Write(iCurrentPlayMode);
+        aRecQualityMode.Write(iCurrentRecordQualityMode);
+    }
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    iSourceUpnpAv.Stop();
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::Play(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    if (aSpeed != kTransportPlaySpeed1) {
+        aInvocation.Error(kUnsupportedPlaySpeedCode, kUnsupportedPlaySpeedMsg);
+    }
+    iSourceUpnpAv.Play();
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    iSourceUpnpAv.Pause();
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    if (aUnit == kSeekModeTrackNr) {
+        TUint trackNum = UINT_MAX;
+        try {
+            trackNum = Ascii::Uint(aTarget);
+        }
+        catch (AsciiError&) {
+            aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+        }
+        if (trackNum > 1) {
+            aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+        }
+        // return to start of track
+        iSourceUpnpAv.Seek(0);
+    }
+    else if (aUnit == kSeekModeAbsTime || aUnit == kSeekModeRelTime) {
+        TUint secs = 0;
+        try {
+            secs = TimeStringToSeconds(aTarget);
+        }
+        catch (AsciiError&) {
+            aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
+        }
+        if (aUnit == kSeekModeRelTime) {
+            iLock.Wait();
+            secs += iRelativeTimeSeconds;
+            iLock.Signal();
+        }
+        iSourceUpnpAv.Seek(secs);
+    }
+    else {
+        aInvocation.Error(kInvalidSeekModeCode, kInvalidSeekModeMsg);
+    }
+
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::Next(IDvInvocation& aInvocation, TUint aInstanceID)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    iSourceUpnpAv.Next();
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID)
+{
+    aInvocation.StartResponse();
+    if (aInstanceID != kInstanceId) {
+        aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    iSourceUpnpAv.Prev();
+    aInvocation.EndResponse();
+}
+
+void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
+{
+    iLock.Wait();
+    switch (aState)
+    {
+    case EPipelinePlaying:
+        iTransportState.Set(kTransportStatePlaying);
+        break;
+    case EPipelinePaused:
+        iTransportState.Set(kTransportStatePausedPlayback);
+        break;
+    case EPipelineStopped:
+        iTransportState.Set(kTransportStateStopped);
+        break;
+    case EPipelineBuffering:
+        iTransportState.Set(kTransportStateTransitioning);
+        break;
+    }
+    QueueStateUpdate();
+    iLock.Signal();
+}
+
+void ProviderAvTransport::NotifyTrack(Track& aTrack, TUint /*aIdPipeline*/)
+{
+    iLock.Wait();
+    iCurrentTrackUri.Replace(aTrack.Uri());
+    iCurrentTrackMetaData.Replace(aTrack.MetaData());
+    QueueStateUpdate();
+    iLock.Signal();
+}
+
+void ProviderAvTransport::NotifyMetaText(const Brx& aText)
+{
+    iLock.Wait();
+    iCurrentTrackMetaData.Replace(aText);
+    QueueStateUpdate();
+    iLock.Signal();
+}
+
+void ProviderAvTransport::NotifyTime(TUint aSeconds, TUint /*aTrackDurationSeconds*/)
+{
+    iLock.Wait();
+    iRelativeTimeSeconds = aSeconds;
+    iLock.Signal();
+    // no call to UpdateEventedState here.  We don't want to include a constantly changing variable in iEventedState
+}
+
+void ProviderAvTransport::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+{
+    const TUint trackDurationSeconds = (TUint)(aStreamInfo.TrackLength() / Jiffies::kJiffiesPerSecond);
+    iLock.Wait();
+    SecondsToTimeString(trackDurationSeconds, iTrackDuration);
+    QueueStateUpdate();
+    iLock.Signal();
+}
+
+void ProviderAvTransport::QueueStateUpdate()
+{
+    if (!iModerationTimerStarted) {
+        iModerationTimer->FireIn(kEventModerationMs);
+        iModerationTimerStarted = true;
+    }
+}
+
+void ProviderAvTransport::ModerationTimerExpired()
+{
+    iLock.Wait();
+    UpdateEventedState();
+    iModerationTimerStarted = false;
+    iLock.Signal();
+}
+
+void ProviderAvTransport::UpdateEventedState()
+{
+    // Write the header for the event
+    iEventedState.Replace("<Event xmlns=\"urn:schemas-upnp-org:metadata-1-0/AVT/\">\n");
+    iEventedState.Append("    <InstanceID val=\"");
+    Ascii::AppendDec(iEventedState, kInstanceId);
+    iEventedState.Append("\">\n");
+
+    AddStateVariable(Brn("TransportState"), iTransportState);
+    AddStateVariable(Brn("TransportStatus"), iTransportStatus);
+    AddStateVariable(Brn("CurrentMediaCategory"), iCurrentMediaCategory);
+    AddStateVariable(Brn("PlaybackStorageMedium"), iPlaybackStorageMedium);
+    AddStateVariable(Brn("NumberOfTracks"), iNumberOfTracks);
+    AddStateVariable(Brn("CurrentTrack"), iCurrentTrack);
+    AddStateVariable(Brn("CurrentTrackDuration"), iTrackDuration);
+    AddStateVariable(Brn("CurrentMediaDuration"), iTrackDuration); // Media and Track durations are identical for us
+    AddStateVariable(Brn("CurrentTrackURI"), iCurrentTrackUri);
+    AddStateVariable(Brn("AVTransportURI"), iAvTransportUri);
+    AddStateVariable(Brn("CurrentTrackMetaData"), iCurrentTrackMetaData);
+    AddStateVariable(Brn("AVTransportURIMetaData"), iAvTransportUriMetaData);
+    AddStateVariable(Brn("PossiblePlaybackStorageMedia"), iPossiblePlaybackStorageMedia);
+    AddStateVariable(Brn("CurrentPlayMode"), iCurrentPlayMode);
+    AddStateVariable(Brn("TransportPlaySpeed"), iTransportPlaySpeed);
+    AddStateVariable(Brn("NextAVTransportURI"), iNextAvTransportUri);
+    AddStateVariable(Brn("NextAVTransportURIMetaData"), iNextAvTransportUriMetaData);
+    AddStateVariable(Brn("RecordStorageMedium"), iRecordStorageMedium);
+    AddStateVariable(Brn("PossibleRecordStorageMedia"), iPossibleRecordStorageMedia);
+    AddStateVariable(Brn("RecordMediumWriteStatus"), iRecordMediumWriteStatus);
+    AddStateVariable(Brn("CurrentRecordQualityMode"), iCurrentRecordQualityMode);
+    AddStateVariable(Brn("PossibleRecordQualityModes"), iPossibleRecordQualityModes);
+
+    // End of event
+    iEventedState.Append("    </InstanceID>\n</Event>\n");
+
+    (void)SetPropertyLastChange(iEventedState);
+}
+
+void ProviderAvTransport::AddStateVariable(const Brx& aName, const Brx& aValue)
+{
+    iXmlEscapedStateVar.SetBytes(0);
+    WriterBuffer writer(iXmlEscapedStateVar);
+    Converter::ToXmlEscaped(writer, aValue);
+    AddStateVariableEscaped(aName, iXmlEscapedStateVar);
+}
+
+void ProviderAvTransport::AddStateVariable(const Brx& aName, TUint aValue)
+{
+    Bws<Ascii::kMaxUintStringBytes> valBuf;
+    Ascii::AppendDec(valBuf, aValue);
+    AddStateVariableEscaped(aName, valBuf);
+}
+
+void ProviderAvTransport::AddStateVariableEscaped(const Brx& aName, const Brx& aValue)
+{
+    iEventedState.Append("        <");
+    iEventedState.Append(aName);
+    iEventedState.Append(" val=\"");
+    iEventedState.Append(aValue);
+    iEventedState.Append("\"/>\n");
+}
+
+void ProviderAvTransport::SecondsToTimeString(TUint aSeconds, Bwx& aTime)
+{ // static
+    const TUint seconds = aSeconds % 60;
+    aSeconds -= seconds;
+    const TUint minutes = (aSeconds % (60 * 60)) / 60;
+    aSeconds -= minutes;
+    const TUint hours = aSeconds / (60 * 60);
+
+    aTime.SetBytes(0);
+    Ascii::AppendDec(aTime, hours);
+    aTime.Append(":");
+    if (minutes < 10) {
+        aTime.Append("0");
+    }
+    Ascii::AppendDec(aTime, minutes);
+    aTime.Append(":");
+    if (seconds < 10) {
+        aTime.Append("0");
+    }
+    Ascii::AppendDec(aTime, seconds);
+}
+
+TUint ProviderAvTransport::TimeStringToSeconds(const Brx& aTime)
+{ // static
+    Parser parser(aTime);
+    const TUint hours = Ascii::Uint(parser.Next(':'));
+    const TUint minutes = Ascii::Uint(parser.Next(':'));
+    parser.Set(parser.Remaining());
+    TUint seconds;
+    if (parser.Remaining().Bytes() > 2) {
+        seconds = Ascii::Uint(parser.Next('.'));
+    } else {
+        seconds = Ascii::Uint(parser.Remaining());
+    }
+    if (minutes > 59 || seconds > 59) {
+        THROW(AsciiError);
+    }
+    return (hours * 60 * 60) + (minutes * 60) + seconds;
+}

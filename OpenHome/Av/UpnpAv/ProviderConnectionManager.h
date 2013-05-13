@@ -6,13 +6,12 @@
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvUpnpOrgConnectionManager1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
-#include <OpenHome/Av/Product.h>
 
 namespace OpenHome {
 using namespace Net;
 namespace Av {
 
-class ProviderConnectionManager : public Net::DvProviderUpnpOrgConnectionManager1
+class ProviderConnectionManager : public DvProviderUpnpOrgConnectionManager1
 {
     static const TUint kConnectionId = 0; // we don't implement the PrepareForConnection action - only connectionID 0 is valid
 public:
