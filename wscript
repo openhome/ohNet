@@ -36,6 +36,8 @@ def configure(conf):
     configure_toolchain(conf)
     guess_ohnet_location(conf)
 
+    conf.env.dest_platform = conf.options.dest_platform
+
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['ohNetProxies', 'ohNetDevices', 'TestFramework', 'ohNetCore']
@@ -544,28 +546,13 @@ def bundle(ctx):
 # == Command for invoking unit tests ==
 
 def test(tst):
-    return
-    for t, a, when in [['TestStore', [], True]
-                      ,['TestMsg', [], True]
-                      ,['TestSupply', [], True]
-                      ,['TestAudioReservoir', [], True]
-                      ,['TestVariableDelay', [], True]
-                      ,['TestStopper', [], True]
-                      ,['TestTrackInspector', [], True]
-                      ,['TestReporter', [], True]
-                      ,['TestStarvationMonitor', [], True]
-                      ,['TestPreDriver', [], True]
-                      ,['TestContentProcessor', [], True]
-                      ,['TestPipeline', [], True]
-                      ,['TestProtocolHttp', [], True]
-                      #,['TestCodec', [], True]
-                      ,['TestIdProvider', [], True]
-                      ,['TestFiller', [], True]
-                      ]:
-        tst(rule=invoke_test, test=t, args=a, always=when)
-        tst.add_group() # Don't start another test until previous has finished.
-    tst(rule=invoke_test_fileserver, test='TestCodec', args=['127.0.0.1', '8080'], always=True)
-    tst.add_group()
+    rule = '{test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
+        test =      '../dependencies/AnyPlatform/testharness/Test',
+        manifest    = '${SRC}',
+        platform    =  tst.env.dest_platform,
+        build_dir   = '.',
+        tool_dir    = '../dependencies/AnyPlatform/')
+    tst(rule=rule, source='oncommit.test')
 
 # == Contexts to make 'waf test' work ==
 
