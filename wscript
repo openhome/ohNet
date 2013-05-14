@@ -477,6 +477,7 @@ def build(bld):
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
                 'OpenHome/Media/Tests/PipelineUtils.cpp',
+                'OpenHome/Media/Tests/SongcastingDriver.cpp',
                 'OpenHome/Media/Tests/SuiteUnitTest.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
