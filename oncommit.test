@@ -5,22 +5,22 @@ from testharness.servers   import StaticWebServer
 suiteRunner = MakeSuiteRunner(context)
 
 tests='''
-    #TestStore
+    TestStore
     TestMsg
     TestSupply
     TestAudioReservoir
-    #TestVariableDelay
-    #TestStopper
-    #TestTrackInspector
+    TestVariableDelay
+    TestStopper
+    TestTrackInspector
     TestReporter
     TestStarvationMonitor
     TestPreDriver
-    #TestContentProcessor
+    TestContentProcessor
     TestPipeline
-    #TestProtocolHttp
+    TestProtocolHttp
     #TestCodec               -s {ws_hostname} -p {ws_port}
-    #TestIdProvider
-    #TestFiller
+    TestIdProvider
+    TestFiller
     '''
 
 #w = StaticWebServer('dependencies/AnyPlatform/TestTones/')
