@@ -123,10 +123,11 @@ TestProtocol::TestProtocol(Environment& aEnv, const Brx& aUrl)
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
     iPipeline->AddCodec(Codec::CodecFactory::NewWav());
-    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
-    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
     iPipeline->AddCodec(Codec::CodecFactory::NewAac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
     iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
+    iPipeline->AddCodec(Codec::CodecFactory::NewWma());
+    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
     iPipeline->Start();
 }
 
