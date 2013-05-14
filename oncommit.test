@@ -1,7 +1,8 @@
 from testharness.testsuite import MakeSuiteRunner
 from testharness.servers   import StaticWebServer
 
-suiteRunner = MakeSuiteRunner(GetPlatform())
+# 'context' is defined globally. until this is fixed, sorry :)
+suiteRunner = MakeSuiteRunner(context)
 
 tests='''
     #TestStore
