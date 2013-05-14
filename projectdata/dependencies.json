@@ -34,7 +34,7 @@
         "dest": "dependencies/AnyPlatform/CherryPy"
     },
     {   "name":             "testharness",
-        "version":          "0.0.3",
+        "version":          "0.0.5",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
