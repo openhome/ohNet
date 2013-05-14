@@ -547,11 +547,11 @@ def bundle(ctx):
 
 def test(tst):
     rule = '{test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
-        test =      '../dependencies/AnyPlatform/testharness/Test',
+        test        = os.path.join('..', 'dependencies', 'AnyPlatform', 'testharness', 'Test'),
         manifest    = '${SRC}',
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
-        tool_dir    = '../dependencies/AnyPlatform/')
+        tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform')
     tst(rule=rule, source='oncommit.test')
 
 # == Contexts to make 'waf test' work ==
