@@ -130,24 +130,6 @@ def setup_windows(context):
 def setup_linux(context):
     env = context.env
 
-@build_step()
-@build_condition(OH_PLATFORM="Core-ppc32")
-@build_condition(OH_PLATFORM="Core-armv6")
-def setup_core(context):
-    env = context.env
-    context.configure_args += ['--nolink']
-    select_optional_steps("-test")
-
-@build_step()
-@build_condition(OH_PLATFORM="Core-ppc32")
-def setup_cross_ppc32(context):
-    context.env.update(CROSS_COMPILE='/opt/rtems-4.11/bin/powerpc-rtems4.11-')
-
-@build_step()
-@build_condition(OH_PLATFORM="Core-armv6")
-def setup_cross_armv6(context):
-    context.env.update(CROSS_COMPILE='/opt/rtems-4.11/bin/arm-rtemseabi4.11-')
-
 # Principal build steps.
 @build_step("fetch", optional=True)
 def fetch(context):
