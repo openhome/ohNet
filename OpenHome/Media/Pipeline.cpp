@@ -31,6 +31,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     , iLoggerCodecController(NULL)
     , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
+    , iLoggerTrackInspector(NULL)
     , iLoggerStopper(NULL)
     , iLoggerReporter(NULL)
     , iLoggerSplitter(NULL)
@@ -72,7 +73,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
 
     iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
-    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *iSupply, *this, *this, kStopperRampDuration);
+    iTrackInspector = new TrackInspector(*iLoggerVariableDelay/**iVariableDelay*/);
+    iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
+    iStopper = new Stopper(*iMsgFactory, /**iTrackInspector*/*iLoggerTrackInspector, *iSupply, *this, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(/**iStopper*/*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -95,6 +98,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
+    //iLoggerTrackInspector->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
@@ -106,6 +110,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
+    //iLoggerTrackInspector->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
@@ -128,6 +133,8 @@ Pipeline::~Pipeline()
     delete iReporter;
     delete iLoggerStopper;
     delete iStopper;
+    delete iLoggerTrackInspector;
+    delete iTrackInspector;
     delete iLoggerVariableDelay;
     delete iVariableDelay;
     delete iLoggerDecodedAudioReservoir;

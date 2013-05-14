@@ -11,6 +11,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
+#include <OpenHome/Media/TrackInspector.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
@@ -110,6 +111,8 @@ private:
     Logger* iLoggerDecodedAudioReservoir;
     VariableDelay* iVariableDelay;
     Logger* iLoggerVariableDelay;
+    TrackInspector* iTrackInspector;
+    Logger* iLoggerTrackInspector;
     Stopper* iStopper;
     Logger* iLoggerStopper;
     Reporter* iReporter;
