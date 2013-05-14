@@ -546,7 +546,7 @@ def bundle(ctx):
 # == Command for invoking unit tests ==
 
 def test(tst):
-    rule = '{test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
+    rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
         test        = os.path.join('..', 'dependencies', 'AnyPlatform', 'testharness', 'Test'),
         manifest    = '${SRC}',
         platform    =  tst.env.dest_platform,
