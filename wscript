@@ -551,7 +551,7 @@ def test(tst):
         manifest    = '${SRC}',
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
-        tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform')
+        tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
     tst(rule=rule, source='oncommit.test')
 
 # == Contexts to make 'waf test' work ==
