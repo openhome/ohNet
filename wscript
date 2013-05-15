@@ -18,6 +18,7 @@ def options(opt):
     opt.load('compiler_c')
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
+    opt.add_option('--testharness-dir', action='store', default=os.path.join('dependencies', 'AnyPlatform', 'testharness'))
     opt.add_option('--ohnet', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
@@ -36,6 +37,7 @@ def configure(conf):
     guess_ohnet_location(conf)
 
     conf.env.dest_platform = conf.options.dest_platform
+    conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
 
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
@@ -544,7 +546,7 @@ def bundle(ctx):
 
 def test(tst):
     rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
-        test        = os.path.join('..', 'dependencies', 'AnyPlatform', 'testharness', 'Test'),
+        test        = os.path.join(tst.env.testharness_dir, 'Test'),
         manifest    = '${SRC}',
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
