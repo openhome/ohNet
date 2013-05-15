@@ -17,6 +17,7 @@ namespace Av {
 class ISourceUpnpAv
 {
 public:
+    virtual ~ISourceUpnpAv() {}
     virtual void SetTrack(const Brx& aUri, const Brx& aMetaData) = 0;
     virtual void Play() = 0;
     virtual void Pause() = 0;

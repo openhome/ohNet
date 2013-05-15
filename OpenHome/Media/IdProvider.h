@@ -36,6 +36,7 @@ private:
         void Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
         void Set(const ActiveStream& aActiveStream);
         void Clear();
+        TBool IsClear() const;
         TBool Matches(const Brx& aStyle, const Brx& aProviderId) const;
         const Brx& Style() const { return iStyle; }
         const Brx& ProviderId() const { return iProviderId; }

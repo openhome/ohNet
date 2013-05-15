@@ -155,8 +155,10 @@ void PipelineIdProvider::InvalidateAfter(const Brx& aStyle, const Brx& aProvider
 void PipelineIdProvider::InvalidateAll()
 {
     AutoMutex a(iLock);
-    iStopper.RemoveStream(iPlaying.TrackId(), iPlaying.StreamId());
-    iPlaying.Clear();
+    if (!iPlaying.IsClear()) {
+        iStopper.RemoveStream(iPlaying.TrackId(), iPlaying.StreamId());
+        iPlaying.Clear();
+    }
     iIndexTail = iIndexHead;
 }
 
@@ -189,6 +191,12 @@ void PipelineIdProvider::ActiveStream::Clear()
     iTrackId = UINT_MAX;
     iStreamId = UINT_MAX;
     iPlayNow = false;
+}
+
+TBool PipelineIdProvider::ActiveStream::IsClear() const
+{
+    return (iStyle.Bytes() == 0 && iProviderId.Bytes() == 0 &&
+            iTrackId == UINT_MAX && iStreamId == UINT_MAX && iPlayNow == false);
 }
 
 TBool PipelineIdProvider::ActiveStream::Matches(const Brx& aStyle, const Brx& aProviderId) const

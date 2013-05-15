@@ -33,7 +33,6 @@ EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
         return ePlayNo;
     }
     aTrack = iTrackFactory.CreateTrack(iUri, Brx::Empty(), Style(), iUri, NULL);
-    iUri.SetBytes(0);
     iIgnoreNext = true;
     return ePlayYes;
 }

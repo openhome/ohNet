@@ -590,6 +590,10 @@ def build(bld):
                 source='OpenHome/Media/Tests/TestFillerMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestFiller')
+        bld.program(
+                source='OpenHome/Av/Tests/TestUpnpAv.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestUpnpAv')
 
 # Bundles
 def bundle(ctx):

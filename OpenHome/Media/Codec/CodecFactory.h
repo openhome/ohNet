@@ -1,7 +1,6 @@
 #ifndef HEADER_PIPELINE_CODEC_FACTORY
 #define HEADER_PIPELINE_CODEC_FACTORY
 
-
 namespace OpenHome {
 namespace Media {
 namespace Codec {
