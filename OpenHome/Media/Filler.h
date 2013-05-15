@@ -22,7 +22,8 @@ public:
     const Brx& Style() const;
     virtual void Begin(const Brx& aProviderId) = 0;
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
-    virtual EStreamPlay GetPrev(Track*& aTrack) = 0;
+    virtual TBool MoveCursorAfter(const Brx& aProviderId) = 0;
+    virtual TBool MoveCursorBefore(const Brx& aProviderId) = 0;
 protected:
     UriProvider(const TChar* aStyle);
 private:
@@ -38,8 +39,8 @@ public:
     void Start(IUriStreamer& aUriStreamer);
     void Play(const Brx& aStyle, const Brx& aProviderId);
     void Stop();
-    void Next();
-    void Prev();
+    TBool Next(const Brx& aStyle, const Brx& aProviderId);
+    TBool Prev(const Brx& aStyle, const Brx& aProviderId);
 private: // from Thread
     void Run();
 private: // from ISupply
