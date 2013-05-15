@@ -93,6 +93,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
         iPipelineEnd = iPreDriver;
     }
 
+    //iLoggerSupply->SetEnabled(true);
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
@@ -105,6 +106,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
+    //iLoggerSupply->SetFilter(Logger::EMsgAll);
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
