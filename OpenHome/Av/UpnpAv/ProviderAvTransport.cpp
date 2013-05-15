@@ -1,7 +1,7 @@
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-#include <Generated/DvUpnpOrgAvTransport1.h>
+#include <Generated/DvUpnpOrgAVTransport1.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Stream.h>
