@@ -17,7 +17,7 @@ tests='''
     TestPreDriver
     TestContentProcessor
     TestPipeline
-    TestProtocolHttp
+    #TestProtocolHttp
     #TestCodec               -s {ws_hostname} -p {ws_port}
     TestIdProvider
     TestFiller

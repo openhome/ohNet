@@ -412,6 +412,7 @@ def build(bld):
     # Tests
     bld.stlib(
             source=[
+                'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
                 'OpenHome/Media/Tests/PipelineUtils.cpp',
@@ -507,7 +508,7 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestProtocol')
     bld.program(
-            source='OpenHome/Av/Tests/TestStore.cpp',
+            source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStore')
     bld.program(
