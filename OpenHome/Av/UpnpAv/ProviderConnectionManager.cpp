@@ -40,7 +40,9 @@ void ProviderConnectionManager::GetProtocolInfo(IDvInvocation& aInvocation, IDvI
 {
     aInvocation.StartResponse();
     aSource.Write(Brx::Empty());
+    aSource.WriteFlush();
     aSink.Write(iSinkProtocolInfo);
+    aSink.WriteFlush();
     aInvocation.EndResponse();
 }
 
@@ -50,6 +52,7 @@ void ProviderConnectionManager::GetCurrentConnectionIDs(IDvInvocation& aInvocati
     Bws<Ascii::kMaxIntStringBytes> connectionId;
     Ascii::AppendDec(connectionId, kConnectionId);
     aConnectionIDs.Write(connectionId);
+    aConnectionIDs.WriteFlush();
     aInvocation.EndResponse();
 }
 
@@ -66,10 +69,14 @@ void ProviderConnectionManager::GetCurrentConnectionInfo(IDvInvocation& aInvocat
         aRcsID.Write(kConnectionId);
         aAVTransportID.Write(kConnectionId);
         aProtocolInfo.Write(iSinkProtocolInfo);
+        aProtocolInfo.WriteFlush();
         aPeerConnectionManager.Write(Brx::Empty());
+        aPeerConnectionManager.WriteFlush();
         aPeerConnectionID.Write(-1);
         aDirection.Write(kDirectionInput);
+        aDirection.WriteFlush();
         aStatus.Write(kStatusUnknown);
+        aStatus.WriteFlush();
     }
     aInvocation.EndResponse();
 }

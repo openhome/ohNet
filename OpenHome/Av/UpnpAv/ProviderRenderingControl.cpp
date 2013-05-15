@@ -52,6 +52,7 @@ void ProviderRenderingControl::ListPresets(IDvInvocation& aInvocation, TUint aIn
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     aCurrentPresetNameList.Write(kPresetNameFactoryDefaults);
+    aCurrentPresetNameList.WriteFlush();
     aInvocation.EndResponse();
 }
 

@@ -159,13 +159,21 @@ void ProviderAvTransport::GetMediaInfo(IDvInvocation& aInvocation, TUint aInstan
         AutoMutex a(iLock);
         aNrTracks.Write(iNumberOfTracks);
         aMediaDuration.Write(iTrackDuration);
+        aMediaDuration.WriteFlush();
         aCurrentURI.Write(iAvTransportUri);
+        aCurrentURI.WriteFlush();
         aCurrentURIMetaData.Write(iAvTransportUriMetaData);
+        aCurrentURIMetaData.WriteFlush();
         aNextURI.Write(iNextAvTransportUri);
+        aNextURI.WriteFlush();
         aNextURIMetaData.Write(iNextAvTransportUriMetaData);
+        aNextURIMetaData.WriteFlush();
         aPlayMedium.Write(iPlaybackStorageMedium);
+        aPlayMedium.WriteFlush();
         aRecordMedium.Write(iRecordStorageMedium);
+        aRecordMedium.WriteFlush();
         aWriteStatus.Write(iRecordMediumWriteStatus);
+        aWriteStatus.WriteFlush();
     }
     aInvocation.EndResponse();
 }
@@ -180,8 +188,11 @@ void ProviderAvTransport::GetTransportInfo(IDvInvocation& aInvocation, TUint aIn
     {
         AutoMutex a(iLock);
         aCurrentTransportState.Write(iTransportState);
+        aCurrentTransportState.WriteFlush();
         aCurrentTransportStatus.Write(iTransportStatus);
+        aCurrentTransportStatus.WriteFlush();
         aCurrentSpeed.Write(iTransportPlaySpeed);
+        aCurrentSpeed.WriteFlush();
     }
     aInvocation.EndResponse();
 }
@@ -199,12 +210,17 @@ void ProviderAvTransport::GetPositionInfo(IDvInvocation& aInvocation, TUint aIns
         AutoMutex a(iLock);
         aTrack.Write(iCurrentTrack);
         aTrackDuration.Write(iTrackDuration);
+        aTrackDuration.WriteFlush();
         aTrackMetaData.Write(iCurrentTrackMetaData);
+        aTrackMetaData.WriteFlush();
         aTrackURI.Write(iCurrentTrackUri);
+        aTrackURI.WriteFlush();
         BwsTime time;
         SecondsToTimeString(iRelativeTimeSeconds, time);
         aRelTime.Write(time);
+        aRelTime.WriteFlush();
         aAbsTime.Write(iAbsoluteTimePosition);
+        aAbsTime.WriteFlush();
         aRelCount.Write(iRelativeCounterPosition);
         aAbsCount.Write(iAbsoluteCounterPosition);
     }
@@ -221,8 +237,11 @@ void ProviderAvTransport::GetDeviceCapabilities(IDvInvocation& aInvocation, TUin
     {
         AutoMutex a(iLock);
         aPlayMedia.Write(iPossiblePlaybackStorageMedia);
+        aPlayMedia.WriteFlush();
         aRecMedia.Write(iPossibleRecordStorageMedia);
+        aRecMedia.WriteFlush();
         aRecQualityModes.Write(iPossibleRecordQualityModes);
+        aRecQualityModes.WriteFlush();
     }
     aInvocation.EndResponse();
 }
@@ -236,7 +255,9 @@ void ProviderAvTransport::GetTransportSettings(IDvInvocation& aInvocation, TUint
     {
         AutoMutex a(iLock);
         aPlayMode.Write(iCurrentPlayMode);
+        aPlayMode.WriteFlush();
         aRecQualityMode.Write(iCurrentRecordQualityMode);
+        aRecQualityMode.WriteFlush();
     }
     aInvocation.EndResponse();
 }
