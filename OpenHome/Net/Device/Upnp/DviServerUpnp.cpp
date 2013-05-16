@@ -1117,6 +1117,14 @@ void DviSessionUpnp::InvocationReadEnd()
 
 void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 {
+    if (iResponseStarted) {
+        if (!iResponseEnded) {
+            InvocationWriteEnd();
+            iResponseEnded = true;
+        }
+        return;
+    }
+
     LOG(kDvInvocation, "Failure processing action: ");
     LOG(kDvInvocation, iHeaderSoapAction.Action());
     LOG(kDvInvocation, "\n");
