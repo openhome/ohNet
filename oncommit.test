@@ -29,8 +29,8 @@ w.start()
 
 try:
     suiteRunner.run(tests.format(
-        ws_hostname = w.host,
-        ws_port = w.port
+        ws_hostname = w.host(),
+        ws_port = w.port()
         ))
 finally:
     w.stop()
