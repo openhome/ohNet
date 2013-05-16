@@ -262,6 +262,7 @@ def build(bld):
                 'OpenHome/Av/UpnpAv/ProviderConnectionManager.cpp',
                 'Generated/DvUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
+                'OpenHome/Av/UpnpAv/UpnpAv.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
