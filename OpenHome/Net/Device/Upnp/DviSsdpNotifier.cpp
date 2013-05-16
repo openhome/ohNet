@@ -419,10 +419,7 @@ DviSsdpNotifierManager::Responder* DviSsdpNotifierManager::GetResponder(IUpnpAnn
         responder = static_cast<DviSsdpNotifierManager::Responder*>(iFreeResponders.front());
         iActiveResponders.splice(iActiveResponders.end(), iFreeResponders, iFreeResponders.begin());
     }
-    if (iActiveResponders.size() + iActiveAnnouncers.size() == 1) {
-        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
-        iShutdownSem.Wait();
-    }
+    (void)iShutdownSem.Clear();
     responder->SetActive(aAnnouncementData.Udn());
     return responder;
 }
@@ -444,10 +441,7 @@ DviSsdpNotifierManager::Announcer* DviSsdpNotifierManager::GetAnnouncer(IUpnpAnn
         announcer = static_cast<DviSsdpNotifierManager::Announcer*>(iFreeAnnouncers.front());
         iActiveAnnouncers.splice(iActiveAnnouncers.end(), iFreeAnnouncers, iFreeAnnouncers.begin());
     }
-    if (iActiveResponders.size() + iActiveAnnouncers.size() == 1) {
-        // First active Notifier.  Will need to wait on any active Notifiers completing inside ~DviSsdpNotifierManager
-        iShutdownSem.Wait();
-    }
+    (void)iShutdownSem.Clear();
     announcer->SetActive(aAnnouncementData.Udn());
     return announcer;
 }
@@ -462,7 +456,6 @@ void DviSsdpNotifierManager::NotifySchedulerComplete(SsdpNotifierScheduler* aSch
         }
     }
     if (iActiveResponders.size() == 0 && iActiveAnnouncers.size() == 0) {
-        // No active Notifiers so its currently safe to delete DviSsdpNotifierManager
         iShutdownSem.Signal();
     }
     iLock.Signal();
