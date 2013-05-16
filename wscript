@@ -193,12 +193,14 @@ def build(bld):
     t4templatedir = bld.env['T4_TEMPLATE_PATH']
     text_transform_exe_node = find_resource_or_fail(bld, bld.root, os.path.join(bld.env['TEXT_TRANSFORM_PATH'], 'TextTransform.exe'))
     for service in upnp_services:
-        for t4Template, ext, args in [
-                ('DvUpnpCppCoreHeader.tt', '.h', '-a buffer:1'),
-                ('DvUpnpCppCoreSource.tt', '.cpp', '')
+        for t4Template, prefix, ext, args in [
+                ('DvUpnpCppCoreHeader.tt', 'Dv', '.h', '-a buffer:1'),
+                ('DvUpnpCppCoreSource.tt', 'Dv', '.cpp', ''),
+                ('CpUpnpCHeader.tt', 'Cp', '.h', '-a buffer:1'),
+                ('CpUpnpCppBufferSource.tt', 'Cp', '.cpp', '')
                 ]:
             t4_template_node = find_resource_or_fail(bld, bld.root, os.path.join(t4templatedir, t4Template))
-            tgt = bld.path.find_or_declare(os.path.join('Generated', 'Dv' + service.target + ext))
+            tgt = bld.path.find_or_declare(os.path.join('Generated', prefix + service.target + ext))
             bld(
                 rule="${MONO} " + text_transform_exe_node.abspath() + " -o " + tgt.abspath() + " " + t4_template_node.abspath() + " -a xml:../" + service.xml + " -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version + " " + args,
                 source=[text_transform_exe_node, t4_template_node, service.xml],
