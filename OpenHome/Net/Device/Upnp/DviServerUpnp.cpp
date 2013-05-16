@@ -722,7 +722,9 @@ void DviSessionUpnp::Post()
 
 void DviSessionUpnp::Subscribe()
 {
-    LOG(kDvEvent, "Subscription request from ");
+    LOG(kDvEvent, "Subscription request ");
+    LOG(kDvEvent, iReaderRequest->Uri());
+    LOG(kDvEvent, " from ");
     iHeaderCallback.Log();
     LOG(kDvEvent, "\n");
     if (iHeaderSid.Received()) {
