@@ -20,8 +20,8 @@ static const Brn kInvalidChannelMsg("Argument[Channel] contains a value that is 
 static const TUint kInvalidPresetNameCode = 701;
 static const Brn KInvalidPresetNameMsg("Argument[PresetName] is invalid");
 
-static const Brn kChannelMaster("Master");
-static const Brn kPresetNameFactoryDefaults("FactoryDefaults");
+const Brn ProviderRenderingControl::kChannelMaster("Master");
+const Brn ProviderRenderingControl::kPresetNameFactoryDefaults("FactoryDefaults");
 
 ProviderRenderingControl::ProviderRenderingControl(Net::DvDevice& aDevice)
     : DvProviderUpnpOrgRenderingControl1(aDevice)
@@ -47,10 +47,10 @@ ProviderRenderingControl::~ProviderRenderingControl()
 
 void ProviderRenderingControl::ListPresets(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentPresetNameList)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     aCurrentPresetNameList.Write(kPresetNameFactoryDefaults);
     aCurrentPresetNameList.WriteFlush();
     aInvocation.EndResponse();
@@ -58,103 +58,103 @@ void ProviderRenderingControl::ListPresets(IDvInvocation& aInvocation, TUint aIn
 
 void ProviderRenderingControl::SelectPreset(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aPresetName)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aPresetName != kPresetNameFactoryDefaults) {
         aInvocation.Error(kInvalidPresetNameCode, KInvalidPresetNameMsg);
     }
+    aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::GetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseBool& /*aCurrentMute*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::SetMute(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TBool /*aDesiredMute*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::GetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseUint& /*aCurrentVolume*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::SetVolume(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TUint /*aDesiredVolume*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::GetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& /*aCurrentVolume*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::SetVolumeDB(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, TInt /*aDesiredVolume*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }
 
 void ProviderRenderingControl::GetVolumeDBRange(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aChannel, IDvInvocationResponseInt& /*aMinValue*/, IDvInvocationResponseInt& /*aMaxValue*/)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aChannel != kChannelMaster) {
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
+    aInvocation.StartResponse();
     FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
     aInvocation.EndResponse();
 }

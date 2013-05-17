@@ -61,22 +61,20 @@ void ProviderConnectionManager::GetCurrentConnectionInfo(IDvInvocation& aInvocat
                                                          IDvInvocationResponseString& aPeerConnectionManager, IDvInvocationResponseInt& aPeerConnectionID,
                                                          IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus)
 {
-    aInvocation.StartResponse();
     if (aConnectionID != 0) {
         aInvocation.Error(kInvalidConnectionIdCode, kInvalidConnectionIdMsg);
     }
-    else {
-        aRcsID.Write(kConnectionId);
-        aAVTransportID.Write(kConnectionId);
-        aProtocolInfo.Write(iSinkProtocolInfo);
-        aProtocolInfo.WriteFlush();
-        aPeerConnectionManager.Write(Brx::Empty());
-        aPeerConnectionManager.WriteFlush();
-        aPeerConnectionID.Write(-1);
-        aDirection.Write(kDirectionInput);
-        aDirection.WriteFlush();
-        aStatus.Write(kStatusUnknown);
-        aStatus.WriteFlush();
-    }
+    aInvocation.StartResponse();
+    aRcsID.Write(kConnectionId);
+    aAVTransportID.Write(kConnectionId);
+    aProtocolInfo.Write(iSinkProtocolInfo);
+    aProtocolInfo.WriteFlush();
+    aPeerConnectionManager.Write(Brx::Empty());
+    aPeerConnectionManager.WriteFlush();
+    aPeerConnectionID.Write(-1);
+    aDirection.Write(kDirectionInput);
+    aDirection.WriteFlush();
+    aStatus.Write(kStatusUnknown);
+    aStatus.WriteFlush();
     aInvocation.EndResponse();
 }
