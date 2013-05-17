@@ -329,6 +329,7 @@ public:
     virtual void WriteFlush();
     // IWriterHeader
     virtual void WriteHeader(const Brx& aField, const Brx& aValue);
+    virtual void WriteHeaderBase64(const Brx& aField, const Brx& aValue);
     virtual IWriterAscii& WriteHeaderField(const Brx& aField); // returns a stream for writing the value
 protected:
     WriterHttpHeader(IWriter& aWriter);

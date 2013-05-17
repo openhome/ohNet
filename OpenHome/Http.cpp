@@ -1,4 +1,5 @@
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Debug.h>
@@ -622,6 +623,16 @@ void WriterHttpHeader::WriteHeader(const Brx& aField, const Brx& aValue)
     iWriter.Write(aField);
     iWriter.Write(Http::kHeaderSeparator);
     iWriter.Write(aValue);
+    iWriter.WriteNewline();
+}
+
+void WriterHttpHeader::WriteHeaderBase64(const Brx& aField, const Brx& aValue)
+{
+    LOG(kHttp, "Http Write Base64 Header   ");
+
+    iWriter.Write(aField);
+    iWriter.Write(Http::kHeaderSeparator);
+    Converter::ToBase64(iWriter, aValue);
     iWriter.WriteNewline();
 }
 
