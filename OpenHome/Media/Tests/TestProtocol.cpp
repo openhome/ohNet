@@ -13,6 +13,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include "AllocatorInfoLogger.h"
+#include "SongcastingDriver.h"
 
 #include <stdio.h>
 
@@ -104,8 +105,7 @@ private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
     Pipeline* iPipeline;
-    Net::DvDeviceStandard* iDevice;
-    DriverSongcastSender* iDriver;
+    SimpleSongcastingDriver* iDriver;
     Brh iUrl;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
@@ -200,22 +200,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
     iPipeline->Start();
 
-    iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
-    iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
-    iDevice->SetAttribute("Upnp.Type", "Sender");
-    iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", aSenderFriendlyName);
-    iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
-    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer TestProtocol");
-    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer TestProtocol");
-    iDevice->SetAttribute("Upnp.ModelNumber", "1");
-    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.SerialNumber", "");
-    iDevice->SetAttribute("Upnp.Upc", "");
-
-    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, false /*unicast*/);
-    iDevice->SetEnabled();
+    iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
 }
 
 TestProtocol::~TestProtocol()
@@ -223,7 +208,6 @@ TestProtocol::~TestProtocol()
     delete iPipeline;
     delete iFiller;
     delete iDriver;
-    delete iDevice;
 }
 
 int TestProtocol::Run()

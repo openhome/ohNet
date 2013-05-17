@@ -21,7 +21,7 @@ namespace Media {
 class Supplier : public Thread, private IStreamHandler
 {
 public:
-    Supplier(ISupply& aSupply, Av::IInfoAggregator& aInfoAggregator);
+    Supplier(ISupply& aSupply, TrackFactory& aTrackFactory);
     ~Supplier();
     void Block();
     void Unblock();
@@ -33,11 +33,11 @@ private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     ISupply& iSupply;
+    TrackFactory& iTrackFactory;
     Mutex iLock;
     Semaphore iBlocker;
     Msg* iPendingMsg;
     TBool iBlock;
-    TrackFactory* iTrackFactory;
 };
 
 class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor
@@ -85,6 +85,7 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     Pipeline* iPipeline;
+    TrackFactory* iTrackFactory;
     IPipelineElementUpstream* iPipelineEnd;
     TUint iSampleRate;
     TUint iNumChannels;
@@ -128,14 +129,14 @@ private:
 
 // Supplier
 
-Supplier::Supplier(ISupply& aSupply, Av::IInfoAggregator& aInfoAggregator)
+Supplier::Supplier(ISupply& aSupply, TrackFactory& aTrackFactory)
     : Thread("TSUP")
     , iSupply(aSupply)
+    , iTrackFactory(aTrackFactory)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
     , iBlock(false)
 {
-    iTrackFactory = new TrackFactory(aInfoAggregator, 1);
     Start();
 }
 
@@ -143,7 +144,6 @@ Supplier::~Supplier()
 {
     Kill();
     Join();
-    delete iTrackFactory;
 }
 
 void Supplier::Block()
@@ -164,7 +164,7 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
+    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
     iSupply.OutputTrack(*track, 1);
     track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
@@ -211,7 +211,8 @@ SuitePipeline::SuitePipeline()
     , iQuitReceived(false)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kDriverMaxAudioJiffies);
-    iSupplier = new Supplier(*iPipeline, iInfoAggregator);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
+    iSupplier = new Supplier(*iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
     iPipeline->Start();
     iPipelineEnd = iPipeline;
@@ -226,6 +227,7 @@ SuitePipeline::~SuitePipeline()
     ThreadFunctor* th = new ThreadFunctor("QUIT", MakeFunctor(*this, &SuitePipeline::PullUntilQuit));
     th->Start();
     delete iPipeline;
+    delete iTrackFactory;
     delete th;
 }
 

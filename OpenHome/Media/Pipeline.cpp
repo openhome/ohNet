@@ -31,6 +31,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     , iLoggerCodecController(NULL)
     , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
+    , iLoggerTrackInspector(NULL)
     , iLoggerStopper(NULL)
     , iLoggerReporter(NULL)
     , iLoggerSplitter(NULL)
@@ -57,32 +58,34 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
     // construct push logger slightly out of sequence
     iLoggerSupply = new Logger("Supply", *iEncodedAudioReservoir);
-    iSupply = new Supply(*iMsgFactory, /**iEncodedAudioReservoir*/*iLoggerSupply);
+    iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
-    iContainer = new Codec::Container(*iMsgFactory, /**iEncodedAudioReservoir*/*iLoggerEncodedAudioReservoir);
+    iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     
     // construct push logger slightly out of sequence
     iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioReservoir);
-    iCodecController = new Codec::CodecController(*iMsgFactory, /**iContainer*/*iLoggerContainer, /**iDecodedAudioReservoir*/*iLoggerCodecController);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController);
 
-    iVariableDelay = new VariableDelay(*iMsgFactory, /**iDecodedAudioReservoir*/*iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
+    iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
-    iStopper = new Stopper(*iMsgFactory, /**iVariableDelay*/*iLoggerVariableDelay, *iSupply, *this, *this, kStopperRampDuration);
+    iTrackInspector = new TrackInspector(*iLoggerVariableDelay);
+    iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
+    iStopper = new Stopper(*iMsgFactory, *iLoggerTrackInspector, *iSupply, *this, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iReporter = new Reporter(/**iStopper*/*iLoggerStopper, *this);
+    iReporter = new Reporter(*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
-    iSplitter = new Splitter(/**iReporter*/*iLoggerReporter, iNullSongcaster);
+    iSplitter = new Splitter(*iLoggerReporter, iNullSongcaster);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, /**iSplitter*/*iLoggerSplitter, *this,
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerSplitter, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration);
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iPreDriver = new PreDriver(*iMsgFactory, /**iStarvationMonitor*/*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
+    iPreDriver = new PreDriver(*iMsgFactory, *iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
 
     iPipelineEnd = iLoggerPreDriver;
@@ -90,22 +93,26 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
         iPipelineEnd = iPreDriver;
     }
 
+    //iLoggerSupply->SetEnabled(true);
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
+    //iLoggerTrackInspector->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
+    //iLoggerSupply->SetFilter(Logger::EMsgAll);
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
+    //iLoggerTrackInspector->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
@@ -128,6 +135,8 @@ Pipeline::~Pipeline()
     delete iReporter;
     delete iLoggerStopper;
     delete iStopper;
+    delete iLoggerTrackInspector;
+    delete iTrackInspector;
     delete iLoggerVariableDelay;
     delete iVariableDelay;
     delete iLoggerDecodedAudioReservoir;

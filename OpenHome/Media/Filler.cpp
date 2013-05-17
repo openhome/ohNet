@@ -37,7 +37,6 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
     , iUriStreamer(NULL)
     , iTrack(NULL)
     , iStopped(true)
-    , iGetPrevious(false)
     , iQuit(false)
 {
 }
@@ -79,7 +78,6 @@ void Filler::Play(const Brx& aStyle, const Brx& aProviderId)
     }
     iActiveUriProvider->Begin(aProviderId);
     iStopped = false;
-    iGetPrevious = false;
     Signal();
 }
 
@@ -87,27 +85,34 @@ void Filler::Stop()
 {
     iLock.Wait();
     iStopped = true;
-    iGetPrevious = false;
     Signal();
     iLock.Signal();
 }
 
-void Filler::Next()
+TBool Filler::Next(const Brx& aStyle, const Brx& aProviderId)
 {
+    TBool ret = false;
     iLock.Wait();
-    iGetPrevious = false;
-    iStopped = false;
-    Signal();
+    if (iActiveUriProvider != NULL && iActiveUriProvider->Style() == aStyle) {
+        ret = iActiveUriProvider->MoveCursorAfter(aProviderId);
+        iStopped = false;
+        Signal();
+    }
     iLock.Signal();
+    return ret;
 }
 
-void Filler::Prev()
+TBool Filler::Prev(const Brx& aStyle, const Brx& aProviderId)
 {
+    TBool ret = false;
     iLock.Wait();
-    iGetPrevious = true;
-    iStopped = false;
-    Signal();
+    if (iActiveUriProvider != NULL && iActiveUriProvider->Style() == aStyle) {
+        ret = iActiveUriProvider->MoveCursorBefore(aProviderId);
+        iStopped = false;
+        Signal();
+    }
     iLock.Signal();
+    return ret;
 }
 
 void Filler::Run()
@@ -131,9 +136,7 @@ void Filler::Run()
             iTrack->RemoveRef();
             iTrack = NULL;
         }
-        iTrackPlayStatus = (iGetPrevious? iActiveUriProvider->GetPrev(iTrack) :
-                                          iActiveUriProvider->GetNext(iTrack));
-        iGetPrevious = false;
+        iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
         iLock.Signal();
         if (iTrackPlayStatus == ePlayNo) {
             // FIXME - iSupply.OutputHalt ??

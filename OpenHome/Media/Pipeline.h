@@ -3,6 +3,7 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Supply.h>
 #include <OpenHome/Media/EncodedAudioReservoir.h>
@@ -10,6 +11,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
+#include <OpenHome/Media/TrackInspector.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
@@ -21,25 +23,6 @@
 namespace OpenHome {
 namespace Media {
 
-enum EPipelineState
-{
-    EPipelinePlaying
-   ,EPipelinePaused
-   ,EPipelineStopped
-   ,EPipelineBuffering
-};
-
-class IPipelineObserver
-{
-public:
-    virtual ~IPipelineObserver() {}
-    virtual void NotifyPipelineState(EPipelineState aState) = 0;
-    virtual void NotifyTrack(Track& aTrack, TUint aIdPipeline) = 0;
-    virtual void NotifyMetaText(const Brx& aText) = 0;
-    virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
-    virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
-};
-    
 class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
@@ -128,6 +111,8 @@ private:
     Logger* iLoggerDecodedAudioReservoir;
     VariableDelay* iVariableDelay;
     Logger* iLoggerVariableDelay;
+    TrackInspector* iTrackInspector;
+    Logger* iLoggerTrackInspector;
     Stopper* iStopper;
     Logger* iLoggerStopper;
     Reporter* iReporter;

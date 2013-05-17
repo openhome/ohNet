@@ -193,12 +193,14 @@ def build(bld):
     t4templatedir = bld.env['T4_TEMPLATE_PATH']
     text_transform_exe_node = find_resource_or_fail(bld, bld.root, os.path.join(bld.env['TEXT_TRANSFORM_PATH'], 'TextTransform.exe'))
     for service in upnp_services:
-        for t4Template, ext, args in [
-                ('DvUpnpCppCoreHeader.tt', '.h', '-a buffer:1'),
-                ('DvUpnpCppCoreSource.tt', '.cpp', '')
+        for t4Template, prefix, ext, args in [
+                ('DvUpnpCppCoreHeader.tt', 'Dv', '.h', '-a buffer:1'),
+                ('DvUpnpCppCoreSource.tt', 'Dv', '.cpp', ''),
+                ('CpUpnpCppHeader.tt', 'Cp', '.h', '-a buffer:1'),
+                ('CpUpnpCppBufferSource.tt', 'Cp', '.cpp', '')
                 ]:
             t4_template_node = find_resource_or_fail(bld, bld.root, os.path.join(t4templatedir, t4Template))
-            tgt = bld.path.find_or_declare(os.path.join('Generated', 'Dv' + service.target + ext))
+            tgt = bld.path.find_or_declare(os.path.join('Generated', prefix + service.target + ext))
             bld(
                 rule="${MONO} " + text_transform_exe_node.abspath() + " -o " + tgt.abspath() + " " + t4_template_node.abspath() + " -a xml:../" + service.xml + " -a domain:" + service.domain + " -a type:" + service.type + " -a version:" + service.version + " " + args,
                 source=[text_transform_exe_node, t4_template_node, service.xml],
@@ -254,8 +256,13 @@ def build(bld):
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
+                'Generated/DvUpnpOrgAVTransport1.cpp',
+                'OpenHome/Av/UpnpAv/ProviderAvTransport.cpp',
                 'Generated/DvUpnpOrgConnectionManager1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderConnectionManager.cpp',
+                'Generated/DvUpnpOrgRenderingControl1.cpp',
+                'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
+                'OpenHome/Av/UpnpAv/UpnpAv.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
@@ -473,6 +480,7 @@ def build(bld):
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
                 'OpenHome/Media/Tests/PipelineUtils.cpp',
+                'OpenHome/Media/Tests/SongcastingDriver.cpp',
                 'OpenHome/Media/Tests/SuiteUnitTest.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
@@ -489,6 +497,10 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
+                'OpenHome/Av/Tests/TestUpnpErrors.cpp',
+                'Generated/CpUpnpOrgAVTransport1.cpp',
+                'Generated/CpUpnpOrgConnectionManager1.cpp',
+                'Generated/CpUpnpOrgRenderingControl1.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
@@ -585,6 +597,14 @@ def build(bld):
                 source='OpenHome/Media/Tests/TestFillerMain.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestFiller')
+        bld.program(
+                source='OpenHome/Av/Tests/TestUpnpAv.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestUpnpAv')
+        bld.program(
+                source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestUpnpErrors')
 
 # Bundles
 def bundle(ctx):

@@ -11,28 +11,48 @@ using namespace OpenHome::Media;
 
 UriProviderSingleTrack::UriProviderSingleTrack(TrackFactory& aTrackFactory)
     : UriProvider("SingleTrack")
+    , iLock("UPST")
     , iTrackFactory(aTrackFactory)
+    , iIgnoreNext(true)
 {
 }
 
 void UriProviderSingleTrack::Begin(const Brx& aProviderId)
 {
+    iLock.Wait();
     iUri.Replace(aProviderId);
+    iIgnoreNext = false;
+    iLock.Signal();
 }
 
 EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
 {
-    if (iUri.Bytes() == 0) {
+    AutoMutex a(iLock);
+    if (iIgnoreNext || iUri.Bytes() == 0) {
         aTrack = NULL;
         return ePlayNo;
     }
     aTrack = iTrackFactory.CreateTrack(iUri, Brx::Empty(), Style(), iUri, NULL);
-    iUri.SetBytes(0);
+    iIgnoreNext = true;
     return ePlayYes;
 }
 
-EStreamPlay UriProviderSingleTrack::GetPrev(Track*& aTrack)
+TBool UriProviderSingleTrack::MoveCursorAfter(const Brx& aProviderId)
 {
-    aTrack = NULL;
-    return ePlayNo;
+    return MoveCursor(aProviderId);
+}
+
+TBool UriProviderSingleTrack::MoveCursorBefore(const Brx& aProviderId)
+{
+    return MoveCursor(aProviderId);
+}
+
+TBool UriProviderSingleTrack::MoveCursor(const Brx& aProviderId)
+{
+    AutoMutex a(iLock);
+    if (iUri != aProviderId) {
+        return false;
+    }
+    iIgnoreNext = true;
+    return true;
 }
