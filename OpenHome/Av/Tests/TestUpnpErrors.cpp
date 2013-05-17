@@ -38,7 +38,7 @@
             } \
             else { \
                 char str[128]; \
-                (void)sprintf(str, "Expected error code %d, got %d", aCode, aPe.Code()); \
+                (void)sprintf(str, "Expected error code %d, got %d", aCode, (int)aPe.Code()); \
                 OpenHome::TestFramework::Fail(file, __LINE__, #aExp, str); \
             } \
         } \
