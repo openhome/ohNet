@@ -196,7 +196,7 @@ def build(bld):
         for t4Template, prefix, ext, args in [
                 ('DvUpnpCppCoreHeader.tt', 'Dv', '.h', '-a buffer:1'),
                 ('DvUpnpCppCoreSource.tt', 'Dv', '.cpp', ''),
-                ('CpUpnpCHeader.tt', 'Cp', '.h', '-a buffer:1'),
+                ('CpUpnpCppHeader.tt', 'Cp', '.h', '-a buffer:1'),
                 ('CpUpnpCppBufferSource.tt', 'Cp', '.cpp', '')
                 ]:
             t4_template_node = find_resource_or_fail(bld, bld.root, os.path.join(t4templatedir, t4Template))
@@ -497,6 +497,10 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
+                'OpenHome/Av/Tests/TestUpnpErrors.cpp',
+                'Generated/CpUpnpOrgAVTransport1.cpp',
+                'Generated/CpUpnpOrgConnectionManager1.cpp',
+                'Generated/CpUpnpOrgRenderingControl1.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
@@ -597,6 +601,10 @@ def build(bld):
                 source='OpenHome/Av/Tests/TestUpnpAv.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestUpnpAv')
+        bld.program(
+                source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestUpnpErrors')
 
 # Bundles
 def bundle(ctx):
