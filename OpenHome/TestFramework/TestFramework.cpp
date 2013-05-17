@@ -14,6 +14,7 @@
 
 #include <time.h>
 #include <stdlib.h>
+#include <limits.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -189,7 +190,7 @@ void OpenHome::TestFramework::RandomiseUdn(Environment& aEnv, Bwh& aUdn)
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
     std::vector<NetworkAdapter*>* subnetList = aEnv.NetworkAdapterList().CreateSubnetList();
-    TUint max = (subnetList->size() > 0? (*subnetList)[0]->Address() : (TUint)&buf);
+    TUint max = (subnetList->size() > 0? (*subnetList)[0]->Address() : UINT_MAX);
     aEnv.NetworkAdapterList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(buf, aEnv.Random(max));
     aUdn.Append(buf);
