@@ -50,6 +50,9 @@ public:
     Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
     TUint SequenceNumber();
+    TInt Random();
+    TUint Random(TUint aMaxValue, TUint aMinValue = 0);
+    void SetRandomSeed(TUint aSeed);
     Net::InitialisationParams& InitParams();
     void AddObject(IStackObject* aObject);
     void RemoveObject(IStackObject* aObject);

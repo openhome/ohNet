@@ -30,8 +30,8 @@ static void RunTestTextUtils(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const
 extern void TestNetwork(const std::vector<Brn>& aArgs);
 static void RunTestNetwork(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestNetwork(aArgs); }
 
-extern void TestTimer();
-static void RunTestTimer(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTimer(); }
+extern void TestTimer(Environment& aEnv);
+static void RunTestTimer(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestTimer(aCpStack.Env()); }
 
 extern void TestSsdpMListen(Environment& aEnv, const std::vector<Brn>& aArgs);
 static void RunTestSsdpMListen(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs) { TestSsdpMListen(aCpStack.Env(), aArgs); }

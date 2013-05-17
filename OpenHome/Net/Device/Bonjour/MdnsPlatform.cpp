@@ -1,6 +1,5 @@
 #include <OpenHome/Net/Private/MdnsPlatform.h>
 #include <OpenHome/Functor.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Os.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Network.h>

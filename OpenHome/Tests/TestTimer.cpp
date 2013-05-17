@@ -1,7 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/Timer.h>
-#include <OpenHome/Private/Maths.h>
-#include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -13,7 +12,7 @@ using namespace OpenHome::TestFramework;
 class MyTimer : public Timer
 {
 public:
-    MyTimer() : Timer(*gEnv, MakeFunctor(*this, &MyTimer::Run)), iCount(0), iSemaphore("TIMR", 0) {}
+    MyTimer(Environment& aEnv) : Timer(aEnv, MakeFunctor(*this, &MyTimer::Run)), iCount(0), iSemaphore("TIMR", 0) {}
     void Wait() { iSemaphore.Wait(); }
     TUint Count() { return (iCount); }
     ~MyTimer() { iCount = 0xffffffff; }
@@ -27,7 +26,7 @@ private:
 class MicrosecondTimer
 {
 public:
-    MicrosecondTimer() : iTimer(*gEnv, MakeFunctor(*this, &MicrosecondTimer::Expired)), iSemaphore("MICR", 0) {}
+    MicrosecondTimer(Environment& aEnv) : iTimer(aEnv, MakeFunctor(*this, &MicrosecondTimer::Expired)), iSemaphore("MICR", 0) {}
     void Calibrate();
     void FireIn(TUint aMicroseconds);
 private:
@@ -71,21 +70,23 @@ void MicrosecondTimer::Expired()
     iTimer.FireIn(100);
 }
 
-class SuiteTimerBasic : public Suite
+class SuiteTimerBasic : public Suite, private INonCopyable
 {
 public:
-    SuiteTimerBasic() : Suite("Basic Timer testing") {}
+    SuiteTimerBasic(Environment& aEnv) : Suite("Basic Timer testing"), iEnv(aEnv) {}
     void Test();
+private:
+    Environment& iEnv;
 };
 
 void SuiteTimerBasic::Test()
 {
-    MyTimer a;
+    MyTimer a(iEnv);
 
     TUint i=0;
     for( ; i < 1000; i++ ) {
         a.FireIn(300);
-        Thread::Sleep(Random(30, 10));
+        Thread::Sleep(iEnv.Random(30, 10));
         Print(".");
     }
 
@@ -100,7 +101,7 @@ void SuiteTimerBasic::Test()
 
     for( i=0; i < 100; i++ ) {
         a.FireIn(300);
-        TUint j = Random(3500, 2500);
+        TUint j = iEnv.Random(3500, 2500);
         TUint k=0;
         for( ; k < j; k++) {
             Print("."); 
@@ -111,7 +112,7 @@ void SuiteTimerBasic::Test()
 
     Thread::Sleep(3000);
 
-    MyTimer b;
+    MyTimer b(iEnv);
     
     Print("\nWait for 5 seconds\n");
     a.FireIn(5000);
@@ -143,7 +144,7 @@ void SuiteTimerBasic::Test()
 
     Print("Cancel a timer\n");
     
-    MyTimer c;
+    MyTimer c(iEnv);
     
     a.FireIn(1000);
     c.FireIn(2000);
@@ -158,7 +159,7 @@ void SuiteTimerBasic::Test()
     
     Print("Delete a timer\n");
     
-    MyTimer* d = new MyTimer();
+    MyTimer* d = new MyTimer(iEnv);
     
     a.FireIn(1000);
     d->FireIn(2000);
@@ -172,7 +173,7 @@ void SuiteTimerBasic::Test()
     
     Print("Change a timer\n");
     
-    MyTimer e;
+    MyTimer e(iEnv);
     
     a.FireIn(1000);
     e.FireIn(2000);
@@ -190,13 +191,14 @@ void SuiteTimerBasic::Test()
 }
 
 
-class SuiteTimerThrash : public Suite
+class SuiteTimerThrash : public Suite, private INonCopyable
 {
 public:
-    SuiteTimerThrash() : Suite("Thrash Timer testing") {}
+    SuiteTimerThrash(Environment& aEnv) : Suite("Thrash Timer testing"), iEnv(aEnv) {}
     void Fire() { iCount++; }
     void Test();
 private:
+    Environment& iEnv;
     TUint iCount;
     Timer* iTimers[10000];
 };
@@ -206,7 +208,7 @@ void SuiteTimerThrash::Test()
     Functor f = MakeFunctor(*this, &SuiteTimerThrash::Fire);
     
     for (TUint i = 0; i < 10000; i++) {
-        iTimers[i] = new Timer(*gEnv, f);
+        iTimers[i] = new Timer(iEnv, f);
     }
     
     Print("Firing 10000 timers over 10 seconds\n");
@@ -214,7 +216,7 @@ void SuiteTimerThrash::Test()
     iCount = 0;
     
     for (TUint i = 0; i < 10000; i++) {
-        iTimers[i]->FireIn(Random(10000)); // fire 10000 timers in the following 10 seconds
+        iTimers[i]->FireIn(iEnv.Random(10000)); // fire 10000 timers in the following 10 seconds
     }
     
     Thread::Sleep(11000);   // wait 11 seconds 
@@ -229,12 +231,15 @@ void SuiteTimerThrash::Test()
 class TimerTestThread : public Thread
 {
 public:
-    TimerTestThread();
+    TimerTestThread(Environment& aEnv);
     void Run();
+private:
+    Environment& iEnv;
 };
 
-TimerTestThread::TimerTestThread()
+TimerTestThread::TimerTestThread(Environment& aEnv)
     : Thread("MAIN", kPriorityNormal)
+    , iEnv(aEnv)
 {
 }
 
@@ -242,15 +247,15 @@ void TimerTestThread::Run()
 {
     //Debug::SetLevel(Debug::kTimer);
     Runner runner("Timer testing\n");
-    runner.Add(new SuiteTimerBasic());
-    runner.Add(new SuiteTimerThrash());
+    runner.Add(new SuiteTimerBasic(iEnv));
+    runner.Add(new SuiteTimerThrash(iEnv));
     runner.Run();
     Signal();
 }
 
-void TestTimer()
+void TestTimer(Environment& aEnv)
 {
-    Thread* th = new TimerTestThread();
+    Thread* th = new TimerTestThread(aEnv);
     th->Start();
     th->Wait();
     delete th;

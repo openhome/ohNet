@@ -3,10 +3,10 @@
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Cpp/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Private/TestFramework.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -208,24 +208,9 @@ void ProviderTestBasic::Shutdown(IDvInvocation& aInvocation)
 
 static Bwh gDeviceName("device");
 
-static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
-{
-    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
-    aUdn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = aDvStack.Env().NetworkAdapterList().CreateSubnetList();
-    TUint max = (*subnetList)[0]->Address();
-    TUint seed = aDvStack.ServerUpnp().Port((*subnetList)[0]->Address());
-    SetRandomSeed(seed);
-    aDvStack.Env().NetworkAdapterList().DestroySubnetList(subnetList);
-    (void)Ascii::AppendDec(buf, Random(max));
-    aUdn.Append(buf);
-    aUdn.PtrZ();
-}
-
 DeviceBasic::DeviceBasic(DvStack& aDvStack)
 {
-    RandomiseUdn(aDvStack, gDeviceName);
+    TestFramework::RandomiseUdn(aDvStack.Env(), gDeviceName);
     iDevice = new DvDeviceStandard(aDvStack, gDeviceName);
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");

@@ -9,7 +9,6 @@
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 

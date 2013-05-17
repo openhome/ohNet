@@ -6,7 +6,6 @@
 #include <OpenHome/Net/C/DvProvider.h>
 #include <OpenHome/Net/C/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
@@ -129,25 +128,10 @@ static int32_t STDCALL getBinary(void* aPtr, IDvInvocationC* /*aInvocation*/, vo
 }
 
 
-static void RandomiseUdn(Bwh& aUdn)
-{
-    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
-    aUdn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    std::vector<NetworkAdapter*>* subnetList = gEnv->NetworkAdapterList().CreateSubnetList();
-    TUint max = (*subnetList)[0]->Address();
-    TUint seed = gDvStack->ServerUpnp().Port((*subnetList)[0]->Address());
-    SetRandomSeed(seed);
-    gEnv->NetworkAdapterList().DestroySubnetList(subnetList);
-    (void)Ascii::AppendDec(buf, Random(max));
-    aUdn.Append(buf);
-    aUdn.PtrZ();
-}
-
 DeviceBasicC::DeviceBasicC(EProtocol aProtocol)
 {
     Bwh udn("device");
-    RandomiseUdn(udn);
+    RandomiseUdn(*gEnv, udn);
     Brhz cstr;
     udn.TransferTo(cstr);
     if (aProtocol == eProtocolNone) {

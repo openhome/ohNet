@@ -11,7 +11,6 @@
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
 #include "TestBasicDv.h"
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/Globals.h>
 
 #include <string.h>
@@ -26,7 +25,7 @@ namespace TestAdapterChange {
 class CpDevices
 {
 public:
-    CpDevices(Semaphore& aAddedSem, const Brx& aTargetUdn);
+    CpDevices(Environment& aEnv, Semaphore& aAddedSem, const Brx& aTargetUdn);
     ~CpDevices();
     void Start();
     void SetSubnet(TIpAddress aSubnet);
@@ -38,6 +37,7 @@ private:
     void UpdatesComplete();
 private:
     Mutex iLock;
+    Environment& iEnv;
     std::vector<CpDevice*> iDevices;
     Semaphore& iAddedSem;
     Semaphore iUpdatesComplete;
@@ -51,8 +51,9 @@ private:
 
 using namespace OpenHome::TestAdapterChange;
 
-CpDevices::CpDevices(Semaphore& aAddedSem, const Brx& aTargetUdn)
+CpDevices::CpDevices(Environment& aEnv, Semaphore& aAddedSem, const Brx& aTargetUdn)
     : iLock("DLMX")
+    , iEnv(aEnv)
     , iAddedSem(aAddedSem)
     , iUpdatesComplete("DSB2", 0)
     , iTargetUdn(aTargetUdn)
@@ -95,7 +96,7 @@ void CpDevices::Test()
     proxy->Subscribe();
     iUpdatesComplete.Wait(); // wait for initial event
 
-    TInt val = Random(0x7fffffff);
+    TInt val = iEnv.Random(0x7fffffff);
     proxy->SyncSetInt(val);
     iUpdatesComplete.Wait();
     TInt propInt;
@@ -170,7 +171,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     Semaphore* sem = new Semaphore("TEST", 0);
     DeviceBasic* dvDevice = new DeviceBasic(*gDvStack);
-    CpDevices* cpDevice = new CpDevices(*sem, dvDevice->Udn());
+    CpDevices* cpDevice = new CpDevices(*gEnv, *sem, dvDevice->Udn());
     LogSubnet("Starting", subnet);
     cpDevice->Start();
     cpDevice->Test();

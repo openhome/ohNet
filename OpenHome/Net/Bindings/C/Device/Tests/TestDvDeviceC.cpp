@@ -12,7 +12,6 @@
 #include <OpenHome/Net/C/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/C/CpOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Debug.h>
 #include "TestBasicDv.h"

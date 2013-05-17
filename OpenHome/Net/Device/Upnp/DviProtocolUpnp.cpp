@@ -7,7 +7,6 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Private/Discovery.h>
 #include <OpenHome/OsWrapper.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
@@ -487,8 +486,9 @@ void DviProtocolUpnp::SendAliveNotifications()
 
 void DviProtocolUpnp::QueueAliveTimer()
 {
-    TUint maxUpdateTimeMs = iDvStack.Env().InitParams().DvMaxUpdateTimeSecs() * 1000;
-    TUint updateTimeMs = Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
+    Environment& env = iDvStack.Env();
+    TUint maxUpdateTimeMs = env.InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TUint updateTimeMs = env.Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
 }
 

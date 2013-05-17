@@ -9,7 +9,10 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
+#include <time.h>
 #include <stdlib.h>
 
 using namespace OpenHome;
@@ -177,6 +180,20 @@ TInt OpenHome::TestFramework::Print(const Brx& aB)
 TInt OpenHome::TestFramework::PrintHex(const Brx& aB)
 {
     return Log::PrintHex(gPrinter, aB);
+}
+
+
+void OpenHome::TestFramework::RandomiseUdn(Environment& aEnv, Bwh& aUdn)
+{
+    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
+    aUdn.Append('-');
+    Bws<Ascii::kMaxUintStringBytes> buf;
+    std::vector<NetworkAdapter*>* subnetList = aEnv.NetworkAdapterList().CreateSubnetList();
+    TUint max = (subnetList->size() > 0? (*subnetList)[0]->Address() : (TUint)&buf);
+    aEnv.NetworkAdapterList().DestroySubnetList(subnetList);
+    (void)Ascii::AppendDec(buf, aEnv.Random(max));
+    aUdn.Append(buf);
+    aUdn.PtrZ();
 }
 
 

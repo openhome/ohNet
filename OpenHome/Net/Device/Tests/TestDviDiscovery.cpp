@@ -6,7 +6,6 @@
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Private/Env.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Standard.h>
@@ -229,21 +228,6 @@ void CpListenerBasic::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& /
 }
 
 
-static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
-{
-    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
-    aUdn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = aDvStack.Env().NetworkAdapterList().CurrentAdapter(kAdapterCookie);
-    TUint max = nif->Address();
-    TUint seed = aDvStack.ServerUpnp().Port(nif->Address());
-    SetRandomSeed(seed);
-    nif->RemoveRef(kAdapterCookie);
-    (void)Ascii::AppendDec(buf, Random(max));
-    aUdn.Append(buf);
-    aUdn.PtrZ();
-}
-
 // SuiteAlive
 
 SuiteAlive::SuiteAlive(DvStack& aDvStack)
@@ -251,7 +235,7 @@ SuiteAlive::SuiteAlive(DvStack& aDvStack)
     , iDvStack(aDvStack)
     , iSem("SALV", 0)
 {
-    RandomiseUdn(iDvStack, gNameDevice1);
+    RandomiseUdn(iDvStack.Env(), gNameDevice1);
 }
 
 SuiteAlive::~SuiteAlive()
@@ -495,9 +479,9 @@ SuiteMsearch::SuiteMsearch(DvStack& aDvStack)
     : Suite("Msearches")
     , iDvStack(aDvStack)
 {
-    RandomiseUdn(iDvStack, gNameDevice1);
-    RandomiseUdn(iDvStack, gNameDevice2);
-    RandomiseUdn(iDvStack, gNameDevice2Embedded1);
+    RandomiseUdn(iDvStack.Env(), gNameDevice1);
+    RandomiseUdn(iDvStack.Env(), gNameDevice2);
+    RandomiseUdn(iDvStack.Env(), gNameDevice2Embedded1);
     Environment& env = iDvStack.Env();
     iBlocker = new Blocker(env);
     iListener = new CpListenerMsearch(env);

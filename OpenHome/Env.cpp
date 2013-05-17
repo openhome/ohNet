@@ -5,7 +5,6 @@
 #include <OpenHome/Net/Private/Discovery.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Globals.h>
@@ -170,6 +169,29 @@ TUint Environment::SequenceNumber()
     TUint seq = iSequenceNumber++;
     iPrivateLock->Signal();
     return seq;
+}
+
+TInt Environment::Random()
+{
+    iPrivateLock->Wait();
+    TInt num = rand();
+    iPrivateLock->Signal();
+    return num;
+}
+
+TUint Environment::Random(TUint aMaxValue, TUint aMinValue)
+{
+    TUint val = (TUint)Random();
+    val = val % (aMaxValue - aMinValue);
+    val += aMinValue;
+    return val;
+}
+
+void Environment::SetRandomSeed(TUint aSeed)
+{
+    iPrivateLock->Wait();
+    srand(aSeed);
+    iPrivateLock->Signal();
 }
 
 InitialisationParams& Environment::InitParams()

@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Cpp/CpDeviceDv.h>
 #include "../../Device/Tests/TestBasicDv.h"
 #include "TestBasicCp.h"
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string>
 #include <vector>
@@ -25,7 +26,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     Print("TestCpDeviceDvStd - starting\n");
 
-    DeviceBasic* device = new DeviceBasic(DeviceBasic::eProtocolNone);
+    DeviceBasic* device = new DeviceBasic(*gEnv, DeviceBasic::eProtocolNone);
     CpDeviceDvCpp* cpDevice = CpDeviceDvCpp::New(device->Device());
     TestBasicCp::TestActions(*cpDevice);
     TestBasicCp::TestSubscriptions(*cpDevice);

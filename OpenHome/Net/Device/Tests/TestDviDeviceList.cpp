@@ -9,7 +9,6 @@
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/CpDeviceUpnp.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 
 #include <stdlib.h>
@@ -24,22 +23,6 @@ static Bwh gNameDevice1("device1");
 static Bwh gNameDevice1_1("device1_1");
 static Bwh gNameDevice1_2("device1_2");
 static Bwh gNameDevice2("device2");
-
-static void RandomiseUdn(DvStack& aDvStack, Bwh& aUdn)
-{
-    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
-    aUdn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    time_t t = time(NULL);
-    int seed = gmtime(&t)->tm_sec;
-    SetRandomSeed(seed);
-    std::vector<NetworkAdapter*>* subnetList = aDvStack.Env().NetworkAdapterList().CreateSubnetList();
-    TUint max = (*subnetList)[0]->Address();
-    aDvStack.Env().NetworkAdapterList().DestroySubnetList(subnetList);
-    (void)Ascii::AppendDec(buf, Random(max));
-    aUdn.Append(buf);
-    aUdn.PtrZ();
-}
 
 static void AddService(DviDevice* aDevice, DviService* aService)
 {
@@ -59,10 +42,10 @@ private:
 
 DvDevices::DvDevices(DvStack& aDvStack)
 {
-    RandomiseUdn(aDvStack, gNameDevice1);
-    RandomiseUdn(aDvStack, gNameDevice1_1);
-    RandomiseUdn(aDvStack, gNameDevice1_2);
-    RandomiseUdn(aDvStack, gNameDevice2);
+    RandomiseUdn(aDvStack.Env(), gNameDevice1);
+    RandomiseUdn(aDvStack.Env(), gNameDevice1_1);
+    RandomiseUdn(aDvStack.Env(), gNameDevice1_2);
+    RandomiseUdn(aDvStack.Env(), gNameDevice2);
 
     DviDeviceStandard* device = new DviDeviceStandard(aDvStack, Brn(gNameDevice1));
     iDevices[0] = device;

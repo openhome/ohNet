@@ -2,6 +2,7 @@
 #define HEADER_TESTBASICDV
 
 namespace OpenHome {
+class Environment;
 namespace Net {
 
 class DvDeviceStd;
@@ -15,7 +16,7 @@ public:
        ,eProtocolUpnp
     };
 public:
-    DeviceBasic(EProtocol aProtocol);
+    DeviceBasic(Environment& aEnv, EProtocol aProtocol);
     ~DeviceBasic();
     DvDeviceStd& Device();
 private:

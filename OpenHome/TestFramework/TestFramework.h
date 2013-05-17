@@ -29,6 +29,8 @@ TInt Print(const Brx& aB);
 TInt Print(const TChar* aFormat, ...);
 TInt Print(const TChar* aFormat, va_list aArgs);
 
+void RandomiseUdn(Environment& aEnv, Bwh& aUdn);
+
 #ifdef _WIN32
 // TEST macro generates "conditional expression is constant" warning
 # pragma warning(disable:4127)

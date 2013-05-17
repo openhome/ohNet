@@ -3,11 +3,11 @@
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Cpp/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/TestFramework.h>
 
 #include <string>
 
@@ -159,28 +159,16 @@ void ProviderTestBasic::GetBinary(IDvInvocationStd& /*aInvocation*/, std::string
 
 static std::string gDeviceName("device");
 
-static void RandomiseUdn(std::string& aUdn)
+static void RandomiseUdn(Environment& aEnv, std::string& aUdn)
 {
-    Bwh udn;
-    udn.Grow((TUint)aUdn.length() + 1 + Ascii::kMaxUintStringBytes + 1);
-    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
-    udn.Append(buf);
-    udn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> addr;
-    std::vector<NetworkAdapter*>* subnetList = gEnv->NetworkAdapterList().CreateSubnetList();
-    TUint max = (*subnetList)[0]->Address();
-    TUint seed = gDvStack->ServerUpnp().Port((*subnetList)[0]->Address());
-    SetRandomSeed(seed);
-    gEnv->NetworkAdapterList().DestroySubnetList(subnetList);
-    (void)Ascii::AppendDec(addr, Random(max));
-    udn.Append(addr);
-    udn.PtrZ();
+    Bwh udn(aUdn.c_str());
+    TestFramework::RandomiseUdn(aEnv, udn);
     aUdn.assign((const char*)udn.Ptr(), udn.Bytes());
 }
 
-DeviceBasic::DeviceBasic(EProtocol aProtocol)
+DeviceBasic::DeviceBasic(Environment& aEnv, EProtocol aProtocol)
 {
-    RandomiseUdn(gDeviceName);
+    RandomiseUdn(aEnv, gDeviceName);
     if (aProtocol == DeviceBasic::eProtocolNone) {
         iDevice = new DvDeviceStd(gDeviceName);
     }

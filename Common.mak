@@ -81,7 +81,6 @@ objects_core = \
 	$(objdir)uDNS.$(objext) \
 	$(objdir)MdnsPlatform.$(objext) \
 	$(objdir)MdnsProvider.$(objext) \
-	$(objdir)Maths.$(objext) \
 	$(objdir)Md5.$(objext) \
 	$(objdir)NetworkAdapterList.$(objext) \
 	$(objdir)Network.$(objext) \
@@ -136,7 +135,6 @@ headers = \
 	$(inc_build)/OpenHome/Private/Fifo.h \
         $(inc_build)/OpenHome/Private/File.h \
 	$(inc_build)/OpenHome/Private/Http.h \
-	$(inc_build)/OpenHome/Private/Maths.h \
 	$(inc_build)/OpenHome/Private/md5.h \
 	$(inc_build)/OpenHome/Private/Network.h \
 	$(inc_build)/OpenHome/Private/NetworkAdapterList.h \
@@ -342,8 +340,6 @@ $(objdir)MdnsPlatform.$(objext) : OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp $
 	$(compiler)MdnsPlatform.$(objext) -c $(cflags_third_party) $(includes) OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp
 $(objdir)MdnsProvider.$(objext) : OpenHome/Net/Device/Bonjour/MdnsProvider.cpp $(headers)
 	$(compiler)MdnsProvider.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Bonjour/MdnsProvider.cpp
-$(objdir)Maths.$(objext) : OpenHome/Maths.cpp $(headers)
-	$(compiler)Maths.$(objext) -c $(cflags) $(includes) OpenHome/Maths.cpp
 $(objdir)Md5.$(objext) : OpenHome/md5.c $(headers)
 	$(compiler)Md5.$(objext) -c $(cflags) $(includes) OpenHome/md5.c
 $(objdir)NetworkAdapterList.$(objext) : OpenHome/NetworkAdapterList.cpp $(headers)
@@ -620,12 +616,6 @@ $(objdir)TestDvSubscription.$(objext) : OpenHome/Net/Device/Tests/TestDvSubscrip
 $(objdir)TestDvSubscriptionMain.$(objext) : OpenHome/Net/Device/Tests/TestDvSubscriptionMain.cpp $(headers)
 	$(compiler)TestDvSubscriptionMain.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvSubscriptionMain.cpp
 
-TestDvLights: $(objdir)TestDvLights.$(exeext) 
-$(objdir)TestDvLights.$(exeext) :  ohNetCore $(objdir)TestDvLights.$(objext) $(objdir)DvOpenhomeOrgTestLights1.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestDvLights.$(exeext) $(objdir)TestDvLights.$(objext) $(objdir)DvOpenhomeOrgTestLights1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
-$(objdir)TestDvLights.$(objext) : OpenHome/Net/Device/Tests/TestDvLights.cpp $(headers)
-	$(compiler)TestDvLights.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Tests/TestDvLights.cpp
-
 TestDvTestBasic: $(objdir)TestDvTestBasic.$(exeext) 
 $(objdir)TestDvTestBasic.$(exeext) :  ohNetCore $(objdir)TestDvTestBasic.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestDvTestBasic.$(exeext) $(objdir)TestDvTestBasic.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -751,9 +741,9 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFifo TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFifo TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
-TestsCs: TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
+TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
 Tests: TestsNative TestsCs
 
@@ -820,20 +810,6 @@ $(objdir)TestDvDeviceCs.exe: \
 		$(csDvTests)TestDvDevice.cs
 		
 TestDvLightsCs: $(objdir)TestDvLightsCs.exe
-
-$(objdir)TestDvLightsCs.exe: \
-	ohNetDll \
-	$(objdir)ohNet.net.dll \
-	$(objdir)DvOpenhomeOrgTestLights1.net.dll \
-	$(objdir)CpOpenhomeOrgTestLights1.net.dll \
-	$(csDvTests)TestDvLights.cs
-	$(csharp) \
-		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
-		/out:$(objdir)TestDvLightsCs.exe \
-		/reference:$(objdir)ohNet.net.dll \
-		/reference:$(objdir)DvOpenhomeOrgTestLights1.net.dll \
-		/reference:$(objdir)CpOpenhomeOrgTestLights1.net.dll \
-		$(csDvTests)TestDvLights.cs
 
 TestCpDeviceDvCs: $(objdir)TestCpDeviceDvCs.exe
 

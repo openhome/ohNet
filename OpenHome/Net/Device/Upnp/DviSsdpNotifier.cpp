@@ -6,7 +6,6 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/Ssdp.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Private/Printer.h>
 
 #include <climits>
@@ -73,7 +72,8 @@ void SsdpNotifierScheduler::SendNextMsg()
 void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
-    const TUint timeNow = Os::TimeInMs(iDvStack.Env().OsCtx());
+    Environment& env = iDvStack.Env();
+    const TUint timeNow = Os::TimeInMs(env.OsCtx());
     TInt remaining;
     if (timeNow > iEndTimeMs && timeNow-iEndTimeMs > UINT_MAX/2) {
         // clock may wrap during this series of announcements but it hasn't wrapped yet
@@ -90,7 +90,7 @@ void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
         interval = 0;
     }
     else {
-        interval = Random((TUint)maxInterval);
+        interval = env.Random((TUint)maxInterval);
     }
     iTimer->FireIn(interval);
 }

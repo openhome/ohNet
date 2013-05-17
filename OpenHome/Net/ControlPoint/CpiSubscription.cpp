@@ -12,7 +12,6 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
-#include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 
@@ -315,7 +314,7 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
         LOG2(kEvent, kError, " has 0s renew time\n");
         return;
     }
-    TUint renewMs = Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    TUint renewMs = iDevice.GetCpStack().Env().Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
     iTimer->FireIn(renewMs);
 }
 
