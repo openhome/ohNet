@@ -44,6 +44,7 @@ Brn Srx::Read(TUint aBytes)
             Bwn buffer(ptr + iBytes, iMaxBytes - iBytes);
             iSource.Read(buffer);
             iBytes += buffer.Bytes();
+            iSource.ReadFlush();
         }
     }
 
