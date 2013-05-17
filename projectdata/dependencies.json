@@ -20,15 +20,14 @@
         "version": "0.0.40",
         "archive-filename": "${name}-${version}.tar.gz"
     },
-    {
-        "name": "TestTones",
+    {   "name": "TestTones",
         "type": "external",
         "version": "1.4",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.0.9",
+        "version":          "0.1.2",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
