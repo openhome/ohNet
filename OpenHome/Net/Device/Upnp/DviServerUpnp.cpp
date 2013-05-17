@@ -722,7 +722,9 @@ void DviSessionUpnp::Post()
 
 void DviSessionUpnp::Subscribe()
 {
-    LOG(kDvEvent, "Subscription request from ");
+    LOG(kDvEvent, "Subscription request ");
+    LOG(kDvEvent, iReaderRequest->Uri());
+    LOG(kDvEvent, " from ");
     iHeaderCallback.Log();
     LOG(kDvEvent, "\n");
     if (iHeaderSid.Received()) {
@@ -1115,6 +1117,14 @@ void DviSessionUpnp::InvocationReadEnd()
 
 void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 {
+    if (iResponseStarted) {
+        if (!iResponseEnded) {
+            InvocationWriteEnd();
+            iResponseEnded = true;
+        }
+        return;
+    }
+
     LOG(kDvInvocation, "Failure processing action: ");
     LOG(kDvInvocation, iHeaderSoapAction.Action());
     LOG(kDvInvocation, "\n");
