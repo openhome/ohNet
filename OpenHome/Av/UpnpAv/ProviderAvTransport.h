@@ -31,6 +31,28 @@ class ProviderAvTransport : public DvProviderUpnpOrgAVTransport1, public IPipeli
 {
     typedef Bws<7> BwsTime; // H:MM:SS format
 public:
+    static const Brn kNotImplemented;
+    static const Brn kTransportStateStopped;
+    static const Brn kTransportStatePlaying;
+    static const Brn kTransportStatePausedPlayback;
+    static const Brn kTransportStateTransitioning;
+    static const Brn kTransportStateNoMediaPresent;
+    static const Brn kTransportStatusOk;
+    static const Brn kTransportStatusErrorOccurred;
+    static const Brn kCurrentMediaCategoryNoMedia;
+    static const Brn kCurrentMediaCategoryTrackAware;
+    static const Brn kCurrentMediaCategoryTrackUnaware;
+    static const Brn kPlaybackStorageMediumNone;
+    static const Brn kPlaybackStorageMediumNetwork;
+    static const Brn kRecordStorageMediumNotImplemented;
+    static const Brn kCurrentPlayModeNormal;
+    static const Brn kTransportPlaySpeed1;
+    static const Brn kRecordMediumWriteStatusNotImplemented;
+    static const Brn kCurrentRecordQualityModeNotImplemented;
+    static const Brn kSeekModeTrackNr;
+    static const Brn kSeekModeAbsTime;
+    static const Brn kSeekModeRelTime;
+public:
     ProviderAvTransport(Net::DvDevice& aDevice, Environment& aEnv, ISourceUpnpAv& aSourceUpnpAv);
     ~ProviderAvTransport();
 private: // from DvProviderUpnpOrgAvTransport1

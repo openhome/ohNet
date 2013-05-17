@@ -34,27 +34,27 @@ static const Brn kIllegalSeekTargetMsg("Illegal seek target");
 static const TUint kUnsupportedPlaySpeedCode = 717;
 static const Brn kUnsupportedPlaySpeedMsg("Play speed not supported");
 
-static const Brn kNotImplemented("NOT_IMPLEMENTED");
-static const Brn kTransportStateStopped("STOPPED");
-static const Brn kTransportStatePlaying("PLAYING");
-static const Brn kTransportStatePausedPlayback("PAUSED_PLAYBACK");
-static const Brn kTransportStateTransitioning("TRANSITIONING");
-static const Brn kTransportStateNoMediaPresent("NO_MEDIA_PRESENT");
-static const Brn kTransportStatusOk("OK");
-static const Brn kTransportStatusErrorOccurred("ERROR_OCCURRED");
-static const Brn kCurrentMediaCategoryNoMedia("NO_MEDIA");
-static const Brn kCurrentMediaCategoryTrackAware("TRACK_AWARE");
-static const Brn kCurrentMediaCategoryTrackUnaware("TRACK_UNAWARE");
-static const Brn kPlaybackStorageMediumNone("NONE");
-static const Brn kPlaybackStorageMediumNetwork("NETWORK");
-static const Brn kRecordStorageMediumNotImplemented("NOT_IMPLEMENTED");
-static const Brn kCurrentPlayModeNormal("NORMAL");
-static const Brn kTransportPlaySpeed1("1");
-static const Brn kRecordMediumWriteStatusNotImplemented("NOT_IMPLEMENTED");
-static const Brn kCurrentRecordQualityModeNotImplemented("NOT_IMPLEMENTED");
-static const Brn kSeekModeTrackNr("TRACK_NR");
-static const Brn kSeekModeAbsTime("ABS_TIME");
-static const Brn kSeekModeRelTime("REL_TIME");
+const Brn ProviderAvTransport::kNotImplemented("NOT_IMPLEMENTED");
+const Brn ProviderAvTransport::kTransportStateStopped("STOPPED");
+const Brn ProviderAvTransport::kTransportStatePlaying("PLAYING");
+const Brn ProviderAvTransport::kTransportStatePausedPlayback("PAUSED_PLAYBACK");
+const Brn ProviderAvTransport::kTransportStateTransitioning("TRANSITIONING");
+const Brn ProviderAvTransport::kTransportStateNoMediaPresent("NO_MEDIA_PRESENT");
+const Brn ProviderAvTransport::kTransportStatusOk("OK");
+const Brn ProviderAvTransport::kTransportStatusErrorOccurred("ERROR_OCCURRED");
+const Brn ProviderAvTransport::kCurrentMediaCategoryNoMedia("NO_MEDIA");
+const Brn ProviderAvTransport::kCurrentMediaCategoryTrackAware("TRACK_AWARE");
+const Brn ProviderAvTransport::kCurrentMediaCategoryTrackUnaware("TRACK_UNAWARE");
+const Brn ProviderAvTransport::kPlaybackStorageMediumNone("NONE");
+const Brn ProviderAvTransport::kPlaybackStorageMediumNetwork("NETWORK");
+const Brn ProviderAvTransport::kRecordStorageMediumNotImplemented("NOT_IMPLEMENTED");
+const Brn ProviderAvTransport::kCurrentPlayModeNormal("NORMAL");
+const Brn ProviderAvTransport::kTransportPlaySpeed1("1");
+const Brn ProviderAvTransport::kRecordMediumWriteStatusNotImplemented("NOT_IMPLEMENTED");
+const Brn ProviderAvTransport::kCurrentRecordQualityModeNotImplemented("NOT_IMPLEMENTED");
+const Brn ProviderAvTransport::kSeekModeTrackNr("TRACK_NR");
+const Brn ProviderAvTransport::kSeekModeAbsTime("ABS_TIME");
+const Brn ProviderAvTransport::kSeekModeRelTime("REL_TIME");
 
 static const Brn kTimeNone("0:00:00");
 static const TUint kCounterNotImplemented = 2147483647;
@@ -118,16 +118,16 @@ ProviderAvTransport::~ProviderAvTransport()
 
 void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
-    Brn metaData(aCurrentURIMetaData);
-    if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
-        metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
-    }
+    aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
+        Brn metaData(aCurrentURIMetaData);
+        if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
+            metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
+        }
         iSourceUpnpAv.SetTrack(aCurrentURI, metaData);
         iCurrentTrackUri.Replace(aCurrentURI);
         iCurrentTrackMetaData.Replace(metaData);
@@ -151,10 +151,10 @@ void ProviderAvTransport::GetMediaInfo(IDvInvocation& aInvocation, TUint aInstan
                                        IDvInvocationResponseString& aNextURIMetaData, IDvInvocationResponseString& aPlayMedium,
                                        IDvInvocationResponseString& aRecordMedium, IDvInvocationResponseString& aWriteStatus)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
         aNrTracks.Write(iNumberOfTracks);
@@ -181,10 +181,10 @@ void ProviderAvTransport::GetMediaInfo(IDvInvocation& aInvocation, TUint aInstan
 void ProviderAvTransport::GetTransportInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentTransportState,
                                            IDvInvocationResponseString& aCurrentTransportStatus, IDvInvocationResponseString& aCurrentSpeed)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
         aCurrentTransportState.Write(iTransportState);
@@ -202,10 +202,10 @@ void ProviderAvTransport::GetPositionInfo(IDvInvocation& aInvocation, TUint aIns
                                           IDvInvocationResponseString& aTrackURI, IDvInvocationResponseString& aRelTime, IDvInvocationResponseString& aAbsTime,
                                           IDvInvocationResponseInt& aRelCount, IDvInvocationResponseInt& aAbsCount)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
         aTrack.Write(iCurrentTrack);
@@ -230,10 +230,10 @@ void ProviderAvTransport::GetPositionInfo(IDvInvocation& aInvocation, TUint aIns
 void ProviderAvTransport::GetDeviceCapabilities(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMedia,
                                                 IDvInvocationResponseString& aRecMedia, IDvInvocationResponseString& aRecQualityModes)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
         aPlayMedia.Write(iPossiblePlaybackStorageMedia);
@@ -248,10 +248,10 @@ void ProviderAvTransport::GetDeviceCapabilities(IDvInvocation& aInvocation, TUin
 
 void ProviderAvTransport::GetTransportSettings(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMode, IDvInvocationResponseString& aRecQualityMode)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
         aPlayMode.Write(iCurrentPlayMode);
@@ -264,43 +264,43 @@ void ProviderAvTransport::GetTransportSettings(IDvInvocation& aInvocation, TUint
 
 void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     iSourceUpnpAv.Stop();
     aInvocation.EndResponse();
 }
 
 void ProviderAvTransport::Play(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
     if (aSpeed != kTransportPlaySpeed1) {
         aInvocation.Error(kUnsupportedPlaySpeedCode, kUnsupportedPlaySpeedMsg);
     }
+    aInvocation.StartResponse();
     iSourceUpnpAv.Play();
     aInvocation.EndResponse();
 }
 
 void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     iSourceUpnpAv.Pause();
     aInvocation.EndResponse();
 }
 
 void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    TUint secs = 0;
     if (aUnit == kSeekModeTrackNr) {
         TUint trackNum = UINT_MAX;
         try {
@@ -312,11 +312,9 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
         if (trackNum > 1) {
             aInvocation.Error(kIllegalSeekTargetCode, kIllegalSeekTargetMsg);
         }
-        // return to start of track
-        iSourceUpnpAv.Seek(0);
+        // return to start of track (i.e. leave secs == 0)
     }
     else if (aUnit == kSeekModeAbsTime || aUnit == kSeekModeRelTime) {
-        TUint secs = 0;
         try {
             secs = TimeStringToSeconds(aTarget);
         }
@@ -328,31 +326,32 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
             secs += iRelativeTimeSeconds;
             iLock.Signal();
         }
-        iSourceUpnpAv.Seek(secs);
     }
     else {
         aInvocation.Error(kInvalidSeekModeCode, kInvalidSeekModeMsg);
     }
 
+    aInvocation.StartResponse();
+    iSourceUpnpAv.Seek(secs);
     aInvocation.EndResponse();
 }
 
 void ProviderAvTransport::Next(IDvInvocation& aInvocation, TUint aInstanceID)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     iSourceUpnpAv.Next();
     aInvocation.EndResponse();
 }
 
 void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID)
 {
-    aInvocation.StartResponse();
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    aInvocation.StartResponse();
     iSourceUpnpAv.Prev();
     aInvocation.EndResponse();
 }

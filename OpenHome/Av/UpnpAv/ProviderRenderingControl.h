@@ -14,6 +14,9 @@ namespace Av {
 class ProviderRenderingControl : public DvProviderUpnpOrgRenderingControl1
 {
 public:
+    static const Brn kChannelMaster;
+    static const Brn kPresetNameFactoryDefaults;
+public:
     ProviderRenderingControl(Net::DvDevice& aDevice);
     ~ProviderRenderingControl();
 private: // from DvProviderUpnpOrgRenderingControl1
