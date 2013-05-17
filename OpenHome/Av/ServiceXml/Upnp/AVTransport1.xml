@@ -56,9 +56,6 @@
             <name>TransportPlaySpeed</name>
             <sendEventsAttribute>no</sendEventsAttribute>
             <dataType>string</dataType>
-          	<allowedValueList>
-                <allowedValue>1</allowedValue>
-            </allowedValueList>
         </stateVariable>
         <stateVariable>
             <sendEventsAttribute>no</sendEventsAttribute>
