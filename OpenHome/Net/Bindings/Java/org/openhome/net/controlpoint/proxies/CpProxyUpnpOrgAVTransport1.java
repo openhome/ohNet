@@ -798,10 +798,8 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         param = new ParameterString("CurrentTransportStatus", allowedValues);
         iActionGetTransportInfo.addOutputParameter(param);
         allowedValues.clear();
-        allowedValues.add("1");
         param = new ParameterString("CurrentSpeed", allowedValues);
         iActionGetTransportInfo.addOutputParameter(param);
-        allowedValues.clear();
 
         iActionGetPositionInfo = new Action("GetPositionInfo");
         param = new ParameterUint("InstanceID");
@@ -850,10 +848,8 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
         iActionPlay = new Action("Play");
         param = new ParameterUint("InstanceID");
         iActionPlay.addInputParameter(param);
-        allowedValues.add("1");
         param = new ParameterString("Speed", allowedValues);
         iActionPlay.addInputParameter(param);
-        allowedValues.clear();
 
         iActionPause = new Action("Pause");
         param = new ParameterUint("InstanceID");

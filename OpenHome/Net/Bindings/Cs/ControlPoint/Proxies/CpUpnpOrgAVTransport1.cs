@@ -532,10 +532,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterString("CurrentTransportStatus", allowedValues);
             iActionGetTransportInfo.AddOutputParameter(param);
             allowedValues.Clear();
-            allowedValues.Add("1");
             param = new ParameterString("CurrentSpeed", allowedValues);
             iActionGetTransportInfo.AddOutputParameter(param);
-            allowedValues.Clear();
 
             iActionGetPositionInfo = new OpenHome.Net.Core.Action("GetPositionInfo");
             param = new ParameterUint("InstanceID");
@@ -584,10 +582,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionPlay = new OpenHome.Net.Core.Action("Play");
             param = new ParameterUint("InstanceID");
             iActionPlay.AddInputParameter(param);
-            allowedValues.Add("1");
             param = new ParameterString("Speed", allowedValues);
             iActionPlay.AddInputParameter(param);
-            allowedValues.Clear();
 
             iActionPause = new OpenHome.Net.Core.Action("Pause");
             param = new ParameterUint("InstanceID");

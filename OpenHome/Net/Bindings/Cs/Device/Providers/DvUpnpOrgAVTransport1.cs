@@ -177,9 +177,7 @@ namespace OpenHome.Net.Device.Providers
             allowedValues.Add("ERROR_OCCURRED");
             action.AddOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues));
             allowedValues.Clear();
-            allowedValues.Add("1");
             action.AddOutputParameter(new ParameterString("CurrentSpeed", allowedValues));
-            allowedValues.Clear();
             iDelegateGetTransportInfo = new ActionDelegate(DoGetTransportInfo);
             EnableAction(action, iDelegateGetTransportInfo, GCHandle.ToIntPtr(iGch));
         }
@@ -264,9 +262,7 @@ namespace OpenHome.Net.Device.Providers
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Play");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
-            allowedValues.Add("1");
             action.AddInputParameter(new ParameterString("Speed", allowedValues));
-            allowedValues.Clear();
             iDelegatePlay = new ActionDelegate(DoPlay);
             EnableAction(action, iDelegatePlay, GCHandle.ToIntPtr(iGch));
         }

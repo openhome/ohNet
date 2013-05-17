@@ -604,12 +604,8 @@ CpProxyUpnpOrgAVTransport1C::CpProxyUpnpOrgAVTransport1C(CpDeviceC aDevice)
     param = new OpenHome::Net::ParameterString("CurrentTransportStatus", allowedValues, 2);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"1";
-    param = new OpenHome::Net::ParameterString("CurrentSpeed", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("CurrentSpeed");
     iActionGetTransportInfo->AddOutputParameter(param);
-    delete[] allowedValues;
 
     iActionGetPositionInfo = new Action("GetPositionInfo");
     param = new OpenHome::Net::ParameterUint("InstanceID");
@@ -660,12 +656,8 @@ CpProxyUpnpOrgAVTransport1C::CpProxyUpnpOrgAVTransport1C(CpDeviceC aDevice)
     iActionPlay = new Action("Play");
     param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPlay->AddInputParameter(param);
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"1";
-    param = new OpenHome::Net::ParameterString("Speed", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Speed");
     iActionPlay->AddInputParameter(param);
-    delete[] allowedValues;
 
     iActionPause = new Action("Pause");
     param = new OpenHome::Net::ParameterUint("InstanceID");

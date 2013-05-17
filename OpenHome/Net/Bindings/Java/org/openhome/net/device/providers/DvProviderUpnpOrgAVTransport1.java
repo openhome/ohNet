@@ -398,9 +398,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
         allowedValues.add("ERROR_OCCURRED");
         action.addOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues));
         allowedValues.clear();
-        allowedValues.add("1");
         action.addOutputParameter(new ParameterString("CurrentSpeed", allowedValues));
-        allowedValues.clear();
         iDelegateGetTransportInfo = new DoGetTransportInfo();
         enableAction(action, iDelegateGetTransportInfo);
     }
@@ -486,9 +484,7 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
     {
         Action action = new Action("Play");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("InstanceID"));
-        allowedValues.add("1");
         action.addInputParameter(new ParameterString("Speed", allowedValues));
-        allowedValues.clear();
         iDelegatePlay = new DoPlay();
         enableAction(action, iDelegatePlay);
     }

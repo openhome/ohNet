@@ -105,11 +105,7 @@ void DvProviderUpnpOrgAVTransport1Cpp::EnableActionGetTransportInfo()
     allowedValues[index++] = (TChar*)"ERROR_OCCURRED";
     action->AddOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues, 2));
     delete[] allowedValues;
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"1";
-    action->AddOutputParameter(new ParameterString("CurrentSpeed", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterString("CurrentSpeed"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1Cpp::DoGetTransportInfo);
     iService->AddAction(action, functor);
 }
@@ -168,14 +164,8 @@ void DvProviderUpnpOrgAVTransport1Cpp::EnableActionStop()
 void DvProviderUpnpOrgAVTransport1Cpp::EnableActionPlay()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
-    TChar** allowedValues;
-    TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
-    index = 0;
-    allowedValues = new TChar*[1];
-    allowedValues[index++] = (TChar*)"1";
-    action->AddInputParameter(new ParameterString("Speed", allowedValues, 1));
-    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Speed"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1Cpp::DoPlay);
     iService->AddAction(action, functor);
 }
