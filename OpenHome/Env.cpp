@@ -10,6 +10,7 @@
 #include <OpenHome/Net/Private/Globals.h>
 
 #include <time.h>
+#include <stdlib.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
