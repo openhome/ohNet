@@ -28,9 +28,9 @@ void MdnsProvider::MdnsDestroyService(TUint aHandle)
     iPlatform.DeregisterService(aHandle);
 }
 
-void MdnsProvider::MdnsAppendTxtRecord(TChar* aBuffer, TUint aLength, const TChar* aKey, const TChar* aValue)
+void MdnsProvider::MdnsAppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue)
 {
-    iPlatform.AppendTxtRecord(aBuffer, aLength, aKey, aValue);
+    iPlatform.AppendTxtRecord(aBuffer, aKey, aValue);
 }
 
 void MdnsProvider::MdnsRegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo)

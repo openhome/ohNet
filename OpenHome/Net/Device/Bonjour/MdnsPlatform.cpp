@@ -394,14 +394,14 @@ void MdnsPlatform::Close()
     delete iThreadListen;
 }
 
-void MdnsPlatform::AppendTxtRecord(TChar* aBuffer, TUint aLength, const TChar* aKey, const TChar* aValue)
+void MdnsPlatform::AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue)
 {
-    ASSERT(strlen(aKey) + strlen(aValue) + 3 <= aLength);
-    *aBuffer = (TByte)(strlen(aKey) + strlen(aValue) + 1);
-    aBuffer++;
-    (void)strcpy(aBuffer, aKey);
-    (void)strncat(aBuffer, "=", 1);
-    (void)strcat(aBuffer, aValue);
+    ASSERT((strlen(aKey) + strlen(aValue) + 3) <= (aBuffer.MaxBytes()-aBuffer.Bytes()));
+    TByte length = (TByte)(strlen(aKey) + strlen(aValue) + 1);
+    aBuffer.Append(length);
+    aBuffer.Append(aKey);
+    aBuffer.Append('=');
+    aBuffer.Append(aValue);
 }
 
 extern "C" {    

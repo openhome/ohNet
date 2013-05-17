@@ -40,7 +40,7 @@ public:
     void DeregisterService(TUint aHandle);
     void RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress Interface, TUint aPort, const TChar* aInfo);
     void RenameAndReregisterService(TUint aHandle, const TChar* aName);
-    void AppendTxtRecord(TChar* aBuffer, TUint aLength, const TChar* aKey, const TChar* aValue);
+    void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 private:
     void Listen();
     void TimerExpired();
