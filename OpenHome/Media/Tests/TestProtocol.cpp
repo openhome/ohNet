@@ -5,6 +5,8 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolHttp.h>
 #include <OpenHome/Media/Protocol/ProtocolFile.h>
+#include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Media/Protocol/ProtocolRtsp.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
@@ -65,7 +67,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, const Brx& aGuid);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -122,7 +124,7 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, const Brx& aGuid)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
@@ -130,6 +132,8 @@ DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& 
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     iProtocolManager->Add(new ProtocolHttp(aEnv));
     iProtocolManager->Add(new ProtocolFile(aEnv));
+    iProtocolManager->Add(new ProtocolRaop(aEnv, aDvStack));
+    iProtocolManager->Add(new ProtocolRtsp(aEnv, aGuid));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
@@ -189,8 +193,10 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     : iUrl(aUrl)
     , iStreamId(0)
 {
+    //Debug::SetLevel(Debug::kHttp);
+    //Debug::SetLevel(Debug::kNetwork);
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
+    iFiller = new DummyFiller(aEnv, aDvStack, *iPipeline, *iPipeline, iInfoAggregator, Brn("GUID-TestProtocol-0123456789"));
     iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
     iPipeline->AddCodec(Codec::CodecFactory::NewWav());
     iPipeline->AddCodec(Codec::CodecFactory::NewAac());
@@ -386,7 +392,7 @@ int CDECL main(int aArgc, char* aArgv[])
     http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // wma (with cover art?) - exhausts recognise buf
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("raop://wmlive-acl.bbc.co.uk/wms/bbc_ami/radio1/radio1_bb_live_eq1_sl0?BBC-UID=242a5e0eee2af256e5da16dd911b815b1f6b3c3580300104748fe4f6c850ee3a&amp;SSO2-UID="), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
@@ -402,6 +408,7 @@ int CDECL main(int aArgc, char* aArgv[])
     }
 
     InitialisationParams* initParams = InitialisationParams::Create();
+    initParams->SetDvEnableBonjour();
 	Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();

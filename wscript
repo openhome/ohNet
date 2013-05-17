@@ -148,6 +148,16 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_WMA=['advapi32', 'user32']
 
+    # OpenSSL
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.STLIB_OPENSSL = ['eay32']
+    else:
+        conf.env.LIB_OPENSSL = ['dl']
+        conf.env.STLIB_OPENSSL = ['crypto']
+    conf.env.INCLUDES_OPENSSL = [
+        'openssl',
+    ]
+
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
         return node_or_filename
@@ -249,6 +259,10 @@ def build(bld):
                 'OpenHome/Media/Protocol/Protocol.cpp',
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
+                'OpenHome/Media/Protocol/Raop.cpp',
+                'OpenHome/Media/Protocol/Rtsp.cpp',
+                'OpenHome/Media/Protocol/ProtocolRaop.cpp',
+                'OpenHome/Media/Protocol/ProtocolRtsp.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
                 'OpenHome/Media/Protocol/ContentPls.cpp',
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
@@ -257,7 +271,7 @@ def build(bld):
                 'Generated/DvUpnpOrgConnectionManager1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderConnectionManager.cpp',
             ],
-            use=['OHNET'],
+            use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
 
     # Wav
