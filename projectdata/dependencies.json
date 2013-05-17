@@ -27,12 +27,6 @@
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/testtones/TestTones-${version}.zip",
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
-    {   "name": "CherryPy",
-        "type": "external",
-        "version": "3.2.2",
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/cherrypy/${name}-${version}.zip",
-        "dest": "dependencies/AnyPlatform/CherryPy"
-    },
     {   "name":             "testharness",
         "version":          "0.0.9",
         "type":             "internal",
@@ -60,7 +54,7 @@
         "ignore":           "${platform-ignore[$platform]}"
     },
     {   "name":             "transmute",
-        "version":          "0.0.6",
+        "version":          "0.0.7",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {

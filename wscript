@@ -13,7 +13,6 @@ sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location
-from fileserver import invoke_test_fileserver
 
 def options(opt):
     opt.load('msvc')
@@ -499,25 +498,6 @@ def build(bld):
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
-
-    # Copy CherryPy to build dir
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/CherryPy/cherrypy/**/*'),
-        'cherrypy',
-        cwd='dependencies/AnyPlatform/CherryPy/cherrypy',
-        keep_relative_paths=True,
-        name=None)
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('fileserver.py'),
-        '')
-    
-    # Copy files for codec tests.
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
-        '')
 
     bld.program(
            source='OpenHome/Media/Tests/TestShell.cpp',
