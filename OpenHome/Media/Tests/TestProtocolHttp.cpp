@@ -1057,7 +1057,7 @@ void SuiteHttpLiveReconnect::Test()
 }
 
 
-void TestHttp()
+void TestProtocolHttp()
 {
     Runner runner("HTTP tests\n");
     runner.Add(new SuiteHttpStreamFull());
