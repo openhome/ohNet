@@ -1,6 +1,6 @@
 #include "OhmReceiver.h"
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Debug.h>
 
@@ -39,7 +39,8 @@ using namespace OpenHome::Av;
 
 
 OhmProtocolMulticast::OhmProtocolMulticast(Environment& aEnv, IOhmReceiver& aReceiver, IOhmMsgFactory& aFactory)
-    : iReceiver(&aReceiver)
+    : iEnv(aEnv)
+    , iReceiver(&aReceiver)
 	, iFactory(&aFactory)
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
@@ -125,7 +126,7 @@ void OhmProtocolMulticast::Play(TIpAddress aInterface, TUint aTtl, const Endpoin
 
 		// Phase 2, periodically send listen if required
 
-	    iTimerListen.FireIn((kTimerListenTimeoutMs >> 2) - Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
+	    iTimerListen.FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
 	    
         for (;;) {
             try {
@@ -137,7 +138,7 @@ void OhmProtocolMulticast::Play(TIpAddress aInterface, TUint aTtl, const Endpoin
 				case OhmHeader::kMsgTypeSlave:
 					break;
 				case OhmHeader::kMsgTypeListen:
-                    iTimerListen.FireIn((kTimerListenTimeoutMs >> 1) - Random(kTimerListenTimeoutMs >> 3)); // listen secondary timeout
+                    iTimerListen.FireIn((kTimerListenTimeoutMs >> 1) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen secondary timeout
 					break;
 				case OhmHeader::kMsgTypeAudio:
 					iReceiver->Add(iFactory->CreateAudio(iReadBuffer, header));
@@ -176,7 +177,7 @@ void OhmProtocolMulticast::Stop()
 void OhmProtocolMulticast::SendListen()
 {
     Send(OhmHeader::kMsgTypeListen);
-    iTimerListen.FireIn((kTimerListenTimeoutMs >> 2) - Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
+    iTimerListen.FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
 }
 
 void OhmProtocolMulticast::SendJoin()
