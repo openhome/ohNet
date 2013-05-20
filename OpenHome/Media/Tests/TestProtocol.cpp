@@ -3,8 +3,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ProtocolHttp.h>
-#include <OpenHome/Media/Protocol/ProtocolFile.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
@@ -128,8 +127,8 @@ DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& 
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(new ProtocolHttp(aEnv));
-    iProtocolManager->Add(new ProtocolFile(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 

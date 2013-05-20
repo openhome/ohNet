@@ -3,8 +3,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ProtocolHttp.h>
-#include <OpenHome/Media/Protocol/ProtocolFile.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>

@@ -1,13 +1,10 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ContentPls.h>
-#include <OpenHome/Media/Protocol/ContentM3u.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/File.h>
-//#include <OpenHome/Private/Ascii.h>
-//#include <OpenHome/Private/Parser.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -214,7 +211,7 @@ Brn SuiteContent::ReadRemaining()
 SuitePls::SuitePls()
     : SuiteContent("Pls tests")
 {
-    iProcessor = new ContentPls();
+    iProcessor =    ContentProcessorFactory::NewPls();
     iProcessor->Initialise(*this);
 }
 
@@ -379,7 +376,7 @@ void SuitePls::TestParse()
 SuiteM3u::SuiteM3u()
     : SuiteContent("M3u tests")
 {
-    iProcessor = new ContentM3u();
+    iProcessor = ContentProcessorFactory::NewM3u();
     iProcessor->Initialise(*this);
 }
 

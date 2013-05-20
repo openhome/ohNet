@@ -7,7 +7,7 @@
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ProtocolHttp.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Private/TestFramework.h>
@@ -332,7 +332,7 @@ TestCodecFiller::TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdPr
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(new ProtocolHttp(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 

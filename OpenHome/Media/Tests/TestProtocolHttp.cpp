@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ProtocolHttp.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Private/Http.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
 #include <OpenHome/Private/File.h>
@@ -262,7 +263,6 @@ private: // from Suite
 private:
     TestHttpPipelineProvider* iProvider;
     TestHttpFlushIdProvider* iFlushId;
-    ProtocolHttp* iProtocolHttp;
 protected:
     TestHttpServer* iServer;
     TestHttpSession* iHttpSession;
@@ -889,8 +889,7 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iFlushId = new TestHttpFlushIdProvider();
 
     iProtocolManager = new ProtocolManager(*iSupply, *iProvider, *iFlushId);
-    iProtocolHttp = new ProtocolHttp(*gEnv);
-    iProtocolManager->Add(iProtocolHttp);
+    iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv));
 
     iTrackFactory= new TrackFactory(iInfoAggregator, 1);
 }
@@ -899,7 +898,6 @@ SuiteHttp::~SuiteHttp()
 {
     delete iTrackFactory;
     delete iProtocolManager;
-    //delete iProtocolHttp;    // Owned by iProtocolManager.
     delete iProvider;
     delete iSupply;
     delete iServer;
