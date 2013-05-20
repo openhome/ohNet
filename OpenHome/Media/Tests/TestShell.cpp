@@ -37,6 +37,12 @@ static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::
     TestCodec(aCpStack.Env(), aArgs);
 }
 
+extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
+static void ShellTestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
+{
+    TestUpnpErrors(aCpStack, aDvStack);
+}
+
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
@@ -73,6 +79,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestTrackInspector", ShellTestTrackInspector));
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
+    shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
 
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
