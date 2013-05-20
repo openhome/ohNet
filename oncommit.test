@@ -22,6 +22,7 @@ tests = '''
     #TestCodec               -s {ws_hostname} -p {ws_port}
     TestIdProvider
     TestFiller
+    TestUpnpErrors
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
