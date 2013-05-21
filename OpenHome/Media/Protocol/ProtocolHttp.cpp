@@ -444,6 +444,7 @@ void ProtocolHttp::StartStream()
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
+    Close();
     if (!Connect(iUri, 80)) {
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
@@ -466,7 +467,9 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
     
     try {
         LOG(kMedia, "ProtocolHttp::WriteRequest read response\n");
+        //iTcpClient.LogVerbose(true);
         iReaderResponse.Read();
+        //iTcpClient.LogVerbose(false);
     }
     catch(HttpError&) {
         LOG(kMedia, "ProtocolHttp::WriteRequest http error\n");
