@@ -115,7 +115,7 @@ void ProtocolNetwork::Interrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolNetwork::Interrupt\n");
 
-    iLock.Wait();
+    iLock.Wait(); // FIXME - almost the only access of iSocketIsOpen that is protected
     TBool open = iSocketIsOpen;
     if (open) {
         iTcpClient.Interrupt(aInterrupt);
