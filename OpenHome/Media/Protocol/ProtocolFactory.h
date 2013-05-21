@@ -21,6 +21,7 @@ class ContentProcessorFactory
 public:
     static ContentProcessor* NewM3u();
     static ContentProcessor* NewPls();
+    static ContentProcessor* NewOpml();
 };
 
 } // namespace Media

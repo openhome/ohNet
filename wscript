@@ -254,6 +254,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
                 'OpenHome/Media/Protocol/ContentPls.cpp',
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
+                'OpenHome/Media/Protocol/ContentOpml.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'Generated/DvUpnpOrgAVTransport1.cpp',
