@@ -487,7 +487,11 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
     
     if (iContentProcessor == NULL && !iStarted) {
         try {
-            Brn contentStart = iReaderBuf.Peek(100);
+            TUint bytes = 100;
+            if (iTotalBytes != 0 && bytes > iTotalBytes) {
+                bytes = (TUint)iTotalBytes;
+            }
+            Brn contentStart = iReaderBuf.Peek(bytes);
             iContentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), iHeaderContentType.Received()? iHeaderContentType.Type() : Brx::Empty(), contentStart);
         }
         catch (ReaderError&) {
