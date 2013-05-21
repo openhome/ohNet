@@ -1371,7 +1371,7 @@ void SuiteDecodedStream::Test()
     TBool lossless = true;
     TBool seekable = true;
     TBool live = true;
-    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, NULL);
+    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live);
     TEST(msg != NULL);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -1384,7 +1384,6 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() == lossless);
     TEST(msg->StreamInfo().Seekable() == seekable);
     TEST(msg->StreamInfo().Live() == live);
-    TEST(msg->StreamInfo().StreamHandler() == NULL);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1414,7 +1413,7 @@ void SuiteDecodedStream::Test()
     lossless = false;
     seekable = false;
     live = false;
-    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, NULL);
+    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live);
     TEST(msg != NULL);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -1427,7 +1426,6 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() == lossless);
     TEST(msg->StreamInfo().Seekable() == seekable);
     TEST(msg->StreamInfo().Live() == live);
-    TEST(msg->StreamInfo().StreamHandler() == NULL);
     msg->RemoveRef();
 }
 
@@ -1478,7 +1476,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
+    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();

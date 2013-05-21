@@ -407,10 +407,9 @@ public:
     TBool Lossless() const { return iLossless; }
     TBool Seekable() const { return iSeekable; }
     TBool Live() const { return iLive; }
-    IStreamHandler* StreamHandler() const { return iStreamHandler; }
 private:
     DecodedStreamInfo();
-    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
 private:
     TUint iStreamId;
     TUint iBitRate;
@@ -423,7 +422,6 @@ private:
     TBool iLossless;
     TBool iSeekable;
     TBool iLive;
-    IStreamHandler* iStreamHandler;
 };
 
 class MsgDecodedStream : public Msg
@@ -433,7 +431,7 @@ public:
     MsgDecodedStream(AllocatorBase& aAllocator);
     const DecodedStreamInfo& StreamInfo() const;
 private:
-    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -835,7 +833,7 @@ public:
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
-    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);

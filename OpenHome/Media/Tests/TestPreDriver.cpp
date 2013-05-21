@@ -197,7 +197,7 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgSilence(iNextMsgSilenceSize);
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, kNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, kNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false);
     case EMsgTrack:
     {
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.

@@ -165,21 +165,6 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
-    iFlushStream = iRemovingStream = false;
-    iState = ERunning;
-
-    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
-    iStreamId = streamInfo.StreamId();
-    iStreamHandler = streamInfo.StreamHandler();
-    if (iStreamHandler->OkToPlay(iTrackId, streamInfo.StreamId()) == ePlayNo) {
-        /*TUint flushId = */iStreamHandler->TryStop(iTrackId, streamInfo.StreamId());
-        iFlushStream = true;
-        aMsg->RemoveRef();
-        return NULL;
-    }
-    // FIXME - should maybe issue a halt if OkToPlay returns false (all cases) or true (for a live stream)
     return aMsg;
 }
 
@@ -191,9 +176,21 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kRampMax;
+    iFlushStream = iRemovingStream = false;
+    iState = ERunning;
+
+    iStreamId = aMsg->StreamId();
+    iStreamHandler = aMsg->StreamHandler();
+    if (iStreamHandler->OkToPlay(iTrackId, iStreamId) == ePlayNo) {
+        /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
+        iFlushStream = true;
+    }
+    // FIXME - should maybe issue a halt if OkToPlay returns false (all cases) or true (for a live stream)
+    aMsg->RemoveRef();
     return NULL;
 }
 

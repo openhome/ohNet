@@ -368,7 +368,7 @@ Msg* SuiteTrackInspector::Pull()
     }
     case EMsgDecodedStream:
     {
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, iLiveStream);
     }
     case EMsgTrack:
     {
@@ -449,7 +449,7 @@ Msg* SuiteTrackObserver::Pull()
     switch (iNextGeneratedMsg)
     {
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 100, 24, 44100, 2, Brn("Dummy codec"), Jiffies::kJiffiesPerSecond * 60, 0, true, false, true, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, 100, 24, 44100, 2, Brn("Dummy codec"), Jiffies::kJiffiesPerSecond * 60, 0, true, false, true);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), iNextTrackStyle, Brx::Empty(), NULL);

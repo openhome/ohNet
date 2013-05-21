@@ -237,7 +237,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     }
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
+        msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
         break;
     case EMsgTrack:
     {
