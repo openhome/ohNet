@@ -425,16 +425,13 @@ void CpiDeviceList::NotifyRefreshed()
                 }
                 else {
                     device->AddRef();
+                    iMap.erase(it);
+                    iPendingRemove.push_back(device);
                     iLock.Signal();
-                    TBool removed = DoRemove(*device);
+                    (void)DoRemove(*device);
                     device->RemoveRef();
                     iLock.Wait();
-                    if (removed) {
-                       it = iMap.begin();
-                    }
-                    else {
-                        it++;
-                    }
+                    it = iMap.begin();
                 }
             }
         }
