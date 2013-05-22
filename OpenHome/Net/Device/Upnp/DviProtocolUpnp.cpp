@@ -512,7 +512,14 @@ void DviProtocolUpnp::SendByeByes(TIpAddress aAdapter, const Brx& aUriBase, Func
 {
     Bws<kMaxUriBytes> uri;
     GetUriDeviceXml(uri, aUriBase);
-    iDvStack.SsdpNotifierManager().AnnouncementByeBye(*this, aAdapter, uri, iDevice.ConfigId(), aCompleted);
+    try {
+        iDvStack.SsdpNotifierManager().AnnouncementByeBye(*this, aAdapter, uri, iDevice.ConfigId(), aCompleted);
+    }
+    catch (NetworkError&) {
+        if (aCompleted) {
+            aCompleted();
+        }
+    }
 }
 
 void DviProtocolUpnp::SendAlives(TIpAddress aAdapter, const Brx& aUriBase)
