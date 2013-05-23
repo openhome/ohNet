@@ -1,0 +1,34 @@
+ohMediaPlayer provides a software av.openhome media renderer.
+See http://www.openhome.org/wiki/Av:Developer for an overview of the network services involved.
+
+The code can be built for Windows, Linux or some embedded platforms.
+System requirements:
+- Python (v2.6 or 2.7)
+- MSVC (Windows)
+- GCC (Linux / embedded)
+- ohdevtools (source)
+- ohNet (either binary or source)
+- others (binary)
+
+Before building, clone ohdevtools (git@github.com:openhome/ohdevtools.git) then run
+'go fetch'.
+
+If you want to debug into ohNet classes, clone ohNet (https://github.com/openhome/ohNet)
+and build it as described in its README.
+
+To build ohMediaPlayer:
+  cd ohMediaPlayer
+  ./waf configure --dest-platform=... --ohnet=... [--debug]
+  ./waf build
+
+where:
+--dest-platform is one of Windows-x86, Linux-x86, Core-ppc32, Core-armv6
+--ohnet points to either your ohNet source directory or the fetched binaries
+        (under your ohMediaPlayer/dependencies directory)
+--debug is optional and only required for debug builds.
+        The default build is ndebug (aka release)
+
+To run unit tests:
+  ./waf test
+or
+  ./dependencies/AnyPlatform/testharness/Test -m oncommit.test -p [platform name]
