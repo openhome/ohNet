@@ -12,6 +12,7 @@ class ProtocolFactory
 public:
     static Protocol* NewHttp(Environment& aEnv);
     static Protocol* NewFile(Environment& aEnv);
+    static Protocol* NewTone(Environment& aEnv);
 };
 
 class ContentProcessor;
