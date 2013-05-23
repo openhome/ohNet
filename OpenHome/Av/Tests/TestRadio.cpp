@@ -12,14 +12,11 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Av/Radio/RadioDatabase.h>
 
 #include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
-
-// RadioDatabase
-#include <OpenHome/Media/Msg.h>
-#include <array>
 
 #ifdef _WIN32
 #if !defined(CDECL)
@@ -89,58 +86,6 @@ private:
     Media::SimpleSongcastingDriver* iDriver;
     Media::UriProviderSingleTrack* iUriProvider;
     //DummySourceUpnpAv* iSourceUpnpAv;
-};
-
-class IRadioDatbaseObserver
-{
-public:
-    ~IRadioDatbaseObserver() {}
-    virtual void RadioDatabaseChanged() = 0;
-};
-
-class RadioDatabase
-{
-public:
-    static const TUint kMaxPresets = 100;
-    static const TUint kPresetIdNone = 0;
-public:
-    RadioDatabase(IRadioDatbaseObserver& aObserver);
-    ~RadioDatabase();
-
-    void GetIdArray(std::array<TUint, kMaxPresets>& aIdArray) const;
-    TUint SequenceNumber() const;
-    void BeginSetPresets();
-    void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const;
-    TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const;
-    TBool TryGetPresetById(TUint aId, TUint aSequenceNumber, Bwx& aMetaData, TUint& aIndex) const;
-    TUint SetPreset(TUint aIndex, const Brx& aMetaData); // returns preset id
-    void ClearPreset(TUint aIndex); // FIXME - could be inlined if we care
-    void EndSetPresets();
-private:
-    class Preset
-    {
-    public:
-        Preset();
-        void Set(TUint aId, const Brx& aMetaData);
-        TUint Id() const { return iId; }
-        const Brx& MetaData() const { return iMetaData; }
-    private:
-        TUint iId;
-        Media::BwsTrackMetaData iMetaData;
-    };
-private:
-    mutable Mutex iLock;
-    IRadioDatbaseObserver& iObserver;
-    Preset iPresets[kMaxPresets];
-    TUint iNextId;
-    TUint iSeq;
-    TBool iUpdated;
-};
-
-class NullRadioDatbaseObserver : public IRadioDatbaseObserver
-{
-private: // from IRadioDatbaseObserver
-    void RadioDatabaseChanged() {}
 };
 
 } // namespace Av
@@ -293,126 +238,6 @@ void TestRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     Log::Print(aStreamInfo.CodecName());
     Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
-}
-
-
-// RadioDatabase
-
-RadioDatabase::RadioDatabase(IRadioDatbaseObserver& aObserver)
-    : iLock("RADB")
-    , iObserver(aObserver)
-    , iNextId(kPresetIdNone + 1)
-    , iSeq(0)
-    , iUpdated(false)
-{
-}
-
-RadioDatabase::~RadioDatabase()
-{
-}
-
-void RadioDatabase::GetIdArray(std::array<TUint, RadioDatabase::kMaxPresets>& aIdArray) const
-{
-    iLock.Wait();
-    for (TUint i=0; i<kMaxPresets; i++) {
-        aIdArray[i] = iPresets[i].Id();
-    }
-    iLock.Signal();
-}
-
-TUint RadioDatabase::SequenceNumber() const
-{
-    return iSeq;
-}
-
-void RadioDatabase::BeginSetPresets()
-{
-}
-
-void RadioDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
-{
-    ASSERT(aIndex < kMaxPresets);
-    iLock.Wait();
-    const Preset& preset = iPresets[aIndex];
-    aId = preset.Id();
-    aMetaData.Replace(preset.MetaData());
-    iLock.Signal();
-}
-
-TBool RadioDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
-{
-    AutoMutex a(iLock);
-    for (TUint i=0; i<kMaxPresets; i++) {
-        if (iPresets[i].Id() == aId) {
-            aMetaData.Replace(iPresets[i].MetaData());
-            return true;
-        }
-    }
-    return false;
-}
-
-TBool RadioDatabase::TryGetPresetById(TUint aId, TUint aSequenceNumber, Bwx& aMetaData, TUint& aIndex) const
-{
-    AutoMutex a(iLock);
-    if (iSeq != aSequenceNumber) {
-        return TryGetPresetById(aId, aMetaData);
-    }
-    for (TUint i=aIndex+1; i<kMaxPresets; i++) {
-        if (iPresets[i].Id() == aId) {
-            aMetaData.Replace(iPresets[i].MetaData());
-            aIndex = i;
-            return true;
-        }
-    }
-    return false;
-}
-
-TUint RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData)
-{
-    iLock.Wait();
-    Preset& preset = iPresets[aIndex];
-    TUint id = preset.Id();
-    if (preset.MetaData() != aMetaData) {
-        id = iNextId++;
-        preset.Set(id, aMetaData);
-        iSeq++;
-    }
-    iLock.Signal();
-    return id;
-}
-
-void RadioDatabase::ClearPreset(TUint aIndex)
-{
-    (void)SetPreset(aIndex, Brx::Empty());
-}
-
-void RadioDatabase::EndSetPresets()
-{
-    iLock.Wait();
-    const TBool updated = iUpdated;
-    iUpdated = false;
-    iLock.Signal();
-    if (updated) {
-        iObserver.RadioDatabaseChanged();
-    }
-}
-
-
-// RadioDatabase::Preset
-
-RadioDatabase::Preset::Preset()
-    : iId(kPresetIdNone)
-{
-}
-
-void RadioDatabase::Preset::Set(TUint aId, const Brx& aMetaData)
-{
-    iId = aId;
-    Brn metaData(aMetaData);
-    if (metaData.Bytes() > iMetaData.MaxBytes()) {
-        metaData.Split(iMetaData.MaxBytes());
-    }
-    iMetaData.Replace(metaData);
 }
 
 
