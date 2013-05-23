@@ -13,8 +13,8 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 
-
-#include <climits>
+#include <ctype.h>
+#include <limits.h>
 #include <stdio.h>
 
 // RadioDatabase
@@ -311,7 +311,7 @@ RadioDatabase::~RadioDatabase()
 {
 }
 
-void RadioDatabase::GetIdArray(std::array<TUint, kMaxPresets>& aIdArray) const
+void RadioDatabase::GetIdArray(std::array<TUint, RadioDatabase::kMaxPresets>& aIdArray) const
 {
     iLock.Wait();
     for (TUint i=0; i<kMaxPresets; i++) {
