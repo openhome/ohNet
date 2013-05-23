@@ -92,6 +92,7 @@ def configure_toolchain(conf):
         conf.load('compiler_c')
         conf.env.append_value('CFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', '-g')
+        conf.env.append_value('CXXFLAGS', '-std=c++0x')
         conf.env.append_value('LINKFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', [
                 '-pipe', '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_TRACE',
