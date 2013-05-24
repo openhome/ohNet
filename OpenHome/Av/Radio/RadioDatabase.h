@@ -25,10 +25,11 @@ public:
     virtual TUint MaxNumPresets() const = 0;
     virtual void BeginSetPresets() = 0;
     virtual void SetPreset(TUint aIndex, const Brx& aMetaData) = 0;
+    virtual void ClearPreset(TUint aIndex) = 0;
     virtual void EndSetPresets() = 0;
 };
 
-class RadioDatabase
+class RadioDatabase : public IRadioDatabaseWriter
 {
 public:
     static const TUint kMaxPresets = 100;
@@ -38,11 +39,14 @@ public:
     ~RadioDatabase();
     void GetIdArray(std::array<TUint, kMaxPresets>& aIdArray) const;
     TUint SequenceNumber() const;
-    void BeginSetPresets();
     void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const;
     TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const;
     TBool TryGetPresetById(TUint aId, TUint aSequenceNumber, Bwx& aMetaData, TUint& aIndex) const;
-    TUint SetPreset(TUint aIndex, const Brx& aMetaData); // returns preset id
+    void SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId);
+public: // from IRadioDatabaseWriter
+    TUint MaxNumPresets() const;
+    void BeginSetPresets();
+    void SetPreset(TUint aIndex, const Brx& aMetaData);
     void ClearPreset(TUint aIndex); // FIXME - could be inlined if we care
     void EndSetPresets();
 private:

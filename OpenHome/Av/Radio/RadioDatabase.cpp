@@ -22,7 +22,7 @@ RadioDatabase::~RadioDatabase()
 {
 }
 
-void RadioDatabase::GetIdArray(std::array<TUint, RadioDatabase::kMaxPresets>& aIdArray) const
+void RadioDatabase::GetIdArray(std::array<TUint, kMaxPresets>& aIdArray) const
 {
     iLock.Wait();
     for (TUint i=0; i<kMaxPresets; i++) {
@@ -34,10 +34,6 @@ void RadioDatabase::GetIdArray(std::array<TUint, RadioDatabase::kMaxPresets>& aI
 TUint RadioDatabase::SequenceNumber() const
 {
     return iSeq;
-}
-
-void RadioDatabase::BeginSetPresets()
-{
 }
 
 void RadioDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
@@ -78,18 +74,32 @@ TBool RadioDatabase::TryGetPresetById(TUint aId, TUint aSequenceNumber, Bwx& aMe
     return false;
 }
 
-TUint RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData)
+void RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId)
 {
     iLock.Wait();
     Preset& preset = iPresets[aIndex];
-    TUint id = preset.Id();
+    aId = preset.Id();
     if (preset.MetaData() != aMetaData) {
-        id = iNextId++;
-        preset.Set(id, aMetaData);
+        aId = iNextId++;
+        preset.Set(aId, aMetaData);
         iSeq++;
     }
     iLock.Signal();
-    return id;
+}
+
+TUint RadioDatabase::MaxNumPresets() const
+{
+    return kMaxPresets;
+}
+
+void RadioDatabase::BeginSetPresets()
+{
+}
+
+void RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData)
+{
+    TUint ignore;
+    SetPreset(aIndex, aMetaData, ignore);
 }
 
 void RadioDatabase::ClearPreset(TUint aIndex)

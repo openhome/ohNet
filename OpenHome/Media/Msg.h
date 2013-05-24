@@ -439,10 +439,15 @@ private:
     DecodedStreamInfo iStreamInfo;
 };
 
-typedef Bws<32> BwsStyle;
-typedef Bws<1024> BwsProviderId;
-typedef Bws<1024> BwsTrackUri;
-typedef Bws<5*1024> BwsTrackMetaData;
+static const TUint kStyleMaxBytes         = 32;
+static const TUint kProviderMaxBytes      = 1024;
+static const TUint kTrackUriMaxBytes      = 1024;
+static const TUint kTrackMetaDataMaxBytes = 5 * 1024;
+
+typedef Bws<kStyleMaxBytes>         BwsStyle;
+typedef Bws<kProviderMaxBytes>      BwsProviderId;
+typedef Bws<kTrackUriMaxBytes>      BwsTrackUri;
+typedef Bws<kTrackMetaDataMaxBytes> BwsTrackMetaData;
 
 class Track : public Allocated
 {

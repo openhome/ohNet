@@ -265,6 +265,7 @@ def build(bld):
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
                 'OpenHome/Av/Radio/RadioDatabase.cpp',
+                'OpenHome/Av/Radio/TuneIn.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')
