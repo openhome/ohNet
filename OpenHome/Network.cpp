@@ -579,6 +579,7 @@ SocketTcpServer::~SocketTcpServer()
     Interrupt(true);
     TUint count = (TUint)iVector.size();
     for (TUint i = 0; i < count; i++) {             // delete all sessions
+        iVector[i]->Terminate();                    // Kill and Join the TcpSession thread
         delete iVector[i];
     }
 
@@ -665,18 +666,26 @@ void SocketTcpSession::Close()
     iMutex.Signal();
 }
 
-SocketTcpSession::~SocketTcpSession()
+void SocketTcpSession::Terminate()
 {
-    LOGF(kNetwork, ">SocketTcpSession::~SocketTcpSession\n");
+    LOGF(kNetwork, ">SocketTcpSession::Terminate()\n");
     iMutex.Wait();
     if (iOpen) {
         Interrupt(true); // should kick the thread out of any network receive or send
     }
     iMutex.Signal();
+
+    iThread->Kill();    // mark the thread as 'killed' in case it's checking that too.
+    iThread->Join();    // Join the TcpSession thread *before* any subclass dtor is invoked.
+    LOGF(kNetwork, "<SocketTcpSession::Terminate()\n");
+}
+
+SocketTcpSession::~SocketTcpSession()
+{
+    LOGF(kNetwork, ">SocketTcpSession::~SocketTcpSession\n");
     delete iThread;
     LOGF(kNetwork, "<SocketTcpSession::~SocketTcpSession\n");
 }
-
 
 // SocketUdpBase
 

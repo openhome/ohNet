@@ -167,6 +167,7 @@ private:
     void Start();
     void Open(THandle aHandle);
     void Close();
+    void Terminate();   /// Called by owning TcpServer *before* invoking dtor. Waits for TcpSession::Run() to exit.
 private:
     Mutex iMutex;
     TBool iOpen;
