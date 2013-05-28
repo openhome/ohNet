@@ -111,22 +111,71 @@ ProtocolTone::Stream(const Brx& aUri)
         const Brn& val = kvParser.NextToEnd();
 
         if (key == Brn("bitdepth")) {
+            if (bitdepth != 0) {
+                Log::Print("!!  ProtocolTone::Stream(): duplicate parameter: bitdepth\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
             bitdepth = Ascii::Int(val);
+            if ((bitdepth != 8) && (bitdepth != 16) && (bitdepth != 24)) {
+                Log::Print("!!  ProtocolTone::Stream(): invalid parameter value: ");  Log::Print(keyVal);  Log::Print("\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
         } else if (key == Brn("samplerate")) {
+            if (samplerate != 0) {
+                Log::Print("!!  ProtocolTone::Stream(): duplicate parameter: samplerate\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
             samplerate = Ascii::Int(val);
-        } else if (key == Brn("pitch")) {
+            switch (samplerate) {
+                // from OpenHome/Media/Msg.cpp
+                case 7350: case 14700: case 29400:
+                case 8000: case 16000: case 32000:
+                case 11025: case 22050: case 44100: case 88200: case 176400:
+                case 12000: case 24000: case 48000: case 96000: case 192000:
+                    break;
+                default:
+                    Log::Print("!!  ProtocolTone::Stream(): invalid parameter value: ");  Log::Print(keyVal);  Log::Print("\n");  // XXX
+                    return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
+        } else if (key == Brn("pitch")) {  // [Hz]
+            if (pitch != 0) {
+                Log::Print("!!  ProtocolTone::Stream(): duplicate parameter: pitch\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
             pitch = Ascii::Int(val);
+            // XXX no upper limit, since not necessarily intended for human hearing
+            if (! (0 < pitch)) {
+                Log::Print("!!  ProtocolTone::Stream(): invalid parameter value: ");  Log::Print(keyVal);  Log::Print("\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
         } else if (key == Brn("channels")) {
+            if (channels != 0) {
+                Log::Print("!!  ProtocolTone::Stream(): duplicate parameter: channels\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
+            // 1 ... 8 (in practice no more than 7.1 surround sound)
             channels = Ascii::Int(val);
-        } else if (key == Brn("duration")) {
+            if (! ((0 < channels) && (channels <= 8))) {
+                Log::Print("!!  ProtocolTone::Stream(): invalid parameter value: ");  Log::Print(keyVal);  Log::Print("\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
+        } else if (key == Brn("duration")) {  // [s]
+            if (duration != 0) {
+                Log::Print("!!  ProtocolTone::Stream(): duplicate parameter: duration\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
+            // 1 ... 900 (i.e. 15min): arbitrary limit guaranteed to avoid integer overflow in calculations
             duration = Ascii::Int(val);
+            if (! ((0 < duration) && (duration <= 900))) {
+                Log::Print("!!  ProtocolTone::Stream(): invalid parameter value: ");  Log::Print(keyVal);  Log::Print("\n");  // XXX
+                return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
+            }
         } else {
             Log::Print("!!  ProtocolTone::Stream(): unrecognised keyword: ");  Log::Print(key);  Log::Print("\n");  // XXX
             return ProtocolStreamResult::EProtocolStreamErrorUnrecoverable;  // XXX
         }
     }
 
-    // XXX duration == 0 possibly legitimate?  (if so, use max TUint as sentinel value?)
     if (bitdepth == 0) {
         Log::Print("!!  ProtocolTone::Stream(): missing parameter or illegal value: bitdepth\n");  // XXX
     } else if (samplerate == 0) {
