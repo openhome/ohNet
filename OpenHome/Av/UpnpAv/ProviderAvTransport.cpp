@@ -17,16 +17,8 @@ using namespace OpenHome::Av;
 // action, the only valid AVTransportID is 0
 static const TUint kInstanceId = 0;
 
-static const TUint kSeekModeNotSupportedCode = 710;
-static const Brn kSeekModeNotSupportedMsg("Seek Mode Not Supported");
-static const TUint kResourceNotFoundCode = 716;
-static const Brn kResourceNotFoundMsg("Resource not found");
 static const TUint kInvalidInstanceIdCode = 718;
 static const Brn kInvalidInstanceIdMsg("Invalid InstanceID");
-static const TUint kInvalidArgsCode = 402;
-static const Brn kInvalidArgsMsg("Invalid Args");
-static const TUint kDeviceBusyCode = 715;
-static const Brn kDeviceBusyMsg("Device busy");
 static const TUint kInvalidSeekModeCode = 710;
 static const Brn kInvalidSeekModeMsg("Seek mode not supported");
 static const TUint kIllegalSeekTargetCode = 711;
