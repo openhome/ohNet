@@ -9,7 +9,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Core/OhNet.h>
-#include <OpenHome/Av/Radio/RadioDatabase.h>
+#include <OpenHome/Av/Radio/PresetDatabase.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -19,7 +19,7 @@ const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg");
 const Brn RadioPresetsTuneIn::kPartnerId("&partnerId=ah2rjr68");
 const Brn RadioPresetsTuneIn::kUsername("&username=");
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, IRadioDatabaseWriter& aDbWriter, const Brx& aUserName)
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)

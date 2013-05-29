@@ -2,7 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvAvOpenHomeOrgRadio1.h>
-#include <OpenHome/Av/Radio/RadioDatabase.h>
+#include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Private/Thread.h>
@@ -24,7 +24,7 @@ static const Brn kInvalidRequestMsg("Comma separated id request list invalid");
 static const TUint kInvalidChannelCode = 803;
 static const Brn kInvalidChannelMsg("Selected channel is invalid");
 
-ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IRadioDatabaseReader& aDbReader, const TChar* aProtocolInfo)
+ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const TChar* aProtocolInfo)
     : DvProviderAvOpenhomeOrgRadio1(aDevice)
     , iLock("PRAD")
     , iSource(aSource)
@@ -61,9 +61,9 @@ ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IRad
 
     (void)SetPropertyMetadata(Brx::Empty());
     SetTransportState(Media::EPipelineStopped);
-    (void)SetPropertyId(IRadioDatabaseReader::kPresetIdNone);
+    (void)SetPropertyId(IPresetDatabaseReader::kPresetIdNone);
     UpdateIdArrayProperty();
-    (void)SetPropertyChannelsMax(IRadioDatabaseReader::kMaxPresets);
+    (void)SetPropertyChannelsMax(IPresetDatabaseReader::kMaxPresets);
     (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
@@ -99,7 +99,7 @@ void ProviderRadio::SetTransportState(Media::EPipelineState aState)
     iLock.Signal();
 }
 
-void ProviderRadio::RadioDatabaseChanged()
+void ProviderRadio::PresetDatabaseChanged()
 {
     UpdateIdArrayProperty();
 }
@@ -191,7 +191,7 @@ void ProviderRadio::Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aV
 void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri)
 {
     Media::BwsTrackMetaData metadata;
-    if (aValue == IRadioDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, metadata)) {
+    if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, metadata)) {
         iUri.Replace(Brx::Empty());
         iMetaData.Replace(Brx::Empty());
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
@@ -204,7 +204,7 @@ void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& a
 void ProviderRadio::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata)
 {
     Media::BwsTrackMetaData metadata;
-    if (aId == IRadioDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, metadata)) {
+    if (aId == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, metadata)) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
     aInvocation.StartResponse();
@@ -281,7 +281,7 @@ void ProviderRadio::IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDv
 void ProviderRadio::ChannelsMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
 {
     aInvocation.StartResponse();
-    aValue.Write(IRadioDatabaseReader::kMaxPresets);
+    aValue.Write(IPresetDatabaseReader::kMaxPresets);
     aInvocation.EndResponse();
 }
 
@@ -308,7 +308,7 @@ void ProviderRadio::UpdateIdArray()
 {
     iDbReader.GetIdArray(iIdArray, iDbSeq);
     iIdArrayBuf.SetBytes(0);
-    for (TUint i=0; i<IRadioDatabaseReader::kMaxPresets; i++) {
+    for (TUint i=0; i<IPresetDatabaseReader::kMaxPresets; i++) {
         TUint32 bigEndianId = Arch::BigEndian4(iIdArray[i]);
         Brn idBuf(reinterpret_cast<const TByte*>(&bigEndianId), sizeof(bigEndianId));
         iIdArrayBuf.Append(idBuf);

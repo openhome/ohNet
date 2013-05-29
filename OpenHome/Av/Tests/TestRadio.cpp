@@ -12,7 +12,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
-#include <OpenHome/Av/Radio/RadioDatabase.h>
+#include <OpenHome/Av/Radio/PresetDatabase.h>
 
 #include <ctype.h>
 #include <limits.h>
@@ -64,7 +64,7 @@ int mygetch()
 namespace OpenHome {
 namespace Av {
     
-class RadioDatabase;
+class PresetDatabase;
 
 class TestRadio : private Media::IPipelineObserver
 {
@@ -72,7 +72,7 @@ class TestRadio : private Media::IPipelineObserver
 public:
     TestRadio(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
     ~TestRadio();
-    void Run(RadioDatabase& aDb);
+    void Run(PresetDatabase& aDb);
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, TUint aIdPipeline);
@@ -139,7 +139,7 @@ TestRadio::~TestRadio()
     delete iTrackFactory;
 }
 
-void TestRadio::Run(RadioDatabase& aDb)
+void TestRadio::Run(PresetDatabase& aDb)
 {
     Log::Print("\nRadio test.  Press 'q' to quit:\n");
     Log::Print("\n");
@@ -278,7 +278,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    RadioDatabase* db = new RadioDatabase();
+    PresetDatabase* db = new PresetDatabase();
     db->BeginSetPresets();
     const TChar* presets[] = {
         "http://opml.radiotime.com/Tune.ashx?id=s122119&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse" // (Linn Radio, MP3)

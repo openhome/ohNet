@@ -265,7 +265,7 @@ def build(bld):
                 'Generated/DvUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
-                'OpenHome/Av/Radio/RadioDatabase.cpp',
+                'OpenHome/Av/Radio/PresetDatabase.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',

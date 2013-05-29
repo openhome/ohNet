@@ -1,4 +1,4 @@
-#include <OpenHome/Av/Radio/RadioDatabase.h>
+#include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Msg.h>
 
@@ -7,9 +7,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Av;
 
-// RadioDatabase
+// PresetDatabase
 
-RadioDatabase::RadioDatabase()
+PresetDatabase::PresetDatabase()
     : iLock("RADB")
     , iObserver(NULL)
     , iNextId(kPresetIdNone + 1)
@@ -18,16 +18,16 @@ RadioDatabase::RadioDatabase()
 {
 }
 
-RadioDatabase::~RadioDatabase()
+PresetDatabase::~PresetDatabase()
 {
 }
 
-void RadioDatabase::SetObserver(IRadioDatbaseObserver& aObserver)
+void PresetDatabase::SetObserver(IPresetDatabaseObserver& aObserver)
 {
     iObserver = &aObserver;
 }
 
-void RadioDatabase::GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const
+void PresetDatabase::GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const
 {
     iLock.Wait();
     for (TUint i=0; i<kMaxPresets; i++) {
@@ -37,7 +37,7 @@ void RadioDatabase::GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint
     iLock.Signal();
 }
 
-void RadioDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
+void PresetDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
 {
     ASSERT(aIndex < kMaxPresets);
     iLock.Wait();
@@ -47,7 +47,7 @@ void RadioDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
     iLock.Signal();
 }
 
-TBool RadioDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
+TBool PresetDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
 {
     AutoMutex a(iLock);
     for (TUint i=0; i<kMaxPresets; i++) {
@@ -59,7 +59,7 @@ TBool RadioDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
     return false;
 }
 
-TBool RadioDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const
+TBool PresetDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const
 {
     AutoMutex a(iLock);
     if (iSeq != aSeq) {
@@ -75,7 +75,7 @@ TBool RadioDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUi
     return false;
 }
 
-TBool RadioDatabase::TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const
+TBool PresetDatabase::TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const
 {
     // FIXME - this could be pretty slow
     aId = kPresetIdNone;
@@ -89,7 +89,7 @@ TBool RadioDatabase::TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) co
     return false;
 }
 
-void RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId)
+void PresetDatabase::SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId)
 {
     iLock.Wait();
     Preset& preset = iPresets[aIndex];
@@ -102,46 +102,46 @@ void RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId)
     iLock.Signal();
 }
 
-TUint RadioDatabase::MaxNumPresets() const
+TUint PresetDatabase::MaxNumPresets() const
 {
     return kMaxPresets;
 }
 
-void RadioDatabase::BeginSetPresets()
+void PresetDatabase::BeginSetPresets()
 {
 }
 
-void RadioDatabase::SetPreset(TUint aIndex, const Brx& aMetaData)
+void PresetDatabase::SetPreset(TUint aIndex, const Brx& aMetaData)
 {
     TUint ignore;
     SetPreset(aIndex, aMetaData, ignore);
 }
 
-void RadioDatabase::ClearPreset(TUint aIndex)
+void PresetDatabase::ClearPreset(TUint aIndex)
 {
     (void)SetPreset(aIndex, Brx::Empty());
 }
 
-void RadioDatabase::EndSetPresets()
+void PresetDatabase::EndSetPresets()
 {
     iLock.Wait();
     const TBool updated = iUpdated;
     iUpdated = false;
     iLock.Signal();
     if (updated && iObserver != NULL) {
-        iObserver->RadioDatabaseChanged();
+        iObserver->PresetDatabaseChanged();
     }
 }
 
 
-// RadioDatabase::Preset
+// PresetDatabase::Preset
 
-RadioDatabase::Preset::Preset()
+PresetDatabase::Preset::Preset()
     : iId(kPresetIdNone)
 {
 }
 
-void RadioDatabase::Preset::Set(TUint aId, const Brx& aMetaData)
+void PresetDatabase::Preset::Set(TUint aId, const Brx& aMetaData)
 {
     iId = aId;
     Brn metaData(aMetaData);

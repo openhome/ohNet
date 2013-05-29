@@ -8,7 +8,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/Av/Radio/RadioDatabase.h>
+#include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Media/Msg.h>
 
 namespace OpenHome {
@@ -27,7 +27,7 @@ class RadioPresetsTuneIn
     static const Brn kPartnerId;
     static const Brn kUsername;
 public:
-    RadioPresetsTuneIn(Environment& aEnv, IRadioDatabaseWriter& aDbWriter, const Brx& aUserName);
+    RadioPresetsTuneIn(Environment& aEnv, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName);
     ~RadioPresetsTuneIn();
     void Refresh();
 private:
@@ -37,7 +37,7 @@ private:
 private:
     Mutex iLock;
     Environment& iEnv;
-    IRadioDatabaseWriter& iDbWriter;
+    IPresetDatabaseWriter& iDbWriter;
     ThreadFunctor* iRefreshThread;
     SocketTcpClient iSocket;
     Uri iRequestUri;
