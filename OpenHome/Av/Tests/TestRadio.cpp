@@ -278,8 +278,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    NullRadioDatbaseObserver obs;
-    RadioDatabase* db = new RadioDatabase(obs);
+    RadioDatabase* db = new RadioDatabase();
     db->BeginSetPresets();
     const TChar* presets[] = {
         "http://opml.radiotime.com/Tune.ashx?id=s122119&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse" // (Linn Radio, MP3)

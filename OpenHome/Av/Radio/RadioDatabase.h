@@ -29,20 +29,36 @@ public:
     virtual void EndSetPresets() = 0;
 };
 
-class RadioDatabase : public IRadioDatabaseWriter
+class IRadioDatabaseReader
 {
 public:
     static const TUint kMaxPresets = 100;
     static const TUint kPresetIdNone = 0;
 public:
-    RadioDatabase(IRadioDatbaseObserver& aObserver);
+    virtual void SetObserver(IRadioDatbaseObserver& aObserver) = 0;
+    virtual void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const = 0;
+    virtual void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const = 0;
+    virtual TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const = 0;
+    virtual TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const = 0;
+    virtual TBool TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const = 0;
+};
+
+class RadioDatabase : public IRadioDatabaseWriter, public IRadioDatabaseReader
+{
+public:
+    static const TUint kMaxPresets = 100;
+    static const TUint kPresetIdNone = 0;
+public:
+    RadioDatabase();
     ~RadioDatabase();
-    void GetIdArray(std::array<TUint, kMaxPresets>& aIdArray) const;
-    TUint SequenceNumber() const;
+    void SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId);
+public: // from IRadioDatabaseReader
+    void SetObserver(IRadioDatbaseObserver& aObserver);
+    void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const;
     void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const;
     TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const;
-    TBool TryGetPresetById(TUint aId, TUint aSequenceNumber, Bwx& aMetaData, TUint& aIndex) const;
-    void SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId);
+    TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const;
+    TBool TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const;
 public: // from IRadioDatabaseWriter
     TUint MaxNumPresets() const;
     void BeginSetPresets();
@@ -63,17 +79,11 @@ private:
     };
 private:
     mutable Mutex iLock;
-    IRadioDatbaseObserver& iObserver;
+    IRadioDatbaseObserver* iObserver;
     Preset iPresets[kMaxPresets];
     TUint iNextId;
     TUint iSeq;
     TBool iUpdated;
-};
-
-class NullRadioDatbaseObserver : public IRadioDatbaseObserver
-{
-private: // from IRadioDatbaseObserver
-    void RadioDatabaseChanged() {}
 };
 
 } // namespace Av

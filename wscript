@@ -184,6 +184,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/ConnectionManager1.xml', 'upnp.org', 'ConnectionManager', '1', 'UpnpOrgConnectionManager1'),
         GeneratedFile('OpenHome/Av/ServiceXml/Upnp/RenderingControl1.xml', 'upnp.org', 'RenderingControl', '1', 'UpnpOrgRenderingControl1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenhomeOrgProduct1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Radio1.xml', 'av.openhome.org', 'Radio', '1', 'AvOpenhomeOrgRadio1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenhomeOrgSender1'),
     ]
 
@@ -266,6 +267,8 @@ def build(bld):
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
                 'OpenHome/Av/Radio/RadioDatabase.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
+                'Generated/DvAvOpenhomeOrgRadio1.cpp',
+                'OpenHome/Av/Radio/ProviderRadio.cpp',
             ],
             use=['OHNET'],
             target='ohMediaPlayer')

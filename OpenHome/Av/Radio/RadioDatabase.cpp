@@ -9,9 +9,9 @@ using namespace OpenHome::Av;
 
 // RadioDatabase
 
-RadioDatabase::RadioDatabase(IRadioDatbaseObserver& aObserver)
+RadioDatabase::RadioDatabase()
     : iLock("RADB")
-    , iObserver(aObserver)
+    , iObserver(NULL)
     , iNextId(kPresetIdNone + 1)
     , iSeq(0)
     , iUpdated(false)
@@ -22,18 +22,19 @@ RadioDatabase::~RadioDatabase()
 {
 }
 
-void RadioDatabase::GetIdArray(std::array<TUint, kMaxPresets>& aIdArray) const
+void RadioDatabase::SetObserver(IRadioDatbaseObserver& aObserver)
+{
+    iObserver = &aObserver;
+}
+
+void RadioDatabase::GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const
 {
     iLock.Wait();
     for (TUint i=0; i<kMaxPresets; i++) {
-        aIdArray[i] = iPresets[i].Id();
+        aIdArray[i] = (TUint32)iPresets[i].Id();
     }
+    aSeq = iSeq;
     iLock.Signal();
-}
-
-TUint RadioDatabase::SequenceNumber() const
-{
-    return iSeq;
 }
 
 void RadioDatabase::GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const
@@ -58,16 +59,30 @@ TBool RadioDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
     return false;
 }
 
-TBool RadioDatabase::TryGetPresetById(TUint aId, TUint aSequenceNumber, Bwx& aMetaData, TUint& aIndex) const
+TBool RadioDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const
 {
     AutoMutex a(iLock);
-    if (iSeq != aSequenceNumber) {
+    if (iSeq != aSeq) {
         return TryGetPresetById(aId, aMetaData);
     }
     for (TUint i=aIndex+1; i<kMaxPresets; i++) {
         if (iPresets[i].Id() == aId) {
             aMetaData.Replace(iPresets[i].MetaData());
             aIndex = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+TBool RadioDatabase::TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const
+{
+    // FIXME - this could be pretty slow
+    aId = kPresetIdNone;
+    AutoMutex a(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        if (iPresets[i].MetaData() == aMetaData) {
+            aId = iPresets[i].Id();
             return true;
         }
     }
@@ -113,8 +128,8 @@ void RadioDatabase::EndSetPresets()
     const TBool updated = iUpdated;
     iUpdated = false;
     iLock.Signal();
-    if (updated) {
-        iObserver.RadioDatabaseChanged();
+    if (updated && iObserver != NULL) {
+        iObserver->RadioDatabaseChanged();
     }
 }
 
