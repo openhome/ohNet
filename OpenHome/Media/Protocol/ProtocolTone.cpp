@@ -1,12 +1,17 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Arch.h>
+
+#include <cstring>
 
 #include <OpenHome/Private/Printer.h>  // XXX Log::Print()
 #include <OpenHome/Media/Msg.h>  // XXX MsgFlush::kIdInvalid
+#include <cctype>  // isprint()
 
 #ifndef NDEBUG
     #define LOG_DBG(msg, val) \
@@ -200,6 +205,60 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     Log::Print("@@  pitch =      %6u\n", pitch);
     Log::Print("@@  channels =   %6u\n", numChannels);
     Log::Print("@@  duration =   %6u\n", duration);
+
+    //
+    // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+    //
+
+    const TUint nSamples = sampleRate * duration;
+    // precondition enforced above: bitsPerSample % 8 == 0
+
+    // chunkId: "RIFF" = 0x52494646 (BE)
+    // chunkSize: see below
+    // format: "WAVE" = 0x57415645 (BE)
+    // subchunkOneId: "fmt " = 0x664d7420 (BE)
+    const TUint subchunkOneSize = 16;  // for PCM data, no extra parameters in "fmt " subchunnk
+    const TUint16 audioFormat = 1;  // PCM (linear quantisation, no compression)
+    // TUint16 numChannels: see above (parsing)
+    // TUint sampleRate: see above (parsing)
+    const TUint byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+    const TUint16 blockAlign = numChannels * (bitsPerSample / 8);
+    // TUint16 bitsPerSample: see above (parsing)
+    // subchunkTwoId: "data" = 0x64617461 (BE)
+    const TUint subchunkTwoSize = nSamples * numChannels * (bitsPerSample / 8);
+
+    // no integer overflow in worst case: 4 + 8 + 16 + 8 + (192000 * 900 * 8 * 3) < 2^32-1
+    const TUint chunkSize = 4 + (8 + subchunkOneSize) + (8 + subchunkTwoSize);
+
+    // serialise RIFF-WAVE structure for output
+    TByte riffWav[44] = { 0 };
+
+    strncpy(reinterpret_cast<char *>(riffWav + 0), "RIFF", 4);
+    *reinterpret_cast<TUint *>(riffWav + 4) = Arch::LittleEndian4(chunkSize);
+    strncpy(reinterpret_cast<char *>(riffWav + 8), "WAVE", 4);
+    strncpy(reinterpret_cast<char *>(riffWav + 12), "fmt ", 4);  // trailing space is significant
+    *reinterpret_cast<TUint *>(riffWav + 16) = Arch::LittleEndian4(subchunkOneSize);
+    *reinterpret_cast<TUint *>(riffWav + 20) = Arch::LittleEndian2(audioFormat);
+    *reinterpret_cast<TUint *>(riffWav + 22) = Arch::LittleEndian2(numChannels);
+    *reinterpret_cast<TUint *>(riffWav + 24) = Arch::LittleEndian4(sampleRate);
+    *reinterpret_cast<TUint *>(riffWav + 28) = Arch::LittleEndian4(byteRate);
+    *reinterpret_cast<TUint *>(riffWav + 32) = Arch::LittleEndian2(blockAlign);
+    *reinterpret_cast<TUint *>(riffWav + 34) = Arch::LittleEndian2(bitsPerSample);
+    strncpy(reinterpret_cast<char *>(riffWav + 36), "data", 4);
+    *reinterpret_cast<TUint *>(riffWav + 40) = Arch::LittleEndian4(subchunkTwoSize);
+
+    //
+    // output audio data (data members inherited from Protocol)
+    //
+
+    // XXX debugging only
+    for (TByte *p = riffWav; p < riffWav + sizeof(riffWav); p += 4) {
+        Log::Print("%02x  %02x  %02x  %02x    ", *(p + 0), *(p + 1), *(p + 2), *(p + 3));
+        for (int i = 0; i < 4; ++i) {
+            Log::Print("%c", isprint(*(p + i)) ? *(p + i) : '.');
+        }
+        Log::Print("\n");
+    }
 
     return EProtocolErrorNotSupported;
 }
