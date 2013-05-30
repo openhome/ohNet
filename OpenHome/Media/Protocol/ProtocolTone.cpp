@@ -98,10 +98,10 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     parser.Forward(1);  // initial "?" already checked
 
     // initialising to illegal values to detect missing ones easily below
-    TUint bitdepth = 0;
-    TUint samplerate = 0;
+    TUint16 bitsPerSample = 0;  // name and bitwidth according to RIFF-WAVE spec
+    TUint sampleRate = 0;
     TUint pitch = 0;
-    TUint channels = 0;
+    TUint16 numChannels = 0;  // name and bitwidth according to RIFF-WAVE spec
     TUint duration = 0;
 
     while (!parser.Finished()) {
@@ -112,22 +112,22 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         const Brn& val = kvParser.NextToEnd();
 
         if (key == Brn("bitdepth")) {
-            if (bitdepth != 0) {
+            if (bitsPerSample!= 0) {
                 LOG_DBG("duplicate parameter", "bitdepth")
                 return EProtocolStreamErrorUnrecoverable;
             }
-            bitdepth = Ascii::Int(val);
-            if ((bitdepth != 8) && (bitdepth != 16) && (bitdepth != 24)) {
+            bitsPerSample = static_cast<TUint16>(Ascii::Uint(val));
+            if ((bitsPerSample != 8) && (bitsPerSample != 16) && (bitsPerSample != 24)) {
                 LOG_DBG("invalid parameter value", keyVal)
                 return EProtocolStreamErrorUnrecoverable;
             }
         } else if (key == Brn("samplerate")) {
-            if (samplerate != 0) {
+            if (sampleRate != 0) {
                 LOG_DBG("duplicate parameter", "samplerate")
                 return EProtocolStreamErrorUnrecoverable;
             }
-            samplerate = Ascii::Int(val);
-            switch (samplerate) {
+            sampleRate = Ascii::Uint(val);
+            switch (sampleRate) {
                 // from OpenHome/Media/Msg.cpp
                 case 7350: case 14700: case 29400:
                 case 8000: case 16000: case 32000:
@@ -143,20 +143,20 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
                 LOG_DBG("duplicate parameter", "pitch")
                 return EProtocolStreamErrorUnrecoverable;
             }
-            pitch = Ascii::Int(val);
+            pitch = Ascii::Uint(val);
             // XXX no upper limit, since not necessarily intended for human hearing
             if (! (0 < pitch)) {
                 LOG_DBG("invalid parameter value", keyVal)
                 return EProtocolStreamErrorUnrecoverable;
             }
         } else if (key == Brn("channels")) {
-            if (channels != 0) {
+            if (numChannels != 0) {
                 LOG_DBG("duplicate parameter", "channels")
                 return EProtocolStreamErrorUnrecoverable;
             }
             // 1 ... 8 (in practice no more than 7.1 surround sound)
-            channels = Ascii::Int(val);
-            if (! ((0 < channels) && (channels <= 8))) {
+            numChannels = static_cast<TUint16>(Ascii::Uint(val));
+            if (! ((0 < numChannels) && (numChannels <= 8))) {
                 LOG_DBG("invalid parameter value", keyVal)
                 return EProtocolStreamErrorUnrecoverable;
             }
@@ -166,7 +166,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
                 return EProtocolStreamErrorUnrecoverable;
             }
             // 1 ... 900 (i.e. 15min): arbitrary limit guaranteed to avoid integer overflow in calculations
-            duration = Ascii::Int(val);
+            duration = Ascii::Uint(val);
             if (! ((0 < duration) && (duration <= 900))) {
                 LOG_DBG("invalid parameter value", keyVal)
                 return EProtocolStreamErrorUnrecoverable;
@@ -177,16 +177,16 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         }
     }
 
-    if (bitdepth == 0) {
+    if (bitsPerSample == 0) {
         LOG_DBG("missing parameter", "bitdepth")
         return EProtocolStreamErrorUnrecoverable;
-    } else if (samplerate == 0) {
+    } else if (sampleRate == 0) {
         LOG_DBG("missing parameter", "samplerate")
         return EProtocolStreamErrorUnrecoverable;
     } else if (pitch == 0) {
         LOG_DBG("missing parameter", "pitch")
         return EProtocolStreamErrorUnrecoverable;
-    } else if (channels == 0) {
+    } else if (numChannels == 0) {
         LOG_DBG("missing parameter", "channels")
         return EProtocolStreamErrorUnrecoverable;
     } else if (duration == 0) {
@@ -195,10 +195,10 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     }
 
     LOG_DBG("successfully parsed all parameters", "")
-    Log::Print("@@  bitdepth =   %6u\n", bitdepth);
-    Log::Print("@@  samplerate = %6u\n", samplerate);
+    Log::Print("@@  bitdepth =   %6u\n", bitsPerSample);
+    Log::Print("@@  samplerate = %6u\n", sampleRate);
     Log::Print("@@  pitch =      %6u\n", pitch);
-    Log::Print("@@  channels =   %6u\n", channels);
+    Log::Print("@@  channels =   %6u\n", numChannels);
     Log::Print("@@  duration =   %6u\n", duration);
 
     return EProtocolErrorNotSupported;
