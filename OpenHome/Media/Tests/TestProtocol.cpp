@@ -129,6 +129,7 @@ DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& 
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewTone(aEnv));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
