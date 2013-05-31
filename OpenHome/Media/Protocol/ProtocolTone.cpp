@@ -72,6 +72,15 @@ TUint ProtocolTone::TryStop(TUint /* aTrackId */, TUint /* aStreamId */)
 
 // TUint ProtocolTone::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) { }
 
+ToneParams::ToneParams() : bitsPerSample(0), sampleRate(0), pitch(0), numChannels(0), duration(0)
+{
+    // NOP
+}
+
+ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration) : bitsPerSample(aBitsPerSample), sampleRate(aSampleRate), pitch(aPitch), numChannels(aNumChannels), duration(aDuration)
+{
+    // NOP
+}
 
 EXCEPTION(ToneUriParseError)
 

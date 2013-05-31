@@ -8,14 +8,33 @@ namespace OpenHome {
 namespace Media {
 
 // audio parameters specifically for tone generation in RIFF-WAVE format
+// c'tors and (in-)equality operators allow terser test implementation
 struct ToneParams
 {
+    ToneParams();  
+    ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
+
+    // tighter packing possible, but universal order convention more valuable
     TUint16 bitsPerSample;
     TUint   sampleRate;
     TUint   pitch;
     TUint16 numChannels;
     TUint   duration;
 };
+
+inline bool operator==(const struct ToneParams& one, const struct ToneParams& other)
+{
+    return (one.bitsPerSample == other.bitsPerSample)
+        && (one.sampleRate == other.sampleRate)
+        && (one.pitch == other.pitch)
+        && (one.numChannels == other.numChannels)
+        && (one.duration == other.duration);
+}
+
+inline bool operator!=(const struct ToneParams& one, const struct ToneParams& other)
+{
+    return !(one == other);
+}
 
 class ToneUriParser
 {
