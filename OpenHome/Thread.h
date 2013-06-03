@@ -146,6 +146,11 @@ public:
      */
     const Brx& Name() const;
 
+    /**
+     * Intended for use from derived destructors.  Multiple levels of dtor can all Join() safely
+     */
+    void Join();
+
     bool operator== (const Thread&) const;
     bool operator!= (const Thread&) const;
 protected:
@@ -163,11 +168,6 @@ protected:
      * Throws ThreadKill if Kill() has been called.
      */
     void CheckForKill() const;
-
-    /**
-     * Intended for use from derived destructors.  Multiple levels of dtor can all Join() safely
-     */
-    void Join();
 private:
     static void EntryPoint(void* aArg);
 protected:
