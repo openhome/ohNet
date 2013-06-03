@@ -162,7 +162,7 @@ Check that remaining audio is not ramped.
     TEST(iStopper->iState == Stopper::EHalted);
     iStopper->Start();
     TEST(iStopper->iState == Stopper::EStarting);
-    iNextGeneratedMsg = EMsgDecodedStream;
+    iNextGeneratedMsg = EMsgEncodedStream;
     Msg* msg = iStopper->Pull();
     (void)msg->Process(*this);
     msg->RemoveRef();
@@ -288,7 +288,7 @@ Check that remaining audio is not ramped.
 
     // Start() then deliver 0x7f filled audio without ramping.
     iStopper->Start();
-    iNextGeneratedMsg = EMsgDecodedStream;
+    iNextGeneratedMsg = EMsgEncodedStream;
     msg = iStopper->Pull();
     (void)msg->Process(*this);
     msg->RemoveRef();
@@ -344,7 +344,7 @@ Msg* SuiteStopper::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(iStreamId, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, this);
+        return iMsgFactory->CreateMsgDecodedStream(iStreamId, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), NULL);
@@ -353,7 +353,10 @@ Msg* SuiteStopper::Pull()
         return msg;
     }
     case EMsgEncodedStream:
-        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
+        /* Stopper consumes EncodedStream internally
+           ...so we need to have another msg ready to be Pull()ed after this */
+        iNextGeneratedMsg = EMsgDecodedStream;
+        return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, this);
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:

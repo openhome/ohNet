@@ -173,6 +173,7 @@ void CodecController::CodecThread()
                 }
             }
             if (iActiveCodec == NULL) {
+                Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
                 iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
                 continue;
@@ -335,7 +336,7 @@ TUint64 CodecController::StreamPos() const
 
 void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
 {
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler);
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive);
     iLock.Wait();
     iSampleRate = aSampleRate;
     if (iExpectedFlushId == MsgFlush::kIdInvalid) {
@@ -412,8 +413,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iSeekable = aMsg->Seekable();
     iLive = aMsg->Live();
     iStreamHandler = aMsg->StreamHandler();
-    aMsg->RemoveRef();
-    return NULL;
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)

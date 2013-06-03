@@ -14,7 +14,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Media/Protocol/ProtocolHttp.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 
 #include <climits>
 #include <stdio.h>
@@ -270,7 +270,7 @@ TestUpnpAv::TestUpnpAv(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSende
     iPipeline->Add(Codec::CodecFactory::NewVorbis());
     iPipeline->Add(Codec::CodecFactory::NewWav());
     iPipeline->Add(Codec::CodecFactory::NewWma());
-    iPipeline->Add(new ProtocolHttp(aDvStack.Env()));
+    iPipeline->Add(ProtocolFactory::NewHttp(aDvStack.Env()));
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack(*iTrackFactory);

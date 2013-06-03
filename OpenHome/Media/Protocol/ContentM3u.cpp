@@ -1,13 +1,10 @@
-#include <OpenHome/Media/Protocol/ContentM3u.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Debug.h>
-
-using namespace OpenHome;
-using namespace OpenHome::Media;
 
 /* Example pls file
 
@@ -20,6 +17,29 @@ C:\Documents and Settings\I\My Music\Sample.mp3
 C:\Documents and Settings\I\My Music\Greatest Hits\Example.ogg
 
 */
+
+namespace OpenHome {
+namespace Media {
+
+class ContentM3u : public ContentProcessor
+{
+private: // from ContentProcessor
+    TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
+    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+};
+
+} // namespace Media
+} // namespace OpenHome
+
+using namespace OpenHome;
+using namespace OpenHome::Media;
+
+
+ContentProcessor* ContentProcessorFactory::NewM3u()
+{ // static
+    return new ContentM3u();
+}
+
 
 // ContentPls
 

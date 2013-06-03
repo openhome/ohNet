@@ -1,13 +1,10 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ContentPls.h>
-#include <OpenHome/Media/Protocol/ContentM3u.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/File.h>
-//#include <OpenHome/Private/Ascii.h>
-//#include <OpenHome/Private/Parser.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -21,7 +18,7 @@ class SuiteContent : public Suite, protected IProtocolSet, protected IProtocolRe
 protected:
     SuiteContent(const TChar* aName);
     ~SuiteContent();
-private: // from IProtocolSet
+protected: // from IProtocolSet
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IProtocolReader
     Brn Read(TUint aBytes);
@@ -64,6 +61,21 @@ private:
     void TestRecognise();
     void TestParse();
 };
+
+class SuiteOpml : public SuiteContent
+{
+public:
+    SuiteOpml();
+private: // from Suite
+    void Test();
+private:
+    void TestRecognise();
+    void TestParse();
+private: // from IProtocolSet
+    ProtocolStreamResult Stream(const Brx& aUri);
+private:
+    TUint iNumFails;
+}; 
 
 } // namespace Media
 } // namespace OpenHome
@@ -214,7 +226,7 @@ Brn SuiteContent::ReadRemaining()
 SuitePls::SuitePls()
     : SuiteContent("Pls tests")
 {
-    iProcessor = new ContentPls();
+    iProcessor =    ContentProcessorFactory::NewPls();
     iProcessor->Initialise(*this);
 }
 
@@ -379,7 +391,7 @@ void SuitePls::TestParse()
 SuiteM3u::SuiteM3u()
     : SuiteContent("M3u tests")
 {
-    iProcessor = new ContentM3u();
+    iProcessor = ContentProcessorFactory::NewM3u();
     iProcessor->Initialise(*this);
 }
 
@@ -508,11 +520,186 @@ void SuiteM3u::TestParse()
 }
 
 
+// SuiteOpml
+
+SuiteOpml::SuiteOpml()
+    : SuiteContent("OPML tests")
+    , iNumFails(0)
+{
+    iProcessor = ContentProcessorFactory::NewOpml();
+    iProcessor->Initialise(*this);
+}
+
+void SuiteOpml::Test()
+{
+    TestRecognise();
+    TestParse();
+}
+
+void SuiteOpml::TestRecognise()
+{
+    // recognition by MIME type fails
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/x-mpegurl"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/mpegurl"), Brx::Empty()));
+
+    // recognition also fails for bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brx::Empty()));
+
+    static const TChar* kFile1 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<opml version=\"1\">\n"
+        "        <head>\n";
+    // recognition by MIME type + content
+    Brn content(kFile1);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("text/xml"), content));
+
+    // recognition by content, no MIME
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+    // good content, bad MIME
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), content));
+
+    // bad content, bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("opml")));
+
+    static const TChar* kFile2 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
+        "<opml version=\"1\">\r\n"
+        "        <head>\r\n";
+    // content with dos line endings
+    content.Set(kFile2);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+}
+
+void SuiteOpml::TestParse()
+{
+    iInterruptBytes = 0;
+
+    // standard file with unix line endings
+    static const TChar* kFile1 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<opml version=\"1\">\n"
+        "        <head>\n"
+        "        <title>Listening Options</title>\n"
+        "        <status>200</status>\n"
+        "        </head>\n"
+        "        <body>\n"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"http://streamexample.com:80\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>\n"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"http://example.com/song.mp3\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>\n"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"/home/myaccount/album.flac\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>\n"
+        "        </body>\n"
+        "</opml>\n";
+    FileBrx file1(kFile1);
+    iFileStream.SetFile(&file1);
+    const char* expected1[] = {"http://streamexample.com:80",
+        "http://example.com/song.mp3",
+        "/home/myaccount/album.flac"};
+    iExpectedStreams = expected1;
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    iProcessor->Reset();
+    iFileStream.Seek(0);
+    iIndex = 0;
+    iReadBuffer->ReadFlush();
+    iNumFails = 1;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+
+    iProcessor->Reset();
+    iFileStream.Seek(0);
+    iIndex = 0;
+    iReadBuffer->ReadFlush();
+    iNumFails = 2;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 3);
+
+    // same file with dos line endings
+    static const TChar* kFile2 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
+        "<opml version=\"1\">\r\n"
+        "        <head>\r\n"
+        "        <title>Listening Options</title>\r\n"
+        "        <status>200</status>\r\n"
+        "        </head>\r\n"
+        "        <body>\r\n"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"http://streamexample.com:80\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>\r\n"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"http://example.com/song.mp3\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>\r\n"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"/home/myaccount/album.flac\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>\r\n"
+        "        </body>\r\n"
+        "</opml>\r\n";
+    
+    iProcessor->Reset();
+    FileBrx file2(kFile2);
+    iFileStream.SetFile(&file2);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // file with no line endings should fail to be processed
+    static const TChar* kFile3 =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        "<opml version=\"1\">"
+        "        <head>"
+        "        <title>Listening Options</title>"
+        "        <status>200</status>"
+        "        </head>"
+        "        <body>"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"http://streamexample.com:80\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"http://example.com/song.mp3\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>"
+        "            <outline type=\"audio\" text=\"foo\" URL=\"/home/myaccount/album.flac\" bitrate=\"48000\" reliability=\"80\" guide_id=\"12345\" station_id=\"397\" title=\"Dummy Track #1\" now_playing_id=\"800\" media_type=\"audio/dummy\"/>"
+        "        </body>"
+        "</opml>";
+    
+    iProcessor->Reset();
+    FileBrx file3(kFile3);
+    iFileStream.SetFile(&file3);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorUnrecoverable);
+
+    // processor passes on EProtocolStreamStopped errors
+    iProcessor->Reset();
+    file1.Seek(0);
+    iFileStream.SetFile(&file1);
+    iReadBuffer->ReadFlush();
+    iIndex = 0;
+    iNextResult = EProtocolStreamStopped;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
+
+    // interrupt mid-way through then resume
+    iProcessor->Reset();
+    iReadBuffer->ReadFlush();
+    iFileStream.Seek(0);
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    static const TUint kInterruptBytes = 229; // part way through a <outline type... line
+    iInterruptBytes = kInterruptBytes;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
+    iInterrupt = false;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 174) == EProtocolStreamSuccess); // 174 chars in complete lines read before interruption
+    TEST(iIndex == 1);
+}
+
+ProtocolStreamResult SuiteOpml::Stream(const Brx& aUri)
+{
+    if (iNumFails > 0) {
+        iNumFails--;
+        iIndex++;
+        return EProtocolStreamErrorUnrecoverable;
+    }
+    return SuiteContent::Stream(aUri);
+}
+
 
 void TestContentProcessor()
 {
     Runner runner("Content Processor tests\n");
     runner.Add(new SuitePls());
     runner.Add(new SuiteM3u());
+    runner.Add(new SuiteOpml());
     runner.Run();
 }

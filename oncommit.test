@@ -1,0 +1,38 @@
+from testharness.testsuite import MakeSuiteRunner
+from testharness.servers   import StaticWebServer
+import os.path
+
+# 'context' is defined globally. until this is fixed, sorry :)
+suiteRunner = MakeSuiteRunner(context)
+
+tests = '''
+    TestStore
+    TestMsg
+    TestSupply
+    TestAudioReservoir
+    TestVariableDelay
+    TestStopper
+    TestTrackInspector
+    TestReporter
+    TestStarvationMonitor
+    TestPreDriver
+    TestContentProcessor
+    TestPipeline
+    #TestProtocolHttp
+    #TestCodec               -s {ws_hostname} -p {ws_port}
+    TestIdProvider
+    TestFiller
+    #TestUpnpErrors
+    '''
+
+w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
+w.start()
+
+try:
+    suiteRunner.run(tests.format(
+        ws_hostname = w.host(),
+        ws_port = w.port()
+        ))
+finally:
+    w.stop()
+

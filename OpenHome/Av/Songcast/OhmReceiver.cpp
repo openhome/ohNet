@@ -1,6 +1,6 @@
 #include "OhmReceiver.h"
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Debug.h>
 
@@ -15,7 +15,8 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 
 OhmReceiver::OhmReceiver(Environment& aEnv, TIpAddress aInterface, TUint aTtl, IOhmReceiverDriver& aDriver)
-	: iInterface(aInterface)
+	: iEnv(aEnv)
+    , iInterface(aInterface)
 	, iTtl(aTtl)
 	, iDriver(&aDriver)
 	, iMutexMode("OHRM")
@@ -523,7 +524,7 @@ TBool OhmReceiver::RepairBegin(OhmMsgAudio& aMsg)
 
 	iRepairFirst = &aMsg;
 
-    iTimerRepair.FireIn(Random(kInitialRepairTimeoutMs)); 
+    iTimerRepair.FireIn(iEnv.Random(kInitialRepairTimeoutMs)); 
 
 	return (true);
 }
@@ -797,7 +798,7 @@ void OhmReceiver::TimerRepairExpired()
 			break;
 		}
 
-		// iTimerRepair.FireIn(Random(iLatency >> 1)); // check again a random time 1/2 of the audio latency
+		// iTimerRepair.FireIn(iEnv.Random(iLatency >> 1)); // check again a random time 1/2 of the audio latency
 		iTimerRepair.FireIn(kSubsequentRepairTimeoutMs); // check again a random time 1/2 of the audio latency
 	}
 
@@ -822,7 +823,7 @@ void OhmReceiver::ResendSeen()
 	iMutexTransport.Wait();
 
 	if (iRepairing) {
-		// iTimerRepair.FireIn(Random(iLatency >> 2)); // delay repair timer by a random time between 0 and 1/4 of the audio latency
+		// iTimerRepair.FireIn(iEnv.Random(iLatency >> 2)); // delay repair timer by a random time between 0 and 1/4 of the audio latency
 		iTimerRepair.FireIn(kSubsequentRepairTimeoutMs); // delay repair timer by a random time between 0 and 1/4 of the audio latency
 	}
 

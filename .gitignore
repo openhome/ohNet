@@ -1,5 +1,6 @@
 *.swp
 *.pyc
+tags
 
 /build*/
 /dependencies/

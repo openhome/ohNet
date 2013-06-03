@@ -103,7 +103,6 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    ASSERTS();
     return aMsg;
 }
 

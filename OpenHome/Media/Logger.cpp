@@ -112,7 +112,15 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
 Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 {
     if (IsEnabled(EMsgTrack)) {
-        Log::Print("Pipeline (%s): track\n", iId);
+        Log::Print("Pipeline (%s): track {uri:", iId);
+        Log::Print(aMsg->Track().Uri());
+        Log::Print(", metaData: ");
+        Log::Print(aMsg->Track().MetaData());
+        Log::Print(", style: ");
+        Log::Print(aMsg->Track().Style());
+        Log::Print(", providerId: ");
+        Log::Print(aMsg->Track().ProviderId());
+        Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());
     }
     return aMsg;
 }

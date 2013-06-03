@@ -1,13 +1,10 @@
-#include <OpenHome/Media/Protocol/ContentPls.h>
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Debug.h>
-
-using namespace OpenHome;
-using namespace OpenHome::Media;
 
 /* Example pls file
 
@@ -29,6 +26,32 @@ Length3=3487
 Version=2
 
 */
+
+namespace OpenHome {
+namespace Media {
+
+class ContentPls : public ContentProcessor
+{
+private: // from ContentProcessor
+    TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
+    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+    void Reset();
+private:
+    TBool iIsPlaylist;
+};
+
+} // namespace Media
+} // namespace OpenHome
+
+using namespace OpenHome;
+using namespace OpenHome::Media;
+
+
+ContentProcessor* ContentProcessorFactory::NewPls()
+{ // static
+    return new ContentPls();
+}
+
 
 // ContentPls
 

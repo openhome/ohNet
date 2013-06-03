@@ -13,7 +13,6 @@ sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task
 from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location
-from fileserver import invoke_test_fileserver
 
 def options(opt):
     opt.load('msvc')
@@ -21,12 +20,12 @@ def options(opt):
     opt.load('compiler_c')
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
+    opt.add_option('--testharness-dir', action='store', default=os.path.join('dependencies', 'AnyPlatform', 'testharness'))
     opt.add_option('--ohnet', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
     opt.add_option('--cross', action='store', default=None)
-    opt.add_option('--nolink', action='store_true', dest="nolink", default=False)
 
 def configure(conf):
 
@@ -49,14 +48,15 @@ def configure(conf):
     configure_toolchain(conf)
     guess_ohnet_location(conf)
 
+    conf.env.dest_platform = conf.options.dest_platform
+    conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
+
     if conf.options.dest_platform.startswith('Windows'):
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['TestFramework', 'ohNetCore']
 
     if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
-
-    conf.env.nolink = conf.options.nolink
 
     conf.env.INCLUDES = [
         '.',
@@ -251,9 +251,11 @@ def build(bld):
                 'OpenHome/Media/Protocol/Protocol.cpp',
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
+                'OpenHome/Media/Protocol/ProtocolTone.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
                 'OpenHome/Media/Protocol/ContentPls.cpp',
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
+                'OpenHome/Media/Protocol/ContentOpml.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'Generated/DvUpnpOrgAVTransport1.cpp',
@@ -477,6 +479,7 @@ def build(bld):
     # Tests
     bld.stlib(
             source=[
+                'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
                 'OpenHome/Media/Tests/PipelineUtils.cpp',
@@ -497,6 +500,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
+                'OpenHome/Media/Tests/TestToneUriParser.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -505,106 +509,94 @@ def build(bld):
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
 
-    # Copy CherryPy to build dir
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/CherryPy/cherrypy/**/*'),
-        'cherrypy',
-        cwd='dependencies/AnyPlatform/CherryPy/cherrypy',
-        keep_relative_paths=True,
-        name=None)
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('fileserver.py'),
-        '')
-    
-    # Copy files for codec tests.
-    create_copy_task(
-        bld,
-        bld.path.ant_glob('dependencies/AnyPlatform/TestTones/*'),
-        '')
-
-    if not bld.env.nolink:
-        bld.program(
-               source='OpenHome/Media/Tests/TestShell.cpp',
-               use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-               target='TestShell')
-        bld.program(
-                source='OpenHome/Media/Tests/TestMsgMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestMsg')
-        bld.program(
-                source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestStarvationMonitor')
-        bld.program(
-                source='OpenHome/Media/Tests/TestStopperMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestStopper')
-        bld.program(
-                source='OpenHome/Media/Tests/TestSupplyMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestSupply')
-        bld.program(
-                source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestAudioReservoir')
-        bld.program(
-                source='OpenHome/Media/Tests/TestVariableDelayMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestVariableDelay')
-        bld.program(
-                source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestTrackInspector')
-        bld.program(
-                source='OpenHome/Media/Tests/TestReporterMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestReporter')
-        bld.program(
-                source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestPreDriver')
-        bld.program(
-                source='OpenHome/Media/Tests/TestContentProcessorMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestContentProcessor')
-        bld.program(
-                source='OpenHome/Media/Tests/TestPipelineMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestPipeline')
-        bld.program(
-                source='OpenHome/Media/Tests/TestProtocol.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestProtocol')
-        bld.program(
-                source='OpenHome/Av/Tests/TestStore.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestStore')
-        bld.program(
-                source='OpenHome/Media/Tests/TestProtocolHttpMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestProtocolHttp')
-        bld.program(
-                source='OpenHome/Media/Tests/TestCodecMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestCodec')
-        bld.program(
-                source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestIdProvider')
-        bld.program(
-                source='OpenHome/Media/Tests/TestFillerMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestFiller')
-        bld.program(
-                source='OpenHome/Av/Tests/TestUpnpAv.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestUpnpAv')
-        bld.program(
-                source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-                target='TestUpnpErrors')
+    bld.program(
+           source='OpenHome/Media/Tests/TestShell.cpp',
+           use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+           target='TestShell')
+    bld.program(
+            source='OpenHome/Media/Tests/TestMsgMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestMsg')
+    bld.program(
+            source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestStarvationMonitor')
+    bld.program(
+            source='OpenHome/Media/Tests/TestStopperMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestStopper')
+    bld.program(
+            source='OpenHome/Media/Tests/TestSupplyMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSupply')
+    bld.program(
+            source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestAudioReservoir')
+    bld.program(
+            source='OpenHome/Media/Tests/TestVariableDelayMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestVariableDelay')
+    bld.program(
+            source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestTrackInspector')
+    bld.program(
+            source='OpenHome/Media/Tests/TestReporterMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestReporter')
+    bld.program(
+            source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestPreDriver')
+    bld.program(
+            source='OpenHome/Media/Tests/TestContentProcessorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestContentProcessor')
+    bld.program(
+            source='OpenHome/Media/Tests/TestPipelineMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestPipeline')
+    bld.program(
+            source='OpenHome/Media/Tests/TestProtocol.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestProtocol')
+    bld.program(
+            source='OpenHome/Av/Tests/TestStoreMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestStore')
+    bld.program(
+            source='OpenHome/Media/Tests/TestProtocolHttpMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestProtocolHttp')
+    bld.program(
+            source='OpenHome/Media/Tests/TestCodecMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestCodec')
+    bld.program(
+            source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestIdProvider')
+    bld.program(
+            source='OpenHome/Media/Tests/TestFillerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestFiller')
+    bld.program(
+            source='OpenHome/Media/Tests/TestToneUriParserMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestToneUriParser')
+    bld.program(
+            source='OpenHome/Av/Tests/TestUpnpAv.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestUpnpAv')
+    bld.program(
+            source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestUpnpErrors')
+    bld.program(
+            source='OpenHome/Av/Tests/TestRadio.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestRadio')
 
 # Bundles
 def bundle(ctx):
@@ -621,27 +613,13 @@ def bundle(ctx):
 # == Command for invoking unit tests ==
 
 def test(tst):
-    for t, a, when in [['TestStore', [], True]
-                      ,['TestMsg', [], True]
-                      ,['TestSupply', [], True]
-                      ,['TestAudioReservoir', [], True]
-                      ,['TestVariableDelay', [], True]
-                      ,['TestStopper', [], True]
-                      ,['TestTrackInspector', [], True]
-                      ,['TestReporter', [], True]
-                      ,['TestStarvationMonitor', [], True]
-                      ,['TestPreDriver', [], True]
-                      ,['TestContentProcessor', [], True]
-                      ,['TestPipeline', [], True]
-                      ,['TestProtocolHttp', [], True]
-                      #,['TestCodec', [], True]
-                      ,['TestIdProvider', [], True]
-                      ,['TestFiller', [], True]
-                      ]:
-        tst(rule=invoke_test, test=t, args=a, always=when)
-        tst.add_group() # Don't start another test until previous has finished.
-    tst(rule=invoke_test_fileserver, test='TestCodec', args=['127.0.0.1', '8080'], always=True)
-    tst.add_group()
+    rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
+        test        = os.path.join(tst.env.testharness_dir, 'Test'),
+        manifest    = '${SRC}',
+        platform    =  tst.env.dest_platform,
+        build_dir   = '.',
+        tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
+    tst(rule=rule, source='oncommit.test')
 
 # == Contexts to make 'waf test' work ==
 
