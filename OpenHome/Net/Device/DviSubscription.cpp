@@ -64,11 +64,11 @@ void DviSubscription::Start(DviService& aService)
 {
     iService = &aService;
     iService->AddRef();
-    const DviService::VectorProperties& properties = iService->Properties();
+    const std::vector<Property*>& properties = iService->Properties();
     for (TUint i=0; i<properties.size(); i++) {
         // store all seq nums as 0 initially to ensure all are published by the first call to WriteChanges()
         iPropertySequenceNumbers.push_back(0);
-        ASSERT(properties[i] != 0);
+        ASSERT(properties[i]->SequenceNumber() != 0);
     }
 }
 
@@ -190,7 +190,7 @@ IPropertyWriter* DviSubscription::CreateWriter()
     }
     AutoPropertiesLock b(*iService);
     IPropertyWriter* writer = NULL;
-    const DviService::VectorProperties& properties = iService->Properties();
+    const std::vector<Property*>& properties = iService->Properties();
     ASSERT(properties.size() == iPropertySequenceNumbers.size()); // services can't change definition after first advertisement
     for (TUint i=0; i<properties.size(); i++) {
         Property* prop = properties[i];
@@ -222,23 +222,6 @@ IPropertyWriter* DviSubscription::CreateWriter()
 const Brx& DviSubscription::Sid() const
 {
     return iSid;
-}
-
-TBool DviSubscription::PropertiesInitialised() const
-{
-    TBool initialised = true;
-    iLock.Wait();
-    if (iService != NULL) {
-        const DviService::VectorProperties& properties = iService->Properties();
-        for (TUint i=0; i<properties.size(); i++) {
-            if (properties[i] == 0) {
-                initialised = false;
-                break;
-            }
-        }
-    }
-    iLock.Signal();
-    return initialised;
 }
 
 void DviSubscription::ListObjectDetails() const
@@ -488,7 +471,6 @@ DviSubscription* DviSubscriptionManager::Find(const Brx& aSid)
 
 void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
 {
-    ASSERT(aSubscription.PropertiesInitialised());
     aSubscription.AddRef();
     iLock.Wait();
     iList.push_back(&aSubscription);

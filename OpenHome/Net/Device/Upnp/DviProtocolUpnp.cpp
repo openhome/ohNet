@@ -1087,7 +1087,7 @@ void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const 
     aWriter.Write("<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">");
     writeSpecVersion(aWriter, aDevice);
     aWriter.Write("<actionList>");
-    DviService::VectorActions actions = aService.DvActions();
+    const std::vector<DvAction>& actions = aService.DvActions();
     for (TUint i=0; i<actions.size(); i++) {
         const Action* action = actions[i].Action();
         aWriter.Write("<action>");
@@ -1102,7 +1102,7 @@ void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const 
     }
     aWriter.Write("</actionList>");
     aWriter.Write("<serviceStateTable>");
-    const DviService::VectorProperties& properties = aService.Properties();
+    const std::vector<Property*>& properties = aService.Properties();
     for (TUint i=0; i<properties.size(); i++) {
         WriteStateVariable(aWriter, properties[i]->Parameter(), true, 0);
     }

@@ -83,15 +83,13 @@ public:
     void Disable();
 
     DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
-    typedef std::vector<DvAction> VectorActions;
-    const VectorActions& DvActions() const;
+    const std::vector<DvAction>& DvActions() const;
     void Invoke(IDviInvocation& aInvocation, const Brx& aActionName);
 
     void PropertiesLock();
     void PropertiesUnlock();
     DllExport void AddProperty(Property* aProperty);
-    typedef std::vector<Property*> VectorProperties;
-    const VectorProperties& Properties() const;
+    const std::vector<Property*>& Properties() const;
     void PublishPropertyUpdates();
 
     void AddSubscription(DviSubscription* aSubscription);
@@ -99,6 +97,7 @@ public:
 private:
     ~DviService();
     void InvocationCompleted();
+    TBool PropertiesInitialised() const;
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
@@ -106,8 +105,8 @@ private:
     Mutex iLock;
     TUint iRefCount;
     Mutex iPropertiesLock;
-    VectorActions iDvActions;
-    VectorProperties iProperties;
+    std::vector<DvAction> iDvActions;
+    std::vector<Property*> iProperties;
     std::vector<DviSubscription*> iSubscriptions;
     TBool iDisabled;
     TUint iCurrentInvocationCount;

@@ -57,7 +57,6 @@ public:
     void Renew(TUint& aSeconds);
     void WriteChanges();
     const Brx& Sid() const;
-    TBool PropertiesInitialised() const;
 private: // from IStackObject
     void ListObjectDetails() const;
 private:

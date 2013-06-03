@@ -151,7 +151,7 @@ void DviService::AddAction(Action* aAction, FunctorDviInvocation aFunctor)
     iDvActions.push_back(action);
 }
 
-const DviService::VectorActions& DviService::DvActions() const
+const std::vector<DvAction>& DviService::DvActions() const
 {
     return iDvActions;
 }
@@ -218,7 +218,7 @@ void DviService::AddProperty(Property* aProperty)
     iProperties.push_back(aProperty);
 }
 
-const DviService::VectorProperties& DviService::Properties() const
+const std::vector<Property*>& DviService::Properties() const
 {
     return iProperties;
 }
@@ -227,6 +227,7 @@ void DviService::PublishPropertyUpdates()
 {
     iLock.Wait();
     for (TUint i=0; i<iSubscriptions.size(); i++) {
+        ASSERT(PropertiesInitialised());
         iDvStack.SubscriptionManager().QueueUpdate(*(iSubscriptions[i]));
     }
     iLock.Signal();
@@ -256,6 +257,16 @@ void DviService::RemoveSubscription(const Brx& aSid)
         }
     }
     iLock.Signal();
+}
+
+TBool DviService::PropertiesInitialised() const
+{
+    for (TUint i=0; i<iProperties.size(); i++) {
+        if (iProperties[i]->SequenceNumber() == 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void DviService::ListObjectDetails() const
