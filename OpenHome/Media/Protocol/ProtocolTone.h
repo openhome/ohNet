@@ -38,6 +38,7 @@ inline bool operator!=(const struct ToneParams& one, const struct ToneParams& ot
 
 class ToneUriParser
 {
+    static const TUint kMaxNameBytes = 100;
 public:
     ToneUriParser();
 
@@ -49,7 +50,7 @@ public:
     const Brx& Name() const;
 private:
     ToneParams iParams;
-    Brn iName;
+    Bws<kMaxNameBytes> iName;
 };
 
 } // namespace Media

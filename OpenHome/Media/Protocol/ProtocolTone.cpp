@@ -84,7 +84,9 @@ ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, 
 
 EXCEPTION(ToneUriParseError)
 
-ToneUriParser::ToneUriParser() : iParams(), iName(Brn::Empty())
+ToneUriParser::ToneUriParser()
+    : iParams()
+    , iName(Brx::Empty())
 {
     // NOP
 } 
@@ -93,7 +95,7 @@ void ToneUriParser::Parse(const Brx& aUri)
 {
     // tone://WAVEFORM.wav?bitdepth=N&samplerate=M&pitch=HZ&channels=K&duration=T
     Uri uri(aUri);
-    iName.Set(uri.Host());
+    iName.ReplaceThrow(uri.Host());
 
     if (uri.Path() != Brn("/")) {
         LOG_DBG("spurious path", uri.Path())
