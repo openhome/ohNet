@@ -35,9 +35,9 @@ private:
     TUint iPort;
     SocketUdp iSocket;
     UdpReader iSocketReader;
-    Srs<kMaxReadBufferBytes> iReaderBuffer;
+    Srs<kMaxReadBufferBytes*2> iReaderBuffer;     // ensure we have enough space to read kMaxReadBufferBytes+1 full UDP packet
     Brn iDataBuffer;
-    Bws<kMaxReadBufferBytes> iAudio;
+    Bws<kMaxReadBufferBytes*2> iAudio;          // to match iReaderBuffer
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
     TBool iInitId;
@@ -71,8 +71,8 @@ private:
     SocketUdp iSocket;
     UdpReader iSocketReader;
     //UdpWriter iSocketWriter;
-    Srs<kMaxReadBufferBytes> iReceive;
-    Bws<kMaxReadBufferBytes> iResentData;
+    Srs<kMaxReadBufferBytes*2> iReceive;    // ensure we have enough space to read kMaxReadBufferBytes+1 full UDP packet
+    Bws<kMaxReadBufferBytes*2> iResentData;
     ThreadFunctor* iThreadControl;
     TUint iSenderSkew;
     TUint iLatency;

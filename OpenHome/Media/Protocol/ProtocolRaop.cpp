@@ -194,9 +194,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                         }
                     }
                 }
+                try {
                 iRaopAudio.DecodePacket(SenderSkew, latency); // send original
                 OutputAudio(iRaopAudio.Audio());
                 expected = count+1;
+                }
+                catch (InvalidHeader&)
+                {
+                    Log::Print("ProtocolRaop::Stream caught InvalidHeader exception\n");
+                }
             }
         }
         catch (InvalidHeader&) {
@@ -238,7 +244,8 @@ void ProtocolRaop::OutputContainer(const Brn &aFmtp)
     container.Append(aFmtp);
     container.Append(Brn("\n"));
     LOG(kMedia, "ProtocolRaop::OutputContainer container %d bytes [", container.Bytes()); LOG(kMedia, container); LOG(kMedia, "]\n");
-    iSupply->OutputMetadata(container);
+    //iSupply->OutputMetadata(container);
+    iSupply->OutputData(container);
 }
 
 void ProtocolRaop::OutputAudio(const Brn &aPacket)
@@ -368,11 +375,11 @@ void RaopControl::Run()
             }
             else if(type == 0x80D6) {
                 // resent packet
-                iReceive.Read(2);	//ignore next 2 bytes
+                iReceive.Read(2);   //ignore next 2 bytes
                 //Brn data(iReceive.Read(kMaxReadBufferBytes, false, 0, true)); // read all of the udp packet
                 Brn data(iReceive.Read(kMaxReadBufferBytes)); // read all of the udp packet
                 LOG(kMedia, "RaopControl read %d bytes, iResend %d\n", data.Bytes(), iResend);
-                iMutexRx.Wait();	// wait for processing of previous resend message
+                iMutexRx.Wait();    // wait for processing of previous resend message
                 iMutex.Wait();
                 TBool resend = false;
                 if (iResend) {
@@ -626,6 +633,7 @@ TUint16 RaopAudio::ReadPacket()
         LOG(kMedia, "<RaopAudio::ReadPacket() no data so retry\n");
         // rogue id so ignore
     }
+    Log::Print("count: %u\n", count);
 
     return count;
 }
@@ -645,10 +653,12 @@ void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brn& aData)
     unsigned char *outbuf = (unsigned char *)iAudio.Ptr()+sizeof(header);
     unsigned char iv[16];
 
+    Log::Print("RaopAudio::DecodePacket before checking header bytes\n");
     if( (header.Bytes() + sizeof(header)) > iAudio.MaxBytes())
     {
         THROW(InvalidHeader);   // invalid data received, should really add different exception
     }
+    Log::Print("RaopAudio::DecodePacket after checking header bytes\n");
 
     memcpy(iv, iAesiv.Ptr(), sizeof(iv));   //use same iv at start of each decryption block
 
