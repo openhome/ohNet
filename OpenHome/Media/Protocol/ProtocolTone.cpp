@@ -92,7 +92,16 @@ ToneUriParser::ToneUriParser()
 void ToneUriParser::Parse(const Brx& aUri)
 {
     // tone://WAVEFORM.wav?bitdepth=N&samplerate=M&pitch=HZ&channels=K&duration=T
-    Uri uri(aUri);
+    Uri uri;
+
+    try {
+        uri.Replace(aUri);
+    } catch (UriError&) {
+        // translate exception so as not to expose implementation details
+        THROW(ToneUriParseError);
+    }
+
+    // BufferOverflow deliberately not caught: programmer error
     iName.ReplaceThrow(uri.Host());
 
     if (uri.Path() != Brn("/")) {
