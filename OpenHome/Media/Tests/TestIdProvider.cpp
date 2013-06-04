@@ -26,9 +26,9 @@ private:
 
 class SuiteSingleStream : public SuiteUnitTest, private IStopper
 {
-    static const Brn kStyle;
-    static const Brn kProviderId;
-    static const TUint kTrackId = 0;
+    static const Brn kMode;
+    static const TUint kTrackId = 100;
+    static const TUint kPipelineTrackId = 0;
     static const TUint kStreamId = 0;
 public:
     SuiteSingleStream();
@@ -61,9 +61,9 @@ private: // from IStopper
 
 class SuiteMaxStreams : public Suite, private IStopper
 {
-    static const Brn kStyle;
-    static const Brn kProviderId;
-    static const TUint kTrackId = 0;
+    static const Brn kMode;
+    static const TUint kTrackId = 200;
+    static const TUint kPipelineTrackId = 0;
     static const TUint kStreamId = 0;
 public:
     SuiteMaxStreams();
@@ -77,13 +77,13 @@ private:
 
 class SuiteMultiStreams : public SuiteUnitTest, private IStopper
 {
-    static const Brn kStyle;
-    static const Brn kProviderId1;
-    static const Brn kProviderId2;
-    static const Brn kProviderId3;
-    static const TUint kTrackId1 = 1;
-    static const TUint kTrackId2 = 2;
-    static const TUint kTrackId3 = 3;
+    static const Brn kMode;
+    static const TUint kTrackId1 = 300;
+    static const TUint kTrackId2 = 301;
+    static const TUint kTrackId3 = 302;
+    static const TUint kPipelineTrackId1 = 1;
+    static const TUint kPipelineTrackId2 = 2;
+    static const TUint kPipelineTrackId3 = 3;
     static const TUint kStreamId1 = 1;
     static const TUint kStreamId2 = 2;
     static const TUint kIdInvalid = 999;
@@ -103,7 +103,6 @@ private:
     void FirstPlaysThenInvalidateAfterThird();
     void SecondPlaysThenInvalidated();
     void SecondPlaysThenInvalidateAfter();
-    void InvalidateAtWithInvalidStyle();
     void InvalidateAtWithInvalidProviderId();
     void InvalidateAll();
 private:
@@ -183,8 +182,7 @@ void SuiteIdsAreUnique::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // SuiteSingleStream
 
-const Brn SuiteSingleStream::kStyle("TestStyle");
-const Brn SuiteSingleStream::kProviderId("ProviderId");
+const Brn SuiteSingleStream::kMode("TestMode");
 
 SuiteSingleStream::SuiteSingleStream()
     : SuiteUnitTest("Single active stream")
@@ -205,7 +203,7 @@ void SuiteSingleStream::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
 void SuiteSingleStream::Setup()
 {
     iPipelineIdProvider = new PipelineIdProvider(*this);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId, true);
+    iPipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, kStreamId, true);
     iIdProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
 }
 
@@ -218,44 +216,42 @@ void SuiteSingleStream::TearDown()
 
 void SuiteSingleStream::OkToPlayOnceForValidIds()
 {
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
     // check we don't get permission to play the same track twice
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayNo);
 }
 
 void SuiteSingleStream::OkToPlayForInvalidIds()
 {
-    TEST(iIdProvider->OkToPlay(kTrackId+1, kStreamId) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId+1) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId+1, kStreamId+1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId+1, kStreamId) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId+1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId+1, kStreamId+1) == ePlayNo);
     // check that previous failures don't prevent us from playing the next track
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
 void SuiteSingleStream::InvalidateAtMatch()
 {
-    iIdProvider->InvalidateAt(kStyle, kProviderId);
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayNo);
+    iIdProvider->InvalidateAt(kTrackId);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayNo);
 }
 
 void SuiteSingleStream::InvalidateAtNoMatch()
 {
-    iIdProvider->InvalidateAt(kStyle, Brn("nomatch"));
-    iIdProvider->InvalidateAt(Brn("nomatch"), kProviderId);
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
+    iIdProvider->InvalidateAt(999);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
 void SuiteSingleStream::InvalidateAfterMatch()
 {
-    iIdProvider->InvalidateAfter(kStyle, kProviderId);
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
+    iIdProvider->InvalidateAfter(kTrackId);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
 void SuiteSingleStream::InvalidateAfterNoMatch()
 {
-    iIdProvider->InvalidateAfter(kStyle, Brn("nomatch"));
-    iIdProvider->InvalidateAfter(Brn("nomatch"), kProviderId);
-    TEST(iIdProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
+    iIdProvider->InvalidateAfter(999);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
 
@@ -272,13 +268,12 @@ SuitePlayLater::~SuitePlayLater()
 
 void SuitePlayLater::Test()
 {
-    const Brn style("teststyle");
-    const Brn providerId("testProviderId");
     const TUint trackId = 4;
+    const TUint pipelineTrackId = 6;
     const TUint streamId = 0;
     PipelineIdProvider* pipelineIdProvider = new PipelineIdProvider(*this);
-    pipelineIdProvider->AddStream(style, providerId, trackId, streamId, false);
-    TEST(static_cast<IPipelineIdProvider*>(pipelineIdProvider)->OkToPlay(trackId, streamId) == ePlayLater);
+    pipelineIdProvider->AddStream(trackId, pipelineTrackId, streamId, false);
+    TEST(static_cast<IPipelineIdProvider*>(pipelineIdProvider)->OkToPlay(pipelineTrackId, streamId) == ePlayLater);
     delete pipelineIdProvider;
 }
 
@@ -290,8 +285,7 @@ void SuitePlayLater::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // SuiteMaxStreams
 
-const Brn SuiteMaxStreams::kStyle("TestStyle");
-const Brn SuiteMaxStreams::kProviderId("ProviderId");
+const Brn SuiteMaxStreams::kMode("TestMode");
 
 SuiteMaxStreams::SuiteMaxStreams()
     : Suite("Max active streams")
@@ -311,20 +305,20 @@ void SuiteMaxStreams::Test()
     PipelineIdProvider* pipelineIdProvider = new PipelineIdProvider(*this);
     const TUint max = pipelineIdProvider->MaxStreams()-1;
     for (TUint streamId = kStreamId; streamId<max; streamId++) {
-        pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, streamId, true);
+        pipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, streamId, true);
     }
     IPipelineIdProvider* idProvider = static_cast<IPipelineIdProvider*>(pipelineIdProvider);
     for (TUint streamId = kStreamId; streamId<max; streamId++) {
-        TEST(idProvider->OkToPlay(kTrackId, streamId) == ePlayYes);
+        TEST(idProvider->OkToPlay(kPipelineTrackId, streamId) == ePlayYes);
     }
-    TEST(idProvider->OkToPlay(kTrackId, kStreamId) == ePlayNo);
+    TEST(idProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayNo);
 
-    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId, true);
-    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId+1, true);
-    pipelineIdProvider->AddStream(kStyle, kProviderId, kTrackId, kStreamId+2, true);
-    TEST(idProvider->OkToPlay(kTrackId, kStreamId) == ePlayYes);
-    TEST(idProvider->OkToPlay(kTrackId, kStreamId+1) == ePlayYes);
-    TEST(idProvider->OkToPlay(kTrackId, kStreamId+2) == ePlayYes);
+    pipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, kStreamId, true);
+    pipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, kStreamId+1, true);
+    pipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, kStreamId+2, true);
+    TEST(idProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
+    TEST(idProvider->OkToPlay(kPipelineTrackId, kStreamId+1) == ePlayYes);
+    TEST(idProvider->OkToPlay(kPipelineTrackId, kStreamId+2) == ePlayYes);
 
     delete pipelineIdProvider;
 }
@@ -337,10 +331,7 @@ void SuiteMaxStreams::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // SuiteMultiStreams
 
-const Brn SuiteMultiStreams::kStyle("TestStyle");
-const Brn SuiteMultiStreams::kProviderId1("1");
-const Brn SuiteMultiStreams::kProviderId2("2");
-const Brn SuiteMultiStreams::kProviderId3("3");
+const Brn SuiteMultiStreams::kMode("TestMode");
 
 SuiteMultiStreams::SuiteMultiStreams()
     : SuiteUnitTest("Multiple active streams")
@@ -353,7 +344,6 @@ SuiteMultiStreams::SuiteMultiStreams()
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::FirstPlaysThenInvalidateAfterThird));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::SecondPlaysThenInvalidated));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::SecondPlaysThenInvalidateAfter));
-    AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAtWithInvalidStyle));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAtWithInvalidProviderId));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAll));
 }
@@ -367,10 +357,10 @@ void SuiteMultiStreams::RemoveStream(TUint aTrackId, TUint aStreamId)
 void SuiteMultiStreams::Setup()
 {
     iPipelineIdProvider = new PipelineIdProvider(*this);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId1, kTrackId1, kStreamId1, true);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId1, kTrackId1, kStreamId2, true);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId2, kTrackId2, kStreamId1, true);
-    iPipelineIdProvider->AddStream(kStyle, kProviderId3, kTrackId3, kStreamId1, true);
+    iPipelineIdProvider->AddStream(kTrackId1, kPipelineTrackId1, kStreamId1, true);
+    iPipelineIdProvider->AddStream(kTrackId1, kPipelineTrackId1, kStreamId2, true);
+    iPipelineIdProvider->AddStream(kTrackId2, kPipelineTrackId2, kStreamId1, true);
+    iPipelineIdProvider->AddStream(kTrackId3, kPipelineTrackId3, kStreamId1, true);
     iIdProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
     iRemoveTrackId = kIdInvalid;
     iRemoveStreamId = kIdInvalid;
@@ -386,10 +376,10 @@ void SuiteMultiStreams::TearDown()
 void SuiteMultiStreams::AllCanBePlayed()
 {
     // check all can be OkToPlay'd
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
 }
 
 void SuiteMultiStreams::FirstPlaysIncorrectCallsThenPlayAll()
@@ -398,120 +388,108 @@ void SuiteMultiStreams::FirstPlaysIncorrectCallsThenPlayAll()
             incorrect track and correct stream fails
             incorrect track and incorrect stream fails
             second can be OkToPlay'd, third can be OkToPlay'd, fourth OkToPlay fails */
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kIdInvalid) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kIdInvalid) == ePlayNo);
     TEST(iIdProvider->OkToPlay(kIdInvalid, kStreamId2) == ePlayNo);
     TEST(iIdProvider->OkToPlay(kIdInvalid, kIdInvalid) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
 }
 
 void SuiteMultiStreams::FirstPlaysThenInvalidated()
 {
     // check first can be OkToPlay'd, call InvalidateAt for first, check Stopper is called and OkToPlay for second fails, third + fourth succeed
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAt(kStyle, kProviderId1);
-    TEST(iRemoveTrackId == kTrackId1);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    iIdProvider->InvalidateAt(kTrackId1);
+    TEST(iRemoveTrackId == kPipelineTrackId1);
     TEST(iRemoveStreamId == kStreamId1);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
 }
 
 void SuiteMultiStreams::FirstPlaysThenInvalidateAfter()
 {
     // check first can be OkToPlay'd, call InvalidateAfter for first, check OkToPlay for second succeeds, third/fourth fails
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAfter(kStyle, kProviderId1);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    iIdProvider->InvalidateAfter(kTrackId1);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayNo);
 }
 
 void SuiteMultiStreams::FirstPlaysThenInvalidateThird()
 {
     // check first can be OkToPlay'd, call InvalidateAt for third, check OkToPlay for second succeeds, third fails, fourth succeeds
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAt(kStyle, kProviderId2);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    iIdProvider->InvalidateAt(kTrackId2);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
 }
 
 void SuiteMultiStreams::FirstPlaysThenInvalidateAfterThird()
 {
     // check first can be OkToPlay'd, call InvalidateAfter for third, check OkToPlay for second/third succeeds, fourth fails
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAfter(kStyle, kProviderId2);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    iIdProvider->InvalidateAfter(kTrackId2);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayNo);
 }
 
 void SuiteMultiStreams::SecondPlaysThenInvalidated()
 {
     // play first then second, call InvalidateAt for second, check Stopper is called and OkToPlay for third, fourth succeeds
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    iIdProvider->InvalidateAt(kStyle, kProviderId1);
-    TEST(iRemoveTrackId == kTrackId1);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    iIdProvider->InvalidateAt(kTrackId1);
+    TEST(iRemoveTrackId == kPipelineTrackId1);
     TEST(iRemoveStreamId == kStreamId2);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
 }
 
 void SuiteMultiStreams::SecondPlaysThenInvalidateAfter()
 {
     // play first then second, call InvalidateAfter for second, check OkToPlay for third, fourth fails
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    iIdProvider->InvalidateAfter(kStyle, kProviderId1);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    iIdProvider->InvalidateAfter(kTrackId1);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayNo);
-}
-
-void SuiteMultiStreams::InvalidateAtWithInvalidStyle()
-{
-    // check first can be OkToPlay'd, call InvalidateAt for first with incorrect style, check OkToPlay for second etc succeeds
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAt(Brn("incorrect"), kProviderId1);
-    TEST(iRemoveTrackId == kIdInvalid);
-    TEST(iRemoveStreamId == kIdInvalid);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayNo);
 }
 
 void SuiteMultiStreams::InvalidateAtWithInvalidProviderId()
 {
     // check first can be OkToPlay'd, call InvalidateAt for first with incorrect providerId, check OkToPlay for second etc succeeds
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAfter(kStyle, Brn("incorrect"));
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    iIdProvider->InvalidateAfter(999);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayYes);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
 }
 
 void SuiteMultiStreams::InvalidateAll()
 {
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId1) == ePlayYes);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
     iIdProvider->InvalidateAll();
-    TEST(iRemoveTrackId == kTrackId1);
+    TEST(iRemoveTrackId == kPipelineTrackId1);
     TEST(iRemoveStreamId == kStreamId1);
-    TEST(iIdProvider->OkToPlay(kTrackId1, kStreamId2) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId2, kStreamId1) == ePlayNo);
-    TEST(iIdProvider->OkToPlay(kTrackId3, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayNo);
 }
 
 

@@ -21,10 +21,10 @@ PipelineIdProvider::PipelineIdProvider(IStopper& aStopper)
 {
 }
 
-void PipelineIdProvider::AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow)
+void PipelineIdProvider::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
 {
     iLock.Wait();
-    iActiveStreams[iIndexTail].Set(aStyle, aProviderId, aTrackId, aStreamId, aPlayNow);
+    iActiveStreams[iIndexTail].Set(aId, aPipelineTrackId, aStreamId, aPlayNow);
     UpdateIndex(iIndexTail);
     ASSERT(iIndexHead != iIndexTail); // OkToPlay can't tell the difference between a full and empty list
                                       // ...so we assume the list contains at most kMaxActiveStreams-1 elements
@@ -68,7 +68,7 @@ EStreamPlay PipelineIdProvider::OkToPlay(TUint aTrackId, TUint aStreamId)
         return ePlayNo;
     }
     const ActiveStream& as = iActiveStreams[iIndexHead];
-    if (as.TrackId() != aTrackId || as.StreamId() != aStreamId) {
+    if (as.PipelineTrackId() != aTrackId || as.StreamId() != aStreamId) {
         return ePlayNo;
     }
     iPlaying.Set(as);
@@ -76,14 +76,14 @@ EStreamPlay PipelineIdProvider::OkToPlay(TUint aTrackId, TUint aStreamId)
     return iPlaying.PlayNow()? ePlayYes : ePlayLater;
 }
 
-void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
+void PipelineIdProvider::InvalidateAt(TUint aId)
 {
     AutoMutex a(iLock);
 
     TBool matched = false;
-    if (iPlaying.Matches(aStyle, aProviderId)) {
+    if (iPlaying.Id() == aId) {
         matched = true;
-        iStopper.RemoveStream(iPlaying.TrackId(), iPlaying.StreamId());
+        iStopper.RemoveStream(iPlaying.PipelineTrackId(), iPlaying.StreamId());
         iPlaying.Clear();
     }
     TBool updateHead = matched;
@@ -95,7 +95,7 @@ void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
     TUint prevIndex = index;
     // find first match
     while (!matched && index != iIndexTail) {
-        matched = iActiveStreams[index].Matches(aStyle, aProviderId);
+        matched = (iActiveStreams[index].Id() == aId);
         if (matched && index == iIndexHead) {
             updateHead = true;
         }
@@ -105,7 +105,7 @@ void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
 
     if (matched) {
         // advance past any additional streams for the same track
-        while (index != iIndexTail && iActiveStreams[index].Matches(aStyle, aProviderId)) {
+        while (index != iIndexTail && iActiveStreams[index].Id() == aId) {
             UpdateIndex(index);
         }
 
@@ -127,15 +127,15 @@ void PipelineIdProvider::InvalidateAt(const Brx& aStyle, const Brx& aProviderId)
     }
 }
 
-void PipelineIdProvider::InvalidateAfter(const Brx& aStyle, const Brx& aProviderId)
+void PipelineIdProvider::InvalidateAfter(TUint aId)
 {
     AutoMutex a(iLock);
 
     // find first matching instance
     TUint index = iIndexHead;
-    TBool matched = iPlaying.Matches(aStyle, aProviderId);
+    TBool matched = (iPlaying.Id() == aId);
     while (!matched && index != iIndexTail) {
-        if (iActiveStreams[index].Matches(aStyle, aProviderId)) {
+        if (iActiveStreams[index].Id() == aId) {
             matched = true;
         }
         else {
@@ -145,7 +145,7 @@ void PipelineIdProvider::InvalidateAfter(const Brx& aStyle, const Brx& aProvider
 
     // if matched, advance past any additional streams for the same track
     if (matched) {
-        while (index != iIndexTail && iActiveStreams[index].Matches(aStyle, aProviderId)) {
+        while (index != iIndexTail && iActiveStreams[index].Id() == aId) {
             UpdateIndex(index);
         }
         iIndexTail = index;
@@ -156,7 +156,7 @@ void PipelineIdProvider::InvalidateAll()
 {
     AutoMutex a(iLock);
     if (!iPlaying.IsClear()) {
-        iStopper.RemoveStream(iPlaying.TrackId(), iPlaying.StreamId());
+        iStopper.RemoveStream(iPlaying.PipelineTrackId(), iPlaying.StreamId());
         iPlaying.Clear();
     }
     iIndexTail = iIndexHead;
@@ -170,36 +170,25 @@ PipelineIdProvider::ActiveStream::ActiveStream()
     Clear();
 }
 
-void PipelineIdProvider::ActiveStream::Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow)
+void PipelineIdProvider::ActiveStream::Set(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
 {
-    iStyle.Replace(aStyle);
-    iProviderId.Replace(aProviderId);
-    iTrackId = aTrackId;
+    iId = aId;
+    iPipelineTrackId = aPipelineTrackId;
     iStreamId = aStreamId;
     iPlayNow = aPlayNow;
+    iClear = false;
 }
 
 void PipelineIdProvider::ActiveStream::Set(const ActiveStream& aActiveStream)
 {
-    Set(aActiveStream.Style(), aActiveStream.ProviderId(), aActiveStream.TrackId(), aActiveStream.StreamId(), aActiveStream.PlayNow());
+    Set(aActiveStream.Id(), aActiveStream.PipelineTrackId(), aActiveStream.StreamId(), aActiveStream.PlayNow());
 }
 
 void PipelineIdProvider::ActiveStream::Clear()
 {
-    iStyle.Replace(Brx::Empty());
-    iProviderId.Replace(Brx::Empty());
-    iTrackId = UINT_MAX;
+    iId = UINT_MAX;
+    iPipelineTrackId = UINT_MAX;
     iStreamId = UINT_MAX;
     iPlayNow = false;
-}
-
-TBool PipelineIdProvider::ActiveStream::IsClear() const
-{
-    return (iStyle.Bytes() == 0 && iProviderId.Bytes() == 0 &&
-            iTrackId == UINT_MAX && iStreamId == UINT_MAX && iPlayNow == false);
-}
-
-TBool PipelineIdProvider::ActiveStream::Matches(const Brx& aStyle, const Brx& aProviderId) const
-{
-    return (iStyle == aStyle && iProviderId == aProviderId);
+    iClear = true;
 }

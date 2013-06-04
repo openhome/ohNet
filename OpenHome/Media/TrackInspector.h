@@ -55,18 +55,6 @@ private:
     Track* iTrack;
 };
 
-class TrackObserver : public ITrackObserver
-{
-public:
-    TrackObserver(const Brx& aStyle, ITrackObserver& aObserver);
-private: // from ITrackObserver
-    void NotifyTrackPlay(Track& aTrack);
-    void NotifyTrackFail(Track& aTrack);
-private:
-    BwsStyle iStyle;
-    ITrackObserver& iObserver;
-};
-
 } // namespace Media
 } // namespace OpenHome
 

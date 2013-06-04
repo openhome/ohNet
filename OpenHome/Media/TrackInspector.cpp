@@ -129,26 +129,3 @@ Msg* TrackInspector::ProcessMsg(MsgQuit* aMsg)
 {
     return aMsg;
 }
-
-
-// TrackObserver
-
-TrackObserver::TrackObserver(const Brx& aStyle, ITrackObserver& aObserver)
-    : iStyle(aStyle)
-    , iObserver(aObserver)
-{
-}
-
-void TrackObserver::NotifyTrackPlay(Track& aTrack)
-{
-    if (aTrack.Style() == iStyle) {
-        iObserver.NotifyTrackPlay(aTrack);
-    }
-}
-
-void TrackObserver::NotifyTrackFail(Track& aTrack)
-{
-    if (aTrack.Style() == iStyle) {
-        iObserver.NotifyTrackFail(aTrack);
-    }
-}

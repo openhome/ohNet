@@ -15,12 +15,12 @@ class UriProviderSingleTrack : public UriProvider
 public:
     UriProviderSingleTrack(TrackFactory& aTrackFactory);
 private: // from UriProvider
-    void Begin(const Brx& aProviderId);
+    void Begin(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
-    TBool MoveCursorAfter(const Brx& aProviderId);
-    TBool MoveCursorBefore(const Brx& aProviderId);
+    TBool MoveCursorAfter(TUint aTrackId);
+    TBool MoveCursorBefore(TUint aTrackId);
 private:
-    TBool MoveCursor(const Brx& aProviderId);
+    TBool MoveCursor(TUint aTrackId);
 private:
     Mutex iLock;
     TrackFactory& iTrackFactory;

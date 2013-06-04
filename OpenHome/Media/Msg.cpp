@@ -1361,14 +1361,9 @@ const Brx& Track::MetaData() const
     return iMetaData;
 }
 
-const Brx& Track::Style() const
+TUint Track::Id() const
 {
-    return iStyle;
-}
-
-const Brx& Track::ProviderId() const
-{
-    return iProviderId;
+    return iId;
 }
 
 TAny* Track::UserData() const
@@ -1376,7 +1371,7 @@ TAny* Track::UserData() const
     return iUserData;
 }
 
-void Track::Initialise(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData)
+void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData)
 {
     iUri.ReplaceThrow(aUri);
     if (aMetaData.Bytes() > iMetaData.MaxBytes()) {
@@ -1385,8 +1380,7 @@ void Track::Initialise(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle,
     else {
         iMetaData.Replace(aMetaData);
     }
-    iStyle.ReplaceThrow(aStyle);
-    iProviderId.ReplaceThrow(aProviderId);
+    iId = aId;
     iUserData = aUserData;
 }
 
@@ -1395,8 +1389,7 @@ void Track::Clear()
 #ifdef DEFINE_DEBUG
     iUri.SetBytes(0);
     iMetaData.SetBytes(0);
-    iStyle.SetBytes(0);
-    iProviderId.SetBytes(0);
+    iId = UINT_MAX;
     iUserData = NULL;
 #endif // DEFINE_DEBUG
 }
@@ -1420,11 +1413,17 @@ TUint MsgTrack::IdPipeline() const
     return iIdPipeline;
 }
 
-void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline)
+const Brx& MsgTrack::Mode() const
+{
+    return iMode;
+}
+
+void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
 {
     iTrack = &aTrack;
     iTrack->AddRef();
     iIdPipeline = aIdPipeline;
+    iMode.Replace(aMode);
 }
 
 void MsgTrack::Clear()
@@ -1432,6 +1431,7 @@ void MsgTrack::Clear()
     iTrack->RemoveRef();
     iTrack = NULL;
     iIdPipeline = UINT_MAX;
+    iMode.Replace(Brx::Empty());
 }
 
 Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
@@ -2011,13 +2011,18 @@ AutoMsgRef::~AutoMsgRef()
 
 TrackFactory::TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount)
     : iAllocatorTrack("Track", aTrackCount, aInfoAggregator)
+    , iLock("TRKF")
+    , iNextId(1)
 {
 }
 
-Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData)
+Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData)
 {
     Track* track = iAllocatorTrack.Allocate();
-    track->Initialise(aUri, aMetaData, aStyle, aProviderId, aUserData);
+    iLock.Wait();
+    TUint id = iNextId++;
+    iLock.Signal();
+    track->Initialise(aUri, aMetaData, id, aUserData);
     return track;
 }
 
@@ -2078,10 +2083,10 @@ MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBit
     return msg;
 }
 
-MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline)
+MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
-    msg->Initialise(aTrack, aIdPipeline);
+    msg->Initialise(aTrack, aIdPipeline, aMode);
     return msg;
 }
 

@@ -17,10 +17,10 @@ UriProviderSingleTrack::UriProviderSingleTrack(TrackFactory& aTrackFactory)
 {
 }
 
-void UriProviderSingleTrack::Begin(const Brx& aProviderId)
+void UriProviderSingleTrack::Begin(TUint /*aTrackId*/)
 {
     iLock.Wait();
-    iUri.Replace(aProviderId);
+//    iUri.Replace(aProviderId);
     iIgnoreNext = false;
     iLock.Signal();
 }
@@ -32,27 +32,27 @@ EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
         aTrack = NULL;
         return ePlayNo;
     }
-    aTrack = iTrackFactory.CreateTrack(iUri, Brx::Empty(), Style(), iUri, NULL);
+    aTrack = iTrackFactory.CreateTrack(iUri, Brx::Empty(), NULL);
     iIgnoreNext = true;
     return ePlayYes;
 }
 
-TBool UriProviderSingleTrack::MoveCursorAfter(const Brx& aProviderId)
+TBool UriProviderSingleTrack::MoveCursorAfter(TUint aTrackId)
 {
-    return MoveCursor(aProviderId);
+    return MoveCursor(aTrackId);
 }
 
-TBool UriProviderSingleTrack::MoveCursorBefore(const Brx& aProviderId)
+TBool UriProviderSingleTrack::MoveCursorBefore(TUint aTrackId)
 {
-    return MoveCursor(aProviderId);
+    return MoveCursor(aTrackId);
 }
 
-TBool UriProviderSingleTrack::MoveCursor(const Brx& aProviderId)
+TBool UriProviderSingleTrack::MoveCursor(TUint /*aTrackId*/)
 {
     AutoMutex a(iLock);
-    if (iUri != aProviderId) {
+/*    if (iUri != aProviderId) {
         return false;
-    }
+    }*/
     iIgnoreNext = true;
     return true;
 }

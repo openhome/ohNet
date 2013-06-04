@@ -75,7 +75,7 @@ public:
     void Run(PresetDatabase& aDb);
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
@@ -155,7 +155,8 @@ void TestRadio::Run(PresetDatabase& aDb)
             TUint ignore;
             aDb.GetPreset(index, ignore, uri);
             iPipeline->Stop();
-            iPipeline->Begin(iUriProvider->Style(), uri);
+            // FIXME - requires update following updates to replace providerId with uint trackId
+            //iPipeline->Begin(iUriProvider->Mode(), uri);
             iPipeline->Play();
         }
         else {
@@ -199,18 +200,16 @@ void TestRadio::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestRadio::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void TestRadio::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aTrack.Uri());
     Log::Print("; metadata=");
     Log::Print(aTrack.MetaData());
-    Log::Print("; style=");
-    Log::Print(aTrack.Style());
-    Log::Print("; providerId=");
-    Log::Print(aTrack.ProviderId());
-    Log::Print("; idPipeline=%u}\n", aIdPipeline);
+    Log::Print("; mode=");
+    Log::Print(aMode);
+    Log::Print("; trackId=%u; idPipeline=%u}\n", aTrack.Id(), aIdPipeline);
 #endif
 }
 

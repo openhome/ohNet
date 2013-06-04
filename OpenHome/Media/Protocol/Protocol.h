@@ -25,7 +25,7 @@ enum ProtocolStreamResult
 class IUriStreamer
 {
 public:
-    virtual TBool DoStream(Track& aTrack) = 0;
+    virtual TBool DoStream(Track& aTrack, const Brx& aMode) = 0;
 };
 
 class IProtocolSet
@@ -138,7 +138,7 @@ public:
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
 public: // from IUriStreamer
-    TBool DoStream(Track& aTrack);
+    TBool DoStream(Track& aTrack, const Brx& aMode);
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;

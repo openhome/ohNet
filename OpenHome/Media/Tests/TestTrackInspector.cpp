@@ -4,7 +4,8 @@
 #include "AllocatorInfoLogger.h"
 #include "SuiteUnitTest.h"
 #include <OpenHome/Functor.h>
-#include <OpenHome/Private/Ascii.h>
+
+#include <vector>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -60,43 +61,9 @@ private:
     EMsgType iNextGeneratedMsg;
     TUint iNextTrackId;
     TBool iLiveStream;
+    std::vector<TUint> iTrackIds;
 };
 
-class SuiteTrackObserver : public Suite, private ITrackObserver, private IPipelineElementUpstream
-{
-public:
-    SuiteTrackObserver();
-    ~SuiteTrackObserver();
-private: // from Suite
-    void Test();
-private: // from ITrackObserver
-    void NotifyTrackPlay(Track& aTrack);
-    void NotifyTrackFail(Track& aTrack);
-private: // from IPipelineElementUpstream
-    Msg* Pull();
-private:
-    enum EMsgType
-    {
-        ENone
-       ,EMsgDecodedStream
-       ,EMsgTrack
-    };
-private:
-    void Pull(EMsgType aGenerateType);
-private:
-    MsgFactory* iMsgFactory;
-    TrackFactory* iTrackFactory;
-    AllocatorInfoLogger iInfoAggregator;
-    TrackInspector* iTrackInspector;
-    TUint iPlayCount;
-    TUint iFailCount;
-    EMsgType iNextGeneratedMsg;
-    TUint iNextTrackId;
-    BwsStyle iTargetStyle;
-    BwsStyle iNextTrackStyle;
-    TrackObserver* iFilteringObserver;
-};
-    
 } // namespace Media
 } // namespace OpenHome
 
@@ -130,6 +97,7 @@ void SuiteTrackInspector::Setup()
     iLastNotifiedTrack = NULL;
     iNextTrackId = 0;
     iLiveStream = false;
+    iTrackIds.clear();
 }
 
 void SuiteTrackInspector::TearDown()
@@ -240,7 +208,7 @@ void SuiteTrackInspector::TrackTrackReportsFail()
     TEST(iPlayCount == 0);
     TEST(iFailCount == 1);
     // confirm that first track is the one that failed
-    TEST(Ascii::Uint(iLastNotifiedTrack->ProviderId()) == 0);
+    TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
 }
 
 void SuiteTrackInspector::TrackHaltTrackReportsFail()
@@ -254,7 +222,7 @@ void SuiteTrackInspector::TrackHaltTrackReportsFail()
     Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 1);
-    TEST(Ascii::Uint(iLastNotifiedTrack->ProviderId()) == 0);
+    TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
 }
 
 void SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay()
@@ -265,14 +233,14 @@ void SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay()
     Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 1);
-    TEST(Ascii::Uint(iLastNotifiedTrack->ProviderId()) == 0);
+    TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
     Pull(EMsgDecodedStream);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 1);
     Pull(EMsgAudioPcm);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 1);
-    TEST(Ascii::Uint(iLastNotifiedTrack->ProviderId()) == 1);
+    TEST(iLastNotifiedTrack->Id() == iTrackIds[1]);
 }
 
 void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackTrackReportsFail()
@@ -290,7 +258,7 @@ void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackTrackReportsFail()
     Pull(EMsgTrack);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 1);
-    TEST(Ascii::Uint(iLastNotifiedTrack->ProviderId()) == 1);
+    TEST(iLastNotifiedTrack->Id() == iTrackIds[1]);
 }
 
 void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing()
@@ -372,10 +340,9 @@ Msg* SuiteTrackInspector::Pull()
     }
     case EMsgTrack:
     {
-        Bws<Ascii::kMaxUintStringBytes> providerId;
-        Ascii::AppendDec(providerId, iNextTrackId);
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), providerId, NULL);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId, Brx::Empty());
+        iTrackIds.push_back(track->Id());
         track->RemoveRef();
         iNextTrackId++;
         return msg;
@@ -391,92 +358,10 @@ Msg* SuiteTrackInspector::Pull()
 }
 
 
-// SuiteTrackObserver
-
-SuiteTrackObserver::SuiteTrackObserver()
-    : Suite("Track observer")
-    , iTargetStyle("TargetStyle")
-{
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iTrackInspector = new TrackInspector(*this);
-    iFilteringObserver = new TrackObserver(iTargetStyle, *this);
-    iTrackInspector->AddObserver(*iFilteringObserver);
-    iPlayCount = 0;
-    iFailCount = 0;
-    iNextTrackId = 0;
-}
-
-SuiteTrackObserver::~SuiteTrackObserver()
-{
-    delete iTrackInspector;
-    delete iFilteringObserver;
-    delete iMsgFactory;
-    delete iTrackFactory;
-}
-
-void SuiteTrackObserver::Test()
-{
-    iNextTrackStyle.Replace(Brn("DummyStyle"));
-    Pull(EMsgTrack);
-    TEST(iPlayCount == 0);
-    TEST(iFailCount == 0);
-    Pull(EMsgDecodedStream);
-    TEST(iPlayCount == 0);
-    TEST(iFailCount == 0);
-
-    iNextTrackStyle.Replace(iTargetStyle);
-    Pull(EMsgTrack);
-    TEST(iPlayCount == 0);
-    TEST(iFailCount == 0);
-    Pull(EMsgDecodedStream);
-    TEST(iPlayCount == 1);
-    TEST(iFailCount == 0);
-}
-
-void SuiteTrackObserver::NotifyTrackPlay(Track& /*aTrack*/)
-{
-    iPlayCount++;
-}
-
-void SuiteTrackObserver::NotifyTrackFail(Track& /*aTrack*/)
-{
-    iFailCount++;
-}
-
-Msg* SuiteTrackObserver::Pull()
-{
-    switch (iNextGeneratedMsg)
-    {
-    case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 100, 24, 44100, 2, Brn("Dummy codec"), Jiffies::kJiffiesPerSecond * 60, 0, true, false, true);
-    case EMsgTrack:
-    {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), iNextTrackStyle, Brx::Empty(), NULL);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
-        track->RemoveRef();
-        iNextTrackId++;
-        return msg;
-    }
-    default:
-        ASSERTS();
-        return NULL;
-    }
-}
-
-void SuiteTrackObserver::Pull(EMsgType aGenerateType)
-{
-    iNextGeneratedMsg = aGenerateType;
-    Msg* msg = iTrackInspector->Pull();
-    msg->RemoveRef();
-}
-
-
 
 void TestTrackInspector()
 {
     Runner runner("TrackInspector tests\n");
     runner.Add(new SuiteTrackInspector());
-    runner.Add(new SuiteTrackObserver());
     runner.Run();
 }

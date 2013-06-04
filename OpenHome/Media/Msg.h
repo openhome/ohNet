@@ -439,13 +439,11 @@ private:
     DecodedStreamInfo iStreamInfo;
 };
 
-static const TUint kStyleMaxBytes         = 32;
-static const TUint kProviderMaxBytes      = 1024;
+static const TUint kModeMaxBytes          = 32;
 static const TUint kTrackUriMaxBytes      = 1024;
 static const TUint kTrackMetaDataMaxBytes = 5 * 1024;
 
-typedef Bws<kStyleMaxBytes>         BwsStyle;
-typedef Bws<kProviderMaxBytes>      BwsProviderId;
+typedef Bws<kModeMaxBytes>          BwsMode;
 typedef Bws<kTrackUriMaxBytes>      BwsTrackUri;
 typedef Bws<kTrackMetaDataMaxBytes> BwsTrackMetaData;
 
@@ -456,18 +454,16 @@ public:
     Track(AllocatorBase& aAllocator);
     const Brx& Uri() const;
     const Brx& MetaData() const;
-    const Brx& Style() const;
-    const Brx& ProviderId() const;
+    TUint Id() const;
     TAny* UserData() const;
 private:
-    void Initialise(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData);
+    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData);
 private: // from Allocated
     void Clear();
 private:
     BwsTrackUri iUri;
     BwsTrackMetaData iMetaData;
-    BwsStyle iStyle;
-    BwsProviderId iProviderId;
+    TUint iId;
     TAny* iUserData;
 };
 
@@ -480,14 +476,16 @@ public:
     MsgTrack(AllocatorBase& aAllocator);
     Media::Track& Track() const;
     TUint IdPipeline() const;
+    const Brx& Mode() const;
 private:
-    void Initialise(Media::Track& aTrack, TUint aIdPipeline);
+    void Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Media::Track* iTrack;
     TUint iIdPipeline;
+    BwsMode iMode;
 };
 
 class MsgEncodedStream : public Msg
@@ -745,7 +743,7 @@ class ISupply
 {
 public:
     virtual ~ISupply() {}
-    virtual void OutputTrack(Track& Track, TUint aTrackId) = 0;
+    virtual void OutputTrack(Track& Track, TUint aTrackId, const Brx& aMode) = 0;
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
@@ -774,8 +772,8 @@ public:
     virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
-    virtual void InvalidateAt(const Brx& aStyle, const Brx& aProviderId) = 0;
-    virtual void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId) = 0;
+    virtual void InvalidateAt(TUint aId) = 0;
+    virtual void InvalidateAfter(TUint aId) = 0;
     virtual void InvalidateAll() = 0;
 };
 
@@ -783,7 +781,7 @@ class IPipelineIdTracker
 {
 public:
     virtual ~IPipelineIdTracker() {}
-    virtual void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow) = 0;
+    virtual void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow) = 0;
 };
 
 class IStreamHandler
@@ -820,9 +818,11 @@ class TrackFactory
 {
 public:
     TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount);
-    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, const Brx& aStyle, const Brx& aProviderId, TAny* aUserData);
+    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData);
 private:
     Allocator<Track> iAllocatorTrack;
+    Mutex iLock;
+    TUint iNextId;
 };
 
 class MsgFactory
@@ -839,7 +839,7 @@ public:
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
-    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
+    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt();

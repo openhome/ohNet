@@ -65,7 +65,7 @@ private:
     void PullUntilQuit();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -164,8 +164,8 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-    iSupply.OutputTrack(*track, 1);
+    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+    iSupply.OutputTrack(*track, 1, Brx::Empty());
     track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
     for (;;) {
@@ -430,15 +430,15 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void SuitePipeline::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Print("Pipeline report property: TRACK {uri=");
     Print(aTrack.Uri());
     Print("; metadata=");
     Print(aTrack.MetaData());
-    Print("; style=");
-    Print(aTrack.Style());
+    Print("; mode=");
+    Print(aMode);
     Print("; providerId=");
     Print(aTrack.ProviderId());
     Print("; idPipeline=%u}\n", aIdPipeline);

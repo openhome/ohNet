@@ -76,8 +76,8 @@ void DummyFiller::Start(const Brx& aUrl)
 
 void DummyFiller::Run()
 {
-    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-    iProtocolManager->DoStream(*track);
+    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), NULL);
+    iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
 }
 
@@ -96,12 +96,12 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayYes;
 }
 
-void DummyFiller::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+void DummyFiller::InvalidateAt(TUint /*aId*/)
 {
     ASSERTS();
 }
 
-void DummyFiller::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+void DummyFiller::InvalidateAfter(TUint /*aId*/)
 {
     ASSERTS();
 }
@@ -280,11 +280,13 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void TestProtocol::NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aUri);
+    Log::Print("; mode=");
+    Log::Print(aMode);
     Log::Print("; idPipeline=%u}\n", aIdPipeline);
 #endif
 }

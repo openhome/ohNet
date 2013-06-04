@@ -116,10 +116,8 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
         Log::Print(aMsg->Track().Uri());
         Log::Print(", metaData: ");
         Log::Print(aMsg->Track().MetaData());
-        Log::Print(", style: ");
-        Log::Print(aMsg->Track().Style());
-        Log::Print(", providerId: ");
-        Log::Print(aMsg->Track().ProviderId());
+        Log::Print(", id: %u, mode: ", aMsg->Track().Id());
+        Log::Print(aMsg->Mode());
         Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());
     }
     return aMsg;

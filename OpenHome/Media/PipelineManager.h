@@ -35,18 +35,18 @@ public:
     void Add(UriProvider* aUriProvider);
     void Start(); // should be called after all Add()s
     void AddObserver(IPipelineObserver& aObserver);
-    void Begin(const Brx& aStyle, const Brx& aProviderId);
+    void Begin(const Brx& aMode, TUint aPipelineTrackId);
     void Play();
     void Pause();
     void Stop();
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool Seek(TUint aPipelineTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void Next();
     void Prev();
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -58,8 +58,8 @@ private:
     PipelineIdProvider* iIdProvider;
     std::vector<UriProvider*> iUriProviders; // FIXME - should PipelineManager own all UriProviders?
     std::vector<IPipelineObserver*> iObservers;
-    BwsStyle iStyle;
-    BwsTrackUri iProviderId; // some sources may mis-use ProviderId by passing a uri here
+    BwsMode iMode;
+    TUint iPipelineTrackId;
 };
 
 } // namespace Media

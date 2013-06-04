@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <limits.h>
 #include <vector>
 #include <algorithm>
 
@@ -22,14 +23,14 @@ public:
     DummyUriProvider();
     ~DummyUriProvider();
     const Brx& TrackUriByIndex(TUint aIndex) const;
-    const Brx& ProviderIdByIndex(TUint aIndex) const;
+    TUint IdByIndex(TUint aIndex) const;
 private: // from UriProvider
-    void Begin(const Brx& aProviderId);
+    void Begin(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
-    TBool MoveCursorAfter(const Brx& aProviderId);
-    TBool MoveCursorBefore(const Brx& aProviderId);
+    TBool MoveCursorAfter(TUint aTrackId);
+    TBool MoveCursorBefore(TUint aTrackId);
 private:
-    TInt Index(const Brx& aProviderId) const;
+    TInt Index(TUint aTrackId) const;
 private:
     static const TInt kNumEntries = 3;
     TrackFactory* iTrackFactory;
@@ -46,7 +47,7 @@ public:
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer
-    TBool DoStream(Track& aTrack);
+    TBool DoStream(Track& aTrack, const Brx& aMode);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -55,7 +56,7 @@ private:
     ISupply& iSupply;
     Semaphore& iTrackAddedSem;
     Semaphore& iTrackCompleteSem;
-    TUint iTrackId;
+    TUint iPipelineTrackId;
     TUint iStreamId;
 };
 
@@ -68,7 +69,7 @@ public:
     TUint LastTrackId() const;
     TUint LastStreamId() const;
 private: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -88,7 +89,7 @@ public:
 private: // from Suite
     void Test();
 private: // from IPipelineIdTracker
-    void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
+    void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow);
 private:
     Semaphore iTrackAddedSem;
     Semaphore iTrackCompleteSem;
@@ -96,9 +97,8 @@ private:
     DummyUriProvider* iUriProvider;
     DummyUriStreamer* iUriStreamer;
     DummySupply* iDummySupply;
-    BwsStyle iStyle;
-    BwsProviderId iProviderId;
     TUint iTrackId;
+    TUint iPipelineTrackId;
     TUint iStreamId;
     TBool iPlayNow;
 };
@@ -116,9 +116,9 @@ DummyUriProvider::DummyUriProvider()
     , iIndex(-1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), Style(), Brn("1"), 0);
-    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), Style(), Brn("2"), 0);
-    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), Style(), Brn("3"), 0);
+    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL);
+    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL);
+    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL);
 }
 
 DummyUriProvider::~DummyUriProvider()
@@ -134,15 +134,15 @@ const Brx& DummyUriProvider::TrackUriByIndex(TUint aIndex) const
     return iTracks[aIndex]->Uri();
 }
 
-const Brx& DummyUriProvider::ProviderIdByIndex(TUint aIndex) const
+TUint DummyUriProvider::IdByIndex(TUint aIndex) const
 {
-    return iTracks[aIndex]->ProviderId();
+    return iTracks[aIndex]->Id();
 }
 
-void DummyUriProvider::Begin(const Brx& aProviderId)
+void DummyUriProvider::Begin(TUint aTrackId)
 {
     TInt index = 0;
-    while (index < kNumEntries && iTracks[index]->ProviderId() != aProviderId) {
+    while (index < kNumEntries && iTracks[index]->Id() != aTrackId) {
         index++;
     }
     if (index == kNumEntries) {
@@ -162,9 +162,9 @@ EStreamPlay DummyUriProvider::GetNext(Track*& aTrack)
     return (!firstCall && iIndex == 0? ePlayLater : ePlayYes);
 }
 
-TBool DummyUriProvider::MoveCursorAfter(const Brx& aProviderId)
+TBool DummyUriProvider::MoveCursorAfter(TUint aTrackId)
 {
-    const TInt index = Index(aProviderId);
+    const TInt index = Index(aTrackId);
     if (index == -1) {
         return false;
     }
@@ -172,9 +172,9 @@ TBool DummyUriProvider::MoveCursorAfter(const Brx& aProviderId)
     return true;
 }
 
-TBool DummyUriProvider::MoveCursorBefore(const Brx& aProviderId)
+TBool DummyUriProvider::MoveCursorBefore(TUint aTrackId)
 {
-    const TInt index = Index(aProviderId);
+    const TInt index = Index(aTrackId);
     if (index == -1) {
         return false;
     }
@@ -182,11 +182,11 @@ TBool DummyUriProvider::MoveCursorBefore(const Brx& aProviderId)
     return true;
 }
 
-TInt DummyUriProvider::Index(const Brx& aProviderId) const
+TInt DummyUriProvider::Index(TUint aTrackId) const
 {
     TInt index = 0;
     while (index < kNumEntries) {
-        if (iTracks[index]->ProviderId() == aProviderId) {
+        if (iTracks[index]->Id() == aTrackId) {
             return index;
         }
         index++;
@@ -201,7 +201,7 @@ DummyUriStreamer::DummyUriStreamer(ISupply& aSupply, Semaphore& aTrackAddedSem, 
     : iSupply(aSupply)
     , iTrackAddedSem(aTrackAddedSem)
     , iTrackCompleteSem(aTrackCompleteSem)
-    , iTrackId(0)
+    , iPipelineTrackId(0)
     , iStreamId(0)
 {
 }
@@ -213,7 +213,7 @@ DummyUriStreamer::~DummyUriStreamer()
 
 TUint DummyUriStreamer::TrackId() const
 {
-    return iTrackId;
+    return iPipelineTrackId;
 }
 
 TUint DummyUriStreamer::StreamId() const
@@ -221,11 +221,11 @@ TUint DummyUriStreamer::StreamId() const
     return iStreamId;
 }
 
-TBool DummyUriStreamer::DoStream(Track& aTrack)
+TBool DummyUriStreamer::DoStream(Track& aTrack, const Brx& aMode)
 {
-    iTrackId++;
+    iPipelineTrackId++;
     iStreamId++;
-    iSupply.OutputTrack(aTrack, iTrackId);
+    iSupply.OutputTrack(aTrack, iPipelineTrackId, aMode);
     iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
@@ -276,7 +276,7 @@ TUint DummySupply::LastStreamId() const
     return iLastStreamId;
 }
 
-void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId)
+void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& /*aMode*/)
 {
     iLastTrackUri.Replace(aTrack.Uri());
     iLastTrackId = aTrackId;
@@ -332,26 +332,25 @@ SuiteFiller::~SuiteFiller()
 
 void SuiteFiller::Test()
 {
-    // Play for invalid style should throw
-    TEST_THROWS(iFiller->Play(Brn("NotARealStyle"), Brn("1")), FillerInvalidStyle);
+    // Play for invalid mode should throw
+    TEST_THROWS(iFiller->Play(Brn("NotARealMode"), 1), FillerInvalidMode);
 
-    // Play for valid style but invalid providerId should throw
-    TEST_THROWS(iFiller->Play(iUriProvider->Style(), Brn("NoARealProviderId")), UriProviderInvalidId);
+    // Play for valid mode but invalid trackId should throw
+    TEST_THROWS(iFiller->Play(iUriProvider->Mode(), UINT_MAX), UriProviderInvalidId);
 
-    // Play for valid style/providerId should succeed and Begin should be called
+    // Play for valid mode/trackId should succeed and Begin should be called
     // IUriStreamer should be passed uri for first track
-    iFiller->Play(iUriProvider->Style(), iUriProvider->ProviderIdByIndex(0));
+    iFiller->Play(iUriProvider->Mode(), iUriProvider->IdByIndex(0));
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(0));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iStyle == iUriProvider->Style());
-    TEST(iProviderId == iUriProvider->ProviderIdByIndex(0));
-    TEST(iTrackId == iDummySupply->LastTrackId());
+    TEST(iTrackId == iUriProvider->IdByIndex(0));
+    TEST(iPipelineTrackId == iDummySupply->LastTrackId());
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
+    TUint pipelineTrackId = iPipelineTrackId;
     TUint trackId = iTrackId;
-    BwsProviderId providerId(iProviderId);
 
     // When first track completes, IUriStreamer should be passed uri for second track
     iTrackCompleteSem.Signal();
@@ -359,55 +358,52 @@ void SuiteFiller::Test()
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(1));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iStyle == iUriProvider->Style());
-    TEST(iProviderId == iUriProvider->ProviderIdByIndex(1));
-    TEST(iProviderId != providerId);
-    TEST(iTrackId == iDummySupply->LastTrackId());
+    TEST(iTrackId == iUriProvider->IdByIndex(1));
     TEST(iTrackId != trackId);
+    TEST(iPipelineTrackId == iDummySupply->LastTrackId());
+    TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
+    pipelineTrackId = iPipelineTrackId;
     trackId = iTrackId;
-    providerId.Replace(iProviderId);
 
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track
     iFiller->Stop();
     iTrackCompleteSem.Signal();
     // tests for invalid Next() args
-    TEST(!iFiller->Next(Brn("InvalidStyle"), Brn("2")));
-    TEST(!iFiller->Next(iUriProvider->Style(), Brn("99")));
+    TEST(!iFiller->Next(Brn("InvalidMode"), 2));
+    TEST(!iFiller->Next(iUriProvider->Mode(), 99));
     //
-    TEST(iFiller->Next(iUriProvider->Style(), Brn("2")));
+    TEST(iFiller->Next(iUriProvider->Mode(), 2));
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(2));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iStyle == iUriProvider->Style());
-    TEST(iProviderId == iUriProvider->ProviderIdByIndex(2));
-    TEST(iProviderId != providerId);
-    TEST(iTrackId == iDummySupply->LastTrackId());
+    TEST(iTrackId == iUriProvider->IdByIndex(2));
     TEST(iTrackId != trackId);
+    TEST(iPipelineTrackId == iDummySupply->LastTrackId());
+    TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
+    pipelineTrackId = iPipelineTrackId;
     trackId = iTrackId;
-    providerId.Replace(iProviderId);
 
     // Stop/Prev during third track.  Once track completes IUriStreamer should be passed uri for second track
     iFiller->Stop();
     iTrackCompleteSem.Signal();
-    TEST(iFiller->Prev(iUriProvider->Style(), Brn("3")));
+    TEST(iFiller->Prev(iUriProvider->Mode(), 3));
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(1));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iStyle == iUriProvider->Style());
-    TEST(iProviderId == iUriProvider->ProviderIdByIndex(1));
-    TEST(iProviderId != providerId);
-    TEST(iTrackId == iDummySupply->LastTrackId());
+    TEST(iTrackId == iUriProvider->IdByIndex(1));
     TEST(iTrackId != trackId);
+    TEST(iPipelineTrackId == iDummySupply->LastTrackId());
+    TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
+    pipelineTrackId = iPipelineTrackId;
     trackId = iTrackId;
-    providerId.Replace(iProviderId);
 
     // Once track completes, IUriStreamer should (again) be passed uri for third track
     iTrackCompleteSem.Signal();
@@ -415,35 +411,32 @@ void SuiteFiller::Test()
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(2));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iStyle == iUriProvider->Style());
-    TEST(iProviderId == iUriProvider->ProviderIdByIndex(2));
-    TEST(iProviderId != providerId);
-    TEST(iTrackId == iDummySupply->LastTrackId());
+    TEST(iTrackId == iUriProvider->IdByIndex(2));
     TEST(iTrackId != trackId);
+    TEST(iPipelineTrackId == iDummySupply->LastTrackId());
+    TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
+    pipelineTrackId = iPipelineTrackId;
     trackId = iTrackId;
-    providerId.Replace(iProviderId);
 
     // Once track completes, dummy UriProvider will return first track to be played later.  IUriStreamer should not be passed anything
     iTrackCompleteSem.Signal();
     iTrackAddedSem.Wait();
-    TEST(iStyle == iUriProvider->Style());
-    TEST(iProviderId == iUriProvider->ProviderIdByIndex(0));
-    TEST(iProviderId != providerId);
-    TEST(iTrackId == iDummySupply->LastTrackId());
+    TEST(iTrackId == iUriProvider->IdByIndex(0));
     TEST(iTrackId != trackId);
+    TEST(iPipelineTrackId == iDummySupply->LastTrackId());
+    TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(!iPlayNow);
     iFiller->Stop();
     iTrackCompleteSem.Signal();
 }
 
-void SuiteFiller::AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow)
+void SuiteFiller::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
 {
-    iStyle.Replace(aStyle);
-    iProviderId.Replace(aProviderId);
-    iTrackId = aTrackId;
+    iTrackId = aId;
+    iPipelineTrackId = aPipelineTrackId;
     iStreamId = aStreamId;
     iPlayNow = aPlayNow;
 }

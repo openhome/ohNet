@@ -370,7 +370,7 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
     iLock.Signal();
 }
 
-void ProviderAvTransport::NotifyTrack(Track& aTrack, TUint /*aIdPipeline*/)
+void ProviderAvTransport::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
     iLock.Wait();
     iCurrentTrackUri.Replace(aTrack.Uri());

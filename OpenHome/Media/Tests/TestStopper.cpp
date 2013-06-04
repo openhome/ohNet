@@ -52,7 +52,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -347,8 +347,8 @@ Msg* SuiteStopper::Pull()
         return iMsgFactory->CreateMsgDecodedStream(iStreamId, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), NULL);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iTrackId);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iTrackId, Brx::Empty());
         track->RemoveRef();
         return msg;
     }
@@ -510,7 +510,7 @@ Msg* SuiteStopper::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-void SuiteStopper::OutputTrack(Track& /*aTrack*/, TUint /*aTrackId*/)
+void SuiteStopper::OutputTrack(Track& /*aTrack*/, TUint /*aTrackId*/, const Brx& /*aMode*/)
 {
     ASSERTS();
 }

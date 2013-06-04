@@ -34,7 +34,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -245,8 +245,8 @@ Msg* SuiteReporter::Pull()
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
+        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty(), NULL);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId, Brx::Empty());
         track->RemoveRef();
         return msg;
     }
@@ -275,7 +275,7 @@ MsgAudio* SuiteReporter::CreateAudio()
     return audio;
 }
 
-void SuiteReporter::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void SuiteReporter::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
 {
     iTrackUpdates++;
     iTrackUri.Replace(aTrack.Uri());

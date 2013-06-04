@@ -261,9 +261,9 @@ TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
     return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
-void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId)
+void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
-    iSupply->OutputTrack(aTrack, aTrackId);
+    iSupply->OutputTrack(aTrack, aTrackId, aMode);
 }
 
 void Pipeline::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
@@ -364,9 +364,9 @@ void Pipeline::PipelineFlushed()
     }
 }
 
-void Pipeline::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
-    iObserver.NotifyTrack(aTrack, aIdPipeline);
+    iObserver.NotifyTrack(aTrack, aMode, aIdPipeline);
 }
 
 void Pipeline::NotifyMetaText(const Brx& aText)
@@ -402,7 +402,7 @@ void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void NullPipelineObserver::NotifyTrack(const Brx& /*aUri*/, TUint /*aIdPipeline*/)
+void NullPipelineObserver::NotifyTrack(const Brx& /*aUri*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
 }
 
@@ -445,10 +445,12 @@ void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
     Log::Print("Pipeline state change: %s\n", state);
 }
 
-void LoggingPipelineObserver::NotifyTrack(const Brx& aUri, TUint aIdPipeline)
+void LoggingPipelineObserver::NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline)
 {
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aUri);
+    Log::Print("; mode=");
+    Log::Print(aMode);
     Log::Print("; idPipeline=%u}\n", aIdPipeline);
 }
 

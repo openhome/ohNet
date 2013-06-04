@@ -9,7 +9,7 @@
 
 #include <vector>
 
-EXCEPTION(FillerInvalidStyle);
+EXCEPTION(FillerInvalidMode);
 EXCEPTION(UriProviderInvalidId);
 
 namespace OpenHome {
@@ -19,15 +19,15 @@ class UriProvider
 {
 public:
     virtual ~UriProvider();
-    const Brx& Style() const;
-    virtual void Begin(const Brx& aProviderId) = 0;
+    const Brx& Mode() const;
+    virtual void Begin(TUint aTrackId) = 0;
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
-    virtual TBool MoveCursorAfter(const Brx& aProviderId) = 0;
-    virtual TBool MoveCursorBefore(const Brx& aProviderId) = 0;
+    virtual TBool MoveCursorAfter(TUint aTrackId) = 0;
+    virtual TBool MoveCursorBefore(TUint aTrackId) = 0;
 protected:
-    UriProvider(const TChar* aStyle);
+    UriProvider(const TChar* aMode);
 private:
-    BwsStyle iStyle;
+    BwsMode iMode;
 };
 
 class Filler : private Thread, public ISupply
@@ -37,14 +37,14 @@ public:
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
-    void Play(const Brx& aStyle, const Brx& aProviderId);
+    void Play(const Brx& aMode, TUint aTrackId);
     void Stop();
-    TBool Next(const Brx& aStyle, const Brx& aProviderId);
-    TBool Prev(const Brx& aStyle, const Brx& aProviderId);
+    TBool Next(const Brx& aMode, TUint aTrackId);
+    TBool Prev(const Brx& aMode, TUint aTrackId);
 private: // from Thread
     void Run();
 private: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);

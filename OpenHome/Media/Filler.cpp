@@ -11,13 +11,13 @@ using namespace OpenHome::Media;
 
 // UriProvider
 
-const Brx& UriProvider::Style() const
+const Brx& UriProvider::Mode() const
 {
-    return iStyle;
+    return iMode;
 }
 
-UriProvider::UriProvider(const TChar* aStyle)
-    : iStyle(aStyle)
+UriProvider::UriProvider(const TChar* aMode)
+    : iMode(aMode)
 {
 }
 
@@ -61,22 +61,22 @@ void Filler::Start(IUriStreamer& aUriStreamer)
     Thread::Start();
 }
 
-void Filler::Play(const Brx& aStyle, const Brx& aProviderId)
+void Filler::Play(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex a(iLock);
     iActiveUriProvider = NULL;
     for (TUint i=0; i<iUriProviders.size(); i++) {
         UriProvider* uriProvider = iUriProviders[i];
-        if (uriProvider->Style() == aStyle) {
+        if (uriProvider->Mode() == aMode) {
             iActiveUriProvider = uriProvider;
             break;
         }
     }
     if (iActiveUriProvider == NULL) {
         iStopped = true;
-        THROW(FillerInvalidStyle);
+        THROW(FillerInvalidMode);
     }
-    iActiveUriProvider->Begin(aProviderId);
+    iActiveUriProvider->Begin(aTrackId);
     iStopped = false;
     Signal();
 }
@@ -89,12 +89,12 @@ void Filler::Stop()
     iLock.Signal();
 }
 
-TBool Filler::Next(const Brx& aStyle, const Brx& aProviderId)
+TBool Filler::Next(const Brx& aMode, TUint aTrackId)
 {
     TBool ret = false;
     iLock.Wait();
-    if (iActiveUriProvider != NULL && iActiveUriProvider->Style() == aStyle) {
-        ret = iActiveUriProvider->MoveCursorAfter(aProviderId);
+    if (iActiveUriProvider != NULL && iActiveUriProvider->Mode() == aMode) {
+        ret = iActiveUriProvider->MoveCursorAfter(aTrackId);
         iStopped = false;
         Signal();
     }
@@ -102,12 +102,12 @@ TBool Filler::Next(const Brx& aStyle, const Brx& aProviderId)
     return ret;
 }
 
-TBool Filler::Prev(const Brx& aStyle, const Brx& aProviderId)
+TBool Filler::Prev(const Brx& aMode, TUint aTrackId)
 {
     TBool ret = false;
     iLock.Wait();
-    if (iActiveUriProvider != NULL && iActiveUriProvider->Style() == aStyle) {
-        ret = iActiveUriProvider->MoveCursorBefore(aProviderId);
+    if (iActiveUriProvider != NULL && iActiveUriProvider->Mode() == aMode) {
+        ret = iActiveUriProvider->MoveCursorBefore(aTrackId);
         iStopped = false;
         Signal();
     }
@@ -117,6 +117,7 @@ TBool Filler::Prev(const Brx& aStyle, const Brx& aProviderId)
 
 void Filler::Run()
 {
+    BwsMode mode;
     while (!iQuit) {
         for (;;) {
             iLock.Wait();
@@ -137,26 +138,27 @@ void Filler::Run()
             iTrack = NULL;
         }
         iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
+        mode.Replace(iActiveUriProvider->Mode());
         iLock.Signal();
         if (iTrackPlayStatus == ePlayNo) {
             // FIXME - iSupply.OutputHalt ??
             iStopped = true;
         }
         else {
-            (void)iUriStreamer->DoStream(*iTrack);
+            (void)iUriStreamer->DoStream(*iTrack, mode);
         }
     }
 }
 
-void Filler::OutputTrack(Track& aTrack, TUint aTrackId)
+void Filler::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
     iTrackId = aTrackId;
-    iSupply.OutputTrack(aTrack, aTrackId);
+    iSupply.OutputTrack(aTrack, aTrackId, aMode);
 }
 
 void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
-    iPipelineIdTracker.AddStream(iTrack->Style(), iTrack->ProviderId(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
+    iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
     iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
 }
 

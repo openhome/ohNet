@@ -28,8 +28,8 @@ private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
-    void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAt(TUint aId);
+    void InvalidateAfter(TUint aId);
     void InvalidateAll();
 private:
     ProtocolManager* iProtocolManager;
@@ -52,7 +52,7 @@ public:
     TUint GetMaxDriverJiffies() const;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

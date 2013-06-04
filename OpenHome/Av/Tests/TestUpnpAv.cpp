@@ -73,7 +73,7 @@ public:
     ~DummySourceUpnpAv();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -177,12 +177,12 @@ void DummySourceUpnpAv::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void DummySourceUpnpAv::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void DummySourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
     iTrackId = aIdPipeline;
     iStreamId = UINT_MAX;
     if (iActive) {
-        iDownstreamObserver->NotifyTrack(aTrack, aIdPipeline);
+        iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
     }
 }
 
@@ -208,11 +208,12 @@ void DummySourceUpnpAv::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     }
 }
 
-void DummySourceUpnpAv::SetTrack(const Brx& aUri, const Brx& /*aMetaData*/)
+void DummySourceUpnpAv::SetTrack(const Brx& /*aUri*/, const Brx& /*aMetaData*/)
 {
     iPipeline.Stop();
+    // FIXME - requires update following updates to replace providerId with uint trackId
     // FIXME - aMetaData not being passed onto iUriProvider
-    iPipeline.Begin(iUriProvider.Style(), aUri);
+    //iPipeline.Begin(iUriProvider.Mode(), aUri);
 }
 
 void DummySourceUpnpAv::Play()

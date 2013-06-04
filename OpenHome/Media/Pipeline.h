@@ -60,7 +60,7 @@ public:
     void Stop();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 public: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -79,7 +79,7 @@ private: // from IStopperObserver
     void PipelineHalted();
     void PipelineFlushed();
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -138,7 +138,7 @@ class NullPipelineObserver : public IPipelineObserver // test helper
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -148,7 +148,7 @@ class LoggingPipelineObserver : public IPipelineObserver // test helper
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, TUint aIdPipeline);
+    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

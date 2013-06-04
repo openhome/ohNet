@@ -20,9 +20,9 @@ Supply::~Supply()
 {
 }
 
-void Supply::OutputTrack(Track& aTrack, TUint aTrackId)
+void Supply::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
-    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId, aMode);
     iDownStreamElement.Push(msg);
 }
 

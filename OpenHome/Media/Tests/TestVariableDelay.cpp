@@ -219,8 +219,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
         track->RemoveRef();
         return msg;
     }

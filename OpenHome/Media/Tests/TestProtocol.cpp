@@ -74,8 +74,8 @@ private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
-    void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAt(TUint aId);
+    void InvalidateAfter(TUint aId);
     void InvalidateAll();
 private:
     ProtocolManager* iProtocolManager;
@@ -96,7 +96,7 @@ public:
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -147,8 +147,8 @@ void DummyFiller::Start(const Brx& aUrl)
 
 void DummyFiller::Run()
 {
-    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-    iProtocolManager->DoStream(*track);
+    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), NULL);
+    iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
 }
 
@@ -167,12 +167,12 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayYes;
 }
 
-void DummyFiller::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+void DummyFiller::InvalidateAt(TUint /*aId*/)
 {
     ASSERTS();
 }
 
-void DummyFiller::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+void DummyFiller::InvalidateAfter(TUint /*aId*/)
 {
     ASSERTS();
 }
@@ -308,18 +308,16 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aTrack.Uri());
     Log::Print("; metadata=");
     Log::Print(aTrack.MetaData());
-    Log::Print("; style=");
-    Log::Print(aTrack.Style());
-    Log::Print("; providerId=");
-    Log::Print(aTrack.ProviderId());
-    Log::Print("; idPipeline=%u}\n", aIdPipeline);
+    Log::Print("; mode=");
+    Log::Print(aMode);
+    Log::Print("; trackId=%u; idPipeline=%u}\n", aTrack.Id(), aIdPipeline);
 #endif
 }
 

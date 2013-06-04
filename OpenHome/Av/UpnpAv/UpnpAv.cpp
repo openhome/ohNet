@@ -71,9 +71,9 @@ void UpnpAv::NotifyPipelineState(EPipelineState aState)
     iDownstreamObserver->NotifyPipelineState(aState);
 }
 
-void UpnpAv::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void UpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
-    iDownstreamObserver->NotifyTrack(aTrack, aIdPipeline);
+    iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
 }
 
 void UpnpAv::NotifyMetaText(const Brx& aText)

@@ -95,8 +95,8 @@ private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
-    void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAt(TUint aId);
+    void InvalidateAfter(TUint aId);
     void InvalidateAll();
 private:
     ProtocolManager* iProtocolManager;
@@ -360,8 +360,8 @@ TUint TestCodecFiller::StreamId()
 
 void TestCodecFiller::Run()
 {
-    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), Brx::Empty(), Brx::Empty(), 0);
-    iProtocolManager->DoStream(*track);
+    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), NULL);
+    iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     // send a msgquit here in case of trying to stream an invalid url during tests
     // could cause race conditions if it isn't sent here
@@ -383,12 +383,12 @@ EStreamPlay TestCodecFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayYes;
 }
 
-void TestCodecFiller::InvalidateAt(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+void TestCodecFiller::InvalidateAt(TUint /*aId*/)
 {
     ASSERTS();
 }
 
-void TestCodecFiller::InvalidateAfter(const Brx& /*aStyle*/, const Brx& /*aProviderId*/)
+void TestCodecFiller::InvalidateAfter(TUint /*aId*/)
 {
     ASSERTS();
 }

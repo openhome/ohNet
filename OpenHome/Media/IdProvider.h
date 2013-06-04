@@ -17,7 +17,7 @@ public:
     PipelineIdProvider(IStopper& aStopper);
     TUint MaxStreams() const;
 public: // from IPipelineIdTracker
-    void AddStream(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
+    void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow);
 private:
     static inline void UpdateIndex(TUint& aIndex);
     TUint UpdateId(TUint& aId);
@@ -25,30 +25,28 @@ private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(const Brx& aStyle, const Brx& aProviderId);
-    void InvalidateAfter(const Brx& aStyle, const Brx& aProviderId);
+    void InvalidateAt(TUint aId);
+    void InvalidateAfter(TUint aId);
     void InvalidateAll();
 private:
     class ActiveStream : public INonCopyable
     {
     public:
         ActiveStream();
-        void Set(const Brx& aStyle, const Brx& aProviderId, TUint aTrackId, TUint aStreamId, TBool aPlayNow);
+        void Set(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow);
         void Set(const ActiveStream& aActiveStream);
         void Clear();
-        TBool IsClear() const;
-        TBool Matches(const Brx& aStyle, const Brx& aProviderId) const;
-        const Brx& Style() const { return iStyle; }
-        const Brx& ProviderId() const { return iProviderId; }
-        TUint TrackId() const { return iTrackId; }
+        TBool IsClear() const { return iClear; }
+        TUint Id() const { return iId; }
+        TUint PipelineTrackId() const { return iPipelineTrackId; }
         TUint StreamId() const { return iStreamId; }
         TBool PlayNow() const { return iPlayNow; }
     private:
-        BwsStyle iStyle;
-        BwsProviderId iProviderId;
-        TUint iTrackId;
+        TUint iId;
+        TUint iPipelineTrackId;
         TUint iStreamId;
         TBool iPlayNow;
+        TBool iClear;
     };
 private:
     Mutex iLock;

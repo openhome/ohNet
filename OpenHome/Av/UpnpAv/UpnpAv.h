@@ -28,7 +28,7 @@ private:
     void DeviceDisabled();
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, TUint aIdPipeline);
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);

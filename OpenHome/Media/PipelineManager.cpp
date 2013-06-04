@@ -62,13 +62,13 @@ void PipelineManager::AddObserver(IPipelineObserver& aObserver)
     iObservers.push_back(&aObserver);
 }
 
-void PipelineManager::Begin(const Brx& aStyle, const Brx& aProviderId)
+void PipelineManager::Begin(const Brx& aMode, TUint aPipelineTrackId)
 {
     iLock.Wait();
-    iStyle.Replace(aStyle);
-    iProviderId.Replace(aProviderId);
+    iMode.Replace(aMode);
+    iPipelineTrackId = aPipelineTrackId;
     iLock.Signal();
-    iFiller->Play(aStyle, aProviderId);
+    iFiller->Play(aMode, aPipelineTrackId);
 }
 
 void PipelineManager::Play()
@@ -95,24 +95,24 @@ TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
 
 void PipelineManager::Next()
 {
-    if (iStyle.Bytes() == 0 && iProviderId.Bytes() == 0) {
-        return; // nothing playing or ready to be played so nothing we to advance relative to
+    if (iMode.Bytes() == 0) {
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
     iFiller->Stop();
     // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
     // can always revert to an equivalent implementation to Prev() if this proves incorrect
-    static_cast<IPipelineIdProvider*>(iIdProvider)->InvalidateAt(iStyle, iProviderId);
-    iFiller->Next(iStyle, iProviderId);
+    static_cast<IPipelineIdProvider*>(iIdProvider)->InvalidateAt(iPipelineTrackId);
+    iFiller->Next(iMode, iPipelineTrackId);
 }
 
 void PipelineManager::Prev()
 {
-    if (iStyle.Bytes() == 0 && iProviderId.Bytes() == 0) {
-        return; // nothing playing or ready to be played so nothing we to advance relative to
+    if (iMode.Bytes() == 0) {
+        return; // nothing playing or ready to be played so nothing we can advance relative to
     }
     iFiller->Stop();
     static_cast<IPipelineIdProvider*>(iIdProvider)->InvalidateAll();
-    iFiller->Prev(iStyle, iProviderId);
+    iFiller->Prev(iMode, iPipelineTrackId);
 }
 
 Msg* PipelineManager::Pull()
@@ -127,14 +127,14 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void PipelineManager::NotifyTrack(Track& aTrack, TUint aIdPipeline)
+void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
     iLock.Wait();
-    iStyle.Replace(aTrack.Style());
-    iProviderId.Replace(aTrack.ProviderId());
+    iMode.Replace(aMode);
+    iPipelineTrackId = aTrack.Id();
     iLock.Signal();
     for (TUint i=0; i<iObservers.size(); i++) {
-        iObservers[i]->NotifyTrack(aTrack, aIdPipeline);
+        iObservers[i]->NotifyTrack(aTrack, aMode, aIdPipeline);
     }
 }
 
