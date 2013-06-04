@@ -16,8 +16,8 @@ namespace Media {
 
 class RaopAudio
 {
+private:
     static const TUint kMaxReadBufferBytes = 2000;
-
 public:
     //RaopAudio(TUint aPort, ProtocolRaop& aProtocol);
     RaopAudio(Environment& aEnv, TUint aPort);
@@ -30,14 +30,13 @@ public:
     void Reset();
     Brn Audio();
     void SetMute();
-
 private:
     TUint iPort;
     SocketUdp iSocket;
     UdpReader iSocketReader;
-    Srs<kMaxReadBufferBytes*2> iReaderBuffer;     // ensure we have enough space to read kMaxReadBufferBytes+1 full UDP packet
+    Srs<kMaxReadBufferBytes> iReaderBuffer;
     Brn iDataBuffer;
-    Bws<kMaxReadBufferBytes*2> iAudio;          // to match iReaderBuffer
+    Bws<kMaxReadBufferBytes> iAudio;
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
     TBool iInitId;
@@ -48,7 +47,10 @@ private:
 
 class RaopControl
 {
+private:
     static const TUint kMaxReadBufferBytes = 1500;
+    static const TUint kPriority = kPriorityNormal-1;
+    static const TUint kSessionStackBytes = 10 * 1024;
 public:
     //RaopControl(TUint aPort, I2sDriver& aI2sDriver);
     RaopControl(Environment& aEnv, TUint aPort);
@@ -60,19 +62,15 @@ public:
     void GetResentData(Bwx& aData, TUint16 aCount);
     void LockRx();
     void UnlockRx();
-
 private:
-    static const TUint kPriority = kPriorityNormal-1;
-    static const TUint kSessionStackBytes = 10 * 1024;
-
     void Run();
     void TimerExpired();
     TUint iPort;
     SocketUdp iSocket;
     UdpReader iSocketReader;
     //UdpWriter iSocketWriter;
-    Srs<kMaxReadBufferBytes*2> iReceive;    // ensure we have enough space to read kMaxReadBufferBytes+1 full UDP packet
-    Bws<kMaxReadBufferBytes*2> iResentData;
+    Srs<kMaxReadBufferBytes> iReceive;
+    Bws<kMaxReadBufferBytes> iResentData;
     ThreadFunctor* iThreadControl;
     TUint iSenderSkew;
     TUint iLatency;
@@ -155,7 +153,6 @@ public:
     TBool Start() {return iStart;}
     TBool Mute() {return iMute;}
     void SetMute() {iMute = true;}
-
 private:
     TUint   iSenderSkew;
     TUint   iLatency;

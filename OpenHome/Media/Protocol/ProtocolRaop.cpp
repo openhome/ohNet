@@ -97,10 +97,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
 
-    //if (!Start(0, true, false)) {
-    //    LOG(kMedia, "ProtocolRaop::Stream Start rejected\n");
-    //    return;
-    //}
     StartStream();
 
     TBool start = true;
@@ -161,8 +157,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
                 // if there are missing packets request re-send and wait for response
                 if(padding > 0) {
-                    //SysLog::Log(uMediaNetAuxFrameBadSeqPrevious, expected);
-                    //SysLog::Log(uMediaNetAuxFrameBadSeqCurrent, count);
                     iRaopControl.RequestResend(expected, padding);
                     while(padding > 0) {
                         LOG(kMedia, "ProtocolRaop get resent data, padding %d\n", padding);
@@ -179,7 +173,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                         }
                         catch(ResendTimeout) {
                             LOG(kMedia, "ProtocolRaop NOT received resent data, padding %d\n", padding);
-                            //SysLog::Log(uMediaNetAuxFramesLost, padding);
 
                             //just mute if resent packets not available
                             //this assumes that iRaopAudio has already been set
@@ -230,10 +223,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
-
-    //iStreamId = iIdProvider->NextStreamId();
-    //iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
-    //iStarted = true;
     TUint streamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(Uri().AbsoluteUri(), 0, false, false, *this, streamId);
 }
@@ -241,10 +230,12 @@ void ProtocolRaop::StartStream()
 void ProtocolRaop::OutputContainer(const Brn &aFmtp)
 {
     Bws<60> container(Brn("Raop"));
+    container.Append(Brn(" "));
+    Ascii::AppendDec(container, aFmtp.Bytes()+1);   // account for newline char added
+    container.Append(" ");
     container.Append(aFmtp);
     container.Append(Brn("\n"));
     LOG(kMedia, "ProtocolRaop::OutputContainer container %d bytes [", container.Bytes()); LOG(kMedia, container); LOG(kMedia, "]\n");
-    //iSupply->OutputMetadata(container);
     iSupply->OutputData(container);
 }
 
@@ -376,7 +367,6 @@ void RaopControl::Run()
             else if(type == 0x80D6) {
                 // resent packet
                 iReceive.Read(2);   //ignore next 2 bytes
-                //Brn data(iReceive.Read(kMaxReadBufferBytes, false, 0, true)); // read all of the udp packet
                 Brn data(iReceive.Read(kMaxReadBufferBytes)); // read all of the udp packet
                 LOG(kMedia, "RaopControl read %d bytes, iResend %d\n", data.Bytes(), iResend);
                 iMutexRx.Wait();    // wait for processing of previous resend message
@@ -460,7 +450,7 @@ void RaopControl::RequestResend(TUint aPacketId, TUint aPackets)
             //iSocketWriter.Send(request);
         }
         catch(NetworkError) {
-                // will handle this by timing out on receive
+            // will handle this by timing out on receive
         }
     }
 }
@@ -474,8 +464,8 @@ void RaopControl::GetResentData(Bwx& aData, TUint16 aCount)
 
     iTimerExpiry->FireIn(kTimerExpiryTimeoutMs);
 
-    LOG(kMedia, "wait for data\n");
-    iSemaResend.Wait();	// wait for resent data to be received or timeout
+    LOG(kMedia, "RaopControl::GetResentData wait for data\n");
+    iSemaResend.Wait(); // wait for resent data to be received or timeout
     iMutex.Wait();
     //if timed out, resent data will be empty
     aData.SetBytes(0);
@@ -491,15 +481,15 @@ void RaopControl::GetResentData(Bwx& aData, TUint16 aCount)
                 valid = true;
             }
             else{
-                LOG(kMedia, "invalid resent data count, is %d, should be %d\n", count, aCount);
+                LOG(kMedia, "RaopControl::GetResentData invalid resent data count, is %d, should be %d\n", count, aCount);
             }
         }
         else {
-            LOG(kMedia, "iResentData.BeInt16At(0) %x\n", type);
+            LOG(kMedia, "RaopControl::GetResentData iResentData.BeInt16At(0) %x\n", type);
         }
     }
     else {
-        LOG(kMedia, "iResentData.Bytes() %d\n", iResentData.Bytes());
+        LOG(kMedia, "RaopControl::GetResentData iResentData.Bytes() %d\n", iResentData.Bytes());
         if(iResentData.Bytes() == 0) {
             timeout = true; // no data, so must have timed out
         }
@@ -546,8 +536,6 @@ RaopAudio::RaopAudio(Environment& aEnv, TUint aPort)
     , iReaderBuffer(iSocketReader)
     //, iProtocol(aProtocol)
 {
-    //iSocket.LogVerbose(true, false);
-    iSocket.SetRecvBufBytes(64000);
 }
 
 RaopAudio::~RaopAudio()
@@ -585,16 +573,12 @@ TUint16 RaopAudio::ReadPacket()
 
     for (;;) {
         try {
-            // FIXME - getting a reader error every time during this
-            // Added ReadFlush() into stream read function to re-open UDP socket, now getting a NetworkError
-            iDataBuffer.Set(iReaderBuffer.Read(kMaxReadBufferBytes));//, false, 0, true)); // read all of the udp packet
-            Log::Print("Rcvd: %u\n", iDataBuffer.Bytes());
+            iDataBuffer.Set(iReaderBuffer.Read(kMaxReadBufferBytes));   // read all of the udp packet
         }
         catch (ReaderError&) {
-            Log::Print("ReaderError - RaopAudio::ReadPacket\n");
             // either no data, user abort or invalid header
             if(iInterrupted) {
-                LOG(kMedia, "<RaopAudio::ReadPacket() Exception, iInterrupted %d\n", iInterrupted);
+                LOG(kMedia, "RaopAudio::ReadPacket() Exception, iInterrupted %d\n", iInterrupted);
                 throw;
             }
             if(iDataBuffer.Bytes() < 12) {  //may get here if kMaxReadBufferBytes not read
@@ -609,14 +593,13 @@ TUint16 RaopAudio::ReadPacket()
         iReaderBuffer.ReadFlush();  // set to read next udp packet
 
         if((iDataBuffer[0] != 0x80) || !((iDataBuffer[1] == 0x60) || (iDataBuffer[1] == 0xe0))) {
-            LOG(kMedia, ">RaopAudio::ReadPacket() invalid header %x\n", iDataBuffer[0]);
+            LOG(kMedia, "RaopAudio::ReadPacket() invalid header %x\n", iDataBuffer[0]);
             THROW(ReaderError); // invalid header
         }
 
         TUint32 id;
-        //id = iDataBuffer.BeInt32At(8);
         id = static_cast<TInt32>(Converter::BeUint32At(iDataBuffer, 8));
-//      LOG(kMedia, "RaopAudio::ReadPacket() %d, id %d\n", iDataBuffer.Bytes(), id);
+        LOG(kMedia, "RaopAudio::ReadPacket() %d, id %d\n", iDataBuffer.Bytes(), id);
 
         if(iInitId) {
             iInitId = false;
@@ -630,7 +613,7 @@ TUint16 RaopAudio::ReadPacket()
             LOG(kMedia, "RaopAudio::ReadPacket() iId = %d, count = %d\n", iId, count);
             break;      // packet with same id found
         }
-        LOG(kMedia, "<RaopAudio::ReadPacket() no data so retry\n");
+        LOG(kMedia, "RaopAudio::ReadPacket() no data so retry\n");
         // rogue id so ignore
     }
     Log::Print("count: %u\n", count);
@@ -645,7 +628,7 @@ void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency)
 
 void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brn& aData)
 {
-    LOG(kMedia, "RaopAudio::DecodePacket() bytes %d\n",aData.Bytes());
+    //LOG(kMedia, "RaopAudio::DecodePacket() bytes %d\n", aData.Bytes());
 
     RaopDataHeader header(aData, aSenderSkew, aLatency);
 
@@ -653,12 +636,10 @@ void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brn& aData)
     unsigned char *outbuf = (unsigned char *)iAudio.Ptr()+sizeof(header);
     unsigned char iv[16];
 
-    Log::Print("RaopAudio::DecodePacket before checking header bytes\n");
     if( (header.Bytes() + sizeof(header)) > iAudio.MaxBytes())
     {
         THROW(InvalidHeader);   // invalid data received, should really add different exception
     }
-    Log::Print("RaopAudio::DecodePacket after checking header bytes\n");
 
     memcpy(iv, iAesiv.Ptr(), sizeof(iv));   //use same iv at start of each decryption block
 
@@ -695,7 +676,7 @@ RaopDataHeader::RaopDataHeader(Brn& aRawData, TUint aSenderSkew, TUint aLatency)
     iSeqno = static_cast<TInt16>(Converter::BeUint16At(aRawData, 2));
     iTimestamp = static_cast<TInt32>(Converter::BeUint32At(aRawData, 4));
     iMute = false;
-    //LOG(kMechanism, "RaopDataHeader raw bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
+    //LOG(kMedia, "RaopDataHeader raw bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
 }
 
 RaopDataHeader::RaopDataHeader(Brn& aBinData)
@@ -707,5 +688,5 @@ RaopDataHeader::RaopDataHeader(Brn& aBinData)
     iSeqno = ((RaopDataHeader*)(aBinData.Ptr()))->Seqno();
     iTimestamp = ((RaopDataHeader*)(aBinData.Ptr()))->Timestamp();
     iMute = ((RaopDataHeader*)(aBinData.Ptr()))->Mute();
-    //LOG(kMechanism, "RaopDataHeader bin bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
+    //LOG(kMedia, "RaopDataHeader bin bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
 }
