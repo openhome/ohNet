@@ -82,8 +82,6 @@ ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, 
     // NOP
 }
 
-EXCEPTION(ToneUriParseError)
-
 ToneUriParser::ToneUriParser()
     : iParams()
     , iName(Brx::Empty())
@@ -94,16 +92,23 @@ ToneUriParser::ToneUriParser()
 void ToneUriParser::Parse(const Brx& aUri)
 {
     // tone://WAVEFORM.wav?bitdepth=N&samplerate=M&pitch=HZ&channels=K&duration=T
-    Uri uri(aUri);
+    Uri uri;
+
+    try {
+        uri.Replace(aUri);
+    } catch (UriError&) {
+        // translate exception so as not to expose implementation details
+        THROW(ToneUriParseError);
+    }
+
+    // BufferOverflow deliberately not caught: programmer error
     iName.ReplaceThrow(uri.Host());
 
     if (uri.Path() != Brn("/")) {
-        LOG_DBG("spurious path", uri.Path())
         THROW(ToneUriParseError);
     }
 
     if (!uri.Query().BeginsWith(Brn("?"))) {
-        LOG_DBG("missing or malformed query", uri.Query())
         THROW(ToneUriParseError);
     }
 
@@ -122,18 +127,15 @@ void ToneUriParser::Parse(const Brx& aUri)
 
         if (key == Brn("bitdepth")) {
             if (iParams.bitsPerSample != 0) {
-                LOG_DBG("duplicate parameter", "bitdepth")
-                THROW(ToneUriParseError);
+                THROW(ToneUriParseError);  // duplicate parameter
             }
             iParams.bitsPerSample = static_cast<TUint16>(Ascii::Uint(val));
             if ((iParams.bitsPerSample != 8) && (iParams.bitsPerSample != 16) && (iParams.bitsPerSample != 24)) {
-                LOG_DBG("invalid parameter value", keyVal)
                 THROW(ToneUriParseError);
             }
         } else if (key == Brn("samplerate")) {
             if (iParams.sampleRate != 0) {
-                LOG_DBG("duplicate parameter", "samplerate")
-                THROW(ToneUriParseError);
+                THROW(ToneUriParseError);  // duplicate parameter
             }
             iParams.sampleRate = Ascii::Uint(val);
             switch (iParams.sampleRate) {
@@ -144,62 +146,50 @@ void ToneUriParser::Parse(const Brx& aUri)
                 case 12000: case 24000: case 48000: case 96000: case 192000:
                     break;
                 default:
-                    LOG_DBG("invalid parameter value", keyVal)
                     THROW(ToneUriParseError);
             }
         } else if (key == Brn("pitch")) {  // [Hz]
             if (iParams.pitch != 0) {
-                LOG_DBG("duplicate parameter", "pitch")
-                THROW(ToneUriParseError);
+                THROW(ToneUriParseError);  // duplicate parameter
             }
             iParams.pitch = Ascii::Uint(val);
             // XXX no upper limit, since not necessarily intended for human hearing
             if (0 == iParams.pitch) {
-                LOG_DBG("invalid parameter value", keyVal)
                 THROW(ToneUriParseError);
             }
         } else if (key == Brn("channels")) {
             if (iParams.numChannels != 0) {
-                LOG_DBG("duplicate parameter", "channels")
-                THROW(ToneUriParseError);
+                THROW(ToneUriParseError);  // duplicate parameter
             }
             // 1 ... 8 (in practice no more than 7.1 surround sound)
             iParams.numChannels = static_cast<TUint16>(Ascii::Uint(val));
             if (! ((0 < iParams.numChannels) && (iParams.numChannels <= 8))) {
-                LOG_DBG("invalid parameter value", keyVal)
                 THROW(ToneUriParseError);
             }
         } else if (key == Brn("duration")) {  // [s]
             if (iParams.duration != 0) {
-                LOG_DBG("duplicate parameter", "duration")
-                THROW(ToneUriParseError);
+                THROW(ToneUriParseError);  // duplicate parameter
             }
             // 1 ... 900 (i.e. 15min): arbitrary limit guaranteed to avoid integer overflow in calculations
             iParams.duration = Ascii::Uint(val);
             if (! ((0 < iParams.duration) && (iParams.duration <= 900))) {
-                LOG_DBG("invalid parameter value", keyVal)
                 THROW(ToneUriParseError);
             }
         } else {
-            LOG_DBG("unrecognised keyword", key)
-            THROW(ToneUriParseError);
+            THROW(ToneUriParseError);  // unrecognised key-value pair
         }
     }
 
+    // check for missing parameters (separately, to have unique exception line numbers)
     if (iParams.bitsPerSample == 0) {
-        LOG_DBG("missing parameter", "bitdepth")
         THROW(ToneUriParseError);
     } else if (iParams.sampleRate == 0) {
-        LOG_DBG("missing parameter", "samplerate")
         THROW(ToneUriParseError);
     } else if (iParams.pitch == 0) {
-        LOG_DBG("missing parameter", "pitch")
         THROW(ToneUriParseError);
     } else if (iParams.numChannels == 0) {
-        LOG_DBG("missing parameter", "channels")
         THROW(ToneUriParseError);
     } else if (iParams.duration == 0) {
-        LOG_DBG("missing parameter", "duration")
         THROW(ToneUriParseError);
     }
 }
@@ -240,6 +230,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     Log::Print("@@  pitch =      %6u\n", params.pitch);
     Log::Print("@@  channels =   %6u\n", params.numChannels);
     Log::Print("@@  duration =   %6u\n", params.duration);
+    Log::Print("\n");
 
     //
     // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/

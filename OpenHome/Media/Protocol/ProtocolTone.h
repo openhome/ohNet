@@ -4,6 +4,8 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/OhNetTypes.h>
 
+EXCEPTION(ToneUriParseError);
+
 namespace OpenHome {
 namespace Media {
 
