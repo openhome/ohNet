@@ -2,7 +2,7 @@
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Filler.h>
-#include <OpenHome/Media/IdProvider.h>
+#include <OpenHome/Media/IdManager.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -13,9 +13,9 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
     : iLock("PLMG")
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, aDriverMaxAudioBytes);
-    iIdProvider = new PipelineIdProvider(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdProvider);
-    iProtocolManager = new ProtocolManager(*iFiller, *iIdProvider, *iPipeline);
+    iIdManager = new IdManager(*iPipeline);
+    iFiller = new Filler(*iPipeline, *iIdManager);
+    iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
 
@@ -25,7 +25,7 @@ PipelineManager::~PipelineManager()
     delete iPipeline;
     delete iProtocolManager;
     delete iFiller;
-    delete iIdProvider;
+    delete iIdManager;
     for (TUint i=0; i<iUriProviders.size(); i++) {
         delete iUriProviders[i];
     }
@@ -85,7 +85,7 @@ void PipelineManager::Stop()
 {
     iFiller->Stop();
     iPipeline->Stop();
-    static_cast<IPipelineIdProvider*>(iIdProvider)->InvalidateAll();
+    iIdManager->InvalidateAll();
 }
 
 TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
@@ -101,7 +101,7 @@ void PipelineManager::Next()
     iFiller->Stop();
     // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
     // can always revert to an equivalent implementation to Prev() if this proves incorrect
-    static_cast<IPipelineIdProvider*>(iIdProvider)->InvalidateAt(iPipelineTrackId);
+    iIdManager->InvalidateAt(iPipelineTrackId);
     iFiller->Next(iMode, iPipelineTrackId);
 }
 
@@ -111,7 +111,7 @@ void PipelineManager::Prev()
         return; // nothing playing or ready to be played so nothing we can advance relative to
     }
     iFiller->Stop();
-    static_cast<IPipelineIdProvider*>(iIdProvider)->InvalidateAll();
+    iIdManager->InvalidateAll();
     iFiller->Prev(iMode, iPipelineTrackId);
 }
 

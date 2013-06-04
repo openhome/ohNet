@@ -3,7 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/IdProvider.h>
+#include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 
 using namespace OpenHome;

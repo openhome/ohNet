@@ -16,7 +16,7 @@ class IPipelineObserver; // FIXME - define this (or equivalent) in this header
 class Pipeline;
 class ProtocolManager;
 class Filler;
-class PipelineIdProvider;
+class IdManager;
 namespace Codec {
     class CodecBase;
 }
@@ -55,7 +55,7 @@ private:
     Pipeline* iPipeline;
     ProtocolManager* iProtocolManager;
     Filler* iFiller;
-    PipelineIdProvider* iIdProvider;
+    IdManager* iIdManager;
     std::vector<UriProvider*> iUriProviders; // FIXME - should PipelineManager own all UriProviders?
     std::vector<IPipelineObserver*> iObservers;
     BwsMode iMode;

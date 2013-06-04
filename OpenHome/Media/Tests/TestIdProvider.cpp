@@ -1,5 +1,5 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/IdProvider.h>
+#include <OpenHome/Media/IdManager.h>
 #include "SuiteUnitTest.h"
 
 #include <vector>
@@ -21,7 +21,7 @@ public:
 private: // from IStopper
     void RemoveStream(TUint aTrackId, TUint aStreamId);
 private:
-    PipelineIdProvider* iPipelineIdProvider;
+    IdManager* iIdManager;
 };
 
 class SuiteSingleStream : public SuiteUnitTest, private IStopper
@@ -45,7 +45,7 @@ private:
     void InvalidateAfterMatch();
     void InvalidateAfterNoMatch();
 private:
-    PipelineIdProvider* iPipelineIdProvider;
+    IdManager* iIdManager;
     IPipelineIdProvider* iIdProvider;
 };
 
@@ -72,7 +72,7 @@ public:
 private: // from IStopper
     void RemoveStream(TUint aTrackId, TUint aStreamId);
 private:
-    PipelineIdProvider* iPipelineIdProvider;
+    IdManager* iIdManager;
 };
 
 class SuiteMultiStreams : public SuiteUnitTest, private IStopper
@@ -106,7 +106,7 @@ private:
     void InvalidateAtWithInvalidProviderId();
     void InvalidateAll();
 private:
-    PipelineIdProvider* iPipelineIdProvider;
+    IdManager* iIdManager;
     IPipelineIdProvider* iIdProvider;
     TUint iRemoveTrackId;
     TUint iRemoveStreamId;
@@ -148,19 +148,19 @@ Create Id provider, add 3 elements (2 streams in first track, 1 in second track)
 SuiteIdsAreUnique::SuiteIdsAreUnique()
     : Suite("Ids are unique")
 {
-    iPipelineIdProvider = new PipelineIdProvider(*this);
+    iIdManager = new IdManager(*this);
 }
 
 SuiteIdsAreUnique::~SuiteIdsAreUnique()
 {
-    delete iPipelineIdProvider;
+    delete iIdManager;
 }
 
 void SuiteIdsAreUnique::Test()
 {
     static const TUint kTestIterations = 10;
     std::vector<TUint> ids;
-    IPipelineIdProvider* idProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
+    IPipelineIdProvider* idProvider = static_cast<IPipelineIdProvider*>(iIdManager);
     for (TUint i=0; i<kTestIterations; i++) {
         TUint trackId = idProvider->NextTrackId();
         TEST(std::find(ids.begin(), ids.end(), trackId) == ids.end());
@@ -202,15 +202,15 @@ void SuiteSingleStream::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 void SuiteSingleStream::Setup()
 {
-    iPipelineIdProvider = new PipelineIdProvider(*this);
-    iPipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, kStreamId, true);
-    iIdProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
+    iIdManager = new IdManager(*this);
+    iIdManager->AddStream(kTrackId, kPipelineTrackId, kStreamId, true);
+    iIdProvider = static_cast<IPipelineIdProvider*>(iIdManager);
 }
 
 void SuiteSingleStream::TearDown()
 {
-    delete iPipelineIdProvider;
-    iPipelineIdProvider = NULL;
+    delete iIdManager;
+    iIdManager = NULL;
     iIdProvider = NULL;
 }
 
@@ -232,25 +232,25 @@ void SuiteSingleStream::OkToPlayForInvalidIds()
 
 void SuiteSingleStream::InvalidateAtMatch()
 {
-    iIdProvider->InvalidateAt(kTrackId);
+    iIdManager->InvalidateAt(kTrackId);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayNo);
 }
 
 void SuiteSingleStream::InvalidateAtNoMatch()
 {
-    iIdProvider->InvalidateAt(999);
+    iIdManager->InvalidateAt(999);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
 void SuiteSingleStream::InvalidateAfterMatch()
 {
-    iIdProvider->InvalidateAfter(kTrackId);
+    iIdManager->InvalidateAfter(kTrackId);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
 void SuiteSingleStream::InvalidateAfterNoMatch()
 {
-    iIdProvider->InvalidateAfter(999);
+    iIdManager->InvalidateAfter(999);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId, kStreamId) == ePlayYes);
 }
 
@@ -271,7 +271,7 @@ void SuitePlayLater::Test()
     const TUint trackId = 4;
     const TUint pipelineTrackId = 6;
     const TUint streamId = 0;
-    PipelineIdProvider* pipelineIdProvider = new PipelineIdProvider(*this);
+    IdManager* pipelineIdProvider = new IdManager(*this);
     pipelineIdProvider->AddStream(trackId, pipelineTrackId, streamId, false);
     TEST(static_cast<IPipelineIdProvider*>(pipelineIdProvider)->OkToPlay(pipelineTrackId, streamId) == ePlayLater);
     delete pipelineIdProvider;
@@ -302,7 +302,7 @@ void SuiteMaxStreams::Test()
     // check each can be OkToPlay'd, check second attempt at initial element fails
     // add another stream, check OkToPlay for it succeeds (so the buffer indices can wrap)
 
-    PipelineIdProvider* pipelineIdProvider = new PipelineIdProvider(*this);
+    IdManager* pipelineIdProvider = new IdManager(*this);
     const TUint max = pipelineIdProvider->MaxStreams()-1;
     for (TUint streamId = kStreamId; streamId<max; streamId++) {
         pipelineIdProvider->AddStream(kTrackId, kPipelineTrackId, streamId, true);
@@ -356,20 +356,20 @@ void SuiteMultiStreams::RemoveStream(TUint aTrackId, TUint aStreamId)
 
 void SuiteMultiStreams::Setup()
 {
-    iPipelineIdProvider = new PipelineIdProvider(*this);
-    iPipelineIdProvider->AddStream(kTrackId1, kPipelineTrackId1, kStreamId1, true);
-    iPipelineIdProvider->AddStream(kTrackId1, kPipelineTrackId1, kStreamId2, true);
-    iPipelineIdProvider->AddStream(kTrackId2, kPipelineTrackId2, kStreamId1, true);
-    iPipelineIdProvider->AddStream(kTrackId3, kPipelineTrackId3, kStreamId1, true);
-    iIdProvider = static_cast<IPipelineIdProvider*>(iPipelineIdProvider);
+    iIdManager = new IdManager(*this);
+    iIdManager->AddStream(kTrackId1, kPipelineTrackId1, kStreamId1, true);
+    iIdManager->AddStream(kTrackId1, kPipelineTrackId1, kStreamId2, true);
+    iIdManager->AddStream(kTrackId2, kPipelineTrackId2, kStreamId1, true);
+    iIdManager->AddStream(kTrackId3, kPipelineTrackId3, kStreamId1, true);
+    iIdProvider = static_cast<IPipelineIdProvider*>(iIdManager);
     iRemoveTrackId = kIdInvalid;
     iRemoveStreamId = kIdInvalid;
 }
 
 void SuiteMultiStreams::TearDown()
 {
-    delete iPipelineIdProvider;
-    iPipelineIdProvider = NULL;
+    delete iIdManager;
+    iIdManager = NULL;
     iIdProvider = NULL;
 }
 
@@ -401,7 +401,7 @@ void SuiteMultiStreams::FirstPlaysThenInvalidated()
 {
     // check first can be OkToPlay'd, call InvalidateAt for first, check Stopper is called and OkToPlay for second fails, third + fourth succeed
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAt(kTrackId1);
+    iIdManager->InvalidateAt(kTrackId1);
     TEST(iRemoveTrackId == kPipelineTrackId1);
     TEST(iRemoveStreamId == kStreamId1);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayNo);
@@ -413,7 +413,7 @@ void SuiteMultiStreams::FirstPlaysThenInvalidateAfter()
 {
     // check first can be OkToPlay'd, call InvalidateAfter for first, check OkToPlay for second succeeds, third/fourth fails
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAfter(kTrackId1);
+    iIdManager->InvalidateAfter(kTrackId1);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
@@ -425,7 +425,7 @@ void SuiteMultiStreams::FirstPlaysThenInvalidateThird()
 {
     // check first can be OkToPlay'd, call InvalidateAt for third, check OkToPlay for second succeeds, third fails, fourth succeeds
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAt(kTrackId2);
+    iIdManager->InvalidateAt(kTrackId2);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
@@ -437,7 +437,7 @@ void SuiteMultiStreams::FirstPlaysThenInvalidateAfterThird()
 {
     // check first can be OkToPlay'd, call InvalidateAfter for third, check OkToPlay for second/third succeeds, fourth fails
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAfter(kTrackId2);
+    iIdManager->InvalidateAfter(kTrackId2);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
@@ -450,7 +450,7 @@ void SuiteMultiStreams::SecondPlaysThenInvalidated()
     // play first then second, call InvalidateAt for second, check Stopper is called and OkToPlay for third, fourth succeeds
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
-    iIdProvider->InvalidateAt(kTrackId1);
+    iIdManager->InvalidateAt(kTrackId1);
     TEST(iRemoveTrackId == kPipelineTrackId1);
     TEST(iRemoveStreamId == kStreamId2);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
@@ -462,7 +462,7 @@ void SuiteMultiStreams::SecondPlaysThenInvalidateAfter()
     // play first then second, call InvalidateAfter for second, check OkToPlay for third, fourth fails
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
-    iIdProvider->InvalidateAfter(kTrackId1);
+    iIdManager->InvalidateAfter(kTrackId1);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayNo);
@@ -473,7 +473,7 @@ void SuiteMultiStreams::InvalidateAtWithInvalidProviderId()
 {
     // check first can be OkToPlay'd, call InvalidateAt for first with incorrect providerId, check OkToPlay for second etc succeeds
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAfter(999);
+    iIdManager->InvalidateAfter(999);
     TEST(iRemoveTrackId == kIdInvalid);
     TEST(iRemoveStreamId == kIdInvalid);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
@@ -484,7 +484,7 @@ void SuiteMultiStreams::InvalidateAtWithInvalidProviderId()
 void SuiteMultiStreams::InvalidateAll()
 {
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
-    iIdProvider->InvalidateAll();
+    iIdManager->InvalidateAll();
     TEST(iRemoveTrackId == kPipelineTrackId1);
     TEST(iRemoveStreamId == kStreamId1);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayNo);

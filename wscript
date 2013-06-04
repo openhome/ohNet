@@ -241,7 +241,7 @@ def build(bld):
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline.cpp',
-                'OpenHome/Media/IdProvider.cpp',
+                'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',

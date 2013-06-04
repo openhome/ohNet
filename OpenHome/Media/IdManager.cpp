@@ -1,4 +1,4 @@
-#include <OpenHome/Media/IdProvider.h>
+#include <OpenHome/Media/IdManager.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
@@ -9,9 +9,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// PipelineIdProvider
+// IdManager
 
-PipelineIdProvider::PipelineIdProvider(IStopper& aStopper)
+IdManager::IdManager(IStopper& aStopper)
     : iLock("IDPR")
     , iStopper(aStopper)
     , iNextTrackId(0)
@@ -21,7 +21,7 @@ PipelineIdProvider::PipelineIdProvider(IStopper& aStopper)
 {
 }
 
-void PipelineIdProvider::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
+void IdManager::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
 {
     iLock.Wait();
     iActiveStreams[iIndexTail].Set(aId, aPipelineTrackId, aStreamId, aPlayNow);
@@ -31,19 +31,19 @@ void PipelineIdProvider::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStr
     iLock.Signal();
 }
 
-TUint PipelineIdProvider::MaxStreams() const
+TUint IdManager::MaxStreams() const
 {
     return kMaxActiveStreams;
 }
 
-inline void PipelineIdProvider::UpdateIndex(TUint& aIndex)
+inline void IdManager::UpdateIndex(TUint& aIndex)
 { // static
     if (++aIndex == kMaxActiveStreams) {
         aIndex = 0;
     }
 }
 
-TUint PipelineIdProvider::UpdateId(TUint& aId)
+TUint IdManager::UpdateId(TUint& aId)
 {
     iLock.Wait();
     TUint id = aId++;
@@ -51,17 +51,17 @@ TUint PipelineIdProvider::UpdateId(TUint& aId)
     return id;
 }
 
-TUint PipelineIdProvider::NextTrackId()
+TUint IdManager::NextTrackId()
 {
     return UpdateId(iNextTrackId);
 }
 
-TUint PipelineIdProvider::NextStreamId()
+TUint IdManager::NextStreamId()
 {
     return UpdateId(iNextStreamId);
 }
 
-EStreamPlay PipelineIdProvider::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay IdManager::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
     if (iIndexHead == iIndexTail) {
@@ -76,7 +76,7 @@ EStreamPlay PipelineIdProvider::OkToPlay(TUint aTrackId, TUint aStreamId)
     return iPlaying.PlayNow()? ePlayYes : ePlayLater;
 }
 
-void PipelineIdProvider::InvalidateAt(TUint aId)
+void IdManager::InvalidateAt(TUint aId)
 {
     AutoMutex a(iLock);
 
@@ -127,7 +127,7 @@ void PipelineIdProvider::InvalidateAt(TUint aId)
     }
 }
 
-void PipelineIdProvider::InvalidateAfter(TUint aId)
+void IdManager::InvalidateAfter(TUint aId)
 {
     AutoMutex a(iLock);
 
@@ -152,7 +152,7 @@ void PipelineIdProvider::InvalidateAfter(TUint aId)
     }
 }
 
-void PipelineIdProvider::InvalidateAll()
+void IdManager::InvalidateAll()
 {
     AutoMutex a(iLock);
     if (!iPlaying.IsClear()) {
@@ -163,14 +163,14 @@ void PipelineIdProvider::InvalidateAll()
 }
 
 
-//  PipelineIdProvider::ActiveStream
+//  IdManager::ActiveStream
 
-PipelineIdProvider::ActiveStream::ActiveStream()
+IdManager::ActiveStream::ActiveStream()
 {
     Clear();
 }
 
-void PipelineIdProvider::ActiveStream::Set(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
+void IdManager::ActiveStream::Set(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
 {
     iId = aId;
     iPipelineTrackId = aPipelineTrackId;
@@ -179,12 +179,12 @@ void PipelineIdProvider::ActiveStream::Set(TUint aId, TUint aPipelineTrackId, TU
     iClear = false;
 }
 
-void PipelineIdProvider::ActiveStream::Set(const ActiveStream& aActiveStream)
+void IdManager::ActiveStream::Set(const ActiveStream& aActiveStream)
 {
     Set(aActiveStream.Id(), aActiveStream.PipelineTrackId(), aActiveStream.StreamId(), aActiveStream.PlayNow());
 }
 
-void PipelineIdProvider::ActiveStream::Clear()
+void IdManager::ActiveStream::Clear()
 {
     iId = UINT_MAX;
     iPipelineTrackId = UINT_MAX;

@@ -223,9 +223,6 @@ public: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(TUint aId);
-    void InvalidateAfter(TUint aId);
-    void InvalidateAll();
 private:
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -810,21 +807,6 @@ EStreamPlay TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStre
 {
     //Log::Print("TestHttpPipelineProvider::OkToPlay\n");
     return ePlayYes;
-}
-
-void TestHttpPipelineProvider::InvalidateAt(TUint /*aId*/)
-{
-    ASSERTS();
-}
-
-void TestHttpPipelineProvider::InvalidateAfter(TUint /*aId*/)
-{
-    ASSERTS();
-}
-
-void TestHttpPipelineProvider::InvalidateAll()
-{
-    ASSERTS();
 }
 
 

@@ -772,6 +772,12 @@ public:
     virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+};
+
+class IPipelineIdManager
+{
+public:
+    virtual ~IPipelineIdManager() {}
     virtual void InvalidateAt(TUint aId) = 0;
     virtual void InvalidateAfter(TUint aId) = 0;
     virtual void InvalidateAll() = 0;

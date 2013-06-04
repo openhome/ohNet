@@ -10,24 +10,25 @@
 namespace OpenHome {
 namespace Media {
 
-class PipelineIdProvider : public IPipelineIdProvider, public IPipelineIdTracker
+class IdManager : public IPipelineIdManager, public IPipelineIdProvider, public IPipelineIdTracker
 {
     static const TUint kMaxActiveStreams = 100;
 public:
-    PipelineIdProvider(IStopper& aStopper);
+    IdManager(IStopper& aStopper);
     TUint MaxStreams() const;
 public: // from IPipelineIdTracker
     void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow);
-private:
-    static inline void UpdateIndex(TUint& aIndex);
-    TUint UpdateId(TUint& aId);
-private: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+public: // from IPipelineIdManager
     void InvalidateAt(TUint aId);
     void InvalidateAfter(TUint aId);
     void InvalidateAll();
+private:
+    static inline void UpdateIndex(TUint& aIndex);
+    TUint UpdateId(TUint& aId);
+private: // from IIdManager
+    TUint NextTrackId();
+    TUint NextStreamId();
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
     class ActiveStream : public INonCopyable
     {

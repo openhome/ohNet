@@ -74,9 +74,6 @@ private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(TUint aId);
-    void InvalidateAfter(TUint aId);
-    void InvalidateAll();
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
@@ -165,21 +162,6 @@ TUint DummyFiller::NextStreamId()
 EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return ePlayYes;
-}
-
-void DummyFiller::InvalidateAt(TUint /*aId*/)
-{
-    ASSERTS();
-}
-
-void DummyFiller::InvalidateAfter(TUint /*aId*/)
-{
-    ASSERTS();
-}
-
-void DummyFiller::InvalidateAll()
-{
-    ASSERTS();
 }
 
 
