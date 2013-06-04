@@ -108,7 +108,7 @@ $(info Building for system ${openhome_system} and architecture ${openhome_archit
 ifeq ($(platform),iOS)
 	linkopts_ohNet =
 	devroot=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
-	sdkroot=$(devroot)/SDKs/iPhoneOS5.1.sdk
+	sdkroot=$(devroot)/SDKs/iPhoneOS6.1.sdk
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv7-apple-darwin10/ 
 	# TODO: Support i386 (x86) for simulator and armv6 for old devices
 	osbuilddir = iOs-armv7
