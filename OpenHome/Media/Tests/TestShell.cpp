@@ -68,6 +68,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestContentProcessor", ShellTestContentProcessor));
     shellTests.push_back(ShellTest("TestIdProvider", ShellTestIdProvider));
     shellTests.push_back(ShellTest("TestFiller", ShellTestFiller));
+    shellTests.push_back(ShellTest("TestToneUriParser", ShellTestToneUriParser));
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
