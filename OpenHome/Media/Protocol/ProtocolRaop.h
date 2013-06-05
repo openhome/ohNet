@@ -25,7 +25,7 @@ public:
     void Initialise(const Brx &aAeskey, const Brx &aAesiv);
     TUint16 ReadPacket();
     void DecodePacket(TUint aSenderSkew, TUint aLatency);
-    void DecodePacket(TUint aSenderSkew, TUint aLatency, Brn& aPacket);
+    void DecodePacket(TUint aSenderSkew, TUint aLatency, Brx& aPacket);
     void DoInterrupt();
     void Reset();
     Brn Audio();
@@ -34,8 +34,7 @@ private:
     TUint iPort;
     SocketUdp iSocket;
     UdpReader iSocketReader;
-    Srs<kMaxReadBufferBytes> iReaderBuffer;
-    Brn iDataBuffer;
+    Bws<kMaxReadBufferBytes> iDataBuffer;
     Bws<kMaxReadBufferBytes> iAudio;
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
@@ -142,8 +141,8 @@ private:
 class RaopDataHeader
 {
 public:
-    RaopDataHeader(Brn& aRawData, TUint aSenderSkew, TUint aLatency);
-    RaopDataHeader(Brn& aBinData);
+    RaopDataHeader(Brx& aRawData, TUint aSenderSkew, TUint aLatency);
+    RaopDataHeader(Brx& aBinData);
     TUint SenderSkew() {return iSenderSkew;}
     TUint Latency() {return iLatency;}
     TUint16 Seqno() {return iSeqno;}

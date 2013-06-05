@@ -9,19 +9,12 @@ EXCEPTION(InvalidHeader);
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// ProtocolFile
-
 ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack)
     : ProtocolNetwork(aEnv)
     , iRaopAudio(aEnv, kPortAudio)
     , iRaopControl(aEnv, kPortControl)
-//        , iRaopDiscoveryServer("MDNS", RaopDevice::kPortRaopDiscovery, kPriority, kSessionStackBytes)
-//	, iRaopAudio(kPortAudio, *this)
-//	, iRaopControl(kPortControl, aI2sDriver)
 //	, iRaopTiming(kPortTiming)
 //	, iPairplaySource(aPairplaySource)
-//{
-//	iRaopDevice = new RaopDevice();
 {
     AutoNetworkAdapterRef ref(aEnv, "ProtocolRaop ctor");
     const NetworkAdapter* current = ref.Adapter();
@@ -51,7 +44,7 @@ ProtocolRaop::~ProtocolRaop()
     delete iRaopDiscoverySession1;
     delete iRaopDiscoverySession2;
     delete iRaopDiscoveryServer;
-    //delete iRaopDevice;
+    delete iRaopDevice;
 }
 
 //void ProtocolRaop::DoInterrupt()
@@ -326,7 +319,6 @@ void RaopControl::Run()
                 continue;
             }
 
-            //TUint type = id.BeInt16At(0) & 0xefff; // first id is 0x90xx
             TUint type = Converter::BeUint16At(id, 0) & 0xefff; // first id is 0x90xx
             if(type == 0x80D4) {
                 //read rest of header
@@ -349,7 +341,9 @@ void RaopControl::Run()
             else if(type == 0x80D6) {
                 // resent packet
                 iReceive.Read(2);   //ignore next 2 bytes
-                Brn data(iReceive.Read(kMaxReadBufferBytes)); // read all of the udp packet
+                //Brn data(iReceive.Read(kMaxReadBufferBytes)); // read all of the udp packet
+                Bws<kMaxReadBufferBytes> data;
+                iSocketReader.Read(data);   // read a full udp packet
                 LOG(kMedia, "RaopControl read %d bytes, iResend %d\n", data.Bytes(), iResend);
                 iMutexRx.Wait();    // wait for processing of previous resend message
                 iMutex.Wait();
@@ -376,7 +370,7 @@ void RaopControl::Run()
             }
             else {
                 //LOG(kMedia, "RaopControl unknown type %x, %x - iResend %d\n", type, id.BeInt16At(0), iResend);
-                LOG(kMedia, "RaopControl unknown type %x, %x - iResend %d\n", type, Converter::BeUint16At(id, 0), iResend);
+                LOG(kMedia, "RaopControl unknown type %x, %x - iResend %d\n", type, static_cast<TInt16>(Converter::BeUint16At(id, 0)), iResend);
                 iReceive.ReadFlush(); // unexpected so ignore
             }
         }
@@ -515,7 +509,6 @@ RaopAudio::RaopAudio(Environment& aEnv, TUint aPort)
     : iPort(aPort)
     , iSocket(aEnv, aPort)
     , iSocketReader(iSocket)
-    , iReaderBuffer(iSocketReader)
     //, iProtocol(aProtocol)
 {
 }
@@ -531,7 +524,7 @@ void RaopAudio::Reset()
     //iSocket.Reopen(iPort);
     iInitId = true;
     iInterrupted = false;
-    iReaderBuffer.ReadFlush();  // set to read next udp packet
+    iSocketReader.ReadFlush();  // set to read next udp packet
 }
 
 void RaopAudio::Initialise(const Brx &aAeskey, const Brx &aAesiv)
@@ -544,7 +537,7 @@ void RaopAudio::Initialise(const Brx &aAeskey, const Brx &aAesiv)
 //{
 //    LOG(kMedia, "RaopAudio::DoInterrupt()\n");
 //    iInterrupted = true;
-//    iReaderBuffer.ReadInterrupt();
+//    iSocketReader.ReadInterrupt();
 //}
 
 TUint16 RaopAudio::ReadPacket()
@@ -555,7 +548,7 @@ TUint16 RaopAudio::ReadPacket()
 
     for (;;) {
         try {
-            iDataBuffer.Set(iReaderBuffer.Read(kMaxReadBufferBytes));   // read all of the udp packet
+            iSocketReader.Read(iDataBuffer);   // read all of the udp packet
         }
         catch (ReaderError&) {
             // either no data, user abort or invalid header
@@ -564,7 +557,7 @@ TUint16 RaopAudio::ReadPacket()
                 throw;
             }
             if(iDataBuffer.Bytes() < 12) {  //may get here if kMaxReadBufferBytes not read
-                iReaderBuffer.ReadFlush();  // set to read next udp packet
+                iSocketReader.ReadFlush();  // set to read next udp packet
                 continue;   // keep trying if not interrupted
             }
         }
@@ -572,7 +565,7 @@ TUint16 RaopAudio::ReadPacket()
             continue;
         }
 
-        iReaderBuffer.ReadFlush();  // set to read next udp packet
+        iSocketReader.ReadFlush();  // set to read next udp packet
 
         if((iDataBuffer[0] != 0x80) || !((iDataBuffer[1] == 0x60) || (iDataBuffer[1] == 0xe0))) {
             LOG(kMedia, "RaopAudio::ReadPacket() invalid header %x\n", iDataBuffer[0]);
@@ -607,7 +600,7 @@ void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency)
     DecodePacket(aSenderSkew, aLatency, iDataBuffer);
 }
 
-void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brn& aData)
+void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brx& aData)
 {
     //LOG(kMedia, "RaopAudio::DecodePacket() bytes %d\n", aData.Bytes());
 
@@ -645,7 +638,7 @@ void RaopAudio::SetMute()
     ((RaopDataHeader*)iAudio.Ptr())->SetMute();
 }
 
-RaopDataHeader::RaopDataHeader(Brn& aRawData, TUint aSenderSkew, TUint aLatency)
+RaopDataHeader::RaopDataHeader(Brx& aRawData, TUint aSenderSkew, TUint aLatency)
     : iSenderSkew(aSenderSkew)
     , iLatency(aLatency)
 {
@@ -660,7 +653,7 @@ RaopDataHeader::RaopDataHeader(Brn& aRawData, TUint aSenderSkew, TUint aLatency)
     //LOG(kMedia, "RaopDataHeader raw bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
 }
 
-RaopDataHeader::RaopDataHeader(Brn& aBinData)
+RaopDataHeader::RaopDataHeader(Brx& aBinData)
 {
     iSenderSkew = ((RaopDataHeader*)(aBinData.Ptr()))->SenderSkew();
     iLatency = ((RaopDataHeader*)(aBinData.Ptr()))->Latency();
