@@ -6,20 +6,14 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
 
-//#include <openssl/rsa.h>
-
 namespace OpenHome {
 namespace Media {
-
-
-//class ProtocolRaop;
 
 class RaopAudio
 {
 private:
     static const TUint kMaxReadBufferBytes = 2000;
 public:
-    //RaopAudio(TUint aPort, ProtocolRaop& aProtocol);
     RaopAudio(Environment& aEnv, TUint aPort);
     ~RaopAudio();
     void Initialise(const Brx &aAeskey, const Brx &aAesiv);
@@ -41,7 +35,6 @@ private:
     TBool iInitId;
     TUint32 iId;
     TBool iInterrupted;
-    //ProtocolRaop& iProtocol;
 };
 
 class RaopControl
@@ -65,9 +58,9 @@ private:
     void Run();
     void TimerExpired();
     TUint iPort;
+    Endpoint iEndpoint;
     SocketUdp iSocket;
     UdpReader iSocketReader;
-    //UdpWriter iSocketWriter;
     Srs<kMaxReadBufferBytes> iReceive;
     Bws<kMaxReadBufferBytes> iResentData;
     ThreadFunctor* iThreadControl;
@@ -98,8 +91,7 @@ public:
     //ProtocolRaop(ProtocolManager& aManager, I2sDriver& aI2sDriver, SourcePairplay& aPairplaySource, Volume& aVolume);
     ~ProtocolRaop();
 public:
-    //virtual void Stream();
-    //void DoInterrupt();
+    void DoInterrupt();
     TBool Active();
     void Deactivate();
     void Close();
@@ -135,6 +127,7 @@ private:
     Bws<16> iAesiv;
     //SourcePairplay& iPairplaySource;
     RaopDevice* iRaopDevice;
+    TUint iStreamId;
     TUint iNextFlushId;
 };
 

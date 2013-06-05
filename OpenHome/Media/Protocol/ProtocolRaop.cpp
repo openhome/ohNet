@@ -47,15 +47,15 @@ ProtocolRaop::~ProtocolRaop()
     delete iRaopDevice;
 }
 
-//void ProtocolRaop::DoInterrupt()
-//{
-//    LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
-//
-//    //Lock();
-//    iRaopAudio.DoInterrupt();
-//    iRaopControl.DoInterrupt();
-//    //Unlock();
-//}
+void ProtocolRaop::DoInterrupt()
+{
+    LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
+
+    iLock.Wait();
+    iRaopAudio.DoInterrupt();
+    iRaopControl.DoInterrupt();
+    iLock.Signal();
+}
 
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
@@ -76,23 +76,13 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     TBool start = true;
     TUint aesSid = 0;
-    //iRaopControl.Reset();
+    iRaopControl.Reset();
     iRaopAudio.Reset();
     Brn audio;
     TUint16 expected = 0;
 
     // Output audio stream
     for (;;) {
-
-        //Lock();
-
-        //if (Interrupt()) {
-        //   LOG(kMedia, "<ProtocolRaop::Stream Interrupted\n");
-        //   //Unlock();
-        //   break;
-        //}
-        //Unlock();
-
         try {
             TUint16 count = iRaopAudio.ReadPacket();
 
@@ -198,8 +188,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
-    TUint streamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(Uri().AbsoluteUri(), 0, false, false, *this, streamId);
+    iStreamId = iIdProvider->NextStreamId();
+    iSupply->OutputStream(Uri().AbsoluteUri(), 0, false, false, *this, iStreamId);
 }
 
 void ProtocolRaop::OutputContainer(const Brn &aFmtp)
@@ -219,9 +209,17 @@ void ProtocolRaop::OutputAudio(const Brn &aPacket)
     iSupply->OutputData(aPacket);
 }
 
-TUint ProtocolRaop::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    return 0;   // FIXME - can't stop an raop stream; just interrupt it?
+    iLock.Wait();
+    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    if (stop) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        //iStopped = true;
+        iTcpClient.Interrupt(true);
+    }
+    iLock.Signal();
+    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
 TBool ProtocolRaop::Active()
@@ -233,9 +231,9 @@ void ProtocolRaop::Close()
 {
     LOG(kMedia, "ProtocolRaop::Close\n");
     // deregister/re-register to kick off any existing controllers - confuses controllers - may need to wait a while before re-reg
-//  iRaopDevice->Deregister();
-//  Thread::Sleep(100);
-//  iRaopDevice->Register(iPairplaySource.Name());
+    iRaopDevice->Deregister();
+    Thread::Sleep(100);
+    iRaopDevice->Register();
 
     iRaopDiscoverySession1->Close();
     iRaopDiscoverySession2->Close();
@@ -290,17 +288,17 @@ void RaopControl::UnlockRx()
     iMutexRx.Signal();
 }
 
-//void RaopControl::DoInterrupt()
-//{
-//    LOG(kMedia, "RaopControl::DoInterrupt()\n");
-//    iMutex.Wait();
-//    if(iResend) {
-//        iResend = 0;
-//        iSemaResend.Signal();
-//    }
-//
-//    iMutex.Signal();
-//}
+void RaopControl::DoInterrupt()
+{
+    LOG(kMedia, "RaopControl::DoInterrupt()\n");
+    iMutex.Wait();
+    if(iResend) {
+        iResend = 0;
+        iSemaResend.Signal();
+    }
+
+    iMutex.Signal();
+}
 
 void RaopControl::Reset()
 {
@@ -314,6 +312,7 @@ void RaopControl::Run()
     for (;;) {
         try {
             Brn id = iReceive.Read(2);
+            iEndpoint = iSocketReader.Sender();
             if(id.Bytes() < 2) {
                 LOG(kMedia, " RaopControl id bytes %d\n", id.Bytes());
                 continue;
@@ -323,6 +322,7 @@ void RaopControl::Run()
             if(type == 0x80D4) {
                 //read rest of header
                 Brn control = iReceive.Read(18);
+                iEndpoint = iSocketReader.Sender();
                 //extract timing info from control message and allow mutexed external access to data...
                 if(control.Bytes() < 18) {
                     THROW(ReaderError);
@@ -330,20 +330,20 @@ void RaopControl::Run()
                 //TUint mclk = iI2sDriver.MclkCount();	// record current mclk count at dac - use this to calculate the drift
                 //mclk /= 256;	// convert to samples
                 iMutex.Wait();
-                //iLatency = control.BeInt32At(14) - control.BeInt32At(2);
                 iLatency = Converter::BeUint32At(control, 14) - Converter::BeUint32At(control, 2);
-                //iSenderSkew = control.BeInt32At(2) - mclk;	// calculate count when this should play relative to current mclk count
+                //iSenderSkew = Converter::BeUint32At(control, 2) - mclk;	// calculate count when this should play relative to current mclk count
                 iMutex.Signal();
-                //LOG(kMedia, " RaopControl: now %u, play at %u, iSenderSkew %u, iLatency %u, mclk %u, iResend %d\n", control.BeInt32At(14), control.BeInt32At(2), iSenderSkew, iLatency, mclk, iResend);
+                //LOG(kMedia, " RaopControl: now %u, play at %u, iSenderSkew %u, iLatency %u, mclk %u, iResend %d\n", Converter::BeUint32At(control, 14), Converter::BeUint32At(control, 2), iSenderSkew, iLatency, mclk, iResend);
                 LOG(kMedia, " RaopControl: now %u, play at %u, iSenderSkew %u, iLatency %u, iResend %d\n", Converter::BeUint32At(control, 14), Converter::BeUint32At(control, 2), iSenderSkew, iLatency, iResend);
                 iReceive.ReadFlush();
             }
             else if(type == 0x80D6) {
                 // resent packet
                 iReceive.Read(2);   //ignore next 2 bytes
-                //Brn data(iReceive.Read(kMaxReadBufferBytes)); // read all of the udp packet
+                iEndpoint = iSocketReader.Sender();
                 Bws<kMaxReadBufferBytes> data;
                 iSocketReader.Read(data);   // read a full udp packet
+                iEndpoint = iSocketReader.Sender();
                 LOG(kMedia, "RaopControl read %d bytes, iResend %d\n", data.Bytes(), iResend);
                 iMutexRx.Wait();    // wait for processing of previous resend message
                 iMutex.Wait();
@@ -369,8 +369,7 @@ void RaopControl::Run()
                 iReceive.ReadFlush();
             }
             else {
-                //LOG(kMedia, "RaopControl unknown type %x, %x - iResend %d\n", type, id.BeInt16At(0), iResend);
-                LOG(kMedia, "RaopControl unknown type %x, %x - iResend %d\n", type, static_cast<TInt16>(Converter::BeUint16At(id, 0)), iResend);
+                LOG(kMedia, "RaopControl unknown type %x, %x - iResend %d\n", type, Converter::BeUint16At(id, 0), iResend);
                 iReceive.ReadFlush(); // unexpected so ignore
             }
         }
@@ -423,7 +422,7 @@ void RaopControl::RequestResend(TUint aPacketId, TUint aPackets)
         request.Append((TByte)((aPackets) & 0xff));
 
         try {
-            //iSocketWriter.Send(request);
+            iSocket.Send(request, iEndpoint);
         }
         catch(NetworkError) {
             // will handle this by timing out on receive
@@ -448,9 +447,9 @@ void RaopControl::GetResentData(Bwx& aData, TUint16 aCount)
     TBool valid = false;
     TBool timeout = false;
     if(iResentData.Bytes() >= 8) { // ensure valid
-        TUint type = static_cast<TInt16>(Converter::BeUint16At(iResentData, 0)) & 0xffff;
+        TUint type = Converter::BeUint16At(iResentData, 0) & 0xffff;
         if(type == 0x8060) {
-            TUint16 count = static_cast<TInt16>(Converter::BeUint16At(iResentData, 2)) & 0xffff;
+            TUint16 count = Converter::BeUint16At(iResentData, 2) & 0xffff;
             if(count == aCount) {
                 aData.Replace(iResentData);
                 iResend--;
@@ -461,7 +460,7 @@ void RaopControl::GetResentData(Bwx& aData, TUint16 aCount)
             }
         }
         else {
-            LOG(kMedia, "RaopControl::GetResentData iResentData.BeInt16At(0) %x\n", type);
+            LOG(kMedia, "RaopControl::GetResentData Converter::BeUint16At(iResentData,0) %x\n", type);
         }
     }
     else {
@@ -497,19 +496,16 @@ void RaopControl::TimerExpired()
 
 }
 
-
-
 //RaopTiming::RaopTiming(TUint aPort)
 //    : iUdpServer(aPort)
 //{
 //}
 
-//RaopAudio::RaopAudio(TUint aPort, ProtocolRaop& aProtocol)
+
 RaopAudio::RaopAudio(Environment& aEnv, TUint aPort)
     : iPort(aPort)
     , iSocket(aEnv, aPort)
     , iSocketReader(iSocket)
-    //, iProtocol(aProtocol)
 {
 }
 
@@ -521,7 +517,7 @@ void RaopAudio::Reset()
 {
     // socket may have been shut down
     //iSocket.Close();
-    //iSocket.Reopen(iPort);
+    iSocket.ReBind(iPort, 0);
     iInitId = true;
     iInterrupted = false;
     iSocketReader.ReadFlush();  // set to read next udp packet
@@ -533,12 +529,12 @@ void RaopAudio::Initialise(const Brx &aAeskey, const Brx &aAesiv)
     iAesiv.Replace(aAesiv);
 }
 
-//void RaopAudio::DoInterrupt()
-//{
-//    LOG(kMedia, "RaopAudio::DoInterrupt()\n");
-//    iInterrupted = true;
-//    iSocketReader.ReadInterrupt();
-//}
+void RaopAudio::DoInterrupt()
+{
+    LOG(kMedia, "RaopAudio::DoInterrupt()\n");
+    iInterrupted = true;
+    iSocketReader.ReadInterrupt();
+}
 
 TUint16 RaopAudio::ReadPacket()
 {
@@ -573,7 +569,7 @@ TUint16 RaopAudio::ReadPacket()
         }
 
         TUint32 id;
-        id = static_cast<TInt32>(Converter::BeUint32At(iDataBuffer, 8));
+        id = Converter::BeUint32At(iDataBuffer, 8);
         LOG(kMedia, "RaopAudio::ReadPacket() %d, id %d\n", iDataBuffer.Bytes(), id);
 
         if(iInitId) {
@@ -583,8 +579,7 @@ TUint16 RaopAudio::ReadPacket()
         }
 
         if(iId == id) {
-            //count = iDataBuffer.BeInt16At(2);
-            count = static_cast<TInt16>(Converter::BeUint16At(iDataBuffer, 2));
+            count = Converter::BeUint16At(iDataBuffer, 2);
             LOG(kMedia, "RaopAudio::ReadPacket() iId = %d, count = %d\n", iId, count);
             break;      // packet with same id found
         }
@@ -647,8 +642,8 @@ RaopDataHeader::RaopDataHeader(Brx& aRawData, TUint aSenderSkew, TUint aLatency)
     }
     iBytes = static_cast<TUint16>(aRawData.Bytes()-12);
     iStart = aRawData[1] != 0x60 ? true : false;
-    iSeqno = static_cast<TInt16>(Converter::BeUint16At(aRawData, 2));
-    iTimestamp = static_cast<TInt32>(Converter::BeUint32At(aRawData, 4));
+    iSeqno = Converter::BeUint16At(aRawData, 2);
+    iTimestamp = Converter::BeUint32At(aRawData, 4);
     iMute = false;
     //LOG(kMedia, "RaopDataHeader raw bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
 }
