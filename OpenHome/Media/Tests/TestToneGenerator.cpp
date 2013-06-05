@@ -252,9 +252,9 @@ void SuiteSyntaxError::Test()
 // sequential execution of test suites
 //
 
-void TestToneUriParser()
+void TestToneGenerator()
 {
-    Runner runner("ToneUriParser tests\n");
+    Runner runner("ToneGenerator tests\n");
     runner.Add(new SuiteLimits());
     runner.Add(new SuiteDuplicate());
     runner.Add(new SuiteMissing());

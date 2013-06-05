@@ -3,12 +3,12 @@
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
-extern void TestToneUriParser();
+extern void TestToneGenerator();
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
-    TestToneUriParser();
+    TestToneGenerator();
     delete aInitParams;
     Net::UpnpLibrary::Close();
 }
