@@ -594,8 +594,6 @@ Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
         catch(AsciiError) {
             THROW(MediaCodecRaopNotFound);
         }
-        //fmtp.Set(data);
-        //TUint bytes = fmtp.NextLine().Bytes()+1; //size of fmtp string
         data.SetBytes(bytes);
         iCodecSpecificData.Replace(data); // pass raw fmtp to alac decoder
 
