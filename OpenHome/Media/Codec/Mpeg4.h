@@ -3,9 +3,11 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Media/Codec/CodecInitContainer.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 
+EXCEPTION(MediaCodecRaopNotFound);
 EXCEPTION(MediaMpeg4FileInvalid);
 
 namespace OpenHome {
@@ -105,32 +107,43 @@ private:
     TUint iContainerSize;
 };
 
-class Mpeg4MediaInfo
+// Base class for parsing RAOP headers
+class Mpeg4MediaInfoBase
 {
 public:
     static const TUint kMaxCSDSize = 100;    // 100 bytes of codec specific data can be stored
 public:
-    Mpeg4MediaInfo(ICodecController& aController);
-    ~Mpeg4MediaInfo();
+    Mpeg4MediaInfoBase();
+    Mpeg4MediaInfoBase(ICodecController& aController);
+    ~Mpeg4MediaInfoBase();
+public:
     const Brx& CodecSpecificData() const;
-    SampleSizeTable& GetSampleSizeTable();
-    SeekTable& GetSeekTable();
     TUint32 SampleRate() const;
     TUint32 Timescale() const;
     TUint16 Channels() const;
     TUint16 BitDepth() const;
     TUint64 Duration() const;
-public:
-    static void GetCodec(const Brx& aData, Bwx& aCodec);
-private:
+protected:
     Bws<kMaxCSDSize> iCodecSpecificData;
-    SampleSizeTable iSampleSizeTable;
-    SeekTable iSeekTable;
     TUint32 iSampleRate;
     TUint32 iTimescale;
     TUint16 iChannels;
     TUint16 iBitDepth;
     TUint64 iSamplesTotal;
+};
+
+class Mpeg4MediaInfo : public Mpeg4MediaInfoBase
+{
+public:
+    Mpeg4MediaInfo(ICodecController& aController);
+    ~Mpeg4MediaInfo();
+    SampleSizeTable& GetSampleSizeTable();
+    SeekTable& GetSeekTable();
+public:
+    static void GetCodec(const Brx& aData, Bwx& aCodec);
+private:
+    SampleSizeTable iSampleSizeTable;
+    SeekTable iSeekTable;
 };
 
 } // namespace Codec

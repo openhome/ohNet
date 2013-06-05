@@ -4,11 +4,14 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
+#include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 
-#include <stream.h>
-#include <demux.h>
+#include <alac.h>
 #include <decomp.h>
 
 extern void alac_free_buffers(alac_file *alac);
@@ -36,6 +39,7 @@ private:
     Bws<4*10240> iInBuf;          // how big can these go and need to go ?
     Bws<16*10240> iDecodedBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
+    Mpeg4MediaInfoBase* iContainer;
     Mpeg4MediaInfo* iMp4;
     alac_file *alac;
 
@@ -45,6 +49,7 @@ private:
     TUint64 iSamplesWrittenTotal;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
+    TBool iAirplay;
 };
 
 } // namespace Codec
@@ -86,6 +91,16 @@ TBool CodecAlac::Recognise(const Brx& aData)
 {
     //LOG(kCodec, "CodecAlac::Recognise\n");
     Bws<4> codec;
+    iAirplay = false;
+
+    if(aData.Bytes() >= 4) {
+        Bws<4> identifier(aData.Ptr(), 4);
+        if(identifier == Brn("Raop")) {
+            LOG(kCodec, "CodecAlac::Recognise airplay\n");
+            iAirplay = true;
+            return true;
+        }
+    }
 
     try {
         Mpeg4MediaInfo::GetCodec(aData, codec);
@@ -96,7 +111,7 @@ TBool CodecAlac::Recognise(const Brx& aData)
     }
 
     if (codec == kCodecAlac) {
-        //LOG(kCodec, "CodecAlac::Recognise alac\n");
+        LOG(kCodec, "CodecAlac::Recognise alac\n");
         return true;
     }
     return false;
@@ -115,41 +130,76 @@ void CodecAlac::StreamInitialise()
     iDecodedBuf.SetBytes(0);
     iOutBuf.SetBytes(0);
 
-    iMp4 = new Mpeg4MediaInfo(*iController);
-    alac = create_alac(iMp4->BitDepth(), iMp4->Channels());
+    if (iAirplay) {
+        iContainer = new Mpeg4MediaInfoBase(*iController);
+        alac = create_alac(iContainer->BitDepth(), iContainer->Channels());
 
-    // We initialised codec-specific data in the recognise function.
-    Bws<64> info;
-    info.SetBytes(20);                          // first 20 bytes are ignored by decoder
-    info.Append(iMp4->CodecSpecificData());            // add data extracted from MPEG-4 header
-    alac_set_info(alac, (char*)info.Ptr());     // configure decoder
+        // fmtp parsing is partially duplicated in RaopContainer() - rationalise - ToDo
+        Parser fmtp(iContainer->CodecSpecificData());
+
+        try {
+            Ascii::Uint(fmtp.Next());   // ignore first number
+            alac->setinfo_max_samples_per_frame = Ascii::Uint(fmtp.Next());
+            alac->setinfo_7a = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
+            alac->setinfo_sample_size = static_cast<TUint8>(Ascii::Uint(fmtp.Next())); // in bits
+            alac->setinfo_rice_historymult = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
+            alac->setinfo_rice_initialhistory = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
+            alac->setinfo_rice_kmodifier = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
+            alac->setinfo_7f = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
+            alac->setinfo_80 = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));
+            alac->setinfo_82 = Ascii::Uint(fmtp.Next()); // max sample size??
+            alac->setinfo_86 = Ascii::Uint(fmtp.Next()); // bit rate (average)??
+            alac->setinfo_8a_rate = Ascii::Uint(fmtp.NextLine());
+        }
+        catch(AsciiError) {
+            THROW(CodecStreamCorrupt);
+        }
+
+        alac_set_info(alac, NULL);        // configure decoder with airplay specific defaults
+    }
+    else {
+        iMp4 = new Mpeg4MediaInfo(*iController);
+        iContainer = iMp4;
+        alac = create_alac(iContainer->BitDepth(), iContainer->Channels());
+
+        // We initialised codec-specific data in the recognise function.
+        Bws<64> info;
+        info.SetBytes(20);                          // first 20 bytes are ignored by decoder
+        info.Append(iContainer->CodecSpecificData());            // add data extracted from MPEG-4 header
+        alac_set_info(alac, (char*)info.Ptr());     // configure decoder
+    }
 
     iBitDepth = alac_sample_size(alac);         // sample size may be re-defined in the codec specific data in the MPEG4 header
-    iBytesPerSample = iMp4->Channels()*iMp4->BitDepth()/8;
+    iBytesPerSample = iContainer->Channels()*iContainer->BitDepth()/8;
     iCurrentSample = 0;
     iSamplesWrittenTotal = 0;
 
-    iTrackLengthJiffies = (iMp4->Duration() * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
+    iTrackLengthJiffies = (iContainer->Duration() * Jiffies::kJiffiesPerSecond) / iContainer->SampleRate();
     iTrackOffset = 0;
 
-    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iMp4->SampleRate(), iMp4->Duration(), iMp4->Channels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, iBitDepth, iMp4->SampleRate(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
+    //LOG(kCodec, "CodecAlac::StreamInitialise  iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    iController->OutputDecodedStream(0, iBitDepth, iContainer->SampleRate(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample) 
 {
     //LOG(kCodec, "CodecAlac::TrySeek(%lld)\n", aSample);
-    TUint64 startSample = 0;
-    TUint64 bytes = iMp4->GetSeekTable().Offset(aSample, startSample);     // find file offset relating to given audio sample
-    //LOG(kCodec, "CodecAlac::TrySeek to sample: %llu, byte: %lld\n", startSample, bytes);
-    TBool canSeek = iController->TrySeek(aStreamId, bytes);
-    if (canSeek) {
-        iSamplesWrittenTotal = aSample;
-        iCurrentSample = startSample;
-        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
-        iController->OutputDecodedStream(0, iBitDepth, iMp4->SampleRate(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, aSample, true);
+    if (!iAirplay) {
+        TUint64 startSample = 0;
+        TUint64 bytes = iMp4->GetSeekTable().Offset(aSample, startSample);     // find file offset relating to given audio sample
+        //LOG(kCodec, "CodecAlac::TrySeek to sample: %llu, byte: %lld\n", startSample, bytes);
+        TBool canSeek = iController->TrySeek(aStreamId, bytes);
+        if (canSeek) {
+            iSamplesWrittenTotal = aSample;
+            iCurrentSample = startSample;
+            iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
+            iController->OutputDecodedStream(0, iBitDepth, iMp4->SampleRate(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, aSample, true);
+        }
+        return canSeek;
     }
-    return canSeek;
+    else {
+        return false;
+    }
 }
 
 void CodecAlac::StreamCompleted()
@@ -170,19 +220,19 @@ void CodecAlac::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
 
     switch(iBitDepth) {
         case 8:
-            for(i=0 ; i<aToWrite*iMp4->Channels(); i++) {
+            for(i=0 ; i<aToWrite*iContainer->Channels(); i++) {
                 *dst++ = *src++;
             }
             break;
         case 16:
-            for(i=0 ; i<aToWrite*iMp4->Channels(); i++) {
+            for(i=0 ; i<aToWrite*iContainer->Channels(); i++) {
                 *dst++ = src[1];
                 *dst++ = src[0];
                 src += 2;
             }
             break;
         case 24:
-            for(i=0 ; i<aToWrite*iMp4->Channels(); i++) {
+            for(i=0 ; i<aToWrite*iContainer->Channels(); i++) {
                 *dst++ = src[2];
                 *dst++ = src[1];
                 *dst++ = src[0];
@@ -193,7 +243,7 @@ void CodecAlac::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
             ASSERTS();
     }
 }
- 
+
 void CodecAlac::Process() 
 {
     //LOG(kCodec, "CodecAlac::Process\n");
@@ -201,22 +251,37 @@ void CodecAlac::Process()
     TBool newStreamStarted = false;
     TBool streamEnded = false;
 
-    if (iCurrentSample < iMp4->GetSampleSizeTable().Count()) {
+    if (iAirplay || iCurrentSample < iMp4->GetSampleSizeTable().Count()) {
         // read in a single alac sample
         iInBuf.SetBytes(0);
 
-        try {
-            //LOG(kCodec, "CodecAlac::Process  sample = %u, size = %u, inBuf max size %u\n", iCurrentSample, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample), iInBuf.MaxBytes());
-            iController->Read(iInBuf, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample));
-            iCurrentSample++;
+        if (iAirplay) { // processing airplay stream
+            Bws<sizeof(RaopDataHeader)> binheader;
+            iController->Read(binheader, sizeof(RaopDataHeader));   // extract header
+
+            Brn audio(binheader);
+
+            RaopDataHeader header(audio);
+            //latency = header.Latency();
+            //senderSkew = header.SenderSkew();
+            //timestamp = header.Timestamp();
+            //mute = header.Mute();
+            iController->Read(iInBuf, header.Bytes());
         }
-        catch (CodecStreamStart&) {
-            newStreamStarted = true;
-            //LOG(kCodec, "CodecAlac::Process caught CodecStreamStart\n");
-        }
-        catch (CodecStreamEnded&) {
-            streamEnded = true;
-            //LOG(kCodec, "CodecAlac::Process caught CodecStreamEnded\n");
+        else {          // processing normal alac stream
+            try {
+                //LOG(kCodec, "CodecAlac::Process  sample = %u, size = %u, inBuf max size %u\n", iCurrentSample, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample), iInBuf.MaxBytes());
+                iController->Read(iInBuf, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample));
+                iCurrentSample++;
+            }
+            catch (CodecStreamStart&) {
+                newStreamStarted = true;
+                //LOG(kCodec, "CodecAlac::Process caught CodecStreamStart\n");
+            }
+            catch (CodecStreamEnded&) {
+                streamEnded = true;
+                //LOG(kCodec, "CodecAlac::Process caught CodecStreamEnded\n");
+            }
         }
 
         // decode sample
@@ -233,17 +298,17 @@ void CodecAlac::Process()
         TUint samplesToWrite = iDecodedBuf.Bytes()/iBytesPerSample;
         TUint samplesWritten = 0;
         while (samplesToWrite > 0) {
-            TUint bytes = samplesToWrite * (iBitDepth/8) * iMp4->Channels();
+            TUint bytes = samplesToWrite * (iBitDepth/8) * iContainer->Channels();
             TUint samples = samplesToWrite;
             TUint outputSpace = iOutBuf.MaxBytes() - iOutBuf.Bytes();
             if (bytes > outputSpace) {
-                samples = outputSpace / (iMp4->Channels() * (iBitDepth/8));
-                bytes = samples * (iBitDepth/8) * iMp4->Channels();
+                samples = outputSpace / (iContainer->Channels() * (iBitDepth/8));
+                bytes = samples * (iBitDepth/8) * iContainer->Channels();
             }
             BigEndianData(samples, samplesWritten);
             iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
-            if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iMp4->Channels()) {
-                iTrackOffset += iController->OutputAudioPcm(iOutBuf, iMp4->Channels(), iMp4->SampleRate(),
+            if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iContainer->Channels()) {
+                iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->SampleRate(),
                     iBitDepth, EMediaDataBigEndian, iTrackOffset);
                 iOutBuf.SetBytes(0);
             }
@@ -260,10 +325,10 @@ void CodecAlac::Process()
     if (newStreamStarted || streamEnded) {
         // flush remaining samples
         if (iOutBuf.Bytes() > 0) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iMp4->Channels(), iMp4->SampleRate(),
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->SampleRate(),
                 iBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutBuf.SetBytes(0);
-	}
+    }
         if (newStreamStarted) {
             THROW(CodecStreamStart);
         }
