@@ -334,7 +334,7 @@ def build(bld):
                  'OpenHome/Media/Codec/Alac.cpp',
                  'alac_decoder/alac.cpp',
             ],
-            use=['ALAC', 'OHNET'],
+            use=['ALAC', 'OHNET', 'OPENSSL'],
             target='CodecAlac')
 
     # AAC
@@ -579,6 +579,10 @@ def build(bld):
                 source='OpenHome/Media/Tests/TestProtocol.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestProtocol')
+        bld.program(
+                source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                target='TestProtocolRaop')
         bld.program(
                 source='OpenHome/Av/Tests/TestStore.cpp',
                 use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

@@ -136,7 +136,6 @@ private:
     Bws<16> iAesiv;
     //SourcePairplay& iPairplaySource;
     RaopDevice* iRaopDevice;
-    Uri iUri;
     TUint iNextFlushId;
 };
 

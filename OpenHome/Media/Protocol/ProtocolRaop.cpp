@@ -1,19 +1,6 @@
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
-//#include <Linn/Media/ProtocolRaop.h>
-//#include <Linn/Ascii/Ascii.h>
-//#include <Linn/Ascii/Parser.h>
-//#include <Linn/SysLog.h>
-//
-//
-//#include <stdio.h>
-//#include <string.h>
-//
-//using namespace Linn;
-//using namespace Linn::Control::Rtsp;
-//using namespace Linn::Media;
-//using namespace Linn::Ascii;
 
 EXCEPTION(ResendTimeout);
 EXCEPTION(ResendInvalid);
@@ -48,13 +35,6 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack)
         iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", RaopDevice::kPortRaopDiscovery, ipAddr, kPriority, kSessionStackBytes);
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
-        //iRaopDiscoverySession1 = new RaopDiscovery(*this, iPairplaySource, aVolume, *iRaopDevice, 1);
-        //iRaopDiscoveryServer.Add("AIRD", iRaopDiscoverySession1);
-
-        //iRaopDiscoverySession2 = new RaopDiscovery(*this, iPairplaySource, aVolume, *iRaopDevice, 2);
-        //iRaopDiscoveryServer.Add("AIRT", iRaopDiscoverySession2);
-
-        // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
         iRaopDiscoverySession1 = new RaopDiscovery(aEnv, *this, *iRaopDevice, 1);
         iRaopDiscoveryServer->Add("AIRD", iRaopDiscoverySession1);
 
@@ -87,12 +67,14 @@ ProtocolRaop::~ProtocolRaop()
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
     iNextFlushId = MsgFlush::kIdInvalid;
-    iUri.Replace(aUri);
+    // raop doesn't actually stream from a URI, so just expect a dummy uri
+    Uri uri;
+    uri.Replace(aUri);
     LOG(kMedia, "ProtocolRaop::Stream ");
-    LOG(kMedia, iUri.AbsoluteUri());
+    LOG(kMedia, uri.AbsoluteUri());
     LOG(kMedia, "\n");
 
-    if (iUri.Scheme() != Brn("raop")) {
+    if (uri.Scheme() != Brn("raop")) {
         LOG(kMedia, "ProtocolRaop::Stream Scheme not recognised\n");
         return EProtocolErrorNotSupported;
     }
@@ -246,7 +228,7 @@ void ProtocolRaop::OutputAudio(const Brn &aPacket)
 
 TUint ProtocolRaop::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return 0;   // FIXME
+    return 0;   // FIXME - can't stop an raop stream; just interrupt it?
 }
 
 TBool ProtocolRaop::Active()
@@ -616,7 +598,6 @@ TUint16 RaopAudio::ReadPacket()
         LOG(kMedia, "RaopAudio::ReadPacket() no data so retry\n");
         // rogue id so ignore
     }
-    Log::Print("count: %u\n", count);
 
     return count;
 }
