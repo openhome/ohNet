@@ -13,7 +13,7 @@ namespace Media {
 // c'tors and (in-)equality operators allow terser test implementation
 struct ToneParams
 {
-    ToneParams();  
+    ToneParams();
     ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
 
     // tighter packing possible, but universal order convention more valuable
@@ -44,9 +44,7 @@ class ToneUriParser
 public:
     ToneUriParser();
 
-    // condition: given URI must live at least as long as parser instance
-    // throws ToneUriParseError, UriError
-    void Parse(const Brx& aUri);
+    void Parse(const Brx& aUri);  // throws ToneUriParseError
 
     const ToneParams& Params() const;
     const Brx& Name() const;
