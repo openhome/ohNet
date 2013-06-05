@@ -6,16 +6,8 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Network.h>
-//#include <Linn/Standard.h>
-//#include <Linn/Control/IProtocol.h>
-//#include <Linn/Network/Network.h>
-//#include <Linn/Network/MdnsPlatform.h>
-//#include <vector>
-//#include <Linn/Control/Http/Http.h>
-//#include <Linn/Control/Rtsp/Rtsp.h>
-//#include <Linn/Media/SourcePairplay.h>
+
 #include  <openssl/rsa.h>
-//#include  <openssl/evp.h>
 #include  <openssl/aes.h>
 
 

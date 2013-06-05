@@ -13,8 +13,8 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack)
     : ProtocolNetwork(aEnv)
     , iRaopAudio(aEnv, kPortAudio)
     , iRaopControl(aEnv, kPortControl)
-//	, iRaopTiming(kPortTiming)
-//	, iPairplaySource(aPairplaySource)
+//  , iRaopTiming(kPortTiming)
+//  , iPairplaySource(aPairplaySource)
 {
     AutoNetworkAdapterRef ref(aEnv, "ProtocolRaop ctor");
     const NetworkAdapter* current = ref.Adapter();
@@ -516,7 +516,6 @@ RaopAudio::~RaopAudio()
 void RaopAudio::Reset()
 {
     // socket may have been shut down
-    //iSocket.Close();
     iSocket.ReBind(iPort, 0);
     iInitId = true;
     iInterrupted = false;

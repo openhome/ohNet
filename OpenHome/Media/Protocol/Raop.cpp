@@ -10,25 +10,8 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
 
-//#include <openssl/aes.h>
 #include <openssl/evp.h>
 
-//#include <Linn/Media/Raop.h>
-//#include <Linn/Media/Volume.h>
-//#include <Linn/AppCore.h>
-//#include <Linn/SysLog.h>
-//#include <Linn/Ascii/Ascii.h>
-//#include <Linn/Ascii/Parser.h>
-//#include <Linn/Control/Device.h>
-//#include <Linn/Media/ProtocolRaop.h>
-//
-//using namespace Linn;
-//using namespace Linn::Ascii;
-//using namespace Linn::Media;
-//using namespace Linn::Control;
-//using namespace Linn::Network;
-//using namespace Linn::Control::Http;
-//using namespace Linn::Control::Rtsp;
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -172,7 +155,6 @@ void RaopDiscovery::WriteSeq(TUint aCSeq)
     iWriterAscii->WriteNewline();
 }
 
-//void RaopDiscovery::WriteFply(TUint aLen, Brn aData)
 void RaopDiscovery::WriteFply(Brn aData)
 {
     const TByte cfply1[] = {
@@ -319,7 +301,7 @@ TBool RaopDiscovery::Active()
 
 void RaopDiscovery::Run()
 {
-    Log::Print("RaopDiscovery::Run\n");
+    LOG(kMedia, "RaopDiscovery::Run\n");
     iActive = false;
 
     iAeskeyPresent = false;
@@ -543,10 +525,6 @@ void RaopDiscovery::GenerateAppleResponse(const Brx& aChallenge)
 
     for (TUint j=0; j<6; j++) {     // shairport zero pads up to 32 bytes
         challenge[i++] = 0;
-    }
-
-    for (TUint j=0; j<sizeof(challenge); j++) {
-        Log::Print("%u ", challenge[j]);
     }
 
     LOG(kMedia, "challenge:");
