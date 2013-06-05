@@ -274,7 +274,7 @@ TestUpnpAv::TestUpnpAv(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSende
     iPipeline->Add(ProtocolFactory::NewHttp(aDvStack.Env()));
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
-    iUriProvider = new UriProviderSingleTrack(*iTrackFactory);
+    iUriProvider = new UriProviderSingleTrack("UpnpAv", *iTrackFactory);
     iPipeline->Add(iUriProvider);
     iPipeline->Start();
     iSourceUpnpAv = new DummySourceUpnpAv(aDvStack, *iPipeline, *iUriProvider);

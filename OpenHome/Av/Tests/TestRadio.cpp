@@ -85,6 +85,7 @@ private:
     Media::TrackFactory* iTrackFactory;
     Media::SimpleSongcastingDriver* iDriver;
     Media::UriProviderSingleTrack* iUriProvider;
+    Media::IUriProviderSingleTrack* iSingleTrackWriter;
     //DummySourceUpnpAv* iSourceUpnpAv;
 };
 
@@ -124,7 +125,8 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
     iPipeline->Add(ContentProcessorFactory::NewOpml());
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
-    iUriProvider = new UriProviderSingleTrack(*iTrackFactory);
+    iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
+    iSingleTrackWriter = iUriProvider;
     iPipeline->Add(iUriProvider);
     iPipeline->Start();
 //    iSourceUpnpAv = new DummySourceUpnpAv(aDvStack, *iPipeline, *iUriProvider);
@@ -155,8 +157,8 @@ void TestRadio::Run(PresetDatabase& aDb)
             TUint ignore;
             aDb.GetPreset(index, ignore, uri);
             iPipeline->Stop();
-            // FIXME - requires update following updates to replace providerId with uint trackId
-            //iPipeline->Begin(iUriProvider->Mode(), uri);
+            const TUint trackId = iSingleTrackWriter->SetTrack(uri, Brx::Empty());
+            iPipeline->Begin(iUriProvider->Mode(), trackId);
             iPipeline->Play();
         }
         else {

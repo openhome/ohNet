@@ -9,30 +9,33 @@ using namespace OpenHome::Media;
 
 // UriProviderSingleTrack
 
-UriProviderSingleTrack::UriProviderSingleTrack(TrackFactory& aTrackFactory)
-    : UriProvider("SingleTrack")
+UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TrackFactory& aTrackFactory)
+    : UriProvider(aMode)
     , iLock("UPST")
     , iTrackFactory(aTrackFactory)
+    , iTrack(NULL)
     , iIgnoreNext(true)
 {
 }
 
-void UriProviderSingleTrack::Begin(TUint /*aTrackId*/)
+void UriProviderSingleTrack::Begin(TUint aTrackId)
 {
     iLock.Wait();
-//    iUri.Replace(aProviderId);
-    iIgnoreNext = false;
+    ASSERT(iTrack != NULL);
+    ASSERT(iTrack->Id() == aTrackId);
+    iIgnoreNext = true;
     iLock.Signal();
 }
 
 EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
 {
     AutoMutex a(iLock);
-    if (iIgnoreNext || iUri.Bytes() == 0) {
+    if (iIgnoreNext || iTrack == NULL) {
         aTrack = NULL;
         return ePlayNo;
     }
-    aTrack = iTrackFactory.CreateTrack(iUri, Brx::Empty(), NULL);
+    aTrack = iTrack;
+    aTrack->AddRef();
     iIgnoreNext = true;
     return ePlayYes;
 }
@@ -47,12 +50,29 @@ TBool UriProviderSingleTrack::MoveCursorBefore(TUint aTrackId)
     return MoveCursor(aTrackId);
 }
 
-TBool UriProviderSingleTrack::MoveCursor(TUint /*aTrackId*/)
+TUint UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
+{
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
+    iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL);
+    return iTrack->Id();
+}
+
+void UriProviderSingleTrack::SetTrack(Track* aTrack)
+{
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
+    iTrack = aTrack;
+}
+
+TBool UriProviderSingleTrack::MoveCursor(TUint aTrackId)
 {
     AutoMutex a(iLock);
-/*    if (iUri != aProviderId) {
+    if (iTrack == NULL || iTrack->Id() != aTrackId) {
         return false;
-    }*/
+    }
     iIgnoreNext = true;
     return true;
 }
