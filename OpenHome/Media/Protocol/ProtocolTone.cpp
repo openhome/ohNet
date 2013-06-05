@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Standard.h>
 
 #include <cstring>
 
@@ -14,7 +15,9 @@
 #include <OpenHome/Media/Msg.h>  // XXX MsgFlush::kIdInvalid
 #include <cctype>  // XXX isprint()
 
-#ifndef NDEBUG
+#undef DEFINE_DEBUG_JOHNH
+
+#ifdef DEFINE_DEBUG_JOHNH
     // msg is always string, but val can be any expression (incl. one for which no format specifier exists)
     #define LOG_DBG(msg, val) \
         Log::Print("!!  %s:%d: " msg ": ", __FILE__, __LINE__); Log::Print(val); Log::Print("\n");
@@ -33,6 +36,8 @@ class ProtocolTone : public Protocol
 {
 public:
     ProtocolTone(Environment& aEnv);
+private:
+    void HexDumpRiffWaveHeader(TByte *aHeader, TUint aHeaderSize);  // debugging only
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private:  // from IStreamHandler
@@ -224,6 +229,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
     const ToneParams& params = uriParser.Params();
 
+#ifdef DEFINE_DEBUG_JOHNH
     LOG_DBG("successfully parsed all parameters", "")
     Log::Print("@@  bitdepth =   %6u\n", params.bitsPerSample);
     Log::Print("@@  samplerate = %6u\n", params.sampleRate);
@@ -231,6 +237,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     Log::Print("@@  channels =   %6u\n", params.numChannels);
     Log::Print("@@  duration =   %6u\n", params.duration);
     Log::Print("\n");
+#endif
 
     //
     // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
@@ -277,14 +284,21 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // output audio data (data members inherited from Protocol)
     //
 
-    // XXX debugging only
-    for (TByte *p = riffWav; p < riffWav + sizeof(riffWav); p += 4) {
+#ifdef DEFINE_DEBUG_JOHNH
+    HexDumpRiffWaveHeader(riffWav, sizeof(riffWav));
+#endif
+
+    return EProtocolErrorNotSupported;
+}
+
+void ProtocolTone::HexDumpRiffWaveHeader(TByte *aHeader, TUint aHeaderSize)
+{
+    ASSERT(aHeaderSize % 4 == 0)
+    for (TByte *p = aHeader; p < aHeader + aHeaderSize; p += 4) {
         Log::Print("%02x  %02x  %02x  %02x    ", *(p + 0), *(p + 1), *(p + 2), *(p + 3));
         for (int i = 0; i < 4; ++i) {
             Log::Print("%c", isprint(*(p + i)) ? *(p + i) : '.');
         }
         Log::Print("\n");
     }
-
-    return EProtocolErrorNotSupported;
 }
