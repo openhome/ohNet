@@ -101,9 +101,11 @@ void RadioPresetsTuneIn::DoRefresh()
             buf.Append(iReadBuffer.Read(readBytes));
             length -= readBytes;
         }
+#if 0
         Log::Print("Response from TuneIn is...\n\n");
         Log::Print(buf);
         Log::Print("\n\n");
+#endif
     }
     catch (NetworkError&) {
     }

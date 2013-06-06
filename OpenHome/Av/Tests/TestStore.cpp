@@ -34,12 +34,12 @@ void SuiteStore::Test()
 
     // check static items can be read as static
     Brn value;
-    TEST(rwStore->TryReadStoreStaticItem(StaticDataKey::kModelInfo, value));
+    TEST(rwStore->TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, value));
     TEST(value == Brn("Test implementation of ohMediaPlayer")); // slightly dodgy duplicating ro data from RamStore
     
     // check static items cannot be read as dynamic
     Bws<StoreMaxValueLength> value2;
-    TEST(!rwStore->TryReadStoreItem(StaticDataKey::kModelInfo, value2));
+    TEST(!rwStore->TryReadStoreItem(StaticDataKey::kBufModelInfo, value2));
 
     // check other (missing) item cannot be read via either route
     Brn missing("missing");
@@ -72,16 +72,16 @@ void SuiteStore::Test()
     TEST(value2 == dynamicValue2);
 
     // try update static item.  Check this throws
-    TEST_THROWS(rwStore->WriteStoreItem(StaticDataKey::kModelInfo, dynamicValue2), AvStoreValueIsReadOnly);
+    TEST_THROWS(rwStore->WriteStoreItem(StaticDataKey::kBufModelInfo, dynamicValue2), AvStoreValueIsReadOnly);
     
     // delete then recreate KvpStore
     // check both dynamic and static items can be read as before
     delete kvpStore;
     kvpStore = new KvpStore(*ramStore, *ramStore);
     rwStore = (IReadWriteStore*)kvpStore;
-    TEST(rwStore->TryReadStoreStaticItem(StaticDataKey::kModelInfo, value));
+    TEST(rwStore->TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, value));
     TEST(value == Brn("Test implementation of ohMediaPlayer")); // slightly dodgy duplicating ro data from RamStore
-    TEST(!rwStore->TryReadStoreItem(StaticDataKey::kModelInfo, value2));
+    TEST(!rwStore->TryReadStoreItem(StaticDataKey::kBufModelInfo, value2));
     TEST(rwStore->TryReadStoreItem(dynamicKey, value2));
     TEST(value2 == dynamicValue2);
     

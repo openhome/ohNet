@@ -43,14 +43,14 @@ void RamStore::List()
 
 void RamStore::LoadStaticData(IStoreLoaderStatic& aLoader)
 {
-    aLoader.AddStaticItem(StaticDataKey::kManufacturerName, "OpenHome");
-    aLoader.AddStaticItem(StaticDataKey::kManufacturerInfo, "insert oh info here...");
-    aLoader.AddStaticItem(StaticDataKey::kManufacturerUrl, "http://www.openhome.org");
-    aLoader.AddStaticItem(StaticDataKey::kManufacturerImageUrl, "http://www.openhome.org/common/images/core/open-home-logo.png");
-    aLoader.AddStaticItem(StaticDataKey::kModelName, "OpenHome Media Player (test)");
-    aLoader.AddStaticItem(StaticDataKey::kModelInfo, "Test implementation of ohMediaPlayer");
-    aLoader.AddStaticItem(StaticDataKey::kModelUrl, "http://www.openhome.org/wiki/OhMedia");
-    aLoader.AddStaticItem(StaticDataKey::kModelImageUrl, "http://www.openhome.org/common/images/core/open-home-logo.png");
+    aLoader.AddStaticItem(StaticDataKey::kBufManufacturerName, "OpenHome");
+    aLoader.AddStaticItem(StaticDataKey::kBufManufacturerInfo, "insert oh info here...");
+    aLoader.AddStaticItem(StaticDataKey::kBufManufacturerUrl, "http://www.openhome.org");
+    aLoader.AddStaticItem(StaticDataKey::kBufManufacturerImageUrl, "http://www.openhome.org/common/images/core/open-home-logo.png");
+    aLoader.AddStaticItem(StaticDataKey::kBufModelName, "OpenHome Media Player (test)");
+    aLoader.AddStaticItem(StaticDataKey::kBufModelInfo, "Test implementation of ohMediaPlayer");
+    aLoader.AddStaticItem(StaticDataKey::kBufModelUrl, "http://www.openhome.org/wiki/OhMedia");
+    aLoader.AddStaticItem(StaticDataKey::kBufModelImageUrl, "http://www.openhome.org/common/images/core/open-home-logo.png");
 }
 
 void RamStore::LoadPersistedData(IStoreLoaderDynamic& aLoader)

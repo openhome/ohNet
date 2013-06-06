@@ -10,14 +10,22 @@ using namespace OpenHome::Av;
 
 // StaticDataKey
 
-const Brn StaticDataKey::kManufacturerName = Brn("Manufacturer.Name");
-const Brn StaticDataKey::kManufacturerInfo = Brn("Manufacturer.Info");
-const Brn StaticDataKey::kManufacturerUrl = Brn("Manufacturer.Url");
-const Brn StaticDataKey::kManufacturerImageUrl = Brn("Manufacturer.ImageUrl");
-const Brn StaticDataKey::kModelName = Brn("Model.Name");
-const Brn StaticDataKey::kModelInfo = Brn("Model.Info");
-const Brn StaticDataKey::kModelUrl = Brn("Model.Url");
-const Brn StaticDataKey::kModelImageUrl = Brn("Model.ImageUrl");
+const TChar* StaticDataKey::kManufacturerName     = "Manufacturer.Name";
+const TChar* StaticDataKey::kManufacturerInfo     = "Manufacturer.Info";
+const TChar* StaticDataKey::kManufacturerUrl      = "Manufacturer.Url";
+const TChar* StaticDataKey::kManufacturerImageUrl = "Manufacturer.ImageUrl";
+const TChar* StaticDataKey::kModelName            = "Model.Name";
+const TChar* StaticDataKey::kModelInfo            = "Model.Info";
+const TChar* StaticDataKey::kModelUrl             = "Model.Url";
+const TChar* StaticDataKey::kModelImageUrl        = "Model.ImageUrl";
+const Brn StaticDataKey::kBufManufacturerName     = Brn(kManufacturerName);
+const Brn StaticDataKey::kBufManufacturerInfo     = Brn(kManufacturerInfo);
+const Brn StaticDataKey::kBufManufacturerUrl      = Brn(kManufacturerUrl);
+const Brn StaticDataKey::kBufManufacturerImageUrl = Brn(kManufacturerImageUrl);
+const Brn StaticDataKey::kBufModelName            = Brn(kModelName);
+const Brn StaticDataKey::kBufModelInfo            = Brn(kModelInfo);
+const Brn StaticDataKey::kBufModelUrl             = Brn(kModelUrl);
+const Brn StaticDataKey::kBufModelImageUrl        = Brn(kModelImageUrl);
 
 
 // KvpStore

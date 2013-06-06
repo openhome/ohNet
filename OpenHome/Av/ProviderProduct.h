@@ -7,11 +7,12 @@
 #include <Generated/DvAvOpenhomeOrgProduct1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Av/Product.h>
+#include <OpenHome/Private/Thread.h>
 
 namespace OpenHome {
 namespace Av {
 
-class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1
+class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1, private IProductObserver
 {
 public:
     ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct);
@@ -30,8 +31,19 @@ private: // from DvProviderAvOpenhomeOrgProduct1
     void Source(Net::IDvInvocation& aInvocation, TUint aIndex, Net::IDvInvocationResponseString& aSystemName, Net::IDvInvocationResponseString& aType, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseBool& aVisible);
     void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
     void SourceXmlChangeCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
+private: // from IProductObserver
+    void Started();
+    void RoomChanged();
+    void NameChanged();
+    void StandbyChanged();
+    void SourceIndexChanged();
+    void SourceXmlChanged();
 private:
+    static const TUint kMaxSourceXmlBytes = 1024 * 2;
+
     Av::Product& iProduct;
+    Mutex iLock;
+    Bws<kMaxSourceXmlBytes> iSourceXml;
 };
 
 } // namespace Av

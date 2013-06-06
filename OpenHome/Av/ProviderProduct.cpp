@@ -13,6 +13,7 @@ using namespace OpenHome::Av;
 ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct)
     : DvProviderAvOpenhomeOrgProduct1(aDevice)
     , iProduct(aProduct)
+    , iLock("PrPr")
 {
     EnablePropertyManufacturerName();
     EnablePropertyManufacturerInfo();
@@ -74,15 +75,16 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct)
         SetPropertyProductRoom(room);
         SetPropertyProductName(name);
         SetPropertyProductInfo(info);
-        // TODO (varies between adapter so not a suitable property) - SetPropertyProductUrl();
         SetPropertyProductImageUri(imageUri);
     }
+    const TChar* presentationUrl;
+    aDevice.GetAttribute("Upnp.PresentationUrl", &presentationUrl);
+    if (presentationUrl == NULL) {
+        presentationUrl = "";
+    }
+    SetPropertyProductUrl(Brn(presentationUrl));
 
-    // TODO - SetPropertyStandby(TBool aValue);
-    SetPropertySourceIndex(iProduct.CurrentSourceIndex());
-    SetPropertySourceCount(iProduct.SourceCount());
-    // TODO - SetPropertySourceXml(const Brx& aValue);
-    // TODO - SetPropertyAttributes(const Brx& aValue);
+    iProduct.SetObserver(*this);
 }
 
 ProviderProduct::~ProviderProduct()
@@ -152,14 +154,16 @@ void ProviderProduct::Product(IDvInvocation& aInvocation, IDvInvocationResponseS
     aInvocation.EndResponse();
 }
 
-void ProviderProduct::Standby(IDvInvocation& aInvocation, IDvInvocationResponseBool& /*aValue*/)
+void ProviderProduct::Standby(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue)
 {
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented);
+    aInvocation.StartResponse();
+    aValue.Write(iProduct.StandbyEnabled());
+    aInvocation.EndResponse();
 }
 
 void ProviderProduct::SetStandby(IDvInvocation& aInvocation, TBool /*aValue*/)
 {
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented);
+    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
 }
 
 void ProviderProduct::SourceCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
@@ -169,10 +173,11 @@ void ProviderProduct::SourceCount(IDvInvocation& aInvocation, IDvInvocationRespo
     aInvocation.EndResponse();
 }
 
-void ProviderProduct::SourceXml(IDvInvocation& aInvocation, IDvInvocationResponseString& /*aValue*/)
+void ProviderProduct::SourceXml(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue)
 {
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented);
     aInvocation.StartResponse();
+    aValue.Write(iSourceXml);
+    aValue.WriteFlush();
     aInvocation.EndResponse();
 }
 
@@ -197,7 +202,6 @@ void ProviderProduct::SetSourceIndex(IDvInvocation& aInvocation, TUint aValue)
 
 void ProviderProduct::SetSourceIndexByName(IDvInvocation& aInvocation, const Brx& aValue)
 {
-    aInvocation.StartResponse();
     try {
         iProduct.SetCurrentSource(aValue);
         aInvocation.EndResponse();
@@ -205,16 +209,16 @@ void ProviderProduct::SetSourceIndexByName(IDvInvocation& aInvocation, const Brx
     catch(AvSourceNotFound& ) {
         FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);
     }
+    aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderProduct::Source(IDvInvocation& aInvocation, TUint aIndex, IDvInvocationResponseString& aSystemName, IDvInvocationResponseString& aType, IDvInvocationResponseString& aName, IDvInvocationResponseBool& aVisible)
 {
-    Bws<Source::kMaxSystemNameBytes> systemName;
-    Bws<Source::kMaxSourceTypeBytes> type;
-    Bws<Source::kMaxSourceTypeBytes> name;
+    Bws<ISource::kMaxSystemNameBytes> systemName;
+    Bws<ISource::kMaxSourceTypeBytes> type;
+    Bws<ISource::kMaxSourceTypeBytes> name;
     TBool visible;
-    aInvocation.StartResponse();
     try {
         iProduct.GetSourceDetails(aIndex, systemName, type, name, visible);
     }
@@ -222,6 +226,7 @@ void ProviderProduct::Source(IDvInvocation& aInvocation, TUint aIndex, IDvInvoca
         FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);
     }
 
+    aInvocation.StartResponse();
     aSystemName.Write(systemName);
     aSystemName.WriteFlush();
     aType.Write(type);
@@ -232,12 +237,65 @@ void ProviderProduct::Source(IDvInvocation& aInvocation, TUint aIndex, IDvInvoca
     aInvocation.EndResponse();
 }
 
-void ProviderProduct::Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& /*aValue*/)
+void ProviderProduct::Attributes(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue)
 {
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented);
+    aInvocation.StartResponse();
+    aValue.Write(iProduct.Attributes());
+    aValue.WriteFlush();
+    aInvocation.EndResponse();
 }
 
-void ProviderProduct::SourceXmlChangeCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& /*aValue*/)
+void ProviderProduct::SourceXmlChangeCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
 {
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented);
+    aInvocation.StartResponse();
+    aValue.Write(iProduct.SourceXmlChangeCount());
+    aInvocation.EndResponse();
+}
+
+void ProviderProduct::Started()
+{
+    SetPropertyStandby(iProduct.StandbyEnabled());
+    SetPropertySourceIndex(iProduct.CurrentSourceIndex());
+    SetPropertySourceCount(iProduct.SourceCount());
+    SetPropertyAttributes(iProduct.Attributes());
+    SourceXmlChanged();
+}
+
+void ProviderProduct::RoomChanged()
+{
+    Bws<Product::kMaxRoomBytes> room;
+    Bws<Product::kMaxNameBytes> name;
+    Brn info;
+    Brn imageUri;
+    iProduct.GetProductDetails(room, name, info, imageUri);
+    SetPropertyProductRoom(room);
+}
+
+void ProviderProduct::NameChanged()
+{
+    Bws<Product::kMaxRoomBytes> room;
+    Bws<Product::kMaxNameBytes> name;
+    Brn info;
+    Brn imageUri;
+    iProduct.GetProductDetails(room, name, info, imageUri);
+    SetPropertyProductName(name);
+}
+
+void ProviderProduct::StandbyChanged()
+{
+    SetPropertyStandby(iProduct.StandbyEnabled());
+}
+
+void ProviderProduct::SourceIndexChanged()
+{
+    SetPropertySourceIndex(iProduct.CurrentSourceIndex());
+}
+
+void ProviderProduct::SourceXmlChanged()
+{
+    iLock.Wait();
+    iSourceXml.SetBytes(0);
+    iProduct.GetSourceXml(iSourceXml);
+    SetPropertySourceXml(iSourceXml);
+    iLock.Signal();
 }

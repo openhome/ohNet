@@ -26,6 +26,31 @@ public:
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
+
+class NullPipelineObserver : public IPipelineObserver
+{
+private: // from IPipelineObserver
+    void NotifyPipelineState(EPipelineState aState);
+    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
+    void NotifyMetaText(const Brx& aText);
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+};
+
+class LoggingPipelineObserver : public IPipelineObserver
+{
+public:
+    LoggingPipelineObserver();
+    void Enable(TBool aEnable);
+private: // from IPipelineObserver
+    void NotifyPipelineState(EPipelineState aState);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyMetaText(const Brx& aText);
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+private:
+    TBool iEnable;
+};
     
 } // namespace Media
 } // namespace OpenHome

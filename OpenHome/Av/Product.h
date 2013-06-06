@@ -18,31 +18,56 @@ namespace OpenHome {
 namespace Av {
 
 class IReadStore;
-class Source;
+class ISource;
 class ProviderProduct;
 
-class Product : private IInfoProvider, private INonCopyable
+class IProduct
 {
+public:
+    virtual void Activate(ISource& aSource) = 0;
+};
+
+class IProductObserver
+{
+public:
+    virtual void Started() = 0;
+    virtual void RoomChanged() = 0;
+    virtual void NameChanged() = 0;
+    virtual void StandbyChanged() = 0;
+    virtual void SourceIndexChanged() = 0;
+    virtual void SourceXmlChanged() = 0;
+};
+
+class Product : private IProduct, private IInfoProvider, private INonCopyable
+{
+    static const TUint kMaxAttributeBytes = 1024;
 public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
     Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IInfoAggregator& aInfoAggregator);
     ~Product();
+    void SetObserver(IProductObserver& aObserver);
     void Start();
-    void AddSource(Source* aSource);
+    void AddSource(ISource* aSource);
+    void AddAttribute(const TChar* aAttribute);
+    void AddAttribute(const Brx& aAttribute);
     void GetManufacturerDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
     void GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
     void GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri);
-    // Standby [g|s]etter tbd
+    TBool StandbyEnabled() const;
     TUint SourceCount() const;
     TUint CurrentSourceIndex() const;
-    //void GetSourceListAsXml(Brh& aXml); // move into provider
+    void GetSourceXml(Bwx& aXml);
     void SetCurrentSource(TUint aIndex);
     void SetCurrentSource(const Brx& aName);
     void GetSourceDetails(TUint aIndex, Bwx& aSystemName, Bwx& aType, Bwx& aName, TBool& aVisible);
-    //void Attributes tbd
+    const Brx& Attributes() const; // not thread-safe.  Assumes attributes are all set on a single thread during startup
     TUint SourceXmlChangeCount();
+private:
+    void AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue);
+private: // from IProduct
+    void Activate(ISource& aSource);
 private: // from IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
@@ -50,9 +75,12 @@ private:
     IReadStore& iReadStore;
     Mutex iLock;
     ProviderProduct* iProviderProduct;
-    std::vector<Source*> iSources;
+    IProductObserver* iObserver;
+    std::vector<ISource*> iSources;
+    Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
     TUint iCurrentSource;
+    TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
 };
 
 } // namespace Av

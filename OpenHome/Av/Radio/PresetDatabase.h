@@ -64,7 +64,7 @@ public: // from IPresetDatabaseWriter
     TUint MaxNumPresets() const;
     void BeginSetPresets();
     void SetPreset(TUint aIndex, const Brx& aMetaData);
-    void ClearPreset(TUint aIndex); // FIXME - could be inlined if we care
+    void ClearPreset(TUint aIndex);
     void EndSetPresets();
 private:
     class Preset

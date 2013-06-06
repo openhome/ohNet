@@ -59,6 +59,7 @@ ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPre
     EnableActionChannelsMax();
     EnableActionProtocolInfo();
 
+    (void)SetPropertyUri(Brx::Empty());
     (void)SetPropertyMetadata(Brx::Empty());
     SetTransportState(Media::EPipelineStopped);
     (void)SetPropertyId(IPresetDatabaseReader::kPresetIdNone);
@@ -154,11 +155,7 @@ void ProviderRadio::Channel(IDvInvocation& aInvocation, IDvInvocationResponseStr
 
 void ProviderRadio::SetChannel(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata)
 {
-    TUint id;
-    if (!iDbReader.TryGetPresetByMetaData(aMetadata, id)) {
-        aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
-    }
-    SetChannel(id, aUri, aMetadata);
+    SetChannel(IPresetDatabaseReader::kPresetIdNone, aUri, aMetadata);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }

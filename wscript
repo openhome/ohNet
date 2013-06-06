@@ -259,6 +259,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ContentOpml.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
+                'OpenHome/Media/PipelineObserver.cpp',
                 'Generated/DvUpnpOrgAVTransport1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderAvTransport.cpp',
                 'Generated/DvUpnpOrgConnectionManager1.cpp',
@@ -266,6 +267,7 @@ def build(bld):
                 'Generated/DvUpnpOrgRenderingControl1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
                 'OpenHome/Av/UpnpAv/UpnpAv.cpp',
+                'OpenHome/Av/Radio/SourceRadio.cpp',
                 'OpenHome/Av/Radio/PresetDatabase.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
@@ -602,6 +604,10 @@ def build(bld):
             source='OpenHome/Av/Tests/TestRadio.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRadio')
+    bld.program(
+            source='OpenHome/Av/Tests/TestMediaPlayer.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestMediaPlayer')
 
 # Bundles
 def bundle(ctx):

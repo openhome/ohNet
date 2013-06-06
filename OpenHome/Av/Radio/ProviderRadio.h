@@ -10,23 +10,11 @@
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Av/Radio/SourceRadio.h>
 
 namespace OpenHome {
 using namespace Net;
 namespace Av {
-
-class ISourceRadio
-{
-public:
-    virtual ~ISourceRadio() {}
-    virtual void Fetch(const Brx& aUri, const Brx& aMetaData) = 0;
-    virtual void Play() = 0;
-    virtual void Pause() = 0;
-    virtual void Stop() = 0;
-    virtual void Seek(TUint aSecondsAbsolute) = 0;
-    virtual void SeekAbsolute(TUint aSeconds) = 0;
-    virtual void SeekRelative(TUint aSeconds) = 0;
-};
 
 class IPresetDatabaseReader;
 

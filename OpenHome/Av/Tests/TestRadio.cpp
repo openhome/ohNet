@@ -85,7 +85,6 @@ private:
     Media::TrackFactory* iTrackFactory;
     Media::SimpleSongcastingDriver* iDriver;
     Media::UriProviderSingleTrack* iUriProvider;
-    Media::IUriProviderSingleTrack* iSingleTrackWriter;
     //DummySourceUpnpAv* iSourceUpnpAv;
 };
 
@@ -126,7 +125,6 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
-    iSingleTrackWriter = iUriProvider;
     iPipeline->Add(iUriProvider);
     iPipeline->Start();
 //    iSourceUpnpAv = new DummySourceUpnpAv(aDvStack, *iPipeline, *iUriProvider);
@@ -157,7 +155,7 @@ void TestRadio::Run(PresetDatabase& aDb)
             TUint ignore;
             aDb.GetPreset(index, ignore, uri);
             iPipeline->Stop();
-            const TUint trackId = iSingleTrackWriter->SetTrack(uri, Brx::Empty());
+            const TUint trackId = iUriProvider->SetTrack(uri, Brx::Empty());
             iPipeline->Begin(iUriProvider->Mode(), trackId);
             iPipeline->Play();
         }
@@ -165,8 +163,6 @@ void TestRadio::Run(PresetDatabase& aDb)
             Log::Print("Unsupported command - %c\n", (char)ch);
         }
     }
-    while (mygetch() != 'q')
-        ;
 }
 
 #define LOG_PIPELINE_OBSERVER

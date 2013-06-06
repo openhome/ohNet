@@ -8,29 +8,55 @@
 namespace OpenHome {
 namespace Av {
 
-class Source : protected IInfoProvider
+class IProduct;
+
+class ISource
 {
+    friend class Product;
 public:
     static const TUint kMaxSystemNameBytes = 20;
     static const TUint kMaxSourceNameBytes = 20;
     static const TUint kMaxSourceTypeBytes = 20;
     static const TUint kMaxAttributesBytes = 100;
 public:
-    virtual ~Source();
+    virtual ~ISource() {}
+    virtual const Brx& SystemName() const = 0;
+    virtual const Brx& Type() const = 0;
+    virtual const Brx& Name() const = 0;
+    virtual TBool IsVisible() const = 0;
+    virtual void Activate() = 0;
+    virtual void Deactivate() = 0;
+    virtual void SetVisible(TBool aVisible) = 0;
+private:
+    virtual void Initialise(IProduct& aProduct) = 0;
+};
+
+class Source : public ISource/*, protected IInfoProvider*/
+{
+    static const TUint kMaxSourceTypeBytes = 20;
+protected: // from ISource
     const Brx& SystemName() const;
     const Brx& Type() const;
     const Brx& Name() const;
     TBool IsVisible() const;
-    virtual void Enable() = 0;
-    virtual void Disable() = 0;
-    // ?? protected void QueryInfo(const Brx& aQuery, IWriter& aWriter);
+    void Deactivate();
+    void SetVisible(TBool aVisible);
 protected:
     Source(const TChar* aSystemName, const TChar* aType);
+    TBool IsActive() const;
+    void DoActivate();
+private: // from ISource
+    void Initialise(IProduct& aProduct);
+protected:
+    TBool iActive;
 private:
     Brn iSystemName;
     Brn iType;
     Bws<kMaxSourceNameBytes> iName;
     TBool iVisible;
+
+    IProduct* iProduct; // FIXME - change type to IProduct
+    //PipelineManager* iPipelineManager; // FIXME - change type to IPipelineManager
 };
 
 } // namespace Av

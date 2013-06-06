@@ -62,14 +62,22 @@ public:
 class StaticDataKey
 {
 public:
-    static const Brn kManufacturerName;
-    static const Brn kManufacturerInfo;
-    static const Brn kManufacturerUrl;
-    static const Brn kManufacturerImageUrl;
-    static const Brn kModelName;
-    static const Brn kModelInfo;
-    static const Brn kModelUrl;
-    static const Brn kModelImageUrl;
+    static const TChar* kManufacturerName;
+    static const TChar* kManufacturerInfo;
+    static const TChar* kManufacturerUrl;
+    static const TChar* kManufacturerImageUrl;
+    static const TChar* kModelName;
+    static const TChar* kModelInfo;
+    static const TChar* kModelUrl;
+    static const TChar* kModelImageUrl;
+    static const Brn kBufManufacturerName;
+    static const Brn kBufManufacturerInfo;
+    static const Brn kBufManufacturerUrl;
+    static const Brn kBufManufacturerImageUrl;
+    static const Brn kBufModelName;
+    static const Brn kBufModelInfo;
+    static const Brn kBufModelUrl;
+    static const Brn kBufModelImageUrl;
 };
 
 // data that is hard-coded for a device so doesn't need to be written to disk

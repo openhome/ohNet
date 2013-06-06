@@ -134,26 +134,6 @@ private:
     TUint iNextFlushId;
 };
 
-class NullPipelineObserver : public IPipelineObserver // test helper
-{
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
-};
-
-class LoggingPipelineObserver : public IPipelineObserver // test helper
-{
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
-};
-
 } // namespace Media
 } // namespace OpenHome
 

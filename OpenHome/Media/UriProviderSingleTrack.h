@@ -10,26 +10,17 @@
 namespace OpenHome {
 namespace Media {
 
-class IUriProviderSingleTrack
-{
-public:
-    virtual ~IUriProviderSingleTrack() {}
-    virtual TUint SetTrack(const Brx& aUri, const Brx& aMetaData) = 0;
-    virtual void SetTrack(Track* aTrack) = 0;
-};
-    
-class UriProviderSingleTrack : public UriProvider, public IUriProviderSingleTrack
+class UriProviderSingleTrack : public UriProvider
 {
 public:
     UriProviderSingleTrack(const TChar* aMode, TrackFactory& aTrackFactory);
+    TUint SetTrack(const Brx& aUri, const Brx& aMetaData);
+    void SetTrack(Track* aTrack);
 private: // from UriProvider
     void Begin(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
     TBool MoveCursorAfter(TUint aTrackId);
     TBool MoveCursorBefore(TUint aTrackId);
-private: // from IUriProviderSingleTrack
-    TUint SetTrack(const Brx& aUri, const Brx& aMetaData);
-    void SetTrack(Track* aTrack);
 private:
     TBool MoveCursor(TUint aTrackId);
 private:
