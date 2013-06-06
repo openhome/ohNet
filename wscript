@@ -149,13 +149,17 @@ def configure(conf):
         conf.env.LIB_WMA=['advapi32', 'user32']
 
     # OpenSSL
+    conf.env.STLIBPATH_OPENSSL = [
+        conf.path.find_node('.').abspath() + '\\'
+        + os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib'),
+    ]
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.STLIB_OPENSSL = ['eay32']
     else:
         conf.env.LIB_OPENSSL = ['dl']
         conf.env.STLIB_OPENSSL = ['crypto']
     conf.env.INCLUDES_OPENSSL = [
-        'openssl',
+        os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'include'),
     ]
 
 def get_node(bld, node_or_filename):
