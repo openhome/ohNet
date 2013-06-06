@@ -24,12 +24,14 @@ class ProviderProduct;
 class IProduct
 {
 public:
+    virtual ~IProduct() {}
     virtual void Activate(ISource& aSource) = 0;
 };
 
 class IProductObserver
 {
 public:
+    virtual ~IProductObserver() {}
     virtual void Started() = 0;
     virtual void RoomChanged() = 0;
     virtual void NameChanged() = 0;
