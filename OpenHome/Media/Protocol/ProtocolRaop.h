@@ -129,6 +129,7 @@ private:
     RaopDevice* iRaopDevice;
     TUint iStreamId;
     TUint iNextFlushId;
+    TBool iStopped;
 };
 
 class RaopDataHeader

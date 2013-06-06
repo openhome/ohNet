@@ -379,14 +379,14 @@ void RaopDiscovery::Run()
                 }
                 else if(method == RtspMethod::kRecord) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
-//	has no effect on iTunes				iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));
+                    //iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));  // has no effect on iTunes 
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
 
                     // select pairplay source
                     //iPairplaySource.Play();
-                    //LOG(kMedia, "RaopDiscovery::Run - Playing\n");
+                    LOG(kMedia, "RaopDiscovery::Run - Playing\n");
                 }
                 else if(method == RtspMethod::kSetParameter) {
                     if(iHeaderContentType.Type() == Brn("text/parameters")) {

@@ -60,6 +60,7 @@ void ProtocolRaop::DoInterrupt()
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
     iNextFlushId = MsgFlush::kIdInvalid;
+    iStopped = false;
     // raop doesn't actually stream from a URI, so just expect a dummy uri
     Uri uri;
     uri.Replace(aUri);
@@ -83,6 +84,11 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     // Output audio stream
     for (;;) {
+        if (iStopped) {
+            iSupply->OutputFlush(iNextFlushId);
+            return EProtocolStreamStopped;
+        }
+
         try {
             TUint16 count = iRaopAudio.ReadPacket();
 
@@ -215,7 +221,7 @@ TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
     const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
-        //iStopped = true;
+        iStopped = true;
         iTcpClient.Interrupt(true);
     }
     iLock.Signal();
