@@ -1,7 +1,7 @@
 #include <OpenHome/Av/Radio/ProviderRadio.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-#include <Generated/DvAvOpenHomeOrgRadio1.h>
+#include <Generated/DvAvOpenhomeOrgRadio1.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>

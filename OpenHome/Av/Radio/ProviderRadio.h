@@ -5,7 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
-#include <Generated/DvAvOpenHomeOrgRadio1.h>
+#include <Generated/DvAvOpenhomeOrgRadio1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Media/Msg.h>
