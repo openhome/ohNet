@@ -44,7 +44,6 @@ private:
     static const TUint kPriority = kPriorityNormal-1;
     static const TUint kSessionStackBytes = 10 * 1024;
 public:
-    //RaopControl(TUint aPort, I2sDriver& aI2sDriver);
     RaopControl(Environment& aEnv, TUint aPort);
     ~RaopControl();
     void DoInterrupt();
@@ -70,7 +69,6 @@ private:
     Mutex iMutexRx;
     Semaphore iSemaResend;
     TUint iResend;
-    //I2sDriver& iI2sDriver;
     Timer* iTimerExpiry;
 };
 
@@ -88,7 +86,6 @@ class ProtocolRaop : public ProtocolNetwork
 {
 public:
     ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack);
-    //ProtocolRaop(ProtocolManager& aManager, I2sDriver& aI2sDriver, SourcePairplay& aPairplaySource, Volume& aVolume);
     ~ProtocolRaop();
 public:
     void DoInterrupt();
@@ -125,7 +122,6 @@ private:
 
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
-    //SourcePairplay& iPairplaySource;
     RaopDevice* iRaopDevice;
     TUint iStreamId;
     TUint iNextFlushId;

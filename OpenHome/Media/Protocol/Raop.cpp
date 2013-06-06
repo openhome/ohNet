@@ -110,19 +110,15 @@ void RaopDevice::MacAddressOctets(TByte (&aOctets)[6]) const
 }
 
 
-//RaopDiscovery::RaopDiscovery(ProtocolRaop& aProtocolRaop, SourcePairplay& aPairplaySource, Volume& aVolume, RaopDevice& aRaopDevice, TUint aInstance)
 RaopDiscovery::RaopDiscovery(Environment& aEnv, ProtocolRaop& aProtocolRaop, RaopDevice& aRaopDevice, TUint aInstance)
     : iAeskeyPresent(false)
     , iAesSid(0)
     , iProtocolRaop(aProtocolRaop)
-    //, iPairplaySource(aPairplaySource)
     //, iVolume(aVolume)
     , iRaopDevice(aRaopDevice)
     , iInstance(aInstance)
     , iActive(false)
 {
-    //iRaopDevice.Register(iPairplaySource.Name());
-
     iReaderBuffer = new Srs<kMaxReadBufferBytes>(*this);
     iWriterBuffer = new Sws<kMaxWriteBufferBytes>(*this);
     iWriterAscii = new WriterAscii(*iWriterBuffer);
@@ -322,7 +318,6 @@ void RaopDiscovery::Run()
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
                     iWriterResponse->WriteHeader(RtspHeader::kContentType, Brn("application/octet-stream"));
                     WriteSeq(iHeaderCSeq.CSeq());
-                    //WriteFply(iHeaderContentLength.ContentLength(), data);
                     WriteFply(data);
                     iWriterResponse->WriteFlush();
                 }
@@ -603,7 +598,6 @@ const Brx &RaopDiscovery::Fmtp()
     return iSdpInfo.Fmtp();
 }
 
-//void RaopDiscovery::ReadSdp(Rtsp::ISdpHandler& aSdpHandler)
 void RaopDiscovery::ReadSdp(ISdpHandler& aSdpHandler)
 {
     aSdpHandler.Reset();

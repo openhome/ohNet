@@ -49,7 +49,7 @@ class RaopDevice
     static const TUint kMaxNameBytes = 100;
     static const TUint kMacAddrBytes = 12;
 public:
-    static const TUint kPortRaopDiscovery = 5048;//5000;
+    static const TUint kPortRaopDiscovery = 5001;//5000;
     // aMacAddr in hex of form 001122334455
     RaopDevice(Net::DvStack& aDvStackconst, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
     void Register();
@@ -74,7 +74,6 @@ class RaopDiscovery : public SocketTcpSession
     static const TUint kMaxWriteBufferBytes = 4000;
 
 public:
-    //RaopDiscovery(ProtocolRaop& aProtocolRaop, SourcePairplay& aPairplaySource, Volume& aVolume, RaopDevice& aRaopDevice, TUint aInstance);
     RaopDiscovery(Environment& aEnv, ProtocolRaop& aProtocolRaop, RaopDevice& aRaopDevice, TUint aInstance);
     ~RaopDiscovery();
     const Brx &Aeskey();
@@ -89,7 +88,6 @@ private: // from SocketTcpSession
     void Run();
 private:
     void WriteSeq(TUint aCSeq);
-    //void WriteFply(TUint aLen, Brn aData);
     void WriteFply(Brn aData);
     void ReadSdp(ISdpHandler& aSdpHandler);
     void GenerateAppleResponse(const Brx& aChallenge);
@@ -113,7 +111,6 @@ private:
     RSA *iRsa;
     Bws<1024> iResponse;
     ProtocolRaop& iProtocolRaop;
-    //SourcePairplay& iPairplaySource;
     //Volume& iVolume;
     RaopDevice& iRaopDevice;
     TUint iInstance;

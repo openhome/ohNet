@@ -14,7 +14,6 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack)
     , iRaopAudio(aEnv, kPortAudio)
     , iRaopControl(aEnv, kPortControl)
 //  , iRaopTiming(kPortTiming)
-//  , iPairplaySource(aPairplaySource)
 {
     AutoNetworkAdapterRef ref(aEnv, "ProtocolRaop ctor");
     const NetworkAdapter* current = ref.Adapter();
@@ -253,7 +252,7 @@ void ProtocolRaop::Deactivate()
     iRaopDiscoverySession2->Deactivate();
 }
 
-RaopControl::RaopControl(Environment& aEnv, TUint aPort)//, I2sDriver& aI2sDriver)
+RaopControl::RaopControl(Environment& aEnv, TUint aPort)
     : iPort(aPort)
     , iSocket(aEnv, aPort)
     , iSocketReader(iSocket)
@@ -262,8 +261,6 @@ RaopControl::RaopControl(Environment& aEnv, TUint aPort)//, I2sDriver& aI2sDrive
     , iMutexRx("raoR")
     , iSemaResend("raoc", 0)
     , iResend(0)
-    //, iI2sDriver(aI2sDriver)
-    //, iTimerExpiry(MakeFunctor(*this, &RaopControl::TimerExpired), kPriority+1) //lower priorities fail to initialise - why? - ToDo
 {
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired));
     iThreadControl = new ThreadFunctor("RAOC", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
