@@ -507,7 +507,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
-                'OpenHome/Media/Tests/TestToneUriParser.cpp',
+                'OpenHome/Media/Tests/TestToneGenerator.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -589,9 +589,9 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestFiller')
     bld.program(
-            source='OpenHome/Media/Tests/TestToneUriParserMain.cpp',
+            source='OpenHome/Media/Tests/TestToneGeneratorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestToneUriParser')
+            target='TestToneGenerator')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpAv.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
