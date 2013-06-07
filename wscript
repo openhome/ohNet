@@ -150,8 +150,8 @@ def configure(conf):
 
     # OpenSSL
     conf.env.STLIBPATH_OPENSSL = [
-        conf.path.find_node('.').abspath() + '\\'
-        + os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib'),
+        os.path.join(conf.path.find_node('.').abspath(),
+        os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib')),
     ]
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.STLIB_OPENSSL = ['eay32']
