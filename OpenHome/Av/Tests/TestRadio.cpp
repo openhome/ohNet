@@ -13,6 +13,7 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <ctype.h>
 #include <limits.h>
@@ -286,7 +287,7 @@ int CDECL main(int aArgc, char* aArgv[])
     };
     for (TUint i=0; i<sizeof(presets)/sizeof(presets[0]); i++) {
         Brn urlAsMetaData(presets[i]);
-        (void)db->SetPreset(i, urlAsMetaData);
+        (void)db->SetPreset(i, urlAsMetaData, urlAsMetaData);
     }
     db->EndSetPresets();
     TestRadio* tr = new TestRadio(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());

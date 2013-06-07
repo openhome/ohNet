@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/Debug.h>
 #include <mad.h>
 
 #include <stdlib.h>

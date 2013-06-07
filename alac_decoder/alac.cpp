@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/OhNetTypes.h>
 

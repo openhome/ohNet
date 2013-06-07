@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Av/Debug.h>
 
 namespace OpenHome {
 namespace Media {

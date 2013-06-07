@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <string.h>
 

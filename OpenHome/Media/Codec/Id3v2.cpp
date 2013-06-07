@@ -6,6 +6,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <string.h>
 

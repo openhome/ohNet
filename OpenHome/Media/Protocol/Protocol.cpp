@@ -3,6 +3,7 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

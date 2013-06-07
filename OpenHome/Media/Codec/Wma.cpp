@@ -7,7 +7,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Os.h>
-
+#include <OpenHome/Av/Debug.h>
 
 extern "C" {
 

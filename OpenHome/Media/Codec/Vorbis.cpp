@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/Debug.h>
 
 #undef X        //defined in os_types.h!
 

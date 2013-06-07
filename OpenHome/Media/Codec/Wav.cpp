@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <string.h>
 

@@ -4,7 +4,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
-#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 /* Example pls file
 
