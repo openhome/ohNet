@@ -40,6 +40,8 @@ private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     std::vector<ToneGenerator*> iToneGenerators;
+    // 1[ms] x 192000[Hz] x 8[channels] x 24[bit/channel] x 1/8[B/bit] = 4,608[B]
+    Bws<4608> iAudioBuf;
 };
 
 } // namespace Media
@@ -346,13 +348,75 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
     //
     // output audio data (data members inherited from Protocol)
+    // N.B. assuming only periodic waveforms and identical output on all channels
     //
 
-#ifdef DEFINE_DEBUG_JOHNH
-    HexDumpRiffWaveHeader(riffWav, sizeof(riffWav));
-#endif
+    // chosen max number of samples that can be Generate()d for any waveform;
+    // esp. for LUT-based implementation: trade-off between (on-device) space and audio resolution;
+    // pitch more likely to be N x 10[Hz] rather than N x 2^r[Hz]
+    // XXX 64000 = 2^6 x 10^3, i.e. plenty of factors from binary and decimal world;
+    //     also fits into TUint16;  sizeof(int) x 64000 < 256kB
+    const TUint kMaxVirtualSamplesPerPeriod = 64000;  // Nyquist limit: assuming pitch <= 32kHz (beyond audible range)
 
-    return EProtocolErrorNotSupported;
+    // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
+    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;  // XXX ???
+
+    TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
+    iSupply->OutputStream(aUri, sizeof(riffWav) + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, *this, streamId);
+
+    iAudioBuf.SetBytes(0);  // reset audio buffer
+    iAudioBuf.Append(riffWav, sizeof(riffWav));  // initialise audio buffer with RIFF-WAVE header
+
+    for (TUint i = 0; i < nSamples; ++i) {
+        TUint x = (i % kMaxVirtualSamplesPerPeriod) * virtualSamplesStep;  // XXX ???
+        // trusting generator to produce at most 24-bit values
+        TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
+        // max requirement: 8[channels] x 24[bit] + extraneous byte from final 32-bit write
+        TByte multiChannelAudioSample[8 * 3 + 1];
+        TByte *p = multiChannelAudioSample;
+        switch (params.bitsPerSample) {
+            case 8:
+                audioSample >>= 16;
+                // RIFF-WAVE spec: stored as unsigned (sic!) bytes
+                audioSample += 128;  // XXX shifting -128..+127 into 0..255
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    *(p + 1 * ch) = static_cast<TByte>(audioSample);
+                }
+                break;
+            case 16:
+                audioSample >>= 8;  // correct sign extension guaranteed
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    *reinterpret_cast<TUint16 *>(p + 2 * ch) = Arch::LittleEndian2(static_cast<TUint16>(audioSample));
+                }
+                break;
+            case 24:
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    // write 32-bit value to staging memory, but then overlap next channel on MSB==0 (highest location in LE)
+                    *reinterpret_cast<TUint32 *>(p + /*sic!*/ 3 * ch) = Arch::LittleEndian4(static_cast<TUint32>(audioSample));
+                }
+                break;
+            default:
+                ASSERTS();
+        }
+        if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
+#ifdef DEFINE_DEBUG_JOHNH
+            Log::Print("flushing audio buffer: %u[B]\n", iAudioBuf.Bytes());
+            HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+#endif  // DEFINE_DEBUG_JOHNH
+            iSupply->OutputData(iAudioBuf);
+            iAudioBuf.SetBytes(0);  // reset audio buffer
+        }
+        iAudioBuf.Append(multiChannelAudioSample, blockAlign);
+    }
+
+    // flush final audio data (if any) from (partially) filled audio buffer
+#ifdef DEFINE_DEBUG_JOHNH
+    Log::Print("flushing final audio buffer: %u[B]\n", iAudioBuf.Bytes());
+    HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+#endif  // DEFINE_DEBUG_JOHNH
+    iSupply->OutputData(iAudioBuf);
+
+    return EProtocolStreamSuccess;
 }
 
 #ifdef DEFINE_DEBUG
