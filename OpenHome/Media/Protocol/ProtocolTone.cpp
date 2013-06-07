@@ -36,8 +36,10 @@ class ProtocolTone : public Protocol
 {
 public:
     ProtocolTone(Environment& aEnv);
+#ifdef DEFINE_DEBUG
 private:
-    void HexDumpRiffWaveHeader(TByte *aHeader, TUint aHeaderSize);  // debugging only
+    void HexDump(const TByte *aBase, TUint aSize) const;
+#endif  // DEFINE_DEBUG
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private:  // from IStreamHandler
@@ -237,7 +239,6 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const ToneParams& params = uriParser.Params();
 
 #ifdef DEFINE_DEBUG_JOHNH
-    LOG_DBG("successfully parsed all parameters", "")
     Log::Print("@@  bitdepth =   %6u\n", params.bitsPerSample);
     Log::Print("@@  samplerate = %6u\n", params.sampleRate);
     Log::Print("@@  pitch =      %6u\n", params.pitch);
@@ -287,6 +288,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     strncpy(reinterpret_cast<char *>(riffWav + 36), "data", 4);
     *reinterpret_cast<TUint *>(riffWav + 40) = Arch::LittleEndian4(subchunkTwoSize);
 
+#ifdef DEFINE_DEBUG_JOHNH
+    HexDump(riffWav, sizeof(riffWav));
+#endif  // DEFINE_DEBUG_JOHNH
     //
     // output audio data (data members inherited from Protocol)
     //
@@ -298,14 +302,30 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     return EProtocolErrorNotSupported;
 }
 
-void ProtocolTone::HexDumpRiffWaveHeader(TByte *aHeader, TUint aHeaderSize)
+#ifdef DEFINE_DEBUG
+void ProtocolTone::HexDump(const TByte *aBase, TUint aSize) const
 {
-    ASSERT(aHeaderSize % 4 == 0)
-    for (TByte *p = aHeader; p < aHeader + aHeaderSize; p += 4) {
-        Log::Print("%02x  %02x  %02x  %02x    ", *(p + 0), *(p + 1), *(p + 2), *(p + 3));
-        for (int i = 0; i < 4; ++i) {
+    const TByte *p = aBase;
+    const int kBytesPerLine = 16;  // 16 x 3 chars + 2 chars + 16 chars < 80
+    do {
+        int maxBytes = kBytesPerLine;
+        if ((p + maxBytes) > (aBase + aSize)) {
+            maxBytes = aSize % kBytesPerLine;
+        }
+
+        for (int i = 0; i < maxBytes; ++i) {
+            Log::Print("%02x ", *(p + i));
+        }
+        for (int i = 0; i < (kBytesPerLine - maxBytes); ++i) {
+            Log::Print("   ");  // optical filler for last line
+        }
+        Log::Print(" ");
+        for (int i = 0; i < maxBytes; ++i) {
             Log::Print("%c", isprint(*(p + i)) ? *(p + i) : '.');
         }
         Log::Print("\n");
-    }
+
+        p += kBytesPerLine;
+    } while (p < (aBase + aSize));
 }
+#endif  // DEFINE_DEBUG
