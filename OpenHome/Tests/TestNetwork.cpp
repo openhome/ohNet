@@ -472,6 +472,21 @@ void SuiteEndpoint::Test()
     Endpoint ep;
     TEST_THROWS(ep.SetAddress(Brn("baddomainname.linn.co.uk")), NetworkError);
     TEST_THROWS(Endpoint ep2(1234, Brn("baddomainname.linn.co.uk")); (void)ep2, NetworkError);
+
+    Bws<32> buffer;
+    ep.SetAddress(Brn("127.0.0.1"));
+
+    // Confirm that TIpAddress is network-order.
+    TEST(ep.Address() == Arch::BigEndian4(0x7F000001));
+
+    // Check address -> string.
+    ep.AppendAddress(buffer);
+    TEST(buffer == Brn("127.0.0.1"));
+
+    // Checkout address decomposition.
+    TByte ip[4];
+    ep.GetAddressOctets(ip);
+    TEST((ip[0] == 127) && (ip[1] == 0) && (ip[2] == 0) && (ip[3] == 1));
 }
 
 const TUint kMulticastPort = 2000;
