@@ -86,12 +86,6 @@ public enum DebugLevel {
      * Enable <tt>DvWebSocket</tt> messages.
      */
     DvWebSocket(1<<15),
-
-    /**
-     * Enable <tt>Media</tt> messages.
-     */
-    Media(1<<16),
-
     /**
      * Enable <tt>Bonjour</tt> messages.
      */
@@ -102,10 +96,16 @@ public enum DebugLevel {
      */
     DvDevice(1<<18),
 
-    /**
-     * Enable <tt>Codec</tt> messages.
-     */
-    Codec(1<<19),
+    App0(1<<20),
+    App1(1<<21),
+    App2(1<<22),
+    App3(1<<23),
+    App4(1<<24),
+    App5(1<<25),
+    App6(1<<26),
+    App7(1<<27),
+    App8(1<<28),
+    App9(1<<29),
 
     /**
      * Enable <tt>Error</tt> messages.

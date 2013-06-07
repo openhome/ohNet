@@ -24,13 +24,21 @@ ShellCommandDebug::ShellCommandDebug(Shell& aShell)
     AddLevel("XmlFetch", Debug::kXmlFetch);
     AddLevel("Service", Debug::kService);
     AddLevel("Event", Debug::kEvent);
-    AddLevel("Topology", Debug::kTopology);
     AddLevel("DvInvocation", Debug::kDvInvocation);
     AddLevel("DvEvent", Debug::kDvEvent);
     AddLevel("DvWebSocket", Debug::kDvWebSocket);
-    AddLevel("Media", Debug::kMedia);
     AddLevel("Bonjour", Debug::kBonjour);
     AddLevel("DvDevice", Debug::kDvDevice);
+    AddLevel("Application0", Debug::kApplication0);
+    AddLevel("Application1", Debug::kApplication1);
+    AddLevel("Application2", Debug::kApplication2);
+    AddLevel("Application3", Debug::kApplication3);
+    AddLevel("Application4", Debug::kApplication4);
+    AddLevel("Application5", Debug::kApplication5);
+    AddLevel("Application6", Debug::kApplication6);
+    AddLevel("Application7", Debug::kApplication7);
+    AddLevel("Application8", Debug::kApplication8);
+    AddLevel("Application9", Debug::kApplication9);
     AddLevel("All", Debug::kAll);
 }
 
