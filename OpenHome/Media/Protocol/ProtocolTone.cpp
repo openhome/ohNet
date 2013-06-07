@@ -229,6 +229,20 @@ TBool ToneGenerator::Recognise(const Brx& aName) const
     return aName == iName;
 }
 
+#ifdef DEFINE_DEBUG
+ToneGeneratorPattern::ToneGeneratorPattern()
+    : ToneGenerator("pattern.wav")
+{
+}
+
+TInt32 ToneGeneratorPattern::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
+{
+    static TUint cnt = 0;
+    cnt = (cnt + 4) & 0xff;
+    return (((cnt + 2) << 16) | ((cnt + 1) << 8) | cnt) & 0x00ffffff;
+}
+#endif  // DEFINE_DEBUG
+
 ToneGeneratorSilence::ToneGeneratorSilence()
     : ToneGenerator("silence.wav")
 {

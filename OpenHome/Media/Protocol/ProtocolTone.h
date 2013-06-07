@@ -65,6 +65,15 @@ private:
     Brn iName;
 };
 
+#ifdef DEFINE_DEBUG
+class ToneGeneratorPattern : public ToneGenerator
+{
+public:
+    ToneGeneratorPattern();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+#endif  // DEFINE_DEBUG
+
 class ToneGeneratorSilence : public ToneGenerator
 {
 public:
