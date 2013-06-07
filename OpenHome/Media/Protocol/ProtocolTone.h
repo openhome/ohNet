@@ -53,6 +53,25 @@ private:
     Bws<kMaxNameBytes> iName;
 };
 
+class ToneGenerator
+{
+public:
+    virtual ~ToneGenerator() { }
+    TBool Recognise(const Brx& aName) const;
+    virtual TInt32 Generate(TUint aOffset, TUint aMaxOffset) = 0;  // really 24-bit max
+protected:
+    ToneGenerator(const TChar* aName);
+private:
+    Brn iName;
+};
+
+class ToneGeneratorSilence : public ToneGenerator
+{
+public:
+    ToneGeneratorSilence();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
 } // namespace Media
 } // namespace OpenHome
 

@@ -218,6 +218,27 @@ const Brx& ToneUriParser::Name() const
     return iName;
 }
 
+// tone generation
+ToneGenerator::ToneGenerator(const TChar* aName)
+    : iName(aName)
+{
+}
+
+TBool ToneGenerator::Recognise(const Brx& aName) const
+{
+    return aName == iName;
+}
+
+ToneGeneratorSilence::ToneGeneratorSilence()
+    : ToneGenerator("silence.wav")
+{
+}
+
+TInt32 ToneGeneratorSilence::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
+{
+    return 0;
+}
+
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 {
     if (!aUri.BeginsWith(Brn("tone://"))) {
