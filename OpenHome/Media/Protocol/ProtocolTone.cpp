@@ -17,14 +17,6 @@
 
 #undef DEFINE_DEBUG_JOHNH
 
-#ifdef DEFINE_DEBUG_JOHNH
-    // msg is always string, but val can be any expression (incl. one for which no format specifier exists)
-    #define LOG_DBG(msg, val) \
-        Log::Print("!!  %s:%d: " msg ": ", __FILE__, __LINE__); Log::Print(val); Log::Print("\n");
-#else
-    #define LOG_DBG(msg, val) /* NOP */
-#endif
-
 //
 // declarations
 //
@@ -280,7 +272,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     Log::Print("@@  channels =   %6u\n", params.numChannels);
     Log::Print("@@  duration =   %6u\n", params.duration);
     Log::Print("\n");
-#endif
+#endif  // DEFINE_DEBUG_JOHNH
 
     //
     // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
