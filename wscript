@@ -533,7 +533,7 @@ def build(bld):
     if not bld.env.nolink:
         bld.program(
                source='OpenHome/Media/Tests/TestShell.cpp',
-               use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+               use=['OHNET', 'SHELL', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                target='TestShell')
         bld.program(
                 source='OpenHome/Media/Tests/TestMsgMain.cpp',
@@ -597,7 +597,7 @@ def build(bld):
                 target='TestProtocolHttp')
         bld.program(
                 source='OpenHome/Media/Tests/TestCodecMain.cpp',
-                use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+                use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
                 target='TestCodec')
         bld.program(
                 source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
