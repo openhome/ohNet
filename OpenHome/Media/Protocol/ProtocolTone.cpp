@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <vector>
 #include <cstring>
 
 #include <OpenHome/Private/Printer.h>  // XXX Log::Print()
@@ -28,6 +29,7 @@ class ProtocolTone : public Protocol
 {
 public:
     ProtocolTone(Environment& aEnv);
+    ~ProtocolTone();
 #ifdef DEFINE_DEBUG
 private:
     void HexDump(const TByte *aBase, TUint aSize) const;
@@ -36,6 +38,8 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+private:
+    std::vector<ToneGenerator*> iToneGenerators;
 };
 
 } // namespace Media
@@ -58,11 +62,21 @@ Protocol* ProtocolFactory::NewTone(Environment& aEnv)
 // ProtocolTone
 ProtocolTone::ProtocolTone(Environment& aEnv)
     : Protocol(aEnv)
+    , iToneGenerators()
 {
+    iToneGenerators.push_back(new ToneGeneratorSilence);
+#ifdef DEFINE_DEBUG
+    iToneGenerators.push_back(new ToneGeneratorPattern);
+#endif  // DEFINE_DEBUG
 }
 
-// XXX any need to override virtual dtor?
-// ProtocolTone::~ProtocolTone() { }
+ProtocolTone::~ProtocolTone()
+{
+    while (!iToneGenerators.empty()) {
+        delete iToneGenerators.back();
+        iToneGenerators.pop_back();
+    }
+}
 
 TUint ProtocolTone::TryStop(TUint /* aTrackId */, TUint /* aStreamId */)
 {
@@ -318,6 +332,18 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 #ifdef DEFINE_DEBUG_JOHNH
     HexDump(riffWav, sizeof(riffWav));
 #endif  // DEFINE_DEBUG_JOHNH
+
+    // dynamically select waveform generator
+    ToneGenerator *generator = NULL;
+    for (TUint i = 0; i < iToneGenerators.size(); ++i) {
+        if (iToneGenerators[i]->Recognise(uriParser.Name())) {
+            generator = iToneGenerators[i];
+        }
+    }
+    if (NULL == generator) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
+
     //
     // output audio data (data members inherited from Protocol)
     //
