@@ -3,7 +3,6 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
-#include <OpenHome/Media/Codec/CodecInitContainer.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 
