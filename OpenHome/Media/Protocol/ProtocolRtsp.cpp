@@ -1,11 +1,8 @@
 #include <OpenHome/Media/Protocol/ProtocolRtsp.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/OsWrapper.h>
-//#include <Linn/Ascii/Ascii.h>
-//#include <Linn/Ascii/Parser.h>
 
 using namespace OpenHome;
-//using namespace Linn::Control::Rtsp;
 using namespace OpenHome::Media;
 
 
@@ -20,10 +17,6 @@ ProtocolRtsp::ProtocolRtsp(Environment& aEnv, const Brx& aGuid)
 
 void ProtocolRtsp::StartStream() {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
-
-    //iStreamId = iIdProvider->NextStreamId();
-    //iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
-    //iStarted = true;
     TUint streamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, true, *this, streamId);
 }
@@ -161,10 +154,6 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
         return EProtocolStreamErrorUnrecoverable;
     }
 
-    //if (!Start(0, true, false)) {
-    //    LOG(kMedia, "ProtocolRtsp::Stream Start rejected\n");
-    //    return EProtocolStreamErrorUnrecoverable;
-    //}
     StartStream();
 
     // Output pgmpu
@@ -175,11 +164,6 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
     // Output audio stream
 
     for (;;) {
-        //if (Interrupt()) {
-        //    LOG(kMedia, "<ProtocolRtsp::Stream Interrupted\n");
-        //    return;
-        //}
-
         if(iKeepAliveTime < Os::TimeInMs(iEnv.OsCtx())) {
             try {      
                 LOG(kMedia, "-ProtocolRtsp::Stream send alive\n");
