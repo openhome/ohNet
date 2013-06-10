@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Standard.h>
 
+#include <vector>
 #include <cstring>
 
 #include <OpenHome/Private/Printer.h>  // XXX Log::Print()
@@ -16,14 +17,6 @@
 #include <cctype>  // XXX isprint()
 
 #undef DEFINE_DEBUG_JOHNH
-
-#ifdef DEFINE_DEBUG_JOHNH
-    // msg is always string, but val can be any expression (incl. one for which no format specifier exists)
-    #define LOG_DBG(msg, val) \
-        Log::Print("!!  %s:%d: " msg ": ", __FILE__, __LINE__); Log::Print(val); Log::Print("\n");
-#else
-    #define LOG_DBG(msg, val) /* NOP */
-#endif
 
 //
 // declarations
@@ -36,12 +29,19 @@ class ProtocolTone : public Protocol
 {
 public:
     ProtocolTone(Environment& aEnv);
+    ~ProtocolTone();
+#ifdef DEFINE_DEBUG
 private:
-    void HexDumpRiffWaveHeader(TByte *aHeader, TUint aHeaderSize);  // debugging only
+    void HexDump(const TByte *aBase, TUint aSize) const;
+#endif  // DEFINE_DEBUG
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+private:
+    std::vector<ToneGenerator*> iToneGenerators;
+    // 1[ms] x 192000[Hz] x 8[channels] x 24[bit/channel] x 1/8[B/bit] = 4,608[B]
+    Bws<4608> iAudioBuf;
 };
 
 } // namespace Media
@@ -64,11 +64,21 @@ Protocol* ProtocolFactory::NewTone(Environment& aEnv)
 // ProtocolTone
 ProtocolTone::ProtocolTone(Environment& aEnv)
     : Protocol(aEnv)
+    , iToneGenerators()
 {
+    iToneGenerators.push_back(new ToneGeneratorSilence);
+#ifdef DEFINE_DEBUG
+    iToneGenerators.push_back(new ToneGeneratorPattern);
+#endif  // DEFINE_DEBUG
 }
 
-// XXX any need to override virtual dtor?
-// ProtocolTone::~ProtocolTone() { }
+ProtocolTone::~ProtocolTone()
+{
+    while (!iToneGenerators.empty()) {
+        delete iToneGenerators.back();
+        iToneGenerators.pop_back();
+    }
+}
 
 TUint ProtocolTone::TryStop(TUint /* aTrackId */, TUint /* aStreamId */)
 {
@@ -216,6 +226,41 @@ const Brx& ToneUriParser::Name() const
     return iName;
 }
 
+// tone generation
+ToneGenerator::ToneGenerator(const TChar* aName)
+    : iName(aName)
+{
+}
+
+TBool ToneGenerator::Recognise(const Brx& aName) const
+{
+    return aName == iName;
+}
+
+#ifdef DEFINE_DEBUG
+ToneGeneratorPattern::ToneGeneratorPattern()
+    : ToneGenerator("pattern.wav")
+{
+}
+
+TInt32 ToneGeneratorPattern::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
+{
+    static TUint cnt = 0;
+    cnt = (cnt + 4) & 0xff;
+    return (((cnt + 2) << 16) | ((cnt + 1) << 8) | cnt) & 0x00ffffff;
+}
+#endif  // DEFINE_DEBUG
+
+ToneGeneratorSilence::ToneGeneratorSilence()
+    : ToneGenerator("silence.wav")
+{
+}
+
+TInt32 ToneGeneratorSilence::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
+{
+    return 0;
+}
+
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 {
     if (!aUri.BeginsWith(Brn("tone://"))) {
@@ -237,14 +282,13 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const ToneParams& params = uriParser.Params();
 
 #ifdef DEFINE_DEBUG_JOHNH
-    LOG_DBG("successfully parsed all parameters", "")
     Log::Print("@@  bitdepth =   %6u\n", params.bitsPerSample);
     Log::Print("@@  samplerate = %6u\n", params.sampleRate);
     Log::Print("@@  pitch =      %6u\n", params.pitch);
     Log::Print("@@  channels =   %6u\n", params.numChannels);
     Log::Print("@@  duration =   %6u\n", params.duration);
     Log::Print("\n");
-#endif
+#endif  // DEFINE_DEBUG_JOHNH
 
     //
     // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
@@ -287,25 +331,118 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     strncpy(reinterpret_cast<char *>(riffWav + 36), "data", 4);
     *reinterpret_cast<TUint *>(riffWav + 40) = Arch::LittleEndian4(subchunkTwoSize);
 
+#ifdef DEFINE_DEBUG_JOHNH
+    HexDump(riffWav, sizeof(riffWav));
+#endif  // DEFINE_DEBUG_JOHNH
+
+    // dynamically select waveform generator
+    ToneGenerator *generator = NULL;
+    for (TUint i = 0; i < iToneGenerators.size(); ++i) {
+        if (iToneGenerators[i]->Recognise(uriParser.Name())) {
+            generator = iToneGenerators[i];
+        }
+    }
+    if (NULL == generator) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
+
     //
     // output audio data (data members inherited from Protocol)
+    // N.B. assuming only periodic waveforms and identical output on all channels
     //
 
-#ifdef DEFINE_DEBUG_JOHNH
-    HexDumpRiffWaveHeader(riffWav, sizeof(riffWav));
-#endif
+    // chosen max number of samples that can be Generate()d for any waveform;
+    // esp. for LUT-based implementation: trade-off between (on-device) space and audio resolution;
+    // pitch more likely to be N x 10[Hz] rather than N x 2^r[Hz]
+    // XXX 64000 = 2^6 x 10^3, i.e. plenty of factors from binary and decimal world;
+    //     also fits into TUint16;  sizeof(int) x 64000 < 256kB
+    const TUint kMaxVirtualSamplesPerPeriod = 64000;  // Nyquist limit: assuming pitch <= 32kHz (beyond audible range)
 
-    return EProtocolErrorNotSupported;
+    // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
+    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;  // XXX ???
+
+    TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
+    iSupply->OutputStream(aUri, sizeof(riffWav) + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, *this, streamId);
+
+    iAudioBuf.SetBytes(0);  // reset audio buffer
+    iAudioBuf.Append(riffWav, sizeof(riffWav));  // initialise audio buffer with RIFF-WAVE header
+
+    for (TUint i = 0; i < nSamples; ++i) {
+        TUint x = (i % kMaxVirtualSamplesPerPeriod) * virtualSamplesStep;  // XXX ???
+        // trusting generator to produce at most 24-bit values
+        TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
+        // max requirement: 8[channels] x 24[bit] + extraneous byte from final 32-bit write
+        TByte multiChannelAudioSample[8 * 3 + 1];
+        TByte *p = multiChannelAudioSample;
+        switch (params.bitsPerSample) {
+            case 8:
+                audioSample >>= 16;
+                // RIFF-WAVE spec: stored as unsigned (sic!) bytes
+                audioSample += 128;  // XXX shifting -128..+127 into 0..255
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    *(p + 1 * ch) = static_cast<TByte>(audioSample);
+                }
+                break;
+            case 16:
+                audioSample >>= 8;  // correct sign extension guaranteed
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    *reinterpret_cast<TUint16 *>(p + 2 * ch) = Arch::LittleEndian2(static_cast<TUint16>(audioSample));
+                }
+                break;
+            case 24:
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    // write 32-bit value to staging memory, but then overlap next channel on MSB==0 (highest location in LE)
+                    *reinterpret_cast<TUint32 *>(p + /*sic!*/ 3 * ch) = Arch::LittleEndian4(static_cast<TUint32>(audioSample));
+                }
+                break;
+            default:
+                ASSERTS();
+        }
+        if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
+#ifdef DEFINE_DEBUG_JOHNH
+            Log::Print("flushing audio buffer: %u[B]\n", iAudioBuf.Bytes());
+            HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+#endif  // DEFINE_DEBUG_JOHNH
+            iSupply->OutputData(iAudioBuf);
+            iAudioBuf.SetBytes(0);  // reset audio buffer
+        }
+        iAudioBuf.Append(multiChannelAudioSample, blockAlign);
+    }
+
+    // flush final audio data (if any) from (partially) filled audio buffer
+#ifdef DEFINE_DEBUG_JOHNH
+    Log::Print("flushing final audio buffer: %u[B]\n", iAudioBuf.Bytes());
+    HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+#endif  // DEFINE_DEBUG_JOHNH
+    iSupply->OutputData(iAudioBuf);
+
+    return EProtocolStreamSuccess;
 }
 
-void ProtocolTone::HexDumpRiffWaveHeader(TByte *aHeader, TUint aHeaderSize)
+#ifdef DEFINE_DEBUG
+void ProtocolTone::HexDump(const TByte *aBase, TUint aSize) const
 {
-    ASSERT(aHeaderSize % 4 == 0)
-    for (TByte *p = aHeader; p < aHeader + aHeaderSize; p += 4) {
-        Log::Print("%02x  %02x  %02x  %02x    ", *(p + 0), *(p + 1), *(p + 2), *(p + 3));
-        for (int i = 0; i < 4; ++i) {
+    const TByte *p = aBase;
+    const int kBytesPerLine = 16;  // 16 x 3 chars + 2 chars + 16 chars < 80
+    do {
+        int maxBytes = kBytesPerLine;
+        if ((p + maxBytes) > (aBase + aSize)) {
+            maxBytes = aSize % kBytesPerLine;
+        }
+
+        for (int i = 0; i < maxBytes; ++i) {
+            Log::Print("%02x ", *(p + i));
+        }
+        for (int i = 0; i < (kBytesPerLine - maxBytes); ++i) {
+            Log::Print("   ");  // optical filler for last line
+        }
+        Log::Print(" ");
+        for (int i = 0; i < maxBytes; ++i) {
             Log::Print("%c", isprint(*(p + i)) ? *(p + i) : '.');
         }
         Log::Print("\n");
-    }
+
+        p += kBytesPerLine;
+    } while (p < (aBase + aSize));
 }
+#endif  // DEFINE_DEBUG

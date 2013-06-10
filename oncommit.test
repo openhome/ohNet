@@ -2,9 +2,10 @@ from testharness.testsuite import MakeSuiteRunner
 from testharness.servers   import StaticWebServer
 import os.path
 
-# 'context' is defined globally. until this is fixed, sorry :)
+# 'context' is predefined globally. until this is fixed, sorry :)
 suiteRunner = MakeSuiteRunner(context)
 
+# testharness honours a '#' within this string :)
 tests = '''
     TestStore
     TestMsg
@@ -23,7 +24,7 @@ tests = '''
     TestIdProvider
     TestFiller
     TestToneGenerator
-    TestUpnpErrors
+    #TestUpnpErrors
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
