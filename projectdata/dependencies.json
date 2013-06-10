@@ -73,6 +73,7 @@
             "*": true },
         "ignore":           "${platform-ignore[$platform]}",
         "dest":             "dependencies/AnyPlatform/${name}/"
+    },
     {   "name": "openssl",
         "type": "external",
         "platform-specific": true,
