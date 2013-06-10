@@ -15,14 +15,12 @@ public:
     static const TUint kRtspPort = 554;
 public:
     ProtocolRtsp(Environment& aEnv, const Brx& aGuid);
-    //virtual void Stream();
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolStreamResult DoStream();
+    void OutputStream();
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
-private:
-    void StartStream();
-    //void OutputAudio();
 private:
     Environment& iEnv;
     Uri iUri;
@@ -32,6 +30,9 @@ private:
     ReaderBuffer iRtp;
     TUint iKeepAliveTime;
     TUint iKeepAlivePeriod;
+    TUint iStreamId;
+    TUint iNextFlushId;
+    TBool iStopped;
 };
 
 };  // namespace Media

@@ -15,14 +15,17 @@ ProtocolRtsp::ProtocolRtsp(Environment& aEnv, const Brx& aGuid)
 {
 }
 
-void ProtocolRtsp::StartStream() {
-    LOG(kMedia, "ProtocolRaop::StartStream\n");
-    TUint streamId = iIdProvider->NextStreamId();
-    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, true, *this, streamId);
+void ProtocolRtsp::OutputStream() {
+    LOG(kMedia, "ProtocolRaop::OutputStream\n");
+    iStreamId = iIdProvider->NextStreamId();
+    iSupply->OutputStream(iUri.AbsoluteUri(), 0, false, true, *this, iStreamId);
 }
 
 ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
 {
+    iStreamId = ProtocolManager::kStreamIdInvalid;
+    iStopped = false;
+    iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);
     LOG(kMedia, "ProtocolRtsp::Stream ");
     LOG(kMedia, iUri.AbsoluteUri());
@@ -36,6 +39,60 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
         }
     }
 
+    ProtocolStreamResult res = DoStream();
+
+    OutputStream();
+
+    // Output pgmpu
+
+    Log::PrintHex(iSdpInfo.AudioPgmpu());
+    iSupply->OutputData(iSdpInfo.AudioPgmpu());
+
+    // Output audio stream
+
+    while (res == EProtocolStreamErrorRecoverable) {
+        if (iStopped) {
+            iSupply->OutputFlush(iNextFlushId);
+            res = EProtocolStreamStopped;
+        }
+        else if (iKeepAliveTime < Os::TimeInMs(iEnv.OsCtx())) {
+            try {      
+                LOG(kMedia, "-ProtocolRtsp::Stream send alive\n");
+
+                iRtspClient.WriteMethodGetParameter(iSdpInfo.SessionControlUri());
+                iRtspClient.WriteHeaderSession();
+                iRtspClient.WriteHeaderUserAgent();
+                iRtspClient.WriteHeaderSeq();
+                iRtspClient.WriteFlush();
+            }
+            catch(WriterError) {
+                LOG(kMedia, "<ProtocolRtsp::Stream Writer error\n");
+                res = EProtocolStreamErrorUnrecoverable;
+            }
+
+            iKeepAliveTime = Os::TimeInMs(iEnv.OsCtx()) + iKeepAlivePeriod;
+        }
+
+        try {
+            Brn data = iRtspClient.ReadRtsp(iSdpInfo);
+            Log::PrintHex(data);
+            iSupply->OutputData(data);
+        }
+        catch (ReaderError&) {
+            LOG(kMedia, "<ProtocolRtsp::Stream Reader error\n");
+            res = EProtocolStreamErrorUnrecoverable;
+        }
+        catch (HttpError&) {
+            LOG(kMedia, "<ProtocolRtsp::Stream Http/Rtsp error\n");
+            res = EProtocolStreamErrorUnrecoverable;
+        }
+    }
+    Close();
+    return res;
+}
+
+ProtocolStreamResult ProtocolRtsp::DoStream()
+{
     if (!Connect(iUri, kRtspPort))
     {
         LOG(kMedia, "ProtocolRtsp::Stream Connection failure\n");
@@ -154,52 +211,18 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
         return EProtocolStreamErrorUnrecoverable;
     }
 
-    StartStream();
-
-    // Output pgmpu
-
-    Log::PrintHex(iSdpInfo.AudioPgmpu());
-    iSupply->OutputData(iSdpInfo.AudioPgmpu());
-
-    // Output audio stream
-
-    for (;;) {
-        if(iKeepAliveTime < Os::TimeInMs(iEnv.OsCtx())) {
-            try {      
-                LOG(kMedia, "-ProtocolRtsp::Stream send alive\n");
-
-                iRtspClient.WriteMethodGetParameter(iSdpInfo.SessionControlUri());
-                iRtspClient.WriteHeaderSession();
-                iRtspClient.WriteHeaderUserAgent();
-                iRtspClient.WriteHeaderSeq();
-                iRtspClient.WriteFlush();
-            }
-            catch(WriterError) {
-                LOG(kMedia, "<ProtocolRtsp::Stream Writer error\n");
-                return EProtocolStreamErrorUnrecoverable;
-            }
-
-            iKeepAliveTime = Os::TimeInMs(iEnv.OsCtx()) + iKeepAlivePeriod;
-        }
-
-        try {
-            Brn data = iRtspClient.ReadRtsp(iSdpInfo);
-            Log::PrintHex(data);
-            iSupply->OutputData(data);
-        }
-        catch (ReaderError&) {
-            LOG(kMedia, "<ProtocolRtsp::Stream Reader error\n");
-            return EProtocolStreamErrorUnrecoverable;
-        }
-        catch (HttpError&) {
-            LOG(kMedia, "<ProtocolRtsp::Stream Http/Rtsp error\n");
-            return EProtocolStreamErrorUnrecoverable;
-        }
-    }
+    return EProtocolStreamErrorRecoverable;
 }
 
-TUint ProtocolRtsp::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint ProtocolRtsp::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    return 0;   // FIXME
+    iLock.Wait();
+    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    if (stop) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        iStopped = true;
+        iTcpClient.Interrupt(true);
+    }
+    iLock.Signal();
+    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
-
