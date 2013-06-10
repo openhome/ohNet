@@ -584,7 +584,7 @@ def build(bld):
             target='TestPipeline')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocol.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestProtocol')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
@@ -616,7 +616,7 @@ def build(bld):
             target='TestToneGenerator')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpAv.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUpnpAv')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
@@ -628,7 +628,7 @@ def build(bld):
     #        target='TestRadio')
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayer.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMediaPlayer')
 
 # Bundles
