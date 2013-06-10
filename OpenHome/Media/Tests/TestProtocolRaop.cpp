@@ -4,6 +4,7 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
@@ -46,15 +47,15 @@ int mygetch()
 
 int mygetch()
 {
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
 }
 
 #endif // _WIN32
@@ -65,7 +66,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -83,13 +84,12 @@ private:
     static const TUint kInvalidPipelineId = 0;
 };
 
-class TestProtocol : private IPipelineObserver
+class TestProtocolRaop : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
-    static const TUint kSeekStepSeconds = 10;
 public:
-    TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    virtual ~TestProtocol();
+    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    virtual ~TestProtocolRaop();
     int Run();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
@@ -118,16 +118,13 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
-    iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
-    iProtocolManager->Add(ProtocolFactory::NewTone(aEnv));
-    iProtocolManager->Add(ProtocolFactory::NewRtsp(aEnv, Brn("GUID-TestProtocol-0123456789")));
+    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, aDvStack));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
@@ -166,69 +163,40 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 }
 
 
-// TestProtocol
+// TestProtocolRaop
 
-TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
-    iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
-    iPipeline->AddCodec(Codec::CodecFactory::NewWav());
-    iPipeline->AddCodec(Codec::CodecFactory::NewAac());
+    iFiller = new DummyFiller(aEnv, aDvStack, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
-    iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
-    iPipeline->AddCodec(Codec::CodecFactory::NewWma());
-    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
     iPipeline->Start();
-
+    
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
 }
 
-TestProtocol::~TestProtocol()
+TestProtocolRaop::~TestProtocolRaop()
 {
     delete iPipeline;
     delete iFiller;
     delete iDriver;
 }
 
-int TestProtocol::Run()
+int TestProtocolRaop::Run()
 {
     iFiller->Start(iUrl);
 
     TBool playing = false;
-    //TBool starve = false;
     TBool quit = false;
 
-    Log::Print("\nPipeline test using ProtocolHttp as supplier.  Usage:\n");
-    Log::Print("p: Toggle between play/pause\n");
-    Log::Print("n: Toggle between start/stop simulating network starvation\n");
-    Log::Print("s: Stop (only valid when paused)\n");
-    Log::Print("q: Quit\n");
-    Log::Print("\n");
+    iPipeline->Play();
+
     do {
-    	int key = mygetch();
+        int key = mygetch();
         switch (key)
         {
-        case 'p':
-            playing = !playing;
-            if (playing) {
-                iPipeline->Play();
-            }
-            else {
-                iPipeline->Pause();
-            }
-            break;
-        /*case 'n':
-            starve = !starve;
-            if (starve) {
-                iFiller->Block();
-            }
-            else {
-                iFiller->Unblock();
-            }
-            break;*/
         case 's':
             if (!playing) {
                 iPipeline->Stop();
@@ -236,21 +204,6 @@ int TestProtocol::Run()
             break;
         case 'q':
             quit = true;
-            break;
-        case '+':
-        {
-            TUint seekAbsolute = iSeconds + kSeekStepSeconds;
-            if (seekAbsolute > iTrackDurationSeconds) {
-                seekAbsolute = iTrackDurationSeconds;
-            }
-            (void)iPipeline->Seek(1, iStreamId, seekAbsolute);
-        }
-            break;
-        case '-':
-        {
-            const TUint seekAbsolute = (iSeconds > kSeekStepSeconds? iSeconds - kSeekStepSeconds : 0);
-            (void)iPipeline->Seek(1, 1, seekAbsolute);
-        }
             break;
         default:
             break;
@@ -266,7 +219,8 @@ int TestProtocol::Run()
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void TestProtocol::NotifyPipelineState(EPipelineState aState)
+
+void TestProtocolRaop::NotifyPipelineState(EPipelineState aState)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     const char* state = "";
@@ -274,9 +228,6 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
     {
     case EPipelinePlaying:
         state = "playing";
-        break;
-    case EPipelinePaused:
-        state = "paused";
         break;
     case EPipelineStopped:
         state = "stopped";
@@ -291,7 +242,7 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void TestProtocolRaop::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
@@ -304,7 +255,7 @@ void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipelin
 #endif
 }
 
-void TestProtocol::NotifyMetaText(const Brx& aText)
+void TestProtocolRaop::NotifyMetaText(const Brx& aText)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: METATEXT {");
@@ -313,7 +264,7 @@ void TestProtocol::NotifyMetaText(const Brx& aText)
 #endif
 }
 
-void TestProtocol::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+void TestProtocolRaop::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
     iSeconds = aSeconds;
     iTrackDurationSeconds = aTrackDurationSeconds;
@@ -322,7 +273,7 @@ void TestProtocol::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 #endif
 }
 
-void TestProtocol::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+void TestProtocolRaop::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     iStreamId = aStreamInfo.StreamId();
 #ifdef LOG_PIPELINE_OBSERVER
@@ -334,28 +285,12 @@ void TestProtocol::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 }
 
 
-
-
 int CDECL main(int aArgc, char* aArgv[])
 {
-    /* Useful test urls:
-    http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav
-    http://10.2.9.146:26125/content/c2/b16/f44100/d35587-co6318.flac
-    http://10.2.9.146:26125/content/c2/b16/f44100/d40842-co4625.mp3
-    file:///c:/test.wav
-    http://10.2.11.131:9000/disk/NON-DLNA/music/O0$1$4I4009/Waiting%20for%20the%207.18.m4a  // alac
-    http://10.2.11.174:26125/content/c2/b16/f48000/d2599-co459.m4a                          // aac
-    http://10.2.11.174:26125/content/c2/b16/f44100/d3220-co459.ogg
-    http://10.2.11.174:26125/content/c2/b16/f44100/d4505-co2377.ogg // ogg with cover art - exhausts recognise buf
-    http://10.2.11.174:26125/content/c2/b16/f44100/d3450-co475.wma
-    http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // wma (with cover art?) - exhausts recognise buf
-    */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
-    parser.AddOption(&optionUrl);
-    OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
+    OptionString optionUdn("-u", "--udn", Brn("TestProtocolRaop"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("TestProtocol"), "[name] name of the sender");
+    OptionString optionName("-n", "--name", Brn("TestProtocolRaop"), "[name] name of the sender");
     parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
@@ -367,18 +302,19 @@ int CDECL main(int aArgc, char* aArgv[])
     }
 
     InitialisationParams* initParams = InitialisationParams::Create();
-	Net::Library* lib = new Net::Library(initParams);
+    initParams->SetDvEnableBonjour();
+    Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     const TUint adapterIndex = optionAdapter.Value();
     if (subnetList->size() <= adapterIndex) {
-		Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
-		ASSERTS();
+        Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
+        ASSERTS();
     }
     Log::Print ("adapter list:\n");
     for (unsigned i=0; i<subnetList->size(); ++i) {
-		TIpAddress addr = (*subnetList)[i]->Address();
-		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+        TIpAddress addr = (*subnetList)[i]->Address();
+        Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
@@ -386,7 +322,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocol* tph = new TestProtocol(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, Brn("raop://dummyuri"), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     

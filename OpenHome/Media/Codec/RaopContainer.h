@@ -3,7 +3,8 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
-#include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/Codec/CodecInitContainer.h>
 
 EXCEPTION(MediaCodecRaopNotFound);
 
@@ -11,13 +12,18 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-class RaopContainer
+class Mpeg4MediaInfoBase
 {
 public:
-	RaopContainer(Selector& aSelector);
-    TUint32 ContainerSize() const;
-private:
-	TUint32 iContainerSize;
+    RaopContainer(ICodecController& aController);
+    ~RaopContainer();
+public:
+    virtual const Brx& CodecSpecificData();
+    virtual TUint32 SampleRate();
+    virtual TUint32 Timescale();
+    virtual TUint16 Channels();
+    virtual TUint16 BitDepth();
+    virtual TUint64 Duration();
 };
 
 } // namespace Codec
