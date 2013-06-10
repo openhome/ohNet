@@ -17,10 +17,11 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // RaopDevice
-RaopDevice::RaopDevice(Net::DvStack& aDvStack, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr)
+RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
     , iName(aName)
-    , iEndpoint(kPortRaopDiscovery, aIpAddr)
+    , iPort(aDiscoveryPort)
+    , iEndpoint(iPort, aIpAddr)
     , iMacAddress(aMacAddr)
     , iRegistered(false)
 {
@@ -63,7 +64,7 @@ void RaopDevice::Register()
     LOG(kCodec, iName);
     LOG(kCodec, "\n");
 
-    iProvider.MdnsRegisterService(iHandleRaop, iName.PtrZ(), "_raop._tcp", iEndpoint.Address(), kPortRaopDiscovery, info.PtrZ());
+    iProvider.MdnsRegisterService(iHandleRaop, iName.PtrZ(), "_raop._tcp", iEndpoint.Address(), iPort, info.PtrZ());
     iRegistered = true;
 }
 

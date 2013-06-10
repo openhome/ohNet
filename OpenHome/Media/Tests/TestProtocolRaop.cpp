@@ -66,7 +66,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -88,7 +88,7 @@ class TestProtocolRaop : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
     virtual ~TestProtocolRaop();
     int Run();
 private: // from IPipelineObserver
@@ -118,13 +118,13 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, aDvStack));
+    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, aDvStack, aDiscoveryPort));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
@@ -165,12 +165,12 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // TestProtocolRaop
 
-TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, aDvStack, *iPipeline, *iPipeline, iInfoAggregator);
+    iFiller = new DummyFiller(aEnv, aDvStack, aDiscoveryPort, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
     iPipeline->Start();
     
@@ -288,6 +288,8 @@ void TestProtocolRaop::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
+    OptionUint optionPort("-p", "--port", 5048, "[0..65535] discovery port");
+    parser.AddOption(&optionPort);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolRaop"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
     OptionString optionName("-n", "--name", Brn("TestProtocolRaop"), "[name] name of the sender");
@@ -322,7 +324,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, Brn("raop://dummyuri"), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, optionPort.Value(), Brn("raop://dummyuri"), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     

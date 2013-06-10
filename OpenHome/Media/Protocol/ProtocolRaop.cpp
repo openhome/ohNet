@@ -11,12 +11,12 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewRaop(Environment& aEnv, Net::DvStack& aDvStack)
+Protocol* ProtocolFactory::NewRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
 { // static
-    return new ProtocolRaop(aEnv, aDvStack);
+    return new ProtocolRaop(aEnv, aDvStack, aDiscoveryPort);
 }
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
     : ProtocolNetwork(aEnv)
     , iRaopAudio(aEnv, kPortAudio)
     , iRaopControl(aEnv, kPortControl)
@@ -29,8 +29,8 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack)
         char* adapterName = current->FullName();
         LOG(kMedia, "ProtocolRaop::ProtocolRaop using network adapter %s\n", adapterName);
 
-        iRaopDevice = new RaopDevice(aDvStack, Brn("ProtocolRaopDevice"), ipAddr, Brn("000000000001"));
-        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", RaopDevice::kPortRaopDiscovery, ipAddr, kPriority, kSessionStackBytes);
+        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, Brn("ProtocolRaopDevice"), ipAddr, Brn("000000000001"));
+        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
         iRaopDiscoverySession1 = new RaopDiscovery(aEnv, *this, *iRaopDevice, 1);

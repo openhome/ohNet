@@ -85,7 +85,7 @@ private:
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack);
+    ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort);
     ~ProtocolRaop();
 public:
     void DoInterrupt();

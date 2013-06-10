@@ -49,9 +49,8 @@ class RaopDevice
     static const TUint kMaxNameBytes = 100;
     static const TUint kMacAddrBytes = 12;
 public:
-    static const TUint kPortRaopDiscovery = 5048;//5000;
     // aMacAddr in hex of form 001122334455
-    RaopDevice(Net::DvStack& aDvStackconst, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    RaopDevice(Net::DvStack& aDvStackconst, TUint aDiscoveryPort, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
@@ -61,6 +60,7 @@ private:
     Net::IMdnsProvider& iProvider;
     TUint iHandleRaop;
     Bws<kMaxNameBytes> iName;
+    TUint iPort;
     Endpoint iEndpoint;
     const Bws<kMacAddrBytes> iMacAddress;
     TBool iRegistered;
