@@ -3,17 +3,6 @@
 
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Http.h>
-//#include <Linn/Standard.h>
-//#include <Linn/Thread.h>
-//#include <Linn/Fifo.h>
-//#include <Linn/Timer.h>
-//#include <Linn/Stream.h>
-//#include <Linn/Network/Network.h>
-//#include <Linn/Ascii/Ascii.h>
-//#include <Linn/Control/Http/Http.h>
-//#include <Linn/Control/Discovery.h>
-
-//#include <vector>
 
 namespace OpenHome {
 namespace Media {
@@ -300,8 +289,6 @@ public:
     Brn ReadRtp();
     void ReadSdp(ISdpHandler& aSdpHandler);
     TUint Timeout() const;
-//private:
-//    void CreateUserAgent();
 private:
     IReader& iReader;
     WriterRtspRequest iWriterRequest;

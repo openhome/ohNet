@@ -1,21 +1,9 @@
-//#include <Linn/Maths.h>
-//#include <Linn/Stream.h>
-//#include <Linn/Ascii/Ascii.h>
-//#include <Linn/Ascii/Parser.h>
-//#include <Linn/Network/Endpoint.h>
-//#include <Linn/Control/Http/Http.h>
 #include <OpenHome/Media/Protocol/Rtsp.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Parser.h>
 
-//using namespace Linn;
-//using namespace Linn::Network;
-//using namespace Linn::Ascii;
-//using namespace Linn::Control;
-//using namespace Linn::Control::Http;
-//using namespace Linn::Control::Rtsp;
 using namespace OpenHome;
 using namespace Media;
 
@@ -372,37 +360,10 @@ void RtspClient::Initialise(const Uri& aUri)
     
     iSeq = 1; // reset sequence number
 
-    //CreateUserAgent();
-
     LOG(kHttp, "RtspClient::Initialise ");
     LOG(kHttp, iUri);
     LOG(kHttp, "\n");
 }
-
-//void RtspClient::CreateUserAgent()    // FIXME -- can't generate own rand numbers
-//{
-//
-//    //Build unique GUID see "http://msdn.microsoft.com/en-us/library/cc251279%28PROT.10%29.aspx"
-//    iGuid.Replace(Brn("WMPlayer/9.0.0.2834 guid/"));
-//
-//    iGuid.Append(Brn("4C494E4E-4453-"));                    //from "LINN-DS-"
-//
-//    iGuid.AppendPrintf("%04X", (Os::TimeInMs()>>16)&0xffff);//use system time for next 2 parameters
-//    iGuid.Append(Brn("-"));
-//    iGuid.AppendPrintf("%04X", Os::TimeInMs()&0xffff);
-//    iGuid.Append(Brn("-"));
-//
-//    const Brx& macAddress = AppCore::GetUStore().MacAddress();  // use MAC address for final part
-//    if(macAddress.Bytes() != 6) {
-//        iGuid.Append(Brn("0123456789AB"));   // invalid mac address
-//    }
-//    else {
-//        for(TUint i=0; i< macAddress.Bytes(); i++) {
-//            iGuid.AppendPrintf("%02X", macAddress[i]);
-//        }
-//    }
-//
-//}
 
 void RtspClient::WriteMethodDescribe()
 {
@@ -568,18 +529,18 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
                     }
                     else {
                         LOG(kHttp, "probably set_parameter!\n");
-                        //iReaderRequest.Read...();	//read/process extra info
-                        return(Brn::Empty());	// assume that we are at the end of playlist or file, so terminate
+                        //iReaderRequest.Read...(); //read/process extra info
+                        return(Brn::Empty());   // assume that we are at the end of playlist or file, so terminate
                     }
                 }
             }
             catch(HttpError) {
                 LOG(kHttp, "unexpected data\n");
-                return(Brn::Empty());	//terminate on unexpected data
+                return(Brn::Empty());   //terminate on unexpected data
             }
             catch(BufferOverflow) {
                 LOG(kHttp, "data overflow\n");
-                return(Brn::Empty());	//terminate on unexpected data
+                return(Brn::Empty());   //terminate on unexpected data
             }
         }
     }
@@ -610,12 +571,6 @@ Brn RtspClient::ReadRtp()
     TUint16 bytes = Converter::BeUint16At(length, 0);
 
     Brn header = iReader.Read(16);
-
-    Log::Print("channel: ");
-    Log::Print(channel);
-    Log::Print("\nlength: ");
-    Log::Print(length);
-    Log::Print("\nbytes: %u\n", bytes);
 
     Brn frame = iReader.Read(bytes - 16);
 
