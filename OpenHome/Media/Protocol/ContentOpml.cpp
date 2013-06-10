@@ -5,7 +5,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 /* Example OPML file
 

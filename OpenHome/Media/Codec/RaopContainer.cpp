@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Codec/RaopContainer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

@@ -17,6 +17,7 @@
 #include <OpenHome/Av/Radio/PresetDatabase.h> // FIXME
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Radio/SourceRadio.h>
+#include <OpenHome/Av/Debug.h>
 
 #ifdef _WIN32
 #if !defined(CDECL)

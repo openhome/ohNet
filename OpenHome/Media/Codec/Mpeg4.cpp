@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/Debug.h>
 
 #include <string.h>
 
