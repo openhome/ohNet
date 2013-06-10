@@ -25,7 +25,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteDuplicate: public Suite
+class SuiteDuplicate : public Suite
 {
 public:
     SuiteDuplicate();
@@ -35,7 +35,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteMissing: public Suite
+class SuiteMissing : public Suite
 {
 public:
     SuiteMissing();
@@ -45,7 +45,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteSpurious: public Suite
+class SuiteSpurious : public Suite
 {
 public:
     SuiteSpurious();
@@ -55,7 +55,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteSyntaxError: public Suite
+class SuiteSyntaxError : public Suite
 {
 public:
     SuiteSyntaxError();
@@ -73,7 +73,8 @@ private:
 //
 
 // SuiteLimits
-SuiteLimits::SuiteLimits() : Suite("enforcement of tone parameter limits")
+SuiteLimits::SuiteLimits()
+    : Suite("enforcement of tone parameter limits")
 {
     iParser = new ToneUriParser();
 }
@@ -163,7 +164,8 @@ void SuiteLimits::Test()
 }
 
 // SuiteDuplicate
-SuiteDuplicate::SuiteDuplicate() : Suite("detection of duplicate tone parameters")
+SuiteDuplicate::SuiteDuplicate()
+    : Suite("detection of duplicate tone parameters")
 {
     iParser = new ToneUriParser();
 }
@@ -183,7 +185,8 @@ void SuiteDuplicate::Test()
 }
 
 // SuiteMissing
-SuiteMissing::SuiteMissing() : Suite("detection of missing tone parameters")
+SuiteMissing::SuiteMissing()
+    : Suite("detection of missing tone parameters")
 {
     iParser = new ToneUriParser();
 }
@@ -204,7 +207,8 @@ void SuiteMissing::Test()
 }
 
 // SuiteSpurious
-SuiteSpurious::SuiteSpurious() : Suite("detection of spurious tone parameters")
+SuiteSpurious::SuiteSpurious()
+    : Suite("detection of spurious tone parameters")
 {
     iParser = new ToneUriParser();
 }
@@ -223,7 +227,8 @@ void SuiteSpurious::Test()
 }
 
 // SuiteSyntaxError
-SuiteSyntaxError::SuiteSyntaxError() : Suite("detection of syntactically defective tone URL")
+SuiteSyntaxError::SuiteSyntaxError()
+    : Suite("detection of syntactically defective tone URL")
 {
     iParser = new ToneUriParser();
 }
