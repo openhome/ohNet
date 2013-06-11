@@ -212,7 +212,8 @@ void CodecController::CodecThread()
             }
             catch (CodecStreamCorrupt&) {
                 // CodecStreamCorrupt thrown during StreamInitialise()
-                // Nothing to do; just rejoin main codec loop
+                iActiveCodec->StreamCompleted();
+                // don't break here - might be waiting on a quit msg or similar
             }
         }
         catch (CodecStreamFlush&) {
