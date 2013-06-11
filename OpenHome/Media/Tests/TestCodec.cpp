@@ -444,11 +444,10 @@ Msg* MsgProcessor::ProcessMsg(MsgTrack* aMsg)
     //LOG(kMedia, ">MsgProcessor::ProcessMsgTrack\n");
     return aMsg;
 }
-Msg* MsgProcessor::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    //Log::Print(">MsgProcessor::ProcessMsgEncodedStream\n");
-    ASSERTS();
-    return NULL;
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgEncodedStream\n");
+    return aMsg;
 }
 Msg* MsgProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
