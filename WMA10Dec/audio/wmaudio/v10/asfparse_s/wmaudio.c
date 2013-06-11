@@ -946,6 +946,28 @@ tWMAFileStatus WMAFileIsWMA (tWMAFileHdrState *pstate)
     return cWMA_NoErr;
 }
 
+tWMAFileStatus WMAFreeFileHdrState (tWMAFileHdrState *state)
+{
+    tWMAFileHdrStateInternal *pInt = (tWMAFileHdrStateInternal *)state;
+    
+    if (pInt->m_pDesc)
+    {
+        tWMAFileContDesc *pDesc = pInt->m_pDesc;
+
+        // it's OK to pass NULL pointers to free
+        free(pDesc->pTitle);
+        free(pDesc->pAuthor);
+        free(pDesc->pCopyright);
+        free(pDesc->pDescription);
+        free(pDesc->pRating);
+
+        free(pInt->m_pDesc);
+        pInt->m_pDesc = NULL;
+    }
+
+    return cWMA_NoErr;
+}
+
 /* ===========================================================================
  * WMAGetLicenseStore
 --------------------------------------------------------------------------- */
