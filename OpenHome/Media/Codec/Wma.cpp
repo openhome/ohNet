@@ -117,6 +117,7 @@ CodecWma* iWma = 0;
 
 TBool CodecWma::Recognise(const Brx& aData)
 {
+    TBool recognised = false;
     iWma = this;           // temp to allow access to read/peek
     iWmaReadOffset = 0;
     iSeekOffset = 0;
@@ -158,22 +159,25 @@ TBool CodecWma::Recognise(const Brx& aData)
 
         if(rc != cWMA_NoErr) {
             LOG(kCodec, "WMA Error while setting target stream number.\n");
-            return false;
+            recognised = false;
         }
 
         rc = WMAFileIsWMA(&g_hdrstate);
 
         if(rc != cWMA_NoErr) {
             LOG(kCodec, " not WMA\n");
-            return false;
+            recognised = false;
         }
     }
     catch(CodecStreamCorrupt) {
         LOG(kCodec, "CodecWma::Recognise track is not WMA\n");
-        return (false);
+        recognised = false;
     }
     LOG(kCodec, "CodecWma::Recognise track is WMA\n");
-    return (true);
+    recognised = true;
+    
+    rc = WMAFreeFileHdrState(&g_hdrstate);
+    return recognised;
 }
 
 void CodecWma::StreamInitialise()
