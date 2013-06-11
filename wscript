@@ -156,7 +156,6 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.STLIB_OPENSSL = ['eay32']
     else:
-        conf.env.LIB_OPENSSL = ['dl']
         conf.env.STLIB_OPENSSL = ['crypto']
     conf.env.INCLUDES_OPENSSL = [
         os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'include'),
