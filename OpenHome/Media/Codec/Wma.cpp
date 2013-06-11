@@ -117,7 +117,7 @@ CodecWma* iWma = 0;
 
 TBool CodecWma::Recognise(const Brx& aData)
 {
-    TBool recognised = false;
+    TBool recognised = true;
     iWma = this;           // temp to allow access to read/peek
     iWmaReadOffset = 0;
     iSeekOffset = 0;
@@ -173,9 +173,10 @@ TBool CodecWma::Recognise(const Brx& aData)
         LOG(kCodec, "CodecWma::Recognise track is not WMA\n");
         recognised = false;
     }
+
     LOG(kCodec, "CodecWma::Recognise track is WMA\n");
-    recognised = true;
     
+    // header is reinitialised inside tHWMAFileState struct when decoder is created
     rc = WMAFreeFileHdrState(&g_hdrstate);
     return recognised;
 }
