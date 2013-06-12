@@ -7,7 +7,6 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/CodecController.h>
-#include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Buffer.h>
 
@@ -150,6 +149,7 @@ private:
     TUint iNextFlushId;
     TUint iNextTrackId;
     TUint iNextStreamId;
+    bool iQuit;
     Semaphore iSemaphore;
 
     ToneParams iExpectedToneParams;
@@ -349,6 +349,7 @@ SuiteGeneratorSilence::SuiteGeneratorSilence()
     , iNextFlushId(1)
     , iNextTrackId(1)
     , iNextStreamId(1)
+    , iQuit(false)
     , iSemaphore("TONE", 0)
 {
     iAllocatorInfoLogger = new AllocatorInfoLogger();
@@ -407,9 +408,13 @@ EStreamPlay SuiteGeneratorSilence::OkToPlay(TUint, TUint)
 
 void SuiteGeneratorSilence::Push(Msg* aMsg)
 {
-    Msg* processedMsg = aMsg->Process(/*IMsgProcessor*/ *this);
-    aMsg->RemoveRef();
-    if  (NULL == processedMsg) {
+    Msg* origMsg = aMsg->Process(/*IMsgProcessor*/ *this);
+    if (NULL != origMsg) {
+        ASSERT(origMsg == aMsg);
+        // only if callback has not already taken care of ref counting / memory management
+        origMsg->RemoveRef();
+    }
+    if  (iQuit) {
         // callback for MsgQuit is done (as all others return original msg)
         // this IMsgProcessor (etc.) object will never be needed again,
         // so destruction may proceed in main (test) thread
@@ -421,7 +426,7 @@ void SuiteGeneratorSilence::Push(Msg* aMsg)
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     ASSERTS();
-    return aMsg;
+    return aMsg;  // unreachable, but required to acquiesce compiler
 }
 
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
@@ -483,11 +488,12 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgQuit* /*aMsg*/)
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgQuit* aMsg)
 {
     TEST(eMsgAudioPcm == iExpectedMsgType);
     iExpectedMsgType = eMsgNone;  // final msg: none more expected
-    return NULL;
+    iQuit = true;
+    return aMsg;
 }
 
 void SuiteGeneratorSilence::Test()
