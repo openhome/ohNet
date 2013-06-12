@@ -7,7 +7,6 @@ suiteRunner = MakeSuiteRunner(context)
 
 # testharness honours a '#' within this string :)
 tests = '''
-    TestUpnpErrors
     TestStore
     TestMsg
     TestSupply
