@@ -7,6 +7,7 @@ suiteRunner = MakeSuiteRunner(context)
 
 # testharness honours a '#' within this string :)
 tests = '''
+    TestUpnpErrors
     TestStore
     TestMsg
     TestSupply
@@ -24,7 +25,6 @@ tests = '''
     TestIdProvider
     TestFiller
     TestToneGenerator
-    #TestUpnpErrors
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
