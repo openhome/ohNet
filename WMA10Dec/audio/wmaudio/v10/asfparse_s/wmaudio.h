@@ -619,6 +619,8 @@ tWMAFileStatus WMAFileDecodeInitEx (tHWMAFileState phstate, tWMA_U16 nDecoderFla
  */
 tWMAFileStatus WMAFileIsWMA (tWMAFileHdrState *state);
 
+tWMAFileStatus WMAFreeFileHdrState (tWMAFileHdrState *state);
+
 
 /*
  *        WMAGetNumberOfMarkers

@@ -181,32 +181,39 @@ void CodecController::CodecThread()
 
             // tell codec to process audio data
             // (blocks until end of stream or a flush)
-            iActiveCodec->StreamInitialise();
-            for (;;) {
-                try {
-                    iLock.Wait();
-                    TBool seek = iSeek;
-                    iLock.Signal();
-                    if (seek) {
-                        iSeek = false;
-                        TUint64 sampleNum = iSeekSeconds * iSampleRate;
-                        (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
+            try {
+                iActiveCodec->StreamInitialise();
+                for (;;) {
+                    try {
+                        iLock.Wait();
+                        TBool seek = iSeek;
+                        iLock.Signal();
+                        if (seek) {
+                            iSeek = false;
+                            TUint64 sampleNum = iSeekSeconds * iSampleRate;
+                            (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
+                        }
+                        else {
+                            iActiveCodec->Process();
+                        }
                     }
-                    else {
-                        iActiveCodec->Process();
+                    catch (CodecStreamStart&) { }
+                    catch (CodecStreamEnded&) {
+                        iStreamEnded = true;
+                    }
+                    catch (CodecStreamCorrupt&) {
+                        iStreamEnded = true;
+                    }
+                    if (iStreamEnded) {
+                        iActiveCodec->StreamCompleted();
+                        break;
                     }
                 }
-                catch (CodecStreamStart&) { }
-                catch (CodecStreamEnded&) {
-                    iStreamEnded = true;
-                }
-                catch (CodecStreamCorrupt&) {
-                    iStreamEnded = true;
-                }
-                if (iStreamEnded) {
-                    iActiveCodec->StreamCompleted();
-                    break;
-                }
+            }
+            catch (CodecStreamCorrupt&) {
+                // CodecStreamCorrupt thrown during StreamInitialise()
+                iActiveCodec->StreamCompleted();
+                // don't break here - might be waiting on a quit msg or similar
             }
         }
         catch (CodecStreamFlush&) {
