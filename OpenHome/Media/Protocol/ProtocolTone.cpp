@@ -19,33 +19,8 @@
 #undef DEFINE_DEBUG_JOHNH
 
 //
-// declarations
+// declarations:  see ProtocolTone.h
 //
-
-namespace OpenHome {
-namespace Media {
-
-class ProtocolTone : public Protocol
-{
-public:
-    ProtocolTone(Environment& aEnv);
-    ~ProtocolTone();
-#ifdef DEFINE_DEBUG
-private:
-    void HexDump(const TByte *aBase, TUint aSize) const;
-#endif  // DEFINE_DEBUG
-private: // from Protocol
-    ProtocolStreamResult Stream(const Brx& aUri);
-private:  // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-private:
-    std::vector<ToneGenerator*> iToneGenerators;
-    // 1[ms] x 192000[Hz] x 8[channels] x 24[bit/channel] x 1/8[B/bit] = 4,608[B]
-    Bws<4608> iAudioBuf;
-};
-
-} // namespace Media
-} // namespace OpenHome
 
 
 //
@@ -103,6 +78,15 @@ ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, 
     , numChannels(aNumChannels)
     , duration(aDuration)
 {
+}
+
+void ToneParams::Set(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration)
+{
+    bitsPerSample = aBitsPerSample;
+    sampleRate = aSampleRate;
+    pitch = aPitch;
+    numChannels = aNumChannels;
+    duration = aDuration;
 }
 
 ToneUriParser::ToneUriParser()
