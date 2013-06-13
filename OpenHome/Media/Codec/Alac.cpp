@@ -5,7 +5,6 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
-#include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
@@ -131,45 +130,19 @@ void CodecAlac::StreamInitialise()
 
     if (iAirplay) {
         iContainer = new Mpeg4MediaInfoBase(*iController);
-        alac = create_alac(iContainer->BitDepth(), iContainer->Channels());
-
-        // fmtp parsing is partially duplicated in RaopContainer() - rationalise - ToDo
-        Parser fmtp(iContainer->CodecSpecificData());
-
-        Bws<Mpeg4MediaInfoBase::kMaxCSDSize> csdBuf;
-        try {
-            // pack fmtp data into the format required for alac_sent_info
-            csdBuf.SetBytes(20);
-            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));   // first number is ignored
-            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next()))); // in bits
-            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));
-            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next()))); // max sample size??
-            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next()))); // bit rate (average)??
-            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.NextLine())));
-        }
-        catch(AsciiError) {
-            THROW(CodecStreamCorrupt);
-        }
-
-        alac_set_info(alac, (char*)csdBuf.Ptr());        // configure decoder with airplay specific defaults
     }
     else {
         iMp4 = new Mpeg4MediaInfo(*iController);
         iContainer = iMp4;
-        alac = create_alac(iContainer->BitDepth(), iContainer->Channels());
-
-        // We initialised codec-specific data in the recognise function.
-        Bws<64> info;
-        info.SetBytes(20);                          // first 20 bytes are ignored by decoder
-        info.Append(iContainer->CodecSpecificData());            // add data extracted from MPEG-4 header
-        alac_set_info(alac, (char*)info.Ptr());     // configure decoder
     }
+
+    alac = create_alac(iContainer->BitDepth(), iContainer->Channels());
+
+    // We initialised codec-specific data in the recognise function.
+    Bws<64> info;
+    info.SetBytes(20);                          // first 20 bytes are ignored by decoder
+    info.Append(iContainer->CodecSpecificData());            // add data extracted from MPEG-4 header
+    alac_set_info(alac, (char*)info.Ptr());     // configure decoder
 
     iBitDepth = iContainer->BitDepth();
     //iBitDepth = alac->setinfo_sample_size;         // sample size may be re-defined in the codec specific data in the MPEG4 header
