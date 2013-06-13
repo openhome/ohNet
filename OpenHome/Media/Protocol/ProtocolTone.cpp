@@ -298,25 +298,25 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // no integer overflow in worst case: 4 + 8 + 16 + 8 + (192000 * 900 * 8 * 3) < 2^32-1
     const TUint chunkSize = 4 + (8 + subchunkOneSize) + (8 + subchunkTwoSize);
 
-    // serialise RIFF-WAVE structure for output
-    TByte riffWav[44] = { 0 };
-
-    strncpy(reinterpret_cast<char *>(riffWav + 0), "RIFF", 4);
-    *reinterpret_cast<TUint *>(riffWav + 4) = Arch::LittleEndian4(chunkSize);
-    strncpy(reinterpret_cast<char *>(riffWav + 8), "WAVE", 4);
-    strncpy(reinterpret_cast<char *>(riffWav + 12), "fmt ", 4);  // trailing space is significant
-    *reinterpret_cast<TUint *>(riffWav + 16) = Arch::LittleEndian4(subchunkOneSize);
-    *reinterpret_cast<TUint *>(riffWav + 20) = Arch::LittleEndian2(audioFormat);
-    *reinterpret_cast<TUint *>(riffWav + 22) = Arch::LittleEndian2(params.numChannels);
-    *reinterpret_cast<TUint *>(riffWav + 24) = Arch::LittleEndian4(params.sampleRate);
-    *reinterpret_cast<TUint *>(riffWav + 28) = Arch::LittleEndian4(byteRate);
-    *reinterpret_cast<TUint *>(riffWav + 32) = Arch::LittleEndian2(blockAlign);
-    *reinterpret_cast<TUint *>(riffWav + 34) = Arch::LittleEndian2(params.bitsPerSample);
-    strncpy(reinterpret_cast<char *>(riffWav + 36), "data", 4);
-    *reinterpret_cast<TUint *>(riffWav + 40) = Arch::LittleEndian4(subchunkTwoSize);
+    #define LE2(x) iAudioBuf.Append(static_cast<TByte>((x) & 0x00ff)); iAudioBuf.Append(static_cast<TByte>(((x) & 0xff00) >> 8));
+    #define LE4(x) iAudioBuf.Append(static_cast<TByte>((x) & 0x000000ff)); iAudioBuf.Append(static_cast<TByte>(((x) & 0x0000ff00) >> 8)); iAudioBuf.Append(static_cast<TByte>(((x) & 0x00ff0000) >> 16)); iAudioBuf.Append(static_cast<TByte>(((x) & 0xff000000) >> 24));
+    iAudioBuf.SetBytes(0);  // reset audio buffer
+    iAudioBuf.Append("RIFF");  // != RIFX, i.e. all integer values in little endian format
+    LE4(chunkSize)
+    iAudioBuf.Append("WAVE");
+    iAudioBuf.Append("fmt ");  // trailing space significant
+    LE4(subchunkOneSize)
+    LE2(audioFormat)
+    LE2(params.numChannels)
+    LE4(params.sampleRate)
+    LE4(byteRate)
+    LE2(blockAlign)
+    LE2(params.bitsPerSample)
+    iAudioBuf.Append("data");
+    LE4(subchunkTwoSize)
 
 #ifdef DEFINE_DEBUG_JOHNH
-    HexDump(riffWav, sizeof(riffWav));
+    HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
 #endif  // DEFINE_DEBUG_JOHNH
 
     // dynamically select waveform generator
@@ -346,10 +346,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;  // XXX ???
 
     TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
-    iSupply->OutputStream(aUri, sizeof(riffWav) + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, *this, streamId);
-
-    iAudioBuf.SetBytes(0);  // reset audio buffer
-    iAudioBuf.Append(riffWav, sizeof(riffWav));  // initialise audio buffer with RIFF-WAVE header
+    iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
 
     for (TUint i = 0; i < nSamples; ++i) {
         TUint x = (i % kMaxVirtualSamplesPerPeriod) * virtualSamplesStep;  // XXX ???
