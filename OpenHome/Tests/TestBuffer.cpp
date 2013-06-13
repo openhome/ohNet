@@ -157,6 +157,58 @@ void SuiteModification::Test()
     TEST(buf2.MaxBytes() == 12);
     TEST(buf1 == buf2);
 
+    //Append a TUint16
+    buf1.SetBytes(0);
+    TUint16 valueTUint16 = 1;
+    buf1.Append(valueTUint16);
+    TEST(buf1.Bytes() == 2);
+    TEST(buf1.MaxBytes() == 8);
+    const TUint16 *ptrTUint16 = reinterpret_cast<const TUint16*>(buf1.Ptr());
+    TEST(*ptrTUint16 == valueTUint16);
+
+    buf2.SetBytes(0);
+    buf2.Append(valueTUint16);
+    TEST(buf1 == buf2);
+
+    //Append a TInt16
+    buf1.SetBytes(0);
+    TInt16 valueTInt16 = -1;
+    buf1.Append(valueTInt16);
+    TEST(buf1.Bytes() == 2);
+    TEST(buf1.MaxBytes() == 8);
+    const TInt16 *ptrTInt16 = reinterpret_cast<const TInt16*>(buf1.Ptr());
+    TEST(*ptrTInt16 == valueTInt16);
+
+    buf2.SetBytes(0);
+    buf2.Append(valueTInt16);
+    TEST(buf1 == buf2);
+
+    //Append a TUint32
+    buf1.SetBytes(0);
+    TUint32 valueTUint32 = 1;
+    buf1.Append(valueTUint32);
+    TEST(buf1.Bytes() == 4);
+    TEST(buf1.MaxBytes() == 8);
+    const TUint32 *ptrTUint32 = reinterpret_cast<const TUint32*>(buf1.Ptr());
+    TEST(*ptrTUint32 == valueTUint32);
+
+    buf2.SetBytes(0);
+    buf2.Append(valueTUint32);
+    TEST(buf1 == buf2);
+
+    //Append a TInt32
+    buf1.SetBytes(0);
+    TInt32 valueTInt32 = -1;
+    buf1.Append(valueTInt32);
+    TEST(buf1.Bytes() == 4);
+    TEST(buf1.MaxBytes() == 8);
+    const TInt32 *ptrTInt32 = reinterpret_cast<const TInt32*>(buf1.Ptr());
+    TEST(*ptrTInt32 == valueTInt32);
+
+    buf2.SetBytes(0);
+    buf2.Append(valueTInt32);
+    TEST(buf1 == buf2);
+
     //Filling
     buf1.SetBytes(5);
     buf1.Fill(0xde);

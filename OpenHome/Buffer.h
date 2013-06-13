@@ -109,7 +109,9 @@ public:
     void Append(const TChar* aStr);
     void Append(const TByte* aPtr, TUint aBytes);
     void Append(TUint16 aValue);
-    void Append(TUint32 aaValue);
+    void Append(TInt16 aValue);
+    void Append(TUint32 aValue);
+    void Append(TInt32 aValue);
     void AppendPrintf(const TChar* aFormatString, ...);
     void AppendPrintf(const TChar* aFormatString, va_list aArgs);
     const TChar* PtrZ() const;

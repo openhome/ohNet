@@ -283,7 +283,19 @@ void Bwx::Append(TUint16 aValue)
     Append(ptr, 2);
 }
 
+void Bwx::Append(TInt16 aValue)
+{
+    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
+    Append(ptr, 2);
+}
+
 void Bwx::Append(TUint32 aValue)
+{
+    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
+    Append(ptr, 4);
+}
+
+void Bwx::Append(TInt32 aValue)
 {
     TByte* ptr = reinterpret_cast<TByte*>(&aValue);
     Append(ptr, 4);
