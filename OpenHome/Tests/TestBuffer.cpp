@@ -164,8 +164,8 @@ void SuiteModification::Test()
     TEST(buf1.Bytes() == 2);
     TEST(buf1.MaxBytes() == 8);
     const TByte *ptrTUint16 = buf1.Ptr();
-    TUint16 cmpValTUint16 = (TUint16)((ptrTUint16[1] & 0xff) << 8) | (ptrTUint16[0] & 0xff);
-    TEST(cmpValTUint16 == valueTUint16);
+    TInt resCmpTUint16 = memcmp(ptrTUint16, &valueTUint16, 2);
+    TEST(resCmpTUint16 == 0);
 
     buf2.SetBytes(0);
     buf2.Append(valueTUint16);
@@ -178,8 +178,8 @@ void SuiteModification::Test()
     TEST(buf1.Bytes() == 2);
     TEST(buf1.MaxBytes() == 8);
     const TByte *ptrTInt16 = buf1.Ptr();
-    TInt16 cmpValTInt16 = (TInt16)((ptrTInt16[1] & 0xff) << 8) | (ptrTInt16[0] & 0xff);
-    TEST(cmpValTInt16 == valueTInt16);
+    TInt resCmpTInt16 = memcmp(ptrTInt16, &valueTInt16, 2);
+    TEST(resCmpTInt16 == 0);
 
     buf2.SetBytes(0);
     buf2.Append(valueTInt16);
@@ -192,8 +192,8 @@ void SuiteModification::Test()
     TEST(buf1.Bytes() == 4);
     TEST(buf1.MaxBytes() == 8);
     const TByte *ptrTUint32 = buf1.Ptr();
-    TUint32 cmpValTUint32 = (TUint32)(((ptrTUint32[3] & 0xff) << 24) | ((ptrTUint32[2] & 0xff) << 16) | ((ptrTUint32[1] & 0xff) << 8) | (ptrTUint32[0] & 0xff));
-    TEST(cmpValTUint32 == valueTUint32);
+    TInt resCmpTUint32 = memcmp(ptrTUint32, &valueTUint32, 4);
+    TEST(resCmpTUint32 == 0);
 
     buf2.SetBytes(0);
     buf2.Append(valueTUint32);
@@ -206,8 +206,8 @@ void SuiteModification::Test()
     TEST(buf1.Bytes() == 4);
     TEST(buf1.MaxBytes() == 8);
     const TByte *ptrTInt32 = buf1.Ptr();
-    TInt32 cmpValTInt32 = (TInt32)((ptrTInt32[3] & 0xff) << 24) | ((ptrTInt32[2] & 0xff) << 16) | ((ptrTInt32[1] & 0xff) << 8) | (ptrTInt32[0] & 0xff);
-    TEST(cmpValTInt32 == valueTInt32);
+    TInt resCmpTInt32 = memcmp(ptrTInt32, &valueTInt32, 4);
+    TEST(resCmpTInt32 == 0);
 
     buf2.SetBytes(0);
     buf2.Append(valueTInt32);
