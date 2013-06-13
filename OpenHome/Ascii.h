@@ -98,6 +98,7 @@ public:
     static TUint AppendDec(Bwx& aBuffer, TBool aValue);
     static TUint AppendHex(Bwx& aBuffer, TUint aValue);
     static TUint AppendHex(Bwx& aBuffer, TByte aValue);
+    static TUint AppendHexTrim(Bwx& aBuffer, TUint aValue);
     static TUint AppendHexPrefix(Bwx& aBuffer);
 
     static TBool ContainsWhitespace(const Brx& aBuffer);

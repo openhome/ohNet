@@ -285,6 +285,22 @@ TUint Ascii::AppendDec(Bwx& aBuffer, TUint64 aValue)
 
 TUint Ascii::AppendHex(Bwx& aBuffer, TUint aValue)
 {
+    aBuffer.Append(HexChar((aValue >> 28) & 0xf));
+    aBuffer.Append(HexChar((aValue >> 24) & 0xf));
+    aBuffer.Append(HexChar((aValue >> 20) & 0xf));
+    aBuffer.Append(HexChar((aValue >> 16) & 0xf));
+    aBuffer.Append(HexChar((aValue >> 12) & 0xf));
+    aBuffer.Append(HexChar((aValue >>  8) & 0xf));
+    aBuffer.Append(HexChar((aValue >>  4) & 0xf));
+    aBuffer.Append(HexChar((aValue >>  0) & 0xf));
+    return (4);
+}
+
+/// Convert the supplied value to a hex string and append it to
+/// the specified buffer, ignoring leading zeros.
+
+TUint Ascii::AppendHexTrim(Bwx& aBuffer, TUint aValue)
+{
     TUint digits;
     TUint value = aValue;
 

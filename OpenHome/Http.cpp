@@ -1008,7 +1008,7 @@ void WriterHttpChunked::Write(const Brx& aBuffer)
 {
     if (iChunked) {
         Bws<16> count;
-        Ascii::AppendHex(count, aBuffer.Bytes());
+        Ascii::AppendHexTrim(count, aBuffer.Bytes());
         iBuffer.Write(count);
         iBuffer.Write(Http::kHeaderTerminator);
         iBuffer.Write(aBuffer);
