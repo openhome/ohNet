@@ -837,23 +837,43 @@ void SuiteAscii::Test()
     TEST(Ascii::AppendDec(test, TUint64(987654321987654321ull)) == 18);
     TEST(test == Brn("TEST:987654321987654321"));
 
-    // Hex
+    // Hex - TUint
     
     test.Replace(Brn("TEST:"));
-    TEST(Ascii::AppendHex(test, TUint(0x00000000)) == 1);
-    TEST(test == Brn("TEST:0"));
+    TEST(Ascii::AppendHex(test, TUint(0x00000000)) == 8);
+    TEST(test == Brn("TEST:00000000"));
     
     test.Replace(Brn("TEST:"));
     TEST(Ascii::AppendHex(test, TUint(0x12345678)) == 8);
     TEST(test == Brn("TEST:12345678"));
 
     test.Replace(Brn("TEST:"));
-    TEST(Ascii::AppendHex(test, TUint(0x1234)) == 4);
-    TEST(test == Brn("TEST:1234"));
+    TEST(Ascii::AppendHex(test, TUint(0x1234)) == 8);
+    TEST(test == Brn("TEST:00001234"));
 
     test.Replace(Brn("TEST:"));
     TEST(Ascii::AppendHex(test, TUint(0xfedcba98)) == 8);
     TEST(test == Brn("TEST:fedcba98"));
+
+    // Hex - TUint, trim leading zeros
+
+    test.Replace(Brn("TEST:"));
+    TEST(Ascii::AppendHexTrim(test, TUint(0x00000000)) == 1);
+    TEST(test == Brn("TEST:0"));
+
+    test.Replace(Brn("TEST:"));
+    TEST(Ascii::AppendHexTrim(test, TUint(0x12345678)) == 8);
+    TEST(test == Brn("TEST:12345678"));
+
+    test.Replace(Brn("TEST:"));
+    TEST(Ascii::AppendHexTrim(test, TUint(0x1234)) == 4);
+    TEST(test == Brn("TEST:1234"));
+
+    test.Replace(Brn("TEST:"));
+    TEST(Ascii::AppendHexTrim(test, TUint(0xfedcba98)) == 8);
+    TEST(test == Brn("TEST:fedcba98"));
+
+    // Hex - TByte
 
     test.Replace(Brn("TEST:"));
     TEST(Ascii::AppendHex(test, TByte(0x00)) == 2);
