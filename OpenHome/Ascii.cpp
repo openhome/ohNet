@@ -293,7 +293,7 @@ TUint Ascii::AppendHex(Bwx& aBuffer, TUint aValue)
     aBuffer.Append(HexChar((aValue >>  8) & 0xf));
     aBuffer.Append(HexChar((aValue >>  4) & 0xf));
     aBuffer.Append(HexChar((aValue >>  0) & 0xf));
-    return (4);
+    return(8);
 }
 
 /// Convert the supplied value to a hex string and append it to
