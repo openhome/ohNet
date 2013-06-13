@@ -105,14 +105,23 @@ public:
     static const TUint kXmlFetch       = 1<<9;
     static const TUint kService        = 1<<10;
     static const TUint kEvent          = 1<<11;
-    static const TUint kTopology       = 1<<12;
+    //static const TUint unused        = 1<<12;
     static const TUint kDvInvocation   = 1<<13;
     static const TUint kDvEvent        = 1<<14;
     static const TUint kDvWebSocket    = 1<<15;
-    static const TUint kMedia          = 1<<16;
+    //static const TUint unused        = 1<<16;
     static const TUint kBonjour        = 1<<17;
     static const TUint kDvDevice       = 1<<18;
-    static const TUint kCodec          = 1<<19;
+    static const TUint kApplication0   = 1<<20;
+    static const TUint kApplication1   = 1<<21;
+    static const TUint kApplication2   = 1<<22;
+    static const TUint kApplication3   = 1<<23;
+    static const TUint kApplication4   = 1<<24;
+    static const TUint kApplication5   = 1<<25;
+    static const TUint kApplication6   = 1<<26;
+    static const TUint kApplication7   = 1<<27;
+    static const TUint kApplication8   = 1<<28;
+    static const TUint kApplication9   = 1<<29;
     static const TUint kError          = 1<<30;
 
     static const TUint kAll            = 0x7FFFFFFF;
