@@ -277,6 +277,18 @@ void Bwx::Append(const TByte* aPtr, TUint aBytes)
     iBytes = Bytes() + aBytes;
 }
 
+void Bwx::Append(TUint16 aValue)
+{
+    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
+    Append(ptr, 2);
+}
+
+void Bwx::Append(TUint32 aValue)
+{
+    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
+    Append(ptr, 4);
+}
+
 void Bwx::AppendPrintf(const TChar* aFormatString, ...)
 {
     va_list args;
