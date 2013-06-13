@@ -353,7 +353,7 @@ def build(bld):
     bld.stlib(
             source=[
                  'OpenHome/Media/Codec/Alac.cpp',
-                 'alac_decoder/alac.cpp',
+                 'alac_decoder/alac.c',
             ],
             use=['ALAC', 'OHNET', 'OPENSSL'],
             target='CodecAlac')

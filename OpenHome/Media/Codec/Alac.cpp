@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
@@ -12,10 +13,10 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
 
-#include <alac.h>
+extern "C"{
 #include <decomp.h>
-
-extern void alac_free_buffers(alac_file *alac);
+int host_bigendian;     // used by alac.c
+}
 
 namespace OpenHome {
 namespace Media {
@@ -67,9 +68,6 @@ CodecBase* CodecFactory::NewAlac()
     return new CodecAlac();
 }
 
-
-
-int host_bigendian;     // used by alac.c
 
 
 const Brn CodecAlac::kCodecAlac("alac");
@@ -138,25 +136,28 @@ void CodecAlac::StreamInitialise()
         // fmtp parsing is partially duplicated in RaopContainer() - rationalise - ToDo
         Parser fmtp(iContainer->CodecSpecificData());
 
+        Bws<Mpeg4MediaInfoBase::kMaxCSDSize> csdBuf;
         try {
-            Ascii::Uint(fmtp.Next());   // ignore first number
-            alac->setinfo_max_samples_per_frame = Ascii::Uint(fmtp.Next());
-            alac->setinfo_7a = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
-            alac->setinfo_sample_size = static_cast<TUint8>(Ascii::Uint(fmtp.Next())); // in bits
-            alac->setinfo_rice_historymult = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
-            alac->setinfo_rice_initialhistory = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
-            alac->setinfo_rice_kmodifier = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
-            alac->setinfo_7f = static_cast<TUint8>(Ascii::Uint(fmtp.Next()));
-            alac->setinfo_80 = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));
-            alac->setinfo_82 = Ascii::Uint(fmtp.Next()); // max sample size??
-            alac->setinfo_86 = Ascii::Uint(fmtp.Next()); // bit rate (average)??
-            alac->setinfo_8a_rate = Ascii::Uint(fmtp.NextLine());
+            // pack fmtp data into the format required for alac_sent_info
+            csdBuf.SetBytes(20);
+            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));   // first number is ignored
+            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next()))); // in bits
+            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));
+            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next()))); // max sample size??
+            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next()))); // bit rate (average)??
+            csdBuf.Append(Arch::BigEndian4(Ascii::Uint(fmtp.NextLine())));
         }
         catch(AsciiError) {
             THROW(CodecStreamCorrupt);
         }
 
-        alac_set_info(alac, NULL);        // configure decoder with airplay specific defaults
+        alac_set_info(alac, (char*)csdBuf.Ptr());        // configure decoder with airplay specific defaults
     }
     else {
         iMp4 = new Mpeg4MediaInfo(*iController);
@@ -170,7 +171,8 @@ void CodecAlac::StreamInitialise()
         alac_set_info(alac, (char*)info.Ptr());     // configure decoder
     }
 
-    iBitDepth = alac_sample_size(alac);         // sample size may be re-defined in the codec specific data in the MPEG4 header
+    iBitDepth = iContainer->BitDepth();
+    //iBitDepth = alac->setinfo_sample_size;         // sample size may be re-defined in the codec specific data in the MPEG4 header
     iBytesPerSample = iContainer->Channels()*iContainer->BitDepth()/8;
     iCurrentSample = 0;
     iSamplesWrittenTotal = 0;
@@ -182,7 +184,7 @@ void CodecAlac::StreamInitialise()
     iController->OutputDecodedStream(0, iBitDepth, iContainer->SampleRate(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
-TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample) 
+TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     //LOG(kCodec, "CodecAlac::TrySeek(%lld)\n", aSample);
     if (!iAirplay) {
