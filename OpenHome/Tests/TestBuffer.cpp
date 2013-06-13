@@ -163,8 +163,9 @@ void SuiteModification::Test()
     buf1.Append(valueTUint16);
     TEST(buf1.Bytes() == 2);
     TEST(buf1.MaxBytes() == 8);
-    const TUint16 *ptrTUint16 = reinterpret_cast<const TUint16*>(buf1.Ptr());
-    TEST(*ptrTUint16 == valueTUint16);
+    const TByte *ptrTUint16 = buf1.Ptr();
+    TUint16 cmpValTUint16 = (TUint16)((ptrTUint16[1] & 0xff) << 8) | (ptrTUint16[0] & 0xff);
+    TEST(cmpValTUint16 == valueTUint16);
 
     buf2.SetBytes(0);
     buf2.Append(valueTUint16);
@@ -176,8 +177,9 @@ void SuiteModification::Test()
     buf1.Append(valueTInt16);
     TEST(buf1.Bytes() == 2);
     TEST(buf1.MaxBytes() == 8);
-    const TInt16 *ptrTInt16 = reinterpret_cast<const TInt16*>(buf1.Ptr());
-    TEST(*ptrTInt16 == valueTInt16);
+    const TByte *ptrTInt16 = buf1.Ptr();
+    TInt16 cmpValTInt16 = (TInt16)((ptrTInt16[1] & 0xff) << 8) | (ptrTInt16[0] & 0xff);
+    TEST(cmpValTInt16 == valueTInt16);
 
     buf2.SetBytes(0);
     buf2.Append(valueTInt16);
@@ -189,8 +191,9 @@ void SuiteModification::Test()
     buf1.Append(valueTUint32);
     TEST(buf1.Bytes() == 4);
     TEST(buf1.MaxBytes() == 8);
-    const TUint32 *ptrTUint32 = reinterpret_cast<const TUint32*>(buf1.Ptr());
-    TEST(*ptrTUint32 == valueTUint32);
+    const TByte *ptrTUint32 = buf1.Ptr();
+    TUint32 cmpValTUint32 = (TUint32)(((ptrTUint32[3] & 0xff) << 24) | ((ptrTUint32[2] & 0xff) << 16) | ((ptrTUint32[1] & 0xff) << 8) | (ptrTUint32[0] & 0xff));
+    TEST(cmpValTUint32 == valueTUint32);
 
     buf2.SetBytes(0);
     buf2.Append(valueTUint32);
@@ -202,8 +205,9 @@ void SuiteModification::Test()
     buf1.Append(valueTInt32);
     TEST(buf1.Bytes() == 4);
     TEST(buf1.MaxBytes() == 8);
-    const TInt32 *ptrTInt32 = reinterpret_cast<const TInt32*>(buf1.Ptr());
-    TEST(*ptrTInt32 == valueTInt32);
+    const TByte *ptrTInt32 = buf1.Ptr();
+    TInt32 cmpValTInt32 = (TInt32)((ptrTInt32[3] & 0xff) << 24) | ((ptrTInt32[2] & 0xff) << 16) | ((ptrTInt32[1] & 0xff) << 8) | (ptrTInt32[0] & 0xff);
+    TEST(cmpValTInt32 == valueTInt32);
 
     buf2.SetBytes(0);
     buf2.Append(valueTInt32);
