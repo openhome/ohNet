@@ -17,6 +17,10 @@ OhmMsg::OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType)
 {
 }
 
+OhmMsg::~OhmMsg()
+{
+}
+
 void OhmMsg::AddRef()
 {
 	iFactory->Lock();

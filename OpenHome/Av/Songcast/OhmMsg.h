@@ -28,6 +28,7 @@ public:
 class OhmMsg
 {
 public:
+    virtual ~OhmMsg();
 	void AddRef();
 	void RemoveRef();
 	TUint ResendCount() const;
