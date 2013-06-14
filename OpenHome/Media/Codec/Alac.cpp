@@ -4,7 +4,7 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
-#include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Media/Protocol/RaopHeader.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
