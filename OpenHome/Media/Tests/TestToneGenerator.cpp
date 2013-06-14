@@ -7,6 +7,8 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Functor.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Buffer.h>
 
@@ -87,13 +89,35 @@ enum EToneMsgType
     eMsgNone,
 };
 
-class SuiteGeneratorSilence : public Suite,
+class SuiteGeneratorSilence : public SuiteUnitTest,
      private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor
 {
 public:
     SuiteGeneratorSilence();
     ~SuiteGeneratorSilence();
-    void Test();
+
+private:
+    void TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams);
+    void Test_8bit_44100_50Hz_2ch_1s();  // various bitsPerSample
+    void Test_16bit_44100_50Hz_2ch_1s();
+    void Test_24bit_44100_50Hz_2ch_1s();
+    void Test_16bit_44100_440Hz_2ch_1s();  // various (typical) sampling frequencies
+    void Test_16bit_88200_440Hz_2ch_1s();
+    void Test_16bit_176400_440Hz_2ch_1s();
+    void Test_16bit_48000_440Hz_2ch_1s();
+    void Test_16bit_96000_440Hz_2ch_1s();
+    void Test_16bit_192000_440Hz_2ch_1s();
+    void Test_16bit_44100_120Hz_1ch_1s();  // various (min, typical, max) channel configs
+    void Test_16bit_44100_120Hz_2ch_1s();
+    void Test_16bit_44100_120Hz_6ch_1s();
+    void Test_16bit_44100_120Hz_8ch_1s();
+    void Test_16bit_44100_60Hz_2ch_1s();  // various durations
+    void Test_16bit_44100_60Hz_2ch_2s();
+    void Test_16bit_44100_60Hz_2ch_5s();
+
+private:  // from SuiteUnitTest
+    void Setup();
+    void TearDown();
 
 private:  // from IPipelineIdProvider
     TUint NextTrackId();
@@ -154,6 +178,8 @@ private:
 
     ToneParams iExpectedToneParams;
     EToneMsgType iExpectedMsgType;
+    TUint iExpectedJiffies;
+    TUint iAccumulatedJiffies;
 };
 
 } // namespace Media
@@ -345,13 +371,49 @@ void SuiteSyntaxError::Test()
 }
 
 SuiteGeneratorSilence::SuiteGeneratorSilence()
-    : Suite("tone generator: silence")
+    : SuiteUnitTest("tone generator: silence")
     , iNextFlushId(1)
     , iNextTrackId(1)
     , iNextStreamId(1)
     , iQuit(false)
     , iSemaphore("TONE", 0)
+    , iExpectedToneParams(0, 0, 0 ,0 ,0)
+    , iExpectedMsgType(eMsgTrack)
+    , iExpectedJiffies(0)
+    , iAccumulatedJiffies(0)
 {
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_8bit_44100_50Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_50Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_24bit_44100_50Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_88200_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_176400_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_48000_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_96000_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_192000_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_1ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_6ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_120Hz_8ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_2s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s));
+}
+
+SuiteGeneratorSilence::~SuiteGeneratorSilence()
+{
+    // clean-up already occurred in most recent Teardown() invocation
+}
+
+void SuiteGeneratorSilence::Setup()
+{
+    // rig fresh scaffolding for each test tone
+    // no need to reset iNext*Id
+    iQuit = false;
+    iSemaphore.Clear();
+    iExpectedToneParams.Set(0, 0, 0 ,0 ,0);
+    iExpectedMsgType = eMsgTrack;
+    iExpectedJiffies = iAccumulatedJiffies = 0;
     iAllocatorInfoLogger = new AllocatorInfoLogger();
     iMsgFactory = new MsgFactory(*iAllocatorInfoLogger,
                              kMsgCountEncodedAudio, kMsgCountAudioEncoded,
@@ -373,7 +435,7 @@ SuiteGeneratorSilence::SuiteGeneratorSilence()
     iTrackFactory = new TrackFactory(*iAllocatorInfoLogger, 1);
 }
 
-SuiteGeneratorSilence::~SuiteGeneratorSilence()
+void SuiteGeneratorSilence::TearDown()
 {
     delete iCodecController;
     delete iContainer;
@@ -431,10 +493,24 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    // TODO: capture and analyse actual PCM audio data
     TEST(eMsgAudioPcm == iExpectedMsgType);
     iExpectedMsgType = eMsgAudioPcm;  // usually more to follow, but MsgQuit also acceptable
-    return aMsg;
+    iAccumulatedJiffies += aMsg->Jiffies();
+    bool allZero = true;
+    MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
+    ProcessorPcmBufPacked proc;
+    playable->Read(proc);
+    Brn buf = proc.Buf();
+    for (const TByte* p = buf.Ptr(); p < (buf.Ptr() + buf.Bytes()); ++p) {
+        if (*p != 0) {
+            allZero = false;
+            break;
+        }
+    }
+    TEST(allZero);
+    // callback-specific objects resource-managed locally
+    playable->RemoveRef();
+    return NULL;
 }
 
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgSilence* aMsg)
@@ -460,6 +536,8 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(eMsgTrack == iExpectedMsgType);
     iExpectedMsgType = eMsgEncodedStream;
+    // reset audio data accu for next track
+    iAccumulatedJiffies = 0;  
     return aMsg;
 }
 
@@ -491,16 +569,101 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgFlush* aMsg)
 Msg* SuiteGeneratorSilence::ProcessMsg(MsgQuit* aMsg)
 {
     TEST(eMsgAudioPcm == iExpectedMsgType);
+    TEST(iAccumulatedJiffies == iExpectedJiffies);
     iExpectedMsgType = eMsgNone;  // final msg: none more expected
     iQuit = true;
     return aMsg;
 }
 
-void SuiteGeneratorSilence::Test()
+void SuiteGeneratorSilence::Test_8bit_44100_50Hz_2ch_1s()
 {
+    TestWaveform("silence", ToneParams( 8, 44100, 50, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_50Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 50, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_24bit_44100_50Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(24, 44100, 50, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_440Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16,  44100, 440, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_88200_440Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16,  88200, 440, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_176400_440Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 176400, 440, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_48000_440Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16,  48000, 440, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_96000_440Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16,  96000, 440, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_192000_440Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 192000, 440, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_120Hz_1ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 120, 1, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_120Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 120, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_120Hz_6ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 120, 6, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_120Hz_8ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 120, 8, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_1s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 60, 2, 1));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_2s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 60, 2, 2));
+}
+
+void SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s()
+{
+    TestWaveform("silence", ToneParams(16, 44100, 60, 2, 5));
+}
+
+void SuiteGeneratorSilence::TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams)
+{
+    // first msg, indicating start of new track
     iExpectedMsgType = eMsgTrack;
-    iExpectedToneParams.Set(16, 44100, 50, 2, 1);
-    Track& trk = *iTrackFactory->CreateTrack(Brn("tone://silence.wav?bitdepth=16&samplerate=44100&pitch=50&channels=2&duration=1"), Brx::Empty(), NULL);
+    iExpectedToneParams = aToneParams;
+    iExpectedJiffies = aToneParams.duration * aToneParams.sampleRate * Jiffies::JiffiesPerSample(aToneParams.sampleRate);
+    Bws<128> toneUrl;
+    toneUrl.AppendPrintf("tone://%s.wav?bitdepth=%u&samplerate=%u&pitch=%u&channels=%u&duration=%u", aWaveform, aToneParams.bitsPerSample, aToneParams.sampleRate, aToneParams.pitch, aToneParams.numChannels, aToneParams.duration);
+    Track& trk = *iTrackFactory->CreateTrack(toneUrl, Brx::Empty(), NULL);
     iProtocolManager->DoStream(trk, Brx::Empty());
     trk.RemoveRef();
     iSupply->OutputQuit();  // ensure no audio remains in pipeline
