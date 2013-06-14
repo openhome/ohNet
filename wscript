@@ -356,7 +356,7 @@ def build(bld):
                  'OpenHome/Media/Codec/Alac.cpp',
                  'alac_decoder/alac.c',
             ],
-            use=['ALAC', 'OHNET', 'OPENSSL'],
+            use=['ALAC', 'OHNET', 'ohMediaPlayer', 'OPENSSL'],
             target='CodecAlac')
 
     # AAC
