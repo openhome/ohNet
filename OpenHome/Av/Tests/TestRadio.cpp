@@ -105,7 +105,8 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
     iPipeline = new PipelineManager(iInfoLogger, SimpleSongcastingDriver::kMaxDriverJiffies);
     iPipeline->AddObserver(*this);
     iPipeline->Add(Codec::CodecFactory::NewAac());
-    iPipeline->Add(Codec::CodecFactory::NewAlac());
+    // Don't include ALAC codec until it breaks it's dependency on RAOP/OpenSSL
+    //iPipeline->Add(Codec::CodecFactory::NewAlac());
     iPipeline->Add(Codec::CodecFactory::NewFlac());
     iPipeline->Add(Codec::CodecFactory::NewMp3());
     iPipeline->Add(Codec::CodecFactory::NewVorbis());

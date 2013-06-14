@@ -40,7 +40,7 @@ void UriProviderSingleTrack::Begin(TUint aTrackId)
     iLock.Wait();
     ASSERT(iTrack != NULL);
     ASSERT(iTrack->Id() == aTrackId);
-    iIgnoreNext = true;
+    iIgnoreNext = false;
     iLock.Signal();
 }
 

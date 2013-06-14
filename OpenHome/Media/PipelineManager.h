@@ -59,7 +59,7 @@ private:
     std::vector<UriProvider*> iUriProviders; // FIXME - should PipelineManager own all UriProviders?
     std::vector<IPipelineObserver*> iObservers;
     BwsMode iMode;
-    TUint iPipelineTrackId;
+    TUint iTrackId;
 };
 
 } // namespace Media

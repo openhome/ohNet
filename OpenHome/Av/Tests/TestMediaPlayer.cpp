@@ -142,7 +142,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice,
     iProduct->AddAttribute("Sender");
 
     iPipeline->Add(Codec::CodecFactory::NewAac());
-    iPipeline->Add(Codec::CodecFactory::NewAlac());
+    // Don't include ALAC codec until it breaks it's dependency on RAOP/OpenSSL
+    //iPipeline->Add(Codec::CodecFactory::NewAlac());
     iPipeline->Add(Codec::CodecFactory::NewFlac());
     iPipeline->Add(Codec::CodecFactory::NewMp3());
     iPipeline->Add(Codec::CodecFactory::NewVorbis());
@@ -164,7 +165,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice,
     UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
     iPipeline->Add(radioUriProvider);
     iPresetDatabase = new PresetDatabase();
-    iProduct->AddSource(new SourceRadio(env, aDevice, *iPipeline, *iPresetDatabase, *radioUriProvider, kSupportedProtocols));
+    iProduct->AddSource(new SourceRadio(env, aDevice, *iPipeline, *iPresetDatabase, *radioUriProvider, kSupportedProtocols, *iKvpStore));
     
     iProduct->SetCurrentSource(0);
 }
@@ -225,7 +226,8 @@ int CDECL main(int aArgc, char* aArgv[])
     }
 
     InitialisationParams* initParams = InitialisationParams::Create();
-    //Debug::SetLevel(Debug::kMedia);
+//    initParams->SetUseLoopbackNetworkAdapter();
+    //Debug::SetLevel(Debug::kDvEvent);
 	Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();

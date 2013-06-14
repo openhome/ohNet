@@ -7,6 +7,7 @@
 #include <OpenHome/Av/Radio/TuneIn.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
+#include <OpenHome/Av/KvpStore.h>
 
 #include <limits.h>
 
@@ -17,7 +18,7 @@ using namespace OpenHome::Media;
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, PresetDatabase& aDatabase, UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, PresetDatabase& aDatabase, UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore)
     : Source("Radio", "Radio")
     , iPipeline(aPipeline)
     , iDatabase(aDatabase)
@@ -28,7 +29,13 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iStreamId(UINT_MAX)
 {
     iProviderRadio = new ProviderRadio(aDevice, *this, iDatabase, aProtocolInfo);
-    iTuneIn = new RadioPresetsTuneIn(aEnv, iDatabase, Brn("linnproducts")); // FIXME - need access to IReadStore
+    Bws<40> username;
+    if (aReadStore.TryReadStoreItem(Brn("Radio.TuneInUserName"), username)) {
+        iTuneIn = new RadioPresetsTuneIn(aEnv, iDatabase, username);
+    }
+    else {
+        iTuneIn = NULL; // FIXME - should maybe just initialise iTuneIn anyway (once we allow runtime change of rwstore anyway)
+    }
     iPipeline.AddObserver(*this);
 }
 

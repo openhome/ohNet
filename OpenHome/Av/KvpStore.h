@@ -24,6 +24,7 @@ enum
 class IReadStore
 {
 public:
+    // FIXME - why aren't all keys string literals?
     virtual TBool TryReadStoreItem(const Brx& aKey, Bwx& aValue) = 0; // take copy of item (which may change at any time).  Returned values may not be nul-terminated.
     virtual TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue) = 0; // read item whose value is fixed at compile time.  Returned values are nul-terminated.
 };

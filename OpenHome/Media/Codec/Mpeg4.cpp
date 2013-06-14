@@ -1,4 +1,5 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
+#include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
@@ -567,7 +568,7 @@ Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
         aController.Read(data, 4);
         TUint bytes = Ascii::Uint(data);    // size of fmtp string
         data.SetBytes(0);
-        aController.Read(data, bytes);     // FIXME - problem here; need to read variable amount of data (and we're not peeking)
+        aController.Read(data, bytes);
         Parser fmtp(data);
 
         LOG(kMedia, "fmtp [");
@@ -575,28 +576,36 @@ Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
         LOG(kMedia, "]\n");
 
         fmtp.Set(data);
+        iCodecSpecificData.SetBytes(0);
 
         try {
-            fmtp.Next();            // ?
-            fmtp.Next();            // max_samples_per_frame
-            fmtp.Next();            // 7a
-            iBitDepth = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));  // bit depth
-            fmtp.Next();            // rice_historymult
-            fmtp.Next();            // rice_initialhistory
-            fmtp.Next();            // rice_kmodifier
-            iChannels = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));    // 7f - I think that this is channels
-            fmtp.Next();            // 80
-            fmtp.Next();            // 82
-            fmtp.Next();            // 86
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // ?
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // max_samples_per_frame
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // 7a
+
+            iBitDepth = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // bit depth
+            iCodecSpecificData.Append(static_cast<TUint8>(iBitDepth));
+
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_historymult
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_initialhistory
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_kmodifier
+
+            iChannels = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // 7f - I think that this is channels
+            iCodecSpecificData.Append(static_cast<TUint8>(iChannels));
+
+            iCodecSpecificData.Append(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));       // 80
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // 82
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // 86
+
             TUint rate = Ascii::Uint(fmtp.NextLine());
             iTimescale = rate;
             iSampleRate = rate;
+            iCodecSpecificData.Append(Arch::BigEndian4(rate)); // parsed fmtp data to be passed to alac decoder
         }
         catch(AsciiError) {
             THROW(MediaCodecRaopNotFound);
         }
         data.SetBytes(bytes);
-        iCodecSpecificData.Replace(data); // pass raw fmtp to alac decoder
 
         LOG(kMedia, "Mpeg4MediaInfoBase RAOP header found %d bytes\n", bytes);
     }

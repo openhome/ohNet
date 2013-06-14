@@ -353,7 +353,7 @@ def build(bld):
     bld.stlib(
             source=[
                  'OpenHome/Media/Codec/Alac.cpp',
-                 'alac_decoder/alac.cpp',
+                 'alac_decoder/alac.c',
             ],
             use=['ALAC', 'OHNET', 'OPENSSL'],
             target='CodecAlac')
@@ -623,10 +623,10 @@ def build(bld):
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUpnpErrors')
-    #bld.program(
-    #        source='OpenHome/Av/Tests/TestRadio.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='TestRadio')
+    bld.program(
+            source='OpenHome/Av/Tests/TestRadio.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestRadio')
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayer.cpp',
             use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
