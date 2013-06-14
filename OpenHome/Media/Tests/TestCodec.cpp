@@ -296,9 +296,9 @@ TUint64 AudioFileDescriptor::Jiffies() const
 {
     const TUint jiffiesPerSecond = Jiffies::kJiffiesPerSecond;
     TUint64 jiffies = 0;
-    TUint wholeSecs = iSamples/iSampleRate;
+    TUint wholeSecs = (iSamples && iSampleRate) ? iSamples/iSampleRate : 0;
     TUint remainingSamples = iSamples - iSampleRate*wholeSecs;
-    TUint jiffiesPerSample = jiffiesPerSecond/iSampleRate;
+    TUint jiffiesPerSample = (jiffiesPerSecond && iSampleRate) ? jiffiesPerSecond/iSampleRate : 0;
 
     jiffies = wholeSecs*static_cast<TUint64>(jiffiesPerSecond) + remainingSamples*jiffiesPerSample;
     //LOG(kMedia, "AudioFileDescriptor::Jiffies wholeSecs: %u, remainingSamples: %u, jiffiesPerSample: %u, jiffies: %llu\n", wholeSecs, remainingSamples, jiffiesPerSample, jiffies);
@@ -444,11 +444,10 @@ Msg* MsgProcessor::ProcessMsg(MsgTrack* aMsg)
     //LOG(kMedia, ">MsgProcessor::ProcessMsgTrack\n");
     return aMsg;
 }
-Msg* MsgProcessor::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    //Log::Print(">MsgProcessor::ProcessMsgEncodedStream\n");
-    ASSERTS();
-    return NULL;
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgEncodedStream\n");
+    return aMsg;
 }
 Msg* MsgProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
@@ -944,7 +943,7 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
         // MP3 encoders/decoders add silence and some samples of random data to
         // start and end of tracks for filter routines.
         // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
-        TEST(iZeroCrossings <= expectedZeroCrossings+70);
+        TEST(iZeroCrossings <= expectedZeroCrossings+75);
     }
     else {
         TEST(iZeroCrossings <= expectedZeroCrossings+15);
@@ -972,13 +971,15 @@ SuiteCodecInvalidType::~SuiteCodecInvalidType()
 void SuiteCodecInvalidType::TestInvalidType()
 {
     Brn filename(iFiles[iFileNum].Filename());
+    TUint64 jiffies = iFiles[iFileNum].Jiffies();
     iFileNum++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecInvalidType"), filename);
     iSem.Wait();
     delete fileLocation;
 
-    //LOG(kMedia, "iJiffies: %llu, kTotalJiffies: %llu\n", iJiffies, TestCodecPipelineElementUpstream::kTotalJiffies);
+    LOG(kMedia, "iJiffies: %llu, kTotalJiffies: %llu\n", iJiffies, jiffies);
+    //Log::Print("iJiffies: %llu, kTotalJiffies: %llu\n", iJiffies, jiffies);
     TEST(iJiffies == 0); // If we don't exit cleanly and with 0 jiffies of output audio, something is misbehaving.
 }
 
@@ -1108,8 +1109,6 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     // MP4 with moov atom after mdat atom.
     // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
     invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
-    // 3s-stereo-44k-q5-coverart.ogg currently fails to play as ProtocolManager exhausts stream during Recognise().
-    invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
 
 
     // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.
@@ -1127,6 +1126,8 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::eCodecMp3));
     // File with embedded cover art
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    // 3s-stereo-44k-q5-coverart.ogg previously failed to play as ProtocolManager exhausted stream during Recognise().
+    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
 

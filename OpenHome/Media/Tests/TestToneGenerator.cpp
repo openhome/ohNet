@@ -1,7 +1,20 @@
 #include <OpenHome/Private/TestFramework.h>
+
+#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolTone.h>
+#include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/EncodedAudioReservoir.h>
+#include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Media/Codec/CodecFactory.h>
+#include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Msg.h>
 #include <OpenHome/Buffer.h>
 
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Net/Private/Globals.h>  // dummy Environment
+
+#include "AllocatorInfoLogger.h"
 #include "SuiteUnitTest.h"
 
 using namespace OpenHome;
@@ -25,7 +38,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteDuplicate: public Suite
+class SuiteDuplicate : public Suite
 {
 public:
     SuiteDuplicate();
@@ -35,7 +48,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteMissing: public Suite
+class SuiteMissing : public Suite
 {
 public:
     SuiteMissing();
@@ -45,7 +58,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteSpurious: public Suite
+class SuiteSpurious : public Suite
 {
 public:
     SuiteSpurious();
@@ -55,7 +68,7 @@ private:
     ToneUriParser* iParser;
 };
 
-class SuiteSyntaxError: public Suite
+class SuiteSyntaxError : public Suite
 {
 public:
     SuiteSyntaxError();
@@ -63,6 +76,84 @@ public:
     void Test();
 private:
     ToneUriParser* iParser;
+};
+
+enum EToneMsgType
+{
+    eMsgTrack,
+    eMsgEncodedStream,
+    eMsgDecodedStream,
+    eMsgAudioPcm,
+    eMsgQuit,
+    eMsgNone,
+};
+
+class SuiteGeneratorSilence : public Suite,
+     private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor
+{
+public:
+    SuiteGeneratorSilence();
+    ~SuiteGeneratorSilence();
+    void Test();
+
+private:  // from IPipelineIdProvider
+    TUint NextTrackId();
+    TUint NextStreamId();
+    EStreamPlay OkToPlay(TUint, TUint);
+
+private:  // from IFlushIdProvider
+    TUint NextFlushId();
+
+private:  // from IPipelineElementDownstream
+    void Push(Msg* aMsg);
+
+private:  // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
+
+private:
+    // as per Pipeline.h
+    static const TUint kMsgCountEncodedAudio    = 512;
+    static const TUint kMsgCountAudioEncoded    = 768;
+    static const TUint kMsgCountDecodedAudio    = 512;
+    static const TUint kMsgCountAudioPcm        = 768;
+    static const TUint kMsgCountSilence         = 512;
+    static const TUint kMsgCountPlayablePcm     = 1024;
+    static const TUint kMsgCountPlayableSilence = 1024;
+    static const TUint kMsgCountEncodedStream   = 20;
+    static const TUint kMsgCountTrack           = 20;
+    static const TUint kMsgCountDecodedStream   = 20;
+    static const TUint kMsgCountMetaText        = 20;
+    static const TUint kMsgCountHalt            = 20;
+    static const TUint kMsgCountFlush           = 1;
+    static const TUint kMsgCountQuit            = 1;
+    static const TUint kEncodedReservoirSizeBytes = 20 * 1024;
+
+    TrackFactory* iTrackFactory;
+    ProtocolManager* iProtocolManager;
+    AllocatorInfoLogger* iAllocatorInfoLogger;
+    MsgFactory* iMsgFactory;
+    EncodedAudioReservoir* iEncodedAudioReservoir;
+    Supply* iSupply;
+    Codec::Container* iContainer;
+    Codec::CodecController* iCodecController;
+
+    TUint iNextFlushId;
+    TUint iNextTrackId;
+    TUint iNextStreamId;
+    Semaphore iSemaphore;
+
+    ToneParams iExpectedToneParams;
+    EToneMsgType iExpectedMsgType;
 };
 
 } // namespace Media
@@ -73,7 +164,8 @@ private:
 //
 
 // SuiteLimits
-SuiteLimits::SuiteLimits() : Suite("enforcement of tone parameter limits")
+SuiteLimits::SuiteLimits()
+    : Suite("enforcement of tone parameter limits")
 {
     iParser = new ToneUriParser();
 }
@@ -163,7 +255,8 @@ void SuiteLimits::Test()
 }
 
 // SuiteDuplicate
-SuiteDuplicate::SuiteDuplicate() : Suite("detection of duplicate tone parameters")
+SuiteDuplicate::SuiteDuplicate()
+    : Suite("detection of duplicate tone parameters")
 {
     iParser = new ToneUriParser();
 }
@@ -183,7 +276,8 @@ void SuiteDuplicate::Test()
 }
 
 // SuiteMissing
-SuiteMissing::SuiteMissing() : Suite("detection of missing tone parameters")
+SuiteMissing::SuiteMissing()
+    : Suite("detection of missing tone parameters")
 {
     iParser = new ToneUriParser();
 }
@@ -204,7 +298,8 @@ void SuiteMissing::Test()
 }
 
 // SuiteSpurious
-SuiteSpurious::SuiteSpurious() : Suite("detection of spurious tone parameters")
+SuiteSpurious::SuiteSpurious()
+    : Suite("detection of spurious tone parameters")
 {
     iParser = new ToneUriParser();
 }
@@ -223,7 +318,8 @@ void SuiteSpurious::Test()
 }
 
 // SuiteSyntaxError
-SuiteSyntaxError::SuiteSyntaxError() : Suite("detection of syntactically defective tone URL")
+SuiteSyntaxError::SuiteSyntaxError()
+    : Suite("detection of syntactically defective tone URL")
 {
     iParser = new ToneUriParser();
 }
@@ -248,6 +344,163 @@ void SuiteSyntaxError::Test()
     TEST_THROWS(iParser->Parse(Brn("tone:/square.wav?samplerate=44100&pitch=50&channels2&duration=360")), ToneUriParseError);
 }
 
+SuiteGeneratorSilence::SuiteGeneratorSilence()
+    : Suite("tone generator: silence")
+    , iNextFlushId(1)
+    , iNextTrackId(1)
+    , iNextStreamId(1)
+    , iSemaphore("TONE", 0)
+{
+    iAllocatorInfoLogger = new AllocatorInfoLogger();
+    iMsgFactory = new MsgFactory(*iAllocatorInfoLogger,
+                             kMsgCountEncodedAudio, kMsgCountAudioEncoded,
+                             kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
+                             kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
+                             kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
+                             kMsgCountHalt, kMsgCountFlush, kMsgCountQuit);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    iSupply = new Supply(*iMsgFactory, *iEncodedAudioReservoir);
+    iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this);
+    iCodecController->AddCodec(Codec::CodecFactory::NewWav());
+    iCodecController->Start();
+
+    iProtocolManager = new ProtocolManager(*iSupply, /*IPipelineIdProvider*/ *this, /*IFlushIdProvider*/ *this);
+    iProtocolManager->Add(ProtocolFactory::NewTone(*gEnv));  // (dummy) environment not really needed
+
+    // only single test track (tone:// URL) in existence at any given time
+    iTrackFactory = new TrackFactory(*iAllocatorInfoLogger, 1);
+}
+
+SuiteGeneratorSilence::~SuiteGeneratorSilence()
+{
+    delete iCodecController;
+    delete iContainer;
+    delete iEncodedAudioReservoir;
+    delete iSupply;
+    delete iProtocolManager;
+    delete iTrackFactory;
+    delete iMsgFactory;
+    delete iAllocatorInfoLogger;
+}
+
+TUint SuiteGeneratorSilence::NextFlushId()
+{
+    return iNextFlushId++;
+}
+
+TUint SuiteGeneratorSilence::NextTrackId()
+{
+    return iNextTrackId++;
+}
+
+TUint SuiteGeneratorSilence::NextStreamId()
+{
+    return iNextStreamId++;
+}
+
+EStreamPlay SuiteGeneratorSilence::OkToPlay(TUint, TUint)
+{
+    ASSERTS();
+    return ePlayNo;
+}
+
+void SuiteGeneratorSilence::Push(Msg* aMsg)
+{
+    Msg* processedMsg = aMsg->Process(/*IMsgProcessor*/ *this);
+    aMsg->RemoveRef();
+    if  (NULL == processedMsg) {
+        // callback for MsgQuit is done (as all others return original msg)
+        // this IMsgProcessor (etc.) object will never be needed again,
+        // so destruction may proceed in main (test) thread
+        iSemaphore.Signal();
+    }
+}
+
+// callbacks from aMsg->Process; actually check output (TEST)
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    // TODO: capture and analyse actual PCM audio data
+    TEST(eMsgAudioPcm == iExpectedMsgType);
+    iExpectedMsgType = eMsgAudioPcm;  // usually more to follow, but MsgQuit also acceptable
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgSilence* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgPlayable* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    TEST(eMsgDecodedStream == iExpectedMsgType);
+    iExpectedMsgType = eMsgAudioPcm;
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgTrack* aMsg)
+{
+    TEST(eMsgTrack == iExpectedMsgType);
+    iExpectedMsgType = eMsgEncodedStream;
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    TEST(eMsgEncodedStream== iExpectedMsgType);
+    iExpectedMsgType = eMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgMetaText* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgHalt* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgFlush* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgQuit* /*aMsg*/)
+{
+    TEST(eMsgAudioPcm == iExpectedMsgType);
+    iExpectedMsgType = eMsgNone;  // final msg: none more expected
+    return NULL;
+}
+
+void SuiteGeneratorSilence::Test()
+{
+    iExpectedMsgType = eMsgTrack;
+    iExpectedToneParams.Set(16, 44100, 50, 2, 1);
+    Track& trk = *iTrackFactory->CreateTrack(Brn("tone://silence.wav?bitdepth=16&samplerate=44100&pitch=50&channels=2&duration=1"), Brx::Empty(), NULL);
+    iProtocolManager->DoStream(trk, Brx::Empty());
+    trk.RemoveRef();
+    iSupply->OutputQuit();  // ensure no audio remains in pipeline
+    iSemaphore.Wait();
+}
+
 //
 // sequential execution of test suites
 //
@@ -260,5 +513,6 @@ void TestToneGenerator()
     runner.Add(new SuiteMissing());
     runner.Add(new SuiteSpurious());
     runner.Add(new SuiteSyntaxError());
+    runner.Add(new SuiteGeneratorSilence());
     runner.Run();
 }

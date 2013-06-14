@@ -148,6 +148,21 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.LIB_WMA=['advapi32', 'user32']
 
+    # OpenSSL
+    conf.env.STLIBPATH_OPENSSL = [
+        os.path.join(conf.path.find_node('.').abspath(),
+        os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib')),
+    ]
+    if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
+        conf.env.STLIB_OPENSSL = ['eay32']
+    else:
+        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64']:
+            conf.env.LIB_OPENSSL = ['dl']
+        conf.env.STLIB_OPENSSL = ['crypto']
+    conf.env.INCLUDES_OPENSSL = [
+        os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'include'),
+    ]
+
 def get_node(bld, node_or_filename):
     if isinstance(node_or_filename, Node):
         return node_or_filename
@@ -253,6 +268,10 @@ def build(bld):
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ProtocolTone.cpp',
+                'OpenHome/Media/Protocol/Raop.cpp',
+                'OpenHome/Media/Protocol/Rtsp.cpp',
+                'OpenHome/Media/Protocol/ProtocolRaop.cpp',
+                'OpenHome/Media/Protocol/ProtocolRtsp.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
                 'OpenHome/Media/Protocol/ContentPls.cpp',
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
@@ -273,7 +292,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
             ],
-            use=['OHNET'],
+            use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
 
     # Wav
@@ -334,9 +353,9 @@ def build(bld):
     bld.stlib(
             source=[
                  'OpenHome/Media/Codec/Alac.cpp',
-                 'alac_decoder/alac.cpp',
+                 'alac_decoder/alac.c',
             ],
-            use=['ALAC', 'OHNET'],
+            use=['ALAC', 'OHNET', 'OPENSSL'],
             target='CodecAlac')
 
     # AAC
@@ -518,7 +537,7 @@ def build(bld):
 
     bld.program(
            source='OpenHome/Media/Tests/TestShell.cpp',
-           use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+           use=['OHNET', 'SHELL', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
            target='TestShell')
     bld.program(
             source='OpenHome/Media/Tests/TestMsgMain.cpp',
@@ -566,8 +585,12 @@ def build(bld):
             target='TestPipeline')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocol.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestProtocol')
+    bld.program(
+            source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestProtocolRaop')
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -578,7 +601,7 @@ def build(bld):
             target='TestProtocolHttp')
     bld.program(
             source='OpenHome/Media/Tests/TestCodecMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestCodec')
     bld.program(
             source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
@@ -594,7 +617,7 @@ def build(bld):
             target='TestToneGenerator')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpAv.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUpnpAv')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
@@ -606,7 +629,7 @@ def build(bld):
             target='TestRadio')
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayer.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'CodecAlac', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMediaPlayer')
 
 # Bundles

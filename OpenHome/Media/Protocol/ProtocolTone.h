@@ -1,6 +1,7 @@
 #ifndef HEADER_PIPELINE_PROTOCOL_TONE
 #define HEADER_PIPELINE_PROTOCOL_TONE
 
+#include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/OhNetTypes.h>
 
@@ -15,6 +16,7 @@ struct ToneParams
 {
     ToneParams();
     ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
+    void Set(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
 
     // tighter packing possible, but universal order convention more valuable
     TUint16 bitsPerSample;
@@ -79,6 +81,25 @@ class ToneGeneratorSilence : public ToneGenerator
 public:
     ToneGeneratorSilence();
     TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
+class ProtocolTone : public Protocol
+{
+public:
+    ProtocolTone(Environment& aEnv);
+    ~ProtocolTone();
+#ifdef DEFINE_DEBUG
+private:
+    void HexDump(const TByte *aBase, TUint aSize) const;
+#endif  // DEFINE_DEBUG
+private: // from Protocol
+    ProtocolStreamResult Stream(const Brx& aUri);
+private:  // from IStreamHandler
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
+private:
+    std::vector<ToneGenerator*> iToneGenerators;
+    // 1[ms] x 192000[Hz] x 8[channels] x 24[bit/channel] x 1/8[B/bit] = 4,608[B]
+    Bws<4608> iAudioBuf;
 };
 
 } // namespace Media

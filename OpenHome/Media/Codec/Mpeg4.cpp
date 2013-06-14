@@ -1,5 +1,9 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
+#include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
 
@@ -530,6 +534,121 @@ TUint Mpeg4Start::ContainerSize() const
 }
 
 
+// Mpeg4MediaInfoBase
+
+// this is a fake header constructed for airplay
+Mpeg4MediaInfoBase::Mpeg4MediaInfoBase()
+{
+}
+
+Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
+{
+    LOG(kMedia, "Checking for Raop container\n");
+
+    try {
+        Bws<60> data;
+        aController.Read(data, 4);
+
+        LOG(kMedia, "data %x {", data[0]);
+        LOG(kMedia, data);
+        LOG(kMedia, "}\n");
+
+        if(data != Brn("Raop")) {
+            THROW(MediaCodecRaopNotFound);
+        }
+
+        // If RAOP is only used by alac, why bother going to extra lengths and creating a pseudo-identifier?
+        //aSelector.iCodecContainer->SetName(Brn("alas"));  // this is used for codec recognition - streamed alac
+        iSamplesTotal = 0;  // continual stream
+
+        // fmtp should hold the sdp fmtp numbers from e.g. a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
+        // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
+        // first read the number of bytes in for the fmtp
+        data.SetBytes(0);
+        aController.Read(data, 4);
+        TUint bytes = Ascii::Uint(data);    // size of fmtp string
+        data.SetBytes(0);
+        aController.Read(data, bytes);
+        Parser fmtp(data);
+
+        LOG(kMedia, "fmtp [");
+        LOG(kMedia, fmtp.NextLine());
+        LOG(kMedia, "]\n");
+
+        fmtp.Set(data);
+        iCodecSpecificData.SetBytes(0);
+
+        try {
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // ?
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // max_samples_per_frame
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // 7a
+
+            iBitDepth = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // bit depth
+            iCodecSpecificData.Append(static_cast<TUint8>(iBitDepth));
+
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_historymult
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_initialhistory
+            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_kmodifier
+
+            iChannels = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // 7f - I think that this is channels
+            iCodecSpecificData.Append(static_cast<TUint8>(iChannels));
+
+            iCodecSpecificData.Append(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));       // 80
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // 82
+            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // 86
+
+            TUint rate = Ascii::Uint(fmtp.NextLine());
+            iTimescale = rate;
+            iSampleRate = rate;
+            iCodecSpecificData.Append(Arch::BigEndian4(rate)); // parsed fmtp data to be passed to alac decoder
+        }
+        catch(AsciiError) {
+            THROW(MediaCodecRaopNotFound);
+        }
+        data.SetBytes(bytes);
+
+        LOG(kMedia, "Mpeg4MediaInfoBase RAOP header found %d bytes\n", bytes);
+    }
+    catch(CodecStreamCorrupt) {
+        THROW(MediaCodecRaopNotFound); // not enough data found to be Raop container
+    }
+}
+
+Mpeg4MediaInfoBase::~Mpeg4MediaInfoBase()
+{
+}
+
+const Brx& Mpeg4MediaInfoBase::CodecSpecificData() const
+{
+    return iCodecSpecificData;
+}
+
+TUint32 Mpeg4MediaInfoBase::SampleRate() const
+{
+    return iSampleRate;
+}
+
+TUint32 Mpeg4MediaInfoBase::Timescale() const
+{
+    return iTimescale;
+}
+
+TUint16 Mpeg4MediaInfoBase::Channels() const
+{
+    return iChannels;
+}
+
+TUint16 Mpeg4MediaInfoBase::BitDepth() const
+{
+    return iBitDepth;
+}
+
+TUint64 Mpeg4MediaInfoBase::Duration() const
+{
+    return iSamplesTotal;
+}
+
+
 // Mpeg4MediaInfo
 
 Mpeg4MediaInfo::Mpeg4MediaInfo(ICodecController& aController)
@@ -685,11 +804,6 @@ Mpeg4MediaInfo::~Mpeg4MediaInfo()
     iSeekTable.Deinitialise();
 }
 
-const Brx& Mpeg4MediaInfo::CodecSpecificData() const
-{
-    return iCodecSpecificData;
-}
-
 SampleSizeTable& Mpeg4MediaInfo::GetSampleSizeTable()
 {
     return iSampleSizeTable;
@@ -698,31 +812,6 @@ SampleSizeTable& Mpeg4MediaInfo::GetSampleSizeTable()
 SeekTable& Mpeg4MediaInfo::GetSeekTable()
 {
     return iSeekTable;
-}
-
-TUint32 Mpeg4MediaInfo::SampleRate() const
-{
-    return iSampleRate;
-}
-
-TUint32 Mpeg4MediaInfo::Timescale() const
-{
-    return iTimescale;
-}
-
-TUint16 Mpeg4MediaInfo::Channels() const
-{
-    return iChannels;
-}
-
-TUint16 Mpeg4MediaInfo::BitDepth() const
-{
-    return iBitDepth;
-}
-
-TUint64 Mpeg4MediaInfo::Duration() const
-{
-    return iSamplesTotal;
 }
 
 void Mpeg4MediaInfo::GetCodec(const Brx& aData, Bwx& aCodec)

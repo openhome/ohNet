@@ -311,7 +311,9 @@ static int _fetch_headers(OggVorbis_File *vf,
     og_ptr=&og;
   }
 
+  vorbis_info_clear(vi);
   vorbis_info_init(vi);
+  vorbis_comment_clear(vc);
   vorbis_comment_init(vc);
   vf->ready_state=OPENED;
 

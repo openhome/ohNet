@@ -7,10 +7,7 @@
 	#include "stdint_win.h"
 #else
 	#include <stdint.h>
-	#include <stdio.h>
 #endif
-
-
 
 typedef struct stream_tTAG stream_t;
 

@@ -24,7 +24,6 @@ tests = '''
     TestIdProvider
     TestFiller
     TestToneGenerator
-    #TestUpnpErrors
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
