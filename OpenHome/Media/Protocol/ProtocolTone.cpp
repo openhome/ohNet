@@ -358,8 +358,6 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         switch (params.bitsPerSample) {
             case 8:
                 audioSample >>= 16;
-                // RIFF-WAVE spec: stored as unsigned (sic!) bytes
-                audioSample += 128;  // XXX shifting -128..+127 into 0..255
                 for (int ch = 0; ch < params.numChannels; ++ch) {
                     *(p + 1 * ch) = static_cast<TByte>(audioSample);
                 }

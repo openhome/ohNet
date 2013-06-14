@@ -128,29 +128,6 @@ private:
     TBool iStopped;
 };
 
-class RaopDataHeader
-{
-public:
-    RaopDataHeader(Brx& aRawData, TUint aSenderSkew, TUint aLatency);
-    RaopDataHeader(Brx& aBinData);
-    TUint SenderSkew() {return iSenderSkew;}
-    TUint Latency() {return iLatency;}
-    TUint16 Seqno() {return iSeqno;}
-    TUint16 Bytes() {return iBytes;}
-    TUint32 Timestamp() {return iTimestamp;}
-    TBool Start() {return iStart;}
-    TBool Mute() {return iMute;}
-    void SetMute() {iMute = true;}
-private:
-    TUint   iSenderSkew;
-    TUint   iLatency;
-    TUint16 iSeqno;
-    TUint16 iBytes;
-    TUint32 iTimestamp;
-    TBool iStart;
-    TBool iMute;
-};
-
 };  // namespace Media
 };  // namespace OpenHome
 
