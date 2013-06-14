@@ -578,5 +578,17 @@ void OhmMsgFactory::Process(OhmMsgMetatext& aMsg)
 
 OhmMsgFactory::~OhmMsgFactory()
 {
+    TUint slots = iFifoAudio.Slots();
+	for (TUint i = 0; i < slots; i++) {
+		delete iFifoAudio.Read();
+	}
+    slots = iFifoTrack.Slots();
+	for (TUint i = 0; i < slots; i++) {
+		delete iFifoTrack.Read();
+	}
+    slots = iFifoMetatext.Slots();
+	for (TUint i = 0; i < slots; i++) {
+		delete iFifoMetatext.Read();
+	}
 }
 
