@@ -7,7 +7,7 @@
 #include <OpenHome/Av/Radio/TuneIn.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
-#include <OpenHome/av/KvpStore.h>
+#include <OpenHome/Av/KvpStore.h>
 
 #include <limits.h>
 
