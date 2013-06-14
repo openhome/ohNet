@@ -62,13 +62,13 @@ void PipelineManager::AddObserver(IPipelineObserver& aObserver)
     iObservers.push_back(&aObserver);
 }
 
-void PipelineManager::Begin(const Brx& aMode, TUint aPipelineTrackId)
+void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     iLock.Wait();
     iMode.Replace(aMode);
-    iPipelineTrackId = aPipelineTrackId;
+    iTrackId = aTrackId;
     iLock.Signal();
-    iFiller->Play(aMode, aPipelineTrackId);
+    iFiller->Play(aMode, aTrackId);
 }
 
 void PipelineManager::Play()
@@ -101,8 +101,8 @@ void PipelineManager::Next()
     iFiller->Stop();
     // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
     // can always revert to an equivalent implementation to Prev() if this proves incorrect
-    iIdManager->InvalidateAt(iPipelineTrackId);
-    iFiller->Next(iMode, iPipelineTrackId);
+    iIdManager->InvalidateAt(iTrackId); // FIXME - need a pipelineTrackId here (i.e. the id associated with a MsgTrack, *not* the one associated with a Track
+    iFiller->Next(iMode, iTrackId);
 }
 
 void PipelineManager::Prev()
@@ -112,7 +112,7 @@ void PipelineManager::Prev()
     }
     iFiller->Stop();
     iIdManager->InvalidateAll();
-    iFiller->Prev(iMode, iPipelineTrackId);
+    iFiller->Prev(iMode, iTrackId);
 }
 
 Msg* PipelineManager::Pull()
@@ -131,7 +131,7 @@ void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipe
 {
     iLock.Wait();
     iMode.Replace(aMode);
-    iPipelineTrackId = aTrack.Id();
+    iTrackId = aTrack.Id();
     iLock.Signal();
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrack(aTrack, aMode, aIdPipeline);

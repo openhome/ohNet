@@ -12,7 +12,8 @@
 #include <OpenHome/Media/Msg.h>
 
 namespace OpenHome {
-class Environment;
+    class Environment;
+    class Parser;
 namespace Av {
 
 class RadioPresetsTuneIn
@@ -22,6 +23,7 @@ class RadioPresetsTuneIn
     static const TUint kMaxUserNameBytes = 64;
     static const TUint kReadResponseTimeoutMs = 30 * 1000; // 30 seconds
     static const TUint kRefreshRateMs = 5 * 60 * 1000; // 5 minutes
+    static const TUint kMaxPresetTitleBytes = 256;
     static const Brn kTuneInPresetsRequest;
     static const Brn kFormats;
     static const Brn kPartnerId;
@@ -34,6 +36,9 @@ private:
     void TimerCallback();
     void RefreshThread();
     void DoRefresh();
+    TBool ReadElement(Parser& aParser, const TChar* aKey, Bwx& aValue);
+    TBool ValidateKey(Parser& aParser, const TChar* aKey);
+    TBool ReadValue(Parser& aParser, const TChar* aKey, Bwx& aValue);
 private:
     Mutex iLock;
     Environment& iEnv;
@@ -47,6 +52,11 @@ private:
     ReaderHttpResponse iReaderResponse;
     HttpHeaderContentLength iHeaderContentLength;
     Timer* iRefreshTimer;
+    // Following members provide temp storage used while converting OPML elements to Didl-Lite
+    Bws<Media::kTrackMetaDataMaxBytes> iDidlLite;
+    Bws<Media::kTrackUriMaxBytes> iPresetUrl;
+    Bws<Media::kTrackUriMaxBytes> iPresetArtUrl;
+    Bws<kMaxPresetTitleBytes> iPresetTitle;
 };
 
 } // namespace Av

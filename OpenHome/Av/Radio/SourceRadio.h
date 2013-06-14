@@ -32,11 +32,12 @@ public:
 class PresetDatabase;
 class ProviderRadio;
 class RadioPresetsTuneIn;
+class IReadStore;
 
 class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
 {
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, PresetDatabase& aDatabase, Media::UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo);
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, PresetDatabase& aDatabase, Media::UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore);
     ~SourceRadio();
 private: // from ISource
     void Activate();

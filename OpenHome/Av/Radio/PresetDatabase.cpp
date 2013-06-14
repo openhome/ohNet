@@ -59,13 +59,26 @@ TBool PresetDatabase::TryGetPresetById(TUint aId, Bwx& aMetaData) const
     return false;
 }
 
+TBool PresetDatabase::TryGetPresetById(TUint aId, Bwx& aUri, Bwx& aMetaData) const
+{
+    AutoMutex a(iLock);
+    for (TUint i=0; i<kMaxPresets; i++) {
+        if (iPresets[i].Id() == aId) {
+            aUri.Replace(iPresets[i].Uri());
+            aMetaData.Replace(iPresets[i].MetaData());
+            return true;
+        }
+    }
+    return false;
+}
+
 TBool PresetDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const
 {
     AutoMutex a(iLock);
     if (iSeq != aSeq) {
         return TryGetPresetById(aId, aMetaData);
     }
-    for (TUint i=aIndex+1; i<kMaxPresets; i++) {
+    for (TUint i=aIndex; i<kMaxPresets; i++) {
         if (iPresets[i].Id() == aId) {
             aMetaData.Replace(iPresets[i].MetaData());
             aIndex = i;
@@ -89,15 +102,16 @@ TBool PresetDatabase::TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) c
     return false;
 }
 
-void PresetDatabase::SetPreset(TUint aIndex, const Brx& aMetaData, TUint& aId)
+void PresetDatabase::SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData, TUint& aId)
 {
     iLock.Wait();
     Preset& preset = iPresets[aIndex];
     aId = preset.Id();
     if (preset.MetaData() != aMetaData) {
         aId = iNextId++;
-        preset.Set(aId, aMetaData);
+        preset.Set(aId, aUri, aMetaData);
         iSeq++;
+        iUpdated = true;
     }
     iLock.Signal();
 }
@@ -111,15 +125,15 @@ void PresetDatabase::BeginSetPresets()
 {
 }
 
-void PresetDatabase::SetPreset(TUint aIndex, const Brx& aMetaData)
+void PresetDatabase::SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData)
 {
     TUint ignore;
-    SetPreset(aIndex, aMetaData, ignore);
+    SetPreset(aIndex, aUri, aMetaData, ignore);
 }
 
 void PresetDatabase::ClearPreset(TUint aIndex)
 {
-    (void)SetPreset(aIndex, Brx::Empty());
+    (void)SetPreset(aIndex, Brx::Empty(), Brx::Empty());
 }
 
 void PresetDatabase::EndSetPresets()
@@ -141,9 +155,10 @@ PresetDatabase::Preset::Preset()
 {
 }
 
-void PresetDatabase::Preset::Set(TUint aId, const Brx& aMetaData)
+void PresetDatabase::Preset::Set(TUint aId, const Brx& aUri, const Brx& aMetaData)
 {
     iId = aId;
+    iUri.Replace(aUri);
     Brn metaData(aMetaData);
     if (metaData.Bytes() > iMetaData.MaxBytes()) {
         metaData.Split(iMetaData.MaxBytes());
