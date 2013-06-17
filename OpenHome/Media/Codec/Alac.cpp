@@ -59,7 +59,11 @@ CodecAlac::CodecAlac()
 CodecAlac::~CodecAlac()
 {
     LOG(kCodec, "CodecAlac::~CodecAlac\n");
-    // AlacBase deletes iContainer, which points to iMp4
+    if (iMp4) {     // clean up in case not terminating under normal conditions
+        delete iMp4;
+        iMp4 = NULL;
+        iContainer = NULL;
+    }
 }
 
 TBool CodecAlac::Recognise(const Brx& aData)
@@ -112,6 +116,11 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
 void CodecAlac::StreamCompleted()
 {
     LOG(kCodec, "CodecAlac::StreamCompleted\n");
+    if (iMp4) {
+        delete iMp4;
+        iMp4 = NULL;
+        iContainer = NULL;
+    }
     CodecAlacBase::StreamCompleted();
 }
 

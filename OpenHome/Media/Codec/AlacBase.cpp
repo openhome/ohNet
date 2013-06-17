@@ -20,6 +20,7 @@ using namespace OpenHome::Media::Codec;
 
 CodecAlacBase::CodecAlacBase()
     : iContainer(NULL)
+    , alac(NULL)
 {
     LOG(kCodec, "CodecAlacBase::CodecAlacBase\n");
 }
@@ -27,8 +28,11 @@ CodecAlacBase::CodecAlacBase()
 CodecAlacBase::~CodecAlacBase()
 {
     LOG(kCodec, "CodecAlacBase::~CodecAlacBase\n");
-    if (iContainer) {
+    alac_free_buffers(alac);
+    alac = NULL;
+    if (iContainer) {   // clean up in case not terminating under normal conditions
         delete iContainer;
+        iContainer = NULL;
     }
 }
 
@@ -80,6 +84,11 @@ void CodecAlacBase::StreamCompleted()
 
     // free all malloc'ed buffers
     alac_free_buffers(alac);
+    alac = NULL;
+    if (iContainer) {
+        delete iContainer;
+        iContainer = NULL;
+    }
 }
 
 void CodecAlacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
