@@ -4,7 +4,6 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
-#include <OpenHome/Private/File.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Network.h>
@@ -61,12 +60,14 @@ private:
 class TestHttpSession : public SocketTcpSession
 {
 public:
-    TestHttpSession(const Brx& aFilename);
+    static const TUint kStreamLen = 123456;
+public:
+    TestHttpSession();
     ~TestHttpSession();
     TUint DataSize() const;
 protected:
     void WaitOnReadRequest();
-    void StreamFile(TUint aStartPos, TUint aEndPos);
+    void Stream(TUint aStartPos, TUint aEndPos);
     virtual void Respond() = 0;
 private: // from SocketTcpSession
     void Run();
@@ -75,8 +76,6 @@ private:
     static const TUint kReadTimeoutMs = 5000;
     static const TUint kMaxWriteBufBytes = 1400;
     HttpHeaderConnection iHeaderConnection;
-    // File attributes.
-    const Brhz iFilename;
     // Reader and buffer.
     Srs<kMaxReadBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
@@ -84,7 +83,6 @@ private:
     Sws<kMaxWriteBufBytes>* iWriterBuffer;
     Bwh iBuf;
 protected:
-    IFile* iFile;
     HttpHeaderRange iHeaderRange;
     // Writer shared by derived classes
     WriterHttpResponse* iWriterResponse;
@@ -93,7 +91,7 @@ protected:
 class TestHttpSessionStreamFull : public TestHttpSession
 {
 public:
-    TestHttpSessionStreamFull(const Brx& aFilename);
+    TestHttpSessionStreamFull();
 protected:
     void WriteResponseContentLength(TUint aLength);
 private: // from TestHttpSession
@@ -103,7 +101,7 @@ private: // from TestHttpSession
 class TestHttpSessionReject : public TestHttpSession
 {
 public:
-    TestHttpSessionReject(const Brx& aFilename);
+    TestHttpSessionReject();
 private:
     void WriteResponseBadRequest();
 private: // from TestHttpSession
@@ -119,7 +117,7 @@ private:
         eReconnect  = 1,
     };
 public:
-    TestHttpSessionReconnect(const Brx& aFilename);
+    TestHttpSessionReconnect();
 private:
     void WriteResponsePartialContent(TUint aStartPos, TUint aEndPos, TUint aTotalLength, TUint aLength);
 private: // from TestHttpSession
@@ -137,7 +135,7 @@ private:
         eStream    = 1,
     };
 public:
-    TestHttpSessionStreamLive(const Brx& aFilename);
+    TestHttpSessionStreamLive();
 protected:
     void WriteResponseOk();
 private: // from TestHttpSessionStreamFull
@@ -156,7 +154,7 @@ private:
         eReconnect      = 2,
     };
 public:
-    TestHttpSessionLiveReconnect(const Brx& aFilename);
+    TestHttpSessionLiveReconnect();
 private: // from TestHttpSessionStreamLive
     void Respond();
 private:
@@ -175,10 +173,8 @@ public:
         eLiveReconnect    = 4,
     };
 public:
-    SessionFactory(const Brx& aFilename);
+    SessionFactory();
     TestHttpSession* Create(ESession aSession);
-private:
-    const Brh iFilename;
 };
 
 
@@ -434,18 +430,9 @@ const Uri TestHttpServer::ServingUri() const
 
 // TestHttpSession
 
-TestHttpSession::TestHttpSession(const Brx& aFilename)
-    : iFilename(aFilename)
-    , iBuf(kMaxWriteBufBytes)
+TestHttpSession::TestHttpSession()
+    : iBuf(kMaxWriteBufBytes)
 {
-    // Try opening the file.
-    try {
-        iFile = IFile::Open(iFilename.CString(), eFileReadOnly);
-    }
-    catch (FileOpenError aFileErr) {
-        ASSERTS();
-    }
-
     iReadBuffer = new Srs<kMaxReadBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*gEnv, *iReadBuffer);
     iReaderRequest->AddMethod(Http::kMethodGet);
@@ -458,7 +445,6 @@ TestHttpSession::TestHttpSession(const Brx& aFilename)
 
 TestHttpSession::~TestHttpSession()
 {
-    delete iFile;
     delete iReaderRequest;
     iReadBuffer->ReadInterrupt();
     delete iReadBuffer;
@@ -476,31 +462,22 @@ void TestHttpSession::WaitOnReadRequest()
     }
 }
 
-void TestHttpSession::StreamFile(TUint aStartPos, TUint aEndPos)
+void TestHttpSession::Stream(TUint aStartPos, TUint aEndPos)
 {
         TUint bytesRemaining = aEndPos - aStartPos;
 
-        iFile->Seek(aStartPos);
-
-        // Loop until we've streamed all of file.
+        // Loop until we've streamed all bytes.
         while (bytesRemaining > 0) {
-            // Bytes to read from file.
-            iBuf.SetBytes(0);
+            // Bytes to transmit.
             TUint bytes = iBuf.MaxBytes();
             if (bytesRemaining < bytes) {
                 bytes = bytesRemaining;
             }
 
-            // Read from the file.
-            iFile->Read(iBuf, bytes);
-
-            // Check the number of bytes read is what we expected; file error otherwise.
-            if (iBuf.Bytes() != bytes) {
-                ASSERTS();
-            }
+            iBuf.SetBytes(bytes);   // Buffer of empty bytes.
             bytesRemaining -= bytes;
 
-            // Write file data out.
+            // Write data out.
             iWriterResponse->Write(iBuf);
         }
         iWriterBuffer->WriteFlush();
@@ -508,7 +485,7 @@ void TestHttpSession::StreamFile(TUint aStartPos, TUint aEndPos)
 
 TUint TestHttpSession::DataSize() const
 {
-    return iFile->Bytes();
+    return kStreamLen;
 }
 
 void TestHttpSession::Run()
@@ -526,8 +503,8 @@ void TestHttpSession::Run()
 
 // TestHttpSessionStreamFull
 
-TestHttpSessionStreamFull::TestHttpSessionStreamFull(const Brx& aFilename)
-    : TestHttpSession(aFilename)
+TestHttpSessionStreamFull::TestHttpSessionStreamFull()
+    : TestHttpSession()
 {
 }
 
@@ -542,15 +519,15 @@ void TestHttpSessionStreamFull::WriteResponseContentLength(TUint aLength)
 
 void TestHttpSessionStreamFull::Respond()
 {
-    WriteResponseContentLength(iFile->Bytes());
-    StreamFile(0, iFile->Bytes());
+    WriteResponseContentLength(kStreamLen);
+    Stream(0, kStreamLen);
 }
 
 
 // TestHttpSessionReject
 
-TestHttpSessionReject::TestHttpSessionReject(const Brx& aFilename)
-    : TestHttpSession(aFilename)
+TestHttpSessionReject::TestHttpSessionReject()
+    : TestHttpSession()
 {
 }
 
@@ -569,8 +546,8 @@ void TestHttpSessionReject::Respond()
 
 // TestHttpSessionReconnect
 
-TestHttpSessionReconnect::TestHttpSessionReconnect(const Brx& aFilename)
-    : TestHttpSessionStreamFull(aFilename)
+TestHttpSessionReconnect::TestHttpSessionReconnect()
+    : TestHttpSessionStreamFull()
     , iMode(eStreamBreak)
 {
 }
@@ -588,17 +565,17 @@ void TestHttpSessionReconnect::WriteResponsePartialContent(TUint aStartPos, TUin
 void TestHttpSessionReconnect::Respond()
 {
     if (iMode == eStreamBreak) {
-        WriteResponseContentLength(iFile->Bytes());
-        // Stream only a portion of file.
-        StreamFile(0, iFile->Bytes()/2);
+        WriteResponseContentLength(kStreamLen);
+        // Portion of stream.
+        Stream(0, kStreamLen/2);
         iMode = eReconnect;
     }
     else if (iMode == eReconnect) {
         if (iHeaderRange.Received()) {
             TUint startByte = iHeaderRange.Start();
             //TUint endByte = iHeaderRange.End();
-            WriteResponsePartialContent(startByte, iFile->Bytes()-1, iFile->Bytes(), iFile->Bytes()-startByte);
-            StreamFile(startByte, iFile->Bytes());
+            WriteResponsePartialContent(startByte, kStreamLen-1, kStreamLen, kStreamLen-startByte);
+            Stream(startByte, kStreamLen);
         }
         else {
             ASSERTS();
@@ -609,8 +586,8 @@ void TestHttpSessionReconnect::Respond()
 
 // TestHttpSessionStreamLive
 
-TestHttpSessionStreamLive::TestHttpSessionStreamLive(const Brx& aFilename)
-    : TestHttpSessionStreamFull(aFilename)
+TestHttpSessionStreamLive::TestHttpSessionStreamLive()
+    : TestHttpSessionStreamFull()
     , iMode(eConnect)
 {
 }
@@ -631,15 +608,15 @@ void TestHttpSessionStreamLive::Respond()
     }
     else if (iMode == eStream) {
         WriteResponseContentLength(0);
-        StreamFile(0, iFile->Bytes());
+        Stream(0, kStreamLen);
     }
 }
 
 
 // TestHttpSessionLiveReconnect
 
-TestHttpSessionLiveReconnect::TestHttpSessionLiveReconnect(const Brx& aFilename)
-    : TestHttpSessionStreamLive(aFilename)
+TestHttpSessionLiveReconnect::TestHttpSessionLiveReconnect()
+    : TestHttpSessionStreamLive()
     , iMode(eConnect)
 {
 }
@@ -652,20 +629,19 @@ void TestHttpSessionLiveReconnect::Respond()
     }
     else if (iMode == eStreamBreak) {
         WriteResponseContentLength(0);
-        StreamFile(0, iFile->Bytes()/2);
+        Stream(0, kStreamLen/2);
         iMode = eReconnect;
     }
     else if (iMode == eReconnect) {
         WriteResponseContentLength(0);
-        StreamFile(iFile->Bytes()/2, iFile->Bytes());
+        Stream(kStreamLen/2, kStreamLen);
     }
 }
 
 
 // SessionFactory
 
-SessionFactory::SessionFactory(const Brx& aFilename)
-    : iFilename(aFilename)
+SessionFactory::SessionFactory()
 {}
 
 TestHttpSession* SessionFactory::Create(ESession aSession)
@@ -673,15 +649,15 @@ TestHttpSession* SessionFactory::Create(ESession aSession)
     switch (aSession)
     {
     case eStreamFull:
-        return new TestHttpSessionStreamFull(iFilename);
+        return new TestHttpSessionStreamFull();
     case eReject:
-        return new TestHttpSessionReject(iFilename);
+        return new TestHttpSessionReject();
     case eReconnect:
-        return new TestHttpSessionReconnect(iFilename);
+        return new TestHttpSessionReconnect();
     case eStreamLive:
-        return new TestHttpSessionStreamLive(iFilename);
+        return new TestHttpSessionStreamLive();
     case eLiveReconnect:
-        return new TestHttpSessionLiveReconnect(iFilename);
+        return new TestHttpSessionLiveReconnect();
     default:
         ASSERTS();
         return NULL;    // Will never reach here.
@@ -831,9 +807,6 @@ TUint TestHttpFlushIdProvider::NextFlushId()
 SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     : Suite(aSuiteName)
 {
-    // The file to be served.
-    Brn serveFile("10s-stereo-44k.wav");
-
     // Get a list of network adapters (using loopback, so first one should do).
     std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackUse, "Loopback");
     TIpAddress addr = (*ifs)[0]->Address();
@@ -849,24 +822,15 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     //Log::Print(iServer->ServingUri().AbsoluteUri());
     //Log::Print("\n");
 
-    // Try opening the file to get the size.
-    TUint iDataSize = 0;
-    try {
-        IFile *file = IFile::Open(Brhz(serveFile).CString(), eFileReadOnly);
-        iDataSize = file->Bytes();
-        delete file;
-    }
-    catch (FileOpenError aFileErr) {
-        ASSERTS();
-    }
+    TUint dataSize = TestHttpSession::kStreamLen;
 
     // Create a custom HTTP session for testing purposes.
-    SessionFactory factory(serveFile);
+    SessionFactory factory;
     iHttpSession = factory.Create(aSession);
     iServer->Add("HTP1", iHttpSession);
 
     // Create our HTTP client.
-    iSupply = new TestHttpSupplier(iDataSize);
+    iSupply = new TestHttpSupplier(dataSize);
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
@@ -891,7 +855,7 @@ SuiteHttp::~SuiteHttp()
 // SuiteHttpStreamFull
 
 SuiteHttpStreamFull::SuiteHttpStreamFull()
-    : SuiteHttp("HTTP file streaming tests", SessionFactory::eStreamFull)
+    : SuiteHttp("HTTP streaming tests", SessionFactory::eStreamFull)
 {
 }
 
@@ -912,10 +876,10 @@ void SuiteHttpStreamFull::Test()
     // Test if it was a live stream
     TEST(iSupply->Live() == false);
 
-    // Test if the data transferred is equivalent to the file size.
-    TUint fileSize = iHttpSession->DataSize();
+    // Test if the data transferred is equivalent to the stream length.
+    TUint streamSize = iHttpSession->DataSize();
     TUint dataTotal = iSupply->DataTotal();
-    TEST(fileSize == dataTotal);
+    TEST(streamSize == dataTotal);
 }
 
 
@@ -949,7 +913,7 @@ void SuiteHttpReject::Test()
 // SuiteHttpReconnect
 
 SuiteHttpReconnect::SuiteHttpReconnect()
-    : SuiteHttp("HTTP file stream reconnection tests", SessionFactory::eReconnect)
+    : SuiteHttp("HTTP stream reconnection tests", SessionFactory::eReconnect)
 {
 }
 
@@ -970,10 +934,10 @@ void SuiteHttpReconnect::Test()
     // Test if it was a live stream
     TEST(iSupply->Live() == false);
 
-    // Test if the total data transferred over both sessions is equivalent to the file size.
-    TUint fileSize = iHttpSession->DataSize();
+    // Test if the total data transferred over both sessions is equivalent to the stream length.
+    TUint streamSize = iHttpSession->DataSize();
     TUint dataTotal = iSupply->DataTotal();
-    TEST(fileSize == dataTotal);
+    TEST(streamSize == dataTotal);
 }
 
 
@@ -1001,10 +965,10 @@ void SuiteHttpStreamLive::Test()
     // Test if it was a live stream
     TEST(iSupply->Live() == true);
 
-    // Test if the total data transferred over both sessions is equivalent to the file size.
-    TUint fileSize = iHttpSession->DataSize();
+    // Test if the total data transferred over both sessions is equivalent to the stream length.
+    TUint streamSize = iHttpSession->DataSize();
     TUint dataTotal = iSupply->DataTotal();
-    TEST(fileSize <= dataTotal);
+    TEST(streamSize <= dataTotal);
 }
 
 
@@ -1032,10 +996,10 @@ void SuiteHttpLiveReconnect::Test()
     // Test if it was a live stream
     TEST(iSupply->Live() == true);
 
-    // Test if the total data transferred over both sessions is equivalent to the file size.
-    TUint fileSize = iHttpSession->DataSize();
+    // Test if the total data transferred over both sessions is equivalent to the stream length.
+    TUint streamSize = iHttpSession->DataSize();
     TUint dataTotal = iSupply->DataTotal();
-    TEST(fileSize <= dataTotal);
+    TEST(streamSize <= dataTotal);
 }
 
 
