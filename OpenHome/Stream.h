@@ -59,7 +59,7 @@ public: // from IReader
     void ReadFlush();
     void ReadInterrupt();
 public:
-    Brn Peek(TUint aBytes);
+    Brn Peek(TUint aBytes); // may return <aBytes at end of stream
     Brn Snaffle();
 protected:
     Srx(TUint aMaxBytes, IReaderSource& aSource);
