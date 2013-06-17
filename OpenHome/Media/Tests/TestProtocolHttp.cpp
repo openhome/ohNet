@@ -474,6 +474,7 @@ void TestHttpSession::Stream(TUint aStartPos, TUint aEndPos)
                 bytes = bytesRemaining;
             }
 
+            memset((void*)(iBuf.Ptr()), 0, bytes);
             iBuf.SetBytes(bytes);   // Buffer of empty bytes.
             bytesRemaining -= bytes;
 
