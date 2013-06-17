@@ -1,3 +1,4 @@
+#include <OpenHome/Media/Protocol/RaopHeader.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Private/Converter.h>
@@ -639,31 +640,4 @@ Brn RaopAudio::Audio()
 void RaopAudio::SetMute()
 {
     ((RaopDataHeader*)iAudio.Ptr())->SetMute();
-}
-
-RaopDataHeader::RaopDataHeader(Brx& aRawData, TUint aSenderSkew, TUint aLatency)
-    : iSenderSkew(aSenderSkew)
-    , iLatency(aLatency)
-{
-    if(aRawData.Bytes() < 12) {
-        THROW(NetworkError);
-    }
-    iBytes = static_cast<TUint16>(aRawData.Bytes()-12);
-    iStart = aRawData[1] != 0x60 ? true : false;
-    iSeqno = Converter::BeUint16At(aRawData, 2);
-    iTimestamp = Converter::BeUint32At(aRawData, 4);
-    iMute = false;
-    //LOG(kMedia, "RaopDataHeader raw bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
-}
-
-RaopDataHeader::RaopDataHeader(Brx& aBinData)
-{
-    iSenderSkew = ((RaopDataHeader*)(aBinData.Ptr()))->SenderSkew();
-    iLatency = ((RaopDataHeader*)(aBinData.Ptr()))->Latency();
-    iBytes = ((RaopDataHeader*)(aBinData.Ptr()))->Bytes();
-    iStart = ((RaopDataHeader*)(aBinData.Ptr()))->Start();
-    iSeqno = ((RaopDataHeader*)(aBinData.Ptr()))->Seqno();
-    iTimestamp = ((RaopDataHeader*)(aBinData.Ptr()))->Timestamp();
-    iMute = ((RaopDataHeader*)(aBinData.Ptr()))->Mute();
-    //LOG(kMedia, "RaopDataHeader bin bytes %d, seqno %d, timestamp %d start %d\n", iBytes, iSeqno, iTimestamp, iStart);
 }
