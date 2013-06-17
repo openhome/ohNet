@@ -350,14 +350,30 @@ def build(bld):
             use=['MAD', 'OHNET', 'OSA'],
             target='CodecMp3')
 
+
+    # AlacBase
+    bld.stlib(
+            source=[
+                 'OpenHome/Media/Codec/AlacBase.cpp',
+                 'alac_decoder/alac.c',
+            ],
+            use=['ALAC', 'OHNET'],
+            target='CodecAlacBase')
     # Alac
     bld.stlib(
             source=[
                  'OpenHome/Media/Codec/Alac.cpp',
-                 'alac_decoder/alac.c',
             ],
-            use=['ALAC', 'OHNET', 'OPENSSL'],
+            use=['CodecAlacBase', 'OHNET'],
             target='CodecAlac')
+
+    # Raop
+    bld.stlib(
+            source=[ # Does OpenHome/Media/Protocol/RaopHeader need to be used?
+                 'OpenHome/Media/Codec/Raop.cpp',
+            ],
+            use=['CodecAlacBase', 'OHNET', 'OPENSSL'],
+            target='CodecRaop')
 
     # AAC
     bld.stlib(
@@ -533,7 +549,7 @@ def build(bld):
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecVorbis', 'CodecWma'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecRaop', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
