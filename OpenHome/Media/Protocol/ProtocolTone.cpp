@@ -343,13 +343,13 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const TUint kMaxVirtualSamplesPerPeriod = 64000;  // Nyquist limit: assuming pitch <= 32kHz (beyond audible range)
 
     // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
-    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;  // XXX ???
+    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;
 
     TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
     iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
 
     for (TUint i = 0; i < nSamples; ++i) {
-        TUint x = (i % kMaxVirtualSamplesPerPeriod) * virtualSamplesStep;  // XXX ???
+        TUint x = (i * virtualSamplesStep) % kMaxVirtualSamplesPerPeriod;
         // trusting generator to produce at most 24-bit values
         TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
         // max requirement: 8[channels] x 24[bit] + extraneous byte from final 32-bit write
