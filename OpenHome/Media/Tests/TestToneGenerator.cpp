@@ -550,6 +550,16 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
 {
     TEST(eMsgDecodedStream == iExpectedMsgType);
     iExpectedMsgType = eMsgAudioPcm;
+    const DecodedStreamInfo& info = aMsg->StreamInfo();
+    TEST(info.CodecName() == Brn("WAV"));
+    TEST(info.Lossless());
+    TEST(!info.Seekable());
+    TEST(!info.Live());
+    TEST(info.BitDepth() == iExpectedToneParams.bitsPerSample);
+    TEST(info.SampleRate() == iExpectedToneParams.sampleRate);
+    // interpretation of pitch is generator-specific
+    TEST(info.NumChannels() == iExpectedToneParams.numChannels);
+    // duration checked by accumulating jiffies from PCM audio msgs
     return aMsg;
 }
 
