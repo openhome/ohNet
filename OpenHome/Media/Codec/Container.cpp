@@ -198,22 +198,33 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
             aMsg = StripContainer(aMsg);    // strip (some of) container from this (or previous) iteration
             iAudioEncoded = aMsg;
         }
+
+        // processing of containers/headers interleaved throughout stream
         if (iActiveContainer && (iRemainingContainerSize == 0)) {
-            // parse first header, remove it, then split packet and pass just audio, storing remainder for processing next time round
-            // continuous processing for containers such as Ogg, which are spread throughout stream
             TUint processBytes = 1;
+
+            // process stream until container found
             while (iRemainingContainerSize == 0 && processBytes > 0) {
                 FillBuffer();
                 aMsg = iAudioEncoded;
                 if (iAudioEncoded) {    // could have been de-ref'd by a flush
                     processBytes = iActiveContainer->Process();
                     iRemainingContainerSize += processBytes;
-                    aMsg = StripContainer(aMsg);    // strip further data
-                    iAudioEncoded = aMsg;
                 } else {
                     processBytes = 0;
                 }
             }
+
+            // if container found, strip and discard bytes
+            while (processBytes > 0) {
+                TUint bytesRemaining = iRemainingContainerSize;
+                FillBuffer();
+                aMsg = iAudioEncoded;
+                aMsg = StripContainer(aMsg);    // strip further data
+                iAudioEncoded = aMsg;
+                processBytes -= bytesRemaining-iRemainingContainerSize;
+            }
+
         }
         iAudioEncoded = NULL;
     }
