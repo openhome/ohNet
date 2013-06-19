@@ -83,6 +83,14 @@ public:
     TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
 };
 
+
+class ToneGeneratorSquare : public ToneGenerator
+{
+public:
+    ToneGeneratorSquare();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
 class ProtocolTone : public Protocol
 {
 public:

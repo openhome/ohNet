@@ -42,6 +42,7 @@ ProtocolTone::ProtocolTone(Environment& aEnv)
     , iToneGenerators()
 {
     iToneGenerators.push_back(new ToneGeneratorSilence);
+    iToneGenerators.push_back(new ToneGeneratorSquare);
 #ifdef DEFINE_DEBUG
     iToneGenerators.push_back(new ToneGeneratorPattern);
 #endif  // DEFINE_DEBUG
@@ -240,9 +241,27 @@ ToneGeneratorSilence::ToneGeneratorSilence()
 {
 }
 
+// contract: return at most 24-bit value
 TInt32 ToneGeneratorSilence::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
 {
     return 0;
+}
+
+ToneGeneratorSquare::ToneGeneratorSquare()
+    : ToneGenerator("square.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorSquare::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    // minimum value (two's complement)
+    TUint32 val = 1 << 23;
+    // full-scale signal with 50% duty cycle
+    if (aOffset >= (aMaxOffset / 2)) {
+        val -= 1;  // deliberate integer underflow from smallest -ve to largest +ve
+    }
+    return val;
 }
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
@@ -350,7 +369,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
     for (TUint i = 0; i < nSamples; ++i) {
         TUint x = (i * virtualSamplesStep) % kMaxVirtualSamplesPerPeriod;
-        // trusting generator to produce at most 24-bit values
+        // contract: generator to produce at most 24-bit values
         TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
         // max requirement: 8[channels] x 24[bit] + extraneous byte from final 32-bit write
         TByte multiChannelAudioSample[8 * 3 + 1];
