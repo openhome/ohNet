@@ -110,25 +110,23 @@ void Container::Read(Bwx& aBuf, TUint aOffset, TUint aBytes)
     aBuf.Append(buf);
 }
 
-MsgAudioEncoded* Container::StripContainer(MsgAudioEncoded* aMsg)
+void Container::StripContainer()
 {
     // strip data from (or dispose of whole) message if some of it belongs to a container
-    if (iRemainingContainerSize > 0 && aMsg != NULL) {
-        const TUint bytes = aMsg->Bytes();
+    if (iRemainingContainerSize > 0 && iAudioEncoded != NULL) {
+        const TUint bytes = iAudioEncoded->Bytes();
         if (iRemainingContainerSize < bytes) {
-            MsgAudioEncoded* tmp = aMsg->Split(iRemainingContainerSize);
-            aMsg->RemoveRef();
-            aMsg = tmp;
+            MsgAudioEncoded* tmp = iAudioEncoded->Split(iRemainingContainerSize);
+            iAudioEncoded->RemoveRef();
+            iAudioEncoded = tmp;
             iRemainingContainerSize = 0;
         }
         else {
-            aMsg->RemoveRef();
-            aMsg = NULL;
+            iAudioEncoded->RemoveRef();
+            iAudioEncoded = NULL;
             iRemainingContainerSize -= bytes;
         }
     }
-
-    return aMsg;
 }
 
 void Container::FillBuffer()
@@ -169,7 +167,12 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 
     if (aMsg != NULL) { // don't do anything if we're still processing the previous container
 
-        iAudioEncoded = aMsg;
+        if (iAudioEncoded == NULL) {
+            iAudioEncoded = aMsg;
+        }
+        else {
+            iAudioEncoded->Add(aMsg);
+        }
         //FillBuffer();
         //aMsg = iAudioEncoded;
 
@@ -194,14 +197,14 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 
             iCheckForContainer = false;
         }
-        if (iAudioEncoded) {    // is this if check req'd?
-            aMsg = StripContainer(aMsg);    // strip (some of) container from this (or previous) iteration
-            iAudioEncoded = aMsg;
+        if (iAudioEncoded) {
+            StripContainer();    // strip (some of) container from this (or previous) iteration
         }
 
         // processing of containers/headers interleaved throughout stream
         if (iActiveContainer && (iRemainingContainerSize == 0)) {
             TUint processBytes = 1;
+            TUint iSplitBytes = 0;
 
             // process stream until container found
             while (iRemainingContainerSize == 0 && processBytes > 0) {
@@ -209,6 +212,7 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
                 aMsg = iAudioEncoded;
                 if (iAudioEncoded) {    // could have been de-ref'd by a flush
                     processBytes = iActiveContainer->Process();
+                    iiSplitBytes = iActiveContainer->Split();
                     iRemainingContainerSize += processBytes;
                 } else {
                     processBytes = 0;
@@ -219,14 +223,31 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
             while (processBytes > 0) {
                 TUint bytesRemaining = iRemainingContainerSize;
                 FillBuffer();
-                aMsg = iAudioEncoded;
-                aMsg = StripContainer(aMsg);    // strip further data
-                iAudioEncoded = aMsg;
+                StripContainer();    // strip further data
                 processBytes -= bytesRemaining-iRemainingContainerSize;
             }
 
+            // split stream to send only required portion before next container
+            if (iSplitBytes > 0) {
+                FillBuffer();
+                if (iAudioEncoded->Bytes() <= iSplitBytes) {
+                    iSplitBytes -= iAudioEncoded->Bytes();
+                    iAudioEncoded = NULL;
+                }
+                else {
+                    iAudioEncoded = iAudioEncoded->Split(iSplitBytes);
+                    iSplitBytes = 0;
+                }
+            }
+            else {
+                aMsg = iAudioEncoded;
+                iAudioEncoded = NULL;
+            }
         }
-        iAudioEncoded = NULL;
+        else {
+            aMsg = iAudioEncoded;
+            iAudioEncoded = NULL;
+        }
     }
 
     return aMsg;
