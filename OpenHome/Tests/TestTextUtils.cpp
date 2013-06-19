@@ -1031,6 +1031,15 @@ void SuiteAscii::Test()
     TEST_THROWS(Ascii::Uint64(Brn("-1")), AsciiError);
     TEST_THROWS(Ascii::Uint64(Brn("-")), AsciiError);
     TEST_THROWS(Ascii::Uint64(Brn("")), AsciiError);
+
+    // UintHex
+
+    TEST(Ascii::UintHex(Brn("0")) == 0);
+    TEST(Ascii::UintHex(Brn("1")) == 1);
+    TEST(Ascii::UintHex(Brn("01")) == 1);
+    TEST(Ascii::UintHex(Brn("10")) == 16);
+    TEST(Ascii::UintHex(Brn("11")) == 17);
+
 }   
     
 class SuiteParser : public Suite
