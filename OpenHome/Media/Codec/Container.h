@@ -73,6 +73,7 @@ private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     void StripContainer();
+    void SplitContainer();
     void FillBuffer();
     void ReleaseAudioEncoded();
 private:
@@ -81,6 +82,7 @@ private:
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
     Msg* iPendingMsg;
+    TUint iSplitBytes;
     TBool iQuit;
     TBool iCheckForContainer;
     TUint iContainerSize;

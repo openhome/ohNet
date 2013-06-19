@@ -45,6 +45,7 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     , iUpstreamElement(aUpstreamElement)
     , iActiveContainer(NULL)
     , iPendingMsg(NULL)
+    , iSplitBytes(0)
     , iQuit(false)
     , iCheckForContainer(false)
     , iContainerSize(0)
@@ -74,7 +75,6 @@ Msg* Container::Pull()
     Msg* msg;
     if (!iAudioEncoded && iPendingMsg) {
         // pulled a quit msg through on previous call
-        Log::Print("pushing quit msg\n");
         return iPendingMsg;
     }
     do {
@@ -83,10 +83,8 @@ Msg* Container::Pull()
         if (!msg && iPendingMsg) {
             // pulled a quit msg
             msg = iPendingMsg;
-            Log::Print("rcvd and pushing quit msg\n");
         }
         else {
-            //Log::Print("sending msg\n");
         }
     } while (msg == NULL);
     return msg;
@@ -129,9 +127,22 @@ void Container::StripContainer()
     }
 }
 
+void Container::SplitContainer()
+{
+    FillBuffer();
+    if (iAudioEncoded->Bytes() <= iSplitBytes) {
+        iSplitBytes -= iAudioEncoded->Bytes();
+        iAudioEncoded = NULL;
+        FillBuffer();
+    }
+    else {
+        iAudioEncoded = iAudioEncoded->Split(iSplitBytes);
+        iSplitBytes = 0;
+    }
+}
+
 void Container::FillBuffer()
 {
-    //TUint audioBytes = iAudioEncoded->Bytes();
     while (!iPendingMsg && (iAudioEncoded->Bytes() < EncodedAudio::kMaxBytes)) { // ensure there are enough bytes for processing
         Msg* msg = iUpstreamElement.Pull();   // if we do this here, could be at the end of a stream and pull a flush
         msg = msg->Process(*this);
@@ -139,9 +150,6 @@ void Container::FillBuffer()
             return;
         }
     }
-    //if (iAudioEncoded->Bytes() == audioBytes) {
-    //    aMsg = iAudioEncoded;
-    //}
 }
 
 void Container::ReleaseAudioEncoded()
@@ -174,7 +182,6 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
             iAudioEncoded->Add(aMsg);
         }
         //FillBuffer();
-        //aMsg = iAudioEncoded;
 
         if (iCheckForContainer && iAudioEncoded) {
 
@@ -197,8 +204,12 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 
             iCheckForContainer = false;
         }
+
         if (iAudioEncoded) {
             StripContainer();    // strip (some of) container from this (or previous) iteration
+        }
+        if (iSplitBytes > 0) {
+            SplitContainer();
         }
 
         // processing of containers/headers interleaved throughout stream
@@ -212,7 +223,7 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
                 aMsg = iAudioEncoded;
                 if (iAudioEncoded) {    // could have been de-ref'd by a flush
                     processBytes = iActiveContainer->Process();
-                    iiSplitBytes = iActiveContainer->Split();
+                    iSplitBytes = iActiveContainer->Split();
                     iRemainingContainerSize += processBytes;
                 } else {
                     processBytes = 0;
@@ -229,15 +240,7 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 
             // split stream to send only required portion before next container
             if (iSplitBytes > 0) {
-                FillBuffer();
-                if (iAudioEncoded->Bytes() <= iSplitBytes) {
-                    iSplitBytes -= iAudioEncoded->Bytes();
-                    iAudioEncoded = NULL;
-                }
-                else {
-                    iAudioEncoded = iAudioEncoded->Split(iSplitBytes);
-                    iSplitBytes = 0;
-                }
+                SplitContainer();
             }
             else {
                 aMsg = iAudioEncoded;
@@ -308,19 +311,15 @@ Msg* Container::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Container::ProcessMsg(MsgFlush* aMsg)
 {
-    Log::Print("msg::flush\n");
     ReleaseAudioEncoded();
     if (iExpectedFlushId == aMsg->Id()) {
         iExpectedFlushId = MsgFlush::kIdInvalid;
     }
     return aMsg;
-    //aMsg->RemoveRef();
-    //return NULL;
 }
 
 Msg* Container::ProcessMsg(MsgQuit* aMsg)
 {
-    Log::Print("msg::quit\n");
     iQuit = true;
     iPendingMsg = aMsg;
     return NULL;
@@ -343,12 +342,10 @@ TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
 TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    Log::Print("iStreamHandler: %p\n", iStreamHandler);
-    // is a quit msg being sent before this and causing destruction of the pipeline?
     if (!iQuit) {
         return iStreamHandler->TryStop(aTrackId, aStreamId);
     }
     else {
-        return 0;
+        return MsgFlush::kIdInvalid;
     }
 }
