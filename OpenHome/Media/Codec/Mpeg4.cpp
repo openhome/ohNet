@@ -467,41 +467,51 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 
 // Mpeg4Start
 
-Mpeg4Start::Mpeg4Start(IContainer& aContainer)
+Mpeg4Start::Mpeg4Start()
 {
-    //LOG(kCodec, "Mpeg4Start::Mpeg4Start\n");
+    LOG(kMedia, "Mpeg4Start::Mpeg4Start\n");
+}
+
+void Mpeg4Start::Initialise()
+{
+    iSize = 0;
+}
+
+TBool Mpeg4Start::Recognise()
+{
+    LOG(kMedia, "Mpeg4Start::Recognise\n");
     Bws<100> data;
     Bws<4> codec;
 
     // Read an MPEG4 header until we reach the mdia box.
     // The mdia box contains children with media info about a track.
 
-    Mpeg4Box BoxL0(aContainer);
+    Mpeg4Box BoxL0(*iContainer);
     if (!BoxL0.Match("ftyp")) {
-        //LOG(kCodec, " no ftyp found at start of file\n");
-        THROW(MediaMpeg4FileInvalid);
+        LOG(kMedia, "Mpeg4Start no ftyp found at start of file\n");
+        return false;
     }
     BoxL0.SkipEntry();
 
     // data could be stored in different orders in the file but ftyp & moov must come before mdat
 
     for (;;) {      // keep on reading until start of data found
-        Mpeg4Box BoxL1(aContainer, &BoxL0, NULL, BoxL0.FileOffset());
+        Mpeg4Box BoxL1(*iContainer, &BoxL0, NULL, BoxL0.FileOffset());
         if(BoxL1.Match("moov")) {
             // Search through levels until we find mdia box;
             // the container for media info.
-            Mpeg4Box BoxL2(aContainer, &BoxL1, "trak");
-            Mpeg4Box BoxL3(aContainer, &BoxL2);
+            Mpeg4Box BoxL2(*iContainer, &BoxL1, "trak");
+            Mpeg4Box BoxL3(*iContainer, &BoxL2);
             TBool foundMdia = BoxL3.FindBox("mdia");
             if (foundMdia) {
                 // Should be pointing at mdhd box, for media
                 // data to be extracted from.
-                iContainerSize = BoxL3.FileOffset();
-                //LOG(kCodec, "Mpeg4Box::Mpeg4Box found mdia, iContainerSize: %u\n", iContainerSize);
-                return;
+                iSize = BoxL3.FileOffset();
+                LOG(kMedia, "Mpeg4Start::Recognise found mdia, iSize: %u\n", iSize);
+                return true;
             }
             else {
-                THROW(MediaMpeg4FileInvalid);
+                return false;
             }
         } else if(BoxL1.Match("pdin")) {
             // ignore this one
@@ -516,21 +526,31 @@ Mpeg4Start::Mpeg4Start(IContainer& aContainer)
         } else if(BoxL1.Match("meta")) {
             // ignore this one
         } else {
-            //LOG(kCodec, "Mpeg4 Invalid File\n");
-            THROW(MediaMpeg4FileInvalid);
+            LOG(kMedia, "Mpeg4Start::Recognise invalid atom\n");
+            return false;
         }
         BoxL1.SkipEntry();  // skip to next entry
     }
 }
 
-Mpeg4Start::~Mpeg4Start()
+TUint Mpeg4Start::Size()
 {
-    //LOG(kCodec, "Mpeg4Start::~Mpeg4Start\n");
+    return iSize;
 }
 
-TUint Mpeg4Start::ContainerSize() const
+TBool Mpeg4Start::AppendDuringSeek()
 {
-    return iContainerSize;
+    return false;
+}
+
+TUint Mpeg4Start::Process()
+{
+    return 0;
+}
+
+TUint Mpeg4Start::Split()
+{
+    return 0;
 }
 
 

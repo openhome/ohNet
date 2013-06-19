@@ -25,11 +25,32 @@ public:
     virtual void Read(Bwx& aBuf, TUint aOffset, TUint aBytes) = 0;
 };
 
+class ContainerBase
+{
+    friend class Container;
+public:
+    virtual ~ContainerBase();
+public:
+    virtual void Initialise() = 0;          // reset container
+    virtual TBool Recognise() = 0;          // recognise container
+    virtual TUint Size() = 0;               // size of outer header portion
+    virtual TBool AppendDuringSeek() = 0;   // include header bytes when seeking?
+    virtual TUint Process() = 0;            // how many bytes to strip from next chunk of data
+    virtual TUint Split() = 0;              // where should the next chunk be split before sending to codec?
+protected:
+    ContainerBase();
+private:
+    void Construct(IContainer& aContainer);
+protected:
+    IContainer* iContainer;
+};
+
 class Container : public IPipelineElementUpstream, private IContainer, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
     Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     virtual ~Container();
+    void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IContainer
@@ -52,12 +73,19 @@ private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     MsgAudioEncoded* StripContainer(MsgAudioEncoded* aMsg);
+    void FillBuffer();
+    void ReleaseAudioEncoded();
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    std::vector<ContainerBase*> iContainers;
+    ContainerBase* iActiveContainer;
+    Msg* iPendingMsg;
+    TBool iQuit;
     TBool iCheckForContainer;
     TUint iContainerSize;
     TUint iRemainingContainerSize; // number of bytes of container (that shouldn't be passed downstream)
+    TUint iAppend;
     TUint iExpectedFlushId;
     IStreamHandler* iStreamHandler;
     MsgAudioEncoded* iAudioEncoded;

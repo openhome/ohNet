@@ -4,6 +4,8 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
+#include <OpenHome/Media/Codec/Id3v2.h>
+#include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
@@ -461,14 +463,16 @@ Msg* MsgProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
     ASSERTS();
     return NULL;
 }
-Msg* MsgProcessor::ProcessMsg(MsgFlush* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgFlush* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgFlush\n");
+    aMsg->RemoveRef();
     return NULL;
 }
-Msg* MsgProcessor::ProcessMsg(MsgQuit* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgQuit* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgQuit\n");
+    aMsg->RemoveRef();
     iSem.Signal();
     return NULL;
 }
@@ -531,6 +535,9 @@ void SuiteCodecStream::Setup()
     iFlushIdProvider = new TestCodecFlushIdProvider();
     iFiller = new TestCodecFiller(iEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
 
+    iContainer->AddContainer(new Id3v2());
+    iContainer->AddContainer(new Mpeg4Start());
+
     // These can be re-ordered to check for problems in the recognise function of each codec.
     iController->AddCodec(CodecFactory::NewWav());
     iController->AddCodec(CodecFactory::NewFlac());
@@ -591,7 +598,7 @@ void SuiteCodecStream::TestJiffies()
         delete fileLocation;
 
         //LOG(kMedia, "iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
-        //Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+        Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
         TEST(iJiffies == jiffies);
 }
 
@@ -1026,7 +1033,7 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     OptionParser parser;
     OptionString optionServer("-s", "--server", Brn("127.0.0.1"), "address of server to connect to");
     parser.AddOption(&optionServer);
-    OptionUint optionPort("-p", "--port", 8080, "server port to connect on");
+    OptionUint optionPort("-p", "--port", 25006, "server port to connect on");
     parser.AddOption(&optionPort);
     if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
@@ -1071,35 +1078,35 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
 
     // test files
     std::vector<AudioFileDescriptor> stdFiles;
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
+//
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
+//
+//#ifdef DEFINE_LITTLE_ENDIAN    // FIXME - zero crossings fail on big endian machines - probably endianness issues
+//    // AAC encoders can add/drop samples from start of files.
+//    // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac.m4a"), 44100, 443392-1024, 16, 2, AudioFileDescriptor::eCodecAac));
 
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
-
-    // AAC encoders can add/drop samples from start of files.
-    // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac.m4a"), 44100, 443392-1024, 16, 2, AudioFileDescriptor::eCodecAac));
-
-#ifdef DEFINE_LITTLE_ENDIAN    // FIXME - zero crossings fail on big endian machines - probably endianness issues
     // MP3 encoders/decoders can add extra samples at start of tracks, which are used for their routines.
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-128k.mp3"), 44100, 442368, 24, 1, AudioFileDescriptor::eCodecMp3));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-128k.mp3"), 44100, 442368, 24, 2, AudioFileDescriptor::eCodecMp3));
 
-    // Vorbis files
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
-
-    // WMA encoder omits some samples, then adds extra for its own use. Decoder then strips samples to less than original PCM.
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
-#endif
+//    // Vorbis files
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+//
+//    // WMA encoder omits some samples, then adds extra for its own use. Decoder then strips samples to less than original PCM.
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
+//    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
+//#endif
 
     // Some files that shouldn't play with any codec.
     std::vector<AudioFileDescriptor> invalidFiles;
@@ -1127,16 +1134,16 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-two_id3v2_headers_msg_boundary.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
     // A file that does not play on existing DS's (is recognised as AAC ADTS)
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::eCodecMp3));
-    // File with embedded cover art
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
+    //// File with embedded cover art
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));
-    runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
-    runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
-    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
+    //runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));
+    //runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
+    //runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
+    //runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
     runner.Add(new SuiteCodecInvalidType(invalidFiles, aEnv, uri));
     runner.Add(new SuiteCodecStream(streamOnlyFiles, aEnv, uri));
     runner.Run();

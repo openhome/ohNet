@@ -2,22 +2,25 @@
 #define HEADER_PIPELINE_CODEC_ID3V2
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Exception.h>
 #include <OpenHome/Media/Codec/Container.h>
-
-EXCEPTION(MediaCodecId3v2NotFound);
 
 namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-class Id3v2
+class Id3v2 : public ContainerBase
 {
 public:
-    Id3v2(IContainer& aContainer);
-    TUint32 ContainerSize() const;
+    Id3v2();
+public: // from ContainerBase
+    void Initialise();
+    TBool Recognise();
+    TUint Size();
+    TBool AppendDuringSeek();
+    TUint Process();
+    TUint Split();
 private:
-	TUint32 iContainerSize;
+    TUint32 iSize;
 };
 
 } // namespace Codec
