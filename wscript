@@ -293,7 +293,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
             ],
-            use=['OHNET', 'OPENSSL'],
+            use=['OHNET'],
             target='ohMediaPlayer')
 
     # Wav
