@@ -14,19 +14,30 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-Id3v2::Id3v2(IContainer& aContainer)
+Id3v2::Id3v2()
+{
+}
+
+void Id3v2::Initialise()
+{
+    iSize = 0;
+}
+
+TBool Id3v2::Recognise()
 {
     Bws<10> data;
-    aContainer.Read(data, 0, 10);
+    //Log::Print("Id3v2::Recognise before iContainer->Read\n");
+    iContainer->Read(data, 0, 10);
+    //Log::Print("Id3v2::Recognise after iContainer->Read\n");
     if (data.Bytes() < 10) {
-        THROW(MediaCodecId3v2NotFound); 
+        return false;
     }
     static const char* kContainerStart = "ID3";
     if (strncmp((const TChar*)(data.Ptr()), kContainerStart, sizeof(kContainerStart)-1) != 0) {
-        THROW(MediaCodecId3v2NotFound); 
+        return false;
     }
     if (data[3] > 4) { // We only support upto Id3v2.4
-        THROW(MediaCodecId3v2NotFound);
+        return false;
     }
     const TBool hasFooter = ((data[5] & 0x10) != 0); // FIXME - docs suggest this is an experimental field rather than footer indicator
     // remaining 4 bytes give the size of container data
@@ -34,30 +45,43 @@ Id3v2::Id3v2(IContainer& aContainer)
     // ...so each byte only holds 7 bits of sizing data
     for (TUint i=6; i<10; i++) {
         if ((data[i] & 0x80) != 0) {
-            THROW(MediaCodecId3v2NotFound);
+            return false;
         }
     }
     
-    iContainerSize = ((data[6] << 21) | (data[7] << 14) | (data[8] << 7) | data[9]);
-    iContainerSize += 10; // for header
+    iSize = ((data[6] << 21) | (data[7] << 14) | (data[8] << 7) | data[9]);
+    iSize += 10; // for header
     if(hasFooter) {
-        iContainerSize += 10; // for footer if present
+        iSize += 10; // for footer if present
     }
-    LOG(kMedia, "Id3v2 header found: %d bytes\n", iContainerSize);
+    LOG(kMedia, "Id3v2 header found: %d bytes\n", iSize);
+    return true;
 }
 
-TUint32 Id3v2::ContainerSize() const
+TUint Id3v2::Size()
 {
-    return iContainerSize;
+    return iSize;
 }
 
-/*
-// FIXME - code retained just until it can be copied into a new home
-TUint Id3v2::BeUint32At(const Brx& aBuf, TUint aIndex)
-{ // FIXME - duplicated code.  Needs a home somewhere; preferably not back in Brx; possibly in ohNet's Converter class?
-    TUint b[4];
-    for (TUint i=0; i<4; i++) {
-        b[i] = aBuf[aIndex++];
+TBool Id3v2::AppendDuringSeek()
+{
+    return true;
+}
+
+TUint Id3v2::Process()
+{
+    TUint prevTagSize = iSize;
+    TUint nextTagSize = 0;
+    if (Recognise()) {
+        nextTagSize = iSize;
+        iSize += prevTagSize;
+        LOG(kMedia, "Id3v2::Process found next set of tags; size: %u\n", nextTagSize);
+        return nextTagSize; // amount to be removed
     }
-    return ((b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]);
-}*/
+    return 0;
+}
+
+TUint Id3v2::Split()
+{
+    return 0;
+}

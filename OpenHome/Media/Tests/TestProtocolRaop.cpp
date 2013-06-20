@@ -171,7 +171,7 @@ TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TU
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, aDvStack, aDiscoveryPort, *iPipeline, *iPipeline, iInfoAggregator);
-    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewRaop());
     iPipeline->Start();
     
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
