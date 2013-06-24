@@ -293,6 +293,7 @@ def build(bld):
                 'OpenHome/Av/Radio/TuneIn.cpp',
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
+                'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
@@ -525,7 +526,6 @@ def build(bld):
             source=[
                 'OpenHome/Av/Tests/TestStore.cpp',
                 'OpenHome/Av/Tests/RamStore.cpp',
-                'OpenHome/Media/Tests/AllocatorInfoLogger.cpp',
                 'OpenHome/Media/Tests/PipelineUtils.cpp',
                 'OpenHome/Media/Tests/SongcastingDriver.cpp',
                 'OpenHome/Media/Tests/SuiteUnitTest.cpp',
