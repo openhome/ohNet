@@ -123,12 +123,24 @@ Msg* Stopper::Pull()
     return msg;
 }
 
+void Stopper::RemoveCurrentStream()
+{
+    iLock.Wait();
+    DoRemoveCurrentStream();
+    iLock.Signal();
+}
+
+void Stopper::DoRemoveCurrentStream()
+{
+    iRemovingStream = true;
+    DoBeginHalt();
+}
+
 void Stopper::RemoveStream(TUint aTrackId, TUint aStreamId)
 {
     iLock.Wait();
     if (iTrackId == aTrackId && iStreamId == aStreamId) {
-        iRemovingStream = true;
-        DoBeginHalt();
+        DoRemoveCurrentStream();
     }
     iLock.Signal();
 }
@@ -248,6 +260,7 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
             if (iRemovingStream) {
                 iState = ERunning;
                 iRemovingStream = false;
+                /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
                 iFlushStream = true;
             }
             else {
