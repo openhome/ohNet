@@ -20,13 +20,15 @@ using namespace OpenHome::Media;
 
 SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, PresetDatabase& aDatabase, UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore)
     : Source("Radio", "Radio")
+    , iLock("SRAD")
     , iPipeline(aPipeline)
     , iDatabase(aDatabase)
     , iUriProvider(aUriProvider)
-    , iTrackId(UINT_MAX)
+    , iTrack(NULL)
     , iTrackPosSeconds(0)
     , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
+    , iTransportState(Media::EPipelineStopped)
 {
     iProviderRadio = new ProviderRadio(aDevice, *this, iDatabase, aProtocolInfo);
     Bws<40> username;
@@ -51,23 +53,53 @@ void SourceRadio::Activate()
     iActive = true;
 }
 
+void SourceRadio::Deactivate()
+{
+    iLock.Wait();
+    iTransportState = Media::EPipelineStopped;
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+        iTrack = NULL;
+    }
+    iLock.Signal();
+    Source::Deactivate();
+}
+
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
 {
-    iTrackId = iUriProvider.SetTrack(aUri, aMetaData);
-    iPipeline.Begin(iUriProvider.Mode(), iTrackId);
+    if (!IsActive()) {
+        DoActivate();
+    }
+    if (iTrack == NULL || iTrack->Uri() != aUri) {
+        iPipeline.RemoveAll();
+        if (iTrack != NULL) {
+            iTrack->RemoveRef();
+        }
+        iTrack = iUriProvider.SetTrack(aUri, aMetaData);
+        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+        if (iTransportState == Media::EPipelinePlaying) {
+            iPipeline.Play();
+        }
+    }
 }
 
 void SourceRadio::Play()
 {
     if (!IsActive()) {
-        Activate();
+        DoActivate();
     }
+    iLock.Wait();
+    iTransportState = Media::EPipelinePlaying;
+    iLock.Signal();
     iPipeline.Play();
 }
 
 void SourceRadio::Pause()
 {
     if (IsActive()) {
+        iLock.Wait();
+        iTransportState = Media::EPipelinePaused;
+        iLock.Signal();
         iPipeline.Pause();
     }
 }
@@ -75,6 +107,9 @@ void SourceRadio::Pause()
 void SourceRadio::Stop()
 {
     if (IsActive()) {
+        iLock.Wait();
+        iTransportState = Media::EPipelineStopped;
+        iLock.Signal();
         iPipeline.Stop();
     }
 }
@@ -98,9 +133,15 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceRadio::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint aIdPipeline)
+void SourceRadio::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
 {
+    iLock.Wait();
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
+    iTrack = &aTrack;
     iPipelineTrackId = aIdPipeline;
+    iLock.Signal();
 }
 
 void SourceRadio::NotifyMetaText(const Brx& /*aText*/)
@@ -109,10 +150,14 @@ void SourceRadio::NotifyMetaText(const Brx& /*aText*/)
 
 void SourceRadio::NotifyTime(TUint aSeconds, TUint /*aTrackDurationSeconds*/)
 {
+    iLock.Wait();
     iTrackPosSeconds = aSeconds;
+    iLock.Signal();
 }
 
 void SourceRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
+    iLock.Wait();
     iStreamId = aStreamInfo.StreamId();
+    iLock.Signal();
 }

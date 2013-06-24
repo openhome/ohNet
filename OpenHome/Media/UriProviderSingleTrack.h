@@ -14,7 +14,7 @@ class UriProviderSingleTrack : public UriProvider
 {
 public:
     UriProviderSingleTrack(const TChar* aMode, TrackFactory& aTrackFactory);
-    TUint SetTrack(const Brx& aUri, const Brx& aMetaData);
+    Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
     void SetTrack(Track* aTrack);
 private: // from UriProvider
     void Begin(TUint aTrackId);
