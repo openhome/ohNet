@@ -217,7 +217,9 @@ void CodecController::CodecThread()
         catch (CodecStreamFlush&) {
             // FIXME
         }
-        iActiveCodec->StreamCompleted();
+        if (iActiveCodec != NULL) {
+            iActiveCodec->StreamCompleted();
+        }
     }
     // push out any pending msgs, such as a quit
     if (iPendingMsg != NULL) {
