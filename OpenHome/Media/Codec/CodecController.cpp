@@ -205,20 +205,19 @@ void CodecController::CodecThread()
                         iStreamEnded = true;
                     }
                     if (iStreamEnded) {
-                        iActiveCodec->StreamCompleted();
                         break;
                     }
                 }
             }
             catch (CodecStreamCorrupt&) {
                 // CodecStreamCorrupt thrown during StreamInitialise()
-                iActiveCodec->StreamCompleted();
                 // don't break here - might be waiting on a quit msg or similar
             }
         }
         catch (CodecStreamFlush&) {
             // FIXME
         }
+        iActiveCodec->StreamCompleted();
     }
     // push out any pending msgs, such as a quit
     if (iPendingMsg != NULL) {
