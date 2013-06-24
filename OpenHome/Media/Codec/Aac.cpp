@@ -173,11 +173,15 @@ TBool Adts::ReadHeader(Brn aHeader)
 
     //LOG(kCodec, "Adts::Header @0x%x, Bytes = %d ", aHeader.Ptr(), aHeader.Bytes());
     //LOG(kCodec, "[%x][%x][%x][%x][%x][%x]\n", aHeader[0], aHeader[1], aHeader[2], aHeader[3], aHeader[4], aHeader[5]);
-    
+
     if((aHeader[0] != 0xff) || ((aHeader[1] & 0xf0) != 0xf0)) {
         return false;                   // invalid ADTS frame marker
     }
     //LOG(kCodec, "Adts::Header Sync found\n");
+
+    if ((aHeader[1] & 0x06) != 0x00) {  // layer; should always be 0
+        return false;
+    }
 
     iHeaderBytes = 7;
     if((aHeader[1] & 0x01) == 0) {
@@ -237,11 +241,11 @@ TBool Adts::ReadHeader(Brn aHeader)
             //LOG(kCodec, " sample freq error %d\n", sf);
             return false;   // invalid sample frequency
     }
-    
+
     iChannelConfig = ((aHeader[2] & 0x01) << 2) | ((aHeader[3] & 0xC0) >> 6);
 
     //LOG(kCodec, "Adts::Header iPayloadBytes %d, iProfile %d, iSamplingFreq %d, iChannelConfig %d\n", iPayloadBytes, iProfile, iSamplingFreq, iChannelConfig);
-    
+
     return true;
 }
 
