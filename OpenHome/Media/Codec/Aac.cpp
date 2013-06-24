@@ -247,20 +247,21 @@ TBool Adts::ReadHeader(Brn aHeader)
 
 TBool CodecAac::Recognise(const Brx& aData)
 {
-    //LOG(kCodec, "CodecAac::Recognise\n");
+    LOG(kCodec, "CodecAac::Recognise\n");
     const TUint kAdtsConsecutiveFrames = 5; // limit this to allow recognition within 1 data message
     Bws<4> codec;
+    iAacMpeg4Format = false;
 
     try {
         Mpeg4MediaInfo::GetCodec(aData, codec);
     }
     catch (MediaMpeg4FileInvalid) {
         // We couldn't recognise this as an MPEG4/AAC file.
-        return false;
+        // don't return here; attempt adts recognition below
     }
 
     if (codec == kCodecAac) {
-        //LOG(kCodec, "CodecAlac::Recognise mp4a\n");
+        LOG(kCodec, "CodecAlac::Recognise aac mp4a\n");
         iAacMpeg4Format = true;
         return true;
     }
@@ -283,6 +284,7 @@ TBool CodecAac::Recognise(const Brx& aData)
                     break;                          // not a valid header so keep searching
                 }
                 iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);	// record average payload size over 3 frames
+                LOG(kCodec, "CodecAlac::Recognise aac adts\n");
                 return true;      
             }
             
@@ -333,11 +335,12 @@ void CodecAac::StreamInitialise()
     iDecodedBuf.SetBytes(0);
     iOutBuf.SetBytes(0);
 
-    iMp4 = new Mpeg4MediaInfo(*iController);
-
     if(iAacMpeg4Format) {
         Bws<64> info;
         info.SetBytes(0);
+
+        iMp4 = new Mpeg4MediaInfo(*iController);
+
         info.Append(iMp4->CodecSpecificData());   // get data extracted from MPEG-4 header
         // see http://wiki.multimedia.cx/index.php?title=Understanding_AAC for details
         // or http://xhelmboyx.tripod.com/formats/mp4-layout.txt - search for 'esds'
@@ -490,7 +493,7 @@ Section 6
         ProcessAdts(true);  //process first 2 frames to get outputSampleRate from the decoder
     }
 
-    iTrackLengthJiffies = (iMp4->Duration() * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackLengthJiffies = (iSamplesTotal * Jiffies::kJiffiesPerSecond) / iSampleRate;
     iTrackOffset = 0;
 
     //LOG(kCodec, "CodecAac::StreamInitialise  iBitDepth %u, iSamplesTotal %lld, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iMp4->Duration(), iChannels(), iTrackLengthJiffies);
@@ -631,7 +634,6 @@ void CodecAac::ProcessMpeg4()
 
 void CodecAac::ProcessAdts(TBool aParseOnly)
 {
-    iFrameCounter = 0;
     Adts adts;
     //LOG(kCodec, "Aac::ProcessAdts - Parse Only = %d\n", aParseOnly);
 
@@ -801,7 +803,7 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
         BigEndianData(samples, samplesWritten);
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
         if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iChannels) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iMp4->SampleRate(),
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
                 iBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutBuf.SetBytes(0);
         }

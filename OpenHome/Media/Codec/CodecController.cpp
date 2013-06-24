@@ -301,6 +301,9 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
 
 TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
 {
+    if (aBytes ==0) {
+        return true;
+    }
     if (iAudioEncoded == NULL) {
         return false;
     }
