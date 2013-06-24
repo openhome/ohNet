@@ -280,6 +280,7 @@ def build(bld):
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
+                'OpenHome/Av/MediaPlayer.cpp',
                 'Generated/DvUpnpOrgAVTransport1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderAvTransport.cpp',
                 'Generated/DvUpnpOrgConnectionManager1.cpp',

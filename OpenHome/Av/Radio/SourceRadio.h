@@ -37,7 +37,7 @@ class IReadStore;
 class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
 {
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, PresetDatabase& aDatabase, Media::UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore);
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore);
     ~SourceRadio();
 private: // from ISource
     void Activate();
@@ -58,9 +58,9 @@ private: // from IPipelineObserver
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
-    PresetDatabase& iDatabase;
     Media::UriProviderSingleTrack& iUriProvider;
     ProviderRadio* iProviderRadio;
+    PresetDatabase* iPresetDatabase;
     RadioPresetsTuneIn* iTuneIn;
     Media::Track* iTrack;
     TUint iTrackPosSeconds;
