@@ -42,6 +42,7 @@ ProtocolTone::ProtocolTone(Environment& aEnv)
     , iToneGenerators()
 {
     iToneGenerators.push_back(new ToneGeneratorSilence);
+    iToneGenerators.push_back(new ToneGeneratorSquare);
 #ifdef DEFINE_DEBUG
     iToneGenerators.push_back(new ToneGeneratorPattern);
 #endif  // DEFINE_DEBUG
@@ -240,9 +241,27 @@ ToneGeneratorSilence::ToneGeneratorSilence()
 {
 }
 
+// contract: return at most 24-bit value
 TInt32 ToneGeneratorSilence::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
 {
     return 0;
+}
+
+ToneGeneratorSquare::ToneGeneratorSquare()
+    : ToneGenerator("square.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorSquare::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    // minimum value (two's complement)
+    TUint32 val = 1 << 23;
+    // full-scale signal with 50% duty cycle
+    if (aOffset >= (aMaxOffset / 2)) {
+        val -= 1;  // deliberate integer underflow from smallest -ve to largest +ve
+    }
+    return val;
 }
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
@@ -343,40 +362,13 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const TUint kMaxVirtualSamplesPerPeriod = 64000;  // Nyquist limit: assuming pitch <= 32kHz (beyond audible range)
 
     // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
-    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;  // XXX ???
+    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;
 
     TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
     iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
 
     for (TUint i = 0; i < nSamples; ++i) {
-        TUint x = (i % kMaxVirtualSamplesPerPeriod) * virtualSamplesStep;  // XXX ???
-        // trusting generator to produce at most 24-bit values
-        TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
-        // max requirement: 8[channels] x 24[bit] + extraneous byte from final 32-bit write
-        TByte multiChannelAudioSample[8 * 3 + 1];
-        TByte *p = multiChannelAudioSample;
-        switch (params.bitsPerSample) {
-            case 8:
-                audioSample >>= 16;
-                for (int ch = 0; ch < params.numChannels; ++ch) {
-                    *(p + 1 * ch) = static_cast<TByte>(audioSample);
-                }
-                break;
-            case 16:
-                audioSample >>= 8;  // correct sign extension guaranteed
-                for (int ch = 0; ch < params.numChannels; ++ch) {
-                    *reinterpret_cast<TUint16 *>(p + 2 * ch) = Arch::LittleEndian2(static_cast<TUint16>(audioSample));
-                }
-                break;
-            case 24:
-                for (int ch = 0; ch < params.numChannels; ++ch) {
-                    // write 32-bit value to staging memory, but then overlap next channel on MSB==0 (highest location in LE)
-                    *reinterpret_cast<TUint32 *>(p + /*sic!*/ 3 * ch) = Arch::LittleEndian4(static_cast<TUint32>(audioSample));
-                }
-                break;
-            default:
-                ASSERTS();
-        }
+        // ensure sufficient capacity for another (multi-channel) audio sample
         if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
 #ifdef DEFINE_DEBUG_JOHNH
             Log::Print("flushing audio buffer: %u[B]\n", iAudioBuf.Bytes());
@@ -385,7 +377,34 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
             iSupply->OutputData(iAudioBuf);
             iAudioBuf.SetBytes(0);  // reset audio buffer
         }
-        iAudioBuf.Append(multiChannelAudioSample, blockAlign);
+
+        TUint x = (i * virtualSamplesStep) % kMaxVirtualSamplesPerPeriod;
+        // contract: generator to produce at most 24-bit values
+        TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
+        switch (params.bitsPerSample) {
+            case 8:
+                audioSample >>= 16;
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    iAudioBuf.Append(static_cast<TByte>(audioSample));
+                }
+                break;
+            case 16:
+                audioSample >>= 8;  // correct sign extension guaranteed
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    iAudioBuf.Append(static_cast<TByte>((audioSample & 0x00ff)));  // LE
+                    iAudioBuf.Append(static_cast<TByte>((audioSample & 0xff00) >> 8));
+                }
+                break;
+            case 24:
+                for (int ch = 0; ch < params.numChannels; ++ch) {
+                    iAudioBuf.Append(static_cast<TByte>((audioSample & 0x0000ff)));  // LE
+                    iAudioBuf.Append(static_cast<TByte>((audioSample & 0x00ff00) >> 8));
+                    iAudioBuf.Append(static_cast<TByte>((audioSample & 0xff0000) >> 16));
+                }
+                break;
+            default:
+                ASSERTS();
+        }
     }
 
     // flush final audio data (if any) from (partially) filled audio buffer

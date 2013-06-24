@@ -89,31 +89,14 @@ enum EToneMsgType
     eMsgNone,
 };
 
-class SuiteGeneratorSilence : public SuiteUnitTest,
+class SuiteGeneratorAny : public SuiteUnitTest,
      private IPipelineIdProvider, private IFlushIdProvider, private IPipelineElementDownstream, private IMsgProcessor
 {
 public:
-    SuiteGeneratorSilence();
-    ~SuiteGeneratorSilence();
+    SuiteGeneratorAny(const TChar* aName);
 
-private:
+protected:
     void TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams);
-    void Test_8bit_44100_50Hz_2ch_1s();  // various bitsPerSample
-    void Test_16bit_44100_50Hz_2ch_1s();
-    void Test_24bit_44100_50Hz_2ch_1s();
-    void Test_16bit_44100_440Hz_2ch_1s();  // various (typical) sampling frequencies
-    void Test_16bit_88200_440Hz_2ch_1s();
-    void Test_16bit_176400_440Hz_2ch_1s();
-    void Test_16bit_48000_440Hz_2ch_1s();
-    void Test_16bit_96000_440Hz_2ch_1s();
-    void Test_16bit_192000_440Hz_2ch_1s();
-    void Test_16bit_44100_120Hz_1ch_1s();  // various (min, typical, max) channel configs
-    void Test_16bit_44100_120Hz_2ch_1s();
-    void Test_16bit_44100_120Hz_6ch_1s();
-    void Test_16bit_44100_120Hz_8ch_1s();
-    void Test_16bit_44100_60Hz_2ch_1s();  // various durations
-    void Test_16bit_44100_60Hz_2ch_2s();
-    void Test_16bit_44100_60Hz_2ch_5s();
 
 private:  // from SuiteUnitTest
     void Setup();
@@ -130,9 +113,12 @@ private:  // from IFlushIdProvider
 private:  // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 
+protected:  // from IMsgProcessor
+    // duration test is universal, but for content see derived classes
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+
 private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
@@ -180,6 +166,33 @@ private:
     EToneMsgType iExpectedMsgType;
     TUint iExpectedJiffies;
     TUint iAccumulatedJiffies;
+};
+
+class SuiteGeneratorSilence : public SuiteGeneratorAny
+{
+public:
+    SuiteGeneratorSilence();
+
+private:
+    void Test_8bit_44100_50Hz_2ch_1s();  // various bitsPerSample
+    void Test_16bit_44100_50Hz_2ch_1s();
+    void Test_24bit_44100_50Hz_2ch_1s();
+    void Test_16bit_44100_440Hz_2ch_1s();  // various (typical) sampling frequencies
+    void Test_16bit_88200_440Hz_2ch_1s();
+    void Test_16bit_176400_440Hz_2ch_1s();
+    void Test_16bit_48000_440Hz_2ch_1s();
+    void Test_16bit_96000_440Hz_2ch_1s();
+    void Test_16bit_192000_440Hz_2ch_1s();
+    void Test_16bit_44100_120Hz_1ch_1s();  // various (min, typical, max) channel configs
+    void Test_16bit_44100_120Hz_2ch_1s();
+    void Test_16bit_44100_120Hz_6ch_1s();
+    void Test_16bit_44100_120Hz_8ch_1s();
+    void Test_16bit_44100_60Hz_2ch_1s();  // various durations
+    void Test_16bit_44100_60Hz_2ch_2s();
+    void Test_16bit_44100_60Hz_2ch_5s();
+
+private:  // indirectly from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
 };
 
 } // namespace Media
@@ -370,8 +383,8 @@ void SuiteSyntaxError::Test()
     TEST_THROWS(iParser->Parse(Brn("tone:/square.wav?samplerate=44100&pitch=50&channels2&duration=360")), ToneUriParseError);
 }
 
-SuiteGeneratorSilence::SuiteGeneratorSilence()
-    : SuiteUnitTest("tone generator: silence")
+SuiteGeneratorAny::SuiteGeneratorAny(const TChar* aName)
+    : SuiteUnitTest(aName)
     , iNextFlushId(1)
     , iNextTrackId(1)
     , iNextStreamId(1)
@@ -381,6 +394,11 @@ SuiteGeneratorSilence::SuiteGeneratorSilence()
     , iExpectedMsgType(eMsgTrack)
     , iExpectedJiffies(0)
     , iAccumulatedJiffies(0)
+{
+}
+
+SuiteGeneratorSilence::SuiteGeneratorSilence()
+    : SuiteGeneratorAny("tone generator: silence")
 {
     AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_8bit_44100_50Hz_2ch_1s));
     AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_50Hz_2ch_1s));
@@ -400,12 +418,7 @@ SuiteGeneratorSilence::SuiteGeneratorSilence()
     AddTest(MakeFunctor(*this, &SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s));
 }
 
-SuiteGeneratorSilence::~SuiteGeneratorSilence()
-{
-    // clean-up already occurred in most recent Teardown() invocation
-}
-
-void SuiteGeneratorSilence::Setup()
+void SuiteGeneratorAny::Setup()
 {
     // rig fresh scaffolding for each test tone
     // no need to reset iNext*Id
@@ -435,7 +448,7 @@ void SuiteGeneratorSilence::Setup()
     iTrackFactory = new TrackFactory(*iAllocatorInfoLogger, 1);
 }
 
-void SuiteGeneratorSilence::TearDown()
+void SuiteGeneratorAny::TearDown()
 {
     delete iCodecController;
     delete iContainer;
@@ -447,28 +460,28 @@ void SuiteGeneratorSilence::TearDown()
     delete iAllocatorInfoLogger;
 }
 
-TUint SuiteGeneratorSilence::NextFlushId()
+TUint SuiteGeneratorAny::NextFlushId()
 {
     return iNextFlushId++;
 }
 
-TUint SuiteGeneratorSilence::NextTrackId()
+TUint SuiteGeneratorAny::NextTrackId()
 {
     return iNextTrackId++;
 }
 
-TUint SuiteGeneratorSilence::NextStreamId()
+TUint SuiteGeneratorAny::NextStreamId()
 {
     return iNextStreamId++;
 }
 
-EStreamPlay SuiteGeneratorSilence::OkToPlay(TUint, TUint)
+EStreamPlay SuiteGeneratorAny::OkToPlay(TUint, TUint)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-void SuiteGeneratorSilence::Push(Msg* aMsg)
+void SuiteGeneratorAny::Push(Msg* aMsg)
 {
     Msg* origMsg = aMsg->Process(/*IMsgProcessor*/ *this);
     if (NULL != origMsg) {
@@ -485,17 +498,25 @@ void SuiteGeneratorSilence::Push(Msg* aMsg)
 }
 
 // callbacks from aMsg->Process; actually check output (TEST)
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     ASSERTS();
     return aMsg;  // unreachable, but required to acquiesce compiler
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioPcm* aMsg)
 {
     TEST(eMsgAudioPcm == iExpectedMsgType);
     iExpectedMsgType = eMsgAudioPcm;  // usually more to follow, but MsgQuit also acceptable
     iAccumulatedJiffies += aMsg->Jiffies();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    // duration test is universal
+    SuiteGeneratorAny::ProcessMsg(aMsg);
+    // but content tests are generator-specific
     bool allZero = true;
     MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
     ProcessorPcmBufPacked proc;
@@ -513,26 +534,36 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
     return NULL;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgSilence* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgSilence* aMsg)
 {
     ASSERTS();
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgPlayable* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgPlayable* aMsg)
 {
     ASSERTS();
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
 {
     TEST(eMsgDecodedStream == iExpectedMsgType);
     iExpectedMsgType = eMsgAudioPcm;
+    const DecodedStreamInfo& info = aMsg->StreamInfo();
+    TEST(info.CodecName() == Brn("WAV"));
+    TEST(info.Lossless());
+    TEST(!info.Seekable());
+    TEST(!info.Live());
+    TEST(info.BitDepth() == iExpectedToneParams.bitsPerSample);
+    TEST(info.SampleRate() == iExpectedToneParams.sampleRate);
+    // interpretation of pitch is generator-specific
+    TEST(info.NumChannels() == iExpectedToneParams.numChannels);
+    // duration checked by accumulating jiffies from PCM audio msgs
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgTrack* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(eMsgTrack == iExpectedMsgType);
     iExpectedMsgType = eMsgEncodedStream;
@@ -541,32 +572,32 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgEncodedStream* aMsg)
 {
     TEST(eMsgEncodedStream== iExpectedMsgType);
     iExpectedMsgType = eMsgDecodedStream;
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgMetaText* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
 {
     ASSERTS();
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgHalt* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgHalt* aMsg)
 {
     ASSERTS();
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgFlush* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgFlush* aMsg)
 {
     ASSERTS();
     return aMsg;
 }
 
-Msg* SuiteGeneratorSilence::ProcessMsg(MsgQuit* aMsg)
+Msg* SuiteGeneratorAny::ProcessMsg(MsgQuit* aMsg)
 {
     TEST(eMsgAudioPcm == iExpectedMsgType);
     TEST(iAccumulatedJiffies == iExpectedJiffies);
@@ -655,7 +686,7 @@ void SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s()
     TestWaveform("silence", ToneParams(16, 44100, 60, 2, 5));
 }
 
-void SuiteGeneratorSilence::TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams)
+void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams)
 {
     // first msg, indicating start of new track
     iExpectedMsgType = eMsgTrack;

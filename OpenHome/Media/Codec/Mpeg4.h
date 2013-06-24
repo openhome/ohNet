@@ -96,14 +96,19 @@ private:
     Bwx*    iOffsets;
 };
 
-class Mpeg4Start
+class Mpeg4Start : public ContainerBase
 {
 public:
-    Mpeg4Start(IContainer& aContainer);
-    ~Mpeg4Start();
-    TUint ContainerSize() const;
+    Mpeg4Start();
+public: // from ContainerBase
+    void Initialise();
+    TBool Recognise();
+    TUint Size();
+    TBool AppendDuringSeek();
+    TUint Process();
+    TUint Split();
 private:
-    TUint iContainerSize;
+    TUint iSize;
 };
 
 // Base class for parsing RAOP headers

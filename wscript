@@ -358,7 +358,7 @@ def build(bld):
                  'OpenHome/Media/Codec/AlacBase.cpp',
                  'alac_decoder/alac.c',
             ],
-            use=['ALAC', 'OHNET'],
+            use=['ALAC', 'OHNET', 'ohMediaPlayer'],
             target='CodecAlacBase')
     # Alac
     bld.stlib(
@@ -429,7 +429,7 @@ def build(bld):
 
                 'ETSI_aacPlusdec/src/spline_resampler.c',
             ],
-            use=['AAC', 'OHNET'],
+            use=['AAC', 'OHNET', 'ohMediaPlayer'],
             target='CodecAac')
 
     # Vorbis
