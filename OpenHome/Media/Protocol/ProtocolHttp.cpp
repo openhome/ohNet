@@ -375,6 +375,11 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
     iLive = (iTotalBytes == 0);
+    if (iReaderResponse.Version() == Http::eHttp10 && iHeaderContentType.Received() && iHeaderContentType.Type() == Brn("audio/x-mpegurl")) {
+        // HTTP1.0 servers may send a response without a Content-Length, expecting clients to just read until their stream closes
+        // if the stream has Content-Type audio/x-mpegurl we assume it is a url pointing towards a radio stream, rather than the radio stream itself
+        iLive = false;
+    }
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
         LOG(kMedia, "ProtocolHttp::Stream Failed\n");
         return EProtocolStreamErrorUnrecoverable;
@@ -495,7 +500,16 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
             if (iTotalBytes != 0 && bytes > iTotalBytes) {
                 bytes = (TUint)iTotalBytes;
             }
-            Brn contentStart = iReaderBuf.Peek(bytes);
+            Brn contentStart;
+            try {
+                contentStart.Set(iReaderBuf.Peek(bytes));
+            }
+            catch (ReaderError&) {
+                if (iTotalBytes != 0) {
+                    throw;
+                }
+                contentStart.Set(iReaderBuf.Snaffle());
+            }
             iContentProcessor = iProtocolManager->GetContentProcessor(iUri.AbsoluteUri(), iHeaderContentType.Received()? iHeaderContentType.Type() : Brx::Empty(), contentStart);
         }
         catch (ReaderError&) {

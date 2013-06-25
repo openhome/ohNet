@@ -18,13 +18,13 @@ UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TrackFactory&
 {
 }
 
-TUint UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
+Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
     iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL);
-    return iTrack->Id();
+    return iTrack;
 }
 
 void UriProviderSingleTrack::SetTrack(Track* aTrack)

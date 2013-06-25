@@ -37,6 +37,7 @@ public:
     void Start();
     void BeginHalt();
     void BeginFlush();
+    void RemoveCurrentStream();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 public: // from IStopper
@@ -57,6 +58,7 @@ private:
     Msg* ProcessMsgAudio(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void DoBeginHalt();
+    void DoRemoveCurrentStream();
 private:
     enum EState
     {

@@ -157,8 +157,8 @@ void TestRadio::Run(PresetDatabase& aDb)
             TUint ignore;
             aDb.GetPreset(index, ignore, uri);
             iPipeline->Stop();
-            const TUint trackId = iUriProvider->SetTrack(uri, Brx::Empty());
-            iPipeline->Begin(iUriProvider->Mode(), trackId);
+            Track* track = iUriProvider->SetTrack(uri, Brx::Empty());
+            iPipeline->Begin(iUriProvider->Mode(), track->Id());
             iPipeline->Play();
         }
         else {

@@ -627,6 +627,7 @@ void CodecMp3::StreamCompleted()
     delete iHeader;
     iHeader = NULL;
     iInput.SetBytes(0);
+    iHeaderBytes = 0;
 
     mad_synth_finish(iMadSynth);
     mad_frame_finish(iMadFrame);
