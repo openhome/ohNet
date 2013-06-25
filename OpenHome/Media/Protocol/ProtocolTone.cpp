@@ -233,8 +233,9 @@ ToneGeneratorSilence::ToneGeneratorSilence()
 }
 
 // contract: return at most 24-bit value
-TInt32 ToneGeneratorSilence::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
+TInt32 ToneGeneratorSilence::Generate(TUint aOffset, TUint aMaxOffset)
 {
+    ASSERT(aOffset < aMaxOffset);
     return 0;
 }
 
@@ -246,13 +247,13 @@ ToneGeneratorSquare::ToneGeneratorSquare()
 // contract: return at most 24-bit value
 TInt32 ToneGeneratorSquare::Generate(TUint aOffset, TUint aMaxOffset)
 {
-    // minimum value (two's complement)
-    TUint32 val = 1 << 23;
+    ASSERT(aOffset < aMaxOffset);
     // full-scale signal with 50% duty cycle
-    if (aOffset >= (aMaxOffset / 2)) {
-        val -= 1;  // deliberate integer underflow from smallest -ve to largest +ve
+    if (aOffset < (aMaxOffset / 2)) {
+        return 0x00800000;  // minimum value (24 bits; two's complement)
+    } else {
+        return 0x007fffff;  // maximum value (24 bits; two's complement)
     }
-    return val;
 }
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
