@@ -115,6 +115,13 @@ public:
     TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
 };
 
+class ToneGeneratorSine : public ToneGenerator
+{
+public:
+    ToneGeneratorSine();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
 class ProtocolTone : public Protocol
 {
 public:
