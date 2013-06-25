@@ -34,6 +34,7 @@ ProtocolTone::ProtocolTone(Environment& aEnv)
 {
     iToneGenerators.push_back(new ToneGeneratorSilence);
     iToneGenerators.push_back(new ToneGeneratorSquare);
+    iToneGenerators.push_back(new ToneGeneratorSawtooth);
 #ifdef DEFINE_DEBUG
     iToneGenerators.push_back(new ToneGeneratorPattern);
 #endif  // DEFINE_DEBUG
@@ -254,6 +255,20 @@ TInt32 ToneGeneratorSquare::Generate(TUint aOffset, TUint aMaxOffset)
     } else {
         return 0x007fffff;  // maximum value (24 bits; two's complement)
     }
+}
+
+ToneGeneratorSawtooth::ToneGeneratorSawtooth()
+    : ToneGenerator("sawtooth.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorSawtooth::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    ASSERT(aOffset < aMaxOffset);  // and truncating integer arithmetic
+    TUint32 val = 0x00800000;  // minimum value (24 bits; two's complement)
+    val += ((1 << 24) / aMaxOffset) * aOffset;  // y = dy/dx * x
+    return (val & 0x00ffffff);
 }
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
