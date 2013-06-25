@@ -18,15 +18,6 @@
 
 #undef DEFINE_DEBUG_JOHNH
 
-//
-// declarations:  see ProtocolTone.h
-//
-
-
-//
-// implementations
-//
-
 using namespace OpenHome;
 using namespace OpenHome::Media;;
 
@@ -280,7 +271,16 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
 
-    // XXX unsupported waveforms reported below when trying to find appropriate waveform generator
+    // dynamically select waveform generator
+    ToneGenerator *generator = NULL;
+    for (TUint i = 0; i < iToneGenerators.size(); ++i) {
+        if (iToneGenerators[i]->Recognise(uriParser.Name())) {
+            generator = iToneGenerators[i];
+        }
+    }
+    if (NULL == generator) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
 
     const ToneParams& params = uriParser.Params();
 
@@ -337,17 +337,6 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 #ifdef DEFINE_DEBUG_JOHNH
     HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
 #endif  // DEFINE_DEBUG_JOHNH
-
-    // dynamically select waveform generator
-    ToneGenerator *generator = NULL;
-    for (TUint i = 0; i < iToneGenerators.size(); ++i) {
-        if (iToneGenerators[i]->Recognise(uriParser.Name())) {
-            generator = iToneGenerators[i];
-        }
-    }
-    if (NULL == generator) {
-        return EProtocolStreamErrorUnrecoverable;
-    }
 
     //
     // output audio data (data members inherited from Protocol)
