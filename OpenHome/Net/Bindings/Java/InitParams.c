@@ -80,6 +80,21 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDest
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsDisposeCallback
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDisposeCallback
+  (JNIEnv *aEnv, jclass aClass, jlong aCallback)
+{
+    JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
+    aClass = aClass;
+    
+    (*aEnv)->DeleteGlobalRef(aEnv, ref->callbackObj);
+    free(ref);
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsTcpConnectTimeoutMs
  * Signature: (J)I
  */
@@ -576,9 +591,9 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetLogOutput
- * Signature: (JLorg/openhome/net/core/IMessageListener;)V
+ * Signature: (JLorg/openhome/net/core/IMessageListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetLogOutput
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetLogOutput
   (JNIEnv *aEnv, jclass aClass, jlong aParams, jobject aListener)
 {
     OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
@@ -594,14 +609,16 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetL
     ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aListener);
     
     OhNetInitParamsSetLogOutput(params, callback, ref);
+
+    return (jlong) (size_t)ref;
 }
 
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetFatalErrorHandler
- * Signature: (JLorg/openhome/net/core/IMessageListener;)V
+ * Signature: (JLorg/openhome/net/core/IMessageListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetFatalErrorHandler
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetFatalErrorHandler
   (JNIEnv *aEnv, jclass aClass, jlong aParams, jobject aListener)
 {
     OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
@@ -617,6 +634,8 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetF
     ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aListener);
     
     OhNetInitParamsSetFatalErrorHandler(params, callback, ref);
+
+    return (jlong) (size_t)ref;
 }
 
 #ifdef __cplusplus

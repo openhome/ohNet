@@ -22,6 +22,8 @@ public class Library
         System.loadLibrary("ohNet");
         System.loadLibrary("ohNetJni");
     }
+
+    private InitParams iInitParams;
     
     public Library() {}
     
@@ -38,6 +40,7 @@ public class Library
         {
             throw new LibraryException();
         }
+        iInitParams = aInitParams;
     }
     
     /**
@@ -137,6 +140,9 @@ public class Library
      */
     public void close() {
         OhNetLibraryClose();
+        if (iInitParams != null) {
+            iInitParams.disposeCallbacks();
+        }
     }
     
     /**

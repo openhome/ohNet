@@ -25,6 +25,14 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDest
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsDisposeCallback
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDisposeCallback
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsTcpConnectTimeoutMs
  * Signature: (J)I
  */
@@ -306,17 +314,17 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetD
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetLogOutput
- * Signature: (JLorg/openhome/net/core/IMessageListener;)V
+ * Signature: (JLorg/openhome/net/core/IMessageListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetLogOutput
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetLogOutput
   (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetFatalErrorHandler
- * Signature: (JLorg/openhome/net/core/IMessageListener;)V
+ * Signature: (JLorg/openhome/net/core/IMessageListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetFatalErrorHandler
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetFatalErrorHandler
   (JNIEnv *, jclass, jlong, jobject);
 
 #ifdef __cplusplus
