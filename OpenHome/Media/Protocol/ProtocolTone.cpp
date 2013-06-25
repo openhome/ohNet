@@ -35,6 +35,7 @@ ProtocolTone::ProtocolTone(Environment& aEnv)
     iToneGenerators.push_back(new ToneGeneratorSilence);
     iToneGenerators.push_back(new ToneGeneratorSquare);
     iToneGenerators.push_back(new ToneGeneratorSawtooth);
+    iToneGenerators.push_back(new ToneGeneratorTriangle);
 #ifdef DEFINE_DEBUG
     iToneGenerators.push_back(new ToneGeneratorPattern);
 #endif  // DEFINE_DEBUG
@@ -268,6 +269,30 @@ TInt32 ToneGeneratorSawtooth::Generate(TUint aOffset, TUint aMaxOffset)
     ASSERT(aOffset < aMaxOffset);  // and truncating integer arithmetic
     TUint32 val = 0x00800000;  // minimum value (24 bits; two's complement)
     val += ((1 << 24) / aMaxOffset) * aOffset;  // y = dy/dx * x
+    return (val & 0x00ffffff);
+}
+
+ToneGeneratorTriangle::ToneGeneratorTriangle()
+    : ToneGenerator("triangle.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorTriangle::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    ASSERT(aOffset < aMaxOffset);  // and truncating integer arithmetic
+    const TInt32 kGradient = (1 << 24) / (aMaxOffset / 2);  // slope twice as steep as sawtooth
+    TUint32 val = 0;
+    // triangle axis symmetrical around half-period,
+    // so always (look up | mirror into) first half-period
+    val = 0x00800000;  // minimum value (24 bits; two's complement)
+    if (aOffset >= aMaxOffset / 2) {
+        // e.g. aMaxOffset=6:      2 <- 3
+        //                       1   <-   4
+        //                     0     <-     5
+        aOffset = aOffset - 1 - 2 * (aOffset % (aMaxOffset / 2));
+    }
+    val += kGradient * aOffset;
     return (val & 0x00ffffff);
 }
 
