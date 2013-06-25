@@ -696,14 +696,12 @@ void CodecAac::FlushOutput()
 void CodecAac::DecodeFrame(TBool aParseOnly)
 {
     TUint error = false;
-    TInt16 frameSize;
-    TInt32 sampleRate;
-    TInt16 numChannels;
-    TInt16 numOutSamples;
-    TBool bDownSample = 0;
-
-    TBool bBitstreamDownMix = 0;
-
+    TInt16 frameSize = 0;
+    TInt32 sampleRate = 0;
+    TInt16 numChannels = 0;
+    TInt16 numOutSamples = 0;
+    TBool bDownSample = true;
+    TBool bBitstreamDownMix = false;
 
     /* decode one frame of audio data */
     streamSBR[0].nrElements = 0;   
@@ -728,6 +726,7 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
         //LOG(kCodec, "Aac::DecodeFrame error %d\n", error);
         THROW(CodecStreamCorrupt);
     }
+
 
     /* end AAC decoder */
 
@@ -765,7 +764,6 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
       }
       else {
         if(!bDownSample){
-          
           frameSize = frameSize*2;
           sampleRate *= 2;
         }
@@ -780,7 +778,7 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
 
     numOutSamples = frameSize;
 
-    //LOG(kCodec, "sampleRate = %d, iSampleRate = %d\n", sampleRate, iSampleRate);
+    //LOG(kCodec, "sampleRate = %u, iSampleRate = %u\n", sampleRate, iSampleRate);
 
     /* end spline resampler */
 
