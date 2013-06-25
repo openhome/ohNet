@@ -255,6 +255,11 @@ void Pipeline::Stop()
     }
 }
 
+void Pipeline::RemoveCurrentStream()
+{
+    iStopper->RemoveCurrentStream();
+}
+
 TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
     // FIXME - update iTargetStatus

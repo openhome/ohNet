@@ -37,10 +37,11 @@ class IReadStore;
 class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
 {
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, PresetDatabase& aDatabase, Media::UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore);
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore);
     ~SourceRadio();
 private: // from ISource
     void Activate();
+    void Deactivate();
 private: // from ISourceRadio
     void Fetch(const Brx& aUri, const Brx& aMetaData);
     void Play();
@@ -55,15 +56,17 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
+    Mutex iLock;
     Media::PipelineManager& iPipeline;
-    PresetDatabase& iDatabase;
     Media::UriProviderSingleTrack& iUriProvider;
     ProviderRadio* iProviderRadio;
+    PresetDatabase* iPresetDatabase;
     RadioPresetsTuneIn* iTuneIn;
-    TUint iTrackId;
+    Media::Track* iTrack;
     TUint iTrackPosSeconds;
     TUint iPipelineTrackId;
     TUint iStreamId;
+    Media::EPipelineState iTransportState;
 };
 
 } // namespace Av

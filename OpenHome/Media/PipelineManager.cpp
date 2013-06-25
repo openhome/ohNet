@@ -88,6 +88,15 @@ void PipelineManager::Stop()
     iIdManager->InvalidateAll();
 }
 
+void PipelineManager::RemoveAll()
+{
+    iFiller->Stop();
+    iLock.Wait();
+    iPipeline->RemoveCurrentStream();
+    iLock.Signal();
+    iIdManager->InvalidateAll();
+}
+
 TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
     return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);

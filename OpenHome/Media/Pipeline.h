@@ -58,6 +58,7 @@ public:
     void Play();
     void Pause();
     void Stop();
+    void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 public: // from ISupply
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);

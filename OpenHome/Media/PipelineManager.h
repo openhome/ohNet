@@ -39,6 +39,7 @@ public:
     void Play();
     void Pause();
     void Stop();
+    void RemoveAll();
     TBool Seek(TUint aPipelineTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void Next();
     void Prev();

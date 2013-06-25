@@ -48,7 +48,7 @@ private:
     void UpdateIdArray();
     void UpdateIdArrayProperty();
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     ISourceRadio& iSource;
     IPresetDatabaseReader& iDbReader;
     Brn iProtocolInfo;
@@ -57,6 +57,7 @@ private:
     Media::BwsTrackMetaData iMetaData;
     std::array<TUint, IPresetDatabaseReader::kMaxPresets> iIdArray;
     Bws<IPresetDatabaseReader::kMaxPresets * sizeof(TUint32)> iIdArrayBuf;
+    Media::EPipelineState iTransportState;
 };
 
 } // namespace Av
