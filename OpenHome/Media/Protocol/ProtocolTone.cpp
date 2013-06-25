@@ -352,10 +352,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
     // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
     const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;
+    // need integer arithmetic, but cannot ignore potentially 5% error (e.g. 44100Hz sample rate with 13Hz pitch)
+    const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.pitch) % params.sampleRate;
 
     TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
     iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
 
+    TUint x = 0;
+    TInt accRemain = 0;  // accumulation of error may tmp'ly be negative
     for (TUint i = 0; i < nSamples; ++i) {
         // ensure sufficient capacity for another (multi-channel) audio sample
         if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
@@ -367,7 +371,6 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
             iAudioBuf.SetBytes(0);  // reset audio buffer
         }
 
-        TUint x = (i * virtualSamplesStep) % kMaxVirtualSamplesPerPeriod;
         // contract: generator to produce at most 24-bit values
         TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
         switch (params.bitsPerSample) {
@@ -394,6 +397,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
             default:
                 ASSERTS();
         }
+        x += virtualSamplesStep;
+        accRemain += virtualSamplesRemainder;
+        // same signedness for comparison: sample rate always representable w/o loss in signed 32-bit int
+        if (accRemain >= static_cast<TInt>(params.sampleRate)) {
+            ++x;
+            accRemain -= params.sampleRate;
+        }
+        x = x % kMaxVirtualSamplesPerPeriod;
     }
 
     // flush final audio data (if any) from (partially) filled audio buffer
