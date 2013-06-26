@@ -82,7 +82,7 @@ public:  // from IMuteManager
 
 private:
     std::vector<MuteSafe*> iMuteCollection;
-    Mutex iMutex;
+    mutable Mutex iMutex;
 };
 
 } // namespace Media
