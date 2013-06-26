@@ -7,8 +7,6 @@
 
 #include <vector>
 
-EXCEPTION(MuteManagerError);
-
 namespace OpenHome {
 namespace Media {
 
@@ -80,12 +78,11 @@ public:
     // i.e. do not Add() anything returned by Find()
     void Add(const TChar* aName, IMute& aMute);
 public:  // from IMuteManager
-    // throws MuteManagerError if not found
     IMute& Find(const TChar* aName) const;
 
 private:
     std::vector<MuteSafe*> iMuteCollection;
-    mutable Mutex iMutex;
+    Mutex iMutex;
 };
 
 } // namespace Media

@@ -80,7 +80,7 @@ void MuteCollection::Mute()
 
 void MuteCollection::Unmute()
 {
-    for (TInt i = iMuteChain.size() - 1; i <= 0; --i) {
+    for (TInt i = iMuteChain.size() - 1; i >= 0; --i) {
         iMuteChain[i]->Unmute();
     }
 }
@@ -175,5 +175,5 @@ IMute& MuteManager::Find(const TChar* aName) const
             return *iMuteCollection[i];
         }
     }
-    THROW(MuteManagerError);  // programmer error
+    ASSERTS();  // programmer error
 }
