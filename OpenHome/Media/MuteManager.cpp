@@ -169,11 +169,18 @@ void MuteManager::Add(const TChar* aName, IMute& aMute)
 IMute& MuteManager::Find(const TChar* aName) const
 {
     AutoMutex mutex(iMutex);
+
+	IMute* mute = NULL;
+
     for (TUint i = 0; i < iMuteCollection.size(); ++i) {
         if (iMuteCollection[i]->Name() == Brn(aName)) {
             // do not unwrap, since implicit locking desired
-            return *iMuteCollection[i];
+            mute = iMuteCollection[i];
+			break;
         }
     }
-    ASSERTS();  // programmer error
+
+	ASSERT(mute != NULL);
+
+	return (*mute);
 }
