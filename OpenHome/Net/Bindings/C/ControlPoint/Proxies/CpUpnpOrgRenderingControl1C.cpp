@@ -3477,10 +3477,11 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    *aCurrentMute = 0;
+    TBool CurrentMute;
     int32_t err = 0;
     try {
-        proxyC->SyncGetMute(aInstanceID, buf_aChannel, *(TBool*)aCurrentMute);
+        proxyC->SyncGetMute(aInstanceID, buf_aChannel, CurrentMute);
+        *aCurrentMute = CurrentMute? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -3505,9 +3506,10 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHandle, OhNet
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aCurrentMute = 0;
+    TBool CurrentMute;
     try {
-        proxyC->EndGetMute(*async, *(TBool*)aCurrentMute);
+        proxyC->EndGetMute(*async, CurrentMute);
+        *aCurrentMute = CurrentMute? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -3764,10 +3766,11 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, 
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    *aCurrentLoudness = 0;
+    TBool CurrentLoudness;
     int32_t err = 0;
     try {
-        proxyC->SyncGetLoudness(aInstanceID, buf_aChannel, *(TBool*)aCurrentLoudness);
+        proxyC->SyncGetLoudness(aInstanceID, buf_aChannel, CurrentLoudness);
+        *aCurrentLoudness = CurrentLoudness? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -3792,9 +3795,10 @@ int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle aHandle, O
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aCurrentLoudness = 0;
+    TBool CurrentLoudness;
     try {
-        proxyC->EndGetLoudness(*async, *(TBool*)aCurrentLoudness);
+        proxyC->EndGetLoudness(*async, CurrentLoudness);
+        *aCurrentLoudness = CurrentLoudness? 1 : 0;
     }
     catch(...) {
         err = -1;

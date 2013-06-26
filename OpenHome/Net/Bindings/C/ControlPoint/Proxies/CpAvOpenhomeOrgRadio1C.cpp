@@ -1838,10 +1838,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1SyncIdArrayChanged(THandle aHandle, ui
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncIdArrayChanged(aToken, *(TBool*)aValue);
+        proxyC->SyncIdArrayChanged(aToken, Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -1865,9 +1866,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgRadio1EndIdArrayChanged(THandle aHandle, OhN
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndIdArrayChanged(*async, *(TBool*)aValue);
+        proxyC->EndIdArrayChanged(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;

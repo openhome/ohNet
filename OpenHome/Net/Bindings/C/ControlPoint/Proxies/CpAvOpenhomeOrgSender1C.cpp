@@ -620,10 +620,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* 
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncAudio(*(TBool*)aValue);
+        proxyC->SyncAudio(Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -647,9 +648,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndAudio(THandle aHandle, OhNetHandle
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndAudio(*async, *(TBool*)aValue);
+        proxyC->EndAudio(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -807,8 +809,9 @@ void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t*
 {
     CpProxyAvOpenhomeOrgSender1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgSender1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aAudio = false;
-    proxyC->PropertyAudio(*(TBool*)aAudio);
+    TBool Audio;
+    proxyC->PropertyAudio(Audio);
+    *aAudio = Audio? 1 : 0;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus)

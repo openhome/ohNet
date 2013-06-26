@@ -794,11 +794,12 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* 
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aLossless = 0;
+    TBool Lossless;
     Brh buf_aCodecName;
     int32_t err = 0;
     try {
-        proxyC->SyncDetails(*aDuration, *aBitRate, *aBitDepth, *aSampleRate, *(TBool*)aLossless, buf_aCodecName);
+        proxyC->SyncDetails(*aDuration, *aBitRate, *aBitDepth, *aSampleRate, Lossless, buf_aCodecName);
+        *aLossless = Lossless? 1 : 0;
         *aCodecName = buf_aCodecName.Extract();
     }
     catch (ProxyError& ) {
@@ -828,11 +829,12 @@ int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHandle
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aLossless = 0;
+    TBool Lossless;
     Brh buf_aCodecName;
     *aCodecName = NULL;
     try {
-        proxyC->EndDetails(*async, *aDuration, *aBitRate, *aBitDepth, *aSampleRate, *(TBool*)aLossless, buf_aCodecName);
+        proxyC->EndDetails(*async, *aDuration, *aBitRate, *aBitDepth, *aSampleRate, Lossless, buf_aCodecName);
+        *aLossless = Lossless? 1 : 0;
         *aCodecName = buf_aCodecName.Extract();
     }
     catch(...) {
@@ -1052,8 +1054,9 @@ void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyLossless(THandle aHandle, uint32_t
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aLossless = false;
-    proxyC->PropertyLossless(*(TBool*)aLossless);
+    TBool Lossless;
+    proxyC->PropertyLossless(Lossless);
+    *aLossless = Lossless? 1 : 0;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyCodecName(THandle aHandle, char** aCodecName)
