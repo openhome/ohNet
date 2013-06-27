@@ -58,6 +58,8 @@ def guess_dest_platform():
     import platform
     if platform.system() == 'Windows':
         return 'Windows-x86'
+    if platform.system() == 'Linux' and platform.architecture()[0] == '32bit' and platform.machine()[0:3] == 'ppc':
+        return 'Linux-ppc32'
     if platform.system() == 'Linux' and platform.architecture()[0] == '32bit':
         return 'Linux-x86'
     if platform.system() == 'Linux' and platform.architecture()[0] == '64bit':
@@ -109,7 +111,7 @@ def configure_toolchain(conf):
         if conf.options.dest_platform in ['Linux-x86']:
             conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('VALGRIND_ENABLE', ['1'])
-        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM']:
+        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM', 'Linux-ppc32']:
             conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
         elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
@@ -226,6 +228,7 @@ def get_platform_info(dest_platform):
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-x64': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
         'Linux-ARM': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
+        'Linux-ppc32': dict(endian='BIG',    build_platform='linux2', ohnet_plat_dir='Posix'),
         'Windows-x86': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Windows-x64': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Core-ppc32': dict(endian='BIG',     build_platform='linux2', ohnet_plat_dir='Core-ppc32'),
