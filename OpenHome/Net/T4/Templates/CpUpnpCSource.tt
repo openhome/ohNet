@@ -348,7 +348,7 @@ int32_t STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 <#      } #>
 <#      else if (o.variable.type == "boolean") #>
 <#      { #>
-    *a<#=o.name#> = 0;
+    TBool <#=o.name#>;
 <#      } #>
 <#  } #>
     int32_t err = 0;
@@ -362,7 +362,11 @@ int32_t STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
         proxyC->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
-<#          if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#          if (o.variable.type == "boolean") #>
+<#          { #>
+        *a<#=o.name#> = <#=o.name#>? 1 : 0;
+<#          } #>
+<#          else if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
 <#          { #>
 <#              if (o.variable.type == "bin.base64") #>
 <#              { #>
@@ -438,14 +442,18 @@ int32_t STDCALL <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgT
 <#      } #>
 <#      else if (o.variable.type == "boolean") #>
 <#      { #>
-    *a<#=o.name#> = 0;
+    TBool <#=o.name#>;
 <#      } #>
 <#  } #>
     try {
         proxyC->End<#=a.name#>(<#=PrefixedOutputArgNames("*async", a)#>);
 <#  foreach (Argument o in a.outargs) #>
 <#  { #>
-<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      if (o.variable.type == "boolean") #>
+<#      { #>
+        *a<#=o.name#> = <#=o.name#>? 1 : 0;
+<#      } #>
+<#      else if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
 <#      { #>
 <#          if (o.variable.type == "bin.base64") #>
 <#          { #>
@@ -504,8 +512,9 @@ void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *a<#=s.name#> = false;
-    proxyC->Property<#=s.name#>(*(TBool*)a<#=s.name#>);
+    TBool <#=s.name#>;
+    proxyC->Property<#=s.name#>(<#=s.name#>);
+    *a<#=s.name#> = <#=s.name#>? 1 : 0;
 }
 <#      } #>
 <#      else #>
@@ -752,17 +761,20 @@ string OutArgNames(Method a)
 
         if (o.variable.type == "boolean")
         {
-            result += "*(TBool*)";
-        }
-        else if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64")
-        {
-            result += "buf_";
+            result += o.name;
         }
         else
         {
-            result += "*";
+            if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64")
+            {
+                result += "buf_";
+            }
+            else
+            {
+                result += "*";
+            }
+            result += "a" + o.name;
         }
-        result += "a" + o.name;
     }
 
     return(result);

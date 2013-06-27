@@ -1671,10 +1671,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncStandby(*(TBool*)aValue);
+        proxyC->SyncStandby(Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -1698,9 +1699,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, OhNetHan
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndStandby(*async, *(TBool*)aValue);
+        proxyC->EndStandby(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -1953,13 +1955,14 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t
     Brh buf_aSystemName;
     Brh buf_aType;
     Brh buf_aName;
-    *aVisible = 0;
+    TBool Visible;
     int32_t err = 0;
     try {
-        proxyC->SyncSource(aIndex, buf_aSystemName, buf_aType, buf_aName, *(TBool*)aVisible);
+        proxyC->SyncSource(aIndex, buf_aSystemName, buf_aType, buf_aName, Visible);
         *aSystemName = buf_aSystemName.Extract();
         *aType = buf_aType.Extract();
         *aName = buf_aName.Extract();
+        *aVisible = Visible? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -1992,12 +1995,13 @@ int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, OhNetHand
     *aType = NULL;
     Brh buf_aName;
     *aName = NULL;
-    *aVisible = 0;
+    TBool Visible;
     try {
-        proxyC->EndSource(*async, buf_aSystemName, buf_aType, buf_aName, *(TBool*)aVisible);
+        proxyC->EndSource(*async, buf_aSystemName, buf_aType, buf_aName, Visible);
         *aSystemName = buf_aSystemName.Extract();
         *aType = buf_aType.Extract();
         *aName = buf_aName.Extract();
+        *aVisible = Visible? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2353,8 +2357,9 @@ void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aStandby = false;
-    proxyC->PropertyStandby(*(TBool*)aStandby);
+    TBool Standby;
+    proxyC->PropertyStandby(Standby);
+    *aStandby = Standby? 1 : 0;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex)

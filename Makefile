@@ -46,6 +46,10 @@ ifeq ($(MACHINE),Darwin)
       detected_openhome_architecture = x86
     endif
   endif
+else ifneq (, $(findstring powerpc, $(gcc_machine)))
+    platform = Linux-ppc32
+    detected_openhome_system = Linux
+    detected_openhome_architecture = ppc32
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
@@ -181,8 +185,7 @@ ifeq ($(platform), Core-armv6)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
-
-ifneq (,$(findstring $(platform),Vanilla))
+ifneq (,$(findstring $(platform),Vanilla Linux-ppc32))
   ifeq ($(gcc4_1), yes)
     version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party = -Wno-non-virtual-dtor
@@ -202,6 +205,16 @@ ifneq (,$(findstring $(platform),Vanilla))
   compiler = ${CROSS_COMPILE}gcc -o $(objdir)
   link = $(version_specific_library_path) ${CROSS_COMPILE}g++ $(platform_linkflags)
   ar = $(version_specific_library_path) ${CROSS_COMPILE}ar rc $(objdir)
+endif
+
+ifeq ($(platform), Linux-ppc32)
+    # platform == Linux-ppc32
+    endian = BIG
+    platform_cflags = $(version_specific_cflags) -fPIC
+    platform_linkflags = $(version_specific_linkflags) -pthread
+    linkopts_ohNet = -Wl,-soname,libohNet.so
+    osbuilddir = Posix
+    osdir = Posix
 endif
 
 ifeq ($(platform), Vanilla)

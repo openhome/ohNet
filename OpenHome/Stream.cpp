@@ -114,8 +114,14 @@ void Srx::ReadInterrupt()
 
 Brn Srx::Peek(TUint aBytes)
 {
-    Brn buf = Read(aBytes);
-    iOffset -= buf.Bytes(); // rewind to the start of the buffer we've just read
+    Brn buf;
+    try {
+        buf.Set(Read(aBytes));
+        iOffset -= buf.Bytes(); // rewind to the start of the buffer we've just read
+    }
+    catch (ReaderError&) {
+        buf.Set(Ptr() + iOffset, iBytes - iOffset); // Snaffle without manipulation of iBytes or iOffset
+    }
     return buf;
 }
 

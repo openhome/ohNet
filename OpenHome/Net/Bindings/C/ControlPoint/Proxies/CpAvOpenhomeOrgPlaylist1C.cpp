@@ -2008,10 +2008,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncRepeat(THandle aHandle, uint32_
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncRepeat(*(TBool*)aValue);
+        proxyC->SyncRepeat(Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -2035,9 +2036,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1EndRepeat(THandle aHandle, OhNetHan
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndRepeat(*async, *(TBool*)aValue);
+        proxyC->EndRepeat(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2087,10 +2089,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncShuffle(THandle aHandle, uint32
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncShuffle(*(TBool*)aValue);
+        proxyC->SyncShuffle(Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -2114,9 +2117,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1EndShuffle(THandle aHandle, OhNetHa
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndShuffle(*async, *(TBool*)aValue);
+        proxyC->EndShuffle(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2666,10 +2670,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1SyncIdArrayChanged(THandle aHandle,
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncIdArrayChanged(aToken, *(TBool*)aValue);
+        proxyC->SyncIdArrayChanged(aToken, Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -2693,9 +2698,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylist1EndIdArrayChanged(THandle aHandle, 
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndIdArrayChanged(*async, *(TBool*)aValue);
+        proxyC->EndIdArrayChanged(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2816,16 +2822,18 @@ void STDCALL CpProxyAvOpenhomeOrgPlaylist1PropertyRepeat(THandle aHandle, uint32
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aRepeat = false;
-    proxyC->PropertyRepeat(*(TBool*)aRepeat);
+    TBool Repeat;
+    proxyC->PropertyRepeat(Repeat);
+    *aRepeat = Repeat? 1 : 0;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylist1PropertyShuffle(THandle aHandle, uint32_t* aShuffle)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aShuffle = false;
-    proxyC->PropertyShuffle(*(TBool*)aShuffle);
+    TBool Shuffle;
+    proxyC->PropertyShuffle(Shuffle);
+    *aShuffle = Shuffle? 1 : 0;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgPlaylist1PropertyId(THandle aHandle, uint32_t* aId)

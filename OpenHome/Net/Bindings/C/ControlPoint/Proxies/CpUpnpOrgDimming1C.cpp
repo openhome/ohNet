@@ -2197,10 +2197,11 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aretIsRamping = 0;
+    TBool retIsRamping;
     int32_t err = 0;
     try {
-        proxyC->SyncGetIsRamping(*(TBool*)aretIsRamping);
+        proxyC->SyncGetIsRamping(retIsRamping);
+        *aretIsRamping = retIsRamping? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -2224,9 +2225,10 @@ int32_t STDCALL CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, OhNetHand
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aretIsRamping = 0;
+    TBool retIsRamping;
     try {
-        proxyC->EndGetIsRamping(*async, *(TBool*)aretIsRamping);
+        proxyC->EndGetIsRamping(*async, retIsRamping);
+        *aretIsRamping = retIsRamping? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2238,10 +2240,11 @@ int32_t STDCALL CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aretRampPaused = 0;
+    TBool retRampPaused;
     int32_t err = 0;
     try {
-        proxyC->SyncGetRampPaused(*(TBool*)aretRampPaused);
+        proxyC->SyncGetRampPaused(retRampPaused);
+        *aretRampPaused = retRampPaused? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -2265,9 +2268,10 @@ int32_t STDCALL CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, OhNetHan
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aretRampPaused = 0;
+    TBool retRampPaused;
     try {
-        proxyC->EndGetRampPaused(*async, *(TBool*)aretRampPaused);
+        proxyC->EndGetRampPaused(*async, retRampPaused);
+        *aretRampPaused = retRampPaused? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2379,15 +2383,17 @@ void STDCALL CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t* 
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aIsRamping = false;
-    proxyC->PropertyIsRamping(*(TBool*)aIsRamping);
+    TBool IsRamping;
+    proxyC->PropertyIsRamping(IsRamping);
+    *aIsRamping = IsRamping? 1 : 0;
 }
 
 void STDCALL CpProxyUpnpOrgDimming1PropertyRampPaused(THandle aHandle, uint32_t* aRampPaused)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aRampPaused = false;
-    proxyC->PropertyRampPaused(*(TBool*)aRampPaused);
+    TBool RampPaused;
+    proxyC->PropertyRampPaused(RampPaused);
+    *aRampPaused = RampPaused? 1 : 0;
 }
 

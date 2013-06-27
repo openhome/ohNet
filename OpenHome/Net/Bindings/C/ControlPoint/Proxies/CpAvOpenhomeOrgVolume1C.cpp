@@ -1908,10 +1908,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* a
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncMute(*(TBool*)aValue);
+        proxyC->SyncMute(Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -1935,9 +1936,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgVolume1EndMute(THandle aHandle, OhNetHandleA
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndMute(*async, *(TBool*)aValue);
+        proxyC->EndMute(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2083,8 +2085,9 @@ void STDCALL CpProxyAvOpenhomeOrgVolume1PropertyMute(THandle aHandle, uint32_t* 
 {
     CpProxyAvOpenhomeOrgVolume1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgVolume1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aMute = false;
-    proxyC->PropertyMute(*(TBool*)aMute);
+    TBool Mute;
+    proxyC->PropertyMute(Mute);
+    *aMute = Mute? 1 : 0;
 }
 
 void STDCALL CpProxyAvOpenhomeOrgVolume1PropertyBalance(THandle aHandle, int32_t* aBalance)

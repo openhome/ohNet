@@ -1500,10 +1500,11 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncToggle(THandle aHandle, uint32_t
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aResult = 0;
+    TBool Result;
     int32_t err = 0;
     try {
-        proxyC->SyncToggle((aValue==0? false : true), *(TBool*)aResult);
+        proxyC->SyncToggle((aValue==0? false : true), Result);
+        *aResult = Result? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -1527,9 +1528,10 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndToggle(THandle aHandle, OhNetHand
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aResult = 0;
+    TBool Result;
     try {
-        proxyC->EndToggle(*async, *(TBool*)aResult);
+        proxyC->EndToggle(*async, Result);
+        *aResult = Result? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -1831,10 +1833,11 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetBool(THandle aHandle, uint32_
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValueBool = 0;
+    TBool ValueBool;
     int32_t err = 0;
     try {
-        proxyC->SyncGetBool(*(TBool*)aValueBool);
+        proxyC->SyncGetBool(ValueBool);
+        *aValueBool = ValueBool? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -1858,9 +1861,10 @@ int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetBool(THandle aHandle, OhNetHan
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValueBool = 0;
+    TBool ValueBool;
     try {
-        proxyC->EndGetBool(*async, *(TBool*)aValueBool);
+        proxyC->EndGetBool(*async, ValueBool);
+        *aValueBool = ValueBool? 1 : 0;
     }
     catch(...) {
         err = -1;
@@ -2256,8 +2260,9 @@ void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint32
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aVarBool = false;
-    proxyC->PropertyVarBool(*(TBool*)aVarBool);
+    TBool VarBool;
+    proxyC->PropertyVarBool(VarBool);
+    *aVarBool = VarBool? 1 : 0;
 }
 
 void STDCALL CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char** aVarStr)

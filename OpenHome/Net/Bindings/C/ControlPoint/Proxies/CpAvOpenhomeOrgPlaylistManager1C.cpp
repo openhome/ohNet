@@ -2206,10 +2206,11 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncPlaylistArraysChanged(TH
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    *aValue = 0;
+    TBool Value;
     int32_t err = 0;
     try {
-        proxyC->SyncPlaylistArraysChanged(aToken, *(TBool*)aValue);
+        proxyC->SyncPlaylistArraysChanged(aToken, Value);
+        *aValue = Value? 1 : 0;
     }
     catch (ProxyError& ) {
         err = -1;
@@ -2233,9 +2234,10 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArraysChanged(THa
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
-    *aValue = 0;
+    TBool Value;
     try {
-        proxyC->EndPlaylistArraysChanged(*async, *(TBool*)aValue);
+        proxyC->EndPlaylistArraysChanged(*async, Value);
+        *aValue = Value? 1 : 0;
     }
     catch(...) {
         err = -1;
