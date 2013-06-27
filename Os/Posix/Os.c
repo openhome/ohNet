@@ -1021,8 +1021,15 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
 
 int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
 {
+#ifdef DEFINE_BIG_ENDIAN
+#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
+        (aByte4 | (aByte3<<8) | (aByte2<<16) | (aByte1<<24))
+#elif defined(DEFINE_LITTLE_ENDIAN)
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
+#else
+#error "Endianness must be defined."
+#endif
 
     int32_t ret = -1;
     struct ifaddrs* networkIf;
