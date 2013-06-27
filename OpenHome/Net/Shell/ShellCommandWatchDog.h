@@ -17,7 +17,7 @@ class ShellCommandWatchDog : private IShellCommandHandler
 class WatchDog;
 
 public:
-    ShellCommandWatchDog(Shell& aShell);
+    ShellCommandWatchDog(Shell& aShell, TUint aWatchdogTimeoutSeconds);
     ~ShellCommandWatchDog();
 private: // from IShellCommandHandler
     void HandleShellCommand(Brn aCommand, const std::vector<Brn>& aArgs, IWriter& aResponse);
