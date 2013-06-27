@@ -68,7 +68,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Mac-x64, Core-ppc32, Core-armv6")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv6")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -104,6 +104,7 @@ class JenkinsBuild():
         platforms = { 
                 'Linux-x86': { 'os':'linux', 'arch':'x86', 'publish':True, 'system':'Linux'},
                 'Linux-x64': { 'os':'linux', 'arch':'x64', 'publish':True, 'system':'Linux'},
+                'Linux-ppc32': { 'os':'linux', 'arch':'ppc32', 'publish':True, 'system':'Linux'},
                 'Windows-x86': { 'os': 'windows', 'arch':'x86', 'publish':True, 'system':'Windows'},
                 'Windows-x64': { 'os': 'windows', 'arch':'x64', 'publish':True, 'system':'Windows'},
                 'Macos-x64': { 'os': 'macos', 'arch':'x86', 'publish':False, 'system':'Mac'}, # Old Jenkins label
@@ -148,14 +149,14 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if arch in ['armel', 'armhf', 'armv7', 'armv6', 'ppc32']:
+        if (arch in ['armel', 'armhf', 'armv7', 'armv6']) or (arch == 'ppc32' and os_platform == 'Core'):
             args.append('--buildonly')
         elif arch == 'x64':
             args.append('--native')
         if os_platform == 'windows' and arch == 'x86':
             args.append('--js')
             args.append('--java')
-        if os_platform == 'linux' and arch == 'x86':
+        if os_platform == 'linux' and (arch == 'x86' or arch == 'ppc32'):
             args.append('--java')
         if os_platform == 'macos':
             if arch == 'x64':
