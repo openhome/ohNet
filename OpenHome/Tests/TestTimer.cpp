@@ -170,15 +170,18 @@ void SuiteTimerBasic::Test()
     delete d;
     b.Wait();
     Print("Wait finished 2\n");
-    
+
     Print("Change a timer\n");
     
+    // Replaced 'a' with a new timer 'a2', as this code
+    // assumes the MyTimer sema count is 0. Not guaranteed though :(
+    MyTimer a2(iEnv);
     MyTimer e(iEnv);
     
-    a.FireIn(1000);
+    a2.FireIn(1000);
     e.FireIn(2000);
     b.FireIn(3000);
-    a.Wait();
+    a2.Wait();
     Print("Wait finished 1\n");
     TEST(e.Count() == 0);
     e.FireIn(3000);
