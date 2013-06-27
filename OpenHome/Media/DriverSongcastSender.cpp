@@ -166,12 +166,13 @@ Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iSampleRate = stream.SampleRate();
     iNumChannels = stream.NumChannels();
-    if (iNumChannels == 1) {
-        iNumChannels = 2;   // output mono as stereo
+    TUint reportedChannels = iNumChannels;
+    if (reportedChannels == 1) {
+        reportedChannels = 2;   // output mono as stereo
     }
     iBitDepth = stream.BitDepth();
     iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), iNumChannels, iBitDepth, stream.Lossless(), stream.CodecName());
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels, iBitDepth, stream.Lossless(), stream.CodecName());
     aMsg->RemoveRef();
     return NULL;
 }
