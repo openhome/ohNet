@@ -18,15 +18,6 @@
 
 #undef DEFINE_DEBUG_JOHNH
 
-//
-// declarations:  see ProtocolTone.h
-//
-
-
-//
-// implementations
-//
-
 using namespace OpenHome;
 using namespace OpenHome::Media;;
 
@@ -43,6 +34,9 @@ ProtocolTone::ProtocolTone(Environment& aEnv)
 {
     iToneGenerators.push_back(new ToneGeneratorSilence);
     iToneGenerators.push_back(new ToneGeneratorSquare);
+    iToneGenerators.push_back(new ToneGeneratorSawtooth);
+    iToneGenerators.push_back(new ToneGeneratorTriangle);
+    iToneGenerators.push_back(new ToneGeneratorSine);
 #ifdef DEFINE_DEBUG
     iToneGenerators.push_back(new ToneGeneratorPattern);
 #endif  // DEFINE_DEBUG
@@ -242,8 +236,9 @@ ToneGeneratorSilence::ToneGeneratorSilence()
 }
 
 // contract: return at most 24-bit value
-TInt32 ToneGeneratorSilence::Generate(TUint /* aOffset */, TUint /* aMaxOffset */)
+TInt32 ToneGeneratorSilence::Generate(TUint aOffset, TUint aMaxOffset)
 {
+    ASSERT(aOffset < aMaxOffset);
     return 0;
 }
 
@@ -255,13 +250,192 @@ ToneGeneratorSquare::ToneGeneratorSquare()
 // contract: return at most 24-bit value
 TInt32 ToneGeneratorSquare::Generate(TUint aOffset, TUint aMaxOffset)
 {
-    // minimum value (two's complement)
-    TUint32 val = 1 << 23;
+    ASSERT(aOffset < aMaxOffset);
     // full-scale signal with 50% duty cycle
-    if (aOffset >= (aMaxOffset / 2)) {
-        val -= 1;  // deliberate integer underflow from smallest -ve to largest +ve
+    if (aOffset < (aMaxOffset / 2)) {
+        return 0x00800000;  // minimum value (24 bits; two's complement)
+    } else {
+        return 0x007fffff;  // maximum value (24 bits; two's complement)
     }
-    return val;
+}
+
+ToneGeneratorSawtooth::ToneGeneratorSawtooth()
+    : ToneGenerator("sawtooth.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorSawtooth::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    ASSERT(aOffset < aMaxOffset);  // and truncating integer arithmetic
+    TUint32 val = 0x00800000;  // minimum value (24 bits; two's complement)
+    val += ((1 << 24) / aMaxOffset) * aOffset;  // y = dy/dx * x
+    return (val & 0x00ffffff);
+}
+
+ToneGeneratorTriangle::ToneGeneratorTriangle()
+    : ToneGenerator("triangle.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorTriangle::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    ASSERT(aOffset < aMaxOffset);  // and truncating integer arithmetic
+    const TInt32 kGradient = (1 << 24) / (aMaxOffset / 2);  // slope twice as steep as sawtooth
+    TUint32 val = 0;
+    // triangle axis symmetrical around half-period,
+    // so always (look up | mirror into) first half-period
+    val = 0x00800000;  // minimum value (24 bits; two's complement)
+    if (aOffset >= aMaxOffset / 2) {
+        // e.g. aMaxOffset=6:      2 <- 3
+        //                       1   <-   4
+        //                     0     <-     5
+        aOffset = aOffset - 1 - 2 * (aOffset % (aMaxOffset / 2));
+    }
+    val += kGradient * aOffset;
+    return (val & 0x00ffffff);
+}
+
+ToneGeneratorSine::ToneGeneratorSine()
+    : ToneGenerator("sine.wav")
+{
+}
+
+// contract: return at most 24-bit value
+TInt32 ToneGeneratorSine::Generate(TUint aOffset, TUint aMaxOffset)
+{
+    ASSERT(aOffset < aMaxOffset);
+    const TInt32 kWave[] = {
+               0,    52706,   105411,   158112,   210806,   263492,   316168,   368831, 
+          421479,   474111,   526725,   579317,   631887,   684431,   736949,   789437, 
+          841895,   894319,   946707,   999059,  1051371,  1103641,  1155868,  1208050, 
+         1260183,  1312267,  1364299,  1416277,  1468199,  1520064,  1571868,  1623610, 
+         1675288,  1726900,  1778444,  1829918,  1881319,  1932646,  1983897,  2035069, 
+         2086161,  2137171,  2188097,  2238936,  2289686,  2340347,  2390914,  2441388, 
+         2491765,  2542044,  2592222,  2642298,  2692270,  2742135,  2791892,  2841539, 
+         2891074,  2940495,  2989799,  3038986,  3088052,  3136997,  3185817,  3234512, 
+         3283080,  3331517,  3379824,  3427996,  3476034,  3523934,  3571695,  3619315, 
+         3666792,  3714125,  3761311,  3808348,  3855235,  3901970,  3948550,  3994975, 
+         4041242,  4087350,  4133296,  4179079,  4224697,  4270148,  4315431,  4360543, 
+         4405484,  4450250,  4494840,  4539254,  4583487,  4627540,  4671411,  4715097, 
+         4758596,  4801908,  4845031,  4887962,  4930700,  4973243,  5015590,  5057739, 
+         5099688,  5141437,  5182982,  5224322,  5265456,  5306383,  5347099,  5387605, 
+         5427898,  5467977,  5507840,  5547486,  5586912,  5626118,  5665102,  5703862, 
+         5742397,  5780705,  5818785,  5856636,  5894255,  5931641,  5968793,  6005710, 
+         6042390,  6078831,  6115032,  6150991,  6186708,  6222180,  6257407,  6292387, 
+         6327119,  6361600,  6395831,  6429809,  6463533,  6497002,  6530215,  6563169, 
+         6595865,  6628300,  6660474,  6692384,  6724031,  6755412,  6786526,  6817372, 
+         6847949,  6878256,  6908292,  6938054,  6967543,  6996757,  7025694,  7054354, 
+         7082735,  7110837,  7138659,  7166198,  7193454,  7220427,  7247114,  7273516, 
+         7299630,  7325456,  7350993,  7376239,  7401195,  7425858,  7450228,  7474304, 
+         7498085,  7521570,  7544758,  7567648,  7590239,  7612531,  7634522,  7656211, 
+         7677599,  7698683,  7719464,  7739939,  7760110,  7779973,  7799530,  7818779, 
+         7837719,  7856349,  7874670,  7892679,  7910377,  7927763,  7944836,  7961595, 
+         7978040,  7994170,  8009984,  8025482,  8040663,  8055527,  8070073,  8084300, 
+         8098208,  8111796,  8125064,  8138011,  8150637,  8162941,  8174923,  8186583, 
+         8197919,  8208931,  8219619,  8229983,  8240022,  8249736,  8259124,  8268186, 
+         8276921,  8285330,  8293411,  8301166,  8308592,  8315691,  8322461,  8328902, 
+         8335015,  8340799,  8346254,  8351379,  8356174,  8360639,  8364775,  8368580, 
+         8372054,  8375199,  8378012,  8380495,  8382647,  8384468,  8385958,  8387117, 
+         8387945,  8388442,  8388608,  8388442,  8387945,  8387117,  8385958,  8384468, 
+         8382647,  8380495,  8378012,  8375199,  8372054,  8368580,  8364775,  8360639, 
+         8356174,  8351379,  8346254,  8340799,  8335015,  8328902,  8322461,  8315691, 
+         8308592,  8301166,  8293411,  8285330,  8276921,  8268186,  8259124,  8249736, 
+         8240022,  8229983,  8219619,  8208931,  8197919,  8186583,  8174923,  8162941, 
+         8150637,  8138011,  8125064,  8111796,  8098208,  8084300,  8070073,  8055527, 
+         8040663,  8025482,  8009984,  7994170,  7978040,  7961595,  7944836,  7927763, 
+         7910377,  7892679,  7874670,  7856349,  7837719,  7818779,  7799530,  7779973, 
+         7760110,  7739939,  7719464,  7698683,  7677599,  7656211,  7634522,  7612531, 
+         7590239,  7567648,  7544758,  7521570,  7498085,  7474304,  7450228,  7425858, 
+         7401195,  7376239,  7350993,  7325456,  7299630,  7273516,  7247114,  7220427, 
+         7193454,  7166198,  7138659,  7110837,  7082735,  7054354,  7025694,  6996757, 
+         6967543,  6938054,  6908292,  6878256,  6847949,  6817372,  6786526,  6755412, 
+         6724031,  6692384,  6660474,  6628300,  6595865,  6563169,  6530215,  6497002, 
+         6463533,  6429809,  6395831,  6361600,  6327119,  6292387,  6257407,  6222180, 
+         6186708,  6150991,  6115032,  6078831,  6042390,  6005710,  5968793,  5931641, 
+         5894255,  5856636,  5818785,  5780705,  5742397,  5703862,  5665102,  5626118, 
+         5586912,  5547486,  5507840,  5467977,  5427898,  5387605,  5347099,  5306383, 
+         5265456,  5224322,  5182982,  5141437,  5099688,  5057739,  5015590,  4973243, 
+         4930700,  4887962,  4845031,  4801908,  4758596,  4715097,  4671411,  4627540, 
+         4583487,  4539254,  4494840,  4450250,  4405484,  4360543,  4315431,  4270148, 
+         4224697,  4179079,  4133296,  4087350,  4041242,  3994975,  3948550,  3901970, 
+         3855235,  3808348,  3761311,  3714125,  3666792,  3619315,  3571695,  3523934, 
+         3476034,  3427996,  3379824,  3331517,  3283080,  3234512,  3185817,  3136997, 
+         3088052,  3038986,  2989799,  2940495,  2891074,  2841539,  2791892,  2742135, 
+         2692270,  2642298,  2592222,  2542044,  2491765,  2441388,  2390914,  2340347, 
+         2289686,  2238936,  2188097,  2137171,  2086161,  2035069,  1983897,  1932646, 
+         1881319,  1829918,  1778444,  1726900,  1675288,  1623610,  1571868,  1520064, 
+         1468199,  1416277,  1364299,  1312267,  1260183,  1208050,  1155868,  1103641, 
+         1051371,   999059,   946707,   894319,   841895,   789437,   736949,   684431, 
+          631887,   579317,   526725,   474111,   421479,   368831,   316168,   263492, 
+          210806,   158112,   105411,    52706,        0,   -52706,  -105411,  -158112, 
+         -210806,  -263492,  -316168,  -368831,  -421479,  -474111,  -526725,  -579317, 
+         -631887,  -684431,  -736949,  -789437,  -841895,  -894319,  -946707,  -999059, 
+        -1051371, -1103641, -1155868, -1208050, -1260183, -1312267, -1364299, -1416277, 
+        -1468199, -1520064, -1571868, -1623610, -1675288, -1726900, -1778444, -1829918, 
+        -1881319, -1932646, -1983897, -2035069, -2086161, -2137171, -2188097, -2238936, 
+        -2289686, -2340347, -2390914, -2441388, -2491765, -2542044, -2592222, -2642298, 
+        -2692270, -2742135, -2791892, -2841539, -2891074, -2940495, -2989799, -3038986, 
+        -3088052, -3136997, -3185817, -3234512, -3283080, -3331517, -3379824, -3427996, 
+        -3476034, -3523934, -3571695, -3619315, -3666792, -3714125, -3761311, -3808348, 
+        -3855235, -3901970, -3948550, -3994975, -4041242, -4087350, -4133296, -4179079, 
+        -4224697, -4270148, -4315431, -4360543, -4405484, -4450250, -4494840, -4539254, 
+        -4583487, -4627540, -4671411, -4715097, -4758596, -4801908, -4845031, -4887962, 
+        -4930700, -4973243, -5015590, -5057739, -5099688, -5141437, -5182982, -5224322, 
+        -5265456, -5306383, -5347099, -5387605, -5427898, -5467977, -5507840, -5547486, 
+        -5586912, -5626118, -5665102, -5703862, -5742397, -5780705, -5818785, -5856636, 
+        -5894255, -5931641, -5968793, -6005710, -6042390, -6078831, -6115032, -6150991, 
+        -6186708, -6222180, -6257407, -6292387, -6327119, -6361600, -6395831, -6429809, 
+        -6463533, -6497002, -6530215, -6563169, -6595865, -6628300, -6660474, -6692384, 
+        -6724031, -6755412, -6786526, -6817372, -6847949, -6878256, -6908292, -6938054, 
+        -6967543, -6996757, -7025694, -7054354, -7082735, -7110837, -7138659, -7166198, 
+        -7193454, -7220427, -7247114, -7273516, -7299630, -7325456, -7350993, -7376239, 
+        -7401195, -7425858, -7450228, -7474304, -7498085, -7521570, -7544758, -7567648, 
+        -7590239, -7612531, -7634522, -7656211, -7677599, -7698683, -7719464, -7739939, 
+        -7760110, -7779973, -7799530, -7818779, -7837719, -7856349, -7874670, -7892679, 
+        -7910377, -7927763, -7944836, -7961595, -7978040, -7994170, -8009984, -8025482, 
+        -8040663, -8055527, -8070073, -8084300, -8098208, -8111796, -8125064, -8138011, 
+        -8150637, -8162941, -8174923, -8186583, -8197919, -8208931, -8219619, -8229983, 
+        -8240022, -8249736, -8259124, -8268186, -8276921, -8285330, -8293411, -8301166, 
+        -8308592, -8315691, -8322461, -8328902, -8335015, -8340799, -8346254, -8351379, 
+        -8356174, -8360639, -8364775, -8368580, -8372054, -8375199, -8378012, -8380495, 
+        -8382647, -8384468, -8385958, -8387117, -8387945, -8388442, -8388608, -8388442, 
+        -8387945, -8387117, -8385958, -8384468, -8382647, -8380495, -8378012, -8375199, 
+        -8372054, -8368580, -8364775, -8360639, -8356174, -8351379, -8346254, -8340799, 
+        -8335015, -8328902, -8322461, -8315691, -8308592, -8301166, -8293411, -8285330, 
+        -8276921, -8268186, -8259124, -8249736, -8240022, -8229983, -8219619, -8208931, 
+        -8197919, -8186583, -8174923, -8162941, -8150637, -8138011, -8125064, -8111796, 
+        -8098208, -8084300, -8070073, -8055527, -8040663, -8025482, -8009984, -7994170, 
+        -7978040, -7961595, -7944836, -7927763, -7910377, -7892679, -7874670, -7856349, 
+        -7837719, -7818779, -7799530, -7779973, -7760110, -7739939, -7719464, -7698683, 
+        -7677599, -7656211, -7634522, -7612531, -7590239, -7567648, -7544758, -7521570, 
+        -7498085, -7474304, -7450228, -7425858, -7401195, -7376239, -7350993, -7325456, 
+        -7299630, -7273516, -7247114, -7220427, -7193454, -7166198, -7138659, -7110837, 
+        -7082735, -7054354, -7025694, -6996757, -6967543, -6938054, -6908292, -6878256, 
+        -6847949, -6817372, -6786526, -6755412, -6724031, -6692384, -6660474, -6628300, 
+        -6595865, -6563169, -6530215, -6497002, -6463533, -6429809, -6395831, -6361600, 
+        -6327119, -6292387, -6257407, -6222180, -6186708, -6150991, -6115032, -6078831, 
+        -6042390, -6005710, -5968793, -5931641, -5894255, -5856636, -5818785, -5780705, 
+        -5742397, -5703862, -5665102, -5626118, -5586912, -5547486, -5507840, -5467977, 
+        -5427898, -5387605, -5347099, -5306383, -5265456, -5224322, -5182982, -5141437, 
+        -5099688, -5057739, -5015590, -4973243, -4930700, -4887962, -4845031, -4801908, 
+        -4758596, -4715097, -4671411, -4627540, -4583487, -4539254, -4494840, -4450250, 
+        -4405484, -4360543, -4315431, -4270148, -4224697, -4179079, -4133296, -4087350, 
+        -4041242, -3994975, -3948550, -3901970, -3855235, -3808348, -3761311, -3714125, 
+        -3666792, -3619315, -3571695, -3523934, -3476034, -3427996, -3379824, -3331517, 
+        -3283080, -3234512, -3185817, -3136997, -3088052, -3038986, -2989799, -2940495, 
+        -2891074, -2841539, -2791892, -2742135, -2692270, -2642298, -2592222, -2542044, 
+        -2491765, -2441388, -2390914, -2340347, -2289686, -2238936, -2188097, -2137171, 
+        -2086161, -2035069, -1983897, -1932646, -1881319, -1829918, -1778444, -1726900, 
+        -1675288, -1623610, -1571868, -1520064, -1468199, -1416277, -1364299, -1312267, 
+        -1260183, -1208050, -1155868, -1103641, -1051371,  -999059,  -946707,  -894319, 
+         -841895,  -789437,  -736949,  -684431,  -631887,  -579317,  -526725,  -474111, 
+         -421479,  -368831,  -316168,  -263492,  -210806,  -158112,  -105411,   -52706, 
+    };
+    // idx / numValues "proportional to" aOffset / kMaxOffset
+    TUint idx = (aOffset * (sizeof(kWave) / sizeof(TInt32))) / aMaxOffset;
+    return kWave[idx];
 }
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
@@ -280,7 +454,16 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
 
-    // XXX unsupported waveforms reported below when trying to find appropriate waveform generator
+    // dynamically select waveform generator
+    ToneGenerator *generator = NULL;
+    for (TUint i = 0; i < iToneGenerators.size(); ++i) {
+        if (iToneGenerators[i]->Recognise(uriParser.Name())) {
+            generator = iToneGenerators[i];
+        }
+    }
+    if (NULL == generator) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
 
     const ToneParams& params = uriParser.Params();
 
@@ -338,17 +521,6 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
 #endif  // DEFINE_DEBUG_JOHNH
 
-    // dynamically select waveform generator
-    ToneGenerator *generator = NULL;
-    for (TUint i = 0; i < iToneGenerators.size(); ++i) {
-        if (iToneGenerators[i]->Recognise(uriParser.Name())) {
-            generator = iToneGenerators[i];
-        }
-    }
-    if (NULL == generator) {
-        return EProtocolStreamErrorUnrecoverable;
-    }
-
     //
     // output audio data (data members inherited from Protocol)
     // N.B. assuming only periodic waveforms and identical output on all channels
@@ -363,10 +535,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
     // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
     const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;
+    // need integer arithmetic, but cannot ignore potentially 5% error (e.g. 44100Hz sample rate with 13Hz pitch)
+    const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.pitch) % params.sampleRate;
 
     TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
     iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
 
+    TUint x = 0;
+    TInt accRemain = 0;  // accumulation of error may tmp'ly be negative
     for (TUint i = 0; i < nSamples; ++i) {
         // ensure sufficient capacity for another (multi-channel) audio sample
         if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
@@ -378,7 +554,6 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
             iAudioBuf.SetBytes(0);  // reset audio buffer
         }
 
-        TUint x = (i * virtualSamplesStep) % kMaxVirtualSamplesPerPeriod;
         // contract: generator to produce at most 24-bit values
         TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
         switch (params.bitsPerSample) {
@@ -405,6 +580,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
             default:
                 ASSERTS();
         }
+        x += virtualSamplesStep;
+        accRemain += virtualSamplesRemainder;
+        // same signedness for comparison: sample rate always representable w/o loss in signed 32-bit int
+        if (accRemain >= static_cast<TInt>(params.sampleRate)) {
+            ++x;
+            accRemain -= params.sampleRate;
+        }
+        x = x % kMaxVirtualSamplesPerPeriod;
     }
 
     // flush final audio data (if any) from (partially) filled audio buffer

@@ -98,7 +98,7 @@ public:
 protected:
     void TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams);
 
-private:  // from SuiteUnitTest
+protected:  // from SuiteUnitTest
     void Setup();
     void TearDown();
 
@@ -116,6 +116,8 @@ private:  // from IPipelineElementDownstream
 protected:  // from IMsgProcessor
     // duration test is universal, but for content see derived classes
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    // allow testing of potentially incomplete final waveform
+    Msg* ProcessMsg(MsgQuit* aMsg);
 
 private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
@@ -127,7 +129,6 @@ private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
-    Msg* ProcessMsg(MsgQuit* aMsg);
 
 private:
     // as per Pipeline.h
@@ -162,7 +163,10 @@ private:
     bool iQuit;
     Semaphore iSemaphore;
 
+protected:
     ToneParams iExpectedToneParams;
+
+private:
     EToneMsgType iExpectedMsgType;
     TUint iExpectedJiffies;
     TUint iAccumulatedJiffies;
@@ -193,6 +197,46 @@ private:
 
 private:  // indirectly from IMsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
+};
+
+class SuiteGeneratorSquare : public SuiteGeneratorAny
+{
+public:
+    SuiteGeneratorSquare();
+
+protected:  // indirectly from SuiteUnitTest
+    void Setup();
+
+private:
+    void Test_8bit_44100_20Hz_2ch_1s();  // various bitsPerSample
+    void Test_16bit_44100_20Hz_2ch_1s();
+    void Test_24bit_44100_20Hz_2ch_1s();
+    void Test_16bit_44100_440Hz_2ch_1s();  // various (typical) sampling frequencies
+    void Test_16bit_88200_440Hz_2ch_1s();
+    void Test_16bit_176400_440Hz_2ch_1s();
+    void Test_16bit_48000_440Hz_2ch_1s();
+    void Test_16bit_96000_440Hz_2ch_1s();
+    void Test_16bit_192000_440Hz_2ch_1s();
+    void Test_16bit_44100_120Hz_1ch_1s();  // various (min, typical, max) channel configs
+    void Test_16bit_44100_120Hz_2ch_1s();
+    void Test_16bit_44100_120Hz_6ch_1s();
+    void Test_16bit_44100_120Hz_8ch_1s();
+    void Test_16bit_44100_60Hz_2ch_1s();  // various durations
+    void Test_16bit_44100_60Hz_2ch_2s();
+    void Test_16bit_44100_60Hz_2ch_5s();
+    void Test_16bit_44100_13Hz_2ch_1s();  // various (odd) pitches
+    void Test_16bit_44100_666Hz_2ch_1s();
+    void Test_16bit_44100_22050Hz_2ch_1s();
+    void Test_16bit_44100_32000Hz_2ch_1s();
+    void Test_16bit_44100_44100Hz_2ch_1s();
+    void Test_16bit_44100_48000Hz_2ch_1s();
+private:  // indirectly from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
+
+private:
+    TUint iCntSignalMin;
+    TUint iCntSignalMax;
 };
 
 } // namespace Media
@@ -534,6 +578,69 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
     return NULL;
 }
 
+Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    TEST((iCntSignalMin == 0) || (iCntSignalMax == 0));  // at most one run in progress
+    // duration test is universal
+    SuiteGeneratorAny::ProcessMsg(aMsg);
+    // but content tests are generator-specific
+    MsgPlayable* playable = aMsg->CreatePlayable();  // implicitly decrements ref on aMsg
+    ProcessorPcmBufPacked proc;
+    playable->Read(proc);
+    Brn buf = proc.Buf();
+    // iExpectedToneParams.* already sanity-checked in earlier msg 
+    const TUint kBlockAlign = iExpectedToneParams.numChannels * (iExpectedToneParams.bitsPerSample / 8);
+    const TUint kSignalMin = 1 << (iExpectedToneParams.bitsPerSample - 1);
+    const TUint kSignalMax = kSignalMin - 1;  // deliberate integer underflow from smallest -ve to largest +ve
+    // 50% duty cycle; sample rate always evenly divisible by two, but pitch less constrained
+    TUint kRunLen = (iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) / 2;
+    // round up, e.g. 44.1kHz sample rate and 20Hz pitch
+    if ((iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) % 2 != 0) { ++kRunLen; }
+    TUint audioSample = 0;
+    // non-exact comparison, since some (sample rate, pitch) combinations
+    // produce trivial fluctuations with integer sample counts, e.g. 8000Hz, 17Hz
+    TInt64 delta = 0;
+    // WAV codec guarantees integer number of (potentially multi-channel) samples per msg
+    for (const TByte* p = buf.Ptr(); p < (buf.Ptr() + buf.Bytes()); p += kBlockAlign) {
+        for (TUint ch = 0; ch < iExpectedToneParams.numChannels; ++ch) {
+            // playable stores audio sample in big endian format
+            switch (iExpectedToneParams.bitsPerSample) {
+                case 8:
+                    audioSample = *(p + 1 * ch);
+                    break;
+                case 16:
+                    audioSample = (*(p + 2 * ch) << 8 ) + (*(p + 1 + 2 * ch));  // BE
+                    break;
+                case 24:
+                    audioSample = (*(p + 3 * ch) << 16) + ((*(p + 1 + 3 * ch)) << 8) + (*(p + 2 + 3 * ch));  // 24 bits = 3 bytes
+                    break;
+                default:
+                    ASSERTS();
+            }
+            TEST((kSignalMin == audioSample) || (kSignalMax == audioSample));
+            if (kSignalMin == audioSample) {
+                ++iCntSignalMin;
+                if (iCntSignalMax != 0) {
+                    // first min marks end of max run, but only test/reset counter after all channels processed
+                    delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMax / iExpectedToneParams.numChannels);
+                    TEST((-1L <= delta) && (delta <= 1L));
+                    iCntSignalMax = 0;
+                }
+            } else {
+                ++iCntSignalMax;
+                if (iCntSignalMin != 0) {
+                    // first max marks end of min run, but only test/reset counter after all channels processed
+                    delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMin / iExpectedToneParams.numChannels);
+                    TEST((-1L <= delta) && (delta <= 1L));
+                    iCntSignalMin = 0;
+                }
+            }
+        }
+    }
+    playable->RemoveRef();
+    return NULL;
+}
+
 Msg* SuiteGeneratorAny::ProcessMsg(MsgSilence* aMsg)
 {
     ASSERTS();
@@ -604,6 +711,18 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgQuit* aMsg)
     iExpectedMsgType = eMsgNone;  // final msg: none more expected
     iQuit = true;
     return aMsg;
+}
+
+Msg* SuiteGeneratorSquare::ProcessMsg(MsgQuit* aMsg)
+{
+    // test sample summary of final, potentially legitimately partial waveform;
+    // note: all channels processed, since -- by definition -- no more sample follow
+    TEST((iCntSignalMin == 0) || (iCntSignalMax == 0));  // at most one run in progress
+    TUint kRunLen = (iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) / 2;
+    if (iExpectedToneParams.sampleRate % iExpectedToneParams.pitch != 0) { ++kRunLen; }
+    TEST(((iCntSignalMin + iCntSignalMax) / iExpectedToneParams.numChannels) <= kRunLen);
+    // base class
+    return SuiteGeneratorAny::ProcessMsg(aMsg);
 }
 
 void SuiteGeneratorSilence::Test_8bit_44100_50Hz_2ch_1s()
@@ -686,6 +805,153 @@ void SuiteGeneratorSilence::Test_16bit_44100_60Hz_2ch_5s()
     TestWaveform("silence", ToneParams(16, 44100, 60, 2, 5));
 }
 
+SuiteGeneratorSquare::SuiteGeneratorSquare()
+    : SuiteGeneratorAny("tone generator: square")
+    , iCntSignalMin(0)
+    , iCntSignalMax(0)
+{
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_8bit_44100_20Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_20Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_24bit_44100_20Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_88200_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_176400_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_48000_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_96000_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_192000_440Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_1ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_6ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_120Hz_8ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_2s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_5s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_13Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_666Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_22050Hz_2ch_1s));
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_32000Hz_2ch_1s));
+#if 0
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_44100Hz_2ch_1s));  // FAIL (Nyquist)
+    AddTest(MakeFunctor(*this, &SuiteGeneratorSquare::Test_16bit_44100_48000Hz_2ch_1s));  // FAIL (Nyquist)
+#endif
+}
+
+void SuiteGeneratorSquare::Setup()
+{
+    SuiteGeneratorAny::Setup();
+    iCntSignalMin = iCntSignalMax = 0;
+}
+
+void SuiteGeneratorSquare::Test_8bit_44100_20Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(8, 44100, 20, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_20Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 20, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_24bit_44100_20Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(24, 44100, 20, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_440Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 440, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_88200_440Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 88200, 440, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_176400_440Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 176400, 440, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_48000_440Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 48000, 440, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_96000_440Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 96000, 440, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_192000_440Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 192000, 440, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_120Hz_1ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 120, 1, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_120Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 120, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_120Hz_6ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 120, 6, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_120Hz_8ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 120, 8, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 60, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_2s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 60, 2, 2));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_60Hz_2ch_5s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 60, 2, 5));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_13Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 13, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_666Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 666, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_22050Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 22050, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_32000Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 32000, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_44100Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 44100, 2, 1));
+}
+
+void SuiteGeneratorSquare::Test_16bit_44100_48000Hz_2ch_1s()
+{
+    TestWaveform("square", ToneParams(16, 44100, 48000, 2, 1));
+}
+
 void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams)
 {
     // first msg, indicating start of new track
@@ -714,5 +980,6 @@ void TestToneGenerator()
     runner.Add(new SuiteSpurious());
     runner.Add(new SuiteSyntaxError());
     runner.Add(new SuiteGeneratorSilence());
+    runner.Add(new SuiteGeneratorSquare());
     runner.Run();
 }
