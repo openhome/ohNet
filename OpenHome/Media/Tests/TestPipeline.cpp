@@ -97,6 +97,7 @@ private:
     TUint iLastSubsample;
     EPipelineState iPipelineState;
     Semaphore iSemFlushed;
+    Semaphore iSemQuit;
     TBool iQuitReceived;
     TByte iBuf[32 * 1024]; // far too large a buffer to save recalculating sizes if/when sample rates change
 };
@@ -208,6 +209,7 @@ SuitePipeline::SuitePipeline()
     , iLastSubsample(0)
     , iPipelineState(EPipelineStopped)
     , iSemFlushed("TPSF", 0)
+    , iSemQuit("TPSQ", 0)
     , iQuitReceived(false)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kDriverMaxAudioJiffies);
@@ -226,6 +228,8 @@ SuitePipeline::~SuitePipeline()
     // ...so we cheat some more by creating a worker thread to pull until Quit is read
     ThreadFunctor* th = new ThreadFunctor("QUIT", MakeFunctor(*this, &SuitePipeline::PullUntilQuit));
     th->Start();
+    iPipeline->Quit();
+    iSemQuit.Wait();
     delete iPipeline;
     delete iTrackFactory;
     delete th;
@@ -394,6 +398,7 @@ void SuitePipeline::PullUntilQuit()
         Msg* msg = iPipelineEnd->Pull();
         (void)msg->Process(*this);
     } while (!iQuitReceived);
+    iSemQuit.Signal();
 }
 
 void SuitePipeline::NotifyPipelineState(EPipelineState aState)
