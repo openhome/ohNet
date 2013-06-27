@@ -108,6 +108,7 @@ private:
     Adts iAdts;
 
     TUint32 iSampleRate;
+    TUint32 iOutputSampleRate;
     TUint32 iBitrateMax;    
     TUint32 iBitrateAverage;
     TUint16 iChannels;
@@ -454,6 +455,7 @@ Section 6
         //LOG(kCodec, "Aac::Initialise channels = %d, timescale %d, samplerate %d\n", iMp4->Timescale(), iMp4->SampleRate());
 
         iSampleRate = iMp4->Timescale();
+        iOutputSampleRate = iSampleRate;
         iBitDepth = iMp4->BitDepth();
         //iChannels = iMp4->Channels();     // not valid !!!
         iSamplesTotal = iMp4->Duration();
@@ -494,14 +496,14 @@ Section 6
         iInBuf.SetBytes(0);
         iController->Read(iInBuf, iAdts.StartOffset());  // skip to first frame header
 
-        ProcessAdts(true);  //process first 2 frames to get outputSampleRate from the decoder
+        ProcessAdts(true);  //process first 2 frames to get iOutputSampleRate from the decoder
     }
 
     iTrackLengthJiffies = (iSamplesTotal * Jiffies::kJiffiesPerSecond) / iSampleRate;
     iTrackOffset = 0;
 
     //LOG(kCodec, "CodecAac::StreamInitialise  iBitDepth %u, iSamplesTotal %lld, iChannels %u, iTrackLengthJiffies %u\n", iBitDepth, iMp4->Duration(), iChannels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
 }
 
 void CodecAac::StreamCompleted()
@@ -639,10 +641,19 @@ void CodecAac::ProcessMpeg4()
 void CodecAac::ProcessAdts(TBool aParseOnly)
 {
     Adts adts;
+    TUint count = 0;
+    TUint total = 0;
     //LOG(kCodec, "Aac::ProcessAdts - Parse Only = %d\n", aParseOnly);
 
-    if (!aParseOnly || (iFrameCounter < 2)) {
-                // read in a single aac frame at a time
+    if (!aParseOnly) {
+        total = 1;
+    }
+    else if (iFrameCounter < 2) {
+        total = 2-iFrameCounter;
+    }
+
+    while (count < total) {
+        // read in a single aac frame at a time
         try {
             TUint headerBytes = 7;
             iInBuf.SetBytes(0);
@@ -672,11 +683,9 @@ void CodecAac::ProcessAdts(TBool aParseOnly)
         }
 
         DecodeFrame(aParseOnly);
+        count++;
     }
-    else {
-        iStreamEnded = true;
-    }
-    
+
     if(!aParseOnly) {
         FlushOutput();
     }
@@ -686,7 +695,7 @@ void CodecAac::ProcessAdts(TBool aParseOnly)
 void CodecAac::FlushOutput()
 {    
     if ((iStreamEnded || iNewStreamStarted) && iOutBuf.Bytes() > 0) {
-        iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
+        iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iOutputSampleRate,
             iBitDepth, EMediaDataBigEndian, iTrackOffset);
         iOutBuf.SetBytes(0);
     }
@@ -700,7 +709,7 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
     TInt32 sampleRate = 0;
     TInt16 numChannels = 0;
     TInt16 numOutSamples = 0;
-    TBool bDownSample = true;
+    TBool bDownSample = false;
     TBool bBitstreamDownMix = false;
 
     /* decode one frame of audio data */
@@ -768,7 +777,7 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
           sampleRate *= 2;
         }
       }
-      
+
       if(bBitstreamDownMix) {
         numChannels = 1;
       }
@@ -776,9 +785,10 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
     /* end sbr decoder */
 
 
+    iOutputSampleRate = sampleRate;
     numOutSamples = frameSize;
 
-    //LOG(kCodec, "sampleRate = %u, iSampleRate = %u\n", sampleRate, iSampleRate);
+    //LOG(kCodec, "iSampleRate = %u, iOutputSampleRate = %u\n", iSampleRate, iOutputSampleRate);
 
     /* end spline resampler */
 
@@ -805,7 +815,7 @@ void CodecAac::DecodeFrame(TBool aParseOnly)
         BigEndianData(samples, samplesWritten);
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
         if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iChannels) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iOutputSampleRate,
                 iBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutBuf.SetBytes(0);
         }

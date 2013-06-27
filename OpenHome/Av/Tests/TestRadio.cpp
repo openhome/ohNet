@@ -281,7 +281,7 @@ int CDECL main(int aArgc, char* aArgv[])
     db->BeginSetPresets();
     const TChar* presets[] = {
         "http://opml.radiotime.com/Tune.ashx?id=s122119&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse" // (Linn Radio, MP3)
-       ,"http://opml.radiotime.com/Tune.ashx?id=s2377&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"   // (Planet Rock, unknown)
+       ,"http://opml.radiotime.com/Tune.ashx?id=s2377&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"   // (Planet Rock, AAC, 22.05KHz, mono)
        ,"http://opml.radiotime.com/Tune.ashx?id=s24940&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Radio 2, AAC)
        ,"http://opml.radiotime.com/Tune.ashx?id=s92182&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Birdsong Radio, MP3)
        ,"http://opml.radiotime.com/Tune.ashx?id=s24945&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Radio Scotland, WMA)
