@@ -27,7 +27,7 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.8",
+        "version":          "0.1.10",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
