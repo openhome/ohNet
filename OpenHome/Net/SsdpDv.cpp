@@ -209,6 +209,7 @@ void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint, TUint aConfigId)
 
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 {
+    iBuffer.Flush(); // clear any data left over from a previous failed notification
     Ssdp::WriteStatus(iWriter);
     Ssdp::WriteServer(iDvStack.Env(), iWriter);
     Ssdp::WriteMaxAge(iDvStack.Env(), iWriter);
