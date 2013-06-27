@@ -243,6 +243,11 @@ TUint Property::SequenceNumber() const
     return iSequenceNumber;
 }
 
+void Property::ResetSequenceNumber()
+{
+    iSequenceNumber = 0;
+}
+
 TBool Property::ReportChanged()
 {
     if (iChanged) {

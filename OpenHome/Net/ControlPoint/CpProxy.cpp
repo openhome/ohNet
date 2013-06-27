@@ -53,6 +53,11 @@ void CpProxy::Unsubscribe()
     iService->Unsubscribe();
     iLock->Wait();
     iInitialEventDelivered = false;
+    PropertyMap::iterator it = iProperties.begin();
+    while (it != iProperties.end()) {
+        it->second->ResetSequenceNumber();
+        it++;
+    }
     iLock->Signal();
 }
 
