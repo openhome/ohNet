@@ -104,7 +104,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
-    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell);
+    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, 60); // default to 60s watchdog. This can be changed at runtime by client.
     blocker->Wait();
     // control never reaches here
     delete blocker;

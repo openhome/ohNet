@@ -196,6 +196,7 @@ public:
     virtual ~Property();
     const OpenHome::Net::Parameter& Parameter() const;
     TUint SequenceNumber() const;
+    void ResetSequenceNumber();
     TBool ReportChanged();
     virtual void Process(IOutputProcessor& aProcessor, const Brx& aBuffer) = 0;
     virtual void Write(IPropertyWriter& aWriter) = 0;
