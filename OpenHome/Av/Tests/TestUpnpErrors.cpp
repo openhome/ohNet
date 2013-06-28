@@ -12,9 +12,10 @@
 #include <OpenHome/Net/Core/CpProxy.h>
 #include <OpenHome/Net/Private/Error.h>
 #include <Generated/CpUpnpOrgAVTransport1.h>
-#include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <Generated/CpUpnpOrgConnectionManager1.h>
 #include <Generated/CpUpnpOrgRenderingControl1.h>
+#include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
+#include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
 
 #include <stdio.h>
@@ -61,6 +62,11 @@ private:
     
 class DummySourceUpnpAv : public ISourceUpnpAv
 {
+public:
+    DummySourceUpnpAv(Net::DvStack& aDvStack, const Brx& aUdn);
+    ~DummySourceUpnpAv();
+private:
+    void Disabled();
 private: // from ISourceUpnpAv
     void SetTrack(const Brx& aUri, const Brx& aMetaData);
     void Play();
@@ -69,6 +75,11 @@ private: // from ISourceUpnpAv
     void Next();
     void Prev();
     void Seek(TUint aSecondsAbsolute);
+private:
+    Net::DvDevice* iDevice;
+    ProviderAvTransport* iProviderAvTransport;
+    ProviderConnectionManager* iProviderConnectionManager;
+    ProviderRenderingControl* iProviderRenderingControl;
 };
 
 class CpDevices : private INonCopyable
@@ -156,6 +167,33 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 
 
 // DummySourceUpnpAv
+
+DummySourceUpnpAv::DummySourceUpnpAv(DvStack& aDvStack, const Brx& aUdn)
+{
+    Bwh udn("UpnpErrorTests");
+    RandomiseUdn(aDvStack, udn);
+    iDevice = new DvDeviceStandard(aDvStack, aUdn);
+    iDevice->SetAttribute("Upnp.Domain", "upnp.org");
+    iDevice->SetAttribute("Upnp.Type", "MediaRenderer");
+    iDevice->SetAttribute("Upnp.Version", "1");
+    iDevice->SetAttribute("Upnp.FriendlyName", "UpnpErrorTests");
+    iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
+    iDevice->SetAttribute("Upnp.ModelName", "None");
+
+    iProviderAvTransport = new ProviderAvTransport(*iDevice, aDvStack.Env(), *this);
+    iProviderConnectionManager = new ProviderConnectionManager(*iDevice, "*");
+    iProviderRenderingControl = new ProviderRenderingControl(*iDevice);
+
+    iDevice->SetEnabled();
+}
+
+DummySourceUpnpAv::~DummySourceUpnpAv()
+{
+    delete iDevice;
+    delete iProviderAvTransport;
+    delete iProviderConnectionManager;
+    delete iProviderRenderingControl;
+}
 
 void DummySourceUpnpAv::SetTrack(const Brx& /*aUri*/, const Brx& /*aMetaData*/)
 {
@@ -518,11 +556,9 @@ void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
     initParams.SetMsearchTime(1);
     initParams.SetAsyncErrorHandler(MakeFunctorAsync(errorSuppressor, &DummyAsyncOutput::LogError));
 
-    DummySourceUpnpAv dummySource;
     Bwh udn("UpnpErrorTests");
     RandomiseUdn(aDvStack, udn);
-    UpnpAv* upnpAv = new UpnpAv(aDvStack, dummySource, udn, "UpnpErrorTests", "None", "UpnpErrorTests", "");
-
+    DummySourceUpnpAv* dummySource = new DummySourceUpnpAv(aDvStack, udn);
     Semaphore sem("sem1", 0);
     CpDevices* cpDevices = new CpDevices(sem);
     cpDevices->Start(aCpStack, udn);
@@ -539,5 +575,5 @@ void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
 
     initParams.SetAsyncErrorHandler(oldAsyncErrorHandler);
     delete cpDevices;
-    delete upnpAv;
+    delete dummySource;
 }
