@@ -157,6 +157,14 @@ MuteManager::MuteManager()
 {
 }
 
+MuteManager::~MuteManager()
+{
+    while (!iMuteCollection.empty()) {
+        delete iMuteCollection.back();
+        iMuteCollection.pop_back();
+    }
+}
+
 // XXX implicit assumption:  aMute not already wrapped in MuteSafe
 void MuteManager::Add(const TChar* aName, IMute& aMute)
 {
