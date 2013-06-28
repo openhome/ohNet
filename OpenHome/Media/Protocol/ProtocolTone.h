@@ -83,11 +83,42 @@ public:
     TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
 };
 
-
 class ToneGeneratorSquare : public ToneGenerator
 {
 public:
     ToneGeneratorSquare();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
+
+// .  /|    /|      .
+// .   |   / |      .
+// .  ~|~~/~~|~~>t  .
+// .   | /   |      .
+// .   |/    |/     .
+class ToneGeneratorSawtooth : public ToneGenerator
+{
+public:
+    ToneGeneratorSawtooth();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
+// .       /\        .
+// .      /  \       .
+// .  ~~~/~~~~\~~~>t .
+// .    /      \     .
+// .  \/        \/   .
+class ToneGeneratorTriangle : public ToneGenerator
+{
+public:
+    ToneGeneratorTriangle();
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
+class ToneGeneratorSine : public ToneGenerator
+{
+public:
+    ToneGeneratorSine();
     TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
 };
 

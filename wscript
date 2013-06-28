@@ -281,6 +281,7 @@ def build(bld):
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
+                'OpenHome/Media/MuteManager.cpp',
                 'Generated/DvUpnpOrgAVTransport1.cpp',
                 'OpenHome/Av/UpnpAv/ProviderAvTransport.cpp',
                 'Generated/DvUpnpOrgConnectionManager1.cpp',
