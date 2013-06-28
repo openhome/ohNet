@@ -33,6 +33,8 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
 
+static const TUint kTimeout = 700;
+
 extern void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs);
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
 {
@@ -88,7 +90,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
-    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell);
+    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, kTimeout);
     blocker->Wait();
     // control never reaches here
     delete blocker;
