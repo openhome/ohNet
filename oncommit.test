@@ -20,10 +20,11 @@ tests = '''
     TestContentProcessor
     TestPipeline
     TestProtocolHttp
-    TestCodec               -s {ws_hostname} -p {ws_port}
+#    TestCodec               -s {ws_hostname} -p {ws_port}
     TestIdProvider
     TestFiller
-    TestToneGenerator
+    TestUpnpErrors
+#   TestToneGenerator
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
