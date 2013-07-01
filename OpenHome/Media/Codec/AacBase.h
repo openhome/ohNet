@@ -30,7 +30,7 @@ protected:
     void FlushOutput();
 private:
     void BigEndianData(TUint toWrite, TUint samplesWritten);
-    static void CodecAacBase::InterleaveSamples(Word16 *pTimeCh0,
+    static void InterleaveSamples(Word16 *pTimeCh0,
                   Word16 *pTimeCh1,
                   Word16 *pTimeOut,
                   Word32  frameSize,
@@ -62,4 +62,4 @@ protected:
 } //namespace Media
 } //namespace OpenHome
 
-#endif HEADER_PIPELINE_CODEC_AAC_BASE
+#endif // HEADER_PIPELINE_CODEC_AAC_BASE
