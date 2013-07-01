@@ -5,6 +5,8 @@
 #include <OpenHome/Media/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/Codec/Id3v2.h>
+#include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/Stopper.h>
@@ -65,6 +67,8 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
+    iContainer->AddContainer(new Codec::Id3v2());
+    iContainer->AddContainer(new Codec::Mpeg4Start());
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
     
     // construct push logger slightly out of sequence
