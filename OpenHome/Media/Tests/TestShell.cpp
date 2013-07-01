@@ -86,7 +86,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
-    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell);
+    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, 60);
     blocker->Wait();
     // control never reaches here
     delete blocker;
