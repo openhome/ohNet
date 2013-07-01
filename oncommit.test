@@ -24,6 +24,7 @@ tests = '''
     TestIdProvider
     TestFiller
     TestToneGenerator
+    TestMuteManager
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

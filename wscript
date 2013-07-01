@@ -79,7 +79,7 @@ def configure(conf):
     fixed_point_model = 'FPM_INTEL'
     if conf.options.dest_platform in ['Linux-ARM', 'Core-armv6']:
         fixed_point_model = 'FPM_ARM'
-    elif conf.options.dest_platform in ['Core-ppc32']:
+    elif conf.options.dest_platform in ['Linux-ppc32', 'Core-ppc32']:
         fixed_point_model = 'FPM_PPC'
     conf.env.DEFINES_MAD = [fixed_point_model, 'OPT_ACCURACY']
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
@@ -132,7 +132,7 @@ def configure(conf):
         conf.env.DEFINES_WMA.append('OPENHOME')
         if conf.options.debugmode == 'Debug':
             conf.env.CFLAGS_WMA = ['-O1', '-finline-functions']
-    if conf.options.dest_platform in ['Core-ppc32']:
+    if conf.options.dest_platform in ['Linux-ppc32', 'Core-ppc32']:
         conf.env.DEFINES_WMA.append('__powerpc__')
     conf.env.INCLUDES_WMA = [
         'WMA10Dec/audio/wmaudio/v10/decoder',
@@ -156,7 +156,7 @@ def configure(conf):
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.STLIB_OPENSSL = ['eay32']
     else:
-        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64']:
+        if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ppc32']:
             conf.env.LIB_OPENSSL = ['dl']
         conf.env.STLIB_OPENSSL = ['crypto']
     conf.env.INCLUDES_OPENSSL = [
@@ -562,6 +562,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
+                'OpenHome/Media/Tests/TestMuteManager.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -650,6 +651,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestToneGeneratorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestToneGenerator')
+    bld.program(
+            source='OpenHome/Media/Tests/TestMuteManagerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestMuteManager')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpAv.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
