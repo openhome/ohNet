@@ -105,7 +105,7 @@ void CodecAacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
             break;
         case 16:
             for(i=0 ; i<aToWrite*iChannels; i++) {
-                TInt16 tmp = Arch::BigEndian2((src[1] << 8) | src[0]);
+                TInt16 tmp = (src[0] << 8) | src[1];
                 TByte* tmpPtr = reinterpret_cast<TByte*>(&tmp);
                 *dst++ = *tmpPtr++;
                 *dst++ = *tmpPtr++;
@@ -114,7 +114,7 @@ void CodecAacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
             break;
         case 24:
             for(i=0 ; i<aToWrite*iChannels; i++) {
-                TInt16 tmp = Arch::BigEndian2((src[2] << 8) | src[0]);
+                TInt16 tmp = (src[2] << 8) | src[0];
                 TByte* tmpPtr = reinterpret_cast<TByte*>(&tmp);
                 *dst++ = *tmpPtr++;
                 *dst++ = src[1];
