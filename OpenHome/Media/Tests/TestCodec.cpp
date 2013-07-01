@@ -1134,7 +1134,7 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-two_id3v2_headers_msg_boundary.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
     // A file that does not play on existing DS's (is recognised as AAC ADTS)
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::eCodecMp3));
-    //// File with embedded cover art
+    // File with embedded cover art
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
     // Following file relies on seeking.  It is very short so protocol module sometimes finishes delivering it before the seek request comes in

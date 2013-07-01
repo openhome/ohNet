@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 
@@ -11,7 +12,21 @@ namespace OpenHome {
 class Environment;
 class Timer;
 namespace Media {
-    
+
+class ProcessorPcmBufPackedDualMono : public ProcessorPcmBuf
+{
+public:
+    ProcessorPcmBufPackedDualMono();
+private: // from IPcmProcessor
+    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
+    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
+    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels);
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+};
+
+
 class DriverSongcastSender : public Thread, private IMsgProcessor
 {
     static const TUint kSongcastTtl = 1;

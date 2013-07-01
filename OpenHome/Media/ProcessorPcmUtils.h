@@ -51,7 +51,6 @@ private: // from IPcmProcessor
     void ProcessSample24(const TByte* aSample, TUint aNumChannels);
 };
 
-
 } // namespace Media
 } // namespace OpenHome
 

@@ -20,6 +20,7 @@ SIMPLE_TEST_DECLARATION(TestContentProcessor);
 SIMPLE_TEST_DECLARATION(TestIdProvider);
 SIMPLE_TEST_DECLARATION(TestFiller);
 SIMPLE_TEST_DECLARATION(TestToneGenerator);
+SIMPLE_TEST_DECLARATION(TestMuteManager);
 SIMPLE_TEST_DECLARATION(TestMsg);
 SIMPLE_TEST_DECLARATION(TestPipeline);
 SIMPLE_TEST_DECLARATION(TestPreDriver);
@@ -31,6 +32,8 @@ SIMPLE_TEST_DECLARATION(TestStore);
 SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
+
+static const TUint kTimeout = 60; // initial timeout for TestShell. This is increased  by testharness once running.
 
 extern void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs);
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
@@ -69,6 +72,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestIdProvider", ShellTestIdProvider));
     shellTests.push_back(ShellTest("TestFiller", ShellTestFiller));
     shellTests.push_back(ShellTest("TestToneGenerator", ShellTestToneGenerator));
+    shellTests.push_back(ShellTest("TestMuteManager", ShellTestMuteManager));
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
@@ -86,7 +90,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);
     ShellCommandQuit* cmdQuit = new ShellCommandQuit(*shell, *blocker);
-    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, 60);
+    ShellCommandWatchDog* cmdWatchDog = new ShellCommandWatchDog(*shell, kTimeout);
     blocker->Wait();
     // control never reaches here
     delete blocker;

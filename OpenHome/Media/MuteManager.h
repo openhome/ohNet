@@ -74,6 +74,7 @@ class MuteManager : public IMuteManager
 {
 public:
     MuteManager();
+    ~MuteManager();
     // only directly constructed objects must be registered,
     // i.e. do not Add() anything returned by Find()
     void Add(const TChar* aName, IMute& aMute);
