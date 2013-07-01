@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Container.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Av/Debug.h>
 
 namespace OpenHome {
@@ -187,9 +188,9 @@ void CodecAac::StreamInitialise()
                     ptr++; // a_v_flag
                     ptr += 4;
                     //extract bitrates
-                    iBitrateMax = *(TUint32*)(ptr);
+                    iBitrateMax = Converter::BeUint32At(Brn(ptr,4), 0);
                     ptr += 4;
-                    iBitrateAverage = *(TUint32*)(ptr);
+                    iBitrateAverage = Converter::BeUint32At(Brn(ptr,4), 0);
                     ptr += 4;
                     if(*ptr == 5) {     // section 5
                         ptr++;
