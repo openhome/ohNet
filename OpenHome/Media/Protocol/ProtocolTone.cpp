@@ -66,7 +66,7 @@ ToneParams::ToneParams()
 {
 }
 
-ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration)
+ToneParams::ToneParams(TUint aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint aNumChannels, TUint aDuration)
     : iBitsPerSample(aBitsPerSample)
     , iSampleRate(aSampleRate)
     , iPitch(aPitch)
@@ -75,7 +75,7 @@ ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, 
 {
 }
 
-void ToneParams::Set(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration)
+void ToneParams::Set(TUint aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint aNumChannels, TUint aDuration)
 {
     iBitsPerSample = aBitsPerSample;
     iSampleRate = aSampleRate;
@@ -114,11 +114,11 @@ void ToneUriParser::Parse(const Brx& aUri)
     }
 
     // initialise to illegal values to detect missing ones easily below
-    TUint16 bitsPerSample = 0;
-    TUint   sampleRate = 0;
-    TUint   pitch = 0;
-    TUint16 numChannels = 0;
-    TUint  duration = 0;
+    TUint bitsPerSample = 0;
+    TUint sampleRate = 0;
+    TUint pitch = 0;
+    TUint numChannels = 0;
+    TUint duration = 0;
 
     Parser parser(uri.Query());
     parser.Forward(1);  // initial "?" already checked
@@ -134,7 +134,7 @@ void ToneUriParser::Parse(const Brx& aUri)
             if (bitsPerSample != 0) {
                 THROW(ToneUriParseError);  // duplicate parameter
             }
-            bitsPerSample = static_cast<TUint16>(Ascii::Uint(val));
+            bitsPerSample = Ascii::Uint(val);
             if ((bitsPerSample != 8) && (bitsPerSample != 16) && (bitsPerSample != 24)) {
                 THROW(ToneUriParseError);
             }
@@ -167,7 +167,7 @@ void ToneUriParser::Parse(const Brx& aUri)
                 THROW(ToneUriParseError);  // duplicate parameter
             }
             // 1 ... 8 (in practice no more than 7.1 surround sound)
-            numChannels = static_cast<TUint16>(Ascii::Uint(val));
+            numChannels = Ascii::Uint(val);
             if (! ((0 < numChannels) && (numChannels <= 8))) {
                 THROW(ToneUriParseError);
             }
@@ -494,12 +494,12 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // format: "WAVE" = 0x57415645 (BE)
     // subchunkOneId: "fmt " = 0x664d7420 (BE)
     const TUint subchunkOneSize = 16;  // for PCM data, no extra parameters in "fmt " subchunnk
-    const TUint16 audioFormat = 1;  // PCM (linear quantisation, no compression)
-    // TUint16 numChannels: see above (parsing)
+    const TUint audioFormat = 1;  // PCM (linear quantisation, no compression)
+    // TUint numChannels: see above (parsing)
     // TUint sampleRate: see above (parsing)
     const TUint byteRate = params.SampleRate() * params.NumChannels() * (params.BitsPerSample() / 8);
-    const TUint16 blockAlign = params.NumChannels() * (params.BitsPerSample() / 8);
-    // TUint16 bitsPerSample: see above (parsing)
+    const TUint blockAlign = params.NumChannels() * (params.BitsPerSample() / 8);
+    // TUint bitsPerSample: see above (parsing)
     // subchunkTwoId: "data" = 0x64617461 (BE)
     const TUint subchunkTwoSize = nSamples * params.NumChannels() * (params.BitsPerSample() / 8);
 
@@ -565,19 +565,19 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         switch (params.BitsPerSample()) {
             case 8:
                 audioSample >>= 16;
-                for (int ch = 0; ch < params.NumChannels(); ++ch) {
+                for (TUint ch = 0; ch < params.NumChannels(); ++ch) {
                     iAudioBuf.Append(static_cast<TByte>(audioSample));
                 }
                 break;
             case 16:
                 audioSample >>= 8;  // correct sign extension guaranteed
-                for (int ch = 0; ch < params.NumChannels(); ++ch) {
+                for (TUint ch = 0; ch < params.NumChannels(); ++ch) {
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0x00ff)));  // LE
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0xff00) >> 8));
                 }
                 break;
             case 24:
-                for (int ch = 0; ch < params.NumChannels(); ++ch) {
+                for (TUint ch = 0; ch < params.NumChannels(); ++ch) {
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0x0000ff)));  // LE
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0x00ff00) >> 8));
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0xff0000) >> 16));

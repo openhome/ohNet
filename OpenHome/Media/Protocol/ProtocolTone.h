@@ -16,20 +16,19 @@ class ToneParams
 {
 public:
     ToneParams();
-    ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
-    void Set(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
-    TUint16 BitsPerSample() const { return iBitsPerSample; }
-    TUint   SampleRate() const { return iSampleRate; }
-    TUint   Pitch() const { return iPitch; }
-    TUint16 NumChannels() const { return iNumChannels; }
-    TUint   DurationSeconds() const { return iDuration; }
+    ToneParams(TUint aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint aNumChannels, TUint aDuration);
+    void Set(TUint aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint aNumChannels, TUint aDuration);
+    TUint BitsPerSample() const { return iBitsPerSample; }
+    TUint SampleRate() const { return iSampleRate; }
+    TUint Pitch() const { return iPitch; }
+    TUint NumChannels() const { return iNumChannels; }
+    TUint DurationSeconds() const { return iDuration; }
 private:
-    // tighter packing possible, but universal order convention more valuable
-    TUint16 iBitsPerSample;
-    TUint   iSampleRate;
-    TUint   iPitch;
-    TUint16 iNumChannels;
-    TUint   iDuration;
+    TUint iBitsPerSample;
+    TUint iSampleRate;
+    TUint iPitch;
+    TUint iNumChannels;
+    TUint iDuration;
 };
 
 inline bool operator==(const ToneParams& one, const ToneParams& other)
