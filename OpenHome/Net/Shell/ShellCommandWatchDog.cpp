@@ -37,6 +37,7 @@ public:
     {
         AutoMutex a(iMutex);
         iRemainingSeconds = aNewSeconds;
+        iTimeoutSeconds = aNewSeconds;
     }
 private:
     void Run()

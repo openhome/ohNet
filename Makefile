@@ -270,7 +270,11 @@ ifeq ($(platform), IntelMac)
 	jar = /usr/bin/jar
 else
 	includes_jni = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
-	libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+        ifeq ($(platform), Linux-ppc32)
+            libjvm_dir ?= $(JAVA_HOME)/jre/lib/ppc/server
+        else
+            libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+        endif
 	link_jvm = $(libjvm_dir)/libjvm.so
 	javac = $(JAVA_HOME)/bin/javac
 	jar = $(JAVA_HOME)/bin/jar
