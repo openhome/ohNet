@@ -378,10 +378,10 @@ def build(bld):
             use=['CodecAlacBase', 'OHNET', 'OPENSSL'],
             target='CodecRaop')
 
-    # AAC
+    # AACBase
     bld.stlib(
             source=[
-                'OpenHome/Media/Codec/Aac.cpp',
+                'OpenHome/Media/Codec/AacBase.cpp',
                 'ETSI_aacPlusdec/etsiop_aacdec/src/aacdecoder.c',
                 'ETSI_aacPlusdec/etsiop_aacdec/src/shortblock.c',
                 'ETSI_aacPlusdec/etsiop_aacdec/src/longblock.c',
@@ -432,7 +432,23 @@ def build(bld):
                 'ETSI_aacPlusdec/src/spline_resampler.c',
             ],
             use=['AAC', 'OHNET', 'ohMediaPlayer'],
+            target='CodecAacBase')
+
+    # AAC
+    bld.stlib(
+            source=[
+                 'OpenHome/Media/Codec/Aac.cpp',
+            ],
+            use=['CodecAacBase', 'OHNET'],
             target='CodecAac')
+
+    # ADTS
+    bld.stlib(
+            source=[
+                 'OpenHome/Media/Codec/Adts.cpp',
+            ],
+            use=['CodecAacBase', 'OHNET'],
+            target='CodecAdts')
 
     # Vorbis
     bld.stlib(
@@ -552,7 +568,7 @@ def build(bld):
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecRaop', 'CodecVorbis', 'CodecWma'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecMp3', 'CodecAlac', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis', 'CodecWma'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(

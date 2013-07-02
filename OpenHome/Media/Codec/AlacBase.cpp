@@ -99,29 +99,25 @@ void CodecAlacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
 
     TUint i=0;
 
-    switch(iBitDepth) {
+    for (i=0 ; i<aToWrite*iContainer->Channels(); i++) {
+        switch (iBitDepth) {
         case 8:
-            for(i=0 ; i<aToWrite*iContainer->Channels(); i++) {
-                *dst++ = *src++;
-            }
+            *dst++ = *src++;
             break;
         case 16:
-            for(i=0 ; i<aToWrite*iContainer->Channels(); i++) {
-                *dst++ = src[1];
-                *dst++ = src[0];
-                src += 2;
-            }
+            *dst++ = src[1];
+            *dst++ = src[0];
+            src += 2;
             break;
         case 24:
-            for(i=0 ; i<aToWrite*iContainer->Channels(); i++) {
-                *dst++ = src[2];
-                *dst++ = src[1];
-                *dst++ = src[0];
-                src += 3;
-            }
+            *dst++ = src[2];
+            *dst++ = src[1];
+            *dst++ = src[0];
+            src += 3;
             break;
         default:
             ASSERTS();
+        }
     }
 }
 

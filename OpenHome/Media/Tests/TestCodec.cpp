@@ -944,18 +944,13 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     delete fileLocation;
 
     //LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
-    //Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
+    Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     TEST(iZeroCrossings >= expectedZeroCrossings-100);
-    if (iCodec == AudioFileDescriptor::eCodecMp3) {
-        // MP3 encoders/decoders add silence and some samples of random data to
-        // start and end of tracks for filter routines.
-        // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
-        TEST(iZeroCrossings <= expectedZeroCrossings+75);
-    }
-    else {
-        TEST(iZeroCrossings <= expectedZeroCrossings+15);
-    }
-    // Test that less than 1% of the zero crossings have an unnaceptable spacing.
+    // MP3 encoders/decoders add silence and some samples of random data to
+    // start and end of tracks for filter routines.
+    // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
+    TEST(iZeroCrossings <= expectedZeroCrossings+100);
+    // Test that less than 2% of the zero crossings have an unnaceptable spacing.
     TEST(iUnacceptableCrossingDeltas < expectedZeroCrossings/100);
 }
 
@@ -1089,15 +1084,16 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
 
-#ifdef DEFINE_LITTLE_ENDIAN    // FIXME - zero crossings fail on big endian machines - probably endianness issues
     // AAC encoders can add/drop samples from start of files.
     // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac.m4a"), 44100, 443392-1024, 16, 2, AudioFileDescriptor::eCodecAac));
 
+#ifdef DEFINE_LITTLE_ENDIAN
     // MP3 encoders/decoders can add extra samples at start of tracks, which are used for their routines.
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-128k.mp3"), 44100, 442368, 24, 1, AudioFileDescriptor::eCodecMp3));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-128k.mp3"), 44100, 442368, 24, 2, AudioFileDescriptor::eCodecMp3));
+#endif
 
     // Vorbis files
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
@@ -1106,7 +1102,6 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     // WMA encoder omits some samples, then adds extra for its own use. Decoder then strips samples to less than original PCM.
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
-#endif
 
     // Some files that shouldn't play with any codec.
     std::vector<AudioFileDescriptor> invalidFiles;

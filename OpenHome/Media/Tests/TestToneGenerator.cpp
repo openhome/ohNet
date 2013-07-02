@@ -580,7 +580,8 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    TEST((iCntSignalMin == 0) || (iCntSignalMax == 0));  // at most one run in progress
+    // at most one run in progress (detail of test implementation)
+    ASSERT((iCntSignalMin == 0) || (iCntSignalMax == 0));
     // duration test is universal
     SuiteGeneratorAny::ProcessMsg(aMsg);
     // but content tests are generator-specific
@@ -589,22 +590,22 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
     playable->Read(proc);
     Brn buf = proc.Buf();
     // iExpectedToneParams.* already sanity-checked in earlier msg 
-    const TUint kBlockAlign = iExpectedToneParams.numChannels * (iExpectedToneParams.bitsPerSample / 8);
-    const TUint kSignalMin = 1 << (iExpectedToneParams.bitsPerSample - 1);
+    const TUint kBlockAlign = iExpectedToneParams.NumChannels() * (iExpectedToneParams.BitsPerSample() / 8);
+    const TUint kSignalMin = 1 << (iExpectedToneParams.BitsPerSample() - 1);
     const TUint kSignalMax = kSignalMin - 1;  // deliberate integer underflow from smallest -ve to largest +ve
     // 50% duty cycle; sample rate always evenly divisible by two, but pitch less constrained
-    TUint kRunLen = (iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) / 2;
+    TUint kRunLen = (iExpectedToneParams.SampleRate() / iExpectedToneParams.Pitch()) / 2;
     // round up, e.g. 44.1kHz sample rate and 20Hz pitch
-    if ((iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) % 2 != 0) { ++kRunLen; }
+    if ((iExpectedToneParams.SampleRate() / iExpectedToneParams.Pitch()) % 2 != 0) { ++kRunLen; }
     TUint audioSample = 0;
     // non-exact comparison, since some (sample rate, pitch) combinations
     // produce trivial fluctuations with integer sample counts, e.g. 8000Hz, 17Hz
     TInt64 delta = 0;
     // WAV codec guarantees integer number of (potentially multi-channel) samples per msg
     for (const TByte* p = buf.Ptr(); p < (buf.Ptr() + buf.Bytes()); p += kBlockAlign) {
-        for (TUint ch = 0; ch < iExpectedToneParams.numChannels; ++ch) {
+        for (TUint ch = 0; ch < iExpectedToneParams.NumChannels(); ++ch) {
             // playable stores audio sample in big endian format
-            switch (iExpectedToneParams.bitsPerSample) {
+            switch (iExpectedToneParams.BitsPerSample()) {
                 case 8:
                     audioSample = *(p + 1 * ch);
                     break;
@@ -617,21 +618,21 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
                 default:
                     ASSERTS();
             }
-            TEST((kSignalMin == audioSample) || (kSignalMax == audioSample));
+            TEST_QUIETLY((kSignalMin == audioSample) || (kSignalMax == audioSample));
             if (kSignalMin == audioSample) {
                 ++iCntSignalMin;
                 if (iCntSignalMax != 0) {
                     // first min marks end of max run, but only test/reset counter after all channels processed
-                    delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMax / iExpectedToneParams.numChannels);
-                    TEST((-1L <= delta) && (delta <= 1L));
+                    delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMax / iExpectedToneParams.NumChannels());
+                    TEST_QUIETLY((-1L <= delta) && (delta <= 1L));
                     iCntSignalMax = 0;
                 }
             } else {
                 ++iCntSignalMax;
                 if (iCntSignalMin != 0) {
                     // first max marks end of min run, but only test/reset counter after all channels processed
-                    delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMin / iExpectedToneParams.numChannels);
-                    TEST((-1L <= delta) && (delta <= 1L));
+                    delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMin / iExpectedToneParams.NumChannels());
+                    TEST_QUIETLY((-1L <= delta) && (delta <= 1L));
                     iCntSignalMin = 0;
                 }
             }
@@ -662,10 +663,10 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
     TEST(info.Lossless());
     TEST(!info.Seekable());
     TEST(!info.Live());
-    TEST(info.BitDepth() == iExpectedToneParams.bitsPerSample);
-    TEST(info.SampleRate() == iExpectedToneParams.sampleRate);
+    TEST(info.BitDepth() == iExpectedToneParams.BitsPerSample());
+    TEST(info.SampleRate() == iExpectedToneParams.SampleRate());
     // interpretation of pitch is generator-specific
-    TEST(info.NumChannels() == iExpectedToneParams.numChannels);
+    TEST(info.NumChannels() == iExpectedToneParams.NumChannels());
     // duration checked by accumulating jiffies from PCM audio msgs
     return aMsg;
 }
@@ -717,10 +718,11 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgQuit* aMsg)
 {
     // test sample summary of final, potentially legitimately partial waveform;
     // note: all channels processed, since -- by definition -- no more sample follow
-    TEST((iCntSignalMin == 0) || (iCntSignalMax == 0));  // at most one run in progress
-    TUint kRunLen = (iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) / 2;
-    if (iExpectedToneParams.sampleRate % iExpectedToneParams.pitch != 0) { ++kRunLen; }
-    TEST(((iCntSignalMin + iCntSignalMax) / iExpectedToneParams.numChannels) <= kRunLen);
+    // at most one run in progress (detail of test implementation)
+    ASSERT((iCntSignalMin == 0) || (iCntSignalMax == 0));
+    TUint kRunLen = (iExpectedToneParams.SampleRate() / iExpectedToneParams.Pitch()) / 2;
+    if (iExpectedToneParams.SampleRate() % iExpectedToneParams.Pitch() != 0) { ++kRunLen; }
+    TEST(((iCntSignalMin + iCntSignalMax) / iExpectedToneParams.NumChannels()) <= kRunLen);
     // base class
     return SuiteGeneratorAny::ProcessMsg(aMsg);
 }
@@ -957,9 +959,9 @@ void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& a
     // first msg, indicating start of new track
     iExpectedMsgType = eMsgTrack;
     iExpectedToneParams = aToneParams;
-    iExpectedJiffies = aToneParams.duration * aToneParams.sampleRate * Jiffies::JiffiesPerSample(aToneParams.sampleRate);
+    iExpectedJiffies = aToneParams.DurationSeconds() * aToneParams.SampleRate() * Jiffies::JiffiesPerSample(aToneParams.SampleRate());
     Bws<128> toneUrl;
-    toneUrl.AppendPrintf("tone://%s.wav?bitdepth=%u&samplerate=%u&pitch=%u&channels=%u&duration=%u", aWaveform, aToneParams.bitsPerSample, aToneParams.sampleRate, aToneParams.pitch, aToneParams.numChannels, aToneParams.duration);
+    toneUrl.AppendPrintf("tone://%s.wav?bitdepth=%u&samplerate=%u&pitch=%u&channels=%u&duration=%u", aWaveform, aToneParams.BitsPerSample(), aToneParams.SampleRate(), aToneParams.Pitch(), aToneParams.NumChannels(), aToneParams.DurationSeconds());
     Track& trk = *iTrackFactory->CreateTrack(toneUrl, Brx::Empty(), NULL);
     iProtocolManager->DoStream(trk, Brx::Empty());
     trk.RemoveRef();

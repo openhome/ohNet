@@ -165,10 +165,11 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
 
     // Add codecs
     iMediaPlayer->Add(Codec::CodecFactory::NewAac());
-    // Don't include ALAC codec until it breaks it's dependency on RAOP/OpenSSL
-    //iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewMp3());
+    iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(Codec::CodecFactory::NewWma());
