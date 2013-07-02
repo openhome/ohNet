@@ -24,7 +24,7 @@ tests = '''
     TestIdProvider
     TestFiller
     TestUpnpErrors
-#   TestToneGenerator
+    TestToneGenerator
     TestMuteManager
     '''
 
