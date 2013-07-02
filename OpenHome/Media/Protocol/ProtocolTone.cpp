@@ -58,30 +58,30 @@ TUint ProtocolTone::TryStop(TUint /* aTrackId */, TUint /* aStreamId */)
 // TUint ProtocolTone::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) { }
 
 ToneParams::ToneParams()
-    : bitsPerSample(0)
-    , sampleRate(0)
-    , pitch(0)
-    , numChannels(0)
-    , duration(0)
+    : iBitsPerSample(0)
+    , iSampleRate(0)
+    , iPitch(0)
+    , iNumChannels(0)
+    , iDuration(0)
 {
 }
 
-ToneParams::ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration)
-    : bitsPerSample(aBitsPerSample)
-    , sampleRate(aSampleRate)
-    , pitch(aPitch)
-    , numChannels(aNumChannels)
-    , duration(aDuration)
+ToneParams::ToneParams(TUint aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint aNumChannels, TUint aDuration)
+    : iBitsPerSample(aBitsPerSample)
+    , iSampleRate(aSampleRate)
+    , iPitch(aPitch)
+    , iNumChannels(aNumChannels)
+    , iDuration(aDuration)
 {
 }
 
-void ToneParams::Set(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration)
+void ToneParams::Set(TUint aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint aNumChannels, TUint aDuration)
 {
-    bitsPerSample = aBitsPerSample;
-    sampleRate = aSampleRate;
-    pitch = aPitch;
-    numChannels = aNumChannels;
-    duration = aDuration;
+    iBitsPerSample = aBitsPerSample;
+    iSampleRate = aSampleRate;
+    iPitch = aPitch;
+    iNumChannels = aNumChannels;
+    iDuration = aDuration;
 }
 
 ToneUriParser::ToneUriParser()
@@ -114,7 +114,11 @@ void ToneUriParser::Parse(const Brx& aUri)
     }
 
     // initialise to illegal values to detect missing ones easily below
-    iParams = ToneParams();
+    TUint bitsPerSample = 0;
+    TUint sampleRate = 0;
+    TUint pitch = 0;
+    TUint numChannels = 0;
+    TUint duration = 0;
 
     Parser parser(uri.Query());
     parser.Forward(1);  // initial "?" already checked
@@ -127,19 +131,19 @@ void ToneUriParser::Parse(const Brx& aUri)
         const Brn& val = kvParser.NextToEnd();
 
         if (key == Brn("bitdepth")) {
-            if (iParams.bitsPerSample != 0) {
+            if (bitsPerSample != 0) {
                 THROW(ToneUriParseError);  // duplicate parameter
             }
-            iParams.bitsPerSample = static_cast<TUint16>(Ascii::Uint(val));
-            if ((iParams.bitsPerSample != 8) && (iParams.bitsPerSample != 16) && (iParams.bitsPerSample != 24)) {
+            bitsPerSample = Ascii::Uint(val);
+            if ((bitsPerSample != 8) && (bitsPerSample != 16) && (bitsPerSample != 24)) {
                 THROW(ToneUriParseError);
             }
         } else if (key == Brn("samplerate")) {
-            if (iParams.sampleRate != 0) {
+            if (sampleRate != 0) {
                 THROW(ToneUriParseError);  // duplicate parameter
             }
-            iParams.sampleRate = Ascii::Uint(val);
-            switch (iParams.sampleRate) {
+            sampleRate = Ascii::Uint(val);
+            switch (sampleRate) {
                 // from OpenHome/Media/Msg.cpp
                 case 7350: case 14700: case 29400:
                 case 8000: case 16000: case 32000:
@@ -150,30 +154,30 @@ void ToneUriParser::Parse(const Brx& aUri)
                     THROW(ToneUriParseError);
             }
         } else if (key == Brn("pitch")) {  // [Hz]
-            if (iParams.pitch != 0) {
+            if (pitch != 0) {
                 THROW(ToneUriParseError);  // duplicate parameter
             }
-            iParams.pitch = Ascii::Uint(val);
+            pitch = Ascii::Uint(val);
             // XXX no upper limit, since not necessarily intended for human hearing
-            if (0 == iParams.pitch) {
+            if (0 == pitch) {
                 THROW(ToneUriParseError);
             }
         } else if (key == Brn("channels")) {
-            if (iParams.numChannels != 0) {
+            if (numChannels != 0) {
                 THROW(ToneUriParseError);  // duplicate parameter
             }
             // 1 ... 8 (in practice no more than 7.1 surround sound)
-            iParams.numChannels = static_cast<TUint16>(Ascii::Uint(val));
-            if (! ((0 < iParams.numChannels) && (iParams.numChannels <= 8))) {
+            numChannels = Ascii::Uint(val);
+            if (! ((0 < numChannels) && (numChannels <= 8))) {
                 THROW(ToneUriParseError);
             }
         } else if (key == Brn("duration")) {  // [s]
-            if (iParams.duration != 0) {
+            if (duration != 0) {
                 THROW(ToneUriParseError);  // duplicate parameter
             }
             // 1 ... 900 (i.e. 15min): arbitrary limit guaranteed to avoid integer overflow in calculations
-            iParams.duration = Ascii::Uint(val);
-            if (! ((0 < iParams.duration) && (iParams.duration <= 900))) {
+            duration = Ascii::Uint(val);
+            if (! ((0 < duration) && (duration <= 900))) {
                 THROW(ToneUriParseError);
             }
         } else {
@@ -182,17 +186,19 @@ void ToneUriParser::Parse(const Brx& aUri)
     }
 
     // check for missing parameters (separately, to have unique exception line numbers)
-    if (iParams.bitsPerSample == 0) {
+    if (bitsPerSample == 0) {
         THROW(ToneUriParseError);
-    } else if (iParams.sampleRate == 0) {
+    } else if (sampleRate == 0) {
         THROW(ToneUriParseError);
-    } else if (iParams.pitch == 0) {
+    } else if (pitch == 0) {
         THROW(ToneUriParseError);
-    } else if (iParams.numChannels == 0) {
+    } else if (numChannels == 0) {
         THROW(ToneUriParseError);
-    } else if (iParams.duration == 0) {
+    } else if (duration == 0) {
         THROW(ToneUriParseError);
     }
+    
+    iParams = ToneParams(bitsPerSample, sampleRate, pitch, numChannels, duration);
 }
 
 const ToneParams& ToneUriParser::Params() const
@@ -468,11 +474,11 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const ToneParams& params = uriParser.Params();
 
 #ifdef DEFINE_DEBUG_JOHNH
-    Log::Print("@@  bitdepth =   %6u\n", params.bitsPerSample);
-    Log::Print("@@  samplerate = %6u\n", params.sampleRate);
-    Log::Print("@@  pitch =      %6u\n", params.pitch);
-    Log::Print("@@  channels =   %6u\n", params.numChannels);
-    Log::Print("@@  duration =   %6u\n", params.duration);
+    Log::Print("@@  bitdepth =   %6u\n", params.BitsPerSample());
+    Log::Print("@@  samplerate = %6u\n", params.SampleRate());
+    Log::Print("@@  pitch =      %6u\n", params.Pitch());
+    Log::Print("@@  channels =   %6u\n", params.NumChannels());
+    Log::Print("@@  duration =   %6u\n", params.DurationSeconds());
     Log::Print("\n");
 #endif  // DEFINE_DEBUG_JOHNH
 
@@ -480,7 +486,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
     //
 
-    const TUint nSamples = params.sampleRate * params.duration;
+    const TUint nSamples = params.SampleRate() * params.DurationSeconds();
     // precondition enforced above: bitsPerSample % 8 == 0
 
     // chunkId: "RIFF" = 0x52494646 (BE)
@@ -488,14 +494,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // format: "WAVE" = 0x57415645 (BE)
     // subchunkOneId: "fmt " = 0x664d7420 (BE)
     const TUint subchunkOneSize = 16;  // for PCM data, no extra parameters in "fmt " subchunnk
-    const TUint16 audioFormat = 1;  // PCM (linear quantisation, no compression)
-    // TUint16 numChannels: see above (parsing)
+    const TUint audioFormat = 1;  // PCM (linear quantisation, no compression)
+    // TUint numChannels: see above (parsing)
     // TUint sampleRate: see above (parsing)
-    const TUint byteRate = params.sampleRate * params.numChannels * (params.bitsPerSample / 8);
-    const TUint16 blockAlign = params.numChannels * (params.bitsPerSample / 8);
-    // TUint16 bitsPerSample: see above (parsing)
+    const TUint byteRate = params.SampleRate() * params.NumChannels() * (params.BitsPerSample() / 8);
+    const TUint blockAlign = params.NumChannels() * (params.BitsPerSample() / 8);
+    // TUint bitsPerSample: see above (parsing)
     // subchunkTwoId: "data" = 0x64617461 (BE)
-    const TUint subchunkTwoSize = nSamples * params.numChannels * (params.bitsPerSample / 8);
+    const TUint subchunkTwoSize = nSamples * params.NumChannels() * (params.BitsPerSample() / 8);
 
     // no integer overflow in worst case: 4 + 8 + 16 + 8 + (192000 * 900 * 8 * 3) < 2^32-1
     const TUint chunkSize = 4 + (8 + subchunkOneSize) + (8 + subchunkTwoSize);
@@ -509,11 +515,11 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     iAudioBuf.Append("fmt ");  // trailing space significant
     LE4(subchunkOneSize)
     LE2(audioFormat)
-    LE2(params.numChannels)
-    LE4(params.sampleRate)
+    LE2(params.NumChannels())
+    LE4(params.SampleRate())
     LE4(byteRate)
     LE2(blockAlign)
-    LE2(params.bitsPerSample)
+    LE2(params.BitsPerSample())
     iAudioBuf.Append("data");
     LE4(subchunkTwoSize)
 
@@ -534,9 +540,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     const TUint kMaxVirtualSamplesPerPeriod = 64000;  // Nyquist limit: assuming pitch <= 32kHz (beyond audible range)
 
     // 64000 < 2^16 and (worst case) 32000 < 2^15, so multiplication cannot overflow unsigned 32-bit value
-    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.pitch) / params.sampleRate;
+    const TUint virtualSamplesStep = (kMaxVirtualSamplesPerPeriod * params.Pitch()) / params.SampleRate();
     // need integer arithmetic, but cannot ignore potentially 5% error (e.g. 44100Hz sample rate with 13Hz pitch)
-    const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.pitch) % params.sampleRate;
+    const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.Pitch()) % params.SampleRate();
 
     TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
     iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
@@ -556,22 +562,22 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
         // contract: generator to produce at most 24-bit values
         TInt32 audioSample = generator->Generate(x, kMaxVirtualSamplesPerPeriod);
-        switch (params.bitsPerSample) {
+        switch (params.BitsPerSample()) {
             case 8:
                 audioSample >>= 16;
-                for (int ch = 0; ch < params.numChannels; ++ch) {
+                for (TUint ch = 0; ch < params.NumChannels(); ++ch) {
                     iAudioBuf.Append(static_cast<TByte>(audioSample));
                 }
                 break;
             case 16:
                 audioSample >>= 8;  // correct sign extension guaranteed
-                for (int ch = 0; ch < params.numChannels; ++ch) {
+                for (TUint ch = 0; ch < params.NumChannels(); ++ch) {
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0x00ff)));  // LE
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0xff00) >> 8));
                 }
                 break;
             case 24:
-                for (int ch = 0; ch < params.numChannels; ++ch) {
+                for (TUint ch = 0; ch < params.NumChannels(); ++ch) {
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0x0000ff)));  // LE
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0x00ff00) >> 8));
                     iAudioBuf.Append(static_cast<TByte>((audioSample & 0xff0000) >> 16));
@@ -583,9 +589,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         x += virtualSamplesStep;
         accRemain += virtualSamplesRemainder;
         // same signedness for comparison: sample rate always representable w/o loss in signed 32-bit int
-        if (accRemain >= static_cast<TInt>(params.sampleRate)) {
+        if (accRemain >= static_cast<TInt>(params.SampleRate())) {
             ++x;
-            accRemain -= params.sampleRate;
+            accRemain -= params.SampleRate();
         }
         x = x % kMaxVirtualSamplesPerPeriod;
     }
