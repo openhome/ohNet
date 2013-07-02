@@ -73,13 +73,14 @@ public:
     TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aFriendlyName, TUint aSenderChannel, const TChar* aTuneInUserName);
     ~TestMediaPlayer();
     void Run();
-    void Disable();
+    TBool TryDisable(Net::DvDevice& aDevice);
 private:
     void Disabled();
 private:
     Semaphore iDisabled;
     MediaPlayer* iMediaPlayer;
     Net::DvDevice* iDevice;
+    Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Media::DriverSongcastSender* iDriver;
 };
@@ -135,6 +136,21 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDevice->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
+    // create separate UPnP device for standard MediaRenderer
+    Bwh udn("UpnpErrorTests");
+    Bws<256> buf(aUdn);
+    buf.Append("-MediaRenderer");
+    iDeviceUpnpAv = new DvDeviceStandard(aDvStack, buf);
+    iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
+    iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
+    iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
+    buf.Replace(aFriendlyName);
+    buf.Append("-MediaRenderer");
+    iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", buf.PtrZ());
+    iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
+    iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
+
+
     // create read/write store.  This creates a number of static (constant) entries automatically
     iRamStore = new RamStore();
     // add a single user (runtime changeable) setting
@@ -158,7 +174,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iMediaPlayer->Add(Codec::CodecFactory::NewWma());
 
     // Add protocol modules (Radio source can require several stacked Http instances)
-
     iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
@@ -175,15 +190,25 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
+    //iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols));
 
     iDevice->SetEnabled();
+    iDeviceUpnpAv->SetEnabled();
     //iProduct->SetCurrentSource(0);
 }
 
 TestMediaPlayer::~TestMediaPlayer()
 {
-    if (iDevice->Enabled()) {
-        Disable();
+    TUint waitCount = 0;
+    if (TryDisable(*iDevice)) {
+        waitCount++;
+    }
+    if (TryDisable(*iDeviceUpnpAv)) {
+        waitCount++;
+    }
+    while (waitCount > 0) {
+        iDisabled.Wait();
+        waitCount--;
     }
     delete iMediaPlayer;
     delete iDriver;
@@ -203,10 +228,13 @@ void TestMediaPlayer::Run()
         ;
 }
 
-void TestMediaPlayer::Disable()
+TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
 {
-    iDevice->SetDisabled(MakeFunctor(*this, &TestMediaPlayer::Disabled));
-    iDisabled.Wait();
+    if (aDevice.Enabled()) {
+        aDevice.SetDisabled(MakeFunctor(*this, &TestMediaPlayer::Disabled));
+        return true;
+    }
+    return false;
 }
 
 void TestMediaPlayer::Disabled()
@@ -259,7 +287,6 @@ int CDECL main(int aArgc, char* aArgv[])
 
     TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value(), optionTuneIn.CString());
     tmp->Run();
-    tmp->Disable();
     delete tmp;
     
     delete lib;

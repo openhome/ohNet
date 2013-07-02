@@ -7,51 +7,71 @@
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+//#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/SourceFactory.h>
+#include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/UriProviderSingleTrack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
-using namespace OpenHome::Net;
+//using namespace OpenHome::Net;
+
+ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const TChar* aSupportedProtocols)
+{ // static
+    UriProviderSingleTrack* uriProvider = new UriProviderSingleTrack("UpnpAv", aMediaPlayer.TrackFactory());
+    aMediaPlayer.Add(uriProvider);
+    return new SourceUpnpAv(aMediaPlayer.Env(), aDevice, aMediaPlayer.Pipeline(), *uriProvider, aSupportedProtocols);
+}
 
 // UpnpAv
 
-UpnpAv::UpnpAv(DvStack& aDvStack, ISourceUpnpAv& aSourceUpnpAv, const Brx& aUdn, const TChar* aFriendlyName, const TChar* aManufacturer, const TChar* aModelName, const TChar* aSupportedProtocols)
-    : iSem("UPAV", 0)
+SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const TChar* aSupportedProtocols)
+    : Source("UpnpAv", "UpnpAv")
+    , iLock("UPAV")
+    , iDevice(aDevice)
+    , iPipeline(aPipeline)
+    , iUriProvider(aUriProvider)
+    , iTrack(NULL)
+    , iPipelineTrackId(UINT_MAX)
+    , iStreamId(UINT_MAX)
+    , iTransportState(Media::EPipelineStopped)
 {
-    iDevice = new DvDeviceStandard(aDvStack, aUdn);
+/*    iDevice = new DvDeviceStandard(aDvStack, aUdn);
     iDevice->SetAttribute("Upnp.Domain", "upnp.org");
     iDevice->SetAttribute("Upnp.Type", "MediaRenderer");
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", aFriendlyName);
     iDevice->SetAttribute("Upnp.Manufacturer", aManufacturer);
-    iDevice->SetAttribute("Upnp.ModelName", aModelName);
-    iProviderAvTransport = new ProviderAvTransport(*iDevice, aDvStack.Env(), aSourceUpnpAv);
-    iProviderConnectionManager = new ProviderConnectionManager(*iDevice, aSupportedProtocols);
-    iProviderRenderingControl = new ProviderRenderingControl(*iDevice);
+    iDevice->SetAttribute("Upnp.ModelName", aModelName);*/
+    iProviderAvTransport = new ProviderAvTransport(iDevice, aEnv, *this);
+    iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
+    iProviderRenderingControl = new ProviderRenderingControl(iDevice);
     iDownstreamObserver = iProviderAvTransport;
-    iDevice->SetEnabled();
+//    iDevice->SetEnabled();
 }
 
-UpnpAv::~UpnpAv()
+SourceUpnpAv::~SourceUpnpAv()
 {
-    SetDisabled(MakeFunctor(*this, &UpnpAv::DeviceDisabled));
-    iSem.Wait();
+    ASSERT(!iDevice.Enabled());
+//    SetDisabled(MakeFunctor(*this, &SourceUpnpAv::DeviceDisabled));
+//    iSem.Wait();
     delete iProviderAvTransport;
     delete iProviderConnectionManager;
     delete iProviderRenderingControl;
-    delete iDevice;
+//    delete iDevice;
 }
-
-void UpnpAv::SetEnabled()
+/*
+void SourceUpnpAv::SetEnabled()
 {
     if (!iDevice->Enabled()) {
         iDevice->SetEnabled();
     }
 }
 
-void UpnpAv::SetDisabled(Functor aCompleted)
+void SourceUpnpAv::SetDisabled(Functor aCompleted)
 {
     if (iDevice->Enabled()) {
         iDevice->SetDisabled(aCompleted);
@@ -61,32 +81,142 @@ void UpnpAv::SetDisabled(Functor aCompleted)
     }
 }
 
-void UpnpAv::DeviceDisabled()
+void SourceUpnpAv::DeviceDisabled()
 {
     iSem.Signal();
 }
+*/
 
-void UpnpAv::NotifyPipelineState(EPipelineState aState)
+void SourceUpnpAv::Activate()
 {
-    iDownstreamObserver->NotifyPipelineState(aState);
+//    iTrackPosSeconds = 0;
+    iActive = true;
 }
 
-void UpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void SourceUpnpAv::Deactivate()
 {
-    iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
+    iLock.Wait();
+    iTransportState = Media::EPipelineStopped;
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+        iTrack = NULL;
+    }
+    iLock.Signal();
+    Source::Deactivate();
 }
 
-void UpnpAv::NotifyMetaText(const Brx& aText)
+void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
-    iDownstreamObserver->NotifyMetaText(aText);
+    if (!IsActive()) {
+        DoActivate();
+    }
+    if (iTrack == NULL || iTrack->Uri() != aUri) {
+        iPipeline.RemoveAll();
+        if (iTrack != NULL) {
+            iTrack->RemoveRef();
+        }
+        iTrack = iUriProvider.SetTrack(aUri, aMetaData);
+        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+        if (iTransportState == Media::EPipelinePlaying) {
+            iPipeline.Play();
+        }
+    }
 }
 
-void UpnpAv::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+void SourceUpnpAv::Play()
 {
-    iDownstreamObserver->NotifyTime(aSeconds, aTrackDurationSeconds);
+    if (!IsActive()) {
+        DoActivate();
+    }
+    iLock.Wait();
+    iTransportState = Media::EPipelinePlaying;
+    iLock.Signal();
+    iPipeline.Play();
 }
 
-void UpnpAv::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+void SourceUpnpAv::Pause()
 {
-    iDownstreamObserver->NotifyStreamInfo(aStreamInfo);
+    if (IsActive()) {
+        iLock.Wait();
+        iTransportState = Media::EPipelinePaused;
+        iLock.Signal();
+        iPipeline.Pause();
+    }
+}
+
+void SourceUpnpAv::Stop()
+{
+    if (IsActive()) {
+        iLock.Wait();
+        iTransportState = Media::EPipelineStopped;
+        iLock.Signal();
+        iPipeline.Stop();
+    }
+}
+
+void SourceUpnpAv::Next()
+{
+    if (IsActive()) {
+        iPipeline.Stop(); // we only store a single track so have nothing to move forward to
+    }
+}
+
+void SourceUpnpAv::Prev()
+{
+    if (IsActive()) {
+        iPipeline.Stop(); // we only store a single track so have nothing to move back to
+    }
+}
+
+void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
+{
+    if (IsActive()) {
+        (void)iPipeline.Seek(iPipelineTrackId, iStreamId, aSecondsAbsolute);
+    }
+}
+
+void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
+{
+    if (IsActive()) {
+        iDownstreamObserver->NotifyPipelineState(aState);
+    }
+}
+
+void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+{
+    iLock.Wait();
+    iPipelineTrackId = aIdPipeline;
+    iStreamId = UINT_MAX;
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
+    iTrack = &aTrack;
+    iLock.Signal();
+    if (IsActive()) {
+        iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
+    }
+}
+
+void SourceUpnpAv::NotifyMetaText(const Brx& aText)
+{
+    if (IsActive()) {
+        iDownstreamObserver->NotifyMetaText(aText);
+    }
+}
+
+void SourceUpnpAv::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
+{
+    if (IsActive()) {
+        iDownstreamObserver->NotifyTime(aSeconds, aTrackDurationSeconds);
+    }
+}
+
+void SourceUpnpAv::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
+{
+    iLock.Wait();
+    iStreamId = aStreamInfo.StreamId();
+    iLock.Signal();
+    if (IsActive()) {
+        iDownstreamObserver->NotifyStreamInfo(aStreamInfo);
+    }
 }

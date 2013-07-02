@@ -6,26 +6,13 @@
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvUpnpOrgAVTransport1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
-#include <OpenHome/Media/Pipeline.h> // for IPipelineObserver - FIXME this to a more appropriate header
+#include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Av/UpnpAv/UpnpAv.h>
 
 namespace OpenHome {
 using namespace Net;
 using namespace Media;
 namespace Av {
-
-// FIXME - move this elsewhere
-class ISourceUpnpAv
-{
-public:
-    virtual ~ISourceUpnpAv() {}
-    virtual void SetTrack(const Brx& aUri, const Brx& aMetaData) = 0;
-    virtual void Play() = 0;
-    virtual void Pause() = 0;
-    virtual void Stop() = 0;
-    virtual void Next() = 0;
-    virtual void Prev() = 0;
-    virtual void Seek(TUint aSecondsAbsolute) = 0;
-};
 
 class ProviderAvTransport : public DvProviderUpnpOrgAVTransport1, public IPipelineObserver
 {

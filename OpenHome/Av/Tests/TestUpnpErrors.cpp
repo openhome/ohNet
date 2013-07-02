@@ -65,8 +65,6 @@ class DummySourceUpnpAv : public ISourceUpnpAv
 public:
     DummySourceUpnpAv(Net::DvStack& aDvStack, const Brx& aUdn);
     ~DummySourceUpnpAv();
-private:
-    void Disabled();
 private: // from ISourceUpnpAv
     void SetTrack(const Brx& aUri, const Brx& aMetaData);
     void Play();

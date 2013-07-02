@@ -639,10 +639,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestMuteManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestMuteManager')
-    bld.program(
-            source='OpenHome/Av/Tests/TestUpnpAv.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestUpnpAv')
+    #bld.program(
+    #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+    #        target='TestUpnpAv')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

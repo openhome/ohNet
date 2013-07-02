@@ -8,24 +8,52 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Av/Source.h>
 
 namespace OpenHome {
+namespace Media {
+    class PipelineManager;
+    class UriProviderSingleTrack;
+}
 namespace Av {
 
-class ISourceUpnpAv;
+class ISourceUpnpAv
+{
+public:
+    virtual ~ISourceUpnpAv() {}
+    virtual void SetTrack(const Brx& aUri, const Brx& aMetaData) = 0;
+    virtual void Play() = 0;
+    virtual void Pause() = 0;
+    virtual void Stop() = 0;
+    virtual void Next() = 0;
+    virtual void Prev() = 0;
+    virtual void Seek(TUint aSecondsAbsolute) = 0;
+};
+
 class ProviderAvTransport;
 class ProviderConnectionManager;
 class ProviderRenderingControl;
     
-class UpnpAv : public Media::IPipelineObserver
+class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipelineObserver
 {
 public:
-    UpnpAv(Net::DvStack& aDvStack, ISourceUpnpAv& aSourceUpnpAv, const Brx& aUdn, const TChar* aFriendlyName, const TChar* aManufacturer, const TChar* aModelName, const TChar* aSupportedProtocols);
-    ~UpnpAv();
+    SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const TChar* aSupportedProtocols);
+    ~SourceUpnpAv();
     void SetEnabled();
     void SetDisabled(Functor aCompleted);
+private: // from Source
+    void Activate();
+    void Deactivate();
 private:
     void DeviceDisabled();
+private: // from ISourceUpnpAv
+    void SetTrack(const Brx& aUri, const Brx& aMetaData);
+    void Play();
+    void Pause();
+    void Stop();
+    void Next();
+    void Prev();
+    void Seek(TUint aSecondsAbsolute);
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -33,12 +61,20 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
-    Semaphore iSem;
-    Net::DvDevice* iDevice;
+//    Semaphore iSem;
+//    Net::DvDevice* iDevice;
+    Mutex iLock;
+    Net::DvDevice& iDevice;
+    Media::PipelineManager& iPipeline;
+    Media::UriProviderSingleTrack& iUriProvider;
+    Media::Track* iTrack;
     ProviderAvTransport* iProviderAvTransport;
     ProviderConnectionManager* iProviderConnectionManager;
     ProviderRenderingControl* iProviderRenderingControl;
     Media::IPipelineObserver* iDownstreamObserver;
+    TUint iPipelineTrackId;
+    TUint iStreamId;
+    Media::EPipelineState iTransportState;
 };
 
 } // namespace Av
