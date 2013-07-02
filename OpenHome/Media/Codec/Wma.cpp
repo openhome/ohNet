@@ -385,7 +385,7 @@ void CodecWma::Process()
                 CopyToBigEndian(samplesPerMsg, bytesPerWMAPCMSample);
 
                 // Check that the amount we're outputting is not including extra samples to be processed next time around.
-                iTrackOffset += iController->OutputAudioPcm(iDecodedBuf, iChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
+                iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate, iBitDepth, EMediaDataBigEndian, iTrackOffset);
                 iTotalSamplesOutput += samplesPerMsg;
                 iOutBuf.SetBytes(0);
 
@@ -473,19 +473,33 @@ void CodecWma::CopyToBigEndian(TUint aSamples, TUint aBytesPerSample)
     TByte* srcByte = const_cast<TByte*>(iDecodedBuf.Ptr());
     TUint samples = aSamples*iChannels;
 
-    while(samples--) {
+    while (samples--) {
         switch (iBitDepth) {
         case 8:
             *dstByte++ = *srcByte++;
             break;
         case 16:
+#ifdef DEFINE_BIG_ENDIAN
             *dstByte++ = srcByte[0];
             *dstByte++ = srcByte[1];
+#else
+            *dstByte++ = srcByte[1];
+            *dstByte++ = srcByte[0];
+#endif
+            srcByte += 2;
             break;
         case 24:
+#ifdef DEFINE_BIG_ENDIAN
             *dstByte++ = srcByte[0];
             *dstByte++ = srcByte[1];
             *dstByte++ = srcByte[2];
+#else
+            *dstByte++ = srcByte[2];
+            *dstByte++ = srcByte[1];
+            *dstByte++ = srcByte[0];
+#endif
+            srcByte += 3;
+            break;
         default:
             ASSERTS();
         }
