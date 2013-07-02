@@ -548,6 +548,7 @@ DviSessionUpnp::DviSessionUpnp(DvStack& aDvStack, TIpAddress aInterface, TUint a
 
     iReaderRequest->AddHeader(iHeaderHost);
     iReaderRequest->AddHeader(iHeaderContentLength);
+    iReaderRequest->AddHeader(iHeaderTransferEncoding);
     iReaderRequest->AddHeader(iHeaderConnection);
     iReaderRequest->AddHeader(iHeaderExpect);
     iReaderRequest->AddHeader(iHeaderSoapAction);
@@ -623,10 +624,14 @@ void DviSessionUpnp::Run()
         }
     }
     catch (HttpError&) {
-        iErrorStatus = &HttpStatus::kBadRequest;
+        if (iErrorStatus == &HttpStatus::kOk) {
+            iErrorStatus = &HttpStatus::kBadRequest;
+        }
     }
     catch (ReaderError&) {
-        iErrorStatus = &HttpStatus::kBadRequest;
+        if (iErrorStatus == &HttpStatus::kOk) {
+            iErrorStatus = &HttpStatus::kBadRequest;
+        }
     }
     catch (WriterError&) {
     }
@@ -695,9 +700,6 @@ void DviSessionUpnp::Post()
             Error(HttpStatus::kBadRequest);
         }
     }
-    if (iHeaderContentLength.ContentLength() == 0) {
-        Error(HttpStatus::kBadRequest);
-    }
 
     ParseRequestUri(DviProtocolUpnp::kControlUrlTail, &iInvocationDevice, &iInvocationService);
     if (iInvocationDevice != NULL && iInvocationService != NULL) {
@@ -706,7 +708,75 @@ void DviSessionUpnp::Post()
                 iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
                 iWriterResponse->WriteFlush();
             }
-            iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
+            if (iHeaderContentLength.ContentLength() != 0) {
+                iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
+            }
+            else if (!iHeaderTransferEncoding.IsChunked()) {
+                if (iReaderRequest->Version() == Http::eHttp11) {
+                    iErrorStatus = &HttpStatus::kLengthRequired;
+                    THROW(HttpError);
+                }
+                // HTTP 1.0 client - we need to read until the connection closes
+                try {
+                    iSoapRequest.Set(iReadBuffer->Read(kMaxRequestBytes));
+                    try {
+                        /* we only support requests of up to kMaxRequestBytes bytes
+                           try reading 1 byte more; ignore any error, throw if it succeeds */
+                        iReadBuffer->Read(1);
+                        iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
+                        THROW(HttpError);
+                    }
+                    catch (ReaderError&) {}
+                }
+                catch (ReaderError&) {
+                    iSoapRequest.Set(iReadBuffer->Snaffle());
+                }
+            }
+            else {
+                /* Dechunk into iReadBuffer's buffer
+                   This is a bit nasty.  It relies on Srs filling its buffer before resetting its iOffset member
+                   ...and relies on us reading a maximum kMaxRequestBytes chunked bytes */
+                TUint len = 0;
+                TByte *ptr = NULL, *dechunked = NULL;
+                for (;;) {
+                    Brn chunkSizeBuf = iReadBuffer->ReadUntil(Ascii::kLf);
+                    if (ptr == NULL) {
+                        ptr = const_cast<TByte*>(chunkSizeBuf.Ptr());
+                        dechunked = ptr;
+                    }
+                    len += chunkSizeBuf.Bytes();
+                    if (len > kMaxRequestBytes) {
+                        iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
+                        THROW(ReaderError);
+                    }
+
+                    Parser parser(chunkSizeBuf);
+                    Brn trimmed = parser.Next(Ascii::kCr);
+                    if (trimmed.Bytes() == 0) {
+                        continue;
+                    }
+                    TUint chunkSize;
+                    try {
+                        chunkSize = Ascii::UintHex(trimmed);
+                    }
+                    catch (AsciiError&) {
+                        THROW(ReaderError);
+                    }
+                    if (chunkSize == 0) {
+                        break;
+                    }
+                    len += chunkSize;
+                    if (len > kMaxRequestBytes) {
+                        iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
+                        THROW(ReaderError);
+                    }
+                    Brn block = iReadBuffer->Read(chunkSize);
+                    (void)memcpy(ptr, block.Ptr(), block.Bytes());
+                    ptr += block.Bytes();
+                }
+                iSoapRequest.Set(dechunked, len);
+            }
+
             Invoke();
         }
         catch (InvocationError&) { }

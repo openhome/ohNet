@@ -216,6 +216,7 @@ private:
     WriterHttpResponse* iWriterResponse;
     HttpHeaderHost iHeaderHost;
     HttpHeaderContentLength iHeaderContentLength;
+    HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HttpHeaderConnection iHeaderConnection;
     HttpHeaderExpect iHeaderExpect;
     HeaderSoapAction iHeaderSoapAction;
