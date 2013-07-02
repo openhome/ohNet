@@ -27,14 +27,14 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.17",
+        "version":          "0.1.18",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.37",
+        "version": "0.0.42",
         "archive-suffix": "-Release",
         "platform-ignore": {
             "Core-armv6": false,

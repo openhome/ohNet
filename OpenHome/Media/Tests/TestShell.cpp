@@ -33,7 +33,7 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
 
-static const TUint kTimeout = 700;
+static const TUint kTimeout = 60; // initial timeout for TestShell. This is increased  by testharness once running.
 
 extern void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs);
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)

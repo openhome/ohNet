@@ -580,7 +580,8 @@ Msg* SuiteGeneratorSilence::ProcessMsg(MsgAudioPcm* aMsg)
 
 Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    TEST((iCntSignalMin == 0) || (iCntSignalMax == 0));  // at most one run in progress
+    // at most one run in progress (detail of test implementation)
+    ASSERT((iCntSignalMin == 0) || (iCntSignalMax == 0));
     // duration test is universal
     SuiteGeneratorAny::ProcessMsg(aMsg);
     // but content tests are generator-specific
@@ -617,13 +618,13 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
                 default:
                     ASSERTS();
             }
-            TEST((kSignalMin == audioSample) || (kSignalMax == audioSample));
+            TEST_QUIETLY((kSignalMin == audioSample) || (kSignalMax == audioSample));
             if (kSignalMin == audioSample) {
                 ++iCntSignalMin;
                 if (iCntSignalMax != 0) {
                     // first min marks end of max run, but only test/reset counter after all channels processed
                     delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMax / iExpectedToneParams.numChannels);
-                    TEST((-1L <= delta) && (delta <= 1L));
+                    TEST_QUIETLY((-1L <= delta) && (delta <= 1L));
                     iCntSignalMax = 0;
                 }
             } else {
@@ -631,7 +632,7 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgAudioPcm* aMsg)
                 if (iCntSignalMin != 0) {
                     // first max marks end of min run, but only test/reset counter after all channels processed
                     delta = static_cast<TInt64>(kRunLen) - static_cast<TInt64>(iCntSignalMin / iExpectedToneParams.numChannels);
-                    TEST((-1L <= delta) && (delta <= 1L));
+                    TEST_QUIETLY((-1L <= delta) && (delta <= 1L));
                     iCntSignalMin = 0;
                 }
             }
@@ -717,7 +718,8 @@ Msg* SuiteGeneratorSquare::ProcessMsg(MsgQuit* aMsg)
 {
     // test sample summary of final, potentially legitimately partial waveform;
     // note: all channels processed, since -- by definition -- no more sample follow
-    TEST((iCntSignalMin == 0) || (iCntSignalMax == 0));  // at most one run in progress
+    // at most one run in progress (detail of test implementation)
+    ASSERT((iCntSignalMin == 0) || (iCntSignalMax == 0));
     TUint kRunLen = (iExpectedToneParams.sampleRate / iExpectedToneParams.pitch) / 2;
     if (iExpectedToneParams.sampleRate % iExpectedToneParams.pitch != 0) { ++kRunLen; }
     TEST(((iCntSignalMin + iCntSignalMax) / iExpectedToneParams.numChannels) <= kRunLen);
