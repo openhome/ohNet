@@ -12,30 +12,36 @@ namespace Media {
 
 // audio parameters specifically for tone generation in RIFF-WAVE format
 // c'tors and (in-)equality operators allow terser test implementation
-struct ToneParams
+class ToneParams
 {
+public:
     ToneParams();
     ToneParams(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
     void Set(TUint16 aBitsPerSample, TUint aSampleRate, TUint aPitch, TUint16 aNumChannels, TUint aDuration);
-
+    TUint16 BitsPerSample() const { return iBitsPerSample; }
+    TUint   SampleRate() const { return iSampleRate; }
+    TUint   Pitch() const { return iPitch; }
+    TUint16 NumChannels() const { return iNumChannels; }
+    TUint   DurationSeconds() const { return iDuration; }
+private:
     // tighter packing possible, but universal order convention more valuable
-    TUint16 bitsPerSample;
-    TUint   sampleRate;
-    TUint   pitch;
-    TUint16 numChannels;
-    TUint   duration;
+    TUint16 iBitsPerSample;
+    TUint   iSampleRate;
+    TUint   iPitch;
+    TUint16 iNumChannels;
+    TUint   iDuration;
 };
 
-inline bool operator==(const struct ToneParams& one, const struct ToneParams& other)
+inline bool operator==(const ToneParams& one, const ToneParams& other)
 {
-    return (one.bitsPerSample == other.bitsPerSample)
-        && (one.sampleRate == other.sampleRate)
-        && (one.pitch == other.pitch)
-        && (one.numChannels == other.numChannels)
-        && (one.duration == other.duration);
+    return (one.BitsPerSample() == other.BitsPerSample())
+        && (one.SampleRate() == other.SampleRate())
+        && (one.Pitch() == other.Pitch())
+        && (one.NumChannels() == other.NumChannels())
+        && (one.DurationSeconds() == other.DurationSeconds());
 }
 
-inline bool operator!=(const struct ToneParams& one, const struct ToneParams& other)
+inline bool operator!=(const ToneParams& one, const ToneParams& other)
 {
     return !(one == other);
 }
