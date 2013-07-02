@@ -97,33 +97,36 @@ void CodecAacBase::BigEndianData(TUint aToWrite, TUint aSamplesWritten)
     TByte* src = const_cast<TByte*>(iDecodedBuf.Ptr()) + (aSamplesWritten * iBytesPerSample);
     TUint i=0;
 
-    switch(iBitDepth) {
+    for(i=0 ; i<aToWrite*iChannels; i++) {
+        switch (iBitDepth) {
         case 8:
-            for(i=0 ; i<aToWrite*iChannels; i++) {
-                *dst++ = *src++;
-            }
+            *dst++ = *src++;
             break;
         case 16:
-            for(i=0 ; i<aToWrite*iChannels; i++) {
-                TInt16 tmp = (src[0] << 8) | src[1];
-                TByte* tmpPtr = reinterpret_cast<TByte*>(&tmp);
-                *dst++ = *tmpPtr++;
-                *dst++ = *tmpPtr++;
-                src += 2;
-            }
+#ifdef DEFINE_BIG_ENDIAN
+            *dst++ = src[0];
+            *dst++ = src[1];
+#else
+            *dst++ = src[1];
+            *dst++ = src[0];
+#endif
+            src += 2;
             break;
         case 24:
-            for(i=0 ; i<aToWrite*iChannels; i++) {
-                TInt16 tmp = (src[0] << 8) | src[2];
-                TByte* tmpPtr = reinterpret_cast<TByte*>(&tmp);
-                *dst++ = *tmpPtr++;
-                *dst++ = src[1];
-                *dst++ = *tmpPtr++;
-                src += 3;
-            }
+#ifdef DEFINE_BIG_ENDIAN
+            *dst++ = src[0];
+            *dst++ = src[1];
+            *dst++ = src[2];
+#else
+            *dst++ = src[2];
+            *dst++ = src[1];
+            *dst++ = src[0];
+#endif
+            src += 3;
             break;
         default:
             ASSERTS();
+        }
     }
 }
 
