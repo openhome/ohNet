@@ -39,57 +39,24 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-/*    iDevice = new DvDeviceStandard(aDvStack, aUdn);
-    iDevice->SetAttribute("Upnp.Domain", "upnp.org");
-    iDevice->SetAttribute("Upnp.Type", "MediaRenderer");
-    iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", aFriendlyName);
-    iDevice->SetAttribute("Upnp.Manufacturer", aManufacturer);
-    iDevice->SetAttribute("Upnp.ModelName", aModelName);*/
+    iActive = true; /* FIXME - Kinsky doesn't cope with this source so we don't register it with the Product.
+                       Fool IsActive() checks below by saying this is always active.  See #169 */
     iProviderAvTransport = new ProviderAvTransport(iDevice, aEnv, *this);
     iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
     iProviderRenderingControl = new ProviderRenderingControl(iDevice);
     iDownstreamObserver = iProviderAvTransport;
-//    iDevice->SetEnabled();
 }
 
 SourceUpnpAv::~SourceUpnpAv()
 {
     ASSERT(!iDevice.Enabled());
-//    SetDisabled(MakeFunctor(*this, &SourceUpnpAv::DeviceDisabled));
-//    iSem.Wait();
     delete iProviderAvTransport;
     delete iProviderConnectionManager;
     delete iProviderRenderingControl;
-//    delete iDevice;
 }
-/*
-void SourceUpnpAv::SetEnabled()
-{
-    if (!iDevice->Enabled()) {
-        iDevice->SetEnabled();
-    }
-}
-
-void SourceUpnpAv::SetDisabled(Functor aCompleted)
-{
-    if (iDevice->Enabled()) {
-        iDevice->SetDisabled(aCompleted);
-    }
-    else if (aCompleted) {
-        aCompleted();
-    }
-}
-
-void SourceUpnpAv::DeviceDisabled()
-{
-    iSem.Signal();
-}
-*/
 
 void SourceUpnpAv::Activate()
 {
-//    iTrackPosSeconds = 0;
     iActive = true;
 }
 

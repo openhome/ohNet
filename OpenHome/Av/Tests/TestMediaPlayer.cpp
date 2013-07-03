@@ -14,7 +14,6 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
-#include <OpenHome/Av/Radio/PresetDatabase.h> // FIXME
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Radio/SourceRadio.h>
 #include <OpenHome/Av/Debug.h>
@@ -83,6 +82,7 @@ private:
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Media::DriverSongcastSender* iDriver;
+    ISource* iSourceUpnp; // FIXME - see #169
 };
 
 } // namespace Av
@@ -191,7 +191,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
-    //iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols));
+    iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols);
 
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();

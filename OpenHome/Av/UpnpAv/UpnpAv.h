@@ -39,13 +39,9 @@ class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipel
 public:
     SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const TChar* aSupportedProtocols);
     ~SourceUpnpAv();
-    void SetEnabled();
-    void SetDisabled(Functor aCompleted);
 private: // from Source
     void Activate();
     void Deactivate();
-private:
-    void DeviceDisabled();
 private: // from ISourceUpnpAv
     void SetTrack(const Brx& aUri, const Brx& aMetaData);
     void Play();
@@ -61,8 +57,6 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
-//    Semaphore iSem;
-//    Net::DvDevice* iDevice;
     Mutex iLock;
     Net::DvDevice& iDevice;
     Media::PipelineManager& iPipeline;
