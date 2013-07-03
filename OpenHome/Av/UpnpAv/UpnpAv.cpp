@@ -7,17 +7,17 @@
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
-//#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 
+#include <limits.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
-//using namespace OpenHome::Net;
 
 ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const TChar* aSupportedProtocols)
 { // static
