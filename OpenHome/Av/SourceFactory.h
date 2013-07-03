@@ -13,6 +13,7 @@ class SourceFactory
 {
 public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const TChar* aSupportedProtocols);
+    static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const TChar* aSupportedProtocols);
 };
 
 } // namespace Av
