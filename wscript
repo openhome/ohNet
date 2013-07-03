@@ -201,6 +201,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Product1.xml', 'av.openhome.org', 'Product', '1', 'AvOpenhomeOrgProduct1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Radio1.xml', 'av.openhome.org', 'Radio', '1', 'AvOpenhomeOrgRadio1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenhomeOrgSender1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Playlist1.xml', 'av.openhome.org', 'Playlist', '1', 'AvOpenhomeOrgPlaylist1'),
     ]
 
 def build(bld):
@@ -295,6 +296,8 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
+                'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
+                'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
