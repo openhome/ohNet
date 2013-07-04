@@ -12,23 +12,22 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
+Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery)
 { // static
-    return new ProtocolRaop(aEnv, aDvStack, aDiscoveryPort);
+    return new ProtocolRaop(aEnv, aDiscovery);
 }
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery)
     : ProtocolNetwork(aEnv)
+    , iDiscovery(aDiscovery)
     , iRaopAudio(aEnv, kPortAudio)
     , iRaopControl(aEnv, kPortControl)
 //  , iRaopTiming(kPortTiming)
 {
-    iDiscovery = new RaopDiscovery(aEnv, aDvStack, aDiscoveryPort);
 }
 
 ProtocolRaop::~ProtocolRaop()
 {
-    delete iDiscovery;
 }
 
 void ProtocolRaop::DoInterrupt()
@@ -76,24 +75,24 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         try {
             TUint16 count = iRaopAudio.ReadPacket();
 
-            if (!iDiscovery->Active()) {
+            if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
                 continue; // no active session so audio must be ignored
             }
 
-            iDiscovery->KeepAlive();
+            iDiscovery.KeepAlive();
 
-            if(aesSid != iDiscovery->AesSid()) {
-                aesSid = iDiscovery->AesSid();       // aes key has been updated
+            if(aesSid != iDiscovery.AesSid()) {
+                aesSid = iDiscovery.AesSid();       // aes key has been updated
 
                 LOG(kMedia, "ProtocolRaop::Stream() new sid\n");
 
-                iRaopAudio.Initialise(iDiscovery->Aeskey(), iDiscovery->Aesiv());
+                iRaopAudio.Initialise(iDiscovery.Aeskey(), iDiscovery.Aesiv());
             }
             if(start) {
                 LOG(kMedia, "ProtocolRaop::Stream() new container\n");
                 start = false;        // create dummy container for Codec() recognition and initialisation
-                OutputContainer(Brn(iDiscovery->Fmtp()));
+                OutputContainer(Brn(iDiscovery.Fmtp()));
                 expected = count;   // init expected count
             }
             TInt padding = count;
@@ -207,20 +206,20 @@ TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
 
 TBool ProtocolRaop::Active()
 {
-    return iDiscovery->Active();
+    return iDiscovery.Active();
 }
 
 void ProtocolRaop::Close()
 {
     LOG(kMedia, "ProtocolRaop::Close\n");
-    iDiscovery->Close();
+    iDiscovery.Close();
 }
 
 void ProtocolRaop::Deactivate()
 {
     LOG(kMedia, "ProtocolRaop::Deactivate\n");
 
-    iDiscovery->Deactivate();
+    iDiscovery.Deactivate();
 }
 
 RaopControl::RaopControl(Environment& aEnv, TUint aPort)

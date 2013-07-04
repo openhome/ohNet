@@ -76,6 +76,7 @@ private: // from IPipelineIdProvider
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
+    RaopDiscovery* iRaopDiscovery;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     Brn iUrl;
@@ -123,8 +124,9 @@ DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, TUint aDisco
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, aDiscoveryPort);
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, aDvStack, aDiscoveryPort));
+    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 
@@ -132,6 +134,7 @@ DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
     delete iTrackFactory;
+    delete iRaopDiscovery;
 }
 
 void DummyFiller::Start(const Brx& aUrl)

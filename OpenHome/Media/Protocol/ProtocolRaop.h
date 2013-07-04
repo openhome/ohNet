@@ -85,7 +85,7 @@ private:
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort);
+    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery);
     ~ProtocolRaop();
 public:
     void DoInterrupt();
@@ -107,8 +107,8 @@ public:
 private:
     static const TUint kMaxReadBufferBytes = 1500;
 
-    //IRaopDiscovery& iDiscovery;    // FIXME - switch to this when finished refactoring
-    IRaopDiscovery* iDiscovery;
+    IRaopDiscovery& iDiscovery;    // FIXME - switch to this when finished refactoring
+    //IRaopDiscovery* iDiscovery;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
     //RaopTiming iRaopTiming;
