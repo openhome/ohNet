@@ -23,6 +23,12 @@
     
     <!-- ohNet.Js requires a running subscriptionmanager before it can receive events from services -->
     <script type="text/javascript">
+        // The device udn.
+        var nodeUdn = 'device-ohNetTestBasic';
+        
+        // The websocket Port.
+        var webSocketPort = 55555;
+        
         function pageLoad() {
                 // Start the Subscription Manager with default settings.
                ohnet.subscriptionmanager.start(
