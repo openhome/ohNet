@@ -10,8 +10,12 @@
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
 
+EXCEPTION(RaopNoActiveSession);
 
 namespace OpenHome {
+namespace Av {
+    class IRaopObserver;
+}
 namespace Media {
 
 class HeaderCSeq : public IHttpHeader
@@ -50,7 +54,7 @@ class RaopDevice
     static const TUint kMacAddrBytes = 12;
 public:
     // aMacAddr in hex of form 001122334455
-    RaopDevice(Net::DvStack& aDvStackconst, TUint aDiscoveryPort, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
@@ -68,14 +72,32 @@ private:
 
 class ProtocolRaop;
 
-class RaopDiscovery : public SocketTcpSession
+class IRaopDiscovery
+{
+public:
+    virtual TBool Active() = 0;
+    virtual void Deactivate() = 0;
+    virtual TUint AesSid() = 0;
+    virtual const Brx& Aeskey() = 0;
+    virtual const Brx& Aesiv() = 0;
+    virtual const Brx& Fmtp() = 0;
+    virtual void KeepAlive() = 0;
+    virtual void Close() = 0;
+};
+
+class RaopDiscovery;
+
+class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
 {
     static const TUint kMaxReadBufferBytes = 12000;
     static const TUint kMaxWriteBufferBytes = 4000;
 
 public:
-    RaopDiscovery(Environment& aEnv, ProtocolRaop& aProtocolRaop, RaopDevice& aRaopDevice, TUint aInstance);
-    ~RaopDiscovery();
+    RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance);
+    ~RaopDiscoverySession();
+private: // from SocketTcpSession
+    void Run();
+public: // from IRaopDiscovery
     const Brx &Aeskey();
     const Brx &Aesiv();
     const Brx &Fmtp();
@@ -84,8 +106,6 @@ public:
     void Deactivate();
     TUint AesSid();
     void Close();
-private: // from SocketTcpSession
-    void Run();
 private:
     void WriteSeq(TUint aCSeq);
     void WriteFply(Brn aData);
@@ -110,12 +130,39 @@ private:
     TUint iAesSid;
     RSA *iRsa;
     Bws<1024> iResponse;
-    ProtocolRaop& iProtocolRaop;
+    //Av::IRaopObserver& iRaopObserver;
+    RaopDiscovery& iDiscovery;
     //Volume& iVolume;
     RaopDevice& iRaopDevice;
     TUint iInstance;
     TBool iActive;
     Timer* iDeactivateTimer;
+};
+
+class RaopDiscovery : public IRaopDiscovery
+{
+public:
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort);
+    ~RaopDiscovery();
+public: // from IRaopDiscovery
+    const Brx &Aeskey();
+    const Brx &Aesiv();
+    const Brx &Fmtp();
+    TBool Active();
+    void Deactivate();
+    void KeepAlive();
+    TUint AesSid();
+    void Close();
+private:
+    RaopDiscoverySession& ActiveSession();
+private:
+    static const TUint kPriority = kPriorityNormal;
+    static const TUint kSessionStackBytes = 10 * 1024;
+
+    RaopDevice* iRaopDevice;
+    SocketTcpServer* iRaopDiscoveryServer;
+    RaopDiscoverySession* iRaopDiscoverySession1;
+    RaopDiscoverySession* iRaopDiscoverySession2;
 };
 
 

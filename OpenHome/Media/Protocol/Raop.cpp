@@ -111,10 +111,11 @@ void RaopDevice::MacAddressOctets(TByte (&aOctets)[6]) const
 }
 
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, ProtocolRaop& aProtocolRaop, RaopDevice& aRaopDevice, TUint aInstance)
+RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance)
     : iAeskeyPresent(false)
     , iAesSid(0)
-    , iProtocolRaop(aProtocolRaop)
+    //, iRaopObserver(aObserver)
+    , iDiscovery(aDiscovery)
     //, iVolume(aVolume)
     , iRaopDevice(aRaopDevice)
     , iInstance(aInstance)
@@ -142,17 +143,17 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, ProtocolRaop& aProtocolRaop, Rao
     iReaderRequest->AddMethod(RtspMethod::kTeardown);
     iReaderRequest->AddMethod(RtspMethod::kPost);
 
-    iDeactivateTimer = new Timer(aEnv, MakeFunctor(*this, &RaopDiscovery::DeactivateCallback));
+    iDeactivateTimer = new Timer(aEnv, MakeFunctor(*this, &RaopDiscoverySession::DeactivateCallback));
 }
 
-void RaopDiscovery::WriteSeq(TUint aCSeq)
+void RaopDiscoverySession::WriteSeq(TUint aCSeq)
 {
     iWriterAscii->Write(Brn("CSeq: "));
     iWriterAscii->WriteUint(aCSeq);
     iWriterAscii->WriteNewline();
 }
 
-void RaopDiscovery::WriteFply(Brn aData)
+void RaopDiscoverySession::WriteFply(Brn aData)
 {
     const TByte cfply1[] = {
                     0x02, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x82, 0x02, 0x00,
@@ -187,7 +188,7 @@ void RaopDiscovery::WriteFply(Brn aData)
     iWriterAscii->Write(fply);
 }
 
-void RaopDiscovery::GetRsa()
+void RaopDiscoverySession::GetRsa()
 {
     static const unsigned char key_private[] = {
             0x30, 0x82, 0x04, 0xA5, 0x02, 0x01, 0x00, 0x02, 0x82, 0x01, 0x01, 0x00, 0xE7, 0xD7, 0x44, 0xF2,
@@ -281,7 +282,7 @@ void RaopDiscovery::GetRsa()
     EVP_PKEY_free(key);
 }
 
-RaopDiscovery::~RaopDiscovery()
+RaopDiscoverySession::~RaopDiscoverySession()
 {
     delete iWriterResponse;
     delete iWriterRequest;
@@ -291,19 +292,19 @@ RaopDiscovery::~RaopDiscovery()
     delete iReaderBuffer;
 }
 
-TBool RaopDiscovery::Active()
+TBool RaopDiscoverySession::Active()
 {
     return(iActive);
 }
 
-void RaopDiscovery::Run()
+void RaopDiscoverySession::Run()
 {
-    LOG(kMedia, "RaopDiscovery::Run\n");
+    LOG(kMedia, "RaopDiscoverySession::Run\n");
     iActive = false;
 
     iAeskeyPresent = false;
 
-    LOG(kMedia, "RaopDiscovery::Run - Started, instance %d\n", iInstance);
+    LOG(kMedia, "RaopDiscoverySession::Run - Started, instance %d\n", iInstance);
     try {
         for (;;) {
             try {
@@ -312,7 +313,7 @@ void RaopDiscovery::Run()
                 KeepAlive();
 
                 const Brx& method = iReaderRequest->Method();
-                LOG(kMedia, "RaopDiscovery::Run - Read Method "); LOG(kMedia, method); LOG(kMedia, ", instance %d\n", iInstance);
+                LOG(kMedia, "RaopDiscoverySession::Run - Read Method "); LOG(kMedia, method); LOG(kMedia, ", instance %d\n", iInstance);
                 if(method == RtspMethod::kPost) {
                     Brn data(iReaderBuffer->Read(iHeaderContentLength.ContentLength()));
 
@@ -336,7 +337,7 @@ void RaopDiscovery::Run()
                 }
                 else if(method == RtspMethod::kAnnounce) {
                     LOG(kMedia, "kAnnounce iActive = %d,  iInstance %d\n", iActive, iInstance);
-                    if(!iActive && iProtocolRaop.Active()) { /*i.e. the other connection is active */
+                    if(!iActive && iDiscovery.Active()) { /*i.e. the other connection is active */
                         /* if already actively connected to another device respond with:
                         RTSP/1.0 453 Not Enough Bandwidth
                         Server: AirTunes/102.2
@@ -348,7 +349,7 @@ void RaopDiscovery::Run()
                         WriteSeq(1);
                     }
                     else {
-                        iProtocolRaop.Deactivate();     // deactivate both streams (effectively the other one!)
+                        iDiscovery.Deactivate();     // deactivate both streams (effectively the other one!)
                         iActive = true;     // don't allow second stream to connect
                         LOG(kMedia, "Announce, instance %d\n", iInstance);
                         ReadSdp(iSdpInfo); //get encoded aes key
@@ -380,9 +381,9 @@ void RaopDiscovery::Run()
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
 
-                    // select pairplay source
-                    //iPairplaySource.Play();
-                    LOG(kMedia, "RaopDiscovery::Run - Playing\n");
+                    // activate RAOP source
+                    //iRaopObserver.NotifyStreamStart();
+                    LOG(kMedia, "RaopDiscoverySession::Run - Playing\n");
                 }
                 else if(method == RtspMethod::kSetParameter) {
                     if(iHeaderContentType.Type() == Brn("text/parameters")) {
@@ -435,7 +436,7 @@ void RaopDiscovery::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
-                    //iPairplaySource.Play(); //restart
+                    //iRaopObserver.NotifyStreamStart(); //restart
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -443,58 +444,58 @@ void RaopDiscovery::Run()
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
                     Deactivate();
-                    LOG(kMedia, "RaopDiscovery::Run - kTeardown\n");
+                    LOG(kMedia, "RaopDiscoverySession::Run - kTeardown\n");
                     return;
                 }
             }
             catch (HttpError) {
-                LOG(kMedia, "RaopDiscovery::Run - HttpError\n");
+                LOG(kMedia, "RaopDiscoverySession::Run - HttpError\n");
             }
         }
     }
     catch (ReaderError) {   // closed by client
-        LOG(kMedia, "RaopDiscovery::Run - ReaderError\n");
+        LOG(kMedia, "RaopDiscoverySession::Run - ReaderError\n");
     }
     catch (WriterError) {   // closed by client
-        LOG(kMedia, "RaopDiscovery::Run - WriterError\n");
+        LOG(kMedia, "RaopDiscoverySession::Run - WriterError\n");
     }
 
-    LOG(kMedia, "RaopDiscovery::Run - Exit iActive = %d\n", iActive);
+    LOG(kMedia, "RaopDiscoverySession::Run - Exit iActive = %d\n", iActive);
 }
 
-void RaopDiscovery::Close()
+void RaopDiscoverySession::Close()
 {
-    LOG(kMedia, "RaopDiscovery::Close iActive = %d, instance %d\n", iActive, iInstance);
+    LOG(kMedia, "RaopDiscoverySession::Close iActive = %d, instance %d\n", iActive, iInstance);
 
     // set timeout and deactivate on expiry
     KeepAlive();
 }
 
-void RaopDiscovery::KeepAlive()
+void RaopDiscoverySession::KeepAlive()
 {
     if(iActive) {
         iDeactivateTimer->FireIn(10000);  // 10s timeout - deactivate of no data received
     }
 }
 
-void RaopDiscovery::DeactivateCallback()
+void RaopDiscoverySession::DeactivateCallback()
 {
-    LOG(kMedia, "RaopDiscovery::DeactivateCallback\n");
+    LOG(kMedia, "RaopDiscoverySession::DeactivateCallback\n");
     Deactivate();
     iReaderRequest->Interrupt(); //terminate run()
 }
 
 
-void RaopDiscovery::Deactivate()
+void RaopDiscoverySession::Deactivate()
 {
-    LOG(kMedia, "RaopDiscovery::Deactivate iActive = %d, instance %d\n", iActive, iInstance);
+    LOG(kMedia, "RaopDiscoverySession::Deactivate iActive = %d, instance %d\n", iActive, iInstance);
     iDeactivateTimer->Cancel();     // reset timeout
     iActive = false;
 }
 
 
 //encrypt challenge using rsa private key
-void RaopDiscovery::GenerateAppleResponse(const Brx& aChallenge)
+void RaopDiscoverySession::GenerateAppleResponse(const Brx& aChallenge)
 {
     GetRsa();
 
@@ -554,7 +555,7 @@ void RaopDiscovery::GenerateAppleResponse(const Brx& aChallenge)
     }
 }
 
-void RaopDiscovery::DecryptAeskey()
+void RaopDiscoverySession::DecryptAeskey()
 {
     GetRsa();
 
@@ -570,12 +571,12 @@ void RaopDiscovery::DecryptAeskey()
     }
 }
 
-TUint RaopDiscovery::AesSid()
+TUint RaopDiscoverySession::AesSid()
 {
     return iAesSid;
 }
 
-const Brx &RaopDiscovery::Aeskey()
+const Brx &RaopDiscoverySession::Aeskey()
 {
     if(!iAeskeyPresent) {
         THROW(HttpError); // should be RoapError but need to add handling everywhere so just throw http, same as rtsp
@@ -583,7 +584,7 @@ const Brx &RaopDiscovery::Aeskey()
     return iAeskey;
 }
 
-const Brx &RaopDiscovery::Aesiv()
+const Brx &RaopDiscoverySession::Aesiv()
 {
     if(!iAeskeyPresent) {
         THROW(HttpError); // should be RoapError but need to add handling everywhere so just throw http, same as rtsp
@@ -591,7 +592,7 @@ const Brx &RaopDiscovery::Aesiv()
     return iSdpInfo.Aesiv();
 }
 
-const Brx &RaopDiscovery::Fmtp()
+const Brx &RaopDiscoverySession::Fmtp()
 {
     if(!iAeskeyPresent) {
         THROW(HttpError); // should be RoapError but need to add handling everywhere so just throw http, same as rtsp
@@ -599,7 +600,7 @@ const Brx &RaopDiscovery::Fmtp()
     return iSdpInfo.Fmtp();
 }
 
-void RaopDiscovery::ReadSdp(ISdpHandler& aSdpHandler)
+void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 {
     aSdpHandler.Reset();
 
@@ -626,6 +627,106 @@ void RaopDiscovery::ReadSdp(ISdpHandler& aSdpHandler)
         }
     }
 }
+
+
+// RaopDiscovery
+
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
+{
+    AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
+    const NetworkAdapter* current = ref.Adapter();
+    if (current != NULL) {
+        TIpAddress ipAddr = current->Address();
+        char* adapterName = current->FullName();
+        LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", adapterName);
+
+        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, Brn("ProtocolRaopDevice"), ipAddr, Brn("000000000001"));
+        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
+
+        // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
+        iRaopDiscoverySession1 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 1);
+        iRaopDiscoveryServer->Add("AIRD", iRaopDiscoverySession1);
+
+        iRaopDiscoverySession2 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 2);
+        iRaopDiscoveryServer->Add("AIRT", iRaopDiscoverySession2);
+    }
+    else {
+        LOG(kMedia, "RaopDiscovery::RaopDiscovery no network adapter available on current subnet - not initialising TCP server\n");
+    }
+}
+
+RaopDiscovery::~RaopDiscovery()
+{
+    delete iRaopDiscoverySession1;
+    delete iRaopDiscoverySession2;
+    delete iRaopDiscoveryServer;
+    delete iRaopDevice;
+}
+
+const Brx& RaopDiscovery::Aeskey()
+{
+    return ActiveSession().Aeskey();
+}
+
+const Brx& RaopDiscovery::Aesiv()
+{
+    return ActiveSession().Aesiv();
+}
+
+const Brx& RaopDiscovery::Fmtp()
+{
+    return ActiveSession().Fmtp();
+}
+
+TBool RaopDiscovery::Active()
+{
+    return (iRaopDiscoverySession1->Active() || iRaopDiscoverySession2->Active());
+}
+
+void RaopDiscovery::Deactivate()
+{
+    LOG(kMedia, "RaopDiscovery::Deactivate\n");
+
+    iRaopDiscoverySession1->Deactivate();
+    iRaopDiscoverySession2->Deactivate();
+}
+
+void RaopDiscovery::KeepAlive()
+{
+    ActiveSession().KeepAlive();
+}
+
+TUint RaopDiscovery::AesSid()
+{
+    return ActiveSession().AesSid();
+}
+
+void RaopDiscovery::Close()
+{
+    LOG(kMedia, "RaopDiscovery::Close\n");
+    // deregister/re-register to kick off any existing controllers - confuses controllers - may need to wait a while before re-reg
+    iRaopDevice->Deregister();
+    Thread::Sleep(100);
+    iRaopDevice->Register();
+
+    iRaopDiscoverySession1->Close();
+    iRaopDiscoverySession2->Close();
+}
+
+RaopDiscoverySession& RaopDiscovery::ActiveSession()
+{
+    if (iRaopDiscoverySession1->Active()) {
+        return *iRaopDiscoverySession1;
+    }
+    else if (iRaopDiscoverySession2->Active()) {
+        return *iRaopDiscoverySession2;
+    }
+    else {
+        THROW(RaopNoActiveSession);
+    }
+}
+
+
 
 
 // HeaderCSeq
