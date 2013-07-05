@@ -102,10 +102,6 @@ void ShellSession::Run()
         catch (WriterError&) {
             break;
         }
-        catch (Exception& e) {
-            Log::Print("Unexpected exception: %s from %s:%u\n", e.Message(), e.File(), e.Line());
-            break;
-        }
     }
     (void)Log::SwapOutput(oldLogger);
     iShutdownSem.Signal();

@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <stdio.h>
 
@@ -180,6 +181,16 @@ const TChar* Exception::Message()
 THandle Exception::StackTrace()
 {
     return iStackTrace;
+}
+
+void Exception::LogStackTrace()
+{
+    const TUint entryCount = Os::StackTraceNumEntries(iStackTrace);
+    for ( TUint i = 0 ; i < entryCount ; ++i )
+    {
+        Log::Print(Os::StackTraceEntry(iStackTrace, i));
+        Log::Print("\n");
+    }
 }
 
 const TChar* Exception::File()

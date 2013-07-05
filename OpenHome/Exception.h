@@ -60,6 +60,7 @@ public:
     DllExport TUint Line();
     DllExport const TChar* Message();
     DllExport THandle StackTrace();
+    DllExport void LogStackTrace();
 protected:
     DllExport Exception(const TChar* aMsg, const TChar* aFile, TUint aLine);
     DllExport Exception(const TChar* aMsg);
