@@ -521,7 +521,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndManufacturer(IAsync& aAsync, std::strin
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -571,7 +571,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndModel(IAsync& aAsync, std::string& aNam
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -622,7 +622,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndProduct(IAsync& aAsync, std::string& aR
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -673,7 +673,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndStandby(IAsync& aAsync, bool& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -705,7 +705,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSetStandby(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -735,7 +735,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceCount(IAsync& aAsync, uint32_t& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -767,7 +767,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceXml(IAsync& aAsync, std::string& 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -802,7 +802,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceIndex(IAsync& aAsync, uint32_t& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -834,7 +834,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSetSourceIndex(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -867,7 +867,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSetSourceIndexByName(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -903,7 +903,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSource(IAsync& aAsync, std::string& aSy
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -947,7 +947,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndAttributes(IAsync& aAsync, std::string&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -982,7 +982,7 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::EndSourceXmlChangeCount(IAsync& aAsync, ui
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();

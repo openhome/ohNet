@@ -726,7 +726,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetSearchCapabilities(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -761,7 +761,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetSortCapabilities(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -796,7 +796,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetSortExtensionCapabilities(IAsync&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -831,7 +831,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetFeatureList(IAsync& aAsync, std::
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -866,7 +866,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetSystemUpdateID(IAsync& aAsync, ui
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -898,7 +898,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetServiceResetToken(IAsync& aAsync,
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -956,7 +956,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndBrowse(IAsync& aAsync, std::string& 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1017,7 +1017,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndSearch(IAsync& aAsync, std::string& 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1066,7 +1066,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndCreateObject(IAsync& aAsync, std::st
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1108,7 +1108,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndDestroyObject(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1149,7 +1149,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndUpdateObject(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1189,7 +1189,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndMoveObject(IAsync& aAsync, std::stri
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1234,7 +1234,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndImportResource(IAsync& aAsync, uint3
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aTransferID = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1276,7 +1276,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndExportResource(IAsync& aAsync, uint3
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aTransferID = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1311,7 +1311,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndDeleteResource(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1341,7 +1341,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndStopTransferResource(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1376,7 +1376,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetTransferProgress(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1429,7 +1429,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndCreateReference(IAsync& aAsync, std:
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1476,7 +1476,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndFreeFormQuery(IAsync& aAsync, std::s
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1512,7 +1512,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::EndGetFreeFormQueryCapabilities(IAsync&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

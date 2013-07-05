@@ -782,7 +782,7 @@ void CpProxyUpnpOrgDimming1C::EndSetLoadLevelTarget(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -812,7 +812,7 @@ void CpProxyUpnpOrgDimming1C::EndGetLoadLevelTarget(IAsync& aAsync, TUint& aGetL
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aGetLoadlevelTarget = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -844,7 +844,7 @@ void CpProxyUpnpOrgDimming1C::EndGetLoadLevelStatus(IAsync& aAsync, TUint& aretL
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aretLoadlevelStatus = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -876,7 +876,7 @@ void CpProxyUpnpOrgDimming1C::EndSetOnEffectLevel(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -906,7 +906,7 @@ void CpProxyUpnpOrgDimming1C::EndSetOnEffect(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -937,7 +937,7 @@ void CpProxyUpnpOrgDimming1C::EndGetOnEffectParameters(IAsync& aAsync, Brh& aret
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aretOnEffect);
@@ -967,7 +967,7 @@ void CpProxyUpnpOrgDimming1C::EndStepUp(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -994,7 +994,7 @@ void CpProxyUpnpOrgDimming1C::EndStepDown(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1021,7 +1021,7 @@ void CpProxyUpnpOrgDimming1C::EndStartRampUp(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1048,7 +1048,7 @@ void CpProxyUpnpOrgDimming1C::EndStartRampDown(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1075,7 +1075,7 @@ void CpProxyUpnpOrgDimming1C::EndStopRamp(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1106,7 +1106,7 @@ void CpProxyUpnpOrgDimming1C::EndStartRampToLevel(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1136,7 +1136,7 @@ void CpProxyUpnpOrgDimming1C::EndSetStepDelta(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1166,7 +1166,7 @@ void CpProxyUpnpOrgDimming1C::EndGetStepDelta(IAsync& aAsync, TUint& aretStepDel
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aretStepDelta = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1198,7 +1198,7 @@ void CpProxyUpnpOrgDimming1C::EndSetRampRate(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1228,7 +1228,7 @@ void CpProxyUpnpOrgDimming1C::EndGetRampRate(IAsync& aAsync, TUint& aretRampRate
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aretRampRate = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1257,7 +1257,7 @@ void CpProxyUpnpOrgDimming1C::EndPauseRamp(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1284,7 +1284,7 @@ void CpProxyUpnpOrgDimming1C::EndResumeRamp(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1314,7 +1314,7 @@ void CpProxyUpnpOrgDimming1C::EndGetIsRamping(IAsync& aAsync, TBool& aretIsRampi
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aretIsRamping = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -1346,7 +1346,7 @@ void CpProxyUpnpOrgDimming1C::EndGetRampPaused(IAsync& aAsync, TBool& aretRampPa
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aretRampPaused = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -1378,7 +1378,7 @@ void CpProxyUpnpOrgDimming1C::EndGetRampTime(IAsync& aAsync, TUint& aretRampTime
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aretRampTime = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();

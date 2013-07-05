@@ -149,6 +149,21 @@ Exception::Exception(const Exception& aException)
     iStackTrace = Os::StackTraceCopy(aException.iStackTrace);
 }
 
+Exception& Exception::operator= (const Exception& aException)
+{
+#if EXCEPTION_LOGGING_LEVEL > 1
+    Log::Print("assignment for %s\n", iMsg);
+#endif
+    if ( this != &aException )
+    {
+        iMsg = aException.iMsg;
+        iFile = aException.iFile;
+        iLine = aException.iLine;
+        iStackTrace = Os::StackTraceCopy(aException.iStackTrace);
+    }
+    return *this;
+}
+
 Exception::~Exception()
 {
 #if EXCEPTION_LOGGING_LEVEL > 1

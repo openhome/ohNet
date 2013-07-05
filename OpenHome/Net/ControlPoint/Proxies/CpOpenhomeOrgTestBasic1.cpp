@@ -594,7 +594,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndIncrement(IAsync& aAsync, TUint& aResult)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aResult = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -629,7 +629,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndDecrement(IAsync& aAsync, TInt& aResult)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aResult = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -664,7 +664,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndToggle(IAsync& aAsync, TBool& aResult)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aResult = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -699,7 +699,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndEchoString(IAsync& aAsync, Brh& aResult)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -734,7 +734,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndEchoBinary(IAsync& aAsync, Brh& aResult)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentBinary*)invocation.OutputArguments()[index++])->TransferTo(aResult);
@@ -766,7 +766,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndSetUint(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -796,7 +796,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndGetUint(IAsync& aAsync, TUint& aValueUint)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValueUint = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -828,7 +828,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndSetInt(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -858,7 +858,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndGetInt(IAsync& aAsync, TInt& aValueInt)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValueInt = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -890,7 +890,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndSetBool(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -920,7 +920,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndGetBool(IAsync& aAsync, TBool& aValueBool)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValueBool = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -954,7 +954,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndSetMultiple(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -984,7 +984,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndSetString(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1014,7 +1014,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndGetString(IAsync& aAsync, Brh& aValueStr)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValueStr);
@@ -1046,7 +1046,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndSetBinary(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1076,7 +1076,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndGetBinary(IAsync& aAsync, Brh& aValueBin)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentBinary*)invocation.OutputArguments()[index++])->TransferTo(aValueBin);
@@ -1105,7 +1105,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndToggleBool(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1136,7 +1136,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndWriteFile(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1163,7 +1163,7 @@ void CpProxyOpenhomeOrgTestBasic1::EndShutdown(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 

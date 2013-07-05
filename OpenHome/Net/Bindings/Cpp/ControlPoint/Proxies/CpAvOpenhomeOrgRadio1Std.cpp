@@ -525,7 +525,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndPlay(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -552,7 +552,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndPause(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -579,7 +579,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndStop(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -609,7 +609,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSeekSecondAbsolute(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -639,7 +639,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSeekSecondRelative(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -670,7 +670,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndChannel(IAsync& aAsync, std::string& aUri
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -716,7 +716,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSetChannel(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -746,7 +746,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndTransportState(IAsync& aAsync, std::strin
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -781,7 +781,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndId(IAsync& aAsync, uint32_t& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -817,7 +817,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSetId(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -850,7 +850,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndRead(IAsync& aAsync, std::string& aMetada
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -891,7 +891,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndReadList(IAsync& aAsync, std::string& aCh
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -927,7 +927,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndIdArray(IAsync& aAsync, uint32_t& aToken,
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aToken = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -966,7 +966,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndIdArrayChanged(IAsync& aAsync, bool& aVal
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -998,7 +998,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndChannelsMax(IAsync& aAsync, uint32_t& aVa
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1030,7 +1030,7 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndProtocolInfo(IAsync& aAsync, std::string&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

@@ -331,7 +331,7 @@ void CpProxyAvOpenhomeOrgInfo1C::EndCounters(IAsync& aAsync, TUint& aTrackCount,
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aTrackCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -366,7 +366,7 @@ void CpProxyAvOpenhomeOrgInfo1C::EndTrack(IAsync& aAsync, Brh& aUri, Brh& aMetad
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aUri);
@@ -404,7 +404,7 @@ void CpProxyAvOpenhomeOrgInfo1C::EndDetails(IAsync& aAsync, TUint& aDuration, TU
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aDuration = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -441,7 +441,7 @@ void CpProxyAvOpenhomeOrgInfo1C::EndMetatext(IAsync& aAsync, Brh& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aValue);

@@ -63,9 +63,9 @@ public:
 protected:
     DllExport Exception(const TChar* aMsg, const TChar* aFile, TUint aLine);
     DllExport Exception(const TChar* aMsg);
+    Exception& operator=(const Exception&);
 private:
     Exception();
-    void operator=(const Exception&);
 private:
     const TChar* iMsg;
     THandle iStackTrace;

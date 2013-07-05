@@ -650,7 +650,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetSortCapabilities(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -692,7 +692,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetPropertyList(IAsync& aAsync, st
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -737,7 +737,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetAllowedValues(IAsync& aAsync, s
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -772,7 +772,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetStateUpdateID(IAsync& aAsync, u
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -819,7 +819,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndBrowseRecordSchedules(IAsync& aAsy
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -876,7 +876,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndBrowseRecordTasks(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -922,7 +922,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndCreateRecordSchedule(IAsync& aAsyn
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -965,7 +965,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndDeleteRecordSchedule(IAsync& aAsyn
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1006,7 +1006,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetRecordSchedule(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1045,7 +1045,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndEnableRecordSchedule(IAsync& aAsyn
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1078,7 +1078,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndDisableRecordSchedule(IAsync& aAsy
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1111,7 +1111,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndDeleteRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1152,7 +1152,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetRecordTask(IAsync& aAsync, std:
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1191,7 +1191,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndEnableRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1224,7 +1224,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndDisableRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1257,7 +1257,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndResetRecordTask(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1294,7 +1294,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetRecordScheduleConflicts(IAsync&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1337,7 +1337,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::EndGetRecordTaskConflicts(IAsync& aAs
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

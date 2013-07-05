@@ -136,7 +136,7 @@ void CpProxyAvOpenhomeOrgTime1C::EndTime(IAsync& aAsync, TUint& aTrackCount, TUi
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aTrackCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();

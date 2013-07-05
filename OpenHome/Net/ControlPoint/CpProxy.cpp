@@ -8,13 +8,15 @@ using namespace OpenHome::Net;
 // ProxyError
 
 ProxyError::ProxyError()
-    : iLevel(0)
+    : Exception("")
+    , iLevel(0)
     , iCode(0)
 {
 }
 
-ProxyError::ProxyError(uint32_t aLevel, uint32_t aCode)
-    : iLevel(aLevel)
+ProxyError::ProxyError(const TChar* aFile, TUint aLine, uint32_t aLevel, uint32_t aCode)
+    : Exception("", aFile, aLine)
+    , iLevel(aLevel)
     , iCode(aCode)
 {
 }
