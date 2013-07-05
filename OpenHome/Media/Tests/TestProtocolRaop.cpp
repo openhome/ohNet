@@ -10,6 +10,7 @@
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include "AllocatorInfoLogger.h"
@@ -63,7 +64,7 @@ int mygetch()
 namespace OpenHome {
 namespace Media {
 
-class DummyFiller : public Thread, private IPipelineIdProvider
+class DummyFiller : public Thread, private IPipelineIdProvider, private Av::IRaopObserver
 {
 public:
     DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
@@ -75,6 +76,8 @@ private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+private: // from IRaopObserver
+    void NotifyStreamStart();
 private:
     RaopDiscovery* iRaopDiscovery;
     ProtocolManager* iProtocolManager;
@@ -124,7 +127,7 @@ DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, TUint aDisco
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, aDiscoveryPort);
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDiscoveryPort);
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
@@ -163,6 +166,10 @@ TUint DummyFiller::NextStreamId()
 EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return ePlayYes;
+}
+
+void DummyFiller::NotifyStreamStart()
+{
 }
 
 

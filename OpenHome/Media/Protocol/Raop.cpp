@@ -1,4 +1,5 @@
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Media/Protocol/Raop.h>
 #include <OpenHome/Net/Private/DviStack.h>
@@ -382,7 +383,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
 
                     // activate RAOP source
-                    //iRaopObserver.NotifyStreamStart();
+                    iDiscovery.NotifyStreamStart();
                     LOG(kMedia, "RaopDiscoverySession::Run - Playing\n");
                 }
                 else if(method == RtspMethod::kSetParameter) {
@@ -436,7 +437,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
-                    //iRaopObserver.NotifyStreamStart(); //restart
+                    iDiscovery.NotifyStreamStart(); //restart
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -631,7 +632,8 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, TUint aDiscoveryPort)
+    : iRaopObserver(aObserver)
 {
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
     const NetworkAdapter* current = ref.Adapter();
@@ -661,6 +663,11 @@ RaopDiscovery::~RaopDiscovery()
     delete iRaopDiscoverySession2;
     delete iRaopDiscoveryServer;
     delete iRaopDevice;
+}
+
+void RaopDiscovery::NotifyStreamStart()
+{
+    return iRaopObserver.NotifyStreamStart();
 }
 
 const Brx& RaopDiscovery::Aeskey()

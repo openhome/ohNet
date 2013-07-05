@@ -1,6 +1,7 @@
 #ifndef HEADER_PIPELINE_RAOP
 #define HEADER_PIPELINE_RAOP
 
+#include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/Protocol/Rtsp.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
 #include <OpenHome/Private/Env.h>
@@ -13,9 +14,6 @@
 EXCEPTION(RaopNoActiveSession);
 
 namespace OpenHome {
-namespace Av {
-    class IRaopObserver;
-}
 namespace Media {
 
 class HeaderCSeq : public IHttpHeader
@@ -130,7 +128,6 @@ private:
     TUint iAesSid;
     RSA *iRsa;
     Bws<1024> iResponse;
-    //Av::IRaopObserver& iRaopObserver;
     RaopDiscovery& iDiscovery;
     //Volume& iVolume;
     RaopDevice& iRaopDevice;
@@ -139,10 +136,10 @@ private:
     Timer* iDeactivateTimer;
 };
 
-class RaopDiscovery : public IRaopDiscovery
+class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, TUint aDiscoveryPort);
     ~RaopDiscovery();
 public: // from IRaopDiscovery
     const Brx &Aeskey();
@@ -153,12 +150,15 @@ public: // from IRaopDiscovery
     void KeepAlive();
     TUint AesSid();
     void Close();
+public: // from IRaopObserver
+    void NotifyStreamStart();
 private:
     RaopDiscoverySession& ActiveSession();
 private:
     static const TUint kPriority = kPriorityNormal;
     static const TUint kSessionStackBytes = 10 * 1024;
 
+    Av::IRaopObserver& iRaopObserver;
     RaopDevice* iRaopDevice;
     SocketTcpServer* iRaopDiscoveryServer;
     RaopDiscoverySession* iRaopDiscoverySession1;
