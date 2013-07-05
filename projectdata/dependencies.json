@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.751",
+        "version": "1.0.756",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -27,7 +27,7 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.19",
+        "version":          "0.1.20",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
@@ -44,7 +44,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.147",
+        "version":          "0.0.148",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv6": false,
