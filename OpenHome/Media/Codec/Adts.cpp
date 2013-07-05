@@ -36,8 +36,6 @@ private:
 class CodecAdts : public CodecAacBase
 {
 public:
-    static const Brn kCodecAdts;
-public:
     CodecAdts();
     ~CodecAdts();
 private: // from CodecBase
@@ -67,7 +65,7 @@ CodecBase* CodecFactory::NewAdts()
 }
 
 
-const Brn CodecAdts::kCodecAdts("mp4a");
+// CodecAdts
 
 CodecAdts::CodecAdts()
 {
@@ -255,7 +253,7 @@ void CodecAdts::StreamInitialise()
     iTrackOffset = 0;
 
     LOG(kCodec, "CodecAac::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
-    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAdts, iTrackLengthJiffies, 0, false);
+    iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
 }
 
 void CodecAdts::Process()

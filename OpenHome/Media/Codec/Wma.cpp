@@ -84,7 +84,7 @@ CodecBase* CodecFactory::NewWma()
 }
 
 
-const Brn CodecWma::kCodecWma("wma");
+const Brn CodecWma::kCodecWma("WMA");
 
 CodecWma::CodecWma()
 {

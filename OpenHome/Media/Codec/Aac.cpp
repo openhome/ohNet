@@ -13,8 +13,6 @@ namespace Codec {
 class CodecAac : public CodecAacBase
 {
 public:
-    static const Brn kCodecAac;
-public:
     CodecAac();
     ~CodecAac();
 private: // from CodecBase
@@ -46,7 +44,7 @@ CodecBase* CodecFactory::NewAac()
 }
 
 
-const Brn CodecAac::kCodecAac("mp4a");
+// CodecAac
 
 CodecAac::CodecAac()
     : iMp4(NULL)

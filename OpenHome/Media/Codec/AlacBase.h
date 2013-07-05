@@ -17,6 +17,8 @@ namespace Codec {
 class CodecAlacBase : public CodecBase
 {
 public:
+    static const Brn kCodecAlac;
+public:
     CodecAlacBase();
     ~CodecAlacBase();
 protected: // from CodecBase
@@ -28,7 +30,7 @@ protected: // from CodecBase
 private:
     void BigEndianData(TUint toWrite, TUint aSamplesWritten);
 protected:
-    void Initialise(const Brx& aCodec);
+    void Initialise();
     void Decode();
     void OutputFinal();
 protected:
