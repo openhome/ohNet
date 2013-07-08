@@ -76,7 +76,7 @@ TBool CodecAlac::Recognise(const Brx& aData)
         return false;
     }
 
-    if (codec == kCodecAlac) {
+    if (codec == Brn("alac")) {
         LOG(kCodec, "CodecAlac::Recognise alac\n");
         return true;
     }
