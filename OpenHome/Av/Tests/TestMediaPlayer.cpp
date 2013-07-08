@@ -16,6 +16,7 @@
 #include "RamStore.h"
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Source.h> // FIXME - see #169
 
 #ifdef _WIN32
 #if !defined(CDECL)
@@ -214,9 +215,11 @@ TestMediaPlayer::~TestMediaPlayer()
         iDisabled.Wait();
         waitCount--;
     }
+    delete iSourceUpnp;
     delete iMediaPlayer;
     delete iDriver;
     delete iDevice;
+    delete iDeviceUpnpAv;
     delete iRamStore;
 }
 
