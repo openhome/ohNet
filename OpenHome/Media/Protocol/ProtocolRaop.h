@@ -2,9 +2,12 @@
 #define HEADER_PIPELINE_PROTOCOL_RAOP
 
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/Raop.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
+
+#include  <openssl/rsa.h>
+#include  <openssl/aes.h>
 
 namespace OpenHome {
 namespace Media {

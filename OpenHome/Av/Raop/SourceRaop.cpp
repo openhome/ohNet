@@ -6,7 +6,7 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
-#include <OpenHome/Media/Protocol/Raop.h>   // do we need to include this or can we forward declare?
+#include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 

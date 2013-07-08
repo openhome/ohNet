@@ -1,7 +1,7 @@
 #include <OpenHome/Av/Debug.h>
-#include <OpenHome/Av/Raop/SourceRaop.h>
-#include <OpenHome/Media/Protocol/ProtocolRaop.h>
-#include <OpenHome/Media/Protocol/Raop.h>
+#include <OpenHome/Av/Raop/Raop.h>
+//#include <OpenHome/Av/Raop/SourceRaop.h>
+//#include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
 #include <OpenHome/Private/Ascii.h>

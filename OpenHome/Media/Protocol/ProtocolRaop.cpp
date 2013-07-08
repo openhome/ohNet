@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Raop/Raop.h>
 
 EXCEPTION(ResendTimeout);
 EXCEPTION(ResendInvalid);

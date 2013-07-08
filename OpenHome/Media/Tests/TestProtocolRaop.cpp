@@ -10,6 +10,7 @@
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
