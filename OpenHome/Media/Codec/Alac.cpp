@@ -18,8 +18,6 @@ namespace Codec {
 class CodecAlac : public CodecAlacBase
 {
 public:
-    static const Brn kCodecAlac;
-public:
     CodecAlac();
     ~CodecAlac();
 private: // from CodecBase
@@ -47,8 +45,7 @@ CodecBase* CodecFactory::NewAlac()
 }
 
 
-
-const Brn CodecAlac::kCodecAlac("alac");
+// CodecAlac
 
 CodecAlac::CodecAlac() 
     : iMp4(NULL)
@@ -79,7 +76,7 @@ TBool CodecAlac::Recognise(const Brx& aData)
         return false;
     }
 
-    if (codec == kCodecAlac) {
+    if (codec == Brn("alac")) {
         LOG(kCodec, "CodecAlac::Recognise alac\n");
         return true;
     }
@@ -93,7 +90,7 @@ void CodecAlac::StreamInitialise()
     iMp4 = new Mpeg4MediaInfo(*iController);
     iContainer = iMp4;
 
-    CodecAlacBase::Initialise(kCodecAlac);
+    CodecAlacBase::Initialise();
 }
 
 TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)

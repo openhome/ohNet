@@ -2,9 +2,12 @@
 #define HEADER_PIPELINE_PROTOCOL_RAOP
 
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/Raop.h>
+#include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
+
+#include  <openssl/rsa.h>
+#include  <openssl/aes.h>
 
 namespace OpenHome {
 namespace Media {
@@ -85,7 +88,7 @@ private:
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort);
+    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery);
     ~ProtocolRaop();
 public:
     void DoInterrupt();
@@ -106,14 +109,9 @@ public:
     //static const TUint kPortTiming = 60402;
 private:
     static const TUint kMaxReadBufferBytes = 1500;
-    static const TUint kPriority = kPriorityNormal;
-    static const TUint kSessionStackBytes = 10 * 1024;
 
-    SocketTcpServer* iRaopDiscoveryServer;
-
-    RaopDiscovery* iRaopDiscoverySession1;
-    RaopDiscovery* iRaopDiscoverySession2;
-
+    IRaopDiscovery& iDiscovery;    // FIXME - switch to this when finished refactoring
+    //IRaopDiscovery* iDiscovery;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
     //RaopTiming iRaopTiming;
@@ -122,7 +120,6 @@ private:
 
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
-    RaopDevice* iRaopDevice;
     TUint iStreamId;
     TUint iNextFlushId;
     TBool iStopped;

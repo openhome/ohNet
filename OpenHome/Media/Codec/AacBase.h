@@ -16,6 +16,8 @@ namespace Codec {
 class CodecAacBase : public CodecBase
 {
 public:
+    static const Brn kCodecAac;
+public:
     CodecAacBase();
     ~CodecAacBase();
 protected: // from CodecBase

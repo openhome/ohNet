@@ -269,7 +269,6 @@ def build(bld):
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ProtocolTone.cpp',
-                'OpenHome/Media/Protocol/Raop.cpp',
                 'OpenHome/Media/Protocol/RaopHeader.cpp',
                 'OpenHome/Media/Protocol/Rtsp.cpp',
                 'OpenHome/Media/Protocol/ProtocolRaop.cpp',
@@ -296,6 +295,8 @@ def build(bld):
                 'OpenHome/Av/Radio/TuneIn.cpp',
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
+                'OpenHome/Av/Raop/Raop.cpp',
+                'OpenHome/Av/Raop/SourceRaop.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',

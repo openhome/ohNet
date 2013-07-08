@@ -15,7 +15,6 @@
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
 #include <OpenHome/Av/Product.h>
-#include <OpenHome/Av/Radio/SourceRadio.h>
 #include <OpenHome/Av/Debug.h>
 
 #ifdef _WIN32
@@ -68,6 +67,7 @@ class TestMediaPlayer
 {
     static const TUint kTrackCount = 1200;
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
+    static const TUint kRaopDiscoveryPort = 5048;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aFriendlyName, TUint aSenderChannel, const TChar* aTuneInUserName);
     ~TestMediaPlayer();
@@ -192,6 +192,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
     iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols);
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, aUdn, kRaopDiscoveryPort));   // FIXME - name should be product name
 
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -265,6 +266,7 @@ int CDECL main(int aArgc, char* aArgv[])
     }
 
     InitialisationParams* initParams = InitialisationParams::Create();
+    initParams->SetDvEnableBonjour();
 //    initParams->SetUseLoopbackNetworkAdapter();
     //Debug::SetLevel(Debug::kDvEvent);
 	Net::Library* lib = new Net::Library(initParams);

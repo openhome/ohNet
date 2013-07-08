@@ -12,6 +12,7 @@ class DvStack;
 namespace Media {
 
 class Protocol;
+class IRaopDiscovery;
 
 class ProtocolFactory
 {
@@ -20,7 +21,7 @@ public:
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
-    static Protocol* NewRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort);
+    static Protocol* NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery);
 };
 
 class ContentProcessor;

@@ -18,8 +18,6 @@ namespace Codec {
 class CodecRaop : public CodecAlacBase
 {
 public:
-    static const Brn kCodecRaop;
-public:
     CodecRaop();
     ~CodecRaop();
 private: // from CodecBase
@@ -45,8 +43,7 @@ CodecBase* CodecFactory::NewRaop()
 }
 
 
-
-const Brn CodecRaop::kCodecRaop("raop");
+// CodecRaop
 
 CodecRaop::CodecRaop() 
 {
@@ -79,7 +76,7 @@ void CodecRaop::StreamInitialise()
     LOG(kCodec, "CodecRaop::StreamInitialise\n");
 
     iContainer = new Mpeg4MediaInfoBase(*iController);
-    CodecAlacBase::Initialise(kCodecRaop);
+    CodecAlacBase::Initialise();
 }
 
 TBool CodecRaop::TrySeek(TUint aStreamId, TUint64 aSample)

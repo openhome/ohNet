@@ -18,6 +18,11 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
+
+// CodecAlacBase
+
+const Brn CodecAlacBase::kCodecAlac("ALAC");
+
 CodecAlacBase::CodecAlacBase()
     : iContainer(NULL)
     , alac(NULL)
@@ -36,7 +41,7 @@ CodecAlacBase::~CodecAlacBase()
     }
 }
 
-void CodecAlacBase::Initialise(const Brx& aCodec)
+void CodecAlacBase::Initialise()
 {
 #ifdef DEFINE_BIG_ENDIAN
     host_bigendian = true; // used within decode_frame()
@@ -70,7 +75,7 @@ void CodecAlacBase::Initialise(const Brx& aCodec)
     iTrackOffset = 0;
 
     LOG(kCodec, "CodecAlacBase::StreamInitialise  iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, iContainer->BitDepth(), iContainer->SampleRate(), iContainer->Channels(), aCodec, iTrackLengthJiffies, 0, true);
+    iController->OutputDecodedStream(0, iContainer->BitDepth(), iContainer->SampleRate(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecAlacBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)

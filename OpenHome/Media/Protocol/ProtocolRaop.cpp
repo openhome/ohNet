@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Raop/Raop.h>
 
 EXCEPTION(ResendTimeout);
 EXCEPTION(ResendInvalid);
@@ -12,45 +13,22 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
+Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery)
 { // static
-    return new ProtocolRaop(aEnv, aDvStack, aDiscoveryPort);
+    return new ProtocolRaop(aEnv, aDiscovery);
 }
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, TUint aDiscoveryPort)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery)
     : ProtocolNetwork(aEnv)
+    , iDiscovery(aDiscovery)
     , iRaopAudio(aEnv, kPortAudio)
     , iRaopControl(aEnv, kPortControl)
 //  , iRaopTiming(kPortTiming)
 {
-    AutoNetworkAdapterRef ref(aEnv, "ProtocolRaop ctor");
-    const NetworkAdapter* current = ref.Adapter();
-    if (current != NULL) {
-        TIpAddress ipAddr = current->Address();
-        char* adapterName = current->FullName();
-        LOG(kMedia, "ProtocolRaop::ProtocolRaop using network adapter %s\n", adapterName);
-
-        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, Brn("ProtocolRaopDevice"), ipAddr, Brn("000000000001"));
-        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
-
-        // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
-        iRaopDiscoverySession1 = new RaopDiscovery(aEnv, *this, *iRaopDevice, 1);
-        iRaopDiscoveryServer->Add("AIRD", iRaopDiscoverySession1);
-
-        iRaopDiscoverySession2 = new RaopDiscovery(aEnv, *this, *iRaopDevice, 2);
-        iRaopDiscoveryServer->Add("AIRT", iRaopDiscoverySession2);
-    }
-    else {
-        LOG(kMedia, "ProtocolRaop::ProtocolRaop no network adapter available on current subnet - not initialising TCP server\n");
-    }
 }
 
 ProtocolRaop::~ProtocolRaop()
 {
-    delete iRaopDiscoverySession1;
-    delete iRaopDiscoverySession2;
-    delete iRaopDiscoveryServer;
-    delete iRaopDevice;
 }
 
 void ProtocolRaop::DoInterrupt()
@@ -98,31 +76,24 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         try {
             TUint16 count = iRaopAudio.ReadPacket();
 
-            RaopDiscovery* activeSession;
-            if(iRaopDiscoverySession1->Active()) {
-                activeSession = iRaopDiscoverySession1;
-            }
-            else if(iRaopDiscoverySession2->Active()) {
-                activeSession = iRaopDiscoverySession2;
-            }
-            else {
+            if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
                 continue; // no active session so audio must be ignored
             }
 
-            activeSession->KeepAlive();
+            iDiscovery.KeepAlive();
 
-            if(aesSid != activeSession->AesSid()) {
-                aesSid = activeSession->AesSid();       // aes key has been updated
+            if(aesSid != iDiscovery.AesSid()) {
+                aesSid = iDiscovery.AesSid();       // aes key has been updated
 
                 LOG(kMedia, "ProtocolRaop::Stream() new sid\n");
 
-                iRaopAudio.Initialise(activeSession->Aeskey(), activeSession->Aesiv());
+                iRaopAudio.Initialise(iDiscovery.Aeskey(), iDiscovery.Aesiv());
             }
             if(start) {
                 LOG(kMedia, "ProtocolRaop::Stream() new container\n");
                 start = false;        // create dummy container for Codec() recognition and initialisation
-                OutputContainer(Brn(activeSession->Fmtp()));
+                OutputContainer(Brn(iDiscovery.Fmtp()));
                 expected = count;   // init expected count
             }
             TInt padding = count;
@@ -236,27 +207,20 @@ TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
 
 TBool ProtocolRaop::Active()
 {
-    return(iRaopDiscoverySession1->Active() || iRaopDiscoverySession2->Active());
+    return iDiscovery.Active();
 }
 
 void ProtocolRaop::Close()
 {
     LOG(kMedia, "ProtocolRaop::Close\n");
-    // deregister/re-register to kick off any existing controllers - confuses controllers - may need to wait a while before re-reg
-    iRaopDevice->Deregister();
-    Thread::Sleep(100);
-    iRaopDevice->Register();
-
-    iRaopDiscoverySession1->Close();
-    iRaopDiscoverySession2->Close();
+    iDiscovery.Close();
 }
 
 void ProtocolRaop::Deactivate()
 {
     LOG(kMedia, "ProtocolRaop::Deactivate\n");
 
-    iRaopDiscoverySession1->Deactivate();
-    iRaopDiscoverySession2->Deactivate();
+    iDiscovery.Deactivate();
 }
 
 RaopControl::RaopControl(Environment& aEnv, TUint aPort)

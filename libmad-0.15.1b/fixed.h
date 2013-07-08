@@ -378,7 +378,7 @@ mad_fixed_t mad_f_mul_inline(mad_fixed_t x, mad_fixed_t y)
        MAD_F_MLX(__hi, __lo, (x), (y));  \
        asm ("addc %0,%2,%3\n\t"  \
 	    "adde %1,%4,%5"  \
-	    : "=r" (lo), "=r" (hi)  \
+	    : "+r" (lo), "+r" (hi)  \
 	    : "%r" (lo), "r" (__lo),  \
 	      "%r" (hi), "r" (__hi)  \
 	    : "xer");  \

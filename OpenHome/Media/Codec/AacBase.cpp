@@ -47,6 +47,11 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
+
+// CodecAacBase
+
+const Brn CodecAacBase::kCodecAac("AAC");
+
 CodecAacBase::CodecAacBase()
 {
     LOG(kCodec, "CodecAacBase::CodecAacBase\n");

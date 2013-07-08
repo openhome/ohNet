@@ -89,7 +89,7 @@ CodecBase* CodecFactory::NewVorbis()
 
 
 
-const Brn CodecVorbis::kCodecVorbis("vorbis");
+const Brn CodecVorbis::kCodecVorbis("VORBIS");
 
 size_t ReadCallback(void *ptr, size_t size, size_t nmemb, void *datasource);
 int SeekCallback(void *datasource, ogg_int64_t offset, int whence);
