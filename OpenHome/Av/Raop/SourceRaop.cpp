@@ -19,17 +19,17 @@ using namespace OpenHome::Net;
 
 
 // SourceFactory
-ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, TUint aDiscoveryPort)
+ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const Brx& aDeviceName, TUint aDiscoveryPort)
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aDiscoveryPort);
+    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aDeviceName, aDiscoveryPort);
 }
 
 
 // SourceRaop
 
-SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, TUint aDiscoveryPort)
+SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aDeviceName, TUint aDiscoveryPort)
     : Source("RAOP", "RAOP")
     , iLock("SRAO")
     , iPipeline(aPipeline)
@@ -40,7 +40,7 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDiscoveryPort);
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDeviceName, aDiscoveryPort);
     iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
 }

@@ -31,7 +31,7 @@ public:
 class SourceRaop : public Source, public IRaopObserver, private Media::IPipelineObserver
 {
 public:
-    SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, TUint aDiscoveryPort);
+    SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aDeviceName, TUint aDiscoveryPort);
     ~SourceRaop();
     Media::IRaopDiscovery& Discovery();
 private: // from ISource

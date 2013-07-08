@@ -139,7 +139,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, TUint aDiscoveryPort);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const Brx& aDeviceName, TUint aDiscoveryPort);
     ~RaopDiscovery();
 public: // from IRaopDiscovery
     const Brx &Aeskey();

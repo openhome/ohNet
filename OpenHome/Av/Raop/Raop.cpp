@@ -1,7 +1,5 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Raop/Raop.h>
-//#include <OpenHome/Av/Raop/SourceRaop.h>
-//#include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
 #include <OpenHome/Private/Ascii.h>
@@ -632,7 +630,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, TUint aDiscoveryPort)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const Brx& aDeviceName, TUint aDiscoveryPort)
     : iRaopObserver(aObserver)
 {
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
@@ -642,7 +640,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
         char* adapterName = current->FullName();
         LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", adapterName);
 
-        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, Brn("ProtocolRaopDevice"), ipAddr, Brn("000000000001"));
+        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, aDeviceName, ipAddr, Brn("000000000001"));
         iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging

@@ -17,7 +17,7 @@ class SourceFactory
 public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const TChar* aSupportedProtocols);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const TChar* aSupportedProtocols);
-    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, TUint aDiscoveryPort);
+    static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const Brx& aDeviceName, TUint aDiscoveryPort);
 };
 
 } // namespace Av
