@@ -124,6 +124,8 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
     iPipeline->Add(ContentProcessorFactory::NewPls());
     iPipeline->Add(ContentProcessorFactory::NewOpml());
     iPipeline->Add(ContentProcessorFactory::NewOpml());
+    iPipeline->Add(ContentProcessorFactory::NewAsx());
+    iPipeline->Add(ContentProcessorFactory::NewAsx());
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);

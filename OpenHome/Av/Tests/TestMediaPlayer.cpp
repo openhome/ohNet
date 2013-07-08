@@ -188,6 +188,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iMediaPlayer->Add(ContentProcessorFactory::NewPls());
     iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
     iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
+    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
+    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
