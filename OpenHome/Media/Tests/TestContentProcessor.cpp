@@ -50,7 +50,7 @@ private:
     void TestRecognise();
     void TestParse();
 };
-    
+
 class SuiteM3u : public SuiteContent
 {
 public:
@@ -76,6 +76,21 @@ private: // from IProtocolSet
 private:
     TUint iNumFails;
 }; 
+
+class SuiteAsx : public SuiteContent
+{
+public:
+    SuiteAsx();
+private: // from Suite
+    void Test();
+private:
+    void TestRecognise();
+    void TestParse();
+private: // from IProtocolSet
+    ProtocolStreamResult Stream(const Brx& aUri);
+private:
+    TUint iNumFails;
+};
 
 } // namespace Media
 } // namespace OpenHome
@@ -120,7 +135,7 @@ Brn SuiteContent::Read(TUint aBytes)
     if (iInterruptBuf.Bytes() == 0) {
         buf.Set(iReadBuffer->Read(aBytes));
         if (iInterruptBytes != 0) {
-            if (buf.Bytes() >= iInterruptBytes) {
+            if (buf.Bytes() <= iInterruptBytes) {
                 iInterruptBytes -= buf.Bytes();
                 iInterrupt = (iInterruptBytes == 0);
             }
@@ -695,11 +710,207 @@ ProtocolStreamResult SuiteOpml::Stream(const Brx& aUri)
 }
 
 
+// SuiteAsx
+
+SuiteAsx::SuiteAsx()
+    : SuiteContent("Asx tests")
+    , iNumFails(0)
+{
+    iProcessor = ContentProcessorFactory::NewAsx();
+    iProcessor->Initialise(*this);
+}
+
+void SuiteAsx::Test()
+{
+    TestRecognise();
+    TestParse();
+}
+
+void SuiteAsx::TestRecognise()
+{
+    // recognition by MIME type
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("video/x-ms-asf"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("video/x-ms-wax"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("video/x-ms-wvx"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/x-ms-asf"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/x-ms-wax"), Brx::Empty()));
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/x-ms-wvx"), Brx::Empty()));
+
+    // recognition fails for bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("video/ms-asf"), Brx::Empty()));
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/ms-asf"), Brx::Empty()));
+
+    static const TChar* kFile1 = "<asx version = \"3.0\">";
+    static const TChar* kFile2 = "\n\r\n[Reference]";
+    // recognition by MIME type + content
+    Brn content(kFile1);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("video/x-ms-wvx"), content));
+    content.Set(kFile2);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("video/x-ms-wvx"), content));
+
+    // recognition by content, no MIME
+    content.Set(kFile1);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+    content.Set(kFile2);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brx::Empty(), content));
+
+    // good content, bad MIME
+    content.Set(kFile1);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/ms-asf"), content));
+    content.Set(kFile2);
+    TEST(iProcessor->Recognise(Brx::Empty(), Brn("audio/ms-asf"), content));
+
+    // bad content, bad MIME
+    TEST(!iProcessor->Recognise(Brx::Empty(), Brn("audio/foobar"), Brn("asx")));
+}
+
+void SuiteAsx::TestParse()
+{
+    // xml file
+    static const TChar* kFile1 =
+        "<asx version = \"3.0\">\n"
+        "    <title>Absolute Classic Rock</title>\n"
+        "    <entry>\n"
+        "        <PARAM name=\"HTMLView\" value=\"http://www.absoluteclassicrock.co.uk/\" />\n"
+        "        <abstract>Now playing info on our website.</abstract>\n"
+        "        <ref href = \"mms://wm.as34763.net/vruk_vc_hi\" />\r\n"
+        "        <ref href = \"http://wm.as34763.net/vruk_vc_hi\" />\n"
+        "    </entry>\n"
+        "</asx>\n";
+    FileBrx file1(kFile1);
+    iFileStream.SetFile(&file1);
+    const char* expected1[] = {"mms://wm.as34763.net/vruk_vc_hi",
+                               "http://wm.as34763.net/vruk_vc_hi"};
+    iExpectedStreams = expected1;
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // plain text file
+    static const TChar* kFile2 =
+        "[Reference]\n"
+        "Ref1=http://wmlive.bbc.co.uk/wms/england/lrcumbria?MSWMExt=.asf\n"
+        "Ref2=mms://212.58.252.33:80/wms/england/lrcumbria?MSWMExt=.asf\n";
+    iProcessor->Reset();
+    FileBrx file2(kFile2);
+    iFileStream.SetFile(&file2);
+    iReadBuffer->ReadFlush();
+    const char* expected2[] = {"mms://wmlive.bbc.co.uk/wms/england/lrcumbria?MSWMExt=.asf",
+                               "mms://212.58.252.33:80/wms/england/lrcumbria?MSWMExt=.asf"};
+    iExpectedStreams = expected2;
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // xml with two entry blocks
+    static const TChar* kFile3 =
+        "<asx version = \"3.0\">\n"
+        "    <title>Absolute Classic Rock</title>\n"
+        "    <entry>\n"
+        "        <PARAM name=\"HTMLView\" value=\"http://www.absoluteclassicrock.co.uk/\" />\n"
+        "        <abstract>Now playing info on our website.</abstract>\n"
+        "        <ref href = \"mms://wm.as34763.net/vruk_vc_hi\" />\r\n"
+        "        <ref href = \"http://wm.as34763.net/vruk_vc_hi\" />\n"
+        "    </entry>\n"
+        "    <entry>\n"
+        "        <abstract>probs</Abstract>\n"
+        "        <PARAM name=\"HTMLView\" value=\"http://www.absoluteradio.co.uk/thestation/faq/listenonline.html\" />\n"
+        "        <ref href = \"mms://wm.as34763.net/prerolls/problems_lo.wma\" />\n"
+        "        <title>Absolute Classic Rock</title>\n"
+        "    </entry>\n"
+        "</asx>\n";
+    iProcessor->Reset();
+    FileBrx file3(kFile3);
+    iFileStream.SetFile(&file3);
+    iReadBuffer->ReadFlush();
+    const char* expected3[] = {"mms://wm.as34763.net/vruk_vc_hi",
+                               "mms://wm.as34763.net/prerolls/problems_lo.wma"};
+    iExpectedStreams = expected3;
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+
+    // xml file #1; first linked file fails, second succeeds
+    iProcessor->Reset();
+    iFileStream.SetFile(&file1);
+    iFileStream.Seek(0, eSeekFromStart);
+    iReadBuffer->ReadFlush();
+    iExpectedStreams = expected1;
+    iNumFails = 1;
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+
+    // plain text file; first linked file fails, second succeeds
+    iProcessor->Reset();
+    iFileStream.SetFile(&file2);
+    iFileStream.Seek(0, eSeekFromStart);
+    iReadBuffer->ReadFlush();
+    iExpectedStreams = expected2;
+    iNumFails = 1;
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamSuccess);
+    TEST(iIndex == 2);
+
+    // processor passes on EProtocolStreamStopped errors
+    iProcessor->Reset();
+    iFileStream.Seek(0, eSeekFromStart);
+    iReadBuffer->ReadFlush();
+    iNumFails = 0;
+    iNextResult = EProtocolStreamStopped;
+    iIndex = 0;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamStopped);
+
+    // interrupt mid-way through then resume (xml file)
+    iNextResult = EProtocolStreamSuccess;
+    iProcessor->Reset();
+    iFileStream.SetFile(&file1);
+    iFileStream.Seek(0);
+    iReadBuffer->ReadFlush();
+    iExpectedStreams = expected1;
+    iIndex = 0;
+    iNextResult = EProtocolStreamSuccess;
+    static const TUint kInterruptBytes = 245; // part way through a <ref href =... line
+    iInterruptBytes = kInterruptBytes;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
+    iInterrupt = false;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - kInterruptBytes) == EProtocolStreamSuccess);
+    TEST(iIndex == 1);
+
+    // ...and repeat for plain text file
+    iProcessor->Reset();
+    iFileStream.SetFile(&file2);
+    iFileStream.Seek(0);
+    iReadBuffer->ReadFlush();
+    iExpectedStreams = expected2;
+    iIndex = 0;
+    iInterruptBytes = 30; // part way through a Ref1=... line
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes()) == EProtocolStreamErrorRecoverable);
+    iInterrupt = false;
+    TEST(iProcessor->Stream(*this, iFileStream.Bytes() - 12) == EProtocolStreamSuccess); // 12 chars in complete lines read before interruption
+    TEST(iIndex == 1);
+
+}
+
+ProtocolStreamResult SuiteAsx::Stream(const Brx& aUri)
+{
+    if (iNumFails > 0) {
+        iNumFails--;
+        iIndex++;
+        return EProtocolStreamErrorUnrecoverable;
+    }
+    return SuiteContent::Stream(aUri);
+}
+
+
+
 void TestContentProcessor()
 {
     Runner runner("Content Processor tests\n");
     runner.Add(new SuitePls());
     runner.Add(new SuiteM3u());
     runner.Add(new SuiteOpml());
+    runner.Add(new SuiteAsx());
     runner.Run();
 }

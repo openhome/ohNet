@@ -107,6 +107,7 @@ protected:
 class ContentProcessor
 {
     static const TUint kMaxLineBytes = 512;
+    static const TUint kMaxTagBytes = 512;
 public:
     virtual ~ContentProcessor();
     void Initialise(IProtocolSet& aProtocolSet);
@@ -120,11 +121,14 @@ public:
     virtual ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes) = 0;
 protected:
     Brn ReadLine(IProtocolReader& aReader, TUint64& aBytesRemaining);
+    Brn ReadTag(IProtocolReader& aReader, TUint64& aBytesRemaining);
 protected:
     IProtocolSet* iProtocolSet;
     Bws<kMaxLineBytes> iPartialLine;
+    Bws<kMaxTagBytes> iPartialTag;
 private:
     TBool iActive;
+    TBool iInTag;
 };
 
 class ProtocolManager : public IUriStreamer, private IProtocolManager, private INonCopyable

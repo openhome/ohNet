@@ -733,28 +733,28 @@ void ProtocolHttp::ProcessM3u(ReaderBuffer& aHeader)
 /* Example asx files
 
 <asx version = "3.0">
-<title>Absolute Classic Rock</title>
-<entry>
-<PARAM name="HTMLView" value="http://www.absoluteclassicrock.co.uk/" />
-<abstract>Now playing info on our website.</abstract>
-<ref href = "mms://wm.as34763.net/vruk_vc_hi" />
-<ref href = "http://wm.as34763.net/vruk_vc_hi" />
-<ref href = "mmsu://wm.as34763.net/vruk_vc_hi" />
-<ref href = "mmst://wm.as34763.net/vruk_vc_hi" />
-<title>Absolute Classic Rock</title>
-<copyright>SMG Digital Radio Ltd </copyright>
-<author>Now playing info on our website</author>
-<MoreInfo href = "http://www.absoluteclassicrock.co.uk/" />
-</entry>
-<entry>
-<abstract>probs</Abstract>
-<PARAM name="HTMLView" value="http://www.absoluteradio.co.uk/thestation/faq/listenonline.html" />
-<ref href = "mms://wm.as34763.net/prerolls/problems_lo.wma" />
-<title>Absolute Classic Rock</title>
-<copyright>SMG Digital Radio Ltd</copyright>
-<author>Now playing info on our website</author>
-<MoreInfo href = "http://www.absoluteclassicrock.co.uk/" />
-</entry>
+    <title>Absolute Classic Rock</title>
+    <entry>
+        <PARAM name="HTMLView" value="http://www.absoluteclassicrock.co.uk/" />
+        <abstract>Now playing info on our website.</abstract>
+        <ref href = "mms://wm.as34763.net/vruk_vc_hi" />
+        <ref href = "http://wm.as34763.net/vruk_vc_hi" />
+        <ref href = "mmsu://wm.as34763.net/vruk_vc_hi" />
+        <ref href = "mmst://wm.as34763.net/vruk_vc_hi" />
+        <title>Absolute Classic Rock</title>
+        <copyright>SMG Digital Radio Ltd </copyright>
+        <author>Now playing info on our website</author>
+        <MoreInfo href = "http://www.absoluteclassicrock.co.uk/" />
+    </entry>
+    <entry>
+        <abstract>probs</Abstract>
+        <PARAM name="HTMLView" value="http://www.absoluteradio.co.uk/thestation/faq/listenonline.html" />
+        <ref href = "mms://wm.as34763.net/prerolls/problems_lo.wma" />
+        <title>Absolute Classic Rock</title>
+        <copyright>SMG Digital Radio Ltd</copyright>
+        <author>Now playing info on our website</author>
+        <MoreInfo href = "http://www.absoluteclassicrock.co.uk/" />
+    </entry>
 </asx>
 
 

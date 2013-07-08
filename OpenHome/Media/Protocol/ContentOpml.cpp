@@ -32,8 +32,6 @@ private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
     ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
 private:
-    Brn EntityReadTag(IReader& aReader);
-private:
     Bws<1024> iUri;
 };
 
@@ -73,7 +71,8 @@ ProtocolStreamResult ContentOpml::Stream(IProtocolReader& aReader, TUint64 aTota
         for (;;) {
             Brn line(ReadLine(aReader, bytesRemaining));
             ReaderBuffer rb(line);
-            Parser parser(EntityReadTag(rb));
+            rb.ReadUntil('<');
+            Parser parser(rb.ReadUntil('>'));
             Brn name = parser.Next();
             if (!Ascii::CaseInsensitiveEquals(name, Brn("outline"))) {
                 continue;
@@ -117,10 +116,4 @@ ProtocolStreamResult ContentOpml::Stream(IProtocolReader& aReader, TUint64 aTota
         return EProtocolStreamErrorRecoverable;
     }
     return EProtocolStreamErrorUnrecoverable;
-}
-
-Brn ContentOpml::EntityReadTag(IReader& aReader)
-{
-    aReader.ReadUntil('<');
-    return aReader.ReadUntil('>');
 }

@@ -179,6 +179,8 @@ void ContentProcessor::Reset()
 {
     iActive = false;
     iPartialLine.SetBytes(0);
+    iPartialTag.SetBytes(0);
+    iInTag = false;
 }
 
 Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemaining)
@@ -222,6 +224,35 @@ Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemainin
         }
     }
     THROW(ReaderError);
+}
+
+Brn ContentProcessor::ReadTag(IProtocolReader& aReader, TUint64& aBytesRemaining)
+{
+    TBool partialTag = false;
+    try {
+        if (!iInTag) {
+            aReader.ReadUntil('<');
+            iInTag = true;
+        }
+        partialTag = true;
+        Brn tag = aReader.ReadUntil('>');
+        iInTag= false;
+        aBytesRemaining -= tag.Bytes();
+        if (iPartialTag.Bytes() > 0) {
+            iPartialTag.Append(tag);
+            tag.Set(iPartialTag);
+            iPartialTag.SetBytes(0);
+        }
+        return tag;
+    }
+    catch (ReaderError&) {
+        Brn rem = aReader.ReadRemaining();
+        aBytesRemaining -= rem.Bytes();
+        if (aBytesRemaining != 0 && partialTag) {
+            iPartialTag.Replace(rem);
+        }
+        throw;
+    }
 }
 
 

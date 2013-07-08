@@ -278,6 +278,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ContentPls.cpp',
                 'OpenHome/Media/Protocol/ContentM3u.cpp',
                 'OpenHome/Media/Protocol/ContentOpml.cpp',
+                'OpenHome/Media/Protocol/ContentAsx.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',

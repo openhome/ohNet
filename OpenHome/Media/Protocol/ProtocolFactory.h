@@ -31,6 +31,7 @@ public:
     static ContentProcessor* NewM3u();
     static ContentProcessor* NewPls();
     static ContentProcessor* NewOpml();
+    static ContentProcessor* NewAsx();
 };
 
 } // namespace Media
