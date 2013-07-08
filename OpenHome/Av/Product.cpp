@@ -191,9 +191,31 @@ TUint Product::SourceXmlChangeCount()
     return iSourceXmlChangeCount;
 }
 
-void Product::Activate(ISource& /*aSource*/)
+void Product::Activate(ISource& aSource)
 {
-    // FIXME
+    ISource* srcNew = NULL;
+    ISource* srcOld = NULL;
+
+    AutoMutex a(iLock);
+    // deactivate current (old) source, if one exists
+    if (iCurrentSource != UINT_MAX) {
+        srcOld = iSources[iCurrentSource];
+        srcOld->Deactivate();
+    }
+
+    // find and activate new source
+    for (TUint i=0; i<(TUint)iSources.size(); i++) {
+        if (iSources[i]->Name() == aSource.Name()) {
+            iCurrentSource = i;
+            srcNew = iSources[i];
+            srcNew->Activate();
+            if (iObserver != NULL) {
+                iObserver->SourceIndexChanged();
+            }
+            return;
+        }
+    }
+    THROW(AvSourceNotFound);
 }
 
 void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)
