@@ -30,7 +30,7 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const Brx& aDeviceNa
 // SourceRaop
 
 SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aDeviceName, TUint aDiscoveryPort)
-    : Source("RAOP", "RAOP")
+    : Source("Net Aux", "Net Aux")
     , iLock("SRAO")
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
