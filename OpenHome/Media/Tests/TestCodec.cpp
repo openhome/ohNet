@@ -1110,9 +1110,6 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
     invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
 
-    // 3s-stereo-44k-q5-coverart.ogg currently fails to play as ProtocolManager exhausts stream during Recognise().
-    invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
-
 
     // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.
     std::vector<AudioFileDescriptor> streamOnlyFiles;
@@ -1130,6 +1127,8 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     // File with embedded cover art
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
     streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
+    //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
     // Following file relies on seeking.  It is very short so protocol module sometimes finishes delivering it before the seek request comes in
     //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
 
