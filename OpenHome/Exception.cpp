@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <stdio.h>
 
@@ -149,6 +150,21 @@ Exception::Exception(const Exception& aException)
     iStackTrace = Os::StackTraceCopy(aException.iStackTrace);
 }
 
+Exception& Exception::operator= (const Exception& aException)
+{
+#if EXCEPTION_LOGGING_LEVEL > 1
+    Log::Print("assignment for %s\n", iMsg);
+#endif
+    if ( this != &aException )
+    {
+        iMsg = aException.iMsg;
+        iFile = aException.iFile;
+        iLine = aException.iLine;
+        iStackTrace = Os::StackTraceCopy(aException.iStackTrace);
+    }
+    return *this;
+}
+
 Exception::~Exception()
 {
 #if EXCEPTION_LOGGING_LEVEL > 1
@@ -165,6 +181,16 @@ const TChar* Exception::Message()
 THandle Exception::StackTrace()
 {
     return iStackTrace;
+}
+
+void Exception::LogStackTrace()
+{
+    const TUint entryCount = Os::StackTraceNumEntries(iStackTrace);
+    for ( TUint i = 0 ; i < entryCount ; ++i )
+    {
+        Log::Print(Os::StackTraceEntry(iStackTrace, i));
+        Log::Print("\n");
+    }
 }
 
 const TChar* Exception::File()

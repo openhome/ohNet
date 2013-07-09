@@ -264,7 +264,7 @@ void CpProxyUpnpOrgConnectionManager2::EndGetProtocolInfo(IAsync& aAsync, Brh& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aSource);
@@ -305,7 +305,7 @@ void CpProxyUpnpOrgConnectionManager2::EndPrepareForConnection(IAsync& aAsync, T
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aConnectionID = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -339,7 +339,7 @@ void CpProxyUpnpOrgConnectionManager2::EndConnectionComplete(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -369,7 +369,7 @@ void CpProxyUpnpOrgConnectionManager2::EndGetCurrentConnectionIDs(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aConnectionIDs);
@@ -410,7 +410,7 @@ void CpProxyUpnpOrgConnectionManager2::EndGetCurrentConnectionInfo(IAsync& aAsyn
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aRcsID = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();

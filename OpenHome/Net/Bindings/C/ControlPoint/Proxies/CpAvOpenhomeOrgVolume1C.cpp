@@ -678,7 +678,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndCharacteristics(IAsync& aAsync, TUint& aVo
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aVolumeMax = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -715,7 +715,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetVolume(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -742,7 +742,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolumeInc(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -769,7 +769,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolumeDec(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -799,7 +799,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolume(IAsync& aAsync, TUint& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -831,7 +831,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetBalance(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -858,7 +858,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndBalanceInc(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -885,7 +885,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndBalanceDec(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -915,7 +915,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndBalance(IAsync& aAsync, TInt& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -947,7 +947,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetFade(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -974,7 +974,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndFadeInc(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1001,7 +1001,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndFadeDec(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1031,7 +1031,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndFade(IAsync& aAsync, TInt& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -1063,7 +1063,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetMute(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1093,7 +1093,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndMute(IAsync& aAsync, TBool& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -1125,7 +1125,7 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolumeLimit(IAsync& aAsync, TUint& aValue)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();

@@ -1293,7 +1293,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndListPresets(IAsync& aAsync, Brh& aCurr
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aCurrentPresetNameList);
@@ -1326,7 +1326,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSelectPreset(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1359,7 +1359,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetBrightness(IAsync& aAsync, TUint& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentBrightness = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1392,7 +1392,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetBrightness(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1425,7 +1425,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetContrast(IAsync& aAsync, TUint& aCu
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentContrast = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1458,7 +1458,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetContrast(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1491,7 +1491,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetSharpness(IAsync& aAsync, TUint& aC
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentSharpness = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1524,7 +1524,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetSharpness(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1557,7 +1557,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetRedVideoGain(IAsync& aAsync, TUint&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentRedVideoGain = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1590,7 +1590,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetRedVideoGain(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1623,7 +1623,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetGreenVideoGain(IAsync& aAsync, TUin
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentGreenVideoGain = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1656,7 +1656,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetGreenVideoGain(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1689,7 +1689,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetBlueVideoGain(IAsync& aAsync, TUint
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentBlueVideoGain = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1722,7 +1722,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetBlueVideoGain(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1755,7 +1755,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetRedVideoBlackLevel(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentRedVideoBlackLevel = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1788,7 +1788,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetRedVideoBlackLevel(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1821,7 +1821,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetGreenVideoBlackLevel(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentGreenVideoBlackLevel = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1854,7 +1854,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetGreenVideoBlackLevel(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1887,7 +1887,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetBlueVideoBlackLevel(IAsync& aAsync,
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentBlueVideoBlackLevel = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1920,7 +1920,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetBlueVideoBlackLevel(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1953,7 +1953,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetColorTemperature(IAsync& aAsync, TU
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentColorTemperature = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -1986,7 +1986,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetColorTemperature(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -2019,7 +2019,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetHorizontalKeystone(IAsync& aAsync, 
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentHorizontalKeystone = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -2052,7 +2052,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetHorizontalKeystone(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -2085,7 +2085,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetVerticalKeystone(IAsync& aAsync, TI
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentVerticalKeystone = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -2118,7 +2118,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetVerticalKeystone(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -2152,7 +2152,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetMute(IAsync& aAsync, TBool& aCurren
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentMute = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -2186,7 +2186,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetMute(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -2220,7 +2220,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetVolume(IAsync& aAsync, TUint& aCurr
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentVolume = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -2254,7 +2254,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetVolume(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -2288,7 +2288,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetVolumeDB(IAsync& aAsync, TInt& aCur
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentVolume = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -2322,7 +2322,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetVolumeDB(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -2357,7 +2357,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetVolumeDBRange(IAsync& aAsync, TInt&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aMinValue = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
@@ -2394,7 +2394,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndGetLoudness(IAsync& aAsync, TBool& aCu
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCurrentLoudness = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -2428,7 +2428,7 @@ void CpProxyUpnpOrgRenderingControl1C::EndSetLoudness(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 

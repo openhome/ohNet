@@ -234,7 +234,7 @@ void CpProxyAvOpenhomeOrgInfo1Cpp::EndCounters(IAsync& aAsync, uint32_t& aTrackC
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aTrackCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -269,7 +269,7 @@ void CpProxyAvOpenhomeOrgInfo1Cpp::EndTrack(IAsync& aAsync, std::string& aUri, s
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -313,7 +313,7 @@ void CpProxyAvOpenhomeOrgInfo1Cpp::EndDetails(IAsync& aAsync, uint32_t& aDuratio
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aDuration = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -353,7 +353,7 @@ void CpProxyAvOpenhomeOrgInfo1Cpp::EndMetatext(IAsync& aAsync, std::string& aVal
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

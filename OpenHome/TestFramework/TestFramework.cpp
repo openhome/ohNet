@@ -103,8 +103,9 @@ void Runner::Run()
     Print("%d of %d tests failed.\n",gFail, gPass+gFail);
     if (gFail != 0) {
         const char* a = getenv("ABORT_ON_FAILURE");
-        if (a != NULL && atoi(a) == 1) {
-            abort();
+        if ( a == NULL || atoi(a) == 1 ) {
+            // If env var is unset, or is set to "1", then exit.
+            exit(1);
         }
     }
 }

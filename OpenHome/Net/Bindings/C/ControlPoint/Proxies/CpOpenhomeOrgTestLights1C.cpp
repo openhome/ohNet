@@ -328,7 +328,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndGetCount(IAsync& aAsync, TUint& aCount)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -363,7 +363,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndGetRoom(IAsync& aAsync, Brh& aRoomName)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aRoomName);
@@ -398,7 +398,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndGetName(IAsync& aAsync, Brh& aFriendlyNa
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aFriendlyName);
@@ -435,7 +435,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndGetPosition(IAsync& aAsync, TUint& aX, T
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aX = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -470,7 +470,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndSetColor(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -503,7 +503,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndGetColor(IAsync& aAsync, TUint& aColor)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aColor = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -541,7 +541,7 @@ void CpProxyOpenhomeOrgTestLights1C::EndGetColorComponents(IAsync& aAsync, TUint
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aBrightness = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();

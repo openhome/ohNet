@@ -137,7 +137,7 @@ void CpProxyUpnpOrgSwitchPower1Cpp::EndSetTarget(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -167,7 +167,7 @@ void CpProxyUpnpOrgSwitchPower1Cpp::EndGetTarget(IAsync& aAsync, bool& aRetTarge
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aRetTargetValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
@@ -199,7 +199,7 @@ void CpProxyUpnpOrgSwitchPower1Cpp::EndGetStatus(IAsync& aAsync, bool& aResultSt
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aResultStatus = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();

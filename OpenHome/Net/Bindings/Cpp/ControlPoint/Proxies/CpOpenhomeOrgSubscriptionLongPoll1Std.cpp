@@ -194,7 +194,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndSubscribe(IAsync& aAsync, st
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -233,7 +233,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndUnsubscribe(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -270,7 +270,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndRenew(IAsync& aAsync, uint32
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aDuration = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -308,7 +308,7 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1Cpp::EndGetPropertyUpdates(IAsync& a
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

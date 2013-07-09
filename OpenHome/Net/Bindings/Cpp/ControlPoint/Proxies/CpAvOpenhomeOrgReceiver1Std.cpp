@@ -234,7 +234,7 @@ void CpProxyAvOpenhomeOrgReceiver1Cpp::EndPlay(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -261,7 +261,7 @@ void CpProxyAvOpenhomeOrgReceiver1Cpp::EndStop(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -298,7 +298,7 @@ void CpProxyAvOpenhomeOrgReceiver1Cpp::EndSetSender(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -329,7 +329,7 @@ void CpProxyAvOpenhomeOrgReceiver1Cpp::EndSender(IAsync& aAsync, std::string& aU
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -368,7 +368,7 @@ void CpProxyAvOpenhomeOrgReceiver1Cpp::EndProtocolInfo(IAsync& aAsync, std::stri
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -403,7 +403,7 @@ void CpProxyAvOpenhomeOrgReceiver1Cpp::EndTransportState(IAsync& aAsync, std::st
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

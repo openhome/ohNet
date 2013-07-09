@@ -671,7 +671,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetAVTransportURI(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -709,7 +709,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetNextAVTransportURI(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -750,7 +750,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetMediaInfo(IAsync& aAsync, uint32_t& aN
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aNrTracks = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -819,7 +819,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetTransportInfo(IAsync& aAsync, std::str
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -872,7 +872,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetPositionInfo(IAsync& aAsync, uint32_t&
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     aTrack = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
@@ -931,7 +931,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetDeviceCapabilities(IAsync& aAsync, std
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -978,7 +978,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetTransportSettings(IAsync& aAsync, std:
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {
@@ -1017,7 +1017,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndStop(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1051,7 +1051,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndPlay(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1081,7 +1081,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndPause(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1111,7 +1111,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndRecord(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1149,7 +1149,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSeek(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1179,7 +1179,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndNext(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1209,7 +1209,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndPrevious(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1243,7 +1243,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetPlayMode(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1277,7 +1277,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndSetRecordQualityMode(IAsync& aAsync)
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 }
 
@@ -1310,7 +1310,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::EndGetCurrentTransportActions(IAsync& aAsync
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
     {

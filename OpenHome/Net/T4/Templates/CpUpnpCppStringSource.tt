@@ -216,7 +216,7 @@ void <#=className#>::End<#=a.name#>(<#=PrefixedOutArgTypesAndNames("IAsync& aAsy
 	TUint code;
 	const TChar* ignore;
 	if (invocation.Error(level, code, ignore)) {
-        throw(ProxyError(level, code));
+        THROW_PROXYERROR(level, code);
     }
 <#      if (a.outargs.Count > 0) #>
 <#      { #>

@@ -34,17 +34,20 @@ public:
 /**
  * Thrown by Sync or End action invocations.
  */
-class DllExportClass ProxyError
+class DllExportClass ProxyError : public OpenHome::Exception
 {
 public:
     DllExport ProxyError();
-    DllExport ProxyError(uint32_t aLevel, uint32_t aCode);
+    DllExport ProxyError(const TChar* aFile, TUint aLine, uint32_t aLevel, uint32_t aCode);
     TUint Level() const;
     DllExport uint32_t Code() const;
 private:
     TUint iLevel;
     TUint iCode;
 };
+
+#define THROW_PROXYERROR(level, code)   throw(ProxyError(__FILE__, __LINE__, (level), (code)))
+
 
 /**
  * Base class for all proxies
