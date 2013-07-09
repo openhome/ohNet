@@ -155,6 +155,7 @@ def configure(conf):
     ]
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
         conf.env.STLIB_OPENSSL = ['eay32']
+        conf.env.LIB_OPENSSL = ['gdi32']
     else:
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ppc32']:
             conf.env.LIB_OPENSSL = ['dl']
@@ -474,7 +475,7 @@ def build(bld):
             use=['VORBIS', 'OHNET'],
             target='CodecVorbis')
 
-        # WMA
+    # WMA
     bld.stlib(
              source=[
                  'OpenHome/Media/Codec/Wma.cpp',
