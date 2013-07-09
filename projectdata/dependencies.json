@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.756",
+        "version": "1.0.760",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -78,7 +78,7 @@
         "type": "external",
         "platform-specific": true,
         "external-version": "1.0.0d",
-        "internal-version": "0.0.1",
+        "internal-version": "0.0.2",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${external-version}-${internal-version}-${archive-platform}-Release.tar.bz2"
     }
 ]
