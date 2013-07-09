@@ -533,7 +533,6 @@ def build(bld):
                  'WMA10Dec/audio/wmaudio/v10/decoder/losslessdecprolsl.c',
                  'WMA10Dec/audio/wmaudio/v10/decoder/msaudiodec.c',
                  'WMA10Dec/audio/wmaudio/v10/decoder/strmdec_wma.c',
-                 'WMA10Dec/audio/wmaudio/v10/decoder/baseplusdecpro.c',
                  'WMA10Dec/audio/wmaudio/v10/decoder/chexdecpro.c',
                  'WMA10Dec/audio/wmaudio/v10/decoder/entropydec.c',
 
