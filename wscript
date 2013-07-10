@@ -678,7 +678,7 @@ def build(bld):
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAlac', 'CodecFlac', 'CodecMp3', 'CodecVorbis', 'CodecWav', 'CodecWma']
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecMp3', 'CodecRaop', 'CodecVorbis', 'CodecWav', 'CodecWma']
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
