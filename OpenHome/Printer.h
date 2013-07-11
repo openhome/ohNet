@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/FunctorMsg.h>
+#include <OpenHome/Private/Thread.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -11,10 +12,10 @@ namespace OpenHome {
 
 class Log
 {
+    friend class Environment;
 public:
     static const TUint kMaxPrintBytes = 1024;
 public:
-    static void RegisterOutput(FunctorMsg& aLogOutput);
     static FunctorMsg SwapOutput(FunctorMsg& aLogOutput);
     static TInt PrintHex(const Brx& aMessage);
     static TInt Print(const Brx& aMessage);
@@ -25,7 +26,12 @@ public:
     static TInt Print(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs);
 private:
-    static TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
+    TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
+    Log(FunctorMsg& aLogOutput);
+private:
+    FunctorMsg iLogOutput;
+    Mutex iLockStdio;
+    Mutex iLockFunctor;
 };
 
 } // namespace OpenHome

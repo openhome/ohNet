@@ -543,26 +543,12 @@ void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 }
 
 
-
-static OsContext* BaseInit(InitialisationParams* aInitParams)
-{
-    Log::RegisterOutput(aInitParams->LogOutput());
-    OsContext* ctx = OpenHome::Os::Create();
-    if (ctx == NULL) {
-        throw std::bad_alloc();
-    }
-    return ctx;
-}
-
-
 // Library
 
 Library::Library(InitialisationParams* aInitParams)
 {
-    OsContext* ctx = BaseInit(aInitParams);
-    iEnv = new OpenHome::Environment(ctx, aInitParams);
+    iEnv = new OpenHome::Environment(aInitParams);
     //Debug::SetLevel(Debug::kError);
-    gEnv = iEnv; // Exception still references gEnv
 }
 
 Library::~Library()
@@ -612,18 +598,14 @@ NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
 Environment* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     ASSERT(gEnv == NULL);
-    OsContext* ctx = BaseInit(aInitParams);
-    Environment* env = new Environment(ctx, aInitParams);
+    Environment* env = new Environment(aInitParams);
     //Debug::SetLevel(Debug::kError);
-    gEnv = env;
     return env;
 }
 
 Environment* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 {
-    OsContext* ctx = BaseInit(aInitParams);
-    Environment* env = new Environment(ctx);
-    gEnv = env;
+    Environment* env = new Environment(aInitParams->LogOutput());
     return env;
 }
 

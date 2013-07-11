@@ -32,8 +32,8 @@ const char kOhNetMimeTypePng[]  = "image/png";
 static const TUint kVersionMajor = 1;
 static const TUint kVersionMinor = 0;
 
-Environment::Environment(OsContext* aOsContext)
-    : iOsContext(aOsContext)
+Environment::Environment(FunctorMsg& aLogOutput)
+    : iOsContext(NULL)
     , iInitParams(NULL)
     , iTimerManager(NULL)
     , iNetworkAdapterList(NULL)
@@ -41,18 +41,18 @@ Environment::Environment(OsContext* aOsContext)
     , iCpStack(NULL)
     , iDvStack(NULL)
 {
-    Construct();
+    Construct(aLogOutput);
 }
 
-Environment::Environment(OsContext* aOsContext, InitialisationParams* aInitParams)
-    : iOsContext(aOsContext)
+Environment::Environment(InitialisationParams* aInitParams)
+    : iOsContext(NULL)
     , iInitParams(aInitParams)
     , iNetworkAdapterList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
 {
-    Construct();
+    Construct(aInitParams->LogOutput());
     SetAssertHandler(AssertHandlerDefault);
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
     iTimerManager = new OpenHome::TimerManager(*this);
@@ -75,9 +75,14 @@ Environment::Environment(OsContext* aOsContext, InitialisationParams* aInitParam
     }
 }
 
-void Environment::Construct()
+void Environment::Construct(FunctorMsg& aLogOutput)
 {
     gEnv = this;
+    iOsContext = OpenHome::Os::Create();
+    if (iOsContext == NULL) {
+        throw std::bad_alloc();
+    }
+    iLogger = new Log(aLogOutput);
     iPublicLock = new OpenHome::Mutex("GMUT");
     iPrivateLock = new OpenHome::Mutex("SOML");
 }
@@ -99,6 +104,7 @@ Environment::~Environment()
     delete iInitParams;
     delete iPublicLock;
     delete iPrivateLock;
+    delete iLogger;
     Os::Destroy(iOsContext);
 }
 
@@ -121,6 +127,11 @@ OpenHome::Mutex& Environment::Mutex()
 OsContext* Environment::OsCtx()
 {
     return iOsContext;
+}
+
+Log& Environment::Logger()
+{
+    return *iLogger;
 }
 
 NetworkAdapterList& Environment::NetworkAdapterList()

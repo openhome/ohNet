@@ -18,6 +18,7 @@ namespace OpenHome {
 class TimerManager;
 class Mutex;
 class NetworkAdapterList;
+class Log;
 
 class IStack
 {
@@ -34,8 +35,8 @@ class Environment
     friend class Net::CpStack;
     friend class Net::DvStack;
 public:
-    Environment(OsContext* aOsContext);
-    Environment(OsContext* aOsContext, Net::InitialisationParams* aInitParams);
+    Environment(FunctorMsg& aLogOutput);
+    Environment(Net::InitialisationParams* aInitParams);
     ~Environment();
 
     void GetVersion(TUint& aMajor, TUint& aMinor);
@@ -46,6 +47,7 @@ public:
     OpenHome::Mutex& Mutex();
 
     OsContext* OsCtx();
+    Log& Logger();
     OpenHome::NetworkAdapterList& NetworkAdapterList();
     Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
@@ -60,7 +62,7 @@ public:
     IStack* CpiStack();
     IStack* DviStack();
 private:
-    void Construct();
+    void Construct(FunctorMsg& aLogOutput);
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
 private:
@@ -79,6 +81,7 @@ private:
     };
 private:
     OsContext* iOsContext;
+    Log* iLogger;
     Net::InitialisationParams* iInitParams;
     OpenHome::TimerManager* iTimerManager;
     OpenHome::Mutex* iPublicLock;
