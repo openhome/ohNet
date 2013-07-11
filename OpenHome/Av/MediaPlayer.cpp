@@ -29,7 +29,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
     iPipeline->AddObserver(*iPipelineObserver);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, *iInfoLogger);
-    iProduct->AddAttribute("Sender"); // FIXME - only currently true if we're using songcasting driver
 }
 
 MediaPlayer::~MediaPlayer()
@@ -61,6 +60,11 @@ void MediaPlayer::Add(ContentProcessor* aContentProcessor)
 void MediaPlayer::Add(ISource* aSource)
 {
     iProduct->AddSource(aSource);
+}
+
+void MediaPlayer::AddAttribute(const TChar* aAttribute)
+{
+    iProduct->AddAttribute(aAttribute);
 }
 
 void MediaPlayer::Start()

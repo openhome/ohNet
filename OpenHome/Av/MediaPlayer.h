@@ -54,6 +54,7 @@ public:
     void Add(Media::Protocol* aProtocol);
     void Add(Media::ContentProcessor* aContentProcessor);
     void Add(ISource* aSource);
+    void AddAttribute(const TChar* aAttribute); // FIXME - temp enabler for Songcasting driver setting a "Sender" attribute
     void Start();
 public: // from IMediaPlayer
     Environment& Env();

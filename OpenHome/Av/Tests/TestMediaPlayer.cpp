@@ -163,6 +163,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     // Create driver & attach it to the pipeline
     Environment& env = iMediaPlayer->Env();
     iDriver = new DriverSongcastSender(iMediaPlayer->Pipeline(), kMaxDriverJiffies, env, *iDevice, aUdn, aSenderChannel, aAdapter, false /*unicast*/);
+    iMediaPlayer->AddAttribute("Sender");
 
     // Add codecs
     iMediaPlayer->Add(Codec::CodecFactory::NewAac());
