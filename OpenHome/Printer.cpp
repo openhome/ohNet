@@ -64,6 +64,7 @@ TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
             buf[j++] = hexChar( (aBrx[i+(k*128)]&0xF0)>>4 );
             buf[j++] = hexChar( (aBrx[i+(k*128)]&0x0F) );
         }
+        buf.SetBytes(j);
         buf.PtrZ();
         DoPrint(aOutput, buf.Ptr());
     }
