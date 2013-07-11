@@ -9,10 +9,10 @@
 
 namespace OpenHome {
 
-const TUint kMaxPrintBytes = 1024;
-    
 class Log
 {
+public:
+    static const TUint kMaxPrintBytes = 1024;
 public:
     static void RegisterOutput(FunctorMsg& aLogOutput);
     static FunctorMsg SwapOutput(FunctorMsg& aLogOutput);

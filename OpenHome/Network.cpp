@@ -364,16 +364,13 @@ void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
     if (iLog == kLogPlainText) {
         Log::Print("%s", aPrefix);
         TUint bytes = aBuffer.Bytes();
-        const TByte* ptr = aBuffer.Ptr();
+        Brn buf(aBuffer);
         while (bytes > 0) {
-            char buf[513];
-            size_t len = (bytes<513? bytes : 512);
-            memcpy(buf, ptr, len);
-            buf[len] = '\0';
-            Brn buf2(buf);
-            Log::Print(buf2);
-            bytes -= (TUint)len;
-            ptr += len;
+            const size_t len = (bytes<Log::kMaxPrintBytes? bytes : Log::kMaxPrintBytes);
+            Brn rem = buf.Split(len);
+            Log::Print(buf);
+            bytes -= buf.Bytes();
+            buf.Set(rem);
         }
         Log::Print("\n");
         return;
