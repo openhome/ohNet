@@ -17,8 +17,10 @@ On Linux:
     Java (optional, required for building Java bindings)
 
 Building
---------
+--------    
     make
+    
+    Note: On Windows, ensure you are in the visual studio 2010 command prompt.
 
 If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
     make generate-makefiles uset4=yes
