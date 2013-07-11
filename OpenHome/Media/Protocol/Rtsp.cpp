@@ -564,6 +564,7 @@ void RtspClient::ReadSdp(ISdpHandler& aSdpHandler)
         LOG(kHttp, line);
         LOG(kHttp, "\n");
         remaining -= line.Bytes() + 1;
+        LOG(kHttp, "  remaining=%u\n", remaining);
         Parser parser(line);
         Brn type = parser.Next('=');
         Brn value = Ascii::Trim(parser.Remaining());

@@ -85,7 +85,7 @@ private:
 class ProtocolNetwork : public Protocol
 {
 protected:
-    static const TUint kReadBufferBytes = 6 * 1024;
+    static const TUint kReadBufferBytes = 8 * 1024; // WMA radio streams (in ProtocolRtsp) require at least an 8k buffer
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
 protected:

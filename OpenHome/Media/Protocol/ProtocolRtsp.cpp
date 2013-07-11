@@ -30,6 +30,7 @@ void ProtocolRtsp::OutputStream() {
 
 ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
 {
+    //iTcpClient.LogVerbose(true);
     iStreamId = ProtocolManager::kStreamIdInvalid;
     iStopped = false;
     iNextFlushId = MsgFlush::kIdInvalid;
@@ -38,12 +39,10 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
     LOG(kMedia, iUri.AbsoluteUri());
     LOG(kMedia, "\n");
 
-    if (iUri.Scheme() != Brn("rtsp")) {
-        if (iUri.Scheme() != Brn("mms")) {
-            LOG(kMedia, "ProtocolRtsp::Stream Scheme not recognised\n");
-            Close();
-            return EProtocolErrorNotSupported;
-        }
+    if (iUri.Scheme() != Brn("rtsp") && iUri.Scheme() != Brn("mms")) {
+        LOG(kMedia, "ProtocolRtsp::Stream Scheme not recognised\n");
+        Close();
+        return EProtocolErrorNotSupported;
     }
 
     ProtocolStreamResult res = DoStream();
@@ -51,12 +50,10 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
     OutputStream();
 
     // Output pgmpu
-
-    Log::PrintHex(iSdpInfo.AudioPgmpu());
+    //Log::PrintHex(iSdpInfo.AudioPgmpu());
     iSupply->OutputData(iSdpInfo.AudioPgmpu());
 
     // Output audio stream
-
     while (res == EProtocolStreamErrorRecoverable) {
         if (iStopped) {
             iSupply->OutputFlush(iNextFlushId);
@@ -82,7 +79,7 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
 
         try {
             Brn data = iRtspClient.ReadRtsp(iSdpInfo);
-            Log::PrintHex(data);
+            //Log::PrintHex(data);
             iSupply->OutputData(data);
         }
         catch (ReaderError&) {

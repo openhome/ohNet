@@ -35,6 +35,9 @@ void Supply::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable,
 
 void Supply::OutputData(const Brx& aData)
 {
+    if (aData.Bytes() == 0) {
+        return;
+    }
     MsgAudioEncoded* msg = iMsgFactory.CreateMsgAudioEncoded(aData);
     iDownStreamElement.Push(msg);
 }
