@@ -72,7 +72,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
     endpt.AppendAddress(buf);
-    Print("Connect to %s.%u then 'help' for options\n\n", buf.Ptr(), Shell::kServerPort);
+    Print("Connect to %s:%u then 'help' for options\n\n", buf.Ptr(), Shell::kServerPort);
     Library::DestroySubnetList(subnetList);
     CpStack* cpStack = NULL;
     DvStack* dvStack = NULL;
