@@ -7,6 +7,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Ascii.h>
+
+#include <ctype.h>
 
 namespace OpenHome {
 namespace Media {
@@ -21,6 +25,29 @@ private: // from HttpHeader
     void Process(const Brx& aValue);
 private:
     TUint iBytes;
+};
+
+class ReaderHttpChunked2 : public IProtocolReader
+{
+    static const TUint kChunkSizeBufBytes = 10;
+    static const TUint kBufSizeBytes = (6 * 1024) + kChunkSizeBufBytes;
+public:
+    ReaderHttpChunked2(Srx& aReader);
+    void SetChunked(TBool aChunked);
+public: // from IProtocolReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
+    Brn ReadRemaining();
+private:
+    Brn Dechunk(const Brx& aBuf);
+private:
+    Srx& iReader;
+    Bws<kBufSizeBytes> iBuf;
+    TUint iChunkBytesRemaining;
+    Bws<kChunkSizeBufBytes> iChunkSizeBuf;
+    TBool iChunked;
 };
 
 class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
@@ -62,9 +89,11 @@ private:
 private:
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
+    ReaderHttpChunked2 iDechunker;
     HttpHeaderContentType iHeaderContentType;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderLocation iHeaderLocation;
+    HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     OpenHome::Uri iUri;
@@ -173,6 +202,121 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
 }
 
 
+// ReaderHttpChunked2
+
+ReaderHttpChunked2::ReaderHttpChunked2(Srx& aReader)
+    : iReader(aReader)
+    , iChunkBytesRemaining(0)
+    , iChunked(false)
+{
+}
+
+void ReaderHttpChunked2::SetChunked(TBool aChunked)
+{
+    iChunked = aChunked;
+    iBuf.SetBytes(0);
+    iChunkSizeBuf.SetBytes(0);
+    iChunkBytesRemaining = 0;
+}
+
+Brn ReaderHttpChunked2::Read(TUint aBytes)
+{
+    Brn buf = iReader.Read(aBytes);
+    return Dechunk(buf);
+}
+
+Brn ReaderHttpChunked2::ReadUntil(TByte aSeparator)
+{
+    ASSERT(!isalpha(aSeparator) && !isdigit(aSeparator)); // don't support scanning for characters which may appear in chunk size
+    Brn buf = iReader.ReadUntil(aSeparator);
+    return Dechunk(buf);
+}
+
+void ReaderHttpChunked2::ReadFlush()
+{
+    iReader.ReadFlush();
+    iBuf.SetBytes(0);
+    iChunkSizeBuf.SetBytes(0);
+    iChunkBytesRemaining = 0;
+}
+
+void ReaderHttpChunked2::ReadInterrupt()
+{
+    iReader.ReadInterrupt();
+}
+
+Brn ReaderHttpChunked2::ReadRemaining()
+{
+    Brn remaining = iReader.Snaffle();
+    return Dechunk(remaining);
+}
+
+Brn ReaderHttpChunked2::Dechunk(const Brx& aBuf)
+{
+    if (!iChunked) {
+        return Brn(aBuf);
+    }
+    iBuf.SetBytes(0);
+    Brn buf(aBuf);
+    while (buf.Bytes() > 0) {
+        while (iChunkBytesRemaining == 0) {
+            iChunkSizeBuf.SetBytes(0);
+            TBool haveLine = false;
+            if (buf.Bytes() > 0) {
+                TUint index=Ascii::IndexOf(buf, Ascii::kLf);
+                haveLine = (index != buf.Bytes());
+                if (haveLine) {
+                    if (index+1 > iChunkSizeBuf.MaxBytes() - iChunkSizeBuf.Bytes()) {
+                        THROW(ReaderError);
+                    }
+                    iChunkSizeBuf.Append(buf.Ptr(), index+1);
+                    buf.Set(buf.Split(index+1));
+                }
+                else {
+                    if (buf.Bytes() > iChunkSizeBuf.MaxBytes() - iChunkSizeBuf.Bytes()) {
+                        THROW(ReaderError);
+                    }
+                    iChunkSizeBuf.Append(buf);
+                    buf.Set(buf.Ptr(), 0);
+                }
+            }
+            if (!haveLine) {
+                Brn b = iReader.ReadUntil(Ascii::kLf);
+                if (b.Bytes() > iChunkSizeBuf.MaxBytes() - iChunkSizeBuf.Bytes()) {
+                    THROW(ReaderError);
+                }
+                iChunkSizeBuf.Append(b);
+            }
+            Parser parser(iChunkSizeBuf);
+            Brn trimmed = parser.Next(Ascii::kCr);
+            if (trimmed.Bytes() == 0) {
+                continue;
+            }
+            try {
+                iChunkBytesRemaining = Ascii::UintHex(trimmed);
+                if (iChunkBytesRemaining == 0 || buf.Bytes() == 0) {
+                    return Brn(iBuf);
+                }
+            }
+            catch (AsciiError&) {
+                THROW(ReaderError);
+            }
+        }
+        if (iChunkBytesRemaining >= buf.Bytes()) {
+            iChunkBytesRemaining -= buf.Bytes();
+            iBuf.Append(buf);
+            buf.Set(buf.Ptr(), 0);
+        }
+        else {
+            iBuf.Append(buf.Ptr(), iChunkBytesRemaining);
+            iChunkBytesRemaining = 0;
+            buf.Set(buf.Split(iChunkBytesRemaining));
+        }
+    }
+    return Brn(iBuf);
+}
+
+
 // ProtocolHttp
 
 static const Brn kUserAgentString("Linn DS"); // FIXME
@@ -181,6 +325,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     : ProtocolNetwork(aEnv)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(aEnv, iReaderBuf)
+    , iDechunker(iReaderBuf)
     , iTotalBytes(0)
     , iSeekable(false)
     , iSem("PRTH", 0)
@@ -188,6 +333,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     iReaderResponse.AddHeader(iHeaderContentType);
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderLocation);
+    iReaderResponse.AddHeader(iHeaderTransferEncoding);
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
 }
 
@@ -322,7 +468,7 @@ Brn ProtocolHttp::Read(TUint aBytes)
         }
         iDataChunkRemaining -= bytes;
     }
-    Brn buf = iReaderBuf.Read(bytes);
+    Brn buf = iDechunker.Read(bytes);
     iOffset += buf.Bytes();
     return buf;
 }
@@ -331,24 +477,24 @@ Brn ProtocolHttp::ReadUntil(TByte aSeparator)
 {
     ASSERT(!iStreamIncludesMetaData); /* assume only audio streams contain icy data
                                          and they just read a number of bytes */
-    Brn buf = iReaderBuf.ReadUntil(aSeparator);
+    Brn buf = iDechunker.ReadUntil(aSeparator);
     iOffset += buf.Bytes();
     return buf;
 }
 
 void ProtocolHttp::ReadFlush()
 {
-    iReaderBuf.ReadFlush();
+    iDechunker.ReadFlush();
 }
 
 void ProtocolHttp::ReadInterrupt()
 {
-    iReaderBuf.ReadInterrupt();
+    iDechunker.ReadInterrupt();
 }
 
 Brn ProtocolHttp::ReadRemaining()
 {
-    Brn buf = iReaderBuf.Snaffle();
+    Brn buf = iDechunker.ReadRemaining();
     iOffset += buf.Bytes();
     return buf;
 }
@@ -375,9 +521,9 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
     iLive = (iTotalBytes == 0);
-    if (iReaderResponse.Version() == Http::eHttp10 && iHeaderContentType.Received() && iHeaderContentType.Type() == Brn("audio/x-mpegurl")) {
-        // HTTP1.0 servers may send a response without a Content-Length, expecting clients to just read until their stream closes
-        // if the stream has Content-Type audio/x-mpegurl we assume it is a url pointing towards a radio stream, rather than the radio stream itself
+    if (iHeaderContentType.Received() && (iHeaderContentType.Type() == Brn("audio/x-mpegurl") ||
+                                          iHeaderContentType.Type() == Brn("video/x-ms-asf"))) { // FIXME - we'll end up slowly duplicating ContentProcessor mime type checks this way
+        // if the stream has a known Content-Type we assume it is a url pointing towards a radio stream, rather than the radio stream itself
         iLive = false;
     }
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
@@ -398,6 +544,8 @@ ProtocolStreamResult ProtocolHttp::DoStream()
         iStreamIncludesMetaData = true;
         iDataChunkSize = iDataChunkRemaining = iHeaderIcyMetadata.Bytes();
     }
+
+    iDechunker.SetChunked(iHeaderTransferEncoding.IsChunked());
 
     if (!iStarted && iLive) {
         StartStream();
@@ -450,19 +598,42 @@ void ProtocolHttp::StartStream()
 
 TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
+    //iTcpClient.LogVerbose(true);
     Close();
     if (!Connect(iUri, 80)) {
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
     }
         
+    /* GETting ASX for BBC Scotland responds with invalid chunking if we request ICY metadata.
+       Suppress this header if we're requesting a resource with an extension that matches
+       a known ContentProcessor */
+    Brn path(iUri.Path());
+    ASSERT_DEBUG(path.Bytes() > 0 && path[0] != '.');
+    Brn ext;
+    for (TUint i=path.Bytes()-1; i!=0; i--) {
+        if (path[i] == '.') {
+            ext.Set(path.Split(i));
+            break;
+        }
+    }
+    TBool suppressIcyHeader = false;
+    if (Ascii::CaseInsensitiveEquals(ext, Brn(".asx")) ||
+        Ascii::CaseInsensitiveEquals(ext, Brn(".pls")) ||
+        Ascii::CaseInsensitiveEquals(ext, Brn(".m3u")) ||
+        Ascii::CaseInsensitiveEquals(ext, Brn(".xml")) ||
+        Ascii::CaseInsensitiveEquals(ext, Brn(".opml"))) {
+        suppressIcyHeader = true;;
+    }
     try {
         LOG(kMedia, "ProtocolHttp::Stream send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
         Http::WriteHeaderHost(iWriterRequest, iUri);
         iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
         Http::WriteHeaderConnectionClose(iWriterRequest);
-        HeaderIcyMetadata::Write(iWriterRequest);
+        if (!suppressIcyHeader) {
+            HeaderIcyMetadata::Write(iWriterRequest);
+        }
         Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
         iWriterRequest.WriteFlush();
     }
@@ -502,7 +673,7 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
             }
             Brn contentStart;
             try {
-                contentStart.Set(iReaderBuf.Peek(bytes));
+                contentStart.Set(iReaderBuf.Peek(bytes)); // FIXME - should ideally be reading via iDechunker here
             }
             catch (ReaderError&) {
                 if (iTotalBytes != 0) {

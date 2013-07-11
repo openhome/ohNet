@@ -118,6 +118,7 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
     iPipeline->Add(ProtocolFactory::NewHttp(env));
     iPipeline->Add(ProtocolFactory::NewHttp(env));
     iPipeline->Add(ProtocolFactory::NewHttp(env));
+    iPipeline->Add(ProtocolFactory::NewRtsp(env, Brn("notarealguid")));
     iPipeline->Add(ContentProcessorFactory::NewM3u());
     iPipeline->Add(ContentProcessorFactory::NewM3u());
     iPipeline->Add(ContentProcessorFactory::NewPls());

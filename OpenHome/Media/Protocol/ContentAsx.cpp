@@ -89,8 +89,9 @@ TBool ContentAsx::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
         Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/x-ms-wvx"))) {
         return true;
     }
-    if (Ascii::Contains(aData, Brn("<asx version")) ||
-        Ascii::Contains(aData, Brn("[Reference]"))) {
+    if (Ascii::Contains(aData, Brn("[Reference]"))  ||
+        Ascii::Contains(aData, Brn("<asx version")) ||
+        Ascii::Contains(aData, Brn("<ASX version"))) {
         return true;
     }
     return false;
@@ -103,6 +104,9 @@ ProtocolStreamResult ContentAsx::Stream(IProtocolReader& aReader, TUint64 aTotal
            first character for xml is '<', alternative is '[Reference]' at start else unsupported */
         while (iFormatVersion == eUnknown) {
             Brn format(aReader.Read(1));
+            if (format.Bytes() == 0) {
+                continue;
+            }
             aTotalBytes--;
             switch (format[0])
             {
