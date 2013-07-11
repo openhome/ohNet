@@ -8,14 +8,12 @@ using namespace OpenHome;
 using namespace Media;
 
 // General headers
-
 const Brn RtspHeader::kCacheControl("Cache-Control");
 const Brn RtspHeader::kConnection("Connection");
 const Brn RtspHeader::kDate("Date");
 const Brn RtspHeader::kVia("Via");
 
 // Request headers
-
 const Brn RtspHeader::kAccept("Accept");
 const Brn RtspHeader::kAcceptEncoding("Accept-Encoding");
 const Brn RtspHeader::kAcceptLanguage("Accept-Language");
@@ -48,7 +46,6 @@ const Brn RtspHeader::kExpires("Expires");
 const Brn RtspHeader::kLastModified("Last-Modified");
 
 // Methods
-
 const Brn RtspMethod::kDescribe("DESCRIBE");
 const Brn RtspMethod::kAnnounce("ANNOUNCE");
 const Brn RtspMethod::kGetParameter("GET_PARAMETER");
@@ -140,13 +137,13 @@ void WriterRtspRequest::WriteMethod(const Brx& aMethod, const Brx& aUri)
     iWriter.WriteNewline();
 }
 
+
 // ReaderRtspRequest
 
 ReaderRtspRequest::ReaderRtspRequest(Environment& aEnv, IReader& aReader)
     : ReaderHttpRequest(aEnv, aReader)
 {
 }
-
 
 void ReaderRtspRequest::ReadRtsp(TChar aFirstChar)
 {
@@ -161,13 +158,10 @@ void ReaderRtspRequest::ReadRtsp(TChar aFirstChar)
     Brn line(firstLine);
 
     for (;;) {
-
         LOG(kHttp, "Read Request   ");
         LOG(kHttp, line);
         LOG(kHttp, "\n");
-
         TUint bytes = line.Bytes();
-
         if (!bytes && count) {
             if (iMethod == 0) {
                 THROW(HttpError);
@@ -177,7 +171,6 @@ void ReaderRtspRequest::ReadRtsp(TChar aFirstChar)
 
         if (!bytes || !Ascii::IsWhitespace(line[0])) { // a line starting with spaces is a continuation line
             Parser parser(line);
-
             if (count == 0) { // method
                 Brn method = parser.Next();
                 LOG(kHttp, "Method   ");
@@ -215,15 +208,12 @@ void ReaderRtspResponse::ReadRtsp()
     Read(); //use http implementation
 }
 
-
 void ReaderRtspResponse::ReadRtsp(TChar aFirstChar)
 {
- //why do this?   iReader.ReadFlush();
-
+    //iReader.ReadFlush(); // FIXME - why do this?
     ResetHeaders();
 
     TUint count = 0;
-
     Bws<500> firstLine;
     firstLine.Append(aFirstChar);
     LOG(kHttp, "RTSP Read Response first char (");
@@ -241,14 +231,12 @@ void ReaderRtspResponse::ReadRtsp(TChar aFirstChar)
         LOG(kHttp, "\n");
 
         TUint bytes = line.Bytes();
-
         if (!bytes && count) {
             return;     // terminate on blank line, unless before first header(RFC 2616 section 4.1)
         }
 
         if (!bytes || !Ascii::IsWhitespace(line[0])) { // a line starting with spaces is a continuation line
             Parser parser(line);
-
             if (count == 0) { // status
                 LOG(kHttp, " HttpStatus   ");
                 Brn version = parser.Next(' ');
@@ -283,7 +271,6 @@ void ReaderRtspResponse::ProcessStatus(const Brx& aVersion, const Brx& aCode, co
     catch (AsciiError) {
         THROW(HttpError);
     }
-
     iStatus.Set(code, aDescription);
 }
 
@@ -292,22 +279,22 @@ void ReaderRtspResponse::ProcessStatus(const Brx& aVersion, const Brx& aCode, co
 
 TBool HeaderRtspSession::Received() const
 {
-    return (iReceived);
+    return iReceived;
 }
 
 const Brx& HeaderRtspSession::SessionId() const
 {
-    return (iSessionId);
+    return iSessionId;
 }
 
 TBool HeaderRtspSession::Recognise(const Brx& aHeader)
 {
-    return (Ascii::CaseInsensitiveEquals(aHeader, Brn("Session")));
+    return Ascii::CaseInsensitiveEquals(aHeader, Brn("Session"));
 }
 
 TUint HeaderRtspSession::Timeout() const
 {
-    return (iTimeout);
+    return iTimeout;
 }
 
 void HeaderRtspSession::Reset()
@@ -321,16 +308,12 @@ void HeaderRtspSession::Process(const Brx& aValue)
     if (aValue.Bytes() > kMaxSessionIdBytes) {
         THROW(HttpError);
     }
-
     Parser parser(aValue);
-
     iSessionId.ReplaceThrow(parser.Next(';'));
     iReceived = true;
-
     parser.Next('=');
     iTimeout = Ascii::Uint(parser.Remaining());
 }
-
 
 
 // RtspClient
@@ -469,12 +452,12 @@ void RtspClient::WriteHeaderSession()
 
 const Brx& RtspClient::SessionId() const
 {
-    return (iHeaderRtspSession.SessionId());
+    return iHeaderRtspSession.SessionId();
 }
 
 TUint RtspClient::Timeout() const
 {
-    return (iHeaderRtspSession.Timeout());
+    return iHeaderRtspSession.Timeout();
 }
 
 void RtspClient::WriteFlush()
@@ -485,7 +468,7 @@ void RtspClient::WriteFlush()
 TUint RtspClient::Read()
 {
     iReaderResponse.ReadRtsp();
-    return (iReaderResponse.Status().Code());
+    return iReaderResponse.Status().Code();
 }
 
 void RtspClient::Flush()
@@ -503,7 +486,6 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
     for (;;) {
         Brn magic = iReader.Read(1);
         LOG(kHttp, "ReadRtsp (%c)\n", magic[0]);
-
         if (magic[0] == '$') {
             return(ReadRtp());
         }
@@ -546,7 +528,6 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
     }
 }
 
-
 // RTSP/RTP frames consist of:
 // Rtsp header:
 //              1byte - magic number, 0x24
@@ -561,45 +542,31 @@ Brn RtspClient::ReadRtsp(SdpInfo& aSdpInfo)
 // Payload header:
 //              2bytes- flags (eg 40,00)
 //              2bytes- payload length (includes this header)
-    
 
 Brn RtspClient::ReadRtp()
 {
     Brn channel = iReader.Read(1);
     Brn length = iReader.Read(2);
-
     TUint16 bytes = Converter::BeUint16At(length, 0);
-
     Brn header = iReader.Read(16);
-
     Brn frame = iReader.Read(bytes - 16);
-
-    return (frame);
+    return frame;
 }
-
 
 void RtspClient::ReadSdp(ISdpHandler& aSdpHandler)
 {
     aSdpHandler.Reset();
-
     Brn line;
-
     TUint remaining = iHeaderContentLength.ContentLength();
-
     while (remaining > 0) {
         line.Set(iReader.ReadUntil(Ascii::kLf));
-
         LOG(kHttp, "SDP: ");
         LOG(kHttp, line);
         LOG(kHttp, "\n");
-
         remaining -= line.Bytes() + 1;
-
         Parser parser(line);
-
         Brn type = parser.Next('=');
         Brn value = Ascii::Trim(parser.Remaining());
-
         if (type.Bytes() == 1) {
             aSdpHandler.Decode(type[0], value);
         }
@@ -640,7 +607,6 @@ void RtspClient::ReadSdp(ISdpHandler& aSdpHandler)
 //      k=* (encryption key)
 //      a=* (zero or more media attribute lines)
 
-
 SdpInfo::SdpInfo()
 {
 }
@@ -649,82 +615,82 @@ const Brn kSdpInfoContentType("application/sdp");
 
 const Brx& SdpInfo::ContentType() const
 {
-    return (kSdpInfoContentType);
+    return kSdpInfoContentType;
 }
  
 TUint SdpInfo::MediaCount() const
 {
-    return (iMediaCount);
+    return iMediaCount;
 }
         
 TUint SdpInfo::MediaAudioCount() const
 {
-    return (iMediaAudioCount);
+    return iMediaAudioCount;
 }
         
 TUint SdpInfo::MediaVideoCount() const
 {
-    return (iMediaVideoCount);
+    return iMediaVideoCount;
 }
         
 TUint SdpInfo::MediaApplicationCount() const
 {
-    return (iMediaApplicationCount);
+    return iMediaApplicationCount;
 }
         
 TUint SdpInfo::MediaDataCount() const
 {
-    return (iMediaDataCount);
+    return iMediaDataCount;
 }        
         
 TUint SdpInfo::MediaAudioPort() const
 {
-    return (iMediaAudioPort);
+    return iMediaAudioPort;
 }
      
 const Brx& SdpInfo::MediaAudioTransport() const
 {
-    return (iMediaAudioTransport);
+    return iMediaAudioTransport;
 }
         
 const Brx& SdpInfo::MediaAudioFormat() const
 {
-    return (iMediaAudioFormat);
+    return iMediaAudioFormat;
 }        
 
 const Brx& SdpInfo::AudioPgmpu() const
 {
-    return (iAudioPgmpu);
+    return iAudioPgmpu;
 }
 
 const Brx& SdpInfo::AudioControlUri() const
 {
-    return (iAudioControlUri);
+    return iAudioControlUri;
 }
 
 const Brx& SdpInfo::Fmtp() const
 {
-    return (iFmtp);
+    return iFmtp;
 }
 
 const Brx& SdpInfo::Rsaaeskey() const
 {
-    return (iRsaaeskey);
+    return iRsaaeskey;
 }
 
 const Brx& SdpInfo::Aesiv() const
 {
-    return (iAesiv);
+    return iAesiv;
 }
 
 TUint SdpInfo::AudioStream() const
 {
-    return (iAudioStream);
+    return iAudioStream;
 }
         
 const Brx& SdpInfo::SessionControlUri() const
 {
-    return (iSessionControlUri);
+    return iSessionControlUri;
 }        
         
 void SdpInfo::Reset()
@@ -744,7 +710,8 @@ void SdpInfo::Reset()
         
 void SdpInfo::Decode(TByte aType, const Brx& aValue)
 {
-    switch (aType) {
+    switch (aType)
+    {
     case 'a':
         DecodeA(aValue);
         break;
@@ -757,33 +724,26 @@ void SdpInfo::Decode(TByte aType, const Brx& aValue)
 void SdpInfo::DecodeA(const Brx& aValue)
 {
     Parser parser(aValue);
-        
     Brn attribute = parser.Next(':');
     Brn remaining = parser.Remaining();
-    
     if (attribute == Brn("pgmpu")) {
         DecodeAttributeAudioPgmpu(remaining);
     }
-   // a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
-
+    // a=fmtp:96 4096 0 16 40 10 14 2 255 0 0 44100
     if (attribute == Brn("fmtp")) {
         DecodeAttributeFmtp(remaining);
     }
-
     if (attribute == Brn("rsaaeskey")) {
         DecodeAttributeRsaaeskey(remaining);
     }
-
     if (attribute == Brn("aesiv")) {
         DecodeAttributeAesiv(remaining);
     }
-
     if (iCurrentMedia == ' ') {
         if (attribute == Brn("control")) {
             DecodeAttributeSessionControl(remaining);
         }
     }
-    
     if (FirstMediaAudio()) {
         if (attribute == Brn("control")) {
             DecodeAttributeAudioControl(remaining);
@@ -797,11 +757,9 @@ void SdpInfo::DecodeA(const Brx& aValue)
 void SdpInfo::DecodeAttributeAudioPgmpu(const Brx& aValue)
 {
     Parser parser(aValue);
-        
     if (parser.Next(',') != Brn("data:application/vnd.ms.wms-hdr.asfv1;base64")) {
         return;
     }
-
     Brn data = Ascii::Trim(parser.Remaining());
     iAudioPgmpu.Replace(data);
     Converter::FromBase64(iAudioPgmpu);
@@ -834,7 +792,6 @@ void SdpInfo::DecodeAttributeFmtp(const Brx& aValue)
 void SdpInfo::DecodeAttributeRsaaeskey(const Brx& aValue)
 {
     Parser parser(aValue);
-
     Brn dataR = Ascii::Trim(parser.Remaining());
     Bwn dataW(dataR.Ptr(), dataR.Bytes());
     dataW.SetBytes(dataR.Bytes());
@@ -845,7 +802,6 @@ void SdpInfo::DecodeAttributeRsaaeskey(const Brx& aValue)
 void SdpInfo::DecodeAttributeAesiv(const Brx& aValue)
 {
     Parser parser(aValue);
-
     Brn dataR = Ascii::Trim(parser.Remaining());
     Bwn dataW(dataR.Ptr(), dataR.Bytes());
     dataW.SetBytes(dataR.Bytes());
@@ -861,16 +817,13 @@ void SdpInfo::DecodeM(const Brx& aValue)
     iCurrentMedia = 'X'; // unknown
 
     Parser parser(aValue);
-
     Brn media = parser.Next();
     Brn port = parser.Next();
     Brn transport = parser.Next();
     Brn format = Ascii::Trim(parser.Remaining());
-    
     if (media == Brn("audio")) {
         iCurrentMedia = 'A';
         iMediaAudioCount++;
-
         if (FirstMediaAudio()) {
             try {
                 iMediaAudioPort = Ascii::Uint(port);
@@ -896,7 +849,6 @@ void SdpInfo::DecodeM(const Brx& aValue)
         iMediaDataCount++;
     }
 }
-
 
 TBool SdpInfo::FirstMediaAudio() const
 {
