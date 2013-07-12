@@ -446,6 +446,11 @@ TBool CodecWma::TrySeek(TUint aStreamId, TUint64 aSample)
     TUint seconds = static_cast<TUint>(aSample/iSampleRate);
     tWMA_U32 actualSeconds;
     tWMAFileStatus rv;
+
+    if (iController->StreamLength() == 0) {
+        return false;
+    }
+
     // this will read a few bytes from the start of the file and determine the approximate offset into
     // the file that corresponds to the supplied time, will then seek from that offset
     // The decoder expects to be working on a flat file structure and uses absolute positioning in the file,
@@ -507,24 +512,25 @@ void CodecWma::CopyToBigEndian(TUint aSamples, TUint aBytesPerSample)
     iOutBuf.SetBytes(aSamples*aBytesPerSample);
 }
 
-TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aRecognisingFromBuf)
+TUint32 CodecWma::Read(const TUint8 **aDataPtr, TUint32 aBytes, TUint64 aOffset, TBool aRecognising)
 {
     //LOG(kCodec, ">Wma::Read %u bytes at %llu.\n", aBytes, aOffset);
+    TBool recognisingFromBuf = aRecognising;
     aOffset -= static_cast<TUint32>(iSeekOffset); // offset to the seeked position
     iInBuf.SetBytes(0);
 
     if (iRecogBuf.Bytes() < aOffset || iRecogBuf.Bytes()-aOffset < aBytes) {
         // going to exhaust buffer, so should read from controller instead
-        aRecognisingFromBuf = false;
+        recognisingFromBuf = false;
     }
 
-    if (aRecognisingFromBuf) {
+    if (recognisingFromBuf) {
         //LOG(kCodec, "CodecWma::Read peeking from buffer\n");
         ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
         Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(aOffset), aBytes);
         iInBuf.Replace(tmpBuf);
     }
-    else if (!aRecognisingFromBuf && (iController->StreamLength() > 0)) {
+    else if (!aRecognising || (!recognisingFromBuf && (iController->StreamLength() > 0))) {   // this means we NEVER read from a stream!
         //LOG(kCodec, "CodecWma::Read reading from controller\n");
         if (aOffset != iWmaReadOffset) {
             // LOG(kCodec, "Wma::Read skipping %llu bytes\n", aOffset - iWmaReadOffset);
