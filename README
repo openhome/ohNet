@@ -20,6 +20,9 @@ Building
 --------
     make
 
+Note: On Windows, ensure you are in a visual studio command prompt or have otherwise set Visual
+Studio's environment variables.
+
 If you have a .NET runtime available and want to regenerate makefiles, proxies or providers, run
     make generate-makefiles uset4=yes
     make GenAll uset4=yes
