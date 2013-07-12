@@ -7,6 +7,34 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+// TransportState
+
+const TChar* TransportState::FromPipelineState(EPipelineState aState)
+{ // static
+    const TChar* state;
+    switch (aState)
+    {
+    case EPipelinePlaying:
+        state = "Playing";
+        break;
+    case EPipelinePaused:
+        state = "Paused";
+        break;
+    case EPipelineStopped:
+        state = "Stopped";
+        break;
+    case EPipelineBuffering:
+        state = "Buffering";
+        break;
+    default:
+        ASSERTS();
+        state = "";
+        break;
+    }
+    return state;
+}
+
+    
 // NullPipelineObserver
 
 void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)

@@ -27,6 +27,12 @@ public:
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
 };
 
+class TransportState
+{
+public:
+    static const TChar* FromPipelineState(EPipelineState aState);
+};
+
 class NullPipelineObserver : public IPipelineObserver
 {
 private: // from IPipelineObserver

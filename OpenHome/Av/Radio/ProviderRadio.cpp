@@ -96,29 +96,9 @@ ProviderRadio::~ProviderRadio()
 
 void ProviderRadio::SetTransportState(Media::EPipelineState aState)
 {
-    const TChar* state;
-    switch (aState)
-    {
-    case Media::EPipelinePlaying:
-        state = "Playing";
-        break;
-    case Media::EPipelinePaused:
-        state = "Paused";
-        break;
-    case Media::EPipelineStopped:
-        state = "Stopped";
-        break;
-    case Media::EPipelineBuffering:
-        state = "Buffering";
-        break;
-    default:
-        ASSERTS();
-        state = "";
-        break;
-    }
-    Brn stateBuf(state);
+    Brn state(Media::TransportState::FromPipelineState(aState));
     iLock.Wait();
-    (void)SetPropertyTransportState(stateBuf);
+    (void)SetPropertyTransportState(state);
     iLock.Signal();
 }
 
