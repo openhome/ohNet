@@ -218,7 +218,11 @@ void SuiteStarvationMonitor::Test()
 
     // Add Halt.  Check queue can be drained without ramping down
     Print("\nDrain without ramping down\n");
+    TEST(!iSm->iPlannedHalt);
     GenerateUpstreamMsgs(EStateHalt);
+    while (!iSm->iPlannedHalt) {
+        Thread::Sleep(1); // nasty delay to give time for Pull'd Halt to be stored in SM
+    }
     do {
         TEST(!iSm->PullWouldBlock());
         TEST(iSm->iStatus == StarvationMonitor::ERunning);
