@@ -14,11 +14,11 @@
 // propagates downstream to actual HW driver via SetVolume() calls;
 // invidual volume elements have specific methods to set their contribution
 //
-// .   0..100        mibidB         on/off       -15..+15    --> [VolLim] --> [HW] .
-// .     |             |              |             |       /                      .
-// . [UserVol] --> [SrcOff] --> [UnityGain] --> [Balance] -+                       .
-// .                                                        \                      .
-// . where --> means SetVolume(TUint)                        --> [VolLim] --> [HW] .
+// .                            mibidB         on/off       -15..+15     --> [VolLim] --> [HW] .
+// .                               |              |             |       /                      .
+// .  0..100 --> [UserVol] --> [SrcOff] --> [UnityGain] --> [Balance] -+                       .
+// .                                                                    \                      .
+// .            where --> means SetVolume(TUint)                         --> [VolLim] --> [HW] .
 //
 
 
@@ -30,9 +30,7 @@ class IVolume
 {
 public:
     virtual ~IVolume();
-    // steps of binary milli decibel (2^-10 dB)
-    // by def (Linn):  80 * 2^10 mibidB := 0 dB = unity gain
-    virtual void SetVolume(TUint amibidB) = 0;
+    virtual void SetVolume(TUint aValue) = 0;
 };
 
 // translate user-visible volume setting into internal scale
@@ -40,13 +38,10 @@ class VolumeUser : public IVolume, public INonCopyable
 {
 public:
     VolumeUser(IVolume& aVolume);
-    void SetUserVolume(TUint aUserVolume);  // [0..100]
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
 private:
     IVolume& iVolume;
-    TUint iUpstreamVolume;
-    TUint iUserVolume_mibidB;
 };
 
 // apply source-specific volume correction
@@ -54,9 +49,9 @@ class VolumeSourceOffset : public IVolume, public INonCopyable
 {
 public:
     VolumeSourceOffset(IVolume& aVolume);
-    void SetOffset(TUint amibidB);  // system units
+    void SetOffset(TUint aValue);
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
 private:
     IVolume& iVolume;
     TUint iUpstreamVolume;
@@ -67,12 +62,12 @@ private:
 class VolumeUnityGain : public IVolume, public INonCopyable
 {
 public:
-    static const TUint skVolumeUnity = 80 * (1 << 10);
+    static const TUint kVolumeUnity = 80 * 1024;
 public:
     VolumeUnityGain(IVolume& aVolume);
-    void SetUnityGain(bool aEnabled);  // on/off
+    void SetUnityGain(bool aValue);
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
 private:
     IVolume& iVolume;
     TUint iUpstreamVolume;
@@ -86,28 +81,27 @@ public:
     VolumeBalance(IVolume& aLeftVolume, IVolume& aRightVolume);
     void SetBalance(TInt aUserBalance);  // [-15..+15]
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
 private:
     IVolume& iLeftVolume;
     IVolume& iRightVolume;
     TUint iUpstreamVolume;
-    TUint iLeftBalance_mibidB;
-    TUint iRightBalance_mibidB;
+    TUint iLeftOffset;
+    TUint iRightOffset;
 };
 
 // limiter: clip any excess volume
 class VolumeLimiter: public IVolume, public INonCopyable
 {
 public:
-    static const TUint skVolumeMax = 100 * (1 << 10);
-public:
-    VolumeLimiter(IVolume& aVolume);
+    VolumeLimiter(IVolume& aVolume, TUint aLimit);
     // fixed operation, not parameterised
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
 private:
     IVolume& iVolume;
     TUint iUpstreamVolume;
+	TUint iLimit;
 };
 
 } // namespace Media
