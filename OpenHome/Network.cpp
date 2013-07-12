@@ -367,7 +367,7 @@ void Socket::Log(const char* aPrefix, const Brx& aBuffer) const
         Brn buf(aBuffer);
         while (bytes > 0) {
             const size_t len = (bytes<Log::kMaxPrintBytes? bytes : Log::kMaxPrintBytes);
-            Brn rem = buf.Split(len);
+            Brn rem = buf.Split((TUint)len);
             Log::Print(buf);
             bytes -= buf.Bytes();
             buf.Set(rem);
