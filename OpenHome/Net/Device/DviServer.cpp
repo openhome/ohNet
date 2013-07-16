@@ -15,6 +15,7 @@ using namespace OpenHome::Net;
 DviServer::~DviServer()
 {
     iLock.Wait();
+    iDvStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iDvStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iServers.size(); i++) {
         delete iServers[i];
@@ -46,6 +47,7 @@ void DviServer::Initialise()
 {
     Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
     NetworkAdapterList& nifList = iDvStack.Env().NetworkAdapterList();
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     AutoMutex a(iLock);
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();

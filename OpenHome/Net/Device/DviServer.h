@@ -46,6 +46,7 @@ private:
     Mutex iLock;
     std::vector<DviServer::Server*> iServers;
     TInt iSubnetListChangeListenerId;
+    TInt iCurrentAdapterChangeListenerId;
 };
 
 } // namespace Net
