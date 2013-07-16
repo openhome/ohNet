@@ -224,8 +224,10 @@ void VolumeBalanceDefault::SetBalance(TInt aValue)
 {
     ASSERT((MinimumUserBalance() <= aValue) && (aValue <= MaximumUserBalance()));
     // factor two allows integer representation in declaration
-    iVolumeBalance.SetBalance((VolumeUserDefault::SystemVolumeFactor() * kBalanceOffsets[MaximumUserBalance() - aValue]) / 2,
-                                (VolumeUserDefault::SystemVolumeFactor() * kBalanceOffsets[MaximumUserBalance() + aValue]) / 2);
+    iVolumeBalance.SetBalance( \
+        (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() - aValue]) / 2,
+        (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() + aValue]) / 2
+    );
 }
 
 void VolumeBalanceDefault::SetVolume(TUint aValue)
