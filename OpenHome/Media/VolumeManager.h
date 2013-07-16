@@ -160,6 +160,14 @@ private:
     VolumeBalance iVolumeBalance;
 };
 
+class VolumeLimiterDefault : public VolumeLimiter
+{
+public:
+    static TUint MaxLimitSystemVolume();
+public:
+    VolumeLimiterDefault(IVolume& aVolume);
+};
+
 } // namespace Media
 } // namespace OpenHome
 

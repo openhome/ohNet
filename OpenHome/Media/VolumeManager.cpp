@@ -232,3 +232,14 @@ void VolumeBalanceDefault::SetVolume(TUint aValue)
 {
     iVolumeBalance.SetVolume(aValue);
 }
+
+// VolumeLimiterDefault
+TUint VolumeLimiterDefault::MaxLimitSystemVolume()  // static
+{
+    return 100 * VolumeUserDefault::SystemVolumeFactor();
+}
+
+VolumeLimiterDefault::VolumeLimiterDefault(IVolume& aVolume)
+    : VolumeLimiter(aVolume, MaxLimitSystemVolume())
+{
+}
