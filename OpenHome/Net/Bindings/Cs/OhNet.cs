@@ -1241,6 +1241,9 @@ namespace OpenHome.Net.Core
             {
                 iIsDisposed = true;
 
+                OhNetLibraryClose(); // need to call this before disposing callbacks (below)
+                                     // which may be called during stack destruction
+
                 if(iLogOutput != null)
                 {
                     iLogOutput.Dispose();
@@ -1277,8 +1280,6 @@ namespace OpenHome.Net.Core
                 {
                     iNetworkAdapterChangedListener.Dispose();
                 }
-
-                OhNetLibraryClose();
             }
         }
     }
