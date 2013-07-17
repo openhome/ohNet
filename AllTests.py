@@ -13,8 +13,10 @@ def objPath():
     elif platform.system() == 'Darwin':
         if gMac64 == 1:
             plat = 'Mac-x64'
-        elif gMacArm == 1:
-            plat = 'Mac/arm'
+        elif giOsArmv7 == 1:
+            plat = 'iOs-armv7'
+        elif giOsx86 == 1:
+            plat = 'iOs-x86'
         else:
             plat = 'Mac-x86'
     variant = 'Release'
@@ -22,6 +24,21 @@ def objPath():
         variant = 'Debug'
     path = os.path.join('Build', 'Obj', plat, variant)
     return path
+
+
+def buildArgs():
+    buildArgs = ''
+    if gDebugBuild == 1:
+        buildArgs += ' debug=1'
+    if gMac64 == 1:
+        buildArgs += ' mac-64=1'
+    if giOsArmv7 == 1:
+        buildArgs += ' iOs-armv7=1'
+    if giOsx86 == 1:
+        buildArgs += ' iOs-x86=1'
+    if gCore == 1:
+        buildArgs += ' platform=' + gPlatform
+    return buildArgs
 
 def build(aTarget, aParallel=False):
     buildCmd = 'make '
@@ -31,16 +48,8 @@ def build(aTarget, aParallel=False):
         buildCmd = 'nmake -s -f OhNet.mak '
     buildCmd += aTarget
     if os.environ.has_key('CS_PLATFORM'):
-        buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
-    if gDebugBuild == 1:
-        buildCmd += ' debug=1'
-    if gMac64 == 1:
-        buildCmd += ' mac-64=1'
-    if gMacArm == 1:
-        buildCmd += ' mac-arm=1'
-    if gCore == 1:
-        buildCmd += ' platform=' + gPlatform
-
+        buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']    
+    buildCmd += buildArgs()
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -53,6 +62,7 @@ def runBuilds():
             cleanCmd = 'nmake /s /f OhNet.mak clean'
         else:
             cleanCmd = 'make clean'
+        cleanCmd += buildArgs()
         os.system(cleanCmd)
     if gParallel:
         build('copy_build_includes')
@@ -179,7 +189,8 @@ gRunJavaTests = 0
 gJsTests = 0
 gDebugBuild = 0
 gMac64 = 0
-gMacArm = 0
+giOsArmv7 = 0
+giOsx86 = 0
 try:
     gPlatform = os.environ['PLATFORM']
 except KeyError:
@@ -220,10 +231,15 @@ for arg in sys.argv[1:]:
         if platform.system() != 'Darwin':
             print 'ERROR - --mac-64 only applicable on Darwin'
             sys.exit(1)
-    elif arg == '--mac-arm':
-        gMacArm = 1
+    elif arg == '--iOs-armv7':
+        giOsArmv7 = 1
         if platform.system() != 'Darwin':
-            print 'ERROR - --mac-arm only applicable on Darwin'
+            print 'ERROR - --iOs-armv7 only applicable on Darwin'
+            sys.exit(1)
+    elif arg == '--iOs-x86':
+        giOsx86 = 1
+        if platform.system() != 'Darwin':
+            print 'ERROR - --iOs-x86 only applicable on Darwin'
             sys.exit(1)
     elif arg == '--parallel':
         gParallel = True
