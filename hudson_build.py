@@ -68,7 +68,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv6")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv6, iOs-armv7, iOs-x86")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -111,7 +111,9 @@ class JenkinsBuild():
                 'Mac-x64': { 'os': 'macos', 'arch':'x64', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Mac-x86': { 'os': 'macos', 'arch':'x86', 'publish':True, 'system':'Mac'}, # New Jenkins label, matches downstream builds
                 'Linux-ARM': { 'os': 'linux', 'arch': 'armel', 'publish':True, 'system':'Linux'},
-                'iOs-ARM': { 'os': 'macos', 'arch':'armv7', 'publish':True, 'system':'iOs'},
+                'iOs-ARM': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'}, # Old Jenkins label
+                'iOs-x86': { 'os': 'iOs', 'arch':'x86', 'publish':True, 'system':'iOs'},
+                'iOs-armv7': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'},
                 'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':True, 'system':'Core'},
                 'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':True, 'system':'Core'},
         }
@@ -162,9 +164,13 @@ class JenkinsBuild():
             if arch == 'x64':
                 args.append('--mac-64')
                 self.platform_make_args.append('mac-64=1')
+        if os_platform == 'iOs':
+            if arch == 'x86':
+                args.append('--iOs-x86')
+                self.platform_make_args.append('iOs-x86=1')
             elif arch == 'armv7':
-                args.append('--mac-arm')
-                self.platform_make_args.append('mac-arm=1')
+                args.append('--iOs-armv7')
+                self.platform_make_args.append('iOs-armv7=1')
             # 32 and 64-bit builds run in parallel on the same slave.
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
@@ -266,13 +272,10 @@ class JenkinsBuild():
                 sys.exit(10)
 
             native_bundle_name = os.path.join('Build/Bundles',"ohNet-%s-%s-%s.tar.gz" %(openhome_system, openhome_architecture, openhome_configuration))
-            managed_bundle_name = os.path.join('Build/Bundles','ohNet.net-AnyPlatform-%s.tar.gz' % (openhome_configuration,))
             native_dest = os.path.join('Build/Bundles',"ohNet-%s-%s-%s-%s.tar.gz" %(version, openhome_system, openhome_architecture, openhome_configuration))
-            managed_dest = os.path.join('Build/Bundles',"ohNet.net-%s-AnyPlatform-%s.tar.gz" %(version, openhome_configuration))
-            for (name, dest) in [(native_bundle_name, native_dest), (managed_bundle_name, managed_dest)]:
-                if os.path.exists(dest):
-                    os.remove(dest)
-                os.rename(name, dest)
+            if os.path.exists(native_dest):
+                os.remove(native_dest)
+            os.rename(native_bundle_name, native_dest)
             rem.check_rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
                         
     

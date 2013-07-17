@@ -33,10 +33,14 @@ $(info Machine reported by compiler is: ${gcc_machine})
 $(info Machine reported by uname is: ${MACHINE})
 
 ifeq ($(MACHINE),Darwin)
-  ifeq ($(mac-arm),1)
+  ifeq ($(iOs-armv7),1)
     platform = iOS
     detected_openhome_system = iOs
     detected_openhome_architecture = armv7
+  else ifeq ($(iOs-x86),1)
+    platform = iOS
+    detected_openhome_system = iOs
+    detected_openhome_architecture = x86
   else
     platform = IntelMac
     detected_openhome_system = Mac
@@ -111,21 +115,28 @@ $(info Building for system ${openhome_system} and architecture ${openhome_archit
 
 ifeq ($(platform),iOS)
 	linkopts_ohNet =
-	devroot=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer
-	sdkroot=$(devroot)/SDKs/iPhoneOS6.1.sdk
-	platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS -I$(sdkroot)/usr/include/c++/4.2.1/armv7-apple-darwin10/ 
-	# TODO: Support i386 (x86) for simulator and armv6 for old devices
-	osbuilddir = iOs-armv7
+	platform_prefix=iPhoneOS
+	platform_compiler=arm-apple-darwin10
+	platform_arch=$(detected_openhome_architecture)
+	ifeq ($(detected_openhome_architecture),x86)
+		platform_prefix=iPhoneSimulator
+		platform_compiler=i686-apple-darwin10
+		platform_arch=i386
+	endif
+	devroot=/Applications/Xcode.app/Contents/Developer/Platforms/$(platform_prefix).platform/Developer
+	sdkroot=$(devroot)/SDKs/$(platform_prefix)6.1.sdk
+	platform_cflags = -I$(sdkroot)/usr/lib/gcc/$(platform_compiler)/4.2.1/include/ -I$(sdkroot)/usr/include/ -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
+	# TODO: Support armv6 for old devices
+	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
-	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv7  -L$(sdkroot)/usr/lib/system
-	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv7 -isysroot $(sdkroot) -o $(objdir)
+	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch)  -L$(sdkroot)/usr/lib/system
+	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
 	ar = $(devroot)/usr/bin/ar rc $(objdir)
-	csharpdefines = /define:IOS /r:monotouch.dll
+    mono_lib_dir=/Developer/MonoTouch/usr/lib/mono/2.1
+	csharpdefines = /define:IOS /r:$(mono_lib_dir)/monotouch.dll /r:$(mono_lib_dir)/System.dll /r:$(mono_lib_dir)/System.Core.dll 
 	no_shared_objects = yes
-	openhome_system = iOs
-	openhome_architecture = armv7
 endif
 
 ifeq ($(platform),IntelMac)
@@ -295,7 +306,7 @@ ifeq ($(native_only), yes)
 build_targets_base = $(native_targets)
 else
 ifeq ($(no_shared_objects), yes)
-build_targets_base = $(native_targets) ohNet.net.dll
+build_targets_base = $(native_targets) ohNet.net.dll CpProxyDotNetAssemblies DvDeviceDotNetAssemblies
 else
 build_targets_base = $(all_targets)
 endif
@@ -475,12 +486,10 @@ docs:
 bundle-after-build: $(build_targets)
 	$(mkdir) $(bundle_build)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
-	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
 
 bundle:
 	$(mkdir) $(bundle_build)
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration)
-	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
 
 ifeq ($(platform),iOS)
 ohNet.net.dll :  $(objdir)ohNet.net.dll
