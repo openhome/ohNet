@@ -919,7 +919,7 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
 
 Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    //aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
+    aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     Msg* msgOut = TestSimilarity(aMsg);
     msgOut->RemoveRef();
     msgOut = NULL;
@@ -944,6 +944,8 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     iSem.Wait();
     delete fileLocation;
 
+    Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+    TEST(iJiffies == jiffies);
     //LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     TEST(iZeroCrossings >= expectedZeroCrossings-100);
@@ -1131,10 +1133,10 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
     //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
     // Following file relies on seeking.  It is very short so protocol module sometimes finishes delivering it before the seek request comes in
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
+    //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));
+    //runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));
     runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
     runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
     runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
