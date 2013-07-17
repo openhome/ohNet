@@ -6,47 +6,52 @@
 #include <OpenHome/Private/Standard.h>
 
 //
-// user balance:   [-15, +15]
-// user volume:    [0, 100]
-// system volume:  [0, 100*1024]
-//
 // volume elements are linearly chained and any contributing change
 // propagates downstream to actual HW driver via SetVolume() calls;
 // invidual volume elements have specific methods to set their contribution
 //
-// .   0..100        mibidB         on/off       -15..+15    --> [VolLim] --> [HW] .
-// .     |             |              |             |       /                      .
-// . [UserVol] --> [SrcOff] --> [UnityGain] --> [Balance] -+                       .
-// .                                                        \                      .
-// . where --> means SetVolume(TUint)                        --> [VolLim] --> [HW] .
+// [defaults]                mibidB         on/off        -15..+15    +--> [VolLim] --> [HW] .
+//                              |              |             |       /                       .
+// 0..100 --> [UserVol] --> [SrcOff] --> [UnityGain] --> [Balance] -+                        .
+//                                                                   \                       .
+//            where --> means SetVolume(TUint)                        +--> [VolLim] --> [HW] .
 //
-
+// for best audio performance, SetVolume() for volume propagation and Set*() for parameter
+// adjustment, respectively, should not supply the same value in consecutive calls
+// (i.e. invocations should always signal genuine change)
+//
+// client code is free to choose an appropriate scale factor for converting from user
+// to system volume and must apply this consistently whenever volume offsets, etc.
+// are supplied in invocations;  classes are provided that encapsulate sensible
+// default factors and value ranges
+//
 
 namespace OpenHome {
 namespace Media {
+
+//
+// generic class declarations
+//
 
 // fundamental interface
 class IVolume
 {
 public:
     virtual ~IVolume();
-    // steps of binary milli decibel (2^-10 dB)
-    // by def (Linn):  80 * 2^10 mibidB := 0 dB = unity gain
-    virtual void SetVolume(TUint amibidB) = 0;
+    virtual void SetVolume(TUint aValue) = 0;
 };
 
 // translate user-visible volume setting into internal scale
 class VolumeUser : public IVolume, public INonCopyable
 {
 public:
-    VolumeUser(IVolume& aVolume);
-    void SetUserVolume(TUint aUserVolume);  // [0..100]
+    VolumeUser(IVolume& aVolume, TUint aScaleFactor);
+    // fixed operation, not dynamically parameterised
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
 private:
     IVolume& iVolume;
-    TUint iUpstreamVolume;
-    TUint iUserVolume_mibidB;
+    TUint iScaleFactor;
 };
 
 // apply source-specific volume correction
@@ -54,9 +59,11 @@ class VolumeSourceOffset : public IVolume, public INonCopyable
 {
 public:
     VolumeSourceOffset(IVolume& aVolume);
-    void SetOffset(TUint amibidB);  // system units
+    void SetOffset(TUint aValue);  // system volume
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
+private:
+    void Changed();
 private:
     IVolume& iVolume;
     TUint iUpstreamVolume;
@@ -67,14 +74,15 @@ private:
 class VolumeUnityGain : public IVolume, public INonCopyable
 {
 public:
-    static const TUint skVolumeUnity = 80 * (1 << 10);
-public:
-    VolumeUnityGain(IVolume& aVolume);
-    void SetUnityGain(bool aEnabled);  // on/off
+    VolumeUnityGain(IVolume& aVolume, TUint aUnityGainSystemValue);
+    void SetUnityGain(bool aValue);
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
+private:
+    void Changed();
 private:
     IVolume& iVolume;
+    TUint iUnityGainSystemVolume;
     TUint iUpstreamVolume;
     bool iEnabled;
 };
@@ -84,30 +92,80 @@ class VolumeBalance : public IVolume, public INonCopyable
 {
 public:
     VolumeBalance(IVolume& aLeftVolume, IVolume& aRightVolume);
-    void SetBalance(TInt aUserBalance);  // [-15..+15]
+    void SetBalance(TInt aLeftOffset, TInt aRightOffset);
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
+private:
+    void Changed();
 private:
     IVolume& iLeftVolume;
     IVolume& iRightVolume;
     TUint iUpstreamVolume;
-    TUint iLeftBalance_mibidB;
-    TUint iRightBalance_mibidB;
+    TInt iLeftOffset;
+    TInt iRightOffset;
 };
 
 // limiter: clip any excess volume
 class VolumeLimiter: public IVolume, public INonCopyable
 {
 public:
-    static const TUint skVolumeMax = 100 * (1 << 10);
-public:
-    VolumeLimiter(IVolume& aVolume);
-    // fixed operation, not parameterised
+    VolumeLimiter(IVolume& aVolume, TUint aLimit);  // system volume
+    // fixed operation, not dynamically parameterised
 public:  // from IVolume
-    void SetVolume(TUint amibidB);
+    void SetVolume(TUint aValue);
+private:
+    void Changed();
 private:
     IVolume& iVolume;
     TUint iUpstreamVolume;
+    TUint iLimit;
+};
+
+//
+// class declarations with default factors and value ranges
+//
+
+class VolumeUserDefault : public VolumeUser
+{
+public:
+    // system volume:  [0, 100*1024]  (i.e. steps of binary milli decibel)
+    static TUint SystemVolumeFactor();
+    // user volume:    [0, 100]
+    static TUint MaxSystemVolume();
+public:
+    VolumeUserDefault(IVolume& aVolume);
+};
+
+class VolumeUnityGainDefault : public VolumeUnityGain
+{
+public:
+    static TUint UnityGainSystemVolume();
+public:
+    VolumeUnityGainDefault(IVolume& aVolume);
+};
+
+class VolumeBalanceDefault : public IVolume
+{
+public:
+    static TInt MinimumUserBalance();  // -15 = amplify left, attenuate right
+    static TInt MaximumUserBalance();  // +15 = attenuate left, amplify right
+public:
+    VolumeBalanceDefault(IVolume& aLeftVolume, IVolume& aRightVolume);
+    void SetBalance(TInt aValue);
+public:  // from IVolume
+    void SetVolume(TUint aValue);
+private:
+    static const TInt kBalanceOffsets[];
+private:
+    VolumeBalance iVolumeBalance;
+};
+
+class VolumeLimiterDefault : public VolumeLimiter
+{
+public:
+    static TUint MaxLimitSystemVolume();
+public:
+    VolumeLimiterDefault(IVolume& aVolume);
 };
 
 } // namespace Media
