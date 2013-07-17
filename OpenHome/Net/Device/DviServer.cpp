@@ -6,6 +6,7 @@
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -50,11 +51,18 @@ void DviServer::Initialise()
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     AutoMutex a(iLock);
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-    for (TUint i=0; i<subnetList->size(); i++) {
-        AddServer(*(*subnetList)[i]);
+    AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::SubnetListChanged");
+    NetworkAdapter* current = ref.Adapter();
+    if (current != NULL) {
+        AddServer(*current);
     }
-    NetworkAdapterList::DestroySubnetList(subnetList);
+    else {
+        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+        for (TUint i=0; i<subnetList->size(); i++) {
+            AddServer(*(*subnetList)[i]);
+        }
+        NetworkAdapterList::DestroySubnetList(subnetList);
+    }
 }
 
 void DviServer::AddServer(NetworkAdapter& aNif)
@@ -142,6 +150,11 @@ DviServer::Server::Server(SocketTcpServer* aTcpServer, NetworkAdapter& aNif)
 {
     iServer = aTcpServer;
     iNif.AddRef("DviServer::Server");
+
+    /*Endpoint endpt(aTcpServer->Port(), aNif.Address());
+    Endpoint::EndpointBuf buf;
+    endpt.AppendEndpoint(buf);
+    Log::Print("--new server at %s\n\n", buf.Ptr());*/
 }
 
 DviServer::Server::~Server()
