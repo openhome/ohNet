@@ -501,7 +501,7 @@ def build(bld):
             target='TestProtocol')
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestProtocolRaop')
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
@@ -549,7 +549,7 @@ def build(bld):
             target='TestRadio')
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayer.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestMediaPlayer')
 
 # Bundles
