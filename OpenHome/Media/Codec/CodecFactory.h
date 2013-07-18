@@ -14,11 +14,9 @@ public:
     static CodecBase* NewAlac();
     static CodecBase* NewAdts();
     static CodecBase* NewFlac();
-    static CodecBase* NewMp3();
     static CodecBase* NewRaop();
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
-    static CodecBase* NewWma();
 };
 
 } // namespace Codec

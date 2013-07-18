@@ -170,11 +170,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewMp3());
     iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
-    iMediaPlayer->Add(Codec::CodecFactory::NewWma());
 
     // Add protocol modules (Radio source can require several stacked Http instances)
     iMediaPlayer->Add(ProtocolFactory::NewHttp(env));

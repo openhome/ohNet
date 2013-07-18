@@ -108,10 +108,8 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
     iPipeline->Add(Codec::CodecFactory::NewAlac());
     iPipeline->Add(Codec::CodecFactory::NewAdts());
     iPipeline->Add(Codec::CodecFactory::NewFlac());
-    iPipeline->Add(Codec::CodecFactory::NewMp3());
     iPipeline->Add(Codec::CodecFactory::NewVorbis());
     iPipeline->Add(Codec::CodecFactory::NewWav());
-    iPipeline->Add(Codec::CodecFactory::NewWma());
     Environment& env = aDvStack.Env();
     iPipeline->Add(ProtocolFactory::NewHttp(env));
     iPipeline->Add(ProtocolFactory::NewHttp(env));
@@ -283,11 +281,8 @@ int CDECL main(int aArgc, char* aArgv[])
     PresetDatabase* db = new PresetDatabase();
     db->BeginSetPresets();
     const TChar* presets[] = {
-        "http://opml.radiotime.com/Tune.ashx?id=s122119&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse" // (Linn Radio, MP3)
-       ,"http://opml.radiotime.com/Tune.ashx?id=s2377&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"   // (Planet Rock, AAC, 22.05KHz, mono)
+        "http://opml.radiotime.com/Tune.ashx?id=s2377&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"   // (Planet Rock, AAC, 22.05KHz, mono)
        ,"http://opml.radiotime.com/Tune.ashx?id=s24940&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Radio 2, AAC)
-       ,"http://opml.radiotime.com/Tune.ashx?id=s92182&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Birdsong Radio, MP3)
-       ,"http://opml.radiotime.com/Tune.ashx?id=s24945&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Radio Scotland, WMA)
     };
     for (TUint i=0; i<sizeof(presets)/sizeof(presets[0]); i++) {
         Brn urlAsMetaData(presets[i]);
