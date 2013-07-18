@@ -26,9 +26,7 @@ void Id3v2::Initialise()
 TBool Id3v2::Recognise()
 {
     Bws<10> data;
-    //Log::Print("Id3v2::Recognise before iContainer->Read\n");
     iContainer->Read(data, 0, 10);
-    //Log::Print("Id3v2::Recognise after iContainer->Read\n");
     if (data.Bytes() < 10) {
         return false;
     }
