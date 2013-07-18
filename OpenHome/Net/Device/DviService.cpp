@@ -176,6 +176,7 @@ void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
                     iDvActions[i].Functor()(aInvocation);
                 }
                 catch (InvocationError&) {
+                    // avoid calls to aInvocation.InvocationReportError in other catch blocks
                     throw;
                 }
                 catch (Exception& e) {
