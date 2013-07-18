@@ -9,7 +9,11 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Globals.h>
 
-#include <time.h>
+#ifdef PLATFORM_MACOSX_GNU
+# include <sys/time.h>
+#else
+# include <time.h>
+#endif // PLATFORM_MACOSX_GNU
 #include <stdlib.h>
 
 using namespace OpenHome;
@@ -54,7 +58,17 @@ Environment::Environment(InitialisationParams* aInitParams)
 {
     Construct(aInitParams->LogOutput());
     SetAssertHandler(AssertHandlerDefault);
+#ifdef PLATFORM_MACOSX_GNU
+    /* Non-portable way of setting a better random seed than time(NULL)
+       This is needed on Mac as CI for x86 and x64 tests use the same host
+       with the builds appearing to run in perfect sync, leaving two
+       versions of this test that choose identical udns for device stack tests. */
+    struct timeval tv;
+    (void)gettimeofday(&tv, NULL);
+    SetRandomSeed((TUint)tv.tv_usec);
+#else
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
+#endif // PLATFORM_MACOSX_GNU
     iTimerManager = new OpenHome::TimerManager(*this);
     iNetworkAdapterList = new OpenHome::NetworkAdapterList(*this, 0);
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
