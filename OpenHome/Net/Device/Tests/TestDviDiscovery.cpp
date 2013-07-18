@@ -236,6 +236,9 @@ SuiteAlive::SuiteAlive(DvStack& aDvStack)
     , iSem("SALV", 0)
 {
     RandomiseUdn(iDvStack.Env(), gNameDevice1);
+    Print("UDN: ");
+    Print(gNameDevice1);
+    Print("\n\n");
 }
 
 SuiteAlive::~SuiteAlive()
@@ -482,6 +485,13 @@ SuiteMsearch::SuiteMsearch(DvStack& aDvStack)
     RandomiseUdn(iDvStack.Env(), gNameDevice1);
     RandomiseUdn(iDvStack.Env(), gNameDevice2);
     RandomiseUdn(iDvStack.Env(), gNameDevice2Embedded1);
+    Print("UDNs: \n    ");
+    Print(gNameDevice1);
+    Print("\n    ");
+    Print(gNameDevice2);
+    Print("\n    ");
+    Print(gNameDevice2Embedded1);
+    Print("\n\n");
     Environment& env = iDvStack.Env();
     iBlocker = new Blocker(env);
     iListener = new CpListenerMsearch(env);
