@@ -41,6 +41,7 @@ DviServer::DviServer(DvStack& aDvStack)
     : iDvStack(aDvStack)
     , iLock("DSUM")
     , iSubnetListChangeListenerId(NetworkAdapterList::kListenerIdNull)
+    , iCurrentAdapterChangeListenerId(NetworkAdapterList::kListenerIdNull)
 {
 }
 
