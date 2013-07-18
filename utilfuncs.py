@@ -95,7 +95,7 @@ def configure_toolchain(conf):
         conf.env.append_value('CFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', '-std=c++0x')
-        conf.env.append_value('LINKFLAGS', '-g')
+        conf.env.append_value('LINKFLAGS', ['-g', '-Wl,--fatal-warnings'])
         conf.env.append_value('CXXFLAGS', [
                 '-pipe', '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_TRACE',
                 '-DDEFINE_'+platform_info['endian']+'_ENDIAN', '-fvisibility=hidden',])
@@ -109,7 +109,6 @@ def configure_toolchain(conf):
                 '-fexceptions', '-Wall', '-Werror'])
 
         if conf.options.dest_platform in ['Linux-x86']:
-            conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('VALGRIND_ENABLE', ['1'])
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM', 'Linux-ppc32']:
             conf.env.append_value('LINKFLAGS', ['-pthread'])
