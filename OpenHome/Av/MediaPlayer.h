@@ -29,6 +29,7 @@ class ISource;
 class IStaticDataSource;
 class IPersister;
 class Product;
+class ProviderTime;
 class KvpStore;
 
 class IMediaPlayer
@@ -72,6 +73,7 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Product* iProduct;
+    ProviderTime *iTime;
     KvpStore* iKvpStore;
 };
 
