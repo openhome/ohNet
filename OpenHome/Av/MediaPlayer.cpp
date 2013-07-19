@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/Product.h>
+#include <OpenHome/Av/ProviderTime.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -29,11 +30,14 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
     iPipeline->AddObserver(*iPipelineObserver);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, *iInfoLogger);
+    iTime = new ProviderTime(aDevice, *iPipeline);
+    iProduct->AddAttribute("Time");
 }
 
 MediaPlayer::~MediaPlayer()
 {
     ASSERT(!iDevice.Enabled());
+    delete iTime;
     delete iPipeline;
     delete iTrackFactory;
     delete iProduct;

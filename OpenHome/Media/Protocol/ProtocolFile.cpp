@@ -131,7 +131,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         }
         else {
             // don't expect any exceptions (other than the above ones we generate) when reading a local file
-            ASSERTS();
+            ASSERT(res == EProtocolStreamSuccess);
         }
         iLock.Signal();
     }

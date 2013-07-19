@@ -15,9 +15,9 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/OsWrapper.h>
-#include "AllocatorInfoLogger.h"
-#include "SuiteUnitTest.h"
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Tests/SuiteUnitTest.h>
 
 #include <vector>
 
@@ -38,11 +38,9 @@ public:
         eCodecUnknown = 0,
         eCodecWav = 1,
         eCodecFlac = 2,
-        eCodecMp3 = 3,
-        eCodecAlac = 4,
-        eCodecAac = 5,
-        eCodecVorbis = 6,
-        eCodecWma = 7,
+        eCodecAlac = 3,
+        eCodecAac = 4,
+        eCodecVorbis = 5,
     };
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec);
@@ -542,9 +540,7 @@ void SuiteCodecStream::Setup()
     // These can be re-ordered to check for problems in the recognise function of each codec.
     iController->AddCodec(CodecFactory::NewWav());
     iController->AddCodec(CodecFactory::NewFlac());
-    iController->AddCodec(CodecFactory::NewWma());
     iController->AddCodec(CodecFactory::NewAac());
-    iController->AddCodec(CodecFactory::NewMp3());
     iController->AddCodec(CodecFactory::NewAlac());
     iController->AddCodec(CodecFactory::NewVorbis());
 
@@ -676,7 +672,7 @@ void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescr
     TEST(iSeekSuccess);
 
     if (aCodec != AudioFileDescriptor::eCodecVorbis) {
-        // Vorbis (and MP3) seeking is isn't particularly accurate
+        // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
         TEST(iJiffies >= expectedJiffies - Jiffies::kJiffiesPerSecond);   // Lower bound.
@@ -771,7 +767,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekP
     TEST(iSeekSuccess);
 
     if (aCodec != AudioFileDescriptor::eCodecVorbis) {
-        // Vorbis (and MP3) seeking is isn't particularly accurate
+        // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
         TEST(iJiffies >= 0);   // Lower bound.
@@ -919,7 +915,7 @@ Msg* SuiteCodecZeroCrossings::TestSimilarity(MsgAudioPcm* aMsg)
 
 Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    //aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
+    aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     Msg* msgOut = TestSimilarity(aMsg);
     msgOut->RemoveRef();
     msgOut = NULL;
@@ -944,12 +940,11 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     iSem.Wait();
     delete fileLocation;
 
+    Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
+    TEST(iJiffies == jiffies);
     //LOG(kMedia, "iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     Log::Print("iZeroCrossings: %u, expectedZeroCrossings: %u, iUnacceptableCrossingDeltas: %u\n", iZeroCrossings, expectedZeroCrossings, iUnacceptableCrossingDeltas);
     TEST(iZeroCrossings >= expectedZeroCrossings-100);
-    // MP3 encoders/decoders add silence and some samples of random data to
-    // start and end of tracks for filter routines.
-    // LAME FAQ suggests this is for at least 1057 samples at start and 288 at end.
     TEST(iZeroCrossings <= expectedZeroCrossings+100);
     // Test that less than 2% of the zero crossings have an unnaceptable spacing.
     TEST(iUnacceptableCrossingDeltas < expectedZeroCrossings/100);
@@ -1031,6 +1026,8 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     parser.AddOption(&optionServer);
     OptionUint optionPort("-p", "--port", 25006, "server port to connect on");
     parser.AddOption(&optionPort);
+    OptionString optionTestType("-t", "--type", Brn("full"), "type of test (quick | full)");
+    parser.AddOption(&optionTestType);
     if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
         return;
     }
@@ -1070,75 +1067,64 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
     Log::Print(uri.AbsoluteUri());
     Log::Print("\n");
 
+    // set test type
+    TBool testFull = true;
+    if (optionTestType.Value() == Brn("quick")) {
+        testFull = false;
+    }
 
-
-    // test files
+    // test file vectors
     std::vector<AudioFileDescriptor> stdFiles;
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
+    std::vector<AudioFileDescriptor> invalidFiles;
+    std::vector<AudioFileDescriptor> streamOnlyFiles;
+
+    // core testing files
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
-
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
-
     // AAC encoders can add/drop samples from start of files.
     // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac.m4a"), 44100, 443392-1024, 16, 2, AudioFileDescriptor::eCodecAac));
-
-    // MP3 encoders/decoders can add extra samples at start of tracks, which are used for their routines.
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-128k.mp3"), 44100, 442368, 24, 1, AudioFileDescriptor::eCodecMp3));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-128k.mp3"), 44100, 442368, 24, 2, AudioFileDescriptor::eCodecMp3));
-
     // Vorbis files
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
     stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
 
-    // WMA encoder omits some samples, then adds extra for its own use. Decoder then strips samples to less than original PCM.
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-96k.wma"), 44100, 440320, 16, 1, AudioFileDescriptor::eCodecWma));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-96k.wma"), 44100, 440320, 16, 2, AudioFileDescriptor::eCodecWma));
 
-    // Some files that shouldn't play with any codec.
-    std::vector<AudioFileDescriptor> invalidFiles;
-    invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_long_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.
-    invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_short_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));       // Small invalid file.
+    if (testFull) {
+        // additional valid testing files
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
+        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
 
-    // MP4 with moov atom after mdat atom.
-    // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
-    invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
+
+        // Some files that shouldn't play with any codec.
+        invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_long_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.
+        invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_short_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));       // Small invalid file.
+        // MP4 with moov atom after mdat atom.
+        // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
+        invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
 
 
-    // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.
-    std::vector<AudioFileDescriptor> streamOnlyFiles;
-    // Test different combinations of ID3 tags
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-no_tags.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v1.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-id3v2.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-dual_tags.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
-    // Files with two sets of ID3v2 tags
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-two_id3v2_headers.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
-    // Second ID3v2 header on a msg boundary (assuming MsgAudioEncoded is normally 6144 bytes) to test container checking/pulling on demand
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-two_id3v2_headers_msg_boundary.mp3"), 44100, 133632, 24, 2, AudioFileDescriptor::eCodecMp3));
-    // A file that does not play on existing DS's (is recognised as AAC ADTS)
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("mp3-8~24-stereo.mp3"), 24000, 4834944, 24, 2, AudioFileDescriptor::eCodecMp3));
-    // File with embedded cover art
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
-    streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
-    // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
-    //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
-    // Following file relies on seeking.  It is very short so protocol module sometimes finishes delivering it before the seek request comes in
-    //streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-96k-coverart.wma"), 44100, 131072, 16, 2, AudioFileDescriptor::eCodecWma));
+        // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.
+        // File with embedded cover art
+        streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
+        streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
+        // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
+        //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
+    }
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));
-    runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
-    runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
     runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
-    runner.Add(new SuiteCodecInvalidType(invalidFiles, aEnv, uri));
-    runner.Add(new SuiteCodecStream(streamOnlyFiles, aEnv, uri));
+    if (testFull) {
+        //runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
+        runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
+        runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
+        runner.Add(new SuiteCodecInvalidType(invalidFiles, aEnv, uri));
+        runner.Add(new SuiteCodecStream(streamOnlyFiles, aEnv, uri));
+    }
     runner.Run();
 }

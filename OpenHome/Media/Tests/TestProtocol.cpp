@@ -11,8 +11,8 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
-#include "AllocatorInfoLogger.h"
-#include "SongcastingDriver.h"
+#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Tests/SongcastingDriver.h>
 
 #include <stdio.h>
 
@@ -179,8 +179,6 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     iPipeline->AddCodec(Codec::CodecFactory::NewAac());
     iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
     iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
-    iPipeline->AddCodec(Codec::CodecFactory::NewWma());
-    iPipeline->AddCodec(Codec::CodecFactory::NewMp3());
     iPipeline->Start();
 
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
