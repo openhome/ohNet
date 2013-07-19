@@ -10,30 +10,10 @@
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
-#include <OpenHome/Private/Stream.h>
-#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Av/ProviderUtils.h>
 
 #include <array>
-
-namespace OpenHome {
-namespace Av {
-
-class WriterInvocationResponseString : public IWriter, private INonCopyable
-{
-public:
-    WriterInvocationResponseString(IDvInvocationResponseString& aIrs);
-    ~WriterInvocationResponseString();
-public: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
-private:
-    IDvInvocationResponseString& iIrs;
-};
-
-} // namespace Av
-} // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -264,7 +244,6 @@ void ProviderRadio::IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUin
     UpdateIdArray();
     aInvocation.StartResponse();
     aToken.Write(iDbSeq);
-    Bws<4> idBuf;
     aArray.Write(iIdArrayBuf);
     aArray.WriteFlush();
     aInvocation.EndResponse();
@@ -322,32 +301,4 @@ void ProviderRadio::UpdateIdArrayProperty()
     AutoMutex a(iLock);
     UpdateIdArray();
     (void)SetPropertyIdArray(iIdArrayBuf);
-}
-
-
-// WriterInvocationResponseString
-
-WriterInvocationResponseString::WriterInvocationResponseString(IDvInvocationResponseString& aIrs)
-    : iIrs(aIrs)
-{
-}
-
-WriterInvocationResponseString::~WriterInvocationResponseString()
-{
-}
-
-void WriterInvocationResponseString::Write(TByte aValue)
-{
-    Brn buf(&aValue, sizeof(TByte));
-    Write(buf);
-}
-
-void WriterInvocationResponseString::Write(const Brx& aBuffer)
-{
-    iIrs.Write(aBuffer);
-}
-
-void WriterInvocationResponseString::WriteFlush()
-{
-    iIrs.WriteFlush();
 }

@@ -24,7 +24,7 @@ class Protocol;
 class ContentProcessor;
 class UriProvider;
 
-class PipelineManager : public IPipelineElementUpstream, private IPipelineObserver
+class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver
 {
 public:
     PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes); // FIXME - config options, observer
@@ -45,6 +45,10 @@ public:
     void Prev();
 private: // from IPipelineElementUpstream
     Msg* Pull();
+private: // from IPipelineIdManager
+    void InvalidateAt(TUint aId);
+    void InvalidateAfter(TUint aId);
+    void InvalidateAll();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);

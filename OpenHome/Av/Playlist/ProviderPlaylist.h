@@ -7,15 +7,43 @@
 #include <OpenHome/Private/Thread.h>
 #include <Generated/DvAvOpenhomeOrgPlaylist1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
+#include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Av/Playlist/PlaylistDatabase.h>
+
+#include <array>
 
 namespace OpenHome {
 using namespace Net;
+    class Environment;
+    class Timer;
 namespace Av {
 
-class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1
+class ISourcePlaylist
 {
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice);
+    virtual ~ISourcePlaylist() {}
+    virtual void Play() = 0;
+    virtual void Pause() = 0;
+    virtual void Stop() = 0;
+    virtual void Next() = 0;
+    virtual void Prev() = 0;
+    virtual void SeekAbsolute(TUint aSeconds) = 0;
+    virtual void SeekRelative(TUint aSeconds) = 0;
+    virtual void SeekToTrackId(TUint aId) = 0;
+    virtual void SeekToTrackIndex(TUint aIndex) = 0;
+};
+
+
+class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1, private IPlaylistDatabaseObserver
+{
+    static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
+public:
+    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const TChar* aProtocolInfo);
+    ~ProviderPlaylist();
+    void NotifyPipelineState(Media::EPipelineState aState);
+    void NotifyTrack(TUint aId);
+private: // from IPlaylistDatabaseObserver
+    void PlaylistDatabaseChanged();
 private: // from DvProviderAvOpenhomeOrgPlaylist1
     void Play(IDvInvocation& aInvocation);
     void Pause(IDvInvocation& aInvocation);
@@ -41,6 +69,24 @@ private: // from DvProviderAvOpenhomeOrgPlaylist1
     void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray);
     void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue);
     void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
+private:
+    void SetRepeat(TBool aRepeat);
+    void SetShuffle(TBool aShuffle);
+    void UpdateIdArray();
+    void UpdateIdArrayProperty();
+    void TimerCallabck();
+private:
+    Mutex iLock;
+    ISourcePlaylist& iSource;
+    IPlaylistDatabase& iDatabase;
+    Brn iProtocolInfo;
+    Media::EPipelineState iPipelineState;
+    TUint iDbSeq;
+    std::array<TUint, IPlaylistDatabase::kMaxTracks> iIdArray;
+    Bws<IPlaylistDatabase::kMaxTracks * sizeof(TUint32)> iIdArrayBuf;
+    TUint iIdCurrentTrack;
+    Timer* iTimer;
+    TBool iTimerActive;
 };
 
 } // namespace Av

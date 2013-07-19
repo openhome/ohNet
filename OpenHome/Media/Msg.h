@@ -730,13 +730,14 @@ private:
     TBool iFlushing;
 };
 
-class AutoMsgRef : private INonCopyable
+// removes ref on destruction.  Does NOT claim ref on construction.
+class AutoAllocatedRef : private INonCopyable
 {
 public:
-    AutoMsgRef(Msg& aMsg);
-    ~AutoMsgRef();
+    AutoAllocatedRef(Allocated& aAllocated);
+    ~AutoAllocatedRef();
 private:
-    Msg& iMsg;
+    Allocated& iAllocated;
 };
 
 class ISupply

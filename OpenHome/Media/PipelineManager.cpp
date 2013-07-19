@@ -129,6 +129,21 @@ Msg* PipelineManager::Pull()
     return iPipeline->Pull();
 }
 
+void PipelineManager::InvalidateAt(TUint aId)
+{
+    iIdManager->InvalidateAt(aId);
+}
+
+void PipelineManager::InvalidateAfter(TUint aId)
+{
+    iIdManager->InvalidateAfter(aId);
+}
+
+void PipelineManager::InvalidateAll()
+{
+    iIdManager->InvalidateAll();
+}
+
 void PipelineManager::NotifyPipelineState(EPipelineState aState)
 {
     for (TUint i=0; i<iObservers.size(); i++) {

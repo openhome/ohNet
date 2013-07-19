@@ -232,6 +232,7 @@ def build(bld):
                 'OpenHome/Av/FaultCode.cpp',
                 'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
+                'OpenHome/Av/ProviderUtils.cpp',
                 'OpenHome/Av/Product.cpp',
                 'Generated/DvAvOpenhomeOrgProduct1.cpp',
                 'OpenHome/Av/ProviderProduct.cpp',
@@ -301,6 +302,9 @@ def build(bld):
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
+                'OpenHome/Av/Playlist/SourcePlaylist.cpp',
+                'OpenHome/Av/Playlist/PlaylistDatabase.cpp',
+                'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')

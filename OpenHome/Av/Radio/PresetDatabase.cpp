@@ -85,6 +85,7 @@ TBool PresetDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TU
             return true;
         }
     }
+    // FIXME - search from 0..aIndex-1 in case client requests presets out of order
     return false;
 }
 
