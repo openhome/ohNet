@@ -1,101 +1,23 @@
+#include "TestMediaPlayer.h"
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Private/DviStack.h>
-#include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
-#include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Private/Standard.h>
-#include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
-#include <OpenHome/Av/Product.h>
-#include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Source.h> // FIXME - see #169
 
-#ifdef _WIN32
-#if !defined(CDECL)
-# define CDECL __cdecl
-#endif
-
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#elif defined(NOTERMIOS)
-
-#define CDECL
-
-int mygetch()
-{
-    return 0;
-}
-
-#else
-
-# define CDECL
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
-}
-
-#endif // _WIN32
-
-namespace OpenHome {
-namespace Av {
-
-class TestMediaPlayer
-{
-    static const TUint kTrackCount = 1200;
-    static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
-    static const TUint kRaopDiscoveryPort = 5048;
-public:
-    TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aRoom, const TChar* aProductName, TUint aSenderChannel, const TChar* aTuneInUserName);
-    ~TestMediaPlayer();
-    void Run();
-    TBool TryDisable(Net::DvDevice& aDevice);
-protected:
-    virtual void RegisterPlugins(Environment& aEnv);
-private:
-    void Disabled();
-protected:
-    static const Brn kSupportedProtocols;
-    MediaPlayer* iMediaPlayer;
-    Net::DvDevice* iDevice;
-    Net::DvDevice* iDeviceUpnpAv;
-    RamStore* iRamStore;
-private:
-    Semaphore iDisabled;
-    Media::DriverSongcastSender* iDriver;
-    ISource* iSourceUpnp; // FIXME - see #169
-};
-
-} // namespace Av
-} // namespace OpenHome
+int mygetch();
+// mygetch() assumed available in PipelineUtils
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
+using namespace OpenHome::Av::Test;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
@@ -130,7 +52,7 @@ const Brn TestMediaPlayer::kSupportedProtocols(
     "http-get:*:audio/x-ogg:*"
     "http-get:*:application/ogg:*");
 
-TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aSenderChannel, const TChar* aTuneInUserName)
+TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName)
     : iDisabled("test", 0)
 {
     Bws<256> friendlyName;
@@ -160,7 +82,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
-
     // create read/write store.  This creates a number of static (constant) entries automatically
     iRamStore = new RamStore();
 
@@ -170,17 +91,10 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iRamStore->AddItem("Radio.TuneInUserName", aTuneInUserName);
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, kMaxDriverJiffies, *iRamStore, *iRamStore);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iRamStore);
 
-    // Create driver & attach it to the pipeline
-    Environment& env = iMediaPlayer->Env();
-    iDriver = new DriverSongcastSender(iMediaPlayer->Pipeline(), kMaxDriverJiffies, env, *iDevice, aUdn, aSenderChannel, aAdapter, false /*unicast*/);
-    iMediaPlayer->AddAttribute("Sender");
+    RegisterPlugins(iMediaPlayer->Env());
 
-    RegisterPlugins(env);
-
-    iDevice->SetEnabled();
-    iDeviceUpnpAv->SetEnabled();
     //iProduct->SetCurrentSource(0);
 }
 
@@ -205,8 +119,15 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iRamStore;
 }
 
+void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
+{
+    iMediaPlayer->AddAttribute(aAttribute);
+}
+
 void TestMediaPlayer::Run()
 {
+    iDevice->SetEnabled();
+    iDeviceUpnpAv->SetEnabled();
     iMediaPlayer->Start();
 
     Log::Print("\nFull (software) media player\n");
@@ -217,13 +138,14 @@ void TestMediaPlayer::Run()
         ;
 }
 
-TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
+PipelineManager& TestMediaPlayer::Pipeline()
 {
-    if (aDevice.Enabled()) {
-        aDevice.SetDisabled(MakeFunctor(*this, &TestMediaPlayer::Disabled));
-        return true;
-    }
-    return false;
+    return iMediaPlayer->Pipeline();
+}
+
+DvDevice* TestMediaPlayer::Device()
+{
+    return iDevice;
 }
 
 void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
@@ -261,62 +183,16 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
 }
 
+TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
+{
+    if (aDevice.Enabled()) {
+        aDevice.SetDisabled(MakeFunctor(*this, &TestMediaPlayer::Disabled));
+        return true;
+    }
+    return false;
+}
+
 void TestMediaPlayer::Disabled()
 {
     iDisabled.Signal();
-}
-
-
-using namespace OpenHome::TestFramework;
-
-int CDECL main(int aArgc, char* aArgv[])
-{
-    OptionParser parser;
-    OptionString optionRoom("-r", "--room", Brn("SoftPlayer"), "room the Product service will report");
-    parser.AddOption(&optionRoom);
-    OptionString optionName("-n", "--name", Brn("SoftPlayer"), "Product name");
-    parser.AddOption(&optionName);
-    OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
-    parser.AddOption(&optionChannel);
-    OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
-    parser.AddOption(&optionAdapter);
-    OptionString optionTuneIn("-n", "--tunein", Brn("linnproducts"), "TuneIn user name");
-    parser.AddOption(&optionTuneIn);
-
-    if (!parser.Parse(aArgc, aArgv)) {
-        return 1;
-    }
-
-    InitialisationParams* initParams = InitialisationParams::Create();
-    initParams->SetDvEnableBonjour();
-//    initParams->SetUseLoopbackNetworkAdapter();
-    //Debug::SetLevel(Debug::kDvEvent);
-	Net::Library* lib = new Net::Library(initParams);
-    Net::DvStack* dvStack = lib->StartDv();
-    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
-    const TUint adapterIndex = optionAdapter.Value();
-    if (subnetList->size() <= adapterIndex) {
-		Log::Print("ERROR: adapter %u doesn't exist\n", adapterIndex);
-		ASSERTS();
-    }
-    Log::Print ("adapter list:\n");
-    for (unsigned i=0; i<subnetList->size(); ++i) {
-		TIpAddress addr = (*subnetList)[i]->Address();
-		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
-    }
-    TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
-    Library::DestroySubnetList(subnetList);
-    lib->SetCurrentSubnet(subnet);
-    Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
-
-    Bwh udn("TestMediaPlayer");
-    RandomiseUdn(dvStack->Env(), udn);
-    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, adapter, udn, optionRoom.CString(), optionName.CString(), optionChannel.Value(), optionTuneIn.CString());
-    tmp->Run();
-    delete tmp;
-    
-    delete lib;
-
-    return 0;
 }

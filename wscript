@@ -450,6 +450,8 @@ def build(bld):
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
+                'OpenHome/Av/Tests/TestMediaPlayer.cpp',
+                'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -555,7 +557,7 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRadio')
     bld.program(
-            source='OpenHome/Av/Tests/TestMediaPlayer.cpp',
+            source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestMediaPlayer')
 
