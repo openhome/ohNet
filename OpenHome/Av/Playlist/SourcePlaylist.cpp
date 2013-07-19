@@ -9,6 +9,8 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 
+#include <limits.h>
+
 namespace OpenHome {
     class Environment;
 namespace Net {
