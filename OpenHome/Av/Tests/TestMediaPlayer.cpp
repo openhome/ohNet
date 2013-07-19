@@ -192,6 +192,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
 
     // Add sources
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, kSupportedProtocols));
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
     iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, aUdn, kRaopDiscoveryPort));   // FIXME - name should be product name
