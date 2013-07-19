@@ -89,8 +89,12 @@ void Product::GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
 
 void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri)
 {
-    aRoom.Append(Brn("SoftPlayer")); // FIXME
-    aName.Append(Brn("SoftPlayer")); // FIXME
+    if (!iReadStore.TryReadStoreItem(Brn("Product.Room"), aRoom)) {
+        aRoom.Append(Brn("Main Room"));
+    }
+    if (!iReadStore.TryReadStoreItem(Brn("Product.Name"), aName)) {
+        aName.Append(Brn("SoftPlayer")); // FIXME
+    }
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));

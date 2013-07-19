@@ -1,5 +1,6 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Private/DviStack.h>
+#include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
@@ -70,10 +71,12 @@ class TestMediaPlayer
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
     static const TUint kRaopDiscoveryPort = 5048;
 public:
-    TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aFriendlyName, TUint aSenderChannel, const TChar* aTuneInUserName);
+    TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aRoom, const TChar* aProductName, TUint aSenderChannel, const TChar* aTuneInUserName);
     ~TestMediaPlayer();
     void Run();
     TBool TryDisable(Net::DvDevice& aDevice);
+protected:
+    virtual void RegisterPlugins(Environment& aEnv);
 private:
     void Disabled();
 private:
@@ -125,15 +128,20 @@ static const TChar* kSupportedProtocols =
     "http-get:*:audio/x-ogg:*"
     "http-get:*:application/ogg:*";
 
-TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aUdn, const TChar* aFriendlyName, TUint aSenderChannel, const TChar* aTuneInUserName)
+TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aSenderChannel, const TChar* aTuneInUserName)
     : iDisabled("test", 0)
 {
+    Bws<256> friendlyName;
+    friendlyName.Append(aRoom);
+    friendlyName.Append(':');
+    friendlyName.Append(aProductName);
+
     // create UPnP device
     iDevice = new DvDeviceStandard(aDvStack, aUdn);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "MediaPlayer");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", aFriendlyName);
+    iDevice->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
     iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDevice->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
@@ -145,16 +153,18 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
-    buf.Replace(aFriendlyName);
-    buf.Append("-MediaRenderer");
-    iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", buf.PtrZ());
+    friendlyName.Append("-MediaRenderer");
+    iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
 
     // create read/write store.  This creates a number of static (constant) entries automatically
     iRamStore = new RamStore();
-    // add a single user (runtime changeable) setting
+
+    // FIXME - available store keys should be listed somewhere
+    iRamStore->AddItem("Product.Room", aRoom);
+    iRamStore->AddItem("Product.Name", aProductName);
     iRamStore->AddItem("Radio.TuneInUserName", aTuneInUserName);
 
     // create MediaPlayer
@@ -165,37 +175,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, co
     iDriver = new DriverSongcastSender(iMediaPlayer->Pipeline(), kMaxDriverJiffies, env, *iDevice, aUdn, aSenderChannel, aAdapter, false /*unicast*/);
     iMediaPlayer->AddAttribute("Sender");
 
-    // Add codecs
-    iMediaPlayer->Add(Codec::CodecFactory::NewAac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
-    iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
-    iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
-    iMediaPlayer->Add(Codec::CodecFactory::NewWav());
-
-    // Add protocol modules (Radio source can require several stacked Http instances)
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(env));
-
-    // Add content processors (mainly required for Radio)
-    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
-    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
-    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
-    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
-    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
-    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
-    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
-    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
-
-    // Add sources
-    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, kSupportedProtocols));
-    iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
-    iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols);
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, aUdn, kRaopDiscoveryPort));   // FIXME - name should be product name
+    RegisterPlugins(env);
 
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
@@ -244,6 +224,41 @@ TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
     return false;
 }
 
+void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
+{
+    // Add codecs
+    iMediaPlayer->Add(Codec::CodecFactory::NewAac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
+    iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
+    iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
+    iMediaPlayer->Add(Codec::CodecFactory::NewWav());
+
+    // Add protocol modules (Radio source can require several stacked Http instances)
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+
+    // Add content processors (mainly required for Radio)
+    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
+    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
+    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
+    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
+    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
+    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
+    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
+    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
+
+    // Add sources
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, kSupportedProtocols));
+    iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
+    iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols);
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
+}
+
 void TestMediaPlayer::Disabled()
 {
     iDisabled.Signal();
@@ -255,9 +270,9 @@ using namespace OpenHome::TestFramework;
 int CDECL main(int aArgc, char* aArgv[])
 {
     OptionParser parser;
-    OptionString optionUdn("-u", "--udn", Brn("TestMediaPlayer"), "[udn] udn for the upnp device");
-    parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("SoftPlayer"), "[name] name of the sender");
+    OptionString optionRoom("-r", "--room", Brn("SoftPlayer"), "room the Product service will report");
+    parser.AddOption(&optionRoom);
+    OptionString optionName("-n", "--name", Brn("SoftPlayer"), "Product name");
     parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
@@ -293,7 +308,9 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value(), optionTuneIn.CString());
+    Bwh udn("TestMediaPlayer");
+    RandomiseUdn(dvStack->Env(), udn);
+    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, adapter, udn, optionRoom.CString(), optionName.CString(), optionChannel.Value(), optionTuneIn.CString());
     tmp->Run();
     delete tmp;
     
