@@ -79,12 +79,14 @@ protected:
     virtual void RegisterPlugins(Environment& aEnv);
 private:
     void Disabled();
-private:
-    Semaphore iDisabled;
+protected:
+    static const Brn kSupportedProtocols;
     MediaPlayer* iMediaPlayer;
     Net::DvDevice* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
+private:
+    Semaphore iDisabled;
     Media::DriverSongcastSender* iDriver;
     ISource* iSourceUpnp; // FIXME - see #169
 };
@@ -99,7 +101,7 @@ using namespace OpenHome::Net;
 
 // TestMediaPlayer
 
-static const TChar* kSupportedProtocols = 
+const Brn TestMediaPlayer::kSupportedProtocols( 
     "http-get:*:audio/x-flac:*"
     "http-get:*:audio/wav:*"
     "http-get:*:audio/wave:*"
@@ -126,7 +128,7 @@ static const TChar* kSupportedProtocols =
     "http-get:*:audio/mp4:*"
     "http-get:*:audio/ogg:*"
     "http-get:*:audio/x-ogg:*"
-    "http-get:*:application/ogg:*";
+    "http-get:*:application/ogg:*");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aSenderChannel, const TChar* aTuneInUserName)
     : iDisabled("test", 0)

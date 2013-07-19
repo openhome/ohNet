@@ -26,7 +26,7 @@ static const Brn kInvalidRequestMsg("Comma separated id request list invalid");
 static const TUint kInvalidChannelCode = 803;
 static const Brn kInvalidChannelMsg("Selected channel is invalid");
 
-ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const TChar* aProtocolInfo)
+ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgRadio1(aDevice)
     , iLock("PRAD")
     , iSource(aSource)

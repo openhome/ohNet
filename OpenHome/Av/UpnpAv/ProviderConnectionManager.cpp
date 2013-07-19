@@ -13,7 +13,7 @@ static const Brn kInvalidConnectionIdMsg("Invalid connection reference");
 static const Brn kDirectionInput("Input");
 static const Brn kStatusUnknown("Unknown");
 
-ProviderConnectionManager::ProviderConnectionManager(Net::DvDevice& aDevice, const TChar* aSinkProtocolInfo)
+ProviderConnectionManager::ProviderConnectionManager(Net::DvDevice& aDevice, const Brx& aSinkProtocolInfo)
     : DvProviderUpnpOrgConnectionManager1(aDevice)
     , iSinkProtocolInfo(aSinkProtocolInfo)
 {

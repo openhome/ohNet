@@ -15,7 +15,7 @@ class ProviderConnectionManager : public DvProviderUpnpOrgConnectionManager1
 {
     static const TUint kConnectionId = 0; // we don't implement the PrepareForConnection action - only connectionID 0 is valid
 public:
-    ProviderConnectionManager(Net::DvDevice& aDevice, const TChar* aSinkProtocolInfo);
+    ProviderConnectionManager(Net::DvDevice& aDevice, const Brx& aSinkProtocolInfo);
     ~ProviderConnectionManager();
 private: // from DvProviderUpnpOrgConnectionManager1
     void GetProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aSource, IDvInvocationResponseString& aSink);

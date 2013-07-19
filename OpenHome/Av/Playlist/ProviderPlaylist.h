@@ -38,7 +38,7 @@ class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1, private IPlayl
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const TChar* aProtocolInfo);
+    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const Brx& aProtocolInfo);
     ~ProviderPlaylist();
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(TUint aId);

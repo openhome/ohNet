@@ -28,7 +28,7 @@ class ProviderPlaylist;
 class SourcePlaylist : public Source, private ISourcePlaylist, private Media::IPipelineObserver
 {
 public:
-    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const TChar* aProtocolInfo);
+    SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const Brx& aProtocolInfo);
     ~SourcePlaylist();
 private: // from ISource
     void Activate();
@@ -72,7 +72,7 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer, const TChar* aSupportedProtocols)
+ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols)
 { // static
     return new SourcePlaylist(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), aMediaPlayer.TrackFactory(), aSupportedProtocols);
 }
@@ -80,7 +80,7 @@ ISource* SourceFactory::NewPlaylist(IMediaPlayer& aMediaPlayer, const TChar* aSu
 
 // SourcePlaylist
 
-SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const TChar* aProtocolInfo)
+SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::TrackFactory& aTrackFactory, const Brx& aProtocolInfo)
     : Source("Playlist", "Playlist")
     , iLock("SPLY")
     , iPipeline(aPipeline)

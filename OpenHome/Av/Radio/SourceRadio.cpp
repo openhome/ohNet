@@ -20,7 +20,7 @@ using namespace OpenHome::Media;
 
 // SourceFactory
 
-ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const TChar* aSupportedProtocols)
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols)
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(radioUriProvider);
@@ -30,7 +30,7 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const TChar* aSuppo
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const TChar* aProtocolInfo, IReadStore& aReadStore)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IReadStore& aReadStore)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)

@@ -15,9 +15,9 @@ class IMediaPlayer;
 class SourceFactory
 {
 public:
-    static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer, const TChar* aSupportedProtocols);
-    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const TChar* aSupportedProtocols);
-    static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const TChar* aSupportedProtocols);
+    static ISource* NewPlaylist(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
+    static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
+    static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols);
     static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const Brx& aDeviceName, TUint aDiscoveryPort);
 };
 

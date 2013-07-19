@@ -25,7 +25,7 @@ static const Brn kPlaylistFullMsg("Playlist full");
 
 // ProviderPlaylist
 
-ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const TChar* aProtocolInfo)
+ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgPlaylist1(aDevice)
     , iLock("PPLY")
     , iSource(aSource)
