@@ -58,6 +58,7 @@ class PlaylistDatabase : public IPlaylistDatabase, public IPlaylistDatabaseReade
 {
 public:
     PlaylistDatabase(Media::TrackFactory& aTrackFactory, Media::IPipelineIdManager& aIdManager);
+    TUint NextTrackId() const;
 public: // from IPlaylistDatabase
     void SetObserver(IPlaylistDatabaseObserver& aObserver);
     void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const;

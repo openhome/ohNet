@@ -52,7 +52,8 @@ private: // from Media::IPipelineObserver
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
-    PlaylistDatabase* iPlaylistDatabase;
+    PlaylistDatabase* iDatabase;
+    UriProviderPlaylist* iUriProvider;
     ProviderPlaylist* iProviderPlaylist;
     TUint iTrackPosSeconds;
     TUint iPipelineTrackId;
@@ -88,9 +89,10 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-    iPlaylistDatabase = new PlaylistDatabase(aTrackFactory, aPipeline);
-    iPipeline.Add(new UriProviderPlaylist(*iPlaylistDatabase));
-    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iPlaylistDatabase, aProtocolInfo);
+    iDatabase = new PlaylistDatabase(aTrackFactory, aPipeline);
+    iUriProvider = new UriProviderPlaylist(*iDatabase);
+    iPipeline.Add(iUriProvider); // ownership passes to iPipeline
+    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, aProtocolInfo);
     iPipeline.AddObserver(*this);
 }
 
@@ -117,6 +119,11 @@ void SourcePlaylist::Play()
 {
     if (!IsActive()) {
         DoActivate();
+        TUint trackId = iDatabase->NextTrackId();
+        if (trackId == IPlaylistDatabase::kTrackIdNone) {
+            return; // nothing to play
+        }
+        iPipeline.Begin(iUriProvider->Mode(), trackId);
     }
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;

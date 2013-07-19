@@ -26,6 +26,17 @@ PlaylistDatabase::PlaylistDatabase(TrackFactory& aTrackFactory, IPipelineIdManag
     // FIXME - no unit tests
 }
 
+TUint PlaylistDatabase::NextTrackId() const
+{
+    TUint trackId = kTrackIdNone;
+    iLock.Wait();
+    if (iCursorIndex < iTrackList.size()) {
+        trackId = iTrackList[iCursorIndex]->Id();
+    }
+    iLock.Signal();
+    return trackId;
+}
+
 void PlaylistDatabase::SetObserver(IPlaylistDatabaseObserver& aObserver)
 {
     iObserver = &aObserver;
