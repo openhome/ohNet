@@ -26,8 +26,9 @@ public:
     static TInt Print(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs);
 private:
-    TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
+    static TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
     Log(FunctorMsg& aLogOutput);
+    static inline FunctorMsg& LogOutput();
 private:
     FunctorMsg iLogOutput;
     Mutex iLockStdio;

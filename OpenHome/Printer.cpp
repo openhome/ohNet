@@ -1,11 +1,19 @@
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/OsWrapper.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
 using namespace OpenHome;
 
+static void STDCALL defaultPrinter(void* /*aPtr*/, const char* aMsg)
+{
+    Os::ConsoleWrite(aMsg);
+}
+
 static Log* gLogger;
+static FunctorMsg gDefaultPrinter = MakeFunctorMsgC(NULL, defaultPrinter);
 
 TChar hexChar(TUint8 aNum)
 {
@@ -23,15 +31,20 @@ FunctorMsg Log::SwapOutput(FunctorMsg& aLogOutput)
     return old;
 }
 
+inline FunctorMsg& Log::LogOutput()
+{ // static
+    return gLogger? gLogger->iLogOutput : gDefaultPrinter;
+}
+
 #define Min(a, b) ((a)<(b)? (a) : (b))
 TInt Log::Print(const Brx& aMessage)
 {
-    return Print(gLogger->iLogOutput, aMessage);
+    return Print(LogOutput(), aMessage);
 }
 
 TInt Log::PrintHex(const Brx& aBrx)
 {
-    return PrintHex(gLogger->iLogOutput, aBrx);
+    return PrintHex(LogOutput(), aBrx);
 }
 
 TInt Log::Print(const TChar* aFormat, ...)
@@ -45,7 +58,7 @@ TInt Log::Print(const TChar* aFormat, ...)
 
 TInt Log::PrintVA(const TChar* aFormat, va_list aArgs)
 {
-    return Print(gLogger->iLogOutput, aFormat, aArgs);
+    return Print(LogOutput(), aFormat, aArgs);
 }
 
 TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
@@ -61,7 +74,7 @@ TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
         }
         buf.SetBytes(j);
         buf.PtrZ();
-        gLogger->DoPrint(aOutput, buf.Ptr());
+        DoPrint(aOutput, buf.Ptr());
     }
     TUint rem = aBrx.Bytes()%128;
     buf.SetBytes(rem*2);
@@ -72,7 +85,7 @@ TInt Log::PrintHex(FunctorMsg& aOutput, const Brx& aBrx)
         buf[j++] = hexChar( (aBrx[i+(split*128)]&0x0F) );
     }
     buf.PtrZ();
-    return gLogger->DoPrint(aOutput, buf.Ptr());
+    return DoPrint(aOutput, buf.Ptr());
 }
 
 TInt Log::Print(FunctorMsg& aOutput, const Brx& aMessage)
@@ -87,7 +100,7 @@ TInt Log::Print(FunctorMsg& aOutput, const Brx& aMessage)
         Bwn msg(temp, len, kMaxPrintBytes+1);
         msg.Replace(ptr, len);
         msg.PtrZ();
-        ret += gLogger->DoPrint(aOutput, msg.Ptr());
+        ret += DoPrint(aOutput, msg.Ptr());
         ptr += len;
     }
     return ret;
@@ -96,22 +109,36 @@ TInt Log::Print(FunctorMsg& aOutput, const Brx& aMessage)
 TInt Log::Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs)
 {
     TChar temp[kMaxPrintBytes+1];
-    gLogger->iLockStdio.Wait();
+    Log* self = gLogger;
+    if (self) {
+        self->iLockStdio.Wait();
+    }
     TInt n = vsnprintf(temp, kMaxPrintBytes, aFormat, aArgs);
-    gLogger->iLockStdio.Signal();
+    if (self) {
+        self->iLockStdio.Signal();
+    }
     if (n > (TInt)kMaxPrintBytes || n < 0) {
         n = kMaxPrintBytes;
     }
     Bwn msg(temp, n, kMaxPrintBytes+1);
     msg.PtrZ();
-    return gLogger->DoPrint(aOutput, msg.Ptr());
+    return DoPrint(aOutput, msg.Ptr());
 }
 
 TInt Log::DoPrint(FunctorMsg& aOutput, const TByte* aMessage)
-{
-    AutoMutex a(iLockFunctor);
+{ // static
+    Log* self = gLogger;
+    if (self) {
+        self->iLockFunctor.Wait();
+    }
     if (aOutput) {
-        aOutput((const char*)aMessage);
+        try {
+            aOutput((const char*)aMessage);
+        }
+        catch (...) { }
+    }
+    if (self) {
+        self->iLockFunctor.Signal();
     }
     return (TUint)strlen((const char*)aMessage);
 }
