@@ -26,6 +26,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iReportHalted(false)
     , iReportFlushed(false)
     , iFlushStream(false)
+    , iResumeAfterHalt(false)
     , iRemovingStream(false)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(UINT_MAX)
@@ -109,6 +110,10 @@ Msg* Stopper::Pull()
         if (iState == EFlushing && msg != NULL) {
             msg->RemoveRef();
             msg = NULL;
+        }
+        if (iState == EHalted && iResumeAfterHalt) {
+            iResumeAfterHalt = false;
+            iState = ERunning;
         }
         iLock.Signal();
         if (iReportHalted) {
@@ -257,15 +262,16 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
     case EHalting:
         Ramp(aMsg, Ramp::EDown);
         if (iRemainingRampSize == 0) {
+            iState = EHaltPending;
             if (iRemovingStream) {
-                iState = ERunning;
                 iRemovingStream = false;
+                iResumeAfterHalt = true;
                 /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
                 iFlushStream = true;
             }
-            else {
+            /*else {
                 iState = EHaltPending;
-            }
+            }*/
             // FIXME - may need to empty/delete iQueue
             // ... or could hang onto them and see whether they're still relevant if we restart playing?
         }
