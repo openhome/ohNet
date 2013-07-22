@@ -194,8 +194,11 @@ void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
     }
 }
 
-void SourcePlaylist::NotifyTrack(Media::Track& /*aTrack*/, const Brx& /*aMode*/, TUint aIdPipeline)
+void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
+    if (aMode == iUriProvider->Mode()) {
+        iProviderPlaylist->NotifyTrack(aTrack.Id());
+    }
     iLock.Wait();
     iPipelineTrackId = aIdPipeline;
     iLock.Signal();
