@@ -190,14 +190,24 @@ void ProviderPlaylist::SeekSecondRelative(IDvInvocation& aInvocation, TInt aValu
 
 void ProviderPlaylist::SeekId(IDvInvocation& aInvocation, TUint aValue)
 {
-    iSource.SeekToTrackId(aValue);
+    try {
+        iSource.SeekToTrackId(aValue);
+    }
+    catch (PlaylistDbIdNotFound&) {
+        aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderPlaylist::SeekIndex(IDvInvocation& aInvocation, TUint aValue)
 {
-    iSource.SeekToTrackIndex(aValue);
+    try {
+        iSource.SeekToTrackIndex(aValue);
+    }
+    catch (PlaylistDbIdNotFound&) {
+        aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
