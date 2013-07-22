@@ -48,6 +48,7 @@ private: // from IPipelineElementUpstream
 private: // from IPipelineIdManager
     void InvalidateAt(TUint aId);
     void InvalidateAfter(TUint aId);
+    void InvalidatePending();
     void InvalidateAll();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);

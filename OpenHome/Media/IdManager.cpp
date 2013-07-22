@@ -152,6 +152,13 @@ void IdManager::InvalidateAfter(TUint aId)
     }
 }
 
+void IdManager::InvalidatePending()
+{
+    iLock.Wait();
+    iIndexTail = iIndexHead;
+    iLock.Signal();
+}
+
 void IdManager::InvalidateAll()
 {
     AutoMutex a(iLock);

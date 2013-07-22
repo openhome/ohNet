@@ -21,6 +21,7 @@ public: // from IPipelineIdTracker
 public: // from IPipelineIdManager
     void InvalidateAt(TUint aId);
     void InvalidateAfter(TUint aId);
+    void InvalidatePending();
     void InvalidateAll();
 private:
     static inline void UpdateIndex(TUint& aIndex);

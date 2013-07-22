@@ -139,6 +139,11 @@ void PipelineManager::InvalidateAfter(TUint aId)
     iIdManager->InvalidateAfter(aId);
 }
 
+void PipelineManager::InvalidatePending()
+{
+    iIdManager->InvalidatePending();
+}
+
 void PipelineManager::InvalidateAll()
 {
     iIdManager->InvalidateAll();
