@@ -20,6 +20,14 @@ int mygetch()
 
 #define CDECL
 
+int mygetch()
+{
+    // FIXME - should avoid use of mygetch() on platforms with no terminal IO support
+    for (;;) {
+    }
+    return EOF;
+}
+
 #else
 
 # define CDECL
