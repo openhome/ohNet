@@ -306,6 +306,10 @@ Check that remaining audio is not ramped.
         TEST(iLastMsg == EMsgAudioPcm);
     } while(iJiffies < kRampDuration);
     TEST(iJiffies == kRampDuration);
+    msg = iStopper->Pull();
+    (void)msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastMsg == EMsgHalt);
 
     // Check that subsequent audio is discarded.
     // Check that subsequent stream plays.
