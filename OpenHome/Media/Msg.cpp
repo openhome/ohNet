@@ -420,6 +420,9 @@ void Ramp::Reset()
 
 TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
 {
+    /*Log::Print("Ramp::Set (");
+    Log::Print(Thread::CurrentThreadName());
+    Log::Print("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRampDuration=%08x\n", aDirection, aStart, aFragmentSize, aRampDuration);*/
     ASSERT(aRampDuration >  aFragmentSize || ((aStart == kRampMax || aStart == kRampMin) && aRampDuration == aFragmentSize));
     ASSERT(aDirection != ENone);
     iEnabled = true;
