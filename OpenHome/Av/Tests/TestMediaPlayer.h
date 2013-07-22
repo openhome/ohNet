@@ -38,7 +38,7 @@ class TestMediaPlayer
     static const TUint kRaopDiscoveryPort = 5048;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
-    ~TestMediaPlayer();
+    virtual ~TestMediaPlayer();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     void Run();
     Media::PipelineManager& Pipeline();
