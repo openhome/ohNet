@@ -113,6 +113,7 @@ Msg* Stopper::Pull()
         }
         if (iState == EHalted && iResumeAfterHalt) {
             iResumeAfterHalt = false;
+            iReportHalted = false;
             iState = ERunning;
         }
         iLock.Signal();
