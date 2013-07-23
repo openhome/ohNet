@@ -220,11 +220,11 @@ void CodecController::CodecThread()
         if (iActiveCodec != NULL) {
             iActiveCodec->StreamCompleted();
         }
-    }
-    // push out any pending msgs, such as a quit
-    if (iPendingMsg != NULL) {
-        Queue(iPendingMsg);
-        iPendingMsg = NULL;
+        // push out any pending msgs, such as a quit
+        if (iPendingMsg != NULL) {
+            Queue(iPendingMsg);
+            iPendingMsg = NULL;
+        }
     }
 }
 
@@ -302,7 +302,7 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
 
 TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
 {
-    if (aBytes ==0) {
+    if (aBytes == 0) {
         return true;
     }
     if (iAudioEncoded == NULL) {
