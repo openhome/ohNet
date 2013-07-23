@@ -1,56 +1,8 @@
 #include "PipelineUtils.h"
+#include <OpenHome/Media/Tests/GetCh.h>
+#include <OpenHome/Media/Tests/Cdecl.h>
 
 #include <stdio.h>
-
-
-int mygetch();
-
-#ifdef _WIN32
-
-# define CDECL __cdecl
-
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#elif defined(NOTERMIOS)
-
-#define CDECL
-
-int mygetch()
-{
-    // FIXME - should avoid use of mygetch() on platforms with no terminal IO support
-    for (;;) {
-    }
-    return EOF;
-}
-
-#else
-
-# define CDECL
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-        struct termios oldt, newt;
-        int ch;
-        tcgetattr(STDIN_FILENO, &oldt);
-        newt = oldt;
-        newt.c_lflag &= ~(ICANON | ECHO);
-        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-        ch = getchar();
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        return ch;
-}
-
-#endif // _WIN32
-
-
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;

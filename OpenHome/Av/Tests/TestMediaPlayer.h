@@ -60,8 +60,8 @@ private:
     ISource* iSourceUpnp; // FIXME - see #169
 };
 
-TestMediaPlayer* CreateMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
-int ExecuteTestMediaPlayer(int aArgc, char* aArgv[]);
+typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
+int ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateMediaPlayerFunc aFunc);
 
 } // namespace Test
 } // namespace Av

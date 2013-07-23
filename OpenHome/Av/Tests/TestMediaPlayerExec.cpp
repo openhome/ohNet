@@ -15,7 +15,7 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
-int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[])
+int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateMediaPlayerFunc aFunc)
 {
     OptionParser parser;
     OptionString optionRoom("-r", "--room", Brn("SoftPlayer"), "room the Product service will report");
@@ -59,7 +59,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[])
     Bwh udn("TestMediaPlayer");
     RandomiseUdn(dvStack->Env(), udn);
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
-    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
+    TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
     DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, dvStack->Env(), *(tmp->Device()), udn, optionChannel.Value(), adapter, false /*unicast*/);
     tmp->AddAttribute("Sender");
     tmp->Run();

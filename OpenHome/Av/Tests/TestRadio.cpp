@@ -1,3 +1,4 @@
+#include "TestRadio.h"
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/OptionParser.h>
@@ -19,82 +20,13 @@
 #include <limits.h>
 #include <stdio.h>
 
-#ifdef _WIN32
-#if !defined(CDECL)
-# define CDECL __cdecl
-#endif
-
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#elif defined(NOTERMIOS)
-
-#define CDECL
-
-int mygetch()
-{
-    return 0;
-}
-
-#else
-
-# define CDECL
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
-}
-
-#endif // _WIN32
-
-namespace OpenHome {
-namespace Av {
-    
-class PresetDatabase;
-
-class TestRadio : private Media::IPipelineObserver
-{
-    static const TUint kTrackCount = 3;
-public:
-    TestRadio(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    ~TestRadio();
-    void Run(PresetDatabase& aDb);
-private: // from Media::IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
-private:
-    Media::AllocatorInfoLogger iInfoLogger;
-    Media::PipelineManager* iPipeline;
-    Media::TrackFactory* iTrackFactory;
-    Media::SimpleSongcastingDriver* iDriver;
-    Media::UriProviderSingleTrack* iUriProvider;
-    //DummySourceUpnpAv* iSourceUpnpAv;
-};
-
-} // namespace Av
-} // namespace OpenHome
+int mygetch();
+// mygetch() assumed available in PipelineUtils
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Av;
+using namespace OpenHome::Av::Test;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
@@ -104,27 +36,9 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
 {
     iPipeline = new PipelineManager(iInfoLogger, SimpleSongcastingDriver::kMaxDriverJiffies);
     iPipeline->AddObserver(*this);
-    iPipeline->Add(Codec::CodecFactory::NewAac());
-    iPipeline->Add(Codec::CodecFactory::NewAlac());
-    iPipeline->Add(Codec::CodecFactory::NewAdts());
-    iPipeline->Add(Codec::CodecFactory::NewFlac());
-    iPipeline->Add(Codec::CodecFactory::NewVorbis());
-    iPipeline->Add(Codec::CodecFactory::NewWav());
     Environment& env = aDvStack.Env();
-    iPipeline->Add(ProtocolFactory::NewHttp(env));
-    iPipeline->Add(ProtocolFactory::NewHttp(env));
-    iPipeline->Add(ProtocolFactory::NewHttp(env));
-    iPipeline->Add(ProtocolFactory::NewHttp(env));
-    iPipeline->Add(ProtocolFactory::NewHttp(env));
-    iPipeline->Add(ProtocolFactory::NewRtsp(env, Brn("notarealguid")));
-    iPipeline->Add(ContentProcessorFactory::NewM3u());
-    iPipeline->Add(ContentProcessorFactory::NewM3u());
-    iPipeline->Add(ContentProcessorFactory::NewPls());
-    iPipeline->Add(ContentProcessorFactory::NewPls());
-    iPipeline->Add(ContentProcessorFactory::NewOpml());
-    iPipeline->Add(ContentProcessorFactory::NewOpml());
-    iPipeline->Add(ContentProcessorFactory::NewAsx());
-    iPipeline->Add(ContentProcessorFactory::NewAsx());
+    RegisterPlugins(env);
+
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
@@ -166,6 +80,35 @@ void TestRadio::Run(PresetDatabase& aDb)
             Log::Print("Unsupported command - %c\n", (char)ch);
         }
     }
+}
+
+void TestRadio::RegisterPlugins(Environment& aEnv)
+{
+    // Add codecs
+    iPipeline->Add(Codec::CodecFactory::NewAac());
+    iPipeline->Add(Codec::CodecFactory::NewAlac());
+    iPipeline->Add(Codec::CodecFactory::NewAdts());
+    iPipeline->Add(Codec::CodecFactory::NewFlac());
+    iPipeline->Add(Codec::CodecFactory::NewVorbis());
+    iPipeline->Add(Codec::CodecFactory::NewWav());
+
+    // Add protocol modules
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
+    iPipeline->Add(ProtocolFactory::NewRtsp(aEnv, Brn("notarealguid")));
+
+    // Add content processors
+    iPipeline->Add(ContentProcessorFactory::NewM3u());
+    iPipeline->Add(ContentProcessorFactory::NewM3u());
+    iPipeline->Add(ContentProcessorFactory::NewPls());
+    iPipeline->Add(ContentProcessorFactory::NewPls());
+    iPipeline->Add(ContentProcessorFactory::NewOpml());
+    iPipeline->Add(ContentProcessorFactory::NewOpml());
+    iPipeline->Add(ContentProcessorFactory::NewAsx());
+    iPipeline->Add(ContentProcessorFactory::NewAsx());
 }
 
 #define LOG_PIPELINE_OBSERVER
@@ -241,7 +184,7 @@ void TestRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 }
 
 
-int CDECL main(int aArgc, char* aArgv[])
+int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFunc aFunc, std::vector<const TChar*> aPresets)
 {
     OptionParser parser;
     OptionString optionUdn("-u", "--udn", Brn("TestRadioSender"), "[udn] udn for the upnp device");
@@ -280,16 +223,12 @@ int CDECL main(int aArgc, char* aArgv[])
 
     PresetDatabase* db = new PresetDatabase();
     db->BeginSetPresets();
-    const TChar* presets[] = {
-        "http://opml.radiotime.com/Tune.ashx?id=s2377&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"   // (Planet Rock, AAC, 22.05KHz, mono)
-       ,"http://opml.radiotime.com/Tune.ashx?id=s24940&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Radio 2, AAC)
-    };
-    for (TUint i=0; i<sizeof(presets)/sizeof(presets[0]); i++) {
-        Brn urlAsMetaData(presets[i]);
+    for (TUint i=0; i<aPresets.size(); i++) {
+        Brn urlAsMetaData(aPresets[i]);
         (void)db->SetPreset(i, urlAsMetaData, urlAsMetaData);
     }
     db->EndSetPresets();
-    TestRadio* tr = new TestRadio(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestRadio* tr = (*aFunc)(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     tr->Run(*db);
     delete tr;
     delete db;
