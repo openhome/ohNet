@@ -145,6 +145,7 @@ void Filler::Run()
             iStopped = true;
         }
         else {
+            ASSERT(iTrack != NULL);
             (void)iUriStreamer->DoStream(*iTrack, mode);
         }
     }
