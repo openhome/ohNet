@@ -31,6 +31,7 @@ public:
     virtual void SeekRelative(TUint aSeconds) = 0;
     virtual void SeekToTrackId(TUint aId) = 0;
     virtual void SeekToTrackIndex(TUint aIndex) = 0;
+    virtual void SetRepeat(TBool aRepeat) = 0;
 };
 
 

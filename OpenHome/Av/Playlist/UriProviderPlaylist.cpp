@@ -13,8 +13,18 @@ using namespace OpenHome::Media;
 
 UriProviderPlaylist::UriProviderPlaylist(IPlaylistDatabaseReader& aDatabase)
     : UriProvider("Playlist")
+    , iLock("UPPL")
     , iDatabase(aDatabase)
+    , iRepeat(false)
+    , iDbCursorWrapped(false)
 {
+}
+
+void UriProviderPlaylist::SetRepeat(TBool aRepeat)
+{
+    iLock.Wait();
+    iRepeat = aRepeat;
+    iLock.Signal();
 }
 
 void UriProviderPlaylist::Begin(TUint aTrackId)
@@ -24,16 +34,34 @@ void UriProviderPlaylist::Begin(TUint aTrackId)
 
 EStreamPlay UriProviderPlaylist::GetNext(Media::Track*& aTrack)
 {
-    aTrack = iDatabase.NextTrack();    
-    return ePlayYes; // FIXME
+    AutoMutex a(iLock);
+    TBool wrapped;
+    iDatabase.NextTrack(aTrack, wrapped);
+    wrapped |= iDbCursorWrapped;
+    iDbCursorWrapped = false;
+    if (aTrack == NULL) {
+        return ePlayNo;
+    }
+    if (!wrapped || iRepeat) {
+        return ePlayYes;
+    }
+    return ePlayLater;
 }
 
 TBool UriProviderPlaylist::MoveCursorAfter(TUint aTrackId)
 {
-    return iDatabase.TryMoveCursorAfter(aTrackId);
+    AutoMutex a(iLock);
+    TBool wrapped;
+    const TBool moved = iDatabase.TryMoveCursorAfter(aTrackId, wrapped);
+    iDbCursorWrapped |= wrapped;
+    return moved;
 }
 
 TBool UriProviderPlaylist::MoveCursorBefore(TUint aTrackId)
 {
-    return iDatabase.TryMoveCursorBefore(aTrackId);
+    AutoMutex a(iLock);
+    TBool wouldWrapped;
+    const TBool moved = iDatabase.TryMoveCursorBefore(aTrackId, iRepeat, wouldWrapped);
+    iDbCursorWrapped |= wouldWrapped;
+    return moved;
 }

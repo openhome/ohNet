@@ -382,7 +382,7 @@ void ProviderPlaylist::ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationRes
 void ProviderPlaylist::SetRepeat(TBool aRepeat)
 {
     (void)SetPropertyRepeat(aRepeat);
-    iDatabase.SetRepeat(aRepeat);
+    iSource.SetRepeat(aRepeat);
 }
 
 void ProviderPlaylist::SetShuffle(TBool aShuffle)

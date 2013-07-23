@@ -15,14 +15,13 @@ PlaylistDatabase::PlaylistDatabase(TrackFactory& aTrackFactory, IPipelineIdManag
     , iTrackFactory(aTrackFactory)
     , iIdManager(aIdManager)
     , iObserver(NULL)
-    , iRepeat(false)
     , iShuffle(false)
     , iSeq(0)
     , iCursorIndex(0)
 {
     iTrackList.reserve(kMaxTracks);
     iShuffleList.reserve(kMaxTracks);
-    // FIXME - Shuffle & Repeat handling is likely incomplete.
+    // FIXME - Shuffle handling is likely incomplete.
     // FIXME - no unit tests
 }
 
@@ -68,13 +67,6 @@ void PlaylistDatabase::GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUi
         aIdArray[i] = kTrackIdNone;
     }
     aSeq = iSeq;
-}
-
-void PlaylistDatabase::SetRepeat(TBool aRepeat)
-{
-    AutoMutex a(iLock);
-    iRepeat = aRepeat;
-    // FIXME
 }
 
 void PlaylistDatabase::SetShuffle(TBool aShuffle)
@@ -152,7 +144,7 @@ void PlaylistDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaD
         if (iShuffle) {
             track->AddRef();
             iShuffleList.push_back(track);
-            iIdManager.InvalidateAll(); // FIXME - this may cancel the current track.  Want something like InvalidatePending() instead.
+            iIdManager.InvalidatePending();
             // no need to update iCursorIndex - we never use it in Shuffle mode
         }
         else {
@@ -227,45 +219,26 @@ void PlaylistDatabase::MoveCursorTo(TUint aId)
     }
 }
 
-Track* PlaylistDatabase::NextTrack()
+void PlaylistDatabase::NextTrack(Media::Track*& aTrack, TBool& aWrapped)
 {
-    Track* track = NULL;
-    iLock.Wait();
+    aTrack = NULL;
+    AutoMutex a(iLock);
     if (iShuffle) {
-        ASSERTS(); // FIXME
+        // FIXME
+        ASSERTS();
+        return;
     }
-    else {
-        if (iCursorIndex > iTrackList.size()) {
-            if (iRepeat) {
-                iCursorIndex = 0;
-            }
-            else {
-                // FIXME - want to return a Track #0 but indicate that it shouldn't be played
-            }
-        }
-        if (iCursorIndex < iTrackList.size()) {
-            track = iTrackList[iCursorIndex];
-            iCursorIndex++;
-            track->AddRef();
-        }
+    if (iCursorIndex >= iTrackList.size()) {
+        iCursorIndex = 0;
+        aWrapped = true;
     }
-    iLock.Signal();
-    return track;
+    aTrack = iTrackList[iCursorIndex];
+    iCursorIndex++;
+    aTrack->AddRef();
 }
 
-TBool PlaylistDatabase::TryMoveCursorAfter(TUint aId)
+TBool PlaylistDatabase::TryMoveCursorAfter(TUint aId, TBool& aWrapped)
 {
-    return TryMoveCursor(aId, true);
-}
-
-TBool PlaylistDatabase::TryMoveCursorBefore(TUint aId)
-{
-    return TryMoveCursor(aId, false);
-}
-
-TBool PlaylistDatabase::TryMoveCursor(TUint aId, TBool aAfter)
-{
-    // FIXME - rules for (before && iCursorIndex==0) and (after && iCursorIndex==iTrackList.size())
     AutoMutex a(iLock);
     if (iShuffle) {
         return true;
@@ -274,20 +247,36 @@ TBool PlaylistDatabase::TryMoveCursor(TUint aId, TBool aAfter)
     TUint index;
     try {
         index = TrackIndexFromId(aId);
-        if (aAfter) {
-            if (index > iTrackList.size() - 1) {
-                // FIXME
-            }
-            else {
-                iCursorIndex = index+1;
-            }
+        if (index < iTrackList.size()-1) {
+            iCursorIndex = index+1;
         }
-        else { // MoveCursorBefore
-            if (index == 0) {
-                // FIXME
-            }
-            else {
-                iCursorIndex = index-1;
+        else {
+            iCursorIndex = 0;
+            aWrapped = true;
+        }
+        moved = true;
+    }
+    catch (PlaylistDbIdNotFound&) { }
+    return moved;
+}
+
+TBool PlaylistDatabase::TryMoveCursorBefore(TUint aId, TBool aCanWrap, TBool& aWouldWrap)
+{
+    AutoMutex a(iLock);
+    if (iShuffle) {
+        return true;
+    }
+    TBool moved = false;
+    TUint index;
+    try {
+        index = TrackIndexFromId(aId);
+        if (index != 0) {
+            iCursorIndex = index-1;
+        }
+        else {
+            aWouldWrap = true;
+            if (aCanWrap) {
+                index = iTrackList.size()-1;
             }
         }
         moved = true;

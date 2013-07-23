@@ -43,6 +43,7 @@ private: // from ISourcePlaylist
     void SeekRelative(TUint aSeconds);
     void SeekToTrackId(TUint aId);
     void SeekToTrackIndex(TUint aIndex);
+    void SetRepeat(TBool aRepeat);
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -191,6 +192,11 @@ void SourcePlaylist::SeekToTrackIndex(TUint aIndex)
     iPipeline.RemoveAll();
     const TUint id = iDatabase->IndexToId(aIndex);
     iPipeline.Begin(iUriProvider->Mode(), id);
+}
+
+void SourcePlaylist::SetRepeat(TBool aRepeat)
+{
+    iUriProvider->SetRepeat(aRepeat);
 }
 
 void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)

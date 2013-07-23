@@ -31,9 +31,9 @@ class IPlaylistDatabaseReader
 {
 public:
     virtual void MoveCursorTo(TUint aId) = 0;
-    virtual Media::Track* NextTrack() = 0;
-    virtual TBool TryMoveCursorAfter(TUint aId) = 0;
-    virtual TBool TryMoveCursorBefore(TUint aId) = 0;
+    virtual void NextTrack(Media::Track*& aTrack, TBool& aWrapped) = 0;
+    virtual TBool TryMoveCursorAfter(TUint aId, TBool& aWrapped) = 0;
+    virtual TBool TryMoveCursorBefore(TUint aId, TBool aCanWrap, TBool& aWouldWrap) = 0;
 };
 
 class IPlaylistDatabase
@@ -45,7 +45,6 @@ public:
     virtual ~IPlaylistDatabase() {}
     virtual void SetObserver(IPlaylistDatabaseObserver& aObserver) = 0;
     virtual void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const = 0;
-    virtual void SetRepeat(TBool aRepeat) = 0;
     virtual void SetShuffle(TBool aShuffle) = 0;
     virtual void GetTrackById(TUint aId, Media::Track*& aTrack) const = 0;
     virtual void GetTrackById(TUint aId, TUint aSeq, Media::Track*& aTrack, TUint& aIndex) const = 0;
@@ -64,7 +63,6 @@ public:
 public: // from IPlaylistDatabase
     void SetObserver(IPlaylistDatabaseObserver& aObserver);
     void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const;
-    void SetRepeat(TBool aRepeat);
     void SetShuffle(TBool aShuffle);
     void GetTrackById(TUint aId, Media::Track*& aTrack) const;
     void GetTrackById(TUint aId, TUint aSeq, Media::Track*& aTrack, TUint& aIndex) const;
@@ -73,11 +71,10 @@ public: // from IPlaylistDatabase
     void DeleteAll();
 private: // from IPlaylistDatabaseReader
     void MoveCursorTo(TUint aId);
-    Media::Track* NextTrack();
-    TBool TryMoveCursorAfter(TUint aId);
-    TBool TryMoveCursorBefore(TUint aId);
+    void NextTrack(Media::Track*& aTrack, TBool& aWrapped);
+    TBool TryMoveCursorAfter(TUint aId, TBool& aWrapped);
+    TBool TryMoveCursorBefore(TUint aId, TBool aCanWrap, TBool& aWouldWrap);
 private:
-    TBool TryMoveCursor(TUint aId, TBool aAfter);
     TUint IndexFromId(const std::vector<Media::Track*>& aList, TUint aId) const;
     TUint TrackIndexFromId(TUint aId) const { return IndexFromId(iTrackList, aId); }
     TUint ShuffleIndexFromId(TUint aId) const { return IndexFromId(iShuffleList, aId); }
@@ -87,7 +84,6 @@ private:
     Media::TrackFactory& iTrackFactory;
     Media::IPipelineIdManager& iIdManager;
     IPlaylistDatabaseObserver* iObserver;
-    TBool iRepeat;
     TBool iShuffle;
     TUint iSeq;
     std::vector<Media::Track*> iTrackList;
