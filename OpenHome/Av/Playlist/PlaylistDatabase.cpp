@@ -274,6 +274,7 @@ TBool PlaylistDatabase::TryMoveCursorBefore(TUint aId, TBool aCanWrap, TBool& aW
             iCursorIndex = index-1;
         }
         else {
+            iCursorIndex = 0;
             aWouldWrap = true;
             if (aCanWrap) {
                 index = iTrackList.size()-1;
