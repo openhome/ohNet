@@ -1,6 +1,6 @@
 #include "PipelineUtils.h"
-#include <OpenHome/Media/Tests/W32GetCh.h>
-#include <OpenHome/Media/Tests/W32Cdecl.h>
+#include <OpenHome/Media/Tests/GetCh.h>
+#include <OpenHome/Media/Tests/Cdecl.h>
 
 #include <stdio.h>
 

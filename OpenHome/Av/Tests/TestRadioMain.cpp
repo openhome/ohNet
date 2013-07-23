@@ -1,6 +1,6 @@
 #include <OpenHome/OhNetTypes.h>
 #include "TestRadio.h"
-#include <OpenHome/Media/Tests/W32Cdecl.h>
+#include <OpenHome/Media/Tests/Cdecl.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;

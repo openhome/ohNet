@@ -16,6 +16,8 @@ int mygetch()
     return 0;
 }
 
+#else
+
 # include <termios.h>
 # include <unistd.h>
 
