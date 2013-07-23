@@ -110,7 +110,7 @@ void PipelineManager::Next()
     iFiller->Stop();
     // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
     // can always revert to an equivalent implementation to Prev() if this proves incorrect
-    iIdManager->InvalidateAt(iTrackId); // FIXME - need a pipelineTrackId here (i.e. the id associated with a MsgTrack, *not* the one associated with a Track
+    iIdManager->InvalidateAt(iTrackId);
     iFiller->Next(iMode, iTrackId);
 }
 
@@ -137,6 +137,11 @@ void PipelineManager::InvalidateAt(TUint aId)
 void PipelineManager::InvalidateAfter(TUint aId)
 {
     iIdManager->InvalidateAfter(aId);
+}
+
+void PipelineManager::InvalidatePending()
+{
+    iIdManager->InvalidatePending();
 }
 
 void PipelineManager::InvalidateAll()

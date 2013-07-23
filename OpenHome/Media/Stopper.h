@@ -86,6 +86,7 @@ private:
     TBool iReportFlushed;
     TBool iFlushStream;
     TBool iRemovingStream;
+    TBool iResumeAfterHalt;
     TUint iTargetFlushId;
     TUint iTrackId;
     TUint iStreamId;

@@ -275,7 +275,6 @@ private:
     virtual MsgAudio* Allocate() = 0;
     virtual void SplitCompleted(MsgAudio& aRemaining);
 protected:
-    MsgFactory* iMsgFactory;
     MsgAudio* iNextAudio;
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
@@ -781,6 +780,7 @@ public:
     virtual ~IPipelineIdManager() {}
     virtual void InvalidateAt(TUint aId) = 0;
     virtual void InvalidateAfter(TUint aId) = 0;
+    virtual void InvalidatePending() = 0;
     virtual void InvalidateAll() = 0;
 };
 

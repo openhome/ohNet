@@ -104,6 +104,7 @@ private:
     void SecondPlaysThenInvalidated();
     void SecondPlaysThenInvalidateAfter();
     void InvalidateAtWithInvalidProviderId();
+    void InvalidatePending();
     void InvalidateAll();
 private:
     IdManager* iIdManager;
@@ -345,6 +346,7 @@ SuiteMultiStreams::SuiteMultiStreams()
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::SecondPlaysThenInvalidated));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::SecondPlaysThenInvalidateAfter));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAtWithInvalidProviderId));
+    AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidatePending));
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAll));
 }
 
@@ -479,6 +481,17 @@ void SuiteMultiStreams::InvalidateAtWithInvalidProviderId()
     TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayYes);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayYes);
     TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayYes);
+}
+
+void SuiteMultiStreams::InvalidatePending()
+{
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId1) == ePlayYes);
+    iIdManager->InvalidatePending();
+    TEST(iRemoveTrackId == kIdInvalid);
+    TEST(iRemoveStreamId == kIdInvalid);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId1, kStreamId2) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId2, kStreamId1) == ePlayNo);
+    TEST(iIdProvider->OkToPlay(kPipelineTrackId3, kStreamId1) == ePlayNo);
 }
 
 void SuiteMultiStreams::InvalidateAll()

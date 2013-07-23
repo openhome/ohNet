@@ -30,6 +30,7 @@ private: // from IPipelineIdProvider
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     void InvalidateAt(TUint aId);
     void InvalidateAfter(TUint aId);
+    void InvalidatePending();
     void InvalidateAll();
 private:
     ProtocolManager* iProtocolManager;

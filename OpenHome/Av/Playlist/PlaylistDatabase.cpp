@@ -37,6 +37,21 @@ TUint PlaylistDatabase::NextTrackId() const
     return trackId;
 }
 
+TUint PlaylistDatabase::IdToIndex(TUint aId) const
+{
+    AutoMutex a(iLock);
+    return TrackIndexFromId(aId);
+}
+
+TUint PlaylistDatabase::IndexToId(TUint aIndex) const
+{
+    AutoMutex a(iLock);
+    if (aIndex >= iTrackList.size()) {
+        THROW(PlaylistDbIdNotFound);
+    }
+    return iTrackList[aIndex]->Id();
+}
+
 void PlaylistDatabase::SetObserver(IPlaylistDatabaseObserver& aObserver)
 {
     iObserver = &aObserver;
@@ -281,7 +296,7 @@ TBool PlaylistDatabase::TryMoveCursor(TUint aId, TBool aAfter)
     return moved;
 }
 
-TUint PlaylistDatabase::IndexFromId(std::vector<Media::Track*>& aList, TUint aId)
+TUint PlaylistDatabase::IndexFromId(const std::vector<Media::Track*>& aList, TUint aId) const
 {
     for (TUint i=0; i<aList.size(); i++) {
         if (aList[i] != NULL && aList[i]->Id() == aId) {

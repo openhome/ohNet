@@ -66,6 +66,11 @@ void DummyFiller::InvalidateAfter(TUint /*aId*/)
     ASSERTS();
 }
 
+void DummyFiller::InvalidatePending()
+{
+    ASSERTS();
+}
+
 void DummyFiller::InvalidateAll()
 {
     ASSERTS();

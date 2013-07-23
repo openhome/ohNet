@@ -177,14 +177,20 @@ void SourcePlaylist::SeekRelative(TUint aSeconds)
     SeekAbsolute(aSeconds + iTrackPosSeconds);
 }
 
-void SourcePlaylist::SeekToTrackId(TUint /*aId*/)
+void SourcePlaylist::SeekToTrackId(TUint aId)
 {
-    // FIXME
+    AutoMutex a(iLock);
+    iPipeline.RemoveAll();
+    (void)iDatabase->IdToIndex(aId); // don't want the index but do want the implicit check that aId is valid
+    iPipeline.Begin(iUriProvider->Mode(), aId);
 }
 
-void SourcePlaylist::SeekToTrackIndex(TUint /*aIndex*/)
+void SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 {
-    // FIXME
+    AutoMutex a(iLock);
+    iPipeline.RemoveAll();
+    const TUint id = iDatabase->IndexToId(aIndex);
+    iPipeline.Begin(iUriProvider->Mode(), id);
 }
 
 void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
@@ -194,8 +200,11 @@ void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
     }
 }
 
-void SourcePlaylist::NotifyTrack(Media::Track& /*aTrack*/, const Brx& /*aMode*/, TUint aIdPipeline)
+void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
+    if (aMode == iUriProvider->Mode()) {
+        iProviderPlaylist->NotifyTrack(aTrack.Id());
+    }
     iLock.Wait();
     iPipelineTrackId = aIdPipeline;
     iLock.Signal();

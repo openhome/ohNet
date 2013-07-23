@@ -59,6 +59,8 @@ class PlaylistDatabase : public IPlaylistDatabase, public IPlaylistDatabaseReade
 public:
     PlaylistDatabase(Media::TrackFactory& aTrackFactory, Media::IPipelineIdManager& aIdManager);
     TUint NextTrackId() const;
+    TUint IdToIndex(TUint aId) const;
+    TUint IndexToId(TUint aIndex) const;
 public: // from IPlaylistDatabase
     void SetObserver(IPlaylistDatabaseObserver& aObserver);
     void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const;
@@ -76,9 +78,9 @@ private: // from IPlaylistDatabaseReader
     TBool TryMoveCursorBefore(TUint aId);
 private:
     TBool TryMoveCursor(TUint aId, TBool aAfter);
-    TUint IndexFromId(std::vector<Media::Track*>& aList, TUint aId);
-    TUint TrackIndexFromId(TUint aId) { return IndexFromId(iTrackList, aId); }
-    TUint ShuffleIndexFromId(TUint aId) { return IndexFromId(iShuffleList, aId); }
+    TUint IndexFromId(const std::vector<Media::Track*>& aList, TUint aId) const;
+    TUint TrackIndexFromId(TUint aId) const { return IndexFromId(iTrackList, aId); }
+    TUint ShuffleIndexFromId(TUint aId) const { return IndexFromId(iShuffleList, aId); }
     void Clear(std::vector<Media::Track*>& aList);
 private:
     mutable Mutex iLock;
