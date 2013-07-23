@@ -109,6 +109,7 @@ void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TUint a
         iTrack->RemoveRef();
     }
     iTrack = &aTrack;
+    iTrack->AddRef();
     iPipelineTrackId = aIdPipeline;
     iLock.Signal();
 }

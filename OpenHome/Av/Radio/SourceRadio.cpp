@@ -153,6 +153,7 @@ void SourceRadio::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipe
         iTrack->RemoveRef();
     }
     iTrack = &aTrack;
+    iTrack->AddRef();
     iPipelineTrackId = aIdPipeline;
     iLock.Signal();
 }
