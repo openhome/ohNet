@@ -148,7 +148,11 @@ void PlaylistDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaD
             // no need to update iCursorIndex - we never use it in Shuffle mode
         }
         else {
-            iIdManager.InvalidateAfter(aIdAfter);
+            TUint idAfter = aIdAfter;
+            if (idAfter == kTrackIdNone) {
+                idAfter = iTrackList[iTrackList.size()-1]->Id();
+            }
+            iIdManager.InvalidateAfter(idAfter);
             if (index < iCursorIndex) {
                 iCursorIndex++;
             }
