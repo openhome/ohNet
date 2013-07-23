@@ -33,11 +33,11 @@ void ProviderTime::Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& a
     TUint propDuration = 0;
     TUint propSeconds = 0;
 
-    iLock.Wait();
+    AutoMutex mutex(iLock);
+
     GetPropertyTrackCount(propTrackCount);
     GetPropertyDuration(propDuration);
     GetPropertySeconds(propSeconds);
-    iLock.Signal();
 
     aInvocation.StartResponse();
     aTrackCount.Write(propTrackCount);
@@ -53,11 +53,12 @@ void ProviderTime::NotifyPipelineState(EPipelineState /*aState*/)
 
 void ProviderTime::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
-    TUint x = 0;
-    iLock.Wait();
-    GetPropertyTrackCount(x);
-    SetPropertyTrackCount(x + 1);
-    iLock.Signal();
+    TUint n = 0;
+
+    AutoMutex mutex(iLock);
+
+    GetPropertyTrackCount(n);
+    SetPropertyTrackCount(n + 1);
 }
 
 void ProviderTime::NotifyMetaText(const Brx& /*aText*/)
@@ -67,10 +68,12 @@ void ProviderTime::NotifyMetaText(const Brx& /*aText*/)
 
 void ProviderTime::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
 {
-    iLock.Wait();
+    AutoMutex mutex(iLock);
+
+    PropertiesLock();
     SetPropertyDuration(aTrackDurationSeconds);
     SetPropertySeconds(aSeconds);
-    iLock.Signal();
+    PropertiesUnlock();
 }
 
 void ProviderTime::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
