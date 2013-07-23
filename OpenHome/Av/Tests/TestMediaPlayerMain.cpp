@@ -1,13 +1,6 @@
 #include <OpenHome/OhNetTypes.h>
 #include "TestMediaPlayer.h"
-
-#ifndef CDECL
-# ifdef _WIN32
-#  define CDECL __cdecl
-# else
-#  define CDECL
-# endif
-#endif
+#include <OpenHome/Media/Tests/W32Cdecl.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;

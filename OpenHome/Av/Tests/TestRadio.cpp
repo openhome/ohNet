@@ -20,39 +20,8 @@
 #include <limits.h>
 #include <stdio.h>
 
-#ifdef _WIN32
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#elif defined(NOTERMIOS)
-
-int mygetch()
-{
-    return 0;
-}
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
-}
-
-#endif // _WIN32
-
+int mygetch();
+// mygetch() assumed available in PipelineUtils
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -215,7 +184,7 @@ void TestRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 }
 
 
-int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[])
+int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFunc aFunc, std::vector<const TChar*> aPresets)
 {
     OptionParser parser;
     OptionString optionUdn("-u", "--udn", Brn("TestRadioSender"), "[udn] udn for the upnp device");
@@ -254,16 +223,12 @@ int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[])
 
     PresetDatabase* db = new PresetDatabase();
     db->BeginSetPresets();
-    const TChar* presets[] = {
-        "http://opml.radiotime.com/Tune.ashx?id=s2377&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"   // (Planet Rock, AAC, 22.05KHz, mono)
-       ,"http://opml.radiotime.com/Tune.ashx?id=s24940&formats=mp3,wma,aac,wmvideo,ogg&partnerId=ah2rjr68&username=chisholmsi&c=ebrowse"  // (Radio 2, AAC)
-    };
-    for (TUint i=0; i<sizeof(presets)/sizeof(presets[0]); i++) {
-        Brn urlAsMetaData(presets[i]);
+    for (TUint i=0; i<aPresets.size(); i++) {
+        Brn urlAsMetaData(aPresets[i]);
         (void)db->SetPreset(i, urlAsMetaData, urlAsMetaData);
     }
     db->EndSetPresets();
-    TestRadio* tr = CreateTestRadio(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestRadio* tr = (*aFunc)(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     tr->Run(*db);
     delete tr;
     delete db;

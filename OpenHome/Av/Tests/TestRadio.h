@@ -40,8 +40,8 @@ private:
     //DummySourceUpnpAv* iSourceUpnpAv;
 };
 
-TestRadio* CreateRadio(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-int ExecuteTestRadio(int aArgc, char* aArgv[]);
+typedef TestRadio* (*CreateRadioFunc)(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+int ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFunc aFunc, std::vector<const TChar*> aPresets);
 
 } // namespace Test
 } // namespace Av
