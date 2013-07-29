@@ -22,6 +22,7 @@ UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Pipeli
     , iPlayingTrackId(ITrackDatabase::kTrackIdNone)
 {
     aPipeline.AddObserver(*this);
+    iDatabase.SetObserver(*this);
 }
 
 UriProviderPlaylist::~UriProviderPlaylist()

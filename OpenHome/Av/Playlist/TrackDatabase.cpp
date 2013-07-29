@@ -276,7 +276,10 @@ void Shuffler::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfte
     TUint idBefore = aIdBefore;
     TUint idAfter = aIdAfter;
     iLock.Wait();
-    const TUint index = iEnv.Random(iShuffleList.size());
+    TUint index = 0;
+    if (iShuffleList.size() > 0) {
+        index = iEnv.Random(iShuffleList.size());
+    }
     iShuffleList.insert(iShuffleList.begin() + index, &aTrack);
     aTrack.AddRef();
     if (iShuffle) {
