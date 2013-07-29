@@ -336,14 +336,12 @@ void ProviderPlaylist::DeleteId(IDvInvocation& aInvocation, TUint aValue)
     catch (PlaylistDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
-    // FIXME - if track with id aValue is playing, need to also remove it
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderPlaylist::DeleteAll(IDvInvocation& aInvocation)
 {
-    // FIXME - also have to stop current track(s) if source is active
     iDatabase.DeleteAll();
     aInvocation.StartResponse();
     aInvocation.EndResponse();

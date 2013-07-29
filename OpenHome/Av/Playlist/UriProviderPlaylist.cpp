@@ -176,7 +176,7 @@ void UriProviderPlaylist::NotifyAllDeleted()
         iPending->RemoveRef();
         iPending = NULL;
     }
-    iIdManager.InvalidatePending();
+    iIdManager.InvalidateAll();
 }
 
 void UriProviderPlaylist::NotifyPipelineState(EPipelineState /*aState*/)
