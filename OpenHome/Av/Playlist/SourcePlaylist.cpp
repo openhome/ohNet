@@ -97,7 +97,7 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     iDatabase = new TrackDatabase(aTrackFactory);
     iShuffler = new Shuffler(aEnv, *iDatabase);
     iRepeater = new Repeater(*iShuffler);
-    iUriProvider = new UriProviderPlaylist(*iDatabase, aPipeline);
+    iUriProvider = new UriProviderPlaylist(*iRepeater, aPipeline);
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
     iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iShuffler, *iRepeater, aProtocolInfo);
     iPipeline.AddObserver(*this);
