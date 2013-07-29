@@ -22,9 +22,9 @@ objects_core = \
 	$(objdir)AsyncPrivate.$(objext) \
 	$(objdir)Bonjour.$(objext) \
 	$(objdir)Buffer.$(objext) \
+	$(objdir)Converter.$(objext) \
 	$(objdir)Discovery.$(objext) \
 	$(objdir)Debug.$(objext) \
-	$(objdir)Converter.$(objext) \
 	$(objdir)CpDeviceCore.$(objext) \
 	$(objdir)CpDeviceC.$(objext) \
 	$(objdir)CpDeviceStd.$(objext) \

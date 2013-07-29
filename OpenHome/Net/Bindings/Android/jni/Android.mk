@@ -10,6 +10,7 @@ LOCAL_LDLIBS := -llog
 LOCAL_MODULE    := ohNet
 LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/AsyncC.cpp \
+                   $(ohroot)OpenHome/Net/ControlPoint/AsyncPrivate.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/Bonjour.cpp \
                    $(ohroot)OpenHome/Buffer.cpp \
                    $(ohroot)OpenHome/Converter.cpp \
@@ -27,7 +28,6 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiDevice.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/CpiDeviceUpnp.cpp \
-                   $(ohroot)OpenHome/Net/ControlPoint/AsyncPrivate.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiService.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiStack.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiSubscription.cpp \
@@ -37,20 +37,21 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/DvDevice.cpp \
                    $(ohroot)OpenHome/Net/Bindings/Cpp/Device/DvDeviceStd.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp \
+                   $(ohroot)OpenHome/Net/Device/DviDevice.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvInvocationC.cpp \
                    $(ohroot)OpenHome/Net/Bindings/Cpp/Device/DvInvocationStd.cpp \
-                   $(ohroot)OpenHome/Net/Device/DviDevice.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp \
+                   $(ohroot)OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp \
+                   $(ohroot)OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.cpp \
                    $(ohroot)OpenHome/Net/Device/DviServer.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviServerUpnp.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp \
                    $(ohroot)OpenHome/Net/Device/DviService.cpp \
+                   $(ohroot)OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp \
                    $(ohroot)OpenHome/Net/Device/DviStack.cpp \
                    $(ohroot)OpenHome/Net/Device/DviSubscription.cpp \
-                   $(ohroot)OpenHome/Net/Device/DvProvider.cpp \
-                   $(ohroot)OpenHome/Net/Device/DviProviderSubscriptionLongPoll.cpp \
-                   $(ohroot)OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.cpp \
                    $(ohroot)OpenHome/Net/Device/DviPropertyUpdateCollection.cpp \
+                   $(ohroot)OpenHome/Net/Device/DvProvider.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvProviderC.cpp \
                    $(ohroot)OpenHome/Net/Device/DvServerUpnp.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/Device/DvServerUpnpC.cpp \
@@ -59,6 +60,10 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/EventUpnp.cpp \
                    $(ohroot)OpenHome/Exception.cpp \
                    $(ohroot)OpenHome/Fifo.cpp \
+                   $(ohroot)OpenHome/File.cpp \
+                   $(ohroot)OpenHome/FileAnsii.cpp \
+                   $(ohroot)OpenHome/FileBrx.cpp \
+                   $(ohroot)OpenHome/FileStream.cpp \
                    $(ohroot)OpenHome/Net/Globals.cpp \
                    $(ohroot)OpenHome/Http.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/DNSCommon.c \
@@ -67,7 +72,6 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/mDNSCore/uDNS.c \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsPlatform.cpp \
                    $(ohroot)OpenHome/Net/Device/Bonjour/MdnsProvider.cpp \
-                   $(ohroot)OpenHome/Maths.cpp \
                    $(ohroot)OpenHome/md5.c \
                    $(ohroot)OpenHome/NetworkAdapterList.cpp \
                    $(ohroot)OpenHome/Network.cpp \
@@ -83,6 +87,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Env.cpp \
                    $(ohroot)OpenHome/Stream.cpp \
                    $(ohroot)OpenHome/Net/Subscription.cpp \
+                   $(ohroot)OpenHome/Terminal.cpp \
                    $(ohroot)OpenHome/Thread.cpp \
                    $(ohroot)OpenHome/Timer.cpp \
                    $(ohroot)OpenHome/Uri.cpp \
@@ -97,6 +102,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/OhNetCDv.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/OhNetCCombined.cpp \
                    $(ohroot)Os/OsWrapper.cpp \
+                   $(ohroot)Os/Posix/TerminalOs.cpp \
                    $(ohroot)Os/Posix/Os.c \
                    ifaddrs-android.cpp
 
