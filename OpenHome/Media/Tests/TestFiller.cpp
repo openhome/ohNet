@@ -27,10 +27,9 @@ public:
 private: // from UriProvider
     void Begin(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
-    TBool MoveCursorAfter(TUint aTrackId);
-    TBool MoveCursorBefore(TUint aTrackId);
-private:
-    TInt Index(TUint aTrackId) const;
+    TUint CurrentTrackId() const;
+    TBool MoveNext();
+    TBool MovePrevious();
 private:
     static const TInt kNumEntries = 3;
     TrackFactory* iTrackFactory;
@@ -162,36 +161,25 @@ EStreamPlay DummyUriProvider::GetNext(Track*& aTrack)
     return (!firstCall && iIndex == 0? ePlayLater : ePlayYes);
 }
 
-TBool DummyUriProvider::MoveCursorAfter(TUint aTrackId)
+TUint DummyUriProvider::CurrentTrackId() const
 {
-    const TInt index = Index(aTrackId);
-    if (index == -1) {
-        return false;
+    return iTracks[iIndex]->Id();
+}
+
+TBool DummyUriProvider::MoveNext()
+{
+    if (++iIndex == kNumEntries) {
+        iIndex = 0;
     }
-    iIndex = index;
     return true;
 }
 
-TBool DummyUriProvider::MoveCursorBefore(TUint aTrackId)
+TBool DummyUriProvider::MovePrevious()
 {
-    const TInt index = Index(aTrackId);
-    if (index == -1) {
-        return false;
+    if (--iIndex < 0) {
+        iIndex = kNumEntries-1;
     }
-    iIndex = (index==0? -1 : index-2);
     return true;
-}
-
-TInt DummyUriProvider::Index(TUint aTrackId) const
-{
-    TInt index = 0;
-    while (index < kNumEntries) {
-        if (iTracks[index]->Id() == aTrackId) {
-            return index;
-        }
-        index++;
-    }
-    return -1;
 }
 
 
@@ -370,11 +358,10 @@ void SuiteFiller::Test()
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track
     iFiller->Stop();
     iTrackCompleteSem.Signal();
-    // tests for invalid Next() args
-    TEST(!iFiller->Next(Brn("InvalidMode"), 2));
-    TEST(!iFiller->Next(iUriProvider->Mode(), 99));
+    // test for invalid Next() arg
+    TEST(iFiller->Next(Brn("InvalidMode")));
     //
-    TEST(iFiller->Next(iUriProvider->Mode(), 2));
+    TEST(iFiller->Next(iUriProvider->Mode()));
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(2));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
@@ -391,7 +378,7 @@ void SuiteFiller::Test()
     // Stop/Prev during third track.  Once track completes IUriStreamer should be passed uri for second track
     iFiller->Stop();
     iTrackCompleteSem.Signal();
-    TEST(iFiller->Prev(iUriProvider->Mode(), 3));
+    TEST(iFiller->Prev(iUriProvider->Mode()));
     iTrackAddedSem.Wait();
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(1));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());

@@ -450,6 +450,8 @@ class Track : public Allocated
 {
     friend class TrackFactory;
 public:
+    static const TUint kIdNone = 0;
+public:
     Track(AllocatorBase& aAllocator);
     const Brx& Uri() const;
     const Brx& MetaData() const;

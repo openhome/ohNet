@@ -19,12 +19,13 @@ public:
 private: // from UriProvider
     void Begin(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
-    TBool MoveCursorAfter(TUint aTrackId);
-    TBool MoveCursorBefore(TUint aTrackId);
+    TUint CurrentTrackId() const;
+    TBool MoveNext();
+    TBool MovePrevious();
 private:
-    TBool MoveCursor(TUint aTrackId);
+    TBool MoveCursor();
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     TrackFactory& iTrackFactory;
     Track* iTrack;
     TBool iIgnoreNext;

@@ -25,16 +25,18 @@ static const Brn kPlaylistFullMsg("Playlist full");
 
 // ProviderPlaylist
 
-ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const Brx& aProtocolInfo)
+ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IShuffler& aShuffler, IRepeater& aRepeater, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgPlaylist1(aDevice)
     , iLock("PPLY")
     , iSource(aSource)
     , iDatabase(aDatabase)
+    , iShuffler(aShuffler)
+    , iRepeater(aRepeater)
     , iProtocolInfo(aProtocolInfo)
     , iTimerActive(false)
 {
     iTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderPlaylist::TimerCallabck));
-    iDatabase.SetObserver(*this);
+    iDatabase.AddObserver(*this);
 
     EnablePropertyTransportState();
     EnablePropertyRepeat();
@@ -98,13 +100,19 @@ void ProviderPlaylist::NotifyTrack(TUint aId)
     (void)SetPropertyId(aId);
 }
 
-void ProviderPlaylist::PlaylistDatabaseChanged()
+void ProviderPlaylist::NotifyTrackInserted(Track& /*aTrack*/, TUint /*aIdBefore*/, TUint /*aIdAfter*/)
 {
-    AutoMutex a(iLock);
-    if (!iTimerActive) {
-        iTimerActive = true;
-        iTimer->FireIn(kIdArrayUpdateFrequencyMillisecs);
-    }
+    TrackDatabaseChanged();
+}
+
+void ProviderPlaylist::NotifyTrackDeleted(TUint /*aId*/, Track* /*aBefore*/, Track* /*aAfter*/)
+{
+    TrackDatabaseChanged();
+}
+
+void ProviderPlaylist::NotifyAllDeleted()
+{
+    TrackDatabaseChanged();
 }
 
 void ProviderPlaylist::Play(IDvInvocation& aInvocation)
@@ -379,16 +387,25 @@ void ProviderPlaylist::ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationRes
     aInvocation.EndResponse();
 }
 
+void ProviderPlaylist::TrackDatabaseChanged()
+{
+    AutoMutex a(iLock);
+    if (!iTimerActive) {
+        iTimerActive = true;
+        iTimer->FireIn(kIdArrayUpdateFrequencyMillisecs);
+    }
+}
+
 void ProviderPlaylist::SetRepeat(TBool aRepeat)
 {
     (void)SetPropertyRepeat(aRepeat);
-    iSource.SetRepeat(aRepeat);
+    iRepeater.SetRepeat(aRepeat);
 }
 
 void ProviderPlaylist::SetShuffle(TBool aShuffle)
 {
     (void)SetPropertyShuffle(aShuffle);
-    iDatabase.SetShuffle(aShuffle);
+    iShuffler.SetShuffle(aShuffle);
 }
 
 void ProviderPlaylist::UpdateIdArray()

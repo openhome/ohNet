@@ -89,12 +89,12 @@ void Filler::Stop()
     iLock.Signal();
 }
 
-TBool Filler::Next(const Brx& aMode, TUint aTrackId)
+TBool Filler::Next(const Brx& aMode)
 {
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != NULL && iActiveUriProvider->Mode() == aMode) {
-        ret = iActiveUriProvider->MoveCursorAfter(aTrackId);
+        ret = iActiveUriProvider->MoveNext();
         iStopped = false;
         Signal();
     }
@@ -102,12 +102,12 @@ TBool Filler::Next(const Brx& aMode, TUint aTrackId)
     return ret;
 }
 
-TBool Filler::Prev(const Brx& aMode, TUint aTrackId)
+TBool Filler::Prev(const Brx& aMode)
 {
     TBool ret = false;
     iLock.Wait();
     if (iActiveUriProvider != NULL && iActiveUriProvider->Mode() == aMode) {
-        ret = iActiveUriProvider->MoveCursorBefore(aTrackId);
+        ret = iActiveUriProvider->MovePrevious();
         iStopped = false;
         Signal();
     }

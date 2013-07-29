@@ -22,8 +22,9 @@ public:
     const Brx& Mode() const;
     virtual void Begin(TUint aTrackId) = 0;
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
-    virtual TBool MoveCursorAfter(TUint aTrackId) = 0;
-    virtual TBool MoveCursorBefore(TUint aTrackId) = 0;
+    virtual TUint CurrentTrackId() const = 0; // Id of last delivered track.  Or of pending track requested via Begin or Move[After|Before]
+    virtual TBool MoveNext() = 0;
+    virtual TBool MovePrevious() = 0;
 protected:
     UriProvider(const TChar* aMode);
 private:
@@ -39,8 +40,8 @@ public:
     void Start(IUriStreamer& aUriStreamer);
     void Play(const Brx& aMode, TUint aTrackId);
     void Stop();
-    TBool Next(const Brx& aMode, TUint aTrackId);
-    TBool Prev(const Brx& aMode, TUint aTrackId);
+    TBool Next(const Brx& aMode);
+    TBool Prev(const Brx& aMode);
 private: // from Thread
     void Run();
 private: // from ISupply

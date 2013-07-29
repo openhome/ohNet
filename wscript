@@ -263,6 +263,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
                 'OpenHome/Av/Playlist/SourcePlaylist.cpp',
+                'OpenHome/Av/Playlist/TrackDatabase.cpp',
                 'OpenHome/Av/Playlist/PlaylistDatabase.cpp',
                 'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
             ],

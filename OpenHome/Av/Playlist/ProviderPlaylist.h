@@ -8,7 +8,7 @@
 #include <Generated/DvAvOpenhomeOrgPlaylist1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Media/PipelineObserver.h>
-#include <OpenHome/Av/Playlist/PlaylistDatabase.h>
+#include <OpenHome/Av/Playlist/TrackDatabase.h>
 
 #include <array>
 
@@ -31,20 +31,21 @@ public:
     virtual void SeekRelative(TUint aSeconds) = 0;
     virtual void SeekToTrackId(TUint aId) = 0;
     virtual void SeekToTrackIndex(TUint aIndex) = 0;
-    virtual void SetRepeat(TBool aRepeat) = 0;
 };
 
 
-class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1, private IPlaylistDatabaseObserver
+class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1, private ITrackDatabaseObserver
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, IPlaylistDatabase& aDatabase, const Brx& aProtocolInfo);
+    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IShuffler& aShuffler, IRepeater& aRepeater, const Brx& aProtocolInfo);
     ~ProviderPlaylist();
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(TUint aId);
-private: // from IPlaylistDatabaseObserver
-    void PlaylistDatabaseChanged();
+private: // from ITrackDatabaseObserver
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
+    void NotifyAllDeleted();
 private: // from DvProviderAvOpenhomeOrgPlaylist1
     void Play(IDvInvocation& aInvocation);
     void Pause(IDvInvocation& aInvocation);
@@ -71,6 +72,7 @@ private: // from DvProviderAvOpenhomeOrgPlaylist1
     void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue);
     void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
 private:
+    void TrackDatabaseChanged();
     void SetRepeat(TBool aRepeat);
     void SetShuffle(TBool aShuffle);
     void UpdateIdArray();
@@ -79,12 +81,14 @@ private:
 private:
     Mutex iLock;
     ISourcePlaylist& iSource;
-    IPlaylistDatabase& iDatabase;
+    ITrackDatabase& iDatabase;
+    IShuffler& iShuffler;
+    IRepeater& iRepeater;
     Brn iProtocolInfo;
     Media::EPipelineState iPipelineState;
     TUint iDbSeq;
-    std::array<TUint, IPlaylistDatabase::kMaxTracks> iIdArray;
-    Bws<IPlaylistDatabase::kMaxTracks * sizeof(TUint32)> iIdArrayBuf;
+    std::array<TUint, ITrackDatabase::kMaxTracks> iIdArray;
+    Bws<ITrackDatabase::kMaxTracks * sizeof(TUint32)> iIdArrayBuf;
     TUint iIdCurrentTrack;
     Timer* iTimer;
     TBool iTimerActive;

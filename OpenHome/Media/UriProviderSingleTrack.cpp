@@ -57,20 +57,31 @@ EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
     return ePlayYes;
 }
 
-TBool UriProviderSingleTrack::MoveCursorAfter(TUint aTrackId)
+TUint UriProviderSingleTrack::CurrentTrackId() const
 {
-    return MoveCursor(aTrackId);
+    TUint id = Track::kIdNone;
+    iLock.Wait();
+    if (iTrack != NULL) {
+        id = iTrack->Id();
+    }
+    iLock.Signal();
+    return id;
 }
 
-TBool UriProviderSingleTrack::MoveCursorBefore(TUint aTrackId)
+TBool UriProviderSingleTrack::MoveNext()
 {
-    return MoveCursor(aTrackId);
+    return MoveCursor();
 }
 
-TBool UriProviderSingleTrack::MoveCursor(TUint aTrackId)
+TBool UriProviderSingleTrack::MovePrevious()
+{
+    return MoveCursor();
+}
+
+TBool UriProviderSingleTrack::MoveCursor()
 {
     AutoMutex a(iLock);
-    if (iTrack == NULL || iTrack->Id() != aTrackId) {
+    if (iTrack == NULL || iIgnoreNext) {
         return false;
     }
     iIgnoreNext = true;

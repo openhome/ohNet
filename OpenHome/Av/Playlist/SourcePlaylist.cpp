@@ -2,6 +2,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Av/Playlist/TrackDatabase.h>
 #include <OpenHome/Av/Playlist/ProviderPlaylist.h>
 #include <OpenHome/Av/Playlist/UriProviderPlaylist.h>
 #include <OpenHome/Media/PipelineManager.h>
@@ -43,7 +44,6 @@ private: // from ISourcePlaylist
     void SeekRelative(TUint aSeconds);
     void SeekToTrackId(TUint aId);
     void SeekToTrackIndex(TUint aIndex);
-    void SetRepeat(TBool aRepeat);
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -53,13 +53,16 @@ private: // from Media::IPipelineObserver
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
-    PlaylistDatabase* iDatabase;
-    UriProviderPlaylist* iUriProvider;
+    TrackDatabase* iDatabase;
+    Shuffler* iShuffler;
+    Repeater* iRepeater;
+    Media::UriProvider* iUriProvider;
     ProviderPlaylist* iProviderPlaylist;
     TUint iTrackPosSeconds;
     TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState;
+    TUint iTrackId;
 };
     
 } // namespace Av
@@ -89,17 +92,23 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
+    , iTrackId(ITrackDatabase::kTrackIdNone)
 {
-    iDatabase = new PlaylistDatabase(aTrackFactory, aPipeline);
-    iUriProvider = new UriProviderPlaylist(*iDatabase);
+    iDatabase = new TrackDatabase(aTrackFactory);
+    iShuffler = new Shuffler(aEnv, *iDatabase);
+    iRepeater = new Repeater(*iShuffler);
+    iUriProvider = new UriProviderPlaylist(*iDatabase, aPipeline);
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
-    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, aProtocolInfo);
+    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iShuffler, *iRepeater, aProtocolInfo);
     iPipeline.AddObserver(*this);
 }
 
 SourcePlaylist::~SourcePlaylist()
 {
     delete iProviderPlaylist;
+    delete iDatabase;
+    delete iShuffler;
+    delete iRepeater;
 }
 
 void SourcePlaylist::Activate()
@@ -120,12 +129,9 @@ void SourcePlaylist::Play()
 {
     if (!IsActive()) {
         DoActivate();
-        TUint trackId = iDatabase->NextTrackId();
-        if (trackId == IPlaylistDatabase::kTrackIdNone) {
-            return; // nothing to play
-        }
-        iPipeline.Begin(iUriProvider->Mode(), trackId);
     }
+    const TUint trackId = iUriProvider->CurrentTrackId();
+    iPipeline.Begin(iUriProvider->Mode(), trackId);
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
@@ -180,23 +186,23 @@ void SourcePlaylist::SeekRelative(TUint aSeconds)
 
 void SourcePlaylist::SeekToTrackId(TUint aId)
 {
-    AutoMutex a(iLock);
+    if (!IsActive()) {
+        DoActivate();
+    }
     iPipeline.RemoveAll();
-    (void)iDatabase->IdToIndex(aId); // don't want the index but do want the implicit check that aId is valid
     iPipeline.Begin(iUriProvider->Mode(), aId);
+    iLock.Wait();
+    iTransportState = Media::EPipelinePlaying;
+    iLock.Signal();
 }
 
 void SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 {
     AutoMutex a(iLock);
     iPipeline.RemoveAll();
-    const TUint id = iDatabase->IndexToId(aIndex);
-    iPipeline.Begin(iUriProvider->Mode(), id);
-}
-
-void SourcePlaylist::SetRepeat(TBool aRepeat)
-{
-    iUriProvider->SetRepeat(aRepeat);
+    Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
+    AutoAllocatedRef r(*track);
+    iPipeline.Begin(iUriProvider->Mode(), track->Id());
 }
 
 void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
@@ -210,10 +216,11 @@ void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint a
 {
     if (aMode == iUriProvider->Mode()) {
         iProviderPlaylist->NotifyTrack(aTrack.Id());
+        iLock.Wait();
+        iPipelineTrackId = aIdPipeline;
+        iTrackId = aTrack.Id();
+        iLock.Signal();
     }
-    iLock.Wait();
-    iPipelineTrackId = aIdPipeline;
-    iLock.Signal();
 }
 
 void SourcePlaylist::NotifyMetaText(const Brx& /*aText*/)
