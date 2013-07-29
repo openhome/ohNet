@@ -36,6 +36,7 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     Track* iTracks[kNumEntries];
     TInt iIndex;
+    TInt iPendingIndex;
 };
 
 class DummyUriStreamer : public IUriStreamer, private IStreamHandler, private INonCopyable
@@ -113,6 +114,7 @@ using namespace OpenHome::Media::TestFiller;
 DummyUriProvider::DummyUriProvider()
     : UriProvider("Dummy")
     , iIndex(-1)
+    , iPendingIndex(-1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL);
@@ -153,10 +155,18 @@ void DummyUriProvider::Begin(TUint aTrackId)
 EStreamPlay DummyUriProvider::GetNext(Track*& aTrack)
 {
     const TBool firstCall = (iIndex<0);
-    if (++iIndex == kNumEntries) {
-        iIndex = 0;
+    TUint index;
+    if (iPendingIndex != -1) {
+        index = iPendingIndex;
+        iPendingIndex = -1;
     }
-    aTrack = iTracks[iIndex];
+    else {
+        if (++iIndex == kNumEntries) {
+            iIndex = 0;
+        }
+        index = iIndex;
+    }
+    aTrack = iTracks[index];
     aTrack->AddRef();
     return (!firstCall && iIndex == 0? ePlayLater : ePlayYes);
 }
@@ -168,16 +178,18 @@ TUint DummyUriProvider::CurrentTrackId() const
 
 TBool DummyUriProvider::MoveNext()
 {
-    if (++iIndex == kNumEntries) {
-        iIndex = 0;
+    iPendingIndex = ++iIndex;
+    if (iPendingIndex == kNumEntries) {
+        iPendingIndex = 0;
     }
     return true;
 }
 
 TBool DummyUriProvider::MovePrevious()
 {
-    if (--iIndex < 0) {
-        iIndex = kNumEntries-1;
+    iPendingIndex = --iIndex;
+    if (iPendingIndex < 0) {
+        iPendingIndex = kNumEntries-1;
     }
     return true;
 }
@@ -359,7 +371,7 @@ void SuiteFiller::Test()
     iFiller->Stop();
     iTrackCompleteSem.Signal();
     // test for invalid Next() arg
-    TEST(iFiller->Next(Brn("InvalidMode")));
+    TEST(!iFiller->Next(Brn("InvalidMode")));
     //
     TEST(iFiller->Next(iUriProvider->Mode()));
     iTrackAddedSem.Wait();
