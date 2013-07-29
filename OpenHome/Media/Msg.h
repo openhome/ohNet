@@ -735,10 +735,10 @@ private:
 class AutoAllocatedRef : private INonCopyable
 {
 public:
-    AutoAllocatedRef(Allocated& aAllocated);
+    AutoAllocatedRef(Allocated* aAllocated);
     ~AutoAllocatedRef();
 private:
-    Allocated& iAllocated;
+    Allocated* iAllocated;
 };
 
 class ISupply

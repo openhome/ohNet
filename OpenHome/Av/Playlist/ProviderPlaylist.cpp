@@ -251,7 +251,7 @@ void ProviderPlaylist::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocation
         catch (PlaylistDbIdNotFound&) {
             aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
         }
-        AutoAllocatedRef t(*track);
+        AutoAllocatedRef t(track);
         aInvocation.StartResponse();
         aUri.Write(track->Uri());
         aUri.WriteFlush();
@@ -287,7 +287,7 @@ void ProviderPlaylist::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, 
             try {
                 Track* track;
                 iDatabase.GetTrackById(id, seq, track, index);
-                AutoAllocatedRef a(*track);
+                AutoAllocatedRef a(track);
                 aTrackList.Write(entryStart);
                 aTrackList.Write(idStart);
                 aTrackList.Write(idBuf);

@@ -1999,14 +1999,14 @@ Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
 
 // AutoAllocatedRef
 
-AutoAllocatedRef::AutoAllocatedRef(Allocated& aAllocated)
+AutoAllocatedRef::AutoAllocatedRef(Allocated* aAllocated)
     : iAllocated(aAllocated)
 {
 }
 
 AutoAllocatedRef::~AutoAllocatedRef()
 {
-    iAllocated.RemoveRef();
+    iAllocated->RemoveRef();
 }
 
     

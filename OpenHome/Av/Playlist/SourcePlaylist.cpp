@@ -201,7 +201,7 @@ void SourcePlaylist::SeekToTrackIndex(TUint aIndex)
     AutoMutex a(iLock);
     iPipeline.RemoveAll();
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
-    AutoAllocatedRef r(*track);
+    AutoAllocatedRef r(track);
     iPipeline.Begin(iUriProvider->Mode(), track->Id());
 }
 
