@@ -418,14 +418,16 @@ ohNet: proxies devices
 
 TestFramework: $(libprefix)TestFramework.$(libext)
 
-$(libprefix)TestFramework.$(libext): $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext)
-	$(ar)$(libprefix)TestFramework.$(libext) $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext)
+$(libprefix)TestFramework.$(libext): $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext)
+	$(ar)$(libprefix)TestFramework.$(libext) $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext) $(objdir)SuiteUnitTest.$(objext)
 $(objdir)TestFramework.$(objext) : OpenHome/TestFramework/TestFramework.cpp $(headers)
 	$(compiler)TestFramework.$(objext) -c $(cflags) $(includes) OpenHome/TestFramework/TestFramework.cpp
 $(objdir)Main.$(objext) : Os/$(osdir)/Main.cpp $(headers)
 	$(compiler)Main.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Main.cpp
 $(objdir)OptionParser.$(objext) : OpenHome/TestFramework/OptionParser.cpp $(headers)
 	$(compiler)OptionParser.$(objext) -c $(cflags) $(includes) OpenHome/TestFramework/OptionParser.cpp
+$(objdir)SuiteUnitTest.$(objext) : OpenHome/TestFramework/SuiteUnitTest.cpp $(headers)
+	$(compiler)SuiteUnitTest.$(objext) -c $(cflags) $(includes) OpenHome/TestFramework/SuiteUnitTest.cpp
 
 
 TestBuffer: $(objdir)TestBuffer.$(exeext) 
