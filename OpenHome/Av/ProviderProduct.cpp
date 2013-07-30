@@ -190,21 +190,20 @@ void ProviderProduct::SourceIndex(IDvInvocation& aInvocation, IDvInvocationRespo
 
 void ProviderProduct::SetSourceIndex(IDvInvocation& aInvocation, TUint aValue)
 {
-    aInvocation.StartResponse();
     try {
         iProduct.SetCurrentSource(aValue);
-        aInvocation.EndResponse();
     }
     catch(AvSourceNotFound& ) {
         FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);
     }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderProduct::SetSourceIndexByName(IDvInvocation& aInvocation, const Brx& aValue)
 {
     try {
         iProduct.SetCurrentSource(aValue);
-        aInvocation.EndResponse();
     }
     catch(AvSourceNotFound& ) {
         FaultCode::Report(aInvocation, FaultCode::kSourceNotFound);
