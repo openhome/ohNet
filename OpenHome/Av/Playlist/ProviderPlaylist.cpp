@@ -2,7 +2,6 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvAvOpenhomeOrgPlaylist1.h>
-#include <OpenHome/Av/Playlist/PlaylistDatabase.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Av/FaultCode.h>
@@ -74,9 +73,9 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     NotifyPipelineState(Media::EPipelineStopped);
     SetRepeat(false);
     SetShuffle(false);
-    NotifyTrack(IPlaylistDatabase::kTrackIdNone);
+    NotifyTrack(ITrackDatabase::kTrackIdNone);
     UpdateIdArrayProperty();
-    (void)SetPropertyTracksMax(IPlaylistDatabase::kMaxTracks);
+    (void)SetPropertyTracksMax(ITrackDatabase::kMaxTracks);
     (void)SetPropertyProtocolInfo(iProtocolInfo);
 }
 
@@ -201,7 +200,7 @@ void ProviderPlaylist::SeekId(IDvInvocation& aInvocation, TUint aValue)
     try {
         iSource.SeekToTrackId(aValue);
     }
-    catch (PlaylistDbIdNotFound&) {
+    catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
     aInvocation.StartResponse();
@@ -213,7 +212,7 @@ void ProviderPlaylist::SeekIndex(IDvInvocation& aInvocation, TUint aValue)
     try {
         iSource.SeekToTrackIndex(aValue);
     }
-    catch (PlaylistDbIdNotFound&) {
+    catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
     aInvocation.StartResponse();
@@ -248,7 +247,7 @@ void ProviderPlaylist::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocation
         try {
             iDatabase.GetTrackById(aId, track);
         }
-        catch (PlaylistDbIdNotFound&) {
+        catch (TrackDbIdNotFound&) {
             aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
         }
         AutoAllocatedRef t(track);
@@ -301,7 +300,7 @@ void ProviderPlaylist::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, 
                 aTrackList.Write(metaEnd);
                 aTrackList.Write(entryEnd);
             }
-            catch (PlaylistDbIdNotFound&) { }
+            catch (TrackDbIdNotFound&) { }
         }
         catch (AsciiError&) { }
         idBuf.Set(parser.Next(' '));
@@ -317,10 +316,10 @@ void ProviderPlaylist::Insert(IDvInvocation& aInvocation, TUint aAfterId, const 
     try {
         iDatabase.Insert(aAfterId, aUri, aMetadata, newId);
     }
-    catch (PlaylistDbIdNotFound&) {
+    catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
-    catch (PlaylistDbFull&) {
+    catch (TrackDbFull&) {
         aInvocation.Error(kPlaylistFull, kPlaylistFullMsg);
     }
     aInvocation.StartResponse();
@@ -333,7 +332,7 @@ void ProviderPlaylist::DeleteId(IDvInvocation& aInvocation, TUint aValue)
     try {
         iDatabase.DeleteId(aValue);
     }
-    catch (PlaylistDbIdNotFound&) {
+    catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
     aInvocation.StartResponse();
@@ -410,8 +409,8 @@ void ProviderPlaylist::UpdateIdArray()
 {
     iDatabase.GetIdArray(iIdArray, iDbSeq);
     iIdArrayBuf.SetBytes(0);
-    for (TUint i=0; i<IPlaylistDatabase::kMaxTracks; i++) {
-        if (iIdArray[i] == IPlaylistDatabase::kTrackIdNone) {
+    for (TUint i=0; i<ITrackDatabase::kMaxTracks; i++) {
+        if (iIdArray[i] == ITrackDatabase::kTrackIdNone) {
             break;
         }
         TUint32 bigEndianId = Arch::BigEndian4(iIdArray[i]);

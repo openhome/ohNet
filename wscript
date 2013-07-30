@@ -264,7 +264,6 @@ def build(bld):
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
                 'OpenHome/Av/Playlist/SourcePlaylist.cpp',
                 'OpenHome/Av/Playlist/TrackDatabase.cpp',
-                'OpenHome/Av/Playlist/PlaylistDatabase.cpp',
                 'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
