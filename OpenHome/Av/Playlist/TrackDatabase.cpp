@@ -57,7 +57,7 @@ void TrackDatabase::GetTrackById(TUint aId, TUint aSeq, Track*& aTrack, TUint& a
         return;
     }
     if (!TryGetTrackById(aId, aTrack, aIndex, iTrackList.size(), aIndex)) {
-        TUint endIndex = std::min(aIndex, iTrackList.size());
+        TUint endIndex = std::min(aIndex, (TUint)iTrackList.size());
         if (!TryGetTrackById(aId, aTrack, 0, endIndex, aIndex)) {
             THROW(TrackDbIdNotFound);
         }
