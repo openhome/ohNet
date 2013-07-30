@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/IdManager.h>
-#include "SuiteUnitTest.h"
+#include <OpenHome/Private/SuiteUnitTest.h>
 
 #include <vector>
 #include <algorithm>

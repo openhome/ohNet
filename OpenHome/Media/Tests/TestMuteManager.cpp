@@ -2,8 +2,6 @@
 
 #include <OpenHome/Media/MuteManager.h>
 
-// include "SuiteUnitTest.h"
-
 using namespace OpenHome::TestFramework;
 using namespace OpenHome;
 using namespace OpenHome::Media;

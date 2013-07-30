@@ -2,7 +2,7 @@
 #include <OpenHome/Media/TrackInspector.h>
 #include <OpenHome/Media/Msg.h>
 #include "AllocatorInfoLogger.h"
-#include "SuiteUnitTest.h"
+#include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Functor.h>
 
 #include <vector>
