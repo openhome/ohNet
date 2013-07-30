@@ -81,7 +81,6 @@ TUint UriProviderPlaylist::CurrentTrackId() const
 
 TBool UriProviderPlaylist::MoveNext()
 {
-    // FIXME - exception handling
     AutoMutex a(iLock);
     if (iPending != NULL) {
         iPending->RemoveRef();
@@ -102,7 +101,6 @@ TBool UriProviderPlaylist::MoveNext()
 
 TBool UriProviderPlaylist::MovePrevious()
 {
-    // FIXME - exception handling
     AutoMutex a(iLock);
     if (iPending != NULL) {
         iPending->RemoveRef();

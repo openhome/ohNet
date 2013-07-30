@@ -124,37 +124,52 @@ void TrackDatabase::SetObserver(ITrackDatabaseObserver& aObserver)
 
 Track* TrackDatabase::TrackRef(TUint aId)
 {
+    Track* track = NULL;
     AutoMutex a(iLock);
-    const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
-    // FIXME - should TrackDbIdNotFound be caught here or in client code?
-    Track* track = iTrackList[index];
-    track->AddRef();
+    try {
+        const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
+        track = iTrackList[index];
+        track->AddRef();
+    }
+    catch (TrackDbIdNotFound&) { }
     return track;
 }
 
 Track* TrackDatabase::NextTrackRef(TUint aId)
 {
-    AutoMutex a(iLock);
-    const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
-    // FIXME - should TrackDbIdNotFound be caught here or in client code?
     Track* track = NULL;
-    if (index < iTrackList.size()-1) {
-        track = iTrackList[index+1];
-        track->AddRef();
+    AutoMutex a(iLock);
+    if (aId == kTrackIdNone) {
+        if (iTrackList.size() > 0) {
+            track = iTrackList[0];
+            track->AddRef();
+        }
+    }
+    else {
+        try {
+            const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
+            if (index < iTrackList.size()-1) {
+                track = iTrackList[index+1];
+                track->AddRef();
+            }
+        }
+        catch (TrackDbIdNotFound&) { }
     }
     return track;
 }
 
 Track* TrackDatabase::PrevTrackRef(TUint aId)
 {
-    AutoMutex a(iLock);
-    const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
-    // FIXME - should TrackDbIdNotFound be caught here or in client code?
     Track* track = NULL;
-    if (index > 0) {
-        track = iTrackList[index-1];
-        track->AddRef();
+    AutoMutex a(iLock);
+    try {
+        const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
+        if (index > 0) {
+            track = iTrackList[index-1];
+            track->AddRef();
+        }
     }
+    catch (TrackDbIdNotFound&) { }
     return track;
 }
 
