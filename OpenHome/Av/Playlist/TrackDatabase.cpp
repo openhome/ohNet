@@ -22,6 +22,11 @@ TrackDatabase::TrackDatabase(TrackFactory& aTrackFactory)
     iTrackList.reserve(kMaxTracks);
 }
 
+TrackDatabase::~TrackDatabase()
+{
+    TrackListUtils::Clear(iTrackList);
+}
+
 void TrackDatabase::AddObserver(ITrackDatabaseObserver& aObserver)
 {
     iObservers.push_back(&aObserver);
@@ -209,6 +214,11 @@ Shuffler::Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader)
 {
     aReader.SetObserver(*this);
     iShuffleList.reserve(ITrackDatabase::kMaxTracks);
+}
+
+Shuffler::~Shuffler()
+{
+    TrackListUtils::Clear(iShuffleList);
 }
 
 void Shuffler::SetShuffle(TBool aShuffle)

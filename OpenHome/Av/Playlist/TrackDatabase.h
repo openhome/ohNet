@@ -74,6 +74,7 @@ class TrackDatabase : public ITrackDatabase, public ITrackDatabaseReader
 {
 public:
     TrackDatabase(Media::TrackFactory& aTrackFactory);
+    ~TrackDatabase();
 private: // from ITrackDatabase
     void AddObserver(ITrackDatabaseObserver& aObserver);
     void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const;
@@ -102,6 +103,7 @@ class Shuffler : public IShuffler, public ITrackDatabaseReader, public ITrackDat
 {
 public:
     Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader);
+    ~Shuffler();
 private: // from IShuffler
     void SetShuffle(TBool aShuffle);
 private: // from ITrackDatabaseReader
