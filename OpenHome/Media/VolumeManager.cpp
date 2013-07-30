@@ -167,20 +167,20 @@ VolumeUnityGainDefault::VolumeUnityGainDefault(IVolume& aVolume)
 {
 }
 
-// VolumeBalanceDefault
-TInt VolumeBalanceDefault::MinimumUserBalance()  // static
+// VolumeBalanceUserDefault
+TInt VolumeBalanceUserDefault::MinimumUserBalance()  // static
 {
     return -15;
 }
 
-TInt VolumeBalanceDefault::MaximumUserBalance()  // static
+TInt VolumeBalanceUserDefault::MaximumUserBalance()  // static
 {
     return 15;
 }
 
 // from older .../Preamp/SpeakerConfig.h
 // hard-coded factor of two to allow integer representation
-const TInt VolumeBalanceDefault::kBalanceOffsets[] =  // static
+const TInt VolumeBalanceUserDefault::kBalanceOffsets[] =  // static
 {
     -200,  // -15
      -48,  //
@@ -215,12 +215,12 @@ const TInt VolumeBalanceDefault::kBalanceOffsets[] =  // static
        6,  // +15
 };
 
-VolumeBalanceDefault::VolumeBalanceDefault(IVolume& aLeftVolume, IVolume& aRightVolume)
+VolumeBalanceUserDefault::VolumeBalanceUserDefault(IVolume& aLeftVolume, IVolume& aRightVolume)
     : iVolumeBalance(aLeftVolume, aRightVolume)
 {
 }
 
-void VolumeBalanceDefault::SetBalance(TInt aValue)
+void VolumeBalanceUserDefault::SetBalance(TInt aValue)
 {
     ASSERT((MinimumUserBalance() <= aValue) && (aValue <= MaximumUserBalance()));
     // factor two allows integer representation in declaration
@@ -230,7 +230,7 @@ void VolumeBalanceDefault::SetBalance(TInt aValue)
     );
 }
 
-void VolumeBalanceDefault::SetVolume(TUint aValue)
+void VolumeBalanceUserDefault::SetVolume(TUint aValue)
 {
     iVolumeBalance.SetVolume(aValue);
 }

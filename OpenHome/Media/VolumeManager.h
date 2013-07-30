@@ -144,13 +144,13 @@ public:
     VolumeUnityGainDefault(IVolume& aVolume);
 };
 
-class VolumeBalanceDefault : public IVolume
+class VolumeBalanceUserDefault : public IVolume
 {
 public:
     static TInt MinimumUserBalance();  // -15 = amplify left, attenuate right
     static TInt MaximumUserBalance();  // +15 = attenuate left, amplify right
 public:
-    VolumeBalanceDefault(IVolume& aLeftVolume, IVolume& aRightVolume);
+    VolumeBalanceUserDefault(IVolume& aLeftVolume, IVolume& aRightVolume);
     void SetBalance(TInt aValue);
 public:  // from IVolume
     void SetVolume(TUint aValue);
