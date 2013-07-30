@@ -60,7 +60,6 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/EventUpnp.cpp \
                    $(ohroot)OpenHome/Exception.cpp \
                    $(ohroot)OpenHome/Fifo.cpp \
-                   $(ohroot)OpenHome/File.cpp \
                    $(ohroot)OpenHome/FileAnsii.cpp \
                    $(ohroot)OpenHome/FileBrx.cpp \
                    $(ohroot)OpenHome/FileStream.cpp \
@@ -102,6 +101,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/OhNetCDv.cpp \
                    $(ohroot)OpenHome/Net/Bindings/C/OhNetCCombined.cpp \
                    $(ohroot)Os/OsWrapper.cpp \
+                   $(ohroot)Os/Posix/File.cpp \
                    $(ohroot)Os/Posix/TerminalOs.cpp \
                    $(ohroot)Os/Posix/Os.c \
                    ifaddrs-android.cpp
