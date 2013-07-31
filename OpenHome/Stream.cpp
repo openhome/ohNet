@@ -56,10 +56,8 @@ Brn Srx::Read(TUint aBytes)
 Brn Srx::ReadUntil(TByte aSeparator)
 {
     TByte* ptr = Ptr();
-    
     TByte* start = ptr + iOffset;
     TByte* current = start;
-    
     TUint count = 0;
     TUint remaining = iBytes - iOffset;
 
@@ -74,7 +72,6 @@ Brn Srx::ReadUntil(TByte aSeparator)
         }
     
         // separator not found in current buffer
-        
         if (iOffset > 0) {   // so move everything down
             start -= iOffset;
             iBytes -= iOffset;
@@ -88,13 +85,9 @@ Brn Srx::ReadUntil(TByte aSeparator)
         if (iBytes >= iMaxBytes) { // buffer full and no separator
             THROW(ReaderError);
         }
-        
         Bwn buffer(ptr + iBytes, iMaxBytes - iBytes); // collect more data from the source
-
         iSource.Read(buffer);
-        
         TUint additional = buffer.Bytes();
-        
         iBytes += additional;
         remaining += additional;
     }
