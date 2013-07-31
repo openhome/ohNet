@@ -72,7 +72,7 @@ Brn Srx::ReadUntil(TByte aSeparator)
         }
     
         // separator not found in current buffer
-        if (iOffset > 0) {   // so move everything down
+        if (iOffset > 0 && iBytes == iMaxBytes) { // so move everything down
             start -= iOffset;
             iBytes -= iOffset;
             current -= iOffset;

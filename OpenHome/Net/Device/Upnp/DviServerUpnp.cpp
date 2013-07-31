@@ -706,31 +706,14 @@ void DviSessionUpnp::Post()
                 iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
             }
             else if (!iHeaderTransferEncoding.IsChunked()) {
-                if (iReaderRequest->Version() == Http::eHttp11) {
-                    iErrorStatus = &HttpStatus::kLengthRequired;
-                    THROW(HttpError);
-                }
-                // HTTP 1.0 client - we need to read until the connection closes
-                try {
-                    iSoapRequest.Set(iReadBuffer->Read(kMaxRequestBytes));
-                    try {
-                        /* we only support requests of up to kMaxRequestBytes bytes
-                           try reading 1 byte more; ignore any error, throw if it succeeds */
-                        iReadBuffer->Read(1);
-                        iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
-                        THROW(HttpError);
-                    }
-                    catch (ReaderError&) {}
-                }
-                catch (ReaderError&) {
-                    iSoapRequest.Set(iReadBuffer->Snaffle());
-                }
+                iErrorStatus = &HttpStatus::kLengthRequired;
+                THROW(HttpError);
             }
             else {
                 /* Dechunk into iReadBuffer's buffer
                    This is a bit nasty.  It relies on Srs filling its buffer before resetting its iOffset member
                    ...and relies on us reading a maximum kMaxRequestBytes chunked bytes */
-                TUint len = 0;
+                TUint len = 0, bytes = 0;
                 TByte *ptr = NULL, *dechunked = NULL;
                 for (;;) {
                     Brn chunkSizeBuf = iReadBuffer->ReadUntil(Ascii::kLf);
@@ -738,8 +721,8 @@ void DviSessionUpnp::Post()
                         ptr = const_cast<TByte*>(chunkSizeBuf.Ptr());
                         dechunked = ptr;
                     }
-                    len += chunkSizeBuf.Bytes();
-                    if (len > kMaxRequestBytes) {
+                    bytes += chunkSizeBuf.Bytes() + 1; // include LF separator
+                    if (bytes > kMaxRequestBytes) {
                         iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
                         THROW(ReaderError);
                     }
@@ -760,12 +743,13 @@ void DviSessionUpnp::Post()
                         break;
                     }
                     len += chunkSize;
-                    if (len > kMaxRequestBytes) {
+                    bytes += chunkSize;
+                    if (bytes > kMaxRequestBytes) {
                         iErrorStatus = &HttpStatus::kRequestEntityTooLarge;
                         THROW(ReaderError);
                     }
                     Brn block = iReadBuffer->Read(chunkSize);
-                    (void)memcpy(ptr, block.Ptr(), block.Bytes());
+                    (void)memmove(ptr, block.Ptr(), block.Bytes()); // source and target might overlap
                     ptr += block.Bytes();
                 }
                 iSoapRequest.Set(dechunked, len);
