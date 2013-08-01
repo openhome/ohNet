@@ -336,6 +336,14 @@ void SuiteTrackDatabase::InsertAtEnd()
     TEST(iIdLastInsertedAfter == ITrackDatabase::kTrackIdNone);
 }
 
+#undef USE_CPP11_LAMBDA
+#ifndef USE_CPP11_LAMBDA
+static bool IsNotTrackIdNone(TUint aId)
+{
+    return aId != ITrackDatabase::kTrackIdNone;
+}
+#endif // !USE_CPP11_LAMBDA
+
 void SuiteTrackDatabase::DeleteValidId()
 {
     TUint id;
@@ -358,7 +366,11 @@ void SuiteTrackDatabase::DeleteValidId()
 
     TUint seq;
     iTrackDatabase->GetIdArray(iIdArray, seq);
+#ifdef USE_CPP11_LAMBDA
     int count = std::count_if(iIdArray.begin(), iIdArray.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
+#else
+    int count = std::count_if(iIdArray.begin(), iIdArray.end(), IsNotTrackIdNone);
+#endif
     TEST(count == 2);
 }
 
@@ -386,7 +398,11 @@ void SuiteTrackDatabase::DeleteAll()
     TEST(iAllDeletedCount == ++deleteCbCount);
     TUint seq;
     iTrackDatabase->GetIdArray(iIdArray, seq);
+#ifdef USE_CPP11_LAMBDA
     int count = std::count_if(iIdArray.begin(), iIdArray.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
+#else
+    int count = std::count_if(iIdArray.begin(), iIdArray.end(), IsNotTrackIdNone);
+#endif
     TEST(count == 0);
 
     iTrackDatabase->Insert(ITrackDatabase::kTrackIdNone, Brx::Empty(), Brx::Empty(), id);
@@ -395,7 +411,11 @@ void SuiteTrackDatabase::DeleteAll()
     iTrackDatabase->DeleteAll();
     TEST(iAllDeletedCount == ++deleteCbCount);
     iTrackDatabase->GetIdArray(iIdArray, seq);
+#ifdef USE_CPP11_LAMBDA
     count = std::count_if(iIdArray.begin(), iIdArray.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
+#else
+    count = std::count_if(iIdArray.begin(), iIdArray.end(), IsNotTrackIdNone);
+#endif
     TEST(count == 0);
 }
 
@@ -776,7 +796,11 @@ void SuiteShuffler::NextTrackRefShuffleOn()
         track->RemoveRef();
     }
     TEST(shuffled);
+#ifdef USE_CPP11_LAMBDA
     int count = std::count_if(availableIds.begin(), availableIds.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
+#else
+    int count = std::count_if(availableIds.begin(), availableIds.end(), IsNotTrackIdNone);
+#endif
     TEST(count == 0);
 }
 
@@ -834,7 +858,11 @@ void SuiteShuffler::PrevTrackRefShuffleOn()
         track->RemoveRef();
     }
     TEST(shuffled);
+#ifdef USE_CPP11_LAMBDA
     int count = std::count_if(availableIds.begin(), availableIds.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
+#else
+    int count = std::count_if(availableIds.begin(), availableIds.end(), IsNotTrackIdNone);
+#endif
     TEST(count == 0);
 }
 
@@ -875,7 +903,11 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
         track->RemoveRef();
     }
     TEST(shuffled);
+#ifdef USE_CPP11_LAMBDA
     int count = std::count_if(availableIds.begin(), availableIds.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
+#else
+    int count = std::count_if(availableIds.begin(), availableIds.end(), IsNotTrackIdNone);
+#endif
     TEST(count == 0);
 }
 
