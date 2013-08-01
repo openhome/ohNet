@@ -18,6 +18,7 @@ using namespace OpenHome::Media;
 TrackDatabase::TrackDatabase(TrackFactory& aTrackFactory)
     : iLock("TRDB")
     , iTrackFactory(aTrackFactory)
+    , iSeq(0)
 {
     iTrackList.reserve(kMaxTracks);
 }
