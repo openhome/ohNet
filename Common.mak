@@ -1236,13 +1236,19 @@ ohNetJavaSrc : $(objdir)ohnet-src.jar
 $(objdir)ohnet-src.jar :
 	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .
 
+
 ohNetAndroidNative : make_obj_dir copy_build_includes ohNetJava
-	#cp OpenHome/Net/Bindings/Android/jni/ifaddrs.h $(ANDROID_NDK_ROOT)/platforms/android-3/arch-arm/usr/include/
-	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni
-	$(mkdir) $(objdir)Android/libs/armeabi
-	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNet.so $(objdir)Android/libs/armeabi/
-	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNetJni.so $(objdir)Android/libs/armeabi/
-	cp $(objdir)ohnet.jar $(objdir)Android/libs/
+	$(ANDROID_NDK_ROOT)/ndk-build NDK_DEBUG=$(android_ndk_debug) -C OpenHome/Net/Bindings/Android/jni
+	$(mkdir) $(objdir)
+	$(mkdir) $(objdir)/armeabi
+	$(mkdir) $(objdir)/armeabi-v7a
+	$(mkdir) $(objdir)/x86
+	cp $(android_build_dir)/armeabi/libohNet.so $(objdir)/armeabi
+	cp $(android_build_dir)/armeabi/libohNetJni.so $(objdir)/armeabi
+	cp $(android_build_dir)/armeabi-v7a/libohNet.so $(objdir)/armeabi-v7a
+	cp $(android_build_dir)/armeabi-v7a/libohNetJni.so $(objdir)/armeabi-v7a
+	cp $(android_build_dir)/x86/libohNet.so $(objdir)/x86
+	cp $(android_build_dir)/x86/libohNetJni.so $(objdir)/x86
 
 ohNetAndroidClean:
 	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni clean

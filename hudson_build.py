@@ -116,6 +116,7 @@ class JenkinsBuild():
                 'iOs-armv7': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'},
                 'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':True, 'system':'Core'},
                 'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':True, 'system':'Core'},
+                'Android-anycpu': { 'os': 'Android', 'arch':'anycpu', 'publish':True, 'system':'Android'},
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -151,7 +152,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'armv6']) or (arch == 'ppc32' and os_platform == 'Core'):
+        if (arch in ['armel', 'armhf', 'armv7', 'armv6']) or (arch == 'ppc32' and os_platform == 'Core') or (os_platform == 'Android'):
             args.append('--buildonly')
         elif arch == 'x64':
             args.append('--native')
@@ -175,6 +176,9 @@ class JenkinsBuild():
             # Overlapping test instances interfere with each other so only run tests for the (assumed more useful) 32-bit build.
             # Temporarily disable all tests on mac as publish jobs hang otherwise
             args.append('--buildonly')
+        if os_platform == 'Android':
+            args.append('--Android-anycpu')
+            self.platform_make_args.append('Android-anycpu=1')
         if os_platform == 'Core':
             args.append('--core')
         if nightly == '1':
