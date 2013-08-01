@@ -82,7 +82,7 @@ Brn Srx::ReadUntil(TByte aSeparator)
             iOffset = 0;
         }
         
-        if (iBytes >= iMaxBytes) { // buffer full and no separator
+        if (iBytes == iMaxBytes) { // buffer full and no separator
             THROW(ReaderError);
         }
         Bwn buffer(ptr + iBytes, iMaxBytes - iBytes); // collect more data from the source
