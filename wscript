@@ -452,6 +452,7 @@ def build(bld):
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
+                'OpenHome/Av/Tests/TestTrackDatabase.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
@@ -555,6 +556,10 @@ def build(bld):
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUpnpErrors')
+    bld.program(
+            source='OpenHome/Av/Tests/TestTrackDatabaseMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestTrackDatabase')
     bld.program(
             source='OpenHome/Av/Tests/TestRadioMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

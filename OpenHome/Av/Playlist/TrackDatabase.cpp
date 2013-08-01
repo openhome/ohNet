@@ -48,6 +48,11 @@ void TrackDatabase::GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint&
 void TrackDatabase::GetTrackById(TUint aId, Track*& aTrack) const
 {
     AutoMutex a(iLock);
+    return GetTrackByIdLocked(aId, aTrack);
+}
+
+void TrackDatabase::GetTrackByIdLocked(TUint aId, Track*& aTrack) const
+{
     const TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
     aTrack = iTrackList[index];
     aTrack->AddRef();
@@ -58,7 +63,7 @@ void TrackDatabase::GetTrackById(TUint aId, TUint aSeq, Track*& aTrack, TUint& a
     AutoMutex a(iLock);
     aTrack = NULL;
     if (iSeq != aSeq) {
-        GetTrackById(aId, aTrack);
+        GetTrackByIdLocked(aId, aTrack);
         return;
     }
     if (!TryGetTrackById(aId, aTrack, aIndex, iTrackList.size(), aIndex)) {
@@ -180,12 +185,13 @@ Track* TrackDatabase::PrevTrackRef(TUint aId)
 
 Track* TrackDatabase::TrackRefByIndex(TUint aIndex)
 {
-    AutoMutex a(iLock);
-    if (aIndex >= iTrackList.size()) {
-        THROW(TrackDbIdNotFound);
+    Track* track = NULL;
+    iLock.Wait();
+    if (aIndex < iTrackList.size()) {
+        track = iTrackList[aIndex];
+        track->AddRef();
     }
-    Track* track = iTrackList[aIndex];
-    track->AddRef();
+    iLock.Signal();
     return track;
 }
 
@@ -235,12 +241,15 @@ void Shuffler::SetObserver(ITrackDatabaseObserver& aObserver)
 
 Track* Shuffler::TrackRef(TUint aId)
 {
-    Track* track;
+    Track* track = NULL;
     AutoMutex a(iLock);
     if (iShuffle) {
-        const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
-        track = iShuffleList[index];
-        track->AddRef();
+        try {
+            const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
+            track = iShuffleList[index];
+            track->AddRef();
+        }
+        catch (TrackDbIdNotFound&) { }
     }
     else {
         track = iReader.TrackRef(aId);
@@ -256,10 +265,21 @@ Track* Shuffler::NextTrackRef(TUint aId)
         track = iReader.NextTrackRef(aId);
     }
     else {
-        const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
-        if (index != iShuffleList.size() - 1) {
-            track = iShuffleList[index+1];
-            track->AddRef();
+        if (aId == ITrackDatabase::kTrackIdNone) {
+            if (iShuffleList.size() > 0) {
+                track = iShuffleList[0];
+                track->AddRef();
+            }
+        }
+        else {
+            try {
+                const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
+                if (index < iShuffleList.size()-1) {
+                    track = iShuffleList[index+1];
+                    track->AddRef();
+                }
+            }
+            catch (TrackDbIdNotFound&) { }
         }
     }
     return track;
@@ -273,11 +293,14 @@ Track* Shuffler::PrevTrackRef(TUint aId)
         track = iReader.PrevTrackRef(aId);
     }
     else {
-        const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
-        if (index != 0) {
-            track = iShuffleList[index-1];
-            track->AddRef();
+        try {
+            const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
+            if (index != 0) {
+                track = iShuffleList[index-1];
+                track->AddRef();
+            }
         }
+        catch (TrackDbIdNotFound&) { }
     }
     return track;
 }
@@ -344,7 +367,9 @@ void Shuffler::NotifyAllDeleted()
 Repeater::Repeater(ITrackDatabaseReader& aReader)
     : iLock("TRPT")
     , iReader(aReader)
+    , iObserver(NULL)
     , iRepeat(false)
+    , iTrackCount(0)
 {
 }
 
@@ -355,7 +380,8 @@ void Repeater::SetRepeat(TBool aRepeat)
 
 void Repeater::SetObserver(ITrackDatabaseObserver& aObserver)
 {
-    iReader.SetObserver(aObserver);
+    iObserver = &aObserver;
+    iReader.SetObserver(*this);
 }
 
 Track* Repeater::TrackRef(TUint aId)
@@ -388,9 +414,32 @@ Track* Repeater::PrevTrackRef(TUint aId)
     AutoMutex a(iLock);
     Track* track = iReader.PrevTrackRef(aId);
     if (track == NULL && iRepeat) {
-        track = iReader.PrevTrackRef(ITrackDatabase::kTrackIdNone);
+        track = iReader.TrackRefByIndex(iTrackCount-1);
     }
     return track;
+}
+
+void Repeater::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfter)
+{
+    AutoMutex a(iLock);
+    iTrackCount++;
+    ASSERT(iTrackCount <= ITrackDatabase::kMaxTracks);
+    iObserver->NotifyTrackInserted(aTrack, aIdBefore, aIdAfter);
+}
+
+void Repeater::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aAfter)
+{
+    AutoMutex a(iLock);
+    iTrackCount--;
+    ASSERT(iTrackCount <= ITrackDatabase::kMaxTracks);
+    iObserver->NotifyTrackDeleted(aId, aBefore, aAfter);
+}
+
+void Repeater::NotifyAllDeleted()
+{
+    AutoMutex a(iLock);
+    iTrackCount = 0;
+    iObserver->NotifyAllDeleted();
 }
 
 

@@ -24,6 +24,7 @@ tests = '''
     TestIdProvider
     TestFiller
     TestUpnpErrors
+    TestTrackDatabase
     TestToneGenerator
     TestMuteManager
     TestVolumeManager
