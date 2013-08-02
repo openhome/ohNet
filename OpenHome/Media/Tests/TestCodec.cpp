@@ -17,7 +17,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/Tests/SuiteUnitTest.h>
+#include <OpenHome/Private/SuiteUnitTest.h>
 
 #include <vector>
 

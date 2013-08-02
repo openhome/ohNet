@@ -74,6 +74,7 @@ class TrackDatabase : public ITrackDatabase, public ITrackDatabaseReader
 {
 public:
     TrackDatabase(Media::TrackFactory& aTrackFactory);
+    ~TrackDatabase();
 private: // from ITrackDatabase
     void AddObserver(ITrackDatabaseObserver& aObserver);
     void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const;
@@ -89,6 +90,7 @@ private: // from ITrackDatabaseReader
     Media::Track* PrevTrackRef(TUint aId);
     Media::Track* TrackRefByIndex(TUint aIndex);
 private:
+    void GetTrackByIdLocked(TUint aId, Media::Track*& aTrack) const;
     TBool TryGetTrackById(TUint aId, Media::Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const;
 private:
     mutable Mutex iLock;
@@ -102,6 +104,7 @@ class Shuffler : public IShuffler, public ITrackDatabaseReader, public ITrackDat
 {
 public:
     Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader);
+    ~Shuffler();
 private: // from IShuffler
     void SetShuffle(TBool aShuffle);
 private: // from ITrackDatabaseReader
@@ -123,22 +126,28 @@ private:
     TBool iShuffle;
 };
 
-class Repeater : public IRepeater, public ITrackDatabaseReader
+class Repeater : public IRepeater, public ITrackDatabaseReader, public ITrackDatabaseObserver
 {
 public:
     Repeater(ITrackDatabaseReader& aReader);
 private: // from IRepeater
     void SetRepeat(TBool aRepeat);
-public: // from ITrackDatabaseReader
+private: // from ITrackDatabaseReader
     void SetObserver(ITrackDatabaseObserver& aObserver);
     Media::Track* TrackRef(TUint aId);
     Media::Track* NextTrackRef(TUint aId);
     Media::Track* PrevTrackRef(TUint aId);
     Media::Track* TrackRefByIndex(TUint aIndex);
+private: // from ITrackDatabaseObserver
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
+    void NotifyAllDeleted();
 private:
     Mutex iLock;
     ITrackDatabaseReader& iReader;
+    ITrackDatabaseObserver* iObserver;
     TBool iRepeat;
+    TUint iTrackCount;
 };
 
 class TrackListUtils

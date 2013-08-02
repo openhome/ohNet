@@ -430,7 +430,6 @@ def build(bld):
                 'OpenHome/Av/Tests/RamStore.cpp',
                 'OpenHome/Media/Tests/PipelineUtils.cpp',
                 'OpenHome/Media/Tests/SongcastingDriver.cpp',
-                'OpenHome/Media/Tests/SuiteUnitTest.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
@@ -453,6 +452,7 @@ def build(bld):
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
                 'Generated/CpUpnpOrgRenderingControl1.cpp',
+                'OpenHome/Av/Tests/TestTrackDatabase.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
@@ -556,6 +556,10 @@ def build(bld):
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUpnpErrors')
+    bld.program(
+            source='OpenHome/Av/Tests/TestTrackDatabaseMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestTrackDatabase')
     bld.program(
             source='OpenHome/Av/Tests/TestRadioMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
