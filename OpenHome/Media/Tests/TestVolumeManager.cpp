@@ -153,13 +153,13 @@ void SuiteVolumeManager::Test()
     TestTaps(/*user*/100, /*src*/120, /*unity*/120, /*leftBal*/120, /*rightBal*/120, /*leftSink*/100, /*rightSink*/100);
     // sane listening volume and adjust balance maximally to left
     iVolUserDfl.SetVolume(40);
-    iVolBalDfl.SetBalance(VolumeBalanceUserDefault::MinimumUserBalance());  // amplify left, attenuate right
+    iVolBalDfl.SetUserBalance(VolumeBalanceUserDefault::MinimumUserBalance());  // amplify left, attenuate right
     TestTaps(/*user*/40, /*src*/60, /*unity*/60, /*leftBal*/63, /*rightBal*/0, /*leftSink*/63, /*rightSink*/0);
     // adjust balance maximally to right
-    iVolBalDfl.SetBalance(VolumeBalanceUserDefault::MaximumUserBalance());  // attenuate left, amplify right
+    iVolBalDfl.SetUserBalance(VolumeBalanceUserDefault::MaximumUserBalance());  // attenuate left, amplify right
     TestTaps(/*user*/40, /*src*/60, /*unity*/60, /*leftBal*/0, /*rightBal*/63, /*leftSink*/0, /*rightSink*/63);
     // adjust balance slightly to left
-    iVolBalDfl.SetBalance(-6);  // attenuate left, amplify right
+    iVolBalDfl.SetUserBalance(-6);  // attenuate left, amplify right
     TestTaps(/*user*/40, /*src*/60, /*unity*/60, /*leftBal*/62, /*rightBal*/57, /*leftSink*/62, /*rightSink*/57);
 }
 
