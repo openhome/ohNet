@@ -74,8 +74,8 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Product* iProduct;
-    ProviderTime *iTime;
-    ProviderInfo *iInfo;
+    ProviderTime* iTime;
+    ProviderInfo* iInfo;
     KvpStore* iKvpStore;
 };
 
