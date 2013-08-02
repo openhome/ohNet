@@ -1,6 +1,7 @@
 #include <OpenHome/Media/VolumeManager.h>
 
 #include <OpenHome/Private/Standard.h>  // ASSERT()
+#include <OpenHome/Private/Printer.h>  // Log::Print() for *Logger
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -12,6 +13,61 @@ using namespace OpenHome::Media;
 IVolume::~IVolume()
 {
     // NOP default implementation (for convenience)
+}
+
+IBalanceUser::~IBalanceUser()
+{
+    // NOP default implementation (for convenience)
+}
+
+IVolumeLimitUser::~IVolumeLimitUser()
+{
+    // NOP default implementation (for convenience)
+}
+
+IVolumeManagerLimits::~IVolumeManagerLimits()
+{
+    // NOP default implementation (for convenience)
+}
+
+IVolumeManager::~IVolumeManager()
+{
+    // NOP default implementation (for convenience)
+}
+
+// VolumeLimiterUser
+VolumeLimiterUser::VolumeLimiterUser(IVolume& aVolume, TUint aLimit)
+    : iVolume(aVolume)
+    , iUpstreamVolume(0)
+    , iLimit(aLimit)
+{
+}
+
+TUint VolumeLimiterUser::UserVolumeLimit() const
+{
+    return iLimit;
+}
+
+void VolumeLimiterUser::SetUserVolumeLimit(TUint aValue)
+{
+    iLimit = aValue;
+    Changed();
+}
+
+TUint VolumeLimiterUser::UserVolume() const
+{
+    return iUpstreamVolume;  // user volume *pre* limiting
+}
+
+void VolumeLimiterUser::SetVolume(TUint aValue)
+{
+    iUpstreamVolume = aValue;
+    Changed();
+}
+
+void VolumeLimiterUser::Changed()
+{
+    iVolume.SetVolume((iUpstreamVolume > iLimit) ? iLimit : iUpstreamVolume);
 }
 
 // VolumeUser
@@ -82,30 +138,37 @@ void VolumeUnityGain::Changed()
     }
 }
 
-// VolumeBalance
-VolumeBalance::VolumeBalance(IVolume& aLeftVolume, IVolume& aRightVolume)
+// VolumeBalanceUser
+VolumeBalanceUser::VolumeBalanceUser(IVolume& aLeftVolume, IVolume& aRightVolume)
     : iLeftVolume(aLeftVolume)
     , iRightVolume(aRightVolume)
     , iUpstreamVolume(0)
+    , iUserBalance(0)
     , iLeftOffset(0)
     , iRightOffset(0)
 {
 }
 
-void VolumeBalance::SetBalance(TInt aLeftOffset, TInt aRightOffset)
+TInt VolumeBalanceUser::UserBalance() const
 {
-    iLeftOffset = aLeftOffset;
-    iRightOffset = aRightOffset;
+    return iUserBalance;
+}
+
+void VolumeBalanceUser::SetUserBalance(TInt aValue)
+{
+    iUserBalance = aValue;
+    iLeftOffset = LeftOffset(aValue);
+    iRightOffset = RightOffset(aValue);
     Changed();
 }
 
-void VolumeBalance::SetVolume(TUint aValue)
+void VolumeBalanceUser::SetVolume(TUint aValue)
 {
     iUpstreamVolume = aValue;
     Changed();
 }
 
-void VolumeBalance::Changed()
+void VolumeBalanceUser::Changed()
 {
     TInt nonNegVol = 0;
     nonNegVol = static_cast<TInt>(iUpstreamVolume) + iLeftOffset;
@@ -140,7 +203,18 @@ void VolumeLimiter::SetVolume(TUint aValue)
 // classes providing sensible default factors and value ranges
 //
 
+// VolumeLimiterUserDefault
+VolumeLimiterUserDefault::VolumeLimiterUserDefault(IVolume& aVolume)
+    : VolumeLimiterUser(aVolume, VolumeUserDefault::MaxUserVolume())
+{
+}
+
 // VolumeUserDefault
+TUint VolumeUserDefault::MaxUserVolume()  // static
+{
+    return 100;
+}
+
 TUint VolumeUserDefault::SystemVolumeFactor()  // static
 {
     return 1024;
@@ -148,7 +222,7 @@ TUint VolumeUserDefault::SystemVolumeFactor()  // static
 
 TUint VolumeUserDefault::MaxSystemVolume()  // static
 {
-    return 100 * SystemVolumeFactor();
+    return MaxUserVolume() * SystemVolumeFactor();
 }
 
 VolumeUserDefault::VolumeUserDefault(IVolume& aVolume)
@@ -216,23 +290,22 @@ const TInt VolumeBalanceUserDefault::kBalanceOffsets[] =  // static
 };
 
 VolumeBalanceUserDefault::VolumeBalanceUserDefault(IVolume& aLeftVolume, IVolume& aRightVolume)
-    : iVolumeBalance(aLeftVolume, aRightVolume)
+    : VolumeBalanceUser(aLeftVolume, aRightVolume)
 {
 }
 
-void VolumeBalanceUserDefault::SetBalance(TInt aValue)
+TInt VolumeBalanceUserDefault::LeftOffset(TInt aValue) const
 {
     ASSERT((MinimumUserBalance() <= aValue) && (aValue <= MaximumUserBalance()));
     // factor two allows integer representation in declaration
-    iVolumeBalance.SetBalance( \
-        (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() - aValue]) / 2,
-        (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() + aValue]) / 2
-    );
+    return (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() - aValue]) / 2;
 }
 
-void VolumeBalanceUserDefault::SetVolume(TUint aValue)
+TInt VolumeBalanceUserDefault::RightOffset(TInt aValue) const
 {
-    iVolumeBalance.SetVolume(aValue);
+    ASSERT((MinimumUserBalance() <= aValue) && (aValue <= MaximumUserBalance()));
+    // factor two allows integer representation in declaration
+    return (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() + aValue]) / 2;
 }
 
 // VolumeLimiterDefault
@@ -244,4 +317,101 @@ TUint VolumeLimiterDefault::MaxLimitSystemVolume()  // static
 VolumeLimiterDefault::VolumeLimiterDefault(IVolume& aVolume)
     : VolumeLimiter(aVolume, MaxLimitSystemVolume())
 {
+}
+
+// VolumeManager
+VolumeManager::VolumeManager(IVolume& aLeftVolHardware, IVolume& aRightVolHardware)
+    : iLeftVolHw(aLeftVolHardware)
+    , iRightVolHw(aRightVolHardware)
+{
+}
+
+TUint VolumeManager::UserVolume() const
+{
+    return iVolLimitUser->UserVolume();  // sic!
+}
+
+TInt VolumeManager::UserBalance() const
+{
+    return iVolBal->UserBalance();  // -ve .. 0 (neutral) .. +ve
+}
+
+TUint VolumeManager::UserVolumeLimit() const
+{
+    return iVolLimitUser->UserVolumeLimit();
+}
+
+void VolumeManager::SetUserVolume(TUint aValue)
+{
+    iVolUser->SetVolume(aValue);
+}
+
+void VolumeManager::SetUserBalance(TInt aValue)
+{
+    iVolBal->SetUserBalance(aValue);
+}
+
+void VolumeManager::SetUserVolumeLimit(TUint aValue)
+{
+    iVolLimitUser->SetUserVolumeLimit(aValue);
+}
+
+// VolumeManagerDefault
+VolumeManagerDefault::VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware)
+    : VolumeManager(aLeftVolHardware, aRightVolHardware)
+{
+    iLeftVolLimit = new VolumeLimiterDefault(iLeftVolHw);
+    iRightVolLimit = new VolumeLimiterDefault(iRightVolHw);
+    iVolBal = new VolumeBalanceUserDefault(*iLeftVolLimit, *iRightVolLimit);
+    iVolUnityGain = new VolumeUnityGainDefault(*iVolBal);
+    iVolSrcOff = new VolumeSourceOffset(*iVolUnityGain);
+    iVolUser = new VolumeUserDefault(*iVolSrcOff);
+    iVolLimitUser = new VolumeLimiterUserDefault(*iVolUser);
+}
+
+VolumeManagerDefault::~VolumeManagerDefault()
+{
+    delete iVolLimitUser;
+    delete iVolUser;
+    delete iVolSrcOff;
+    delete iVolUnityGain;
+    delete iVolBal;
+    delete iLeftVolLimit;
+    delete iRightVolLimit;
+}
+
+TUint VolumeManagerDefault::MaxUserVolume() const
+{
+    return VolumeUserDefault::MaxUserVolume();
+}
+
+TUint VolumeManagerDefault::VolumeUnity() const
+{
+    return VolumeUnityGainDefault::UnityGainSystemVolume() / VolumeUserDefault::SystemVolumeFactor();
+}
+
+TUint VolumeManagerDefault::VolumeSteps() const
+{
+    return VolumeUserDefault::MaxUserVolume();  // [0..100] in steps of 1
+}
+
+TUint VolumeManagerDefault::VolumeMilliDbPerStep() const
+{
+    return VolumeUserDefault::SystemVolumeFactor();
+}
+
+TInt VolumeManagerDefault::MaxUserBalance() const
+{
+    return VolumeBalanceUserDefault::MaximumUserBalance();
+}
+
+// VolumeSinkLogger
+VolumeSinkLogger::VolumeSinkLogger(const TChar* aLabel)
+    : iLabel(aLabel)
+{
+}
+
+void VolumeSinkLogger::SetVolume(TUint aValue)
+{
+    Log::Print("\n[VolSinkLog:");  Log::Print(iLabel);  Log::Print("] vol = %u\n", aValue);
 }
