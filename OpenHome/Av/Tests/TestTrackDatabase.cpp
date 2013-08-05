@@ -272,7 +272,7 @@ void SuiteTrackDatabase::GetIdArrayDbPartiallyFull()
     TUint seq;
     iTrackDatabase->GetIdArray(iIdArray, seq);
     std::array<TUint32, kTrackCount> trackIds;
-    trackIds.fill(ITrackDatabase::kTrackIdNone);
+    trackIds.fill((TUint)ITrackDatabase::kTrackIdNone);
     std::array<TUint32, kTrackCount>::iterator it;
     for (i=0; i<kTrackCount; i++) {
         const TUint id = iIdArray[i];
