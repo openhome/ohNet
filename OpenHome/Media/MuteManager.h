@@ -63,6 +63,7 @@ public:  // from IMute
 class IMuteManager
 {
 public:
+    virtual ~IMuteManager();
     virtual IMute& Find(const TChar* aName) const = 0;
 };
 
