@@ -32,11 +32,12 @@ ProtocolTone::ProtocolTone(Environment& aEnv)
     : Protocol(aEnv)
     , iToneGenerators()
 {
-    iToneGenerators.push_back(new ToneGeneratorSilence);
-    iToneGenerators.push_back(new ToneGeneratorSquare);
-    iToneGenerators.push_back(new ToneGeneratorSawtooth);
-    iToneGenerators.push_back(new ToneGeneratorTriangle);
-    iToneGenerators.push_back(new ToneGeneratorSine);
+    iToneGenerators.push_back(new ToneGeneratorSilence());
+    iToneGenerators.push_back(new ToneGeneratorSquare());
+    iToneGenerators.push_back(new ToneGeneratorSawtooth());
+    iToneGenerators.push_back(new ToneGeneratorTriangle());
+    iToneGenerators.push_back(new ToneGeneratorSine());
+    iToneGenerators.push_back(new ToneGeneratorConstant());
 #ifdef DEFINE_DEBUG
     iToneGenerators.push_back(new ToneGeneratorPattern);
 #endif  // DEFINE_DEBUG
@@ -443,6 +444,40 @@ TInt32 ToneGeneratorSine::Generate(TUint aOffset, TUint aMaxOffset)
     TUint idx = (aOffset * (sizeof(kWave) / sizeof(TInt32))) / aMaxOffset;
     return kWave[idx];
 }
+
+
+// ToneGeneratorConstant
+
+ToneGeneratorConstant::ToneGeneratorConstant()
+    : ToneGenerator("constant.wav")
+{
+}
+
+TBool ToneGeneratorConstant::Recognise(const Brx& aName) const
+{
+    if (!aName.BeginsWith(Brn("constant-"))) {
+        return false;
+    }
+    Parser parser(aName);
+    parser.Next('-');
+    Brn buf = parser.Next('.');
+    if (buf.Bytes() == 0) {
+        return false;
+    }
+    try {
+        iValue = Ascii::Int(buf);
+    }
+    catch (AsciiError&) {
+        return false;
+    }
+    return true;
+}
+
+TInt32 ToneGeneratorConstant::Generate(TUint /*aOffset*/, TUint /*aMaxOffset*/)
+{
+    return iValue<<16;
+}
+
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 {

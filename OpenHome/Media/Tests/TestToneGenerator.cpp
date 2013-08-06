@@ -239,6 +239,21 @@ private:
     TUint iCntSignalMax;
 };
 
+class SuiteGeneratorConstant : public SuiteGeneratorAny
+{
+public:
+    SuiteGeneratorConstant();
+protected:  // indirectly from SuiteUnitTest
+    void Setup();
+private:
+    void Test_val5_8bit_44100_20Hz_2ch_1s();
+private:  // indirectly from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+private:
+    TByte iExpectedSubsample;
+};
+
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -954,6 +969,44 @@ void SuiteGeneratorSquare::Test_16bit_44100_48000Hz_2ch_1s()
     TestWaveform("square", ToneParams(16, 44100, 48000, 2, 1));
 }
 
+
+// SuiteGeneratorConstant
+
+SuiteGeneratorConstant::SuiteGeneratorConstant()
+    : SuiteGeneratorAny("tone generator: constant")
+    , iExpectedSubsample(0)
+{
+    AddTest(MakeFunctor(*this, &SuiteGeneratorConstant::Test_val5_8bit_44100_20Hz_2ch_1s));
+}
+
+void SuiteGeneratorConstant::Setup()
+{
+    SuiteGeneratorAny::Setup();
+    iExpectedSubsample = 0;
+}
+
+void SuiteGeneratorConstant::Test_val5_8bit_44100_20Hz_2ch_1s()
+{
+    iExpectedSubsample = 5;
+    TestWaveform("constant-5", ToneParams(8, 44100, 20, 2, 1));
+}
+
+Msg* SuiteGeneratorConstant::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    // duration test is universal
+    SuiteGeneratorAny::ProcessMsg(aMsg);
+    // but content tests are generator-specific
+    MsgPlayable* playable = aMsg->CreatePlayable();
+    ProcessorPcmBufPacked proc;
+    playable->Read(proc);
+    Brn buf = proc.Buf();
+    TEST(buf[0] == iExpectedSubsample);
+    TEST(buf[buf.Bytes()-1] == iExpectedSubsample);
+    playable->RemoveRef();
+    return NULL;
+}
+
+
 void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams)
 {
     // first msg, indicating start of new track
@@ -983,5 +1036,6 @@ void TestToneGenerator()
     runner.Add(new SuiteSyntaxError());
     runner.Add(new SuiteGeneratorSilence());
     runner.Add(new SuiteGeneratorSquare());
+    runner.Add(new SuiteGeneratorConstant());
     runner.Run();
 }

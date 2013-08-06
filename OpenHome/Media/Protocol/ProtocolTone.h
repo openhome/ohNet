@@ -64,8 +64,8 @@ class ToneGenerator
 {
 public:
     virtual ~ToneGenerator() { }
-    TBool Recognise(const Brx& aName) const;
-    virtual TInt32 Generate(TUint aOffset, TUint aMaxOffset) = 0;  // really 24-bit max
+    virtual TBool Recognise(const Brx& aName) const;
+    virtual TInt32 Generate(TUint aOffset, TUint aMaxOffset) = 0;  // must return 24-bit value
 protected:
     ToneGenerator(const TChar* aName);
 private:
@@ -125,6 +125,17 @@ class ToneGeneratorSine : public ToneGenerator
 public:
     ToneGeneratorSine();
     TInt32 Generate(TUint aOffset, TUint aMaxOffset);  // from ToneGenerator
+};
+
+class ToneGeneratorConstant : public ToneGenerator
+{
+public:
+    ToneGeneratorConstant();
+private: // from ToneGenerator
+    TBool Recognise(const Brx& aName) const;
+    TInt32 Generate(TUint aOffset, TUint aMaxOffset);
+private:
+    mutable TInt32 iValue;
 };
 
 class ProtocolTone : public Protocol
