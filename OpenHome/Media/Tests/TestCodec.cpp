@@ -343,7 +343,7 @@ const Brn SuiteCodecStream::kPrefixHttp("http://");;
 const TUint SuiteCodecStream::kLenPrefixHttp = sizeof("http://")-1;
 const TUint SuiteCodecStream::kMaxUriBytes = Endpoint::kMaxEndpointBytes + kLenPrefixHttp;
 
-SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
+SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
     : SuiteUnitTest("Codec stream tests")
     , MsgProcessor(iSem)
     , iJiffies(0)
@@ -354,6 +354,7 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     , iPipeline(NULL)
     , iFiles(aFiles)
     , iFileNum(0)
+    , iCreatePipeline(aFunc)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
@@ -361,7 +362,7 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     }
 }
 
-SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
+SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
     : SuiteUnitTest(aSuiteName)
     , MsgProcessor(iSem)
     , iJiffies(0)
@@ -372,6 +373,7 @@ SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFil
     , iPipeline(NULL)
     , iFiles(aFiles)
     , iFileNum(0)
+    , iCreatePipeline(aFunc)
 {
 }
 
@@ -383,8 +385,7 @@ void SuiteCodecStream::Setup()
 {
     iJiffies = 0;
 
-    //iPipeline = //call functor here
-    iPipeline = new TestCodecMinimalPipeline(iEnv, *this);
+    iPipeline = (*iCreatePipeline)(iEnv, *this);
     iPipeline->StartPipeline();
 }
 
@@ -435,8 +436,8 @@ void SuiteCodecStream::TestJiffies()
 
 // SuiteCodecSeek
 
-SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream("Codec seek tests", aFiles, aEnv, aUri)
+SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream("Codec seek tests", aFiles, aEnv, aFunc, aUri)
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
@@ -454,8 +455,8 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     }
 }
 
-SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream(aSuiteName, aFiles, aEnv, aUri)
+SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream(aSuiteName, aFiles, aEnv, aFunc, aUri)
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
@@ -564,8 +565,8 @@ void SuiteCodecSeek::TestSeekingForwards()
 
 // SuiteCodecSeekFromStart
 
-SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecSeek("Codec seek from start tests", aFiles, aEnv, aUri)
+SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecSeek("Codec seek from start tests", aFiles, aEnv, aFunc, aUri)
     , iFileNumMiddle(0)
     , iFileNumEnd(0)
 {
@@ -635,8 +636,8 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
 
 // SuiteCodecZeroCrossings
 
-SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream("Codec zero crossing tests", aFiles, aEnv, aUri)
+SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream("Codec zero crossing tests", aFiles, aEnv, aFunc, aUri)
     , iSampleRate(0)
     , iBitDepth(0)
     , iChannels(0)
@@ -786,8 +787,8 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
 
 // SuiteCodecInvalidType
 
-SuiteCodecInvalidType::SuiteCodecInvalidType(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream("Codec invalid type tests", aFiles, aEnv, aUri)
+SuiteCodecInvalidType::SuiteCodecInvalidType(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream("Codec invalid type tests", aFiles, aEnv, aFunc, aUri)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
@@ -816,6 +817,7 @@ void SuiteCodecInvalidType::TestInvalidType()
 
 
 void TestCodec(Environment& aEnv
+               , CreateTestCodecPipelineFunc aFunc
                , std::vector<AudioFileDescriptor> aMinFiles
                , std::vector<AudioFileDescriptor> aExtraFiles
                , std::vector<AudioFileDescriptor> aInvalidFiles
@@ -886,13 +888,13 @@ void TestCodec(Environment& aEnv
     }
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
+    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, aFunc, uri));
     if (testFull) {
-        //runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
-        runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
-        runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
-        runner.Add(new SuiteCodecInvalidType(aInvalidFiles, aEnv, uri));
-        runner.Add(new SuiteCodecStream(aStreamOnlyFiles, aEnv, uri));
+        //runner.Add(new SuiteCodecStream(stdFiles, aEnv, aFunc, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
+        runner.Add(new SuiteCodecSeek(stdFiles, aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecInvalidType(aInvalidFiles, aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecStream(aStreamOnlyFiles, aEnv, aFunc, uri));
     }
     runner.Run();
 }

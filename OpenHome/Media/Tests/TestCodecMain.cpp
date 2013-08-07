@@ -1,20 +1,26 @@
 #include "TestCodec.h"
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
-#include <OpenHome/Buffer.h>
 
 #include <vector>
 
 using namespace OpenHome;
+using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 extern void TestCodec(OpenHome::Environment& aEnv
+                      , CreateTestCodecPipelineFunc aFunc
                       , std::vector<AudioFileDescriptor> aMinFiles
                       , std::vector<AudioFileDescriptor> aExtraFiles
                       , std::vector<AudioFileDescriptor> aInvalidFiles
                       , std::vector<AudioFileDescriptor> aStreamOnlyFiles
                       ,const std::vector<Brn>& aArgs
                       );
+
+TestCodecMinimalPipeline* CreateTestCodecPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor)
+{
+    return new TestCodecMinimalPipeline(aEnv, aMsgProcessor);
+}
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
@@ -63,6 +69,6 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
 
     Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
-    TestCodec(lib->Env(), minFiles, extraFiles, invalidFiles, streamOnlyFiles, args);
+    TestCodec(lib->Env(), CreateTestCodecPipeline, minFiles, extraFiles, invalidFiles, streamOnlyFiles, args);
     delete lib;
 }
