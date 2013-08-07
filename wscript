@@ -464,10 +464,10 @@ def build(bld):
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
-    bld.program(
-           source='OpenHome/Media/Tests/TestShell.cpp',
-           use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-           target='TestShell')
+    # bld.program(
+           # source='OpenHome/Media/Tests/TestShell.cpp',
+           # use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+           # target='TestShell')
     bld.program(
             source='OpenHome/Media/Tests/TestMsgMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
