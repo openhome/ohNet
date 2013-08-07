@@ -758,6 +758,8 @@ Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
 
 void SuiteCodecZeroCrossings::TestZeroCrossings()
 {
+    TUint timeStart;
+    TUint timeEnd;
     Brn filename(iFiles[iFileNum].Filename());
     TUint64 jiffies = iFiles[iFileNum].Jiffies();
     iSampleRate = iFiles[iFileNum].SampleRate();
@@ -770,9 +772,15 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     const TUint sineWaves = (TUint)jiffies/jiffiesPerSine;
     const TUint expectedZeroCrossings = sineWaves*2 - 1;
 
+    timeStart = Time::Now(iEnv);
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecZeroCrossings"), filename);
     iSem.Wait();
     delete fileLocation;
+
+    timeEnd = Time::Now(iEnv);
+    Log::Print("TestCodec ");
+    Log::Print(filename);
+    Log::Print(" start: %ums, end: %ums, duration: %us (%ums)\n", timeStart, timeEnd, (timeEnd-timeStart)/1000, timeEnd-timeStart);
 
     Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
     TEST(iJiffies == jiffies);
