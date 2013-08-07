@@ -500,6 +500,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     for (TUint i = 0; i < iToneGenerators.size(); ++i) {
         if (iToneGenerators[i]->Recognise(uriParser.Name())) {
             generator = iToneGenerators[i];
+            break;
         }
     }
     if (NULL == generator) {
