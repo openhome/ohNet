@@ -138,6 +138,17 @@ void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TUint
     SetPropertyUri(iTrackUri);
     iMetaData.Replace(aTrack.MetaData());
     SetPropertyMetadata(iMetaData);
+    SetPropertyDetailsCount(0);
+    SetPropertyDuration(0);
+    SetPropertyBitRate(0);
+    SetPropertyBitDepth(0);
+    SetPropertySampleRate(0);
+    SetPropertyLossless(false);
+    iCodecName.Replace(Brx::Empty());
+    SetPropertyCodecName(iCodecName);
+    SetPropertyMetatextCount(0);
+    iMetaText.Replace(Brx::Empty());
+    SetPropertyMetatext(iMetaText);
     PropertiesUnlock();
 }
 
