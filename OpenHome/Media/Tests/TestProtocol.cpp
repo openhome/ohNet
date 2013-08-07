@@ -1,3 +1,4 @@
+#include "TestProtocol.h"
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
@@ -16,100 +17,8 @@
 
 #include <stdio.h>
 
-#ifdef _WIN32
-#if !defined(CDECL)
-# define CDECL __cdecl
-#endif
+int mygetch();
 
-# include <conio.h>
-
-int mygetch()
-{
-    return (_getch());
-}
-
-#elif defined(NOTERMIOS)
-
-#define CDECL
-
-int mygetch()
-{
-    return 0;
-}
-
-#else
-
-# define CDECL
-
-# include <termios.h>
-# include <unistd.h>
-
-int mygetch()
-{
-	struct termios oldt, newt;
-	int ch;
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
-	newt.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-	ch = getchar();
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-	return ch;
-}
-
-#endif // _WIN32
-
-namespace OpenHome {
-namespace Media {
-
-class DummyFiller : public Thread, private IPipelineIdProvider
-{
-public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
-    ~DummyFiller();
-    void Start(const Brx& aUrl);
-private: // from Thread
-    void Run();
-private: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-private:
-    ProtocolManager* iProtocolManager;
-    TrackFactory* iTrackFactory;
-    Brn iUrl;
-    TUint iNextTrackId;
-    TUint iNextStreamId;
-    static const TUint kInvalidPipelineId = 0;
-};
-
-class TestProtocol : private IPipelineObserver
-{
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
-    static const TUint kSeekStepSeconds = 10;
-public:
-    TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
-    virtual ~TestProtocol();
-    int Run();
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
-private:
-    DummyFiller* iFiller;
-    AllocatorInfoLogger iInfoAggregator;
-    Pipeline* iPipeline;
-    SimpleSongcastingDriver* iDriver;
-    Brh iUrl;
-    TUint iSeconds;
-    TUint iTrackDurationSeconds;
-    TUint iStreamId;
-};
-
-} // namespace Media
-} // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -174,11 +83,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
-    iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
-    iPipeline->AddCodec(Codec::CodecFactory::NewWav());
-    iPipeline->AddCodec(Codec::CodecFactory::NewAac());
-    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
-    iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
+    RegisterPlugins();
     iPipeline->Start();
 
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
@@ -258,6 +163,15 @@ int TestProtocol::Run()
     return 0;
 }
 
+void TestProtocol::RegisterPlugins()
+{
+    iPipeline->AddCodec(Codec::CodecFactory::NewFlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewWav());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewAlac());
+    iPipeline->AddCodec(Codec::CodecFactory::NewVorbis());
+}
+
 #define LOG_PIPELINE_OBSERVER
 #ifdef _WIN32
 // suppress 'unreferenced formal parameter' warnings which come and go depending
@@ -334,7 +248,7 @@ void TestProtocol::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 
 
-int CDECL main(int aArgc, char* aArgv[])
+int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtocolFunc aFunc)
 {
     /* Useful test urls:
     http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav
@@ -384,7 +298,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocol* tph = new TestProtocol(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestProtocol* tph = (*aFunc)(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     

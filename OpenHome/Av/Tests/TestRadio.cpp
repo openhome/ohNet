@@ -21,7 +21,7 @@
 #include <stdio.h>
 
 int mygetch();
-// mygetch() assumed available in PipelineUtils
+
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;

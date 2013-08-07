@@ -13,7 +13,7 @@
 #include <OpenHome/Av/Source.h> // FIXME - see #169
 
 int mygetch();
-// mygetch() assumed available in PipelineUtils
+
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
