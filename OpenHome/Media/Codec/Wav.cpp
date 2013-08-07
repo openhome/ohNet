@@ -77,6 +77,7 @@ void CodecWav::StreamInitialise()
     iAudioBytesTotal = 0;
     iAudioBytesRemaining = 0;
     iTrackOffset = 0;
+    iReadBuf.SetBytes(0);
 }
 
 void CodecWav::Process()
@@ -129,6 +130,9 @@ void CodecWav::ProcessHeader(const Brx& aHeader)
     const TByte* header = aHeader.Ptr();
     //We shouldn't be in the wav codec unless this says 'RIFF'
     //This isn't a track corrupt issue as it was previously checked by Recognise
+    if (strncmp((const TChar*)header, "RIFF", 4) != 0) {
+        _asm int 3;
+    }
     ASSERT(strncmp((const TChar*)header, "RIFF", 4) == 0);
 
     // Get the file size (FIXME - disabled for now since we're not considering continuous streams yet)
