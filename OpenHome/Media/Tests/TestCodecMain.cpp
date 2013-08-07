@@ -8,21 +8,14 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-extern void TestCodec(OpenHome::Environment& aEnv
-                      , CreateTestCodecPipelineFunc aFunc
-                      , std::vector<AudioFileDescriptor> aMinFiles
-                      , std::vector<AudioFileDescriptor> aExtraFiles
-                      , std::vector<AudioFileDescriptor> aInvalidFiles
-                      , std::vector<AudioFileDescriptor> aStreamOnlyFiles
-                      ,const std::vector<Brn>& aArgs
-                      );
+extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, AudioFileCollection& aFiles, const std::vector<Brn>& aArgs);
 
 TestCodecMinimalPipeline* CreateTestCodecPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor)
 {
     return new TestCodecMinimalPipeline(aEnv, aMsgProcessor);
 }
 
-void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
+AudioFileCollection* OpenHome::Media::Codec::GenerateTestFileCollection()
 {
     // test file vectors
     std::vector<AudioFileDescriptor> minFiles;
@@ -67,8 +60,15 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
     //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
 
+    return new AudioFileCollection(minFiles, extraFiles, invalidFiles, streamOnlyFiles);
+}
+
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
+{
     Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
-    TestCodec(lib->Env(), CreateTestCodecPipeline, minFiles, extraFiles, invalidFiles, streamOnlyFiles, args);
+    AudioFileCollection* files = GenerateTestFileCollection();
+    TestCodec(lib->Env(), CreateTestCodecPipeline, *files, args);
+    delete files;
     delete lib;
 }

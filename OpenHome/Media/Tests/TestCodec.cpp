@@ -83,6 +83,65 @@ AudioFileDescriptor::ECodec AudioFileDescriptor::Codec() const
 }
 
 
+// AudioFileCollection
+
+AudioFileCollection::AudioFileCollection()
+{
+}
+
+AudioFileCollection::AudioFileCollection(std::vector<AudioFileDescriptor> aReqFiles
+                  , std::vector<AudioFileDescriptor> aExtraFiles
+                  , std::vector<AudioFileDescriptor> aInvalidFiles
+                  , std::vector<AudioFileDescriptor> aStreamOnlyFiles
+                  )
+    : iReqFiles(aReqFiles)
+    , iExtraFiles(aExtraFiles)
+    , iInvalidFiles(aInvalidFiles)
+    , iStreamOnlyFiles(aStreamOnlyFiles)
+{
+}
+
+
+void AudioFileCollection::AddRequiredFile(AudioFileDescriptor aFile)
+{
+    iReqFiles.push_back(aFile);
+}
+
+void AudioFileCollection::AddExtraFile(AudioFileDescriptor aFile)
+{
+    iExtraFiles.push_back(aFile);
+}
+
+void AudioFileCollection::AddInvalidFile(AudioFileDescriptor aFile)
+{
+    iInvalidFiles.push_back(aFile);
+}
+
+void AudioFileCollection::AddStreamOnlyFile(AudioFileDescriptor aFile)
+{
+    iStreamOnlyFiles.push_back(aFile);
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::RequiredFiles()
+{
+    return iReqFiles;
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::ExtraFiles()
+{
+    return iExtraFiles;
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::InvalidFiles()
+{
+    return iInvalidFiles;
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::StreamOnlyFiles()
+{   return iStreamOnlyFiles;
+}
+
+
 // TestCodecInfoAggregator
 
 TestCodecInfoAggregator::TestCodecInfoAggregator()
@@ -824,14 +883,7 @@ void SuiteCodecInvalidType::TestInvalidType()
 }
 
 
-void TestCodec(Environment& aEnv
-               , CreateTestCodecPipelineFunc aFunc
-               , std::vector<AudioFileDescriptor> aMinFiles
-               , std::vector<AudioFileDescriptor> aExtraFiles
-               , std::vector<AudioFileDescriptor> aInvalidFiles
-               , std::vector<AudioFileDescriptor> aStreamOnlyFiles
-               , const std::vector<Brn>& aArgs
-               )
+void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, AudioFileCollection& aFiles, const std::vector<Brn>& aArgs)
 {
     Log::Print("TestCodec\n");
 
@@ -888,9 +940,9 @@ void TestCodec(Environment& aEnv
     }
 
     // set up bare minimum files (and include extra files if full test being run)
-    std::vector<AudioFileDescriptor> stdFiles(aMinFiles);
+    std::vector<AudioFileDescriptor> stdFiles(aFiles.RequiredFiles());
     if (testFull) {
-        for(std::vector<AudioFileDescriptor>::iterator it = aExtraFiles.begin(); it != aExtraFiles.end(); ++it) {
+        for(std::vector<AudioFileDescriptor>::iterator it = aFiles.ExtraFiles().begin(); it != aFiles.ExtraFiles().end(); ++it) {
             stdFiles.push_back(*it);
         }
     }
@@ -901,8 +953,8 @@ void TestCodec(Environment& aEnv
         //runner.Add(new SuiteCodecStream(stdFiles, aEnv, aFunc, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
         runner.Add(new SuiteCodecSeek(stdFiles, aEnv, aFunc, uri));
         runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, aFunc, uri));
-        runner.Add(new SuiteCodecInvalidType(aInvalidFiles, aEnv, aFunc, uri));
-        runner.Add(new SuiteCodecStream(aStreamOnlyFiles, aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecInvalidType(aFiles.InvalidFiles(), aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecStream(aFiles.StreamOnlyFiles(), aEnv, aFunc, uri));
     }
     runner.Run();
 }
