@@ -152,9 +152,13 @@ private: // from Protocol
 private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
+    Mutex iLock;
     std::vector<ToneGenerator*> iToneGenerators;
     // 1[ms] x 192000[Hz] x 8[channels] x 24[bit/channel] x 1/8[B/bit] = 4,608[B]
     Bws<4608> iAudioBuf;
+    TUint iStreamId;
+    TBool iStop;
+    TUint iNextFlushId;
 };
 
 } // namespace Media

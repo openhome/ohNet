@@ -30,6 +30,7 @@ Protocol* ProtocolFactory::NewTone(Environment& aEnv)
 // ProtocolTone
 ProtocolTone::ProtocolTone(Environment& aEnv)
     : Protocol(aEnv)
+    , iLock("PRTN")
     , iToneGenerators()
 {
     iToneGenerators.push_back(new ToneGeneratorSilence());
@@ -51,9 +52,16 @@ ProtocolTone::~ProtocolTone()
     }
 }
 
-TUint ProtocolTone::TryStop(TUint /* aTrackId */, TUint /* aStreamId */)
+TUint ProtocolTone::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    return MsgFlush::kIdInvalid;  // XXX
+    iLock.Wait();
+    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    if (stop) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        iStop = true;
+    }
+    iLock.Signal();
+    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
 // TUint ProtocolTone::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) { }
@@ -481,6 +489,10 @@ TInt32 ToneGeneratorConstant::Generate(TUint /*aOffset*/, TUint /*aMaxOffset*/)
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 {
+    iStreamId = ProtocolManager::kStreamIdInvalid;
+    iStop = false;
+    iNextFlushId = MsgFlush::kIdInvalid;
+
     if (!aUri.BeginsWith(Brn("tone://"))) {
         // quietly decline offer to handle other URL schemes; leave it to other protocol modules
         return EProtocolErrorNotSupported;
@@ -580,12 +592,19 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // need integer arithmetic, but cannot ignore potentially 5% error (e.g. 44100Hz sample rate with 13Hz pitch)
     const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.Pitch()) % params.SampleRate();
 
-    TUint streamId = iIdProvider->NextStreamId();  // indicate to pipeline that fresh stream is starting
-    iSupply->OutputStream(aUri, /*RIFF-WAVE*/ iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, streamId);
+    iStreamId = iIdProvider->NextStreamId();
+    iSupply->OutputStream(aUri, iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, iStreamId);
 
     TUint x = 0;
     TInt accRemain = 0;  // accumulation of error may tmp'ly be negative
     for (TUint i = 0; i < nSamples; ++i) {
+        iLock.Wait();
+        if (iStop) {
+            iAudioBuf.SetBytes(0); // discard any pending audio (avoiding another test of iStop beneath this loop)
+            iSupply->OutputFlush(iNextFlushId);
+            break;
+        }
+        iLock.Signal();
         // ensure sufficient capacity for another (multi-channel) audio sample
         if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
 #ifdef DEFINE_DEBUG_JOHNH
