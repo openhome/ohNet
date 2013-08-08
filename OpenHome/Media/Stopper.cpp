@@ -308,6 +308,8 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 void Stopper::DoBeginHalt()
 {
     ASSERT_DEBUG(iState != EFlushing);
-    iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+    if (iState != EHalting && iState != EHaltPending) {
+        iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+    }
     iState = EHalting;
 }
