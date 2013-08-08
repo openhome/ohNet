@@ -21,7 +21,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
 
 PipelineManager::~PipelineManager()
 {
-    iFiller->Stop();
+    RemoveAll();
     delete iPipeline;
     delete iProtocolManager;
     delete iFiller;
