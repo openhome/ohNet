@@ -20,31 +20,28 @@ namespace Codec {
 class AudioFileDescriptor
 {
 public:
-    enum ECodec
-    {
-        eCodecUnknown = 0,
-        eCodecWav = 1,
-        eCodecFlac = 2,
-        eCodecAlac = 3,
-        eCodecAac = 4,
-        eCodecVorbis = 5,
-    };
+    static const TUint kCodecUnknown  = 0;
+    static const TUint kCodecWav      = 1;
+    static const TUint kCodecFlac     = 2;
+    static const TUint kCodecAlac     = 3;
+    static const TUint kCodecAac      = 4;
+    static const TUint kCodecVorbis   = 5;
 public:
-    AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec);
+    AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec);
     const Brx& Filename() const;
     TUint SampleRate() const;
     TUint Samples() const;
     TUint64 Jiffies() const;
     TUint BitDepth() const;
     TUint Channels() const;
-    ECodec Codec() const;
+    TUint Codec() const;
 private:
     Brn iFilename;
     TUint iSampleRate;
     TUint iSamples;
     TUint iBitDepth;
     TUint iChannels;
-    ECodec iCodec;
+    TUint iCodec;
 };
 
 class AudioFileCollection
@@ -225,7 +222,7 @@ private: // from SuiteUnitTest
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
 private:
-    void TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec);
+    void TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec);
     void TestSeekingToStart();
     void TestSeekingToEnd();
     void TestSeekingBackwards();
@@ -247,7 +244,7 @@ public:
     SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri);
 private:
     ~SuiteCodecSeekFromStart();
-    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec);
+    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec);
     void TestSeekingToMiddle();
     void TestSeekingToEnd();
 public: // from MsgProcessor
@@ -278,7 +275,7 @@ private:
     TUint iLastCrossingByte;
     TUint iZeroCrossings;
     TUint iUnacceptableCrossingDeltas;
-    AudioFileDescriptor::ECodec iCodec;
+    TUint iCodec;
 };
 
 class SuiteCodecInvalidType : public SuiteCodecStream

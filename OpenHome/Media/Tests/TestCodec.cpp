@@ -1,4 +1,4 @@
-#include "TestCodec.h"
+#include <OpenHome/Media/Tests/TestCodec.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Media/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Msg.h>
@@ -30,7 +30,7 @@ using namespace OpenHome::Media::Codec;
 
 // AudioFileDescriptor
 
-AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec)
+AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec)
     : iFilename(aFilename)
     , iSampleRate(aSampleRate)
     , iSamples(aSamples)
@@ -77,7 +77,7 @@ TUint AudioFileDescriptor::Channels() const
     return iChannels;
 }
 
-AudioFileDescriptor::ECodec AudioFileDescriptor::Codec() const
+TUint AudioFileDescriptor::Codec() const
 {
     return iCodec;
 }
@@ -553,7 +553,7 @@ TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint 
     return jiffies;
 }
 
-void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec)
+void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec)
 {
     // Try seeking forward to end of file.
     iSeekPos = aSeekPos;
@@ -563,7 +563,7 @@ void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescr
     //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
 
-    if (aCodec != AudioFileDescriptor::eCodecVorbis) {
+    if (aCodec != AudioFileDescriptor::kCodecVorbis) {
         // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
@@ -576,7 +576,7 @@ void SuiteCodecSeek::TestSeekingToStart()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumStart].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumStart].Codec();
+    TUint codec = iFiles[iFileNumStart].Codec();
     iFileNumStart++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to start"), filename);
@@ -588,7 +588,7 @@ void SuiteCodecSeek::TestSeekingToEnd()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumEnd].Codec();
+    TUint codec = iFiles[iFileNumEnd].Codec();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to end"), filename);
@@ -600,7 +600,7 @@ void SuiteCodecSeek::TestSeekingBackwards()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumBack].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumBack].Codec();
+    TUint codec = iFiles[iFileNumBack].Codec();
     iFileNumBack++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking backwards"), filename);
@@ -612,7 +612,7 @@ void SuiteCodecSeek::TestSeekingForwards()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumForward].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumForward].Codec();
+    TUint codec = iFiles[iFileNumForward].Codec();
     iFileNumForward++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking forwards"), filename);
@@ -649,7 +649,7 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
     return aMsg;
 }
 
-void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec)
+void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec)
 {
     iSeekPos = aSeekPos;
     iSem.Wait();
@@ -658,7 +658,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekP
     //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
 
-    if (aCodec != AudioFileDescriptor::eCodecVorbis) {
+    if (aCodec != AudioFileDescriptor::kCodecVorbis) {
         // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
@@ -671,7 +671,7 @@ void SuiteCodecSeekFromStart::TestSeekingToMiddle()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumMiddle].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumMiddle].Codec();
+    TUint codec = iFiles[iFileNumMiddle].Codec();
     iFileNumMiddle++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to middle"), filename);
@@ -683,7 +683,7 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumEnd].Codec();
+    TUint codec = iFiles[iFileNumEnd].Codec();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
@@ -703,7 +703,7 @@ SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor
     , iLastCrossingByte(0)
     , iZeroCrossings(0)
     , iUnacceptableCrossingDeltas(0)
-    , iCodec(AudioFileDescriptor::eCodecUnknown)
+    , iCodec(AudioFileDescriptor::kCodecUnknown)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {

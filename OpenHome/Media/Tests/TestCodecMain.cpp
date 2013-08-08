@@ -1,8 +1,6 @@
-#include "TestCodec.h"
+#include <OpenHome/Media/Tests/TestCodec.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
-
-#include <vector>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
