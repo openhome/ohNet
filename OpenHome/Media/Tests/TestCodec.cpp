@@ -883,7 +883,7 @@ void SuiteCodecInvalidType::TestInvalidType()
 }
 
 
-void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, AudioFileCollection& aFiles, const std::vector<Brn>& aArgs)
+void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFileFunc, const std::vector<Brn>& aArgs)
 {
     Log::Print("TestCodec\n");
 
@@ -940,9 +940,10 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, AudioFileCo
     }
 
     // set up bare minimum files (and include extra files if full test being run)
-    std::vector<AudioFileDescriptor> stdFiles(aFiles.RequiredFiles());
+    AudioFileCollection* files = (*aFileFunc)();
+    std::vector<AudioFileDescriptor> stdFiles(files->RequiredFiles());
     if (testFull) {
-        for(std::vector<AudioFileDescriptor>::iterator it = aFiles.ExtraFiles().begin(); it != aFiles.ExtraFiles().end(); ++it) {
+        for(std::vector<AudioFileDescriptor>::iterator it = files->ExtraFiles().begin(); it != files->ExtraFiles().end(); ++it) {
             stdFiles.push_back(*it);
         }
     }
@@ -953,8 +954,10 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, AudioFileCo
         //runner.Add(new SuiteCodecStream(stdFiles, aEnv, aFunc, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
         runner.Add(new SuiteCodecSeek(stdFiles, aEnv, aFunc, uri));
         runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, aFunc, uri));
-        runner.Add(new SuiteCodecInvalidType(aFiles.InvalidFiles(), aEnv, aFunc, uri));
-        runner.Add(new SuiteCodecStream(aFiles.StreamOnlyFiles(), aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecInvalidType(files->InvalidFiles(), aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecStream(files->StreamOnlyFiles(), aEnv, aFunc, uri));
     }
     runner.Run();
+
+    delete files;
 }
