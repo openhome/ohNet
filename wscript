@@ -453,6 +453,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
                 'OpenHome/Media/Tests/TestVolumeManager.cpp',
+                'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -466,7 +467,7 @@ def build(bld):
             target='ohMediaPlayerTestUtils')
 
     bld.program(
-           source='OpenHome/Media/Tests/TestShell.cpp',
+           source='OpenHome/Media/Tests/TestShellMain.cpp',
            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
            target='TestShell')
     bld.program(
