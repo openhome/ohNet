@@ -40,14 +40,14 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
 MediaPlayer::~MediaPlayer()
 {
     ASSERT(!iDevice.Enabled());
-    delete iInfo;
-    delete iTime;
     delete iPipeline;
-    delete iTrackFactory;
     delete iProduct;
+    delete iTime;
+    delete iInfo;
     delete iKvpStore;
     delete iInfoLogger;
     delete iPipelineObserver;
+    delete iTrackFactory;
 }
 
 void MediaPlayer::Add(Codec::CodecBase* aCodec)
