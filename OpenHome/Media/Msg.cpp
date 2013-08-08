@@ -1993,6 +1993,7 @@ Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
 
 Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
 {
+    iQueue.StopFlushing();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
