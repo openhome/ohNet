@@ -27,7 +27,7 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.20",
+        "version":          "0.1.22",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
@@ -44,7 +44,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.150",
+        "version":          "0.0.151",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv6": false,
