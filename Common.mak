@@ -438,6 +438,14 @@ $(objdir)TestBuffer.$(objext) : OpenHome/Tests/TestBuffer.cpp $(headers)
 $(objdir)TestBufferMain.$(objext) : OpenHome/Tests/TestBufferMain.cpp $(headers)
 	$(compiler)TestBufferMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestBufferMain.cpp
 
+TestException: $(objdir)TestException.$(exeext) 
+$(objdir)TestException.$(exeext) :  ohNetCore $(objdir)TestException.$(objext) $(objdir)TestExceptionMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestException.$(exeext) $(objdir)TestExceptionMain.$(objext) $(objdir)TestException.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestException.$(objext) : OpenHome/Tests/TestException.cpp $(headers)
+	$(compiler)TestException.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestException.cpp
+$(objdir)TestExceptionMain.$(objext) : OpenHome/Tests/TestExceptionMain.cpp $(headers)
+	$(compiler)TestExceptionMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestExceptionMain.cpp
+
 TestFile: $(objdir)TestFile.$(exeext) 
 $(objdir)TestFile.$(exeext) :  ohNetCore $(objdir)TestFile.$(objext) $(objdir)TestFileMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestFile.$(exeext) $(objdir)TestFileMain.$(objext) $(objdir)TestFile.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -738,6 +746,7 @@ tests_core = \
 	$(objdir)TestDvSubscription.$(objext) \
 	$(objdir)TestBasicDvCore.$(objext) \
 	$(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
+	$(objdir)TestException.$(objext) \
 	$(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 
 TestsCore: $(tests_core)
