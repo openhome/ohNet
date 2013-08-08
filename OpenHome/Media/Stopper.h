@@ -78,7 +78,7 @@ private:
     Mutex iLock;
     Semaphore iSem;
     EState iState;
-    TUint iRampDuration;
+    const TUint iRampDuration;
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp

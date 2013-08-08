@@ -77,6 +77,7 @@ void CodecWav::StreamInitialise()
     iAudioBytesTotal = 0;
     iAudioBytesRemaining = 0;
     iTrackOffset = 0;
+    iReadBuf.SetBytes(0);
 }
 
 void CodecWav::Process()

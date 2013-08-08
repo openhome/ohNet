@@ -34,7 +34,7 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     , iProtocolInfo(aProtocolInfo)
     , iTimerActive(false)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderPlaylist::TimerCallabck));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderPlaylist::TimerCallback));
     iDatabase.AddObserver(*this);
 
     EnablePropertyTransportState();
@@ -425,7 +425,7 @@ void ProviderPlaylist::UpdateIdArrayProperty()
     (void)SetPropertyIdArray(iIdArrayBuf);
 }
 
-void ProviderPlaylist::TimerCallabck()
+void ProviderPlaylist::TimerCallback()
 {
     AutoMutex a(iLock);
     iTimerActive = false;

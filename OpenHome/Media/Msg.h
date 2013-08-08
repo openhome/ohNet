@@ -85,8 +85,8 @@ private:
     virtual void Clear();
 protected:
     AllocatorBase& iAllocator;
+    mutable Mutex iLock;
 private:
-    Mutex iLock;
     TUint iRefCount;
 };
 
@@ -261,7 +261,6 @@ class MsgAudio : public Msg
     friend class MsgFactory;
 public:
     MsgAudio* Split(TUint aJiffies); // returns block after aAt
-    //void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
     TUint SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
@@ -269,13 +268,11 @@ public:
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
-protected: // from Msg
-    void Clear();
 private:
     virtual MsgAudio* Allocate() = 0;
+    MsgAudio* DoSplit(TUint aJiffies);
     virtual void SplitCompleted(MsgAudio& aRemaining);
 protected:
-    MsgAudio* iNextAudio;
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
     Media::Ramp iRamp;

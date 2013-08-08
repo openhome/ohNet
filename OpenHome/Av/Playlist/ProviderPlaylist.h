@@ -77,7 +77,7 @@ private:
     void SetShuffle(TBool aShuffle);
     void UpdateIdArray();
     void UpdateIdArrayProperty();
-    void TimerCallabck();
+    void TimerCallback();
 private:
     Mutex iLock;
     ISourcePlaylist& iSource;

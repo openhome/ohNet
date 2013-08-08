@@ -49,19 +49,19 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
 MediaPlayer::~MediaPlayer()
 {
     ASSERT(!iDevice.Enabled());
-    delete iInfo;
+    delete iPipeline;
+    delete iProduct;
     delete iTime;
+    delete iInfo;
     delete iVolume;
     delete iMuteManager;
     delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
-    delete iPipeline;
-    delete iTrackFactory;
-    delete iProduct;
     delete iKvpStore;
     delete iInfoLogger;
     delete iPipelineObserver;
+    delete iTrackFactory;
 }
 
 void MediaPlayer::Add(Codec::CodecBase* aCodec)
