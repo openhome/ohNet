@@ -136,13 +136,14 @@ public:
     TBool SeekCurrentTrack(TUint aSecondsAbsolute);
 protected:
     virtual void RegisterPlugins();
+protected:
+    Container* iContainer;
+    CodecController* iController;
 private:
     TestCodecInfoAggregator* iInfoAggregator;
     MsgFactory* iMsgFactory;
     TestCodecPipelineElementDownstream* iElementDownstream;
     EncodedAudioReservoir* iReservoir;
-    Container* iContainer;
-    CodecController* iController;
     Supply* iSupply;
     TestCodecFlushIdProvider* iFlushIdProvider;
     TestCodecFiller* iFiller;
