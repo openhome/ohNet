@@ -271,8 +271,6 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     iSupply = new Supply(*iMsgFactory, *iReservoir);
     iFlushIdProvider = new TestCodecFlushIdProvider();
     iFiller = new TestCodecFiller(aEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
-
-    RegisterPlugins();
 }
 
 TestCodecMinimalPipeline::~TestCodecMinimalPipeline()
@@ -290,6 +288,7 @@ TestCodecMinimalPipeline::~TestCodecMinimalPipeline()
 
 void TestCodecMinimalPipeline::StartPipeline()
 {
+    RegisterPlugins();
     iController->Start();
 }
 
