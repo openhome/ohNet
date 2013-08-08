@@ -51,10 +51,11 @@ private: // from IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+protected:
+    Pipeline* iPipeline;
 private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
-    Pipeline* iPipeline;
     SimpleSongcastingDriver* iDriver;
     Brh iUrl;
     TUint iSeconds;

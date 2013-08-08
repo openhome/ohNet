@@ -83,8 +83,6 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
-    RegisterPlugins();
-    iPipeline->Start();
 
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
 }
@@ -98,6 +96,8 @@ TestProtocol::~TestProtocol()
 
 int TestProtocol::Run()
 {
+    RegisterPlugins();
+    iPipeline->Start();
     iFiller->Start(iUrl);
 
     TBool playing = false;
