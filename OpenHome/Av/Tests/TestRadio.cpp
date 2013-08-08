@@ -36,14 +36,12 @@ TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderU
 {
     iPipeline = new PipelineManager(iInfoLogger, SimpleSongcastingDriver::kMaxDriverJiffies);
     iPipeline->AddObserver(*this);
-    Environment& env = aDvStack.Env();
-    RegisterPlugins(env);
+    iEnv = &aDvStack.Env();
 
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
     iPipeline->Add(iUriProvider);
-    iPipeline->Start();
 //    iSourceUpnpAv = new DummySourceUpnpAv(aDvStack, *iPipeline, *iUriProvider);
 }
 
@@ -54,12 +52,15 @@ TestRadio::~TestRadio()
 //    delete iSourceUpnpAv;
     delete iUriProvider;
     delete iTrackFactory;
+    delete iEnv;
 }
 
 void TestRadio::Run(PresetDatabase& aDb)
 {
     Log::Print("\nRadio test.  Press 'q' to quit:\n");
     Log::Print("\n");
+    RegisterPlugins(*iEnv);
+    iPipeline->Start();
     for (;;) {
         int ch = mygetch();
         if (ch == 'q') {
