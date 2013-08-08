@@ -4,6 +4,8 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/VolumeManager.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
@@ -12,6 +14,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
+#include <OpenHome/Av/ProviderVolume.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -31,10 +34,16 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
     iPipeline->AddObserver(*iPipelineObserver);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, *iInfoLogger);
+    iMuteManager = new MuteManager();
+    iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
+    iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
+    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware);
     iTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
+    iVolume = new ProviderVolume(aDevice, *iMuteManager, *iVolumeManager);
+    iProduct->AddAttribute("Volume");
 }
 
 MediaPlayer::~MediaPlayer()
@@ -44,6 +53,11 @@ MediaPlayer::~MediaPlayer()
     delete iProduct;
     delete iTime;
     delete iInfo;
+    delete iVolume;
+    delete iMuteManager;
+    delete iVolumeManager;
+    delete iLeftVolumeHardware;   // XXX dummy ...
+    delete iRightVolumeHardware;  // XXX volume hardware
     delete iKvpStore;
     delete iInfoLogger;
     delete iPipelineObserver;

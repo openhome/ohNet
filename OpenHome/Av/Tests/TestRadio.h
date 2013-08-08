@@ -31,9 +31,11 @@ private: // from Media::IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
-private:
-    Media::AllocatorInfoLogger iInfoLogger;
+protected:
     Media::PipelineManager* iPipeline;
+private:
+    Environment* iEnv;
+    Media::AllocatorInfoLogger iInfoLogger;
     Media::TrackFactory* iTrackFactory;
     Media::SimpleSongcastingDriver* iDriver;
     Media::UriProviderSingleTrack* iUriProvider;

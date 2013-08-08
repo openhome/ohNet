@@ -12,6 +12,9 @@ namespace Net {
 }
 namespace Media {
     class PipelineManager;
+    class IMuteManager;
+    class IVolume;  // XXX dummy volume hardware
+    class IVolumeManagerLimits;
     class UriProvider;
     class Protocol;
     class ContentProcessor;
@@ -31,6 +34,7 @@ class IPersister;
 class Product;
 class ProviderTime;
 class ProviderInfo;
+class ProviderVolume;
 class KvpStore;
 
 class IMediaPlayer
@@ -74,8 +78,13 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Product* iProduct;
+    Media::IMuteManager* iMuteManager;
+    Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
+    Media::IVolume* iRightVolumeHardware;  // XXX volume hardware
+    Media::IVolumeManagerLimits* iVolumeManager;
     ProviderTime* iTime;
     ProviderInfo* iInfo;
+    ProviderVolume* iVolume;
     KvpStore* iKvpStore;
 };
 

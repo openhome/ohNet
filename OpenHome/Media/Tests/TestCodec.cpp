@@ -1,3 +1,4 @@
+#include <OpenHome/Media/Tests/TestCodec.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Media/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Msg.h>
@@ -26,249 +27,10 @@ using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
-namespace OpenHome {
-namespace Media {
-namespace Codec {
-
-class AudioFileDescriptor
-{
-public:
-    enum ECodec
-    {
-        eCodecUnknown = 0,
-        eCodecWav = 1,
-        eCodecFlac = 2,
-        eCodecAlac = 3,
-        eCodecAac = 4,
-        eCodecVorbis = 5,
-    };
-public:
-    AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec);
-    const Brx& Filename() const;
-    TUint SampleRate() const;
-    TUint Samples() const;
-    TUint64 Jiffies() const;
-    TUint BitDepth() const;
-    TUint Channels() const;
-    ECodec Codec() const;
-private:
-    Brn iFilename;
-    TUint iSampleRate;
-    TUint iSamples;
-    TUint iBitDepth;
-    TUint iChannels;
-    ECodec iCodec;
-};
-
-class TestCodecInfoAggregator : public Av::IInfoAggregator
-{
-public:
-    TestCodecInfoAggregator();
-    virtual ~TestCodecInfoAggregator();
-public: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
-};
-
-class TestCodecFlushIdProvider : public IFlushIdProvider
-{
-public:
-    TestCodecFlushIdProvider();
-    ~TestCodecFlushIdProvider();
-public: // from IFlushIdProvider
-    TUint NextFlushId();
-private:
-    TUint iFlushId;
-};
-
-class TestCodecFiller : public Thread, private IPipelineIdProvider
-{
-private:
-    static const TUint kInvalidPipelineId = 0;
-public:
-    TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
-    ~TestCodecFiller();
-    void Start(const Brx& aUrl);
-    TUint TrackId();
-    TUint StreamId();
-private: // from Thread
-    void Run();
-private: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-private:
-    ProtocolManager* iProtocolManager;
-    TrackFactory* iTrackFactory;
-    ISupply& iSupply;
-    Brn iUrl;
-    TUint iNextTrackId;
-    TUint iNextStreamId;
-};
-
-class TestCodecPipelineElementDownstream : public IPipelineElementDownstream, private INonCopyable
-{
-public:
-    TestCodecPipelineElementDownstream(IMsgProcessor& aMsgProcessor);
-    virtual ~TestCodecPipelineElementDownstream();
-public: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
-private:
-    IMsgProcessor& iMsgProcessor;
-};
-
-class MsgProcessor : public IMsgProcessor, public INonCopyable
-{
-public:
-    MsgProcessor(Semaphore& aSem);
-    ~MsgProcessor();
-public: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
-    Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgEncodedStream* aMsg);
-    Msg* ProcessMsg(MsgMetaText* aMsg);
-    Msg* ProcessMsg(MsgHalt* aMsg);
-    Msg* ProcessMsg(MsgFlush* aMsg);
-    Msg* ProcessMsg(MsgQuit* aMsg);
-private:
-    Semaphore& iSem;
-};
-
-class SuiteCodecStream : public SuiteUnitTest, public MsgProcessor
-{
-public:
-    static const Brn kPrefixHttp;
-    static const TUint kLenPrefixHttp;
-    static const TUint kMaxUriBytes;
-public:
-    SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-protected:
-    SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-    ~SuiteCodecStream();
-    Brx* StartStreaming(const Brx& aTestName, const Brx& aFilename);
-private:
-    void TestJiffies();
-protected: // from SuiteUnitTest
-    virtual void Setup();
-    virtual void TearDown();
-public: // from MsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-protected:
-    TUint64 iJiffies;
-    Environment& iEnv;
-    const Uri& iUri;
-    Bwh iFileLocation;
-    Semaphore iSem;
-    MsgFactory* iMsgFactory;
-    TestCodecPipelineElementDownstream* iElementDownstream;
-    EncodedAudioReservoir* iReservoir;
-    Supply* iSupply;
-    TestCodecFlushIdProvider* iFlushIdProvider;
-    TestCodecFiller* iFiller;
-    TestCodecInfoAggregator* iInfoAggregator;
-    Container* iContainer;
-    CodecController* iController;
-    std::vector<AudioFileDescriptor>& iFiles;
-protected:
-    TUint iFileNum;
-protected:
-    static const TUint kEncodedReservoirSizeBytes = 12 * 1024; // in practice, this can be ~500kB, but it must be limited for seek testing
-    static const TUint kMaxFilenameLen = 100;    // max filename length
-    static const TUint kDuration = 10;          // Test file duration (in seconds).
-    static const TUint kTotalJiffies = kDuration * Jiffies::kJiffiesPerSecond;
-    static const TUint kFrequencyHz = 1000;
-};
-
-class SuiteCodecSeek : public SuiteCodecStream
-{
-public:
-    SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-protected:
-    SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-    ~SuiteCodecSeek();
-    static TUint64 ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos);
-private: // from SuiteUnitTest
-    void Setup();
-public: // from MsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-private:
-    void TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec);
-    void TestSeekingToStart();
-    void TestSeekingToEnd();
-    void TestSeekingBackwards();
-    void TestSeekingForwards();
-protected:
-    TBool iSeek;
-    TUint iSeekPos;
-    TBool iSeekSuccess;
-private:
-    TUint iFileNumStart;
-    TUint iFileNumEnd;
-    TUint iFileNumBack;
-    TUint iFileNumForward;
-};
-
-class SuiteCodecSeekFromStart : public SuiteCodecSeek
-{
-public:
-    SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-private:
-    ~SuiteCodecSeekFromStart();
-    void TestSeekingFromStart(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec);
-    void TestSeekingToMiddle();
-    void TestSeekingToEnd();
-public: // from MsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-private:
-    TUint iFileNumMiddle;
-    TUint iFileNumEnd;
-};
-
-class SuiteCodecZeroCrossings : public SuiteCodecStream
-{
-public:
-    SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-private:
-    ~SuiteCodecZeroCrossings();
-    void TestCrossingDelta();
-    Msg* TestSimilarity(MsgAudioPcm* aMsg);
-    void TestZeroCrossings();
-private: // from SuiteUnitTest
-    void Setup();
-public: // from MsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-private:
-    TUint iSampleRate;
-    TUint iBitDepth;
-    TUint iChannels;
-    TUint iBytesProcessed;
-    TUint iLastCrossingByte;
-    TUint iZeroCrossings;
-    TUint iUnacceptableCrossingDeltas;
-    AudioFileDescriptor::ECodec iCodec;
-};
-
-class SuiteCodecInvalidType : public SuiteCodecStream
-{
-public:
-    SuiteCodecInvalidType(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri);
-protected:
-    ~SuiteCodecInvalidType();
-private:
-    void TestInvalidType();
-};
-
-} // Codec
-} // Media
-} // OpenHome
-
 
 // AudioFileDescriptor
 
-AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, ECodec aCodec)
+AudioFileDescriptor::AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec)
     : iFilename(aFilename)
     , iSampleRate(aSampleRate)
     , iSamples(aSamples)
@@ -315,9 +77,100 @@ TUint AudioFileDescriptor::Channels() const
     return iChannels;
 }
 
-AudioFileDescriptor::ECodec AudioFileDescriptor::Codec() const
+TUint AudioFileDescriptor::Codec() const
 {
     return iCodec;
+}
+
+
+// AudioFileCollection
+
+AudioFileCollection::AudioFileCollection()
+{
+}
+
+AudioFileCollection::AudioFileCollection(std::vector<AudioFileDescriptor> aReqFiles
+                  , std::vector<AudioFileDescriptor> aExtraFiles
+                  , std::vector<AudioFileDescriptor> aInvalidFiles
+                  , std::vector<AudioFileDescriptor> aStreamOnlyFiles
+                  )
+    : iReqFiles(aReqFiles)
+    , iExtraFiles(aExtraFiles)
+    , iInvalidFiles(aInvalidFiles)
+    , iStreamOnlyFiles(aStreamOnlyFiles)
+{
+}
+
+
+void AudioFileCollection::AddRequiredFile(AudioFileDescriptor aFile)
+{
+    iReqFiles.push_back(aFile);
+}
+
+void AudioFileCollection::AddExtraFile(AudioFileDescriptor aFile)
+{
+    iExtraFiles.push_back(aFile);
+}
+
+void AudioFileCollection::AddInvalidFile(AudioFileDescriptor aFile)
+{
+    iInvalidFiles.push_back(aFile);
+}
+
+void AudioFileCollection::AddStreamOnlyFile(AudioFileDescriptor aFile)
+{
+    iStreamOnlyFiles.push_back(aFile);
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::RequiredFiles()
+{
+    return iReqFiles;
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::ExtraFiles()
+{
+    return iExtraFiles;
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::InvalidFiles()
+{
+    return iInvalidFiles;
+}
+
+std::vector<AudioFileDescriptor>& AudioFileCollection::StreamOnlyFiles()
+{   return iStreamOnlyFiles;
+}
+
+
+// TestCodecInfoAggregator
+
+TestCodecInfoAggregator::TestCodecInfoAggregator()
+{
+}
+
+TestCodecInfoAggregator::~TestCodecInfoAggregator()
+{
+}
+
+void TestCodecInfoAggregator::Register(Av::IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
+{
+}
+
+
+//class TestCodecFlushIdProvider
+
+TestCodecFlushIdProvider::TestCodecFlushIdProvider()
+    : iFlushId(MsgFlush::kIdInvalid+1)
+{
+}
+
+TestCodecFlushIdProvider::~TestCodecFlushIdProvider()
+{
+}
+
+TUint TestCodecFlushIdProvider::NextFlushId()
+{
+    return iFlushId++;
 }
 
 
@@ -383,20 +236,85 @@ EStreamPlay TestCodecFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 }
 
 
-//class TestCodecFlushIdProvider
+// TestCodecPipelineElementDownstream
 
-TestCodecFlushIdProvider::TestCodecFlushIdProvider()
-    : iFlushId(MsgFlush::kIdInvalid+1)
+TestCodecPipelineElementDownstream::TestCodecPipelineElementDownstream(IMsgProcessor& aMsgProcessor)
+    : iMsgProcessor(aMsgProcessor)
 {
 }
 
-TestCodecFlushIdProvider::~TestCodecFlushIdProvider()
+TestCodecPipelineElementDownstream::~TestCodecPipelineElementDownstream()
 {
 }
 
-TUint TestCodecFlushIdProvider::NextFlushId()
+void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
 {
-    return iFlushId++;
+    //LOG(kMedia, ">TestCodecPipelineElementDownstream::Push\n");
+    aMsg->Process(iMsgProcessor);
+    if (aMsg != NULL) {
+        aMsg->RemoveRef();
+    }
+}
+
+
+// TestCodecMinimalPipeline
+
+TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor)
+{
+    iInfoAggregator = new TestCodecInfoAggregator();
+    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
+    iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
+    iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    iContainer = new Container(*iMsgFactory, *iReservoir);
+    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
+    iSupply = new Supply(*iMsgFactory, *iReservoir);
+    iFlushIdProvider = new TestCodecFlushIdProvider();
+    iFiller = new TestCodecFiller(aEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
+}
+
+TestCodecMinimalPipeline::~TestCodecMinimalPipeline()
+{
+    delete iFiller;
+    delete iFlushIdProvider;
+    delete iSupply;
+    delete iController;
+    delete iContainer;
+    delete iMsgFactory;
+    delete iReservoir;
+    delete iElementDownstream;
+    delete iInfoAggregator;
+}
+
+void TestCodecMinimalPipeline::StartPipeline()
+{
+    RegisterPlugins();
+    iController->Start();
+}
+
+void TestCodecMinimalPipeline::StartStreaming(const Brx& aUrl)
+{
+    iFiller->Start(aUrl);
+}
+
+TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute)
+{
+    return iController->Seek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute);
+}
+
+void TestCodecMinimalPipeline::RegisterPlugins()
+{
+    // Add containers
+    iContainer->AddContainer(new Id3v2());
+    iContainer->AddContainer(new Mpeg4Start());
+
+    // Add codecs
+    // These can be re-ordered to check for problems in the recognise function of each codec.
+    iController->AddCodec(CodecFactory::NewWav());
+    iController->AddCodec(CodecFactory::NewFlac());
+    iController->AddCodec(CodecFactory::NewAac());
+    iController->AddCodec(CodecFactory::NewAlac());
+    iController->AddCodec(CodecFactory::NewVorbis());
 }
 
 
@@ -483,7 +401,7 @@ const Brn SuiteCodecStream::kPrefixHttp("http://");;
 const TUint SuiteCodecStream::kLenPrefixHttp = sizeof("http://")-1;
 const TUint SuiteCodecStream::kMaxUriBytes = Endpoint::kMaxEndpointBytes + kLenPrefixHttp;
 
-SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
+SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
     : SuiteUnitTest("Codec stream tests")
     , MsgProcessor(iSem)
     , iJiffies(0)
@@ -491,9 +409,10 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     , iUri(aUri)
     , iFileLocation(iUri.AbsoluteUri().Bytes()+kMaxFilenameLen)
     , iSem("TCO1", 0)
-    , iController(NULL)
+    , iPipeline(NULL)
     , iFiles(aFiles)
     , iFileNum(0)
+    , iCreatePipeline(aFunc)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
@@ -501,7 +420,7 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     }
 }
 
-SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
+SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
     : SuiteUnitTest(aSuiteName)
     , MsgProcessor(iSem)
     , iJiffies(0)
@@ -509,9 +428,10 @@ SuiteCodecStream::SuiteCodecStream(const TChar* aSuiteName, std::vector<AudioFil
     , iUri(aUri)
     , iFileLocation(iUri.AbsoluteUri().Bytes()+kMaxFilenameLen)
     , iSem("TCO1", 0)
-    , iController(NULL)
+    , iPipeline(NULL)
     , iFiles(aFiles)
     , iFileNum(0)
+    , iCreatePipeline(aFunc)
 {
 }
 
@@ -523,41 +443,13 @@ void SuiteCodecStream::Setup()
 {
     iJiffies = 0;
 
-    iInfoAggregator = new TestCodecInfoAggregator();
-    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
-    // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
-    iElementDownstream = new TestCodecPipelineElementDownstream(*this);
-    iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
-    iContainer = new Container(*iMsgFactory, *iReservoir);
-    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
-    iSupply = new Supply(*iMsgFactory, *iReservoir);
-    iFlushIdProvider = new TestCodecFlushIdProvider();
-    iFiller = new TestCodecFiller(iEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
-
-    iContainer->AddContainer(new Id3v2());
-    iContainer->AddContainer(new Mpeg4Start());
-
-    // These can be re-ordered to check for problems in the recognise function of each codec.
-    iController->AddCodec(CodecFactory::NewWav());
-    iController->AddCodec(CodecFactory::NewFlac());
-    iController->AddCodec(CodecFactory::NewAac());
-    iController->AddCodec(CodecFactory::NewAlac());
-    iController->AddCodec(CodecFactory::NewVorbis());
-
-    iController->Start();
+    iPipeline = (*iCreatePipeline)(iEnv, *this);
+    iPipeline->StartPipeline();
 }
 
 void SuiteCodecStream::TearDown()
 {
-    delete iFiller;
-    delete iFlushIdProvider;
-    delete iSupply;
-    delete iController;
-    delete iContainer;
-    delete iMsgFactory;
-    delete iReservoir;
-    delete iElementDownstream;
-    delete iInfoAggregator;
+    delete iPipeline;
 }
 
 Msg* SuiteCodecStream::ProcessMsg(MsgAudioPcm* aMsg)
@@ -580,7 +472,7 @@ Brx* SuiteCodecStream::StartStreaming(const Brx& aTestName, const Brx& aFilename
     fileLocation->Replace(iUri.AbsoluteUri());
     fileLocation->Append("/");
     fileLocation->Append(aFilename);
-    iFiller->Start(*fileLocation);
+    iPipeline->StartStreaming(*fileLocation);
     return fileLocation;
 }
 
@@ -602,8 +494,8 @@ void SuiteCodecStream::TestJiffies()
 
 // SuiteCodecSeek
 
-SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream("Codec seek tests", aFiles, aEnv, aUri)
+SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream("Codec seek tests", aFiles, aEnv, aFunc, aUri)
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
@@ -621,8 +513,8 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     }
 }
 
-SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream(aSuiteName, aFiles, aEnv, aUri)
+SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream(aSuiteName, aFiles, aEnv, aFunc, aUri)
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
@@ -641,7 +533,7 @@ Msg* SuiteCodecSeek::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek && (iJiffies >= SuiteCodecStream::kTotalJiffies/2)) {
-        iSeekSuccess = iController->Seek(iFiller->TrackId(), iFiller->StreamId(), iSeekPos);
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
         iSeek = false;
     }
     return aMsg;
@@ -661,7 +553,7 @@ TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint 
     return jiffies;
 }
 
-void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec)
+void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec)
 {
     // Try seeking forward to end of file.
     iSeekPos = aSeekPos;
@@ -671,7 +563,7 @@ void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, AudioFileDescr
     //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
 
-    if (aCodec != AudioFileDescriptor::eCodecVorbis) {
+    if (aCodec != AudioFileDescriptor::kCodecVorbis) {
         // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
@@ -684,7 +576,7 @@ void SuiteCodecSeek::TestSeekingToStart()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumStart].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumStart].Codec();
+    TUint codec = iFiles[iFileNumStart].Codec();
     iFileNumStart++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to start"), filename);
@@ -696,7 +588,7 @@ void SuiteCodecSeek::TestSeekingToEnd()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumEnd].Codec();
+    TUint codec = iFiles[iFileNumEnd].Codec();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking to end"), filename);
@@ -708,7 +600,7 @@ void SuiteCodecSeek::TestSeekingBackwards()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumBack].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumBack].Codec();
+    TUint codec = iFiles[iFileNumBack].Codec();
     iFileNumBack++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking backwards"), filename);
@@ -720,7 +612,7 @@ void SuiteCodecSeek::TestSeekingForwards()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumForward].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumForward].Codec();
+    TUint codec = iFiles[iFileNumForward].Codec();
     iFileNumForward++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeek seeking forwards"), filename);
@@ -731,8 +623,8 @@ void SuiteCodecSeek::TestSeekingForwards()
 
 // SuiteCodecSeekFromStart
 
-SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecSeek("Codec seek from start tests", aFiles, aEnv, aUri)
+SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecSeek("Codec seek from start tests", aFiles, aEnv, aFunc, aUri)
     , iFileNumMiddle(0)
     , iFileNumEnd(0)
 {
@@ -751,13 +643,13 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek) {
-        iSeekSuccess = iController->Seek(iFiller->TrackId(), iFiller->StreamId(), iSeekPos);
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
         iSeek = false;
     }
     return aMsg;
 }
 
-void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, AudioFileDescriptor::ECodec aCodec)
+void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekPos, TUint aCodec)
 {
     iSeekPos = aSeekPos;
     iSem.Wait();
@@ -766,7 +658,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekP
     //Log::Print("iJiffies: %llu, expectedJiffies: %llu\n", iJiffies, expectedJiffies);
     TEST(iSeekSuccess);
 
-    if (aCodec != AudioFileDescriptor::eCodecVorbis) {
+    if (aCodec != AudioFileDescriptor::kCodecVorbis) {
         // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
@@ -779,7 +671,7 @@ void SuiteCodecSeekFromStart::TestSeekingToMiddle()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumMiddle].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumMiddle].Codec();
+    TUint codec = iFiles[iFileNumMiddle].Codec();
     iFileNumMiddle++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to middle"), filename);
@@ -791,7 +683,7 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
 {
     TUint duration = SuiteCodecStream::kDuration;
     Brn filename(iFiles[iFileNumEnd].Filename());
-    AudioFileDescriptor::ECodec codec = iFiles[iFileNumEnd].Codec();
+    TUint codec = iFiles[iFileNumEnd].Codec();
     iFileNumEnd++;
 
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecSeekFromStart seeking to end"), filename);
@@ -802,8 +694,8 @@ void SuiteCodecSeekFromStart::TestSeekingToEnd()
 
 // SuiteCodecZeroCrossings
 
-SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream("Codec zero crossing tests", aFiles, aEnv, aUri)
+SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream("Codec zero crossing tests", aFiles, aEnv, aFunc, aUri)
     , iSampleRate(0)
     , iBitDepth(0)
     , iChannels(0)
@@ -811,7 +703,7 @@ SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor
     , iLastCrossingByte(0)
     , iZeroCrossings(0)
     , iUnacceptableCrossingDeltas(0)
-    , iCodec(AudioFileDescriptor::eCodecUnknown)
+    , iCodec(AudioFileDescriptor::kCodecUnknown)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
@@ -924,6 +816,8 @@ Msg* SuiteCodecZeroCrossings::ProcessMsg(MsgAudioPcm* aMsg)
 
 void SuiteCodecZeroCrossings::TestZeroCrossings()
 {
+    TUint timeStart;
+    TUint timeEnd;
     Brn filename(iFiles[iFileNum].Filename());
     TUint64 jiffies = iFiles[iFileNum].Jiffies();
     iSampleRate = iFiles[iFileNum].SampleRate();
@@ -936,9 +830,15 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     const TUint sineWaves = (TUint)jiffies/jiffiesPerSine;
     const TUint expectedZeroCrossings = sineWaves*2 - 1;
 
+    timeStart = Time::Now(iEnv);
     Brx* fileLocation = StartStreaming(Brn("SuiteCodecZeroCrossings"), filename);
     iSem.Wait();
     delete fileLocation;
+
+    timeEnd = Time::Now(iEnv);
+    Log::Print("TestCodec ");
+    Log::Print(filename);
+    Log::Print(" start: %ums, end: %ums, duration: %us (%ums)\n", timeStart, timeEnd, (timeEnd-timeStart)/1000, timeEnd-timeStart);
 
     Log::Print("iJiffies: %llu, track jiffies: %llu\n", iJiffies, jiffies);
     TEST(iJiffies == jiffies);
@@ -953,8 +853,8 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
 
 // SuiteCodecInvalidType
 
-SuiteCodecInvalidType::SuiteCodecInvalidType(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, const Uri& aUri)
-    : SuiteCodecStream("Codec invalid type tests", aFiles, aEnv, aUri)
+SuiteCodecInvalidType::SuiteCodecInvalidType(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
+    : SuiteCodecStream("Codec invalid type tests", aFiles, aEnv, aFunc, aUri)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
@@ -982,42 +882,7 @@ void SuiteCodecInvalidType::TestInvalidType()
 }
 
 
-// TestCodecPipelineElementDownstream
-
-TestCodecPipelineElementDownstream::TestCodecPipelineElementDownstream(IMsgProcessor& aMsgProcessor)
-    : iMsgProcessor(aMsgProcessor)
-{
-}
-
-TestCodecPipelineElementDownstream::~TestCodecPipelineElementDownstream()
-{
-}
-
-void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
-{
-    //LOG(kMedia, ">TestCodecPipelineElementDownstream::Push\n");
-    aMsg->Process(iMsgProcessor);
-    if (aMsg != NULL) {
-        aMsg->RemoveRef();
-    }
-}
-
-
-// TestCodecInfoAggregator
-
-TestCodecInfoAggregator::TestCodecInfoAggregator()
-{
-}
-
-TestCodecInfoAggregator::~TestCodecInfoAggregator()
-{
-}
-
-void TestCodecInfoAggregator::Register(Av::IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
-{
-}
-
-void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
+void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFileFunc, const std::vector<Brn>& aArgs)
 {
     Log::Print("TestCodec\n");
 
@@ -1073,58 +938,25 @@ void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs)
         testFull = false;
     }
 
-    // test file vectors
-    std::vector<AudioFileDescriptor> stdFiles;
-    std::vector<AudioFileDescriptor> invalidFiles;
-    std::vector<AudioFileDescriptor> streamOnlyFiles;
-
-    // core testing files
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k.wav"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecWav));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecFlac));
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecAlac));
-    // AAC encoders can add/drop samples from start of files.
-    // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac.m4a"), 44100, 443392-1024, 16, 2, AudioFileDescriptor::eCodecAac));
-    // Vorbis files
-    stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
-
-
+    // set up bare minimum files (and include extra files if full test being run)
+    AudioFileCollection* files = (*aFileFunc)();
+    std::vector<AudioFileDescriptor> stdFiles(files->RequiredFiles());
     if (testFull) {
-        // additional valid testing files
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecWav));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecFlac));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::eCodecFlac));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecFlac));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecAlac));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::eCodecAlac));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::eCodecAac));
-        stdFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-q5.ogg"), 44100, 441000, 16, 1, AudioFileDescriptor::eCodecVorbis));
-
-
-        // Some files that shouldn't play with any codec.
-        invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_long_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));            // Large invalid file.
-        invalidFiles.push_back(AudioFileDescriptor(Brn("invalid_short_file"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));       // Small invalid file.
-        // MP4 with moov atom after mdat atom.
-        // Currently can't handle this type of file, so check we at least fail to handle them gracefully.
-        invalidFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aac-moov_end.m4a"), 0, 0, 16, 1, AudioFileDescriptor::eCodecUnknown));
-
-
-        // Files to check behaviour of codec wrappers (and/or container), other than their decoding behaviour.
-        // File with embedded cover art
-        streamOnlyFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
-        streamOnlyFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-q5-coverart.ogg"), 44100, 441000, 16, 2, AudioFileDescriptor::eCodecVorbis));
-        // 3s-stereo-44k-q5-coverart.ogg currently fails to play as it relies on seeking and ProtocolManager may exhaust stream during Recognise().
-        //invalidFiles.push_back(AudioFileDescriptor(Brn("3s-stereo-44k-q5-coverart.ogg"), 44100, 132300, 16, 2, AudioFileDescriptor::eCodecVorbis));
+        for(std::vector<AudioFileDescriptor>::iterator it = files->ExtraFiles().begin(); it != files->ExtraFiles().end(); ++it) {
+            stdFiles.push_back(*it);
+        }
     }
 
     Runner runner("Codec tests\n");
-    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, uri));
+    runner.Add(new SuiteCodecZeroCrossings(stdFiles, aEnv, aFunc, uri));
     if (testFull) {
-        //runner.Add(new SuiteCodecStream(stdFiles, aEnv, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
-        runner.Add(new SuiteCodecSeek(stdFiles, aEnv, uri));
-        runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, uri));
-        runner.Add(new SuiteCodecInvalidType(invalidFiles, aEnv, uri));
-        runner.Add(new SuiteCodecStream(streamOnlyFiles, aEnv, uri));
+        //runner.Add(new SuiteCodecStream(stdFiles, aEnv, aFunc, uri));    // now done as part of SuiteCodecZeroCrossings to speed things up
+        runner.Add(new SuiteCodecSeek(stdFiles, aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecSeekFromStart(stdFiles, aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecInvalidType(files->InvalidFiles(), aEnv, aFunc, uri));
+        runner.Add(new SuiteCodecStream(files->StreamOnlyFiles(), aEnv, aFunc, uri));
     }
     runner.Run();
+
+    delete files;
 }

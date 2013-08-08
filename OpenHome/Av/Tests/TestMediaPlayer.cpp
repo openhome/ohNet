@@ -13,7 +13,7 @@
 #include <OpenHome/Av/Source.h> // FIXME - see #169
 
 int mygetch();
-// mygetch() assumed available in PipelineUtils
+
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -93,8 +93,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iRamStore);
 
-    RegisterPlugins(iMediaPlayer->Env());
-
     //iProduct->SetCurrentSource(0);
 }
 
@@ -128,6 +126,7 @@ void TestMediaPlayer::Run()
 {
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
+    RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
 
     Log::Print("\nFull (software) media player\n");

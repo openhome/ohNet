@@ -7,9 +7,12 @@
 #include <OpenHome/Net/Private/ShellCommandWatchDog.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Media/Tests/TestCodec.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
+using namespace OpenHome::Media;
+using namespace OpenHome::Media::Codec;
 
 #define SIMPLE_TEST_DECLARATION(x)  \
     extern void x();                \
@@ -37,10 +40,13 @@ SIMPLE_TEST_DECLARATION(TestVariableDelay);
 
 static const TUint kTimeout = 60; // initial timeout for TestShell. This is increased  by testharness once running.
 
-extern void TestCodec(Environment& aEnv, const std::vector<Brn>& aArgs);
+extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
+extern TestCodecMinimalPipeline* CreateTestCodecPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor);
+extern AudioFileCollection* TestCodecFiles();
+
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
 {
-    TestCodec(aCpStack.Env(), aArgs);
+    TestCodec(aCpStack.Env(), CreateTestCodecPipeline, TestCodecFiles, aArgs);
 }
 
 extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
