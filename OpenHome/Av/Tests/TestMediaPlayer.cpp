@@ -124,9 +124,9 @@ void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void TestMediaPlayer::Run()
 {
+    RegisterPlugins(iMediaPlayer->Env());
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
-    RegisterPlugins(iMediaPlayer->Env());
     iMediaPlayer->Start();
 
     Log::Print("\nFull (software) media player\n");
