@@ -472,6 +472,6 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
-    //iStreamEnded = true;  // will cause codec to quit prematurely; let codec set this with a CodecStreamEnded
+    //iStreamEnded = true;  // will cause codec to quit prematurely
     return aMsg;
 }
