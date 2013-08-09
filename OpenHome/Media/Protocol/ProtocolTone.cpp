@@ -601,6 +601,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         iLock.Wait();
         if (iStop) {
             iAudioBuf.SetBytes(0); // discard any pending audio (avoiding another test of iStop beneath this loop)
+            iLock.Signal();
             iSupply->OutputFlush(iNextFlushId);
             break;
         }
