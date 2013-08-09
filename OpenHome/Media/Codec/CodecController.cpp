@@ -60,10 +60,10 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
 
 CodecController::~CodecController()
 {
+    delete iDecoderThread;
     for (size_t i=0; i<iCodecs.size(); i++) {
         delete iCodecs[i];
     }
-    delete iDecoderThread;
     ReleaseAudioEncoded();
     if (iPostSeekStreamInfo != NULL) {
         iPostSeekStreamInfo->RemoveRef();
