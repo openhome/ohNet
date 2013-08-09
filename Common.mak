@@ -438,6 +438,14 @@ $(objdir)TestBuffer.$(objext) : OpenHome/Tests/TestBuffer.cpp $(headers)
 $(objdir)TestBufferMain.$(objext) : OpenHome/Tests/TestBufferMain.cpp $(headers)
 	$(compiler)TestBufferMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestBufferMain.cpp
 
+TestException: $(objdir)TestException.$(exeext) 
+$(objdir)TestException.$(exeext) :  ohNetCore $(objdir)TestException.$(objext) $(objdir)TestExceptionMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestException.$(exeext) $(objdir)TestExceptionMain.$(objext) $(objdir)TestException.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestException.$(objext) : OpenHome/Tests/TestException.cpp $(headers)
+	$(compiler)TestException.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestException.cpp
+$(objdir)TestExceptionMain.$(objext) : OpenHome/Tests/TestExceptionMain.cpp $(headers)
+	$(compiler)TestExceptionMain.$(objext) -c $(cflags) $(includes) OpenHome/Tests/TestExceptionMain.cpp
+
 TestFile: $(objdir)TestFile.$(exeext) 
 $(objdir)TestFile.$(exeext) :  ohNetCore $(objdir)TestFile.$(objext) $(objdir)TestFileMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestFile.$(exeext) $(objdir)TestFileMain.$(objext) $(objdir)TestFile.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -738,6 +746,7 @@ tests_core = \
 	$(objdir)TestDvSubscription.$(objext) \
 	$(objdir)TestBasicDvCore.$(objext) \
 	$(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
+	$(objdir)TestException.$(objext) \
 	$(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 
 TestsCore: $(tests_core)
@@ -1238,13 +1247,19 @@ ohNetJavaSrc : $(objdir)ohnet-src.jar
 $(objdir)ohnet-src.jar :
 	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .
 
+
 ohNetAndroidNative : make_obj_dir copy_build_includes ohNetJava
-	#cp OpenHome/Net/Bindings/Android/jni/ifaddrs.h $(ANDROID_NDK_ROOT)/platforms/android-3/arch-arm/usr/include/
-	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni
-	$(mkdir) $(objdir)Android/libs/armeabi
-	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNet.so $(objdir)Android/libs/armeabi/
-	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNetJni.so $(objdir)Android/libs/armeabi/
-	cp $(objdir)ohnet.jar $(objdir)Android/libs/
+	$(ANDROID_NDK_ROOT)/ndk-build NDK_DEBUG=$(android_ndk_debug) -C OpenHome/Net/Bindings/Android/jni
+	$(mkdir) $(objdir)
+	$(mkdir) $(objdir)/armeabi
+	$(mkdir) $(objdir)/armeabi-v7a
+	$(mkdir) $(objdir)/x86
+	cp $(android_build_dir)/armeabi/libohNet.so $(objdir)/armeabi
+	cp $(android_build_dir)/armeabi/libohNetJni.so $(objdir)/armeabi
+	cp $(android_build_dir)/armeabi-v7a/libohNet.so $(objdir)/armeabi-v7a
+	cp $(android_build_dir)/armeabi-v7a/libohNetJni.so $(objdir)/armeabi-v7a
+	cp $(android_build_dir)/x86/libohNet.so $(objdir)/x86
+	cp $(android_build_dir)/x86/libohNetJni.so $(objdir)/x86
 
 ohNetAndroidClean:
 	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni clean

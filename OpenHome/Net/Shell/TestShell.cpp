@@ -18,6 +18,9 @@ static void RunTestBuffer(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const st
 extern void TestThread();
 static void RunTestThread(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestThread(); }
 
+extern void TestException();
+static void RunTestException(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestException(); }
+
 extern void TestFifo();
 static void RunTestFifo(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestFifo(); }
 
@@ -100,6 +103,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestDviDeviceList", RunTestDviDeviceList));
     shellTests.push_back(ShellTest("TestDvInvocation", RunTestDvInvocation));
     shellTests.push_back(ShellTest("TestDvSubscription", RunTestDvSubscription));
+    shellTests.push_back(ShellTest("TestException", RunTestException));
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);

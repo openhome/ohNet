@@ -14,11 +14,13 @@ debug_specific_cflags = -g -O0
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 openhome_configuration = Debug
+android_ndk_debug = 1
 else
 debug_specific_cflags = -g -O2
 debug_csharp = /optimize+
 build_dir = Release
 openhome_configuration = Release
+android_ndk_debug=0
 endif
 
 
@@ -54,6 +56,10 @@ else ifneq (, $(findstring powerpc, $(gcc_machine)))
     platform = Linux-ppc32
     detected_openhome_system = Linux
     detected_openhome_architecture = ppc32
+else ifeq ($(Android-anycpu), 1)
+    platform = Android
+    detected_openhome_system = Android
+    detected_openhome_architecture = anycpu
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
@@ -111,6 +117,13 @@ openhome_system = ${detected_openhome_system}
 openhome_architecture = ${detected_openhome_architecture}
 
 $(info Building for system ${openhome_system} and architecture ${openhome_architecture})
+
+ifeq ($(platform),Android)
+    osbuilddir = $(platform)-$(detected_openhome_architecture)
+    objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
+    android_build_dir = OpenHome/Net/Bindings/Android/libs/
+    managed_only = yes
+endif
 
 
 ifeq ($(platform),iOS)
@@ -241,6 +254,7 @@ endif
 
 # Macros used by Common.mak
 native_only ?= no
+managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
 cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
@@ -302,6 +316,9 @@ mkdir = mkdir -p
 rmdir = rm -rf
 uset4 = no
 
+ifeq ($(managed_only), yes)
+build_targets_base = make_obj_dir ohNet.net.dll CpProxyDotNetAssemblies DvDeviceDotNetAssemblies
+else
 ifeq ($(native_only), yes)
 build_targets_base = $(native_targets)
 else
@@ -309,6 +326,7 @@ ifeq ($(no_shared_objects), yes)
 build_targets_base = $(native_targets) ohNet.net.dll CpProxyDotNetAssemblies DvDeviceDotNetAssemblies
 else
 build_targets_base = $(all_targets)
+endif
 endif
 endif
 ifeq ($(uset4), yes)
@@ -493,6 +511,8 @@ bundle:
 
 ifeq ($(platform),iOS)
 ohNet.net.dll :  $(objdir)ohNet.net.dll
+else ifeq ($(platform),Android)
+ohNet.net.dll : $(objdir)ohNet.net.dll ohNetAndroidNative
 else
 ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
 endif

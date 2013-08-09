@@ -8,14 +8,14 @@ from collections import namedtuple
 def exclude_non_binary(filename):
     if filename.lower().startswith("test"):
         return True
-    executable_extensions = [".dll", ".so", ".elf", ".lib", ".map", ".pdb", ".dylib", ".a"]
+    executable_extensions = [".dll", ".so", ".elf", ".lib", ".map", ".pdb", ".dylib", ".a", ".jar"]
     has_executable_extension = any(filename.endswith(ex) for ex in executable_extensions)
     has_no_extension = "." not in filename
     is_binary = has_executable_extension or has_no_extension
     return not is_binary
 
 def exclude_non_managed(filename):
-    managed_extensions = [".net.dll", ".net.pdb", ".net.dll.mdb"]
+    managed_extensions = [".net.dll", ".net.pdb", ".net.dll.mdb", ".jar"]
     has_managed_extension = any(filename.endswith(ex) for ex in managed_extensions)
     return not has_managed_extension
 
@@ -66,6 +66,9 @@ ALL_TARGETS = {
         BuildTarget("Core",    "armv6", "Release"): BuildInfo(builddir="Build/Obj/Core-armv6/Release"),
         BuildTarget("Core",    "ppc32", "Debug"):   BuildInfo(builddir="Build/Obj/Core-ppc32/Debug"),
         BuildTarget("Core",    "ppc32", "Release"): BuildInfo(builddir="Build/Obj/Core-ppc32/Release"),
+
+        BuildTarget("Android",    "anycpu", "Debug"):   BuildInfo(builddir="Build/Obj/Android-anycpu/Debug"),
+        BuildTarget("Android",    "anycpu", "Release"): BuildInfo(builddir="Build/Obj/Android-anycpu/Release"),
     }
 
 ALL_SYSTEMS = set(tgt.system for tgt in ALL_TARGETS.keys())

@@ -28,3 +28,8 @@ Build/
 /hgout/
 /xout/
 /ohSongcast/Build/
+
+# android ndk builds to source tree
+OpenHome/Net/Bindings/Android/obj/
+OpenHome/Net/Bindings/Android/libs/
+
