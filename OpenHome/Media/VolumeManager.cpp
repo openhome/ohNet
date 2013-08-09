@@ -54,11 +54,6 @@ void VolumeLimiterUser::SetUserVolumeLimit(TUint aValue)
     Changed();
 }
 
-TUint VolumeLimiterUser::UserVolume() const
-{
-    return iUpstreamVolume;  // user volume *pre* limiting
-}
-
 void VolumeLimiterUser::SetVolume(TUint aValue)
 {
     iUpstreamVolume = aValue;
@@ -73,12 +68,19 @@ void VolumeLimiterUser::Changed()
 // VolumeUser
 VolumeUser::VolumeUser(IVolume& aVolume, TUint aScaleFactor)
     : iVolume(aVolume)
+    , iUpstreamVolume(0)
     , iScaleFactor(aScaleFactor)
 {
 }
 
+TUint VolumeUser::UserVolume() const
+{
+    return iUpstreamVolume;
+}
+
 void VolumeUser::SetVolume(TUint aValue)
 {
+    iUpstreamVolume = aValue;
     // fixed operation (without dynamic parameter)
     iVolume.SetVolume(iScaleFactor * aValue);
 }
@@ -328,7 +330,7 @@ VolumeManager::VolumeManager(IVolume& aLeftVolHardware, IVolume& aRightVolHardwa
 
 TUint VolumeManager::UserVolume() const
 {
-    return iVolLimitUser->UserVolume();  // sic!
+    return iVolUser->UserVolume();
 }
 
 TInt VolumeManager::UserBalance() const
