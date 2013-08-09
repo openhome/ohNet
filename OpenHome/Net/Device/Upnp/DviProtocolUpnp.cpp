@@ -333,7 +333,7 @@ void DviProtocolUpnp::Enable()
             const TChar* name = 0;
             GetAttribute("FriendlyName", &name);
             adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
-            GetAttribute("MdnsHostName", &name);
+            /*GetAttribute("MdnsHostName", &name);
             if (name != NULL) {
                 iDvStack.MdnsProvider()->MdnsSetHostName(name);
                 Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
@@ -345,7 +345,7 @@ void DviProtocolUpnp::Enable()
                 redirectedPath.Append(iDevice.kResourceDir);
                 redirectedPath.Append('/');
                 iDvStack.ServerUpnp().Redirect(Brn("/"), redirectedPath);
-            }
+            }*/
         }
     }
     for (TUint i=0; i<iAdapters.size(); i++) {
