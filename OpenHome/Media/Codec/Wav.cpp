@@ -17,6 +17,7 @@ class CodecWav : public CodecBase
 {
 public:
     CodecWav();
+    ~CodecWav();
 private: // from CodecBase
     TBool Recognise(const Brx& aData);
     void StreamInitialise();
@@ -58,6 +59,10 @@ CodecWav::CodecWav()
 {
 }
 
+CodecWav::~CodecWav()
+{
+}
+
 TBool CodecWav::Recognise(const Brx& aData)
 {
     const TChar* ptr = reinterpret_cast<const TChar*>(aData.Ptr());
@@ -94,9 +99,7 @@ void CodecWav::Process()
             THROW(CodecStreamEnded);
         }
         TUint chunkSize = DecodedAudio::kMaxBytes - (DecodedAudio::kMaxBytes % (iNumChannels * (iBitDepth/8)));
-        if (chunkSize > sizeof(iReadBuf)) {
-            chunkSize = sizeof(iReadBuf);
-        }
+        ASSERT_DEBUG(chunkSize <= iReadBuf.MaxBytes());
         iReadBuf.SetBytes(0);
         const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
         iController->Read(iReadBuf, bytes);
