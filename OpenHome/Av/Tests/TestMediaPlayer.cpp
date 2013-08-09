@@ -111,7 +111,6 @@ TestMediaPlayer::~TestMediaPlayer()
     }
     delete iSourceUpnp;
     delete iMediaPlayer;
-    delete iDriver;
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;

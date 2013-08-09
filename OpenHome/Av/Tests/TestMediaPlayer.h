@@ -56,7 +56,6 @@ protected:
     RamStore* iRamStore;
 private:
     Semaphore iDisabled;
-    Media::DriverSongcastSender* iDriver;
     ISource* iSourceUpnp; // FIXME - see #169
 };
 
