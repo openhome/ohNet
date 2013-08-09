@@ -708,7 +708,7 @@ SocketUdpBase::~SocketUdpBase()
 
 TUint SocketUdpBase::Port() const
 {
-    return iPort;;
+    return iPort;
 }
 
 void SocketUdpBase::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
