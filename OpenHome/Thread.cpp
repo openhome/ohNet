@@ -132,6 +132,7 @@ Thread::~Thread()
 
 void Thread::Start()
 {
+    ASSERT(iHandle == kHandleNull);
     iHandle = OpenHome::Os::ThreadCreate(OpenHome::gEnv->OsCtx(), (TChar*)iName.Ptr(), iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
