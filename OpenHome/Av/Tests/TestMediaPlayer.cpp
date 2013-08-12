@@ -98,6 +98,14 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
 TestMediaPlayer::~TestMediaPlayer()
 {
+    ASSERT(!iDevice->Enabled());
+    delete iDevice;
+    delete iDeviceUpnpAv;
+    delete iRamStore;
+}
+
+void TestMediaPlayer::DestroyPipeline()
+{
     TUint waitCount = 0;
     if (TryDisable(*iDevice)) {
         waitCount++;
@@ -111,9 +119,6 @@ TestMediaPlayer::~TestMediaPlayer()
     }
     delete iSourceUpnp;
     delete iMediaPlayer;
-    delete iDevice;
-    delete iDeviceUpnpAv;
-    delete iRamStore;
 }
 
 void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
