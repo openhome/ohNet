@@ -119,6 +119,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDi
     , iRaopDevice(aRaopDevice)
     , iInstance(aInstance)
     , iActive(false)
+    , iShutdownSem("RAOP", 1)
 {
     iReaderBuffer = new Srs<kMaxReadBufferBytes>(*this);
     iWriterBuffer = new Sws<kMaxWriteBufferBytes>(*this);
@@ -283,6 +284,8 @@ void RaopDiscoverySession::GetRsa()
 
 RaopDiscoverySession::~RaopDiscoverySession()
 {
+    Interrupt(true);
+    iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterRequest;
     delete iReaderRequest;
@@ -300,8 +303,8 @@ void RaopDiscoverySession::Run()
 {
     LOG(kMedia, "RaopDiscoverySession::Run\n");
     iActive = false;
-
     iAeskeyPresent = false;
+    iShutdownSem.Wait();
 
     LOG(kMedia, "RaopDiscoverySession::Run - Started, instance %d\n", iInstance);
     try {
@@ -459,6 +462,7 @@ void RaopDiscoverySession::Run()
         LOG(kMedia, "RaopDiscoverySession::Run - WriterError\n");
     }
 
+    iShutdownSem.Signal();
     LOG(kMedia, "RaopDiscoverySession::Run - Exit iActive = %d\n", iActive);
 }
 
@@ -657,8 +661,6 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
 
 RaopDiscovery::~RaopDiscovery()
 {
-    delete iRaopDiscoverySession1;
-    delete iRaopDiscoverySession2;
     delete iRaopDiscoveryServer;
     delete iRaopDevice;
 }
