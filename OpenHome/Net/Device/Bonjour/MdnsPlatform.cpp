@@ -83,6 +83,11 @@ MdnsPlatform::~MdnsPlatform()
     mDNS_Close(iMdns);
     delete iMdns;
     delete iTimer;
+    Map::iterator it = iServices.begin();
+    while (it != iServices.end()) {
+        delete it->second;
+        it++;
+    }
     for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
         delete iInterfaces[i];
     }
