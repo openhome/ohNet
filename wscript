@@ -214,6 +214,7 @@ def build(bld):
                 'OpenHome/Media/Msg.cpp',
                 'OpenHome/Media/PreDriver.cpp',
                 'OpenHome/Media/Reporter.cpp',
+                'OpenHome/Media/Rewinder.cpp',
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
@@ -453,6 +454,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
                 'OpenHome/Media/Tests/TestVolumeManager.cpp',
+                'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
@@ -554,6 +556,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestVolumeManager')
+    bld.program(
+            source='OpenHome/Media/Tests/TestRewinderMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestRewinder')
     #bld.program(
     #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
