@@ -119,6 +119,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDi
     , iRaopDevice(aRaopDevice)
     , iInstance(aInstance)
     , iActive(false)
+    , iShutdownSem("RAOP", 1)
 {
     iReaderBuffer = new Srs<kMaxReadBufferBytes>(*this);
     iWriterBuffer = new Sws<kMaxWriteBufferBytes>(*this);
@@ -283,6 +284,9 @@ void RaopDiscoverySession::GetRsa()
 
 RaopDiscoverySession::~RaopDiscoverySession()
 {
+    Interrupt(true);
+    iShutdownSem.Wait();
+    delete iDeactivateTimer;
     delete iWriterResponse;
     delete iWriterRequest;
     delete iReaderRequest;
@@ -300,8 +304,8 @@ void RaopDiscoverySession::Run()
 {
     LOG(kMedia, "RaopDiscoverySession::Run\n");
     iActive = false;
-
     iAeskeyPresent = false;
+    iShutdownSem.Wait();
 
     LOG(kMedia, "RaopDiscoverySession::Run - Started, instance %d\n", iInstance);
     try {
@@ -459,6 +463,7 @@ void RaopDiscoverySession::Run()
         LOG(kMedia, "RaopDiscoverySession::Run - WriterError\n");
     }
 
+    iShutdownSem.Signal();
     LOG(kMedia, "RaopDiscoverySession::Run - Exit iActive = %d\n", iActive);
 }
 
@@ -637,8 +642,10 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
     const NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         TIpAddress ipAddr = current->Address();
-        char* adapterName = current->FullName();
-        LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", adapterName);
+        Endpoint::AddressBuf addrBuf;
+        Endpoint ep(0, ipAddr);
+        ep.AppendAddress(addrBuf);
+        LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
 
         iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, aDeviceName, ipAddr, Brn("000000000001"));
         iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
@@ -657,8 +664,6 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
 
 RaopDiscovery::~RaopDiscovery()
 {
-    delete iRaopDiscoverySession1;
-    delete iRaopDiscoverySession2;
     delete iRaopDiscoveryServer;
     delete iRaopDevice;
 }

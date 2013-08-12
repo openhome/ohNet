@@ -59,6 +59,7 @@ public:
 private:
     void Run();
     void TimerExpired();
+private:
     TUint iPort;
     Endpoint iEndpoint;
     SocketUdp iSocket;
@@ -73,6 +74,7 @@ private:
     Semaphore iSemaResend;
     TUint iResend;
     Timer* iTimerExpiry;
+    TBool iExit;
 };
 
 //class RaopTiming

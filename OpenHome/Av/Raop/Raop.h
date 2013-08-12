@@ -112,6 +112,7 @@ private:
     void DecryptAeskey();
     void GetRsa();
     void DeactivateCallback();
+private:
     Srs<kMaxReadBufferBytes>* iReaderBuffer;
     Sws<kMaxWriteBufferBytes>* iWriterBuffer;
     WriterAscii* iWriterAscii;
@@ -134,6 +135,7 @@ private:
     TUint iInstance;
     TBool iActive;
     Timer* iDeactivateTimer;
+    Semaphore iShutdownSem;
 };
 
 class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable

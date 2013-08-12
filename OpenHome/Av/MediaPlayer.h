@@ -74,7 +74,6 @@ private:
     Net::DvStack& iDvStack;
     Net::DvDevice& iDevice;
     Media::AllocatorInfoLogger* iInfoLogger;
-    Media::LoggingPipelineObserver* iPipelineObserver;
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Product* iProduct;

@@ -63,8 +63,9 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, dvStack->Env(), *(tmp->Device()), udn, optionChannel.Value(), adapter, false /*unicast*/);
     tmp->AddAttribute("Sender");
     tmp->Run();
-    delete tmp;
+    tmp->DestroyPipeline();
     delete driver;
+    delete tmp;
     
     delete lib;
 

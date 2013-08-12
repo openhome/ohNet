@@ -39,6 +39,7 @@ class TestMediaPlayer
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
     virtual ~TestMediaPlayer();
+    void DestroyPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     void Run();
     Media::PipelineManager& Pipeline();
@@ -51,12 +52,12 @@ private:
 protected:
     static const Brn kSupportedProtocols;
     MediaPlayer* iMediaPlayer;
+    Media::LoggingPipelineObserver* iPipelineObserver;
     Net::DvDevice* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
 private:
     Semaphore iDisabled;
-    Media::DriverSongcastSender* iDriver;
     ISource* iSourceUpnp; // FIXME - see #169
 };
 

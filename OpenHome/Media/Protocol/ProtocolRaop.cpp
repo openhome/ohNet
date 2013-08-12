@@ -232,6 +232,7 @@ RaopControl::RaopControl(Environment& aEnv, TUint aPort)
     , iMutexRx("raoR")
     , iSemaResend("raoc", 0)
     , iResend(0)
+    , iExit(false)
 {
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired));
     iThreadControl = new ThreadFunctor("RAOC", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
@@ -248,6 +249,8 @@ RaopControl::RaopControl(Environment& aEnv, TUint aPort)
 
 RaopControl::~RaopControl()
 {
+    iExit = true;
+    iSocketReader.ReadInterrupt();
     delete iThreadControl;
     delete iTimerExpiry;
 }
@@ -283,7 +286,7 @@ void RaopControl::Run()
     LOG(kMedia, "RaopControl::Run\n");
     iResend = 0;
 
-    for (;;) {
+    while (!iExit) {
         try {
             Brn id = iReceive.Read(2);
             iEndpoint = iSocketReader.Sender();

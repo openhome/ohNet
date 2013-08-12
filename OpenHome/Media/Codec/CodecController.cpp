@@ -60,10 +60,10 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
 
 CodecController::~CodecController()
 {
+    delete iDecoderThread;
     for (size_t i=0; i<iCodecs.size(); i++) {
         delete iCodecs[i];
     }
-    delete iDecoderThread;
     ReleaseAudioEncoded();
     if (iPostSeekStreamInfo != NULL) {
         iPostSeekStreamInfo->RemoveRef();
@@ -472,6 +472,6 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
-    //iStreamEnded = true;  // will cause codec to quit prematurely; let codec set this with a CodecStreamEnded
+    //iStreamEnded = true;  // will cause codec to quit prematurely
     return aMsg;
 }

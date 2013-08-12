@@ -91,15 +91,13 @@ public:
 };
 
 // limiter (of user volume)
-class VolumeLimiterUser : public IVolume, public IVolumeLimitUser, public IVolumeUser, public INonCopyable
+class VolumeLimiterUser : public IVolume, public IVolumeLimitUser, public INonCopyable
 {
 public:
     VolumeLimiterUser(IVolume& aVolume, TUint aLimit);
 public:  // from IVolumeLimitUser
     TUint UserVolumeLimit() const;
     void SetUserVolumeLimit(TUint aValue);
-public:  // from IVolumeUser
-    TUint UserVolume() const;  // sic!
 public:  // from IVolume
     void SetVolume(TUint aValue);
 private:
@@ -111,15 +109,18 @@ private:
 };
 
 // translate user-visible volume setting into internal scale
-class VolumeUser : public IVolume, public INonCopyable
+class VolumeUser : public IVolumeUser, public IVolume, public INonCopyable
 {
 public:
     VolumeUser(IVolume& aVolume, TUint aScaleFactor);
     // fixed operation, not dynamically parameterised
+public:  // from IVolumeUser
+    TUint UserVolume() const;
 public:  // from IVolume
     void SetVolume(TUint aValue);
 private:
     IVolume& iVolume;
+    TUint iUpstreamVolume;
     TUint iScaleFactor;
 };
 

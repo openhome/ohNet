@@ -77,7 +77,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
-    friendlyName.Append("-MediaRenderer");
+    friendlyName.Append(":MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
@@ -92,11 +92,21 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iRamStore);
+    iPipelineObserver = new LoggingPipelineObserver();
+    iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
     //iProduct->SetCurrentSource(0);
 }
 
 TestMediaPlayer::~TestMediaPlayer()
+{
+    ASSERT(!iDevice->Enabled());
+    delete iDevice;
+    delete iDeviceUpnpAv;
+    delete iRamStore;
+}
+
+void TestMediaPlayer::DestroyPipeline()
 {
     TUint waitCount = 0;
     if (TryDisable(*iDevice)) {
@@ -111,10 +121,7 @@ TestMediaPlayer::~TestMediaPlayer()
     }
     delete iSourceUpnp;
     delete iMediaPlayer;
-    delete iDriver;
-    delete iDevice;
-    delete iDeviceUpnpAv;
-    delete iRamStore;
+    delete iPipelineObserver;
 }
 
 void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
