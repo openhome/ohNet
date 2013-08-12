@@ -15,8 +15,7 @@ namespace Media {
    buffering until TryStop is called or a new MsgEncodedStream is received
    (i.e., the entire stream was pulled before being recognised).
    If a seek (back to start) is received, Rewinder starts passing msgs from
-   start of its FIFO, otherwise FIFOs are cleared and TrySeek msg is passed
-   upstream.
+   start of its FIFO.
 */
 
 class Rewinder : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler, private INonCopyable
