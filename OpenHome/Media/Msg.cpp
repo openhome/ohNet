@@ -108,6 +108,7 @@ Allocated* AllocatorBase::DoAllocate()
         cell->iRefCount = 1;
     }
     catch (Timeout& ) {
+        Log::Print("AllocatorNoMemory for %s\n", iName);
         THROW(AllocatorNoMemory);
     }
     iLock.Wait();
