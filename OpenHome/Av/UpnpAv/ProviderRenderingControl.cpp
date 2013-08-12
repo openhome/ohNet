@@ -176,19 +176,19 @@ void ProviderRenderingControl::UpdateLastChange()
     iLastChange.Append("        <Mute channel= \"");
     iLastChange.Append(kChannelMaster);
     iLastChange.Append("\" val=\"");
-    iLastChange.Append("FIXME - Mute not implemented");
+    iLastChange.Append("0"); // FIXME - Mute not implemented
     iLastChange.Append("\"/>\n");
 
     // Volume
     iLastChange.Append("        <Volume channel= \"");
     iLastChange.Append(kChannelMaster);
     iLastChange.Append("\" val=\"");
-    iLastChange.Append("FIXME - Volume not implemented");
+    iLastChange.Append("50"); // FIXME - Volume not implemented
     iLastChange.Append("\"/>\n");
 
     // VolumeDB
     iLastChange.Append("        <VolumeDB val=\"");
-    iLastChange.Append("FIXME - VolumeDB not implemented");
+    iLastChange.Append("0"); // FIXME - VolumeDB not implemented
     iLastChange.Append("\"/>\n");
 
     // End
