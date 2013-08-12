@@ -286,6 +286,7 @@ RaopDiscoverySession::~RaopDiscoverySession()
 {
     Interrupt(true);
     iShutdownSem.Wait();
+    delete iDeactivateTimer;
     delete iWriterResponse;
     delete iWriterRequest;
     delete iReaderRequest;
@@ -641,8 +642,10 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
     const NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         TIpAddress ipAddr = current->Address();
-        char* adapterName = current->FullName();
-        LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", adapterName);
+        Endpoint::AddressBuf addrBuf;
+        Endpoint ep(0, ipAddr);
+        ep.AppendAddress(addrBuf);
+        LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
 
         iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, aDeviceName, ipAddr, Brn("000000000001"));
         iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
