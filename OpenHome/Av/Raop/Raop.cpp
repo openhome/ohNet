@@ -286,6 +286,7 @@ RaopDiscoverySession::~RaopDiscoverySession()
 {
     Interrupt(true);
     iShutdownSem.Wait();
+    delete iDeactivateTimer;
     delete iWriterResponse;
     delete iWriterRequest;
     delete iReaderRequest;
