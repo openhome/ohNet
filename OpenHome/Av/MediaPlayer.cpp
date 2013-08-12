@@ -28,10 +28,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
     , iDevice(aDevice)
 {
     iInfoLogger = new AllocatorInfoLogger();
-    iPipelineObserver = new LoggingPipelineObserver();
     iKvpStore = new KvpStore(aStaticDataSource, aPersistor);
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
-    iPipeline->AddObserver(*iPipelineObserver);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, *iInfoLogger);
     iMuteManager = new MuteManager();
@@ -60,7 +58,6 @@ MediaPlayer::~MediaPlayer()
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iKvpStore;
     delete iInfoLogger;
-    delete iPipelineObserver;
     delete iTrackFactory;
 }
 

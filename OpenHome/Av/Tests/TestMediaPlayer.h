@@ -52,6 +52,7 @@ private:
 protected:
     static const Brn kSupportedProtocols;
     MediaPlayer* iMediaPlayer;
+    Media::LoggingPipelineObserver* iPipelineObserver;
     Net::DvDevice* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;

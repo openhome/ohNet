@@ -92,6 +92,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iRamStore);
+    iPipelineObserver = new LoggingPipelineObserver();
+    iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
     //iProduct->SetCurrentSource(0);
 }
@@ -119,6 +121,7 @@ void TestMediaPlayer::DestroyPipeline()
     }
     delete iSourceUpnp;
     delete iMediaPlayer;
+    delete iPipelineObserver;
 }
 
 void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
