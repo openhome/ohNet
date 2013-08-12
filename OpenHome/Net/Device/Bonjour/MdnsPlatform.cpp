@@ -78,6 +78,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
 
 MdnsPlatform::~MdnsPlatform()
 {
+    iReaderController.ReadInterrupt();
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     mDNS_Close(iMdns);
     delete iMdns;
@@ -330,6 +331,9 @@ void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
 {
     LOG(kBonjour, "Bonjour             InitCallback\n");
     m->mDNSPlatformStatus = aStatus;
+    if (aStatus != mStatus_NoError) {
+        Log::Print("Bonjour initialisation error - %d\n", aStatus);
+    }
     ASSERT(aStatus == mStatus_NoError);
 }
 
