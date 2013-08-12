@@ -77,7 +77,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
-    friendlyName.Append("-MediaRenderer");
+    friendlyName.Append(":MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
