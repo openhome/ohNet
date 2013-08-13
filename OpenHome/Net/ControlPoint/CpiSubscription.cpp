@@ -124,7 +124,15 @@ void CpiSubscription::RunInSubscriber()
     case eNone:
         break;
     case eSubscribe:
-        DoSubscribe();
+        try {
+            DoSubscribe();
+        }
+        catch(...) {
+            LOG2(kError, kTrace, "Subscribe for device ");
+            LOG2(kError, kTrace, iDevice.Udn());
+            LOG2(kError, kTrace, " failed\n");
+            throw;
+        }
         break;
     case eRenew:
         DoRenew();
