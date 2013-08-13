@@ -148,7 +148,7 @@ THandle OsStackTraceInitialise(OsContext* aContext)
     if (stackTrace == NULL) {
         return kHandleNull;
     }
-    stackTrace->iCount = CaptureStackBackTrace(0, 100, stackTrace->iStack, NULL);
+    stackTrace->iCount = CaptureStackBackTrace(4, STACK_TRACE_MAX_DEPTH, stackTrace->iStack, NULL);
 #endif /* STACK_TRACE_ENABLE */
     stackTrace->iOsContext = aContext;
     return stackTrace;
@@ -187,6 +187,7 @@ const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
     return NULL;
 #else
     OsStackTrace* stackTrace = (OsStackTrace*)aStackTrace;
+    OsMutexLock(stackTrace->iOsContext->iMutex);
     if (stackTrace->iSymbol == NULL) {
         stackTrace->iSymbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256, 1);
         if (stackTrace->iSymbol == NULL) {
@@ -196,6 +197,7 @@ const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
         stackTrace->iSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
     }
     SymFromAddr(stackTrace->iOsContext->iDebugSymbolHandle, (DWORD64)(stackTrace->iStack[aIndex]), 0, stackTrace->iSymbol);
+    OsMutexUnlock(stackTrace->iOsContext->iMutex);
     return stackTrace->iSymbol->Name;
 #endif
 }
