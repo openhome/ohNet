@@ -19,11 +19,41 @@ public:
     static const TUint kPreAudioMsgCount = 2;
     static const TUint kEncodedAudioCount = 256;
     static const TUint kMsgAudioEncodedCount = 256;
+    protected:
+enum EMsgType
+    {
+        ENone
+        ,ENull
+        ,EMsgAudioEncoded
+        ,EMsgAudioPcm
+        ,EMsgSilence
+        ,EMsgPlayable
+        ,EMsgDecodedStream
+        ,EMsgTrack
+        ,EMsgEncodedStream
+        ,EMsgMetaText
+        ,EMsgHalt
+        ,EMsgFlush
+        ,EMsgQuit
+    };
 public:
     SuiteRewinder(const TChar* aName);
     SuiteRewinder();
 protected:
     void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots);
+    TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
+    Msg* GenerateMsg(EMsgType aType);
+    virtual Msg* GenerateNextMsg();
+private:
+    TByte LastCount();
+    void SetLastCount(TByte aCount);
+    MsgAudioEncoded* CreateAudio();
+    void TestAllocatorExhaustion();
+    void TestTryStop();
+    void TestTrySeekToStart();
+    void TestTrySeekToStartAfterMiscAudio();
+    void TestUpstreamRequestPassThrough();
+    void TestMsgOrdering();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -45,36 +75,6 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
-protected:
-    enum EMsgType
-    {
-        ENone
-        ,ENull
-        ,EMsgAudioEncoded
-        ,EMsgAudioPcm
-        ,EMsgSilence
-        ,EMsgPlayable
-        ,EMsgDecodedStream
-        ,EMsgTrack
-        ,EMsgEncodedStream
-        ,EMsgMetaText
-        ,EMsgHalt
-        ,EMsgFlush
-        ,EMsgQuit
-    };
-private:
-    TByte LastCount();
-    void SetLastCount(TByte aCount);
-    MsgAudioEncoded* CreateAudio();
-    Msg* GenerateMsg(EMsgType aType);
-    virtual Msg* GenerateNextMsg();
-    void TestAllocatorExhaustion();
-    void TestTryStop();
-    void TestNoNulls();
-    void TestTrySeekToStart();
-    void TestTrySeekToStartAfterMiscAudio();
-    void TestUpstreamRequestPassThrough();
-    void TestMsgOrdering();
 protected:
     AllocatorInfoLogger iInfoAggregator;
     MsgFactory* iMsgFactory;
@@ -99,7 +99,22 @@ private: // from SuiteUnitTest
     void Setup();
 private:
     void TestMaxCapacity();
+};
 
+class SuiteRewinderNullMsgs : public SuiteRewinder
+{
+public:
+    SuiteRewinderNullMsgs();
+private: // from SuiteUnitTest
+    void Setup();
+private: // from SuiteRewinder
+    Msg* GenerateNextMsg();
+private:
+    void TestNoNulls();
+private:
+    std::vector<EMsgType> iMsgOrderVector;
+    TUint iNextMsgCount;
+    TByte iAudioEncodedCount;
 };
 
 } // namespace Media
@@ -118,7 +133,6 @@ SuiteRewinder::SuiteRewinder()
 {
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTryStop));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestNoNulls));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStartAfterMiscAudio));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough));
@@ -179,13 +193,7 @@ TUint SuiteRewinder::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 Msg* SuiteRewinder::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    TEST(iLastMsgType == EMsgAudioEncoded);
-    TEST(aMsg->Bytes() == EncodedAudio::kMaxBytes);
-    Bws<EncodedAudio::kMaxBytes> buf;
-    aMsg->CopyTo(const_cast<TByte*>(buf.Ptr()));
-    buf.SetBytes(aMsg->Bytes());
-    ASSERT(buf[0] == iIn);
-    ASSERT(buf[buf.Bytes()-1] == iIn);
+    TestMsgAudioEncodedValue(*aMsg, iIn);
     iIn++;
     return aMsg;
 }
@@ -249,6 +257,21 @@ Msg* SuiteRewinder::ProcessMsg(MsgQuit* aMsg)
 {
     TEST(iLastMsgType == EMsgQuit);
     return aMsg;
+}
+
+TBool SuiteRewinder::TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue)
+{
+    if ((iLastMsgType != EMsgAudioEncoded) || (aMsg.Bytes() != EncodedAudio::kMaxBytes))
+    {
+        return false;
+    }
+    Bws<EncodedAudio::kMaxBytes> buf;
+    aMsg.CopyTo(const_cast<TByte*>(buf.Ptr()));
+    buf.SetBytes(aMsg.Bytes());
+    if ((buf[0] != aValue) || (buf[buf.Bytes()-1] != aValue)) {
+        return false;
+    }
+    return true;
 }
 
 MsgAudioEncoded* SuiteRewinder::CreateAudio()
@@ -375,12 +398,6 @@ void SuiteRewinder::TestTryStop()
         msg->RemoveRef();
     }
     // if executions gets to here, no longer buffering
-}
-
-void SuiteRewinder::TestNoNulls()
-{
-    // test that, under normal conditions, if a NULL msg is passed down the
-    // pipeline, the Rewinder only ever returns non-NULL msgs
 }
 
 void SuiteRewinder::TestTrySeekToStart()
@@ -512,10 +529,105 @@ void SuiteRewinderMaxCapacity::TestMaxCapacity()
     iLastMsg->RemoveRef();
 }
 
+
+// SuiteRewinderNullMsgs
+
+SuiteRewinderNullMsgs::SuiteRewinderNullMsgs()
+    : SuiteRewinder("RewinderNullMsgs tests")
+{
+    AddTest(MakeFunctor(*this, &SuiteRewinderNullMsgs::TestNoNulls));
+}
+
+void SuiteRewinderNullMsgs::Setup()
+{
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
+    iNextMsgCount = 0;
+    iAudioEncodedCount = 0;
+    iMsgOrderVector.clear();
+    // populate vector with normal stream interleaved with nulls
+    iMsgOrderVector.push_back(ENull);
+    iMsgOrderVector.push_back(EMsgTrack);
+    iMsgOrderVector.push_back(ENull);
+    iMsgOrderVector.push_back(ENull);
+    iMsgOrderVector.push_back(EMsgEncodedStream);
+    iMsgOrderVector.push_back(ENull);
+    for (TUint i = 0; i < 10; i++) {
+        iMsgOrderVector.push_back(EMsgAudioEncoded);
+        iAudioEncodedCount++;
+    }
+    iMsgOrderVector.push_back(ENull);
+    for (TUint i = 0; i < 5; i++) {
+        iMsgOrderVector.push_back(EMsgAudioEncoded);
+        iAudioEncodedCount++;
+    }
+    iMsgOrderVector.push_back(ENull);
+    iMsgOrderVector.push_back(ENull);
+    for (TUint i = 0; i < 10; i++) {
+        iMsgOrderVector.push_back(EMsgAudioEncoded);
+        iAudioEncodedCount++;
+    }
+    iMsgOrderVector.push_back(ENull);
+    // end with a MsgAudioEncoded, otherwise Rewinder will keep pulling on NULLs
+    // and test won't end sensibly
+    iMsgOrderVector.push_back(EMsgAudioEncoded);
+    iAudioEncodedCount++;
+}
+
+Msg* SuiteRewinderNullMsgs::GenerateNextMsg()
+{
+    // generate NULL msgs among others
+    Msg* msg = NULL;
+    ASSERT(iNextMsgCount < iMsgOrderVector.size());
+    switch (iMsgOrderVector[iNextMsgCount++])
+    {
+    default:
+    case EMsgPlayable:
+    case EMsgAudioPcm:
+    case EMsgSilence:
+        ASSERTS();
+        break;
+    case ENull:
+        msg = NULL;
+        break;
+    case EMsgTrack:
+        msg = GenerateMsg(EMsgTrack);
+        break;
+    case EMsgEncodedStream:
+        msg = GenerateMsg(EMsgEncodedStream);
+        break;
+    case EMsgAudioEncoded:
+        msg = GenerateMsg(EMsgAudioEncoded);
+        break;
+    }
+    return msg;
+}
+
+void SuiteRewinderNullMsgs::TestNoNulls()
+{
+    // test that, under normal conditions, if a NULL msg is passed down the
+    // pipeline, the Rewinder only ever returns non-NULL msgs
+    for (TByte i = 0; i < kPreAudioMsgCount+iAudioEncodedCount-1; i++)
+    {
+        Msg* msg = iRewinder->Pull();
+        TEST(msg != NULL);
+        msg = msg->Process(*this);
+        msg->RemoveRef();
+    }
+    // test that last msg pulled is final msg we queued
+    Msg* msg = iRewinder->Pull();
+    TEST(msg != NULL);
+    TBool isFinalMsgSent = TestMsgAudioEncodedValue(*dynamic_cast<MsgAudioEncoded*>(msg), iAudioEncodedCount-1);
+    TEST(isFinalMsgSent == true);
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+}
+
+
 void TestRewinder()
 {
     Runner runner("Rewinder tests\n");
     runner.Add(new SuiteRewinder());
     runner.Add(new SuiteRewinderMaxCapacity());
+    runner.Add(new SuiteRewinderNullMsgs());
     runner.Run();
 }
