@@ -5,9 +5,6 @@
 #include <stdarg.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Exception.h>
-
-EXCEPTION(AssertionFailed);
 
 class AutoLog
 {

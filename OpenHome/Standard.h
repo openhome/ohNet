@@ -4,6 +4,8 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
 
+EXCEPTION(AssertionFailed);
+
 namespace OpenHome {
 
 #define ASSERT(x)                             \
