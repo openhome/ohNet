@@ -252,7 +252,7 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
     case EFlushing:
         break;
     case EHalted:
-        ASSERTS();
+        ASSERT(iRemovingStream);
         break;
     case EStarting:
         Ramp(aMsg, Ramp::EUp);
@@ -308,8 +308,8 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 void Stopper::DoBeginHalt()
 {
     ASSERT_DEBUG(iState != EFlushing);
-    if (iState != EHalting && iState != EHaltPending) {
+    if (iState == ERunning || iState == EStarting) {
         iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+        iState = EHalting;
     }
-    iState = EHalting;
 }
