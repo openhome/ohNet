@@ -84,8 +84,13 @@ OsContext* OsCreate()
         free(ctx);
         return NULL;
     }
-    ctx->iDebugSymbolHandle = GetCurrentProcess();
-    (void)SymInitialize(ctx->iDebugSymbolHandle, NULL, TRUE);
+    {
+        HMODULE hModule = GetModuleHandle(NULL);
+        CHAR path[MAX_PATH];
+        GetModuleFileName(hModule, path, MAX_PATH);
+        ctx->iDebugSymbolHandle = GetCurrentProcess();
+        (void)SymInitialize(ctx->iDebugSymbolHandle, /*NULL*/path, TRUE);
+    }
 
     return ctx;
 }
@@ -134,7 +139,7 @@ typedef struct OsStackTrace
     OsContext* iOsContext;
 } OsStackTrace;
 
-//#define STACK_TRACE_ENABLE
+#define STACK_TRACE_ENABLE
 
 THandle OsStackTraceInitialise(OsContext* aContext)
 {
