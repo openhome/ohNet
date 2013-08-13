@@ -25,10 +25,16 @@ Rewinder::~Rewinder()
 MsgAudioEncoded* Rewinder::GetAudioFromCurrent()
 {
     ASSERT(iFifoCurrent->SlotsUsed() > 0);
-    ASSERT(iFifoNext->SlotsFree() > 0);
-    MsgAudioEncoded* msg;
-    msg = iFifoCurrent->Read();
-    iFifoNext->Write(msg);
+    MsgAudioEncoded* msg = NULL;
+    if (iBuffering) {
+        ASSERT(iFifoNext->SlotsFree() > 0);
+        msg = iFifoCurrent->Read();
+        msg->AddRef();
+        iFifoNext->Write(msg);
+    }
+    else {
+        msg = iFifoCurrent->Read();
+    }
     return msg;
 }
 
@@ -52,15 +58,16 @@ Msg* Rewinder::Pull()
         }
     }
     if (iFifoCurrent->SlotsUsed() > 0) {
-        return GetAudioFromCurrent();
+        msg = GetAudioFromCurrent();
     }
     return msg;
 }
 
 Msg* Rewinder::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    aMsg->AddRef();
     ASSERT(iFifoCurrent->SlotsFree() > 0);
+    ASSERT(iFifoNext->SlotsFree() > 0);
+    //aMsg->AddRef();
     iFifoCurrent->Write(aMsg);
     return NULL;
 }
@@ -100,7 +107,10 @@ Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
     // clear data in case previous stream was exhausted while buffering
     DrainFifo(*iFifoCurrent);
     DrainFifo(*iFifoNext);
-    return aMsg;
+    iStreamHandler = aMsg->StreamHandler();
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* Rewinder::ProcessMsg(MsgMetaText* /*aMsg*/)
@@ -140,7 +150,7 @@ TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
         Fifo<MsgAudioEncoded*>* tmp = iFifoCurrent;
         iFifoCurrent = iFifoNext;
         iFifoNext = tmp;
-        return true;
+        return MsgFlush::kIdInvalid;
     }
     else {
         // no need to store reference to flush id as we don't buffer msgs during normal operation
@@ -150,10 +160,10 @@ TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
 TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    if (iFifoNext->SlotsUsed() > 0) {
+    if (iBuffering) {
         iBuffering = false;
         DrainFifo(*iFifoNext);
-        return true;
+        return MsgFlush::kIdInvalid;
     }
     else {
         return iStreamHandler->TryStop(aTrackId, aStreamId);
