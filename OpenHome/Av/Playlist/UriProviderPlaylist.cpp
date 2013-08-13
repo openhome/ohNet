@@ -64,7 +64,7 @@ EStreamPlay UriProviderPlaylist::GetNext(Media::Track*& aTrack)
         aTrack = iDatabase.NextTrackRef(iLastTrackId);
         if (aTrack == NULL) {
             aTrack = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
-            canPlay = ePlayLater;
+            canPlay = (aTrack==NULL? ePlayNo : ePlayLater);
         }
         iLastTrackId = (aTrack != NULL? aTrack->Id() : ITrackDatabase::kTrackIdNone);
     }
