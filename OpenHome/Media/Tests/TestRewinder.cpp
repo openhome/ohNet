@@ -22,7 +22,8 @@ public:
 public:
     SuiteRewinder(const TChar* aName);
     SuiteRewinder();
-    ~SuiteRewinder();
+protected:
+    void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots);
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -94,10 +95,8 @@ class SuiteRewinderMaxCapacity : public SuiteRewinder
 {
 public:
     SuiteRewinderMaxCapacity();
-    ~SuiteRewinderMaxCapacity();
 private: // from SuiteUnitTest
     void Setup();
-    void TearDown();
 private:
     void TestMaxCapacity();
 
@@ -126,15 +125,11 @@ SuiteRewinder::SuiteRewinder()
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestMsgOrdering));
 }
 
-SuiteRewinder::~SuiteRewinder()
+void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots)
 {
-}
-
-void SuiteRewinder::Setup()
-{
-    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iRewinder = new Rewinder(*iMsgFactory, *this, kMsgAudioEncodedCount);
+    iRewinder = new Rewinder(*iMsgFactory, *this, aRewinderSlots);
     iStreamHandler = NULL;
     iLastMsgType = ENone;
     iOut = 0;
@@ -143,6 +138,11 @@ void SuiteRewinder::Setup()
     iTrySeekCount = 0;
     iLastSeekOffset = 0;
     iTryStopCount = 0;
+}
+
+void SuiteRewinder::Setup()
+{
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
 }
 
 void SuiteRewinder::TearDown()
@@ -491,30 +491,9 @@ SuiteRewinderMaxCapacity::SuiteRewinderMaxCapacity()
     AddTest(MakeFunctor(*this, &SuiteRewinderMaxCapacity::TestMaxCapacity));
 }
 
-SuiteRewinderMaxCapacity::~SuiteRewinderMaxCapacity()
-{
-}
-
 void SuiteRewinderMaxCapacity::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
-    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iRewinder = new Rewinder(*iMsgFactory, *this, kMsgAudioEncodedCount-1);
-    iStreamHandler = NULL;
-    iLastMsgType = ENone;
-    iOut = 0;
-    iIn = 0;
-    iOkToPlayCount = 0;
-    iTrySeekCount = 0;
-    iLastSeekOffset = 0;
-    iTryStopCount = 0;
-}
-
-void SuiteRewinderMaxCapacity::TearDown()
-{
-    delete iRewinder;
-    delete iTrackFactory;
-    delete iMsgFactory;
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount-1);
 }
 
 void SuiteRewinderMaxCapacity::TestMaxCapacity()
