@@ -3,7 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Env.h>
-//#include <OpenHome/Media/IdManager.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <algorithm>
 #include <array>
