@@ -40,14 +40,15 @@ public:
     SuiteRewinder(const TChar* aName);
     SuiteRewinder();
 protected:
+    virtual void InitMsgOrder();
     void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots);
     TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
-    Msg* GenerateMsg(EMsgType aType);
-    virtual Msg* GenerateNextMsg();
+    Msg* GenerateNextMsg();
 private:
     TByte LastCount();
     void SetLastCount(TByte aCount);
     MsgAudioEncoded* CreateAudio();
+    Msg* GenerateMsg(EMsgType aType);
     void TestAllocatorExhaustion();
     void TestTryStop();
     void TestTrySeekToStart();
@@ -81,10 +82,12 @@ protected:
     TrackFactory* iTrackFactory;
     Rewinder* iRewinder;
     IStreamHandler* iStreamHandler;
+    std::vector<EMsgType> iMsgOrder;
+    TUint iMsgCount;
     Msg* iLastMsg;
     EMsgType iLastMsgType;
-    TByte iOut;
-    TByte iIn;
+    TByte iAudioOut;
+    TByte iAudioIn;
     TUint iOkToPlayCount;
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
@@ -108,12 +111,10 @@ public:
 private: // from SuiteUnitTest
     void Setup();
 private: // from SuiteRewinder
-    Msg* GenerateNextMsg();
+    void InitMsgOrder();
 private:
     void TestNoNulls();
 private:
-    std::vector<EMsgType> iMsgOrderVector;
-    TUint iNextMsgCount;
     TByte iAudioEncodedCount;
 };
 
@@ -139,19 +140,33 @@ SuiteRewinder::SuiteRewinder()
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestMsgOrdering));
 }
 
+void SuiteRewinder::InitMsgOrder()
+{
+    // generate 1 track -> 1 stream -> >0 audio encoded msgs to simulate normal operation
+    iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    // make sure there are more than enough MsgAudioEncodeds for our needs
+    for (TUint i=0; i<kMsgAudioEncodedCount*2; i++){
+        iMsgOrder.push_back(EMsgAudioEncoded);
+    }
+}
+
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this, aRewinderSlots);
     iStreamHandler = NULL;
+    iMsgOrder.clear();
+    iMsgCount = 0;
     iLastMsgType = ENone;
-    iOut = 0;
-    iIn = 0;
+    iAudioOut = 0;
+    iAudioIn = 0;
     iOkToPlayCount = 0;
     iTrySeekCount = 0;
     iLastSeekOffset = 0;
     iTryStopCount = 0;
+    InitMsgOrder();
 }
 
 void SuiteRewinder::Setup()
@@ -193,8 +208,9 @@ TUint SuiteRewinder::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 Msg* SuiteRewinder::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    TestMsgAudioEncodedValue(*aMsg, iIn);
-    iIn++;
+    TBool isCorrectMsg = TestMsgAudioEncodedValue(*aMsg, iAudioIn);
+    TEST(isCorrectMsg == true);
+    iAudioIn++;
     return aMsg;
 }
 
@@ -276,14 +292,14 @@ TBool SuiteRewinder::TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValu
 
 MsgAudioEncoded* SuiteRewinder::CreateAudio()
 {
-    // create a MsgAudioEncoded filled with iOut;
-    // iOut is incremented after each call
+    // create a MsgAudioEncoded filled with iAudioOut;
+    // iAudioOut is incremented after each call
     static const TUint kDataBytes = EncodedAudio::kMaxBytes;
     TByte encodedAudioData[kDataBytes];
-    (void)memset(encodedAudioData, iOut, kDataBytes);
+    (void)memset(encodedAudioData, iAudioOut, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioEncoded* audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
-    iOut++;
+    iAudioOut++;
     return audio;
 }
 
@@ -338,11 +354,12 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
     return msg;
 }
 
+
 Msg* SuiteRewinder::GenerateNextMsg()
 {
-    // generate 1 track -> 1 stream -> >0 audio encoded msgs to simulate normal operation
     Msg* msg = NULL;
-    switch (iLastMsgType)
+    ASSERT(iMsgCount < iMsgOrder.size());
+    switch (iMsgOrder[iMsgCount++])
     {
     default:
     case EMsgPlayable:
@@ -350,13 +367,15 @@ Msg* SuiteRewinder::GenerateNextMsg()
     case EMsgSilence:
         ASSERTS();
         break;
-    case ENone:
-        msg = GenerateMsg(EMsgTrack);
+    case ENull:
+        msg = NULL;
         break;
     case EMsgTrack:
-        msg = GenerateMsg(EMsgEncodedStream);
+        msg = GenerateMsg(EMsgTrack);
         break;
     case EMsgEncodedStream:
+        msg = GenerateMsg(EMsgEncodedStream);
+        break;
     case EMsgAudioEncoded:
         msg = GenerateMsg(EMsgAudioEncoded);
         break;
@@ -413,7 +432,7 @@ void SuiteRewinder::TestTrySeekToStart()
     }
     // try seeking back to start
     iStreamHandler->TrySeek(0, 0, 0);
-    iIn = 0;
+    iAudioIn = 0;
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         Msg* msg = iRewinder->Pull();
@@ -422,7 +441,7 @@ void SuiteRewinder::TestTrySeekToStart()
     }
     // try seeking again
     iStreamHandler->TrySeek(0, 0, 0);
-    iIn = 0;
+    iAudioIn = 0;
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         Msg* msg = iRewinder->Pull();
@@ -538,68 +557,41 @@ SuiteRewinderNullMsgs::SuiteRewinderNullMsgs()
     AddTest(MakeFunctor(*this, &SuiteRewinderNullMsgs::TestNoNulls));
 }
 
-void SuiteRewinderNullMsgs::Setup()
+void SuiteRewinderNullMsgs::InitMsgOrder()
 {
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
-    iNextMsgCount = 0;
-    iAudioEncodedCount = 0;
-    iMsgOrderVector.clear();
     // populate vector with normal stream interleaved with nulls
-    iMsgOrderVector.push_back(ENull);
-    iMsgOrderVector.push_back(EMsgTrack);
-    iMsgOrderVector.push_back(ENull);
-    iMsgOrderVector.push_back(ENull);
-    iMsgOrderVector.push_back(EMsgEncodedStream);
-    iMsgOrderVector.push_back(ENull);
+    iMsgOrder.push_back(ENull);
+    iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(ENull);
+    iMsgOrder.push_back(ENull);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    iMsgOrder.push_back(ENull);
     for (TUint i = 0; i < 10; i++) {
-        iMsgOrderVector.push_back(EMsgAudioEncoded);
+        iMsgOrder.push_back(EMsgAudioEncoded);
         iAudioEncodedCount++;
     }
-    iMsgOrderVector.push_back(ENull);
+    iMsgOrder.push_back(ENull);
     for (TUint i = 0; i < 5; i++) {
-        iMsgOrderVector.push_back(EMsgAudioEncoded);
+        iMsgOrder.push_back(EMsgAudioEncoded);
         iAudioEncodedCount++;
     }
-    iMsgOrderVector.push_back(ENull);
-    iMsgOrderVector.push_back(ENull);
+    iMsgOrder.push_back(ENull);
+    iMsgOrder.push_back(ENull);
     for (TUint i = 0; i < 10; i++) {
-        iMsgOrderVector.push_back(EMsgAudioEncoded);
+        iMsgOrder.push_back(EMsgAudioEncoded);
         iAudioEncodedCount++;
     }
-    iMsgOrderVector.push_back(ENull);
+    iMsgOrder.push_back(ENull);
     // end with a MsgAudioEncoded, otherwise Rewinder will keep pulling on NULLs
     // and test won't end sensibly
-    iMsgOrderVector.push_back(EMsgAudioEncoded);
+    iMsgOrder.push_back(EMsgAudioEncoded);
     iAudioEncodedCount++;
 }
 
-Msg* SuiteRewinderNullMsgs::GenerateNextMsg()
+void SuiteRewinderNullMsgs::Setup()
 {
-    // generate NULL msgs among others
-    Msg* msg = NULL;
-    ASSERT(iNextMsgCount < iMsgOrderVector.size());
-    switch (iMsgOrderVector[iNextMsgCount++])
-    {
-    default:
-    case EMsgPlayable:
-    case EMsgAudioPcm:
-    case EMsgSilence:
-        ASSERTS();
-        break;
-    case ENull:
-        msg = NULL;
-        break;
-    case EMsgTrack:
-        msg = GenerateMsg(EMsgTrack);
-        break;
-    case EMsgEncodedStream:
-        msg = GenerateMsg(EMsgEncodedStream);
-        break;
-    case EMsgAudioEncoded:
-        msg = GenerateMsg(EMsgAudioEncoded);
-        break;
-    }
-    return msg;
+    iAudioEncodedCount = 0;
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
 }
 
 void SuiteRewinderNullMsgs::TestNoNulls()
