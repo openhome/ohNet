@@ -52,9 +52,7 @@ private:
     void TestAllocatorExhaustion();
     void TestTryStop();
     void TestTrySeekToStart();
-    void TestTrySeekToStartAfterMiscAudio();
     void TestUpstreamRequestPassThrough();
-    void TestMsgOrdering();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -118,6 +116,29 @@ private:
     TByte iAudioEncodedCount;
 };
 
+class SuiteRewinderSeekToStartAfterMiscAudio : public SuiteRewinder
+{
+public:
+    SuiteRewinderSeekToStartAfterMiscAudio();
+    SuiteRewinderSeekToStartAfterMiscAudio(const TChar* aName);
+private: // from SuiteUnitTest
+    void Setup();
+private:
+    void InitMsgOrder();
+private:
+    void TestTrySeekToStartAfterMiscAudio();
+protected:
+    static const TUint kStartOfNewStream = 10;
+};
+
+class SuiteRewinderSeekToStartMultipleStreams : public SuiteRewinderSeekToStartAfterMiscAudio
+{
+public:
+    SuiteRewinderSeekToStartMultipleStreams();
+private:
+    void InitMsgOrder();
+};
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -135,9 +156,7 @@ SuiteRewinder::SuiteRewinder()
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTryStop));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStartAfterMiscAudio));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestMsgOrdering));
 }
 
 void SuiteRewinder::InitMsgOrder()
@@ -450,13 +469,6 @@ void SuiteRewinder::TestTrySeekToStart()
     }
 }
 
-void SuiteRewinder::TestTrySeekToStartAfterMiscAudio()
-{
-    // test that after receiving X msgs of MsgAudioEncoded, then a
-    // MsgEncodedStream followed by a TrySeek, only MsgAudioEncodeds received
-    // after the MsgEncodedStream are passed through
-}
-
 void SuiteRewinder::TestUpstreamRequestPassThrough()
 {
     // test that upstream msgs are successfully (and correctly) passed through
@@ -511,11 +523,6 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     stopRes = iStreamHandler->TryStop(0,0);
     TEST(stopRes == 1);
     TEST(iTryStopCount == 1);
-}
-
-void SuiteRewinder::TestMsgOrdering()
-{
-    // test that Rewinder passes through ALL msgs in order (even buffered ones)
 }
 
 
@@ -615,11 +622,96 @@ void SuiteRewinderNullMsgs::TestNoNulls()
 }
 
 
+// SuiteRewinderSeekToStartAfterMiscAudio
+
+SuiteRewinderSeekToStartAfterMiscAudio::SuiteRewinderSeekToStartAfterMiscAudio()
+    : SuiteRewinder("RewinderSeekToStartAfterMiscAudio tests")
+{
+    AddTest(MakeFunctor(*this, &SuiteRewinderSeekToStartAfterMiscAudio::TestTrySeekToStartAfterMiscAudio));
+}
+
+SuiteRewinderSeekToStartAfterMiscAudio::SuiteRewinderSeekToStartAfterMiscAudio(const TChar* aName)
+    : SuiteRewinder(aName)
+{
+    AddTest(MakeFunctor(*this, &SuiteRewinderSeekToStartAfterMiscAudio::TestTrySeekToStartAfterMiscAudio));
+}
+
+void SuiteRewinderSeekToStartAfterMiscAudio::InitMsgOrder()
+{
+    for (TUint i = 0; i < kStartOfNewStream; i++) {
+        iMsgOrder.push_back(EMsgAudioEncoded);
+    }
+    iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    for (TUint i = 0; i < 15; i++) {
+        iMsgOrder.push_back(EMsgAudioEncoded);
+    }
+}
+
+void SuiteRewinderSeekToStartAfterMiscAudio::Setup()
+{
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
+}
+
+void SuiteRewinderSeekToStartAfterMiscAudio::TestTrySeekToStartAfterMiscAudio()
+{
+    // test that after receiving X msgs of MsgAudioEncoded, then a
+    // MsgEncodedStream followed by a TrySeek, only MsgAudioEncodeds received
+    // after the MsgEncodedStream are passed through
+    for (TByte i = 0; i < iMsgOrder.size(); i++)
+    {
+        Msg* msg = iRewinder->Pull();
+        msg = msg->Process(*this);
+        msg->RemoveRef();
+    }
+    // try seek back to start of stream and test that seek is to start of
+    // second stream of MsgAudioEncodeds
+    TUint seekRes = iStreamHandler->TrySeek(0,0,0);
+    TEST(seekRes == MsgFlush::kIdInvalid);
+    TEST(iTrySeekCount == 0);   // seek shouldn't have been passed upstream
+    // pull next msg and test seek was to start of second stream
+    iAudioIn = kStartOfNewStream;
+    Msg* msg = iRewinder->Pull();
+    TBool isStartOfStream = TestMsgAudioEncodedValue(*dynamic_cast<MsgAudioEncoded*>(msg), kStartOfNewStream);
+    TEST(isStartOfStream == true);
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+}
+
+
+// SuiteRewinderSeekToStartMultipleStreams
+
+SuiteRewinderSeekToStartMultipleStreams::SuiteRewinderSeekToStartMultipleStreams()
+    : SuiteRewinderSeekToStartAfterMiscAudio("RewinderSeekToStartMultipleStreams tests")
+{
+}
+
+void SuiteRewinderSeekToStartMultipleStreams::InitMsgOrder()
+{
+    iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    for (TUint i = 0; i < kStartOfNewStream; i++) {
+        iMsgOrder.push_back(EMsgAudioEncoded);
+    }
+    iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    for (TUint i = 0; i < 15; i++) {
+        iMsgOrder.push_back(EMsgAudioEncoded);
+    }
+}
+
+//void SuiteRewinder::TestMsgOrdering()
+//{
+//    // test that Rewinder passes through ALL msgs in order (even buffered ones)
+//}
+
 void TestRewinder()
 {
     Runner runner("Rewinder tests\n");
     runner.Add(new SuiteRewinder());
     runner.Add(new SuiteRewinderMaxCapacity());
     runner.Add(new SuiteRewinderNullMsgs());
+    runner.Add(new SuiteRewinderSeekToStartAfterMiscAudio());
+    runner.Add(new SuiteRewinderSeekToStartMultipleStreams());
     runner.Run();
 }
