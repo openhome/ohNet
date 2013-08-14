@@ -283,10 +283,11 @@ Msg* SuiteRewinder::ProcessMsg(MsgEncodedStream* aMsg)
     return aMsg;
 }
 
-Msg* SuiteRewinder::ProcessMsg(MsgMetaText* /*aMsg*/)
+Msg* SuiteRewinder::ProcessMsg(MsgMetaText* aMsg)
 {
-    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
+    TEST(iLastMsgType == EMsgMetaText);
+    iRcvdMsgType = EMsgMetaText;
+    return aMsg;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgHalt* aMsg)
@@ -349,7 +350,6 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
     case EMsgAudioPcm:
     case EMsgSilence:
     case EMsgDecodedStream:
-    case EMsgMetaText:
         ASSERTS();
         break;
     case ENull:
@@ -369,6 +369,10 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
     case EMsgAudioEncoded:
         msg = CreateAudio();
         iLastMsgType = EMsgAudioEncoded;
+        break;
+    case EMsgMetaText:
+        msg = iMsgFactory->CreateMsgMetaText(Brn("metatext"));
+        iLastMsgType = EMsgMetaText;
         break;
     case EMsgHalt:
         msg = iMsgFactory->CreateMsgHalt();
@@ -399,7 +403,6 @@ Msg* SuiteRewinder::GenerateNextMsg()
     case EMsgAudioPcm:
     case EMsgSilence:
     case EMsgDecodedStream:
-    case EMsgMetaText:
         ASSERTS();
         break;
     case ENull:
@@ -413,6 +416,9 @@ Msg* SuiteRewinder::GenerateNextMsg()
         break;
     case EMsgAudioEncoded:
         msg = GenerateMsg(EMsgAudioEncoded);
+        break;
+    case EMsgMetaText:
+        msg = GenerateMsg(EMsgMetaText);
         break;
     case EMsgHalt:
         msg = GenerateMsg(EMsgHalt);
@@ -736,6 +742,8 @@ void SuiteRewinderMsgOrdering::InitMsgOrder()
     for (TUint i = 0; i < 10; i++) {
         iMsgOrder.push_back(EMsgAudioEncoded);
     }
+    iMsgOrder.push_back(EMsgMetaText);
+    iMsgOrder.push_back(EMsgAudioEncoded);
     iMsgOrder.push_back(EMsgFlush);
     iMsgOrder.push_back(EMsgAudioEncoded);
     iMsgOrder.push_back(EMsgHalt);

@@ -298,10 +298,9 @@ Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
     return msg;
 }
 
-Msg* Container::ProcessMsg(MsgMetaText* /*aMsg*/)
+Msg* Container::ProcessMsg(MsgMetaText* aMsg)
 {
-    ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return aMsg;
 }
 
 Msg* Container::ProcessMsg(MsgHalt* aMsg)

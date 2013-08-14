@@ -28,6 +28,7 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
+SIMPLE_TEST_DECLARATION(TestRewinder);
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
 extern TestCodecMinimalPipeline* CreateTestCodecPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor);
@@ -67,6 +68,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestTrackDatabase", ShellTestTrackDatabase));
     shellTests.push_back(ShellTest("TestTrackInspector", ShellTestTrackInspector));
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
+    shellTests.push_back(ShellTest("TestRewinder", ShellTestRewinder));
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
 

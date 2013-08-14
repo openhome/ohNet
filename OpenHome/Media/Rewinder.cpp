@@ -58,6 +58,7 @@ Msg* Rewinder::Pull()
         }
     }
     if (iFifoCurrent->SlotsUsed() > 0) {
+        ASSERT(msg == NULL);
         msg = GetAudioFromCurrent();
     }
     return msg;
@@ -67,7 +68,6 @@ Msg* Rewinder::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     ASSERT(iFifoCurrent->SlotsFree() > 0);
     ASSERT(iFifoNext->SlotsFree() > 0);
-    //aMsg->AddRef();
     iFifoCurrent->Write(aMsg);
     return NULL;
 }
@@ -113,10 +113,9 @@ Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
     return msg;
 }
 
-Msg* Rewinder::ProcessMsg(MsgMetaText* /*aMsg*/)
+Msg* Rewinder::ProcessMsg(MsgMetaText* aMsg)
 {
-    ASSERTS(); // only expect encoded audio at this stage of the pipeline
-    return NULL;
+    return aMsg;
 }
 
 Msg* Rewinder::ProcessMsg(MsgHalt* aMsg)
@@ -126,6 +125,9 @@ Msg* Rewinder::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Rewinder::ProcessMsg(MsgFlush* aMsg)
 {
+    iBuffering = false;
+    DrainFifo(*iFifoCurrent);
+    DrainFifo(*iFifoNext);
     return aMsg;
 }
 
