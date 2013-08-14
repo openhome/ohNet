@@ -211,6 +211,7 @@ void ProviderPlaylist::SeekIndex(IDvInvocation& aInvocation, TUint aValue)
 {
     try {
         iSource.SeekToTrackIndex(aValue);
+        iSource.Play(); // reqiured for volkano1 compatibility
     }
     catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
