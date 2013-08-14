@@ -11,6 +11,7 @@
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Media/Rewinder.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Private/TestFramework.h>
@@ -262,12 +263,13 @@ void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
 TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor)
 {
     iInfoAggregator = new TestCodecInfoAggregator();
-    iMsgFactory = new MsgFactory(*iInfoAggregator, 100, 100, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
-    // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
+    iMsgFactory = new MsgFactory(*iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iRewinder -> iController -> iElementDownstream(this)
     iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
     iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iContainer = new Container(*iMsgFactory, *iReservoir);
-    iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
+    iRewinder = new Rewinder(*iMsgFactory, *iContainer, kMsgAudioEncodedCount);
+    iController = new CodecController(*iMsgFactory, *iRewinder, *iElementDownstream);
     iSupply = new Supply(*iMsgFactory, *iReservoir);
     iFlushIdProvider = new TestCodecFlushIdProvider();
     iFiller = new TestCodecFiller(aEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
@@ -279,6 +281,7 @@ TestCodecMinimalPipeline::~TestCodecMinimalPipeline()
     delete iFlushIdProvider;
     delete iSupply;
     delete iController;
+    delete iRewinder;
     delete iContainer;
     delete iMsgFactory;
     delete iReservoir;

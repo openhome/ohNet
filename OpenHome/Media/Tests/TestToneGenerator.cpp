@@ -10,6 +10,7 @@
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Rewinder.h>
 #include <OpenHome/Buffer.h>
 
 #include <OpenHome/Private/Thread.h>
@@ -155,6 +156,7 @@ private:
     EncodedAudioReservoir* iEncodedAudioReservoir;
     Supply* iSupply;
     Codec::Container* iContainer;
+    Rewinder* iRewinder;
     Codec::CodecController* iCodecController;
 
     TUint iNextFlushId;
@@ -496,7 +498,8 @@ void SuiteGeneratorAny::Setup()
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iSupply = new Supply(*iMsgFactory, *iEncodedAudioReservoir);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this);
+    iRewinder = new Rewinder(*iMsgFactory, *iContainer, kMsgCountAudioEncoded);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iRewinder, /*IPipelineElementDownstream*/ *this);
     iCodecController->AddCodec(Codec::CodecFactory::NewWav());
     iCodecController->Start();
 

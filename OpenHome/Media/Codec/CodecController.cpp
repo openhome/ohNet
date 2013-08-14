@@ -172,6 +172,7 @@ void CodecController::CodecThread()
                     break;
                 }
             }
+            iStreamHandler->TryStop(iTrackId, iStreamId);   // tell immediately upstream Rewinder to stop buffering
             if (iActiveCodec == NULL) {
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?

@@ -30,6 +30,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     , iLoggerSupply(NULL)
     , iLoggerEncodedAudioReservoir(NULL)
     , iLoggerContainer(NULL)
+    , iLoggerRewinder(NULL)
     , iLoggerCodecController(NULL)
     , iLoggerDecodedAudioReservoir(NULL)
     , iLoggerVariableDelay(NULL)
@@ -70,10 +71,13 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iContainer->AddContainer(new Codec::Id3v2());
     iContainer->AddContainer(new Codec::Mpeg4Start());
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
-    
+
+    iRewinder = new Rewinder(*iMsgFactory, *iLoggerContainer, kMsgCountAudioEncoded);
+    iLoggerRewinder = new Logger(*iRewinder, "Rewinder");
+
     // construct push logger slightly out of sequence
     iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioReservoir);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerRewinder, *iLoggerCodecController);
 
     iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
@@ -100,6 +104,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerSupply->SetEnabled(true);
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
+    //iLoggerRewinder->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
@@ -113,6 +118,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerSupply->SetFilter(Logger::EMsgAll);
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
+    //iLoggerRewinder->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
@@ -147,6 +153,8 @@ Pipeline::~Pipeline()
     delete iDecodedAudioReservoir;
     delete iLoggerCodecController;
     delete iCodecController;
+    delete iLoggerRewinder;
+    delete iRewinder;
     delete iLoggerContainer;
     delete iContainer;
     delete iLoggerEncodedAudioReservoir;
