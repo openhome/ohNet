@@ -542,23 +542,11 @@ void SocketTcpServer::Add(const TChar* aName, SocketTcpSession* aSession, TInt a
 THandle SocketTcpServer::Accept(Endpoint& aClientEndpoint)
 {
     LOGF(kNetwork, "SocketTcpServer::Accept\n");
-    iMutex.Wait();                                    // wait to become the single accepting thread
-    if (iTerminating) {
-        iMutex.Signal();                              // signal for next session thread to become the accepting thread
+    AutoMutex a(iMutex);                        // wait to become the single accepting thread
+    if (iTerminating)
         THROW(NetworkError);
-    }
 
-    THandle handle;
-    try {
-        handle = Socket::Accept(aClientEndpoint);    // accept the connection
-        iMutex.Signal();
-        return (handle);
-    }
-    catch (NetworkError&) {  // server handle closed by destructor
-    }
-
-    iMutex.Signal();    // signal for next session thread to become the accepting thread
-    THROW(NetworkError);
+    return Socket::Accept(aClientEndpoint);     // accept the connection
 }
 
 TBool SocketTcpServer::Terminating()
