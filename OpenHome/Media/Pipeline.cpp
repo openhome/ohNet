@@ -72,7 +72,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iContainer->AddContainer(new Codec::Mpeg4Start());
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
-    iRewinder = new Rewinder(*iMsgFactory, *iLoggerContainer, kMsgCountAudioEncoded);
+    iRewinder = new Rewinder(*iMsgFactory, *iLoggerContainer, *this, kMsgCountAudioEncoded);
     iLoggerRewinder = new Logger(*iRewinder, "Rewinder");
 
     // construct push logger slightly out of sequence

@@ -21,7 +21,7 @@ namespace Media {
 class Rewinder : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
-    Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aSlots);
+    Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IFlushIdProvider& aIdProvider, TUint aSlots);
     ~Rewinder();
 private:
     MsgAudioEncoded* GetAudioFromCurrent();
@@ -47,8 +47,10 @@ private: // from IStreamHandler
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
+    IFlushIdProvider& iIdProvider;
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
+    MsgQueue iFlushQueue;
     Fifo<MsgAudioEncoded*>* iFifoCurrent;    // new Msgs still to be passed on
     Fifo<MsgAudioEncoded*>* iFifoNext;       // Msgs passed on but buffered in case of rewind
 };

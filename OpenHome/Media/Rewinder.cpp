@@ -4,9 +4,10 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aSlots)
+Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IFlushIdProvider& aIdProvider, TUint aSlots)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iIdProvider(aIdProvider)
     , iStreamHandler(NULL)
     , iBuffering(false)
 {
@@ -50,6 +51,11 @@ void Rewinder::DrainFifo(Fifo<MsgAudioEncoded*>& aFifo)
 Msg* Rewinder::Pull()
 {
     Msg* msg = NULL;
+
+    if (!iFlushQueue.IsEmpty()) {
+        return iFlushQueue.Dequeue();
+    }
+
     // check if we have a waiting MsgAudioEncoded as first part of short-circuit
     while (iFifoCurrent->SlotsUsed() == 0 && msg == NULL) {
         msg = iUpstreamElement.Pull();
@@ -152,10 +158,11 @@ TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
         Fifo<MsgAudioEncoded*>* tmp = iFifoCurrent;
         iFifoCurrent = iFifoNext;
         iFifoNext = tmp;
-        return MsgFlush::kIdInvalid;
+        TUint flushId = iIdProvider.NextFlushId();
+        iFlushQueue.Enqueue(iMsgFactory.CreateMsgFlush(flushId));
+        return flushId;
     }
     else {
-        // no need to store reference to flush id as we don't buffer msgs during normal operation
         return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     }
 }

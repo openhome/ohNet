@@ -265,13 +265,13 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     iInfoAggregator = new TestCodecInfoAggregator();
     iMsgFactory = new MsgFactory(*iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
     // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iRewinder -> iController -> iElementDownstream(this)
+    iFlushIdProvider = new TestCodecFlushIdProvider();
     iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
     iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iContainer = new Container(*iMsgFactory, *iReservoir);
-    iRewinder = new Rewinder(*iMsgFactory, *iContainer, kMsgAudioEncodedCount);
+    iRewinder = new Rewinder(*iMsgFactory, *iContainer, *iFlushIdProvider, kMsgAudioEncodedCount);
     iController = new CodecController(*iMsgFactory, *iRewinder, *iElementDownstream);
     iSupply = new Supply(*iMsgFactory, *iReservoir);
-    iFlushIdProvider = new TestCodecFlushIdProvider();
     iFiller = new TestCodecFiller(aEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
 }
 
