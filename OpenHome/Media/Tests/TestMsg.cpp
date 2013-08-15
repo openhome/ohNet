@@ -519,6 +519,50 @@ void SuiteMsgAudioEncoded::Test()
     }
     msg2->RemoveRef();
 
+    // try cloning a message, check size and output of both are same
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    msg2 = msg->Clone();
+
+    msg1Size = msg->Bytes();
+    msg2Size = msg2->Bytes();
+    TEST(msg1Size == msg2Size);
+
+    (void)memset(output, 0xde, sizeof(output));
+    msg->CopyTo(output);
+    for (TUint i=0; i<msg->Bytes(); i++) {
+        TEST(output[i] == buf[i]);
+    }
+    (void)memset(output, 0xde, sizeof(output));
+    msg2->CopyTo(output);
+    for (TUint i=0; i<msg2->Bytes(); i++) {
+        TEST(output[i] == buf[i]);
+    }
+    msg->RemoveRef();
+    msg2->RemoveRef();
+
+    // try cloning a chained message, check size and output are same
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    msg1Size = msg->Bytes();
+    msg2 = iMsgFactory->CreateMsgAudioEncoded(buf2);
+    msg2Size = msg2->Bytes();
+    msg->Add(msg2);
+    MsgAudioEncoded* msg3 = msg->Clone();
+    TEST(msg3->Bytes() == msg1Size + msg2Size);
+
+    (void)memset(output, 0xde, sizeof(output));
+    msg3->CopyTo(output);
+    for (TUint i=0; i<msg3->Bytes(); i++) {
+        if (i < buf.Bytes()) {
+            TEST(output[i] == buf[i]);
+        }
+        else {
+            TEST(output[i] == buf2[i - buf.Bytes()]);
+        }
+    }
+    msg->RemoveRef();
+    msg2->RemoveRef();
+    msg3->RemoveRef();
+
     // clean shutdown implies no leaked msgs
 }
 

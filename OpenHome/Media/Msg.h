@@ -244,6 +244,7 @@ public:
     void Add(MsgAudioEncoded* aMsg); // combines MsgAudioEncoded instances so they report larger sizes etc
     TUint Bytes() const;
     void CopyTo(TByte* aPtr);
+    MsgAudioEncoded* Clone();
 private:
     void Initialise(EncodedAudio* aEncodedAudio);
 private: // from Msg

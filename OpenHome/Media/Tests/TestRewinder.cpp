@@ -13,7 +13,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteRewinder : public SuiteUnitTest, public IPipelineElementUpstream, private IStreamHandler, protected IMsgProcessor
+class SuiteRewinder : public SuiteUnitTest, public IPipelineElementUpstream, public IFlushIdProvider, private IStreamHandler, protected IMsgProcessor
 {
 public:
     static const TUint kPreAudioMsgCount = 2;
@@ -41,9 +41,11 @@ public:
     SuiteRewinder();
 protected:
     virtual void InitMsgOrder();
-    void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots);
+    void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount);
     TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
     Msg* GenerateNextMsg();
+    void PullAndProcess();
+    void PullFlush();
 private:
     TByte LastCount();
     void SetLastCount(TByte aCount);
@@ -58,6 +60,8 @@ private: // from SuiteUnitTest
     void TearDown();
 public: // from IPipelineElementUpstream
     Msg* Pull();
+public: // from IFlushIdProvider
+    TUint NextFlushId();
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -80,6 +84,7 @@ protected:
     TrackFactory* iTrackFactory;
     Rewinder* iRewinder;
     IStreamHandler* iStreamHandler;
+    TUint iNextFlushId;
     std::vector<EMsgType> iMsgOrder;
     TUint iMsgCount;
     Msg* iLastMsg;
@@ -91,16 +96,6 @@ protected:
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
     TUint iTryStopCount;
-};
-
-class SuiteRewinderMaxCapacity : public SuiteRewinder
-{
-public:
-    SuiteRewinderMaxCapacity();
-private: // from SuiteUnitTest
-    void Setup();
-private:
-    void TestMaxCapacity();
 };
 
 class SuiteRewinderNullMsgs : public SuiteRewinder
@@ -179,12 +174,13 @@ void SuiteRewinder::InitMsgOrder()
     }
 }
 
-void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots)
+void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iRewinder = new Rewinder(*iMsgFactory, *this, aRewinderSlots);
+    iRewinder = new Rewinder(*iMsgFactory, *this, *this);
     iStreamHandler = NULL;
+    iNextFlushId = MsgFlush::kIdInvalid+1;
     iMsgOrder.clear();
     iMsgCount = 0;
     iLastMsgType = ENone;
@@ -200,7 +196,7 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
 
 void SuiteRewinder::Setup()
 {
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount);
 }
 
 void SuiteRewinder::TearDown()
@@ -214,6 +210,11 @@ Msg* SuiteRewinder::Pull()
 {
     iLastMsg = GenerateNextMsg();
     return iLastMsg;
+}
+
+TUint SuiteRewinder::NextFlushId()
+{
+    return iNextFlushId++;
 }
 
 EStreamPlay SuiteRewinder::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -379,7 +380,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgHalt;
         break;
     case EMsgFlush:
-        msg = iMsgFactory->CreateMsgFlush(1);
+        msg = iMsgFactory->CreateMsgFlush(NextFlushId());
         iLastMsgType = EMsgFlush;
         break;
     case EMsgQuit:
@@ -389,7 +390,6 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
     }
     return msg;
 }
-
 
 Msg* SuiteRewinder::GenerateNextMsg()
 {
@@ -433,14 +433,27 @@ Msg* SuiteRewinder::GenerateNextMsg()
     return msg;
 }
 
+void SuiteRewinder::PullAndProcess()
+{
+    Msg* msg = iRewinder->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+}
+
+void SuiteRewinder::PullFlush()
+{
+    EMsgType tmpType = iLastMsgType;
+    iLastMsgType = EMsgFlush;
+    PullAndProcess();
+    iLastMsgType = tmpType;
+}
+
 void SuiteRewinder::TestAllocatorExhaustion()
 {
     // test that pulling kMsgAudioEncodedCount+1 into Rewinder causes AllocatorNoMemory to be thrown
     for (TUint i = 0; i < kPreAudioMsgCount+kMsgAudioEncodedCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     TEST_THROWS(iRewinder->Pull(), AllocatorNoMemory);
 }
@@ -454,17 +467,13 @@ void SuiteRewinder::TestTryStop()
     static const TUint kPostTryStopAudioCount = kMsgAudioEncodedCount;   // any value >Rewinder slots
     for (TUint i = 0; i < kPreAudioMsgCount+kPreTryStopAudioCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     iStreamHandler->TryStop(0, 0);
     TEST(iTryStopCount == 0); // no TryStop msg should have been passed up
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     // if executions gets to here, no longer buffering
 }
@@ -476,27 +485,23 @@ void SuiteRewinder::TestTrySeekToStart()
     static const TUint kPostTryStopAudioCount = kPreTryStopAudioCount+5;
     for (TUint i = 0; i < kPreAudioMsgCount+kPreTryStopAudioCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     // try seeking back to start
     iStreamHandler->TrySeek(0, 0, 0);
+    PullFlush();
     iAudioIn = 0;
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     // try seeking again
     iStreamHandler->TrySeek(0, 0, 0);
+    PullFlush();
     iAudioIn = 0;
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
 }
 
@@ -516,13 +521,11 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TEST(iStreamHandler == NULL);
     for (TUint i = 0; i < kPreAudioMsgCount+kAudioCount; i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     // TrySeek shouldn't be passed through while buffering
     seekRes = iStreamHandler->TrySeek(0,0,0);
-    TEST(seekRes == 0);
+    TEST(seekRes == iNextFlushId-1);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 0);
     // test seeking anywhere other than start during buffering causes assert
@@ -554,36 +557,6 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     stopRes = iStreamHandler->TryStop(0,0);
     TEST(stopRes == 1);
     TEST(iTryStopCount == 1);
-}
-
-
-// SuiteRewinderMaxCapacity
-
-SuiteRewinderMaxCapacity::SuiteRewinderMaxCapacity()
-    : SuiteRewinder("RewinderMaxCapacity tests")
-{
-    AddTest(MakeFunctor(*this, &SuiteRewinderMaxCapacity::TestMaxCapacity));
-}
-
-void SuiteRewinderMaxCapacity::Setup()
-{
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount-1);
-}
-
-void SuiteRewinderMaxCapacity::TestMaxCapacity()
-{
-    // test that pulling kMsgAudioEncodedCount into a Rewinder with
-    // kMsgAudioEncodedCount-1 slots causes assertion
-    Msg* msg = NULL;
-    for (TUint i = 0; i < kPreAudioMsgCount+(kMsgAudioEncodedCount-1); i++)
-    {
-        msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
-    }
-    // pulling msg #kMsgAudioEncodedCount
-    TEST_THROWS(msg = iRewinder->Pull(), AssertionFailed);
-    iLastMsg->RemoveRef();
 }
 
 
@@ -629,7 +602,7 @@ void SuiteRewinderNullMsgs::InitMsgOrder()
 void SuiteRewinderNullMsgs::Setup()
 {
     iAudioEncodedCount = 0;
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount);
 }
 
 void SuiteRewinderNullMsgs::TestNoNulls()
@@ -686,14 +659,14 @@ void SuiteRewinderSeekToStartAfterMiscAudio::TestTrySeekToStartAfterMiscAudio()
     // after the MsgEncodedStream are passed through
     for (TByte i = 0; i < iMsgOrder.size(); i++)
     {
-        Msg* msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
+        PullAndProcess();
     }
     // try seek back to start of stream and test that seek is to start of
     // second stream of MsgAudioEncodeds
     TUint seekRes = iStreamHandler->TrySeek(0,0,0);
-    TEST(seekRes == MsgFlush::kIdInvalid);
+    TEST(seekRes == iNextFlushId-1);
+    PullFlush();
+
     TEST(iTrySeekCount == 0);   // seek shouldn't have been passed upstream
     // pull next msg and test seek was to start of second stream
     iAudioIn = kStartOfNewStream;
@@ -768,7 +741,6 @@ void TestRewinder()
 {
     Runner runner("Rewinder tests\n");
     runner.Add(new SuiteRewinder());
-    runner.Add(new SuiteRewinderMaxCapacity());
     runner.Add(new SuiteRewinderNullMsgs());
     runner.Add(new SuiteRewinderSeekToStartAfterMiscAudio());
     runner.Add(new SuiteRewinderSeekToStartMultipleStreams());

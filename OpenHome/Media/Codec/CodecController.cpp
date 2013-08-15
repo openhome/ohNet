@@ -157,11 +157,6 @@ void CodecController::CodecThread()
                     if (!TrySeek(iStreamId, 0)) {
                         break;
                     }
-                    // pull a new message through to ensure the flush is pulled
-                    PullAudio(kMaxRecogniseBytes);
-                    if (iQuit) {
-                        break;
-                    }
                     if (iStreamEnded) {
                         continue;
                     }
@@ -172,6 +167,7 @@ void CodecController::CodecThread()
                     break;
                 }
             }
+            iStreamHandler->TryStop(iTrackId, iStreamId);   // tell immediately upstream Rewinder to stop buffering
             if (iActiveCodec == NULL) {
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
@@ -376,10 +372,12 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
         aMsg->RemoveRef();
     }
     else if (iAudioEncoded == NULL) {
-        iAudioEncoded = aMsg;
+        iAudioEncoded = aMsg->Clone();
+        aMsg->RemoveRef();
     }
     else {
-        iAudioEncoded->Add(aMsg);
+        iAudioEncoded->Add(aMsg->Clone());
+        aMsg->RemoveRef();
     }
     return NULL;
 }

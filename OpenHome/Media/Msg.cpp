@@ -721,6 +721,21 @@ void MsgAudioEncoded::CopyTo(TByte* aPtr)
     }
 }
 
+MsgAudioEncoded* MsgAudioEncoded::Clone()
+{
+    MsgAudioEncoded* clone = static_cast<Allocator<MsgAudioEncoded>&>(iAllocator).Allocate();
+    AutoMutex a(iLock);
+    clone->iNextAudio = NULL;
+    if (iNextAudio) {
+        clone->iNextAudio = iNextAudio->Clone();
+    }
+    clone->iSize = iSize;
+    clone->iOffset = iOffset;
+    clone->iAudioData = iAudioData;
+    iAudioData->AddRef();
+    return clone;
+}
+
 void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
 {
     iAudioData = aEncodedAudio;

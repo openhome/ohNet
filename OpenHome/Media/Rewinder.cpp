@@ -4,45 +4,43 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aSlots)
+Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IFlushIdProvider& aIdProvider)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
+    , iIdProvider(aIdProvider)
     , iStreamHandler(NULL)
     , iBuffering(false)
 {
-    iFifoCurrent = new Fifo<MsgAudioEncoded*>(aSlots);
-    iFifoNext = new Fifo<MsgAudioEncoded*>(aSlots);
+    iQueueCurrent = new MsgQueue();
+    iQueueNext = new MsgQueue();
 }
 
 Rewinder::~Rewinder()
 {
-    DrainFifo(*iFifoCurrent);
-    DrainFifo(*iFifoNext);
-    delete iFifoCurrent;
-    delete iFifoNext;
+    delete iQueueCurrent;
+    delete iQueueNext;
 }
 
-MsgAudioEncoded* Rewinder::GetAudioFromCurrent()
+Msg* Rewinder::GetAudioFromCurrent()
 {
-    ASSERT(iFifoCurrent->SlotsUsed() > 0);
-    MsgAudioEncoded* msg = NULL;
+    ASSERT(!iQueueCurrent->IsEmpty());
+    Msg* msg = NULL;
     if (iBuffering) {
-        ASSERT(iFifoNext->SlotsFree() > 0);
-        msg = iFifoCurrent->Read();
+        msg = iQueueCurrent->Dequeue();
         msg->AddRef();
-        iFifoNext->Write(msg);
+        iQueueNext->Enqueue(msg);
     }
     else {
-        msg = iFifoCurrent->Read();
+        msg = iQueueCurrent->Dequeue();
     }
     return msg;
 }
 
-void Rewinder::DrainFifo(Fifo<MsgAudioEncoded*>& aFifo)
+void Rewinder::DrainQueue(MsgQueue& aQueue)
 {
-    MsgAudioEncoded* msg;
-    while (aFifo.SlotsUsed() > 0) {
-        msg = aFifo.Read();
+    Msg* msg;
+    while (!aQueue.IsEmpty()) {
+        msg = aQueue.Dequeue();
         msg->RemoveRef();
     }
 }
@@ -50,14 +48,19 @@ void Rewinder::DrainFifo(Fifo<MsgAudioEncoded*>& aFifo)
 Msg* Rewinder::Pull()
 {
     Msg* msg = NULL;
+
+    if (!iFlushQueue.IsEmpty()) {
+        return iFlushQueue.Dequeue();
+    }
+
     // check if we have a waiting MsgAudioEncoded as first part of short-circuit
-    while (iFifoCurrent->SlotsUsed() == 0 && msg == NULL) {
+    while (iQueueCurrent->IsEmpty() && msg == NULL) {
         msg = iUpstreamElement.Pull();
         if (msg != NULL) {
             msg = msg->Process(*this);
         }
     }
-    if (iFifoCurrent->SlotsUsed() > 0) {
+    if (!iQueueCurrent->IsEmpty()) {
         ASSERT(msg == NULL);
         msg = GetAudioFromCurrent();
     }
@@ -66,9 +69,7 @@ Msg* Rewinder::Pull()
 
 Msg* Rewinder::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    ASSERT(iFifoCurrent->SlotsFree() > 0);
-    ASSERT(iFifoNext->SlotsFree() > 0);
-    iFifoCurrent->Write(aMsg);
+    iQueueCurrent->Enqueue(aMsg);
     return NULL;
 }
 
@@ -105,8 +106,8 @@ Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iBuffering = true;
     // clear data in case previous stream was exhausted while buffering
-    DrainFifo(*iFifoCurrent);
-    DrainFifo(*iFifoNext);
+    DrainQueue(*iQueueCurrent);
+    DrainQueue(*iQueueNext);
     iStreamHandler = aMsg->StreamHandler();
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();
@@ -126,8 +127,8 @@ Msg* Rewinder::ProcessMsg(MsgHalt* aMsg)
 Msg* Rewinder::ProcessMsg(MsgFlush* aMsg)
 {
     iBuffering = false;
-    DrainFifo(*iFifoCurrent);
-    DrainFifo(*iFifoNext);
+    DrainQueue(*iQueueCurrent);
+    DrainQueue(*iQueueNext);
     return aMsg;
 }
 
@@ -145,17 +146,18 @@ TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     if (iBuffering) {
         ASSERT(aOffset == 0); // shouldn't be seeking back to anywhere other than start while buffering/recognising
-        // write any msgs from iFifoCurrent into iFifoNext, then set iFifoNext as iFifoCurrent
-        while (iFifoCurrent->SlotsUsed() > 0) {
-            iFifoNext->Write(iFifoCurrent->Read());
+        // write any msgs from iQueueCurrent into iQueueNext, then set iQueueNext as iQueueCurrent
+        while (!iQueueCurrent->IsEmpty()) {
+            iQueueNext->Enqueue(iQueueCurrent->Dequeue());
         }
-        Fifo<MsgAudioEncoded*>* tmp = iFifoCurrent;
-        iFifoCurrent = iFifoNext;
-        iFifoNext = tmp;
-        return MsgFlush::kIdInvalid;
+        MsgQueue* tmpQueue = iQueueCurrent;
+        iQueueCurrent = iQueueNext;
+        iQueueNext = tmpQueue;
+        TUint flushId = iIdProvider.NextFlushId();
+        iFlushQueue.Enqueue(iMsgFactory.CreateMsgFlush(flushId));
+        return flushId;
     }
     else {
-        // no need to store reference to flush id as we don't buffer msgs during normal operation
         return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     }
 }
@@ -164,7 +166,7 @@ TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
 {
     if (iBuffering) {
         iBuffering = false;
-        DrainFifo(*iFifoNext);
+        DrainQueue(*iQueueNext);
         return MsgFlush::kIdInvalid;
     }
     else {
