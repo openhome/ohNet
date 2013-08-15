@@ -18,6 +18,7 @@
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <array>
+#include <limits.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -62,7 +63,6 @@ private:
     TUint iJiffiesPerSample;
     TUint iBitDepth;
     TUint iNumChannels;
-    TInt iLastSample;
     TInt iTargetTrackSample;
     TUint64 iJiffies;
     TBool iCountJiffies;
@@ -151,7 +151,7 @@ DummyDriver::DummyDriver(IPipelineElementUpstream& aPipeline)
     , iJiffiesPerSample(0)
     , iBitDepth(0)
     , iNumChannels(0)
-    , iLastSample(0)
+    , iTargetTrackSample(INT_MAX)
     , iCountJiffies(false)
     , iQuit(false)
 {
@@ -200,14 +200,17 @@ TUint DummyDriver::MarkEnd()
 
 void DummyDriver::Run()
 {
-    TUint count = 0;
+    /* FIXME - If we Sleep on every loop below, the test is painfully slow
+               If we only Sleep every nth iteration, StarvationMonitor kicks in
+               under valgrind and Playing/Buffering counts increase, breaking tests */
+    //TUint count = 0;
     do {
         Msg* msg = iPipeline.Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
-        if (++count % 4 == 0) {
+        //if (++count % 4 == 0) {
             Thread::Sleep(1); // slow driver to reduce (avoid?) chances of drop-outs
-        }
+        //}
     } while (!iQuit);
 }
 
