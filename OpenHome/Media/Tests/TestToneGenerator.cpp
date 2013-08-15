@@ -513,6 +513,7 @@ void SuiteGeneratorAny::Setup()
 void SuiteGeneratorAny::TearDown()
 {
     delete iCodecController;
+    delete iRewinder;
     delete iContainer;
     delete iEncodedAudioReservoir;
     delete iSupply;
