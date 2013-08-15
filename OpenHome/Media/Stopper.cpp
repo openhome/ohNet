@@ -43,15 +43,14 @@ void Stopper::Start()
 {
     iLock.Wait();
     ASSERT_DEBUG(iState != ERunning && iState != EFlushing);
-    if (iRemovingStream) {
-        ;
-    }
-    else if (iRemainingRampSize == iRampDuration || iFlushStream) {
+    if (iRemainingRampSize == iRampDuration || iFlushStream) {
         iState = ERunning;
     }
     else {
         iState = EStarting;
-        iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+        if (!iRemovingStream) {
+            iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
+        }
     }
     iSem.Signal();
     iLock.Signal();
