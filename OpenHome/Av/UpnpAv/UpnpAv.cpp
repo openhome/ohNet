@@ -44,6 +44,7 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     iProviderAvTransport = new ProviderAvTransport(iDevice, aEnv, *this);
     iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
     iProviderRenderingControl = new ProviderRenderingControl(iDevice);
+    aPipeline.AddObserver(*this);
     iDownstreamObserver = iProviderAvTransport;
 }
 
@@ -64,10 +65,6 @@ void SourceUpnpAv::Deactivate()
 {
     iLock.Wait();
     iTransportState = Media::EPipelineStopped;
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
     iLock.Signal();
     Source::Deactivate();
 }
@@ -92,6 +89,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 
 void SourceUpnpAv::Play()
 {
+    iActive = true; // FIXME
     if (!IsActive()) {
         DoActivate();
     }
@@ -154,10 +152,7 @@ void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipelin
     iLock.Wait();
     iPipelineTrackId = aIdPipeline;
     iStreamId = UINT_MAX;
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-    }
-    iTrack = &aTrack;
+    iActive = (iTrack != NULL && iTrack->Id() == aTrack.Id());
     iLock.Signal();
     if (IsActive()) {
         iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
