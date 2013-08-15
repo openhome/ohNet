@@ -41,7 +41,7 @@ public:
     SuiteRewinder();
 protected:
     virtual void InitMsgOrder();
-    void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots);
+    void Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount);
     TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
     Msg* GenerateNextMsg();
     void PullAndProcess();
@@ -96,16 +96,6 @@ protected:
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
     TUint iTryStopCount;
-};
-
-class SuiteRewinderMaxCapacity : public SuiteRewinder
-{
-public:
-    SuiteRewinderMaxCapacity();
-private: // from SuiteUnitTest
-    void Setup();
-private:
-    void TestMaxCapacity();
 };
 
 class SuiteRewinderNullMsgs : public SuiteRewinder
@@ -184,11 +174,11 @@ void SuiteRewinder::InitMsgOrder()
     }
 }
 
-void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, TUint aRewinderSlots)
+void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iRewinder = new Rewinder(*iMsgFactory, *this, *this, aRewinderSlots);
+    iRewinder = new Rewinder(*iMsgFactory, *this, *this);
     iStreamHandler = NULL;
     iNextFlushId = MsgFlush::kIdInvalid+1;
     iMsgOrder.clear();
@@ -206,7 +196,7 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
 
 void SuiteRewinder::Setup()
 {
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount);
 }
 
 void SuiteRewinder::TearDown()
@@ -570,36 +560,6 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
 }
 
 
-// SuiteRewinderMaxCapacity
-
-SuiteRewinderMaxCapacity::SuiteRewinderMaxCapacity()
-    : SuiteRewinder("RewinderMaxCapacity tests")
-{
-    AddTest(MakeFunctor(*this, &SuiteRewinderMaxCapacity::TestMaxCapacity));
-}
-
-void SuiteRewinderMaxCapacity::Setup()
-{
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount-1);
-}
-
-void SuiteRewinderMaxCapacity::TestMaxCapacity()
-{
-    // test that pulling kMsgAudioEncodedCount into a Rewinder with
-    // kMsgAudioEncodedCount-1 slots causes assertion
-    Msg* msg = NULL;
-    for (TUint i = 0; i < kPreAudioMsgCount+(kMsgAudioEncodedCount-1); i++)
-    {
-        msg = iRewinder->Pull();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
-    }
-    // pulling msg #kMsgAudioEncodedCount
-    TEST_THROWS(msg = iRewinder->Pull(), AssertionFailed);
-    iLastMsg->RemoveRef();
-}
-
-
 // SuiteRewinderNullMsgs
 
 SuiteRewinderNullMsgs::SuiteRewinderNullMsgs()
@@ -642,7 +602,7 @@ void SuiteRewinderNullMsgs::InitMsgOrder()
 void SuiteRewinderNullMsgs::Setup()
 {
     iAudioEncodedCount = 0;
-    Init(kEncodedAudioCount, kMsgAudioEncodedCount, kMsgAudioEncodedCount);
+    Init(kEncodedAudioCount, kMsgAudioEncodedCount);
 }
 
 void SuiteRewinderNullMsgs::TestNoNulls()
@@ -781,7 +741,6 @@ void TestRewinder()
 {
     Runner runner("Rewinder tests\n");
     runner.Add(new SuiteRewinder());
-    runner.Add(new SuiteRewinderMaxCapacity());
     runner.Add(new SuiteRewinderNullMsgs());
     runner.Add(new SuiteRewinderSeekToStartAfterMiscAudio());
     runner.Add(new SuiteRewinderSeekToStartMultipleStreams());
