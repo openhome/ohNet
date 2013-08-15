@@ -44,10 +44,13 @@ static void CallFatalErrorHandler(const char* aMsg)
 
 void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
 {
+    THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
+#if 0 // previous ASSERT implementation
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Assertion failed.  %s:%lu\n", aFile, (unsigned long)aLine);
     CallFatalErrorHandler(buf);
     Os::Quit(OpenHome::gEnv->OsCtx());
+#endif
 }
 
 static void GetThreadName(Bws<5>& aThName)
@@ -70,9 +73,8 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
 {
     Bws<5> thName;
     GetThreadName(thName);
-    char buf[1024];
+    char buf[512];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n", aException.Message(), aException.File(), (unsigned long)aException.Line(), thName.Ptr());
-
     TInt len = 8*1024;
     char* msg = new char[len];
     if (msg != NULL) {
