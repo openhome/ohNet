@@ -365,6 +365,9 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
     case EPipelineBuffering:
         iTransportState.Set(kTransportStateTransitioning);
         break;
+    default:
+        ASSERTS();
+        break;
     }
     QueueStateUpdate();
     iLock.Signal();
