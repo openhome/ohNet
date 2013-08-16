@@ -40,7 +40,8 @@ void CodecBase::Construct(ICodecController& aController)
 
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement)
     : iMsgFactory(aMsgFactory)
-    , iUpstreamElement(aUpstreamElement)
+    , iRewinder(Rewinder(aMsgFactory, aUpstreamElement))
+    , iUpstreamElement(iRewinder)
     , iDownstreamElement(aDownstreamElement)
     , iLock("CDCC")
     , iActiveCodec(NULL)
@@ -153,10 +154,7 @@ void CodecController::CodecThread()
                 TBool recognised = codec->Recognise(recogBuf);
                 if (iRecogniseRead) {    // seek back to start of data
                     iRecogniseRead = false;
-                    iConsumeExpectedFlush = true;
-                    if (!TrySeek(iStreamId, 0)) {
-                        break;
-                    }
+                    Rewind();
                     if (iStreamEnded) {
                         continue;
                     }
@@ -167,7 +165,7 @@ void CodecController::CodecThread()
                     break;
                 }
             }
-            iStreamHandler->TryStop(iTrackId, iStreamId);   // tell immediately upstream Rewinder to stop buffering
+            iRewinder.Stop(); // stop buffering audio
             if (iActiveCodec == NULL) {
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
@@ -224,7 +222,8 @@ void CodecController::CodecThread()
     }
 }
 
-void CodecController::PullAudio(TUint aBytes) {
+void CodecController::PullAudio(TUint aBytes)
+{
     // pull audio data until we have aBytes of data, or reach a stop condition
     do {
         Msg* msg = iUpstreamElement.Pull();
@@ -233,6 +232,13 @@ void CodecController::PullAudio(TUint aBytes) {
             Queue(msg);
         }
     } while ((!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) && !iQuit);
+}
+
+void CodecController::Rewind()
+{
+    iRewinder.Rewind();
+    ReleaseAudioEncoded();
+    iStreamPos = 0;
 }
 
 void CodecController::PullMsg()

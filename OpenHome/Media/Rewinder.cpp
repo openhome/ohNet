@@ -5,13 +5,14 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IFlushIdProvider& aIdProvider)
+Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
-    , iIdProvider(aIdProvider)
     , iStreamHandler(NULL)
     , iBuffering(false)
     , iLock("REWI")
+    , iTrackId(0)
+    , iStreamId(0)
 {
     iQueueCurrent = new MsgQueue();
     iQueueNext = new MsgQueue();
@@ -106,6 +107,7 @@ Msg* Rewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 
 Msg* Rewinder::ProcessMsg(MsgTrack* aMsg)
 {
+    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -116,6 +118,7 @@ Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
     DrainQueue(*iQueueCurrent);
     DrainQueue(*iQueueNext);
     iStreamHandler = aMsg->StreamHandler();
+    iStreamId = aMsg->StreamId();
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();
     return msg;
@@ -133,15 +136,44 @@ Msg* Rewinder::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Rewinder::ProcessMsg(MsgFlush* aMsg)
 {
-    iBuffering = false;
-    DrainQueue(*iQueueCurrent);
-    DrainQueue(*iQueueNext);
+    //ASSERT(!iBuffering);
+    //DrainQueue(*iQueueCurrent);
+    //DrainQueue(*iQueueNext);
     return aMsg;
 }
 
 Msg* Rewinder::ProcessMsg(MsgQuit* aMsg)
 {
     return aMsg;
+}
+
+void Rewinder::Rewind()
+{
+    AutoMutex a(iLock);
+    if (iBuffering) {
+        // write any msgs from iQueueCurrent into iQueueNext, then set iQueueNext as iQueueCurrent
+        while (!iQueueCurrent->IsEmpty()) {
+            iQueueNext->Enqueue(iQueueCurrent->Dequeue());
+        }
+        MsgQueue* tmpQueue = iQueueCurrent;
+        iQueueCurrent = iQueueNext;
+        iQueueNext = tmpQueue;
+    }
+    else {
+        ASSERTS();
+    }
+}
+
+void Rewinder::Stop()
+{
+    AutoMutex a(iLock);
+    if (iBuffering) {
+        iBuffering = false;
+        DrainQueue(*iQueueNext);
+    }
+    else {
+        ASSERTS();
+    }
 }
 
 EStreamPlay Rewinder::OkToPlay(TUint aTrackId, TUint aStreamId)
@@ -152,33 +184,15 @@ EStreamPlay Rewinder::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     AutoMutex a(iLock);
-    if (iBuffering) {
-        ASSERT(aOffset == 0); // shouldn't be seeking back to anywhere other than start while buffering/recognising
-        // write any msgs from iQueueCurrent into iQueueNext, then set iQueueNext as iQueueCurrent
-        while (!iQueueCurrent->IsEmpty()) {
-            iQueueNext->Enqueue(iQueueCurrent->Dequeue());
-        }
-        MsgQueue* tmpQueue = iQueueCurrent;
-        iQueueCurrent = iQueueNext;
-        iQueueNext = tmpQueue;
-        TUint flushId = iIdProvider.NextFlushId();
-        iFlushQueue.Enqueue(iMsgFactory.CreateMsgFlush(flushId));
-        return flushId;
-    }
-    else {
-        return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
-    }
+    // can't seek if buffering current track
+    ASSERT(!iBuffering || (aTrackId != iTrackId) || (aStreamId != iStreamId));
+    return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
 }
 
 TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    if (iBuffering) {
-        iBuffering = false;
-        DrainQueue(*iQueueNext);
-        return MsgFlush::kIdInvalid;
-    }
-    else {
-        return iStreamHandler->TryStop(aTrackId, aStreamId);
-    }
+    // can't stop if buffering current track
+    ASSERT(!iBuffering || (aTrackId != iTrackId) || (aStreamId != iStreamId));
+    return iStreamHandler->TryStop(aTrackId, aStreamId);
 }

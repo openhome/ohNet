@@ -11,7 +11,6 @@ namespace OpenHome {
 namespace Media {
     class EncodedAudioReservoir;
     class ProtocolManager;
-    class Rewinder;
     class Supply;
 
 namespace Codec {
@@ -141,7 +140,6 @@ protected:
     virtual void RegisterPlugins();
 protected:
     Container* iContainer;
-    Rewinder* iRewinder;
     CodecController* iController;
 private:
     TestCodecInfoAggregator* iInfoAggregator;
