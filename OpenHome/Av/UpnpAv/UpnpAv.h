@@ -69,6 +69,7 @@ private:
     TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState;
+    Media::EPipelineState iPipelineTransportState;
 };
 
 } // namespace Av

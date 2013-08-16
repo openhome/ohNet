@@ -57,6 +57,7 @@ ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aE
     : DvProviderUpnpOrgAVTransport1(aDevice)
     , iSourceUpnpAv(aSourceUpnpAv)
     , iLock("UpAv")
+    , iModerationTimerStarted(false)
     , iTransportState(kTransportStateNoMediaPresent)
     , iTransportStatus(kTransportStatusOk)
     , iCurrentMediaCategory(kCurrentMediaCategoryNoMedia)
@@ -409,6 +410,7 @@ void ProviderAvTransport::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 void ProviderAvTransport::QueueStateUpdate()
 {
+    // assumes iLock is held by caller
     if (!iModerationTimerStarted) {
         iModerationTimer->FireIn(kEventModerationMs);
         iModerationTimerStarted = true;
@@ -418,8 +420,8 @@ void ProviderAvTransport::QueueStateUpdate()
 void ProviderAvTransport::ModerationTimerExpired()
 {
     iLock.Wait();
-    UpdateEventedState();
     iModerationTimerStarted = false;
+    UpdateEventedState();
     iLock.Signal();
 }
 
