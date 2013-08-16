@@ -40,7 +40,7 @@ void CodecBase::Construct(ICodecController& aController)
 
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement)
     : iMsgFactory(aMsgFactory)
-    , iRewinder(Rewinder(aMsgFactory, aUpstreamElement))
+    , iRewinder(aMsgFactory, aUpstreamElement)
     , iUpstreamElement(iRewinder)
     , iDownstreamElement(aDownstreamElement)
     , iLock("CDCC")
