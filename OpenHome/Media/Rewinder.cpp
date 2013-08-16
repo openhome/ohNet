@@ -1,5 +1,6 @@
 #include <OpenHome/Media/Rewinder.h>
 #include <OpenHome/Media/Pipeline.h>
+#include <OpenHome/Private/Thread.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -10,6 +11,7 @@ Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iIdProvider(aIdProvider)
     , iStreamHandler(NULL)
     , iBuffering(false)
+    , iLock("REWI")
 {
     iQueueCurrent = new MsgQueue();
     iQueueNext = new MsgQueue();
@@ -24,11 +26,18 @@ Rewinder::~Rewinder()
 Msg* Rewinder::GetAudioFromCurrent()
 {
     ASSERT(!iQueueCurrent->IsEmpty());
-    Msg* msg = NULL;
-    msg = iQueueCurrent->Dequeue();
+    MsgAudioEncoded* msg = NULL;
+    msg = dynamic_cast<MsgAudioEncoded*>(iQueueCurrent->Dequeue());
     if (iBuffering) {
-        msg->AddRef();
-        iQueueNext->Enqueue(msg);
+        try {
+            MsgAudioEncoded* clone = msg->Clone();
+            iQueueNext->Enqueue(clone);
+        }
+        catch (AllocatorNoMemory&) {
+            // can't clone msg; push back onto head of current queue so memory isn't lost
+            iQueueCurrent->EnqueueAtHead(msg);
+            throw; // can't do anything other than pass exception on now
+        }
     }
     return msg;
 }
@@ -45,6 +54,7 @@ void Rewinder::DrainQueue(MsgQueue& aQueue)
 Msg* Rewinder::Pull()
 {
     Msg* msg = NULL;
+    AutoMutex a(iLock);
 
     if (!iFlushQueue.IsEmpty()) {
         return iFlushQueue.Dequeue();
@@ -141,6 +151,7 @@ EStreamPlay Rewinder::OkToPlay(TUint aTrackId, TUint aStreamId)
 
 TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
+    AutoMutex a(iLock);
     if (iBuffering) {
         ASSERT(aOffset == 0); // shouldn't be seeking back to anywhere other than start while buffering/recognising
         // write any msgs from iQueueCurrent into iQueueNext, then set iQueueNext as iQueueCurrent
@@ -161,6 +172,7 @@ TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
 TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
 {
+    AutoMutex a(iLock);
     if (iBuffering) {
         iBuffering = false;
         DrainQueue(*iQueueNext);

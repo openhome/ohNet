@@ -25,7 +25,7 @@ public:
     ~Rewinder();
 private:
     Msg* GetAudioFromCurrent();
-    static void DrainQueue(MsgQueue& aQueue);
+    void DrainQueue(MsgQueue& aQueue);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
@@ -50,6 +50,7 @@ private:
     IFlushIdProvider& iIdProvider;
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
+    Mutex iLock;
     MsgQueue iFlushQueue;
     MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
     MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind

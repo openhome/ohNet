@@ -372,12 +372,10 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
         aMsg->RemoveRef();
     }
     else if (iAudioEncoded == NULL) {
-        iAudioEncoded = aMsg->Clone();
-        aMsg->RemoveRef();
+        iAudioEncoded = aMsg;
     }
     else {
-        iAudioEncoded->Add(aMsg->Clone());
-        aMsg->RemoveRef();
+        iAudioEncoded->Add(aMsg);
     }
     return NULL;
 }

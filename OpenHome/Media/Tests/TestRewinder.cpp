@@ -451,7 +451,7 @@ void SuiteRewinder::PullFlush()
 void SuiteRewinder::TestAllocatorExhaustion()
 {
     // test that pulling kMsgAudioEncodedCount+1 into Rewinder causes AllocatorNoMemory to be thrown
-    for (TUint i = 0; i < kPreAudioMsgCount+kMsgAudioEncodedCount; i++)
+    for (TUint i = 0; i < kPreAudioMsgCount+kMsgAudioEncodedCount-1; i++)
     {
         PullAndProcess();
     }
