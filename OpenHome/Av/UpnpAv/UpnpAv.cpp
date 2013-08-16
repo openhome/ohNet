@@ -38,6 +38,7 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
+    , iPipelineTransportState(Media::EPipelineStopped)
 {
     iActive = true; /* FIXME - Kinsky doesn't cope with this source so we don't register it with the Product.
                        Fool IsActive() checks below by saying this is always active.  See #169 */
@@ -71,9 +72,10 @@ void SourceUpnpAv::Deactivate()
 
 void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
-    if (!IsActive()) {
+    iActive = true; // FIXME
+    /*if (!IsActive()) {
         DoActivate();
-    }
+    }*/
     if (iTrack == NULL || iTrack->Uri() != aUri) {
         iPipeline.RemoveAll();
         if (iTrack != NULL) {
@@ -90,9 +92,9 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 void SourceUpnpAv::Play()
 {
     iActive = true; // FIXME
-    if (!IsActive()) {
+    /*if (!IsActive()) {
         DoActivate();
-    }
+    }*/
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
@@ -142,6 +144,7 @@ void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
 
 void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
 {
+    iPipelineTransportState = aState;
     if (IsActive()) {
         iDownstreamObserver->NotifyPipelineState(aState);
     }
@@ -156,6 +159,10 @@ void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipelin
     iLock.Signal();
     if (IsActive()) {
         iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
+        iDownstreamObserver->NotifyPipelineState(iPipelineTransportState);
+    }
+    else {
+        iDownstreamObserver->NotifyPipelineState(EPipelineStopped);
     }
 }
 
