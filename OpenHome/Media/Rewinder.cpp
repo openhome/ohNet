@@ -25,13 +25,10 @@ Msg* Rewinder::GetAudioFromCurrent()
 {
     ASSERT(!iQueueCurrent->IsEmpty());
     Msg* msg = NULL;
+    msg = iQueueCurrent->Dequeue();
     if (iBuffering) {
-        msg = iQueueCurrent->Dequeue();
         msg->AddRef();
         iQueueNext->Enqueue(msg);
-    }
-    else {
-        msg = iQueueCurrent->Dequeue();
     }
     return msg;
 }
