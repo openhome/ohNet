@@ -13,7 +13,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteRewinder : public SuiteUnitTest, public IPipelineElementUpstream, public IFlushIdProvider, private IStreamHandler, protected IMsgProcessor
+class SuiteRewinder : public SuiteUnitTest, public IPipelineElementUpstream, private IStreamHandler, protected IMsgProcessor
 {
 public:
     static const TUint kPreAudioMsgCount = 2;
@@ -52,7 +52,7 @@ private:
     MsgAudioEncoded* CreateAudio();
     Msg* GenerateMsg(EMsgType aType);
     void TestAllocatorExhaustion();
-    void TestTryStop();
+    void TestStop();
     void TestTrySeekToStart();
     void TestUpstreamRequestPassThrough();
 private: // from SuiteUnitTest
@@ -60,8 +60,6 @@ private: // from SuiteUnitTest
     void TearDown();
 public: // from IPipelineElementUpstream
     Msg* Pull();
-public: // from IFlushIdProvider
-    TUint NextFlushId();
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -84,7 +82,6 @@ protected:
     TrackFactory* iTrackFactory;
     Rewinder* iRewinder;
     IStreamHandler* iStreamHandler;
-    TUint iNextFlushId;
     std::vector<EMsgType> iMsgOrder;
     TUint iMsgCount;
     Msg* iLastMsg;
@@ -92,6 +89,7 @@ protected:
     EMsgType iRcvdMsgType;
     TByte iAudioOut;
     TByte iAudioIn;
+    TUint iCurrentFlushId;
     TUint iOkToPlayCount;
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
@@ -158,7 +156,7 @@ SuiteRewinder::SuiteRewinder()
     : SuiteUnitTest("Rewinder tests")
 {
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestTryStop));
+    AddTest(MakeFunctor(*this, &SuiteRewinder::TestStop));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart));
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough));
 }
@@ -178,15 +176,15 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iRewinder = new Rewinder(*iMsgFactory, *this, *this);
+    iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;
-    iNextFlushId = MsgFlush::kIdInvalid+1;
     iMsgOrder.clear();
     iMsgCount = 0;
     iLastMsgType = ENone;
     iRcvdMsgType = ENone;
     iAudioOut = 0;
     iAudioIn = 0;
+    iCurrentFlushId = 1;
     iOkToPlayCount = 0;
     iTrySeekCount = 0;
     iLastSeekOffset = 0;
@@ -212,11 +210,6 @@ Msg* SuiteRewinder::Pull()
     return iLastMsg;
 }
 
-TUint SuiteRewinder::NextFlushId()
-{
-    return iNextFlushId++;
-}
-
 EStreamPlay SuiteRewinder::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     iOkToPlayCount++;
@@ -227,13 +220,13 @@ TUint SuiteRewinder::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 aO
 {
     iTrySeekCount++;
     iLastSeekOffset = aOffset;
-    return 1;
+    return ++iCurrentFlushId;
 }
 
 TUint SuiteRewinder::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     iTryStopCount++;
-    return 1;
+    return ++iCurrentFlushId;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -380,7 +373,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgHalt;
         break;
     case EMsgFlush:
-        msg = iMsgFactory->CreateMsgFlush(NextFlushId());
+        msg = iMsgFactory->CreateMsgFlush(0);
         iLastMsgType = EMsgFlush;
         break;
     case EMsgQuit:
@@ -458,7 +451,7 @@ void SuiteRewinder::TestAllocatorExhaustion()
     TEST_THROWS(iRewinder->Pull(), AllocatorNoMemory);
 }
 
-void SuiteRewinder::TestTryStop()
+void SuiteRewinder::TestStop()
 {
     // test that normal sequence can be pulled, then TryStop to tell Rewinder
     // to stop buffering, and that subsequent messages are ordered correctly
@@ -469,8 +462,7 @@ void SuiteRewinder::TestTryStop()
     {
         PullAndProcess();
     }
-    iStreamHandler->TryStop(0, 0);
-    TEST(iTryStopCount == 0); // no TryStop msg should have been passed up
+    iRewinder->Stop();
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         PullAndProcess();
@@ -487,17 +479,15 @@ void SuiteRewinder::TestTrySeekToStart()
     {
         PullAndProcess();
     }
-    // try seeking back to start
-    iStreamHandler->TrySeek(0, 0, 0);
-    PullFlush();
+    // try rewinding back to start
+    iRewinder->Rewind();
     iAudioIn = 0;
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         PullAndProcess();
     }
-    // try seeking again
-    iStreamHandler->TrySeek(0, 0, 0);
-    PullFlush();
+    // try rewinding again
+    iRewinder->Rewind();
     iAudioIn = 0;
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
@@ -513,50 +503,105 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     static const TUint kNonZeroSeekOffset = 10;
 
     TUint seekRes = 0;
-    TUint expectedSeekCount = 0;
+    TUint expectedSeekCount = 1;
     EStreamPlay playRes = ePlayNo;
     TUint expectedOkToPlayCount = 1;
     TUint stopRes = 0;
+    TUint expectedStopCount = 1;
 
     TEST(iStreamHandler == NULL);
     for (TUint i = 0; i < kPreAudioMsgCount+kAudioCount; i++)
     {
         PullAndProcess();
     }
-    // TrySeek shouldn't be passed through while buffering
-    seekRes = iStreamHandler->TrySeek(0,0,0);
-    TEST(seekRes == iNextFlushId-1);
+
+    // should ASSERT if TrySeek called while buffering current track
+    TEST_THROWS(iStreamHandler->TrySeek(0,0,0), AssertionFailed);
+    // TrySeek should be passed through while buffering if not current track or stream
+    // non-current track
+    seekRes = iStreamHandler->TrySeek(1,0,1);
+    TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
-    TEST(iLastSeekOffset == 0);
-    // test seeking anywhere other than start during buffering causes assert
-    TEST_THROWS(iStreamHandler->TrySeek(0,0,1), AssertionFailed);
+    TEST(iLastSeekOffset == 1);
+    // non-current stream
+    seekRes = iStreamHandler->TrySeek(0,1,2);
+    TEST(seekRes == iCurrentFlushId);
+    TEST(iTrySeekCount == expectedSeekCount++);
+    TEST(iLastSeekOffset == 2);
+    // non-current track or stream
+    seekRes = iStreamHandler->TrySeek(1,1,3);
+    TEST(seekRes == iCurrentFlushId);
+    TEST(iTrySeekCount == expectedSeekCount++);
+    TEST(iLastSeekOffset == 3);
+
+    // TryStop should have same behaviour as TrySeek during buffering
+    // stop on current track - ASSERT
+    TEST_THROWS(iStreamHandler->TryStop(0,0), AssertionFailed);
+    // non-current track
+    stopRes = iStreamHandler->TryStop(1,0);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+    // non-current stream
+    stopRes = iStreamHandler->TryStop(0,1);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+    // non-current track or stream
+    stopRes = iStreamHandler->TryStop(1,1);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+
     // OkToPlay should always be passed through
     playRes = iStreamHandler->OkToPlay(0,0);
     TEST(playRes == ePlayYes);
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
 
-    // now call a TryStop and repeat calls - ALL calls should be passed through afterwards
-    stopRes = iStreamHandler->TryStop(0,0);
-    TEST(stopRes == 0);
-    TEST(iTryStopCount == 0);   // first TryStop shouldn't be passed through
-    // TrySeek to 0
+
+    // now call Stop and repeat calls - ALL calls should be passed through afterwards
+    iRewinder->Stop();
+    // TrySeek on current track should succeed when no longer buffering
     seekRes = iStreamHandler->TrySeek(0,0,0);
-    TEST(seekRes == 1);
+    TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 0);
-    // TrySeek to 10
-    seekRes = iStreamHandler->TrySeek(0,0,kNonZeroSeekOffset);
-    TEST(seekRes == 1);
+    // TrySeek should be passed through while buffering if not current track or stream
+    // non-current track
+    seekRes = iStreamHandler->TrySeek(1,0,1);
+    TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
-    TEST(iLastSeekOffset == kNonZeroSeekOffset);
-    // OkToPlay
+    TEST(iLastSeekOffset == 1);
+    // non-current stream
+    seekRes = iStreamHandler->TrySeek(0,1,2);
+    TEST(seekRes == iCurrentFlushId);
+    TEST(iTrySeekCount == expectedSeekCount++);
+    TEST(iLastSeekOffset == 2);
+    // non-current track or stream
+    seekRes = iStreamHandler->TrySeek(1,1,3);
+    TEST(seekRes == iCurrentFlushId);
+    TEST(iTrySeekCount == expectedSeekCount++);
+    TEST(iLastSeekOffset == 3);
+
+    // TryStop should have same behaviour as TrySeek when no longer buffering
+    // TryStop on current track should succeed when no longer buffering
+    stopRes = iStreamHandler->TryStop(0,0);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+    // non-current track
+    stopRes = iStreamHandler->TryStop(1,0);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+    // non-current stream
+    stopRes = iStreamHandler->TryStop(0,1);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+    // non-current track or stream
+    stopRes = iStreamHandler->TryStop(1,1);
+    TEST(stopRes == iCurrentFlushId);
+    TEST(iTryStopCount == expectedStopCount++);
+
+    // OkToPlay should always be passed through
     playRes = iStreamHandler->OkToPlay(0,0);
     TEST(playRes == ePlayYes);
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
-    // TryStop again - should be passed through this time
-    stopRes = iStreamHandler->TryStop(0,0);
-    TEST(stopRes == 1);
-    TEST(iTryStopCount == 1);
 }
 
 
@@ -661,13 +706,9 @@ void SuiteRewinderSeekToStartAfterMiscAudio::TestTrySeekToStartAfterMiscAudio()
     {
         PullAndProcess();
     }
-    // try seek back to start of stream and test that seek is to start of
+    // try rewind back to start of stream and test that seek is to start of
     // second stream of MsgAudioEncodeds
-    TUint seekRes = iStreamHandler->TrySeek(0,0,0);
-    TEST(seekRes == iNextFlushId-1);
-    PullFlush();
-
-    TEST(iTrySeekCount == 0);   // seek shouldn't have been passed upstream
+    iRewinder->Rewind();
     // pull next msg and test seek was to start of second stream
     iAudioIn = kStartOfNewStream;
     Msg* msg = iRewinder->Pull();

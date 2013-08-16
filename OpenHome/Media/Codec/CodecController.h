@@ -6,6 +6,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Rewinder.h>
 
 #include <vector>
 
@@ -68,6 +69,7 @@ public:
 private:
     void CodecThread();
     void PullAudio(TUint aBytes);
+    void Rewind();
     void PullMsg();
     void Queue(Msg* aMsg);
     TBool QueueTrackData() const;
@@ -95,6 +97,7 @@ private: // IMsgProcessor
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
+    Rewinder iRewinder;
     IPipelineElementUpstream& iUpstreamElement;
     IPipelineElementDownstream& iDownstreamElement;
     Mutex iLock;

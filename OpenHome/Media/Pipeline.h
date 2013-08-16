@@ -14,7 +14,6 @@
 #include <OpenHome/Media/TrackInspector.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
-#include <OpenHome/Media/Rewinder.h>
 #include <OpenHome/Media/Splitter.h>
 #include <OpenHome/Media/Logger.h>
 #include <OpenHome/Media/StarvationMonitor.h>
@@ -107,8 +106,6 @@ private:
     Logger* iLoggerEncodedAudioReservoir;
     Codec::Container* iContainer;
     Logger* iLoggerContainer;
-    Rewinder* iRewinder;
-    Logger* iLoggerRewinder;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
     DecodedAudioReservoir* iDecodedAudioReservoir;

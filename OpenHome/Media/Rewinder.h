@@ -8,6 +8,13 @@
 namespace OpenHome {
 namespace Media {
 
+class IRewinder
+{
+public:
+    virtual void Rewind() = 0;
+    virtual void Stop() = 0;
+};
+
 /* Class which buffers data for recognition (in case seeking back to the start
    of the data is required due to a failed recognition that pulls on the
    stream).
@@ -18,10 +25,10 @@ namespace Media {
    start of its FIFO.
 */
 
-class Rewinder : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler, private INonCopyable
+class Rewinder : public IPipelineElementUpstream, private IMsgProcessor, public IRewinder, private IStreamHandler, private INonCopyable
 {
 public:
-    Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IFlushIdProvider& aIdProvider);
+    Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     ~Rewinder();
 private:
     Msg* GetAudioFromCurrent();
@@ -40,6 +47,9 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+public: // from IRewinder
+    void Rewind();
+    void Stop();
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -47,10 +57,11 @@ private: // from IStreamHandler
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
-    IFlushIdProvider& iIdProvider;
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
     Mutex iLock;
+    TUint iTrackId;
+    TUint iStreamId;
     MsgQueue iFlushQueue;
     MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
     MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind
