@@ -500,7 +500,6 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     // test that upstream msgs are successfully (and correctly) passed through
     // to the IStreamHandler
     static const TUint kAudioCount = 5;
-    static const TUint kNonZeroSeekOffset = 10;
 
     TUint seekRes = 0;
     TUint expectedSeekCount = 1;
