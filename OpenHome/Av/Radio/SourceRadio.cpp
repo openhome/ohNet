@@ -58,6 +58,9 @@ SourceRadio::~SourceRadio()
     delete iTuneIn;
     delete iPresetDatabase;
     delete iProviderRadio;
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
 }
 
 void SourceRadio::Activate()

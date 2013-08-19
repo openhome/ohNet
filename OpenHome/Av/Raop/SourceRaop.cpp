@@ -48,6 +48,9 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
 SourceRaop::~SourceRaop()
 {
     delete iRaopDiscovery;
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
 }
 
 IRaopDiscovery& SourceRaop::Discovery()
