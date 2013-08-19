@@ -81,7 +81,7 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     std::vector<ContainerBase*> iContainers;
     ContainerBase* iActiveContainer;
-    Msg* iPendingMsg;
+    Msg* iPendingQuit;
     TUint iSplitBytes;
     TBool iQuit;
     TBool iCheckForContainer;

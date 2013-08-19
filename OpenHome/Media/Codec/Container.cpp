@@ -44,7 +44,7 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iActiveContainer(NULL)
-    , iPendingMsg(NULL)
+    , iPendingQuit(NULL)
     , iSplitBytes(0)
     , iQuit(false)
     , iCheckForContainer(false)
@@ -59,6 +59,7 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
 
 Container::~Container()
 {
+    ASSERT(iAudioEncoded == NULL);
     for (size_t i=0; i<iContainers.size(); i++) {
         delete iContainers[i];
     }
@@ -73,18 +74,16 @@ void Container::AddContainer(ContainerBase* aContainer)
 Msg* Container::Pull()
 {
     Msg* msg;
-    if (!iAudioEncoded && iPendingMsg) {
+    if (iAudioEncoded == NULL && iPendingQuit != NULL) {
         // pulled a quit msg through on previous call
-        return iPendingMsg;
+        return iPendingQuit;
     }
     do {
         msg = iUpstreamElement.Pull();
         msg = msg->Process(*this);
-        if (!msg && iPendingMsg) {
+        if (msg == NULL && iPendingQuit != NULL) {
             // pulled a quit msg
-            msg = iPendingMsg;
-        }
-        else {
+            msg = iPendingQuit;
         }
     } while (msg == NULL);
     return msg;
@@ -143,10 +142,10 @@ void Container::SplitContainer()
 
 void Container::FillBuffer()
 {
-    while (!iPendingMsg && (iAudioEncoded->Bytes() < EncodedAudio::kMaxBytes)) { // ensure there are enough bytes for processing
+    while (iPendingQuit == NULL && (iAudioEncoded->Bytes() < EncodedAudio::kMaxBytes)) { // ensure there are enough bytes for processing
         Msg* msg = iUpstreamElement.Pull();   // if we do this here, could be at the end of a stream and pull a flush
         msg = msg->Process(*this);
-        if (!iAudioEncoded) {   // flush has been received
+        if (iAudioEncoded == NULL) {   // flush has been received
             return;
         }
     }
@@ -287,7 +286,6 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
 
 Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iPendingMsg = NULL;
     iQuit = false;
     iCheckForContainer = true;
     iContainerSize = 0;
@@ -320,7 +318,7 @@ Msg* Container::ProcessMsg(MsgFlush* aMsg)
 Msg* Container::ProcessMsg(MsgQuit* aMsg)
 {
     iQuit = true;
-    iPendingMsg = aMsg;
+    iPendingQuit = aMsg;
     return NULL;
 }
 
