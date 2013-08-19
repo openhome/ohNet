@@ -62,6 +62,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
 CodecController::~CodecController()
 {
     delete iDecoderThread;
+    ASSERT(iPendingMsg == NULL);
     for (size_t i=0; i<iCodecs.size(); i++) {
         delete iCodecs[i];
     }
