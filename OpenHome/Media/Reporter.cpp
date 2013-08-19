@@ -90,7 +90,6 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
     iSeconds = 0;
     iJiffies = 0;
     iObserver.NotifyTrack(aMsg->Track(), aMsg->Mode(), aMsg->IdPipeline());
-    iObserver.NotifyMetaText(aMsg->Track().MetaData());
     return aMsg;
 }
 
