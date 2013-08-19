@@ -2,7 +2,7 @@
 #define HEADER_PIPELINE_MANAGER
 
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/Pipeline.h> // FIXME - Pipeline.h shouldn't be externally visible
+#include <OpenHome/Media/PipelineObserver.h>
 
 #include <vector>
 
@@ -11,8 +11,6 @@ namespace Av {
     class IInfoAggregator;
 }
 namespace Media {
-
-class IPipelineObserver; // FIXME - define this (or equivalent) in this header
 class Pipeline;
 class ProtocolManager;
 class Filler;
@@ -27,7 +25,7 @@ class UriProvider;
 class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver
 {
 public:
-    PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes); // FIXME - config options, observer
+    PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes); // FIXME - config options
     ~PipelineManager();
     void Add(Codec::CodecBase* aCodec);
     void Add(Protocol* aProtocol);
@@ -62,7 +60,7 @@ private:
     ProtocolManager* iProtocolManager;
     Filler* iFiller;
     IdManager* iIdManager;
-    std::vector<UriProvider*> iUriProviders; // FIXME - should PipelineManager own all UriProviders?
+    std::vector<UriProvider*> iUriProviders;
     std::vector<IPipelineObserver*> iObservers;
     BwsMode iMode;
     TUint iTrackId;
