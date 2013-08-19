@@ -70,7 +70,21 @@ void PipelineManager::Start()
 
 void PipelineManager::AddObserver(IPipelineObserver& aObserver)
 {
+    iLock.Wait();
     iObservers.push_back(&aObserver);
+    iLock.Signal();
+}
+
+void PipelineManager::RemoveObserver(IPipelineObserver& aObserver)
+{
+    iLock.Wait();
+    for (TUint i=0; i<iObservers.size(); i++) {
+        if (iObservers[i] == &aObserver) {
+            iObservers.erase(iObservers.begin()+i);
+            break;
+        }
+    }
+    iLock.Signal();
 }
 
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)

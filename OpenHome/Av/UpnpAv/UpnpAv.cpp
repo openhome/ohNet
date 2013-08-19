@@ -52,9 +52,13 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
 SourceUpnpAv::~SourceUpnpAv()
 {
     ASSERT(!iDevice.Enabled());
+    iPipeline.RemoveObserver(*this);
     delete iProviderAvTransport;
     delete iProviderConnectionManager;
     delete iProviderRenderingControl;
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
 }
 
 void SourceUpnpAv::Activate()

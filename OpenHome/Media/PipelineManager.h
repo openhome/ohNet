@@ -34,6 +34,7 @@ public:
     void Add(UriProvider* aUriProvider);
     void Start(); // should be called after all Add()s
     void AddObserver(IPipelineObserver& aObserver);
+    void RemoveObserver(IPipelineObserver& aObserver);
     void Begin(const Brx& aMode, TUint aPipelineTrackId);
     void Play();
     void Pause();

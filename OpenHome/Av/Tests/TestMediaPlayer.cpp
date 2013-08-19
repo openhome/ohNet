@@ -119,8 +119,8 @@ void TestMediaPlayer::DestroyPipeline()
         iDisabled.Wait();
         waitCount--;
     }
-    delete iMediaPlayer;
     delete iSourceUpnp;
+    delete iMediaPlayer;
     delete iPipelineObserver;
 }
 
