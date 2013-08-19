@@ -744,6 +744,20 @@ void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
     iNextAudio = NULL;
 }
 
+void MsgAudioEncoded::RefAdded()
+{
+    if (iNextAudio != NULL) {
+        iNextAudio->AddRef();
+    }
+}
+
+void MsgAudioEncoded::RefRemoved()
+{
+    if (iNextAudio != NULL) {
+        iNextAudio->RemoveRef();
+    }
+}
+
 void MsgAudioEncoded::Clear()
 {
     if (iNextAudio != NULL) {

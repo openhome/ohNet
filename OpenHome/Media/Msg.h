@@ -248,6 +248,8 @@ public:
 private:
     void Initialise(EncodedAudio* aEncodedAudio);
 private: // from Msg
+    void RefAdded();
+    void RefRemoved();
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
