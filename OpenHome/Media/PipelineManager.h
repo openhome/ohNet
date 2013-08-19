@@ -3,6 +3,7 @@
 
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Private/Thread.h>
 
 #include <vector>
 
@@ -62,6 +63,8 @@ private:
     IdManager* iIdManager;
     std::vector<UriProvider*> iUriProviders;
     std::vector<IPipelineObserver*> iObservers;
+    EPipelineState iPipelineState;
+    Semaphore iPipelineStoppedSem;
     BwsMode iMode;
     TUint iTrackId;
 };

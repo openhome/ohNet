@@ -11,6 +11,8 @@ using namespace OpenHome::Media;
 
 PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes)
     : iLock("PLMG")
+    , iPipelineState(EPipelineStopped)
+    , iPipelineStoppedSem("PLMG", 1)
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
@@ -21,7 +23,16 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
 
 PipelineManager::~PipelineManager()
 {
-    RemoveAll();
+    iFiller->Stop();
+    iIdManager->InvalidatePending();
+    iLock.Wait();
+    const TBool waitStop = (iPipelineState != EPipelineStopped);
+    iLock.Signal();
+    if (waitStop) {
+        iPipeline->Stop();
+        iPipelineStoppedSem.Wait();
+    }
+
     delete iPipeline;
     delete iProtocolManager;
     delete iFiller;
@@ -153,6 +164,15 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
 {
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyPipelineState(aState);
+    }
+    iLock.Wait();
+    iPipelineState = aState;
+    iLock.Signal();
+    if (iPipelineState == EPipelineStopped) {
+        iPipelineStoppedSem.Signal();
+    }
+    else {
+        (void)iPipelineStoppedSem.Clear();
     }
 }
 
