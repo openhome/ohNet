@@ -115,7 +115,7 @@ void SuiteReporter::Test()
     Msg* msg = iReporter->Pull();
     msg->RemoveRef();
     expectedTrackUpdates++;
-    //expectedMetaTextUpdates++;
+    expectedMetaTextUpdates++;
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iTrackUri == Brn(KTrackUri));
     TEST(iTrackIdPipeline == kTrackId);
