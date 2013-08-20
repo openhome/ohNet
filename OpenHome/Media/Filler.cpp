@@ -141,7 +141,7 @@ void Filler::Run()
         mode.Replace(iActiveUriProvider->Mode());
         iLock.Signal();
         if (iTrackPlayStatus == ePlayNo) {
-            // FIXME - iSupply.OutputHalt ??
+            iSupply.OutputHalt();
             iStopped = true;
         }
         else {
@@ -176,6 +176,11 @@ void Filler::OutputMetadata(const Brx& aMetadata)
 void Filler::OutputFlush(TUint aFlushId)
 {
     iSupply.OutputFlush(aFlushId);
+}
+
+void Filler::OutputHalt()
+{
+    iSupply.OutputHalt();
 }
 
 void Filler::OutputQuit()

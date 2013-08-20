@@ -74,6 +74,7 @@ private: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputHalt();
     void OutputQuit();
 private:
     BwsTrackUri iLastTrackUri;
@@ -300,6 +301,10 @@ void DummySupply::OutputMetadata(const Brx& /*aMetadata*/)
 void DummySupply::OutputFlush(TUint /*aFlushId*/)
 {
     ASSERTS();
+}
+
+void DummySupply::OutputHalt()
+{
 }
 
 void DummySupply::OutputQuit()

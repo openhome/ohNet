@@ -126,6 +126,8 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
 
 Pipeline::~Pipeline()
 {
+    // FIXME - should we wait for the pipeline to be halted before issuing a Quit?
+    //         ...otherwise, MsgQuit goes down the pipeline ahead of final audio
     Quit();
 
     // loggers (if non-null) and iPreDriver will block until they receive the Quit msg
@@ -293,6 +295,11 @@ void Pipeline::OutputMetadata(const Brx& aMetadata)
 void Pipeline::OutputFlush(TUint aFlushId)
 {
     iSupply->OutputFlush(aFlushId);
+}
+
+void Pipeline::OutputHalt()
+{
+    iSupply->OutputHalt();
 }
 
 void Pipeline::OutputQuit()

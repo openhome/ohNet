@@ -54,6 +54,12 @@ void Supply::OutputFlush(TUint aFlushId)
     iDownStreamElement.Push(msg);
 }
 
+void Supply::OutputHalt()
+{
+    MsgHalt* msg = iMsgFactory.CreateMsgHalt();
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputQuit()
 {
     MsgQuit* msg = iMsgFactory.CreateMsgQuit();

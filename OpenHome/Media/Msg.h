@@ -750,6 +750,7 @@ public:
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     virtual void OutputFlush(TUint aFlushId) = 0;
+    virtual void OutputHalt() = 0;
     virtual void OutputQuit() = 0;
 };
 

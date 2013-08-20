@@ -57,6 +57,7 @@ private: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputHalt();
     void OutputQuit();
 private:
     enum EMsgType
@@ -537,6 +538,11 @@ void SuiteStopper::OutputMetadata(const Brx& /*aMetadata*/)
 void SuiteStopper::OutputFlush(TUint aFlushId)
 {
     iFlush = iMsgFactory->CreateMsgFlush(aFlushId);
+}
+
+void SuiteStopper::OutputHalt()
+{
+    ASSERTS();
 }
 
 void SuiteStopper::OutputQuit()

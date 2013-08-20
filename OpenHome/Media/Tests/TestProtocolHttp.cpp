@@ -198,6 +198,7 @@ public: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputHalt();
     void OutputQuit();
 private:
     TUint iDataSize;
@@ -748,6 +749,10 @@ void TestHttpSupplier::OutputMetadata(const Brx& /*aMetadata*/)
 void TestHttpSupplier::OutputFlush(TUint /*aFlushId*/)
 {
     //Log::Print("TestHttpSupplier::OutputFlush\n");
+}
+
+void TestHttpSupplier::OutputHalt()
+{
 }
 
 void TestHttpSupplier::OutputQuit()

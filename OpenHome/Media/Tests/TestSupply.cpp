@@ -136,6 +136,8 @@ void SuiteSupply::Test()
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputFlush(1);
     TEST(++expectedMsgCount == iMsgPushCount);
+    iSupply->OutputHalt();
+    TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputQuit();
     TEST(++expectedMsgCount == iMsgPushCount);
 }
@@ -215,7 +217,6 @@ Msg* SuiteSupply::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* SuiteSupply::ProcessMsg(MsgHalt* aMsg)
 {
-    ASSERTS(); // FIXME - we probably should expect this type of msg at the start of the pipeline
     iLastMsg = EMsgHalt;
     return aMsg;
 }

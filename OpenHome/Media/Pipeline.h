@@ -66,6 +66,7 @@ public: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputHalt();
     void OutputQuit();
 public: // from IPipelineElementUpstream
     Msg* Pull();
