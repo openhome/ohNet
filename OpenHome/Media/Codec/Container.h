@@ -25,36 +25,106 @@ public:
     virtual void Read(Bwx& aBuf, TUint aOffset, TUint aBytes) = 0;
 };
 
-class ContainerBase
+
+class IRecogniser
+{
+public:
+    virtual TBool Recognise(Brx& aBuf) = 0;
+};
+
+class IContainerBase : public IRecogniser, public IPipelineElementUpstream, public IStreamHandler
+{
+public: // from IRecogniser
+    virtual TBool Recognise(Brx& aBuf) = 0;
+public: // from IPipelineElementUpstream
+    virtual Msg* Pull() = 0;
+public: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+};
+
+class ContainerBase : public IContainerBase, private IMsgProcessor, private INonCopyable
 {
     friend class Container;
 public:
-    virtual ~ContainerBase();
-public:
-    virtual void Initialise() = 0;          // reset container
-    virtual TBool Recognise() = 0;          // recognise container
-    virtual TUint Size() = 0;               // size of outer header portion
-    virtual TBool AppendDuringSeek() = 0;   // include header bytes when seeking?
-    virtual TUint Process() = 0;            // how many bytes to strip from next chunk of data
-    virtual TUint Split() = 0;              // where should the next chunk be split before sending to codec?
-protected:
     ContainerBase();
+    ~ContainerBase();
+protected:
+    Msg* PullMsg();
+    void ReleaseAudioEncoded();
 private:
-    void Construct(IContainer& aContainer);
+    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler);
+public: // from IRecogniser
+    //TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
+    TBool Recognise(Brx& aBuf);
+public: // from IPipelineElementUpstream
+    Msg* Pull();
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
+protected:
+    MsgAudioEncoded* iAudioEncoded;
+private:
+    MsgFactory* iMsgFactory;
+    IPipelineElementUpstream* iUpstreamElement;
+    IStreamHandler* iStreamHandler;
+    TUint iExpectedFlushId;
+
 protected:
     IContainer* iContainer;
 };
 
-class Container : public IPipelineElementUpstream, private IContainer, private IMsgProcessor, private IStreamHandler, private INonCopyable
+class ContainerNull : public ContainerBase
 {
+public:
+    ContainerNull();
+public: // from IRecogniser
+    TBool Recognise(Brx& aBuf);
+};
+
+class Container;
+
+class ContainerFront : public IPipelineElementUpstream, public IStreamHandler, private INonCopyable
+{
+public:
+    ContainerFront(Container& aContainer, IMsgProcessor& aMsgProcessor, IPipelineElementUpstream& aUpstreamElement);
+public: // from IPipelineElementUpstream
+    Msg* Pull();
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
+private:
+    Container& iContainer;
+    IMsgProcessor& iMsgProcessor;
+    IPipelineElementUpstream& iUpstreamElement;
+    TUint iAccumulator;
+    TUint iExpectedFlushId;
+};
+
+class Container : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler, private INonCopyable
+{
+    friend class ContainerFront;
 public:
     Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     virtual ~Container();
     void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream
     Msg* Pull();
-private: // IContainer
-    void Read(Bwx& aBuf, TUint aOffset, TUint aBytes);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -72,26 +142,19 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
-    void StripContainer();
-    void SplitContainer();
-    void FillBuffer();
-    void ReleaseAudioEncoded();
-private:
+    static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
-    IPipelineElementUpstream& iUpstreamElement;
-    std::vector<ContainerBase*> iContainers;
-    ContainerBase* iActiveContainer;
-    Msg* iPendingMsg;
-    TUint iSplitBytes;
-    TBool iQuit;
-    TBool iCheckForContainer;
-    TUint iContainerSize;
-    TUint iRemainingContainerSize; // number of bytes of container (that shouldn't be passed downstream)
-    TUint iAppend;
-    TUint iExpectedFlushId;
+    ContainerFront* iContainerFront;
+    std::vector<IContainerBase*> iContainers;
+    IContainerBase* iActiveContainer;
+    ContainerNull* iContainerNull;
     IStreamHandler* iStreamHandler;
+    //Msg* iPendingMsg;
+    //TBool iQuit;
+    TBool iRecognising;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[EncodedAudio::kMaxBytes];
+    TUint iExpectedFlushId;
 };
 
 } // namespace Codec
