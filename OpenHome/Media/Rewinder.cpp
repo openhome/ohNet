@@ -167,12 +167,14 @@ void Rewinder::Rewind()
 void Rewinder::Stop()
 {
     AutoMutex a(iLock);
+    DoStop();
+}
+
+void Rewinder::DoStop()
+{
     if (iBuffering) {
         iBuffering = false;
         DrainQueue(*iQueueNext);
-    }
-    else {
-        ASSERTS();
     }
 }
 
@@ -192,7 +194,9 @@ TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    // can't stop if buffering current track
-    ASSERT(!iBuffering || (aTrackId != iTrackId) || (aStreamId != iStreamId));
-    return iStreamHandler->TryStop(aTrackId, aStreamId);
+    const TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+    if (flushId != MsgFlush::kIdInvalid) {
+        DoStop();
+    }
+    return flushId;
 }

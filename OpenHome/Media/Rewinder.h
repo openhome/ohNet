@@ -33,6 +33,7 @@ public:
 private:
     Msg* GetAudioFromCurrent();
     void DrainQueue(MsgQueue& aQueue);
+    void DoStop();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor

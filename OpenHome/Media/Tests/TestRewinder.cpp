@@ -533,9 +533,6 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 3);
 
-    // TryStop should have same behaviour as TrySeek during buffering
-    // stop on current track - ASSERT
-    TEST_THROWS(iStreamHandler->TryStop(0,0), AssertionFailed);
     // non-current track
     stopRes = iStreamHandler->TryStop(1,0);
     TEST(stopRes == iCurrentFlushId);
