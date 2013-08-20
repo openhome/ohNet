@@ -28,6 +28,8 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iFlushStream(false)
     , iRemovingStream(false)
     , iResumeAfterHalt(false)
+    , iStopping(false)
+    , iInStream(false)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
@@ -52,6 +54,7 @@ void Stopper::Start()
             iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
         }
     }
+    iStopping = false;
     iSem.Signal();
     iLock.Signal();
 }
@@ -59,6 +62,7 @@ void Stopper::Start()
 void Stopper::BeginHalt()
 {
     iLock.Wait();
+    iStopping = true;
     DoBeginHalt();
     iLock.Signal();
 }
@@ -67,16 +71,7 @@ void Stopper::BeginFlush()
 {
     ASSERT(iState == EHalted);
     iLock.Wait();
-    iState = EFlushing;
-    iTargetFlushId = MsgFlush::kIdInvalid;
-    if (iStreamHandler != NULL) {
-        iTargetFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
-    }
-    if (iTargetFlushId == MsgFlush::kIdInvalid) {
-        iTargetFlushId = iIdProvider.NextFlushId();
-        iSupply.OutputFlush(iTargetFlushId);
-    }
-    iSem.Signal();
+    DoBeginFlush();
     iLock.Signal();
 }
 
@@ -198,11 +193,16 @@ Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
     iFlushStream = iRemovingStream = false;
+    iInStream = false;
     iState = ERunning;
 
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
-    if (iStreamHandler->OkToPlay(iTrackId, iStreamId) == ePlayNo) {
+    if (iStopping) {
+        iStopping = false;
+        DoBeginFlush();
+    }
+    else if (iStreamHandler->OkToPlay(iTrackId, iStreamId) == ePlayNo) {
         /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
         iFlushStream = true;
     }
@@ -245,6 +245,7 @@ Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 
 Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
 {
+    iInStream = true;
     switch (iState)
     {
     case ERunning:
@@ -263,6 +264,7 @@ Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
         Ramp(aMsg, Ramp::EDown);
         if (iRemainingRampSize == 0) {
             iState = EHaltPending;
+            iInStream = false;
             if (iRemovingStream) {
                 iRemovingStream = false;
                 iResumeAfterHalt = true;
@@ -307,8 +309,26 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 void Stopper::DoBeginHalt()
 {
     ASSERT_DEBUG(iState != EFlushing);
-    if (iState == ERunning || iState == EStarting) {
+    /*if (!iInStream) {
+        iState = EHaltPending;
+        iResumeAfterHalt = false;
+    }
+    else */if (iState == ERunning || iState == EStarting) {
         iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
         iState = EHalting;
     }
+}
+
+void Stopper::DoBeginFlush()
+{
+    iState = EFlushing;
+    iTargetFlushId = MsgFlush::kIdInvalid;
+    if (iStreamHandler != NULL) {
+        iTargetFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+    }
+    if (iTargetFlushId == MsgFlush::kIdInvalid) {
+        iTargetFlushId = iIdProvider.NextFlushId();
+        iSupply.OutputFlush(iTargetFlushId);
+    }
+    iSem.Signal();
 }

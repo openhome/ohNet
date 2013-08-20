@@ -58,6 +58,7 @@ private:
     Msg* ProcessMsgAudio(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void DoBeginHalt();
+    void DoBeginFlush();
     void DoRemoveCurrentStream();
 private:
     enum EState
@@ -87,6 +88,8 @@ private:
     TBool iFlushStream;
     TBool iRemovingStream;
     TBool iResumeAfterHalt;
+    TBool iStopping;
+    TBool iInStream;
     TUint iTargetFlushId;
     TUint iTrackId;
     TUint iStreamId;
