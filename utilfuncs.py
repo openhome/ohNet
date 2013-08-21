@@ -232,7 +232,7 @@ def guess_ohmediaplayer_location(conf):
         [
             '{options.ohmediaplayer_include_dir}',
             '{options.ohmediaplayer}',
-            'dependencies/{options.dest_platform}/ohMediaplayer/include',
+            'dependencies/{options.dest_platform}/ohMediaPlayer/include',
         ],
         message='Specify --ohmediaplayer-include-dir or --ohmediaplayer')
     )
@@ -241,7 +241,7 @@ def guess_ohmediaplayer_location(conf):
         [
             '{options.ohmediaplayer_lib_dir}',
             '{options.ohmediaplayer}/build',
-            'dependencies/{options.dest_platform}/ohMediaplayer/lib',
+            'dependencies/{options.dest_platform}/ohMediaPlayer/lib',
         ],
         message='Specify --ohmediaplayer-lib-dir or --ohmediaplayer')
     )
