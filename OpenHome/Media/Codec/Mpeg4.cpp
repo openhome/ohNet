@@ -472,21 +472,18 @@ Mpeg4Start::Mpeg4Start()
     LOG(kMedia, "Mpeg4Start::Mpeg4Start\n");
 }
 
-void Mpeg4Start::Initialise()
-{
-    iSize = 0;
-}
-
-TBool Mpeg4Start::Recognise()
+TBool Mpeg4Start::Recognise(Brx& aBuf)
 {
     LOG(kMedia, "Mpeg4Start::Recognise\n");
     Bws<100> data;
     Bws<4> codec;
+    iSize = 0;
+    iContainerStripped = false;
 
     // Read an MPEG4 header until we reach the mdia box.
     // The mdia box contains children with media info about a track.
 
-    Mpeg4Box BoxL0(*iContainer);
+    Mpeg4Box BoxL0(aBuf);
     if (!BoxL0.Match("ftyp")) {
         LOG(kMedia, "Mpeg4Start no ftyp found at start of file\n");
         return false;
@@ -496,12 +493,12 @@ TBool Mpeg4Start::Recognise()
     // data could be stored in different orders in the file but ftyp & moov must come before mdat
 
     for (;;) {      // keep on reading until start of data found
-        Mpeg4Box BoxL1(*iContainer, &BoxL0, NULL, BoxL0.FileOffset());
+        Mpeg4Box BoxL1(aBuf, &BoxL0, NULL, BoxL0.FileOffset());
         if(BoxL1.Match("moov")) {
             // Search through levels until we find mdia box;
             // the container for media info.
-            Mpeg4Box BoxL2(*iContainer, &BoxL1, "trak");
-            Mpeg4Box BoxL3(*iContainer, &BoxL2);
+            Mpeg4Box BoxL2(aBuf, &BoxL1, "trak");
+            Mpeg4Box BoxL3(aBuf, &BoxL2);
             TBool foundMdia = BoxL3.FindBox("mdia");
             if (foundMdia) {
                 // Should be pointing at mdhd box, for media
@@ -533,24 +530,37 @@ TBool Mpeg4Start::Recognise()
     }
 }
 
-TUint Mpeg4Start::Size()
+Msg* Mpeg4Start::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    return iSize;
-}
+    // FIXME - assumes enough of container was processed within Recognise from buffer
+    MsgAudioEncoded* msg = aMsg;
 
-TBool Mpeg4Start::AppendDuringSeek()
-{
-    return false;
-}
+    if (!iContainerStripped) {
+        // know the size of this from Recognise();
+        // just make sure enough is pulled through, then split
 
-TUint Mpeg4Start::Process()
-{
-    return 0;
-}
+        if (iAudioEncoded == NULL) {
+            iAudioEncoded = aMsg;
+            msg = NULL;
+        }
+        else {
+            iAudioEncoded->Add(aMsg);
+            msg = NULL;
+        }
 
-TUint Mpeg4Start::Split()
-{
-    return 0;
+        PullAudio(iSize);
+        if (iSize < iAudioEncoded->Bytes()) {
+            MsgAudioEncoded* remainder = iAudioEncoded->Split(iSize);
+            iAudioEncoded->RemoveRef();
+            iAudioEncoded = remainder;
+            // can'safely return remaining iAudioEncoded here; shouldn't have another tag
+            msg = iAudioEncoded;
+            iAudioEncoded = NULL;
+        }
+        iContainerStripped = true;
+    }
+
+    return msg;
 }
 
 

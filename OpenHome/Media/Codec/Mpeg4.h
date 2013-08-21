@@ -100,15 +100,13 @@ class Mpeg4Start : public ContainerBase
 {
 public:
     Mpeg4Start();
-public: // from ContainerBase
-    void Initialise();
-    TBool Recognise();
-    TUint Size();
-    TBool AppendDuringSeek();
-    TUint Process();
-    TUint Split();
+public: // from IRecogniser
+    TBool Recognise(Brx& aBuf);
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
 private:
     TUint iSize;
+    TBool iContainerStripped;
 };
 
 // Base class for parsing RAOP headers
