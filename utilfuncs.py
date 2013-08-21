@@ -226,6 +226,26 @@ def guess_ohnet_location(conf):
         message='Specify --ohnet')
     )
 
+def guess_ohmediaplayer_location(conf):
+    set_env_verbose(conf, 'INCLUDES_OHMEDIAPLAYER', match_path(
+        conf,
+        [
+            '{options.ohmediaplayer_include_dir}',
+            '{options.ohmediaplayer}',
+            'dependencies/{options.dest_platform}/ohMediaplayer/include',
+        ],
+        message='Specify --ohmediaplayer-include-dir or --ohmediaplayer')
+    )
+    set_env_verbose(conf, 'STLIBPATH_OHMEDIAPLAYER', match_path(
+        conf,
+        [
+            '{options.ohmediaplayer_lib_dir}',
+            '{options.ohmediaplayer}/build',
+            'dependencies/{options.dest_platform}/ohMediaplayer/lib',
+        ],
+        message='Specify --ohmediaplayer-lib-dir or --ohmediaplayer')
+    )
+
 def get_platform_info(dest_platform):
     platforms = {
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
