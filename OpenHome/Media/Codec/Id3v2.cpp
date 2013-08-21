@@ -65,16 +65,8 @@ TBool Id3v2::Recognise(Brx& aBuf)
 Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     Log::Print("Id3v2:ProcessMsgAudioEncoded\n");
-    // probably make this block of generic behaviour part of ContainerBase
-    MsgAudioEncoded* msg = aMsg;
-    if (iAudioEncoded == NULL) {
-        iAudioEncoded = aMsg;
-        msg = NULL;
-    }
-    else {
-        iAudioEncoded->Add(aMsg);
-        msg = NULL;
-    }
+    MsgAudioEncoded* msg = NULL;
+    AddToAudioEncoded(aMsg);
 
     // problem with Read: is it calling process?
     // if so, it's corrupting the stream as THIS ProcessMsg will be getting called while in the middle of the last call

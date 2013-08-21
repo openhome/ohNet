@@ -34,6 +34,16 @@ Msg* ContainerBase::PullMsg()
     return msg;
 }
 
+void ContainerBase::AddToAudioEncoded(MsgAudioEncoded* aMsg)
+{
+    if (iAudioEncoded == NULL) {
+        iAudioEncoded = aMsg;
+    }
+    else {
+        iAudioEncoded->Add(aMsg);
+    }
+}
+
 void ContainerBase::ReleaseAudioEncoded()
 {
     if (iAudioEncoded != NULL) {

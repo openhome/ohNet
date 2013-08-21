@@ -52,6 +52,7 @@ public:
     ~ContainerBase();
 protected:
     Msg* PullMsg();
+    void AddToAudioEncoded(MsgAudioEncoded* aMsg);
     void ReleaseAudioEncoded();
     void PullAudio(TUint aBytes);
     void Read(Bwx& aBuf, TUint aBytes);

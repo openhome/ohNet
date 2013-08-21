@@ -539,14 +539,8 @@ Msg* Mpeg4Start::ProcessMsg(MsgAudioEncoded* aMsg)
         // know the size of this from Recognise();
         // just make sure enough is pulled through, then split
 
-        if (iAudioEncoded == NULL) {
-            iAudioEncoded = aMsg;
-            msg = NULL;
-        }
-        else {
-            iAudioEncoded->Add(aMsg);
-            msg = NULL;
-        }
+        AddToAudioEncoded(aMsg);
+        msg = NULL;
 
         PullAudio(iSize);
         if (iSize < iAudioEncoded->Bytes()) {
