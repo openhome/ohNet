@@ -167,29 +167,30 @@ def configure_toolchain(conf):
         conf.env.LINK_CXX = cross_compile + 'g++'
         conf.env.LINK_CC = cross_compile + 'gcc'
 
+# helper functions for guess_xxx_location
+def set_env_verbose(conf, varname, value):
+    conf.msg(
+        'Setting %s to' % varname,
+        'True' if value is True else
+        'False' if value is False else
+        value)
+    setattr(conf.env, varname, value)
+    return value
+def match_path(conf, paths, message):
+    import os.path
+    for p in paths:
+        fname = p.format(
+            options=conf.options,
+            debugmode_lc=conf.options.debugmode.lower(),
+            debugmode_tc=conf.options.debugmode.title(),
+            platform_info=get_platform_info(conf.options.dest_platform))
+        if os.path.exists(fname):
+            return os.path.abspath(fname)
+    conf.fatal(message)
 
 def guess_ohnet_location(conf):
-    import os.path
-    def set_env_verbose(conf, varname, value):
-        conf.msg(
-            'Setting %s to' % varname,
-            'True' if value is True else
-            'False' if value is False else
-            value)
-        setattr(conf.env, varname, value)
-        return value
-    def match_path(paths, message):
-        for p in paths:
-            fname = p.format(
-                options=conf.options,
-                debugmode_lc=conf.options.debugmode.lower(),
-                debugmode_tc=conf.options.debugmode.title(),
-                platform_info=get_platform_info(conf.options.dest_platform))
-            if os.path.exists(fname):
-                return os.path.abspath(fname)
-        conf.fatal(message)
-    # guess_ohnet_location
     set_env_verbose(conf, 'INCLUDES_OHNET', match_path(
+        conf,
         [
             '{options.ohnet_include_dir}',
             '{options.ohnet}/Build/Include',
@@ -199,6 +200,7 @@ def guess_ohnet_location(conf):
         message='Specify --ohnet-include-dir or --ohnet')
     )
     set_env_verbose(conf, 'STLIBPATH_OHNET', match_path(
+        conf,
         [
             '{options.ohnet_lib_dir}',
             '{options.ohnet}/Build/Obj/{platform_info[ohnet_plat_dir]}/{options.debugmode}',
@@ -208,6 +210,7 @@ def guess_ohnet_location(conf):
         message='Specify --ohnet-lib-dir or --ohnet')
     )
     set_env_verbose(conf, 'TEXT_TRANSFORM_PATH', match_path(
+        conf,
         [
             '{options.ohnet}/Build/Tools',
             'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/lib/t4',
@@ -215,6 +218,7 @@ def guess_ohnet_location(conf):
         message='Specify --ohnet')
     )
     set_env_verbose(conf, 'T4_TEMPLATE_PATH', match_path(
+        conf,
         [
             '{options.ohnet}/OpenHome/Net/T4/Templates',
             'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/lib/t4',
