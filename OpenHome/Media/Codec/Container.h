@@ -53,8 +53,11 @@ public:
 protected:
     Msg* PullMsg();
     void ReleaseAudioEncoded();
+    void PullAudio(TUint aBytes);
+    void Read(Bwx& aBuf, TUint aBytes);
 private:
     void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler);
+    TBool ReadFromCachedAudio(Bwx& aBuf, TUint aBytes);
 public: // from IRecogniser
     //TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
     TBool Recognise(Brx& aBuf);
@@ -78,11 +81,15 @@ private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 protected:
     MsgAudioEncoded* iAudioEncoded;
+    IStreamHandler* iStreamHandler;
+    TUint iExpectedFlushId;
 private:
     MsgFactory* iMsgFactory;
     IPipelineElementUpstream* iUpstreamElement;
-    IStreamHandler* iStreamHandler;
-    TUint iExpectedFlushId;
+    TByte iReadBuf[EncodedAudio::kMaxBytes];
+    MsgQueue iMsgQueue;
+    Msg* iPendingMsg;
+    TBool iQuit;
 
 protected:
     IContainer* iContainer;

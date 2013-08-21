@@ -42,6 +42,80 @@ void ContainerBase::ReleaseAudioEncoded()
     }
 }
 
+// should maybe be a TBool instead?
+// can always check the size of iAudioEncoded afterwards - but could just do that in this function!
+void ContainerBase::PullAudio(TUint aBytes)
+{
+    // FIXME - sort for all cases
+    //if (iPendingMsg != NULL) {
+    //    return;
+    //}
+    while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
+        Msg* msg = iUpstreamElement->Pull();
+        Log::Print("about to call process\n");
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            iPendingMsg = msg;
+            break;
+        }
+    }
+}
+
+void ContainerBase::Read(Bwx& aBuf, TUint aBytes)
+{
+    // FIXME - sort for all states
+    //if (iPendingMsg != NULL) {
+    //    if (ReadFromCachedAudio(aBuf, aBytes)) {
+    //        return;
+    //    }
+    //    iMsgQueue.Enqueue(iPendingMsg);
+    //    iPendingMsg = NULL;
+    //    return;
+    //}
+    //while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
+    //    Msg* msg = iUpstreamElement->Pull();
+    //    Log::Print("about to call process\n");
+    //    msg = msg->Process(*this);
+    //    //if (msg != NULL) {
+    //    //    iPendingMsg = msg;
+    //    //    break;
+    //    //}
+    //}
+    PullAudio(aBytes);
+    ReadFromCachedAudio(aBuf, aBytes);
+}
+
+/*
+  try read (up to) aBytes from data currently held in iAudioEncoded
+*/
+TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes)
+{
+    if (aBytes == 0) {
+        return true;
+    }
+    if (iAudioEncoded == NULL) {
+        return false;
+    }
+    MsgAudioEncoded* remaining = NULL;
+    if (iAudioEncoded->Bytes() > aBytes) {
+        remaining = iAudioEncoded->Split(aBytes);
+    }
+    const TUint bytes = iAudioEncoded->Bytes();
+    ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
+    TByte* ptr = const_cast<TByte*>(aBuf.Ptr()) + aBuf.Bytes();
+    iAudioEncoded->CopyTo(ptr);
+    aBuf.SetBytes(aBuf.Bytes() + bytes);
+    if (remaining != NULL) {
+        // re-attach remaining and let a container plugin deal with iAudioEncoded
+        // or should iAudioEncoded be modified here?
+        iAudioEncoded->Add(remaining);
+    }
+    //iAudioEncoded->RemoveRef();
+    //iAudioEncoded = remaining;
+    //iStreamPos += bytes;
+    return true;
+}
+
 void ContainerBase::Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler)
 {
     iMsgFactory = &aMsgFactory;
@@ -56,8 +130,10 @@ TBool ContainerBase::Recognise(Brx& /*aBuf*/)
 
 Msg* ContainerBase::Pull()
 {
-    //Log::Print("ContainerBase::Pull\n");
     Msg* msg = NULL;
+    //if (!iMsgQueue.IsEmpty()) {
+    //    msg = iMsgQueue.Dequeue();
+    //}
     while (msg == NULL) {
         msg = PullMsg();
     }
@@ -66,12 +142,13 @@ Msg* ContainerBase::Pull()
 
 EStreamPlay ContainerBase::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "ContainerBase::OkToPlay\n");
     return iStreamHandler->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint ContainerBase::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    Log::Print("ContainerBase::TrySeek\n");
+    LOG(kMedia, "ContainerBase::TrySeek\n");
     // seek to absolute offset in stream by default
     iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     return iExpectedFlushId;
@@ -79,8 +156,9 @@ TUint ContainerBase::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
 TUint ContainerBase::TryStop(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "ContainerBase::TryStop\n");
     //if (!iQuit) {
-    iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+        iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
     //}
     //else {
     //    return MsgFlush::kIdInvalid;
@@ -124,28 +202,35 @@ Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
 
 Msg* ContainerBase::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    iQuit = false;
     // replace iStreamHandler with own
     return aMsg;
 }
 
 Msg* ContainerBase::ProcessMsg(MsgMetaText* aMsg)
 {
+    //iMsgQueue.Enqueue(aMsg);
+    //return NULL;
     return aMsg;
 }
 
 Msg* ContainerBase::ProcessMsg(MsgHalt* aMsg)
 {
+
     return aMsg;
 }
 
 Msg* ContainerBase::ProcessMsg(MsgFlush* aMsg)
 {
     ReleaseAudioEncoded();
+    //iMsgQueue.Enqueue(aMsg);
+    //return NULL;
     return aMsg;
 }
 
 Msg* ContainerBase::ProcessMsg(MsgQuit* aMsg)
 {
+    //iQuit = true;
     return aMsg;
 }
 
@@ -199,12 +284,13 @@ Msg* ContainerFront::Pull()
 
 EStreamPlay ContainerFront::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "ContainerFront::OkToPlay\n");
     return iContainer.iStreamHandler->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    Log::Print("ContainerFront::TrySeek\n");
+    LOG(kMedia, "ContainerFront::TrySeek\n");
     // seek to absolute offset in stream by default
     iExpectedFlushId = iContainer.iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     return iExpectedFlushId;
@@ -212,6 +298,7 @@ TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
 TUint ContainerFront::TryStop(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "ContainerFront::TryStop\n");
     //if (!iQuit) {
     iExpectedFlushId = iContainer.iStreamHandler->TryStop(aTrackId, aStreamId);
     //}
@@ -264,7 +351,6 @@ void Container::AddContainer(ContainerBase* aContainer)
 
 Msg* Container::Pull()
 {
-    //Log::Print("Container::Pull\n");
     // can't break the call stack, so after a new MsgEncodedStream comes in and
     // we're put into iRecognising mode, can't just pull through next inner
     // container, otherwise we'd pass on some audio, and any downstream element
@@ -280,19 +366,12 @@ Msg* Container::Pull()
     }
 }
 
-//Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
-//{
-//    // doing this for the main Container (with ContainerNull) works fine
-//    // so the problem is likely to be with the complex ProcessMsg(MsgAudioEncoded) func
-//    return aMsg;
-//}
-
 Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     // read enough audio for recognise buffer
     // then iterate over containers, calling Recognise
     // once recognised (at least the NULL container, which should be last, MUST recognise ALL streams)
-    // somehow pass the audio into the container (call Pull on it?)
+    // pass the audio into the container by calling Pull on it
     // then hand future control over to the container
     Msg* msg = aMsg;
     if (iRecognising && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes)) {
@@ -305,7 +384,10 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
         }
         msg = NULL;
     }
-    if (iRecognising && (iAudioEncoded != NULL) && (iAudioEncoded->Bytes() >= kMaxRecogniseBytes)) {
+    // perform recognition with just 1 MsgAudioEncoded, in case of very short
+    // stream which would otherwise not be recognised (and cause subsequent
+    // MsgQuit to be pulled through, which would require extra state)
+    if (iRecognising && (iAudioEncoded != NULL)) {
         // we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than that,
         // split the msg, select a container then add the fragments back together before processing
         MsgAudioEncoded* remaining = NULL;
@@ -321,7 +403,6 @@ Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
             IContainerBase* container = iContainers[i];
             TBool recognised = container->Recognise(recogBuf);
             if (recognised) {
-                Log::Print("recognised\n");
                 iActiveContainer = container;
                 iRecognising = false;
                 msg = iActiveContainer->Pull(); // get audio into iActiveContainer
@@ -398,12 +479,13 @@ Msg* Container::ProcessMsg(MsgQuit* aMsg)
 
 EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "Container::OkToPlay\n");
     return iActiveContainer->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    Log::Print("Container::TrySeek\n");
+    LOG(kMedia, "Container::TrySeek\n");
     // seek to absolute offset in stream by default
     iExpectedFlushId = iActiveContainer->TrySeek(aTrackId, aStreamId, aOffset);
     return iExpectedFlushId;
@@ -411,6 +493,7 @@ TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 
 TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "Container::TryStop\n");
     //if (!iQuit) {
     iExpectedFlushId = iActiveContainer->TryStop(aTrackId, aStreamId);
     //}
