@@ -9,9 +9,7 @@ using namespace OpenHome;
 
 static const Brn kThreadNameUnknown("____");
 
-//
 // Semaphore
-//
 
 Semaphore::Semaphore(const TChar* aName, TUint aCount)
 {
@@ -53,9 +51,8 @@ void Semaphore::Signal()
     OpenHome::Os::SemaphoreSignal(iHandle);
 }
 
-//
+
 // Mutex
-//
 
 Mutex::Mutex(const TChar* aName)
 {
@@ -96,9 +93,8 @@ void Mutex::Signal()
     OpenHome::Os::MutexUnlock(iHandle);
 }
 
-//
+
 // Thread
-//
 
 const TUint OpenHome::Thread::kDefaultStackBytes = 32 * 1024;
 
@@ -256,12 +252,13 @@ void Thread::Join()
     iTerminated.Signal();
 }
 
-//
-// ThreadFunctor
-//
 
-ThreadFunctor::ThreadFunctor(const TChar* aName, Functor aFunctor, TUint aPriority,
-    TUint aStackBytes) : Thread(aName, aPriority, aStackBytes), iFunctor(aFunctor), iStarted("TFSM", 0)
+// ThreadFunctor
+
+ThreadFunctor::ThreadFunctor(const TChar* aName, Functor aFunctor, TUint aPriority, TUint aStackBytes)
+    : Thread(aName, aPriority, aStackBytes)
+    , iFunctor(aFunctor)
+    , iStarted("TFSM", 0)
 {
 }
 
@@ -276,12 +273,11 @@ void ThreadFunctor::Run()
     iFunctor();
 }
 
-//
+
 // AutoMutex
-//
 
 AutoMutex::AutoMutex(Mutex& aMutex)
- : iMutex(aMutex)
+    : iMutex(aMutex)
 {
     iMutex.Wait();
 }
@@ -291,9 +287,8 @@ AutoMutex::~AutoMutex()
     iMutex.Signal();
 }
 
-//
+
 // AutoSemaphore
-//
 
 AutoSemaphore::AutoSemaphore(Semaphore& aSemaphore)
     : iSem(aSemaphore)
