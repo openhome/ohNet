@@ -16,27 +16,8 @@ using namespace OpenHome::Media::Codec;
 
 // Mpeg4Box
 
-Mpeg4Box::Mpeg4Box(IContainer& aContainer, Mpeg4Box* aParent, const TChar* aIdName, TUint aOffset)
-    : iContainer(&aContainer)
-    , iController(NULL)
-    , iInput(NULL)
-    , iParent(aParent)
-    , iBytesRead(0)
-    , iBoxSize(0)
-    , iOffset(aOffset)
-{
-    if (iParent != NULL) {
-        iOffset = iParent->FileOffset();
-    }
-    ExtractHeaderId();
-    if (aIdName != NULL) {
-        FindBox(aIdName);
-    }
-}
-
 Mpeg4Box::Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent, const TChar* aIdName)
-    : iContainer(NULL)
-    , iController(&aController)
+    : iController(&aController)
     , iInput(NULL)
     , iParent(aParent)
     , iBytesRead(0)
@@ -49,8 +30,7 @@ Mpeg4Box::Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent, const TChar
 }
 
 Mpeg4Box::Mpeg4Box(const Brx& aBuffer, Mpeg4Box* aParent, const TChar* aIdName, TUint aOffset)
-    : iContainer(NULL)
-    , iController(NULL)
+    : iController(NULL)
     , iInput(&aBuffer)
     , iParent(aParent)
     , iBytesRead(0)
@@ -121,13 +101,7 @@ void Mpeg4Box::ExtractHeaderId()
 
 void Mpeg4Box::Read(Bwx& aData, TUint aBytes)
 {
-   if (iContainer) {
-       iContainer->Read(aData, iOffset, aBytes);
-       if (aData.Bytes() < aBytes) {
-           THROW(MediaMpeg4FileInvalid);
-       }
-   }
-   else if (iController) {
+   if (iController) {
        iController->Read(aData, aBytes);
        if (aData.Bytes() < aBytes) {
            THROW(MediaMpeg4FileInvalid);
