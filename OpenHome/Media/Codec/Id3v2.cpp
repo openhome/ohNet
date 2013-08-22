@@ -64,46 +64,35 @@ TBool Id3v2::Recognise(Brx& aBuf)
 
 Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    Log::Print("Id3v2:ProcessMsgAudioEncoded\n");
     MsgAudioEncoded* msg = NULL;
     AddToAudioEncoded(aMsg);
 
-    // problem with Read: is it calling process?
-    // if so, it's corrupting the stream as THIS ProcessMsg will be getting called while in the middle of the last call
-    iBuf.SetBytes(0);
-    Read(iBuf, kRecogniseBytes);
-    if (iBuf.Bytes() == kRecogniseBytes) {
-        TBool recognised = Recognise(iBuf);
-        if (recognised) {
-            // read more audio if req'd; could be splitting a large tag (i.e., one containing album art)
-            PullAudio(iSize);
-            if (iSize < iAudioEncoded->Bytes()) {
-                MsgAudioEncoded* remainder = iAudioEncoded->Split(iSize);
-                iAudioEncoded->RemoveRef();
-                iAudioEncoded = remainder;
-                // can't return remaining iAudioEncoded here; could have another tag following this one
+    if (!iPulling) {
+        iBuf.SetBytes(0);
+        Read(iBuf, kRecogniseBytes);
+        if (iBuf.Bytes() == kRecogniseBytes) {
+            TBool recognised = Recognise(iBuf);
+            if (recognised) {
+                // read more audio if req'd; could be splitting a large tag (i.e., one containing album art)
+                PullAudio(iSize);
+                if (iSize < iAudioEncoded->Bytes()) {
+                    MsgAudioEncoded* remainder = iAudioEncoded->Split(iSize);
+                    iAudioEncoded->RemoveRef();
+                    iAudioEncoded = remainder;
+                    // can't return remaining iAudioEncoded here; could have another tag following this one
+                }
+                iTotalSize += iSize;
             }
-            iTotalSize += iSize;
+            else {
+                msg = iAudioEncoded;
+                iAudioEncoded = NULL;
+            }
         }
         else {
+            // didn't read a full buffer, so must be at end of stream
             msg = iAudioEncoded;
             iAudioEncoded = NULL;
         }
-    }
-    else {
-        // didn't read a full buffer, so must be at end of stream
-        msg = iAudioEncoded;
-        iAudioEncoded = NULL;
-    }
-
-    Log::Print("Id3v2::ProcessMsg: iSize: %u\n", iSize);
-    if (msg != NULL) {
-        TByte buf[4];
-        MsgAudioEncoded* tmp = msg->Split(sizeof(buf));
-        msg->CopyTo(buf);
-        msg->Add(tmp);
-        Log::Print("Id3v2::ProcessMsg: iSize: %u, 0x%x 0x%x 0x%x 0x%x\n", iSize, buf[0], buf[1], buf[2], buf[3]);
-        Log::Print("msg->Bytes(): %u\n", msg->Bytes());
     }
 
     return msg;

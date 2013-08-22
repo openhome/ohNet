@@ -535,23 +535,25 @@ Msg* Mpeg4Start::ProcessMsg(MsgAudioEncoded* aMsg)
     // FIXME - assumes enough of container was processed within Recognise from buffer
     MsgAudioEncoded* msg = aMsg;
 
-    if (!iContainerStripped) {
-        // know the size of this from Recognise();
-        // just make sure enough is pulled through, then split
+    if (!iPulling) {
+        if (!iContainerStripped) {
+            // know the size of this container from Recognise();
+            // just make sure enough is pulled through, then split
 
-        AddToAudioEncoded(aMsg);
-        msg = NULL;
+            AddToAudioEncoded(aMsg);
+            msg = NULL;
 
-        PullAudio(iSize);
-        if (iSize < iAudioEncoded->Bytes()) {
-            MsgAudioEncoded* remainder = iAudioEncoded->Split(iSize);
-            iAudioEncoded->RemoveRef();
-            iAudioEncoded = remainder;
-            // can'safely return remaining iAudioEncoded here; shouldn't have another tag
-            msg = iAudioEncoded;
-            iAudioEncoded = NULL;
+            PullAudio(iSize);
+            if (iSize < iAudioEncoded->Bytes()) {
+                MsgAudioEncoded* remainder = iAudioEncoded->Split(iSize);
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = remainder;
+                // can'safely return remaining iAudioEncoded here; shouldn't have another tag
+                msg = iAudioEncoded;
+                iAudioEncoded = NULL;
+            }
+            iContainerStripped = true;
         }
-        iContainerStripped = true;
     }
 
     return msg;

@@ -19,6 +19,7 @@ ContainerBase::ContainerBase()
     , iStreamHandler(NULL)
     , iAudioEncoded(NULL)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
+    , iPulling(false)
 {
 }
 
@@ -60,15 +61,16 @@ void ContainerBase::PullAudio(TUint aBytes)
     //if (iPendingMsg != NULL) {
     //    return;
     //}
+    iPulling = true;
     while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
         Msg* msg = iUpstreamElement->Pull();
-        Log::Print("about to call process\n");
         msg = msg->Process(*this);
         if (msg != NULL) {
             iPendingMsg = msg;
             break;
         }
     }
+    iPulling = false;
 }
 
 void ContainerBase::Read(Bwx& aBuf, TUint aBytes)
@@ -116,13 +118,8 @@ TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes)
     iAudioEncoded->CopyTo(ptr);
     aBuf.SetBytes(aBuf.Bytes() + bytes);
     if (remaining != NULL) {
-        // re-attach remaining and let a container plugin deal with iAudioEncoded
-        // or should iAudioEncoded be modified here?
         iAudioEncoded->Add(remaining);
     }
-    //iAudioEncoded->RemoveRef();
-    //iAudioEncoded = remaining;
-    //iStreamPos += bytes;
     return true;
 }
 
@@ -159,7 +156,7 @@ EStreamPlay ContainerBase::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint ContainerBase::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ContainerBase::TrySeek\n");
-    // seek to absolute offset in stream by default
+    // seek to absolute offset in stream by default; containers subclassing this can override
     iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     return iExpectedFlushId;
 }
@@ -301,7 +298,6 @@ EStreamPlay ContainerFront::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ContainerFront::TrySeek\n");
-    // seek to absolute offset in stream by default
     iExpectedFlushId = iContainer.iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     return iExpectedFlushId;
 }
@@ -332,7 +328,6 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     iContainerFront = new ContainerFront(*this, *this, aUpstreamElement);
     iContainerNull = new ContainerNull();
     AddContainer(iContainerNull);
-    //iContainers.push_back(iContainerNull);
     iActiveContainer = iContainerNull;
 }
 
@@ -496,7 +491,6 @@ EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "Container::TrySeek\n");
-    // seek to absolute offset in stream by default
     iExpectedFlushId = iActiveContainer->TrySeek(aTrackId, aStreamId, aOffset);
     return iExpectedFlushId;
 }

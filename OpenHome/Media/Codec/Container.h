@@ -84,6 +84,7 @@ protected:
     MsgAudioEncoded* iAudioEncoded;
     IStreamHandler* iStreamHandler;
     TUint iExpectedFlushId;
+    TBool iPulling;
 private:
     MsgFactory* iMsgFactory;
     IPipelineElementUpstream* iUpstreamElement;
