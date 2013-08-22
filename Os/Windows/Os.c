@@ -353,6 +353,7 @@ int32_t OsMutexUnlock(THandle aMutex)
 typedef struct
 {
     HANDLE           iThread;
+    char             iName[5];
     ThreadEntryPoint iEntryPoint;
     void*            iArg;
     uint32_t         iPriority;
@@ -376,6 +377,7 @@ DWORD threadEntrypoint(LPVOID aArg)
     int i;
 
     assert(data != NULL);
+    //fprintf(stderr, "++ new thread: %s(%d)\n", data->iName, GetCurrentThreadId());
 
     for (i=kNumHostPriorities-1; i>=0; i--) {
         if (kPriorityMin + (i*step) < data->iPriority) {
@@ -401,7 +403,7 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
     if (NULL == data) {
         return kHandleNull;
     }
-    aName = aName;
+    (void)strcpy(data->iName, aName);
     if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
         return kHandleNull;
     }
