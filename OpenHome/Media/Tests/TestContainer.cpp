@@ -144,6 +144,10 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
 protected:
     void PullAndProcess();
 private:
@@ -674,13 +678,36 @@ Msg* SuiteContainerBase::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* SuiteContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgTrack);
     iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
 Msg* SuiteContainerBase::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgEncodedStream);
     iStreamId = aMsg->StreamId();
+    return aMsg;
+}
+
+Msg* SuiteContainerBase::ProcessMsg(MsgMetaText* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgMetaText);
+    return aMsg;
+}
+Msg* SuiteContainerBase::ProcessMsg(MsgHalt* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgHalt);
+    return aMsg;
+}
+Msg* SuiteContainerBase::ProcessMsg(MsgFlush* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgFlush);
+    return aMsg;
+}
+Msg* SuiteContainerBase::ProcessMsg(MsgQuit* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgQuit);
     return aMsg;
 }
 
