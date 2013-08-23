@@ -97,6 +97,7 @@ private:
     void DeletePlaying();
     void PlayNextDelete();
     void SeekIdPrevDelete();
+    void PlayDeleteAll();
     void PlayDeleteAllPlay();
     void AddTrackJustBeforeCompletingPlaylist();
 private:
@@ -316,19 +317,20 @@ SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     , iDvStack(aDvStack)
     , iTimeSem("TPLY", 0)
 {
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAll));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist));
 }
 
 SuitePlaylist::~SuitePlaylist()
@@ -514,11 +516,11 @@ void SuitePlaylist::SeekIdPlayPrev()
 {
     Log::Print("\nSeekIdPlayPrev  ");
     iProxy->SyncSeekId(iTrackIds[1]);
-    iProxy->SyncPlay();
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
+    iProxy->SyncPlay();
     iTrackChanged.Wait();
-    iProxy->SyncPrevious();
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
+    iProxy->SyncPrevious();
     iTrackChanged.Wait();
     TEST(iCurrentTrackId == iTrackIds[0]);
     TEST(iTrackCount == 2);
@@ -546,7 +548,7 @@ void SuitePlaylist::SeekIndexValid()
 
 void SuitePlaylist::SeekIndexInvalid()
 {
-    Log::Print("\nSeekIndexValid  ");
+    Log::Print("\nSeekIndexInvalid  ");
     iProxy->SyncSeekIndex(100);
     TEST(true);
 }
@@ -559,9 +561,9 @@ void SuitePlaylist::DeletePlaying()
     iTimeSem.Wait();
     // now 1 sec into track #1
     TEST(iCurrentTrackId == iTrackIds[0]);
+    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iProxy->SyncDeleteId(iTrackIds[0]);
     iDriver->Mark();
-    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iTrackChanged.Wait();
     const TUint ms = iDriver->MarkEnd();
     Print("Pulled %ums audio", ms);
@@ -613,6 +615,24 @@ void SuitePlaylist::SeekIdPrevDelete()
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
     TEST(iTransportStateCount[EPipelinePaused] == 0);
     TEST(iTransportStateCount[EPipelineStopped] == 0);
+    TEST(iTransportStateCount[EPipelineBuffering] == 1);
+}
+
+void SuitePlaylist::PlayDeleteAll()
+{
+    Log::Print("\nPlayDeleteAll  ");
+    iProxy->SyncPlay();
+    iTimeSem.Wait();
+    iTimeSem.Wait();
+    iProxy->SyncDeleteAll();
+    while (iTransportState != EPipelineStopped) {
+        // lazy way of waiting for the playing track to ramp down and the pipeline to actually stop
+        Thread::Sleep(50);
+    }
+    TEST(iTransportState == EPipelineStopped);
+    TEST(iTransportStateCount[EPipelinePlaying] == 1);
+    TEST(iTransportStateCount[EPipelinePaused] == 0);
+    TEST(iTransportStateCount[EPipelineStopped] == 1);
     TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
