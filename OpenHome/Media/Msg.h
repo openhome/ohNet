@@ -10,6 +10,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Av/InfoProvider.h>
 
+#include <limits.h>
+
 EXCEPTION(AllocatorNoMemory); // heaps are expected to be setup to avoid this.  Any instance of this exception indicates a system design error.
 
 namespace OpenHome {
