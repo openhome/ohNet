@@ -55,23 +55,26 @@ void Rewinder::DrainQueue(MsgQueue& aQueue)
 Msg* Rewinder::Pull()
 {
     Msg* msg = NULL;
-    AutoMutex a(iLock);
 
     if (!iFlushQueue.IsEmpty()) {
         return iFlushQueue.Dequeue();
     }
 
-    // check if we have a waiting MsgAudioEncoded as first part of short-circuit
-    while (iQueueCurrent->IsEmpty() && msg == NULL) {
-        msg = iUpstreamElement.Pull();
-        if (msg != NULL) {
-            msg = msg->Process(*this);
+    do {
+        iLock.Wait();
+        if (!iQueueCurrent->IsEmpty()) {
+            msg = GetAudioFromCurrent();
         }
-    }
-    if (!iQueueCurrent->IsEmpty()) {
-        ASSERT(msg == NULL);
-        msg = GetAudioFromCurrent();
-    }
+        iLock.Signal();
+        if (msg == NULL) {
+            msg = iUpstreamElement.Pull();
+            if (msg != NULL) {
+                iLock.Wait();
+                msg = msg->Process(*this);
+                iLock.Signal();
+            }
+        }
+    } while (msg == NULL);
     return msg;
 }
 

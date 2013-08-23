@@ -12,13 +12,13 @@ tests = '''
     TestSupply
     TestAudioReservoir
     TestVariableDelay
-    TestStopper
+    #TestStopper
     TestTrackInspector
     TestReporter
     TestStarvationMonitor
     TestPreDriver
     TestContentProcessor
-    TestPipeline
+    #TestPipeline
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t quick
     TestIdProvider

@@ -25,6 +25,7 @@ public:
     ~Supplier();
     void Block();
     void Unblock();
+    void Exit(TUint aHaltId);
 private: // from Thread
     void Run();
 private: // from IStreamHandler
@@ -38,6 +39,8 @@ private:
     Semaphore iBlocker;
     Msg* iPendingMsg;
     TBool iBlock;
+    TBool iQuit;
+    TUint iHaltId;
 };
 
 class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor
@@ -137,6 +140,8 @@ Supplier::Supplier(ISupply& aSupply, TrackFactory& aTrackFactory)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
     , iBlock(false)
+    , iQuit(false)
+    , iHaltId(MsgHalt::kIdInvalid)
 {
     Start();
 }
@@ -159,6 +164,12 @@ void Supplier::Unblock()
     iBlock = false;
 }
 
+void Supplier::Exit(TUint aHaltId)
+{
+    iHaltId = aHaltId;
+    iQuit = true;
+}
+
 void Supplier::Run()
 {
     TByte encodedAudioData[EncodedAudio::kMaxBytes];
@@ -169,7 +180,7 @@ void Supplier::Run()
     iSupply.OutputTrack(*track, 1, Brx::Empty());
     track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
-    for (;;) {
+    while (!iQuit) {
         CheckForKill();
         if (iBlock) {
             iBlocker.Wait();
@@ -177,6 +188,7 @@ void Supplier::Run()
         iSupply.OutputData(encodedAudioBuf);
         Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
+    iSupply.OutputHalt(iHaltId);
 }
 
 EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -314,7 +326,9 @@ void SuitePipeline::Test()
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
     iJiffies = 0;
-    iPipeline->Stop();
+    static const TUint kHaltId = 10; // randomly chosen value
+    iPipeline->Stop(kHaltId);
+    iSupplier->Exit(kHaltId);
     PullUntilEnd(ERampDownDeferred);
     iSemFlushed.Wait();
     TEST(iPipelineState == EPipelineStopped);

@@ -38,6 +38,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
     , iTrack(NULL)
     , iStopped(true)
     , iQuit(false)
+    , iNextHaltId(MsgHalt::kIdNone + 1)
 {
 }
 
@@ -81,12 +82,14 @@ void Filler::Play(const Brx& aMode, TUint aTrackId)
     Signal();
 }
 
-void Filler::Stop()
+TUint Filler::Stop()
 {
     iLock.Wait();
     iStopped = true;
+    const TUint id = ++iNextHaltId;
     Signal();
     iLock.Signal();
+    return id;
 }
 
 TBool Filler::Next(const Brx& aMode)
@@ -115,16 +118,30 @@ TBool Filler::Prev(const Brx& aMode)
     return ret;
 }
 
+TBool Filler::IsStopped() const
+{
+    iLock.Wait();
+    const TBool stopped = iStopped;
+    iLock.Signal();
+    return stopped;
+}
+
 void Filler::Run()
 {
     BwsMode mode;
+    Wait();
     while (!iQuit) {
+        TBool sentHalt = false;
         for (;;) {
             iLock.Wait();
             const TBool wait = iStopped;
             iLock.Signal();
             if (!wait) {
                 break;
+            }
+            if (!sentHalt) {
+                iSupply.OutputHalt(iNextHaltId);
+                sentHalt = true;
             }
             Wait();
         }
@@ -139,12 +156,13 @@ void Filler::Run()
         }
         iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
         mode.Replace(iActiveUriProvider->Mode());
-        iLock.Signal();
         if (iTrackPlayStatus == ePlayNo) {
-            iSupply.OutputHalt();
+            iSupply.OutputHalt(iStopped? iNextHaltId : MsgHalt::kIdNone);
+            iLock.Signal();
             iStopped = true;
         }
         else {
+            iLock.Signal();
             ASSERT(iTrack != NULL);
             (void)iUriStreamer->DoStream(*iTrack, mode);
         }
@@ -178,9 +196,9 @@ void Filler::OutputFlush(TUint aFlushId)
     iSupply.OutputFlush(aFlushId);
 }
 
-void Filler::OutputHalt()
+void Filler::OutputHalt(TUint aHaltId)
 {
-    iSupply.OutputHalt();
+    iSupply.OutputHalt(aHaltId);
 }
 
 void Filler::OutputQuit()

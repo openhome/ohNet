@@ -39,9 +39,10 @@ public:
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
     void Play(const Brx& aMode, TUint aTrackId);
-    void Stop();
+    TUint Stop(); // returns Id of MsgHalt which will (eventually) be generated
     TBool Next(const Brx& aMode);
     TBool Prev(const Brx& aMode);
+    TBool IsStopped() const;
 private: // from Thread
     void Run();
 private: // from ISupply
@@ -50,10 +51,10 @@ private: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
-    void OutputHalt();
+    void OutputHalt(TUint aHaltId);
     void OutputQuit();
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     ISupply& iSupply;
     IPipelineIdTracker& iPipelineIdTracker;
     std::vector<UriProvider*> iUriProviders;
@@ -65,6 +66,7 @@ private:
     TBool iGetPrevious;
     TBool iQuit;
     EStreamPlay iTrackPlayStatus;
+    TUint iNextHaltId;
 };
 
 } // namespace Media

@@ -23,13 +23,13 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
 
 PipelineManager::~PipelineManager()
 {
-    iFiller->Stop();
+    const TUint haltId = iFiller->Stop();
     iIdManager->InvalidatePending();
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
     iLock.Signal();
     if (waitStop) {
-        iPipeline->Stop();
+        iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
     }
 
@@ -108,14 +108,14 @@ void PipelineManager::Pause()
 
 void PipelineManager::Stop()
 {
-    iFiller->Stop();
-    iPipeline->Stop();
+    const TUint haltId = iFiller->Stop();
+    iPipeline->Stop(haltId);
     iIdManager->InvalidateAll();
 }
 
 void PipelineManager::RemoveAll()
 {
-    iFiller->Stop();
+    /*TUint haltId = */iFiller->Stop();
     iLock.Wait();
     iPipeline->RemoveCurrentStream();
     iLock.Signal();

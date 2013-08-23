@@ -46,7 +46,7 @@ private:
     void PullerThread();
     void Enqueue(Msg* aMsg);
     MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
-    void Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirection aDirection);
+    void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
 private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgHalt* aMsg);

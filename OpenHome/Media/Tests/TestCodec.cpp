@@ -250,7 +250,7 @@ TestCodecPipelineElementDownstream::~TestCodecPipelineElementDownstream()
 void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
 {
     //LOG(kMedia, ">TestCodecPipelineElementDownstream::Push\n");
-    aMsg->Process(iMsgProcessor);
+    aMsg = aMsg->Process(iMsgProcessor);
     if (aMsg != NULL) {
         aMsg->RemoveRef();
     }

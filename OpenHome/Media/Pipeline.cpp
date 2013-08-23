@@ -46,6 +46,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     , iBuffering(false)
     , iQuitting(false)
     , iNextFlushId(MsgFlush::kIdInvalid + 1)
+    , iTargetHaltId(MsgHalt::kIdInvalid)
 {
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
@@ -244,10 +245,15 @@ void Pipeline::Pause()
     iStatus = EHalting;
 }
 
-void Pipeline::Stop()
+void Pipeline::Stop(TUint aHaltId)
 {
     AutoMutex a(iLock);
-    if (iTargetStatus == EFlushed || iTargetStatus == EQuit) {
+    iTargetHaltId = aHaltId;
+    iStopper->BeginHalt(aHaltId);
+    iStatus = EHalting;
+    iTargetStatus = EFlushed;
+
+    /*if (iTargetStatus == EFlushed || iTargetStatus == EQuit) {
         return; // already stopped or in the process of stopping so ignore this additional request
     }
     iTargetStatus = EFlushed;
@@ -258,7 +264,7 @@ void Pipeline::Stop()
     else if (iStatus == EHalted) {
         iStopper->BeginFlush();
         iStatus = EFlushing;
-    }
+    }*/
 }
 
 void Pipeline::RemoveCurrentStream()
@@ -297,9 +303,9 @@ void Pipeline::OutputFlush(TUint aFlushId)
     iSupply->OutputFlush(aFlushId);
 }
 
-void Pipeline::OutputHalt()
+void Pipeline::OutputHalt(TUint aHaltId)
 {
-    iSupply->OutputHalt();
+    iSupply->OutputHalt(aHaltId);
 }
 
 void Pipeline::OutputQuit()
@@ -312,9 +318,34 @@ Msg* Pipeline::Pull()
     return iPipelineEnd->Pull();
 }
 
-void Pipeline::PipelineHalted()
+void Pipeline::PipelineHalted(TUint aHaltId)
 {
     iLock.Wait();
+    if (iTargetHaltId != MsgHalt::kIdInvalid && iTargetHaltId != aHaltId) {
+        iLock.Signal();
+        return;
+    }
+    iTargetHaltId = MsgHalt::kIdInvalid;
+    switch (iTargetStatus)
+    {
+    case EPlaying:
+        iTargetStatus = EHalted;
+        // fallthrough
+    case EHalted:
+        iStatus = EHalted;
+        break;
+    case EFlushed:
+    case EQuit:
+        iStatus = EFlushed;
+        break;
+    default:
+        ASSERTS();
+        break;
+    }
+    iLock.Signal();
+    NotifyStatus();
+
+    /*iLock.Wait();
     if (iHaltCompletedIgnoreCount > 0) {
         iHaltCompletedIgnoreCount--;
         iLock.Signal();
@@ -339,7 +370,7 @@ void Pipeline::PipelineHalted()
     default:
         ASSERTS();
         break;
-    }
+    }*/
 }
 
 TUint Pipeline::NextFlushId()

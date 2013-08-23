@@ -136,6 +136,18 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
+class SuiteHalt : public Suite
+{
+    static const TUint kMsgHaltCount = 1;
+public:
+    SuiteHalt();
+    ~SuiteHalt();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
 class SuiteDecodedStream : public Suite
 {
     static const TUint kMsgDecodedStreamCount = 1;
@@ -560,7 +572,6 @@ void SuiteMsgAudioEncoded::Test()
         }
     }
     msg->RemoveRef();
-    msg2->RemoveRef();
     msg3->RemoveRef();
 
     // clean shutdown implies no leaked msgs
@@ -948,18 +959,18 @@ void SuiteRamp::Test()
     TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 2);
     TEST(ramp.Direction() == Ramp::EUp);
 
-    // start=50%, direction=down, duration=4*fragmentSize.  Apply, check end is 25%
+    // start=50%, direction=down, duration=4*fragmentSize (so remainingDuration=2*fragmentSize).  Apply, check end is 25%
     ramp.Reset();
     TUint start = (Ramp::kRampMax - Ramp::kRampMin) / 2;
-    TEST(!ramp.Set(start, jiffies, 4*jiffies, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(start, jiffies, 2*jiffies, Ramp::EDown, split, splitPos));
     TEST(ramp.Start() == start);
     TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 4);
     TEST(ramp.Direction() == Ramp::EDown);
 
-    // start=50%, direction=up, duration=4*fragmentSize.  Apply, check end is 75%
+    // start=50%, direction=up, duration=4*fragmentSize (so remainingDuration=2*fragmentSize).  Apply, check end is 75%
     ramp.Reset();
     start = (Ramp::kRampMax - Ramp::kRampMin) / 2;
-    TEST(!ramp.Set(start, jiffies, 4*jiffies, Ramp::EUp, split, splitPos));
+    TEST(!ramp.Set(start, jiffies, 2*jiffies, Ramp::EUp, split, splitPos));
     TEST(ramp.Start() == start);
     TEST(ramp.End() == Ramp::kRampMax - ((Ramp::kRampMax - Ramp::kRampMin) / 4));
     TEST(ramp.Direction() == Ramp::EUp);
@@ -1064,7 +1075,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [50%...25%].  Check start/end values
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, kAudioDataSize, kAudioDataSize*4, Ramp::EDown, split, splitPos)); // *4 as the highest sample rate gives 4 jiffies per sample
+    TEST(!ramp.Set(Ramp::kRampMax / 2, kAudioDataSize, kAudioDataSize*2, Ramp::EDown, split, splitPos));
     prevSampleVal = 0;
     numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1080,7 +1091,7 @@ void SuiteRamp::Test()
 
     // Create [50%...Min] ramp.  Add [Min...50%] ramp.  Check this splits into [Min...25%], [25%...Min]
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 2 * jiffies, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, jiffies, Ramp::EDown, split, splitPos));
     TEST(ramp.Set(Ramp::kRampMin, jiffies, 2 * jiffies, Ramp::EUp, split, splitPos));
     TEST(ramp.Start() == 0);
     TEST(ramp.End() == Ramp::kRampMax / 4);
@@ -1104,10 +1115,10 @@ void SuiteRamp::Test()
 
     // Create [50%...25%] ramp.  Add [40%...Min] ramp.  Check new ramp is used.
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 4 * jiffies, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 2 * jiffies, Ramp::EDown, split, splitPos));
     start = ramp.Start();
     start = ((TUint64)2 * Ramp::kRampMax) / 5;
-    TEST(!ramp.Set(start, jiffies, (5 * jiffies) / 2, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(start, jiffies, jiffies, Ramp::EDown, split, splitPos));
     TEST(ramp.Start() == start);
     TEST(ramp.End() == 0);
     TEST(ramp.Direction() == Ramp::EDown);
@@ -1136,8 +1147,10 @@ void SuiteRamp::Test()
     const TUint kNumChannels = 2;
     MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, kNumChannels, 44100, 16, EMediaDataLittleEndian, 0);
     jiffies = audioPcm->Jiffies();
-    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMax / 2, jiffies*2, Ramp::EDown, remaining));
-    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMin, jiffies*2, Ramp::EUp, remaining));
+    TUint remainingDuration = jiffies;
+    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMax / 2, remainingDuration, Ramp::EDown, remaining));
+    remainingDuration = jiffies * 2;
+    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMin, remainingDuration, Ramp::EUp, remaining));
     TEST(remaining != NULL);
     TEST(audioPcm->Jiffies() == jiffies / 2);
     TEST(audioPcm->Jiffies() == remaining->Jiffies());
@@ -1176,9 +1189,10 @@ void SuiteRamp::Test()
     silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 17);
     MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 23);
     const TUint duration = silence->Jiffies() + silence2->Jiffies();
+    remainingDuration = duration;
     TUint currentRamp = Ramp::kRampMax;
-    currentRamp = silence->SetRamp(currentRamp, duration, Ramp::EDown, remaining);
-    currentRamp = silence2->SetRamp(currentRamp, duration, Ramp::EDown, remaining);
+    currentRamp = silence->SetRamp(currentRamp, remainingDuration, Ramp::EDown, remaining);
+    currentRamp = silence2->SetRamp(currentRamp, remainingDuration, Ramp::EDown, remaining);
     TEST(currentRamp == Ramp::kRampMin);
     silence->RemoveRef();
     silence2->RemoveRef();
@@ -1383,6 +1397,44 @@ void SuiteFlush::Test()
     TEST(msg->Id() != MsgFlush::kIdInvalid);
     TEST(msg->Id() == id);
     msg->RemoveRef();
+}
+
+
+
+// SuiteHalt
+
+SuiteHalt::SuiteHalt()
+    : Suite("MsgHalt tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgHaltCount, 1);
+}
+
+SuiteHalt::~SuiteHalt()
+{
+    delete iMsgFactory;
+}
+
+void SuiteHalt::Test()
+{
+    MsgHalt* msg = iMsgFactory->CreateMsgHalt();
+    TEST(msg->Id() == MsgHalt::kIdNone);
+    msg->RemoveRef();
+    TEST(msg->Id() != MsgHalt::kIdNone);
+
+    msg = iMsgFactory->CreateMsgHalt(MsgHalt::kIdInvalid);
+    TEST(msg->Id() == MsgHalt::kIdInvalid);
+    msg->RemoveRef();
+
+    TUint id = MsgHalt::kIdNone;
+    msg = iMsgFactory->CreateMsgHalt();
+    TEST(msg->Id() == MsgHalt::kIdNone);
+    msg->RemoveRef();
+
+    id++;
+    msg = iMsgFactory->CreateMsgHalt(id);
+    TEST(msg->Id() == id);
+    msg->RemoveRef();
+    TEST(msg->Id() != id);
 }
 
 
@@ -2024,6 +2076,7 @@ void TestMsg()
     runner.Add(new SuiteMetaText());
     runner.Add(new SuiteTrack());
     runner.Add(new SuiteFlush());
+    runner.Add(new SuiteHalt());
     runner.Add(new SuiteDecodedStream());
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());

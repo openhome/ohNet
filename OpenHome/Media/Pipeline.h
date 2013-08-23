@@ -57,7 +57,7 @@ public:
     MsgFactory& Factory();
     void Play();
     void Pause();
-    void Stop();
+    void Stop(TUint aHaltId);
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
 public: // from ISupply
@@ -66,7 +66,7 @@ public: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
-    void OutputHalt();
+    void OutputHalt(TUint aHaltId);
     void OutputQuit();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -78,8 +78,8 @@ private:
     void Quit();
     void NotifyStatus();
 private: // from IStopperObserver
-    void PipelineHalted();
-    void PipelineFlushed();
+    void PipelineHalted(TUint aHaltId);
+    void PipelineFlushed(); // FIXME - remove
 private: // from IPipelinePropertyObserver
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
@@ -134,6 +134,7 @@ private:
     TBool iBuffering;
     TBool iQuitting;
     TUint iNextFlushId;
+    TUint iTargetHaltId;
 };
 
 } // namespace Media

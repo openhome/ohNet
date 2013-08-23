@@ -122,7 +122,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
         iRemainingRampSize = iRampDownDuration;
     }
     if (iStatus == ERampingDown) {
-        Ramp(aMsg, iRampDownDuration, Ramp::EDown);
+        Ramp(aMsg, Ramp::EDown);
         if (iCurrentRampValue == Ramp::kRampMin) {
             UpdateStatus(EBuffering);
         }
@@ -131,7 +131,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
         }
     }
     else if (iStatus == ERampingUp) {
-        Ramp(aMsg, iRampUpSize, Ramp::EUp);
+        Ramp(aMsg, Ramp::EUp);
         if (iCurrentRampValue == Ramp::kRampMax) {
             UpdateStatus(ERunning);
         }
@@ -149,18 +149,17 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     return aMsg;
 }
 
-void StarvationMonitor::Ramp(MsgAudio* aMsg, TUint aRampDuration, Ramp::EDirection aDirection)
+void StarvationMonitor::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 {
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
         EnqueueAtHead(remaining);
     }
     MsgAudio* split;
-    iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, aRampDuration, aDirection, split);
+    iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, aDirection, split);
     if (split != NULL) {
         EnqueueAtHead(split);
     }
-    iRemainingRampSize -= aMsg->Jiffies();
 }
 
 void StarvationMonitor::UpdateStatus(EStatus aStatus)

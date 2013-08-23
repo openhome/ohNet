@@ -316,19 +316,19 @@ SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     , iDvStack(aDvStack)
     , iTimeSem("TPLY", 0)
 {
-    AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete));
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist));
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist));
 }
 
 SuitePlaylist::~SuitePlaylist()
@@ -384,7 +384,6 @@ void SuitePlaylist::Setup()
 
 void SuitePlaylist::TearDown()
 {
-    iProxy->SyncDeleteAll();
     delete iProxy;
     iDevice->SetDisabled(MakeFunctor(*this, &SuitePlaylist::Disabled));
     iDeviceDisabled.Wait();

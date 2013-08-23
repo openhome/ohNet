@@ -11,8 +11,8 @@ namespace Media {
 class IStopperObserver
 {
 public:
-    virtual void PipelineHalted() = 0;
-    virtual void PipelineFlushed() = 0;
+    virtual void PipelineHalted(TUint aHaltId) = 0;
+    //virtual void PipelineStopped() = 0;
 };
     
 /*
@@ -36,7 +36,7 @@ public:
     virtual ~Stopper();
     void Start();
     void BeginHalt();
-    void BeginFlush();
+    void BeginHalt(TUint aHaltId);
     void RemoveCurrentStream();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -58,7 +58,6 @@ private:
     Msg* ProcessMsgAudio(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void DoBeginHalt();
-    void DoBeginFlush();
     void DoRemoveCurrentStream();
 private:
     enum EState
@@ -68,6 +67,7 @@ private:
        ,EStarting
        ,EHalting
        ,EHaltPending
+       ,EFlushPending
        ,EFlushing
     };
 private:
@@ -83,14 +83,15 @@ private:
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
-    TBool iReportHalted;
-    TBool iReportFlushed;
+    //TBool iReportHalted; // remove??
+    //TBool iReportFlushed;
     TBool iFlushStream;
     TBool iRemovingStream;
     TBool iResumeAfterHalt;
-    TBool iStopping;
-    TBool iInStream;
-    TUint iTargetFlushId;
+    //TBool iStopping; // remove??
+    //TBool iInStream; // remove??
+    //TUint iTargetFlushId;
+    TUint iTargetHaltId;
     TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;

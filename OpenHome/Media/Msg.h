@@ -199,7 +199,7 @@ public:
 public:
     Ramp();
     void Reset();
-    TBool Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
+    TBool Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos); // returns true iff aSplit is set
     Ramp Split(TUint aNewSize, TUint aCurrentSize);
     TUint Start() const { return iStart; }
     TUint End() const { return iEnd; }
@@ -266,7 +266,7 @@ public:
     MsgAudio* Split(TUint aJiffies); // returns block after aAt
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
-    TUint SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
+    TUint SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
     const Media::Ramp& Ramp() const;
 protected:
     MsgAudio(AllocatorBase& aAllocator);
@@ -538,10 +538,20 @@ private:
 
 class MsgHalt : public Msg
 {
+    friend class MsgFactory;
+public:
+    static const TUint kIdNone    = 0;
+    static const TUint kIdInvalid = UINT_MAX;
 public:
     MsgHalt(AllocatorBase& aAllocator);
+    TUint Id() const;
+private:
+    void Initialise(TUint aId);
 private: // from Msg
+    void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iId;
 };
 
 class MsgFlush : public Msg
@@ -750,7 +760,7 @@ public:
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     virtual void OutputFlush(TUint aFlushId) = 0;
-    virtual void OutputHalt() = 0;
+    virtual void OutputHalt(TUint aHaltId) = 0;
     virtual void OutputQuit() = 0;
 };
 
@@ -852,7 +862,7 @@ public:
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
-    MsgHalt* CreateMsgHalt();
+    MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);
     MsgFlush* CreateMsgFlush(TUint aId);
     MsgQuit* CreateMsgQuit();
 private:

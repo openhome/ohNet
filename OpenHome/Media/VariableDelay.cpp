@@ -137,11 +137,10 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
         iQueue.Enqueue(remaining);
     }
     MsgAudio* split;
-    iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRampDuration, iRampDirection, split);
+    iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
     if (split != NULL) {
         iQueue.Enqueue(split);
     }
-    iRemainingRampSize -= aMsg->Jiffies();
 }
 
 Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)

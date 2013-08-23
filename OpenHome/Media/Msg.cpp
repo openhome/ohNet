@@ -38,10 +38,10 @@ AllocatorBase::~AllocatorBase()
 
 void AllocatorBase::Free(Allocated* aPtr)
 {
-    iFree.Write(aPtr);
     iLock.Wait();
     iCellsUsed--;
     iLock.Signal();
+    iFree.Write(aPtr);
 }
 
 TUint AllocatorBase::CellsTotal() const
@@ -153,6 +153,7 @@ void Allocated::AddRef()
 
 void Allocated::RemoveRef()
 {
+    ASSERT_DEBUG(iRefCount != 0);
     iLock.Wait();
     TBool free = (--iRefCount == 0);
     iLock.Signal();
@@ -419,18 +420,19 @@ void Ramp::Reset()
     iEnabled = false;
 }
 
-TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRampDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
+TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDirection aDirection, Ramp& aSplit, TUint& aSplitPos)
 {
     /*Log::Print("Ramp::Set (");
     Log::Print(Thread::CurrentThreadName());
-    Log::Print("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRampDuration=%08x\n", aDirection, aStart, aFragmentSize, aRampDuration);*/
-    ASSERT(aRampDuration >  aFragmentSize || ((aStart == kRampMax || aStart == kRampMin) && aRampDuration == aFragmentSize));
+    Log::Print("), aDirection=%d, aStart=%08x, aFragmentSize=%08x, aRemainingDuration=%08x\n", aDirection, aStart, aFragmentSize, aRemainingDuration);*/
+    ASSERT(aRemainingDuration >=  aFragmentSize);
     ASSERT(aDirection != ENone);
     iEnabled = true;
     aSplit.Reset();
     aSplitPos = 0xffffffff;
+    const TUint rampRemaining = (aDirection == EDown? aStart : kRampMax-aStart);
     // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration 
-    TUint rampDelta = ((kRampMax * (TUint64)aFragmentSize) + aRampDuration - 1) / aRampDuration;
+    TUint rampDelta = ((rampRemaining * (TUint64)aFragmentSize) + aRemainingDuration - 1) / aRemainingDuration;
     // Rounding up rampDelta means that a ramp may overshoot.
     // ...check for this and clamp end values to min/max dependent on direction
     TUint rampEnd;
@@ -746,6 +748,9 @@ void MsgAudioEncoded::Initialise(EncodedAudio* aEncodedAudio)
 
 void MsgAudioEncoded::RefAdded()
 {
+    /* FIXME - not clear that its correct to Add/Remove refs down a chain like this
+       it might be better to modify the head msg only then RemoveRef down the chain when
+       the head is Clear()ed */
     if (iNextAudio != NULL) {
         iNextAudio->AddRef();
     }
@@ -760,9 +765,6 @@ void MsgAudioEncoded::RefRemoved()
 
 void MsgAudioEncoded::Clear()
 {
-    if (iNextAudio != NULL) {
-        iNextAudio->RemoveRef();
-    }
     iAudioData->RemoveRef();
 }
 
@@ -816,14 +818,14 @@ TUint MsgAudio::Jiffies() const
     return jiffies;
 }
 
-TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)
+TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)  // FIXME
 {
     AutoMutex a(iLock);
     Media::Ramp split;
     TUint splitPos;
     TUint rampEnd;
     aSplit = NULL;
-    if (iRamp.Set(aStart, iSize, aDuration, aDirection, split, splitPos)) {
+    if (iRamp.Set(aStart, iSize, aRemainingDuration, aDirection, split, splitPos)) {
         Media::Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
         aSplit = DoSplit(splitPos);
         iRamp = ramp;
@@ -836,6 +838,7 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint aDuration, Ramp::EDirection aDirecti
     else {
         rampEnd = iRamp.End();
     }
+    aRemainingDuration -= iSize;
     return rampEnd;
 }
 
@@ -1552,6 +1555,21 @@ MsgHalt::MsgHalt(AllocatorBase& aAllocator)
 {
 }
 
+TUint MsgHalt::Id() const
+{
+    return iId;
+}
+
+void MsgHalt::Initialise(TUint aId)
+{
+    iId = aId;
+}
+
+void MsgHalt::Clear()
+{
+    iId = UINT_MAX;
+}
+
 Msg* MsgHalt::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
@@ -1982,6 +2000,7 @@ Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
 {
+    iQueue.StopFlushing();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2108,9 +2127,11 @@ MsgMetaText* MsgFactory::CreateMsgMetaText(const Brx& aMetaText)
     return msg;
 }
 
-MsgHalt* MsgFactory::CreateMsgHalt()
+MsgHalt* MsgFactory::CreateMsgHalt(TUint aId)
 {
-    return iAllocatorMsgHalt.Allocate();
+    MsgHalt* msg = iAllocatorMsgHalt.Allocate();
+    msg->Initialise(aId);
+    return msg;
 }
 
 MsgFlush* MsgFactory::CreateMsgFlush(TUint aId)

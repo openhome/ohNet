@@ -136,7 +136,7 @@ void SuiteSupply::Test()
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputFlush(1);
     TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputHalt();
+    iSupply->OutputHalt(MsgHalt::kIdNone + 1);
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputQuit();
     TEST(++expectedMsgCount == iMsgPushCount);

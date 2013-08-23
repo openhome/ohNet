@@ -134,7 +134,8 @@ int TestProtocol::Run()
             break;*/
         case 's':
             if (!playing) {
-                iPipeline->Stop();
+                //iPipeline->Stop();
+                Log::Print("Stop currently disabled.  Use TestMediaPlayer for interactive testing instead\n");
             }
             break;
         case 'q':
