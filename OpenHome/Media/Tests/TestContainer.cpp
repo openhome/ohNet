@@ -734,6 +734,29 @@ void SuiteContainerBase::TestNormalOperation()
 
 void SuiteContainerBase::TestMsgOrdering()
 {
+    // pull through a variety of Msgs and let the ProcessMsg methods above do
+    // the checking that the Msg pulled was the last sent.
+    // successful completion of this test means all msgs were pulled through in
+    // correct order.
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgMetaText);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgHalt);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgFlush);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    for (TUint i = 0; i < msgOrder.size(); i++)
+    {
+        PullAndProcess();
+    }
 }
 
 void SuiteContainerBase::TestStreamHandling()
