@@ -695,16 +695,19 @@ Msg* SuiteContainerBase::ProcessMsg(MsgMetaText* aMsg)
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgMetaText);
     return aMsg;
 }
+
 Msg* SuiteContainerBase::ProcessMsg(MsgHalt* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgHalt);
     return aMsg;
 }
+
 Msg* SuiteContainerBase::ProcessMsg(MsgFlush* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgFlush);
     return aMsg;
 }
+
 Msg* SuiteContainerBase::ProcessMsg(MsgQuit* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgQuit);
