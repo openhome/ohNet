@@ -336,6 +336,7 @@ Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     , iRecognising(false)
     , iAudioEncoded(NULL)
     , iExpectedFlushId(0)
+    , iQuit(false)
 {
     iContainerFront = new ContainerFront(*this, *this, aUpstreamElement);
     iContainerNull = new ContainerNull();
@@ -463,6 +464,7 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
 Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iRecognising = true;
+    iQuit = false;
     iStreamHandler = aMsg->StreamHandler();
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();

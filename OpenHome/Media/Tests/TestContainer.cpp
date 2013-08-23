@@ -647,7 +647,7 @@ void SuiteContainerBase::TearDown()
 
 void SuiteContainerBase::PullAndProcess()
 {
-    Msg* msg = iGenerator->Pull();
+    Msg* msg = iContainer->Pull();
     msg = msg->Process(*this);
     msg->RemoveRef();
 }
@@ -738,6 +738,30 @@ void SuiteContainerBase::TestMsgOrdering()
 
 void SuiteContainerBase::TestStreamHandling()
 {
+    // test IStreamHandler calls are successfully passed through while streaming
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    for (TUint i = 0; i < msgOrder.size(); i++)
+    {
+        PullAndProcess();
+    }
+
+    EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iTrackId, iStreamId);
+    TEST(iOkToPlayRes == ePlayYes);
+    TEST(iProvider->OkToPlayCount() == 1);
+    TUint iSeekRes = iContainer->TrySeek(iTrackId, iStreamId, 0);
+    TEST(iSeekRes != MsgFlush::kIdInvalid);
+    TEST(iProvider->SeekCount() == 1);
+    TUint iStopRes = iContainer->TryStop(iTrackId, iStreamId);
+    TEST(iStopRes != MsgFlush::kIdInvalid);
+    TEST(iProvider->StopCount() == 1);
 }
 
 void SuiteContainerBase::TestEndOfStreamQuit()
