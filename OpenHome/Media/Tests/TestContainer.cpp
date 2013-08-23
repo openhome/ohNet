@@ -753,6 +753,28 @@ void SuiteContainerBase::TestFlushPending()
 
 void SuiteContainerBase::TestNullContainer()
 {
+    // add some plugins to the container and send a stream through which none
+    // will recognise; the Null container should still end up recognising it
+
+    // successful completion of this test shows that the Null plugin is working
+
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    iContainer->AddContainer(new Id3v2());
+    iContainer->AddContainer(new Mpeg4Start());
+
+    for (TUint i = 0; i < msgOrder.size(); i++)
+    {
+        PullAndProcess();
+    }
 }
 
 
