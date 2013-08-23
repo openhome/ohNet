@@ -386,6 +386,12 @@ Msg* Container::Pull()
 
 Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    // throw away msg if awaiting a MsgFlush
+    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
+
     // read enough audio for recognise buffer
     // then iterate over containers, calling Recognise
     // once recognised (at least the NULL container, which should be last, MUST recognise ALL streams)
@@ -487,6 +493,9 @@ Msg* Container::ProcessMsg(MsgFlush* aMsg)
     {
         iAudioEncoded->RemoveRef();
         iAudioEncoded = NULL;
+    }
+    if (iExpectedFlushId == aMsg->Id()) {
+        iExpectedFlushId = MsgFlush::kIdInvalid;
     }
     return aMsg;
 }

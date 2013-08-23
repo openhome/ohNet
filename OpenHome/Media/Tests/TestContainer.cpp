@@ -108,7 +108,8 @@ public:
     TUint SeekCount();
     TUint StopCount();
 private:
-    TUint iFlushId;
+    TUint iPendingFlushId;
+    TUint iCurrentFlushId;
     TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iOkToPlayCount;
@@ -487,7 +488,8 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
 
 // TestContainerProvider
 TestContainerProvider::TestContainerProvider()
-    : iFlushId(MsgFlush::kIdInvalid+1)
+    : iPendingFlushId(MsgFlush::kIdInvalid+1)
+    , iCurrentFlushId(iPendingFlushId)
     , iNextTrackId(1)
     , iNextStreamId(1)
     , iOkToPlayCount(0)
@@ -498,7 +500,7 @@ TestContainerProvider::TestContainerProvider()
 
 TUint TestContainerProvider::NextFlushId()
 {
-    return iFlushId++;
+    return iPendingFlushId++;
 }
 
 TUint TestContainerProvider::NextTrackId()
@@ -520,13 +522,13 @@ EStreamPlay TestContainerProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamI
 TUint TestContainerProvider::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     iSeekCount++;
-    return NextFlushId();
+    return iCurrentFlushId++;
 }
 
 TUint TestContainerProvider::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     iStopCount++;
-    return NextFlushId();
+    return iCurrentFlushId++;
 }
 
 TUint TestContainerProvider::OkToPlayCount()
@@ -747,6 +749,10 @@ void SuiteContainerBase::TestMsgOrdering()
     msgOrder.push_back(TestContainerMsgGenerator::EMsgMetaText);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgHalt);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgFlush);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
@@ -822,10 +828,101 @@ void SuiteContainerBase::TestEndOfStreamQuit()
 
 void SuiteContainerBase::TestNewStream()
 {
+    // test that when a new MsgEncodedStream is coming down the pipeline, all
+    // MsgAudioEncoded from previous stream are received before it, to avoid
+    // any out-of-order issues (or corruption/loss of buffered audio)
+
+    // this test is probably covered by TestMsgOrdering, can maybe be omitted
+
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    for (TUint i = 0; i < msgOrder.size(); i++)
+    {
+        PullAndProcess();
+    }
 }
 
 void SuiteContainerBase::TestFlushPending()
 {
+    // get a pending flush by doing a TrySeek or TryStop then pump more
+    // MsgAudioEncoded down the pipeline before eventually sending the expected
+    // seek. all MsgAudioEncoded sent during waiting on the pending flush
+    // must be disposed of
+
+    // calculate relative msg counts for seek, stop and end of msgs
+    static const TUint kDiscardedAudio = 3;
+
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    static const TUint kMsgCountSeek = 5;
+
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgFlush);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    static const TUint kMsgCountStop = 7 - kDiscardedAudio;
+
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgFlush);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
+    static const TUint kCountFinish = 8 - kDiscardedAudio;
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    // pull msgs until we're halfway through audio
+    for (TUint i = 0; i < kMsgCountSeek; i++)
+    {
+        PullAndProcess();
+    }
+
+    // then call a TrySeek so Container awaits a pending flush
+    TUint seekRes = iContainer->TrySeek(iTrackId, iStreamId, 0);
+    TEST(iProvider->SeekCount() == 1);
+    TEST(seekRes != MsgFlush::kIdInvalid);
+
+    // then pull remainder through - all MsgAudioEncoded up to MsgFlush should
+    // be disposed of; increment iAudioRcvdCount to account for this
+    iAudioRcvdCount += kDiscardedAudio;
+    for (TUint i = 0; i < kMsgCountStop; i++)
+    {
+        PullAndProcess();
+    }
+
+    // then do a TryStop, as with the TrySeek above
+    TUint stopRes = iContainer->TryStop(iTrackId, iStreamId);
+    TEST(iProvider->StopCount() == 1);
+    TEST(stopRes != MsgFlush::kIdInvalid);
+
+    // pull remainder of msgs through
+    iAudioRcvdCount += kDiscardedAudio;
+    for (TUint i = 0; i < kCountFinish; i++)
+    {
+        PullAndProcess();
+    }
 }
 
 void SuiteContainerBase::TestNullContainer()
