@@ -237,7 +237,7 @@ Msg* ContainerBase::ProcessMsg(MsgFlush* aMsg)
 
 Msg* ContainerBase::ProcessMsg(MsgQuit* aMsg)
 {
-    //iQuit = true;
+    iQuit = true;
     return aMsg;
 }
 
@@ -292,26 +292,38 @@ Msg* ContainerFront::Pull()
 EStreamPlay ContainerFront::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     LOG(kMedia, "ContainerFront::OkToPlay\n");
-    return iContainer.iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    if (!iContainer.iQuit) {
+        return iContainer.iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    }
+    else {
+        return ePlayNo;
+    }
 }
 
 TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ContainerFront::TrySeek\n");
-    iExpectedFlushId = iContainer.iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
-    return iExpectedFlushId;
+    if (!iContainer.iQuit) {
+        iExpectedFlushId = iContainer.iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+        return iExpectedFlushId;
+    }
+    else {
+        return MsgFlush::kIdInvalid;
+    }
 }
 
 TUint ContainerFront::TryStop(TUint aTrackId, TUint aStreamId)
 {
     LOG(kMedia, "ContainerFront::TryStop\n");
-    //if (!iQuit) {
-    iExpectedFlushId = iContainer.iStreamHandler->TryStop(aTrackId, aStreamId);
-    //}
-    //else {
-    //    return MsgFlush::kIdInvalid;
-    //}
-    return iExpectedFlushId;
+    // IStreamHandler calls after MsgQuit shouldn't reach here,
+    // but best to check in case of a bug or badly behaved container plugin.
+    if (!iContainer.iQuit) {
+        iExpectedFlushId = iContainer.iStreamHandler->TryStop(aTrackId, aStreamId);
+        return iExpectedFlushId;
+    }
+    else {
+        return MsgFlush::kIdInvalid;
+    }
 }
 
 
@@ -479,30 +491,41 @@ Msg* Container::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Container::ProcessMsg(MsgQuit* aMsg)
 {
+    iQuit = true;
     return aMsg;
 }
 
 EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     LOG(kMedia, "Container::OkToPlay\n");
-    return iActiveContainer->OkToPlay(aTrackId, aStreamId);
+    if (!iQuit) {
+        return iActiveContainer->OkToPlay(aTrackId, aStreamId);
+    }
+    else {
+        return ePlayNo;
+    }
 }
 
 TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "Container::TrySeek\n");
-    iExpectedFlushId = iActiveContainer->TrySeek(aTrackId, aStreamId, aOffset);
-    return iExpectedFlushId;
+    if (!iQuit) {
+        iExpectedFlushId = iActiveContainer->TrySeek(aTrackId, aStreamId, aOffset);
+        return iExpectedFlushId;
+    }
+    else {
+        return MsgFlush::kIdInvalid;
+    }
 }
 
 TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
 {
     LOG(kMedia, "Container::TryStop\n");
-    //if (!iQuit) {
-    iExpectedFlushId = iActiveContainer->TryStop(aTrackId, aStreamId);
-    //}
-    //else {
-    //    return MsgFlush::kIdInvalid;
-    //}
-    return iExpectedFlushId;
+    if (!iQuit) {
+        iExpectedFlushId = iActiveContainer->TryStop(aTrackId, aStreamId);
+        return iExpectedFlushId;
+    }
+    else {
+        return MsgFlush::kIdInvalid;
+    }
 }

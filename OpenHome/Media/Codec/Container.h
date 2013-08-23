@@ -125,7 +125,7 @@ private:
     TUint iExpectedFlushId;
 };
 
-class Container : public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler, private INonCopyable
+class Container : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, private INonCopyable
 {
     friend class ContainerFront;
 public:
@@ -146,7 +146,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
-private: // from IStreamHandler
+public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
@@ -159,11 +159,11 @@ private:
     ContainerNull* iContainerNull;
     IStreamHandler* iStreamHandler;
     //Msg* iPendingMsg;
-    //TBool iQuit;
     TBool iRecognising;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[EncodedAudio::kMaxBytes];
     TUint iExpectedFlushId;
+    TBool iQuit;
 };
 
 } // namespace Codec
