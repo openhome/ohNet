@@ -123,14 +123,21 @@ def configure_toolchain(conf):
                 conf.env.append_value('LINKFLAGS', ['-arch', 'x86_64'])
             conf.env.append_value('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.4', '-DPLATFORM_MACOSX_GNU'])
             conf.env.append_value('LINKFLAGS',['-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
-        # Options for Core-ppc32 and Core-armv6
-        if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
+        # Options for Core-ppc32 and Core-armv5 / Core-armv6
+        if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
 
             platform = conf.options.dest_platform
 
             if platform == 'Core-ppc32':
                 default_cross = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
                 cpu = '403'
+            if platform == 'Core-armv5':
+                default_cross = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
+                cpu = 'arm926ej-s'
+                # core2 is arm based - pass no-psabi flag to avoid excessive noise during compilation.
+                flags = ['-Wno-psabi', '-marm', '-mapcs', '-fno-omit-frame-pointer']
+                conf.env.append_value('CFLAGS', flags )
+                conf.env.append_value('CXXFLAGS', flags )
             if platform == 'Core-armv6':
                 default_cross = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
                 cpu = 'arm926ej-s'
@@ -255,6 +262,7 @@ def get_platform_info(dest_platform):
         'Windows-x86': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Windows-x64': dict(endian='LITTLE', build_platform='win32',  ohnet_plat_dir='Windows'),
         'Core-ppc32': dict(endian='BIG',     build_platform='linux2', ohnet_plat_dir='Core-ppc32'),
+        'Core-armv5': dict(endian='LITTLE',  build_platform='linux2', ohnet_plat_dir='Core-armv5'),
         'Core-armv6': dict(endian='LITTLE',  build_platform='linux2', ohnet_plat_dir='Core-armv6'),
         'Mac-x86': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac-x86'),
         'Mac-x64': dict(endian='LITTLE',     build_platform='darwin', ohnet_plat_dir='Mac-x64'),
