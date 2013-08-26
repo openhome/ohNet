@@ -55,7 +55,7 @@ def configure(conf):
         conf.env.LIB_OHNET=['ws2_32', 'iphlpapi', 'dbghelp']
     conf.env.STLIB_OHNET=['TestFramework', 'ohNetCore']
 
-    if conf.options.dest_platform in ['Core-ppc32', 'Core-armv6']:
+    if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
 
     conf.env.INCLUDES = [
