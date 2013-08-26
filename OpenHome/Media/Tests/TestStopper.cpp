@@ -33,8 +33,7 @@ private: // from IPipelineElementUpstream
 private: // from IFlushIdProvider
     TUint NextFlushId();
 private: // from IStopperObserver
-    void PipelineHalted();
-    void PipelineFlushed();
+    void PipelineHalted(TUint aHaltId);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -91,11 +90,11 @@ private:
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     Stopper* iStopper;
+    EStreamPlay iOkToPlay;
     EMsgType iNextGeneratedMsg;
     EMsgType iLastMsg;
     TUint iJiffies;
     TUint iPipelineHaltedCount;
-    TUint iPipelineFlushedCount;
     TUint iAudioMsgsDue;
     TUint iFlushMsgsDue;
     TUint iNextFlushId;
@@ -105,6 +104,9 @@ private:
     Semaphore iFlushThreadExit;
     TUint64 iTrackOffset;
     TByte iBuf[DecodedAudio::kMaxBytes];
+    TUint iLastHaltId;
+    TUint iLastObserverHaltId;
+    TUint iNextHaltId;
 };
 
 } // namespace Media
@@ -115,11 +117,11 @@ private:
 
 SuiteStopper::SuiteStopper()
     : Suite("Stopper tests")
+    , iOkToPlay(ePlayYes)
     , iNextGeneratedMsg(ENone)
     , iLastMsg(ENone)
     , iJiffies(0)
     , iPipelineHaltedCount(0)
-    , iPipelineFlushedCount(0)
     , iAudioMsgsDue(0)
     , iFlushMsgsDue(0)
     , iNextFlushId(MsgFlush::kIdInvalid + 1000)
@@ -128,6 +130,9 @@ SuiteStopper::SuiteStopper()
     , iFlush(NULL)
     , iFlushThreadExit("HACK", 0)
     , iTrackOffset(0)
+    , iLastHaltId(MsgHalt::kIdInvalid)
+    , iLastObserverHaltId(MsgHalt::kIdInvalid)
+    , iNextHaltId(MsgHalt::kIdNone)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
@@ -145,21 +150,24 @@ void SuiteStopper::Test()
 {
     /*
     Test goes something like
-        Start().  Check that audio isn't ramped.
-Check that ramp size matches kRampDuration and that the final msg was Split to ensure this.
-Check that remaining audio is not ramped.
+        Start.  Check that audio isn't ramped.
         Deliver Track, Metatext, Quit msgs.  Check they're passed through.
+        BeginHalt then re-Start soon after.  Check no Halt msg is output
         BeginHalt.  Deliver more audio, checking it ramps down
-        BeginFlush.  Deliver other msgs, check none are delivered and PipelineFlushed is called.
         Start() then deliver 0x7f filled audio.  Check it ramps up.
-        Halt then re-Start soon after.  Check no halt msg is output
-        Send halt msg.  Check there was no previous ramping down.
+        BeginHalt(id).  Deliver more audio, checking it ramps down
+        Start; deliver 0x7f filled audio, check it is discarded
+        ...deliver MsgEncodedStream followed by more audio, check it is passed on
+        Deliver new MsgEncodedStream; respond Later to OkToPlay; check Halt is output.
         Start() then deliver 0x7f filled audio.  Check initial audio isn't ramped.
-        RemoveStream().  Check that audio ramps down then flushes.
+        RemoveCurrentStream().  Check that audio ramps down then flushes.
         Check that subsequent audio is discarded.
         Check that subsequent stream plays.
+        BeginHalt.  Deliver more audio, checking it ramps down
+        RemoveCurrentStream().  Check that subsequent audio is discarded.
     */
 
+    Print("Start.  Check that audio isn't ramped\n");
     TEST(iStopper->iState == Stopper::EHalted);
     iStopper->Start();
     TEST(iStopper->iState == Stopper::EStarting);
@@ -174,8 +182,10 @@ Check that remaining audio is not ramped.
     TEST(iLastMsg == EMsgAudioPcm);
     TEST(iStopper->iQueue.IsEmpty());
 
-    // Deliver Silence, Track, AudioStream, Metatext, Quit msgs.  Check they're passed through.
-    EMsgType expected[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgMetaText, EMsgQuit };
+    Print("\nCheck msgs are passed through\n");
+    // Deliver Track, DecodedStream, Metatext, Quit msgs.  Check they're passed through.
+    // FIXME - may want to include test for EncodedStream but these aren't passed on by Stopper at present
+    EMsgType expected[] = { EMsgDecodedStream, EMsgTrack, EMsgMetaText, EMsgQuit };
     for (TUint i=0; i<sizeof(expected)/sizeof(expected[0]); i++) {
         iNextGeneratedMsg = expected[i];
         msg = iStopper->Pull();
@@ -184,7 +194,22 @@ Check that remaining audio is not ramped.
         TEST(iLastMsg == expected[i]);
     }
 
-    // BeginHalt.  Deliver more audio, checking it ramps down
+    Print("\nBeginHalt then re-Start soon after.  Check no Halt msg is output\n");
+    TUint pipelineHaltedCount = 0;
+    iStopper->BeginHalt();
+    TEST(iStopper->iState != Stopper::EHalted);
+    iNextGeneratedMsg = EMsgAudioPcm;
+    iStopper->Start();
+    msg = iStopper->Pull();
+    msg = msg->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg != EMsgHalt);
+    TEST(iStopper->iState == Stopper::ERunning);
+    TEST(iPipelineHaltedCount == pipelineHaltedCount);
+
+    Print("\nBeginHalt.  Deliver more audio, checking it ramps down\n");
     TEST(iStopper->iState == Stopper::ERunning);
     iStopper->BeginHalt();
     iJiffies = 0;
@@ -201,47 +226,28 @@ Check that remaining audio is not ramped.
     } while(iJiffies < kRampDuration);
     TEST(iJiffies == kRampDuration);
     TEST(iStopper->iState == Stopper::EHaltPending);
-    TEST(iPipelineHaltedCount == 0);
+    TEST(iPipelineHaltedCount == pipelineHaltedCount);
     msg = iStopper->Pull();
     (void)msg->Process(*this);
     msg->RemoveRef();
-    TEST(iPipelineHaltedCount == 1);
-    TEST(iPipelineFlushedCount == 0);
+    TEST(iPipelineHaltedCount == ++pipelineHaltedCount);
     TEST(iStopper->iState == Stopper::EHalted);
     TEST(iLastMsg == EMsgHalt);
 
-    // BeginFlush.  Deliver other msgs, check none are delivered and PipelineFlushed is called.
-    // Pull() will block when Stopper reads a Flush until Start() is called again
-    // We avoid deadlock here by pulling from a different thread and calling Start
-    // ...here when we noticed the Stopper is blocked
-    iLastMsg = ENone;
-    ThreadFunctor* flushThread = new ThreadFunctor("HACK", MakeFunctor(*this, &SuiteStopper::FlushThread));
-    iAudioMsgsDue = 5;
-    iFlushMsgsDue = 2;
-    iNextGeneratedMsg = EMsgFlush;
-    iStopper->BeginFlush();
-    TEST(iFlush != NULL);
-    TEST(iStopper->iState == Stopper::EFlushing);
-    flushThread->Start();
-    for (;;) {
-        if (iStopper->iState == Stopper::EHalted) {
-            break;
-        }
-        Thread::Sleep(10);
-    }
-    TEST(iLastMsg == ENone);
-    TEST(iStopper->iQueue.IsEmpty());
-    TEST(iPipelineHaltedCount == 1);
-    TEST(iPipelineFlushedCount == 1);
-    TEST(iFlush == NULL);
-        
-    // Start() then deliver 0x7f filled audio.  Check it ramps up.
+    Print("\nStart then deliver 0x7f filled audio.  Check it ramps up.\n");
     iNextGeneratedMsg = EMsgAudioPcm;
     iJiffies = 0;
     iStopper->Start();
+    while (!iStopper->iQueue.IsEmpty()) {
+        /* Discard any audio fragment left over from earlier ramp
+           If we don't do this, we risk Pull()ing a tiny fragment whose ramp is [0..0]
+           ...which would confuse our ramping tests in ProcessMsg(MsgAudioPcm*) */
+        msg = iStopper->Pull()->Process(*this);
+        if (msg != NULL) {
+            msg->RemoveRef();
+        }
+    }
     TEST(iStopper->iState == Stopper::EStarting);
-    iFlushThreadExit.Wait();
-    // Pull (audio, again) until state changes to ERunning.  Check we've ramped over kRampDuration.
     do {
         if (iStopper->iState != Stopper::EStarting) {
             Print("iJiffies=%08x (from duration %08x).  State=%u\n", iJiffies, kRampDuration, iStopper->iState);
@@ -255,72 +261,167 @@ Check that remaining audio is not ramped.
         }
         TEST(iLastMsg == EMsgAudioPcm);
     } while(iJiffies < kRampDuration);
-    delete flushThread; // can't be deleted until the next msg is Pulled
     TEST(iJiffies == kRampDuration);
     TEST(iStopper->iState == Stopper::ERunning);
     TEST(!iStopper->iQueue.IsEmpty());
 
-    // Halt then re-Start soon after.  Check no halt msg is output
-    iJiffies = 0;
-    iStopper->BeginHalt();
-    msg = iStopper->Pull();
-    (void)msg->Process(*this);
-    TEST(iLastMsg == EMsgAudioPcm);
-    TEST(iStopper->iState == Stopper::EHalting);
-    iStopper->Start();
-    TEST(iStopper->iState == Stopper::EStarting);
-    msg = iStopper->Pull();
-    (void)msg->Process(*this);
-    TEST(iLastMsg == EMsgAudioPcm);
-    TEST(iStopper->iState == Stopper::ERunning);
-    TEST(iPipelineHaltedCount == 1);
-    TEST(iPipelineFlushedCount == 1);
 
-    // Send halt msg.  Check there was no previous ramping down.
-    msg = iStopper->Pull();
-    (void)msg->Process(*this);
-    TEST(iLastMsg == EMsgAudioPcm);
+    // BeginHalt(id).  Deliver more audio, checking it ramps down; PipelineHalted() should pass id back to us.
+    Print("BeginHalt(id)\n");
     TEST(iStopper->iState == Stopper::ERunning);
+    static const TUint kHaltId = 1234;
+    iStopper->BeginHalt(kHaltId);
+    iNextHaltId = kHaltId;
+    iJiffies = 0;
+    while (!iStopper->iQueue.IsEmpty()) {
+        msg = iStopper->Pull()->Process(*this);
+        if (msg != NULL) {
+            msg->RemoveRef();
+        }
+    }
+    iNextGeneratedMsg = EMsgAudioPcm;
+    do {
+        TEST(iStopper->iState == Stopper::EHalting);
+        if (iStopper->iState != Stopper::EHalting) {
+            Print("iStopper->iState=%d\n", iStopper->iState);
+        }
+        TEST(iStopper->iQueue.IsEmpty());
+        msg = iStopper->Pull();
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            msg->RemoveRef();
+        }
+        TEST(iLastMsg == EMsgAudioPcm);
+    } while(iJiffies < kRampDuration);
+    TEST(iJiffies == kRampDuration);
+    TEST(iStopper->iState == Stopper::EFlushing);
+    TEST(iPipelineHaltedCount == pipelineHaltedCount);
+    iAudioMsgsDue = 5;
     iNextGeneratedMsg = EMsgHalt;
     msg = iStopper->Pull();
     (void)msg->Process(*this);
     msg->RemoveRef();
+    TEST(iPipelineHaltedCount == ++pipelineHaltedCount);
+    TEST(iStopper->iState == Stopper::EHalted);
     TEST(iLastMsg == EMsgHalt);
+    TEST(iLastHaltId == kHaltId);
+    TEST(iLastObserverHaltId == kHaltId);
+    iNextHaltId = MsgHalt::kIdNone;
 
-    // Start() then deliver 0x7f filled audio without ramping.
+    // Start; deliver 0x7f filled audio, check it is discarded
+    // ...deliver MsgEncodedStream followed by more audio, check it is passed on
+    // Check initial audio isn't ramped.
+    Print("\nDiscard audio until new stream\n");
     iStopper->Start();
+    iAudioMsgsDue = 5;
     iNextGeneratedMsg = EMsgEncodedStream;
-    msg = iStopper->Pull();
-    (void)msg->Process(*this);
-    msg->RemoveRef();
+    msg = iStopper->Pull()->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == EMsgDecodedStream); // EMsgDecodedStream due to test strangeness
+    iNextGeneratedMsg = EMsgAudioPcm;
+    TEST(iStopper->iState == Stopper::ERunning);
+    msg = iStopper->Pull()->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == EMsgAudioPcm);
     TEST(iStopper->iState == Stopper::ERunning);
 
-    // RemoveStream().  Check that audio ramps down then flushes.
-    iStopper->RemoveStream(iTrackId, iStreamId);
+    // Deliver new MsgEncodedStream; respond Later to OkToPlay; check Halt is output.
+    Print("\nOkToPlay returns ePlayLater\n");
+    iOkToPlay = ePlayLater;
+    iNextGeneratedMsg = EMsgEncodedStream;
+    msg = iStopper->Pull()->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == EMsgHalt);
+    TEST(iStopper->iState == Stopper::EHalted);
+    TEST(iPipelineHaltedCount == ++pipelineHaltedCount);
+    TEST(iLastHaltId == MsgHalt::kIdNone);
+    TEST(iLastObserverHaltId == MsgHalt::kIdNone);
+
+    // Start() then RemoveStream().  Check that audio ramps down then flushes.
+    // Check that subsequent audio is discarded.
+    // Check that subsequent stream plays.
+    Print("\nRemoveStream\n");
     iNextGeneratedMsg = EMsgAudioPcm;
+    iOkToPlay = ePlayYes;
+    iStopper->Start();
+    msg = iStopper->Pull()->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == EMsgAudioPcm);
+    TEST(iStopper->iState == Stopper::ERunning);
+    iStopper->RemoveCurrentStream();
     iJiffies = 0;
+    iNextGeneratedMsg = EMsgAudioPcm;
+    do {
+        TEST(iStopper->iState == Stopper::EHalting);
+        TEST(iStopper->iQueue.IsEmpty());
+        msg = iStopper->Pull()->Process(*this);
+        if (msg != NULL) {
+            msg->RemoveRef();
+        }
+        TEST(iLastMsg == EMsgAudioPcm);
+    } while(iJiffies < kRampDuration);
+    TEST(iJiffies == kRampDuration);
+    TEST(iStopper->iState == Stopper::EHaltPending);
+    msg = iStopper->Pull()->Process(*this);
+    msg->RemoveRef();
+    TEST(iPipelineHaltedCount == pipelineHaltedCount);
+    TEST(iStopper->iState == Stopper::ERunning);
+    TEST(iLastMsg == EMsgHalt);
+    iAudioMsgsDue = 5;
+    iNextGeneratedMsg = EMsgEncodedStream;
+    msg = iStopper->Pull()->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == EMsgDecodedStream); // EMsgDecodedStream due to test strangeness
+    iNextGeneratedMsg = EMsgAudioPcm;
+    TEST(iStopper->iState == Stopper::ERunning);
+
+    // bug #231
+    // BeginHalt.  Deliver more audio, checking it ramps down
+    // RemoveCurrentStream().  Check that subsequent audio is discarded.
+    Print("\nRemoveCurrentStream when halted\n");
+    TEST(iStopper->iState == Stopper::ERunning);
+    iStopper->BeginHalt();
+    iJiffies = 0;
+    iNextGeneratedMsg = EMsgAudioPcm;
     do {
         TEST(iStopper->iState == Stopper::EHalting);
         TEST(iStopper->iQueue.IsEmpty());
         msg = iStopper->Pull();
-        (void)msg->Process(*this);
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            msg->RemoveRef();
+        }
         TEST(iLastMsg == EMsgAudioPcm);
     } while(iJiffies < kRampDuration);
     TEST(iJiffies == kRampDuration);
+    TEST(iStopper->iState == Stopper::EHaltPending);
+    TEST(iPipelineHaltedCount == pipelineHaltedCount);
     msg = iStopper->Pull();
     (void)msg->Process(*this);
     msg->RemoveRef();
+    TEST(iPipelineHaltedCount == ++pipelineHaltedCount);
+    TEST(iStopper->iState == Stopper::EHalted);
     TEST(iLastMsg == EMsgHalt);
-
-    // Check that subsequent audio is discarded.
-    // Check that subsequent stream plays.
-    iAudioMsgsDue = 100;
-    iStreamId++;
-    iNextGeneratedMsg = EMsgDecodedStream;
-    msg = iStopper->Pull();
-    (void)msg->Process(*this);
-    msg->RemoveRef();
-    TEST(iLastMsg == EMsgDecodedStream);
+    iStopper->RemoveCurrentStream();
+    iStopper->Start();
+    iAudioMsgsDue = 5;
+    iNextGeneratedMsg = EMsgEncodedStream;
+    msg = iStopper->Pull()->Process(*this);
+    if (msg != NULL) {
+        msg->RemoveRef();
+    }
+    TEST(iLastMsg == EMsgDecodedStream); // EMsgDecodedStream due to test strangeness
+    iNextGeneratedMsg = EMsgAudioPcm;
     TEST(iStopper->iState == Stopper::ERunning);
 }
 
@@ -365,7 +466,7 @@ Msg* SuiteStopper::Pull()
     case EMsgMetaText:
         return iMsgFactory->CreateMsgMetaText(Brn("metatext"));
     case EMsgHalt:
-        return iMsgFactory->CreateMsgHalt();
+        return iMsgFactory->CreateMsgHalt(iNextHaltId);
     case EMsgFlush:
         if (iFlush != NULL) {
             Msg* msg = iFlush;
@@ -387,7 +488,7 @@ MsgAudio* SuiteStopper::CreateAudio()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -397,19 +498,15 @@ TUint SuiteStopper::NextFlushId()
     return iNextFlushId++;
 }
 
-void SuiteStopper::PipelineHalted()
+void SuiteStopper::PipelineHalted(TUint aHaltId)
 {
     iPipelineHaltedCount++;
-}
-
-void SuiteStopper::PipelineFlushed()
-{
-    iPipelineFlushedCount++;
+    iLastObserverHaltId = aHaltId;
 }
 
 EStreamPlay SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    return ePlayYes;
+    return iOkToPlay;
 }
 
 TUint SuiteStopper::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -439,9 +536,9 @@ Msg* SuiteStopper::ProcessMsg(MsgAudioPcm* aMsg)
     Brn buf(pcmProcessor.Buf());
     playable->RemoveRef();
     const TByte* ptr = buf.Ptr();
-    const TInt firstSubsample = (ptr[0]<<8) | ptr[1];
+    const TInt firstSubsample = (ptr[0]<<16) | (ptr[1]<<8) | ptr[2];
     const TUint bytes = buf.Bytes();
-    const TInt lastSubsample = (ptr[bytes-2]<<8) | ptr[bytes-1];
+    const TInt lastSubsample = (ptr[bytes-3]<<16) | (ptr[bytes-2]<<8) | ptr[bytes-1];
 
     switch (iStopper->iState)
     {
@@ -500,6 +597,7 @@ Msg* SuiteStopper::ProcessMsg(MsgMetaText* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgHalt* aMsg)
 {
     iLastMsg = EMsgHalt;
+    iLastHaltId = aMsg->Id();
     return aMsg;
 }
 

@@ -12,20 +12,22 @@ class IStopperObserver
 {
 public:
     virtual void PipelineHalted(TUint aHaltId) = 0;
-    //virtual void PipelineStopped() = 0;
 };
     
 /*
-Element which implements ramp up/down at the start/end of a playlist (or equivalent).
+Element which implements ramp up/down around a pause
+...or ramps down before removing the currently playing stream.
 Doesn't hold any audio itself (bar the special case where applying a ramp forces a msg to be split).
 Halt (pause) is implemented by telling the stopper to BeginHalt
 ...RampDuration of audio is then passed through, gradually ramping down
 ...Pull then blocks until Start() is called again
-Flush (stop) is implemented by telling the stopper to begin
-...then adding Flush msg to the leftmost pipeline element
-...then waiting for the Flush msg to reach the stopper, which informs IStopperObserver
+Halt(aId) is implemented by telling the stopper to start
+...then ramping down as for pause
+...followed by calling IStreamHandler::TryStop to attempt to stop delivery of the current stream
+...followed by pulling/discarding all remaining content for that stream
+...repeat for any other streams until a Halt msg with id==aId is pulled
+RemoveCurrentStream ramps down as with pause then discards audio + metatext content until the next MsgEncodedStream
 Flush msgs are not propogated.  Any audio which gets past this element is guaranteed to be played
-Note that Flush msg can only be added to pipeline once it is halted (when PipelineHalted() has been called)
 */
 
 class Stopper : public IPipelineElementUpstream, public IStopper, private IMsgProcessor
@@ -83,14 +85,9 @@ private:
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
-    //TBool iReportHalted; // remove??
-    //TBool iReportFlushed;
     TBool iFlushStream;
     TBool iRemovingStream;
     TBool iResumeAfterHalt;
-    //TBool iStopping; // remove??
-    //TBool iInStream; // remove??
-    //TUint iTargetFlushId;
     TUint iTargetHaltId;
     TUint iTrackId;
     TUint iStreamId;

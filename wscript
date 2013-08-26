@@ -436,7 +436,7 @@ def build(bld):
                 'OpenHome/Media/Tests/SongcastingDriver.cpp',
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
-                #'OpenHome/Media/Tests/TestStopper.cpp',
+                'OpenHome/Media/Tests/TestStopper.cpp',
                 'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
@@ -482,10 +482,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStarvationMonitor')
-    #bld.program(
-    #        source='OpenHome/Media/Tests/TestStopperMain.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='TestStopper')
+    bld.program(
+            source='OpenHome/Media/Tests/TestStopperMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestStopper')
     bld.program(
             source='OpenHome/Media/Tests/TestSupplyMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

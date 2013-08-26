@@ -386,31 +386,6 @@ void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)
     iStopper->RemoveStream(aTrackId, aStreamId);
 }
 
-void Pipeline::PipelineFlushed()
-{
-    iLock.Wait();
-    if (iFlushCompletedIgnoreCount > 0) {
-        iFlushCompletedIgnoreCount--;
-        iLock.Signal();
-        return;
-    }
-    switch (iTargetStatus)
-    {
-    case EFlushed:
-        iStatus = EFlushed;
-        iLock.Signal();
-        NotifyStatus();
-        break;
-    case EQuit:
-        iStatus = EFlushed;
-        iLock.Signal();
-        OutputQuit();
-        break;
-    default:
-        ASSERTS();
-    }
-}
-
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
 {
     iObserver.NotifyTrack(aTrack, aMode, aIdPipeline);

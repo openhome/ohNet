@@ -79,7 +79,6 @@ private:
     void NotifyStatus();
 private: // from IStopperObserver
     void PipelineHalted(TUint aHaltId);
-    void PipelineFlushed(); // FIXME - remove
 private: // from IPipelinePropertyObserver
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
