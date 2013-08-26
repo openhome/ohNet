@@ -92,6 +92,7 @@ def choose_platform(context):
                 "Linux-ppc32" : "Linux-ppc32",
                 "Macos-x64" : "Mac-x64",
                 "Core-ppc32" : "Core-ppc32",
+                "Core-armv5" : "Core-armv5",
                 "Core-armv6" : "Core-armv6",
             }[context.env["PLATFORM"]]
     else:
