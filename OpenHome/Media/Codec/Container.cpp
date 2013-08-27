@@ -14,12 +14,12 @@ using namespace OpenHome::Media::Codec;
 // ContainerBase
 
 ContainerBase::ContainerBase()
-    : iMsgFactory(NULL)
-    , iUpstreamElement(NULL)
+    : iAudioEncoded(NULL)
     , iStreamHandler(NULL)
-    , iAudioEncoded(NULL)
     , iExpectedFlushId(MsgFlush::kIdInvalid)
     , iPulling(false)
+    , iMsgFactory(NULL)
+    , iUpstreamElement(NULL)
     , iPendingMsg(NULL)
 {
 }
