@@ -10,6 +10,7 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 SIMPLE_TEST_DECLARATION(TestAudioReservoir);
+SIMPLE_TEST_DECLARATION(TestContainer);
 SIMPLE_TEST_DECLARATION(TestContentProcessor);
 SIMPLE_TEST_DECLARATION(TestIdProvider);
 SIMPLE_TEST_DECLARATION(TestFiller);
@@ -21,6 +22,7 @@ SIMPLE_TEST_DECLARATION(TestPipeline);
 SIMPLE_TEST_DECLARATION(TestPreDriver);
 SIMPLE_TEST_DECLARATION(TestProtocolHttp);
 SIMPLE_TEST_DECLARATION(TestReporter);
+SIMPLE_TEST_DECLARATION(TestRewinder);
 SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestStopper);
 SIMPLE_TEST_DECLARATION(TestStore);
@@ -28,7 +30,7 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
-SIMPLE_TEST_DECLARATION(TestRewinder);
+
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
 extern TestCodecMinimalPipeline* CreateTestCodecPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor);
@@ -50,6 +52,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 {
     std::vector<ShellTest> shellTests;
     shellTests.push_back(ShellTest("TestAudioReservoir", ShellTestAudioReservoir));
+    shellTests.push_back(ShellTest("TestContainer", ShellTestContainer));
     shellTests.push_back(ShellTest("TestContentProcessor", ShellTestContentProcessor));
     shellTests.push_back(ShellTest("TestIdProvider", ShellTestIdProvider));
     shellTests.push_back(ShellTest("TestFiller", ShellTestFiller));

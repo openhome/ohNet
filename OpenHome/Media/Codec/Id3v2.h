@@ -12,15 +12,17 @@ class Id3v2 : public ContainerBase
 {
 public:
     Id3v2();
-public: // from ContainerBase
-    void Initialise();
-    TBool Recognise();
-    TUint Size();
-    TBool AppendDuringSeek();
-    TUint Process();
-    TUint Split();
+public: // from IRecogniser
+    TBool Recognise(Brx& aBuf);
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+private: // from IStreamHandler
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
 private:
-    TUint32 iSize;
+    static const TUint kRecogniseBytes = 10;
+    TUint iSize;
+    TUint iTotalSize;
+    Bws<kRecogniseBytes> iBuf;
 };
 
 } // namespace Codec
