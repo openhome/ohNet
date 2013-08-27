@@ -126,6 +126,14 @@ void TrackDatabase::DeleteAll()
     iLock.Signal();
 }
 
+TUint TrackDatabase::TrackCount() const
+{
+    iLock.Wait();
+    const TUint count = iTrackList.size();
+    iLock.Signal();
+    return count;
+}
+
 void TrackDatabase::SetObserver(ITrackDatabaseObserver& aObserver)
 {
     iLock.Wait();

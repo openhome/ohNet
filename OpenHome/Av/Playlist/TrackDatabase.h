@@ -43,6 +43,7 @@ public:
     virtual void Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData, TUint& aIdInserted) = 0;
     virtual void DeleteId(TUint aId) = 0;
     virtual void DeleteAll() = 0;
+    virtual TUint TrackCount() const = 0;
 };
 
 class ITrackDatabaseReader
@@ -83,6 +84,7 @@ private: // from ITrackDatabase
     void Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData, TUint& aIdInserted);
     void DeleteId(TUint aId);
     void DeleteAll();
+    TUint TrackCount() const;
 private: // from ITrackDatabaseReader
     void SetObserver(ITrackDatabaseObserver& aObserver);
     Media::Track* TrackRef(TUint aId);

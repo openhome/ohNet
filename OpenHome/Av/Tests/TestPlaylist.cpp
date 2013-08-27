@@ -329,7 +329,7 @@ SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete));
     AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete));
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAll));
-    //AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay));
     AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist));
 }
 
@@ -646,11 +646,11 @@ void SuitePlaylist::PlayDeleteAllPlay()
     iProxy->SyncPlay();
     iDriver->PullTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged));
     iTrackChanged.Wait();
-    TEST(iTransportState == EPipelineBuffering);
+    TEST(iTransportState == EPipelineStopped);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
     TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 2);
+    TEST(iTransportStateCount[EPipelineStopped] == 1);
+    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::AddTrackJustBeforeCompletingPlaylist()

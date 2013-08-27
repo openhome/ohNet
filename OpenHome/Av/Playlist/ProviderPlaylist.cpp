@@ -116,14 +116,18 @@ void ProviderPlaylist::NotifyAllDeleted()
 
 void ProviderPlaylist::Play(IDvInvocation& aInvocation)
 {
-    iSource.Play();
+    if (iDatabase.TrackCount() > 0) {
+        iSource.Play();
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderPlaylist::Pause(IDvInvocation& aInvocation)
 {
-    iSource.Pause();
+    if (iDatabase.TrackCount() > 0) {
+        iSource.Pause();
+    }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -332,6 +336,9 @@ void ProviderPlaylist::DeleteId(IDvInvocation& aInvocation, TUint aValue)
 {
     try {
         iDatabase.DeleteId(aValue);
+        if (iDatabase.TrackCount() == 0) {
+            iSource.Stop();
+        }
     }
     catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
@@ -342,6 +349,7 @@ void ProviderPlaylist::DeleteId(IDvInvocation& aInvocation, TUint aValue)
 
 void ProviderPlaylist::DeleteAll(IDvInvocation& aInvocation)
 {
+    iSource.Stop(); // we want TransportState == Stopped after this
     iDatabase.DeleteAll();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
