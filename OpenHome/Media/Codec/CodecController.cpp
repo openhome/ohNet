@@ -455,7 +455,10 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
         Queue(aMsg);
         THROW(CodecStreamFlush);
     }
-    if (iExpectedFlushId == aMsg->Id()) {
+    if (iExpectedFlushId != aMsg->Id()) {
+        Queue(aMsg);
+    }
+    else {
         iExpectedFlushId = MsgFlush::kIdInvalid;
         if (iConsumeExpectedFlush) {
             iConsumeExpectedFlush = false;
