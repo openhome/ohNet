@@ -70,7 +70,14 @@ void Stopper::BeginHalt(TUint aHaltId)
     iLock.Wait();
     iTargetHaltId = aHaltId;
     iResumeAfterHalt = false;
-    DoBeginHalt();
+    if (iState == EHalted) {
+        // Currently paused.  Need to unblock Pull() until we fetch MsgHalt with the above id
+        iState = EFlushing;
+        iSem.Signal();
+    }
+    else {
+        DoBeginHalt();
+    }
     iLock.Signal();
 }
 
