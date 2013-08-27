@@ -171,6 +171,9 @@ void CodecController::CodecThread()
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
                 iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                    iConsumeExpectedFlush = true;
+                }
                 continue;
             }
 
