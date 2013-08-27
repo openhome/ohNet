@@ -516,6 +516,7 @@ void SuiteContainerBase::TearDown()
     delete iGenerator;
     delete iMsgFactory;
     delete iProvider;
+    delete iTrackFactory;
 }
 
 void SuiteContainerBase::AddBaseTests()
