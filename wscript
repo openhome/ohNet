@@ -449,6 +449,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestProtocolHttp.cpp',
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestCodecInit.cpp',
+                'OpenHome/Media/Tests/TestContainer.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
@@ -538,6 +539,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestCodecMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestCodec')
+    bld.program(
+            source='OpenHome/Media/Tests/TestContainerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestContainer')
     bld.program(
             source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

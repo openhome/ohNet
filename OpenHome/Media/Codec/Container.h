@@ -46,7 +46,7 @@ public: // from IStreamHandler
 
 class ContainerBase : public IContainerBase, private IMsgProcessor, private INonCopyable
 {
-    friend class Container;
+    friend class ContainerFront;
 public:
     ContainerBase();
     ~ContainerBase();
@@ -89,9 +89,7 @@ private:
     MsgFactory* iMsgFactory;
     IPipelineElementUpstream* iUpstreamElement;
     TByte iReadBuf[EncodedAudio::kMaxBytes];
-    MsgQueue iMsgQueue;
     Msg* iPendingMsg;
-    TBool iQuit;
 
 protected:
     IContainer* iContainer;
@@ -107,27 +105,50 @@ public: // from IRecogniser
 
 class Container;
 
-class ContainerFront : public IPipelineElementUpstream, public IStreamHandler, private INonCopyable
+class ContainerFront : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, private INonCopyable
 {
+    friend class Container;
 public:
-    ContainerFront(Container& aContainer, IMsgProcessor& aMsgProcessor, IPipelineElementUpstream& aUpstreamElement);
+    ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
+    ~ContainerFront();
+    void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream
     Msg* Pull();
+private: // IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
-    Container& iContainer;
-    IMsgProcessor& iMsgProcessor;
+    static const TUint kMaxRecogniseBytes = 6 * 1024;
+    MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
-    TUint iAccumulator;
+    std::vector<IContainerBase*> iContainers;
+    IContainerBase* iActiveContainer;
+    ContainerNull* iContainerNull;
+    IStreamHandler* iStreamHandler;
+
+    MsgAudioEncoded* iAudioEncoded;
+    TByte iReadBuf[EncodedAudio::kMaxBytes];
+    TBool iRecognising;
     TUint iExpectedFlushId;
+    TBool iQuit;
 };
 
 class Container : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, private INonCopyable
 {
-    friend class ContainerFront;
+    //friend class ContainerFront;
 public:
     Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     virtual ~Container();
@@ -151,19 +172,9 @@ public: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
-    static const TUint kMaxRecogniseBytes = 6 * 1024;
-    MsgFactory& iMsgFactory;
     ContainerFront* iContainerFront;
-    std::vector<IContainerBase*> iContainers;
-    IContainerBase* iActiveContainer;
-    ContainerNull* iContainerNull;
-    IStreamHandler* iStreamHandler;
-    //Msg* iPendingMsg;
-    TBool iRecognising;
-    MsgAudioEncoded* iAudioEncoded;
-    TByte iReadBuf[EncodedAudio::kMaxBytes];
-    TUint iExpectedFlushId;
-    TBool iQuit;
+    TBool iNewStream;
+
 };
 
 } // namespace Codec
