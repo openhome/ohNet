@@ -38,7 +38,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountDecodedStream   = 20;
     static const TUint kMsgCountMetaText        = 20;
     static const TUint kMsgCountHalt            = 20;
-    static const TUint kMsgCountFlush           = 1;
+    static const TUint kMsgCountFlush           = 16;
     static const TUint kMsgCountQuit            = 1;
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
