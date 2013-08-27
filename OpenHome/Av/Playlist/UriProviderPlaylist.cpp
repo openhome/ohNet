@@ -40,13 +40,10 @@ void UriProviderPlaylist::Begin(TUint aTrackId)
         iPending = NULL;
     }
     iPending = iDatabase.TrackRef(aTrackId);
-    if (iPending != NULL) {
-        iPendingCanPlay = ePlayYes;
-    }
-    else {
+    if (iPending == NULL) {
         iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
-        iPendingCanPlay = ePlayLater;
     }
+    iPendingCanPlay = ePlayYes;
     iPendingDirection = eJumpTo;
 }
 
