@@ -54,8 +54,7 @@ void ContainerBase::ReleaseAudioEncoded()
     }
 }
 
-// should maybe be a TBool instead?
-// can always check the size of iAudioEncoded afterwards - but could just do that in this function!
+// should return type be TBool, based on whether all aBytes were read?
 void ContainerBase::PullAudio(TUint aBytes)
 {
     if (iPendingMsg != NULL) {
@@ -118,10 +117,10 @@ void ContainerBase::Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream&
     iStreamHandler = &aStreamHandler;
 }
 
-TBool ContainerBase::Recognise(Brx& /*aBuf*/)
-{
-    return false; // should help detect if there's a problem
-}
+//TBool ContainerBase::Recognise(Brx& /*aBuf*/)
+//{
+//    return false; // should help detect if there's a problem
+//}
 
 Msg* ContainerBase::Pull()
 {
@@ -336,7 +335,7 @@ Msg* ContainerFront::ProcessMsg(MsgAudioEncoded* aMsg)
     // stream which would otherwise not be recognised (and cause subsequent
     // MsgQuit to be pulled through, which would require extra state)
     if (iRecognising && (iAudioEncoded != NULL)) {
-        // we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than that,
+        // we can only CopyTo a max of kMaxRecogniseBytes bytes. If we have more data than that,
         // split the msg, select a container then add the fragments back together before processing
         MsgAudioEncoded* remaining = NULL;
         if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {

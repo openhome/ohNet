@@ -13,10 +13,10 @@ namespace Media {
 namespace Codec {
 
 /*
-Element which strips any container data from the start of a file.
-Could (should) be extended later to handle more complex containers
-...which read a stream, skip some data, read another stream repeatedly
-...not just at the start of a file.
+Element which strips any container data from a file.
+Complex containers which read a stream, skip some data, read another stream
+repeatedly, not just parse a header at the start of a file, are implementable
+as IContainerBase plugins.
 */
 
 class IContainer
@@ -60,8 +60,8 @@ private:
     void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler);
     TBool ReadFromCachedAudio(Bwx& aBuf, TUint aBytes);
 public: // from IRecogniser
-    //TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
-    TBool Recognise(Brx& aBuf);
+    TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
+    //TBool Recognise(Brx& aBuf);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
@@ -148,7 +148,6 @@ private:
 
 class Container : public IPipelineElementUpstream, private IMsgProcessor, public IStreamHandler, private INonCopyable
 {
-    //friend class ContainerFront;
 public:
     Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     virtual ~Container();

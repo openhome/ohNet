@@ -18,24 +18,6 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-//class DummyContainerGenerator
-//{
-//public:
-//    DummyContainerGenerator(TUint aHeaderBytes, TUint aFileBytes, TBool aInterleaved = false, TUint aInterleaveCount = 0);
-//    ~DummyContainerGenerator();
-//    TUint Bytes();
-//    void Next(Bwx& aBuf, TUint aBytes);
-//    void Next(Bwx& aBuf);
-//private:
-//    TUint iHeaderBytes;
-//    TUint iFileBytes;
-//    TUint iSize;
-//    TBool iInterleaved;
-//    TUint iInterleaveCount;
-//    Bwh*  iHeader;
-//    Bws<EncodedAudio::kMaxBytes> iData;
-//};
-
 class ContainerNullBuffered : public ContainerNull
 {
 public:
@@ -91,14 +73,6 @@ private:
     TUint iAudioMsgCount;
     EMsgType iLastMsgType;
 };
-
-//class TestContainerGenerator : public TestContainerMsgGenerator
-//{
-//public:
-//    TestContainerGenerator(DummyContainerGenerator& aGenerator, MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, std::vector<EMsgType> aMsgOrder);
-//private: // from TestContainerMsgGenerator
-//    MsgAudioEncoded* GenerateAudioMsg();
-//};
 
 class TestContainerProvider : public IPipelineIdProvider, public IFlushIdProvider, public IStreamHandler
 {
@@ -202,7 +176,6 @@ private: // from SuiteUnitTest
 private: // from SuiteContainerBase
     TBool TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, TByte aValue);
     TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
-    //void TestFlushPending();
 private:
     TUint iMsgBytesRcvd;
 };
@@ -220,168 +193,6 @@ private: // Tests
 } // Codec
 } // Media
 } // OpenHome
-
-
-// DummyContainerGenerator
-
-//DummyContainerGenerator::DummyContainerGenerator(TUint aHeaderBytes, TUint aFileBytes, TBool aInterleaved, TUint aInterleaveCount)
-//    : iHeaderBytes(aHeaderBytes)
-//    , iFileBytes(aFileBytes)
-//    , iSize(aHeaderBytes + aFileBytes)
-//    , iInterleaved(aInterleaved)
-//    , iInterleaveCount(aInterleaveCount)
-//{
-//    if (iInterleaved) {
-//        ASSERT(iFileBytes >= iFileBytes/(iHeaderBytes*iInterleaveCount));
-//    }
-//    iHeader = new Bwh(iHeaderBytes);
-//    memset((void*)iHeader->Ptr(), 0, iHeader->MaxBytes());
-//    // This should probably be moved to the Next() function for the case of interleaved headers
-//    iHeader->Append("dumh");
-//    iHeader->Append(aHeaderBytes);
-//    iHeader->Append(aFileBytes);
-//    iHeader->SetBytes(aHeaderBytes);
-//    memset((void*)iData.Ptr(), 0, iData.MaxBytes());
-//}
-//
-//DummyContainerGenerator::~DummyContainerGenerator()
-//{
-//    delete iHeader;
-//}
-//
-//TUint DummyContainerGenerator::Bytes()
-//{
-//    return iSize;
-//}
-//
-//void DummyContainerGenerator::Next(Bwx& aBuf, TUint aBytes)
-//{
-//    iData.SetBytes(iData.MaxBytes());
-//
-//    aBuf.MaxBytes();
-//    aBuf.Bytes();
-//    ASSERT(aBuf.MaxBytes()-aBuf.Bytes() >= aBytes);
-//    if (iHeader->Bytes() > 0) {
-//        if (iHeader->Bytes() > aBytes) {
-//            Brn tmp = iHeader->Split(aBytes);
-//            aBuf.Append(iHeader->Ptr(), aBytes);
-//            aBytes -= iHeader->Bytes();
-//            //iFileBytes -= iHeader->Bytes();
-//            iHeader->Replace(tmp);
-//        }
-//        else {
-//            aBuf.Append(*iHeader);
-//            aBytes -= iHeader->Bytes();
-//            //iFileBytes -= iHeader->Bytes();
-//            iHeader->SetBytes(0);
-//        }
-//    }
-//
-//    if (iFileBytes > 0 && aBytes > 0) {
-//        while (iFileBytes > 0 && aBytes > 0) {  // terminate when reached filesize or filled external buf
-//            if (iFileBytes >= aBytes) {
-//                iData.SetBytes(aBytes);
-//                aBuf.Append(iData);
-//                aBytes -= iData.Bytes();
-//                iFileBytes -= iData.Bytes();
-//                iData.SetBytes(iData.MaxBytes());
-//            }
-//            else {
-//                while (iFileBytes > 0) {
-//                    if (iFileBytes >= aBytes) {
-//                        iData.SetBytes(aBytes);
-//                        aBuf.Append(iData);
-//                        aBytes -= iData.Bytes();
-//                        iFileBytes -= iData.Bytes();
-//                        iData.SetBytes(iData.MaxBytes());
-//                    }
-//                    else {
-//                        iData.SetBytes(iFileBytes);
-//                        aBuf.Append(iData);
-//                        aBytes -= iData.Bytes();
-//                        iFileBytes -= iData.Bytes();
-//                        iData.SetBytes(iData.MaxBytes());
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//void DummyContainerGenerator::Next(Bwx& aBuf)
-//{
-//    Next(aBuf, aBuf.MaxBytes()-aBuf.Bytes());
-//}
-
-
-// TestContainerGenerator
-
-//TestContainerGenerator::TestContainerGenerator(DummyContainerGenerator& aGenerator, MsgFactory& aMsgFactory, IFlushIdProvider& /*aFlushIdProvider*/, Av::IInfoAggregator& aInfoAggregator)
-//    : iGenerator(aGenerator)
-//    , iMsgFactory(aMsgFactory)
-//    , iTrackId(1)
-//    , iStreamId(1)
-//    , iTrackSent(false)
-//    , iStreamSent(false)
-//{
-//    iTrackFactory = new TrackFactory(aInfoAggregator, 1);
-//}
-//
-//TestContainerGenerator::~TestContainerGenerator()
-//{
-//    delete iTrackFactory;
-//}
-//
-//TUint TestContainerGenerator::TrackId()
-//{
-//    return iTrackId;
-//}
-//
-//TUint TestContainerGenerator::StreamId()
-//{
-//    return iStreamId;
-//}
-//
-//Msg* TestContainerGenerator::Pull()
-//{
-//    if (!iTrackSent) {
-//        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
-//        // send track msg
-//        Msg* msg = iMsgFactory.CreateMsgTrack(*track, kPipelineId, Brx::Empty());
-//        track->RemoveRef();
-//        iTrackSent = true;
-//        return msg;
-//    }
-//    if (!iStreamSent) {
-//        Msg* msg = iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), iGenerator.Bytes(), NextStreamId(), false, false, NULL);
-//        iStreamSent = true;
-//        return msg;
-//    }
-//
-//    // sent initialisers; send stream now
-//    iData.SetBytes(0);
-//    iGenerator.Next(iData);
-//    Msg* msg = NULL;
-//    if (iData.Bytes()) {
-//        msg = iMsgFactory.CreateMsgAudioEncoded(iData);
-//    }
-//    else {
-//        msg = iMsgFactory.CreateMsgQuit();
-//    }
-//    return msg;
-//
-//    // send a flush or quit msg?
-//}
-//
-//TUint TestContainerGenerator::NextTrackId()
-//{
-//    return iTrackId++;
-//}
-//
-//TUint TestContainerGenerator::NextStreamId()
-//{
-//    return iStreamId++;
-//}
 
 
 // ContainerNullBuffered
@@ -797,8 +608,7 @@ Msg* SuiteContainerBase::ProcessMsg(MsgQuit* aMsg)
 
 void SuiteContainerBase::TestNormalOperation()
 {
-    // This test is maybe redundant as it's almost same as TestEndOfStreamQuit
-    // populate vector with normal type/order of stream msgs
+    // Populate vector with normal type/order of stream msgs
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
@@ -920,7 +730,6 @@ void SuiteContainerBase::TestNewStream()
     msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
-    //msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
@@ -973,7 +782,7 @@ void SuiteContainerBase::TestFlushPending()
 
     iGenerator->SetMsgOrder(msgOrder);
 
-    // pull msgs until we're halfway through audio
+    // pull msgs until we're halfway through first batch of audio
     while (iMsgRcvdCount < kMsgCountSeek)
     {
         PullAndProcess();
@@ -984,8 +793,8 @@ void SuiteContainerBase::TestFlushPending()
     TEST(iProvider->SeekCount() == 1);
     TEST(seekRes != MsgFlush::kIdInvalid);
 
-    // then pull remainder through - all MsgAudioEncoded up to MsgFlush should
-    // be disposed of; increment iAudioRcvdCount to account for this
+    // then pull more through - all MsgAudioEncoded up to MsgFlush should be
+    // disposed of; increment iAudioRcvdCount/iMsgRcvdCount to account for this
     iAudioRcvdCount += kDiscardedAudio;
     iMsgRcvdCount += kDiscardedAudio;
     while (iMsgRcvdCount < kMsgCountStop)
@@ -1035,8 +844,8 @@ TBool SuiteContainerBuffered::TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, 
 {
     // Need to handle buffered msgs that may have been split or chained
     // i.e., msg may contain less, or more than, one distinct msg, so may
-    // contain several values. this method keeps a byte counter as it processes
-    // msgs to ensure it checks correct portion of msgs
+    // contain several values. This method keeps a byte counter as it processes
+    // msgs to ensure it checks correct portion of msgs.
 
     Bwh buf(aMsg.Bytes());
     TByte value = aValue;
@@ -1069,13 +878,12 @@ TBool SuiteContainerBuffered::TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, 
         bytesToProcess -= bytesProcessed;
         lowerBound = upperBound+1;
 
-
         ASSERT(iMsgBytesRcvd <= EncodedAudio::kMaxBytes); // implementation error in tests
         if (iMsgBytesRcvd == EncodedAudio::kMaxBytes) {
             iMsgBytesRcvd = 0;
             if (bytesToProcess > 0) {
                 iMsgRcvdCount++;
-                iAudioRcvdCount++; // only do this if iMsgBytesRcvd has increase to EncodedAudio::kMaxBytes
+                iAudioRcvdCount++; // only do this if iMsgBytesRcvd has increased to EncodedAudio::kMaxBytes
                 value++;
             }
         }
@@ -1100,32 +908,6 @@ TBool SuiteContainerBuffered::TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TB
     }
     return TestMsgAudioEncodedContent(aMsg, aValue);
 }
-
-//Msg* SuiteContainerBase::ProcessMsg(MsgAudioEncoded* aMsg)
-//{
-//    //LOG(kMedia, ">SuiteContainerBase::ProcessMsgAudioPcm\n");
-//    iBytes += aMsg->Bytes();
-//    //LOG(kMedia, "iBytes: %u\n", iBytes);
-//    //Log::Print("iBytes: %u\n", iBytes);
-//    return aMsg;
-//}
-//
-//Msg* SuiteContainerBase::ProcessMsg(MsgQuit* aMsg)
-//{
-//    //LOG(kMedia, ">SuiteContainerBase::ProcessMsgQuit\n");
-//    iSem.Signal();
-//    iQuit = true;
-//    return aMsg;
-//}
-//
-//void SuiteContainerBase::TestBytes()
-//{
-//    this->Start();
-//    iSem.Wait();
-//    //LOG(kMedia, "iBytes: %u, track bytes: %lu\n", iBytes, iGenerator->Bytes());
-//    Log::Print("iBytes: %u, track bytes: %u\n", iBytes, iGenerator->Bytes());
-//    TEST(iBytes == iGenerator->Bytes());
-//}
 
 
 // SuiteContainerNull
