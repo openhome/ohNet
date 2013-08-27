@@ -13,145 +13,40 @@ using namespace OpenHome::Media::Codec;
 
 // ContainerBase
 
-ContainerBase::~ContainerBase()
-{
-}
-
 ContainerBase::ContainerBase()
-    : iContainer(NULL)
-{
-}
-
-TUint ContainerBase::Process()
-{
-    return 0;
-}
-
-TUint ContainerBase::Split()
-{
-    return 0;
-}
-
-void ContainerBase::Construct(IContainer& aContainer)
-{
-    iContainer = &aContainer;
-}
-
-
-// Container
-
-Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
-    : iMsgFactory(aMsgFactory)
-    , iUpstreamElement(aUpstreamElement)
-    , iActiveContainer(NULL)
-    , iPendingQuit(NULL)
-    , iSplitBytes(0)
-    , iQuit(false)
-    , iCheckForContainer(false)
-    , iContainerSize(0)
-    , iRemainingContainerSize(0)
-    , iAppend(false)
-    , iExpectedFlushId(MsgFlush::kIdInvalid)
+    : iMsgFactory(NULL)
+    , iUpstreamElement(NULL)
     , iStreamHandler(NULL)
     , iAudioEncoded(NULL)
+    , iExpectedFlushId(MsgFlush::kIdInvalid)
+    , iPulling(false)
+    , iPendingMsg(NULL)
 {
 }
 
-Container::~Container()
+ContainerBase::~ContainerBase()
 {
-    ASSERT(iAudioEncoded == NULL);
-    for (size_t i=0; i<iContainers.size(); i++) {
-        delete iContainers[i];
-    }
+    ReleaseAudioEncoded();
 }
 
-void Container::AddContainer(ContainerBase* aContainer)
+Msg* ContainerBase::PullMsg()
 {
-    aContainer->Construct(*this);
-    iContainers.push_back(aContainer);
-}
-
-Msg* Container::Pull()
-{
-    Msg* msg;
-    if (iAudioEncoded == NULL && iPendingQuit != NULL) {
-        // pulled a quit msg through on previous call
-        return iPendingQuit;
-    }
-    do {
-        msg = iUpstreamElement.Pull();
-        msg = msg->Process(*this);
-        if (msg == NULL && iPendingQuit != NULL) {
-            // pulled a quit msg
-            msg = iPendingQuit;
-        }
-    } while (msg == NULL);
+    Msg* msg = iUpstreamElement->Pull();
+    msg = msg->Process(*this);
     return msg;
 }
 
-void Container::Read(Bwx& aBuf, TUint aOffset, TUint aBytes)
+void ContainerBase::AddToAudioEncoded(MsgAudioEncoded* aMsg)
 {
-    TUint bytes = aBytes;
-    if (iAudioEncoded->Bytes() > sizeof(iReadBuf)) {    // handling of chained msgs
-        MsgAudioEncoded* tmp = iAudioEncoded->Split(sizeof(iReadBuf));
-        iAudioEncoded->CopyTo(iReadBuf);
-        iAudioEncoded->Add(tmp); // reconstitute msg
+    if (iAudioEncoded == NULL) {
+        iAudioEncoded = aMsg;
     }
     else {
-        iAudioEncoded->CopyTo(iReadBuf);
-        if (iAudioEncoded->Bytes() < aBytes) {
-            bytes = iAudioEncoded->Bytes();
-        }
-    }
-    Brn buf(&iReadBuf[aOffset], bytes);
-    aBuf.Append(buf);
-}
-
-void Container::StripContainer()
-{
-    // strip data from (or dispose of whole) message if some of it belongs to a container
-    if (iRemainingContainerSize > 0 && iAudioEncoded != NULL) {
-        const TUint bytes = iAudioEncoded->Bytes();
-        if (iRemainingContainerSize < bytes) {
-            MsgAudioEncoded* tmp = iAudioEncoded->Split(iRemainingContainerSize);
-            iAudioEncoded->RemoveRef();
-            iAudioEncoded = tmp;
-            iRemainingContainerSize = 0;
-        }
-        else {
-            iAudioEncoded->RemoveRef();
-            iAudioEncoded = NULL;
-            iRemainingContainerSize -= bytes;
-        }
+        iAudioEncoded->Add(aMsg);
     }
 }
 
-void Container::SplitContainer()
-{
-    FillBuffer();
-    if (iAudioEncoded->Bytes() <= iSplitBytes) {
-        iSplitBytes -= iAudioEncoded->Bytes();
-        iAudioEncoded = NULL;
-        FillBuffer();
-    }
-    else {
-        iAudioEncoded = iAudioEncoded->Split(iSplitBytes);
-        iSplitBytes = 0;
-    }
-}
-
-void Container::FillBuffer()
-{
-    while (iPendingQuit == NULL && (iAudioEncoded->Bytes() < EncodedAudio::kMaxBytes)) { // ensure there are enough bytes for processing
-        Msg* msg = iUpstreamElement.Pull();   // if we do this here, could be at the end of a stream and pull a flush
-        msg = msg->Process(*this);
-        if (iAudioEncoded == NULL) {   // flush has been received
-            return;
-        }
-    }
-}
-
-void Container::ReleaseAudioEncoded()
+void ContainerBase::ReleaseAudioEncoded()
 {
     if (iAudioEncoded != NULL) {
         iAudioEncoded->RemoveRef();
@@ -159,99 +54,459 @@ void Container::ReleaseAudioEncoded()
     }
 }
 
-Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
+// should return type be TBool, based on whether all aBytes were read?
+void ContainerBase::PullAudio(TUint aBytes)
 {
+    if (iPendingMsg != NULL) {
+        return;
+    }
+    iPulling = true;
+    while (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes) {
+        Msg* msg = iUpstreamElement->Pull();
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            iPendingMsg = msg;
+            break;
+        }
+    }
+    iPulling = false;
+}
+
+void ContainerBase::Read(Bwx& aBuf, TUint aBytes)
+{
+    if (iPendingMsg != NULL) {
+        if (ReadFromCachedAudio(aBuf, aBytes)) {
+            return;
+        }
+        return;
+    }
+    PullAudio(aBytes);
+    ReadFromCachedAudio(aBuf, aBytes);
+}
+
+/*
+  try read (up to) aBytes from data currently held in iAudioEncoded
+*/
+TBool ContainerBase::ReadFromCachedAudio(Bwx& aBuf, TUint aBytes)
+{
+    if (aBytes == 0) {
+        return true;
+    }
+    if (iAudioEncoded == NULL) {
+        return false;
+    }
+    MsgAudioEncoded* remaining = NULL;
+    if (iAudioEncoded->Bytes() > aBytes) {
+        remaining = iAudioEncoded->Split(aBytes);
+    }
+    const TUint bytes = iAudioEncoded->Bytes();
+    ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
+    TByte* ptr = const_cast<TByte*>(aBuf.Ptr()) + aBuf.Bytes();
+    iAudioEncoded->CopyTo(ptr);
+    aBuf.SetBytes(aBuf.Bytes() + bytes);
+    if (remaining != NULL) {
+        iAudioEncoded->Add(remaining);
+    }
+    return true;
+}
+
+void ContainerBase::Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler)
+{
+    iMsgFactory = &aMsgFactory;
+    iUpstreamElement = &aUpstreamElement;
+    iStreamHandler = &aStreamHandler;
+}
+
+//TBool ContainerBase::Recognise(Brx& /*aBuf*/)
+//{
+//    return false; // should help detect if there's a problem
+//}
+
+Msg* ContainerBase::Pull()
+{
+    Msg* msg = NULL;
+    // if there is a pending Msg (Track, Stream, Quit), forcibly pass any
+    // iAudioEncoded down the pipeline (if a plugin requires further processing
+    // before the remaining iAudioEncoded can be handed off, it should override
+    // this Pull method)
+    while (msg == NULL) {
+        if ((iPendingMsg) && (iAudioEncoded != NULL)) {
+            msg = iAudioEncoded;
+            iAudioEncoded = NULL;
+        }
+        else if (iPendingMsg) {
+            msg = iPendingMsg;
+            iPendingMsg = NULL;
+        }
+        if (msg == NULL) { // don't have any buffered/pending Msgs
+            msg = PullMsg();
+        }
+    }
+    return msg;
+}
+
+EStreamPlay ContainerBase::OkToPlay(TUint aTrackId, TUint aStreamId)
+{
+    LOG(kMedia, "ContainerBase::OkToPlay\n");
+    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+}
+
+TUint ContainerBase::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+{
+    LOG(kMedia, "ContainerBase::TrySeek\n");
+    // seek to absolute offset in stream by default; containers subclassing this can override
+    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+    return iExpectedFlushId;
+}
+
+TUint ContainerBase::TryStop(TUint aTrackId, TUint aStreamId)
+{
+    LOG(kMedia, "ContainerBase::TryStop\n");
+    iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+    return iExpectedFlushId;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS(); // only expect encoded audio at this stage of the pipeline
+    return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS(); // only expect encoded audio at this stage of the pipeline
+    return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS(); // only expect encoded audio at this stage of the pipeline
+    return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); // expect this Msg to be generated by a downstream decoder element
+    return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
+{
+    iPendingMsg = aMsg;
+    return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iPendingMsg = aMsg;
+    return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgFlush* aMsg)
+{
+    ReleaseAudioEncoded();
+    if (iExpectedFlushId == aMsg->Id()) {
+        iExpectedFlushId = MsgFlush::kIdInvalid;
+    }
+    return aMsg;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgQuit* aMsg)
+{
+    iPendingMsg = aMsg;
+    return NULL;
+}
+
+
+// ContainerNull
+
+ContainerNull::ContainerNull()
+    : ContainerBase()
+{
+}
+
+TBool ContainerNull::Recognise(Brx& /*aBuf*/)
+{
+    return true;
+}
+
+
+// ContainerFront
+
+ContainerFront::ContainerFront(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+    : iMsgFactory(aMsgFactory)
+    , iUpstreamElement(aUpstreamElement)
+    , iActiveContainer(NULL)
+    , iStreamHandler(NULL)
+    , iAudioEncoded(NULL)
+    , iRecognising(false)
+    , iExpectedFlushId(MsgFlush::kIdInvalid)
+    , iQuit(false)
+{
+    iContainerNull = new ContainerNull();
+    AddContainer(iContainerNull);
+    iActiveContainer = iContainerNull;
+}
+
+void ContainerFront::AddContainer(ContainerBase* aContainer)
+{
+    aContainer->Construct(iMsgFactory, *this, *this);
+
+    IContainerBase* container = aContainer;
+    if (iContainers.size() >= 1) {
+        // if we have >= 1 container, must have NULL container at end;
+        // pop NULL container and re-attach at end
+        container = iContainers.back();
+        iContainers.pop_back();
+        iContainers.push_back(aContainer);
+    }
+    iContainers.push_back(container);
+}
+
+ContainerFront::~ContainerFront()
+{
+    for (size_t i=0; i<iContainers.size(); i++) {
+        delete iContainers[i];
+    }
+}
+
+Msg* ContainerFront::Pull()
+{
+    // this is needed to handle a pull coming into the container, and being
+    // called on the inner_container, which then calls back into the container
+    // i.e., upstream_element <- [container] <- downstream_element
+    // where container encapsulates:
+    // <- [container <- inner_container <- container] <-
+    // but this would require container's Pull() function to have two modes
+    // of behaviour, so use this pseudo-element at the front.
+    Msg* msg = NULL;
+    if (iAudioEncoded && !iRecognising)
+    {
+        msg = iAudioEncoded;
+        iAudioEncoded = NULL;
+    }
+    while (msg == NULL) {
+        msg = iUpstreamElement.Pull();
+        msg = msg->Process(*this);
+    }
+    return msg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    // throw away msg if awaiting a MsgFlush
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        // throw away buffered data
         aMsg->RemoveRef();
         return NULL;
     }
 
-    if (iAudioEncoded != NULL) {    // pulling more data as iAudioEncoded->Bytes()<EncodedAudio::kMaxBytes
-        iAudioEncoded->Add(aMsg);
-        return NULL;
-    }
-
-    if (aMsg != NULL) { // don't do anything if we're still processing the previous container
-
+    // read enough audio for recognise buffer
+    // then iterate over containers, calling Recognise
+    // once recognised (at least the NULL container, which should be last, MUST recognise ALL streams)
+    // pass the audio into the container by calling Pull on it
+    // then hand future control over to the container
+    Msg* msg = aMsg;
+    if (iRecognising && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < kMaxRecogniseBytes)) {
+        // still to recognise stream and not enough MsgAudioEncoded data to perform recognition
         if (iAudioEncoded == NULL) {
             iAudioEncoded = aMsg;
         }
         else {
             iAudioEncoded->Add(aMsg);
         }
-        //FillBuffer();
-
-        if (iCheckForContainer && iAudioEncoded) {
-
-            // try identify a container
-            for (size_t i=0; i<iContainers.size(); i++) {
-                ContainerBase* container = iContainers[i];
-                TBool recognised = container->Recognise();
-                if (recognised) {
-                    iActiveContainer = container;
-                    break;
-                }
-            }
-
-            // amount to strip off
-            if (iActiveContainer) {
-                iContainerSize += iRemainingContainerSize = iActiveContainer->Size();
-                iAppend = iActiveContainer->AppendDuringSeek();
-                LOG(kMedia, "Container iContainerSize: %u, iRemainingContainerSize: %u, iAppend: %u\n", iContainerSize, iRemainingContainerSize, iAppend);
-            }
-
-            iCheckForContainer = false;
-        }
-
-        if (iAudioEncoded) {
-            StripContainer();    // strip (some of) container from this (or previous) iteration
-        }
-        if (iSplitBytes > 0) {
-            SplitContainer();
-        }
-
-        // processing of containers/headers interleaved throughout stream
-        if (iActiveContainer && (iRemainingContainerSize == 0)) {
-            TUint processBytes = 1;
-            TUint iSplitBytes = 0;
-
-            // process stream until container found
-            while (iRemainingContainerSize == 0 && processBytes > 0) {
-                FillBuffer();
-                aMsg = iAudioEncoded;
-                if (iAudioEncoded) {    // could have been de-ref'd by a flush
-                    processBytes = iActiveContainer->Process();
-                    iSplitBytes = iActiveContainer->Split();
-                    iRemainingContainerSize += processBytes;
-                } else {
-                    processBytes = 0;
-                }
-            }
-
-            // if container found, strip and discard bytes
-            while (processBytes > 0) {
-                TUint bytesRemaining = iRemainingContainerSize;
-                FillBuffer();
-                StripContainer();    // strip further data
-                processBytes -= bytesRemaining-iRemainingContainerSize;
-            }
-
-            // split stream to send only required portion before next container
-            if (iSplitBytes > 0) {
-                SplitContainer();
-            }
-            else {
-                aMsg = iAudioEncoded;
-                iAudioEncoded = NULL;
-            }
-        }
-        else {
-            aMsg = iAudioEncoded;
-            iAudioEncoded = NULL;
-        }
+        msg = NULL;
     }
+    // perform recognition with just 1 MsgAudioEncoded, in case of very short
+    // stream which would otherwise not be recognised (and cause subsequent
+    // MsgQuit to be pulled through, which would require extra state)
+    if (iRecognising && (iAudioEncoded != NULL)) {
+        // we can only CopyTo a max of kMaxRecogniseBytes bytes. If we have more data than that,
+        // split the msg, select a container then add the fragments back together before processing
+        MsgAudioEncoded* remaining = NULL;
+        if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {
+            remaining = iAudioEncoded->Split(kMaxRecogniseBytes);
+        }
+        iAudioEncoded->CopyTo(iReadBuf);
+        iAudioEncoded->Add(remaining); // reconstitute audio msg
+        Brn recogBuf(iReadBuf, kMaxRecogniseBytes);
 
+        // iterate over containers, calling recognise
+        for (size_t i=0; i<iContainers.size(); i++) {
+            IContainerBase* container = iContainers[i];
+            TBool recognised = container->Recognise(recogBuf);
+            if (recognised) {
+                iActiveContainer = container;
+                iRecognising = false;
+                break;
+            }
+        }
+        ASSERT(!iRecognising); // all streams should be recognised by ContainerNull if nothing else
+        msg = iActiveContainer->Pull(); // get audio into iActiveContainer
+    }
+    return msg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS(); // only expect encoded audio at this stage of the pipeline
+    return NULL;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS(); // only expect encoded audio at this stage of the pipeline
+    return NULL;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS(); // only expect encoded audio at this stage of the pipeline
+    return NULL;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); // expect this Msg to be generated by a downstream decoder element
+    return NULL;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iRecognising = true;
+    iQuit = false;
+    iStreamHandler = aMsg->StreamHandler();
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    aMsg->RemoveRef();
+    return msg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgFlush* aMsg)
+{
+    if (iAudioEncoded)
+    {
+        iAudioEncoded->RemoveRef();
+        iAudioEncoded = NULL;
+    }
+    if (iExpectedFlushId == aMsg->Id()) {
+        iExpectedFlushId = MsgFlush::kIdInvalid;
+    }
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgQuit* aMsg)
+{
+    iQuit = true;
+    return aMsg;
+}
+
+EStreamPlay ContainerFront::OkToPlay(TUint aTrackId, TUint aStreamId)
+{
+    LOG(kMedia, "ContainerFront::OkToPlay\n");
+    if (!iQuit) {
+        return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    }
+    else {
+        return ePlayNo;
+    }
+}
+
+TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+{
+    LOG(kMedia, "ContainerFront::TrySeek\n");
+    if (!iQuit) {
+        iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+        return iExpectedFlushId;
+    }
+    else {
+        return MsgFlush::kIdInvalid;
+    }
+}
+
+TUint ContainerFront::TryStop(TUint aTrackId, TUint aStreamId)
+{
+    LOG(kMedia, "ContainerFront::TryStop\n");
+    // IStreamHandler calls after MsgQuit shouldn't reach here,
+    // but best to check in case of a bug or badly behaved container plugin.
+    if (!iQuit) {
+        iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+        return iExpectedFlushId;
+    }
+    else {
+        return MsgFlush::kIdInvalid;
+    }
+}
+
+
+// Container
+
+Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
+    : iNewStream(false)
+{
+    iContainerFront = new ContainerFront(aMsgFactory, aUpstreamElement);
+}
+
+Container::~Container()
+{
+    delete iContainerFront;
+}
+
+void Container::AddContainer(ContainerBase* aContainer)
+{
+    iContainerFront->AddContainer(aContainer);
+}
+
+Msg* Container::Pull()
+{
+    // can't break the call stack, so after a new MsgEncodedStream comes in and
+    // we're put into iRecognising mode, can't just pull through next inner
+    // container, otherwise we'd pass on some audio, and any downstream element
+    // may start trying to decode it.
+    // should pull on iContainerFront here, allowing next inner container to be
+    // recognised and slotted in place and only THEN may control be handed over.
+    if (iNewStream && iContainerFront->iRecognising) {
+        iNewStream = false;
+        return iContainerFront->Pull();
+    }
+    else {
+        ASSERT(iContainerFront->iActiveContainer != NULL); // should have at least ContainerNull
+        Msg* msg = iContainerFront->iActiveContainer->Pull();
+        msg = msg->Process(*this);
+        return msg;
+    }
+}
+
+Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)
+{
     return aMsg;
 }
 
@@ -286,14 +541,8 @@ Msg* Container::ProcessMsg(MsgTrack* aMsg)
 
 Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iQuit = false;
-    iCheckForContainer = true;
-    iContainerSize = 0;
-    iRemainingContainerSize = 0;
-    iStreamHandler = aMsg->StreamHandler();
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
-    aMsg->RemoveRef();
-    return msg;
+    iNewStream = true;
+    return aMsg;
 }
 
 Msg* Container::ProcessMsg(MsgMetaText* aMsg)
@@ -308,41 +557,28 @@ Msg* Container::ProcessMsg(MsgHalt* aMsg)
 
 Msg* Container::ProcessMsg(MsgFlush* aMsg)
 {
-    ReleaseAudioEncoded();
-    if (iExpectedFlushId == aMsg->Id()) {
-        iExpectedFlushId = MsgFlush::kIdInvalid;
-    }
     return aMsg;
 }
 
 Msg* Container::ProcessMsg(MsgQuit* aMsg)
 {
-    iQuit = true;
-    iPendingQuit = aMsg;
-    return NULL;
+    return aMsg;
 }
 
 EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    LOG(kMedia, "Container::OkToPlay\n");
+    return iContainerFront->iActiveContainer->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    TUint64 offset = aOffset;
-    if (iAppend) {
-        offset += iContainerSize;
-    }
-    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, offset);
-    return iExpectedFlushId;
+    LOG(kMedia, "Container::TrySeek\n");
+    return iContainerFront->iActiveContainer->TrySeek(aTrackId, aStreamId, aOffset);
 }
 
 TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    if (!iQuit) {
-        return iStreamHandler->TryStop(aTrackId, aStreamId);
-    }
-    else {
-        return MsgFlush::kIdInvalid;
-    }
+    LOG(kMedia, "Container::TryStop\n");
+    return iContainerFront->iActiveContainer->TryStop(aTrackId, aStreamId);
 }

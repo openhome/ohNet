@@ -29,6 +29,7 @@ tests = '''
     TestMuteManager
     TestVolumeManager
     TestRewinder
+    TestContainer
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

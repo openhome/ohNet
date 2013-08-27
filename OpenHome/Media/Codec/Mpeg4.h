@@ -16,7 +16,6 @@ namespace Codec {
 class Mpeg4Box
 {
 public:
-    Mpeg4Box(IContainer& aContainer, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL, TUint aOffset = 0);
     Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL);
     Mpeg4Box(const Brx& aBuffer, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL, TUint aOffset = 0);
     ~Mpeg4Box();
@@ -36,7 +35,6 @@ private:
     void Reset();
     void UpdateBytesRead(TUint aBytes);
 private:
-    IContainer* iContainer;
     ICodecController* iController;
     const Brx* iInput;
     Mpeg4Box *iParent;
@@ -100,15 +98,13 @@ class Mpeg4Start : public ContainerBase
 {
 public:
     Mpeg4Start();
-public: // from ContainerBase
-    void Initialise();
-    TBool Recognise();
-    TUint Size();
-    TBool AppendDuringSeek();
-    TUint Process();
-    TUint Split();
+public: // from IRecogniser
+    TBool Recognise(Brx& aBuf);
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
 private:
     TUint iSize;
+    TBool iContainerStripped;
 };
 
 // Base class for parsing RAOP headers
