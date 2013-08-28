@@ -14,6 +14,7 @@ namespace Av {
 namespace Media {
 class Pipeline;
 class ProtocolManager;
+class ITrackObserver;
 class Filler;
 class IdManager;
 namespace Codec {
@@ -35,6 +36,7 @@ public:
     void Start(); // should be called after all Add()s
     void AddObserver(IPipelineObserver& aObserver);
     void RemoveObserver(IPipelineObserver& aObserver);
+    void AddObserver(ITrackObserver& aObserver);
     void Begin(const Brx& aMode, TUint aPipelineTrackId);
     void Play();
     void Pause();

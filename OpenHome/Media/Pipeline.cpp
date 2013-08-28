@@ -278,6 +278,11 @@ TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
     return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
+void Pipeline::AddObserver(ITrackObserver& aObserver)
+{
+    iTrackInspector->AddObserver(aObserver);
+}
+
 void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
     iSupply->OutputTrack(aTrack, aTrackId, aMode);

@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Media/TrackInspector.h>
 
 #include <array>
 #include <vector>
@@ -19,7 +20,7 @@ namespace Media {
 }
 namespace Av {
 
-class UriProviderPlaylist : public Media::UriProvider, private ITrackDatabaseObserver, private Media::IPipelineObserver
+class UriProviderPlaylist : public Media::UriProvider, private ITrackDatabaseObserver, private Media::IPipelineObserver, private Media::ITrackObserver
 {
 public:
     UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Media::PipelineManager& aPipeline);
@@ -40,6 +41,9 @@ private: // from Media::IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+private: // from Media::ITrackObserver
+    void NotifyTrackPlay(Media::Track& aTrack);
+    void NotifyTrackFail(Media::Track& aTrack);
 private:
     TUint CurrentTrackIdLocked() const;
 private:
@@ -58,6 +62,7 @@ private:
     EPendingDirection iPendingDirection;
     TUint iLastTrackId;
     TUint iPlayingTrackId;
+    TUint iFirstFailedTrackId; // first id from a string of failures; reset by any track generating audio
 };
 
 } // namespace Av

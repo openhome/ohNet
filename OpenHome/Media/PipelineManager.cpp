@@ -87,6 +87,11 @@ void PipelineManager::RemoveObserver(IPipelineObserver& aObserver)
     iLock.Signal();
 }
 
+void PipelineManager::AddObserver(ITrackObserver& aObserver)
+{
+    iPipeline->AddObserver(aObserver);
+}
+
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     iLock.Wait();

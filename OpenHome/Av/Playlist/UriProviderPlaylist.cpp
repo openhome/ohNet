@@ -5,6 +5,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Av/Playlist/TrackDatabase.h>
+#include <OpenHome/Media/TrackInspector.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -20,9 +21,11 @@ UriProviderPlaylist::UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Pipeli
     , iPending(NULL)
     , iLastTrackId(ITrackDatabase::kTrackIdNone)
     , iPlayingTrackId(ITrackDatabase::kTrackIdNone)
+    , iFirstFailedTrackId(ITrackDatabase::kTrackIdNone)
 {
-    aPipeline.AddObserver(*this);
+    aPipeline.AddObserver(static_cast<IPipelineObserver&>(*this));
     iDatabase.SetObserver(*this);
+    aPipeline.AddObserver(static_cast<ITrackObserver&>(*this));
 }
 
 UriProviderPlaylist::~UriProviderPlaylist()
@@ -51,6 +54,7 @@ EStreamPlay UriProviderPlaylist::GetNext(Media::Track*& aTrack)
 {
     EStreamPlay canPlay = ePlayYes;
     AutoMutex a(iLock);
+    const TUint prevLastTrackId = iLastTrackId;
     if (iPending != NULL) {
         aTrack = iPending;
         iLastTrackId = iPending->Id();
@@ -64,6 +68,16 @@ EStreamPlay UriProviderPlaylist::GetNext(Media::Track*& aTrack)
             canPlay = (aTrack==NULL? ePlayNo : ePlayLater);
         }
         iLastTrackId = (aTrack != NULL? aTrack->Id() : ITrackDatabase::kTrackIdNone);
+    }
+    if (aTrack != NULL && aTrack->Id() == iFirstFailedTrackId) {
+        // every single track in a playlist has failed to generate any audio
+        // set aTrack to NULL to halt the Filler until the user takes action
+        iLastTrackId = prevLastTrackId;
+        if (aTrack != NULL) {
+            aTrack->RemoveRef();
+            aTrack = NULL;
+        }
+        canPlay = ePlayNo;
     }
     return canPlay;
 }
@@ -137,6 +151,9 @@ void UriProviderPlaylist::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TU
         }
     }
     iIdManager.InvalidateAfter(aIdBefore);
+
+    // allow additional loop round the playlist in case the new track is the only one that is playable
+    iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
 }
 
 void UriProviderPlaylist::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aAfter)
@@ -197,4 +214,20 @@ void UriProviderPlaylist::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationS
 
 void UriProviderPlaylist::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
+}
+
+void UriProviderPlaylist::NotifyTrackPlay(Track& /*aTrack*/)
+{
+    iLock.Wait();
+    iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
+    iLock.Signal();
+}
+
+void UriProviderPlaylist::NotifyTrackFail(Track& aTrack)
+{
+    iLock.Wait();
+    if (iFirstFailedTrackId == ITrackDatabase::kTrackIdNone) {
+        iFirstFailedTrackId = aTrack.Id();
+    }
+    iLock.Signal();
 }

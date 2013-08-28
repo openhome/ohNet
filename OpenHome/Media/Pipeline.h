@@ -60,6 +60,7 @@ public:
     void Stop(TUint aHaltId);
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    void AddObserver(ITrackObserver& aObserver);
 public: // from ISupply
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
