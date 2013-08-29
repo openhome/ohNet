@@ -902,7 +902,7 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
         *it = ITrackDatabase::kTrackIdNone;
         track->RemoveRef();
     }
-    TEST(shuffled);
+    TEST(!shuffled);
 #ifdef USE_CPP11_LAMBDA
     int count = std::count_if(availableIds.begin(), availableIds.end(), [](TUint aId) {return aId != ITrackDatabase::kTrackIdNone;});
 #else
