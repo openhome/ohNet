@@ -144,6 +144,9 @@ void Stopper::RemoveCurrentStream()
 void Stopper::DoRemoveCurrentStream()
 {
     if (iState == EHalted || iState == EHaltPending) {
+        if (iStreamHandler != NULL) {
+            /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
+        }
         iFlushStream = true;
     }
     else {
