@@ -318,13 +318,14 @@ Track* Shuffler::TrackRefByIndex(TUint aIndex)
 {
     Track* track = NULL;
     AutoMutex a(iLock);
-    if (!iShuffle) {
+    // FIXME - an option to index into a (secret) randomised array probably isn't what anyone would expect
+    //if (!iShuffle) {
         track = iReader.TrackRefByIndex(aIndex);
-    }
+    /*}
     else {
         track = iShuffleList[aIndex];
         track->AddRef();
-    }
+    }*/
     return track;
 }
 
