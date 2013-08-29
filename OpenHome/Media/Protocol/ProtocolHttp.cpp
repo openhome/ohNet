@@ -372,6 +372,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
     while (res == EProtocolStreamErrorRecoverable) {
+        if (iStopped) {
+            res = EProtocolStreamStopped;
+            break;
+        }
         Close();
         if (iLive) {
             res = DoLiveStream();
@@ -398,10 +402,9 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         if (res == EProtocolStreamErrorRecoverable) {
             Thread::Sleep(50);
         }
-        if (iStopped) {
-            iSupply->OutputFlush(iNextFlushId);
-            res = EProtocolStreamStopped;
-        }
+    }
+    if (res == EProtocolStreamStopped) {
+        iSupply->OutputFlush(iNextFlushId);
     }
     iLock.Wait();
     // FIXME - clear track, stream ids
