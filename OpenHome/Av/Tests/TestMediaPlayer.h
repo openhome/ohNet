@@ -46,11 +46,11 @@ public:
     Net::DvDevice* Device();
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
+    void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
 private:
     TBool TryDisable(Net::DvDevice& aDevice);
     void Disabled();
 protected:
-    static const Brn kSupportedProtocols;
     MediaPlayer* iMediaPlayer;
     Media::LoggingPipelineObserver* iPipelineObserver;
     Net::DvDevice* iDevice;

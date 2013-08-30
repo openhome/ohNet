@@ -23,35 +23,6 @@ using namespace OpenHome::Net;
 
 // TestMediaPlayer
 
-const Brn TestMediaPlayer::kSupportedProtocols( 
-    "http-get:*:audio/x-flac:*"
-    "http-get:*:audio/wav:*"
-    "http-get:*:audio/wave:*"
-    "http-get:*:audio/x-wav:*"
-    "http-get:*:audio/mpeg:*"
-    "http-get:*:audio/x-mpeg:*"
-    "http-get:*:audio/mp1:*"
-    "http-get:*:audio/aiff:*"
-    "http-get:*:audio/x-aiff:*"
-    "http-get:*:audio/x-m4a:*"
-    "http-get:*:audio/x-ms-wma:*"
-    "rtsp-rtp-udp:*:audio/x-ms-wma:*"
-    "http-get:*:audio/x-scpls:*"
-    "http-get:*:audio/x-mpegurl:*"
-    "http-get:*:audio/x-ms-asf:*"
-    "http-get:*:audio/x-ms-wax:*"
-    "http-get:*:audio/x-ms-wvx:*"
-    "http-get:*:video/x-ms-asf:*"
-    "http-get:*:video/x-ms-wax:*"
-    "http-get:*:video/x-ms-wvx:*"
-    "http-get:*:text/xml:*"
-    "http-get:*:audio/aac:*"
-    "http-get:*:audio/aacp:*"
-    "http-get:*:audio/mp4:*"
-    "http-get:*:audio/ogg:*"
-    "http-get:*:audio/x-ogg:*"
-    "http-get:*:application/ogg:*");
-
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName)
     : iDisabled("test", 0)
 {
@@ -156,6 +127,27 @@ DvDevice* TestMediaPlayer::Device()
 
 void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 {
+    const Brn kSupportedProtocols( 
+        "http-get:*:audio/x-flac:*,"
+        "http-get:*:audio/wav:*,"
+        "http-get:*:audio/wave:*,"
+        "http-get:*:audio/x-wav:*,"
+        "http-get:*:audio/aiff:*,"
+        "http-get:*:audio/x-aiff:*,"
+        "http-get:*:audio/x-m4a:*,"
+        "http-get:*:audio/x-scpls:*,"
+        "http-get:*:text/xml:*,"
+        "http-get:*:audio/aac:*,"
+        "http-get:*:audio/aacp:*,"
+        "http-get:*:audio/mp4:*,"
+        "http-get:*:audio/ogg:*,"
+        "http-get:*:audio/x-ogg:*,"
+        "http-get:*:application/ogg:*");
+    DoRegisterPlugins(aEnv, kSupportedProtocols);
+}
+
+void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols)
+{
     // Add codecs
     iMediaPlayer->Add(Codec::CodecFactory::NewAac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
@@ -183,9 +175,9 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
 
     // Add sources
-    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, kSupportedProtocols));
-    iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, kSupportedProtocols));
-    iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, kSupportedProtocols);
+    iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
+    iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
+    iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
 }
 
