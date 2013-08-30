@@ -112,6 +112,7 @@ public:
     DummyCodec(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
 private: // from CodecBase
     void StreamInitialise();
+    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const Brx& aData);
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -606,6 +607,11 @@ void DummyCodec::StreamInitialise()
 {
     iTrackOffsetJiffies = 0;
     iSentDecodedInfo = false;
+}
+
+TBool DummyCodec::SupportsMimeType(const Brx& /*aMimeType*/)
+{
+    return false;
 }
 
 TBool DummyCodec::Recognise(const Brx& /*aData*/)

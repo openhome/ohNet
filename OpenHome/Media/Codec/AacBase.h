@@ -21,7 +21,7 @@ public:
     CodecAacBase();
     ~CodecAacBase();
 protected: // from CodecBase
-    TBool Recognise(const Brx& aData) = 0;
+    TBool SupportsMimeType(const Brx& aMimeType);
     void StreamInitialise();
     void Process() = 0;
     TBool TrySeek(TUint aStreamId, TUint64 aSample);

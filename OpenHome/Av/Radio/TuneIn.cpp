@@ -14,16 +14,23 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Media/PipelineManager.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
 
 const Brn RadioPresetsTuneIn::kTuneInPresetsRequest("http://opml.radiotime.com/Browse.ashx?&c=presets&options=recurse:tuneShows");
-const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg");
+//const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg");
 const Brn RadioPresetsTuneIn::kPartnerId("&partnerId=ah2rjr68");
 const Brn RadioPresetsTuneIn::kUsername("&username=");
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName)
+typedef struct MimeTuneInPair
+{
+    TChar* iMimeType;
+    TChar* iTuneInFormat;
+} MimeTuneInPair;
+
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)
@@ -31,10 +38,33 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, IPresetDatabaseWriter&
     , iWriterRequest(iWriteBuffer)
     , iReadBuffer(iSocket)
     , iReaderResponse(aEnv, iReadBuffer)
+    , iSupportedFormats("&formats=")
 {
+    const MimeTuneInPair kTypes[] = {{"audio/mpeg", "mp3"}
+                                    ,{"audio/x-ms-wma", "wma"}
+                                    ,{"audio/aac", "aac"}
+                                    ,{"video/x-ms-wmv", "wmvideo"}
+                                    ,{"application/ogg", "ogg"}};
+    const TUint maxFormats = sizeof(kTypes)/sizeof(kTypes[0]);
+    TBool first = true;
+    for (TUint i=0; i<maxFormats; i++) {
+        Brn mimeType(kTypes[i].iMimeType);
+        if (aPipeline.SupportsMimeType(mimeType)) {
+            if (first) {
+                first = false;
+            }
+            else {
+                iSupportedFormats.Append(",");
+            }
+            iSupportedFormats.Append(kTypes[i].iTuneInFormat);
+        }
+    }
+    Log::Print("iSupportedFormats = ");
+    Log::Print(iSupportedFormats);
+    Log::Print("\n");
     Bws<256> uriBuf;
     uriBuf.Append(kTuneInPresetsRequest);
-    uriBuf.Append(kFormats);
+    uriBuf.Append(iSupportedFormats);
     uriBuf.Append(kPartnerId);
     uriBuf.Append(kUsername);
     uriBuf.Append(aUserName);

@@ -154,6 +154,11 @@ void PipelineManager::Prev()
     iFiller->Prev(iMode);
 }
 
+TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
+{
+    return iPipeline->SupportsMimeType(aMimeType);
+}
+
 Msg* PipelineManager::Pull()
 {
     return iPipeline->Pull();

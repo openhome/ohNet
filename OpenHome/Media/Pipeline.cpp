@@ -283,6 +283,11 @@ void Pipeline::AddObserver(ITrackObserver& aObserver)
     iTrackInspector->AddObserver(aObserver);
 }
 
+TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
+{
+    return iCodecController->SupportsMimeType(aMimeType);
+}
+
 void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
     iSupply->OutputTrack(aTrack, aTrackId, aMode);

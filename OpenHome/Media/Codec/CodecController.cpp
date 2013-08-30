@@ -100,6 +100,16 @@ TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
     return true;
 }
 
+TBool CodecController::SupportsMimeType(const Brx& aMimeType)
+{
+    for (TUint i=0; i<iCodecs.size(); i++) {
+        if (iCodecs[i]->SupportsMimeType(aMimeType)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void CodecController::CodecThread()
 {
     iRecognising = true;

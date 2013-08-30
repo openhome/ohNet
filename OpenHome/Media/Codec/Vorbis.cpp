@@ -29,6 +29,7 @@ public:
     CodecVorbis();
     ~CodecVorbis();
 private: // from CodecBase
+    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const Brx& aData);
     void StreamInitialise();
     void Process();
@@ -226,6 +227,16 @@ CodecVorbis::~CodecVorbis()
     LOG(kCodec, "CodecVorbis::~CodecVorbis\n");
 }
 
+TBool CodecVorbis::SupportsMimeType(const Brx& aMimeType)
+{
+    static const Brn kMimeOgg1("audio/ogg");
+    static const Brn kMimeXOgg("audio/x-ogg");
+    static const Brn kMimeOgg2("application/ogg");
+    if (aMimeType == kMimeOgg1 || aMimeType == kMimeXOgg || aMimeType == kMimeOgg2) {
+        return true;
+    }
+    return false;
+}
 
 TBool CodecVorbis::Recognise(const Brx& aData)
 {

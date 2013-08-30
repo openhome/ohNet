@@ -45,6 +45,7 @@ class CodecBase
 public:
     virtual ~CodecBase();
 public:
+    virtual TBool SupportsMimeType(const Brx& aMimeType) = 0;
     virtual TBool Recognise(const Brx& aData) = 0;
     virtual void StreamInitialise();
     virtual void Process() = 0;
@@ -66,6 +67,7 @@ public:
     void AddCodec(CodecBase* aCodec);
     void Start();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool SupportsMimeType(const Brx& aMimeType);
 private:
     void CodecThread();
     void PullAudio(TUint aBytes);

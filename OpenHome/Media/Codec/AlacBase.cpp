@@ -78,6 +78,15 @@ void CodecAlacBase::Initialise()
     iController->OutputDecodedStream(0, iContainer->BitDepth(), iContainer->SampleRate(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
+TBool CodecAlacBase::SupportsMimeType(const Brx& aMimeType)
+{
+    static const Brn kMimeAlac("audio/x-m4a");
+    if (aMimeType == kMimeAlac) {
+        return true;
+    }
+    return false;
+}
+
 TBool CodecAlacBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
 {
     return false;

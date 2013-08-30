@@ -62,6 +62,16 @@ CodecAacBase::~CodecAacBase()
     LOG(kCodec, "CodecAacBase::~CodecAacBase\n");
 }
 
+TBool CodecAacBase::SupportsMimeType(const Brx& aMimeType)
+{
+    static const Brn kMimeAac("audio/aac");
+    static const Brn kMimeAacp("audio/aacp");
+    if (aMimeType == kMimeAac || aMimeType == kMimeAacp) {
+        return true;
+    }
+    return false;
+}
+
 void CodecAacBase::StreamInitialise()
 {
     LOG(kCodec, "CodecAacBase::StreamInitialise\n");

@@ -19,6 +19,7 @@ public:
     CodecWav();
     ~CodecWav();
 private: // from CodecBase
+    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const Brx& aData);
     void StreamInitialise();
     void Process();
@@ -61,6 +62,17 @@ CodecWav::CodecWav()
 
 CodecWav::~CodecWav()
 {
+}
+
+TBool CodecWav::SupportsMimeType(const Brx& aMimeType)
+{
+    static const Brn kMimeWav("audio/wav");
+    static const Brn kMimeWave("audio/wave");
+    static const Brn kMimeXWav("audio/x-wav");
+    if (aMimeType == kMimeWav || aMimeType == kMimeWave || aMimeType == kMimeXWav) {
+        return true;
+    }
+    return false;
 }
 
 TBool CodecWav::Recognise(const Brx& aData)

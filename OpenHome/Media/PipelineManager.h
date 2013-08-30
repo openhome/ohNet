@@ -45,6 +45,7 @@ public:
     TBool Seek(TUint aPipelineTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void Next();
     void Prev();
+    TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelineIdManager

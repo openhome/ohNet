@@ -22,9 +22,7 @@ public:
     CodecAlacBase();
     ~CodecAlacBase();
 protected: // from CodecBase
-    TBool Recognise(const Brx& aData) = 0;
-    void StreamInitialise() = 0;
-    void Process() = 0;
+    TBool SupportsMimeType(const Brx& aMimeType);
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 private:

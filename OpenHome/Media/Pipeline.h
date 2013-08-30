@@ -61,6 +61,7 @@ public:
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
+    TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
 public: // from ISupply
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);

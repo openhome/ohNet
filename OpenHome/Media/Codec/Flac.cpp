@@ -19,6 +19,7 @@ public:
     CodecFlac();
     ~CodecFlac();
 private: // from CodecBase
+    TBool SupportsMimeType(const Brx& aMimeType);
     TBool Recognise(const Brx& aData);
     void StreamInitialise();
     void Process();
@@ -139,6 +140,15 @@ CodecFlac::CodecFlac()
 CodecFlac::~CodecFlac()
 {
     FLAC__stream_decoder_delete(iDecoder);
+}
+
+TBool CodecFlac::SupportsMimeType(const Brx& aMimeType)
+{
+    static const Brn kMimeFlac("audio/x-flac");
+    if (aMimeType == kMimeFlac) {
+        return true;
+    }
+    return false;
 }
 
 TBool CodecFlac::Recognise(const Brx& aMsg)

@@ -45,7 +45,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
     Bws<40> username;
     if (aReadStore.TryReadStoreItem(Brn("Radio.TuneInUserName"), username)) {
-        iTuneIn = new RadioPresetsTuneIn(aEnv, *iPresetDatabase, username);
+        iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, username);
     }
     else {
         iTuneIn = NULL; // FIXME - should maybe just initialise iTuneIn anyway (once we allow runtime change of rwstore anyway)

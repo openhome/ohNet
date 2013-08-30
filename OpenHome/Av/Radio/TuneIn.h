@@ -14,6 +14,9 @@
 namespace OpenHome {
     class Environment;
     class Parser;
+namespace Media {
+    class PipelineManager;
+}
 namespace Av {
 
 class RadioPresetsTuneIn
@@ -29,7 +32,7 @@ class RadioPresetsTuneIn
     static const Brn kPartnerId;
     static const Brn kUsername;
 public:
-    RadioPresetsTuneIn(Environment& aEnv, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName);
+    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName);
     ~RadioPresetsTuneIn();
     void Refresh();
 private:
@@ -52,6 +55,7 @@ private:
     ReaderHttpResponse iReaderResponse;
     HttpHeaderContentLength iHeaderContentLength;
     Timer* iRefreshTimer;
+    Bws<40> iSupportedFormats;
     // Following members provide temp storage used while converting OPML elements to Didl-Lite
     Bws<Media::kTrackMetaDataMaxBytes> iDidlLite;
     Bws<Media::kTrackUriMaxBytes> iPresetUrl;
