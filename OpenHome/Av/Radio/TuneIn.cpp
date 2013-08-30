@@ -26,8 +26,8 @@ const Brn RadioPresetsTuneIn::kUsername("&username=");
 
 typedef struct MimeTuneInPair
 {
-    TChar* iMimeType;
-    TChar* iTuneInFormat;
+    const TChar* iMimeType;
+    const TChar* iTuneInFormat;
 } MimeTuneInPair;
 
 RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName)
