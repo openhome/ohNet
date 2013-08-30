@@ -128,21 +128,22 @@ DvDevice* TestMediaPlayer::Device()
 void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 {
     const Brn kSupportedProtocols( 
-        "http-get:*:audio/x-flac:*,"
-        "http-get:*:audio/wav:*,"
-        "http-get:*:audio/wave:*,"
-        "http-get:*:audio/x-wav:*,"
-        "http-get:*:audio/aiff:*,"
-        "http-get:*:audio/x-aiff:*,"
-        "http-get:*:audio/x-m4a:*,"
-        "http-get:*:audio/x-scpls:*,"
-        "http-get:*:text/xml:*,"
-        "http-get:*:audio/aac:*,"
-        "http-get:*:audio/aacp:*,"
-        "http-get:*:audio/mp4:*,"
-        "http-get:*:audio/ogg:*,"
-        "http-get:*:audio/x-ogg:*,"
-        "http-get:*:application/ogg:*");
+        "http-get:*:audio/x-flac:*,"   // Flac
+        "http-get:*:audio/wav:*,"      // Wav
+        "http-get:*:audio/wave:*,"     // Wav
+        "http-get:*:audio/x-wav:*,"    // Wav
+        "http-get:*:audio/aiff:*,"     // FIXME - AIFF codec not implemented
+        "http-get:*:audio/x-aiff:*,"   // FIXME - AIFF codec not implemented
+        "http-get:*:audio/x-m4a:*,"    // Alac
+        "http-get:*:audio/x-scpls:*,"  // M3u (content processor)
+        "http-get:*:text/xml:*,"       // Opml ??  (content processor)
+        "http-get:*:audio/aac:*,"      // Aac
+        "http-get:*:audio/aacp:*,"     // Aac
+        "http-get:*:audio/mp4:*,"      // Mpeg4 (container)
+        "http-get:*:audio/ogg:*,"      // Vorbis
+        "http-get:*:audio/x-ogg:*,"    // Vorbis
+        "http-get:*:application/ogg:*" // Vorbis
+        );
     DoRegisterPlugins(aEnv, kSupportedProtocols);
 }
 
