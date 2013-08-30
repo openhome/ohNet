@@ -140,12 +140,13 @@ void SourcePlaylist::Play()
 
 void SourcePlaylist::Pause()
 {
-    if (IsActive()) {
-        iLock.Wait();
-        iTransportState = Media::EPipelinePaused;
-        iLock.Signal();
-        iPipeline.Pause();
+    if (!IsActive()) {
+        DoActivate();
     }
+    iLock.Wait();
+    iTransportState = Media::EPipelinePaused;
+    iLock.Signal();
+    iPipeline.Pause();
 }
 
 void SourcePlaylist::Stop()
@@ -198,6 +199,9 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
 
 void SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 {
+    if (!IsActive()) {
+        DoActivate();
+    }
     AutoMutex a(iLock);
     iPipeline.RemoveAll();
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);

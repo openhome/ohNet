@@ -148,8 +148,14 @@ void Product::SetCurrentSource(TUint aIndex)
     if (aIndex >= (TUint)iSources.size()) {
         THROW(AvSourceNotFound);
     }
+    if (iCurrentSource == aIndex) {
+        return;
+    }
+    if (iCurrentSource != UINT_MAX) {
+        iSources[iCurrentSource]->Deactivate();
+    }
     iCurrentSource = aIndex;
-    // FIXME - activate new current source
+    iSources[iCurrentSource]->Activate();
     if (iObserver != NULL) {
         iObserver->SourceIndexChanged();
     }
