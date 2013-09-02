@@ -50,13 +50,11 @@ void OhmProtocolUnicast::HandleSlave(const OhmHeader& aHeader)
 {
     OhmHeaderSlave headerSlave;
     headerSlave.Internalise(iReadBuffer, aHeader);
-        	
     iSlaveCount = headerSlave.SlaveCount();
 
 	ReaderBinary reader(iReadBuffer);
-
     for (TUint i = 0; i < iSlaveCount; i++) {
-        TIpAddress address = reader.ReadUintLe(4); // utterly confused due to ohNet's ridiculous decision to pass IpAddresses around memory in BE form
+        TIpAddress address = reader.ReadUintLe(4);
         TUint port = reader.ReadUintBe(2);
         iSlaveList[i].SetAddress(address);
         iSlaveList[i].SetPort(port);
