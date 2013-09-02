@@ -50,42 +50,31 @@ OhmReceiver::OhmReceiver(Environment& aEnv, TIpAddress aInterface, TUint aTtl, I
 OhmReceiver::~OhmReceiver()
 {
 	iMutexTransport.Wait();
-
 	StopLocked();
-
 	iTerminating = true;
-
 	iThread->Signal();
 	iThreadZone->Signal();
-
-	delete (iThread);
-	delete (iThreadZone);
-	delete (iProtocolMulticast);
-	delete (iProtocolUnicast);
-	
+	delete iThread;
+	delete iThreadZone;
+	delete iProtocolMulticast;
+	delete iProtocolUnicast;
 	iMutexTransport.Signal();
 }
 
 TUint OhmReceiver::Ttl() const
 {
 	iMutexTransport.Wait();
-
 	TUint ttl = iTtl;
-
 	iMutexTransport.Signal();
-
-	return (ttl);
+	return ttl;
 }
 
 TIpAddress OhmReceiver::Interface() const
 {
 	iMutexTransport.Wait();
-
 	TIpAddress iface = iInterface;
-
 	iMutexTransport.Signal();
-
-	return (iface);
+	return iface;
 }
 
 void OhmReceiver::SetTtl(TUint aValue)
@@ -175,14 +164,10 @@ void OhmReceiver::SetInterface(TIpAddress aValue)
 void OhmReceiver::Play(const Brx& aUri)
 {
 	iMutexTransport.Wait();
-
 	StopLocked();
-
 	iTransportState = eStarted;
 	iDriver->Started();
-
 	OpenHome::Uri uri;
-
 	try {
 		uri.Replace(aUri);
 	}
@@ -190,11 +175,8 @@ void OhmReceiver::Play(const Brx& aUri)
 	}
 
 	iMutexMode.Wait();
-
 	iEndpoint.Replace(Endpoint(uri.Port(), uri.Host()));
-
-	if (iEndpoint.Equals(iEndpointNull))
-	{
+	if (iEndpoint.Equals(iEndpointNull)) {
 		iZoneMode = false;
 		iPlayMode = eNull;
 		iTransportState = eConnected;
@@ -237,9 +219,7 @@ void OhmReceiver::Play(const Brx& aUri)
 void OhmReceiver::PlayZoneMode(const Brx& aUri)
 {
 	iMutexTransport.Wait();
-
 	OpenHome::Uri uri;
-
 	try {
 		uri.Replace(aUri);
 	}
@@ -248,11 +228,8 @@ void OhmReceiver::PlayZoneMode(const Brx& aUri)
 	}
 
 	Endpoint endpoint(uri.Port(), uri.Host());
-
 	iMutexTransport.Signal();
-
 	iMutexMode.Wait();
-
 	if (iEndpoint.Equals(endpoint)) {
 		iMutexMode.Signal();
 		return;
@@ -277,17 +254,13 @@ void OhmReceiver::PlayZoneMode(const Brx& aUri)
 	}
 
 	iMutexTransport.Wait();
-
 	Reset();
-
 	if (iTransportState != eStarted) {
 		iDriver->Started();
 	}
-
 	iEndpoint.Replace(endpoint);
 
-	if (iEndpoint.Equals(iEndpointNull))
-	{
+	if (iEndpoint.Equals(iEndpointNull)) {
 		iPlayMode = eNull;
 		iTransportState = eConnected;
 		iDriver->Connected();
@@ -321,24 +294,20 @@ void OhmReceiver::PlayZoneMode(const Brx& aUri)
 void OhmReceiver::Stop()
 {
 	iMutexTransport.Wait();
-
 	StopLocked();
-
 	iMutexTransport.Signal();
 }
 
 void OhmReceiver::StopLocked()
 {
-	if (iTransportState == eStopped)
-	{
+	if (iTransportState == eStopped) {
 		return;
 	}
 
 	iMutexMode.Wait();
 	iMutexTransport.Signal();
 
-	if (iZoneMode)
-	{
+	if (iZoneMode) {
 		iSocketZone.ReadInterrupt();
 		iStopped.Wait();
 	}
@@ -362,12 +331,9 @@ void OhmReceiver::StopLocked()
 	}
 
 	iMutexTransport.Wait();
-
 	Reset();
-
 	iTransportState = eStopped;
 	iDriver->Stopped();
-
 	iMutexMode.Signal();
 }
 
@@ -375,7 +341,6 @@ void OhmReceiver::Run()
 {
 	for (;;) {
 		iThread->Wait();
-
 		if (iTerminating) {
 			break;
 		}
@@ -384,7 +349,8 @@ void OhmReceiver::Run()
 		TIpAddress iface(iInterface);
 		Endpoint endpoint(iEndpoint);
 
-		switch (iPlayMode) {
+		switch (iPlayMode)
+        {
         case eNone:
 			ASSERTS();
 		case eMulticast:
@@ -411,14 +377,11 @@ void OhmReceiver::SendZoneQuery()
 	OhzHeader header(OhzHeader::kMsgTypeZoneQuery, headerZoneQuery.MsgBytes());
 
 	WriterBuffer writer(iTxZone);
-        
     writer.Flush();
     header.Externalise(writer);
     headerZoneQuery.Externalise(writer);
     writer.Write(iZone);
-
 	iSocketZone.Send(iTxZone);
-
 	iTimerZoneQuery.FireIn(kTimerZoneQueryDelayMs);
 }
 
@@ -426,7 +389,6 @@ void OhmReceiver::RunZone()
 {
     for (;;) {
         iThreadZone->Wait();
-
 		if (iTerminating) {
 			break;
 		}
@@ -438,7 +400,6 @@ void OhmReceiver::RunZone()
 		try {
 			for (;;) {
 				OhzHeader header;
-	        
 				for (;;) {
         			try {
 						header.Internalise(iRxZone);
@@ -452,12 +413,9 @@ void OhmReceiver::RunZone()
 				if (header.MsgType() == OhzHeader::kMsgTypeZoneUri) {
 					OhzHeaderZoneUri headerZoneUri;
 					headerZoneUri.Internalise(iRxZone, header);
-
 					Brn msgZone = iRxZone.Read(headerZoneUri.ZoneBytes());
 					Brn msgUri = iRxZone.Read(headerZoneUri.UriBytes());
-
-					if (msgZone == iZone)
-					{
+					if (msgZone == iZone) {
 						iTimerZoneQuery.Cancel();
 						PlayZoneMode(msgUri);
 					}
@@ -479,249 +437,168 @@ void OhmReceiver::RunZone()
 TUint OhmReceiver::Latency(OhmMsgAudio& aMsg)
 {
 	TUint latency = aMsg.MediaLatency();
-
 	if (latency != 0) {
-
 		TUint multiplier = 48000 * 256;
-
-		if ((aMsg.SampleRate() % 441) == 0)
-		{
+		if ((aMsg.SampleRate() % 441) == 0) {
 			multiplier = 44100 * 256;
 		}
 
 		latency = latency * 1000 / multiplier;
-
 		LOG(kMedia, "LATENCY %d\n", latency);
-
-		return (latency);
+		return latency;
 	}
 
 	LOG(kMedia, "LATENCY %d\n", kDefaultLatency);
-
-	return (kDefaultLatency);
+	return kDefaultLatency;
 }
 
 void OhmReceiver::Reset()
 {
 	iTimerRepair.Cancel();
-
 	if (iRepairing) {
-
 		iRepairFirst->RemoveRef();
-
 		while (iFifoRepair.SlotsUsed() > 0) {
 			iFifoRepair.Read()->RemoveRef();
 		}
 	}
 
 	iRepairing = false;
-
 	iLatency = 0;
 }
 
 TBool OhmReceiver::RepairBegin(OhmMsgAudio& aMsg)
 {
 	LOG(kMedia, "BEGIN ON %d\n", aMsg.Frame());
-
 	iRepairFirst = &aMsg;
-
     iTimerRepair.FireIn(iEnv.Random(kInitialRepairTimeoutMs)); 
-
-	return (true);
+	return true;
 }
 
 void  OhmReceiver::RepairReset()
 {
 	LOG(kMedia, "RESET\n");
-
 	iTimerRepair.Cancel();
-
 	iRepairFirst->RemoveRef();
-
 	while (iFifoRepair.SlotsUsed() > 0) {
 		iFifoRepair.Read()->RemoveRef();
 	}
-
 	iTransportState = eDisconnected;
 	iDriver->Disconnected();
-
 	iLatency = 0;
 }
 
 TBool OhmReceiver::Repair(OhmMsgAudio& aMsg)
 {
 	// get the incoming frame number
-
 	TUint frame = aMsg.Frame();
-
 	LOG(kMedia, "GOT %d\n", frame);
 
 	// get difference between this and the last frame send down the pipeline
-
 	TInt diff = frame - iFrame;
-
 	if (diff == 1) {
 		// incoming frame is one greater than the last frame sent down the pipeline, so send this ...
-
 		iFrame++;
-
 		iDriver->Add(aMsg);
-
 		// ... and see if the current first waiting frame is now also ready to be sent
-
 		while (iRepairFirst->Frame() == iFrame + 1) {
 			// ... yes, it is, so send it
-
 			iFrame++;
-
 			iDriver->Add(*iRepairFirst);
-
 			// ... and see if there are further messages waiting in the fifo
-
 			if (iFifoRepair.SlotsUsed() == 0) {
 				// ... no, so we have completed the repair
-
 				LOG(kMedia, "END\n");
-
-				return (false);
+				return false;
 			}
-
 			// ... yes, so update the current first waiting frame and continue testing to see if this can also be sent
-
 			iRepairFirst = iFifoRepair.Read();
 		}
-
 		// ... we're done
-
-		return (true);
+		return true;
 	}
 
 	if (diff < 1) {
 		// incoming frames is equal to or earlier than the last frame sent down the pipeline
 		// in other words, it's a duplicate, so so discard it and continue
-
 		aMsg.RemoveRef();
-
-		return (true);
+		return true;
 	}
 
 	// Ok, its a frame that needs to be put into the backlog, but where?
-
 	// compare it to the current first waiting frame
-
 	diff = frame - iRepairFirst->Frame();
-
 	if (diff < 0) {
 		// it's earlier than the current first waiting message, so it should become the new current first waiting frame
 		// and the old first waiting frame needs to be injected into the start of the backlog, so inject it into the end
 		// and rotate the others (if there is space to add another frame)
-
 		TUint count = iFifoRepair.SlotsUsed();
-
 		if (count == kMaxRepairBacklogFrames) {
 			// can't put another frame into the backlog
-
 			RepairReset();
-
-			return (false);
+			return false;
 		}
-
 		iFifoRepair.Write(iRepairFirst);
-
 		if (count == 0) {
 			iRepairLast = iRepairFirst->Frame();
 		}
-
 		for (TUint i = 0; i < count; i++) {
 			iFifoRepair.Write(iFifoRepair.Read());
 		}
 
 		// replace the currently waiting message with this new one
-
 		iRepairFirst = &aMsg;
-
-		return (true);
+		return true;
 	}
-
 	if (diff == 0) {
 		// it's equal to the currently first waiting frame, so discard it - it's a duplicate
-
 		aMsg.RemoveRef();
-
-		return (true);
+		return true;
 	}
-
 	// ok, it's after the currently first waiting frame, so it needs to go into the backlog
-
 	// first check if the backlog is empty
-
 	if (iFifoRepair.SlotsUsed() == 0) {
 		// ... yes, so just inject it
-
 		iFifoRepair.Write(&aMsg);
-
 		// ... and always keep track of the latest frame in the backlog
 		iRepairLast = frame;
-
-		return (true);
+		return true;
 	}
-
 	// ok, so the backlog is not empty
-
 	// is the incoming frame later than the last one currently in the backlog?
-
 	diff = frame - iRepairLast;
-
 	if (diff > 0) {
 		// ... yes, so, again, just inject it (if there is space)
-
 		TUint count = iFifoRepair.SlotsUsed();
-
 		if (count == kMaxRepairBacklogFrames) {
 			// can't put another frame into the backlog
 			RepairReset();
-
-			return (false);
+			return false;
 		}
-
 		iFifoRepair.Write(&aMsg);
-
 		// ... and update the record of the last frame in the backlog
-
 		iRepairLast = frame;
-
-		return (true);
+		return true;
 	}
-
 	// is it a duplicate of the last frame in the backlog?
-
 	if (diff == 0) {
 		// ... yes, so discard
 		aMsg.RemoveRef();
-
-		return (true);
+		return true;
 	}
-
 	// ... no, so it has to go somewhere in the middle of the backlog, so iterate through and inject it at the right place (if there is space)
-
 	TUint count = iFifoRepair.SlotsUsed();
-
 	TBool found = false;
-
 	for (TUint i = 0; i < count; i++) {
 		OhmMsgAudio* msg = iFifoRepair.Read();
-					
 		if (!found) {
 			diff = frame - msg->Frame();
-
 			if (diff < 0) {
 				if (count == kMaxRepairBacklogFrames) {
 					// can't put another frame into the backlog
 					iFifoRepair.Write(&aMsg);
 					RepairReset();
-					return (false);
+					return false;
 				}
-
 				iFifoRepair.Write(&aMsg);
 				found = true;
 			}
@@ -730,32 +607,26 @@ TBool OhmReceiver::Repair(OhmMsgAudio& aMsg)
 				found = true;
 			}
 		}
-
 		iFifoRepair.Write(msg);
 	}
 
-	return (true);
+	return true;
 }
-
 
 void OhmReceiver::TimerRepairExpired()
 {
 	iMutexTransport.Wait();
-
 	if (iRepairing) {
 		LOG(kMedia, "REQUEST RESEND");
-
 		Bws<kMaxRepairMissedFrames * 4> missed;
 		WriterBuffer buffer(missed);
 		WriterBinary writer(buffer);
 
 		TUint count = 0;
-
 		TUint start = iFrame + 1;
 		TUint end = iRepairFirst->Frame();
 
 		// phase 1 - request the frames between the last sent down the pipeline and the first waiting frame
-
 		for (TUint i = start; i < end; i++) {
 			writer.WriteUint32Be(i);
 			LOG(kMedia, " %d", i);
@@ -765,10 +636,8 @@ void OhmReceiver::TimerRepairExpired()
 		}
 
 		// phase 2 - if there is room add the missing frames in the backlog
-
 		if (count < kMaxRepairMissedFrames) {
 			TUint slots = iFifoRepair.SlotsUsed();
-
 			for (TUint j = 0; j < slots; j++) {
 				OhmMsgAudio* msg = iFifoRepair.Read();
 				if (count < kMaxRepairMissedFrames) {
@@ -788,7 +657,8 @@ void OhmReceiver::TimerRepairExpired()
 
 		LOG(kMedia, "\n");
 
-		switch (iPlayMode) {
+		switch (iPlayMode)
+        {
 		case eMulticast:
 			iProtocolMulticast->RequestResend(missed);
 			break;
@@ -811,23 +681,18 @@ void OhmReceiver::TimerRepairExpired()
 void OhmReceiver::Add(OhmMsg& aMsg)
 {
 	iDriver->Timestamp(aMsg);
-
 	iMutexTransport.Wait();
-
 	aMsg.Process(*this);
-
 	iMutexTransport.Signal();
 }
 
 void OhmReceiver::ResendSeen()
 {
 	iMutexTransport.Wait();
-
 	if (iRepairing) {
 		// iTimerRepair.FireIn(iEnv.Random(iLatency >> 2)); // delay repair timer by a random time between 0 and 1/4 of the audio latency
 		iTimerRepair.FireIn(kSubsequentRepairTimeoutMs); // delay repair timer by a random time between 0 and 1/4 of the audio latency
 	}
-
 	iMutexTransport.Signal();
 }
 
@@ -850,7 +715,6 @@ void OhmReceiver::Process(OhmMsgAudio& aMsg)
 	}
 
 	TInt diff = aMsg.Frame() - iFrame;
-
 	if (diff == 1) {
 		iFrame++;
 		iDriver->Add(aMsg);
@@ -869,7 +733,6 @@ void OhmReceiver::Process(OhmMsgTrack& aMsg)
 		iTransportState = eConnected;
 		iDriver->Connected();
 	}
-
 	iDriver->Add(aMsg);
 }
 
@@ -879,6 +742,5 @@ void OhmReceiver::Process(OhmMsgMetatext& aMsg)
 		iTransportState = eConnected;
 		iDriver->Connected();
 	}
-
 	iDriver->Add(aMsg);
 }

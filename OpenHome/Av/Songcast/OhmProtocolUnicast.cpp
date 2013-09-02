@@ -65,36 +65,25 @@ void OhmProtocolUnicast::HandleSlave(const OhmHeader& aHeader)
 
 void OhmProtocolUnicast::RequestResend(const Brx& aFrames)
 {
-	TUint bytes = aFrames.Bytes();
-
-	if (bytes > 0)
-	{
+	const TUint bytes = aFrames.Bytes();
+	if (bytes > 0) {
 		Bws<OhmHeader::kHeaderBytes + 400> buffer;
-
 		WriterBuffer writer(buffer);
-
 		OhmHeaderResend headerResend(bytes / 4);
-
 		OhmHeader header(OhmHeader::kMsgTypeResend, headerResend.MsgBytes());
-
 		header.Externalise(writer);
 		headerResend.Externalise(writer);
 		writer.Write(aFrames);
-		
 		iSocket.Send(buffer, iEndpoint);
 	}
 }
 
 void OhmProtocolUnicast::Broadcast(OhmMsg& aMsg)
 {
-	if (iSlaveCount > 0)
-	{
+	if (iSlaveCount > 0) {
 		WriterBuffer writer(iMessageBuffer);
-
 		writer.Flush();
-
 		aMsg.Externalise(writer);
-
         for (TUint i = 0; i < iSlaveCount; i++) {
         	iSocket.Send(iMessageBuffer, iSlaveList[i]);
         }
@@ -106,20 +95,14 @@ void OhmProtocolUnicast::Broadcast(OhmMsg& aMsg)
 void OhmProtocolUnicast::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
 	iLeaving = false;
-
 	iSlaveCount = 0;
-
 	iEndpoint.Replace(aEndpoint);
-
 	iSocket.OpenUnicast(aInterface, aTtl);
-
     try {
         OhmHeader header;
-
         SendJoin();
 
 		// Phase 1, periodically send join until Track and Metatext have been received
-
 		TBool joinComplete = false;
 		TBool receivedTrack = false;
 		TBool receivedMetatext = false;
@@ -128,7 +111,8 @@ void OhmProtocolUnicast::Play(TIpAddress aInterface, TUint aTtl, const Endpoint&
 			try {
                 header.Internalise(iReadBuffer);
 
-				switch(header.MsgType()) {
+				switch (header.MsgType())
+                {
 				case OhmHeader::kMsgTypeJoin:
 				case OhmHeader::kMsgTypeListen:
 				case OhmHeader::kMsgTypeLeave:
@@ -163,14 +147,13 @@ void OhmProtocolUnicast::Play(TIpAddress aInterface, TUint aTtl, const Endpoint&
 		iTimerJoin.Cancel();
 
 		// Phase 2, periodically send listen if required
-
 	    iTimerListen.FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
-	    
         for (;;) {
 			try {
                 header.Internalise(iReadBuffer);
 
-				switch(header.MsgType()) {
+				switch (header.MsgType())
+                {
 				case OhmHeader::kMsgTypeJoin:
 				case OhmHeader::kMsgTypeLeave:
 					break;
@@ -204,13 +187,10 @@ void OhmProtocolUnicast::Play(TIpAddress aInterface, TUint aTtl, const Endpoint&
     }
     
     iReadBuffer.ReadFlush();
-
 	iLeaving = false;
-
    	iTimerJoin.Cancel();
     iTimerListen.Cancel();
 	iTimerLeave.Cancel();
-    
 	iSocket.Close();
 }
 
@@ -254,8 +234,7 @@ void OhmProtocolUnicast::Send(TUint aType)
     try {
         iSocket.Send(buffer, iEndpoint);
     }
-    catch (NetworkError&)
-    {
+    catch (NetworkError&) {
     }
 }
 
@@ -264,4 +243,3 @@ void OhmProtocolUnicast::TimerLeaveExpired()
 	SendLeave();
 	iReadBuffer.ReadInterrupt();
 }
-

@@ -43,7 +43,7 @@ void OhmMsg::RemoveRef()
 
 TUint OhmMsg::ResendCount() const
 {
-	return (iResendCount);
+	return iResendCount;
 }
 
 void OhmMsg::IncrementResendCount()
@@ -53,22 +53,22 @@ void OhmMsg::IncrementResendCount()
 
 TBool OhmMsg::TxTimestamped() const
 {
-	return (iTxTimestamped);
+	return iTxTimestamped;
 }
 
 TBool OhmMsg::RxTimestamped() const
 {
-	return (iRxTimestamped);
+	return iRxTimestamped;
 }
 
 TUint OhmMsg::TxTimestamp() const
 {
-	return (iTxTimestamp);
+	return iTxTimestamp;
 }
 
 TUint OhmMsg::RxTimestamp() const
 {
-	return (iRxTimestamp);
+	return iRxTimestamp;
 }
 
 void OhmMsg::SetTxTimestamp(TUint aValue)
@@ -192,92 +192,92 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
 
 TBool OhmMsgAudio::Halt() const
 {
-	return (iHalt);
+	return iHalt;
 }
 
 TBool OhmMsgAudio::Lossless() const
 {
-	return (iLossless);
+	return iLossless;
 }
 
 TBool OhmMsgAudio::Timestamped() const
 {
-	return (iTimestamped);
+	return iTimestamped;
 }
 
 TBool OhmMsgAudio::Resent() const
 {
-	return (iResent);
+	return iResent;
 }
 
 TUint OhmMsgAudio::Samples() const
 {
-	return (iSamples);
+	return iSamples;
 }
 
 TUint OhmMsgAudio::Frame() const
 {
-	return (iFrame);
+	return iFrame;
 }
 
 TUint OhmMsgAudio::NetworkTimestamp() const
 {
-	return (iNetworkTimestamp);
+	return iNetworkTimestamp;
 }
 
 TUint OhmMsgAudio::MediaLatency() const
 {
-	return (iMediaLatency);
+	return iMediaLatency;
 }
 
 TUint OhmMsgAudio::MediaTimestamp() const
 {
-	return (iMediaTimestamp);
+	return iMediaTimestamp;
 }
 
 TUint64 OhmMsgAudio::SampleStart() const
 {
-	return (iSampleStart);
+	return iSampleStart;
 }
 
 TUint64 OhmMsgAudio::SamplesTotal() const
 {
-	return (iSamplesTotal);
+	return iSamplesTotal;
 }
 
 TUint OhmMsgAudio::SampleRate() const
 {
-	return (iSampleRate);
+	return iSampleRate;
 }
 
 TUint OhmMsgAudio::BitRate() const
 {
-	return (iBitRate);
+	return iBitRate;
 }
 
 TInt OhmMsgAudio::VolumeOffset() const
 {
-	return (iVolumeOffset);
+	return iVolumeOffset;
 }
 
 TUint OhmMsgAudio::BitDepth() const
 {
-	return (iBitDepth);
+	return iBitDepth;
 }
 
 TUint OhmMsgAudio::Channels() const
 {
-	return (iChannels);
+	return iChannels;
 }
 
 const Brx& OhmMsgAudio::Codec() const
 {
-	return (iCodec);
+	return iCodec;
 }
 
 const Brx& OhmMsgAudio::Audio() const
 {
-	return (iAudio);
+	return iAudio;
 }
 
 void OhmMsgAudio::SetResent(TBool aValue)
@@ -376,17 +376,17 @@ void OhmMsgTrack::Create(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
 
 TUint OhmMsgTrack::Sequence() const
 {
-	return (iSequence);
+	return iSequence;
 }
 
 const Brx& OhmMsgTrack::Uri() const
 {
-	return (iUri);
+	return iUri;
 }
 
 const Brx& OhmMsgTrack::Metadata() const
 {
-	return (iMetadata);
+	return iMetadata;
 }
 
 void OhmMsgTrack::Process(IOhmMsgProcessor& aProcessor)
@@ -440,12 +440,12 @@ void OhmMsgMetatext::Create(TUint aSequence, const Brx& aMetatext)
 
 TUint OhmMsgMetatext::Sequence() const
 {
-	return (iSequence);
+	return iSequence;
 }
 
 const Brx& OhmMsgMetatext::Metatext() const
 {
-	return (iMetatext);
+	return iMetatext;
 }
 
 void OhmMsgMetatext::Process(IOhmMsgProcessor& aProcessor)
@@ -496,58 +496,58 @@ OhmMsg& OhmMsgFactory::Create(IReader& aReader, const OhmHeader& aHeader)
 	switch (aHeader.MsgType())
 	{
 	case OhmHeader::kMsgTypeAudio:
-		return (CreateAudio(aReader, aHeader));
+		return CreateAudio(aReader, aHeader);
 	case OhmHeader::kMsgTypeTrack:
-		return (CreateTrack(aReader, aHeader));
+		return CreateTrack(aReader, aHeader);
 	case OhmHeader::kMsgTypeMetatext:
-		return (CreateMetatext(aReader, aHeader));
+		return CreateMetatext(aReader, aHeader);
 	default:
 		ASSERTS();
 	}
 
-	return (*(OhmMsg*)0);
+	return *(OhmMsg*)0;
 }
 
 OhmMsgAudio& OhmMsgFactory::CreateAudio(IReader& aReader, const OhmHeader& aHeader)
 {
 	OhmMsgAudio* msg = iFifoAudio.Read();
 	msg->Create(aReader, aHeader);
-	return (*msg);
+	return *msg;
 }
 
 OhmMsgTrack& OhmMsgFactory::CreateTrack(IReader& aReader, const OhmHeader& aHeader)
 {
 	OhmMsgTrack* msg = iFifoTrack.Read();
 	msg->Create(aReader, aHeader);
-	return (*msg);
+	return *msg;
 }
 
 OhmMsgMetatext& OhmMsgFactory::CreateMetatext(IReader& aReader, const OhmHeader& aHeader)
 {
 	OhmMsgMetatext* msg = iFifoMetatext.Read();
 	msg->Create(aReader, aHeader);
-	return (*msg);
+	return *msg;
 }
 
 OhmMsgAudio& OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
 {
 	OhmMsgAudio* msg = iFifoAudio.Read();
 	msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aMediaTimestamp, aSampleStart, aSamplesTotal, aSampleRate, aBitRate, aVolumeOffset, aBitDepth, aChannels,  aCodec, aAudio);
-	return (*msg);
+	return *msg;
 }
 
 OhmMsgTrack& OhmMsgFactory::CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
 {
 	OhmMsgTrack* msg = iFifoTrack.Read();
 	msg->Create(aSequence, aUri, aMetadata);
-	return (*msg);
+	return *msg;
 }
 
 OhmMsgMetatext& OhmMsgFactory::CreateMetatext(TUint aSequence, const Brx& aMetatext)
 {
 	OhmMsgMetatext* msg = iFifoMetatext.Read();
 	msg->Create(aSequence, aMetatext);
-	return (*msg);
+	return *msg;
 }
 
 void OhmMsgFactory::Lock()

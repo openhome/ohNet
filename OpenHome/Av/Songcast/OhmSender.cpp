@@ -498,24 +498,23 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver
 
 const Brx& OhmSender::Image() const
 {
-	return (iImage);
+	return iImage;
 }
 
 const Brx& OhmSender::MimeType() const
 {
-	return (iMimeType);
+	return iMimeType;
 }
 
 const Brx& OhmSender::SenderUri() const
 {
-	return (iSenderUri.AbsoluteUri());
+	return iSenderUri.AbsoluteUri();
 }
 
 const Brx& OhmSender::SenderMetadata() const
 {
-	return (iSenderMetadata);
+	return iSenderMetadata;
 }
-
 
 void OhmSender::SetName(const Brx& aValue)
 {
@@ -560,7 +559,7 @@ void OhmSender::SetInterface(TIpAddress aValue)
 		if (iStarted) {
 			Stop();
 			StopZone();
-			delete (iServer);
+			delete iServer;
 			iInterface = aValue;
 			iServer = new SocketTcpServer(iEnv, "OHMS", 0, iInterface);
 			iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
@@ -1392,7 +1391,7 @@ TBool OhmSender::CheckSlaveExpiry()
         i++;
     }
     
-    return (changed);
+    return changed;
 }
 
 void OhmSender::RemoveSlave(TUint aIndex)
@@ -1411,11 +1410,11 @@ TUint OhmSender::FindSlave(const Endpoint& aEndpoint)
 {
     for (TUint i = 0; i < iSlaveCount; i++) {
         if (aEndpoint.Equals(iSlaveList[i])) {
-            return (i);
+            return i;
         }
     }
     
-    return (iSlaveCount);
+    return iSlaveCount;
 }
 
 // Zone handling

@@ -46,8 +46,8 @@ public:
     void Internalise(IReader& aReader);
     void Externalise(IWriter& aWriter) const;
 
-    TUint MsgType() const {return (iMsgType);}
-    TUint MsgBytes() const {return (iBytes - kHeaderBytes);}
+    TUint MsgType() const {return iMsgType;}
+    TUint MsgBytes() const {return iBytes - kHeaderBytes;}
     
 private:
     TUint iMsgType;
@@ -95,25 +95,25 @@ public:
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
-    TBool Halt() const {return (iHalt);}
-    TBool Lossless() const {return (iLossless);}
-    TBool Timestamped() const {return (iTimestamped);}
-    TBool Resent() const {return (iResent);}
-    TUint Samples() const {return (iSamples);}
-    TUint Frame() const {return (iFrame);}
-    TUint NetworkTimestamp() const {return (iNetworkTimestamp);}
-    TUint MediaLatency() const {return (iMediaLatency);}
-    TUint MediaTimestamp() const {return (iMediaTimestamp);}
-    TUint64 SampleStart() const {return (iSampleStart);}
-    TUint64 SamplesTotal() const {return (iSamplesTotal);}
-    TUint SampleRate() const {return (iSampleRate);}
-    TUint BitRate() const {return (iBitRate);}
-    TInt VolumeOffset() const {return (iVolumeOffset);}
-    TUint BitDepth() const {return (iBitDepth);}
-    TUint Channels() const {return (iChannels);}
-    const Brx& CodecName() const {return (iCodecName);}
+    TBool Halt() const {return iHalt;}
+    TBool Lossless() const {return iLossless;}
+    TBool Timestamped() const {return iTimestamped;}
+    TBool Resent() const {return iResent;}
+    TUint Samples() const {return iSamples;}
+    TUint Frame() const {return iFrame;}
+    TUint NetworkTimestamp() const {return iNetworkTimestamp;}
+    TUint MediaLatency() const {return iMediaLatency;}
+    TUint MediaTimestamp() const {return iMediaTimestamp;}
+    TUint64 SampleStart() const {return iSampleStart;}
+    TUint64 SamplesTotal() const {return iSamplesTotal;}
+    TUint SampleRate() const {return iSampleRate;}
+    TUint BitRate() const {return iBitRate;}
+    TInt VolumeOffset() const {return iVolumeOffset;}
+    TUint BitDepth() const {return iBitDepth;}
+    TUint Channels() const {return iChannels;}
+    const Brx& CodecName() const {return iCodecName;}
     
-    TUint AudioBytes() const {return (iAudioBytes);}
+    TUint AudioBytes() const {return iAudioBytes;}
     TUint MsgBytes() const {return (kHeaderBytes + iCodecName.Bytes() + iAudioBytes);}
 
 private:
@@ -169,9 +169,9 @@ public:
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
-    TUint Sequence() const {return (iSequence);}
-    TUint UriBytes() const {return (iUriBytes);}
-    TUint MetadataBytes() const {return (iMetadataBytes);}
+    TUint Sequence() const {return iSequence;}
+    TUint UriBytes() const {return iUriBytes;}
+    TUint MetadataBytes() const {return iMetadataBytes;}
     TUint MsgBytes() const {return (kHeaderBytes + iUriBytes + iMetadataBytes);}
 
 private:
@@ -199,8 +199,8 @@ public:
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
-    TUint Sequence() const {return (iSequence);}
-    TUint MetatextBytes() const {return (iMetatextBytes);}
+    TUint Sequence() const {return iSequence;}
+    TUint MetatextBytes() const {return iMetatextBytes;}
     TUint MsgBytes() const {return (kHeaderBytes + iMetatextBytes);}
 
 private:
@@ -225,7 +225,7 @@ public:
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
 
-    TUint SlaveCount() const {return (iSlaveCount);}
+    TUint SlaveCount() const {return iSlaveCount;}
     TUint MsgBytes() const {return (kHeaderBytes + (iSlaveCount * 6));}
 
 private:
@@ -248,7 +248,7 @@ public:
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
 
-    TUint FramesCount() const {return (iFramesCount);}
+    TUint FramesCount() const {return iFramesCount;}
     TUint MsgBytes() const {return (kHeaderBytes + (iFramesCount * 4));}
 
 private:
@@ -279,7 +279,7 @@ public:
     void Internalise(IReader& aReader);
     void Externalise(IWriter& aWriter) const;
 
-    TUint MsgType() const {return (iMsgType);}
+    TUint MsgType() const {return iMsgType;}
     TUint MsgBytes() const {return (iBytes - kHeaderBytes);}
     
 private:
@@ -306,7 +306,7 @@ public:
     void Internalise(IReader& aReader, const OhzHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
-    TUint ZoneBytes() const {return (iZoneBytes);}
+    TUint ZoneBytes() const {return iZoneBytes;}
     TUint MsgBytes() const {return (kHeaderBytes + iZoneBytes);}
 
 private:
@@ -329,8 +329,8 @@ public:
     void Internalise(IReader& aReader, const OhzHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
-    TUint ZoneBytes() const {return (iZoneBytes);}
-    TUint UriBytes() const {return (iUriBytes);}
+    TUint ZoneBytes() const {return iZoneBytes;}
+    TUint UriBytes() const {return iUriBytes;}
     TUint MsgBytes() const {return (kHeaderBytes + iZoneBytes + iUriBytes);}
 
 private:
@@ -356,9 +356,9 @@ public:
     void Internalise(IReader& aReader, const OhzHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
 
-    TUint MsgBytes() const {return (kHeaderBytes);}
+    TUint MsgBytes() const {return kHeaderBytes;}
 
-    TUint Preset() const {return (iPreset);}
+    TUint Preset() const {return iPreset;}
 
 private:
     //Offset    Bytes                   Desc
@@ -381,8 +381,8 @@ public:
 
     TUint MsgBytes() const {return (kHeaderBytes + iMetadataBytes);}
 
-    TUint Preset() const {return (iPreset);}
-    TUint MetadataBytes() const {return (iMetadataBytes);}
+    TUint Preset() const {return iPreset;}
+    TUint MetadataBytes() const {return iMetadataBytes;}
 
 private:
     //ZonepusHeaderPresetResponse

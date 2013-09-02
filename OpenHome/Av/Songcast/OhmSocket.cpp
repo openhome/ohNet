@@ -54,13 +54,13 @@ void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 
 Endpoint OhmSocket::This() const
 {
-    return (iThis);
+    return iThis;
 }
 
 Endpoint OhmSocket::Sender() const
 {
     ASSERT(iReader);
-    return (iReader->Sender());
+    return iReader->Sender();
 }
 
 void OhmSocket::Close()
@@ -115,7 +115,7 @@ OhzSocket::OhzSocket(Environment& aEnv)
 
 const Endpoint& OhzSocket::This() const
 {
-    return (iEndpoint);
+    return iEndpoint;
 }
 
 void OhzSocket::Open(TIpAddress aInterface, TUint aTtl)
@@ -136,9 +136,9 @@ void OhzSocket::Send(const Brx& aBuffer)
 void OhzSocket::Close()
 {
     ASSERT(iRxSocket);
-    delete (iRxSocket);
-    delete (iTxSocket);
-    delete (iReader);
+    delete iRxSocket;
+    delete iTxSocket;
+    delete iReader;
     iRxSocket = 0;
     iTxSocket = 0;
     iReader = 0;

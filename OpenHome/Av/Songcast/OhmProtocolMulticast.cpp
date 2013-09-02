@@ -51,22 +51,15 @@ OhmProtocolMulticast::OhmProtocolMulticast(Environment& aEnv, IOhmReceiver& aRec
 
 void OhmProtocolMulticast::RequestResend(const Brx& aFrames)
 {
-	TUint bytes = aFrames.Bytes();
-
-	if (bytes > 0)
-	{
+	const TUint bytes = aFrames.Bytes();
+	if (bytes > 0) {
 		Bws<OhmHeader::kHeaderBytes + 400> buffer;
-
 		WriterBuffer writer(buffer);
-
 		OhmHeaderResend headerResend(bytes / 4);
-
 		OhmHeader header(OhmHeader::kMsgTypeResend, headerResend.MsgBytes());
-
 		header.Externalise(writer);
 		headerResend.Externalise(writer);
 		writer.Write(aFrames);
-		
 		iSocket.Send(buffer, iEndpoint);
 	}
 }
@@ -74,16 +67,12 @@ void OhmProtocolMulticast::RequestResend(const Brx& aFrames)
 void OhmProtocolMulticast::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
 	iEndpoint.Replace(aEndpoint);
-
 	iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
-
     try {
         OhmHeader header;
-
         SendJoin();
 
 		// Phase 1, periodically send join until Track and Metatext have been received
-
 		TBool joinComplete = false;
 		TBool receivedTrack = false;
 		TBool receivedMetatext = false;
@@ -92,7 +81,8 @@ void OhmProtocolMulticast::Play(TIpAddress aInterface, TUint aTtl, const Endpoin
             try {
                 header.Internalise(iReadBuffer);
 
-				switch(header.MsgType()) {
+				switch (header.MsgType())
+                {
 				case OhmHeader::kMsgTypeJoin:
 				case OhmHeader::kMsgTypeListen:
 				case OhmHeader::kMsgTypeLeave:
@@ -125,14 +115,13 @@ void OhmProtocolMulticast::Play(TIpAddress aInterface, TUint aTtl, const Endpoin
 		iTimerJoin.Cancel();
 
 		// Phase 2, periodically send listen if required
-
 	    iTimerListen.FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
-	    
         for (;;) {
             try {
                 header.Internalise(iReadBuffer);
 
-				switch(header.MsgType()) {
+				switch (header.MsgType())
+                {
 				case OhmHeader::kMsgTypeJoin:
 				case OhmHeader::kMsgTypeLeave:
 				case OhmHeader::kMsgTypeSlave:
@@ -196,4 +185,3 @@ void OhmProtocolMulticast::Send(TUint aType)
     
     iSocket.Send(buffer, iEndpoint);
 }
-
