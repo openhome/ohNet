@@ -23,7 +23,7 @@ class ProviderSender;
 class OhmSenderDriver : public IOhmSenderDriver
 {
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
-	static const TUint kMaxHistoryFrames = 100;
+    static const TUint kMaxHistoryFrames = 100;
 
 public:
     OhmSenderDriver(Environment& aEnv);
@@ -38,19 +38,19 @@ private:
     virtual void SetTtl(TUint aValue);
     virtual void SetLatency(TUint aValue);
     virtual void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal);
-	virtual void Resend(const Brx& aFrames);
+    virtual void Resend(const Brx& aFrames);
 
 private:
-	void ResetLocked();
-	void Resend(OhmMsgAudio& aMsg);
+    void ResetLocked();
+    void Resend(OhmMsgAudio& aMsg);
 
 private:
     Mutex iMutex;
-	TBool iEnabled;
+    TBool iEnabled;
     TBool iActive;
-	TBool iSend;
+    TBool iSend;
     Endpoint iEndpoint;
-	TIpAddress iAdapter;
+    TIpAddress iAdapter;
     Bws<kMaxAudioFrameBytes> iBuffer;
     TUint iFrame;
     TUint iSampleRate;
@@ -61,10 +61,10 @@ private:
     Bws<Ohm::kMaxCodecNameBytes> iCodecName;
     TUint64 iSamplesTotal;
     TUint64 iSampleStart;
-	TUint iLatency;
+    TUint iLatency;
     SocketUdp iSocket;
-	OhmMsgFactory iFactory;
-	FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
+    OhmMsgFactory iFactory;
+    FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
 };
 
 class OhmSender
@@ -79,41 +79,41 @@ class OhmSender
     static const TUint kTimerAliveAudioTimeoutMs = 3000;
     static const TUint kTimerExpiryTimeoutMs = 10000;
     static const TUint kMaxSlaveCount = 4;
-	static const TUint kMaxMimeTypeBytes = 100;
+    static const TUint kMaxMimeTypeBytes = 100;
     static const TUint kMaxZoneFrameBytes = 1 * 1024;
     static const TUint kTimerZoneUriDelayMs = 100;
     static const TUint kTimerPresetInfoDelayMs = 100;
 
 public:
-	static const TUint kMaxNameBytes = 64;
-	static const TUint kMaxTrackUriBytes = Ohm::kMaxTrackUriBytes;
-	static const TUint kMaxTrackMetadataBytes = Ohm::kMaxTrackMetadataBytes;
-	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
+    static const TUint kMaxNameBytes = 64;
+    static const TUint kMaxTrackUriBytes = Ohm::kMaxTrackUriBytes;
+    static const TUint kMaxTrackMetadataBytes = Ohm::kMaxTrackMetadataBytes;
+    static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
     OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TUint aLatency, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset);
     ~OhmSender();
 
-	const Brx& Image() const;
-	const Brx& MimeType() const;
-	const Brx& SenderUri() const;
-	const Brx& SenderMetadata() const; // might change after SetName() and SetMulticast()
+    const Brx& Image() const;
+    const Brx& MimeType() const;
+    const Brx& SenderUri() const;
+    const Brx& SenderMetadata() const; // might change after SetName() and SetMulticast()
 
-	void SetName(const Brx& aValue);
-	void SetChannel(TUint aValue);
+    void SetName(const Brx& aValue);
+    void SetChannel(TUint aValue);
     void SetInterface(TIpAddress aValue);
     void SetTtl(TUint aValue);
     void SetLatency(TUint aValue);
     void SetMulticast(TBool aValue);
-	void SetEnabled(TBool aValue);
+    void SetEnabled(TBool aValue);
     void SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart);
-	void SetMetatext(const Brx& aValue);
-	void SetPreset(TUint aValue);
+    void SetMetatext(const Brx& aValue);
+    void SetPreset(TUint aValue);
     
 private:
     void RunMulticast();
     void RunUnicast();
-	void RunZone();
+    void RunZone();
 
     void UpdateChannel();
     void UpdateMetadata();
@@ -137,10 +137,10 @@ private:
     void SendSlaveList();
     void SendListen(const Endpoint& aEndpoint);
     void SendLeave(const Endpoint& aEndpoint);
-	void SendZoneUri(TUint aCount);
-	void SendZoneUri();
-	void SendPresetInfo(TUint aCount);
-	void SendPresetInfo();
+    void SendZoneUri(TUint aCount);
+    void SendZoneUri();
+    void SendPresetInfo(TUint aCount);
+    void SendPresetInfo();
     TUint FindSlave(const Endpoint& aEndpoint);
     void RemoveSlave(TUint aIndex);
     TBool CheckSlaveExpiry();
@@ -156,8 +156,8 @@ private:
     TUint iLatency;
     TBool iMulticast;
     TBool iEnabled;
-	Brh iImage;
-	Bws<kMaxMimeTypeBytes> iMimeType;
+    Brh iImage;
+    Bws<kMaxMimeTypeBytes> iMimeType;
     OhmSocket iSocketOhm;
     OhzSocket iSocketOhz;
     Srs<kMaxAudioFrameBytes> iRxBuffer;
@@ -176,7 +176,7 @@ private:
     TBool iAliveBlocked;
     Endpoint iMulticastEndpoint;
     Endpoint iTargetEndpoint;
-	TIpAddress iTargetInterface;
+    TIpAddress iTargetInterface;
     ThreadFunctor* iThreadMulticast;
     ThreadFunctor* iThreadUnicast;
     ThreadFunctor* iThreadZone;
@@ -197,10 +197,10 @@ private:
     TUint iSequenceTrack;
     TUint iSequenceMetatext;
     SocketTcpServer* iServer;
-	TBool iClientControllingTrackMetadata;
-	TUint iSendZoneUriCount;
-	TUint iSendPresetInfoCount;
-	TUint iPreset;
+    TBool iClientControllingTrackMetadata;
+    TUint iSendZoneUriCount;
+    TUint iSendPresetInfoCount;
+    TUint iPreset;
 };
 
 class OhmSenderSession : public SocketTcpSession
@@ -215,14 +215,14 @@ private:
     void Error(const HttpStatus& aStatus);
     void Get(TBool aWriteEntity);
 private:
-	const OhmSender& iSender;
+    const OhmSender& iSender;
     Srs<kMaxRequestBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
     Sws<kMaxResponseBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;
     HttpHeaderHost iHeaderHost;
     HttpHeaderExpect iHeaderExpect;
-	const HttpStatus* iErrorStatus;
+    const HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;
     Semaphore iSemaphore;

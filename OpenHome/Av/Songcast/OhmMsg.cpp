@@ -6,14 +6,14 @@ using namespace OpenHome::Av;
 // OhmMsg
 
 OhmMsg::OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType)
-	: iFactory(&aFactory)
-	, iMsgType(aMsgType)
-	, iRefCount(0)
-	, iResendCount(0)
-	, iTxTimestamped(false)
-	, iRxTimestamped(false)
-	, iTxTimestamp(0)
-	, iRxTimestamp(0)
+    : iFactory(&aFactory)
+    , iMsgType(aMsgType)
+    , iRefCount(0)
+    , iResendCount(0)
+    , iTxTimestamped(false)
+    , iRxTimestamped(false)
+    , iTxTimestamp(0)
+    , iRxTimestamp(0)
 {
 }
 
@@ -23,86 +23,86 @@ OhmMsg::~OhmMsg()
 
 void OhmMsg::AddRef()
 {
-	iFactory->Lock();
+    iFactory->Lock();
 
-	iRefCount++;
+    iRefCount++;
 
-	iFactory->Unlock();
+    iFactory->Unlock();
 }
 
 void OhmMsg::RemoveRef()
 {
-	iFactory->Lock();
+    iFactory->Lock();
 
-	if (--iRefCount == 0) {
-		iFactory->Destroy(*this);
-	}
+    if (--iRefCount == 0) {
+        iFactory->Destroy(*this);
+    }
 
-	iFactory->Unlock();
+    iFactory->Unlock();
 }
 
 TUint OhmMsg::ResendCount() const
 {
-	return iResendCount;
+    return iResendCount;
 }
 
 void OhmMsg::IncrementResendCount()
 {
-	iResendCount++;
+    iResendCount++;
 }
 
 TBool OhmMsg::TxTimestamped() const
 {
-	return iTxTimestamped;
+    return iTxTimestamped;
 }
 
 TBool OhmMsg::RxTimestamped() const
 {
-	return iRxTimestamped;
+    return iRxTimestamped;
 }
 
 TUint OhmMsg::TxTimestamp() const
 {
-	return iTxTimestamp;
+    return iTxTimestamp;
 }
 
 TUint OhmMsg::RxTimestamp() const
 {
-	return iRxTimestamp;
+    return iRxTimestamp;
 }
 
 void OhmMsg::SetTxTimestamp(TUint aValue)
 {
-	iTxTimestamp = aValue;
-	iTxTimestamped = true;
+    iTxTimestamp = aValue;
+    iTxTimestamped = true;
 }
 
 void OhmMsg::SetRxTimestamp(TUint aValue)
 {
-	iRxTimestamp = aValue;
-	iRxTimestamped = true;
+    iRxTimestamp = aValue;
+    iRxTimestamped = true;
 }
 
 void OhmMsg::Create()
 {
-	iRefCount = 1;
-	iResendCount = 0;
-	iTxTimestamp = 0;
-	iRxTimestamp = 0;
-	iTxTimestamped = false;
-	iRxTimestamped = false;
+    iRefCount = 1;
+    iResendCount = 0;
+    iTxTimestamp = 0;
+    iRxTimestamp = 0;
+    iTxTimestamped = false;
+    iRxTimestamped = false;
 }
-	
+    
 // OhmMsgAudio
 
 OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
-	: OhmMsg(aFactory, OhmHeader::kMsgTypeAudio)
+    : OhmMsg(aFactory, OhmHeader::kMsgTypeAudio)
 {
 }
 
 void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 {
-	OhmMsg::Create();
+    OhmMsg::Create();
 
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
     
@@ -114,8 +114,8 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 
     iHalt = false;
     iLossless = false;
-	iTimestamped = false;
-	iResent = false;
+    iTimestamped = false;
+    iResent = false;
 
     TUint flags = reader.ReadUintBe(1);
     
@@ -163,138 +163,138 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     
     TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
 
-	iAudio.Replace(reader.Read(audio));
+    iAudio.Replace(reader.Read(audio));
 }
 
 void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
 {
-	OhmMsg::Create();
+    OhmMsg::Create();
 
-	iHalt = aHalt;
-	aLossless = aLossless;
-	iTimestamped = aTimestamped;
-	iResent = aResent;
-	iSamples = aSamples;
-	iFrame = aFrame;
-	iNetworkTimestamp = aNetworkTimestamp;
-	iMediaLatency = aMediaLatency;
-	iMediaTimestamp = aMediaTimestamp;
-	iSampleStart = aSampleStart;
-	iSamplesTotal = aSamplesTotal;
-	iSampleRate = aSampleRate;
-	iBitRate = aBitRate;
-	iVolumeOffset = aVolumeOffset;
-	iBitDepth = aBitDepth;
-	iChannels = aChannels;
-	iCodec.Replace(aCodec);
-	iAudio.Replace(aAudio);
+    iHalt = aHalt;
+    aLossless = aLossless;
+    iTimestamped = aTimestamped;
+    iResent = aResent;
+    iSamples = aSamples;
+    iFrame = aFrame;
+    iNetworkTimestamp = aNetworkTimestamp;
+    iMediaLatency = aMediaLatency;
+    iMediaTimestamp = aMediaTimestamp;
+    iSampleStart = aSampleStart;
+    iSamplesTotal = aSamplesTotal;
+    iSampleRate = aSampleRate;
+    iBitRate = aBitRate;
+    iVolumeOffset = aVolumeOffset;
+    iBitDepth = aBitDepth;
+    iChannels = aChannels;
+    iCodec.Replace(aCodec);
+    iAudio.Replace(aAudio);
 }
 
 TBool OhmMsgAudio::Halt() const
 {
-	return iHalt;
+    return iHalt;
 }
 
 TBool OhmMsgAudio::Lossless() const
 {
-	return iLossless;
+    return iLossless;
 }
 
 TBool OhmMsgAudio::Timestamped() const
 {
-	return iTimestamped;
+    return iTimestamped;
 }
 
 TBool OhmMsgAudio::Resent() const
 {
-	return iResent;
+    return iResent;
 }
 
 TUint OhmMsgAudio::Samples() const
 {
-	return iSamples;
+    return iSamples;
 }
 
 TUint OhmMsgAudio::Frame() const
 {
-	return iFrame;
+    return iFrame;
 }
 
 TUint OhmMsgAudio::NetworkTimestamp() const
 {
-	return iNetworkTimestamp;
+    return iNetworkTimestamp;
 }
 
 TUint OhmMsgAudio::MediaLatency() const
 {
-	return iMediaLatency;
+    return iMediaLatency;
 }
 
 TUint OhmMsgAudio::MediaTimestamp() const
 {
-	return iMediaTimestamp;
+    return iMediaTimestamp;
 }
 
 TUint64 OhmMsgAudio::SampleStart() const
 {
-	return iSampleStart;
+    return iSampleStart;
 }
 
 TUint64 OhmMsgAudio::SamplesTotal() const
 {
-	return iSamplesTotal;
+    return iSamplesTotal;
 }
 
 TUint OhmMsgAudio::SampleRate() const
 {
-	return iSampleRate;
+    return iSampleRate;
 }
 
 TUint OhmMsgAudio::BitRate() const
 {
-	return iBitRate;
+    return iBitRate;
 }
 
 TInt OhmMsgAudio::VolumeOffset() const
 {
-	return iVolumeOffset;
+    return iVolumeOffset;
 }
 
 TUint OhmMsgAudio::BitDepth() const
 {
-	return iBitDepth;
+    return iBitDepth;
 }
 
 TUint OhmMsgAudio::Channels() const
 {
-	return iChannels;
+    return iChannels;
 }
 
 const Brx& OhmMsgAudio::Codec() const
 {
-	return iCodec;
+    return iCodec;
 }
 
 const Brx& OhmMsgAudio::Audio() const
 {
-	return iAudio;
+    return iAudio;
 }
 
 void OhmMsgAudio::SetResent(TBool aValue)
 {
-	iResent = aValue;
+    iResent = aValue;
 }
 
 void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 {
-	aProcessor.Process(*this);
+    aProcessor.Process(*this);
 }
 
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
-	OhmHeader header(OhmHeader::kMsgTypeAudio, kHeaderBytes + iCodec.Bytes() + iAudio.Bytes());
-	
-	header.Externalise(aWriter);
+    OhmHeader header(OhmHeader::kMsgTypeAudio, kHeaderBytes + iCodec.Bytes() + iAudio.Bytes());
+    
+    header.Externalise(aWriter);
 
     WriterBinary writer(aWriter);
 
@@ -308,13 +308,13 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
         flags |= kFlagLossless;
     }
 
-	if (iTimestamped) {
-		flags |= kFlagTimestamped;
-	}
+    if (iTimestamped) {
+        flags |= kFlagTimestamped;
+    }
 
-	if (iResent) {
-		flags |= kFlagResent;
-	}
+    if (iResent) {
+        flags |= kFlagResent;
+    }
     
     writer.WriteUint8(kHeaderBytes);
     writer.WriteUint8(flags);
@@ -338,261 +338,261 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
         writer.Write(iCodec);
     }
 
-	writer.Write(iAudio);
+    writer.Write(iAudio);
 
-	aWriter.WriteFlush();
+    aWriter.WriteFlush();
 }
 
 
 // OhmMsgTrack
 
 OhmMsgTrack::OhmMsgTrack(OhmMsgFactory& aFactory)
-	: OhmMsg(aFactory, OhmHeader::kMsgTypeTrack)
+    : OhmMsg(aFactory, OhmHeader::kMsgTypeTrack)
 {
 }
 
 void OhmMsgTrack::Create(IReader& aReader, const OhmHeader& aHeader)
 {
-	OhmMsg::Create();
+    OhmMsg::Create();
 
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeTrack);
     
     ReaderBinary reader(aReader);
     iSequence = reader.ReadUintBe(4);
-	TUint uri = reader.ReadUintBe(4);
+    TUint uri = reader.ReadUintBe(4);
     TUint metadata = reader.ReadUintBe(4);
-	iUri.Replace(reader.Read(uri));
-	iMetadata.Replace(reader.Read(metadata));
+    iUri.Replace(reader.Read(uri));
+    iMetadata.Replace(reader.Read(metadata));
 }
 
 void OhmMsgTrack::Create(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
 {
-	OhmMsg::Create();
+    OhmMsg::Create();
 
-	iSequence = aSequence;
-	iUri.Replace(aUri);
-	iMetadata.Replace(aMetadata);
+    iSequence = aSequence;
+    iUri.Replace(aUri);
+    iMetadata.Replace(aMetadata);
 }
 
 TUint OhmMsgTrack::Sequence() const
 {
-	return iSequence;
+    return iSequence;
 }
 
 const Brx& OhmMsgTrack::Uri() const
 {
-	return iUri;
+    return iUri;
 }
 
 const Brx& OhmMsgTrack::Metadata() const
 {
-	return iMetadata;
+    return iMetadata;
 }
 
 void OhmMsgTrack::Process(IOhmMsgProcessor& aProcessor)
 {
-	aProcessor.Process(*this);
+    aProcessor.Process(*this);
 }
 
 void OhmMsgTrack::Externalise(IWriter& aWriter)
 {
-	OhmHeader header(OhmHeader::kMsgTypeTrack, kHeaderBytes + iUri.Bytes() + iMetadata.Bytes());
+    OhmHeader header(OhmHeader::kMsgTypeTrack, kHeaderBytes + iUri.Bytes() + iMetadata.Bytes());
 
-	header.Externalise(aWriter);
+    header.Externalise(aWriter);
 
     WriterBinary writer(aWriter);
     writer.WriteUint32Be(iSequence);
     writer.WriteUint32Be(iUri.Bytes());
     writer.WriteUint32Be(iMetadata.Bytes());
-	writer.Write(iUri);
-	writer.Write(iMetadata);
+    writer.Write(iUri);
+    writer.Write(iMetadata);
 
-	aWriter.WriteFlush();
+    aWriter.WriteFlush();
 }
 
 
 // OhmMsgMetatext
 
 OhmMsgMetatext::OhmMsgMetatext(OhmMsgFactory& aFactory)
-	: OhmMsg(aFactory, OhmHeader::kMsgTypeMetatext)
+    : OhmMsg(aFactory, OhmHeader::kMsgTypeMetatext)
 {
 }
 
 void OhmMsgMetatext::Create(IReader& aReader, const OhmHeader& aHeader)
 {
-	OhmMsg::Create();
+    OhmMsg::Create();
 
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeMetatext);
     
     ReaderBinary reader(aReader);
     iSequence = reader.ReadUintBe(4);
-	TUint metatext = reader.ReadUintBe(4);
-	iMetatext.Replace(reader.Read(metatext));
+    TUint metatext = reader.ReadUintBe(4);
+    iMetatext.Replace(reader.Read(metatext));
 }
 
 void OhmMsgMetatext::Create(TUint aSequence, const Brx& aMetatext)
 {
-	OhmMsg::Create();
+    OhmMsg::Create();
 
-	iSequence = aSequence;
-	iMetatext.Replace(aMetatext);
+    iSequence = aSequence;
+    iMetatext.Replace(aMetatext);
 }
 
 TUint OhmMsgMetatext::Sequence() const
 {
-	return iSequence;
+    return iSequence;
 }
 
 const Brx& OhmMsgMetatext::Metatext() const
 {
-	return iMetatext;
+    return iMetatext;
 }
 
 void OhmMsgMetatext::Process(IOhmMsgProcessor& aProcessor)
 {
-	aProcessor.Process(*this);
+    aProcessor.Process(*this);
 }
 
 void OhmMsgMetatext::Externalise(IWriter& aWriter)
 {
-	OhmHeaderMetatext headerMetatext(iSequence, iMetatext);
-	
-	OhmHeader header(OhmHeader::kMsgTypeMetatext, kHeaderBytes + iMetatext.Bytes());
+    OhmHeaderMetatext headerMetatext(iSequence, iMetatext);
+    
+    OhmHeader header(OhmHeader::kMsgTypeMetatext, kHeaderBytes + iMetatext.Bytes());
 
-	header.Externalise(aWriter);
+    header.Externalise(aWriter);
 
-	WriterBinary writer(aWriter);
+    WriterBinary writer(aWriter);
     writer.WriteUint32Be(iSequence);
     writer.WriteUint32Be(iMetatext.Bytes());
-	writer.Write(iMetatext);
+    writer.Write(iMetatext);
 
-	aWriter.WriteFlush();
+    aWriter.WriteFlush();
 }
+
 
 // OhmMsgFactory
 
 OhmMsgFactory::OhmMsgFactory(TUint aAudioCount, TUint aTrackCount, TUint aMetatextCount)
-	: iFifoAudio(aAudioCount)
-	, iFifoTrack(aTrackCount)
-	, iFifoMetatext(aMetatextCount)
-	, iMutex("OHMF")
+    : iFifoAudio(aAudioCount)
+    , iFifoTrack(aTrackCount)
+    , iFifoMetatext(aMetatextCount)
+    , iMutex("OHMF")
 {
-	for (TUint i = 0; i < aAudioCount; i++) {
-		iFifoAudio.Write(new OhmMsgAudio(*this));
-	}
+    for (TUint i = 0; i < aAudioCount; i++) {
+        iFifoAudio.Write(new OhmMsgAudio(*this));
+    }
 
-	for (TUint i = 0; i < aTrackCount; i++) {
-		iFifoTrack.Write(new OhmMsgTrack(*this));
-	}
+    for (TUint i = 0; i < aTrackCount; i++) {
+        iFifoTrack.Write(new OhmMsgTrack(*this));
+    }
 
-	for (TUint i = 0; i < aMetatextCount; i++) {
-		iFifoMetatext.Write(new OhmMsgMetatext(*this));
-	}
+    for (TUint i = 0; i < aMetatextCount; i++) {
+        iFifoMetatext.Write(new OhmMsgMetatext(*this));
+    }
 
-}
-
-OhmMsg& OhmMsgFactory::Create(IReader& aReader, const OhmHeader& aHeader)
-{
-	switch (aHeader.MsgType())
-	{
-	case OhmHeader::kMsgTypeAudio:
-		return CreateAudio(aReader, aHeader);
-	case OhmHeader::kMsgTypeTrack:
-		return CreateTrack(aReader, aHeader);
-	case OhmHeader::kMsgTypeMetatext:
-		return CreateMetatext(aReader, aHeader);
-	default:
-		ASSERTS();
-	}
-
-	return *(OhmMsg*)0;
-}
-
-OhmMsgAudio& OhmMsgFactory::CreateAudio(IReader& aReader, const OhmHeader& aHeader)
-{
-	OhmMsgAudio* msg = iFifoAudio.Read();
-	msg->Create(aReader, aHeader);
-	return *msg;
-}
-
-OhmMsgTrack& OhmMsgFactory::CreateTrack(IReader& aReader, const OhmHeader& aHeader)
-{
-	OhmMsgTrack* msg = iFifoTrack.Read();
-	msg->Create(aReader, aHeader);
-	return *msg;
-}
-
-OhmMsgMetatext& OhmMsgFactory::CreateMetatext(IReader& aReader, const OhmHeader& aHeader)
-{
-	OhmMsgMetatext* msg = iFifoMetatext.Read();
-	msg->Create(aReader, aHeader);
-	return *msg;
-}
-
-OhmMsgAudio& OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
-{
-	OhmMsgAudio* msg = iFifoAudio.Read();
-	msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aMediaTimestamp, aSampleStart, aSamplesTotal, aSampleRate, aBitRate, aVolumeOffset, aBitDepth, aChannels,  aCodec, aAudio);
-	return *msg;
-}
-
-OhmMsgTrack& OhmMsgFactory::CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
-{
-	OhmMsgTrack* msg = iFifoTrack.Read();
-	msg->Create(aSequence, aUri, aMetadata);
-	return *msg;
-}
-
-OhmMsgMetatext& OhmMsgFactory::CreateMetatext(TUint aSequence, const Brx& aMetatext)
-{
-	OhmMsgMetatext* msg = iFifoMetatext.Read();
-	msg->Create(aSequence, aMetatext);
-	return *msg;
-}
-
-void OhmMsgFactory::Lock()
-{
-	iMutex.Wait();
-}
-
-void OhmMsgFactory::Unlock()
-{
-	iMutex.Signal();
-}
-
-void OhmMsgFactory::Destroy(OhmMsg& aMsg)
-{
-	aMsg.Process(*this);
-}
-
-void OhmMsgFactory::Process(OhmMsgAudio& aMsg)
-{
-	iFifoAudio.Write(&aMsg);
-}
-
-void OhmMsgFactory::Process(OhmMsgTrack& aMsg)
-{
-	iFifoTrack.Write(&aMsg);
-}
-
-void OhmMsgFactory::Process(OhmMsgMetatext& aMsg)
-{
-	iFifoMetatext.Write(&aMsg);
 }
 
 OhmMsgFactory::~OhmMsgFactory()
 {
     TUint slots = iFifoAudio.Slots();
-	for (TUint i = 0; i < slots; i++) {
-		delete iFifoAudio.Read();
-	}
+    for (TUint i = 0; i < slots; i++) {
+        delete iFifoAudio.Read();
+    }
     slots = iFifoTrack.Slots();
-	for (TUint i = 0; i < slots; i++) {
-		delete iFifoTrack.Read();
-	}
+    for (TUint i = 0; i < slots; i++) {
+        delete iFifoTrack.Read();
+    }
     slots = iFifoMetatext.Slots();
-	for (TUint i = 0; i < slots; i++) {
-		delete iFifoMetatext.Read();
-	}
+    for (TUint i = 0; i < slots; i++) {
+        delete iFifoMetatext.Read();
+    }
 }
 
+OhmMsg* OhmMsgFactory::Create(IReader& aReader, const OhmHeader& aHeader)
+{
+    switch (aHeader.MsgType())
+    {
+    case OhmHeader::kMsgTypeAudio:
+        return CreateAudio(aReader, aHeader);
+    case OhmHeader::kMsgTypeTrack:
+        return CreateTrack(aReader, aHeader);
+    case OhmHeader::kMsgTypeMetatext:
+        return CreateMetatext(aReader, aHeader);
+    default:
+        ASSERTS();
+    }
+
+    return NULL;
+}
+
+OhmMsgAudio* OhmMsgFactory::CreateAudio(IReader& aReader, const OhmHeader& aHeader)
+{
+    OhmMsgAudio* msg = iFifoAudio.Read();
+    msg->Create(aReader, aHeader);
+    return msg;
+}
+
+OhmMsgTrack* OhmMsgFactory::CreateTrack(IReader& aReader, const OhmHeader& aHeader)
+{
+    OhmMsgTrack* msg = iFifoTrack.Read();
+    msg->Create(aReader, aHeader);
+    return msg;
+}
+
+OhmMsgMetatext* OhmMsgFactory::CreateMetatext(IReader& aReader, const OhmHeader& aHeader)
+{
+    OhmMsgMetatext* msg = iFifoMetatext.Read();
+    msg->Create(aReader, aHeader);
+    return msg;
+}
+
+OhmMsgAudio* OhmMsgFactory::CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio)
+{
+    OhmMsgAudio* msg = iFifoAudio.Read();
+    msg->Create(aHalt, aLossless, aTimestamped, aResent, aSamples, aFrame, aNetworkTimestamp, aMediaLatency, aMediaTimestamp, aSampleStart, aSamplesTotal, aSampleRate, aBitRate, aVolumeOffset, aBitDepth, aChannels,  aCodec, aAudio);
+    return msg;
+}
+
+OhmMsgTrack* OhmMsgFactory::CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
+{
+    OhmMsgTrack* msg = iFifoTrack.Read();
+    msg->Create(aSequence, aUri, aMetadata);
+    return msg;
+}
+
+OhmMsgMetatext* OhmMsgFactory::CreateMetatext(TUint aSequence, const Brx& aMetatext)
+{
+    OhmMsgMetatext* msg = iFifoMetatext.Read();
+    msg->Create(aSequence, aMetatext);
+    return msg;
+}
+
+void OhmMsgFactory::Lock()
+{
+    iMutex.Wait();
+}
+
+void OhmMsgFactory::Unlock()
+{
+    iMutex.Signal();
+}
+
+void OhmMsgFactory::Destroy(OhmMsg& aMsg)
+{
+    aMsg.Process(*this);
+}
+
+void OhmMsgFactory::Process(OhmMsgAudio& aMsg)
+{
+    iFifoAudio.Write(&aMsg);
+}
+
+void OhmMsgFactory::Process(OhmMsgTrack& aMsg)
+{
+    iFifoTrack.Write(&aMsg);
+}
+
+void OhmMsgFactory::Process(OhmMsgMetatext& aMsg)
+{
+    iFifoMetatext.Write(&aMsg);
+}

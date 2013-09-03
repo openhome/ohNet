@@ -16,39 +16,39 @@ namespace OpenHome {
 class Environment;
 namespace Av {
 
-	class ProviderSender : public Net::DvProviderAvOpenhomeOrgSender1
-	{
-	    static const TUint kMaxMetadataBytes = 4096;
-	    static const TUint kTimeoutAudioPresentMs = 1000;
-	
-	public:
-	    ProviderSender(Environment& aEnv, Net::DvDevice& aDevice);
-	    
-	    void SetMetadata(const Brx& aValue);
-	    
-	    void SetStatusEnabled();
-	    void SetStatusDisabled();
+    class ProviderSender : public Net::DvProviderAvOpenhomeOrgSender1
+    {
+        static const TUint kMaxMetadataBytes = 4096;
+        static const TUint kTimeoutAudioPresentMs = 1000;
+    
+    public:
+        ProviderSender(Environment& aEnv, Net::DvDevice& aDevice);
+        
+        void SetMetadata(const Brx& aValue);
+        
+        void SetStatusEnabled();
+        void SetStatusDisabled();
         void SetStatusBlocked();
-	    
-	    void InformAudioPresent();
-	    
-	    ~ProviderSender() {}
-	    
-	private:
-	    virtual void PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-	    virtual void Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-	    virtual void Audio(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue);
-	    virtual void Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-	    virtual void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-	
-	    void UpdateMetadata();
-	    void TimerAudioPresentExpired();
-	
-	private:
-	    Bws<kMaxMetadataBytes> iMetadata;
-	    mutable Mutex iMutex;
-	    Timer iTimerAudioPresent;
-	};
+        
+        void InformAudioPresent();
+        
+        ~ProviderSender() {}
+        
+    private:
+        virtual void PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
+        virtual void Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
+        virtual void Audio(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue);
+        virtual void Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
+        virtual void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
+    
+        void UpdateMetadata();
+        void TimerAudioPresentExpired();
+    
+    private:
+        Bws<kMaxMetadataBytes> iMetadata;
+        mutable Mutex iMutex;
+        Timer iTimerAudioPresent;
+    };
 } // namespace Av
 } // namespace OpenHome
 
@@ -63,13 +63,13 @@ ProviderSender::ProviderSender(Environment& aEnv, Net::DvDevice& aDevice)
     , iMutex("PSND")
     , iTimerAudioPresent(aEnv, MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired))
 {
-	EnablePropertyPresentationUrl();
-	EnablePropertyMetadata();
-	EnablePropertyAudio();
-	EnablePropertyStatus();
-	EnablePropertyAttributes();
+    EnablePropertyPresentationUrl();
+    EnablePropertyMetadata();
+    EnablePropertyAudio();
+    EnablePropertyStatus();
+    EnablePropertyAttributes();
 
-	EnableActionPresentationUrl();
+    EnableActionPresentationUrl();
     EnableActionMetadata();
     EnableActionAudio();
     EnableActionStatus();
@@ -84,7 +84,7 @@ ProviderSender::ProviderSender(Environment& aEnv, Net::DvDevice& aDevice)
 
 void ProviderSender::PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue)
 {
-	Brhz value;
+    Brhz value;
     GetPropertyPresentationUrl(value);
     aInvocation.StartResponse();
     aValue.Write(value);
@@ -94,7 +94,7 @@ void ProviderSender::PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvIn
 
 void ProviderSender::Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue)
 {
-	Brhz value;
+    Brhz value;
     GetPropertyMetadata(value);
     aInvocation.StartResponse();
     aValue.Write(value);
@@ -133,7 +133,7 @@ void ProviderSender::Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocat
 
 void ProviderSender::SetMetadata(const Brx& aValue)
 {
-	SetPropertyMetadata(aValue);
+    SetPropertyMetadata(aValue);
 }
 
 static const Brn kStatusEnabled("Enabled");
@@ -170,15 +170,15 @@ void ProviderSender::TimerAudioPresentExpired()
 
 OhmSenderDriver::OhmSenderDriver(Environment& aEnv)
     : iMutex("OHMD")
-	, iEnabled(false)
+    , iEnabled(false)
     , iActive(false)
-	, iSend(false)
+    , iSend(false)
     , iFrame(0)
     , iSamplesTotal(0)
     , iSampleStart(0)
-	, iLatency(100)
+    , iLatency(100)
     , iSocket(aEnv)
-	, iFactory(100, 10, 10)
+    , iFactory(100, 10, 10)
 {
 }
 
@@ -205,29 +205,29 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
         return;
     }
 
-	TUint multiplier = 48000 * 256;
+    TUint multiplier = 48000 * 256;
 
-	if ((iSampleRate % 441) == 0)
-	{
-		multiplier = 44100 * 256;
-	}
+    if ((iSampleRate % 441) == 0)
+    {
+        multiplier = 44100 * 256;
+    }
 
-	TUint latency = iLatency * multiplier / 1000;
+    TUint latency = iLatency * multiplier / 1000;
     
-	if (iFifoHistory.SlotsUsed() == kMaxHistoryFrames) {
-		iFifoHistory.Read()->RemoveRef();
-	}
+    if (iFifoHistory.SlotsUsed() == kMaxHistoryFrames) {
+        iFifoHistory.Read()->RemoveRef();
+    }
 
-	OhmMsgAudio& msg = iFactory.CreateAudio(
-		false,  // halt
+    OhmMsgAudio* msg = iFactory.CreateAudio(
+        false,  // halt
         iLossless,
-		false,
-		false,
+        false,
+        false,
         samples,
         iFrame,
-		0, // network timestamp
-		latency,
-		0,
+        0, // network timestamp
+        latency,
+        0,
         iSampleStart,
         iSamplesTotal,
         iSampleRate,
@@ -236,19 +236,19 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
         iBitDepth,
         iChannels,
         iCodecName,
-		Brn(aData, aBytes)
-	);
+        Brn(aData, aBytes)
+    );
     
-	WriterBuffer writer(iBuffer);
-	writer.Flush();
-	msg.Externalise(writer);
+    WriterBuffer writer(iBuffer);
+    writer.Flush();
+    msg->Externalise(writer);
 
-	msg.SetResent(true);
+    msg->SetResent(true);
 
-	iFifoHistory.Write(&msg);
+    iFifoHistory.Write(msg);
 
     try {
-		iSocket.Send(iBuffer, iEndpoint);
+        iSocket.Send(iBuffer, iEndpoint);
     }
     catch (NetworkError&) {
     }
@@ -264,43 +264,43 @@ void OhmSenderDriver::SetEnabled(TBool aValue)
 {
     AutoMutex mutex(iMutex);
 
-	iEnabled = aValue;
+    iEnabled = aValue;
 
-	if (iSend) {
-		if (!aValue) { // turning off
-			ResetLocked();
-		}
-	}
-	else {
-		if (aValue && iActive) { // turning on
-			iSend = true;
-		}
-	}
+    if (iSend) {
+        if (!aValue) { // turning off
+            ResetLocked();
+        }
+    }
+    else {
+        if (aValue && iActive) { // turning on
+            iSend = true;
+        }
+    }
 }
 
 void OhmSenderDriver::SetActive(TBool aValue)
 {
     AutoMutex mutex(iMutex);
-	
-	iActive = aValue;
+    
+    iActive = aValue;
 
-	if (iSend) {
-		if (!aValue) { // turning off
-			ResetLocked();
-		}
-	}
-	else {
-		if (aValue && iEnabled) { // turning on
-			iSend = true;
-		}
-	}
+    if (iSend) {
+        if (!aValue) { // turning off
+            ResetLocked();
+        }
+    }
+    else {
+        if (aValue && iEnabled) { // turning on
+            iSend = true;
+        }
+    }
 }
 
 void OhmSenderDriver::SetEndpoint(const Endpoint& aEndpoint, TIpAddress aAdapter)
 {
     AutoMutex mutex(iMutex);
     iEndpoint.Replace(aEndpoint);
-	iAdapter = aAdapter;
+    iAdapter = aAdapter;
 }
 
 
@@ -325,17 +325,17 @@ void OhmSenderDriver::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleSta
 
 void OhmSenderDriver::Resend(OhmMsgAudio& aMsg)
 {
-	WriterBuffer writer(iBuffer);
+    WriterBuffer writer(iBuffer);
 
-	writer.Flush();
+    writer.Flush();
 
-	aMsg.Externalise(writer);
+    aMsg.Externalise(writer);
 
-	try {
-		iSocket.Send(iBuffer, iEndpoint);
-	}
-	catch (NetworkError&) {
-	}
+    try {
+        iSocket.Send(iBuffer, iEndpoint);
+    }
+    catch (NetworkError&) {
+    }
 
 }
 
@@ -343,83 +343,83 @@ void OhmSenderDriver::Resend(const Brx& aFrames)
 {
     AutoMutex mutex(iMutex);
 
-	Log::Print("RESEND");
+    Log::Print("RESEND");
 
-	ReaderBuffer buffer(aFrames);
-	ReaderBinary reader(buffer);
+    ReaderBuffer buffer(aFrames);
+    ReaderBinary reader(buffer);
 
-	TUint frames = aFrames.Bytes() / 4;
+    TUint frames = aFrames.Bytes() / 4;
 
-	TUint frame = reader.ReadUintBe(4);
+    TUint frame = reader.ReadUintBe(4);
 
-	frames--;
+    frames--;
 
-	Log::Print(" %lu", (unsigned long)frame);
-	
-	TBool found = false;
+    Log::Print(" %lu", (unsigned long)frame);
+    
+    TBool found = false;
 
-	TUint count = iFifoHistory.SlotsUsed();
+    TUint count = iFifoHistory.SlotsUsed();
 
-	for (TUint i = 0; i < count; i++) {
-		OhmMsgAudio* msg = iFifoHistory.Read();
+    for (TUint i = 0; i < count; i++) {
+        OhmMsgAudio* msg = iFifoHistory.Read();
 
-		if (!found) {
-			TInt diff = frame - msg->Frame();
+        if (!found) {
+            TInt diff = frame - msg->Frame();
 
-			if (diff == 0) {
-				Resend(*msg);
-				if (frames-- > 0) {
-					frame = reader.ReadUintBe(4);
-				}
-				else {
-					found = true;
-				}
-			}
-			else {
-				while (diff < 0) {
-					if (frames-- > 0) {
-						frame = reader.ReadUintBe(4);
-					}
-					else {
-						found = true;
-						break;
-					}
+            if (diff == 0) {
+                Resend(*msg);
+                if (frames-- > 0) {
+                    frame = reader.ReadUintBe(4);
+                }
+                else {
+                    found = true;
+                }
+            }
+            else {
+                while (diff < 0) {
+                    if (frames-- > 0) {
+                        frame = reader.ReadUintBe(4);
+                    }
+                    else {
+                        found = true;
+                        break;
+                    }
 
-					diff = frame - msg->Frame();
+                    diff = frame - msg->Frame();
 
-					if (diff == 0) {
-						Resend(*msg);
+                    if (diff == 0) {
+                        Resend(*msg);
 
-						if (frames-- > 0) {
-							frame = reader.ReadUintBe(4);
-						}
-						else {
-							found = true;
-						}
+                        if (frames-- > 0) {
+                            frame = reader.ReadUintBe(4);
+                        }
+                        else {
+                            found = true;
+                        }
 
-						break;
-					}
-				}
-			}
-		}
+                        break;
+                    }
+                }
+            }
+        }
 
-		iFifoHistory.Write(msg);
-	}
+        iFifoHistory.Write(msg);
+    }
 
-	Log::Print("\n");
+    Log::Print("\n");
 }
 
 void OhmSenderDriver::ResetLocked()
 {
-	iSend = false;
+    iSend = false;
 
-	iFrame = 0;
+    iFrame = 0;
 
-	TUint count = iFifoHistory.SlotsUsed();
+    TUint count = iFifoHistory.SlotsUsed();
 
-	for (TUint i = 0; i < count; i++) {
-		iFifoHistory.Read()->RemoveRef();
-	}
+    for (TUint i = 0; i < count; i++) {
+        iFifoHistory.Read()->RemoveRef();
+    }
 }
 
 // OhmSender
@@ -432,15 +432,15 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver
     , iChannel(aChannel)
     , iInterface(aInterface)
     , iTtl(aTtl)
-	, iLatency(aLatency)
+    , iLatency(aLatency)
     , iMulticast(aMulticast)
-	, iEnabled(false)
-	, iImage(aImage)
-	, iMimeType(aMimeType)
+    , iEnabled(false)
+    , iImage(aImage)
+    , iMimeType(aMimeType)
     , iSocketOhm(aEnv)
     , iSocketOhz(aEnv)
     , iRxBuffer(iSocketOhm)
-	, iRxZone(iSocketOhz)
+    , iRxZone(iSocketOhz)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
     , iMutexZone("OHMZ")
@@ -457,18 +457,18 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver
     , iTimerPresetInfo(aEnv, MakeFunctor(*this, &OhmSender::TimerPresetInfoExpired))
     , iSequenceTrack(0)
     , iSequenceMetatext(0)
-	, iClientControllingTrackMetadata(false)
+    , iClientControllingTrackMetadata(false)
     , iPreset(aPreset)
 {
     iProvider = new ProviderSender(aEnv, iDevice);
  
     iDriver.SetTtl(iTtl);
 
-	LOG(kMedia, "OHM SENDER DRIVER TTL %d\n", iTtl);
+    LOG(kMedia, "OHM SENDER DRIVER TTL %d\n", iTtl);
        
-	iDriver.SetLatency(iLatency);
+    iDriver.SetLatency(iLatency);
 
-	LOG(kMedia, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
+    LOG(kMedia, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
        
     iThreadMulticast = new ThreadFunctor("MTXM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadMulticast->Start();
@@ -479,181 +479,181 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDevice& aDevice, IOhmSenderDriver
     iThreadZone = new ThreadFunctor("MTXZ", MakeFunctor(*this, &OhmSender::RunZone), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadZone->Start();    
 
-	iServer = new SocketTcpServer(aEnv, "OHMS", 0, iInterface);
+    iServer = new SocketTcpServer(aEnv, "OHMS", 0, iInterface);
 
-	iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
+    iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
 
     // scope for AutoMutex
     {
     AutoMutex mutex(iMutexStartStop);
-	StartZone();
+    StartZone();
     }
 
     UpdateChannel();
 
-	SetEnabled(aEnabled);
-	
-	UpdateMetadata();
+    SetEnabled(aEnabled);
+    
+    UpdateMetadata();
 }
 
 const Brx& OhmSender::Image() const
 {
-	return iImage;
+    return iImage;
 }
 
 const Brx& OhmSender::MimeType() const
 {
-	return iMimeType;
+    return iMimeType;
 }
 
 const Brx& OhmSender::SenderUri() const
 {
-	return iSenderUri.AbsoluteUri();
+    return iSenderUri.AbsoluteUri();
 }
 
 const Brx& OhmSender::SenderMetadata() const
 {
-	return iSenderMetadata;
+    return iSenderMetadata;
 }
 
 void OhmSender::SetName(const Brx& aValue)
 {
     AutoMutex mutex(iMutexStartStop);
     
-	if (iName != aValue) {
-		iName.Replace(aValue);
-		UpdateMetadata();
-	}
+    if (iName != aValue) {
+        iName.Replace(aValue);
+        UpdateMetadata();
+    }
 }
 
 void OhmSender::SetChannel(TUint aValue)
 {
     AutoMutex mutex(iMutexStartStop);
 
-	if (iChannel != aValue) {
-		if (iMulticast) {
-			if (iStarted) {
-				Stop();
-				iChannel = aValue;
-				UpdateChannel();
-				Start();
-			}
-			else {
-				iChannel = aValue;
-				UpdateChannel();
-				UpdateUri();
-			}
-		}
-		else {
-			iChannel = aValue;
-			UpdateChannel();
-		}
-	}
+    if (iChannel != aValue) {
+        if (iMulticast) {
+            if (iStarted) {
+                Stop();
+                iChannel = aValue;
+                UpdateChannel();
+                Start();
+            }
+            else {
+                iChannel = aValue;
+                UpdateChannel();
+                UpdateUri();
+            }
+        }
+        else {
+            iChannel = aValue;
+            UpdateChannel();
+        }
+    }
 }
 
 void OhmSender::SetInterface(TIpAddress aValue)
 {
     AutoMutex mutex(iMutexStartStop);
     
-	if (iInterface != aValue) {
-		if (iStarted) {
-			Stop();
-			StopZone();
-			delete iServer;
-			iInterface = aValue;
-			iServer = new SocketTcpServer(iEnv, "OHMS", 0, iInterface);
-			iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
+    if (iInterface != aValue) {
+        if (iStarted) {
+            Stop();
+            StopZone();
+            delete iServer;
+            iInterface = aValue;
+            iServer = new SocketTcpServer(iEnv, "OHMS", 0, iInterface);
+            iServer->Add("OHMS", new OhmSenderSession(iEnv, *this));
             // recreate server before UpdateMetadata() as that function requires the server port
-			UpdateMetadata();
-			StartZone();
-			Start();
-		}
-		else {
-			StopZone();
-			iInterface = aValue;
-			StartZone();
-		}
-	}
+            UpdateMetadata();
+            StartZone();
+            Start();
+        }
+        else {
+            StopZone();
+            iInterface = aValue;
+            StartZone();
+        }
+    }
 }
 
 void OhmSender::SetTtl(TUint aValue)
 {
     AutoMutex mutex(iMutexStartStop);
     
-	if (iTtl != aValue) {
-		if (iStarted) {
-			Stop();
-			iTtl = aValue;
-			iDriver.SetTtl(iTtl);
-			LOG(kMedia, "OHM SENDER DRIVER TTL %d\n", iTtl);
-			Start();
-		}
-		else {
-			iTtl = aValue;
-			iDriver.SetTtl(iTtl);
-			LOG(kMedia, "OHM SENDER DRIVER TTL %d\n", iTtl);
-		}
-	}
+    if (iTtl != aValue) {
+        if (iStarted) {
+            Stop();
+            iTtl = aValue;
+            iDriver.SetTtl(iTtl);
+            LOG(kMedia, "OHM SENDER DRIVER TTL %d\n", iTtl);
+            Start();
+        }
+        else {
+            iTtl = aValue;
+            iDriver.SetTtl(iTtl);
+            LOG(kMedia, "OHM SENDER DRIVER TTL %d\n", iTtl);
+        }
+    }
 }
 
 void OhmSender::SetLatency(TUint aValue)
 {
     AutoMutex mutex(iMutexStartStop);
     
-	if (iLatency != aValue) {
-		if (iStarted) {
-			Stop();
-			iLatency = aValue;
-			iDriver.SetLatency(iLatency);
-			LOG(kMedia, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
-			Start();
-		}
-		else {
-			iLatency = aValue;
-			iDriver.SetLatency(iLatency);
-			LOG(kMedia, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
-		}
-	}
+    if (iLatency != aValue) {
+        if (iStarted) {
+            Stop();
+            iLatency = aValue;
+            iDriver.SetLatency(iLatency);
+            LOG(kMedia, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
+            Start();
+        }
+        else {
+            iLatency = aValue;
+            iDriver.SetLatency(iLatency);
+            LOG(kMedia, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
+        }
+    }
 }
 
 void OhmSender::SetMulticast(TBool aValue)
 {
     AutoMutex mutex(iMutexStartStop);
 
-	if (iMulticast != aValue) {
-		if (iStarted) {
-			Stop();
-			iMulticast = aValue;
-			UpdateMetadata();
-			Start();
-		}
-		else {
-			iMulticast = aValue;
-			UpdateMetadata();
-		}
-	}
+    if (iMulticast != aValue) {
+        if (iStarted) {
+            Stop();
+            iMulticast = aValue;
+            UpdateMetadata();
+            Start();
+        }
+        else {
+            iMulticast = aValue;
+            UpdateMetadata();
+        }
+    }
 }
 
 void OhmSender::SetEnabled(TBool aValue)
 {
     AutoMutex mutex(iMutexStartStop);
 
-	if (iEnabled != aValue) {
-		iEnabled = aValue;
+    if (iEnabled != aValue) {
+        iEnabled = aValue;
 
-		iDriver.SetEnabled(iEnabled);
+        iDriver.SetEnabled(iEnabled);
 
-		LOG(kMedia, "OHM SENDER DRIVER ENABLED %d\n", aValue);
+        LOG(kMedia, "OHM SENDER DRIVER ENABLED %d\n", aValue);
     
-		if (iEnabled) {
-			iProvider->SetStatusEnabled();
-			Start();
-		}
-		else {
-			Stop();
-			iProvider->SetStatusDisabled();
-		}
-	}
+        if (iEnabled) {
+            iProvider->SetStatusEnabled();
+            Start();
+        }
+        else {
+            Stop();
+            iProvider->SetStatusDisabled();
+        }
+    }
 }
 
 // Start always called with the start/stop mutex locked
@@ -664,12 +664,12 @@ void OhmSender::Start()
         if (iMulticast) {
             iSocketOhm.OpenMulticast(iInterface, iTtl, iMulticastEndpoint);
             iTargetEndpoint.Replace(iMulticastEndpoint);
-			iTargetInterface = iInterface;
+            iTargetInterface = iInterface;
             iThreadMulticast->Signal();
         }
         else {
             iSocketOhm.OpenUnicast(iInterface, iTtl);
-			iTargetInterface = iInterface;
+            iTargetInterface = iInterface;
             iThreadUnicast->Signal();
         }
         iStarted = true;
@@ -683,16 +683,16 @@ void OhmSender::Start()
 void OhmSender::Stop()
 {
     if (iStarted) {
-		LOG(kMedia, "STOP INTERRUPT\n");
+        LOG(kMedia, "STOP INTERRUPT\n");
         iSocketOhm.ReadInterrupt();
-		LOG(kMedia, "STOP WAIT\n");
+        LOG(kMedia, "STOP WAIT\n");
         iNetworkDeactivated.Wait();
-		LOG(kMedia, "STOP CLOSE\n");
+        LOG(kMedia, "STOP CLOSE\n");
         iSocketOhm.Close();
         iStarted = false;
-		LOG(kMedia, "STOP UPDATE\n");
+        LOG(kMedia, "STOP UPDATE\n");
         UpdateUri();
-		LOG(kMedia, "STOP DONE\n");
+        LOG(kMedia, "STOP DONE\n");
     }
 }
 
@@ -700,22 +700,22 @@ void OhmSender::StopZone()
 {
     iSocketOhz.ReadInterrupt();
     iZoneDeactivated.Wait();
-	iTimerZoneUri.Cancel();
-	iTimerPresetInfo.Cancel();
+    iTimerZoneUri.Cancel();
+    iTimerPresetInfo.Cancel();
     iSocketOhz.Close();
 }
 
 void OhmSender::StartZone()
 {
     iSocketOhz.Open(iInterface, iTtl);
-	iThreadZone->Signal();
+    iThreadZone->Signal();
 }
 
 void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart)
 {
     AutoMutex mutex(iMutexActive);
 
-	iClientControllingTrackMetadata = true;
+    iClientControllingTrackMetadata = true;
     iDriver.SetTrackPosition(aSamplesTotal, aSampleStart);
     iSequenceTrack++;
     iSequenceMetatext = 0;
@@ -742,30 +742,30 @@ void OhmSender::SetMetatext(const Brx& aValue)
 
 void OhmSender::SetPreset(TUint aValue)
 {
-	AutoMutex mutex(iMutexZone);
-	iPreset = aValue;
+    AutoMutex mutex(iMutexZone);
+    iPreset = aValue;
 }
     
 OhmSender::~OhmSender()
 {
     LOG(kMedia, "OhmSender::~OhmSender\n");
 
-	iEnabled = false;
+    iEnabled = false;
 
-	iDriver.SetEnabled(false);
+    iDriver.SetEnabled(false);
 
-	LOG(kMedia, "OhmSender::~OhmSender disabled driver\n");
+    LOG(kMedia, "OhmSender::~OhmSender disabled driver\n");
 
     // scope for AutoMutex
     {
     AutoMutex mutex(iMutexStartStop);
     Stop();
-	StopZone();
+    StopZone();
     }
 
     LOG(kMedia, "OhmSender::~OhmSender stopped\n");
 
-	delete iThreadZone;
+    delete iThreadZone;
 
     LOG(kMedia, "OhmSender::~OhmSender deleted zone thread\n");
 
@@ -773,7 +773,7 @@ OhmSender::~OhmSender()
 
     LOG(kMedia, "OhmSender::~OhmSender deleted tcp server\n");
 
-	delete iThreadUnicast;
+    delete iThreadUnicast;
 
     LOG(kMedia, "OhmSender::~OhmSender deleted unicast thread\n");
 
@@ -781,9 +781,9 @@ OhmSender::~OhmSender()
 
     LOG(kMedia, "OhmSender::~OhmSender deleted multicast thread\n");
 
-	delete iProvider;
+    delete iProvider;
 
-	LOG(kMedia, "OhmSender::~OhmSender deleted provider\n");
+    LOG(kMedia, "OhmSender::~OhmSender deleted provider\n");
 }
 
 //  This runs a little state machine where the current state is reflected by:
@@ -805,9 +805,9 @@ void OhmSender::RunMulticast()
 
         LOG(kMedia, "OhmSender::RunMulticast go\n");
         
-		iDriver.SetEndpoint(iTargetEndpoint, iTargetInterface);
+        iDriver.SetEndpoint(iTargetEndpoint, iTargetInterface);
 
-		LOG(kMedia, "OHM SENDER DRIVER ENDPOINT %x:%d\n", iTargetEndpoint.Address(), iTargetEndpoint.Port());
+        LOG(kMedia, "OHM SENDER DRIVER ENDPOINT %x:%d\n", iTargetEndpoint.Address(), iTargetEndpoint.Port());
 
         try {
             for (;;) {
@@ -825,62 +825,62 @@ void OhmSender::RunMulticast()
                             SendMetatext();
                         }
                         
-						if (!iActive) {
-							iActive = true;
-	                        iDriver.SetActive(true);
-							LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
-						}
+                        if (!iActive) {
+                            iActive = true;
+                            iDriver.SetActive(true);
+                            LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
+                        }
                         
-						iAliveJoined = true;
+                        iAliveJoined = true;
 
                         iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
                     }
-					else if (header.MsgType() == OhmHeader::kMsgTypeResend) {
+                    else if (header.MsgType() == OhmHeader::kMsgTypeResend) {
                         LOG(kMedia, "OhmSender::RunMulticast resend received\n");
 
-						OhmHeaderResend headerResend;
-						headerResend.Internalise(iRxBuffer, header);
+                        OhmHeaderResend headerResend;
+                        headerResend.Internalise(iRxBuffer, header);
 
-						TUint frames = headerResend.FramesCount();
+                        TUint frames = headerResend.FramesCount();
 
-						if (frames > 0) {
-							iDriver.Resend(iRxBuffer.Read(frames * 4));
-						}
-					}
-					else if (header.MsgType() == OhmHeader::kMsgTypeAudio) {
-						// Check sender not us
+                        if (frames > 0) {
+                            iDriver.Resend(iRxBuffer.Read(frames * 4));
+                        }
+                    }
+                    else if (header.MsgType() == OhmHeader::kMsgTypeAudio) {
+                        // Check sender not us
 
-						Endpoint sender = iSocketOhm.Sender();
+                        Endpoint sender = iSocketOhm.Sender();
 
-						if (sender.Address() != iInterface) {
-	                        LOG(kMedia, "OhmSender::RunMulticast audio received\n");
+                        if (sender.Address() != iInterface) {
+                            LOG(kMedia, "OhmSender::RunMulticast audio received\n");
 
-							// The following randomisation prevents two senders from both sending,
-							// both seeing each other's audio, both backing off for the same amount of time,
-							// then both sending again, then both seeing each other's audio again,
-							// then both backing off for the same amount of time ...
+                            // The following randomisation prevents two senders from both sending,
+                            // both seeing each other's audio, both backing off for the same amount of time,
+                            // then both sending again, then both seeing each other's audio again,
+                            // then both backing off for the same amount of time ...
                         
-							TUint delay = iEnv.Random(kTimerAliveAudioTimeoutMs, kTimerAliveAudioTimeoutMs >> 1);
+                            TUint delay = iEnv.Random(kTimerAliveAudioTimeoutMs, kTimerAliveAudioTimeoutMs >> 1);
 
                             // scope for AutoMutex
                             {
                             AutoMutex mutex(iMutexActive);
                         
-							if (iActive) {
-								iActive = false;
-								iDriver.SetActive(false);
-								LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
-							} 
+                            if (iActive) {
+                                iActive = false;
+                                iDriver.SetActive(false);
+                                LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
+                            } 
 
-							iAliveBlocked = true;
+                            iAliveBlocked = true;
 
-							iTimerAliveAudio.FireIn(delay);
+                            iTimerAliveAudio.FireIn(delay);
                             }
 
-							LOG(kMedia, "OhmSender::RunMulticast blocked\n");
+                            LOG(kMedia, "OhmSender::RunMulticast blocked\n");
 
-							iProvider->SetStatusBlocked();
-						}
+                            iProvider->SetStatusBlocked();
+                        }
                     }
                 }
                 catch (OhmError&)
@@ -906,7 +906,7 @@ void OhmSender::RunMulticast()
         if (iActive) {
             iActive = false;
             iDriver.SetActive(false);
-			LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
+            LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
         } 
 
         iAliveJoined = false;
@@ -955,11 +955,11 @@ void OhmSender::RunUnicast()
 
                 iTargetEndpoint.Replace(iSocketOhm.Sender());
 
-				iDriver.SetEndpoint(iTargetEndpoint, iTargetInterface);
+                iDriver.SetEndpoint(iTargetEndpoint, iTargetInterface);
 
-				LOG(kMedia, "OHM SENDER DRIVER ENDPOINT %x:%d\n", iTargetEndpoint.Address(), iTargetEndpoint.Port());
+                LOG(kMedia, "OHM SENDER DRIVER ENDPOINT %x:%d\n", iTargetEndpoint.Address(), iTargetEndpoint.Port());
         
-				SendTrack();
+                SendTrack();
                 SendMetatext();
             
                 iSlaveCount = 0;
@@ -973,7 +973,7 @@ void OhmSender::RunUnicast()
 
                 iDriver.SetActive(true);
 
-				LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", true);
+                LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", true);
                 }
                 
                 iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
@@ -1052,8 +1052,8 @@ void OhmSender::RunUnicast()
                             Endpoint sender(iSocketOhm.Sender());
 
                             if (sender.Equals(iTargetEndpoint) || sender.Equals(iSocketOhm.This())) {
-						        iTimerExpiry.Cancel();
-                    			if (iSlaveCount == 0) {
+                                iTimerExpiry.Cancel();
+                                if (iSlaveCount == 0) {
                                     if (sender.Equals(iTargetEndpoint)) {
                                         AutoMutex mutex(iMutexActive);
                                         SendLeave(sender);
@@ -1063,19 +1063,19 @@ void OhmSender::RunUnicast()
                                 else {
                                     AutoMutex mutex(iMutexActive);
                                     
-									SendLeave(sender);
+                                    SendLeave(sender);
                                     
-									iTargetEndpoint.Replace(iSlaveList[--iSlaveCount]);
+                                    iTargetEndpoint.Replace(iSlaveList[--iSlaveCount]);
                                     
-									iTimerExpiry.FireAt(iSlaveExpiry[iSlaveCount]);
+                                    iTimerExpiry.FireAt(iSlaveExpiry[iSlaveCount]);
                                     
-									if (iSlaveCount > 0) {
+                                    if (iSlaveCount > 0) {
                                         SendSlaveList();
                                     }
                                     
-									iDriver.SetEndpoint(iTargetEndpoint, iTargetInterface);
+                                    iDriver.SetEndpoint(iTargetEndpoint, iTargetInterface);
 
-									LOG(kMedia, "OHM SENDER DRIVER ENDPOINT %x:%d\n", iTargetEndpoint.Address(), iTargetEndpoint.Port());
+                                    LOG(kMedia, "OHM SENDER DRIVER ENDPOINT %x:%d\n", iTargetEndpoint.Address(), iTargetEndpoint.Port());
                                 }
                             }
                             else {
@@ -1089,18 +1089,18 @@ void OhmSender::RunUnicast()
                                 }
                             }
                         }
-						else if (header.MsgType() == OhmHeader::kMsgTypeResend) {
-							LOG(kMedia, "OhmSender::RunMulticast resend received\n");
+                        else if (header.MsgType() == OhmHeader::kMsgTypeResend) {
+                            LOG(kMedia, "OhmSender::RunMulticast resend received\n");
 
-							OhmHeaderResend headerResend;
-							headerResend.Internalise(iRxBuffer, header);
+                            OhmHeaderResend headerResend;
+                            headerResend.Internalise(iRxBuffer, header);
 
-							TUint frames = headerResend.FramesCount();
+                            TUint frames = headerResend.FramesCount();
 
-							if (frames > 0) {
-								iDriver.Resend(iRxBuffer.Read(frames * 4));
-							}
-						}
+                            if (frames > 0) {
+                                iDriver.Resend(iRxBuffer.Read(frames * 4));
+                            }
+                        }
                     }
                     catch (OhmError&)
                     {
@@ -1114,20 +1114,20 @@ void OhmSender::RunUnicast()
                 AutoMutex mutex(iMutexActive);
                 iActive = false;
 
-				iAliveJoined = false;               
+                iAliveJoined = false;               
 
-				iDriver.SetActive(false);
+                iDriver.SetActive(false);
 
-				LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
+                LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
             }
         }
         catch (ReaderError&) {
             LOG(kMedia, "OhmSender::RunUnicast reader error\n");
         }
 
-		iRxBuffer.ReadFlush();
+        iRxBuffer.ReadFlush();
 
-		iTimerExpiry.Cancel();
+        iTimerExpiry.Cancel();
 
         // scope for AutoMutex
         {
@@ -1136,16 +1136,16 @@ void OhmSender::RunUnicast()
         if (iActive) {
             iActive = false;
 
-			iDriver.SetActive(false);
-			
-			LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
+            iDriver.SetActive(false);
+            
+            LOG(kMedia, "OHM SENDER DRIVER ACTIVE %d\n", iActive);
         } 
 
         iAliveJoined = false;
         iAliveBlocked = false;
         }
 
-		iNetworkDeactivated.Signal();
+        iNetworkDeactivated.Signal();
         
         LOG(kMedia, "OhmSender::RunUnicast stop\n");
     }
@@ -1203,23 +1203,23 @@ void OhmSender::UpdateChannel()
 
 void OhmSender::UpdateUri()
 {
-	AutoMutex mutex(iMutexZone);
+    AutoMutex mutex(iMutexZone);
 
-	if (iStarted) {
-		if (iMulticast) {
-			iUri.Replace("ohm://");
-			iMulticastEndpoint.AppendEndpoint(iUri);
-		}
-		else {
-			iUri.Replace("ohu://");
-			iSocketOhm.This().AppendEndpoint(iUri);
-		}
-	}
-	else {
-			iUri.Replace("ohu://0.0.0.0:0");
-	}
+    if (iStarted) {
+        if (iMulticast) {
+            iUri.Replace("ohm://");
+            iMulticastEndpoint.AppendEndpoint(iUri);
+        }
+        else {
+            iUri.Replace("ohu://");
+            iSocketOhm.This().AppendEndpoint(iUri);
+        }
+    }
+    else {
+            iUri.Replace("ohu://0.0.0.0:0");
+    }
 
-	SendZoneUri(3);
+    SendZoneUri(3);
 }
 
 void OhmSender::UpdateMetadata()
@@ -1231,44 +1231,44 @@ void OhmSender::UpdateMetadata()
     iSenderMetadata.Append("</dc:title>");
     
     if (iMulticast) {
-	    iSenderMetadata.Append("<res protocolInfo=\"ohz:*:*:m\">");
-	}
-	else {
-	    iSenderMetadata.Append("<res protocolInfo=\"ohz:*:*:u\">");
-	}
+        iSenderMetadata.Append("<res protocolInfo=\"ohz:*:*:m\">");
+    }
+    else {
+        iSenderMetadata.Append("<res protocolInfo=\"ohz:*:*:u\">");
+    }
 
-	iSenderUri.Replace(Brn("ohz://239.255.255.250:51972/"), iDevice.Udn());
+    iSenderUri.Replace(Brn("ohz://239.255.255.250:51972/"), iDevice.Udn());
 
-	iSenderMetadata.Append(iSenderUri.AbsoluteUri());
+    iSenderMetadata.Append(iSenderUri.AbsoluteUri());
     iSenderMetadata.Append("</res>");
     
-	if (iImage.Bytes() > 0)
-	{
-		iSenderMetadata.Append("<upnp:albumArtURI>");
-		iSenderMetadata.Append("http://");
-		Endpoint(iServer->Port(), iInterface).AppendEndpoint(iSenderMetadata);
-		iSenderMetadata.Append("/icon");
-		iSenderMetadata.Append("</upnp:albumArtURI>");
-	}
-		
-	iSenderMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
+    if (iImage.Bytes() > 0)
+    {
+        iSenderMetadata.Append("<upnp:albumArtURI>");
+        iSenderMetadata.Append("http://");
+        Endpoint(iServer->Port(), iInterface).AppendEndpoint(iSenderMetadata);
+        iSenderMetadata.Append("/icon");
+        iSenderMetadata.Append("</upnp:albumArtURI>");
+    }
+        
+    iSenderMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
     iSenderMetadata.Append("</item>");
     iSenderMetadata.Append("</DIDL-Lite>");
 
-	if (!iClientControllingTrackMetadata) {
-		AutoMutex mutex(iMutexActive);
-	
-		iTrackMetadata.Replace(iSenderMetadata);
-		
-		iSequenceTrack++;
-		iSequenceMetatext = 0;
+    if (!iClientControllingTrackMetadata) {
+        AutoMutex mutex(iMutexActive);
     
-		if (iActive) {
-			SendTrack();
-		}
-	}
+        iTrackMetadata.Replace(iSenderMetadata);
+        
+        iSequenceTrack++;
+        iSequenceMetatext = 0;
+    
+        if (iActive) {
+            SendTrack();
+        }
+    }
 
-	iProvider->SetMetadata(iSenderMetadata);
+    iProvider->SetMetadata(iSenderMetadata);
 }
 
 void OhmSender::Send()
@@ -1428,63 +1428,63 @@ void OhmSender::RunZone()
 
         LOG(kMedia, "OhmSender::RunZone go\n");
         
-		try {
-			for (;;) {
-				OhzHeader header;
-	        
-        		try {
-					header.Internalise(iRxZone);
-				}
-				catch (OhzError&) {
-			        LOG(kMedia, "OhmSender::RunZone received error\n");
-					iRxZone.ReadFlush();
-	           		continue;
-				}
+        try {
+            for (;;) {
+                OhzHeader header;
+            
+                try {
+                    header.Internalise(iRxZone);
+                }
+                catch (OhzError&) {
+                    LOG(kMedia, "OhmSender::RunZone received error\n");
+                    iRxZone.ReadFlush();
+                       continue;
+                }
 
-				if (header.MsgType() == OhzHeader::kMsgTypeZoneQuery) {
-					OhzHeaderZoneQuery headerZoneQuery;
-					headerZoneQuery.Internalise(iRxZone, header);
+                if (header.MsgType() == OhzHeader::kMsgTypeZoneQuery) {
+                    OhzHeaderZoneQuery headerZoneQuery;
+                    headerZoneQuery.Internalise(iRxZone, header);
 
-					Brn zone = iRxZone.Read(headerZoneQuery.ZoneBytes());
+                    Brn zone = iRxZone.Read(headerZoneQuery.ZoneBytes());
 
-			        LOG(kMedia, "OhmSender::RunZone received zone query for ");
-					LOG(kMedia, zone);
-					LOG(kMedia, "\n");
+                    LOG(kMedia, "OhmSender::RunZone received zone query for ");
+                    LOG(kMedia, zone);
+                    LOG(kMedia, "\n");
                 
-					if (zone == iDevice.Udn())
-					{
-	                    AutoMutex mutex(iMutexZone);
-						SendZoneUri(1);
-					}
-				}
-				else if (header.MsgType() == OhzHeader::kMsgTypePresetQuery) {
-			        LOG(kMedia, "OhmSender::RunZone received preset query\n");
-					OhzHeaderPresetQuery headerPresetQuery;
-					headerPresetQuery.Internalise(iRxZone, header);
-					TUint preset = headerPresetQuery.Preset();
+                    if (zone == iDevice.Udn())
+                    {
+                        AutoMutex mutex(iMutexZone);
+                        SendZoneUri(1);
+                    }
+                }
+                else if (header.MsgType() == OhzHeader::kMsgTypePresetQuery) {
+                    LOG(kMedia, "OhmSender::RunZone received preset query\n");
+                    OhzHeaderPresetQuery headerPresetQuery;
+                    headerPresetQuery.Internalise(iRxZone, header);
+                    TUint preset = headerPresetQuery.Preset();
 
-					if (preset > 0) {
-	                    AutoMutex mutex(iMutexZone);
-						if (preset == iPreset) {
-							SendPresetInfo(1);
-						}
-					}
-				}
+                    if (preset > 0) {
+                        AutoMutex mutex(iMutexZone);
+                        if (preset == iPreset) {
+                            SendPresetInfo(1);
+                        }
+                    }
+                }
 
-				else {
-					LOG(kMedia, "OhmSender::RunZone received message type %d\n", header.MsgType());
-				}
+                else {
+                    LOG(kMedia, "OhmSender::RunZone received message type %d\n", header.MsgType());
+                }
 
-				iRxZone.ReadFlush();
-			}
-		}
-		catch (ReaderError&) { // ReaderError is thrown when shutdown is called to close the thread
-		}
+                iRxZone.ReadFlush();
+            }
+        }
+        catch (ReaderError&) { // ReaderError is thrown when shutdown is called to close the thread
+        }
 
         iZoneDeactivated.Signal();
         
         LOG(kMedia, "OhmSender::RunZone stop\n");
-	}
+    }
 }
 
 // called with zone mutex locked
@@ -1492,12 +1492,12 @@ void OhmSender::RunZone()
 void OhmSender::SendZoneUri(TUint aCount)
 {
     iSendZoneUriCount = aCount;
-	iTimerZoneUri.FireIn(0);
+    iTimerZoneUri.FireIn(0);
 }
 
 void OhmSender::SendZoneUri()
 {
-	ASSERT(iSendZoneUriCount <= 3);
+    ASSERT(iSendZoneUriCount <= 3);
 
     try
     {
@@ -1514,7 +1514,7 @@ void OhmSender::SendZoneUri()
         
         LOG(kMedia, "OhmSender::SendZoneUri %d\n", iSendZoneUriCount);
 
-		iSocketOhz.Send(iTxZone);
+        iSocketOhz.Send(iTxZone);
         
         iSendZoneUriCount--;
     }
@@ -1538,7 +1538,7 @@ void OhmSender::SendZoneUri()
 
 void OhmSender::SendPresetInfo(TUint aCount)
 {
-	iSendPresetInfoCount = aCount;
+    iSendPresetInfoCount = aCount;
 
     SendPresetInfo();
 }
@@ -1547,7 +1547,7 @@ void OhmSender::SendPresetInfo()
 {
     try
     {
-    	OhzHeaderPresetInfo headerPresetInfo(iPreset, iSenderMetadata);
+        OhzHeaderPresetInfo headerPresetInfo(iPreset, iSenderMetadata);
         OhzHeader header(OhzHeader::kMsgTypePresetInfo, headerPresetInfo.MsgBytes());
 
         WriterBuffer writer(iTxZone);
@@ -1591,7 +1591,7 @@ void OhmSender::TimerPresetInfoExpired()
 // OhmSender must run an http server just to serve up the image that it is constructed with and that is reported in its metadata
 
 OhmSenderSession::OhmSenderSession(Environment& aEnv, const OhmSender& aSender)
-	: iSender(aSender)
+    : iSender(aSender)
     , iSemaphore("OHMS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
@@ -1619,7 +1619,7 @@ void OhmSenderSession::Run()
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     
-	try {
+    try {
         try {
             iReaderRequest->Read();
         }
@@ -1635,9 +1635,9 @@ void OhmSenderSession::Run()
         if (method == Http::kMethodGet) {
             Get(true);
         }
-		else {
-			Get(false);
-		}
+        else {
+            Get(false);
+        }
     }
     catch (HttpError&) {
         iErrorStatus = &HttpStatus::kMethodNotAllowed;
@@ -1648,7 +1648,7 @@ void OhmSenderSession::Run()
     catch (WriterError&) {
     }
     
-	try {
+    try {
         if (!iResponseStarted) {
             if (iErrorStatus == &HttpStatus::kOk) {
                 iErrorStatus = &HttpStatus::kNotFound;
@@ -1662,7 +1662,7 @@ void OhmSenderSession::Run()
         }
     }
     catch (WriterError&) {
-	}
+    }
 
     iSemaphore.Signal();
 }
@@ -1681,7 +1681,7 @@ void OhmSenderSession::Get(TBool aWriteEntity)
         }
     }
 
-	if (iHeaderExpect.Continue()) {
+    if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
         iWriterResponse->WriteFlush();
     }
@@ -1690,20 +1690,20 @@ void OhmSenderSession::Get(TBool aWriteEntity)
 
     Http::WriteHeaderContentLength(*iWriterResponse, iSender.Image().Bytes());
 
-	IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
-	writer.Write(iSender.MimeType());
-	writer.Write(Brn("; charset=\"utf-8\""));
-	writer.WriteFlush();
+    IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
+    writer.Write(iSender.MimeType());
+    writer.Write(Brn("; charset=\"utf-8\""));
+    writer.WriteFlush();
 
-	Http::WriteHeaderConnectionClose(*iWriterResponse);
+    Http::WriteHeaderConnectionClose(*iWriterResponse);
 
     iWriterResponse->WriteFlush();
 
     iResponseStarted = true;
 
-	if (aWriteEntity) {
-		iWriterBuffer->Write(iSender.Image());
-	}
+    if (aWriteEntity) {
+        iWriterBuffer->Write(iSender.Image());
+    }
 
     iWriterBuffer->WriteFlush();
 }
