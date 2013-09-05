@@ -68,7 +68,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv6, iOs-armv7, iOs-x86")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-x86")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -115,6 +115,7 @@ class JenkinsBuild():
                 'iOs-x86': { 'os': 'iOs', 'arch':'x86', 'publish':True, 'system':'iOs'},
                 'iOs-armv7': { 'os': 'iOs', 'arch':'armv7', 'publish':True, 'system':'iOs'},
                 'Core-ppc32': { 'os': 'Core', 'arch':'ppc32', 'publish':True, 'system':'Core'},
+                'Core-armv5': { 'os': 'Core', 'arch':'armv5', 'publish':True, 'system':'Core'},
                 'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':True, 'system':'Core'},
                 'Android-anycpu': { 'os': 'Android', 'arch':'anycpu', 'publish':True, 'system':'Android'},
         }
@@ -136,7 +137,7 @@ class JenkinsBuild():
             os.environ['CROSS_COMPILE'] = '/usr/local/arm-2011.09/bin/arm-none-linux-gnueabi-'
         if os_platform == 'Core' and arch == 'ppc32':
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/powerpc-rtems4.11-'
-        if os_platform == 'Core' and arch == 'armv6':
+        if os_platform == 'Core' and (arch == 'armv5' or arch == 'armv6'):
             os.environ['CROSS_COMPILE'] = '/opt/rtems-4.11/bin/arm-rtemseabi4.11-'
 
         self.platform_args = args
@@ -152,7 +153,7 @@ class JenkinsBuild():
 
         self.platform_make_args = []
 
-        if (arch in ['armel', 'armhf', 'armv7', 'armv6']) or (arch == 'ppc32' and os_platform == 'Core') or (os_platform == 'Android'):
+        if (arch in ['armel', 'armhf', 'armv7', 'armv5', 'armv6']) or (arch == 'ppc32' and os_platform == 'Core') or (os_platform == 'Android'):
             args.append('--buildonly')
         elif arch == 'x64':
             args.append('--native')

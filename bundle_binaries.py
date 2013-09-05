@@ -62,6 +62,8 @@ ALL_TARGETS = {
         BuildTarget("iOs",     "armv6", "Release"): BuildInfo(builddir="Build/Obj/iOs-armv6/Release"),
         BuildTarget("iOs",     "armv7", "Release"): BuildInfo(builddir="Build/Obj/iOs-armv7/Release"),
 
+        BuildTarget("Core",    "armv5", "Debug"):   BuildInfo(builddir="Build/Obj/Core-armv5/Debug"),
+        BuildTarget("Core",    "armv5", "Release"): BuildInfo(builddir="Build/Obj/Core-armv5/Release"),
         BuildTarget("Core",    "armv6", "Debug"):   BuildInfo(builddir="Build/Obj/Core-armv6/Debug"),
         BuildTarget("Core",    "armv6", "Release"): BuildInfo(builddir="Build/Obj/Core-armv6/Release"),
         BuildTarget("Core",    "ppc32", "Debug"):   BuildInfo(builddir="Build/Obj/Core-ppc32/Debug"),
