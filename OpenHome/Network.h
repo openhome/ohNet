@@ -3,6 +3,7 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/OsTypes.h>
@@ -281,6 +282,67 @@ private:
     SocketUdpBase& iSocket;
     Endpoint iEndpoint;
     TBool iOpen;
+};
+
+/**
+ * Storage class for the output of a UdpSocketBase::Receive call
+ */
+class MsgUdp
+{
+public:
+    MsgUdp(TUint aMaxSize);
+    MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint);
+    ~MsgUdp();
+    Bwx& Buffer();
+    Endpoint& GetEndpoint();
+    void Clear();
+private:
+    Bwh* iBuf;
+    Endpoint iEndpoint;
+};
+
+/**
+ * Class for a continuously running server which buffers packets while active
+ * and discards packets when deactivated
+ */
+class SocketUdpServer : public SocketUdp
+{
+public:
+    SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
+    ~SocketUdpServer();
+    void Open();
+    void Close();
+public: // from SocketUdpBase
+    Endpoint Receive(Bwx& aBuffer); // definitely needs overridden as incoming packets are buffered (or disposed of); need to ASSERT(!iOpen when this is called)
+private:
+    void ServerThread();
+private:
+    TUint iMaxSize;
+    TBool iOpen;
+    Fifo<MsgUdp*> iFifoWaiting;
+    Fifo<MsgUdp*> iFifoReady;
+    Semaphore iSem;
+    ThreadFunctor* iServerThread;
+    TBool iQuit;
+};
+
+/**
+ * Class for managing a collection of SocketUdpServers. UdpServerManager owns
+ * all the SocketUdpServers contained within it.
+ */
+class UdpServerManager
+{
+public:
+    UdpServerManager(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets);
+    ~UdpServerManager();
+    TUint CreateServer(TUint aPort = 0, TIpAddress aInterface = 0); // return ID of server
+    SocketUdpServer& Find(TUint aId); // find server by ID
+private:
+    std::vector<SocketUdpServer*> iServers;
+    Environment& iEnv;
+    TUint iMaxSize;
+    TUint iMaxPackets;
+    Mutex iLock;
 };
 
 } // namespace OpenHome

@@ -869,3 +869,177 @@ void UdpWriter::WriteFlush()
 {
     iOpen = true;
 }
+
+
+// MsgUdp
+
+MsgUdp::MsgUdp(TUint aMaxSize)
+    : iEndpoint()
+{
+    iBuf = new Bwh(aMaxSize);
+}
+
+MsgUdp::MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint)
+    : iEndpoint(aEndpoint)
+{
+    iBuf = new Bwh(aMaxSize);
+}
+
+MsgUdp::~MsgUdp()
+{
+    delete iBuf;
+}
+
+Bwx& MsgUdp::Buffer()
+{
+    return *iBuf;
+}
+
+Endpoint& MsgUdp::GetEndpoint()
+{
+    return iEndpoint;
+}
+
+void MsgUdp::Clear()
+{
+    Endpoint ep(0, 0);
+    iEndpoint.Replace(ep);
+    iBuf->SetBytes(0);
+}
+
+
+// SocketUdpServer
+
+SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort, TIpAddress aInterface)
+    : SocketUdp(aEnv, aPort, aInterface)
+    , iMaxSize(aMaxSize)
+    , iOpen(true)
+    , iFifoWaiting(aMaxPackets+1)
+    , iFifoReady(aMaxPackets)
+    , iSem("UDPS", 0)
+    , iQuit(false)
+{
+    // populate iFifoWaiting with empty packets/bufs
+    while (iFifoWaiting.SlotsFree() > 0) {
+        iFifoWaiting.Write(new MsgUdp(iMaxSize));
+    }
+
+    iServerThread = new ThreadFunctor("UDPS", MakeFunctor(*this, &SocketUdpServer::ServerThread));
+    iServerThread->Start();
+}
+
+SocketUdpServer::~SocketUdpServer()
+{
+    iQuit = true;
+    Interrupt(true);
+    delete iServerThread;
+    while (iFifoReady.SlotsUsed() > 0) {
+        MsgUdp* msg = iFifoReady.Read();
+        delete msg;
+    }
+    while (iFifoWaiting.SlotsUsed() > 0) {
+        MsgUdp* msg = iFifoWaiting.Read();
+        delete msg;
+    }
+}
+
+void SocketUdpServer::Open()
+{
+    iOpen = true;
+}
+
+void SocketUdpServer::Close()
+{
+    iOpen = false;
+}
+
+Endpoint SocketUdpServer::Receive(Bwx& aBuffer)
+{
+    ASSERT(iOpen);
+    // ensure there is a msg to read from
+    if (iFifoReady.SlotsUsed() == 0) {
+        iSem.Wait();
+    }
+
+    // get data from msg
+    MsgUdp* msg = iFifoReady.Peek(); // peek in case this ASSERTs
+    Bwx& buf = msg->Buffer();
+    ASSERT(aBuffer.MaxBytes() >= buf.Bytes());
+    aBuffer.Replace(buf);           // FIXME - does this take a copy or hold a reference?
+    Endpoint ep;
+    ep.Replace(msg->GetEndpoint());
+
+    // requeue msg
+    msg->Clear();
+    msg = iFifoReady.Read(); // msg hadn't been popped yet; only peeked
+    iFifoWaiting.Write(msg);
+
+    return ep;
+}
+
+void SocketUdpServer::ServerThread()
+{
+    // continually read incoming packets
+    while (!iQuit) {
+        ASSERT(iFifoWaiting.SlotsUsed() > 0);
+        // read data into next msg
+        MsgUdp* msg = iFifoWaiting.Peek();
+        Bwx& buf = msg->Buffer();
+        ASSERT(buf.Bytes() == 0);
+        Endpoint& ep = msg->GetEndpoint();
+
+        try {
+            ep.Replace(SocketUdp::Receive(buf));
+        }
+        catch (NetworkError&) {
+            // nothing we can do to recover packet, or Interrupt has been
+            // called on path to server quitting
+            continue;
+        }
+
+        // if server is open and iFifoReady has a free slot, queue packet
+        if (iOpen && (iFifoReady.SlotsFree() > 0)) {
+            msg = iFifoWaiting.Read();
+            iFifoReady.Write(msg);
+            iSem.Signal();
+        }
+        // if server closed, clear msg
+        else {
+            msg->Clear();
+        }
+    }
+}
+
+
+// UdpServerManager
+
+UdpServerManager::UdpServerManager(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets)
+    : iEnv(aEnv)
+    , iMaxSize(aMaxSize)
+    , iMaxPackets(aMaxPackets)
+    , iLock("USML")
+{
+}
+
+UdpServerManager::~UdpServerManager()
+{
+    AutoMutex a(iLock);
+    for (size_t i=0; i<iServers.size(); i++) {
+        delete iServers[i];
+    }
+}
+
+TUint UdpServerManager::CreateServer(TUint aPort, TIpAddress aInterface)
+{
+    AutoMutex a(iLock);
+    SocketUdpServer* server = new SocketUdpServer(iEnv, iMaxSize, iMaxPackets, aPort, aInterface);
+    iServers.push_back(server);
+    return iServers.size()-1;
+}
+
+SocketUdpServer& UdpServerManager::Find(TUint aId)
+{
+    AutoMutex a(iLock);
+    ASSERT(aId < iServers.size());
+    return *(iServers[aId]);
+}
