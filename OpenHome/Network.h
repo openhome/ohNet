@@ -321,7 +321,9 @@ private:
     TBool iOpen;
     Fifo<MsgUdp*> iFifoWaiting;
     Fifo<MsgUdp*> iFifoReady;
-    Semaphore iSem;
+    Semaphore iSemWaiting;
+    Semaphore iSemReady;
+    Mutex iLock;
     ThreadFunctor* iServerThread;
     TBool iQuit;
 };

@@ -916,7 +916,9 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     , iOpen(true)
     , iFifoWaiting(aMaxPackets+1)
     , iFifoReady(aMaxPackets)
-    , iSem("UDPS", 0)
+    , iSemWaiting("UDPW", 0)
+    , iSemReady("UDPR", 0)
+    , iLock("UDPL")
     , iQuit(false)
 {
     // populate iFifoWaiting with empty packets/bufs
@@ -958,21 +960,24 @@ Endpoint SocketUdpServer::Receive(Bwx& aBuffer)
     ASSERT(iOpen);
     // ensure there is a msg to read from
     if (iFifoReady.SlotsUsed() == 0) {
-        iSem.Wait();
+        iSemReady.Wait();
     }
 
     // get data from msg
-    MsgUdp* msg = iFifoReady.Peek(); // peek in case this ASSERTs
+    MsgUdp* msg = iFifoReady.Read();
     Bwx& buf = msg->Buffer();
     ASSERT(aBuffer.MaxBytes() >= buf.Bytes());
-    aBuffer.Replace(buf);           // FIXME - does this take a copy or hold a reference?
+    aBuffer.Replace(buf);
     Endpoint ep;
     ep.Replace(msg->GetEndpoint());
 
     // requeue msg
     msg->Clear();
-    msg = iFifoReady.Read(); // msg hadn't been popped yet; only peeked
+    iLock.Wait();
+    ASSERT(iFifoWaiting.SlotsFree() > 0);
     iFifoWaiting.Write(msg);
+    iLock.Signal();
+    iSemWaiting.Signal();
 
     return ep;
 }
@@ -981,9 +986,13 @@ void SocketUdpServer::ServerThread()
 {
     // continually read incoming packets
     while (!iQuit) {
+        if (iFifoWaiting.SlotsUsed() == 0) {
+            iSemWaiting.Wait();
+        }
         ASSERT(iFifoWaiting.SlotsUsed() > 0);
-        // read data into next msg
-        MsgUdp* msg = iFifoWaiting.Peek();
+
+        // get next msg for reading data into
+        MsgUdp* msg = iFifoWaiting.Read();
         Bwx& buf = msg->Buffer();
         ASSERT(buf.Bytes() == 0);
         Endpoint& ep = msg->GetEndpoint();
@@ -994,18 +1003,27 @@ void SocketUdpServer::ServerThread()
         catch (NetworkError&) {
             // nothing we can do to recover packet, or Interrupt has been
             // called on path to server quitting
+
+            // MUST requeue message here, otherwise it'll be lost
+            iLock.Wait();
+            ASSERT(iFifoWaiting.SlotsFree() > 0);
+            iFifoWaiting.Write(msg);
+            iLock.Signal();
             continue;
         }
 
         // if server is open and iFifoReady has a free slot, queue packet
         if (iOpen && (iFifoReady.SlotsFree() > 0)) {
-            msg = iFifoWaiting.Read();
             iFifoReady.Write(msg);
-            iSem.Signal();
+            iSemReady.Signal();
         }
-        // if server closed, clear msg
+        // if server is closed, or no slots available in ready queue, clear msg
         else {
             msg->Clear();
+            iLock.Wait();
+            ASSERT(iFifoWaiting.SlotsFree() > 0);
+            iFifoWaiting.Write(msg);
+            iLock.Signal();
         }
     }
 }
