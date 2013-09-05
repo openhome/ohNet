@@ -810,6 +810,13 @@ void SuiteMsgUdp::TestClear()
 
 // SuiteSocketUdpServer
 
+/**
+ * Note: this suite assumes all UDP packets are received reliably and in order
+ * as the tests will typically be run over loopback. However, this somewhat
+ * contravenes the UDP spec, so, if some tests fail due to packet loss/ordering
+ * problems, it is likely to be down to poor assumptions in the tests, rather
+ * than the classes being tested.
+ */
 class SuiteSocketUdpServer : public SuiteUnitTest, public INonCopyable
 {
 public:
@@ -830,9 +837,12 @@ private:
     void TestMsgsDisposed();
     void TestMsgsDisposedCapacityExceeded();
 private:
-    static const TUint kMaxMsgSize = 1000;
-    static const TUint kMaxMsgCount = 100;
+    static const TUint kUdpRecvBufSize = 8192;
+    // ensure (kMaxMsgSize+8)*kMaxMsgCount < kUdpRecvBufSize
+    static const TUint kMaxMsgSize = 64;
+    static const TUint kMaxMsgCount = 50;
     static const TUint kPort = 0;
+    static const TUint kSendWaitMs = 3;
     static const TUint kDisposedCount = 10;
     Environment& iEnv;
     TIpAddress iInterface;
@@ -863,6 +873,7 @@ void SuiteSocketUdpServer::Setup()
 {
     iSender = new SocketUdp(iEnv);
     iServer = new SocketUdpServer(iEnv, kMaxMsgSize, kMaxMsgCount, kPort, iInterface);
+    iServer->SetRecvBufBytes(kUdpRecvBufSize);
     iCurrentVal = 0;
     Endpoint ep(iServer->Port(), iInterface);
     iEndpoint.Replace(ep);
@@ -893,6 +904,8 @@ void SuiteSocketUdpServer::SendNextMsg(Bwx& aBuf)
 {
     GenerateNextMsg(aBuf);
     iSender->Send(aBuf, iEndpoint);
+    // have an artificial sleep, giving receiver a chance to pull msgs
+    Thread::Sleep(kSendWaitMs);
 }
 
 void SuiteSocketUdpServer::CheckMsgValue(Brx& aBuf, TByte aVal)

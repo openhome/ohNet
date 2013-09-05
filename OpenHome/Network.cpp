@@ -952,6 +952,16 @@ void SocketUdpServer::Open()
 
 void SocketUdpServer::Close()
 {
+    // should probably dispose of all msgs in ready queue here
+    // and add a unit test checking that if we
+    // -> send some msgs (and don't read them)
+    // -> close socket
+    // -> send some more msgs
+    // -> open socket
+    // -> send some more msgs (and read them)
+    // we then don't receive any msgs from the first two sends
+    // and that ALL msgs from the first send are definitely not rcvd, as they should have
+    // been dropped when Close() was called
     iOpen = false;
 }
 
@@ -989,7 +999,6 @@ void SocketUdpServer::ServerThread()
         if (iFifoWaiting.SlotsUsed() == 0) {
             iSemWaiting.Wait();
         }
-        ASSERT(iFifoWaiting.SlotsUsed() > 0);
 
         // get next msg for reading data into
         MsgUdp* msg = iFifoWaiting.Read();
