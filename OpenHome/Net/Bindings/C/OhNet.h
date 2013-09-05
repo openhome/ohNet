@@ -115,6 +115,15 @@ DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCombined(TIpAddress aS
  */
 DllExport void STDCALL OhNetLibraryClose();
 
+/**
+ * Inform the library that the application has been resumed
+ *
+ * This is necessary if the application may have been paused while other processes on
+ * a device continued to be executed (e.g. when an app moves to background on iOS).
+ * It is typically not necessary to call this when the host device resumes from hibernation.
+ */
+DllExport void STDCALL OhNetNotifyResumed(void);
+
 /* @} */
 /**
  * @addtogroup InitParams

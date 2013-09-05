@@ -1026,6 +1026,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetNotifyResumed();
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetFree(IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
@@ -1173,6 +1179,17 @@ namespace OpenHome.Net.Core
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
             OhNetSetCurrentSubnet(aSubnet.Subnet());
+        }
+
+        /// <summary>
+        /// Inform the library that the application has been resumed
+        /// </summary>
+        /// <remarks>This is necessary if the application may have been paused while other processes on
+        /// a device continued to be executed (e.g. when an app moves to background on iOS).
+        /// It is typically not necessary to call this when the host device resumes from hibernation.</remarks>
+        public void NotifyResumed()
+        {
+            OhNetNotifyResumed();
         }
 
         public enum DebugLevel: uint

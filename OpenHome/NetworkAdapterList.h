@@ -33,6 +33,7 @@ public:
 public:
     NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet=0);
     virtual ~NetworkAdapterList();
+    void Refresh(); // only needs to be called if app can be suspended (e.g. iOS) or OS notification of adapter change isn't possible
     NetworkAdapter* CurrentAdapter(const char* aCookie) const;
     const std::vector<NetworkAdapter*>& List() const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;

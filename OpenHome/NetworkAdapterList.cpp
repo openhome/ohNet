@@ -38,6 +38,11 @@ NetworkAdapterList::~NetworkAdapterList()
     iEnv.RemoveObject(this);
 }
 
+void NetworkAdapterList::Refresh()
+{
+    HandleInterfaceListChanged();
+}
+
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
 {
     AutoMutex a(iListLock);

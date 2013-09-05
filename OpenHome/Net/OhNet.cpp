@@ -593,6 +593,11 @@ NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
     return iEnv->NetworkAdapterList().CurrentAdapter(aCookie);
 }
 
+void Library::NotifyResumed()
+{
+    iEnv->NetworkAdapterList().Refresh();
+}
+
 
 // UpnpLibrary
 
