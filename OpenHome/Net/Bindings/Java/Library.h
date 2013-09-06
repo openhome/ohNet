@@ -73,10 +73,10 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAda
 
 /*
  * Class:     org_openhome_net_core_Library
- * Method:    OhNetNotifyResumed
+ * Method:    OhNetLibraryNotifyResumed
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetNotifyResumed
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryNotifyResumed
   (JNIEnv *, jclass);
 
 /*

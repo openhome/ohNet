@@ -122,7 +122,7 @@ DllExport void STDCALL OhNetLibraryClose();
  * a device continued to be executed (e.g. when an app moves to background on iOS).
  * It is typically not necessary to call this when the host device resumes from hibernation.
  */
-DllExport void STDCALL OhNetNotifyResumed(void);
+DllExport void STDCALL OhNetLibraryNotifyResumed(void);
 
 /* @} */
 /**

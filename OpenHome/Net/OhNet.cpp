@@ -650,3 +650,8 @@ NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter(const char* aCookie)
 {
     return gEnv->NetworkAdapterList().CurrentAdapter(aCookie);
 }
+
+void UpnpLibrary::NotifyResumed()
+{
+    gEnv->NetworkAdapterList().Refresh();
+}
