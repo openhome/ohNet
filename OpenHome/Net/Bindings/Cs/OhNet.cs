@@ -1026,7 +1026,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern void OhNetNotifyResumed();
+        static extern void OhNetLibraryNotifyResumed();
 #if IOS
         [DllImport("__Internal")]
 #else
