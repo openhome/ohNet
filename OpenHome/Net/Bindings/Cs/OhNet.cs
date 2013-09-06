@@ -1189,7 +1189,7 @@ namespace OpenHome.Net.Core
         /// It is typically not necessary to call this when the host device resumes from hibernation.</remarks>
         public void NotifyResumed()
         {
-            OhNetNotifyResumed();
+            OhNetLibraryNotifyResumed();
         }
 
         public enum DebugLevel: uint

@@ -14,6 +14,7 @@ public class Library
     private static native void OhNetLibraryClose();
     private static native void OhNetSetCurrentSubnet(long aSubnet);
     private static native long OhNetCurrentSubnetAdapter();
+    private static native void OhNetLibraryNotifyResumed();
     private static native void OhNetDebugSetLevel(int aLevel);
     private static native void OhNetAbortProcess();
 
@@ -177,7 +178,7 @@ public class Library
      */
      public void notifyResumed()
      {
-         OhNetNotifyResumed();
+         OhNetLibraryNotifyResumed();
      }
 
     /**

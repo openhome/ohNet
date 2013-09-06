@@ -46,6 +46,11 @@ void STDCALL OhNetLibraryClose()
     UpnpLibrary::Close();
 }
 
+void STDCALL OhNetLibraryNotifyResumed(void)
+{
+    UpnpLibrary::NotifyResumed();
+}
+
 void STDCALL OhNetFree(void* aPtr)
 {
     free(aPtr);
