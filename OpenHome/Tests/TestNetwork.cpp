@@ -967,7 +967,7 @@ void SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed()
     // should be retrievable
     iServer->Open();
     TUint totalMsgCount = iMsgCount + 10;
-    for (iMsgCount;iMsgCount<totalMsgCount;) {
+    for (;iMsgCount<totalMsgCount;) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
         // should definitely not receive any of first set of msgs, so if
@@ -1004,7 +1004,7 @@ void SuiteSocketUdpServer::TestMsgsDisposedStart()
     // due to timing issues, server may have been re-opened and received one
     // (or more) msgs intended to be dropped - dispose of these
     TUint totalMsgCount = iMsgCount + 10;
-    for (iMsgCount;iMsgCount<totalMsgCount;) {
+    for (;iMsgCount<totalMsgCount;) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
         if (iInBuf[0] < iMsgCount) { // rcvd a msg intended for disposal
@@ -1036,7 +1036,7 @@ void SuiteSocketUdpServer::TestMsgsDisposed()
     iServer->Open();
 
     TUint totalMsgCount = iMsgCount + 10;
-    for (iMsgCount;iMsgCount<totalMsgCount;) {
+    for (;iMsgCount<totalMsgCount;) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
         if (iInBuf[0] < iMsgCount) { // rcvd a msg intended for disposal
@@ -1065,7 +1065,7 @@ void SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded()
     iMsgCount += kDisposedCount;
 
     TUint totalMsgCount = iMsgCount + 10;
-    for (iMsgCount;iMsgCount<totalMsgCount;) {
+    for (;iMsgCount<totalMsgCount;) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
         if (iInBuf[0] < iMsgCount) { // rcvd a msg intended for disposal
@@ -1135,8 +1135,7 @@ void SuiteUdpServerManager::TestCreateOneServer()
     // findable. there is nothing explicitly testable for this - successful
     // completion of the test signifies correct operation
     TUint id = iManager->CreateServer(kPort, iInterface);
-    SocketUdpServer& server = iManager->Find(id);
-    server;
+    iManager->Find(id);
 }
 
 void SuiteUdpServerManager::TestCreateMultipleServers()
