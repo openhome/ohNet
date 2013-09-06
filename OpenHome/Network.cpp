@@ -916,9 +916,8 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     , iOpen(true)
     , iFifoWaiting(aMaxPackets+1)
     , iFifoReady(aMaxPackets)
-    , iSemWaiting("UDPW", 0)
-    , iSemReady("UDPR", 0)
-    , iLock("UDPL")
+    , iWaitingLock("UDPW")
+    , iReadyLock("UDPR")
     , iQuit(false)
 {
     // populate iFifoWaiting with empty packets/bufs
@@ -933,8 +932,10 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 SocketUdpServer::~SocketUdpServer()
 {
     iQuit = true;
+    iOpen = false;
     Interrupt(true);
     delete iServerThread;
+
     while (iFifoReady.SlotsUsed() > 0) {
         MsgUdp* msg = iFifoReady.Read();
         delete msg;
@@ -952,87 +953,94 @@ void SocketUdpServer::Open()
 
 void SocketUdpServer::Close()
 {
-    // should probably dispose of all msgs in ready queue here
-    // and add a unit test checking that if we
-    // -> send some msgs (and don't read them)
-    // -> close socket
-    // -> send some more msgs
-    // -> open socket
-    // -> send some more msgs (and read them)
-    // we then don't receive any msgs from the first two sends
-    // and that ALL msgs from the first send are definitely not rcvd, as they should have
-    // been dropped when Close() was called
     iOpen = false;
+
+    // dispose of all msgs in ready queue
+    //iFifoReady.ReadInterrupt();
+    //iFifoWaiting.ReadInterrupt();
+    // if Interrupt is called on the fifos, but neither was middle of a Read(),
+    // the next Read() will throw a FifoReadError exception
+    iReadyLock.Wait();
+    while (iFifoReady.SlotsUsed() > 0) {
+        MsgUdp* msg = iFifoReady.Read();
+        ClearAndRequeue(*msg);
+    }
+    iReadyLock.Signal();
 }
 
-Endpoint SocketUdpServer::Receive(Bwx& aBuffer)
+Endpoint SocketUdpServer::Receive(Bwx& aBuf)
 {
     ASSERT(iOpen);
-    // ensure there is a msg to read from
-    if (iFifoReady.SlotsUsed() == 0) {
-        iSemReady.Wait();
-    }
 
     // get data from msg
-    MsgUdp* msg = iFifoReady.Read();
-    Bwx& buf = msg->Buffer();
-    ASSERT(aBuffer.MaxBytes() >= buf.Bytes());
-    aBuffer.Replace(buf);
-    Endpoint ep;
-    ep.Replace(msg->GetEndpoint());
+    try {
+        iReadyLock.Wait();
+        MsgUdp* msg = iFifoReady.Read(); // will block until msg available
+        iReadyLock.Signal();
+        Endpoint ep;
+        CopyMsgToBuf(*msg, aBuf, ep);
 
-    // requeue msg
-    msg->Clear();
-    iLock.Wait();
+        // requeue msg
+        ClearAndRequeue(*msg);
+
+        return ep;
+    }
+    catch (FifoReadError) {
+        THROW(NetworkError);
+    }
+}
+
+void SocketUdpServer::ClearAndRequeue(MsgUdp& aMsg)
+{
+    // clear a msg and requeue it in the waiting fifo
+    aMsg.Clear();
+    iWaitingLock.Wait();
     ASSERT(iFifoWaiting.SlotsFree() > 0);
-    iFifoWaiting.Write(msg);
-    iLock.Signal();
-    iSemWaiting.Signal();
+    iFifoWaiting.Write(&aMsg);
+    iWaitingLock.Signal();
+}
 
-    return ep;
+void SocketUdpServer::CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint)
+{
+    Bwx& buf = aMsg.Buffer();
+    ASSERT(aBuf.MaxBytes() >= buf.Bytes());
+    aBuf.Replace(buf);
+    aEndpoint.Replace(aMsg.GetEndpoint());
 }
 
 void SocketUdpServer::ServerThread()
 {
     // continually read incoming packets
     while (!iQuit) {
-        if (iFifoWaiting.SlotsUsed() == 0) {
-            iSemWaiting.Wait();
+
+        MsgUdp* msg = NULL;
+        // get next msg for reading data into
+        try {
+            msg = iFifoWaiting.Read();
+        }
+        catch (FifoReadError&) {
+            continue;
         }
 
-        // get next msg for reading data into
-        MsgUdp* msg = iFifoWaiting.Read();
-        Bwx& buf = msg->Buffer();
-        ASSERT(buf.Bytes() == 0);
-        Endpoint& ep = msg->GetEndpoint();
-
         try {
+            Bwx& buf = msg->Buffer();
+            ASSERT(buf.Bytes() == 0);
+            Endpoint& ep = msg->GetEndpoint();
             ep.Replace(SocketUdp::Receive(buf));
         }
         catch (NetworkError&) {
             // nothing we can do to recover packet, or Interrupt has been
-            // called on path to server quitting
-
-            // MUST requeue message here, otherwise it'll be lost
-            iLock.Wait();
-            ASSERT(iFifoWaiting.SlotsFree() > 0);
-            iFifoWaiting.Write(msg);
-            iLock.Signal();
+            // called as server is quitting
+            ClearAndRequeue(*msg);
             continue;
         }
 
         // if server is open and iFifoReady has a free slot, queue packet
         if (iOpen && (iFifoReady.SlotsFree() > 0)) {
             iFifoReady.Write(msg);
-            iSemReady.Signal();
         }
-        // if server is closed, or no slots available in ready queue, clear msg
         else {
-            msg->Clear();
-            iLock.Wait();
-            ASSERT(iFifoWaiting.SlotsFree() > 0);
-            iFifoWaiting.Write(msg);
-            iLock.Signal();
+            ClearAndRequeue(*msg);
         }
     }
 }

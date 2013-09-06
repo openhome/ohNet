@@ -313,17 +313,18 @@ public:
     void Open();
     void Close();
 public: // from SocketUdpBase
-    Endpoint Receive(Bwx& aBuffer); // definitely needs overridden as incoming packets are buffered (or disposed of); need to ASSERT(!iOpen when this is called)
+    Endpoint Receive(Bwx& aBuf);
 private:
+    void ClearAndRequeue(MsgUdp& aMsg);
+    void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
     void ServerThread();
 private:
     TUint iMaxSize;
     TBool iOpen;
     Fifo<MsgUdp*> iFifoWaiting;
     Fifo<MsgUdp*> iFifoReady;
-    Semaphore iSemWaiting;
-    Semaphore iSemReady;
-    Mutex iLock;
+    Mutex iWaitingLock;
+    Mutex iReadyLock;
     ThreadFunctor* iServerThread;
     TBool iQuit;
 };

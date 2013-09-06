@@ -832,6 +832,7 @@ private:
     void TestOpenWhenInitialised();
     void TestClose();
     void TestReopen();
+    void TestMsgQueueClearedWhenClosed();
     void TestMsgOrdering();
     void TestMsgsDisposedStart();
     void TestMsgsDisposed();
@@ -863,6 +864,7 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenWhenInitialised));
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClose));
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReopen));
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed));
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrdering));
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart));
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed));
@@ -933,7 +935,7 @@ void SuiteSocketUdpServer::TestClose()
 
 void SuiteSocketUdpServer::TestReopen()
 {
-    // test server can be successfully closed and reopened
+    // test server can be successfully closed and re-opened
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
@@ -944,6 +946,35 @@ void SuiteSocketUdpServer::TestReopen()
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
+}
+
+void SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed()
+{
+    // test any msgs received by the server, but not yet read by a client, are
+    // disposed of when the server is closed and not retrievable when server is
+    // re-opened
+
+    // send some msgs with server open, but don't read them
+    for (TUint i=0; i<kDisposedCount; i++) {
+        SendNextMsg(iOutBuf);
+    }
+    iMsgCount += kDisposedCount;
+
+    // now close the server, which should clear the msg queue
+    iServer->Close();
+
+    // now re-open server and send more msgs - none of the first set of msgs
+    // should be retrievable
+    iServer->Open();
+    TUint totalMsgCount = iMsgCount + 10;
+    for (iMsgCount;iMsgCount<totalMsgCount;) {
+        SendNextMsg(iOutBuf);
+        iServer->Receive(iInBuf);
+        // should definitely not receive any of first set of msgs, so if
+        // ordering problems occur here and not down to network issues,
+        // suggests msg queue wasn't cleared
+        CheckMsgValue(iInBuf, iMsgCount++);
+    }
 }
 
 void SuiteSocketUdpServer::TestMsgOrdering()
