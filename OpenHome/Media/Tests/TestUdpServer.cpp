@@ -178,7 +178,12 @@ void SuiteSocketUdpServer::Setup()
 {
     iSender = new SocketUdp(iEnv);
     iServer = new SocketUdpServer(iEnv, kMaxMsgSize, kMaxMsgCount, kPort, iInterface);
-    iServer->SetRecvBufBytes(kUdpRecvBufSize);
+    try {
+        iServer->SetRecvBufBytes(kUdpRecvBufSize);
+    }
+    catch (NetworkError&) {
+        Log::Print("Failed to set UDP receive buffer size to %u bytes\n", kUdpRecvBufSize);
+    }
     iCurrentVal = 0;
     Endpoint ep(iServer->Port(), iInterface);
     iEndpoint.Replace(ep);
