@@ -221,6 +221,7 @@ def build(bld):
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
+                'OpenHome/Media/UdpServer.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
@@ -457,6 +458,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestVolumeManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
+                'OpenHome/Media/Tests/TestUdpServer.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -567,6 +569,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRewinder')
+    bld.program(
+            source='OpenHome/Media/Tests/TestUdpServerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestUdpServer')
     #bld.program(
     #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
