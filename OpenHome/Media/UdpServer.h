@@ -20,7 +20,7 @@ public:
     Endpoint& GetEndpoint();
     void Clear();
 private:
-    Bwh* iBuf;
+    Bwh iBuf;
     Endpoint iEndpoint;
 };
 

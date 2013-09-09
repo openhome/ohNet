@@ -10,25 +10,24 @@ using namespace Media;
 // MsgUdp
 
 MsgUdp::MsgUdp(TUint aMaxSize)
-    : iEndpoint()
+    : iBuf(aMaxSize)
+    , iEndpoint()
 {
-    iBuf = new Bwh(aMaxSize);
 }
 
 MsgUdp::MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint)
-    : iEndpoint(aEndpoint)
+    : iBuf(aMaxSize)
+    ,iEndpoint(aEndpoint)
 {
-    iBuf = new Bwh(aMaxSize);
 }
 
 MsgUdp::~MsgUdp()
 {
-    delete iBuf;
 }
 
 Bwx& MsgUdp::Buffer()
 {
-    return *iBuf;
+    return iBuf;
 }
 
 Endpoint& MsgUdp::GetEndpoint()
@@ -40,7 +39,7 @@ void MsgUdp::Clear()
 {
     Endpoint ep(0, 0);
     iEndpoint.Replace(ep);
-    iBuf->SetBytes(0);
+    iBuf.SetBytes(0);
 }
 
 
