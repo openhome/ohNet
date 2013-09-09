@@ -448,8 +448,7 @@ void SuiteUdpServerManager::TestCreateOneServer()
     // findable. there is nothing explicitly testable for this - successful
     // completion of the test signifies correct operation
     TUint id = iManager->CreateServer(kPort, iInterface);
-    SocketUdpServer& server = iManager->Find(id);
-    server;
+    iManager->Find(id);
 }
 
 void SuiteUdpServerManager::TestCreateMultipleServers()
