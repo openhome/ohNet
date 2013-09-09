@@ -106,7 +106,7 @@ void SocketUdpServer::Close()
     iReadyLock.Wait();
     // clear the interrupt, so next read doesn't throw an exception
     iFifoReady.ReadInterrupt(false);
-    iFifoReady.ReadInterrupt(false);
+    iFifoWaiting.ReadInterrupt(false);
 
     // dispose of all msgs in ready queue
     while (iFifoReady.SlotsUsed() > 0) {
