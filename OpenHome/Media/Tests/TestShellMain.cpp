@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Tests/TestCodec.h>
 #include <OpenHome/Media/Tests/TestShell.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -41,6 +42,12 @@ static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::
     TestCodec(aCpStack.Env(), CreateTestCodecPipeline, TestCodecFiles, aArgs);
 }
 
+extern void TestUdpServer(Environment& aEnv);
+static void ShellTestUdpServer(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
+{
+    TestUdpServer(aDvStack.Env());
+}
+
 extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
 static void ShellTestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
 {
@@ -73,6 +80,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
     shellTests.push_back(ShellTest("TestRewinder", ShellTestRewinder));
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
+    shellTests.push_back(ShellTest("TestUdpServer", ShellTestUdpServer));
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
 
     OpenHome::Media::ExecuteTestShell(aInitParams, shellTests);
