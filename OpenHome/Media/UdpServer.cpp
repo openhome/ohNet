@@ -100,12 +100,16 @@ void SocketUdpServer::Close()
 {
     iOpen = false;
 
-    // dispose of all msgs in ready queue
-    //iFifoReady.ReadInterrupt();
-    //iFifoWaiting.ReadInterrupt();
-    // if Interrupt is called on the fifos, but neither was middle of a Read(),
-    // the next Read() will throw a FifoReadError exception
+    // set an interrupt
+    iFifoReady.ReadInterrupt(true);
+    iFifoWaiting.ReadInterrupt(true);
+
     iReadyLock.Wait();
+    // clear the interrupt, so next read doesn't throw an exception
+    iFifoReady.ReadInterrupt(false);
+    iFifoReady.ReadInterrupt(false);
+
+    // dispose of all msgs in ready queue
     while (iFifoReady.SlotsUsed() > 0) {
         MsgUdp* msg = iFifoReady.Read();
         ClearAndRequeue(*msg);
