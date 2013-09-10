@@ -12,12 +12,14 @@
 namespace OpenHome {
 namespace Media {
 
+class SocketUdpServer;
+
 class RaopAudio
 {
 private:
-    static const TUint kMaxReadBufferBytes = 2000;
+    static const TUint kMaxReadBufferBytes = 1500;
 public:
-    RaopAudio(Environment& aEnv, TUint aPort);
+    RaopAudio(SocketUdpServer& aServer);
     ~RaopAudio();
     void Initialise(const Brx &aAeskey, const Brx &aAesiv);
     TUint16 ReadPacket();
@@ -28,8 +30,7 @@ public:
     Brn Audio();
     void SetMute();
 private:
-    TUint iPort;
-    SocketUdp iSocket;
+    SocketUdpServer& iServer;
     UdpReader iSocketReader;
     Bws<kMaxReadBufferBytes> iDataBuffer;
     Bws<kMaxReadBufferBytes> iAudio;
@@ -47,7 +48,7 @@ private:
     static const TUint kPriority = kPriorityNormal-1;
     static const TUint kSessionStackBytes = 10 * 1024;
 public:
-    RaopControl(Environment& aEnv, TUint aPort);
+    RaopControl(Environment& aEnv, SocketUdpServer& aServer);
     ~RaopControl();
     void DoInterrupt();
     void Reset();
@@ -60,9 +61,8 @@ private:
     void Run();
     void TimerExpired();
 private:
-    TUint iPort;
     Endpoint iEndpoint;
-    SocketUdp iSocket;
+    SocketUdpServer& iServer;
     UdpReader iSocketReader;
     Srs<kMaxReadBufferBytes> iReceive;
     Bws<kMaxReadBufferBytes> iResentData;
@@ -81,16 +81,16 @@ private:
 //{
 //    static const TUint kMaxReadBufferBytes = 1000;
 //public:
-//    RaopTiming(TUint aPort);
+//    RaopTiming(SocketUdpServer& aServer);
 //private:
-//    Linn::Network::UdpServer iUdpServer;
+//    SocketUdpServer iUdpServer;
 //    Bws<kMaxReadBufferBytes> iDataBuffer;
 //};
 
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery);
+    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint aTimingId);
     ~ProtocolRaop();
 public:
     void DoInterrupt();
@@ -105,15 +105,11 @@ private:
     void StartStream();
     void OutputAudio(const Brn &aPacket);
     void OutputContainer(const Brn &aFmtp);
-public:
-    static const TUint kPortAudio = 60400;
-    static const TUint kPortControl = 60401;
-    //static const TUint kPortTiming = 60402;
 private:
     static const TUint kMaxReadBufferBytes = 1500;
 
-    IRaopDiscovery& iDiscovery;    // FIXME - switch to this when finished refactoring
-    //IRaopDiscovery* iDiscovery;
+    IRaopDiscovery& iDiscovery;
+    UdpServerManager& iServerManager;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
     //RaopTiming iRaopTiming;

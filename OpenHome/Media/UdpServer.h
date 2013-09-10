@@ -66,6 +66,8 @@ public:
     ~UdpServerManager();
     TUint CreateServer(TUint aPort = 0, TIpAddress aInterface = 0); // return ID of server
     SocketUdpServer& Find(TUint aId); // find server by ID
+    void CloseAll();
+    void OpenAll();
 private:
     std::vector<SocketUdpServer*> iServers;
     Environment& iEnv;

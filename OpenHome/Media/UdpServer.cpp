@@ -247,3 +247,17 @@ SocketUdpServer& UdpServerManager::Find(TUint aId)
     ASSERT(aId < iServers.size());
     return *(iServers[aId]);
 }
+
+void UdpServerManager::CloseAll()
+{
+    for (size_t i=0; i<iServers.size(); i++) {
+        iServers[i]->Close();
+    }
+}
+
+void UdpServerManager::OpenAll()
+{
+    for (size_t i=0; i<iServers.size(); i++) {
+        iServers[i]->Open();
+    }
+}

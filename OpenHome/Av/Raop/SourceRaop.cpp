@@ -34,6 +34,7 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     , iLock("SRAO")
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
+    , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
     , iTrack(NULL)
     , iTrackPosSeconds(0)
     , iPipelineTrackId(UINT_MAX)
@@ -41,7 +42,10 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     , iTransportState(Media::EPipelineStopped)
 {
     iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDeviceName, aDiscoveryPort);
-    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery)); // bypassing MediaPlayer
+    TUint audioId = iServerManager.CreateServer(kPortAudio);
+    TUint controlId = iServerManager.CreateServer(kPortControl);
+    TUint timingId = iServerManager.CreateServer(kPortTiming);
+    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId, timingId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
 }
 
@@ -60,6 +64,7 @@ IRaopDiscovery& SourceRaop::Discovery()
 
 void SourceRaop::Activate()
 {
+    iServerManager.OpenAll();
     iTrackPosSeconds = 0;
     iActive = true;
 }
@@ -73,6 +78,7 @@ void SourceRaop::Deactivate()
         iTrack = NULL;
     }
     iLock.Signal();
+    iServerManager.CloseAll();
     Source::Deactivate();
 }
 
@@ -80,6 +86,9 @@ void SourceRaop::NotifyStreamStart()
     // FIXME - should probably reconstruct the uri from params to this method (or take the constructed uri as a param)
     // and check if the existing track->uri() matches it (if not, or if doesn't exist, should clear and generate new one, if using
     // it to communicate udp port, otherwise reuse existing one)
+
+    // get udp ports via params, then compose into a URI that protocol raop can use to retrieve servers for each member class
+    // or can tell each member class what server to retrieve
 {
     if (!IsActive()) {
         DoActivate();
