@@ -25,8 +25,7 @@ class IRaopObserver
 {
 public:
     //virtual ~IObserverRaop() {}
-    //virtual void NotifyStreamStart(TUint aAudioPort, TUint aControlPort, TUint aTimingPort) = 0;
-    virtual void NotifyStreamStart() = 0;
+    virtual void NotifyStreamStart(TUint aControlPort, TUint aTimingPort) = 0;
 };
 
 class SourceRaop : public Source, public IRaopObserver, private Media::IPipelineObserver
@@ -39,7 +38,7 @@ private: // from ISource
     void Activate();
     void Deactivate();
 private: // from IRaopObserver
-    void NotifyStreamStart();
+    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -62,6 +61,9 @@ private:
     TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState;
+    TUint iAudioId;
+    TUint iControlId;
+    TUint iTimingId;
 };
 
 } // namespace Av

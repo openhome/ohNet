@@ -42,11 +42,16 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     , iTransportState(Media::EPipelineStopped)
 {
     iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDeviceName, aDiscoveryPort);
-    TUint audioId = iServerManager.CreateServer(kPortAudio);
-    TUint controlId = iServerManager.CreateServer(kPortControl);
-    TUint timingId = iServerManager.CreateServer(kPortTiming);
-    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId, timingId)); // bypassing MediaPlayer
+    iAudioId = iServerManager.CreateServer(kPortAudio);
+    iControlId = iServerManager.CreateServer(kPortControl);
+    iTimingId = iServerManager.CreateServer(kPortTiming);
+    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, iAudioId, iControlId, iTimingId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
+
+    SocketUdpServer& audioServer = iServerManager.Find(iAudioId);
+    SocketUdpServer& controlServer = iServerManager.Find(iControlId);
+    SocketUdpServer& timingServer = iServerManager.Find(iTimingId);
+    iRaopDiscovery->SetListeningPorts(audioServer.Port(), controlServer.Port(), timingServer.Port());
 }
 
 SourceRaop::~SourceRaop()
@@ -82,7 +87,7 @@ void SourceRaop::Deactivate()
     Source::Deactivate();
 }
 
-void SourceRaop::NotifyStreamStart()
+void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
     // FIXME - should probably reconstruct the uri from params to this method (or take the constructed uri as a param)
     // and check if the existing track->uri() matches it (if not, or if doesn't exist, should clear and generate new one, if using
     // it to communicate udp port, otherwise reuse existing one)
