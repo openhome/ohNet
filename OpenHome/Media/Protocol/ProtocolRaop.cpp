@@ -58,13 +58,17 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
 
-    // parse uri to get server ids for control and audio (and timing?)
-    // do we also require ports for sending responses on?
+    // FIXME - parse uri to get ports for sending control/timing info to
+    // (could also get server ids for audio/control/timing and retrieve servers
+    // on behalf of them, and pass in servers while resetting)
 
     TBool start = true;
     TUint aesSid = 0;
+    // FIXME - should we pass an ID into Reset() methods here and update server
+    // each time, instead of doing it in constructor? - would require dynamic
+    // re-allocation of UdpReader
     iRaopControl.Reset();
-    iRaopAudio.Reset();   // FIXME - should we pass an ID here and update server each time, instead of doing it in constructor? - would have to delete and create a new UdpReader
+    iRaopAudio.Reset();
     Brn audio;
     TUint16 expected = 0;
 

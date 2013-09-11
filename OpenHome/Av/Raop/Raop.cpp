@@ -890,8 +890,16 @@ TUint HeaderRtspTransport::ParsePort(Brx& aData)
 void HeaderRtspTransport::Process(const Brx& aValue)
 {
     Parser parser(aValue);
-    while (iControlPort == 0 && iTimingPort == 0) {
-        Brn entry = parser.Next(';');
+    for (TUint i=0; i<6; i++) {
+        Brn entry;
+
+        if (i < 5) {
+            entry = parser.Next(';');
+        }
+        else {
+            entry = parser.Next();
+        }
+
         if (Ascii::Contains(entry, kControlPortStr)) {
             iControlPort = ParsePort(entry);
         }

@@ -30,6 +30,8 @@ public:
 
 class SourceRaop : public Source, public IRaopObserver, private Media::IPipelineObserver
 {
+private:
+    static const Brn kRaopPrefix;
 public:
     SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aDeviceName, TUint aDiscoveryPort);
     ~SourceRaop();

@@ -29,6 +29,8 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const Brx& aDeviceNa
 
 // SourceRaop
 
+const Brn SourceRaop::kRaopPrefix("raop://");
+
 SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aDeviceName, TUint aDiscoveryPort)
     : Source("Net Aux", "Net Aux")
     , iLock("SRAO")
@@ -88,12 +90,17 @@ void SourceRaop::Deactivate()
 }
 
 void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
-    // FIXME - should probably reconstruct the uri from params to this method (or take the constructed uri as a param)
-    // and check if the existing track->uri() matches it (if not, or if doesn't exist, should clear and generate new one, if using
-    // it to communicate udp port, otherwise reuse existing one)
+    // FIXME - get client UDP ports via params, then compose into URI so that
+    // control and timing servers know ports to send on - currently just send
+    // to ports that packets were sent from, which also happen to be the
+    // receiving ports.
+    // Can also compose UDP servers/ports into URI, so that ProtocolRaop can
+    // retrieve servers at the start of each streaming session for each member
+    // class requiring a server.
 
-    // get udp ports via params, then compose into a URI that protocol raop can use to retrieve servers for each member class
-    // or can tell each member class what server to retrieve
+    // Current implementation of getting client UDP ports below causes
+    // streaming to fail - possible race condition? Without it, works at least
+    // as well as existing solution.
 {
     if (!IsActive()) {
         DoActivate();
@@ -103,6 +110,18 @@ void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }
+        //const TUint maxPortBytes = 5;
+        //const TUint portCount = 2;
+        //Bwh track(kRaopPrefix.Bytes() + portCount*maxPortBytes + portCount-1); // raop://xxxxx.yyyyy.zzzzz
+        //track.Append(kRaopPrefix);
+        //Ascii::AppendDec(track, aControlPort);
+        //track.Append('.');
+        //Ascii::AppendDec(track, aTimingPort);
+        ////Log::Print("track: ");
+        ////Log::Print(track);
+        ////Log::Print("\n");
+        //iTrack = iUriProvider.SetTrack(track, Brn(""));
+
         iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""));
         iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     }
