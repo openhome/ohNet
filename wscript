@@ -525,10 +525,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestProtocolMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestProtocol')
-    # bld.program(
-           # source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
-           # use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-           # target='TestProtocolRaop')
+    bld.program(
+           source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+           use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+           target='TestProtocolRaop')
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
