@@ -240,21 +240,21 @@ void SuiteCVNum::TestValueOutOfRangeConstructor()
 void SuiteCVNum::TestGet()
 {
     // test the correct value of the CVNum is returned
-    TUint val = iCVal->Get();
+    TInt val = iCVal->Get();
     TEST(val == kVal);
 }
 
 void SuiteCVNum::TestGetMin()
 {
     // test the correct value for min is returned
-    TUint min = iCVal->Min();
+    TInt min = iCVal->Min();
     TEST(min == kMin);
 }
 
 void SuiteCVNum::TestGetMax()
 {
     // test the correct value for max is returned
-    TUint max = iCVal->Max();
+    TInt max = iCVal->Max();
     TEST(max == kMax);
 }
 
@@ -269,7 +269,7 @@ void SuiteCVNum::TestSetUpdate()
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
 
-    TUint val = iCVal->Get();
+    TInt val = iCVal->Get();
     TEST(val == kVal+1);
 
     iCVal->Unsubscribe(id);
@@ -286,7 +286,7 @@ void SuiteCVNum::TestSetNoUpdate()
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
 
-    TUint val = iCVal->Get();
+    TInt val = iCVal->Get();
     TEST(val == kVal);
 
     iCVal->Unsubscribe(id);
