@@ -11,6 +11,7 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 SIMPLE_TEST_DECLARATION(TestAudioReservoir);
+SIMPLE_TEST_DECLARATION(TestConfigManager);
 SIMPLE_TEST_DECLARATION(TestContainer);
 SIMPLE_TEST_DECLARATION(TestContentProcessor);
 SIMPLE_TEST_DECLARATION(TestIdProvider);
@@ -59,6 +60,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 {
     std::vector<ShellTest> shellTests;
     shellTests.push_back(ShellTest("TestAudioReservoir", ShellTestAudioReservoir));
+    shellTests.push_back(ShellTest("TestConfigManager", ShellTestConfigManager));
     shellTests.push_back(ShellTest("TestContainer", ShellTestContainer));
     shellTests.push_back(ShellTest("TestContentProcessor", ShellTestContentProcessor));
     shellTests.push_back(ShellTest("TestIdProvider", ShellTestIdProvider));
