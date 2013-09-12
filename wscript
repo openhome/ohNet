@@ -185,6 +185,7 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
+                'OpenHome/Av/ConfigManager.cpp',
                 'OpenHome/Av/FaultCode.cpp',
                 'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
@@ -459,6 +460,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Media/Tests/TestUdpServer.cpp',
+                'OpenHome/Av/Tests/TestConfigManager.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -577,6 +579,10 @@ def build(bld):
     #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
     #        target='TestUpnpAv')
+    bld.program(
+            source='OpenHome/Av/Tests/TestConfigManagerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestConfigManager')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
