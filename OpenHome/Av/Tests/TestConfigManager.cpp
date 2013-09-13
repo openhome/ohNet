@@ -33,8 +33,6 @@ private:
     void TestAddRemoveMultipleSubscriptions();
     void TestRemoveInvalidId();
 private:
-    void DummyFunctor();
-private:
     CVal* iCVal;
 };
 
