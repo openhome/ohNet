@@ -32,7 +32,6 @@ private:
     void TestAddRemoveSubscription();
     void TestAddRemoveMultipleSubscriptions();
     void TestRemoveInvalidId();
-    void TestSubscriptionsNotRemoved();
 private:
     void DummyFunctor();
 private:
@@ -134,7 +133,6 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveSubscription));
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions));
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidId));
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestSubscriptionsNotRemoved));
 }
 
 void SuiteCVSubscriptions::Setup()
@@ -185,15 +183,6 @@ void SuiteCVSubscriptions::TestRemoveInvalidId()
 {
     // test that trying to unsubscribe using an invalid id does nothing
     iCVal->Unsubscribe(0);
-}
-
-void SuiteCVSubscriptions::TestSubscriptionsNotRemoved()
-{
-    // test adding a subscription and not removing it - should assert at
-    // destruction
-    iCVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
-    TEST_THROWS(delete iCVal, AssertionFailed);
-    iCVal = NULL;
 }
 
 
