@@ -25,6 +25,7 @@ debug_specific_cflags = /MTd /Zi /Od /RTC1
 debug_csharp = /define:DEBUG /debug+
 build_dir = Debug
 openhome_configuration = Debug
+android_ndk_debug = 1
 !else
 link_flag_debug =
 link_flag_debug_dll = /debug /opt:ref
@@ -32,6 +33,7 @@ debug_specific_cflags = /MT /Ox
 debug_csharp = /optimize+
 build_dir = Release
 openhome_configuration = Release
+android_ndk_debug = 0
 !endif
 
 !message Building for system $(openhome_system), architecture $(openhome_architecture), configuration $(openhome_configuration)
@@ -69,6 +71,7 @@ java_cflags = $(cflags)
 javac =  "$(JAVA_HOME)\bin\javac.exe"
 jar =  "$(JAVA_HOME)\bin\jar.exe"
 jarflags = cf
+android_build_dir = OpenHome/Net/Bindings/Android/libs/
 dirsep = ^\
 installdir = $(PROGRAMFILES)\ohNet
 installlibdir = $(installdir)\lib

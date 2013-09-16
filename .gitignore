@@ -16,6 +16,7 @@ _ReSharper.*
 *.a
 *.obj
 *.pyc
+*.class
 
 # "tags" files are caches created by ctags for quick navigation in
 # various text editors.
