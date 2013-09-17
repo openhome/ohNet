@@ -32,9 +32,6 @@ private:
     void TestAddRemoveSubscription();
     void TestAddRemoveMultipleSubscriptions();
     void TestRemoveInvalidId();
-    void TestSubscriptionsNotRemoved();
-private:
-    void DummyFunctor();
 private:
     CVal* iCVal;
 };
@@ -170,7 +167,6 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveSubscription));
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions));
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidId));
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestSubscriptionsNotRemoved));
 }
 
 void SuiteCVSubscriptions::Setup()
@@ -223,15 +219,6 @@ void SuiteCVSubscriptions::TestRemoveInvalidId()
     iCVal->Unsubscribe(0);
 }
 
-void SuiteCVSubscriptions::TestSubscriptionsNotRemoved()
-{
-    // test adding a subscription and not removing it - should assert at
-    // destruction
-    iCVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
-    TEST_THROWS(delete iCVal, AssertionFailed);
-    iCVal = NULL;
-}
-
 
 // SuiteCVNum
 
@@ -277,21 +264,21 @@ void SuiteCVNum::TestValueOutOfRangeConstructor()
 void SuiteCVNum::TestGet()
 {
     // test the correct value of the CVNum is returned
-    TUint val = iCVal->Get();
+    TInt val = iCVal->Get();
     TEST(val == kVal);
 }
 
 void SuiteCVNum::TestGetMin()
 {
     // test the correct value for min is returned
-    TUint min = iCVal->Min();
+    TInt min = iCVal->Min();
     TEST(min == kMin);
 }
 
 void SuiteCVNum::TestGetMax()
 {
     // test the correct value for max is returned
-    TUint max = iCVal->Max();
+    TInt max = iCVal->Max();
     TEST(max == kMax);
 }
 
@@ -306,7 +293,7 @@ void SuiteCVNum::TestSetUpdate()
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
 
-    TUint val = iCVal->Get();
+    TInt val = iCVal->Get();
     TEST(val == kVal+1);
 
     iCVal->Unsubscribe(id);
@@ -323,7 +310,7 @@ void SuiteCVNum::TestSetNoUpdate()
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
 
-    TUint val = iCVal->Get();
+    TInt val = iCVal->Get();
     TEST(val == kVal);
 
     iCVal->Unsubscribe(id);
