@@ -173,7 +173,7 @@ template <class T> void SerialisedMap<T>::Add(const Brx& aId, T& aVal)
 {
     Brn id(aId);
     AutoMutex a(iLock);
-    Map::iterator it = iMap.find(id);
+    typename Map::iterator it = iMap.find(id);
     if (it != iMap.end()) {
         THROW(AvConfigIdAlreadyExists);
     }
@@ -185,7 +185,7 @@ template <class T> TBool SerialisedMap<T>::Has(const Brx& aId)
     TBool found = false;
     Brn id(aId);
     AutoMutex a(iLock);
-    Map::iterator it = iMap.find(id);
+    typename Map::iterator it = iMap.find(id);
     if (it != iMap.end()) {
         found = true;
     }
@@ -197,7 +197,7 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aId)
 {
     Brn id(aId);
     AutoMutex a(iLock);
-    Map::iterator it = iMap.find(id);
+    typename Map::iterator it = iMap.find(id);
     ASSERT(it != iMap.end());
 
     return it->second;
