@@ -158,7 +158,7 @@ public:
     T& Get(const Brx& aId);
     //void Remove(const Brx& aId);
 private:
-    typedef std::map<Brn, T&, BufferCmp> Map;
+    typedef std::map<Brn, T*, BufferCmp> Map;
     Map iMap;
     Mutex iLock;
 };
@@ -177,7 +177,7 @@ template <class T> void SerialisedMap<T>::Add(const Brx& aId, T& aVal)
     if (it != iMap.end()) {
         THROW(AvConfigIdAlreadyExists);
     }
-    iMap.insert(std::pair<Brn, T&>(id, aVal));
+    iMap.insert(std::pair<Brn, T*>(id, &aVal));
 }
 
 template <class T> TBool SerialisedMap<T>::Has(const Brx& aId)
@@ -200,7 +200,7 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aId)
     typename Map::iterator it = iMap.find(id);
     ASSERT(it != iMap.end());
 
-    return it->second;
+    return *(it->second);
 }
 
 
