@@ -579,6 +579,13 @@ void SuiteCVText::TestSetValueTooLong()
 
 // SuiteConfigurationManager
 
+/*
+ * Note: SerialisedMap is not tested, as ConfigManager is such a thin wrapper
+ * around it that all the test cases present here would just be duplicated.
+ * These tests essentially test SerialisedMap anyway; just proxied through
+ * ConfigManager.
+ */
+
 const Brn SuiteConfigurationManager::kIdNum1("cv.num.1");
 const Brn SuiteConfigurationManager::kIdNum2("cv.num.2");
 const Brn SuiteConfigurationManager::kIdChoice1("cv.choice.1");

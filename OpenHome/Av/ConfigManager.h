@@ -225,6 +225,8 @@ public: // from IConfigurationManager
     TBool HasText(const Brx& aId);
     CVText& GetText(const Brx& aId);
 private:
+    template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal);
+private:
     SerialisedMap<CVNum> iMapNum;
     SerialisedMap<CVChoice> iMapChoice;
     SerialisedMap<CVText> iMapText;

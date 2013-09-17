@@ -195,19 +195,28 @@ TBool CVText::Set(const Brx& aText)
 
 // ConfigurationManager
 
+template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
+{
+    if (iMapNum.Has(aId) || iMapChoice.Has(aId) || iMapText.Has(aId)) {
+        THROW(AvConfigIdAlreadyExists);
+    }
+
+    aMap.Add(aId, aVal);
+}
+
 void ConfigurationManager::Add(const Brx& aId, CVNum& aNum)
 {
-    iMapNum.Add(aId, aNum);
+    Add(iMapNum, aId, aNum);
 }
 
 void ConfigurationManager::Add(const Brx& aId, CVChoice& aChoice)
 {
-    iMapChoice.Add(aId, aChoice);
+    Add(iMapChoice, aId, aChoice);
 }
 
 void ConfigurationManager::Add(const Brx& aId, CVText& aText)
 {
-    iMapText.Add(aId, aText);
+    Add(iMapText, aId, aText);
 }
 
 TBool ConfigurationManager::HasNum(const Brx& aId)
