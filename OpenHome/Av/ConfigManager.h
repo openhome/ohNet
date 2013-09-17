@@ -92,7 +92,7 @@ public:
     TBool Set(TUint aIndex);
     inline TBool operator==(const CVChoice& aChoice) const;
 private:
-    std::vector<const Brx*> iAllowedValues;
+    std::vector<Brn> iAllowedValues;
     TUint iSelected;
 };
 
@@ -156,7 +156,6 @@ public:
     void Add(const Brx& aId, T& aVal);
     TBool Has(const Brx& aId);
     T& Get(const Brx& aId);
-    //void Remove(const Brx& aId);
 private:
     typedef std::map<Brn, T*, BufferCmp> Map;
     Map iMap;

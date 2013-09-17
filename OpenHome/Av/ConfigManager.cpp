@@ -119,25 +119,31 @@ CVChoice::~CVChoice()
 
 void CVChoice::Add(const Brx& aVal)
 {
-    std::vector<const Brx*>::iterator it;
-    for (it = iAllowedValues.begin() ; it != iAllowedValues.end(); it++) {
-        if (**it == aVal) {
+    Brn val(aVal);
+    std::vector<Brn>::iterator it;
+    for (it = iAllowedValues.begin(); it != iAllowedValues.end(); it++) {
+        if (*it == aVal) {
             THROW(AvConfigValueAlreadyExists);
         }
     }
-    iAllowedValues.push_back(&aVal);
+    iAllowedValues.push_back(val);
 }
 
 std::vector<const Brx*> CVChoice::Options()
 {
-    return iAllowedValues;
+    std::vector<const Brx*> options;
+    std::vector<Brn>::iterator it;
+    for (it = iAllowedValues.begin(); it != iAllowedValues.end(); it++) {
+        options.push_back(&*it);
+    }
+    return options;
 }
 
 const Brx& CVChoice::Get() const
 {
     ASSERT(iAllowedValues.size() > 0);
 
-    return *iAllowedValues[iSelected];
+    return iAllowedValues[iSelected];
 }
 
 TBool CVChoice::Set(TUint aIndex)
