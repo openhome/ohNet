@@ -201,6 +201,8 @@ TBool CVText::Set(const Brx& aText)
 
 // ConfigurationManager
 
+ConfigurationManager::~ConfigurationManager() {}
+
 template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
 {
     if (iMapNum.Has(aId) || iMapChoice.Has(aId) || iMapText.Has(aId)) {

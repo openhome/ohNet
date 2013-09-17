@@ -212,6 +212,8 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aId)
  */
 class ConfigurationManager : public IConfigurationManager
 {
+public:
+    virtual ~ConfigurationManager();
 public: // from IConfigurationManager
     void Add(const Brx& aId, CVNum& aNum);
     void Add(const Brx& aId, CVChoice& aChoice);
