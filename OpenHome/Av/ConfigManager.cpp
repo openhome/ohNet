@@ -191,3 +191,51 @@ TBool CVText::Set(const Brx& aText)
 
     return changed;
 }
+
+
+// ConfigurationManager
+
+void ConfigurationManager::Add(const Brx& aId, CVNum& aNum)
+{
+    iMapNum.Add(aId, aNum);
+}
+
+void ConfigurationManager::Add(const Brx& aId, CVChoice& aChoice)
+{
+    iMapChoice.Add(aId, aChoice);
+}
+
+void ConfigurationManager::Add(const Brx& aId, CVText& aText)
+{
+    iMapText.Add(aId, aText);
+}
+
+TBool ConfigurationManager::HasNum(const Brx& aId)
+{
+    return iMapNum.Has(aId);
+}
+
+CVNum& ConfigurationManager::GetNum(const Brx& aId)
+{
+    return iMapNum.Get(aId);
+}
+
+TBool ConfigurationManager::HasChoice(const Brx& aId)
+{
+    return iMapChoice.Has(aId);
+}
+
+CVChoice& ConfigurationManager::GetChoice(const Brx& aId)
+{
+    return iMapChoice.Get(aId);
+}
+
+TBool ConfigurationManager::HasText(const Brx& aId)
+{
+    return iMapText.Has(aId);
+}
+
+CVText& ConfigurationManager::GetText(const Brx& aId)
+{
+    return iMapText.Get(aId);
+}

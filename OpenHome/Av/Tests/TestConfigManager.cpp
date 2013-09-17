@@ -101,6 +101,42 @@ private:
     CVText* iCVal;
 };
 
+class SuiteConfigurationManager : public SuiteUnitTest
+{
+public:
+    SuiteConfigurationManager();
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    void TestAdd();
+    void TestAddDuplicate();
+    void TestHasNoVals();
+    void TestHasValidId();
+    void TestHasInvalidId();
+    void TestHasMultiple();
+    void TestGetNoVals();
+    void TestGetValidId();
+    void TestGetInvalidId();
+    void TestGetMultiple();
+private:
+    static const TUint kMinNum = 0;
+    static const TUint kMaxNum = 2;
+    static const TUint kMaxText = 10;
+    static const Brn kIdNum1;
+    static const Brn kIdNum2;
+    static const Brn kIdChoice1;
+    static const Brn kIdChoice2;
+    static const Brn kIdText1;
+    static const Brn kIdText2;
+    ConfigurationManager* iConfigManager;
+    CVNum* iNum1;
+    CVNum* iNum2;
+    CVChoice* iChoice1;
+    CVChoice* iChoice2;
+    CVText* iText1;
+    CVText* iText2;
+};
 
 
 // SuiteCVNotify
@@ -218,6 +254,7 @@ void SuiteCVNum::Setup()
     iCVal = new CVNum(kMin, kMax, kVal);
     iChangedCount = 0;
 }
+
 void SuiteCVNum::TearDown()
 {
     SuiteCVNotify::TearDown();
@@ -540,6 +577,245 @@ void SuiteCVText::TestSetValueTooLong()
 }
 
 
+// SuiteConfigurationManager
+
+const Brn SuiteConfigurationManager::kIdNum1("cv.num.1");
+const Brn SuiteConfigurationManager::kIdNum2("cv.num.2");
+const Brn SuiteConfigurationManager::kIdChoice1("cv.choice.1");
+const Brn SuiteConfigurationManager::kIdChoice2("cv.choice.2");
+const Brn SuiteConfigurationManager::kIdText1("cv.text.1");
+const Brn SuiteConfigurationManager::kIdText2("cv.text.2");
+
+SuiteConfigurationManager::SuiteConfigurationManager()
+    : SuiteUnitTest("SuiteConfigurationManager")
+{
+    // Creating different instances of SuiteConfigurationManager for each of
+    // CVNum, CVChoice and CVText would end up in a lot of boilerplate code.
+    // Just group functions for each val class in a single generic unit test
+    // for each type of ConfigurationManager function to maintain clarity and
+    // small test size.
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestAdd));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestAddDuplicate));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasNoVals));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasValidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasInvalidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasMultiple));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetNoVals));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetValidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetInvalidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetMultiple));
+}
+
+void SuiteConfigurationManager::Setup()
+{
+    iConfigManager = new ConfigurationManager();
+    iNum1 = new CVNum(kMinNum, kMaxNum, kMinNum);
+    iNum2 = new CVNum(kMinNum, kMaxNum, kMinNum+1);
+    iChoice1 = new CVChoice();
+    iChoice2 = new CVChoice();
+    iText1 = new CVText(kMaxText);
+    iText2 = new CVText(kMaxText);
+}
+
+void SuiteConfigurationManager::TearDown()
+{
+    delete iConfigManager;
+    delete iNum1;
+    delete iNum2;
+    delete iChoice1;
+    delete iChoice2;
+    delete iText1;
+    delete iText2;
+}
+
+void SuiteConfigurationManager::TestAdd()
+{
+    // completion of this test without errors suggests adding works
+    // Has() and Get() are tested in their own unit tests.
+    iConfigManager->Add(kIdNum1, *iNum1);
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    iConfigManager->Add(kIdText1, *iText1);
+}
+
+void SuiteConfigurationManager::TestAddDuplicate()
+{
+    // test that an exception is throws if an attempt to add a CVal with the
+    // same ID is made twice
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    TEST(iConfigManager->HasNum(kIdNum1) == true);
+    CVNum& num = iConfigManager->GetNum(kIdNum1);
+    TEST(num == *iNum1);
+
+    TEST_THROWS(iConfigManager->Add(kIdNum1, *iNum1), AvConfigIdAlreadyExists);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    TEST(iConfigManager->HasChoice(kIdChoice1) == true);
+    CVChoice& choice = iConfigManager->GetChoice(kIdChoice1);
+    TEST(choice == *iChoice1);
+
+    TEST_THROWS(iConfigManager->Add(kIdChoice1, *iChoice1), AvConfigIdAlreadyExists);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    TEST(iConfigManager->HasText(kIdText1) == true);
+    CVText& text = iConfigManager->GetText(kIdText1);
+    TEST(text == *iText1);
+
+    TEST_THROWS(iConfigManager->Add(kIdText1, *iText1), AvConfigIdAlreadyExists);
+
+    // attempt to add a CVChoice with same ID as existing CVNum - should fail
+    TEST_THROWS(iConfigManager->Add(kIdNum1, *iChoice1), AvConfigIdAlreadyExists);
+}
+
+void SuiteConfigurationManager::TestHasNoVals()
+{
+    // test that calling Has() when no values are added returns false
+    TEST(iConfigManager->HasNum(kIdNum1) == false);
+    TEST(iConfigManager->HasChoice(kIdChoice1) == false);
+    TEST(iConfigManager->HasText(kIdText1) == false);
+}
+
+void SuiteConfigurationManager::TestHasValidId()
+{
+    // test Has() returns true when a given ID exists
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    TEST(iConfigManager->HasNum(kIdNum1) == true);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    TEST(iConfigManager->HasChoice(kIdChoice1) == true);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    TEST(iConfigManager->HasText(kIdText1) == true);
+}
+
+void SuiteConfigurationManager::TestHasInvalidId()
+{
+    // test Has() returns false when IDs are present, but not the given ID
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    TEST(iConfigManager->HasNum(kIdNum2) == false);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    TEST(iConfigManager->HasChoice(kIdChoice2) == false);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    TEST(iConfigManager->HasText(kIdText2) == false);
+
+    // try call HasChoice() with the ID of CVNum
+    TEST(iConfigManager->HasChoice(kIdNum1) == false);
+}
+
+void SuiteConfigurationManager::TestHasMultiple()
+{
+    // test adding multiple values and calling Has() on the IDs
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    iConfigManager->Add(kIdNum2, *iNum2);
+    TEST(iConfigManager->HasNum(kIdNum1) == true);
+    TEST(iConfigManager->HasNum(kIdNum2) == true);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    iConfigManager->Add(kIdChoice2, *iChoice2);
+    TEST(iConfigManager->HasChoice(kIdChoice1) == true);
+    TEST(iConfigManager->HasChoice(kIdChoice2) == true);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    iConfigManager->Add(kIdText2, *iText2);
+    TEST(iConfigManager->HasText(kIdText1) == true);
+    TEST(iConfigManager->HasText(kIdText2) == true);
+}
+
+void SuiteConfigurationManager::TestGetNoVals()
+{
+    // test that Get() fails with an assertion when no values are present
+    TEST_THROWS(iConfigManager->GetNum(kIdNum1), AssertionFailed);
+    TEST_THROWS(iConfigManager->GetChoice(kIdChoice1), AssertionFailed);
+    TEST_THROWS(iConfigManager->GetText(kIdText1), AssertionFailed);
+}
+
+void SuiteConfigurationManager::TestGetValidId()
+{
+    // test Get() returns the correct val when ID is present
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    CVNum& num = iConfigManager->GetNum(kIdNum1);
+    TEST(num == *iNum1);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    CVChoice& choice = iConfigManager->GetChoice(kIdChoice1);
+    TEST(choice == *iChoice1);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    CVText& text = iConfigManager->GetText(kIdText1);
+    TEST(text == *iText1);
+}
+
+void SuiteConfigurationManager::TestGetInvalidId()
+{
+    // test that Get() causes an assertion when ID is not present
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    TEST_THROWS(iConfigManager->GetNum(kIdNum2), AssertionFailed);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    TEST_THROWS(iConfigManager->GetChoice(kIdChoice2), AssertionFailed);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    TEST_THROWS(iConfigManager->GetText(kIdText2), AssertionFailed);
+
+    // try call HasChoice() with the ID of CVNum
+    TEST_THROWS(iConfigManager->GetChoice(kIdNum1), AssertionFailed);
+}
+
+void SuiteConfigurationManager::TestGetMultiple()
+{
+    // test adding multiple values and calling Get() on the IDs
+
+    // test CVNum
+    iConfigManager->Add(kIdNum1, *iNum1);
+    iConfigManager->Add(kIdNum2, *iNum2);
+    CVNum& num1 = iConfigManager->GetNum(kIdNum1);
+    TEST(num1 == *iNum1);
+    CVNum& num2 = iConfigManager->GetNum(kIdNum2);
+    TEST(num2 == *iNum2);
+
+    // test CVChoice
+    iConfigManager->Add(kIdChoice1, *iChoice1);
+    iConfigManager->Add(kIdChoice2, *iChoice2);
+    CVChoice& choice1 = iConfigManager->GetChoice(kIdChoice1);
+    TEST(choice1 == *iChoice1);
+    CVChoice& choice2 = iConfigManager->GetChoice(kIdChoice2);
+    TEST(choice2 == *iChoice2);
+
+    // test CVText
+    iConfigManager->Add(kIdText1, *iText1);
+    iConfigManager->Add(kIdText2, *iText2);
+    CVText& text1 = iConfigManager->GetText(kIdText1);
+    TEST(text1 == *iText1);
+    CVText& text2 = iConfigManager->GetText(kIdText2);
+    TEST(text2 == *iText2);
+}
+
+
 
 void TestConfigManager()
 {
@@ -548,5 +824,6 @@ void TestConfigManager()
     runner.Add(new SuiteCVNum());
     runner.Add(new SuiteCVChoice());
     runner.Add(new SuiteCVText());
+    runner.Add(new SuiteConfigurationManager);
     runner.Run();
 }
