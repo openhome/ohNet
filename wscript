@@ -281,6 +281,12 @@ def build(bld):
             use=['OHNET'],
             target='CodecWav')
 
+    # AIFF
+    bld.stlib(
+            source=['OpenHome/Media/Codec/Aiff.cpp'],
+            use=['OHNET'],
+            target='CodecAiff')
+
     # Ogg
     bld.stlib(
             source=[
@@ -472,7 +478,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -608,7 +614,7 @@ def build(bld):
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecRaop', 'CodecVorbis', 'CodecWav']
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAiff', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecRaop', 'CodecVorbis', 'CodecWav']
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
