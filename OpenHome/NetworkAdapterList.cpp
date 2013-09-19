@@ -40,7 +40,10 @@ NetworkAdapterList::~NetworkAdapterList()
 
 void NetworkAdapterList::Refresh()
 {
-    HandleInterfaceListChanged();
+    // check for subnet changes
+    HandleInterfaceListChanged();    
+    // force a refresh
+    iNotifierThread->QueueCurrentChanged();
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
