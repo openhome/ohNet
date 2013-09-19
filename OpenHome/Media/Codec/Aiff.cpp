@@ -128,7 +128,6 @@ TBool CodecAiff::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     const TUint byteDepth = iBitDepth/8;
     const TUint64 bytePos = aSample * iNumChannels * byteDepth;
-    Log::Print("iTrackStart: %u\n", iTrackStart);
     if (!iController->TrySeek(aStreamId, iTrackStart + bytePos)) {
         return false;
     }
@@ -191,7 +190,7 @@ void CodecAiff::ProcessHeader()
 
     TUint commChunkBytes = Converter::BeUint32At(iReadBuf, 4);
     if (commChunkBytes != 18) {
-        THROW(CodecStreamFeatureUnsupported);
+        THROW(CodecStreamCorrupt);
     }
 
     iReadBuf.SetBytes(0);
@@ -230,6 +229,7 @@ void CodecAiff::ProcessHeader()
     }
 
     // There are 8 bytes included for offset and blocksize in this number
+    // FIXME - should account for a zero pad byte if chunk size is odd - will this always be even?
     iAudioBytesTotal = Converter::BeUint32At(iReadBuf, 4) - 8;
     iAudioBytesRemaining = iAudioBytesTotal;
 
