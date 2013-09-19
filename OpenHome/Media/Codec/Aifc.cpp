@@ -26,6 +26,7 @@ private: // from CodecBase
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
 private:
+    TUint FindChunk(const Brx& aChunkId);
     TUint DetermineRate(TUint16 aExponent, TUint32 aMantissa);
     void ProcessHeader();
     void SendMsgDecodedStream(TUint64 aStartSample);
@@ -137,6 +138,35 @@ TBool CodecAifc::TrySeek(TUint aStreamId, TUint64 aSample)
     return true;
 }
 
+TUint CodecAifc::FindChunk(const Brx& aChunkId)
+{
+    LOG(kMedia, "CodecAifc::FindChunk: ");
+    LOG(kMedia, aChunkId);
+    LOG(kMedia, "\n");
+
+    for (;;) {
+        iReadBuf.SetBytes(0);
+        iController->Read(iReadBuf, 8); //Read chunk id and chunk size
+        TUint bytes = Converter::BeUint32At(iReadBuf, 4);
+        bytes += (bytes % 2); // aiff pads by one byte if chunk size is odd
+
+        if (Brn(iReadBuf.Ptr(), 4) == aChunkId) {
+            return bytes;
+        }
+        else {
+            iReadBuf.SetBytes(0);
+            if (iReadBuf.MaxBytes() < bytes) {
+                // FIXME - this could be the case if, e.g., COMM comes after SSND
+                // don't want to exhaust MsgAudioEncodeds by trying to skip over
+                // an extremely large amount of data
+                // FIXME - CodecStreamFeatureUnsupported appears to be unhandled
+                THROW(CodecStreamFeatureUnsupported);
+            }
+            iController->Read(iReadBuf, bytes);
+        }
+    }
+}
+
 TUint CodecAifc::DetermineRate(TUint16 aExponent, TUint32 aMantissa)
 {
     /*
@@ -180,36 +210,19 @@ void CodecAifc::ProcessHeader()
 
     audioOffset += 12;
 
-    // Find the FVER chunk (FIXME - should be able to search and skip over unknown chunks)
-    // FIXME - when chunk seeking is implemented, can probably safely ignore FVER chunk
-    // - should check it exists, but contains no useful data
-    iReadBuf.SetBytes(0);
-    iController->Read(iReadBuf, 8);
-    const TByte* fverHeader = iReadBuf.Ptr();
-    if (strncmp((const TChar*)fverHeader, "FVER", 4) != 0) {
-        THROW(CodecStreamCorrupt);
-    }
-
-    TUint fverChunkBytes = Converter::BeUint32At(iReadBuf, 4);
+    // Find the FVER chunk - should check it exists, but contains no useful data
+    TUint fverChunkBytes = FindChunk(Brn("FVER"));
     if (fverChunkBytes != 4) {
         THROW(CodecStreamCorrupt);
     }
-
     // read remainder of chunk
     iReadBuf.SetBytes(0);
     iController->Read(iReadBuf, fverChunkBytes);
 
     audioOffset += fverChunkBytes + 8;
 
-    // Find the COMMON chunk (FIXME - should be able to search and skip over unknown chunks)
-    iReadBuf.SetBytes(0);
-    iController->Read(iReadBuf, 8);
-    const TByte* commHeader = iReadBuf.Ptr();
-    if (strncmp((const TChar*)commHeader, "COMM", 4) != 0) {
-        THROW(CodecStreamCorrupt);
-    }
-
-    TUint commChunkBytes = Converter::BeUint32At(iReadBuf, 4);
+    // Find the COMMON chunk
+    TUint commChunkBytes = FindChunk(Brn("COMM"));
     if (commChunkBytes < 22) {
         THROW(CodecStreamCorrupt);
     }
@@ -248,17 +261,11 @@ void CodecAifc::ProcessHeader()
 
     audioOffset += commChunkBytes + 8;
 
-    // Find the sound chunk (FIXME - should be able to search and skip over unknown chunks)
-    iReadBuf.SetBytes(0);
-    iController->Read(iReadBuf, 8);
-    const TByte* ssndHeader = iReadBuf.Ptr();
-    if (strncmp((const TChar*)ssndHeader, "SSND", 4) != 0) {
-        THROW(CodecStreamCorrupt);
-    }
+    // Find the sound chunk
+    TUint ssndChunkBytes = FindChunk(Brn("SSND"));
 
     // There are 8 bytes included for offset and blocksize in this number
-    // FIXME - should account for a zero pad byte if chunk size is odd - will this always be even?
-    iAudioBytesTotal = Converter::BeUint32At(iReadBuf, 4) - 8;
+    iAudioBytesTotal = ssndChunkBytes - 8;
     iAudioBytesRemaining = iAudioBytesTotal;
 
     iController->Read(iReadBuf, 8); // read in offset and blocksize
