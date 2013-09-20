@@ -12,22 +12,32 @@ namespace Codec {
 class CodecAiffBase : public CodecBase
 {
 public:
-    CodecAiffBase(EMediaDataEndian aEndian);
+    CodecAiffBase(const Brx& aName, EMediaDataEndian aEndian);
     ~CodecAiffBase();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise(const Brx& aData) = 0;
+    TBool Recognise(const Brx& aData);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
 protected:
-    virtual void ProcessHeader() = 0;
     TUint FindChunk(const Brx& aChunkId);
-    TUint DetermineRate(TUint16 aExponent, TUint32 aMantissa);
+    virtual void ProcessMiscChunks();
+    virtual TUint GetCommChunkHeader() = 0;
+    virtual void ProcessCommChunkExtra(); // for e.g., getting compression format for AIFC
 private:
+    TUint DetermineRate(TUint16 aExponent, TUint32 aMantissa);
+    void ProcessHeader();
+    void ProcessFormChunk();
+    void ParseCommChunk(TUint aChunkSize); // helper for ProcessCommChunk
+    void ProcessCommChunk();
+    void ProcessSsndChunk();
     void SendMsgDecodedStream(TUint64 aStartSample);
 protected:
     Bws<DecodedAudio::kMaxBytes> iReadBuf;
+    TUint64 iTrackStart;
+private:
+    Brn iName;
     TUint iNumChannels;
     TUint64 iSamplesTotal;
     TUint iBitDepth;
@@ -35,9 +45,7 @@ protected:
     TUint iBitRate;
     TUint iAudioBytesTotal;
     TUint iAudioBytesRemaining;
-    TUint64 iTrackStart;
     TUint64 iTrackLengthJiffies;
-private:
     EMediaDataEndian iEndian;
     TUint64 iTrackOffset;
 };

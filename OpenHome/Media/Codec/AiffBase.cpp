@@ -1,4 +1,5 @@
 #include <OpenHome/Media/Codec/AiffBase.h>
+#include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
@@ -8,8 +9,9 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 
-CodecAiffBase::CodecAiffBase(EMediaDataEndian aEndian)
-    :iEndian(aEndian)
+CodecAiffBase::CodecAiffBase(const Brx& aName, EMediaDataEndian aEndian)
+    : iName(aName)
+    , iEndian(aEndian)
 {
 }
 
@@ -23,6 +25,18 @@ TBool CodecAiffBase::SupportsMimeType(const Brx& aMimeType)
     static const Brn kMimeXAiff("audio/x-aiff");
     if (aMimeType == kMimeAiff || aMimeType == kMimeXAiff) {
         return true;
+    }
+    return false;
+}
+
+
+TBool CodecAiffBase::Recognise(const Brx& aData)
+{
+    const TChar* ptr = reinterpret_cast<const TChar*>(aData.Ptr());
+    if(strncmp(ptr, "FORM", 4) == 0) {
+        if(strncmp(ptr+8, reinterpret_cast<const TChar*>(iName.Ptr()), 4) == 0) {
+            return true;
+        }
     }
     return false;
 }
@@ -102,6 +116,7 @@ TUint CodecAiffBase::FindChunk(const Brx& aChunkId)
                 THROW(CodecStreamFeatureUnsupported);
             }
             iController->Read(iReadBuf, bytes);
+            iTrackStart += 8 + bytes;
         }
     }
 }
@@ -121,6 +136,111 @@ TUint CodecAiffBase::DetermineRate(TUint16 aExponent, TUint32 aMantissa)
     TUint srate = aMantissa >> aExponent;
 
     return srate;
+}
+
+void CodecAiffBase::ProcessHeader()
+{
+    LOG(kMedia, "CodecAiff::ProcessHeader()\n");
+    ProcessFormChunk();
+    // FIXME - these could appear be in any order, i.e. metadata could be after
+    // audio; still need to parse them in this kind of order, but should be
+    // able to seek back if above is the case
+    ProcessMiscChunks();
+    ProcessCommChunk();
+    ProcessSsndChunk();
+}
+
+void CodecAiffBase::ProcessFormChunk()
+{
+    //Should be FORM,<FileBytes>,AIFF/AIFC,<audio data>
+    iController->Read(iReadBuf, 12); //Read the first 12 bytes of the IFF file, the FORM header
+    const TByte* header = iReadBuf.Ptr();
+
+    //We shouldn't be in the aiff codec unless this says 'AIFF/AIFC'
+    //This isn't a track corrupt issue as it was previously checked by Recognise
+    ASSERT(strncmp((const TChar*)header, "FORM", 4) == 0);
+
+    // Get the file size (FIXME - disabled for now since we're not considering continuous streams yet)
+    //here the given size includes four bytes for the file type (AIFF/AIFC)
+    //TUint bytesTotal = Converter::BeUint32At(iReadBuf, 4) + 8;
+
+    //We shouldn't be in the aiff codec unless this says 'AIFF/AIFC'
+    //This isn't a track corrupt issue as it was previously checked by Recognise
+    ASSERT(strncmp((const TChar*)header+8, (const TChar*)iName.Ptr(), 4) == 0);
+
+    iTrackStart += 12;
+}
+
+void CodecAiffBase::ProcessMiscChunks()
+{
+    // do nothing by default
+}
+
+void CodecAiffBase::ParseCommChunk(TUint aChunkSize)
+{
+    iReadBuf.SetBytes(0);
+    iController->Read(iReadBuf, aChunkSize);
+    iNumChannels = Converter::BeUint16At(iReadBuf, 0);
+    iSamplesTotal = Converter::BeUint32At(iReadBuf, 2);
+    iBitDepth = Converter::BeUint16At(iReadBuf, 6);
+
+    //the sample rate is expressed as a 80-bit floating point number
+    iSampleRate = DetermineRate(Converter::BeUint16At(iReadBuf, 8), Converter::BeUint32At(iReadBuf, 10));
+
+    switch(iBitDepth) {
+    case 8:
+    case 16:
+    case 24:
+        break;
+    case 20:
+        iBitDepth = 24;
+        break;
+    default:
+        THROW(CodecStreamFeatureUnsupported);
+    }
+
+    TUint bytesPerSample = iNumChannels * (iBitDepth/8);
+    TUint bytesPerSec = iSampleRate * bytesPerSample;
+    iBitRate = bytesPerSec * 8;
+
+    iTrackStart += aChunkSize + 8;
+}
+
+void CodecAiffBase::ProcessCommChunkExtra()
+{
+    // do nothing by default
+}
+
+void CodecAiffBase::ProcessCommChunk()
+{
+    TUint chunkSize = GetCommChunkHeader();
+    ParseCommChunk(chunkSize);
+    ProcessCommChunkExtra();
+}
+
+void CodecAiffBase::ProcessSsndChunk()
+{
+    // Find the sound chunk
+    TUint ssndChunkBytes = FindChunk(Brn("SSND"));
+
+    // There are 8 bytes included for offset and blocksize in this number
+    iAudioBytesTotal = ssndChunkBytes - 8;
+    iAudioBytesRemaining = iAudioBytesTotal;
+
+    iController->Read(iReadBuf, 8); // read in offset and blocksize
+
+    iTrackStart += 16;
+
+    if (iAudioBytesTotal % (iNumChannels * (iBitDepth/8)) != 0) {
+        // There aren't an exact number of samples in the file => file is corrupt
+        THROW(CodecStreamCorrupt);
+    }
+
+    const TUint numSamples = iAudioBytesTotal / (iNumChannels * (iBitDepth/8));
+    if (numSamples != iSamplesTotal) {
+        THROW(CodecStreamCorrupt);
+    }
+    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
 }
 
 void CodecAiffBase::SendMsgDecodedStream(TUint64 aStartSample)
