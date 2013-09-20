@@ -311,6 +311,8 @@ void TestCodecMinimalPipeline::RegisterPlugins()
     // Add codecs
     // These can be re-ordered to check for problems in the recognise function of each codec.
     iController->AddCodec(CodecFactory::NewWav());
+    iController->AddCodec(CodecFactory::NewAiff());
+    iController->AddCodec(CodecFactory::NewAifc());
     iController->AddCodec(CodecFactory::NewFlac());
     iController->AddCodec(CodecFactory::NewAac());
     iController->AddCodec(CodecFactory::NewAlac());

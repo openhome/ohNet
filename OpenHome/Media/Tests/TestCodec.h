@@ -26,6 +26,8 @@ public:
     static const TUint kCodecAlac     = 3;
     static const TUint kCodecAac      = 4;
     static const TUint kCodecVorbis   = 5;
+    static const TUint kCodecAiff     = 6;
+    static const TUint kCodecAifc     = 7;
 public:
     AudioFileDescriptor(const Brx& aFilename, TUint aSampleRate, TUint aSamples, TUint aBitDepth, TUint aChannels, TUint aCodec);
     const Brx& Filename() const;
