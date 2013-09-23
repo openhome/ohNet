@@ -637,13 +637,20 @@ def bundle(ctx):
 # == Command for invoking unit tests ==
 
 def test(tst):
+    if not hasattr(tst, 'test_manifest'):
+        tst.test_manifest = 'oncommit.test'
+    print 'Testing using manifest:', tst.test_manifest
     rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
         test        = os.path.join(tst.env.testharness_dir, 'Test'),
         manifest    = '${SRC}',
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
         tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
-    tst(rule=rule, source='oncommit.test')
+    tst(rule=rule, source=tst.test_manifest)
+
+def test_full(tst):
+    tst.test_manifest = 'nightly.test'
+    test(tst)
 
 # == Contexts to make 'waf test' work ==
 
@@ -652,6 +659,10 @@ from waflib.Build import BuildContext
 class TestContext(BuildContext):
     cmd = 'test'
     fun = 'test'
+
+class TestContext(BuildContext):
+    cmd = 'test_full'
+    fun = 'test_full'
 
 class BundleContext(BuildContext):
     cmd = 'bundle'
