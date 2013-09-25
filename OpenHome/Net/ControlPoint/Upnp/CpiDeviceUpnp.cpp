@@ -362,10 +362,12 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
         iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
     }
     iSsdpLock.Signal();
+    iCpStack.Env().AddResumeObserver(*this);
 }
 
 CpiDeviceListUpnp::~CpiDeviceListUpnp()
 {
+    iCpStack.Env().RemoveResumeObserver(*this);
     iLock.Wait();
     iActive = false;
     iLock.Signal();
@@ -660,6 +662,11 @@ void CpiDeviceListUpnp::SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& 
 void CpiDeviceListUpnp::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& /*aDomain*/, const Brx& /*aType*/, TUint /*aVersion*/)
 {
     Remove(aUuid);
+}
+
+void CpiDeviceListUpnp::NotifyResumed()
+{
+    Refresh();
 }
 
 

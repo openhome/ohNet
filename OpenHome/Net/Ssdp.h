@@ -335,7 +335,7 @@ class SsdpMsearchResponder : public ISsdpNotify
 {
 public:
     SsdpMsearchResponder(DvStack& aDvStack);
-    void SetRemote(const Endpoint& aEndpoint, TUint aConfigId);
+    void SetRemote(const Endpoint& aEndpoint, TUint aConfigId, TIpAddress aAdapter);
     // ISsdpNotify
     void SsdpNotifyRoot(const Brx& aUuid, const Brx& aUri);
     void SsdpNotifyUuid(const Brx& aUuid, const Brx& aUri);
@@ -353,6 +353,7 @@ private:
     WriterHttpResponse iWriter;
     TUint iConfigId;
     Endpoint iRemote;
+    TIpAddress iAdapter;
 };
 
 } // namespace Net

@@ -17,6 +17,7 @@
 #include <OpenHome/Net/Private/CpiService.h>
 #include <OpenHome/Net/Private/DeviceXml.h>
 #include <OpenHome/Net/Private/XmlFetcher.h>
+#include <OpenHome/Private/Env.h>
 
 namespace OpenHome {
 namespace Net {
@@ -95,7 +96,7 @@ private:
  *
  * This class is not intended for use outside this module.
  */
-class CpiDeviceListUpnp : public CpiDeviceList, public ISsdpNotifyHandler
+class CpiDeviceListUpnp : public CpiDeviceList, public ISsdpNotifyHandler, private IResumeObserver
 {
 public:
     void XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError);
@@ -129,6 +130,8 @@ protected:
     void SsdpNotifyUuidByeBye(const Brx& aUuid);
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
+private: // IResumeObserver
+    void NotifyResumed();
 private:
     void RefreshTimerComplete();
     void NextRefreshDue();

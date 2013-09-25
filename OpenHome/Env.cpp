@@ -98,7 +98,8 @@ void Environment::Construct(FunctorMsg& aLogOutput)
     }
     iLogger = new Log(aLogOutput);
     iPublicLock = new OpenHome::Mutex("GMUT");
-    iPrivateLock = new OpenHome::Mutex("SOML");
+    iPrivateLock = new OpenHome::Mutex("ENVP");
+    iResumeObserverLock = new OpenHome::Mutex("ENVR");
 }
 
 Environment::~Environment()
@@ -118,6 +119,8 @@ Environment::~Environment()
     delete iInitParams;
     delete iPublicLock;
     delete iPrivateLock;
+    ASSERT(iResumeObservers.size() == 0);
+    delete iResumeObserverLock;
     delete iLogger;
     Os::Destroy(iOsContext);
 }
@@ -187,6 +190,34 @@ void Environment::MulticastListenerRelease(TIpAddress aInterface)
         }
     }
     iPrivateLock->Signal();
+}
+
+void Environment::AddResumeObserver(IResumeObserver& aObserver)
+{
+    iResumeObserverLock->Wait();
+    iResumeObservers.push_back(&aObserver);
+    iResumeObserverLock->Signal();
+}
+
+void Environment::RemoveResumeObserver(IResumeObserver& aObserver)
+{
+    iResumeObserverLock->Wait();
+    for (TUint i=0; i<iResumeObservers.size(); i++) {
+        if (iResumeObservers[i] == &aObserver) {
+            iResumeObservers.erase(iResumeObservers.begin() + i);
+            break;
+        }
+    }
+    iResumeObserverLock->Signal();
+}
+
+void Environment::NotifyResumed()
+{
+    iResumeObserverLock->Wait();
+    for (TUint i=0; i<iResumeObservers.size(); i++) {
+        iResumeObservers[i]->NotifyResumed();
+    }
+    iResumeObserverLock->Signal();
 }
 
 TUint Environment::SequenceNumber()

@@ -60,52 +60,55 @@ Brn Parser::Remaining()
 
 Brn Parser::Next(TByte aDelimiter)
 {
-    TUint start = iIndex;
+    //TUint start = iIndex;
 
     TUint bytes = iBuffer.Bytes();
 
-    while (start < bytes) {
-        if (!Ascii::IsWhitespace(iBuffer[start])) {
+    const TByte *pBufferStart = iBuffer.Ptr();
+    const TByte *pStart = pBufferStart + iIndex;
+    const TByte *pBufferEnd = pBufferStart + bytes;
+
+    while (pStart < pBufferEnd) {
+        if (!Ascii::IsWhitespace(*pStart)) {
             break;
         }
-        start++;
+        pStart++;
     }
 
-    if (start == bytes) {
-        iIndex = start;
+    if (pStart == pBufferEnd) {
+        iIndex = pStart - pBufferStart;
         return (Brn::Empty());
     }
 
     TUint extra = 1;
 
-    TUint delimiter = start;
+    //TUint delimiter = start;
+    const TByte *pDelimiter = pStart;
 
-    while (delimiter < bytes) {
-        if (iBuffer[delimiter] == aDelimiter) {
+    while (pDelimiter < pBufferEnd) {
+        if (*pDelimiter == aDelimiter) {
             break;
         }
-        delimiter++;
+        pDelimiter++;
     }
 
-    if (delimiter == bytes) {
+    if (pDelimiter == pBufferEnd) {
         extra = 0;
     }
 
-    TUint length = delimiter - start;
+    const TByte *pEnd = pDelimiter;
 
-    TUint end = delimiter;
-
-    while (length > 0) {
-        if (!Ascii::IsWhitespace(iBuffer[--end])) {
-            end++;
+    while (pEnd > pStart) {
+        pEnd--;
+        if (!Ascii::IsWhitespace(*pEnd)) {
+            pEnd++;
             break;
         }
-        length--;
     }
 
-    iIndex = delimiter + extra; // go one past delimiter if not end of buffer
+    iIndex = (pDelimiter - pBufferStart) + extra; // go one past delimiter if not end of buffer
 
-    return(iBuffer.Split(start, end - start));
+    return(iBuffer.Split(pStart - pBufferStart, pEnd - pStart));
 }
 
 Brn Parser::Next()

@@ -577,7 +577,7 @@ void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAdd
             LogUnicastNotification("all");
             Bws<kMaxUriBytes> uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iDvStack.SsdpNotifierManager().MsearchResponseAll(*this, aEndpoint, aMx, uri, iDevice.ConfigId());
+            iDvStack.SsdpNotifierManager().MsearchResponseAll(*this, aEndpoint, aMx, uri, iDevice.ConfigId(), aAdapter);
         }
     }
 }
@@ -591,7 +591,7 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
             LogUnicastNotification("root");
             Bws<kMaxUriBytes> uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iDvStack.SsdpNotifierManager().MsearchResponseRoot(*this, aEndpoint, aMx, uri, iDevice.ConfigId());
+            iDvStack.SsdpNotifierManager().MsearchResponseRoot(*this, aEndpoint, aMx, uri, iDevice.ConfigId(), aAdapter);
         }
     }
 }
@@ -605,7 +605,7 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
             LogUnicastNotification("uuid");
             Bws<kMaxUriBytes> uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iDvStack.SsdpNotifierManager().MsearchResponseUuid(*this, aEndpoint, aMx, uri, iDevice.ConfigId());
+            iDvStack.SsdpNotifierManager().MsearchResponseUuid(*this, aEndpoint, aMx, uri, iDevice.ConfigId(), aAdapter);
         }
     }
 }
@@ -619,7 +619,7 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
             LogUnicastNotification("device");
             Bws<kMaxUriBytes> uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iDvStack.SsdpNotifierManager().MsearchResponseDeviceType(*this, aEndpoint, aMx, uri, iDevice.ConfigId());
+            iDvStack.SsdpNotifierManager().MsearchResponseDeviceType(*this, aEndpoint, aMx, uri, iDevice.ConfigId(), aAdapter);
         }
     }
 }
@@ -637,7 +637,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
                     LogUnicastNotification("service");
                     Bws<kMaxUriBytes> uri;
                     GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-                    iDvStack.SsdpNotifierManager().MsearchResponseServiceType(*this, aEndpoint, aMx, serviceType, uri, iDevice.ConfigId());
+                    iDvStack.SsdpNotifierManager().MsearchResponseServiceType(*this, aEndpoint, aMx, serviceType, uri, iDevice.ConfigId(), aAdapter);
                 }
                 break;
             }
