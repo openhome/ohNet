@@ -595,7 +595,7 @@ NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
 
 void Library::NotifyResumed()
 {
-    iEnv->NetworkAdapterList().Refresh();
+    iEnv->NotifyResumed();
 }
 
 
@@ -653,5 +653,5 @@ NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter(const char* aCookie)
 
 void UpnpLibrary::NotifyResumed()
 {
-    gEnv->NetworkAdapterList().Refresh();
+    gEnv->NotifyResumed();
 }

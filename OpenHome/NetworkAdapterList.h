@@ -7,6 +7,7 @@
 #include <OpenHome/FunctorNetworkAdapter.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Private/Env.h>
 
 #include <vector>
 #include <map>
@@ -26,14 +27,13 @@ public:
 
 class NetworkAdapterChangeNotifier;
 
-class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNotifier
+class NetworkAdapterList : private IStackObject, private INetworkAdapterChangeNotifier, private IResumeObserver
 {
 public:
     static const TUint kListenerIdNull = 0;
 public:
     NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet=0);
     virtual ~NetworkAdapterList();
-    void Refresh(); // only needs to be called if app can be suspended (e.g. iOS) or OS notification of adapter change isn't possible
     NetworkAdapter* CurrentAdapter(const char* aCookie) const;
     const std::vector<NetworkAdapter*>& List() const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;
@@ -85,6 +85,8 @@ private: // from INetworkAdapterChangeNotifier
     void NotifyAdapterAdded(NetworkAdapter& aAdapter);
     void NotifyAdapterRemoved(NetworkAdapter& aAdapter);
     void NotifyAdapterChanged(NetworkAdapter& aAdapter);
+private: // IResumeObserver
+    void NotifyResumed();
 private:
     Environment& iEnv;
     mutable Mutex iListLock;

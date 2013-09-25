@@ -19,6 +19,7 @@ NetworkAdapterList::NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSub
     , iNextListenerId(1)
 {
     iEnv.AddObject(this);
+    iEnv.AddResumeObserver(*this);
     iDefaultSubnet = aDefaultSubnet;
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
@@ -32,18 +33,11 @@ NetworkAdapterList::NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSub
 
 NetworkAdapterList::~NetworkAdapterList()
 {
+    iEnv.RemoveResumeObserver(*this);
     delete iNotifierThread;
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
     iEnv.RemoveObject(this);
-}
-
-void NetworkAdapterList::Refresh()
-{
-    // check for subnet changes
-    HandleInterfaceListChanged();    
-    // force a refresh
-    iNotifierThread->QueueCurrentChanged();
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
@@ -502,6 +496,11 @@ void NetworkAdapterList::NotifyAdapterRemoved(NetworkAdapter& aAdapter)
 void NetworkAdapterList::NotifyAdapterChanged(NetworkAdapter& aAdapter)
 {
     RunSubnetCallbacks(iListenersAdapterChanged, aAdapter);
+}
+
+void NetworkAdapterList::NotifyResumed()
+{
+    HandleInterfaceListChanged();    
 }
 
 
