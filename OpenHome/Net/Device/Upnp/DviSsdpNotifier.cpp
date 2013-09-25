@@ -123,7 +123,7 @@ MsearchResponse::~MsearchResponse()
     delete iNotifier;
 }
 
-void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     LogNotifierStart("StartAll");
     TUint nextMsgIndex = NEXT_MSG_ROOT;
@@ -132,28 +132,28 @@ void MsearchResponse::StartAll(IUpnpAnnouncementData& aAnnouncementData, const E
         msgCount--;
         nextMsgIndex = NEXT_MSG_UUID;
     }
-    Start(aAnnouncementData, msgCount, nextMsgIndex, aRemote, aMx, aUri, aConfigId);
+    Start(aAnnouncementData, msgCount, nextMsgIndex, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void MsearchResponse::StartRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void MsearchResponse::StartRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     LogNotifierStart("StartRoot");
-    Start(aAnnouncementData, 1, NEXT_MSG_ROOT, aRemote, aMx, aUri, aConfigId);
+    Start(aAnnouncementData, 1, NEXT_MSG_ROOT, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void MsearchResponse::StartUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void MsearchResponse::StartUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     LogNotifierStart("StartUuid");
-    Start(aAnnouncementData, 1, NEXT_MSG_UUID, aRemote, aMx, aUri, aConfigId);
+    Start(aAnnouncementData, 1, NEXT_MSG_UUID, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void MsearchResponse::StartDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void MsearchResponse::StartDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     LogNotifierStart("StartDeviceType");
-    Start(aAnnouncementData, 1, NEXT_MSG_DEVICE_TYPE, aRemote, aMx, aUri, aConfigId);
+    Start(aAnnouncementData, 1, NEXT_MSG_DEVICE_TYPE, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId)
+void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     LogNotifierStart("StartServiceType");
     TUint index = 0;
@@ -164,15 +164,15 @@ void MsearchResponse::StartServiceType(IUpnpAnnouncementData& aAnnouncementData,
         }
         index++;
     }
-    Start(aAnnouncementData, 1, NEXT_MSG_SERVICE_TYPE + index, aRemote, aMx, aUri, aConfigId);
+    Start(aAnnouncementData, 1, NEXT_MSG_SERVICE_TYPE + index, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void MsearchResponse::Start(IUpnpAnnouncementData& aAnnouncementData, TUint aTotalMsgs, TUint aNextMsgIndex, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void MsearchResponse::Start(IUpnpAnnouncementData& aAnnouncementData, TUint aTotalMsgs, TUint aNextMsgIndex, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     iAnnouncementData = &aAnnouncementData;
     iNextMsgIndex = aNextMsgIndex;
     iRemainingMsgs = aTotalMsgs;
-    static_cast<SsdpMsearchResponder*>(iNotifier)->SetRemote(aRemote, aConfigId);
+    static_cast<SsdpMsearchResponder*>(iNotifier)->SetRemote(aRemote, aConfigId, aAdapter);
     iUri.Replace(aUri);
     SsdpNotifierScheduler::Start(aMx * 1000, iRemainingMsgs);
 }
@@ -344,39 +344,39 @@ void DviSsdpNotifierManager::AnnouncementUpdate(IUpnpAnnouncementData& aAnnounce
     }
 }
 
-void DviSsdpNotifierManager::MsearchResponseAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseAll(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartAll(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
+    responder->Response().StartAll(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void DviSsdpNotifierManager::MsearchResponseRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseRoot(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartRoot(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
+    responder->Response().StartRoot(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void DviSsdpNotifierManager::MsearchResponseUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseUuid(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartUuid(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
+    responder->Response().StartUuid(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void DviSsdpNotifierManager::MsearchResponseDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseDeviceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartDeviceType(aAnnouncementData, aRemote, aMx, aUri, aConfigId);
+    responder->Response().StartDeviceType(aAnnouncementData, aRemote, aMx, aUri, aConfigId, aAdapter);
 }
 
-void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId)
+void DviSsdpNotifierManager::MsearchResponseServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote, TUint aMx, const OpenHome::Net::ServiceType& aServiceType, const Brx& aUri, TUint aConfigId, TIpAddress aAdapter)
 {
     AutoMutex a(iLock);
     Responder* responder = GetResponder(aAnnouncementData);
-    responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId);
+    responder->Response().StartServiceType(aAnnouncementData, aRemote, aMx, aServiceType, aUri, aConfigId, aAdapter);
 }
 
 void DviSsdpNotifierManager::Stop(const Brx& aUdn)

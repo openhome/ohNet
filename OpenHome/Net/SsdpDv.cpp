@@ -201,10 +201,11 @@ SsdpMsearchResponder::SsdpMsearchResponder(DvStack& aDvStack)
 {
 }
 
-void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint, TUint aConfigId)
+void SsdpMsearchResponder::SetRemote(const Endpoint& aEndpoint, TUint aConfigId, TIpAddress aAdapter)
 {
     iRemote.Replace(aEndpoint);
     iConfigId = aConfigId;
+    iAdapter = aAdapter;
 }
 
 void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
@@ -223,7 +224,7 @@ void SsdpMsearchResponder::SsdpNotify(const Brx& aUri)
 void SsdpMsearchResponder::Flush()
 {
     iWriter.WriteFlush();
-    SocketUdp socket(iDvStack.Env());
+    SocketUdp socket(iDvStack.Env(), 0, iAdapter);
     socket.Send(iResponse, iRemote);
     iBuffer.Flush();
 }
