@@ -1049,6 +1049,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
         while (iter != NULL) {
             if (iter->ifa_addr != NULL &&
                 iter->ifa_addr->sa_family == AF_INET &&
+                (iter->ifa_flags & IFF_RUNNING) != 0 &&
                 ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr) {
                 includeLoopback = 0;
                 break;
@@ -1062,6 +1063,7 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     OsNetworkAdapter* tail = NULL;
     while (iter != NULL) {
         if (iter->ifa_addr == NULL || iter->ifa_addr->sa_family != AF_INET ||
+            (iter->ifa_flags & IFF_RUNNING) == 0 ||
             (includeLoopback == 0 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ||
             (aUseLoopback == 1 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr)) {
             iter = iter->ifa_next;
