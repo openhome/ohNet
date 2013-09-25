@@ -315,7 +315,11 @@ else
         ifeq ($(platform), Linux-ppc32)
             libjvm_dir ?= $(JAVA_HOME)/jre/lib/ppc/server
         else
-            libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+            ifneq (,$(findstring arm,$(gcc_machine)))
+                libjvm_dir ?= $(JAVA_HOME)/jre/lib/arm/server
+            else
+                libjvm_dir ?= $(JAVA_HOME)/jre/lib/i386/server
+            endif
         endif
 	link_jvm = $(libjvm_dir)/libjvm.so
 	javac = $(JAVA_HOME)/bin/javac
