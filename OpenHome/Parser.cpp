@@ -76,7 +76,7 @@ Brn Parser::Next(TByte aDelimiter)
     }
 
     if (pStart == pBufferEnd) {
-        iIndex = pStart - pBufferStart;
+        iIndex = static_cast<TUint>(pStart - pBufferStart);
         return (Brn::Empty());
     }
 
@@ -106,9 +106,9 @@ Brn Parser::Next(TByte aDelimiter)
         }
     }
 
-    iIndex = (pDelimiter - pBufferStart) + extra; // go one past delimiter if not end of buffer
+    iIndex = static_cast<TUint>(pDelimiter - pBufferStart) + extra; // go one past delimiter if not end of buffer
 
-    return(iBuffer.Split(pStart - pBufferStart, pEnd - pStart));
+    return(iBuffer.Split(static_cast<TUint>(pStart - pBufferStart), static_cast<TUint>(pEnd - pStart)));
 }
 
 Brn Parser::Next()
