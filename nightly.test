@@ -20,7 +20,7 @@ tests = '''
     TestContentProcessor
     TestPipeline
     TestProtocolHttp
-    TestCodec               -s {ws_hostname} -p {ws_port} -t quick
+    TestCodec               -s {ws_hostname} -p {ws_port} -t full
     TestIdProvider
     TestFiller
     TestUpnpErrors

@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Tests/TestCodec.h>
 #include <OpenHome/Media/Tests/TestShell.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -10,6 +11,7 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 SIMPLE_TEST_DECLARATION(TestAudioReservoir);
+SIMPLE_TEST_DECLARATION(TestConfigManager);
 SIMPLE_TEST_DECLARATION(TestContainer);
 SIMPLE_TEST_DECLARATION(TestContentProcessor);
 SIMPLE_TEST_DECLARATION(TestIdProvider);
@@ -41,6 +43,12 @@ static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::
     TestCodec(aCpStack.Env(), CreateTestCodecPipeline, TestCodecFiles, aArgs);
 }
 
+extern void TestUdpServer(Environment& aEnv);
+static void ShellTestUdpServer(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
+{
+    TestUdpServer(aDvStack.Env());
+}
+
 extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
 static void ShellTestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
 {
@@ -52,6 +60,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 {
     std::vector<ShellTest> shellTests;
     shellTests.push_back(ShellTest("TestAudioReservoir", ShellTestAudioReservoir));
+    shellTests.push_back(ShellTest("TestConfigManager", ShellTestConfigManager));
     shellTests.push_back(ShellTest("TestContainer", ShellTestContainer));
     shellTests.push_back(ShellTest("TestContentProcessor", ShellTestContentProcessor));
     shellTests.push_back(ShellTest("TestIdProvider", ShellTestIdProvider));
@@ -73,6 +82,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
     shellTests.push_back(ShellTest("TestRewinder", ShellTestRewinder));
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
+    shellTests.push_back(ShellTest("TestUdpServer", ShellTestUdpServer));
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
 
     OpenHome::Media::ExecuteTestShell(aInitParams, shellTests);

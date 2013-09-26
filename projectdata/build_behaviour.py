@@ -158,6 +158,10 @@ def bundle(context):
 def test(context):
     python("waf", "test")
 
+@build_step("test_full", optional=True, default=False)
+def test_full(context):
+    python("waf", "test_full")
+
 @build_step("publish", optional=True, default=False)
 def publish(context):
     targetpath    = "{OH_PUBLISHDIR}/{OH_PROJECT}/{OH_PROJECT}-{OH_VERSION}-{OH_PLATFORM}-{OH_DEBUG}.tar.gz".format(**context.env)

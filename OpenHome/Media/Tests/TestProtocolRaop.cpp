@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/UdpServer.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/Raop/SourceRaop.h>
@@ -78,11 +79,17 @@ private: // from IPipelineIdProvider
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private: // from IRaopObserver
-    void NotifyStreamStart();
+    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
 private:
+    static const TUint kMaxUdpSize = 1472;
+    static const TUint kMaxUdpPackets = 25;
+    static const TUint kPortAudio = 60400;
+    static const TUint kPortControl = 60401;
+    static const TUint kPortTiming = 60402;
     RaopDiscovery* iRaopDiscovery;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
+    UdpServerManager iServerManager;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -125,13 +132,22 @@ using namespace OpenHome::Net;
 
 DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aDeviceName, TUint aDiscoveryPort, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
+    , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDeviceName, aDiscoveryPort);
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery));
+    TUint audioId = iServerManager.CreateServer(kPortAudio);
+    TUint controlId = iServerManager.CreateServer(kPortControl);
+    TUint timingId = iServerManager.CreateServer(kPortTiming);
+    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId, timingId));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
+
+    SocketUdpServer& audioServer = iServerManager.Find(audioId);
+    SocketUdpServer& controlServer = iServerManager.Find(controlId);
+    SocketUdpServer& timingServer = iServerManager.Find(timingId);
+    iRaopDiscovery->SetListeningPorts(audioServer.Port(), controlServer.Port(), timingServer.Port());
 }
 
 DummyFiller::~DummyFiller()
@@ -169,7 +185,7 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayYes;
 }
 
-void DummyFiller::NotifyStreamStart()
+void DummyFiller::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
 {
 }
 
@@ -184,7 +200,7 @@ TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, co
     iFiller = new DummyFiller(aEnv, aDvStack, aDeviceName, aDiscoveryPort, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(Codec::CodecFactory::NewRaop());
     iPipeline->Start();
-    
+
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
 }
 
@@ -210,7 +226,8 @@ int TestProtocolRaop::Run()
         {
         case 's':
             if (!playing) {
-                iPipeline->Stop();
+                //iPipeline->Stop();
+                Log::Print("Stop currently disabled.  Use TestMediaPlayer for interactive testing instead\n");
             }
             break;
         case 'q':

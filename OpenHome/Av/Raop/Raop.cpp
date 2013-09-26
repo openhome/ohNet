@@ -120,6 +120,11 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDi
     , iInstance(aInstance)
     , iActive(false)
     , iShutdownSem("RAOP", 1)
+    , iAudioPort(0)
+    , iControlPort(0)
+    , iTimingPort(0)
+    , iClientControlPort(0)
+    , iClientTimingPort(0)
 {
     iReaderBuffer = new Srs<kMaxReadBufferBytes>(*this);
     iWriterBuffer = new Sws<kMaxWriteBufferBytes>(*this);
@@ -134,6 +139,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDi
     iReaderRequest->AddHeader(iHeaderContentType);
     iReaderRequest->AddHeader(iHeaderCSeq);
     iReaderRequest->AddHeader(iHeaderAppleChallenge);
+    iReaderRequest->AddHeader(iHeaderRtspTransport);
     iReaderRequest->AddMethod(RtspMethod::kOptions);
     iReaderRequest->AddMethod(RtspMethod::kAnnounce);
     iReaderRequest->AddMethod(RtspMethod::kSetup);
@@ -374,7 +380,29 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteHeader(RtspHeader::kSession, Brn("1"));
-                    iWriterResponse->WriteHeader(Brn("Transport"), Brn("RTP/AVP/UDP;unicast;mode=record;server_port=60400;control_port=60401;timing_port=60402"));
+
+                    // get transport info, which gives us UDP ports of Airplay client for control and timing
+                    iClientControlPort = iHeaderRtspTransport.ControlPort();
+                    iClientTimingPort = iHeaderRtspTransport.TimingPort();
+
+                    Brn prefix("RTP/AVP/UDP;unicast;mode=record");
+                    Brn audioPortStr(";server_port=");
+                    Brn controlPortStr(";control_port=");
+                    Brn timingPortStr(";timing_port=");
+
+                    const TUint portNumBytes = 3* kMaxPortNumBytes; // no. ports * max bytes req'd to represent port string
+                    Bwh transResponse(prefix.Bytes() + audioPortStr.Bytes() + controlPortStr.Bytes() + timingPortStr.Bytes() + portNumBytes);
+                    transResponse.Append(prefix);
+                    transResponse.Append(audioPortStr);
+                    Ascii::AppendDec(transResponse, iAudioPort);
+                    transResponse.Append(controlPortStr);
+                    Ascii::AppendDec(transResponse, iControlPort);
+                    transResponse.Append(timingPortStr);
+                    Ascii::AppendDec(transResponse, iTimingPort);
+
+                    ASSERT(iAudioPort != 0 && iControlPort != 0 && iTimingPort != 0); // make sure ports have been set
+                    iWriterResponse->WriteHeader(Brn("Transport"), transResponse);
+                    //iWriterResponse->WriteHeader(Brn("Transport"), Brn("RTP/AVP/UDP;unicast;mode=record;server_port=60400;control_port=60401;timing_port=60402"));
                     iWriterResponse->WriteFlush();
                 }
                 else if(method == RtspMethod::kRecord) {
@@ -385,7 +413,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
 
                     // activate RAOP source
-                    iDiscovery.NotifyStreamStart();
+                    iDiscovery.NotifyStreamStart(iClientControlPort, iClientTimingPort);
                     LOG(kMedia, "RaopDiscoverySession::Run - Playing\n");
                 }
                 else if(method == RtspMethod::kSetParameter) {
@@ -439,7 +467,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
-                    iDiscovery.NotifyStreamStart(); //restart
+                    iDiscovery.NotifyStreamStart(iClientControlPort, iClientTimingPort); // restart
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -473,6 +501,13 @@ void RaopDiscoverySession::Close()
 
     // set timeout and deactivate on expiry
     KeepAlive();
+}
+
+void RaopDiscoverySession::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming)
+{
+    iAudioPort = aAudio;
+    iControlPort = aControl;
+    iTimingPort = aTiming;
 }
 
 void RaopDiscoverySession::KeepAlive()
@@ -668,9 +703,9 @@ RaopDiscovery::~RaopDiscovery()
     delete iRaopDevice;
 }
 
-void RaopDiscovery::NotifyStreamStart()
+void RaopDiscovery::NotifyStreamStart(TUint aControlPort, TUint aTimingPort)
 {
-    return iRaopObserver.NotifyStreamStart();
+    return iRaopObserver.NotifyStreamStart(aControlPort, aTimingPort);
 }
 
 const Brx& RaopDiscovery::Aeskey()
@@ -721,6 +756,12 @@ void RaopDiscovery::Close()
 
     iRaopDiscoverySession1->Close();
     iRaopDiscoverySession2->Close();
+}
+
+void RaopDiscovery::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming)
+{
+    iRaopDiscoverySession1->SetListeningPorts(aAudio, aControl, aTiming);
+    iRaopDiscoverySession2->SetListeningPorts(aAudio, aControl, aTiming);
 }
 
 RaopDiscoverySession& RaopDiscovery::ActiveSession()
@@ -807,4 +848,63 @@ void HeaderAppleChallenge::Process(const Brx& aValue)
     iChallenge.Replace(challengeb64);
     Converter::FromBase64(iChallenge);
     iReceived = true;
+}
+
+
+// HeaderRtspTransport
+
+const Brn HeaderRtspTransport::kControlPortStr("control_port");
+const Brn HeaderRtspTransport::kTimingPortStr("timing_port");
+
+TUint HeaderRtspTransport::ControlPort() const
+{
+    return iControlPort;
+}
+
+TUint HeaderRtspTransport::TimingPort() const
+{
+    return iTimingPort;
+}
+
+TBool HeaderRtspTransport::Recognise(const Brx& aHeader)
+{
+    return (Ascii::CaseInsensitiveEquals(aHeader, Brn("Transport")));
+}
+
+void HeaderRtspTransport::Reset()
+{
+    HttpHeader::Reset();
+    iControlPort = 0;
+    iTimingPort = 0;
+}
+
+TUint HeaderRtspTransport::ParsePort(Brx& aData)
+{
+    Parser parser(aData);
+    parser.Next('=');
+    Brn val = parser.Next();
+
+    return Ascii::Uint(val);
+}
+
+void HeaderRtspTransport::Process(const Brx& aValue)
+{
+    Parser parser(aValue);
+    for (TUint i=0; i<6; i++) {
+        Brn entry;
+
+        if (i < 5) {
+            entry = parser.Next(';');
+        }
+        else {
+            entry = parser.Next();
+        }
+
+        if (Ascii::Contains(entry, kControlPortStr)) {
+            iControlPort = ParsePort(entry);
+        }
+        else if (Ascii::Contains(entry, kTimingPortStr)) {
+            iTimingPort = ParsePort(entry);
+        }
+    }
 }

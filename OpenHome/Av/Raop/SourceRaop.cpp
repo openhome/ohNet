@@ -29,11 +29,14 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const Brx& aDeviceNa
 
 // SourceRaop
 
+const Brn SourceRaop::kRaopPrefix("raop://");
+
 SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aDeviceName, TUint aDiscoveryPort)
     : Source("Net Aux", "Net Aux")
     , iLock("SRAO")
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
+    , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
     , iTrack(NULL)
     , iTrackPosSeconds(0)
     , iPipelineTrackId(UINT_MAX)
@@ -41,8 +44,16 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     , iTransportState(Media::EPipelineStopped)
 {
     iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aDeviceName, aDiscoveryPort);
-    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery)); // bypassing MediaPlayer
+    iAudioId = iServerManager.CreateServer(kPortAudio);
+    iControlId = iServerManager.CreateServer(kPortControl);
+    iTimingId = iServerManager.CreateServer(kPortTiming);
+    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, iAudioId, iControlId, iTimingId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
+
+    SocketUdpServer& audioServer = iServerManager.Find(iAudioId);
+    SocketUdpServer& controlServer = iServerManager.Find(iControlId);
+    SocketUdpServer& timingServer = iServerManager.Find(iTimingId);
+    iRaopDiscovery->SetListeningPorts(audioServer.Port(), controlServer.Port(), timingServer.Port());
 }
 
 SourceRaop::~SourceRaop()
@@ -60,6 +71,7 @@ IRaopDiscovery& SourceRaop::Discovery()
 
 void SourceRaop::Activate()
 {
+    iServerManager.OpenAll();
     iTrackPosSeconds = 0;
     iActive = true;
 }
@@ -73,13 +85,22 @@ void SourceRaop::Deactivate()
         iTrack = NULL;
     }
     iLock.Signal();
+    iServerManager.CloseAll();
     Source::Deactivate();
 }
 
-void SourceRaop::NotifyStreamStart()
-    // FIXME - should probably reconstruct the uri from params to this method (or take the constructed uri as a param)
-    // and check if the existing track->uri() matches it (if not, or if doesn't exist, should clear and generate new one, if using
-    // it to communicate udp port, otherwise reuse existing one)
+void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
+    // FIXME - get client UDP ports via params, then compose into URI so that
+    // control and timing servers know ports to send on - currently just send
+    // to ports that packets were sent from, which also happen to be the
+    // receiving ports.
+    // Can also compose UDP servers/ports into URI, so that ProtocolRaop can
+    // retrieve servers at the start of each streaming session for each member
+    // class requiring a server.
+
+    // Current implementation of getting client UDP ports below causes
+    // streaming to fail - possible race condition? Without it, works at least
+    // as well as existing solution.
 {
     if (!IsActive()) {
         DoActivate();
@@ -89,6 +110,18 @@ void SourceRaop::NotifyStreamStart()
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }
+        //const TUint maxPortBytes = 5;
+        //const TUint portCount = 2;
+        //Bwh track(kRaopPrefix.Bytes() + portCount*maxPortBytes + portCount-1); // raop://xxxxx.yyyyy.zzzzz
+        //track.Append(kRaopPrefix);
+        //Ascii::AppendDec(track, aControlPort);
+        //track.Append('.');
+        //Ascii::AppendDec(track, aTimingPort);
+        ////Log::Print("track: ");
+        ////Log::Print(track);
+        ////Log::Print("\n");
+        //iTrack = iUriProvider.SetTrack(track, Brn(""));
+
         iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""));
         iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     }

@@ -185,6 +185,7 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
+                'OpenHome/Av/ConfigManager.cpp',
                 'OpenHome/Av/FaultCode.cpp',
                 'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
@@ -221,6 +222,7 @@ def build(bld):
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
+                'OpenHome/Media/UdpServer.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
@@ -279,6 +281,24 @@ def build(bld):
             use=['OHNET'],
             target='CodecWav')
 
+    # AiffBase
+    bld.stlib(
+            source=['OpenHome/Media/Codec/AiffBase.cpp'],
+            use=['OHNET'],
+            target='CodecAiffBase')
+
+    # AIFC
+    bld.stlib(
+            source=['OpenHome/Media/Codec/Aifc.cpp'],
+            use=['CodecAiffBase', 'OHNET'],
+            target='CodecAifc')
+
+    # AIFF
+    bld.stlib(
+            source=['OpenHome/Media/Codec/Aiff.cpp'],
+            use=['CodecAiffBase', 'OHNET'],
+            target='CodecAiff')
+
     # Ogg
     bld.stlib(
             source=[
@@ -326,7 +346,7 @@ def build(bld):
 
     # Raop
     bld.stlib(
-            source=[ # Does OpenHome/Media/Protocol/RaopHeader need to be used?
+            source=[
                  'OpenHome/Media/Codec/Raop.cpp',
             ],
             use=['CodecAlacBase', 'OHNET', 'OPENSSL'],
@@ -457,6 +477,8 @@ def build(bld):
                 'OpenHome/Media/Tests/TestVolumeManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
+                'OpenHome/Media/Tests/TestUdpServer.cpp',
+                'OpenHome/Av/Tests/TestConfigManager.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -468,7 +490,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
@@ -523,10 +545,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestProtocolMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestProtocol')
-    #bld.program(
-    #        source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-    #        target='TestProtocolRaop')
+    bld.program(
+           source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+           use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+           target='TestProtocolRaop')
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -567,10 +589,18 @@ def build(bld):
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRewinder')
+    bld.program(
+            source='OpenHome/Media/Tests/TestUdpServerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestUdpServer')
     #bld.program(
     #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
     #        target='TestUpnpAv')
+    bld.program(
+            source='OpenHome/Av/Tests/TestConfigManagerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestConfigManager')
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
@@ -596,7 +626,7 @@ def build(bld):
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecRaop', 'CodecVorbis', 'CodecWav']
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecRaop', 'CodecVorbis', 'CodecWav']
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,
@@ -607,13 +637,20 @@ def bundle(ctx):
 # == Command for invoking unit tests ==
 
 def test(tst):
+    if not hasattr(tst, 'test_manifest'):
+        tst.test_manifest = 'oncommit.test'
+    print 'Testing using manifest:', tst.test_manifest
     rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
         test        = os.path.join(tst.env.testharness_dir, 'Test'),
         manifest    = '${SRC}',
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
         tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
-    tst(rule=rule, source='oncommit.test')
+    tst(rule=rule, source=tst.test_manifest)
+
+def test_full(tst):
+    tst.test_manifest = 'nightly.test'
+    test(tst)
 
 # == Contexts to make 'waf test' work ==
 
@@ -622,6 +659,10 @@ from waflib.Build import BuildContext
 class TestContext(BuildContext):
     cmd = 'test'
     fun = 'test'
+
+class TestContext(BuildContext):
+    cmd = 'test_full'
+    fun = 'test_full'
 
 class BundleContext(BuildContext):
     cmd = 'bundle'

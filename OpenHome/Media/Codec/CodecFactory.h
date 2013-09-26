@@ -11,6 +11,8 @@ class CodecFactory
 {
 public:
     static CodecBase* NewAac();
+    static CodecBase* NewAifc();
+    static CodecBase* NewAiff();
     static CodecBase* NewAlac();
     static CodecBase* NewAdts();
     static CodecBase* NewFlac();

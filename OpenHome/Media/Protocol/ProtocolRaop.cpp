@@ -13,17 +13,18 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery)
+Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint aTimingId)
 { // static
-    return new ProtocolRaop(aEnv, aDiscovery);
+    return new ProtocolRaop(aEnv, aDiscovery, aServerManager, aAudioId, aControlId, aTimingId);
 }
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint /*aTimingId*/)
     : ProtocolNetwork(aEnv)
     , iDiscovery(aDiscovery)
-    , iRaopAudio(aEnv, kPortAudio)
-    , iRaopControl(aEnv, kPortControl)
-//  , iRaopTiming(kPortTiming)
+    , iServerManager(aServerManager)
+    , iRaopAudio(iServerManager.Find(aAudioId))
+    , iRaopControl(aEnv, iServerManager.Find(aControlId))
+//  , iRaopTiming(iServerManager.Find(aTimingId))
 {
 }
 
@@ -57,14 +58,21 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
 
-    StartStream();
+    // FIXME - parse uri to get ports for sending control/timing info to
+    // (could also get server ids for audio/control/timing and retrieve servers
+    // on behalf of them, and pass in servers while resetting)
 
     TBool start = true;
     TUint aesSid = 0;
+    // FIXME - should we pass an ID into Reset() methods here and update server
+    // each time, instead of doing it in constructor? - would require dynamic
+    // re-allocation of UdpReader
     iRaopControl.Reset();
     iRaopAudio.Reset();
     Brn audio;
     TUint16 expected = 0;
+
+    StartStream();
 
     // Output audio stream
     for (;;) {
@@ -223,10 +231,9 @@ void ProtocolRaop::Deactivate()
     iDiscovery.Deactivate();
 }
 
-RaopControl::RaopControl(Environment& aEnv, TUint aPort)
-    : iPort(aPort)
-    , iSocket(aEnv, aPort)
-    , iSocketReader(iSocket)
+RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
+    : iServer(aServer)
+    , iSocketReader(iServer)
     , iReceive(iSocketReader)
     , iMutex("raoc")
     , iMutexRx("raoR")
@@ -279,6 +286,7 @@ void RaopControl::DoInterrupt()
 
 void RaopControl::Reset()
 {
+    // FIXME - should take a TUint aPort as param and set up iEndpoint here
 }
 
 void RaopControl::Run()
@@ -289,7 +297,7 @@ void RaopControl::Run()
     while (!iExit) {
         try {
             Brn id = iReceive.Read(2);
-            iEndpoint = iSocketReader.Sender();
+            iEndpoint = iSocketReader.Sender(); // FIXME - will the sender (iTunes) always be using the same port for in/out?
             if(id.Bytes() < 2) {
                 LOG(kMedia, " RaopControl id bytes %d\n", id.Bytes());
                 continue;
@@ -399,7 +407,7 @@ void RaopControl::RequestResend(TUint aPacketId, TUint aPackets)
         request.Append((TByte)((aPackets) & 0xff));
 
         try {
-            iSocket.Send(request, iEndpoint);
+            iServer.Send(request, iEndpoint);
         }
         catch(NetworkError) {
             // will handle this by timing out on receive
@@ -473,16 +481,15 @@ void RaopControl::TimerExpired()
 
 }
 
-//RaopTiming::RaopTiming(TUint aPort)
-//    : iUdpServer(aPort)
+//RaopTiming::RaopTiming(SocketUdpServer& aServer)
+//    : iServer(aServer)
 //{
 //}
 
 
-RaopAudio::RaopAudio(Environment& aEnv, TUint aPort)
-    : iPort(aPort)
-    , iSocket(aEnv, aPort)
-    , iSocketReader(iSocket)
+RaopAudio::RaopAudio(SocketUdpServer& aServer)
+    : iServer(aServer)
+    , iSocketReader(iServer)
 {
 }
 
@@ -492,8 +499,6 @@ RaopAudio::~RaopAudio()
 
 void RaopAudio::Reset()
 {
-    // socket may have been shut down
-    iSocket.ReBind(iPort, 0);
     iInitId = true;
     iInterrupted = false;
     iSocketReader.ReadFlush();  // set to read next udp packet

@@ -46,6 +46,25 @@ private:
     TBool iReceived;
 };
 
+class HeaderRtspTransport : public HttpHeader
+{
+public:
+    static const Brn kControlPortStr;
+    static const Brn kTimingPortStr;
+public:
+    TUint ControlPort() const;
+    TUint TimingPort() const;
+    virtual void Reset();
+private:
+    virtual TBool Recognise(const Brx& aHeader);
+    virtual void Process(const Brx& aValue);
+private:
+    static TUint ParsePort(Brx& aData);
+private:
+    TUint iControlPort;
+    TUint iTimingPort;
+};
+
 class RaopDevice
 {
     static const TUint kMaxNameBytes = 100;
@@ -81,6 +100,7 @@ public:
     virtual const Brx& Fmtp() = 0;
     virtual void KeepAlive() = 0;
     virtual void Close() = 0;
+    virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
 };
 
 class RaopDiscovery;
@@ -104,6 +124,7 @@ public: // from IRaopDiscovery
     void Deactivate();
     TUint AesSid();
     void Close();
+    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
 private:
     void WriteSeq(TUint aCSeq);
     void WriteFply(Brn aData);
@@ -113,6 +134,7 @@ private:
     void GetRsa();
     void DeactivateCallback();
 private:
+    static const TUint kMaxPortNumBytes = 5;
     Srs<kMaxReadBufferBytes>* iReaderBuffer;
     Sws<kMaxWriteBufferBytes>* iWriterBuffer;
     WriterAscii* iWriterAscii;
@@ -122,6 +144,7 @@ private:
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderContentType iHeaderContentType;
     HeaderAppleChallenge iHeaderAppleChallenge;
+    HeaderRtspTransport iHeaderRtspTransport;
     HeaderCSeq iHeaderCSeq;
     SdpInfo iSdpInfo;
     Bws<sizeof(AES_KEY)> iAeskey;
@@ -136,6 +159,11 @@ private:
     TBool iActive;
     Timer* iDeactivateTimer;
     Semaphore iShutdownSem;
+    TUint iAudioPort;
+    TUint iControlPort;
+    TUint iTimingPort;
+    TUint iClientControlPort;
+    TUint iClientTimingPort;
 };
 
 class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
@@ -152,8 +180,9 @@ public: // from IRaopDiscovery
     void KeepAlive();
     TUint AesSid();
     void Close();
+    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
 public: // from IRaopObserver
-    void NotifyStreamStart();
+    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
 private:
     RaopDiscoverySession& ActiveSession();
 private:
