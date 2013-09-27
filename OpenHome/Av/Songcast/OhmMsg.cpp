@@ -10,9 +10,7 @@ OhmMsg::OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType)
     , iMsgType(aMsgType)
     , iRefCount(0)
     , iResendCount(0)
-    , iTxTimestamped(false)
     , iRxTimestamped(false)
-    , iTxTimestamp(0)
     , iRxTimestamp(0)
 {
 }
@@ -51,30 +49,14 @@ void OhmMsg::IncrementResendCount()
     iResendCount++;
 }
 
-TBool OhmMsg::TxTimestamped() const
-{
-    return iTxTimestamped;
-}
-
 TBool OhmMsg::RxTimestamped() const
 {
     return iRxTimestamped;
 }
 
-TUint OhmMsg::TxTimestamp() const
-{
-    return iTxTimestamp;
-}
-
 TUint OhmMsg::RxTimestamp() const
 {
     return iRxTimestamp;
-}
-
-void OhmMsg::SetTxTimestamp(TUint aValue)
-{
-    iTxTimestamp = aValue;
-    iTxTimestamped = true;
 }
 
 void OhmMsg::SetRxTimestamp(TUint aValue)
@@ -87,9 +69,7 @@ void OhmMsg::Create()
 {
     iRefCount = 1;
     iResendCount = 0;
-    iTxTimestamp = 0;
     iRxTimestamp = 0;
-    iTxTimestamped = false;
     iRxTimestamped = false;
 }
     
@@ -103,34 +83,25 @@ OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
 void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 {
     OhmMsg::Create();
-
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
-    
     ReaderBinary reader(aReader);
-
-    TUint headerBytes = reader.ReadUintBe(1);
-
+    const TUint headerBytes = reader.ReadUintBe(1);
     ASSERT (headerBytes == kHeaderBytes);
 
     iHalt = false;
     iLossless = false;
     iTimestamped = false;
     iResent = false;
-
-    TUint flags = reader.ReadUintBe(1);
-    
+    const TUint flags = reader.ReadUintBe(1);
     if (flags & kFlagHalt) {
         iHalt = true;
     }
-
     if (flags & kFlagLossless) {
         iLossless = true;
     }
-
     if (flags & kFlagTimestamped) {
         iTimestamped = true;
     }
-
     if (flags & kFlagResent) {
         iResent = true;
     }
@@ -148,12 +119,10 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
     iBitDepth = reader.ReadUintBe(1);
     iChannels = reader.ReadUintBe(1);
     
-    TUint reserved = reader.ReadUintBe(1);
-    
+    const TUint reserved = reader.ReadUintBe(1);
     ASSERT (reserved == kReserved);
-    
-    TUint codec = reader.ReadUintBe(1);
-    
+
+    const TUint codec = reader.ReadUintBe(1);
     if(codec > 0) {
         iCodec.Replace(reader.Read(codec));
     }
@@ -161,8 +130,7 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
         iCodec.Replace(Brx::Empty());
     }
     
-    TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
-
+    const TUint audio = aHeader.MsgBytes() - kHeaderBytes - codec;
     iAudio.Replace(reader.Read(audio));
 }
 
@@ -293,25 +261,19 @@ void OhmMsgAudio::Process(IOhmMsgProcessor& aProcessor)
 void OhmMsgAudio::Externalise(IWriter& aWriter)
 {
     OhmHeader header(OhmHeader::kMsgTypeAudio, kHeaderBytes + iCodec.Bytes() + iAudio.Bytes());
-    
     header.Externalise(aWriter);
-
     WriterBinary writer(aWriter);
 
     TUint flags = 0;
-    
     if (iHalt) {
         flags |= kFlagHalt;
     }
-    
     if (iLossless) {
         flags |= kFlagLossless;
     }
-
     if (iTimestamped) {
         flags |= kFlagTimestamped;
     }
-
     if (iResent) {
         flags |= kFlagResent;
     }
@@ -331,13 +293,11 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
     writer.WriteUint8(iBitDepth);
     writer.WriteUint8(iChannels);
     writer.WriteUint8(kReserved);
-    
     writer.WriteUint8(iCodec.Bytes());
     
     if (iCodec.Bytes() > 0) {
         writer.Write(iCodec);
     }
-
     writer.Write(iAudio);
 
     aWriter.WriteFlush();

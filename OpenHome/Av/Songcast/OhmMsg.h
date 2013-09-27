@@ -51,9 +51,7 @@ private:
     TUint iMsgType;
     TUint iRefCount;
     TUint iResendCount;
-    TBool iTxTimestamped;
     TBool iRxTimestamped;
-    TUint iTxTimestamp;
     TUint iRxTimestamp;
 };
 

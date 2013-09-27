@@ -22,27 +22,19 @@ OhmHeader::OhmHeader(TUint aMsgType, TUint aMsgBytes)
 void OhmHeader::Internalise(IReader& aReader)
 {
     ReaderBinary reader(aReader);
-
     Brn ohm = reader.Read(4);
-    
     if(ohm != kOhm) {
         THROW(OhmError);
     }
-
-    TUint major = reader.ReadUintBe(1);
-
+    const TUint major = reader.ReadUintBe(1);
     if(major != kMajor) {
         THROW(OhmError);
     }
-
     iMsgType  = reader.ReadUintBe(1);
-
     if(iMsgType > kMsgTypeResend) {
         THROW(OhmError);
     }
-
     iBytes = reader.ReadUintBe(2);
-    
     if (iBytes < kHeaderBytes) {
         THROW(OhmError);
     }
