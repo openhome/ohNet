@@ -104,8 +104,8 @@ void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TUint
     }
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aTrack.Uri());
-    Log::Print("; metadata=");
-    Log::Print(aTrack.MetaData());
+    //Log::Print("; metadata=");
+    //Log::Print(aTrack.MetaData());
     Log::Print("; mode=");
     Log::Print(aMode);
     Log::Print("; trackId=%u; idPipeline=%u}\n", aTrack.Id(), aIdPipeline);
