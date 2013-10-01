@@ -132,8 +132,8 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
         "http-get:*:audio/wav:*,"      // Wav
         "http-get:*:audio/wave:*,"     // Wav
         "http-get:*:audio/x-wav:*,"    // Wav
-        "http-get:*:audio/aiff:*,"     // FIXME - AIFF codec not implemented
-        "http-get:*:audio/x-aiff:*,"   // FIXME - AIFF codec not implemented
+        "http-get:*:audio/aiff:*,"     // AIFF codec not implemented
+        "http-get:*:audio/x-aiff:*,"   // AIFF codec not implemented
         "http-get:*:audio/x-m4a:*,"    // Alac
         "http-get:*:audio/x-scpls:*,"  // M3u (content processor)
         "http-get:*:text/xml:*,"       // Opml ??  (content processor)
