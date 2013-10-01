@@ -38,6 +38,7 @@ public:
     static const TUint kMsgTypeMetatext = 5;
     static const TUint kMsgTypeSlave = 6;
     static const TUint kMsgTypeResend = 7;
+    static const TUint kMsgTypeAudioBlob = 0xffff; // locally generated, is never sent over the network
 
 public:
     OhmHeader();

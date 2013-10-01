@@ -12,6 +12,7 @@ namespace OpenHome {
 namespace Av {
 
 class OhmMsgAudio;
+class OhmMsgAudioBlob;
 class OhmMsgTrack;
 class OhmMsgMetatext;
 class OhmMsgFactory;
@@ -21,6 +22,7 @@ class IOhmMsgProcessor
 public:
     virtual ~IOhmMsgProcessor() {}
     virtual void Process(OhmMsgAudio& aMsg) = 0;
+    virtual void Process(OhmMsgAudioBlob& aMsg) = 0;
     virtual void Process(OhmMsgTrack& aMsg) = 0;
     virtual void Process(OhmMsgMetatext& aMsg) = 0;
 };
@@ -41,11 +43,9 @@ public:
     void SetRxTimestamp(TUint aValue);
     virtual void Process(IOhmMsgProcessor& aProcessor) = 0;
     virtual void Externalise(IWriter& aWriter) = 0;
-
 protected:
     OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType);
     void Create();
-    
 private:
     OhmMsgFactory* iFactory;
     TUint iMsgType;
@@ -58,11 +58,10 @@ private:
 class OhmMsgAudio : public OhmMsg
 {
     friend class OhmMsgFactory;
-
+    friend class OhmMsgAudioBlob;
 public:
     static const TUint kMaxSampleBytes = 8 * 1024;
     static const TUint kMaxCodecBytes = 256;
-
 private:
     static const TUint kHeaderBytes = 50; // not including codec name
     static const TUint kReserved = 0;
@@ -70,7 +69,6 @@ private:
     static const TUint kFlagLossless = 2;
     static const TUint kFlagTimestamped = 4;
     static const TUint kFlagResent = 8;
-
 public:
     TBool Halt() const;
     TBool Lossless() const;
@@ -92,15 +90,13 @@ public:
     const Brx& Audio() const;
 
     void SetResent(TBool aValue);
-
-    virtual void Process(IOhmMsgProcessor& aProcessor);
-    virtual void Externalise(IWriter& aWriter);
-
+public: // from OhmMsg
+    void Process(IOhmMsgProcessor& aProcessor);
+    void Externalise(IWriter& aWriter);
 private:
     OhmMsgAudio(OhmMsgFactory& aFactory);
-    void Create(IReader& aReader, const OhmHeader& aHeader);    
+    void Create(IReader& aReader, const OhmHeader& aHeader);
     void Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio);
-
 private:
     TBool iHalt;
     TBool iLossless;
@@ -122,29 +118,43 @@ private:
     Bws<kMaxSampleBytes> iAudio;
 };
 
+class OhmMsgAudioBlob : public OhmMsg
+{
+    friend class OhmMsgFactory;
+public:
+    static const TUint kMaxBytes = 9 * 1024;
+public:
+    TUint Frame() const { return iFrame; }
+public: // from OhmMsg
+    void Process(IOhmMsgProcessor& aProcessor);
+    void Externalise(IWriter& aWriter);
+private:
+    OhmMsgAudioBlob(OhmMsgFactory& aFactory);
+    void Create(IReader& aReader, const OhmHeader& aHeader);
+private:
+    TUint iFrame;
+    Bws<kMaxBytes> iBlob;
+};
+
 class OhmMsgTrack : public OhmMsg
 {
     friend class OhmMsgFactory;
-
 public:
     static const TUint kMaxUriBytes = 1 * 1024;
     static const TUint kMaxMetadataBytes = 4 * 1024;
-
 private:
     static const TUint kHeaderBytes = 12;
-
 public:
     TUint Sequence() const;
     const Brx& Uri() const;
     const Brx& Metadata() const;
-    virtual void Process(IOhmMsgProcessor& aProcessor);
-    virtual void Externalise(IWriter& aWriter);
-
+public: // from OhmMsg
+    void Process(IOhmMsgProcessor& aProcessor);
+    void Externalise(IWriter& aWriter);
 private:
     OhmMsgTrack(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);    
     void Create(TUint aSequence, const Brx& aUri, const Brx& aMetadata);
-
 private:
     TUint iSequence;
     Bws<kMaxUriBytes> iUri;
@@ -154,24 +164,20 @@ private:
 class OhmMsgMetatext : public OhmMsg
 {
     friend class OhmMsgFactory;
-
 public:
     static const TUint kMaxMetatextBytes = 1 * 1024;
-
 private:
     static const TUint kHeaderBytes = 8;
-
 public:
     TUint Sequence() const;
     const Brx& Metatext() const;
-    virtual void Process(IOhmMsgProcessor& aProcessor);
-    virtual void Externalise(IWriter& aWriter);
-
+public: // from OhmMsg
+    void Process(IOhmMsgProcessor& aProcessor);
+    void Externalise(IWriter& aWriter);
 private:
     OhmMsgMetatext(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);    
     void Create(TUint aSequence, const Brx& aMetatext);
-
 private:
     TUint iSequence;
     Bws<kMaxMetatextBytes> iMetatext;
@@ -183,6 +189,7 @@ public:
     virtual ~IOhmMsgFactory() {}
     virtual OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader) = 0;
+    virtual OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio) = 0;
@@ -195,11 +202,12 @@ class OhmMsgFactory : public IOhmMsgFactory, public IOhmMsgProcessor
     friend class OhmMsg;
 
 public:
-    OhmMsgFactory(TUint aAudioCount, TUint aTrackCount, TUint aMetatextCount);
+    OhmMsgFactory(TUint aAudioCount, TUint aAudioBlobCount, TUint aTrackCount, TUint aMetatextCount);
     ~OhmMsgFactory();
 public: // from IOhmMsgFactory
     OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader);
+    OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio);
@@ -211,10 +219,12 @@ private:
     void Destroy(OhmMsg& aMsg);
 private: // from IOhmMsgProcessor
     void Process(OhmMsgAudio& aMsg);
+    void Process(OhmMsgAudioBlob& aMsg);
     void Process(OhmMsgTrack& aMsg);
     void Process(OhmMsgMetatext& aMsg);
 private:
     Fifo<OhmMsgAudio*> iFifoAudio;
+    Fifo<OhmMsgAudioBlob*> iFifoAudioBlob;
     Fifo<OhmMsgTrack*> iFifoTrack;
     Fifo<OhmMsgMetatext*> iFifoMetatext;
     Mutex iMutex;

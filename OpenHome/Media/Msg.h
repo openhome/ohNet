@@ -96,7 +96,7 @@ class EncodedAudio : public Allocated
 {
     friend class MsgFactory;
 public:
-    static const TUint kMaxBytes = 6 * 1024;
+    static const TUint kMaxBytes = 9 * 1024; // 9k buffer required for Songcast; other codecs are fine with 6k
 public:
     EncodedAudio(AllocatorBase& aAllocator);
     const TByte* Ptr(TUint aBytes) const;
