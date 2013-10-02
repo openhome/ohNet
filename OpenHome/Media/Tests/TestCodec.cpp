@@ -889,10 +889,12 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     Log::Print("TestCodec\n");
 
     OptionParser parser;
-    OptionString optionServer("-s", "--server", Brn("127.0.0.1"), "address of server to connect to");
+    OptionString optionServer("-s", "--server", Brn("eng"), "address of server to connect to");
     parser.AddOption(&optionServer);
-    OptionUint optionPort("-p", "--port", 25006, "server port to connect on");
+    OptionUint optionPort("-p", "--port", 80, "server port to connect on");
     parser.AddOption(&optionPort);
+    OptionString optionPath("", "--path", Brn(""), "path to use on server");
+    parser.AddOption(&optionPath);
     OptionString optionTestType("-t", "--type", Brn("full"), "type of test (quick | full)");
     parser.AddOption(&optionTestType);
     if (!parser.Parse(aArgs) || parser.HelpDisplayed()) {
@@ -929,6 +931,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     Bws<SuiteCodecStream::kMaxUriBytes> uriBuf;
     uriBuf.Append(SuiteCodecStream::kPrefixHttp);
     endptServer.AppendEndpoint(uriBuf);
+    uriBuf.Append(optionPath.Value());
     Uri uri(uriBuf);
     Log::Print("Connecting to server: ");
     Log::Print(uri.AbsoluteUri());
