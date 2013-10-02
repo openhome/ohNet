@@ -30,7 +30,7 @@ public:
     ~CodecVorbis();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -238,15 +238,15 @@ TBool CodecVorbis::SupportsMimeType(const Brx& aMimeType)
     return false;
 }
 
-TBool CodecVorbis::Recognise(const Brx& aData)
+TBool CodecVorbis::Recognise()
 {
     LOG(kCodec, "CodecVorbis::Recognise\n");
 
     iPeekOffset = 0;
     iRecognisingFromBuf = true;
     iSamplesTotal = 0;
-    ASSERT(aData.Bytes() <= EncodedAudio::kMaxBytes); // check we don't try overflow the buffer capacity
-    iRecogBuf.Replace(aData);
+    iRecogBuf.SetBytes(0);
+    iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
 
     TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
 

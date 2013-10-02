@@ -30,9 +30,11 @@ TBool CodecAiffBase::SupportsMimeType(const Brx& aMimeType)
 }
 
 
-TBool CodecAiffBase::Recognise(const Brx& aData)
+TBool CodecAiffBase::Recognise()
 {
-    const TChar* ptr = reinterpret_cast<const TChar*>(aData.Ptr());
+    Bws<12> buf;
+    iController->Read(buf, buf.MaxBytes());
+    const TChar* ptr = reinterpret_cast<const TChar*>(buf.Ptr());
     if(strncmp(ptr, "FORM", 4) == 0) {
         if(strncmp(ptr+8, reinterpret_cast<const TChar*>(iName.Ptr()), 4) == 0) {
             return true;

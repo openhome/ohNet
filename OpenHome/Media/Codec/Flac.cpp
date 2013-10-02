@@ -20,7 +20,7 @@ public:
     ~CodecFlac();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -151,16 +151,18 @@ TBool CodecFlac::SupportsMimeType(const Brx& aMimeType)
     return false;
 }
 
-TBool CodecFlac::Recognise(const Brx& aMsg)
+TBool CodecFlac::Recognise()
 {
-    const TChar* ptr = reinterpret_cast<const TChar*>(aMsg.Ptr());
-    if(aMsg.Bytes() >= 4) {
+    Bws<42> buf;
+    iController->Read(buf, buf.MaxBytes());
+    const TChar* ptr = reinterpret_cast<const TChar*>(buf.Ptr());
+    if(buf.Bytes() >= 4) {
         if(strncmp(ptr, "fLaC", 4) == 0) {
             iOgg = false;
             return true;
         }
         else if(strncmp(ptr, "OggS", 4) == 0) {
-            if(aMsg.Bytes() >= 42) {
+            if(buf.Bytes() >= 42) {
                 if(strncmp(ptr+37, "fLaC", 4) == 0) {
                     iOgg = true;
                     return true;

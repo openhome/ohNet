@@ -16,7 +16,7 @@ public:
     CodecAac();
     ~CodecAac();
 private: // from CodecBase
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -25,6 +25,8 @@ private:
     void ProcessMpeg4();
     TUint SkipEsdsTag(const TByte& aPtr);
 private:
+    static const TUint kMaxRecogBytes = 6 * 1024; // copied from previous CodecController behaviour
+    Bws<kMaxRecogBytes> iRecogBuf;
     TUint64 iCurrentSample;
     Mpeg4MediaInfo* iMp4;
 };
@@ -57,18 +59,19 @@ CodecAac::~CodecAac()
     LOG(kCodec, "CodecAac::~CodecAac\n");
 }
 
-TBool CodecAac::Recognise(const Brx& aData)
+TBool CodecAac::Recognise()
 {
     LOG(kCodec, "CodecAac::Recognise\n");
-    Bws<4> codec;
 
+    iRecogBuf.SetBytes(0);
+    iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
+    Bws<4> codec;
     try {
-        Mpeg4MediaInfo::GetCodec(aData, codec);
+        Mpeg4MediaInfo::GetCodec(iRecogBuf, codec);
     }
     catch (MediaMpeg4FileInvalid) {
         // couldn't recognise this as an MPEG4 file.
     }
-
     if (codec == Brn("mp4a")) {
         LOG(kCodec, "CodecAlac::Recognise aac mp4a\n");
         return true;

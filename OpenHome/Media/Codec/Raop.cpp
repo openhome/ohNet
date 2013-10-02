@@ -21,7 +21,7 @@ public:
     CodecRaop();
     ~CodecRaop();
 private: // from CodecBase
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -55,17 +55,15 @@ CodecRaop::~CodecRaop()
     LOG(kCodec, "CodecRaop::~CodecRaop\n");
 }
 
-TBool CodecRaop::Recognise(const Brx& aData)
+TBool CodecRaop::Recognise()
 {
     LOG(kCodec, "CodecRaop::Recognise\n");
-    Bws<4> codec;
+    Bws<4> buf;
+    iController->Read(buf, buf.Bytes());
 
-    if(aData.Bytes() >= 4) {
-        Bws<4> identifier(aData.Ptr(), 4);
-        if(identifier == Brn("Raop")) {
-            LOG(kCodec, "CodecRaop::Recognise airplay\n");
-            return true;
-        }
+    if (buf == Brn("Raop")) {
+        LOG(kCodec, "CodecRaop::Recognise airplay\n");
+        return true;
     }
 
     return false;

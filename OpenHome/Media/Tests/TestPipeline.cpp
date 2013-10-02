@@ -113,7 +113,7 @@ public:
 private: // from CodecBase
     void StreamInitialise();
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
 private:
@@ -614,7 +614,7 @@ TBool DummyCodec::SupportsMimeType(const Brx& /*aMimeType*/)
     return false;
 }
 
-TBool DummyCodec::Recognise(const Brx& /*aData*/)
+TBool DummyCodec::Recognise()
 {
     return true;
 }

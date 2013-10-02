@@ -20,7 +20,7 @@ public:
     ~CodecWav();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -75,9 +75,11 @@ TBool CodecWav::SupportsMimeType(const Brx& aMimeType)
     return false;
 }
 
-TBool CodecWav::Recognise(const Brx& aData)
+TBool CodecWav::Recognise()
 {
-    const TChar* ptr = reinterpret_cast<const TChar*>(aData.Ptr());
+    Bws<12> buf;
+    iController->Read(buf, buf.MaxBytes());
+    const TChar* ptr = reinterpret_cast<const TChar*>(buf.Ptr());
     if(strncmp(ptr, "RIFF", 4) == 0) {
         if(strncmp(ptr+8, "WAVE", 4) == 0) {
             return true;

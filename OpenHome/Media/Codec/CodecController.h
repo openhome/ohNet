@@ -46,7 +46,7 @@ public:
     virtual ~CodecBase();
 public:
     virtual TBool SupportsMimeType(const Brx& aMimeType) = 0;
-    virtual TBool Recognise(const Brx& aData) = 0;
+    virtual TBool Recognise() = 0;
     virtual void StreamInitialise();
     virtual void Process() = 0;
     virtual TBool TrySeek(TUint aStreamId, TUint64 aSample) = 0;
@@ -70,7 +70,6 @@ public:
     TBool SupportsMimeType(const Brx& aMimeType);
 private:
     void CodecThread();
-    void PullAudio(TUint aBytes);
     void Rewind();
     void PullMsg();
     void Queue(Msg* aMsg);
@@ -109,8 +108,6 @@ private:
     MsgQueue iQueue;
     Msg* iPendingMsg;
     TBool iQueueTrackData;
-    TBool iRecognising;
-    TBool iRecogniseRead;
     TBool iStreamStarted;
     TBool iStreamEnded;
     TBool iQuit;

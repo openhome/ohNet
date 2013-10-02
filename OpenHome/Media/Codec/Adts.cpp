@@ -39,7 +39,7 @@ public:
     CodecAdts();
     ~CodecAdts();
 private: // from CodecBase
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     //TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -47,6 +47,8 @@ private: // from CodecBase
 private:
     void ProcessAdts(TBool aParseOnly);
 private:
+    static const TUint kMaxRecogBytes = 6 * 1024; // copied from previous CodecController behaviour
+    Bws<kMaxRecogBytes> iRecogBuf;
     Adts iAdts;
 };
 
@@ -172,26 +174,28 @@ TBool Adts::ReadHeader(Brn aHeader)
     return true;
 }
 
-TBool CodecAdts::Recognise(const Brx& aData)
+TBool CodecAdts::Recognise()
 {
     LOG(kCodec, "CodecAdts::Recognise\n");
     const TUint kAdtsConsecutiveFrames = 5; // limit this to allow recognition within 1 data message
+    iRecogBuf.SetBytes(0);
+    iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
 
     // attempt Adts recognition
-    for(TUint i = 0; i < aData.Bytes(); i++) {
+    for(TUint i = 0; i < iRecogBuf.Bytes(); i++) {
         iAdts.SetStartOffset(i);                // save potential start position for first frame
         
         Adts adts;
         TUint matched = 0;        
         TUint j = i;
         TUint payloadBytes = 0;
-        while((j+9) < aData.Bytes()) {           // ensure there are enough bytes for the maximum header size
-            if(!adts.ReadHeader(Brn(aData.Ptr()+j, aData.Bytes()-j))) {
+        while((j+9) < iRecogBuf.Bytes()) {           // ensure there are enough bytes for the maximum header size
+            if(!adts.ReadHeader(Brn(iRecogBuf.Ptr()+j, iRecogBuf.Bytes()-j))) {
                 break;                          // not a valid header so keep searching
             }
             payloadBytes += adts.PayloadBytes();
             if(++matched >= kAdtsConsecutiveFrames) {   // found enough consecutive valid frames
-                if(!iAdts.ReadHeader(Brn(aData.Ptr()+iAdts.StartOffset(), aData.Bytes()-iAdts.StartOffset()))) {    // save info from first frame
+                if(!iAdts.ReadHeader(Brn(iRecogBuf.Ptr()+iAdts.StartOffset(), iRecogBuf.Bytes()-iAdts.StartOffset()))) {    // save info from first frame
                     break;                          // not a valid header so keep searching
                 }
                 iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);	// record average payload size over 3 frames

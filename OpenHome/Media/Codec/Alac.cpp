@@ -21,12 +21,14 @@ public:
     CodecAlac();
     ~CodecAlac();
 private: // from CodecBase
-    TBool Recognise(const Brx& aData);
+    TBool Recognise();
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
 private:
+    static const TUint kMaxRecogBytes = 6 * 1024; // copied from previous CodecController behaviour
+    Bws<kMaxRecogBytes> iRecogBuf;
     Mpeg4MediaInfo* iMp4;
 };
 
@@ -63,19 +65,20 @@ CodecAlac::~CodecAlac()
     }
 }
 
-TBool CodecAlac::Recognise(const Brx& aData)
+TBool CodecAlac::Recognise()
 {
     LOG(kCodec, "CodecAlac::Recognise\n");
-    Bws<4> codec;
 
+    iRecogBuf.SetBytes(0);
+    iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
+    Bws<4> codec;
     try {
-        Mpeg4MediaInfo::GetCodec(aData, codec);
+        Mpeg4MediaInfo::GetCodec(iRecogBuf, codec);
     }
     catch (MediaMpeg4FileInvalid) {
         // We couldn't recognise this as an MPEG4/ALAC file.
         return false;
     }
-
     if (codec == Brn("alac")) {
         LOG(kCodec, "CodecAlac::Recognise alac\n");
         return true;

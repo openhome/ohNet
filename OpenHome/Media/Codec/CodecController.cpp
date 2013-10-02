@@ -112,8 +112,6 @@ TBool CodecController::SupportsMimeType(const Brx& aMimeType)
 
 void CodecController::CodecThread()
 {
-    iRecognising = true;
-    iRecogniseRead = false;
     iStreamStarted = false;
     iQuit = false;
     while (!iQuit) {
@@ -140,43 +138,27 @@ void CodecController::CodecThread()
                 break;
             }
             iQueueTrackData = true;
-            iRecognising = true;
             iStreamStarted = iStreamEnded = false;
 
-            // Read audio data then attempt to recognise it
-            PullAudio(kMaxRecogniseBytes);
-            if (iQuit) {
-                break;
-            }
-            if (iStreamEnded) {
-                continue;
-            }
-            /* we can only CopyTo a max of kMaxRecogniseBytes bytes.  If we have more data than this, 
-               split the msg, select a codec then add the fragments back together before processing */
-            MsgAudioEncoded* remaining = NULL;
-            if (iAudioEncoded->Bytes() > kMaxRecogniseBytes) {
-                remaining = iAudioEncoded->Split(kMaxRecogniseBytes);
-            }
-            iAudioEncoded->CopyTo(iReadBuf);
-            iAudioEncoded->Add(remaining);  // reconstitute audio msg
-            Brn recogBuf(iReadBuf, kMaxRecogniseBytes);
-            for (size_t i=0; i<iCodecs.size(); i++) {
+            for (size_t i=0; i<iCodecs.size() && !iQuit; i++) {
                 CodecBase* codec = iCodecs[i];
-                TBool recognised = codec->Recognise(recogBuf);
-                if (iRecogniseRead) {    // seek back to start of data
-                    iRecogniseRead = false;
-                    Rewind();
-                    if (iStreamEnded) {
-                        continue;
-                    }
+                TBool recognised = false;
+                try {
+                    recognised = codec->Recognise();
                 }
+                catch (CodecStreamEnded&) {
+                    iStreamEnded = false; // give other codecs a chance to handle this (potentially tiny) stream
+                }
+                Rewind();
                 if (recognised) {
                     iActiveCodec = codec;
-                    iRecognising = false;
                     break;
                 }
             }
             iRewinder.Stop(); // stop buffering audio
+            if (iQuit) {
+                break;
+            }
             if (iActiveCodec == NULL) {
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
@@ -234,18 +216,10 @@ void CodecController::CodecThread()
             iPendingMsg = NULL;
         }
     }
-}
-
-void CodecController::PullAudio(TUint aBytes)
-{
-    // pull audio data until we have aBytes of data, or reach a stop condition
-    do {
-        Msg* msg = iUpstreamElement.Pull();
-        msg = msg->Process(*this);
-        if (msg != NULL) {
-            Queue(msg);
-        }
-    } while ((!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) && !iQuit);
+    if (iPendingMsg != NULL) {
+        Queue(iPendingMsg);
+        iPendingMsg = NULL;
+    }
 }
 
 void CodecController::Rewind()
@@ -282,12 +256,6 @@ void CodecController::ReleaseAudioEncoded()
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
 {
-    if (iRecognising && !iSeekable) {
-        ASSERTS();  // shouldn't be trying to read during recognise for non-seekable streams
-    }
-    if (iRecognising && iSeekable) {
-        iRecogniseRead = true;
-    }
     if (iPendingMsg != NULL) {
         if (DoRead(aBuf, aBytes)) {
             return;
