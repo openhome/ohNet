@@ -5,7 +5,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Exception.h>
 
-EXCEPTION(FifoReadError);
+EXCEPTION(FifoReadError)
 
 namespace OpenHome {
 

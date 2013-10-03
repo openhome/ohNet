@@ -15,7 +15,7 @@
 #include <map>
 #include <list>
 
-EXCEPTION(DvSubscriptionError);
+EXCEPTION(DvSubscriptionError)
 
 namespace OpenHome {
 namespace Net {

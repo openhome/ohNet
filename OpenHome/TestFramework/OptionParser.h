@@ -7,7 +7,7 @@
 
 #include <vector>
 
-EXCEPTION(OptionParserError);
+EXCEPTION(OptionParserError)
 
 namespace OpenHome {
 namespace TestFramework {

@@ -15,7 +15,7 @@
 
 #include <vector>
 
-EXCEPTION(InvocationError);
+EXCEPTION(InvocationError)
 
 namespace OpenHome {
 namespace Net {

@@ -18,7 +18,7 @@
 // 7   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~ DEL
 
 
-EXCEPTION(AsciiError);
+EXCEPTION(AsciiError)
 
 namespace OpenHome {
 

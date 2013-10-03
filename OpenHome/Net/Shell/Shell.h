@@ -11,7 +11,7 @@
 #include <vector>
 #include <map>
 
-EXCEPTION(ShellCommandAlreadyRegistered);
+EXCEPTION(ShellCommandAlreadyRegistered)
 
 namespace OpenHome {
 namespace Net {

@@ -9,9 +9,9 @@
 
 #include <vector>
 
-EXCEPTION(NetworkError);
-EXCEPTION(NetworkAddressInUse);
-EXCEPTION(NetworkTimeout);
+EXCEPTION(NetworkError)
+EXCEPTION(NetworkAddressInUse)
+EXCEPTION(NetworkTimeout)
 
 namespace OpenHome {
 

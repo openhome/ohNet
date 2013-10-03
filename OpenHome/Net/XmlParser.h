@@ -5,7 +5,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
 
-EXCEPTION(XmlError);
+EXCEPTION(XmlError)
 
 namespace OpenHome {
 namespace Net {

@@ -6,8 +6,8 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/OsTypes.h>
 
-EXCEPTION(ThreadKill);
-EXCEPTION(Timeout);
+EXCEPTION(ThreadKill)
+EXCEPTION(Timeout)
 
 namespace OpenHome {
 

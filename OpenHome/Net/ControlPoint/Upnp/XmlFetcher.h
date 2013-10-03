@@ -15,7 +15,7 @@
 
 #include <list>
 
-EXCEPTION(XmlFetchError);
+EXCEPTION(XmlFetchError)
 
 namespace OpenHome {
 class SocketTcpClient;

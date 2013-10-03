@@ -4,7 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
 
-EXCEPTION(AssertionFailed);
+EXCEPTION(AssertionFailed)
 
 namespace OpenHome {
 

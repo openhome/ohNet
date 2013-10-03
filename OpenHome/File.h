@@ -8,10 +8,10 @@
 
 #include <cstdio>
 
-EXCEPTION(FileOpenError);
-EXCEPTION(FileReadError);
-EXCEPTION(FileWriteError);
-EXCEPTION(FileSeekError);
+EXCEPTION(FileOpenError)
+EXCEPTION(FileReadError)
+EXCEPTION(FileWriteError)
+EXCEPTION(FileSeekError)
 
 namespace OpenHome {
 

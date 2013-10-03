@@ -5,8 +5,8 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 
-EXCEPTION(ReaderError);
-EXCEPTION(WriterError);
+EXCEPTION(ReaderError)
+EXCEPTION(WriterError)
 
 namespace OpenHome {
 
