@@ -131,6 +131,7 @@ public: // from OhmMsg
 private:
     OhmMsgAudioBlob(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);
+    static void Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader);
 private:
     TUint iFrame;
     Bws<kMaxBytes> iBlob;
@@ -208,6 +209,7 @@ public: // from IOhmMsgFactory
     OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader);
+    OhmMsgAudio* CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader);
     OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio);

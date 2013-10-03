@@ -307,6 +307,21 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
     return true;
 }
 
+void CodecController::ReadNextMsg(Bwx& aBuf)
+{
+    while (iAudioEncoded == NULL) {
+        Msg* msg = iUpstreamElement.Pull();
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            Queue(msg);
+        }
+        if (iStreamEnded || iQuit) {
+            THROW(CodecStreamEnded);
+        }
+    }
+    DoRead(aBuf, iAudioEncoded->Bytes());
+}
+
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
     ReleaseAudioEncoded();
@@ -352,6 +367,12 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     TUint jiffies= audio->Jiffies();
     Queue(audio);
     return jiffies;
+}
+
+void CodecController::OutputHalt()
+{
+    MsgHalt* halt = iMsgFactory.CreateMsgHalt();
+    Queue(halt);
 }
 
 Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)

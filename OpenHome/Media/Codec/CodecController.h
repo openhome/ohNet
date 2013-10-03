@@ -32,11 +32,13 @@ class ICodecController
 {
 public:
     virtual void Read(Bwx& aBuf, TUint aBytes) = 0;
+    virtual void ReadNextMsg(Bwx& aBuf) = 0;
     virtual TBool TrySeek(TUint aStreamId, TUint64 aBytePos) = 0;
     virtual TUint64 StreamLength() const = 0;
     virtual TUint64 StreamPos() const = 0;
     virtual void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless) = 0;
     virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset) = 0; // returns jiffy size of data
+    virtual void OutputHalt() = 0;
 };
     
 class CodecBase
@@ -78,11 +80,13 @@ private:
     TBool DoRead(Bwx& aBuf, TUint aBytes);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
+    void ReadNextMsg(Bwx& aBuf);
     TBool TrySeek(TUint aStreamId, TUint64 aBytePos);
     TUint64 StreamLength() const;
     TUint64 StreamPos() const;
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
+    void OutputHalt();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);

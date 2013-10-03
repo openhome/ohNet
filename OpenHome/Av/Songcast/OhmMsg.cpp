@@ -85,10 +85,11 @@ OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
 void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 {
     OhmMsg::Create();
-    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
+    ASSERT(aHeader.MsgType() == OhmHeader::kMsgTypeAudio ||
+           aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
     ReaderBinary reader(aReader);
     const TUint headerBytes = reader.ReadUintBe(1);
-    ASSERT (headerBytes == kHeaderBytes);
+    ASSERT(headerBytes == kHeaderBytes);
 
     iHalt = false;
     iLossless = false;
@@ -337,6 +338,14 @@ void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
     iFrame = Converter::BeUint32At(iBlob, 4);
 }
 
+void OhmMsgAudioBlob::Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader)
+{ // static
+    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
+    aMsg.Create(aReader, aHeader);
+    ReaderBinary reader(aReader);
+    aMsg.SetRxTimestamp(reader.ReadUintBe(4));
+}
+
 
 // OhmMsgTrack
 
@@ -535,6 +544,13 @@ OhmMsgAudioBlob* OhmMsgFactory::CreateAudioBlob(IReader& aReader, const OhmHeade
 {
     OhmMsgAudioBlob* msg = iFifoAudioBlob.Read();
     msg->Create(aReader, aHeader);
+    return msg;
+}
+
+OhmMsgAudio* OhmMsgFactory::CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader)
+{
+    OhmMsgAudio* msg = iFifoAudio.Read();
+    OhmMsgAudioBlob::Create(*msg, aReader, aHeader);
     return msg;
 }
 

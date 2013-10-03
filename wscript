@@ -273,6 +273,7 @@ def build(bld):
                 'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhBase.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhu.cpp',
+                'OpenHome/Media/Codec/Ohm.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
