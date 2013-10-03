@@ -71,7 +71,7 @@ class RaopDevice
     static const TUint kMacAddrBytes = 12;
 public:
     // aMacAddr in hex of form 001122334455
-    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr);
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
@@ -169,7 +169,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const Brx& aDeviceName, TUint aDiscoveryPort);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort);
     virtual ~RaopDiscovery();
 public: // from IRaopDiscovery
     const Brx &Aeskey();

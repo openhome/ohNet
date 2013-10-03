@@ -16,7 +16,7 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // RaopDevice
-RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr)
+RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
     , iName(aName)
     , iPort(aDiscoveryPort)
@@ -32,8 +32,7 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const Brx& 
 
     iHandleRaop = iProvider.MdnsCreateService();
 
-    TByte testarr[6];
-    MacAddressOctets(testarr);
+    aDvStack.MdnsProvider()->MdnsSetHostName(aHost);
 }
 
 void RaopDevice::Register()
@@ -45,7 +44,7 @@ void RaopDevice::Register()
     Bws<200> info;
 
     info.SetBytes(0);
-    iProvider.MdnsAppendTxtRecord(info, "txtvers", "1");    // does mdns support multiple records clumped together?
+    iProvider.MdnsAppendTxtRecord(info, "txtvers", "1");
     iProvider.MdnsAppendTxtRecord(info, "ch", "2");
     iProvider.MdnsAppendTxtRecord(info, "cn", "0,1");
     iProvider.MdnsAppendTxtRecord(info, "ek", "1");
@@ -670,7 +669,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const Brx& aDeviceName, TUint aDiscoveryPort)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort)
     : iRaopObserver(aObserver)
 {
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
@@ -682,7 +681,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
         ep.AppendAddress(addrBuf);
         LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
 
-        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, aDeviceName, ipAddr, Brn("000000000001"));
+        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, aHostName, aDeviceName, ipAddr, Brn("000000000001"));
         iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
