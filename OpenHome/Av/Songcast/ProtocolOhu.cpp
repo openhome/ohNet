@@ -88,6 +88,12 @@ void ProtocolOhu::RequestResend(const Brx& aFrames)
     }
 }
 
+TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS(); // FIXME
+    return 0;
+}
+
 void ProtocolOhu::Broadcast(OhmMsg* aMsg)
 {
     if (iSlaveCount > 0) {

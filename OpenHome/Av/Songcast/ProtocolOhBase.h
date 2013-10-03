@@ -1,5 +1,5 @@
-#ifndef HEADER_PROTOCOL_OHM
-#define HEADER_PROTOCOL_OHM
+#ifndef HEADER_PROTOCOL_OHBASE
+#define HEADER_PROTOCOL_OHBASE
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
@@ -38,7 +38,7 @@ protected:
     void ResendSeen();
 private:
     virtual void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
-    virtual void RequestResend(const Brx& aFrames) = 0;
+    virtual void RequestResend(const Brx& aFrames) = 0; // FIXME - ohm & ohu have identical implementations of this
 private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri);
 private:
@@ -81,4 +81,4 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROTOCOL_OHM
+#endif // HEADER_PROTOCOL_OHBASE

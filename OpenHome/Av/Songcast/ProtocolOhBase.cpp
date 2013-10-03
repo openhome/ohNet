@@ -278,6 +278,7 @@ void ProtocolOhBase::TimerRepairExpired()
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
+    // FIXME - also need to OutputStream (probably when we infer a stream change, not just relying on following MsgTrack)
     WriterBuffer writer(iFrameBuf);
     aMsg.Externalise(writer);
     iSupply->OutputData(iFrameBuf);
