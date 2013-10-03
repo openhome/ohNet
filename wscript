@@ -156,6 +156,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Radio1.xml', 'av.openhome.org', 'Radio', '1', 'AvOpenhomeOrgRadio1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Sender1.xml', 'av.openhome.org', 'Sender', '1', 'AvOpenhomeOrgSender1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Playlist1.xml', 'av.openhome.org', 'Playlist', '1', 'AvOpenhomeOrgPlaylist1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Receiver1.xml', 'av.openhome.org', 'Receiver', '1', 'AvOpenhomeOrgReceiver1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Time1.xml', 'av.openhome.org', 'Time', '1', 'AvOpenhomeOrgTime1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Info1.xml', 'av.openhome.org', 'Info', '1', 'AvOpenhomeOrgInfo1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Volume1.xml', 'av.openhome.org', 'Volume', '1', 'AvOpenhomeOrgVolume1'),
@@ -275,6 +276,8 @@ def build(bld):
                 'OpenHome/Av/Songcast/ProtocolOhu.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhm.cpp',
                 'OpenHome/Media/Codec/Ohm.cpp',
+                'Generated/DvAvOpenhomeOrgReceiver1.cpp',
+                'OpenHome/Av/Songcast/ProviderReceiver.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
