@@ -13,10 +13,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * Wrapped do {...} while(0) macros in MULTI_LINE_MACRO helpers
  */
 
 #ifndef __mDNSDebug_h
 #define __mDNSDebug_h
+
+#include "MultilineMacro.h"
 
 // Set MDNS_DEBUGMSGS to 0 to optimize debugf() calls out of the compiled code
 // Set MDNS_DEBUGMSGS to 1 to generate normal debugging messages
@@ -96,15 +104,15 @@ typedef enum
 	#if (MDNS_C99_VA_ARGS)
 		#define debug_noop( ... ) ((void)0)
 		#define LogMsg( ... )           LogMsgWithLevel(MDNS_LOG_MSG, __VA_ARGS__)
-		#define LogOperation( ... )     do { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_OPERATION, __VA_ARGS__); } while (0)
-		#define LogSPS( ... )           do { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_SPS,       __VA_ARGS__); } while (0)
-		#define LogInfo( ... )          do { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_INFO,      __VA_ARGS__); } while (0)
+		#define LogOperation( ... )     MULTI_LINE_MACRO_BEGIN { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_OPERATION, __VA_ARGS__); } MULTI_LINE_MACRO_END
+		#define LogSPS( ... )           MULTI_LINE_MACRO_BEGIN { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_SPS,       __VA_ARGS__); } MULTI_LINE_MACRO_END
+		#define LogInfo( ... )          MULTI_LINE_MACRO_BEGIN { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_INFO,      __VA_ARGS__); } MULTI_LINE_MACRO_END
 	#elif (MDNS_GNU_VA_ARGS)
 		#define	debug_noop( ARGS... ) ((void)0)
 		#define	LogMsg( ARGS... )       LogMsgWithLevel(MDNS_LOG_MSG, ARGS)
-		#define	LogOperation( ARGS... ) do { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_OPERATION, ARGS); } while (0)
-		#define	LogSPS( ARGS... )       do { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_SPS,       ARGS); } while (0)
-		#define	LogInfo( ARGS... )      do { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_INFO,      ARGS); } while (0)
+		#define	LogOperation( ARGS... ) MULTI_LINE_MACRO_BEGIN { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_OPERATION, ARGS); } MULTI_LINE_MACRO_END
+		#define	LogSPS( ARGS... )       MULTI_LINE_MACRO_BEGIN { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_SPS,       ARGS); } MULTI_LINE_MACRO_END
+		#define	LogInfo( ARGS... )      MULTI_LINE_MACRO_BEGIN { if (mDNS_LoggingEnabled) LogMsgWithLevel(MDNS_LOG_INFO,      ARGS); } MULTI_LINE_MACRO_END
 	#else
 		#error Unknown variadic macros
 	#endif

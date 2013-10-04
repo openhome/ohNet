@@ -34,6 +34,12 @@
  * thinking that variables x and y are both of type "char*" -- and anyone who doesn't
  * understand why variable y is not of type "char*" just proves the point that poor code
  * layout leads people to unfortunate misunderstandings about how the C language really works.)
+ *
+ *
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * Suppress non-const aggregate array initialization warnings and add casts when assigning to smaller types
  */
 
 #include "DNSCommon.h"                  // Defines general DNS untility routines
@@ -1884,7 +1890,7 @@ mDNSlocal mDNSu16 CheckSum(const void *const data, mDNSs32 length, mDNSu32 sum)
 	while (length > 0) { length -= 2; sum += *ptr++; }
 	sum = (sum & 0xFFFF) + (sum >> 16);
 	sum = (sum & 0xFFFF) + (sum >> 16);
-	return(sum != 0xFFFF ? sum : 0);
+	return (mDNSu16)(sum != 0xFFFF ? sum : 0);
 	}
 
 mDNSlocal mDNSu16 IPv6CheckSum(const mDNSv6Addr *const src, const mDNSv6Addr *const dst, const mDNSu8 protocol, const void *const data, const mDNSu32 length)
@@ -1893,9 +1899,9 @@ mDNSlocal mDNSu16 IPv6CheckSum(const mDNSv6Addr *const src, const mDNSv6Addr *co
 	ph.src = *src;
 	ph.dst = *dst;
 	ph.len.b[0] = length >> 24;
-	ph.len.b[1] = length >> 16;
-	ph.len.b[2] = length >> 8;
-	ph.len.b[3] = length;
+	ph.len.b[1] = (mDNSu8)(length >> 16);
+	ph.len.b[2] = (mDNSu8)(length >> 8);
+	ph.len.b[3] = (mDNSu8)length;
 	ph.pro.b[0] = 0;
 	ph.pro.b[1] = 0;
 	ph.pro.b[2] = 0;
@@ -1912,9 +1918,26 @@ mDNSlocal void SendNDP(mDNS *const m, const mDNSu8 op, const mDNSu8 flags, const
 	// Some recipient hosts seem to ignore Neighbor Solicitations if the IPv6-layer destination address is not the
 	// appropriate IPv6 solicited node multicast address, so we use that IPv6-layer destination address, even though
 	// at the Ethernet-layer we unicast the packet to the intended target, to avoid wasting network bandwidth.
-	const mDNSv6Addr mc = { { 0xFF,0x02,0x00,0x00, 0,0,0,0, 0,0,0,1, 0xFF,tpa->b[0xD],tpa->b[0xE],tpa->b[0xF] } };
+	mDNSv6Addr mc;
 	const mDNSv6Addr *const v6dst = (op == NDP_Sol) ? &mc : tpa;
 	NetworkInterfaceInfo *intf = FirstInterfaceForID(m, rr->resrec.InterfaceID);
+	mc.b[0] = 0xFF;
+	mc.b[1] = 0x02;
+	mc.b[2] = 0x00;
+	mc.b[3] = 0x00;
+	mc.b[4] = 0;
+	mc.b[5] = 0;
+	mc.b[6] = 0;
+	mc.b[7] = 0;
+	mc.b[8] = 0;
+	mc.b[9] = 0;
+	mc.b[10] = 0;
+	mc.b[11] = 1;
+	mc.b[12] = 0xFF;
+	mc.b[13] = tpa->b[0xD];
+	mc.b[14] = tpa->b[0xE];
+	mc.b[15] = tpa->b[0xF];
+
 	if (!intf) { LogMsg("SendNDP: No interface with InterfaceID %p found %s", rr->resrec.InterfaceID, ARDisplayString(m,rr)); return; }
 
 	// 0x00 Destination address
@@ -1983,7 +2006,7 @@ mDNSlocal void SendNDP(mDNS *const m, const mDNSu8 op, const mDNSu8 flags, const
 		}
 
 	// 0x4E or 0x56 Total NDP Packet length 78 or 86 bytes
-	m->omsg.data[0x13] = ptr - &m->omsg.data[0x36];		// Compute actual length
+	m->omsg.data[0x13] = (mDNSu8)(ptr - &m->omsg.data[0x36]);		// Compute actual length
 	checksum.NotAnInteger = ~IPv6CheckSum(spa, v6dst, 0x3A, &m->omsg.data[0x36], m->omsg.data[0x13]);
 	m->omsg.data[0x38] = checksum.b[0];
 	m->omsg.data[0x39] = checksum.b[1];
@@ -10189,7 +10212,7 @@ mDNSlocal mDNSBool mDNS_IdUsedInQuestionsList(mDNS * const m, mDNSOpaque16 id)
 	
 mDNSexport mDNSOpaque16 mDNS_NewMessageID(mDNS * const m)
 	{
-	mDNSOpaque16 id;
+	mDNSOpaque16 id = mDNSOpaque16fromIntVal(0);
 	int i;
 
 	for (i=0; i<10; i++)

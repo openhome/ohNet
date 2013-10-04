@@ -18,6 +18,12 @@
  * Elimate all mDNSPlatformMemAllocate/mDNSPlatformMemFree from this code -- the core code
  * is supposed to be malloc-free so that it runs in constant memory determined at compile-time.
  * Any dynamic run-time requirements should be handled by the platform layer below or client layer above
+ *
+ *
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * Suppress constant expression warnings for RRTypeAnswersQuestionType by passing in var instead of enum compile-time constant
  */
 
 #if APPLE_OSX_mDNSResponder
@@ -2901,7 +2907,7 @@ mDNSlocal AuthRecord *MarkRRForSending(mDNS *const m)
 
 mDNSlocal mDNSBool SendGroupUpdates(mDNS *const m)
 	{
-	mDNSOpaque16 msgid;
+	mDNSOpaque16 msgid = mDNSOpaque16fromIntVal(0);
 	mDNSs32 spaceleft = 0;
 	mDNSs32 zoneSize, rrSize;
 	mDNSu8 *oldnext; // for debugging
@@ -4882,12 +4888,14 @@ mDNSlocal void FlushAddressCacheRecords(mDNS *const m)
 	CacheRecord *cr;
 	FORALL_CACHERECORDS(slot, cg, cr)
 		{
+		const DNS_TypeValues dnsTypeA = kDNSType_A;
+		const DNS_TypeValues dnsTypeAAAA = kDNSType_AAAA;
 		if (cr->resrec.InterfaceID) continue;
 
 		// If a resource record can answer A or AAAA, they need to be flushed so that we will
 		// never used to deliver an ADD or RMV
-		if (RRTypeAnswersQuestionType(&cr->resrec, kDNSType_A) ||
-			RRTypeAnswersQuestionType(&cr->resrec, kDNSType_AAAA))
+		if (RRTypeAnswersQuestionType(&cr->resrec, dnsTypeA) ||
+			RRTypeAnswersQuestionType(&cr->resrec, dnsTypeAAAA))
 			{
 			LogInfo("FlushAddressCacheRecords: Purging Resourcerecord %s", CRDisplayString(m, cr));
 			mDNS_PurgeCacheResourceRecord(m, cr);

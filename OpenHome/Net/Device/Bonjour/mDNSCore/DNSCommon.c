@@ -13,6 +13,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * Avoid non-const aggregate array initialization warnings by assigning values after declaration
  */
 
 // Set mDNS_InstantiateInlines to tell mDNSEmbeddedAPI.h to instantiate inline functions, if necessary
@@ -2630,9 +2636,12 @@ mDNSexport mStatus mDNSSendDNSMessage(mDNS *const m, DNSMessage *const msg, mDNS
 			status = mDNSPlatformSendUDP(m, msg, end, InterfaceID, src, dst, dstport);
 		else
 			{
+			long nsent;
 			mDNSu16 msglen = (mDNSu16)(end - (mDNSu8 *)msg);
-			mDNSu8 lenbuf[2] = { (mDNSu8)(msglen >> 8), (mDNSu8)(msglen & 0xFF) };
-			long nsent = mDNSPlatformWriteTCP(sock, (char*)lenbuf, 2);		// Should do scatter/gather here -- this is probably going out as two packets
+			mDNSu8 lenbuf[2];
+			lenbuf[0] = (mDNSu8)(msglen >> 8);
+			lenbuf[1] = (mDNSu8)(msglen & 0xFF);
+			nsent = mDNSPlatformWriteTCP(sock, (char*)lenbuf, 2);		// Should do scatter/gather here -- this is probably going out as two packets
 			if (nsent != 2) { LogMsg("mDNSSendDNSMessage: write msg length failed %d/%d", nsent, 2); status = mStatus_ConnFailed; }
 			else
 				{

@@ -13,12 +13,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * Wrapped do {...} while(0) macros in MULTI_LINE_MACRO helpers
  */
 
 #ifndef __DNSCOMMON_H_
 #define __DNSCOMMON_H_
 
 #include "mDNSEmbeddedAPI.h"
+#include "MultilineMacro.h"
 
 #ifdef	__cplusplus
 	extern "C" {
@@ -277,13 +284,13 @@ extern void mDNS_Unlock_(mDNS *const m, const char * const functionname);
 
 #define mDNS_Unlock(X) mDNS_Unlock_((X), __func__)
 
-#define mDNS_DropLockBeforeCallback() do { m->mDNS_reentrancy++; \
+#define mDNS_DropLockBeforeCallback() MULTI_LINE_MACRO_BEGIN { m->mDNS_reentrancy++; \
 	if (m->mDNS_busy != m->mDNS_reentrancy) LogMsg("%s: Locking Failure! mDNS_busy (%ld) != mDNS_reentrancy (%ld)", __func__, m->mDNS_busy, m->mDNS_reentrancy); \
-	} while (0)
+	} MULTI_LINE_MACRO_END
 
-#define mDNS_ReclaimLockAfterCallback() do { \
+#define mDNS_ReclaimLockAfterCallback() MULTI_LINE_MACRO_BEGIN { \
 	if (m->mDNS_busy != m->mDNS_reentrancy) LogMsg("%s: Unlocking Failure! mDNS_busy (%ld) != mDNS_reentrancy (%ld)", __func__, m->mDNS_busy, m->mDNS_reentrancy); \
-	m->mDNS_reentrancy--; } while (0)
+	m->mDNS_reentrancy--; } MULTI_LINE_MACRO_END
 
 #ifdef	__cplusplus
 	}

@@ -49,6 +49,11 @@
    you can still use the exact same client C code as you'd use on a
    general-purpose desktop system.
 
+
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * Wrapped do {...} while(0) macros in MULTI_LINE_MACRO helpers
  */
 
 #ifndef __mDNSClientAPI_h
@@ -68,6 +73,7 @@
 #endif
 
 #include "mDNSDebug.h"
+#include "MultilineMacro.h"
 #if APPLE_OSX_mDNSResponder
 #include <uuid/uuid.h>
 #endif
@@ -2136,7 +2142,7 @@ extern void    mDNS_GrowCache (mDNS *const m, CacheEntity *storage, mDNSu32 numr
 extern void    mDNS_GrowAuth (mDNS *const m, AuthEntity *storage, mDNSu32 numrecords);
 extern void    mDNS_StartExit (mDNS *const m);
 extern void    mDNS_FinalExit (mDNS *const m);
-#define mDNS_Close(m) do { mDNS_StartExit(m); mDNS_FinalExit(m); } while(0)
+#define mDNS_Close(m) MULTI_LINE_MACRO_BEGIN { mDNS_StartExit(m); mDNS_FinalExit(m); } MULTI_LINE_MACRO_END
 #define mDNS_ExitNow(m, now) ((now) - (m)->ShutdownTime >= 0 || (!(m)->ResourceRecords))
 
 extern mDNSs32 mDNS_Execute   (mDNS *const m);
@@ -2283,8 +2289,8 @@ extern mDNSu32 SetValidDNSServers(mDNS *m, DNSQuestion *question);
 // A simple C structure assignment of a domainname can cause a protection fault by accessing unmapped memory,
 // because that object is defined to be 256 bytes long, but not all domainname objects are truly the full size.
 // This macro uses mDNSPlatformMemCopy() to make sure it only touches the actual bytes that are valid.
-#define AssignDomainName(DST, SRC) do { mDNSu16 len__ = DomainNameLength((SRC)); \
-	if (len__ <= MAX_DOMAIN_NAME) mDNSPlatformMemCopy((DST)->c, (SRC)->c, len__); else (DST)->c[0] = 0; } while(0)
+#define AssignDomainName(DST, SRC) MULTI_LINE_MACRO_BEGIN { mDNSu16 len__ = DomainNameLength((SRC)); \
+	if (len__ <= MAX_DOMAIN_NAME) mDNSPlatformMemCopy((DST)->c, (SRC)->c, len__); else (DST)->c[0] = 0; } MULTI_LINE_MACRO_END
 
 // Comparison functions
 #define SameDomainLabelCS(A,B) ((A)[0] == (B)[0] && mDNSPlatformMemSame((A)+1, (B)+1, (A)[0]))
@@ -2477,7 +2483,7 @@ extern McastResolver *mDNS_AddMcastResolver(mDNS *const m, const domainname *d, 
 
 // We use ((void *)0) here instead of mDNSNULL to avoid compile warnings on gcc 4.2
 #define mDNS_AddSearchDomain_CString(X, I) \
-	do { domainname d__; if (((X) != (void*)0) && MakeDomainNameFromDNSNameString(&d__, (X)) && d__.c[0]) mDNS_AddSearchDomain(&d__, I); } while(0)
+	MULTI_LINE_MACRO_BEGIN { domainname d__; if (((X) != (void*)0) && MakeDomainNameFromDNSNameString(&d__, (X)) && d__.c[0]) mDNS_AddSearchDomain(&d__, I); } MULTI_LINE_MACRO_END
 
 // Routines called by the core, exported by DNSDigest.c
 
@@ -2490,15 +2496,15 @@ extern mDNSs32 DNSDigest_ConstructHMACKeyfromBase64(DomainAuthInfo *info, const 
 // the new end pointer on success, and NULL on failure.
 extern void DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, DomainAuthInfo *info, mDNSu16 tcode);
 
-#define SwapDNSHeaderBytes(M) do { \
+#define SwapDNSHeaderBytes(M) MULTI_LINE_MACRO_BEGIN { \
     (M)->h.numQuestions   = (mDNSu16)((mDNSu8 *)&(M)->h.numQuestions  )[0] << 8 | ((mDNSu8 *)&(M)->h.numQuestions  )[1]; \
     (M)->h.numAnswers     = (mDNSu16)((mDNSu8 *)&(M)->h.numAnswers    )[0] << 8 | ((mDNSu8 *)&(M)->h.numAnswers    )[1]; \
     (M)->h.numAuthorities = (mDNSu16)((mDNSu8 *)&(M)->h.numAuthorities)[0] << 8 | ((mDNSu8 *)&(M)->h.numAuthorities)[1]; \
     (M)->h.numAdditionals = (mDNSu16)((mDNSu8 *)&(M)->h.numAdditionals)[0] << 8 | ((mDNSu8 *)&(M)->h.numAdditionals)[1]; \
-    } while (0)
+    } MULTI_LINE_MACRO_END
 
 #define DNSDigest_SignMessageHostByteOrder(M,E,INFO) \
-	do { SwapDNSHeaderBytes(M); DNSDigest_SignMessage((M), (E), (INFO), 0); SwapDNSHeaderBytes(M); } while (0)
+	MULTI_LINE_MACRO_BEGIN { SwapDNSHeaderBytes(M); DNSDigest_SignMessage((M), (E), (INFO), 0); SwapDNSHeaderBytes(M); } MULTI_LINE_MACRO_END
 
 // verify a DNS message.  The message must be complete, with all values in network byte order.  end points to the
 // end of the record.  tsig is a pointer to the resource record that contains the TSIG OPT record.  info is
@@ -2883,7 +2889,7 @@ typedef enum
 
 extern void mDNSCoreBeSleepProxyServer_internal(mDNS *const m, mDNSu8 sps, mDNSu8 port, mDNSu8 marginalpower, mDNSu8 totpower);
 #define mDNSCoreBeSleepProxyServer(M,S,P,MP,TP) \
-	do { mDNS_Lock(m); mDNSCoreBeSleepProxyServer_internal((M),(S),(P),(MP),(TP)); mDNS_Unlock(m); } while(0)
+	MULTI_LINE_MACRO_BEGIN { mDNS_Lock(m); mDNSCoreBeSleepProxyServer_internal((M),(S),(P),(MP),(TP)); mDNS_Unlock(m); } MULTI_LINE_MACRO_END
 
 extern void FindSPSInCache(mDNS *const m, const DNSQuestion *const q, const CacheRecord *sps[3]);
 #define PrototypeSPSName(X) ((X)[0] >= 11 && (X)[3] == '-' && (X)[ 4] == '9' && (X)[ 5] == '9' && \
