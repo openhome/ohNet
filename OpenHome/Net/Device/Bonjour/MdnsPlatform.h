@@ -18,13 +18,13 @@
 namespace OpenHome {
 
 class Environment;
-    
+
 namespace Net {
 
 class MdnsPlatform
 {
     typedef mStatus Status;
-    
+
     static const TUint kMaxHostBytes = 16;
     static const TUint kMaxMessageBytes = 4096;
 public: 
@@ -34,6 +34,7 @@ public:
     void Lock();
     void Unlock();
     void Close();
+    Status GetPrimaryInterface(TIpAddress& aInterface);
     Status SendUdp(const Brx& aBuffer, const Endpoint& aEndpoint);
     void SetHostName(const TChar* aName);
     TUint CreateService();
