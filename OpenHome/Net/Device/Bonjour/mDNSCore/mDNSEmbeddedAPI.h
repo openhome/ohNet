@@ -53,7 +53,8 @@
  * Change history:
  *
  * 2013/10/04  greggh
- * Wrapped do {...} while(0) macros in MULTI_LINE_MACRO helpers
+ * Wrapped do {...} while(0) macros in MULTI_LINE_MACRO helpers and renamed
+ * some members of ZoneData_struct to have names different from their types
  */
 
 #ifndef __mDNSClientAPI_h
@@ -1635,7 +1636,7 @@ typedef void ZoneDataCallback(mDNS *const m, mStatus err, const ZoneData *result
 struct ZoneData_struct
 	{
 	domainname       ChildName;			// Name for which we're trying to find the responsible server
-	ZoneService      ZoneService;		// Which service we're seeking for this zone (update, query, or LLQ)
+	ZoneService      Service;		// Which service we're seeking for this zone (update, query, or LLQ)
 	domainname       *CurrentSOA;		// Points to somewhere within ChildName
 	domainname       ZoneName;			// Discovered result: Left-hand-side of SOA record
 	mDNSu16          ZoneClass;			// Discovered result: DNS Class from SOA record
@@ -1643,7 +1644,7 @@ struct ZoneData_struct
 	mDNSIPPort       Port;				// Discovered result: Update port, query port, or LLQ port from SRV record
 	mDNSAddr         Addr;				// Discovered result: Address of Target host from SRV record
 	mDNSBool         ZonePrivate;		// Discovered result: Does zone require encrypted queries?
-	ZoneDataCallback *ZoneDataCallback;	// Caller-specified function to be called upon completion
+	ZoneDataCallback *DataCallback;	// Caller-specified function to be called upon completion
 	void             *ZoneDataContext;
 	DNSQuestion      question;			// Storage for any active question
 	};

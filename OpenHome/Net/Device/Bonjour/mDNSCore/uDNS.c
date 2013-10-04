@@ -23,7 +23,8 @@
  * Change history:
  *
  * 2013/10/04  greggh
- * Suppress constant expression warnings for RRTypeAnswersQuestionType by passing in var instead of enum compile-time constant
+ * Suppress constant expression warnings for RRTypeAnswersQuestionType by passing in var instead of
+ * compile-time const enum and updated to use renamed members of ZoneData_struct
  */
 
 #if APPLE_OSX_mDNSResponder
@@ -1457,9 +1458,9 @@ mDNSlocal const domainname *PRIVATE_QUERY_SERVICE_TYPE  = (const domainname*)"\x
 mDNSlocal const domainname *PRIVATE_LLQ_SERVICE_TYPE    = (const domainname*)"\x0C_dns-llq-tls"    "\x04_tcp";
 
 #define ZoneDataSRV(X) (\
-	(X)->ZoneService == ZoneServiceUpdate ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
-	(X)->ZoneService == ZoneServiceQuery  ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
-	(X)->ZoneService == ZoneServiceLLQ    ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : (const domainname*)"")
+	(X)->Service == ZoneServiceUpdate ? ((X)->ZonePrivate ? PRIVATE_UPDATE_SERVICE_TYPE : PUBLIC_UPDATE_SERVICE_TYPE) : \
+	(X)->Service == ZoneServiceQuery  ? ((X)->ZonePrivate ? PRIVATE_QUERY_SERVICE_TYPE  : (const domainname*)""     ) : \
+	(X)->Service == ZoneServiceLLQ    ? ((X)->ZonePrivate ? PRIVATE_LLQ_SERVICE_TYPE    : PUBLIC_LLQ_SERVICE_TYPE   ) : (const domainname*)"")
 
 // Forward reference: GetZoneData_StartQuery references GetZoneData_QuestionCallback, and
 // GetZoneData_QuestionCallback calls GetZoneData_StartQuery
@@ -1497,7 +1498,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
 				// To keep the load on the server down, we don't chop down on
 				// SOA lookups for AutoTunnels
 				LogInfo("GetZoneData_QuestionCallback: not chopping labels for %##s", zd->CurrentSOA->c);
-				zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
+				zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
 				}
 			else 
 				{
@@ -1509,7 +1510,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
 		else
 			{
 			LogInfo("GetZoneData recursed to root label of %##s without finding SOA", zd->ChildName.c);
-			zd->ZoneDataCallback(m, mStatus_NoSuchNameErr, zd);
+			zd->DataCallback(m, mStatus_NoSuchNameErr, zd);
 			}
 		}
 	else if (answer->rrtype == kDNSType_SRV)
@@ -1543,7 +1544,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
 				zd->Host.c[0] = 0;
 				zd->Port = zeroIPPort;
 				zd->Addr = zeroAddr;
-				zd->ZoneDataCallback(m, mStatus_NoError, zd);
+				zd->DataCallback(m, mStatus_NoError, zd);
 				}
 			}
 		}
@@ -1566,7 +1567,7 @@ mDNSlocal void GetZoneData_QuestionCallback(mDNS *const m, DNSQuestion *question
 		zd->Addr.ip.v4.b[3] = 1;
 #endif
 		// The caller needs to free the memory when done with zone data
-		zd->ZoneDataCallback(m, mStatus_NoError, zd);
+		zd->DataCallback(m, mStatus_NoError, zd);
 		}
 	}
 
@@ -1616,7 +1617,7 @@ mDNSexport ZoneData *StartGetZoneData(mDNS *const m, const domainname *const nam
 	if (!zd) { LogMsg("ERROR: StartGetZoneData - mDNSPlatformMemAllocate failed"); return mDNSNULL; }
 	mDNSPlatformMemZero(zd, sizeof(ZoneData));
 	AssignDomainName(&zd->ChildName, name);
-	zd->ZoneService      = target;
+	zd->Service      = target;
 	zd->CurrentSOA       = (domainname *)(&zd->ChildName.c[initialskip]);
 	zd->ZoneName.c[0]    = 0;
 	zd->ZoneClass        = 0;
@@ -1624,7 +1625,7 @@ mDNSexport ZoneData *StartGetZoneData(mDNS *const m, const domainname *const nam
 	zd->Port             = zeroIPPort;
 	zd->Addr             = zeroAddr;
 	zd->ZonePrivate      = AuthInfo && AuthInfo->AutoTunnel ? mDNStrue : mDNSfalse;
-	zd->ZoneDataCallback = callback;
+	zd->DataCallback = callback;
 	zd->ZoneDataContext  = ZoneDataContext;
 
 	zd->question.QuestionContext = zd;
