@@ -41,10 +41,8 @@ using namespace OpenHome::Media;
 
 // ProtocolOhm
 
-ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
-    : ProtocolOhBase(aEnv, aTrackFactory, aTimestamper, "ohm", aMode)
-    , iEnv(aEnv)
-	, iFactory(aFactory)
+ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
 {
@@ -88,15 +86,15 @@ void ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpo
 				case OhmHeader::kMsgTypeSlave:
 					break;
 				case OhmHeader::kMsgTypeAudio:
-					Add(iFactory.CreateAudioBlob(iReadBuffer, header));
+					Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
 					break;
 				case OhmHeader::kMsgTypeTrack:
-					Add(iFactory.CreateTrack(iReadBuffer, header));
+					Add(iMsgFactory.CreateTrack(iReadBuffer, header));
 					receivedTrack = true;
 					joinComplete = receivedMetatext;
 					break;
 				case OhmHeader::kMsgTypeMetatext:
-					Add(iFactory.CreateMetatext(iReadBuffer, header));
+					Add(iMsgFactory.CreateMetatext(iReadBuffer, header));
 					receivedMetatext = true;
 					joinComplete = receivedTrack;
 					break;
@@ -129,13 +127,13 @@ void ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpo
                     iTimerListen->FireIn((kTimerListenTimeoutMs >> 1) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen secondary timeout
 					break;
 				case OhmHeader::kMsgTypeAudio:
-					Add(iFactory.CreateAudioBlob(iReadBuffer, header));
+					Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
 					break;
 				case OhmHeader::kMsgTypeTrack:
-					Add(iFactory.CreateTrack(iReadBuffer, header));
+					Add(iMsgFactory.CreateTrack(iReadBuffer, header));
 					break;
 				case OhmHeader::kMsgTypeMetatext:
-					Add(iFactory.CreateMetatext(iReadBuffer, header));
+					Add(iMsgFactory.CreateMetatext(iReadBuffer, header));
 					break;
 				case OhmHeader::kMsgTypeResend:
 					ResendSeen();

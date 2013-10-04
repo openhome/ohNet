@@ -47,16 +47,16 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 using namespace OpenHome::Av;
 
-CodecBase* CodecFactory::NewOhm()
+CodecBase* CodecFactory::NewOhm(OhmMsgFactory& aMsgFactory)
 { // static
-    // FIXME
-    return NULL; // new CodecOhm();
+    return new CodecOhm(aMsgFactory);
 }
 
 
 
 CodecOhm::CodecOhm(OhmMsgFactory& aMsgFactory)
     : iMsgFactory(aMsgFactory)
+    , iOffset(0)
 {
 }
 

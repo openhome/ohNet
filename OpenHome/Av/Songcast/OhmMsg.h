@@ -191,6 +191,7 @@ public:
     virtual OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader) = 0;
+    virtual OhmMsgAudio* CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) = 0;
     virtual OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio) = 0;

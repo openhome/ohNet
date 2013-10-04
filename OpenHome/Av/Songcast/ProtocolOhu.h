@@ -33,8 +33,6 @@ public:
 private: // from ProtocolOhBase
     void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
     void RequestResend(const Brx& aFrames);
-private: // from Media::Protocol
-    Media::ProtocolStreamResult Stream(const Brx& aUri); // FIXME
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
@@ -49,8 +47,6 @@ private:
     void Send(TUint aType);
     void TimerLeaveExpired();
 private:
-    Environment& iEnv;
-    IOhmMsgFactory& iFactory;
     OhmSocket iSocket;
     Srs<kMaxFrameBytes> iReadBuffer;
     Endpoint iEndpoint;

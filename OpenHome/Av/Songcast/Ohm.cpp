@@ -31,7 +31,7 @@ void OhmHeader::Internalise(IReader& aReader)
         THROW(OhmError);
     }
     iMsgType  = reader.ReadUintBe(1);
-    if(iMsgType > kMsgTypeResend) {
+    if(iMsgType > kMsgTypeResend && iMsgType != kMsgTypeAudioBlob) {
         THROW(OhmError);
     }
     iBytes = reader.ReadUintBe(2);

@@ -32,7 +32,7 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kInitialRepairTimeoutMs = 10;
     static const TUint kSubsequentRepairTimeoutMs = 30;
 protected:
-    ProtocolOhBase(Environment& aEnv, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
+    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
     ~ProtocolOhBase();
     void Add(OhmMsg* aMsg);
     void ResendSeen();
@@ -52,6 +52,9 @@ private: // from IOhmMsgProcessor
     void Process(OhmMsgAudioBlob& aMsg);
     void Process(OhmMsgTrack& aMsg);
     void Process(OhmMsgMetatext& aMsg);
+protected:
+    Environment& iEnv;
+    IOhmMsgFactory& iMsgFactory;
 private:
     Mutex iMutexTransport;
     Media::TrackFactory& iTrackFactory;
@@ -62,10 +65,13 @@ private:
     TUint iFrame;
     TBool iRunning;
     TBool iRepairing;
+    TBool iStreamMsgDue;
     OhmMsgAudioBlob* iRepairFirst;
     std::vector<OhmMsgAudioBlob*> iRepairFrames;
     Timer* iTimerRepair;
     Bws<Media::EncodedAudio::kMaxBytes> iFrameBuf;
+    TUint iAddr; // FIXME - should listen for subnet changes and update this value
+    Media::BwsTrackUri iTrackUri;
 };
 
 class DefaultTimestamper : public IOhmTimestamper, private INonCopyable // trivial implementation that just returns the current time

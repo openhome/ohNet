@@ -316,12 +316,12 @@ void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudioBlob::Externalise(IWriter& aWriter)
 {
-    const TUint rxTimestamp = RxTimestamp();
-    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes() + sizeof(rxTimestamp));
+    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes()); // deliberately omit RxTimestamp().
+                                                                   // This allows us to (hackily) reuse OhmMsgAudio's internalise later
     header.Externalise(aWriter);
     aWriter.Write(iBlob);
     WriterBinary wb(aWriter);
-    wb.WriteUint32Be(rxTimestamp);
+    wb.WriteUint32Be(RxTimestamp());
 }
 
 OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)
@@ -332,7 +332,7 @@ OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)
 void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
 {
     OhmMsg::Create();
-    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
+    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
 
     iBlob.Replace(aReader.Read(aHeader.MsgBytes()));
     iFrame = Converter::BeUint32At(iBlob, 4);

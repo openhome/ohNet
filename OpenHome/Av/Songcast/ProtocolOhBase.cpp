@@ -13,13 +13,16 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-ProtocolOhBase::ProtocolOhBase(Environment& aEnv, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
+ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
     : Protocol(aEnv)
+    , iEnv(aEnv)
+    , iMsgFactory(aFactory)
     , iMutexTransport("POHB")
     , iTrackFactory(aTrackFactory)
     , iTimestamper(aTimestamper)
@@ -27,9 +30,16 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, Media::TrackFactory& aTrackFac
     , iMode(aMode)
     , iRunning(false)
     , iRepairing(false)
+    , iStreamMsgDue(true)
 {
     iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired));
     iRepairFrames.reserve(kMaxRepairBacklogFrames);
+
+    static const TChar* kOhmCookie = "Songcast";
+    NetworkAdapter* current = aEnv.NetworkAdapterList().CurrentAdapter(kOhmCookie);
+    ASSERT(current != NULL); // FIXME
+    iAddr = current->Address();
+    current->RemoveRef(kOhmCookie);
 }
 
 ProtocolOhBase::~ProtocolOhBase()
@@ -40,7 +50,6 @@ ProtocolOhBase::~ProtocolOhBase()
 void ProtocolOhBase::Add(OhmMsg* aMsg)
 {
     aMsg->SetRxTimestamp(iTimestamper.Timestamp());
-    AutoMutex a(iMutexTransport);
     aMsg->Process(*this);
 }
 
@@ -62,7 +71,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
     Endpoint ep(iUri.Port(), iUri.Host());
-    Parser parser(iUri.Query());
+    /*Parser parser(iUri.Query());
     (void)parser.Next('&');
     Brn nif = parser.Next('&');
     Parser parser2(nif);
@@ -82,6 +91,8 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     }
     const TUint ttl = Ascii::Uint(parser2.Remaining());
     Play(addr, ttl, ep);
+    */
+    Play(iAddr, 2, ep);
     return EProtocolStreamErrorUnrecoverable;
 }
 
@@ -118,6 +129,7 @@ void ProtocolOhBase::RepairReset()
     }
     iRepairFrames.clear();
     iRunning = false;
+    iRepairing = false; // FIXME - not absolutely required as test for iRunning takes precedence in Process(OhmMsgAudioBlob&
 }
 
 TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
@@ -130,7 +142,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
     TInt diff = frame - iFrame;
     if (diff < 1) {
         // incoming frames is equal to or earlier than the last frame sent down the pipeline
-        // in other words, it's a duplicate, so so discard it and continue
+        // in other words, it's a duplicate, so discard it and continue
         aMsg.RemoveRef();
         return true;
     }
@@ -143,7 +155,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
             // ... yes, it is, so send it
             iFrame++;
             OutputAudio(*iRepairFirst);
-            // ... and see if there are further messages waiting in the fifo
+            // ... and see if there are further messages waiting
             if (iRepairFrames.size() == 0) {
                 // ... no, so we have completed the repair
                 iRepairFirst = NULL;
@@ -189,13 +201,13 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
     }
     // ok, so the backlog is not empty
     // is it a duplicate of the last frame in the backlog?
+    diff = frame - iRepairFrames[iRepairFrames.size()-1]->Frame();
     if (diff == 0) {
         // ... yes, so discard
         aMsg.RemoveRef();
         return true;
     }
     // is the incoming frame later than the last one currently in the backlog?
-    diff = frame - iRepairFrames[iRepairFrames.size()-1]->Frame();
     if (diff > 0) {
         // ... yes, so, again, just inject it (if there is space)
         if (iRepairFrames.size() == kMaxRepairBacklogFrames) {
@@ -234,7 +246,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
 
 void ProtocolOhBase::TimerRepairExpired()
 {
-    iMutexTransport.Wait();
+    AutoMutex a(iMutexTransport);
     if (iRepairing) {
         LOG(kSongcast, "REQUEST RESEND");
         Bws<kMaxRepairMissedFrames * 4> missed;
@@ -272,15 +284,31 @@ void ProtocolOhBase::TimerRepairExpired()
         RequestResend(missed);
         iTimerRepair->FireIn(kSubsequentRepairTimeoutMs);
     }
-
-    iMutexTransport.Signal();
 }
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
-    // FIXME - also need to OutputStream (probably when we infer a stream change, not just relying on following MsgTrack)
+    iFrameBuf.SetBytes(0);
     WriterBuffer writer(iFrameBuf);
     aMsg.Externalise(writer);
+    const TUint bytesBefore = iFrameBuf.Bytes();
+    if (iStreamMsgDue) {
+        /* FIXME - we really need to be able to check trackLength, sampleRate, bitDepth
+                   for every audio msg to infer stream changes.
+                   Should probably just deal in OhmMsgAudio instances to enable this. */
+        /* FIXME - it might not actually matter if we miss some track changes.  We need at least
+                   one encodedStream notification to get into the correct codec.  After this, the
+                   codec can (probably) send DecodedStream msgs at appropriate times */
+        ReaderBuffer reader(iFrameBuf);
+        OhmHeader header;
+        header.Internalise(reader);
+        OhmMsgAudio* audio = iMsgFactory.CreateAudioFromBlob(reader, header);
+        const TUint64 totalBytes = audio->SamplesTotal() * audio->Channels() * audio->BitDepth()/8;
+        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iIdProvider->NextStreamId());
+        audio->RemoveRef();
+        iStreamMsgDue = false;
+    }
+    ASSERT(bytesBefore == iFrameBuf.Bytes());
     iSupply->OutputData(iFrameBuf);
     aMsg.RemoveRef();
 }
@@ -292,33 +320,40 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
-    if (!iRunning) {
-        iFrame = aMsg.Frame();
-        iRunning = true;
+    TBool output = false;
+    {
+        AutoMutex a(iMutexTransport);
+        if (!iRunning) {
+            iFrame = aMsg.Frame();
+            iRunning = true;
+            output = true;
+        }
+        else if (iRepairing) {
+            iRepairing = Repair(aMsg);
+        }
+        else {
+            const TInt diff = aMsg.Frame() - iFrame;
+            if (diff == 1) {
+                iFrame++;
+                output = true;
+            }
+            else if (diff < 1) {
+                aMsg.RemoveRef();
+            }
+            else {
+                iRepairing = RepairBegin(aMsg);
+            }
+        }
+    }
+    if (output) {
         OutputAudio(aMsg);
-        return;
-    }
-    
-    if (iRepairing) {
-        iRepairing = Repair(aMsg);
-        return;
-    }
-
-    const TInt diff = aMsg.Frame() - iFrame;
-    if (diff == 1) {
-        iFrame++;
-        OutputAudio(aMsg);
-    }
-    else if (diff < 1) {
-        aMsg.RemoveRef();
-    }
-    else {
-        iRepairing = RepairBegin(aMsg);
     }
 }
 
 void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 {
+    iTrackUri.Replace(aMsg.Uri());
+    iStreamMsgDue = true;
     Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata(), NULL);
     iSupply->OutputTrack(*track, iIdProvider->NextTrackId(), iMode);
     track->RemoveRef();

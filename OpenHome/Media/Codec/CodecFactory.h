@@ -2,6 +2,9 @@
 #define HEADER_PIPELINE_CODEC_FACTORY
 
 namespace OpenHome {
+namespace Av {
+    class OhmMsgFactory;
+}
 namespace Media {
 namespace Codec {
 
@@ -19,6 +22,7 @@ public:
     static CodecBase* NewRaop();
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
+    static CodecBase* NewOhm(Av::OhmMsgFactory& aMsgFactory);
 };
 
 } // namespace Codec

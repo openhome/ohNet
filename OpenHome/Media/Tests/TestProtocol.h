@@ -9,7 +9,10 @@ namespace OpenHome {
 namespace Net {
     class DvStack;
 }
-
+namespace Av {
+    class OhmMsgFactory;
+    class DefaultTimestamper;
+}
 namespace Media {
 class ProtocolManager;
 class SimpleSongcastingDriver;
@@ -17,7 +20,7 @@ class SimpleSongcastingDriver;
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -29,6 +32,8 @@ private: // from IPipelineIdProvider
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
+    Av::OhmMsgFactory* iOhmMsgFactory;
+    Av::DefaultTimestamper* iTimestamper;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;

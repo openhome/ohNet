@@ -17,10 +17,8 @@ using namespace OpenHome::Media;
 
 // ProtocolOhu
 
-ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
-    : ProtocolOhBase(aEnv, aTrackFactory, aTimestamper, "ohu", aMode)
-    , iEnv(aEnv)
-    , iFactory(aFactory)
+ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
+    : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohu", aMode)
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
 {
@@ -39,7 +37,7 @@ ProtocolOhu::~ProtocolOhu()
 
 void ProtocolOhu::HandleAudio(const OhmHeader& aHeader)
 {
-    Broadcast(iFactory.CreateAudioBlob(iReadBuffer, aHeader));
+    Broadcast(iMsgFactory.CreateAudioBlob(iReadBuffer, aHeader));
 
     if (iLeaving) {
         iTimerLeave->Cancel();
@@ -50,12 +48,12 @@ void ProtocolOhu::HandleAudio(const OhmHeader& aHeader)
 
 void ProtocolOhu::HandleTrack(const OhmHeader& aHeader)
 {
-    Broadcast(iFactory.CreateTrack(iReadBuffer, aHeader));
+    Broadcast(iMsgFactory.CreateTrack(iReadBuffer, aHeader));
 }
 
 void ProtocolOhu::HandleMetatext(const OhmHeader& aHeader)
 {
-    Broadcast(iFactory.CreateMetatext(iReadBuffer, aHeader));
+    Broadcast(iMsgFactory.CreateMetatext(iReadBuffer, aHeader));
 }
 
 void ProtocolOhu::HandleSlave(const OhmHeader& aHeader)

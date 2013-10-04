@@ -23,7 +23,7 @@ class ProtocolOhm : public ProtocolOhBase
     static const TUint kTimerJoinTimeoutMs = 300;
     static const TUint kTimerListenTimeoutMs = 10000;
 public:
-	ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
+	ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
     ~ProtocolOhm();
 	void Stop();
 private: // from ProtocolOhBase
@@ -36,8 +36,6 @@ private:
     void SendListen();
     void Send(TUint aType);
 private:
-    Environment& iEnv;
-	IOhmMsgFactory& iFactory;
     OhmSocket iSocket;
     Srs<kMaxFrameBytes> iReadBuffer;
     Endpoint iEndpoint;

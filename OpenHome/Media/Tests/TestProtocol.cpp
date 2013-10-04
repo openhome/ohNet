@@ -12,8 +12,14 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Tests/SongcastingDriver.h>
+// Songcast
+#include <OpenHome/Av/Songcast/ProtocolOhm.h>
+#include <OpenHome/Av/Songcast/ProtocolOhu.h>
+#include <OpenHome/Av/Songcast/OhmMsg.h>
+#include <OpenHome/Av/Songcast/ProtocolOhBase.h>
 
 #include <stdio.h>
 
@@ -24,26 +30,36 @@ using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
+using namespace OpenHome::Av;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
+    iTrackFactory = new TrackFactory(aInfoAggregator, 10);
+    iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
+    iTimestamper = new DefaultTimestamper(aEnv);
+    aPipeline.AddCodec(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
+
+    iProtocolManager = new ProtocolManager(aPipeline, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewTone(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewRtsp(aEnv, Brn("GUID-TestProtocol-0123456789")));
-    iTrackFactory = new TrackFactory(aInfoAggregator, 1);
+    static const Brn kSongcastMode("Songcast");
+    iProtocolManager->Add(new ProtocolOhm(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode));
+    iProtocolManager->Add(new ProtocolOhu(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode));
 }
 
 DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
     delete iTrackFactory;
+    delete iOhmMsgFactory;
+    delete iTimestamper;
 }
 
 void DummyFiller::Start(const Brx& aUrl)
@@ -264,7 +280,7 @@ int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtoco
     http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // wma (with cover art?) - exhausts recognise buf
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("ohm://239.253.131.53:51972"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
@@ -299,6 +315,7 @@ int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtoco
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
+    //Debug::SetLevel(Debug::kSongcast);
     TestProtocol* tph = (*aFunc)(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
