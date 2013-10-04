@@ -39,7 +39,8 @@
  * Change history:
  *
  * 2013/10/04  greggh
- * Suppress non-const aggregate array initialization warnings and add casts when assigning to smaller types
+ * Suppress non-const aggregate array initialization warnings and add casts when assigning to smaller types;
+ * comment out unused vars and wrap vars used for debugging in "if MDNS_DEBUGMSGS"
  */
 
 #include "DNSCommon.h"                  // Defines general DNS untility routines
@@ -7903,7 +7904,7 @@ mDNSexport mDNSBool DomainEnumQuery(const domainname *qname)
 // Sets all the Valid DNS servers for a question
 mDNSexport mDNSu32 SetValidDNSServers(mDNS *m, DNSQuestion *question)
 	{
-	DNSServer *curmatch = mDNSNULL;
+	//DNSServer *curmatch = mDNSNULL;
 	int bestmatchlen = -1, namecount = CountLabels(&question->qname);
 	DNSServer *curr;
 	int bettermatch, currcount;
@@ -7944,7 +7945,7 @@ mDNSexport mDNSu32 SetValidDNSServers(mDNS *m, DNSQuestion *question)
 			// bit
 			if ((bettermatch == 1) || (bettermatch == 0))
 				{
-				curmatch = curr;
+				//curmatch = curr;
 				bestmatchlen = currcount;
 				if (bettermatch) { debugf("SetValidDNSServers: Resetting all the bits"); question->validDNSServers = zeroOpaque64; timeout = 0; }
 				debugf("SetValidDNSServers: question %##s Setting the bit for DNS server Address %#a (Domain %##s), Scoped:%d index %d,"
@@ -11509,14 +11510,18 @@ mDNSexport void mDNS_StartExit(mDNS *const m)
 mDNSexport void mDNS_FinalExit(mDNS *const m)
 	{
 	mDNSu32 rrcache_active = 0;
+#if MDNS_DEBUGMSGS
 	mDNSu32 rrcache_totalused = 0;
+#endif
 	mDNSu32 slot;
 	AuthRecord *rr;
 
 	LogInfo("mDNS_FinalExit: mDNSPlatformClose");
 	mDNSPlatformClose(m);
 
+#if MDNS_DEBUGMSGS
 	rrcache_totalused = m->rrcache_totalused;
+#endif
 	for (slot = 0; slot < CACHE_HASH_SLOTS; slot++)
 		{
 		while (m->rrcache_hash[slot])
