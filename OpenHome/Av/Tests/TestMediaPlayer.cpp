@@ -179,7 +179,9 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
     iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols);
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
+    Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
+    hostName.Replace(iDevice->Udn());
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
 }
 
 TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
