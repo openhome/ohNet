@@ -288,6 +288,7 @@ void ProtocolOhBase::TimerRepairExpired()
 
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
+    iMutexTransport.Signal();
     iFrameBuf.SetBytes(0);
     WriterBuffer writer(iFrameBuf);
     aMsg.Externalise(writer);
@@ -311,6 +312,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
     ASSERT(bytesBefore == iFrameBuf.Bytes());
     iSupply->OutputData(iFrameBuf);
     aMsg.RemoveRef();
+    iMutexTransport.Wait();
 }
 
 void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
@@ -320,33 +322,28 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
-    TBool output = false;
-    {
-        AutoMutex a(iMutexTransport);
-        if (!iRunning) {
-            iFrame = aMsg.Frame();
-            iRunning = true;
-            output = true;
-        }
-        else if (iRepairing) {
-            iRepairing = Repair(aMsg);
-        }
-        else {
-            const TInt diff = aMsg.Frame() - iFrame;
-            if (diff == 1) {
-                iFrame++;
-                output = true;
-            }
-            else if (diff < 1) {
-                aMsg.RemoveRef();
-            }
-            else {
-                iRepairing = RepairBegin(aMsg);
-            }
-        }
-    }
-    if (output) {
+    AutoMutex a(iMutexTransport);
+    if (!iRunning) {
+        iFrame = aMsg.Frame();
+        iRunning = true;
         OutputAudio(aMsg);
+        return;
+    }
+    if (iRepairing) {
+        iRepairing = Repair(aMsg);
+        return;
+    }
+
+    const TInt diff = aMsg.Frame() - iFrame;
+    if (diff == 1) {
+        iFrame++;
+        OutputAudio(aMsg);
+    }
+    else if (diff < 1) {
+        aMsg.RemoveRef();
+    }
+    else {
+        iRepairing = RepairBegin(aMsg);
     }
 }
 
