@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 4 -*-
  *
- * Copyright (c) 2002-2003 Apple Computer, Inc. All rights reserved.
+ * Copyright (c) 2002-2011 Apple Computer, Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,67 +13,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-
-    Change History (most recent first):
-
-$Log: DNSDigest.c,v $
-Revision 1.15.2.1  2006/08/29 06:24:22  cheshire
-Re-licensed mDNSResponder daemon source code under Apache License, Version 2.0
-
-Revision 1.15  2006/06/20 04:12:30  cheshire
-<rdar://problem/4490961> DNS Update broken
-
-Revision 1.14  2006/02/25 23:12:07  cheshire
-<rdar://problem/4427969> Fix to avoid code generation warning/error on FreeBSD 7
-
-Revision 1.13  2004/12/16 20:12:59  cheshire
-<rdar://problem/3324626> Cache memory management improvements
-
-Revision 1.12  2004/12/03 07:20:50  ksekar
-<rdar://problem/3674208> Wide-Area: Registration of large TXT record fails
-
-Revision 1.11  2004/12/02 01:10:27  cheshire
-Fix to compile cleanly on 64-bit x86
-
-Revision 1.10  2004/11/01 20:36:04  ksekar
-<rdar://problem/3802395> mDNSResponder should not receive Keychain Notifications
-
-Revision 1.9  2004/10/26 09:00:12  cheshire
-Save a few bytes by creating HMAC_MD5_AlgName as a C string instead of a 256-byte object
-
-Revision 1.8  2004/09/17 01:08:48  cheshire
-Renamed mDNSClientAPI.h to mDNSEmbeddedAPI.h
-  The name "mDNSClientAPI.h" is misleading to new developers looking at this code. The interfaces
-  declared in that file are ONLY appropriate to single-address-space embedded applications.
-  For clients on general-purpose computers, the interfaces defined in dns_sd.h should be used.
-
-Revision 1.7  2004/08/15 18:36:38  cheshire
-Don't use strcpy() and strlen() on "struct domainname" objects;
-use AssignDomainName() and DomainNameLength() instead
-(A "struct domainname" is a collection of packed pascal strings, not a C string.)
-
-Revision 1.6  2004/06/02 00:17:46  ksekar
-Referenced original OpenSSL license headers in source file description.
-
-Revision 1.5  2004/05/20 18:37:37  cheshire
-Fix compiler warnings
-
-Revision 1.4  2004/04/22 20:28:20  cheshire
-Use existing facility of PutResourceRecordTTL() to update count field for us
-
-Revision 1.3  2004/04/22 03:05:28  cheshire
-kDNSClass_ANY should be kDNSQClass_ANY
-
-Revision 1.2  2004/04/15 00:51:28  bradley
-Minor tweaks for Windows and C++ builds. Added casts for signed/unsigned integers and 64-bit pointers.
-Prefix some functions with mDNS to avoid conflicts. Disable benign warnings on Microsoft compilers.
-
-Revision 1.1  2004/04/14 23:09:28  ksekar
-Support for TSIG signed dynamic updates.
-
-
-
-*/
+ *
+ *
+ * Change history:
+ *
+ * 2013/10/04  greggh
+ * comment out unused var "macsize" in DNSDigest_VerifyMessage()
+ */
 
 
 #ifdef __cplusplus
@@ -90,6 +36,22 @@ extern "C" {
 	// If someone knows a variant way of writing "while(1)" that doesn't generate warning messages, please let us know
 	#pragma warning(disable:4127)
 #endif
+
+
+ // ***************************************************************************
+#if COMPILER_LIKES_PRAGMA_MARK
+#pragma mark - Byte Swapping Functions
+#endif
+
+mDNSlocal mDNSu16 NToH16(mDNSu8 * bytes)
+	{
+	return (mDNSu16)((mDNSu16)bytes[0] << 8 | (mDNSu16)bytes[1]);
+	}
+
+mDNSlocal mDNSu32 NToH32(mDNSu8 * bytes)
+	{
+	return (mDNSu32)((mDNSu32) bytes[0] << 24 | (mDNSu32) bytes[1] << 16 | (mDNSu32) bytes[2] << 8 | (mDNSu32)bytes[3]);
+	}
 
  // ***************************************************************************
 #if COMPILER_LIKES_PRAGMA_MARK
@@ -108,7 +70,7 @@ extern "C" {
  * Note: machine archetecure specific conditionals from the original sources are turned off, but are left in the code
  * to aid in platform-specific optimizations and debugging.
  * Sources originally distributed under the following license headers:
- * CommonDigest.c - APSL
+ * CommonDigest.h - APSL
  * 
  * md32_Common.h
  * ====================================================================
@@ -464,7 +426,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 #   define ROTATE(a,n)	(unsigned MD32_REG_T)__rlwinm((int)a,n,0,31)
 #  elif defined(__MC68K__)
     /* Motorola specific tweak. <appro@fy.chalmers.se> */
-#   define ROTATE(a,n)	( n<24 ? __rol(a,n) : __ror(a,32-n) )
+#   define ROTATE(a,n)	(n<24 ? __rol(a,n) : __ror(a,32-n))
 #  else
 #   define ROTATE(a,n)	__rol(a,n)
 #  endif
@@ -475,6 +437,11 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
    * what we need here...
    *
    * 					<appro@fy.chalmers.se>
+   */
+  /*
+   * LLVM is more strict about compatibility of types between input & output constraints,
+   * but we want these to be rotations of 32 bits, not 64, so we explicitly drop the
+   * most significant bytes by casting to an unsigned int.
    */
 #  if defined(__i386) || defined(__i386__) || defined(__x86_64) || defined(__x86_64__)
 #   define ROTATE(a,n)	({ register unsigned int ret;	\
@@ -610,9 +577,16 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 #endif
 #endif
 
+// None of the invocations of the following macros actually use the result,
+// so cast them to void to avoid any compiler warnings/errors about not using
+// the result (e.g. when using clang).
+// If the resultant values need to be used at some point, these must be changed.
+#define HOST_c2l(c,l) ((void)_HOST_c2l(c,l))
+#define HOST_l2c(l,c) ((void)_HOST_l2c(l,c))
+
 #if defined(DATA_ORDER_IS_BIG_ENDIAN)
 
-#define HOST_c2l(c,l)	(l =(((unsigned long)(*((c)++)))<<24),		\
+#define _HOST_c2l(c,l)	(l =(((unsigned long)(*((c)++)))<<24),		\
 			 l|=(((unsigned long)(*((c)++)))<<16),		\
 			 l|=(((unsigned long)(*((c)++)))<< 8),		\
 			 l|=(((unsigned long)(*((c)++)))    ),		\
@@ -640,7 +614,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 			case 2: l|=((unsigned long)(*(--(c))))<<16;	\
 			case 1: l|=((unsigned long)(*(--(c))))<<24;	\
 				} }
-#define HOST_l2c(l,c)	(*((c)++)=(unsigned char)(((l)>>24)&0xff),	\
+#define _HOST_l2c(l,c)	(*((c)++)=(unsigned char)(((l)>>24)&0xff),	\
 			 *((c)++)=(unsigned char)(((l)>>16)&0xff),	\
 			 *((c)++)=(unsigned char)(((l)>> 8)&0xff),	\
 			 *((c)++)=(unsigned char)(((l)    )&0xff),	\
@@ -648,7 +622,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 
 #elif defined(DATA_ORDER_IS_LITTLE_ENDIAN)
 
-#define HOST_c2l(c,l)	(l =(((unsigned long)(*((c)++)))    ),		\
+#define _HOST_c2l(c,l)	(l =(((unsigned long)(*((c)++)))    ),		\
 			 l|=(((unsigned long)(*((c)++)))<< 8),		\
 			 l|=(((unsigned long)(*((c)++)))<<16),		\
 			 l|=(((unsigned long)(*((c)++)))<<24),		\
@@ -676,7 +650,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 			case 2: l|=((unsigned long)(*(--(c))))<< 8;	\
 			case 1: l|=((unsigned long)(*(--(c))));		\
 				} }
-#define HOST_l2c(l,c)	(*((c)++)=(unsigned char)(((l)    )&0xff),	\
+#define _HOST_l2c(l,c)	(*((c)++)=(unsigned char)(((l)    )&0xff),	\
 			 *((c)++)=(unsigned char)(((l)>> 8)&0xff),	\
 			 *((c)++)=(unsigned char)(((l)>>16)&0xff),	\
 			 *((c)++)=(unsigned char)(((l)>>24)&0xff),	\
@@ -771,7 +745,7 @@ int HASH_UPDATE (HASH_CTX *c, const void *data_, unsigned long len)
 #if !defined(HASH_BLOCK_DATA_ORDER)
 			while (sw--)
 				{
-				memcpy (p=c->data,data,HASH_CBLOCK);
+				mDNSPlatformMemCopy(p=c->data,data,HASH_CBLOCK);
 				HASH_BLOCK_DATA_ORDER_ALIGNED(c,p,1);
 				data+=HASH_CBLOCK;
 				len-=HASH_CBLOCK;
@@ -814,7 +788,7 @@ void HASH_TRANSFORM (HASH_CTX *c, const unsigned char *data)
 	else
 #if !defined(HASH_BLOCK_DATA_ORDER)
 		{
-		memcpy (c->data,data,HASH_CBLOCK);
+		mDNSPlatformMemCopy(c->data,data,HASH_CBLOCK);
 		HASH_BLOCK_DATA_ORDER_ALIGNED (c,c->data,1);
 		}
 #endif
@@ -1168,20 +1142,18 @@ void md5_block_data_order (MD5_CTX *c, const void *data_, int num)
 #endif
 
 
-
  // ***************************************************************************
 #if COMPILER_LIKES_PRAGMA_MARK
 #pragma mark - base64 -> binary conversion
 #endif
 
-static const char Base64[] =
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static const char Base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char Pad64 = '=';
 
 
 #define mDNSisspace(x) (x == '\t' || x == '\n' || x == '\v' || x == '\f' || x == '\r' || x == ' ')
 
-static const char *mDNSstrchr(const char *s, int c)
+mDNSlocal const char *mDNSstrchr(const char *s, int c)
 	{
 	while (1)
 		{
@@ -1197,7 +1169,7 @@ static const char *mDNSstrchr(const char *s, int c)
 // it returns the number of data bytes stored at the target, or -1 on error.
 // adapted from BIND sources
 
-mDNSexport mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu32 targsize)
+mDNSlocal mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu32 targsize)
 	{
 	int tarindex, state, ch;
 	const char *pos;
@@ -1327,7 +1299,7 @@ mDNSexport mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu3
 #define HMAC_MD5_AlgName (*(const domainname*) "\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int")
 
 // Adapted from Appendix, RFC 2104
-mDNSexport void DNSDigest_ConstructHMACKey(uDNS_AuthInfo *info, const mDNSu8 *key, mDNSu32 len)		
+mDNSlocal void DNSDigest_ConstructHMACKey(DomainAuthInfo *info, const mDNSu8 *key, mDNSu32 len)		
 	{
 	MD5_CTX k;
 	mDNSu8 buf[MD5_LEN];
@@ -1344,24 +1316,33 @@ mDNSexport void DNSDigest_ConstructHMACKey(uDNS_AuthInfo *info, const mDNSu8 *ke
 		}
 
 	// store key in pads
-	mDNSPlatformMemZero(info->key.ipad, HMAC_LEN);
-	mDNSPlatformMemZero(info->key.opad, HMAC_LEN);
-	mDNSPlatformMemCopy(key, info->key.ipad, len);
-	mDNSPlatformMemCopy(key, info->key.opad, len);
+	mDNSPlatformMemZero(info->keydata_ipad, HMAC_LEN);
+	mDNSPlatformMemZero(info->keydata_opad, HMAC_LEN);
+	mDNSPlatformMemCopy(info->keydata_ipad, key, len);
+	mDNSPlatformMemCopy(info->keydata_opad, key, len);
 
 	// XOR key with ipad and opad values
 	for (i = 0; i < HMAC_LEN; i++)
 		{
-		info->key.ipad[i] ^= HMAC_IPAD;
-		info->key.opad[i] ^= HMAC_OPAD;
+		info->keydata_ipad[i] ^= HMAC_IPAD;
+		info->keydata_opad[i] ^= HMAC_OPAD;
 		}
 
 	}
 
-mDNSexport mDNSu8 *DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, mDNSu16 *numAdditionals, uDNS_AuthInfo *info)
+mDNSexport mDNSs32 DNSDigest_ConstructHMACKeyfromBase64(DomainAuthInfo *info, const char *b64key)
+	{
+	mDNSu8 keybuf[1024];
+	mDNSs32 keylen = DNSDigest_Base64ToBin(b64key, keybuf, sizeof(keybuf));
+	if (keylen < 0) return(keylen);
+	DNSDigest_ConstructHMACKey(info, keybuf, (mDNSu32)keylen);
+	return(keylen);
+	}
+
+mDNSexport void DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, DomainAuthInfo *info, mDNSu16 tcode)
 	{
 	AuthRecord tsig;
-	mDNSu8 *countPtr, *rdata;
+	mDNSu8  *rdata, *const countPtr = (mDNSu8 *)&msg->h.numAdditionals;	// Get existing numAdditionals value
 	mDNSu32 utc32;
 	mDNSu8 utc48[6];
 	mDNSu8 digest[MD5_LEN];
@@ -1369,18 +1350,18 @@ mDNSexport mDNSu8 *DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, mDNSu16 
 	mDNSu32 len;
 	mDNSOpaque16 buf;
 	MD5_CTX c;
+	mDNSu16 numAdditionals = (mDNSu16)((mDNSu16)countPtr[0] << 8 | countPtr[1]);
 	
 	// Init MD5 context, digest inner key pad and message
     MD5_Init(&c);
-    MD5_Update(&c, info->key.ipad, HMAC_LEN);
+    MD5_Update(&c, info->keydata_ipad, HMAC_LEN);
 	MD5_Update(&c, (mDNSu8 *)msg, (unsigned long)(*end - (mDNSu8 *)msg));
 	   
 	// Construct TSIG RR, digesting variables as apporpriate
-	mDNSPlatformMemZero(&tsig, sizeof(AuthRecord));	
-	mDNS_SetupResourceRecord(&tsig, mDNSNULL, 0, kDNSType_TSIG, 0, kDNSRecordTypeKnownUnique, mDNSNULL, mDNSNULL);
+	mDNS_SetupResourceRecord(&tsig, mDNSNULL, 0, kDNSType_TSIG, 0, kDNSRecordTypeKnownUnique, AuthRecordAny, mDNSNULL, mDNSNULL);
 
 	// key name
-	AssignDomainName(tsig.resrec.name, &info->keyname);
+	AssignDomainName(&tsig.namestorage, &info->keyname);
 	MD5_Update(&c, info->keyname.c, DomainNameLength(&info->keyname));
 
 	// class
@@ -1401,15 +1382,15 @@ mDNSexport mDNSu8 *DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, mDNSu16 
 	// time
 	// get UTC (universal time), convert to 48-bit unsigned in network byte order
 	utc32 = (mDNSu32)mDNSPlatformUTC();
-	if (utc32 == (unsigned)-1) { LogMsg("ERROR: DNSDigest_SignMessage - mDNSPlatformUTC returned bad time -1"); return mDNSNULL; }
+	if (utc32 == (unsigned)-1) { LogMsg("ERROR: DNSDigest_SignMessage - mDNSPlatformUTC returned bad time -1"); *end = mDNSNULL; }
 	utc48[0] = 0;
 	utc48[1] = 0;
 	utc48[2] = (mDNSu8)((utc32 >> 24) & 0xff);
 	utc48[3] = (mDNSu8)((utc32 >> 16) & 0xff);
-	utc48[4] = (mDNSu8)((utc32 >> 8)  & 0xff);
+	utc48[4] = (mDNSu8)((utc32 >>  8) & 0xff);
 	utc48[5] = (mDNSu8)( utc32        & 0xff);
 
-	mDNSPlatformMemCopy(utc48, rdata, 6);
+	mDNSPlatformMemCopy(rdata, utc48, 6);
 	rdata += 6;              	
 	MD5_Update(&c, utc48, 6);
 
@@ -1419,9 +1400,11 @@ mDNSexport mDNSu8 *DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, mDNSu16 
 	MD5_Update(&c, rdata, sizeof(mDNSOpaque16));
 	rdata += sizeof(mDNSOpaque16);
 
-	// digest error and other data len (both zero) - we'll add them to the rdata later
-	buf.NotAnInteger = 0;
+	// digest error (tcode) and other data len (zero) - we'll add them to the rdata later
+	buf.b[0] = (mDNSu8)((tcode >> 8) & 0xff);
+	buf.b[1] = (mDNSu8)( tcode       & 0xff);
 	MD5_Update(&c, buf.b, sizeof(mDNSOpaque16));  // error
+	buf.NotAnInteger = 0;
 	MD5_Update(&c, buf.b, sizeof(mDNSOpaque16));  // other data len
 
 	// finish the message & tsig var hash
@@ -1429,7 +1412,7 @@ mDNSexport mDNSu8 *DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, mDNSu16 
 	
 	// perform outer MD5 (outer key pad, inner digest)
 	MD5_Init(&c);
-	MD5_Update(&c, info->key.opad, HMAC_LEN);
+	MD5_Update(&c, info->keydata_opad, HMAC_LEN);
 	MD5_Update(&c, digest, MD5_LEN);
 	MD5_Final(digest, &c);
 
@@ -1437,27 +1420,170 @@ mDNSexport mDNSu8 *DNSDigest_SignMessage(DNSMessage *msg, mDNSu8 **end, mDNSu16 
 	rdata[0] = (mDNSu8)((MD5_LEN >> 8)  & 0xff);
 	rdata[1] = (mDNSu8)( MD5_LEN        & 0xff);
 	rdata += sizeof(mDNSOpaque16);
-	mDNSPlatformMemCopy(digest, rdata, MD5_LEN);                          // MAC
+	mDNSPlatformMemCopy(rdata, digest, MD5_LEN);                          // MAC
 	rdata += MD5_LEN;
 	rdata[0] = msg->h.id.b[0];                                            // original ID
 	rdata[1] = msg->h.id.b[1];
-	rdata[2] = 0;                                                         // no error
-	rdata[3] = 0;
+	rdata[2] = (mDNSu8)((tcode >> 8) & 0xff);
+	rdata[3] = (mDNSu8)( tcode       & 0xff);
 	rdata[4] = 0;                                                         // other data len
 	rdata[5] = 0;
 	rdata += 6;
 	
 	tsig.resrec.rdlength = (mDNSu16)(rdata - tsig.resrec.rdata->u.data);
-	*end = PutResourceRecordTTLJumbo(msg, ptr, numAdditionals, &tsig.resrec, 0);
-	if (!*end) { LogMsg("ERROR: DNSDigest_SignMessage - could not put TSIG"); return mDNSNULL; }
+	*end = PutResourceRecordTTLJumbo(msg, ptr, &numAdditionals, &tsig.resrec, 0);
+	if (!*end) { LogMsg("ERROR: DNSDigest_SignMessage - could not put TSIG"); *end = mDNSNULL; return; }
 
-	// update num additionals
-	countPtr = (mDNSu8 *)&msg->h.numAdditionals;  // increment (network-byte ordered) header value
-	*countPtr++ = (mDNSu8)(*numAdditionals >> 8);
-	*countPtr++ = (mDNSu8)(*numAdditionals &  0xFF);
-
-	return *end;
+	// Write back updated numAdditionals value
+	countPtr[0] = (mDNSu8)(numAdditionals >> 8);
+	countPtr[1] = (mDNSu8)(numAdditionals &  0xFF);
 	}
+
+mDNSexport mDNSBool DNSDigest_VerifyMessage(DNSMessage *msg, mDNSu8 *end, LargeCacheRecord * lcr, DomainAuthInfo *info, mDNSu16 * rcode, mDNSu16 * tcode)
+	{
+	mDNSu8			*	ptr = (mDNSu8*) &lcr->r.resrec.rdata->u.data;
+	mDNSs32				now;
+	mDNSs32				then;
+	mDNSu8				thisDigest[MD5_LEN];
+	mDNSu8				thatDigest[MD5_LEN];
+	//mDNSu32				macsize;
+	mDNSOpaque16 		buf;
+	mDNSu8				utc48[6];
+	mDNSs32				delta;
+	mDNSu16				fudge;
+	domainname		*	algo;
+	MD5_CTX				c;
+	mDNSBool			ok = mDNSfalse;
+
+	// We only support HMAC-MD5 for now
+
+	algo = (domainname*) ptr;
+
+	if (!SameDomainName(algo, &HMAC_MD5_AlgName))
+		{
+		LogMsg("ERROR: DNSDigest_VerifyMessage - TSIG algorithm not supported: %##s", algo->c);
+		*rcode = kDNSFlag1_RC_NotAuth;
+		*tcode = TSIG_ErrBadKey;
+		ok = mDNSfalse;
+		goto exit;
+		}
+
+	ptr += DomainNameLength(algo);
+
+	// Check the times
+
+	now = mDNSPlatformUTC();
+	if (now == -1)
+		{
+		LogMsg("ERROR: DNSDigest_VerifyMessage - mDNSPlatformUTC returned bad time -1");
+		*rcode = kDNSFlag1_RC_NotAuth;
+		*tcode = TSIG_ErrBadTime;
+		ok = mDNSfalse;
+		goto exit;
+		}
+
+	// Get the 48 bit time field, skipping over the first word
+
+	utc48[0] = *ptr++;
+	utc48[1] = *ptr++;
+	utc48[2] = *ptr++;
+	utc48[3] = *ptr++;
+	utc48[4] = *ptr++;
+	utc48[5] = *ptr++;
+
+	then  = (mDNSs32)NToH32(utc48 + sizeof(mDNSu16));
+
+	fudge = NToH16(ptr);
+
+	ptr += sizeof(mDNSu16);
+
+	delta = (now > then) ? now - then : then - now;
+
+	if (delta > fudge)
+		{
+		LogMsg("ERROR: DNSDigest_VerifyMessage - time skew > %d", fudge);
+		*rcode = kDNSFlag1_RC_NotAuth;
+		*tcode = TSIG_ErrBadTime;
+		ok = mDNSfalse;
+		goto exit;
+		}
+
+	// MAC size
+
+	//macsize = (mDNSu32) NToH16(ptr);
+	
+	ptr += sizeof(mDNSu16);
+
+	// MAC
+
+	mDNSPlatformMemCopy(thatDigest, ptr, MD5_LEN);
+
+	// Init MD5 context, digest inner key pad and message
+
+	MD5_Init(&c);
+	MD5_Update(&c, info->keydata_ipad, HMAC_LEN);
+	MD5_Update(&c, (mDNSu8*) msg, (unsigned long)(end - (mDNSu8*) msg));
+	   
+	// Key name
+
+	MD5_Update(&c, lcr->r.resrec.name->c, DomainNameLength(lcr->r.resrec.name));
+
+	// Class name
+
+	buf = mDNSOpaque16fromIntVal(lcr->r.resrec.rrclass);
+	MD5_Update(&c, buf.b, sizeof(mDNSOpaque16));
+
+	// TTL
+
+	MD5_Update(&c, (mDNSu8*) &lcr->r.resrec.rroriginalttl, sizeof(lcr->r.resrec.rroriginalttl));
+	
+	// Algorithm
+ 
+	MD5_Update(&c, algo->c, DomainNameLength(algo));
+
+	// Time
+
+	MD5_Update(&c, utc48, 6);
+
+	// Fudge
+
+	buf = mDNSOpaque16fromIntVal(fudge);
+	MD5_Update(&c, buf.b, sizeof(mDNSOpaque16));
+
+	// Digest error and other data len (both zero) - we'll add them to the rdata later
+
+	buf.NotAnInteger = 0;
+	MD5_Update(&c, buf.b, sizeof(mDNSOpaque16));  // error
+	MD5_Update(&c, buf.b, sizeof(mDNSOpaque16));  // other data len
+
+	// Finish the message & tsig var hash
+
+    MD5_Final(thisDigest, &c);
+	
+	// perform outer MD5 (outer key pad, inner digest)
+
+	MD5_Init(&c);
+	MD5_Update(&c, info->keydata_opad, HMAC_LEN);
+	MD5_Update(&c, thisDigest, MD5_LEN);
+	MD5_Final(thisDigest, &c);
+
+	if (!mDNSPlatformMemSame(thisDigest, thatDigest, MD5_LEN))
+		{
+		LogMsg("ERROR: DNSDigest_VerifyMessage - bad signature");
+		*rcode = kDNSFlag1_RC_NotAuth;
+		*tcode = TSIG_ErrBadSig;
+		ok = mDNSfalse;
+		goto exit;
+		}
+
+	// set remaining rdata fields
+	ok = mDNStrue;
+
+exit:
+
+	return ok;
+	}
+
 
 #ifdef __cplusplus
 }

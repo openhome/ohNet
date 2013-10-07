@@ -317,7 +317,7 @@ void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TCha
     SetDomainName(host, "");
     SetPort(port, aPort);
     
-    mDNS_RegisterService(iMdns, service, &name, &type, &domain, 0, port, (const mDNSu8*)aInfo, (mDNSu16)strlen(aInfo), 0, 0, (mDNSInterfaceID)aInterface, ServiceCallback, this);
+    mDNS_RegisterService(iMdns, service, &name, &type, &domain, 0, port, (const mDNSu8*)aInfo, (mDNSu16)strlen(aInfo), 0, 0, (mDNSInterfaceID)aInterface, ServiceCallback, this, 0);
 
     LOG(kBonjour, "Bonjour             RegisterService - Complete\n");
 }
@@ -386,6 +386,30 @@ MdnsPlatform::Status MdnsPlatform::Init()
     return status;
 }
 
+MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(TIpAddress& aInterface)
+{
+    LOG(kBonjour, "Bonjour             GetPrimaryInterface ");
+    Status status = mStatus_NoError;
+    iInterfacesLock.Wait();
+    if (iInterfaces.size() == 0) {
+        status = mStatus_NotInitializedErr;
+        aInterface = 0;
+    }
+    aInterface = iInterfaces[0]->Address();
+    if (aInterface == 0) {
+        status = mStatus_NotInitializedErr;
+        aInterface = 0;
+    }
+    iInterfacesLock.Signal();
+
+    Bws<Endpoint::kMaxAddressBytes> addr;
+    Endpoint::AppendAddress(addr, aInterface);
+    LOG(kBonjour, addr);
+    LOG(kBonjour, "\n");
+
+    return status;
+}
+
 MdnsPlatform::Status MdnsPlatform::SendUdp(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
     LOG(kBonjour, "Bonjour             SendUdp\n");
@@ -429,7 +453,7 @@ void mDNSPlatformClose(mDNS* m)
 }
 
 mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDNSu8* const aEnd,
-        mDNSInterfaceID aInterface, const mDNSAddr *aAddress, mDNSIPPort aPort)
+        mDNSInterfaceID aInterface, UDPSocket* /*src*/, const mDNSAddr *aAddress, mDNSIPPort aPort)
 {
     if (aInterface ==  mDNSInterface_LocalOnly) {
         LOG(kBonjour, "Bonjour             mDNSPlatformSendUDP - local only, ignore\n");
@@ -471,7 +495,7 @@ mDNSInterfaceID mDNSPlatformInterfaceIDfromInterfaceIndex(mDNS* /*m*/, mDNSu32 /
     return 0;
 }
 
-mDNSu32 mDNSPlatformInterfaceIndexfromInterfaceID(mDNS* /*m*/, mDNSInterfaceID /*aId*/)
+mDNSu32 mDNSPlatformInterfaceIndexfromInterfaceID(mDNS* /*m*/, mDNSInterfaceID /*aId*/, mDNSBool /*suppressNetworkChange*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformInterfaceIndexFromInterfaceID\n");
     ASSERTS(); // not sure what an interface index is and can't find any mDNS callers for this function
@@ -501,7 +525,7 @@ void mDNSPlatformUnlock (const mDNS* m)
 // mDNS core calls this routine to copy C strings.
 // On the Posix platform this maps directly to the ANSI C strcpy.
 
-void mDNSPlatformStrCopy(const void *src, void *dst)
+void mDNSPlatformStrCopy(void *dst, const void *src)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformStrCopy\n");
     strcpy((char*)dst, (char*)src);
@@ -519,7 +543,7 @@ mDNSu32 mDNSPlatformStrLen(const void *src)
 // mDNS core calls this routine to copy memory.
 // On the Posix platform this maps directly to the ANSI C memcpy.
 
-void mDNSPlatformMemCopy(const void *src, void *dst, mDNSu32 len)
+void mDNSPlatformMemCopy(void *dst, const void *src, mDNSu32 len)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformMemCopy\n");
     memcpy(dst, src, len);
@@ -543,9 +567,19 @@ void mDNSPlatformMemZero(void *dst, mDNSu32 len)
     memset(dst, 0, len);
 }
 
+// Logging/debugging
+
+#ifdef DEFINE_TRACE
+int mDNS_LoggingEnabled = 1;
+int mDNS_PacketLoggingEnabled= 1;
+#else
+int mDNS_LoggingEnabled = 0;
+int mDNS_PacketLoggingEnabled= 0;
+#endif
+
 static const TUint kMaxLogMsgBytes = 200;
 
-void LogMsg(const char *format, ...)
+void LogMsgWithLevel(mDNSLogLevel_t /*logLevel*/, const char *format, ...)
 {
 #ifdef DEFINE_TRACE
     va_list args;
@@ -562,10 +596,16 @@ void LogMsg(const char *format, ...)
 #endif
 }
 
+mDNSu32 mDNSPlatformRandomNumber()
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformRandomNumber\n");
+    return gEnv->Random();
+}
+
 mDNSu32 mDNSPlatformRandomSeed()
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformRandomSeed\n");
-    return 0xdeadbeef;
+    return gEnv->Random();
 }
 
 // Time handlers
@@ -594,27 +634,163 @@ mDNSs32 mDNSPlatformUTC()
 
 // TCP handlers
 
-mStatus mDNSPlatformTCPConnect(const mDNSAddr*, mDNSOpaque16, mDNSInterfaceID, TCPConnectionCallback, void*, int*)
+TCPSocket* mDNSPlatformTCPSocket(mDNS* const /*m*/, TCPSocketFlags /*flags*/, mDNSIPPort* /*port*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformTCPSocket\n");
+    ASSERTS();
+    return NULL;
+}
+
+TCPSocket* mDNSPlatformTCPAccept(TCPSocketFlags /*flags*/, int /*sd*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformTCPAccept\n");
+    ASSERTS();
+    return NULL;
+}
+
+int mDNSPlatformTCPGetFD(TCPSocket* /*sock*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformTCPGetFD\n");
+    ASSERTS();
+    return 0;
+}
+
+mStatus mDNSPlatformTCPConnect(TCPSocket* /*sock*/, const mDNSAddr* /*dst*/, mDNSOpaque16 /*dstport*/, domainname* /*hostname*/,
+                               mDNSInterfaceID /*InterfaceID*/, TCPConnectionCallback /*callback*/, void* /*context*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformTCPConnect\n");
+    ASSERTS();
     return mStatus_UnsupportedErr;
 }
 
-void mDNSPlatformTCPCloseConnection(int)
+void mDNSPlatformTCPCloseConnection(TCPSocket*)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformTCPCloseConnection\n");
+    ASSERTS();
 }
 
-int mDNSPlatformReadTCP(int, void*, int)
+long mDNSPlatformReadTCP(TCPSocket* /*sock*/, void* /*buf*/, unsigned long /*buflen*/, mDNSBool* /*closed*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformReadTCP\n");
+    ASSERTS();
     return 0;
 }
 
-int mDNSPlatformWriteTCP(int, const char*, int)
+long mDNSPlatformWriteTCP(TCPSocket* /*sock*/, const char* /*msg*/, unsigned long /*len*/)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformWriteTCP\n");
+    ASSERTS();
     return 0;
+}
+
+// unused UDP handlers
+
+UDPSocket* mDNSPlatformUDPSocket(mDNS* const /*m*/, const mDNSIPPort /*requestedport*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformUDPSocket\n");
+    ASSERTS();
+    return NULL;
+}
+
+void mDNSPlatformUDPClose(UDPSocket* /*sock*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformUDPClose\n");
+    ASSERTS();
+}
+
+// unused misc socket handlers
+
+void mDNSPlatformReceiveBPF_fd(mDNS* const /*m*/, int /*fd*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformReceiveBPF_fd\n");
+    ASSERTS();
+}
+
+void mDNSPlatformUpdateProxyList(mDNS* const /*m*/, const mDNSInterfaceID /*InterfaceID*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformUpdateProxyList\n");
+    ASSERTS();
+}
+
+void mDNSPlatformSendRawPacket(const void* const /*msg*/, const mDNSu8* const /*end*/, mDNSInterfaceID /*InterfaceID*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformSendRawPacket\n");
+    ASSERTS();
+}
+
+void mDNSPlatformSetLocalAddressCacheEntry(mDNS* const /*m*/, const mDNSAddr* const /*tpa*/, const mDNSEthAddr* const /*tha*/, mDNSInterfaceID /*InterfaceID*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformSetLocalAddressCacheEntry\n");
+    ASSERTS();
+}
+
+void mDNSPlatformSourceAddrForDest(mDNSAddr* const /*src*/, const mDNSAddr* const /*dst*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformSourceAddrForDest\n");
+    ASSERTS();
+}
+
+// dnsextd handlers
+
+mStatus mDNSPlatformTLSSetupCerts()
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformTLSSetupCerts\n");
+    ASSERTS();
+    return mStatus_UnsupportedErr;
+}
+
+void mDNSPlatformTLSTearDownCerts()
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformTLSTearDownCerts\n");
+    ASSERTS();
+}
+
+// Handlers for unicast browsing/dynamic update for clients who do not specify a domain
+// in browse/registration
+
+void mDNSPlatformSetDNSConfig(mDNS* const /*m*/, mDNSBool /*setservers*/, mDNSBool /*setsearch*/, domainname* const /*fqdn*/,
+                              DNameListElem** /*RegDomains*/, DNameListElem** /*BrowseDomains*/)
+{
+    // unused, but called by Bonjour
+    LOG(kBonjour, "Bonjour             mDNSPlatformSetDNSConfig\n");
+}
+
+mStatus mDNSPlatformGetPrimaryInterface(mDNS* const m, mDNSAddr* v4, mDNSAddr* v6, mDNSAddr* router)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformGetPrimaryInterface\n");
+    mStatus err = mStatus_NoError;
+    MdnsPlatform& platform = *(MdnsPlatform*)m->p;
+    *v6 = zeroAddr;
+    *router = zeroAddr;
+    *v4 = zeroAddr;
+    err = platform.GetPrimaryInterface((TIpAddress&)*v4);
+
+    return err;
+}
+
+void mDNSPlatformDynDNSHostNameStatusChanged(const domainname* const /*dname*/, const mStatus /*status*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformDynDNSHostNameStatusChanged\n");
+    ASSERTS();
+}
+
+void mDNSPlatformSetAllowSleep(mDNS* const /*m*/, mDNSBool /*allowSleep*/, const char* /*reason*/)
+{
+    // unused, but called by Bonjour
+    LOG(kBonjour, "Bonjour             mDNSPlatformSetAllowSleep\n");
+}
+
+void mDNSPlatformSendWakeupPacket(mDNS* const /*m*/, mDNSInterfaceID /*InterfaceID*/, char* /*EthAddr*/, char* /*IPAddr*/, int /*iteration*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformSendWakeupPacket\n");
+    ASSERTS();
+}
+
+mDNSBool mDNSPlatformValidRecordForInterface(AuthRecord* /*rr*/, const NetworkInterfaceInfo* /*intf*/)
+{
+    LOG(kBonjour, "Bonjour             mDNSPlatformValidRecordForInterface\n");
+    ASSERTS();
+    return false;
 }
 
 } // extern "C"
