@@ -51,7 +51,6 @@ private:
     OggVorbis_File iVf;
     vorbis_info* iInfo;
 
-    Bws<EncodedAudio::kMaxBytes> iRecogBuf;
     Bws<DecodedAudio::kMaxBytes> iInBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
     TUint32 iAudioBytes;
@@ -67,7 +66,6 @@ private:
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
-    TBool iRecognisingFromBuf;
     TUint64 iPeekOffset;
     TInt iLink;
 
@@ -104,28 +102,14 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
     //LOG(kCodec,"CodecVorbis::CallbackRead: attempt to read %u bytes\n", bytes);
     Bwn buf((TByte *)ptr, bytes);
     try{
-        if (iRecognisingFromBuf && ((iRecogBuf.Bytes() < iPeekOffset) || (iRecogBuf.Bytes()-iPeekOffset < bytes))) {
-            iRecognisingFromBuf = false;   // not enough data in buffer
-        }
-        if(iRecognisingFromBuf) {
-            ASSERT(iRecogBuf.Bytes() > 0);  // check buffer has been initialised
-            //LOG(kCodec,"CodecVorbis::CallbackRead: buf.Bytes: %u, iPeekOffset: %u, bytes: %u\n", buf.Bytes(), iPeekOffset, bytes);
-            Brn tmpBuf = iRecogBuf.Split(static_cast<TUint>(iPeekOffset), bytes);
-            buf.Replace(tmpBuf);
-            iPeekOffset += bytes;
-        }
-        else if (!iRecognisingFromBuf && (iController->StreamLength() > 0)) {   // reading during recognise requires a seekable stream
-            if (!iController->StreamLength() || (iController->StreamPos() < iController->StreamLength())) {
-                // Tremor pulls more data after stream exhaustion, as it is looking
-                // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
-                // than requested bytes; any subsequent pulls may pull a quit msg.
+        // Tremor pulls more data after stream exhaustion, as it is looking
+        // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
+        // than requested bytes; any subsequent pulls may pull a quit msg.
 
-                // Account for this by checking if stream has already been exhausted;
-                // if not, we'll do another read; otherwise we won't do anything and Tremor
-                // will get its EOF identifier.
-                iController->Read(buf, bytes);
-            }
-        }
+        // Account for this by checking if stream has already been exhausted;
+        // if not, we'll do another read; otherwise we won't do anything and Tremor
+        // will get its EOF identifier.
+        iController->Read(buf, bytes);
     }
     catch(CodecStreamEnded) {
         buf.SetBytes(0);
@@ -152,12 +136,7 @@ int CodecVorbis::CloseCallback()
 long CodecVorbis::TellCallback()
 {
     TUint64 tell;
-    if(iRecognisingFromBuf) {
-        tell = iPeekOffset;
-    }
-    else {
-        tell = iController->StreamPos();
-    }
+    tell = iController->StreamPos();
     LOG(kCodec,"CodecVorbis::Tell %llu\n", tell);
 
     return (long)tell;
@@ -198,7 +177,6 @@ void PrintCallback(void *datasource, char *message)
 
 
 CodecVorbis::CodecVorbis()
-    : iRecognisingFromBuf(false)
 {
     iDataSource = this;
     iCallbacks.read_func = ::ReadCallback;
@@ -229,16 +207,9 @@ TBool CodecVorbis::Recognise()
     LOG(kCodec, "CodecVorbis::Recognise\n");
 
     iPeekOffset = 0;
-    iRecognisingFromBuf = true;
     iSamplesTotal = 0;
-    iRecogBuf.SetBytes(0);
-    iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
 
     TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
-
-    iRecognisingFromBuf = false;
-    iPeekOffset = 0;
-    iRecogBuf.SetBytes(0);
 
     return isVorbis;
 }
