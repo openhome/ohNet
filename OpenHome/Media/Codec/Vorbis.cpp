@@ -116,20 +116,6 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
         }
         else if (!iRecognisingFromBuf && (iController->StreamLength() > 0)) {   // reading during recognise requires a seekable stream
             if (!iController->StreamLength() || (iController->StreamPos() < iController->StreamLength())) {
-                while (iPeekOffset > 0) {  // previously recognising from buf
-                    TUint64 totalBytes = iPeekOffset;
-                    TUint bytes = 0;
-                    if (totalBytes > buf.MaxBytes()) {
-                        bytes = buf.MaxBytes();
-                    }
-                    else {
-                        bytes = static_cast<TUint>(iPeekOffset);    // buffers can't have a size >TUint
-                    }
-                    iController->Read(buf, bytes);
-                    buf.SetBytes(0);
-                    iPeekOffset -= bytes;
-                }
-
                 // Tremor pulls more data after stream exhaustion, as it is looking
                 // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
                 // than requested bytes; any subsequent pulls may pull a quit msg.
