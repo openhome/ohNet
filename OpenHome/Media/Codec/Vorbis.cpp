@@ -66,7 +66,6 @@ private:
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
-    TUint64 iPeekOffset;
     TInt iLink;
 
     TBool iStreamEnded;
@@ -102,14 +101,16 @@ size_t CodecVorbis::ReadCallback(void *ptr, size_t size, size_t nmemb)
     //LOG(kCodec,"CodecVorbis::CallbackRead: attempt to read %u bytes\n", bytes);
     Bwn buf((TByte *)ptr, bytes);
     try{
-        // Tremor pulls more data after stream exhaustion, as it is looking
-        // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
-        // than requested bytes; any subsequent pulls may pull a quit msg.
+        if (!iController->StreamLength() || (iController->StreamPos() < iController->StreamLength())) {
+            // Tremor pulls more data after stream exhaustion, as it is looking
+            // for 0 bytes to signal EOF. However, controller signals EOF by outputting fewer
+            // than requested bytes; any subsequent pulls may pull a quit msg.
 
-        // Account for this by checking if stream has already been exhausted;
-        // if not, we'll do another read; otherwise we won't do anything and Tremor
-        // will get its EOF identifier.
-        iController->Read(buf, bytes);
+            // Account for this by checking if stream has already been exhausted;
+            // if not, we'll do another read; otherwise we won't do anything and Tremor
+            // will get its EOF identifier.
+            iController->Read(buf, bytes);
+        }
     }
     catch(CodecStreamEnded) {
         buf.SetBytes(0);
@@ -206,9 +207,7 @@ TBool CodecVorbis::Recognise()
 {
     LOG(kCodec, "CodecVorbis::Recognise\n");
 
-    iPeekOffset = 0;
     iSamplesTotal = 0;
-
     TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
 
     return isVorbis;
