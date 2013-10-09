@@ -1296,7 +1296,7 @@ mDNSlocal mDNSs32 DNSDigest_Base64ToBin(const char *src, mDNSu8 *target, mDNSu32
 #define HMAC_OPAD   0x5c
 #define MD5_LEN     16
 
-#define HMAC_MD5_AlgName (*(const domainname*) "\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int")
+const domainname HMAC_MD5_AlgName = {"\010" "hmac-md5" "\007" "sig-alg" "\003" "reg" "\003" "int"};
 
 // Adapted from Appendix, RFC 2104
 mDNSlocal void DNSDigest_ConstructHMACKey(DomainAuthInfo *info, const mDNSu8 *key, mDNSu32 len)		
