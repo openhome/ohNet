@@ -278,7 +278,6 @@ private:
     UdpWriter iSocketWriter;
     Sws<kMaxBufferBytes> iBuffer;
     WriterHttpRequest iWriter;
-    TIpAddress iInterface;
     TUint iConfigId;
 };
 

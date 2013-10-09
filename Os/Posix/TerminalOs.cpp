@@ -12,6 +12,7 @@ TerminalOs::TerminalOs()
 
 TerminalOs::~TerminalOs()
 {
+    ASSERT(iHandle == 0); // suppress unused variable warning from clang
 }
 
 TChar TerminalOs::GetChar()

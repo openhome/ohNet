@@ -618,7 +618,7 @@ void DviSessionWebSocket::Run()
             try {
                 WritePropertyUpdates();
                 LOG(kDvWebSocket, "WS: Wait for next request (or interrupt)\n");
-                Read();
+                DoRead();
             }
             catch (ReaderError&) {
                 if (iPropertyUpdates.SlotsUsed() == 0) {
@@ -795,7 +795,7 @@ WsProtocol* DviSessionWebSocket::Handshake80()
     return new WsProtocol80(*iReadBuffer, *iWriterBuffer);
 }
 
-void DviSessionWebSocket::Read()
+void DviSessionWebSocket::DoRead()
 {
     Brn data;
     TBool closed;

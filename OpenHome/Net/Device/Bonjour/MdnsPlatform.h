@@ -84,7 +84,6 @@ private:
     Mutex iInterfacesLock;
     std::vector<MdnsPlatform::Nif*> iInterfaces;
     TInt iSubnetListChangeListenerId;
-    Status iStatus;
     Bws<kMaxMessageBytes> iMessage;
     typedef std::map<TUint, ServiceRecordSet*> Map;
     Mutex iServicesLock;

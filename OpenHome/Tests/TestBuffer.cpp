@@ -508,7 +508,7 @@ void SuiteGrow::Test()
     Bws<10> e((TUint)0);
     TEST(e.Bytes() == 0);
     TEST(e.MaxBytes() == 10);
-    TEST_THROWS(d == e, AssertionFailed);
+    TEST_THROWS((void)(d == e), AssertionFailed);
 
     d.Grow(3);
     TEST(d.Bytes() == 0);
@@ -545,12 +545,12 @@ void SuiteZeroBytes::Test()
     TEST(brn1 != Brx::Empty());
 
     Brn brn2;
-    TEST_THROWS(brn2 == Brx::Empty(), AssertionFailed);
+    TEST_THROWS((void)(brn2 == Brx::Empty()), AssertionFailed);
     brn2.Set(z);
     TEST(brn2 != Brx::Empty());
 
     Bwh d;
-    TEST_THROWS(d == Brx::Empty(), AssertionFailed);
+    TEST_THROWS((void)(d == Brx::Empty()), AssertionFailed);
     d.Grow(10);
     TEST(d.Bytes() == 0);
     TEST(d == Brx::Empty());

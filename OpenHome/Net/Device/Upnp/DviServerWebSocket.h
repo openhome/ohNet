@@ -234,8 +234,7 @@ private:
     void Handshake();
     WsProtocol* Handshake76();
     WsProtocol* Handshake80();
-    void Read();
-    void Write(WsOpcode aOpcode, const Brx& aData);
+    void DoRead();
     void Subscribe(const Brx& aRequest);
     void Unsubscribe(const Brx& aRequest);
     void Renew(const Brx& aRequest);

@@ -454,7 +454,6 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     , iLock("SBSL")
     , iFree(aCpStack.Env().InitParams().NumSubscriberThreads())
     , iWaiter("SBSS", 0)
-    , iWaiters(0)
     , iShutdownSem("SBMS", 0)
 {
     NetworkAdapterList& ifList = iCpStack.Env().NetworkAdapterList();

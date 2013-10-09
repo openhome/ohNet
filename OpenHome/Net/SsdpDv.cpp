@@ -38,7 +38,6 @@ SsdpNotifier::SsdpNotifier(DvStack& aDvStack)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocketWriter)
     , iWriter(iBuffer)
-    , iInterface(0)
     , iConfigId(0)
 {
 }

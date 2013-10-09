@@ -243,7 +243,6 @@ private:
     Map iMap;
     TBool iActive;
     Semaphore iWaiter;
-    TUint iWaiters;
     Semaphore iShutdownSem;
     EventServerUpnp* iEventServer;
     std::vector<PendingSubscription*> iPendingSubscriptions;
