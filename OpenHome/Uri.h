@@ -5,7 +5,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 
-EXCEPTION(UriError);
+EXCEPTION(UriError)
 
 namespace OpenHome {
 

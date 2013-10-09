@@ -6,8 +6,8 @@
 #include <OpenHome/Private/Standard.h>
 #include <cstdarg>
 
-EXCEPTION(BufferFull);
-EXCEPTION(BufferOverflow);
+EXCEPTION(BufferFull)
+EXCEPTION(BufferOverflow)
 
 namespace OpenHome {
 

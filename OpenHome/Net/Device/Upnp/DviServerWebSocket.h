@@ -15,7 +15,7 @@
 
 #include <map>
 
-EXCEPTION(WebSocketError);
+EXCEPTION(WebSocketError)
 
 namespace OpenHome {
 namespace Net {

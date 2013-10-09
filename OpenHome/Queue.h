@@ -2,9 +2,10 @@
 #define HEADER_QUEUE
 
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
 
-EXCEPTION(QueueEmpty);
+EXCEPTION(QueueEmpty)
 
 namespace OpenHome {
 

@@ -16,7 +16,7 @@
 #include <vector>
 #include <map>
 
-EXCEPTION(ParameterValidationError);
+EXCEPTION(ParameterValidationError)
 
 namespace OpenHome {
 

@@ -7,7 +7,7 @@
 #include <OpenHome/Exception.h>
 #include <cstdarg>
 
-EXCEPTION(TerminalClosed);
+EXCEPTION(TerminalClosed)
 
 namespace OpenHome {
 

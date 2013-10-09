@@ -8,8 +8,8 @@
 
 #include <map>
 
-EXCEPTION(InvalidSid);
-EXCEPTION(InvalidClientId);
+EXCEPTION(InvalidSid)
+EXCEPTION(InvalidClientId)
 
 namespace OpenHome {
 namespace Net {
