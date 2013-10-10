@@ -798,10 +798,26 @@ SocketUdpMulticast::~SocketUdpMulticast()
 
 // UdpReader
 
-UdpReader::UdpReader(SocketUdpBase& aSocket)
-    : iSocket(aSocket)
+UdpReader::UdpReader()
+    : iSocket(NULL)
     , iOpen(true)
 {
+}
+
+UdpReader::UdpReader(SocketUdpBase& aSocket)
+    : iSocket(&aSocket)
+    , iOpen(true)
+{
+}
+
+void UdpReader::SetSocket(SocketUdpBase& aSocket)
+{
+    iSocket = &aSocket;
+}
+
+void UdpReader::ClearSocket()
+{
+    iSocket = NULL;
 }
 
 Endpoint UdpReader::Sender() const
@@ -813,7 +829,8 @@ void UdpReader::Read(Bwx& aBuffer)
 {
     if (iOpen) {
         try {
-            iSender = iSocket.Receive(aBuffer);
+            ASSERT(iSocket != NULL);
+            iSender = iSocket->Receive(aBuffer);
             iOpen = false;
         }
         catch (NetworkError&) {
@@ -832,7 +849,9 @@ void UdpReader::ReadFlush()
 
 void UdpReader::ReadInterrupt()
 {
-    iSocket.Interrupt(true);
+    if (iSocket != NULL) {
+        iSocket->Interrupt(true);
+    }
 }
 
 // UdpWriter

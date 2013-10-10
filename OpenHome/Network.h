@@ -254,13 +254,16 @@ private:
 class UdpReader : public IReaderSource, public INonCopyable
 {
 public:
+    UdpReader();
     UdpReader(SocketUdpBase& aSocket);
+    void SetSocket(SocketUdpBase& aSocket);
+    void ClearSocket();
     Endpoint Sender() const; // sender of last completed Read()
     virtual void Read(Bwx& aBuffer);
     virtual void ReadFlush();
     virtual void ReadInterrupt();
 protected:
-    SocketUdpBase& iSocket;
+    SocketUdpBase* iSocket;
 private:
     Endpoint iSender;
     TBool iOpen;
