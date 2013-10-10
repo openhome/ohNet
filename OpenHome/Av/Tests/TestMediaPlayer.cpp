@@ -25,6 +25,7 @@ using namespace OpenHome::Net;
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName)
     : iDisabled("test", 0)
+    , iSongcastTimestamper(aDvStack.Env())
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -182,6 +183,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }
 
 TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)

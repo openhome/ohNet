@@ -15,6 +15,7 @@
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
 #include <OpenHome/Av/ProviderVolume.h>
+#include <OpenHome/Av/Songcast/ZoneHandler.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -29,6 +30,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource, aPersistor);
+    iZoneHandler = new Av::ZoneHandler(aDvStack.Env());
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, *iInfoLogger);
@@ -57,6 +59,7 @@ MediaPlayer::~MediaPlayer()
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iKvpStore;
+    delete iZoneHandler;
     delete iInfoLogger;
     delete iTrackFactory;
 }
@@ -121,6 +124,11 @@ Media::TrackFactory& MediaPlayer::TrackFactory()
 IReadStore& MediaPlayer::ReadStore()
 {
     return *iKvpStore;
+}
+
+Av::ZoneHandler& MediaPlayer::ZoneHandler()
+{
+    return *iZoneHandler;
 }
 
 void MediaPlayer::Add(UriProvider* aUriProvider)

@@ -276,8 +276,11 @@ def build(bld):
                 'OpenHome/Av/Songcast/ProtocolOhu.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhm.cpp',
                 'OpenHome/Media/Codec/Ohm.cpp',
+                'OpenHome/Av/Songcast/OhmTimestamp.cpp',
                 'Generated/DvAvOpenhomeOrgReceiver1.cpp',
                 'OpenHome/Av/Songcast/ProviderReceiver.cpp',
+                'OpenHome/Av/Songcast/ZoneHandler.cpp',
+                'OpenHome/Av/Songcast/SourceReceiver.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')

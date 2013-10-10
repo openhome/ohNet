@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 #include <vector>
 
@@ -14,13 +15,6 @@ namespace OpenHome {
     class Environment;
     class Timer;
 namespace Av {
-
-class IOhmTimestamper
-{
-public:
-    virtual ~IOhmTimestamper() {}
-    virtual TUint Timestamp() = 0;
-};
 
 class OhmMsgAudioBlob;
 class OhmMsg;
@@ -72,16 +66,6 @@ private:
     Bws<Media::EncodedAudio::kMaxBytes> iFrameBuf;
     TUint iAddr; // FIXME - should listen for subnet changes and update this value
     Media::BwsTrackUri iTrackUri;
-};
-
-class DefaultTimestamper : public IOhmTimestamper, private INonCopyable // trivial implementation that just returns the current time
-{
-public:
-    DefaultTimestamper(Environment& aEnv);
-private: // from IOhmTimestamper
-    TUint Timestamp();
-private:
-    Environment& iEnv;
 };
 
 } // namespace Av

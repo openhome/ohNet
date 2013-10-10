@@ -363,16 +363,3 @@ void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
     iSupply->OutputMetadata(aMsg.Metatext());
     aMsg.RemoveRef();
 }
-
-
-// DefaultTimestamper
-
-DefaultTimestamper::DefaultTimestamper(Environment& aEnv)
-    : iEnv(aEnv)
-{
-}
-
-TUint DefaultTimestamper::Timestamp()
-{
-    return Os::TimeInMs(iEnv.OsCtx());
-}
