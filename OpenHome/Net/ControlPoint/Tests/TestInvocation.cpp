@@ -116,7 +116,7 @@ void DeviceListTI::Poll()
         iConnMgr = new CpProxyUpnpOrgConnectionManager1(*device);
         iStopTimeMs = Os::TimeInMs(iEnv.OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<iEnv.InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<iEnv.InitParams()->NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
         }
         iPollStop.Wait();
@@ -201,7 +201,7 @@ void TestInvocation(CpStack& aCpStack)
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected
        errors from invocations we interrupt at the end of each device's 1s timeslice */
-    env.InitParams().SetAsyncErrorHandler(dummy);
+    env.InitParams()->SetAsyncErrorHandler(dummy);
 
     Debug::SetLevel(Debug::kNone);
     DeviceListTI* deviceList = new DeviceListTI(env);
@@ -218,7 +218,7 @@ void TestInvocation(CpStack& aCpStack)
     CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(aCpStack, uuid, added, removed);
 #endif
     Blocker* blocker = new Blocker(env);
-    blocker->Wait(env.InitParams().MsearchTimeSecs());
+    blocker->Wait(env.InitParams()->MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 

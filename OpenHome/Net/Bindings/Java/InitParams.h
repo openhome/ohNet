@@ -17,6 +17,14 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsCre
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsCreateThreadExitCallback
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsCreateThreadExitCallback
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsDestroy
  * Signature: (J)V
  */
@@ -326,6 +334,14 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
  */
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetFatalErrorHandler
   (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetThreadExitHandler
+ * Signature: (JLorg/openhome/net/core/IThreadExitListener;)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetThreadExitHandler
+  (JNIEnv *, jclass , jlong, jobject);
 
 #ifdef __cplusplus
 }

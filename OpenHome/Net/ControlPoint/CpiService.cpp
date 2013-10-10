@@ -365,7 +365,7 @@ void OpenHome::Net::Invocation::SignalCompleted()
     iCompleted = !Error();
     // log completion before running the client callback as that may transfer the content of ArgumentStrings
     if (iCompleted) {
-        FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams().AsyncEndHandler();
+        FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams()->AsyncEndHandler();
         if (asyncEndHandler) {
             asyncEndHandler(*this);
         }
@@ -376,7 +376,7 @@ void OpenHome::Net::Invocation::SignalCompleted()
         }
         catch(ProxyError&)
         {
-            FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams().AsyncErrorHandler();
+            FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams()->AsyncErrorHandler();
             if (asyncErrorHandler) {
                 asyncErrorHandler(*this);
             }
@@ -706,21 +706,21 @@ InvocationManager::InvocationManager(CpStack& aCpStack)
     : Thread("INVM")
     , iCpStack(aCpStack)
     , iLock("INVM")
-    , iFreeInvocations(aCpStack.Env().InitParams().NumInvocations())
-    , iWaitingInvocations(aCpStack.Env().InitParams().NumInvocations())
-    , iFreeInvokers(aCpStack.Env().InitParams().NumActionInvokerThreads())
+    , iFreeInvocations(aCpStack.Env().InitParams()->NumInvocations())
+    , iWaitingInvocations(aCpStack.Env().InitParams()->NumInvocations())
+    , iFreeInvokers(aCpStack.Env().InitParams()->NumActionInvokerThreads())
 {
     TUint i;
     TChar thName[5] = "IN  ";
-    iInvokers = (Invoker**)malloc(sizeof(*iInvokers) * iCpStack.Env().InitParams().NumActionInvokerThreads());
-    for (i=0; i<iCpStack.Env().InitParams().NumActionInvokerThreads(); i++) {
+    iInvokers = (Invoker**)malloc(sizeof(*iInvokers) * iCpStack.Env().InitParams()->NumActionInvokerThreads());
+    for (i=0; i<iCpStack.Env().InitParams()->NumActionInvokerThreads(); i++) {
         thName[3] = (TChar)('0'+i);
         iInvokers[i] = new Invoker(&thName[0], iFreeInvokers);
         iFreeInvokers.Write(iInvokers[i]);
         iInvokers[i]->Start();
     }
 
-    for (i=0; i<iCpStack.Env().InitParams().NumInvocations(); i++) {
+    for (i=0; i<iCpStack.Env().InitParams()->NumInvocations(); i++) {
         iFreeInvocations.Write(new OpenHome::Net::Invocation(iCpStack, iFreeInvocations));
     }
     iActive = true;
@@ -738,12 +738,12 @@ InvocationManager::~InvocationManager()
     Join();
 
     TUint i;
-    for (i=0; i<iCpStack.Env().InitParams().NumActionInvokerThreads(); i++) {
+    for (i=0; i<iCpStack.Env().InitParams()->NumActionInvokerThreads(); i++) {
         delete iInvokers[i];
     }
     free(iInvokers);
 
-    for (i=0; i<iCpStack.Env().InitParams().NumInvocations(); i++) {
+    for (i=0; i<iCpStack.Env().InitParams()->NumInvocations(); i++) {
         OpenHome::Net::Invocation* invocation = iFreeInvocations.Read();
         delete invocation;
     }
@@ -760,7 +760,7 @@ OpenHome::Net::Invocation* InvocationManager::Invocation()
 
 void InvocationManager::Invoke(OpenHome::Net::Invocation* aInvocation)
 {
-    FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams().AsyncBeginHandler();
+    FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams()->AsyncBeginHandler();
     if (asyncBeginHandler) {
         asyncBeginHandler(*aInvocation);
     }
@@ -770,7 +770,7 @@ void InvocationManager::Invoke(OpenHome::Net::Invocation* aInvocation)
 
 void InvocationManager::Interrupt(const Service& aService)
 {
-    const TUint numThreads = iCpStack.Env().InitParams().NumActionInvokerThreads();
+    const TUint numThreads = iCpStack.Env().InitParams()->NumActionInvokerThreads();
     for (TUint i=0; i<numThreads; i++) {
         iInvokers[i]->Interrupt(aService);
     }

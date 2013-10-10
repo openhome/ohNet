@@ -240,10 +240,10 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 // EventServerUpnp
 
 EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
-    : iTcpServer(aCpStack.Env(), "EVNT", aCpStack.Env().InitParams().CpUpnpEventServerPort(), aInterface)
+    : iTcpServer(aCpStack.Env(), "EVNT", aCpStack.Env().InitParams()->CpUpnpEventServerPort(), aInterface)
 {
     TChar name[5] = "ESS ";
-    const TUint numThread = aCpStack.Env().InitParams().NumEventSessionThreads();
+    const TUint numThread = aCpStack.Env().InitParams()->NumEventSessionThreads();
 #ifndef _WIN32
     // nothing terribly bad would happen if this assertion failed so its not worth a separate Windows implementation
     ASSERT(numThread < 10);

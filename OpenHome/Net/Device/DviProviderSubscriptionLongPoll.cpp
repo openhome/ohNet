@@ -31,7 +31,7 @@ DviProviderSubscriptionLongPoll::DviProviderSubscriptionLongPoll(DviDevice& aDev
     EnableActionGetPropertyUpdates();
 
     iShutdown.Signal();
-    iMaxClientCount = iDvStack.Env().InitParams().DvNumServerThreads() / 2;
+    iMaxClientCount = iDvStack.Env().InitParams()->DvNumServerThreads() / 2;
     ASSERT(iMaxClientCount > 0);
     UpdateReadySignal empty;
     for (TUint i=0; i<iMaxClientCount; i++) {

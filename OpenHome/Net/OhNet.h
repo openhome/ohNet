@@ -184,6 +184,7 @@ public:
     void SetSubnetAddedListener(FunctorNetworkAdapter aFunctor);
     void SetSubnetRemovedListener(FunctorNetworkAdapter aFunctor);
     void SetNetworkAdapterChangedListener(FunctorNetworkAdapter aFunctor);
+    void SetThreadExitHandler(Functor aFunctor);
     /**
      * Set a timeout for TCP connections.  Must be greater that zero
      */
@@ -322,6 +323,7 @@ public:
     FunctorNetworkAdapter& SubnetAddedListener();
     FunctorNetworkAdapter& SubnetRemovedListener();
     FunctorNetworkAdapter& NetworkAdapterChangedListener();
+    Functor& ThreadExitHandler();
     uint32_t TcpConnectTimeoutMs() const;
     uint32_t MsearchTimeSecs() const;
     uint32_t MsearchTtl() const;
@@ -357,6 +359,7 @@ private:
     FunctorNetworkAdapter iSubnetAddedListener;
     FunctorNetworkAdapter iSubnetRemovedListener;
     FunctorNetworkAdapter iNetworkAdapterChangedListener;
+    Functor iThreadExitHandler;
     uint32_t iTcpConnectTimeoutMs;
     uint32_t iMsearchTimeSecs;
     uint32_t iMsearchTtl;

@@ -452,7 +452,7 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     : Thread("SBSM")
     , iCpStack(aCpStack)
     , iLock("SBSL")
-    , iFree(aCpStack.Env().InitParams().NumSubscriberThreads())
+    , iFree(aCpStack.Env().InitParams()->NumSubscriberThreads())
     , iWaiter("SBSS", 0)
     , iShutdownSem("SBMS", 0)
 {
@@ -474,9 +474,9 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
 
     TChar thName[5] = "SBS ";
 #ifndef _WIN32
-    ASSERT(iCpStack.Env().InitParams().NumSubscriberThreads() <= 9);
+    ASSERT(iCpStack.Env().InitParams()->NumSubscriberThreads() <= 9);
 #endif
-    const TUint numThreads = iCpStack.Env().InitParams().NumSubscriberThreads();
+    const TUint numThreads = iCpStack.Env().InitParams()->NumSubscriberThreads();
     iSubscribers = (Subscriber**)malloc(sizeof(*iSubscribers) * numThreads);
     for (TUint i=0; i<numThreads; i++) {
         thName[3] = (TChar)('0'+i);
@@ -513,7 +513,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
     Kill();
     Join();
 
-    for (TUint i=0; i<iCpStack.Env().InitParams().NumSubscriberThreads(); i++) {
+    for (TUint i=0; i<iCpStack.Env().InitParams()->NumSubscriberThreads(); i++) {
         delete iSubscribers[i];
     }
     free(iSubscribers);
@@ -537,7 +537,7 @@ void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
     iPendingSubscriptions.push_back(pending);
     iLock.Signal();
     try {
-        pending->iSem.Wait(iCpStack.Env().InitParams().PendingSubscriptionTimeoutMs());
+        pending->iSem.Wait(iCpStack.Env().InitParams()->PendingSubscriptionTimeoutMs());
     }
     catch(Timeout&) {
         iLock.Wait();

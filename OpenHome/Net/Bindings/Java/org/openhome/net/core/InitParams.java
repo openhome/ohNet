@@ -4,11 +4,13 @@ public class InitParams
 {
 
 	private long iHandle = 0;
+    private long iCallbackThreadExit = 0;
     private long iCallbackLogOutput = 0;
     private long iCallbackFatalError = 0;
 	
 	// Initialisation and destruction functions.
 	private static native long OhNetInitParamsCreate();
+    private static native long OhNetInitParamsCreateThreadExitCallback(long aParams);
 	private static native void OhNetInitParamsDestroy(long aParams);
     private static native void OhNetInitParamsDisposeCallback(long aCallback);
 	
@@ -62,6 +64,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetDvEnableBonjour(long aParams);
     private static native long OhNetInitParamsSetLogOutput(long aParams, IMessageListener aListener);
     private static native long OhNetInitParamsSetFatalErrorHandler(long aParams, IMessageListener aListener);
+    private static native void OhNetInitParamsSetThreadExitHandler(long aParams, IThreadExitListener aListener);
 
 
 	static
@@ -73,6 +76,7 @@ public class InitParams
 	public InitParams()
 	{
 		iHandle = OhNetInitParamsCreate();
+        iCallbackThreadExit = OhNetInitParamsCreateThreadExitCallback(iHandle);
 	}
 	
 	public void destroy()
@@ -83,6 +87,9 @@ public class InitParams
     
     public void disposeCallbacks()
     {
+        if (iCallbackThreadExit != 0) {
+            OhNetInitParamsDisposeCallback(iCallbackThreadExit);
+        }
         if (iCallbackLogOutput != 0) {
             OhNetInitParamsDisposeCallback(iCallbackLogOutput);
         }
@@ -566,7 +573,11 @@ public class InitParams
      */
     public void setLogOutput(IMessageListener aListener)
     {
-        iCallbackLogOutput = OhNetInitParamsSetLogOutput(iHandle, aListener);
+        long prevCallbackLogOutput = iCallbackLogOutput; 
+         iCallbackLogOutput = OhNetInitParamsSetLogOutput(iHandle, aListener);
+        if (prevCallbackLogOutput != 0) {
+            OhNetInitParamsDisposeCallback(prevCallbackLogOutput);
+        }
     }
     
     /**
@@ -576,7 +587,21 @@ public class InitParams
      */
     public void setFatalErrorHandler(IMessageListener aListener)
     {
+        long prevCallbackFatalError = iCallbackFatalError; 
         iCallbackFatalError = OhNetInitParamsSetFatalErrorHandler(iHandle, aListener);
+        if (prevCallbackFatalError != 0) {
+            OhNetInitParamsDisposeCallback(prevCallbackFatalError);
+        }
+    }
+
+    /**
+     * Set the thread exit handler.
+     * 
+     * @param aListener     the handler for thread exit events.
+     */
+    public void setThreadExitHandler(IThreadExitListener aListener)
+    {
+        OhNetInitParamsSetThreadExitHandler(iCallbackThreadExit, aListener);
     }
 	
 	public static void main(String[] args)

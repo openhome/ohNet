@@ -12,7 +12,7 @@ using namespace OpenHome::Net;
 SsdpSocketReader::SsdpSocketReader(Environment& aEnv, TIpAddress aInterface, const Endpoint& aMulticast)
     : SocketUdpMulticast(aEnv, aInterface, aMulticast)
 {
-    SetTtl(aEnv.InitParams().MsearchTtl()); 
+    SetTtl(aEnv.InitParams()->MsearchTtl()); 
     iReader = new UdpReader(*this);
 }
 
@@ -423,7 +423,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
     , iReaderResponse(aEnv, iReadBuffer)
     , iExiting(false)
 {
-    iSocket.SetTtl(aEnv.InitParams().MsearchTtl());
+    iSocket.SetTtl(aEnv.InitParams()->MsearchTtl());
     try
     {
         iSocket.SetRecvBufBytes(kRecvBufBytes);
@@ -558,5 +558,5 @@ void SsdpListenerUnicast::MsearchAll()
 
 TUint SsdpListenerUnicast::MsearchDurationSeconds() const
 {
-    return iEnv.InitParams().MsearchTimeSecs();
+    return iEnv.InitParams()->MsearchTimeSecs();
 }

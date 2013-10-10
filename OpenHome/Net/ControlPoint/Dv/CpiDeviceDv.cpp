@@ -73,7 +73,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     Brn tmp(sid);
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
-    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     iSubscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid, durationSecs);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     iDeviceDv.GetDvStack().SubscriptionManager().AddSubscription(*iSubscriptionDv);
@@ -86,7 +86,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
 
 TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
 {
-    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     iSubscriptionDv->Renew(durationSecs);
     return durationSecs;
 }

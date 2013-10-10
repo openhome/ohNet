@@ -186,9 +186,9 @@ void CpDevices::UpdatesComplete()
 void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack)
 {
     Environment& env = aDvStack.Env();
-    InitialisationParams& initParams = env.InitParams();
-    TUint oldMsearchTime = initParams.MsearchTimeSecs();
-    initParams.SetMsearchTime(1);
+    InitialisationParams* initParams = env.InitParams();
+    TUint oldMsearchTime = initParams->MsearchTimeSecs();
+    initParams->SetMsearchTime(1);
     Print("TestDvSubscription - starting\n");
 
     Semaphore* sem = new Semaphore("SEM1", 0);
@@ -209,5 +209,5 @@ void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack)
     delete device;
 
     Print("TestDvSubscription - completed\n");
-    initParams.SetMsearchTime(oldMsearchTime);
+    initParams->SetMsearchTime(oldMsearchTime);
 }

@@ -23,7 +23,7 @@ NetworkAdapterList::NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSub
     iDefaultSubnet = aDefaultSubnet;
     iNotifierThread = new NetworkAdapterChangeNotifier(*this);
     iNotifierThread->Start();
-    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iEnv.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    iNetworkAdapters = Os::NetworkListAdapters(iEnv, iEnv.InitParams()->LoopbackNetworkAdapter(), "NetworkAdapterList");
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(iEnv.OsCtx(), &InterfaceListChanged, this);
     for (size_t i=0; i<iSubnets->size(); i++) {
@@ -295,7 +295,7 @@ void NetworkAdapterList::HandleInterfaceListChanged()
 {
     static const char* kRemovedAdapterCookie = "RemovedAdapter";
     iListLock.Wait();
-    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iEnv.InitParams().LoopbackNetworkAdapter(), "NetworkAdapterList");
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(iEnv, iEnv.InitParams()->LoopbackNetworkAdapter(), "NetworkAdapterList");
     TIpAddress oldAddress = (iCurrent==NULL ? 0 : iCurrent->Address());
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;

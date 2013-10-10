@@ -109,7 +109,7 @@ void DeviceList::Poll()
         iConnMgr = new CpProxyUpnpOrgConnectionManager1Cpp(*device);
         iStopTimeMs = Os::TimeInMs(gEnv->OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
-        for (TUint j=0; j<gEnv->InitParams().NumActionInvokerThreads(); j++) {
+        for (TUint j=0; j<gEnv->InitParams()->NumActionInvokerThreads(); j++) {
             iConnMgr->BeginGetProtocolInfo(callback);
         }
         iPollStop.Wait();

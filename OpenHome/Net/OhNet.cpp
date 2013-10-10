@@ -240,6 +240,11 @@ void InitialisationParams::SetNetworkAdapterChangedListener(FunctorNetworkAdapte
     iNetworkAdapterChangedListener = aFunctor;
 }
 
+void InitialisationParams::SetThreadExitHandler(Functor aFunctor)
+{
+    iThreadExitHandler = aFunctor;
+}
+
 void InitialisationParams::SetTcpConnectTimeout(uint32_t aTimeoutMs)
 {
     ASSERT(aTimeoutMs > 0);
@@ -401,6 +406,11 @@ FunctorNetworkAdapter& InitialisationParams::SubnetRemovedListener()
 FunctorNetworkAdapter& InitialisationParams::NetworkAdapterChangedListener()
 {
     return iNetworkAdapterChangedListener;
+}
+
+Functor& InitialisationParams::ThreadExitHandler()
+{
+    return iThreadExitHandler;
 }
 
 uint32_t InitialisationParams::TcpConnectTimeoutMs() const

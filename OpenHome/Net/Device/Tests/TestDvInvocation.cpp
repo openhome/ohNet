@@ -136,9 +136,9 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 
 void TestDvInvocation(CpStack& aCpStack, DvStack& aDvStack)
 {
-    InitialisationParams& initParams = aDvStack.Env().InitParams();
-    TUint oldMsearchTime = initParams.MsearchTimeSecs();
-    initParams.SetMsearchTime(1);
+    InitialisationParams* initParams = aDvStack.Env().InitParams();
+    TUint oldMsearchTime = initParams->MsearchTimeSecs();
+    initParams->SetMsearchTime(1);
     Print("TestDvInvocation - starting\n");
 
     Semaphore* sem = new Semaphore("SEM1", 0);
@@ -159,5 +159,5 @@ void TestDvInvocation(CpStack& aCpStack, DvStack& aDvStack)
     delete device;
 
     Print("TestDvInvocation - completed\n");
-    initParams.SetMsearchTime(oldMsearchTime);
+    initParams->SetMsearchTime(oldMsearchTime);
 }

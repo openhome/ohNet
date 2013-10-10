@@ -33,11 +33,11 @@ void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
 
 static void CallFatalErrorHandler(const char* aMsg)
 {
-    if (gEnv == NULL) {
+    if (gEnv == NULL || gEnv->InitParams() == NULL) {
         Os::ConsoleWrite(aMsg);
     }
     else {
-        FunctorMsg& handler = gEnv->InitParams().FatalErrorHandler();
+        FunctorMsg& handler = gEnv->InitParams()->FatalErrorHandler();
         handler(aMsg);
     }
 }

@@ -32,7 +32,7 @@ const OpenHome::Uri& XmlFetch::Uri() const
 
 void XmlFetch::SignalCompleted()
 {
-    FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams().AsyncEndHandler();
+    FunctorAsync& asyncEndHandler = iCpStack.Env().InitParams()->AsyncEndHandler();
     if (asyncEndHandler) {
         asyncEndHandler(*this);
     }
@@ -41,7 +41,7 @@ void XmlFetch::SignalCompleted()
         iFunctor(*this);
     }
     catch(XmlFetchError&) {
-        FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams().AsyncErrorHandler();
+        FunctorAsync& asyncErrorHandler = iCpStack.Env().InitParams()->AsyncErrorHandler();
         if (asyncErrorHandler) {
             asyncErrorHandler(*this);
         }
@@ -81,7 +81,7 @@ void XmlFetch::Fetch()
     iLock.Signal();
     try {
         Endpoint endpoint(iUri->Port(), iUri->Host());
-        TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
+        TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
         socket.Connect(endpoint, timeout);
         WriteRequest(socket);
         Read(socket);
@@ -310,9 +310,9 @@ XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
     : Thread("FETM")
     , iCpStack(aCpStack)
     , iLock("FETL")
-    , iFree(iCpStack.Env().InitParams().NumXmlFetcherThreads())
+    , iFree(iCpStack.Env().InitParams()->NumXmlFetcherThreads())
 {
-    const TUint numThreads = iCpStack.Env().InitParams().NumXmlFetcherThreads();
+    const TUint numThreads = iCpStack.Env().InitParams()->NumXmlFetcherThreads();
     iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
     TChar thName[5] = "FET ";
 #ifndef _WIN32
@@ -341,7 +341,7 @@ XmlFetchManager::~XmlFetchManager()
 
     iFree.ReadInterrupt();
 
-    for (TUint i=0; i<iCpStack.Env().InitParams().NumXmlFetcherThreads(); i++) {
+    for (TUint i=0; i<iCpStack.Env().InitParams()->NumXmlFetcherThreads(); i++) {
         delete iFetchers[i];
     }
     free(iFetchers);
@@ -370,7 +370,7 @@ void XmlFetchManager::Fetch(XmlFetch* aFetch)
     LOG(kXmlFetch, aFetch->Uri().AbsoluteUri());
     LOG(kXmlFetch, "\n");
 
-    FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams().AsyncBeginHandler();
+    FunctorAsync& asyncBeginHandler = iCpStack.Env().InitParams()->AsyncBeginHandler();
     if (asyncBeginHandler) {
         asyncBeginHandler(*aFetch);
     }

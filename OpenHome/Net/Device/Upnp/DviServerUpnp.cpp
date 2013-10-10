@@ -341,7 +341,7 @@ PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack)
 void PropertyWriterUpnp::Connect(const Endpoint& aSubscriber)
 {
     iSocket.Open(iDvStack.Env());
-    iSocket.Connect(aSubscriber, iDvStack.Env().InitParams().TcpConnectTimeoutMs());
+    iSocket.Connect(aSubscriber, iDvStack.Env().InitParams()->TcpConnectTimeoutMs());
 }
 
 void PropertyWriterUpnp::WriteHeaders(const Endpoint& aPublisher, const Brx& aSubscriberPath,
@@ -1369,7 +1369,7 @@ SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "DSVU", iPort, aNif.Address());
     TChar thName[5];
-    const TUint numWsThreads = iDvStack.Env().InitParams().DvNumServerThreads();
+    const TUint numWsThreads = iDvStack.Env().InitParams()->DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "DS%2lu", (unsigned long)i);
         server->Add(&thName[0], new DviSessionUpnp(iDvStack, aNif.Address(), server->Port(), *this));

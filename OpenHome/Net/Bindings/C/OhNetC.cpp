@@ -130,6 +130,13 @@ void STDCALL OhNetInitParamsSetNetworkAdapterChangedListener(OhNetHandleInitPara
     ip->SetNetworkAdapterChangedListener(functor);
 }
 
+void STDCALL OhNetInitParamsSetThreadExitHandler(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    ip->SetThreadExitHandler(functor);
+}
+
 void STDCALL OhNetInitParamsSetTcpConnectTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -469,7 +476,7 @@ OhNetHandleNetworkAdapter STDCALL OhNetCurrentSubnetAdapter(const char* aCookie)
 
 void STDCALL OhNetFreeExternal(void* aPtr)
 {
-    OhNetCallbackFreeExternal cb = gEnv->InitParams().FreeExternal();
+    OhNetCallbackFreeExternal cb = gEnv->InitParams()->FreeExternal();
     if (cb != NULL) {
         cb(aPtr);
     }

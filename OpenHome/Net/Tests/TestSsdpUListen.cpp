@@ -181,7 +181,7 @@ void TestSsdpUListen(Environment& aEnv, const std::vector<Brn>& aArgs)
 
     if (block) {
         Blocker* blocker = new Blocker(aEnv);
-        blocker->Wait(aEnv.InitParams().MsearchTimeSecs());
+        blocker->Wait(aEnv.InitParams()->MsearchTimeSecs());
         delete blocker;
     }
     delete uListener;

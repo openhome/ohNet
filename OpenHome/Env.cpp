@@ -251,9 +251,9 @@ void Environment::SetRandomSeed(TUint aSeed)
     iPrivateLock->Signal();
 }
 
-InitialisationParams& Environment::InitParams()
+InitialisationParams* Environment::InitParams()
 {
-    return *iInitParams;
+    return iInitParams;
 }
 
 void Environment::AddObject(IStackObject* aObject)

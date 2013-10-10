@@ -82,7 +82,7 @@ void SsdpNotifierScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
     else {
         remaining = iEndTimeMs - timeNow;
     }
-    TInt maxUpdateTimeMs = (TInt)iDvStack.Env().InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TInt maxUpdateTimeMs = (TInt)iDvStack.Env().InitParams()->DvMaxUpdateTimeSecs() * 1000;
     ASSERT(remaining <= maxUpdateTimeMs);
     TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {

@@ -487,7 +487,7 @@ void DviProtocolUpnp::SendAliveNotifications()
 void DviProtocolUpnp::QueueAliveTimer()
 {
     Environment& env = iDvStack.Env();
-    TUint maxUpdateTimeMs = env.InitParams().DvMaxUpdateTimeSecs() * 1000;
+    TUint maxUpdateTimeMs = env.InitParams()->DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = env.Random(maxUpdateTimeMs/2, maxUpdateTimeMs/4);
     iAliveTimer->FireIn(updateTimeMs);
 }

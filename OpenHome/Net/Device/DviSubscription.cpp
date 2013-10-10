@@ -144,7 +144,7 @@ void DviSubscription::Renew(TUint& aSeconds)
 
 void DviSubscription::DoRenew(TUint& aSeconds)
 {
-    const TUint maxDuration = iDvStack.Env().InitParams().DvMaxUpdateTimeSecs();
+    const TUint maxDuration = iDvStack.Env().InitParams()->DvMaxUpdateTimeSecs();
     if (aSeconds == 0 || aSeconds > maxDuration) {
         aSeconds = maxDuration;
     }
@@ -398,9 +398,9 @@ DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
     : Thread("DVSM")
     , iDvStack(aDvStack)
     , iLock("DSBM")
-    , iFree(aDvStack.Env().InitParams().DvNumPublisherThreads())
+    , iFree(aDvStack.Env().InitParams()->DvNumPublisherThreads())
 {
-    const TUint numPublisherThreads = iDvStack.Env().InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = iDvStack.Env().InitParams()->DvNumPublisherThreads();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
     TChar thName[5];
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
@@ -422,7 +422,7 @@ DviSubscriptionManager::~DviSubscriptionManager()
     Join();
     iLock.Signal();
 
-    const TUint numPublisherThreads = iDvStack.Env().InitParams().DvNumPublisherThreads();
+    const TUint numPublisherThreads = iDvStack.Env().InitParams()->DvNumPublisherThreads();
     for (TUint i=0; i<numPublisherThreads; i++) {
         delete iPublishers[i];
     }

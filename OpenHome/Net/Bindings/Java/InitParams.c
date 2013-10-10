@@ -49,6 +49,46 @@ static void STDCALL CallbackMessage(void* aPtr, const char* aMsg)
     // leave daemon thread attached to the VM
 }
 
+static void STDCALL CallbackThreadExit(void* aPtr)
+{
+    JniObjRef *ref = (JniObjRef*) aPtr;
+    JavaVM *vm = ref->vm;
+    jint ret;
+    JNIEnv *env;
+    jclass cls;
+    jmethodID mid;
+    jint attached;
+
+    if (ref->callbackObj != NULL) {
+        attached = (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_4);
+        if (attached < 0)
+        {
+#ifdef __ANDROID__
+            ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
+#else
+            ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
+#endif
+            if (ret < 0)
+            {
+                printf("InitParamsJNI: Unable to attach thread to JVM.\n");
+                fflush(stdout);
+                return;
+            }
+        }
+        cls = (*env)->GetObjectClass(env, ref->callbackObj);
+        mid = (*env)->GetMethodID(env, cls, "threadExit", "()V");
+        (*env)->DeleteLocalRef(env, cls);
+        if (mid == 0) {
+            printf("Method ID threadExit() not found.\n");
+            return;
+        }
+        (*env)->CallVoidMethod(env, ref->callbackObj, mid);
+    }
+
+    // detach this thread from the VM
+    (*vm)->DetachCurrentThread(vm);
+}
+
 /*
  * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsCreate
@@ -65,6 +105,31 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsCre
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsCreateThreadExitCallback
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsCreateThreadExitCallback
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
+{
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    OhNetCallback callback = (OhNetCallback) &CallbackThreadExit;
+    JniObjRef *ref = (JniObjRef*) malloc(sizeof(JniObjRef));
+    int ret;
+    aClass = aClass;
+
+    ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
+    if (ret < 0) {
+        printf("Unable to get reference to the current Java VM.\n");
+    }
+    ref->callbackObj = NULL;
+
+    OhNetInitParamsSetThreadExitHandler(params, callback, ref);
+
+    return (jlong) (size_t)ref;
+}
+
+/*
++ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsDestroy
  * Signature: (J)V
  */
@@ -88,8 +153,10 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDisp
 {
     JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
     aClass = aClass;
-    
-    (*aEnv)->DeleteGlobalRef(aEnv, ref->callbackObj);
+
+    if (ref->callbackObj != NULL) {
+        (*aEnv)->DeleteGlobalRef(aEnv, ref->callbackObj);
+    }
     free(ref);
 }
 
@@ -636,6 +703,25 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
     OhNetInitParamsSetFatalErrorHandler(params, callback, ref);
 
     return (jlong) (size_t)ref;
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetThreadExitHandler
+ * Signature: (JLorg/openhome/net/core/IThreadExitListener;)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetThreadExitHandler
+  (JNIEnv *aEnv, jclass aClass, jlong aCallback, jobject aListener)
+{
+    JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
+    jobject prevCallbackObj = ref->callbackObj; 
+    aClass = aClass;
+
+    ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aListener);
+
+    if (prevCallbackObj != NULL) {
+        (*aEnv)->DeleteGlobalRef(aEnv, prevCallbackObj);
+    }
 }
 
 #ifdef __cplusplus

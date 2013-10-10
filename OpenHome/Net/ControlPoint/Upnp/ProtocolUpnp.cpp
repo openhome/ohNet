@@ -58,7 +58,7 @@ void InvocationUpnp::WriteRequest(const Uri& aUri)
 
     try {
         Endpoint endpoint(aUri.Port(), aUri.Host());
-        TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
+        TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
         iSocket.Connect(endpoint, timeout);
     }
     catch (NetworkTimeout&) {
@@ -301,7 +301,7 @@ void EventUpnp::Subscribe(const Uri& aPublisher, const Uri& aSubscriber, TUint& 
     iSocket.Open(iCpStack.Env());
     iSubscription.SetInterruptHandler(this);
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     SubscribeWriteRequest(aPublisher, aSubscriber, aDurationSecs);
@@ -315,7 +315,7 @@ void EventUpnp::RenewSubscription(const Uri& aPublisher, TUint& aDurationSecs)
     iSocket.Open(iCpStack.Env());
     iSubscription.SetInterruptHandler(this);
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     RenewSubscriptionWriteRequest(aPublisher, aDurationSecs);
@@ -330,7 +330,7 @@ void EventUpnp::Unsubscribe(const Uri& aPublisher, const Brx& aSid)
 {
     iSocket.Open(iCpStack.Env());
     Endpoint endpoint(aPublisher.Port(), aPublisher.Host());
-    TUint timeout = iCpStack.Env().InitParams().TcpConnectTimeoutMs();
+    TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
     iSocket.Connect(endpoint, timeout);
 
     UnsubscribeWriteRequest(aPublisher, aSid);

@@ -249,6 +249,15 @@ DllExport void STDCALL OhNetInitParamsSetSubnetRemovedListener(OhNetHandleInitPa
 DllExport void STDCALL OhNetInitParamsSetNetworkAdapterChangedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
 
 /**
+ * Set a callback which will run each time a thread exits
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aCallback        Callback which will be run each time a thread exits
+ * @param[in] aPtr             Data which will be passed to aCallback
+ */
+DllExport void STDCALL OhNetInitParamsSetThreadExitHandler(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr);
+
+/**
  * Set a custom timeout for TCP connections.
  *
  * @param[in] aParams          Initialisation params

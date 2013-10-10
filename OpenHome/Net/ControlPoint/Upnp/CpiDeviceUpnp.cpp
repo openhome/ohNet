@@ -153,7 +153,7 @@ void CpiDeviceUpnp::InvokeAction(Invocation& aInvocation)
 
 TUint CpiDeviceUpnp::Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber)
 {
-    TUint durationSecs = iDevice->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDevice->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     Uri uri;
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(iDevice->GetCpStack(), aSubscription);
@@ -163,7 +163,7 @@ TUint CpiDeviceUpnp::Subscribe(CpiSubscription& aSubscription, const Uri& aSubsc
 
 TUint CpiDeviceUpnp::Renew(CpiSubscription& aSubscription)
 {
-    TUint durationSecs = iDevice->GetCpStack().Env().InitParams().SubscriptionDurationSecs();
+    TUint durationSecs = iDevice->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
     Uri uri;
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(iDevice->GetCpStack(), aSubscription);
@@ -460,7 +460,7 @@ void CpiDeviceListUpnp::Refresh()
         return;
     }
     Start();
-    TUint delayMs = iCpStack.Env().InitParams().MsearchTimeSecs() * 1000;
+    TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
     delayMs += 100; /* allow slightly longer to cope with devices which send
                        out Alive messages at the last possible moment */
     iRefreshTimer->FireIn(delayMs);
@@ -517,7 +517,7 @@ void CpiDeviceListUpnp::RefreshTimerComplete()
     Mutex& lock = iCpStack.Env().Mutex();
     lock.Wait();
     if (iPendingRefreshCount > 0) {
-        iNextRefreshTimer->FireIn(iCpStack.Env().InitParams().MsearchTimeSecs() * 1000);
+        iNextRefreshTimer->FireIn(iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000);
         iPendingRefreshCount--;
     }
     lock.Signal();
@@ -567,7 +567,7 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     iLock.Wait();
     iInterface = current->Address();
     iLock.Signal();
-    TUint msearchTime = iCpStack.Env().InitParams().MsearchTimeSecs();
+    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
     Mutex& lock = iCpStack.Env().Mutex();
     lock.Wait();
     iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);

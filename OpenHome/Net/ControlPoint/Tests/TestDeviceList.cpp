@@ -126,12 +126,12 @@ void TestDeviceList(CpStack& aCpStack, const std::vector<Brn>& aArgs)
     Environment& env = aCpStack.Env();
     Blocker* blocker = new Blocker(env);
     if (deviceList != NULL) {
-        blocker->Wait(env.InitParams().MsearchTimeSecs());
+        blocker->Wait(env.InitParams()->MsearchTimeSecs());
     }
     if (refresh.Value()) {
         Print("\nRefreshing...\n\n");
         deviceList->Refresh();
-        blocker->Wait(env.InitParams().MsearchTimeSecs());
+        blocker->Wait(env.InitParams()->MsearchTimeSecs());
     }
     delete blocker;
     delete deviceList;

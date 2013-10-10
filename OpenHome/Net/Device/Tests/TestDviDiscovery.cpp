@@ -563,7 +563,7 @@ void SuiteMsearch::Test()
 
 void SuiteMsearch::Wait()
 {
-    iBlocker->Wait(iDvStack.Env().InitParams().MsearchTimeSecs() + 1);
+    iBlocker->Wait(iDvStack.Env().InitParams()->MsearchTimeSecs() + 1);
 }
 
 void SuiteMsearch::TestMsearchAll()
@@ -731,9 +731,9 @@ void SuiteMsearch::TestMsearchServiceType()
 
 void TestDviDiscovery(DvStack& aDvStack)
 {
-    InitialisationParams& initParams = aDvStack.Env().InitParams();
-    TUint oldMsearchTime = initParams.MsearchTimeSecs();
-    initParams.SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
+    InitialisationParams* initParams = aDvStack.Env().InitParams();
+    TUint oldMsearchTime = initParams->MsearchTimeSecs();
+    initParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
 
     //Debug::SetLevel(Debug::kNetwork);
     Runner runner("SSDP discovery\n");
@@ -741,5 +741,5 @@ void TestDviDiscovery(DvStack& aDvStack)
     runner.Add(new SuiteMsearch(aDvStack));
     runner.Run();
 
-    initParams.SetMsearchTime(oldMsearchTime);
+    initParams->SetMsearchTime(oldMsearchTime);
 }

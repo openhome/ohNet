@@ -23,12 +23,12 @@ DvStack::DvStack(OpenHome::Environment& aEnv)
     iEnv.SetDvStack(this);
     iSsdpNotifierManager = new DviSsdpNotifierManager(*this);
     iPropertyUpdateCollection = new DviPropertyUpdateCollection(*this);
-    TUint port = iEnv.InitParams().DvUpnpServerPort();
+    TUint port = iEnv.InitParams()->DvUpnpServerPort();
     iDviServerUpnp = new DviServerUpnp(*this, port);
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager(*this);
     iDviServerWebSocket = new DviServerWebSocket(*this);
-    if (iEnv.InitParams().DvIsBonjourEnabled()) {
+    if (iEnv.InitParams()->DvIsBonjourEnabled()) {
         iMdns = new OpenHome::Net::MdnsProvider(iEnv, ""); // replace this to allow clients to set an alternative Bonjour implementation
     }
 }

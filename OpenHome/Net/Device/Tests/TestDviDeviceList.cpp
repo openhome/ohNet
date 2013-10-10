@@ -219,9 +219,9 @@ void CpDevices::Removed(CpDevice& aDevice)
 
 void TestDviDeviceList(CpStack& aCpStack, DvStack& aDvStack)
 {
-    InitialisationParams& initParams = aDvStack.Env().InitParams();
-    TUint oldMsearchTime = initParams.MsearchTimeSecs();
-    initParams.SetMsearchTime(1);
+    InitialisationParams* initParams = aDvStack.Env().InitParams();
+    TUint oldMsearchTime = initParams->MsearchTimeSecs();
+    initParams->SetMsearchTime(1);
 
 //    Debug::SetLevel(/*Debug::kDevice | Debug::kDvDevice | Debug::kXmlFetch | Debug::kError);
 
@@ -259,5 +259,5 @@ void TestDviDeviceList(CpStack& aCpStack, DvStack& aDvStack)
     delete devices;
 
     Print("TestDviDeviceList - completed\n");
-    initParams.SetMsearchTime(oldMsearchTime);
+    initParams->SetMsearchTime(oldMsearchTime);
 }

@@ -156,7 +156,7 @@ void TestSubscription(CpStack& aCpStack)
     CpDeviceListUpnpUuid* list = new CpDeviceListUpnpUuid(aCpStack, uuid, added, removed);
 #endif
     Blocker* blocker = new Blocker(env);
-    blocker->Wait(env.InitParams().MsearchTimeSecs());
+    blocker->Wait(env.InitParams()->MsearchTimeSecs());
     delete blocker;
     deviceList->Stop();
 
