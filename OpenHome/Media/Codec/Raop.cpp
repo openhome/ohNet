@@ -59,7 +59,7 @@ TBool CodecRaop::Recognise()
 {
     LOG(kCodec, "CodecRaop::Recognise\n");
     Bws<4> buf;
-    iController->Read(buf, buf.Bytes());
+    iController->Read(buf, buf.MaxBytes());
 
     if (buf == Brn("Raop")) {
         LOG(kCodec, "CodecRaop::Recognise airplay\n");
