@@ -37,7 +37,7 @@ public:
     void AddObserver(IPipelineObserver& aObserver);
     void RemoveObserver(IPipelineObserver& aObserver);
     void AddObserver(ITrackObserver& aObserver);
-    void Begin(const Brx& aMode, TUint aPipelineTrackId);
+    void Begin(const Brx& aMode, TUint aPipelineTrackId); // FIXME - pipelineTrackId is allocated by ProtocolManager.  Should this be aTrackId instead?
     void Play();
     void Pause();
     void Stop();

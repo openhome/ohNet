@@ -548,11 +548,11 @@ void SuiteRenderingControl::Test()
 void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
 {
     DummyAsyncOutput errorSuppressor;
-    InitialisationParams& initParams = aDvStack.Env().InitParams();
-    TUint oldMsearchTime = initParams.MsearchTimeSecs();
-    FunctorAsync oldAsyncErrorHandler = initParams.AsyncErrorHandler();
-    initParams.SetMsearchTime(1);
-    initParams.SetAsyncErrorHandler(MakeFunctorAsync(errorSuppressor, &DummyAsyncOutput::LogError));
+    InitialisationParams* initParams = aDvStack.Env().InitParams();
+    TUint oldMsearchTime = initParams->MsearchTimeSecs();
+    FunctorAsync oldAsyncErrorHandler = initParams->AsyncErrorHandler();
+    initParams->SetMsearchTime(1);
+    initParams->SetAsyncErrorHandler(MakeFunctorAsync(errorSuppressor, &DummyAsyncOutput::LogError));
 
     Bwh udn("UpnpErrorTests");
     RandomiseUdn(aDvStack, udn);
@@ -563,7 +563,7 @@ void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
     sem.Wait(30*1000); // allow up to 30 seconds to find our one device
     CpDevice& cpDevice = cpDevices->Device();
 
-    initParams.SetMsearchTime(oldMsearchTime);
+    initParams->SetMsearchTime(oldMsearchTime);
 
     Runner runner("Upnp error reporting tests\n");
     runner.Add(new SuiteAvTransport(cpDevice));
@@ -571,7 +571,7 @@ void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
     runner.Add(new SuiteRenderingControl(cpDevice));
     runner.Run();
 
-    initParams.SetAsyncErrorHandler(oldAsyncErrorHandler);
+    initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
     delete cpDevices;
     delete dummySource;
 }

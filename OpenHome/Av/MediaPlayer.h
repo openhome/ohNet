@@ -36,6 +36,7 @@ class ProviderTime;
 class ProviderInfo;
 class ProviderVolume;
 class KvpStore;
+class ZoneHandler;
 
 class IMediaPlayer
 {
@@ -47,6 +48,7 @@ public:
     virtual Media::PipelineManager& Pipeline() = 0;
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
+    virtual Av::ZoneHandler& ZoneHandler() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
 };
 
@@ -69,6 +71,7 @@ public: // from IMediaPlayer
     Media::PipelineManager& Pipeline();
     Media::TrackFactory& TrackFactory();
     IReadStore& ReadStore();
+    Av::ZoneHandler& ZoneHandler();
     void Add(Media::UriProvider* aUriProvider);
 private:
     Net::DvStack& iDvStack;
@@ -85,6 +88,7 @@ private:
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
     KvpStore* iKvpStore;
+    Av::ZoneHandler* iZoneHandler;
 };
 
 } // namespace Av

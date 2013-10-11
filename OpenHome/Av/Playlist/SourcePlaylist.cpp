@@ -61,7 +61,7 @@ private:
     TUint iTrackPosSeconds;
     TUint iPipelineTrackId;
     TUint iStreamId;
-    Media::EPipelineState iTransportState;
+    Media::EPipelineState iTransportState; // FIXME - this appears to be set but never used
     TUint iTrackId;
 };
     

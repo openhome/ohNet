@@ -17,6 +17,7 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
+#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 namespace OpenHome {
 namespace Net {
@@ -59,6 +60,7 @@ protected:
 private:
     Semaphore iDisabled;
     ISource* iSourceUpnp; // FIXME - see #169
+    DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
 };
 
 typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
