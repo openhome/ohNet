@@ -233,6 +233,9 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     void NotifyChanged();
+    void WriteToStore(const Brx& akey, TInt aInt);
+    void WriteToStore(const Brx& akey, TUint aUint);
+    void WriteToStore(const Brx& akey, const Brx& aBuf);
     void TestCreateNum();
     void TestWriteImmediateNum();
     void TestWriteDeferredNum();
@@ -1329,6 +1332,25 @@ void SuiteStoreManager::NotifyChanged()
     iChangedCount++;
 }
 
+void SuiteStoreManager::WriteToStore(const Brx& aKey, TInt aInt)
+{
+    Bwh buf(sizeof(TInt));
+    buf.Append(aInt);
+    iStore->Write(aKey, buf);
+}
+
+void SuiteStoreManager::WriteToStore(const Brx& aKey, TUint aUint)
+{
+    Bwh buf(sizeof(TUint));
+    buf.Append(aUint);
+    iStore->Write(aKey, buf);
+}
+
+void SuiteStoreManager::WriteToStore(const Brx& aKey, const Brx& aBuf)
+{
+    iStore->Write(aKey, aBuf);
+}
+
 void SuiteStoreManager::TestCreateNum()
 {
     const ConfigNum val(0, 1, 0);
@@ -1337,9 +1359,7 @@ void SuiteStoreManager::TestCreateNum()
     TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max()), StoreKeyNotFound);
 
     // try creating from value that exists in store
-    Bwh valBuf(sizeof(TInt));
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     TInt initialVal = iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max());
     TEST(initialVal == val.Get());
     TEST(iConfigManager->HasNum(kKey1) == true);
@@ -1356,9 +1376,7 @@ void SuiteStoreManager::TestWriteImmediateNum()
     const ConfigNum val(0, 1, 0);
 
     // create value in store
-    Bwh valBuf(sizeof(TInt));
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max());
 
     // test that callback functor has been added to config val subscribers correctly
@@ -1369,6 +1387,7 @@ void SuiteStoreManager::TestWriteImmediateNum()
 
     // test that non-deferred write worked
     Bwh expectedBuf(sizeof(TInt));
+    Bwh valBuf(sizeof(TInt));
     expectedBuf.Append(confVal.Get());
     iStore->Read(kKey1, valBuf);
     TEST(valBuf == expectedBuf);
@@ -1380,9 +1399,7 @@ void SuiteStoreManager::TestWriteDeferredNum()
     const ConfigNum val(0, 1, 0);
 
     // create a value
-    Bwh valBuf(sizeof(TInt));
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     iStoreManager->CreateNum(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max());
 
     // update the config value - value in store should NOT be updated
@@ -1390,6 +1407,7 @@ void SuiteStoreManager::TestWriteDeferredNum()
     ConfigNum& confVal = iConfigManager->GetNum(kKey1);
     // get original val
     Bwh expectedBuf(sizeof(TInt));
+    Bwh valBuf(sizeof(TInt));
     expectedBuf.Append(confVal.Get());
     // change config val
     confVal.Set(1);
@@ -1421,9 +1439,7 @@ void SuiteStoreManager::TestCreateChoice()
     TEST_THROWS(iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options), StoreKeyNotFound);
 
     // try creating from value that exists in store
-    Bwh valBuf(sizeof(TUint));
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     TUint initialVal = iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options);
     TEST(initialVal == val.Get());
     TEST(iConfigManager->HasChoice(kKey1) == true);
@@ -1446,9 +1462,7 @@ void SuiteStoreManager::TestWriteImmediateChoice()
     options.push_back(&kTrue);
 
     // create value in store
-    Bwh valBuf(sizeof(TUint));
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options);
 
     // test that callback functor has been added to config val subscribers correctly
@@ -1459,6 +1473,7 @@ void SuiteStoreManager::TestWriteImmediateChoice()
 
     // test that non-deferred write worked
     Bwh expectedBuf(sizeof(TUint));
+    Bwh valBuf(sizeof(TUint));
     expectedBuf.Append(confVal.Get());
     iStore->Read(kKey1, valBuf);
     TEST(valBuf == expectedBuf);
@@ -1476,9 +1491,7 @@ void SuiteStoreManager::TestWriteDeferredChoice()
     options.push_back(&kTrue);
 
     // create a value
-    Bwh valBuf(sizeof(TUint));
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     iStoreManager->CreateChoice(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options);
 
     // update the config value - value in store should NOT be updated
@@ -1486,6 +1499,7 @@ void SuiteStoreManager::TestWriteDeferredChoice()
     ConfigChoice& confVal = iConfigManager->GetChoice(kKey1);
     // get original val
     Bwh expectedBuf(sizeof(TUint));
+    Bwh valBuf(sizeof(TUint));
     expectedBuf.Append(confVal.Get());
     // change config val
     confVal.Set(1);
@@ -1512,9 +1526,7 @@ void SuiteStoreManager::TestCreateText()
     TEST_THROWS(iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), StoreKeyNotFound);
 
     // try creating from value that exists in store
-    Bwh valBuf(kTextMaxBytes);
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     const Brx& initialVal = iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes);
     TEST(initialVal == val.Get());
     TEST(iConfigManager->HasText(kKey1) == true);
@@ -1532,9 +1544,7 @@ void SuiteStoreManager::TestWriteImmediateText()
     val.Set(kText1);
 
     // create value in store
-    Bwh valBuf(kTextMaxBytes);
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes);
 
     // test that callback functor has been added to config val subscribers correctly
@@ -1545,6 +1555,7 @@ void SuiteStoreManager::TestWriteImmediateText()
 
     // test that non-deferred write worked
     Bwh expectedBuf(kTextMaxBytes);
+    Bwh valBuf(kTextMaxBytes);
     expectedBuf.Append(confVal.Get());
     iStore->Read(kKey1, valBuf);
     TEST(valBuf == expectedBuf);
@@ -1557,9 +1568,7 @@ void SuiteStoreManager::TestWriteDeferredText()
     val.Set(kText1);
 
     // create a value
-    Bwh valBuf(kTextMaxBytes);
-    valBuf.Append(val.Get());
-    iStore->Write(kKey1, valBuf);
+    WriteToStore(kKey1, val.Get());
     iStoreManager->CreateText(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes);
 
     // update the config value - value in store should NOT be updated
@@ -1567,6 +1576,7 @@ void SuiteStoreManager::TestWriteDeferredText()
     ConfigText& confVal = iConfigManager->GetText(kKey1);
     // get original val
     Bwh expectedBuf(kTextMaxBytes);
+    Bwh valBuf(kTextMaxBytes);
     expectedBuf.Append(confVal.Get());
     // change config val
     confVal.Set(kText2);
@@ -1591,9 +1601,7 @@ void SuiteStoreManager::TestCreateDiffTypesSameKey()
 
     // create a num
     const ConfigNum valNum(0, 1, 0);
-    Bwh valBufNum(sizeof(TInt));
-    valBufNum.Append(valNum.Get());
-    iStore->Write(kKey1, valBufNum);
+    WriteToStore(kKey1, valNum.Get());
     iStoreManager->CreateNum(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), valNum.Min(), valNum.Max());
 
     // try create a choice with same key
@@ -1612,9 +1620,7 @@ void SuiteStoreManager::TestWritePendingUpdates()
 
     // create a num
     const ConfigNum valNum(0, 1, 0);
-    Bwh valBufNum(sizeof(TInt));
-    valBufNum.Append(valNum.Get());
-    iStore->Write(kKey1, valBufNum);
+    WriteToStore(kKey1, valNum.Get());
     iStoreManager->CreateNum(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), valNum.Min(), valNum.Max());
     ConfigNum& confValNum = iConfigManager->GetNum(kKey1);
 
@@ -1625,23 +1631,20 @@ void SuiteStoreManager::TestWritePendingUpdates()
     std::vector<const Brx*> options;
     options.push_back(&kFalse);
     options.push_back(&kTrue);
-    Bwh valBufChoice(sizeof(TUint));
-    valBufChoice.Append(valChoice.Get());
-    iStore->Write(kKey2, valBufChoice);
+    WriteToStore(kKey2, valChoice.Get());
     iStoreManager->CreateChoice(kKey2, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options);
     ConfigChoice& confValChoice = iConfigManager->GetChoice(kKey2);
 
     // create a text
     ConfigText valText(kTextMaxBytes);
     valText.Set(kText1);
-    Bwh valBufText(kTextMaxBytes);
-    valBufText.Append(valText.Get());
-    iStore->Write(kKey3, valBufText);
+    WriteToStore(kKey3, valText.Get());
     iStoreManager->CreateText(kKey3, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes);
     ConfigText& confValText = iConfigManager->GetText(kKey3);
 
     // change all config vals
     Bwh expectedBufNum(sizeof(TInt));
+    Bwh valBufNum(sizeof(TInt));
     expectedBufNum.Append(confValNum.Get());
     confValNum.Set(1);
     TEST(iChangedCount == 1); // check callback works
@@ -1649,6 +1652,7 @@ void SuiteStoreManager::TestWritePendingUpdates()
     TEST(valBufNum == expectedBufNum);
 
     Bwh expectedBufChoice(sizeof(TUint));
+    Bwh valBufChoice(sizeof(TUint));
     expectedBufChoice.Append(confValChoice.Get());
     confValChoice.Set(1);
     TEST(iChangedCount == 2); // check callback works
@@ -1656,6 +1660,7 @@ void SuiteStoreManager::TestWritePendingUpdates()
     TEST(valBufChoice == expectedBufChoice);
 
     Bwh expectedBufText(kTextMaxBytes);
+    Bwh valBufText(kTextMaxBytes);
     expectedBufText.Append(confValText.Get());
     confValText.Set(kText2);
     TEST(iChangedCount == 3); // check callback works
