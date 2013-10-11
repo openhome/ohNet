@@ -24,7 +24,6 @@ class ProtocolOhu : public ProtocolOhBase
 public:
     ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
     ~ProtocolOhu();
-    void Stop();
 private: // from ProtocolOhBase
     void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
 private: // from IStreamHandler
@@ -38,11 +37,14 @@ private:
     void SendLeave();
     void TimerLeaveExpired();
 private:
+    Mutex iLeaveLock;
     Timer* iTimerLeave;
     TBool iLeaving;
+    TBool iStopped;
     TUint iSlaveCount;
     Endpoint iSlaveList[kMaxSlaveCount];
     Bws<kMaxFrameBytes> iMessageBuffer;
+    TUint iNextFlushId;
 };
 
 } // namespace Av

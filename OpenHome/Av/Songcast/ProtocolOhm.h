@@ -19,11 +19,13 @@ class ProtocolOhm : public ProtocolOhBase
 {
 public:
 	ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
-    ~ProtocolOhm();
 private: // from ProtocolOhBase
     void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+private:
+    TUint iNextFlushId;
+    TBool iStopped;
 };
 
 } // namespace Av
