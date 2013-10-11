@@ -23,6 +23,8 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
+    , iSocket(aEnv)
+    , iReadBuffer(iSocket)
     , iMutexTransport("POHB")
     , iTrackFactory(aTrackFactory)
     , iTimestamper(aTimestamper)
@@ -34,6 +36,8 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
 {
     iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired));
     iRepairFrames.reserve(kMaxRepairBacklogFrames);
+    iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendJoin));
+    iTimerListen = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendListen));
 
     static const TChar* kOhmCookie = "Songcast";
     NetworkAdapter* current = aEnv.NetworkAdapterList().CurrentAdapter(kOhmCookie);
@@ -45,6 +49,8 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
 ProtocolOhBase::~ProtocolOhBase()
 {
     delete iTimerRepair;
+    delete iTimerJoin;
+    delete iTimerListen;
 }
 
 void ProtocolOhBase::Add(OhmMsg* aMsg)
@@ -60,6 +66,46 @@ void ProtocolOhBase::ResendSeen()
         iTimerRepair->FireIn(kSubsequentRepairTimeoutMs);
     }
     iMutexTransport.Signal();
+}
+
+void ProtocolOhBase::RequestResend(const Brx& aFrames)
+{
+    const TUint bytes = aFrames.Bytes();
+    if (bytes > 0) {
+        Bws<OhmHeader::kHeaderBytes + 400> buffer;
+        WriterBuffer writer(buffer);
+        OhmHeaderResend headerResend(bytes / 4);
+        OhmHeader header(OhmHeader::kMsgTypeResend, headerResend.MsgBytes());
+        header.Externalise(writer);
+        headerResend.Externalise(writer);
+        writer.Write(aFrames);
+        iSocket.Send(buffer, iEndpoint);
+    }
+}
+
+void ProtocolOhBase::SendJoin()
+{
+    Send(OhmHeader::kMsgTypeJoin);
+    iTimerJoin->FireIn(kTimerJoinTimeoutMs);
+}
+
+void ProtocolOhBase::SendListen()
+{
+    Send(OhmHeader::kMsgTypeListen);
+    iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
+}
+
+void ProtocolOhBase::Send(TUint aType)
+{
+    Bws<OhmHeader::kHeaderBytes> buffer;
+    WriterBuffer writer(buffer);
+    OhmHeader msg(aType, 0);
+    msg.Externalise(writer);
+    try {
+        iSocket.Send(buffer, iEndpoint);
+    }
+    catch (NetworkError&) {
+    }
 }
 
 ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
@@ -95,20 +141,6 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     Play(iAddr, 2, ep);
     return EProtocolStreamErrorUnrecoverable;
 }
-
-/*void ProtocolOhBase::Reset()
-{
-    iTimerRepair->Cancel();
-    if (iRepairing) {
-        iRepairFirst->RemoveRef();
-        for (TUint i=0; i<iRepairFrames.size(); i++) {
-            iRepairFrames[i]->RemoveRef();
-        }
-        iRepairFrames.clear();
-        iRepairing = false;
-    }
-    iRunning = false;
-}*/
 
 TBool ProtocolOhBase::RepairBegin(OhmMsgAudioBlob& aMsg)
 {

@@ -43,22 +43,11 @@ using namespace OpenHome::Media;
 
 ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
-    , iSocket(aEnv)
-    , iReadBuffer(iSocket)
 {
-    iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhm::SendJoin));
-    iTimerListen = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhm::SendListen));
 }
 
 ProtocolOhm::~ProtocolOhm()
 {
-    delete iTimerJoin;
-    delete iTimerListen;
-}
-
-void ProtocolOhm::Stop()
-{
-    iReadBuffer.ReadInterrupt();
 }
 
 void ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
@@ -155,44 +144,8 @@ void ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpo
 	iSocket.Close();
 }
 
-void ProtocolOhm::RequestResend(const Brx& aFrames)
-{
-    const TUint bytes = aFrames.Bytes();
-    if (bytes > 0) {
-        Bws<OhmHeader::kHeaderBytes + 400> buffer;
-        WriterBuffer writer(buffer);
-        OhmHeaderResend headerResend(bytes / 4);
-        OhmHeader header(OhmHeader::kMsgTypeResend, headerResend.MsgBytes());
-        header.Externalise(writer);
-        headerResend.Externalise(writer);
-        writer.Write(aFrames);
-        iSocket.Send(buffer, iEndpoint);
-    }
-}
-
 TUint ProtocolOhm::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS(); // FIXME
     return 0;
-}
-
-void ProtocolOhm::SendJoin()
-{
-    Send(OhmHeader::kMsgTypeJoin);
-    iTimerJoin->FireIn(kTimerJoinTimeoutMs);
-}
-
-void ProtocolOhm::SendListen()
-{
-    Send(OhmHeader::kMsgTypeListen);
-    iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
-}
-
-void ProtocolOhm::Send(TUint aType)
-{
-    Bws<OhmHeader::kHeaderBytes> buffer;
-    WriterBuffer writer(buffer);
-    OhmHeader msg(aType, 0);
-    msg.Externalise(writer);
-    iSocket.Send(buffer, iEndpoint);
 }

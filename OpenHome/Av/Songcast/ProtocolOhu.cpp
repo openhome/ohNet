@@ -19,19 +19,13 @@ using namespace OpenHome::Media;
 
 ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohu", aMode)
-    , iSocket(aEnv)
-    , iReadBuffer(iSocket)
 {
-    iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::SendJoin));
-    iTimerListen = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::SendListen));
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired));
 }
 
 ProtocolOhu::~ProtocolOhu()
 {
     // FIXME - any synchronisation required to ensure other threads have shut down before we start destroying objects?
-    delete iTimerJoin;
-    delete iTimerListen;
     delete iTimerLeave;
 }
 
@@ -68,21 +62,6 @@ void ProtocolOhu::HandleSlave(const OhmHeader& aHeader)
         TUint port = reader.ReadUintBe(2);
         iSlaveList[i].SetAddress(address);
         iSlaveList[i].SetPort(port);
-    }
-}
-
-void ProtocolOhu::RequestResend(const Brx& aFrames)
-{
-    const TUint bytes = aFrames.Bytes();
-    if (bytes > 0) {
-        Bws<OhmHeader::kHeaderBytes + 400> buffer;
-        WriterBuffer writer(buffer);
-        OhmHeaderResend headerResend(bytes / 4);
-        OhmHeader header(OhmHeader::kMsgTypeResend, headerResend.MsgBytes());
-        header.Externalise(writer);
-        headerResend.Externalise(writer);
-        writer.Write(aFrames);
-        iSocket.Send(buffer, iEndpoint);
     }
 }
 
@@ -224,34 +203,9 @@ void ProtocolOhu::Stop()
     TimerLeaveExpired();
 }*/
 
-void ProtocolOhu::SendJoin()
-{
-    Send(OhmHeader::kMsgTypeJoin);
-    iTimerJoin->FireIn(kTimerJoinTimeoutMs);
-}
-
-void ProtocolOhu::SendListen()
-{
-    Send(OhmHeader::kMsgTypeListen);
-    iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
-}
-
 void ProtocolOhu::SendLeave()
 {
     Send(OhmHeader::kMsgTypeLeave);
-}
-
-void ProtocolOhu::Send(TUint aType)
-{
-    Bws<OhmHeader::kHeaderBytes> buffer;
-    WriterBuffer writer(buffer);
-    OhmHeader msg(aType, 0);
-    msg.Externalise(writer);
-    try {
-        iSocket.Send(buffer, iEndpoint);
-    }
-    catch (NetworkError&) {
-    }
 }
 
 void ProtocolOhu::TimerLeaveExpired()
