@@ -297,7 +297,7 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
 void SuiteCVSubscriptions::Setup()
 {
     SuiteCVNotify::Setup();
-    iConfigVal = new ConfigNum(1,1);
+    iConfigVal = new ConfigNum(1,1,1);
 }
 
 void SuiteCVSubscriptions::TearDown()
@@ -377,7 +377,6 @@ void SuiteConfigNum::TestInvalidRange()
 {
     // test creating a ConfigNum with max < min
     TEST_THROWS(ConfigNum cv(1, -1, 1), AvConfigInvalidRange);
-    TEST_THROWS(ConfigNum cv(1, -1), AvConfigInvalidRange);
 }
 
 void SuiteConfigNum::TestValueOutOfRangeConstructor()

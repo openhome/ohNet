@@ -60,7 +60,6 @@ class ConfigNum : public ConfigVal
 {
 public:
     ConfigNum(TInt aMin, TInt aMax, TInt aVal);
-    ConfigNum(TInt aMin, TInt aMax); // initialise value of ConfigNum to aMin
     TInt Min() const;
     TInt Max() const;
     TInt Get() const;

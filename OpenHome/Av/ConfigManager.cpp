@@ -63,16 +63,6 @@ ConfigNum::ConfigNum(TInt aMin, TInt aMax, TInt aVal)
     }
 }
 
-ConfigNum::ConfigNum(TInt aMin, TInt aMax)
-    : iMin(aMin)
-    , iMax(aMax)
-    , iVal(iMin)
-{
-    if (iMin > iMax) {
-        THROW(AvConfigInvalidRange);
-    }
-}
-
 TInt ConfigNum::Min() const
 {
     return iMin;
