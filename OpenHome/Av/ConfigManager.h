@@ -15,10 +15,10 @@
 
 EXCEPTION(AvConfigInvalidRange);
 EXCEPTION(AvConfigValueOutOfRange);
-EXCEPTION(AvConfigValueAlreadyExists);
+EXCEPTION(AvConfigValueExists);
 EXCEPTION(AvConfigIndexOutOfRange);
 EXCEPTION(AvConfigValueTooLong);
-EXCEPTION(AvConfigIdAlreadyExists);
+EXCEPTION(AvConfigIdExists);
 
 namespace OpenHome {
 namespace Av {
@@ -34,11 +34,12 @@ public:
     virtual void Unsubscribe(TUint aId) = 0;
 };
 
-class CVal : public IObservable
+class ConfigVal : public IObservable
 {
+protected:
+    ConfigVal();
 public:
-    CVal();
-    virtual ~CVal() = 0;
+    virtual ~ConfigVal() = 0;
 public: // from IObservable
     TUint Subscribe(Functor aFunctor);
     void Unsubscribe(TUint aId);
@@ -55,23 +56,23 @@ private:
  * Class representing a numerical value, which can be positive or negative,
  * with upper and lower limits.
  */
-class CVNum : public CVal
+class ConfigNum : public ConfigVal
 {
 public:
-    CVNum(TInt aMin, TInt aMax, TInt aVal);
-    CVNum(TInt aMin, TInt aMax); // initialise value of CVNum to aMin
+    ConfigNum(TInt aMin, TInt aMax, TInt aVal);
+    ConfigNum(TInt aMin, TInt aMax); // initialise value of ConfigNum to aMin
     TInt Min() const;
     TInt Max() const;
     TInt Get() const;
     TBool Set(TInt aVal);
-    inline TBool operator==(const CVNum& aNum) const;
+    inline TBool operator==(const ConfigNum& aNum) const;
 private:
     TInt iMin;
     TInt iMax;
     TInt iVal;
 };
 
-inline TBool CVNum::operator==(const CVNum& aNum) const
+inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
 {
     return iMin == aNum.iMin
         && iVal == aNum.iVal
@@ -85,22 +86,22 @@ inline TBool CVNum::operator==(const CVNum& aNum) const
  * Empty when created. When first option value is added, defaults to that value
  * as the selected one.
  */
-class CVChoice : public CVal
+class ConfigChoice : public ConfigVal
 {
 public:
-    CVChoice();
-    ~CVChoice();
+    ConfigChoice();
+    ~ConfigChoice();
     void Add(const Brx& aVal);
     std::vector<const Brx*> Options();
     TUint Get() const;
     TBool Set(TUint aIndex);
-    inline TBool operator==(const CVChoice& aChoice) const;
+    inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
     std::vector<Brn> iAllowedValues;
     TUint iSelected;
 };
 
-inline TBool CVChoice::operator==(const CVChoice& aChoice) const
+inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
 {
     TBool optionsEqual = true;
     for (TUint i=0; i<iAllowedValues.size(); i++) {
@@ -115,19 +116,19 @@ inline TBool CVChoice::operator==(const CVChoice& aChoice) const
  * Class representing a text value. Length of text that can be allocated is
  * fixed at construction.
  */
-class CVText : public CVal
+class ConfigText : public ConfigVal
 {
 public:
-    CVText(TUint aMaxBytes);
+    ConfigText(TUint aMaxBytes);
     TUint MaxLength() const;
     const Brx& Get() const;
     TBool Set(const Brx& aText);
-    inline TBool operator==(const CVText& aText) const;
+    inline TBool operator==(const ConfigText& aText) const;
 private:
     Bwh iText;
 };
 
-inline TBool CVText::operator==(const CVText& aText) const
+inline TBool ConfigText::operator==(const ConfigText& aText) const
 {
     return (iText == aText.iText);
 }
@@ -138,16 +139,16 @@ inline TBool CVText::operator==(const CVText& aText) const
 class IConfigurationManager
 {
 public:
-    virtual void Add(const Brx& aId, CVNum& aNum) = 0;
-    virtual void Add(const Brx& aId, CVChoice& aChoice) = 0;
-    virtual void Add(const Brx& aId, CVText& aText) = 0;
+    virtual void Add(const Brx& aId, ConfigNum& aNum) = 0;
+    virtual void Add(const Brx& aId, ConfigChoice& aChoice) = 0;
+    virtual void Add(const Brx& aId, ConfigText& aText) = 0;
 
     virtual TBool HasNum(const Brx& aId) = 0;
-    virtual CVNum& GetNum(const Brx& aId) = 0;
+    virtual ConfigNum& GetNum(const Brx& aId) = 0;
     virtual TBool HasChoice(const Brx& aId) = 0;
-    virtual CVChoice& GetChoice(const Brx& aId) = 0;
+    virtual ConfigChoice& GetChoice(const Brx& aId) = 0;
     virtual TBool HasText(const Brx& aId) = 0;
-    virtual CVText& GetText(const Brx& aId) = 0;
+    virtual ConfigText& GetText(const Brx& aId) = 0;
 };
 
 /*
@@ -178,7 +179,7 @@ template <class T> void SerialisedMap<T>::Add(const Brx& aId, T& aVal)
     AutoMutex a(iLock);
     typename Map::iterator it = iMap.find(id);
     if (it != iMap.end()) {
-        THROW(AvConfigIdAlreadyExists);
+        THROW(AvConfigIdExists);
     }
     iMap.insert(std::pair<Brn, T*>(id, &aVal));
 }
@@ -208,9 +209,9 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aId)
 
 
 /*
- * Class storing a collection of CVals. Values are stored with, and retrievable
- * via, an ID of form "some.value.identifier". Classes that create CVals own
- * them and are responsible for their destruction.
+ * Class storing a collection of ConfigVals. Values are stored with, and
+ * retrievable via, an ID of form "some.value.identifier". Classes that create
+ * ConfigVals own them and are responsible for their destruction.
  *
  * Known identifiers are listed elsewhere.
  */
@@ -219,25 +220,25 @@ class ConfigurationManager : public IConfigurationManager
 public:
     virtual ~ConfigurationManager();
 public: // from IConfigurationManager
-    void Add(const Brx& aId, CVNum& aNum);
-    void Add(const Brx& aId, CVChoice& aChoice);
-    void Add(const Brx& aId, CVText& aText);
+    void Add(const Brx& aId, ConfigNum& aNum);
+    void Add(const Brx& aId, ConfigChoice& aChoice);
+    void Add(const Brx& aId, ConfigText& aText);
 
     TBool Has(const Brx& aId);
-    CVal& Get(const Brx& aId);
+    ConfigVal& Get(const Brx& aId);
 
     TBool HasNum(const Brx& aId);
-    CVNum& GetNum(const Brx& aId);
+    ConfigNum& GetNum(const Brx& aId);
     TBool HasChoice(const Brx& aId);
-    CVChoice& GetChoice(const Brx& aId);
+    ConfigChoice& GetChoice(const Brx& aId);
     TBool HasText(const Brx& aId);
-    CVText& GetText(const Brx& aId);
+    ConfigText& GetText(const Brx& aId);
 private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal);
 private:
-    SerialisedMap<CVNum> iMapNum;
-    SerialisedMap<CVChoice> iMapChoice;
-    SerialisedMap<CVText> iMapText;
+    SerialisedMap<ConfigNum> iMapNum;
+    SerialisedMap<ConfigChoice> iMapChoice;
+    SerialisedMap<ConfigText> iMapText;
 };
 
 /*
@@ -255,16 +256,17 @@ public:
  * Wrapper class for ConfigVals that hold a reference to a read/write store and
  * should know how to write their value out to the store. Writes can be
  * immediate (i.e., upon update) or deferred (i.e., at power down).
+ * StoreVals own their ConfigVals and are responsible for their destruction.
  */
 class StoreVal : public IStoreVal
 {
 protected:
-    StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVal* aVal);
+    StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigVal* aVal);
 public:
     ~StoreVal();
 public: // from IStoreVal
     TBool UpdatePending();
-    void Write() = 0;   // can maybe do a default implementation of this, with only the part that converts to rwstore's native type being left to a function that can be overridden
+    void Write() = 0;
 private:
     void NotifyChanged();
 protected:
@@ -273,7 +275,7 @@ protected:
     Mutex iLock;
     TBool iUpdatePending;
 private:
-    CVal* iVal;
+    ConfigVal* iVal;
     TUint iListenerId;
     const TBool iUpdatesDeferred;
 };
@@ -281,31 +283,31 @@ private:
 class StoreNum : public StoreVal
 {
 public:
-    StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVNum* aVal);
+    StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigNum* aVal);
 public: // from StoreVal
     void Write();
 private:
-    CVNum* iNum;
+    ConfigNum* iNum;
 };
 
 class StoreChoice : public StoreVal
 {
 public:
-    StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVChoice* aVal);
+    StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigChoice* aVal);
 public: // from StoreVal
     void Write();
 private:
-    CVChoice* iChoice;
+    ConfigChoice* iChoice;
 };
 
 class StoreText : public StoreVal
 {
 public:
-    StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVText* aVal);
+    StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigText* aVal);
 public: // from StoreVal
     void Write();
 private:
-    CVText* iText;
+    ConfigText* iText;
 };
 
 /*

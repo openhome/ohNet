@@ -5,20 +5,20 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 
 
-// CVal
+// ConfigVal
 
-CVal::CVal()
+ConfigVal::ConfigVal()
     : iObserverLock("CVOL")
     , iNextObserverId(0)
 {
 }
 
-CVal::~CVal()
+ConfigVal::~ConfigVal()
 {
     ASSERT(iObservers.size() == 0);
 }
 
-TUint CVal::Subscribe(Functor aFunctor)
+TUint ConfigVal::Subscribe(Functor aFunctor)
 {
     iObserverLock.Wait();
     TUint id = iNextObserverId;
@@ -28,7 +28,7 @@ TUint CVal::Subscribe(Functor aFunctor)
     return id;
 }
 
-void CVal::Unsubscribe(TUint aId)
+void ConfigVal::Unsubscribe(TUint aId)
 {
     iObserverLock.Wait();
     Map::iterator it = iObservers.find(aId);
@@ -38,7 +38,7 @@ void CVal::Unsubscribe(TUint aId)
     iObserverLock.Signal();
 }
 
-void CVal::NotifySubscribers()
+void ConfigVal::NotifySubscribers()
 {
     AutoMutex a(iObserverLock);
     for (Map::iterator it = iObservers.begin(); it != iObservers.end(); it++) {
@@ -47,9 +47,9 @@ void CVal::NotifySubscribers()
 }
 
 
-// CVNum
+// ConfigNum
 
-CVNum::CVNum(TInt aMin, TInt aMax, TInt aVal)
+ConfigNum::ConfigNum(TInt aMin, TInt aMax, TInt aVal)
     : iMin(aMin)
     , iMax(aMax)
     , iVal(aVal)
@@ -63,7 +63,7 @@ CVNum::CVNum(TInt aMin, TInt aMax, TInt aVal)
     }
 }
 
-CVNum::CVNum(TInt aMin, TInt aMax)
+ConfigNum::ConfigNum(TInt aMin, TInt aMax)
     : iMin(aMin)
     , iMax(aMax)
     , iVal(iMin)
@@ -73,22 +73,22 @@ CVNum::CVNum(TInt aMin, TInt aMax)
     }
 }
 
-TInt CVNum::Min() const
+TInt ConfigNum::Min() const
 {
     return iMin;
 }
 
-TInt CVNum::Max() const
+TInt ConfigNum::Max() const
 {
     return iMax;
 }
 
-TInt CVNum::Get() const
+TInt ConfigNum::Get() const
 {
     return iVal;
 }
 
-TBool CVNum::Set(TInt aVal)
+TBool ConfigNum::Set(TInt aVal)
 {
     TBool changed = false;
 
@@ -98,7 +98,7 @@ TBool CVNum::Set(TInt aVal)
 
     if (aVal != iVal) {
         iVal = aVal;
-        CVal::NotifySubscribers();
+        ConfigVal::NotifySubscribers();
         changed = true;
     }
 
@@ -106,31 +106,31 @@ TBool CVNum::Set(TInt aVal)
 }
 
 
-// CVChoice
+// ConfigChoice
 
-CVChoice::CVChoice()
+ConfigChoice::ConfigChoice()
     : iSelected(0)
 {
 }
 
-CVChoice::~CVChoice()
+ConfigChoice::~ConfigChoice()
 {
 }
 
 
-void CVChoice::Add(const Brx& aVal)
+void ConfigChoice::Add(const Brx& aVal)
 {
     Brn val(aVal);
     std::vector<Brn>::iterator it;
     for (it = iAllowedValues.begin(); it != iAllowedValues.end(); it++) {
         if (*it == aVal) {
-            THROW(AvConfigValueAlreadyExists);
+            THROW(AvConfigValueExists);
         }
     }
     iAllowedValues.push_back(val);
 }
 
-std::vector<const Brx*> CVChoice::Options()
+std::vector<const Brx*> ConfigChoice::Options()
 {
     std::vector<const Brx*> options;
     std::vector<Brn>::iterator it;
@@ -140,13 +140,13 @@ std::vector<const Brx*> CVChoice::Options()
     return options;
 }
 
-TUint CVChoice::Get() const
+TUint ConfigChoice::Get() const
 {
     ASSERT(iAllowedValues.size() > 0);
     return iSelected;
 }
 
-TBool CVChoice::Set(TUint aIndex)
+TBool ConfigChoice::Set(TUint aIndex)
 {
     TBool changed = false;
 
@@ -156,7 +156,7 @@ TBool CVChoice::Set(TUint aIndex)
 
     if (aIndex != iSelected) {
         iSelected = aIndex;
-        CVal::NotifySubscribers();
+        ConfigVal::NotifySubscribers();
         changed = true;
     }
 
@@ -164,24 +164,24 @@ TBool CVChoice::Set(TUint aIndex)
 }
 
 
-// CVText
+// ConfigText
 
-CVText::CVText(TUint aMaxBytes)
+ConfigText::ConfigText(TUint aMaxBytes)
     : iText(aMaxBytes)
 {
 }
 
-TUint CVText::MaxLength() const
+TUint ConfigText::MaxLength() const
 {
     return iText.MaxBytes();
 }
 
-const Brx& CVText::Get() const
+const Brx& ConfigText::Get() const
 {
     return iText;
 }
 
-TBool CVText::Set(const Brx& aText)
+TBool ConfigText::Set(const Brx& aText)
 {
     TBool changed = false;
 
@@ -191,7 +191,7 @@ TBool CVText::Set(const Brx& aText)
 
     if (aText != iText) {
         iText.Replace(aText);
-        CVal::NotifySubscribers();
+        ConfigVal::NotifySubscribers();
         changed = true;
     }
 
@@ -206,23 +206,23 @@ ConfigurationManager::~ConfigurationManager() {}
 template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
 {
     if (HasNum(aId) || HasChoice(aId) || HasText(aId)) {
-        THROW(AvConfigIdAlreadyExists);
+        THROW(AvConfigIdExists);
     }
 
     aMap.Add(aId, aVal);
 }
 
-void ConfigurationManager::Add(const Brx& aId, CVNum& aNum)
+void ConfigurationManager::Add(const Brx& aId, ConfigNum& aNum)
 {
     Add(iMapNum, aId, aNum);
 }
 
-void ConfigurationManager::Add(const Brx& aId, CVChoice& aChoice)
+void ConfigurationManager::Add(const Brx& aId, ConfigChoice& aChoice)
 {
     Add(iMapChoice, aId, aChoice);
 }
 
-void ConfigurationManager::Add(const Brx& aId, CVText& aText)
+void ConfigurationManager::Add(const Brx& aId, ConfigText& aText)
 {
     Add(iMapText, aId, aText);
 }
@@ -232,7 +232,7 @@ TBool ConfigurationManager::Has(const Brx& aId)
     return HasNum(aId) || HasChoice(aId) || HasText(aId);
 }
 
-CVal& ConfigurationManager::Get(const Brx& aId)
+ConfigVal& ConfigurationManager::Get(const Brx& aId)
 {
     ASSERT(Has(aId));
     if (HasNum(aId)) {
@@ -251,7 +251,7 @@ TBool ConfigurationManager::HasNum(const Brx& aId)
     return iMapNum.Has(aId);
 }
 
-CVNum& ConfigurationManager::GetNum(const Brx& aId)
+ConfigNum& ConfigurationManager::GetNum(const Brx& aId)
 {
     return iMapNum.Get(aId);
 }
@@ -261,7 +261,7 @@ TBool ConfigurationManager::HasChoice(const Brx& aId)
     return iMapChoice.Has(aId);
 }
 
-CVChoice& ConfigurationManager::GetChoice(const Brx& aId)
+ConfigChoice& ConfigurationManager::GetChoice(const Brx& aId)
 {
     return iMapChoice.Get(aId);
 }
@@ -271,7 +271,7 @@ TBool ConfigurationManager::HasText(const Brx& aId)
     return iMapText.Has(aId);
 }
 
-CVText& ConfigurationManager::GetText(const Brx& aId)
+ConfigText& ConfigurationManager::GetText(const Brx& aId)
 {
     return iMapText.Get(aId);
 }
@@ -279,7 +279,7 @@ CVText& ConfigurationManager::GetText(const Brx& aId)
 
 // StoreVal
 
-StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVal* aVal)
+StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigVal* aVal)
     : iStore(aStore)
     , iId(aId)
     , iVal(aVal)
@@ -287,7 +287,7 @@ StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferr
     , iUpdatesDeferred(aUpdatesDeferred)
     , iUpdatePending(false)
 {
-    // StoreVal takes ownership of its CVal
+    // StoreVal takes ownership of its ConfigVal
     ASSERT(iVal != NULL);
     iListenerId = aVal->Subscribe(MakeFunctor(*this, &StoreVal::NotifyChanged));
 }
@@ -318,7 +318,7 @@ void StoreVal::NotifyChanged()
 
 // StoreNum
 
-StoreNum::StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVNum* aVal)
+StoreNum::StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigNum* aVal)
     : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
     , iNum(aVal)
 {
@@ -338,7 +338,7 @@ void StoreNum::Write()
 
 // StoreChoice
 
-StoreChoice::StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVChoice* aVal)
+StoreChoice::StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigChoice* aVal)
     : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
     , iChoice(aVal)
 {
@@ -358,7 +358,7 @@ void StoreChoice::Write()
 
 // StoreText
 
-StoreText::StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVText* aVal)
+StoreText::StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigText* aVal)
     : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
     , iText(aVal)
 {
@@ -390,7 +390,7 @@ StoreManager::~StoreManager()
     AutoMutex a(iListenersLock);
     for (ListenerMap::iterator it = iListeners.begin(); it != iListeners.end(); it++) {
         ASSERT(iConfigManager.Has(it->first));
-        CVal& cVal = iConfigManager.Get(it->first);
+        ConfigVal& cVal = iConfigManager.Get(it->first);
         cVal.Unsubscribe(it->second);
     }
     // StoreManager has ownership of its StoreVals, so delete them
@@ -405,13 +405,13 @@ StoreManager::~StoreManager()
 TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax)
 {
     if (iConfigManager.HasNum(aId)) {
-        THROW(AvConfigIdAlreadyExists);
+        THROW(AvConfigIdExists);
     }
 
     Bws<sizeof(TInt)> storeVal;
     iStore.Read(aId, storeVal);
     TInt initial = Converter::BeUint32At(storeVal, 0);
-    CVNum* cVal = new CVNum(aMin, aMax, initial);
+    ConfigNum* cVal = new ConfigNum(aMin, aMax, initial);
     TUint listenerId = cVal->Subscribe(aFunc);
     AddListener(aId, listenerId);
     StoreNum* sVal = new StoreNum(iStore, aId, aUpdatesDeferred, cVal);
@@ -425,13 +425,13 @@ TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFu
 TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions)
 {
     if (iConfigManager.HasChoice(aId)) {
-        THROW(AvConfigIdAlreadyExists);
+        THROW(AvConfigIdExists);
     }
 
     Bws<sizeof(TUint)> storeVal;
     iStore.Read(aId, storeVal);
     TUint initial = Converter::BeUint32At(storeVal, 0);
-    CVChoice* cVal = new CVChoice();
+    ConfigChoice* cVal = new ConfigChoice();
     for (TUint i=0; i<aOptions.size(); i++)
     {
         cVal->Add(*aOptions[i]);
@@ -450,12 +450,12 @@ TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor
 const Brx& StoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxBytes)
 {
     if (iConfigManager.HasText(aId)) {
-        THROW(AvConfigIdAlreadyExists);
+        THROW(AvConfigIdExists);
     }
 
     Bwh storeVal(aMaxBytes);
     iStore.Read(aId, storeVal);
-    CVText* cVal = new CVText(aMaxBytes);
+    ConfigText* cVal = new ConfigText(aMaxBytes);
     cVal->Set(storeVal);
     TUint listenerId = cVal->Subscribe(aFunc);
     AddListener(aId, listenerId);

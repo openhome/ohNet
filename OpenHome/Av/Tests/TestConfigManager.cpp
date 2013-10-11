@@ -33,13 +33,13 @@ private:
     void TestAddRemoveMultipleSubscriptions();
     void TestRemoveInvalidId();
 private:
-    CVal* iCVal;
+    ConfigVal* iConfigVal;
 };
 
-class SuiteCVNum : public SuiteCVNotify
+class SuiteConfigNum : public SuiteCVNotify
 {
 public:
-    SuiteCVNum();
+    SuiteConfigNum();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -56,13 +56,13 @@ private:
     static const TInt kMin = -1;
     static const TInt kMax = 2;
     static const TInt kVal = 1;
-    CVNum* iCVal;
+    ConfigNum* iConfigVal;
 };
 
-class SuiteCVChoice : public SuiteCVNotify
+class SuiteConfigChoice : public SuiteCVNotify
 {
 public:
-    SuiteCVChoice();
+    SuiteConfigChoice();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -78,13 +78,13 @@ private:
     static const Brn kOption1;
     static const Brn kOption2;
     static const Brn kOption3;
-    CVChoice* iCVal;
+    ConfigChoice* iConfigVal;
 };
 
-class SuiteCVText : public SuiteCVNotify
+class SuiteConfigText : public SuiteCVNotify
 {
 public:
-    SuiteCVText();
+    SuiteConfigText();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -95,7 +95,7 @@ private:
     void TestSetUpdate();
     void TestSetNoUpdate();
     void TestSetValueTooLong();
-    CVText* iCVal;
+    ConfigText* iConfigVal;
 };
 
 class SuiteConfigurationManager : public SuiteUnitTest
@@ -127,12 +127,12 @@ private:
     static const Brn kIdText1;
     static const Brn kIdText2;
     ConfigurationManager* iConfigManager;
-    CVNum* iNum1;
-    CVNum* iNum2;
-    CVChoice* iChoice1;
-    CVChoice* iChoice2;
-    CVText* iText1;
-    CVText* iText2;
+    ConfigNum* iNum1;
+    ConfigNum* iNum2;
+    ConfigChoice* iChoice1;
+    ConfigChoice* iChoice2;
+    ConfigText* iText1;
+    ConfigText* iText2;
 };
 
 class SuiteRamStore : public SuiteUnitTest
@@ -167,7 +167,7 @@ private:
 private:
     static const Brn kKey1;
     ConfigRamStore* iStore;
-    CVNum* iConfigVal;
+    ConfigNum* iConfigVal;
 };
 
 class SuiteStoreNum : public SuiteUnitTest
@@ -183,7 +183,7 @@ private:
 private:
     static const Brn kKey;
     ConfigRamStore* iStore;
-    CVNum* iConfigVal;
+    ConfigNum* iConfigVal;
     StoreNum* iStoreVal;
 };
 
@@ -202,7 +202,7 @@ private:
     static const Brn kOption1;
     static const Brn kOption2;
     ConfigRamStore* iStore;
-    CVChoice* iConfigVal;
+    ConfigChoice* iConfigVal;
     StoreChoice* iStoreVal;
 };
 
@@ -220,7 +220,7 @@ private:
     static const Brn kKey;
     static const Brn kText;
     ConfigRamStore* iStore;
-    CVText* iConfigVal;
+    ConfigText* iConfigVal;
     StoreText* iStoreVal;
 };
 
@@ -297,394 +297,394 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
 void SuiteCVSubscriptions::Setup()
 {
     SuiteCVNotify::Setup();
-    iCVal = new CVNum(1,1);
+    iConfigVal = new ConfigNum(1,1);
 }
 
 void SuiteCVSubscriptions::TearDown()
 {
     SuiteCVNotify::TearDown();
-    delete iCVal;
+    delete iConfigVal;
 }
 
 void SuiteCVSubscriptions::TestNoSubscriptions()
 {
-    // test that a CVal can be successfully destructed without ever having a
+    // test that a ConfigVal can be successfully destructed without ever having a
     // subscription on it.
-    delete iCVal;
-    iCVal = NULL;
+    delete iConfigVal;
+    iConfigVal = NULL;
 }
 
 void SuiteCVSubscriptions::TestAddRemoveSubscription()
 {
     // test adding and removing a single subscription - will assert at
     // destruction if error
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
-    iCVal->Unsubscribe(id);
-    delete iCVal;
-    iCVal = NULL;
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
+    iConfigVal->Unsubscribe(id);
+    delete iConfigVal;
+    iConfigVal = NULL;
 }
 
 void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
 {
     // test adding and removing multiple subscriptions (and test id ordering)
     // - will assert at destruction if error
-    TUint id1 = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TUint id1 = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id1 == 0);
-    TUint id2 = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TUint id2 = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id2 == 1);
-    iCVal->Unsubscribe(id1);
-    iCVal->Unsubscribe(id2);
-    delete iCVal;
-    iCVal = NULL;
+    iConfigVal->Unsubscribe(id1);
+    iConfigVal->Unsubscribe(id2);
+    delete iConfigVal;
+    iConfigVal = NULL;
 }
 
 void SuiteCVSubscriptions::TestRemoveInvalidId()
 {
     // test that trying to unsubscribe using an invalid id does nothing
-    iCVal->Unsubscribe(0);
+    iConfigVal->Unsubscribe(0);
 }
 
 
-// SuiteCVNum
+// SuiteConfigNum
 
-SuiteCVNum::SuiteCVNum()
-    : SuiteCVNotify("SuiteCVNum")
+SuiteConfigNum::SuiteConfigNum()
+    : SuiteCVNotify("SuiteConfigNum")
 {
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestInvalidRange));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestValueOutOfRangeConstructor));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestGet));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestGetMin));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestGetMax));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestSetUpdate));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteCVNum::TestSetValueOutOfRange));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGet));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMin));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMax));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetUpdate));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetNoUpdate));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetValueOutOfRange));
 }
 
-void SuiteCVNum::Setup()
+void SuiteConfigNum::Setup()
 {
     SuiteCVNotify::Setup();
-    iCVal = new CVNum(kMin, kMax, kVal);
+    iConfigVal = new ConfigNum(kMin, kMax, kVal);
     iChangedCount = 0;
 }
 
-void SuiteCVNum::TearDown()
+void SuiteConfigNum::TearDown()
 {
     SuiteCVNotify::TearDown();
-    delete iCVal;
+    delete iConfigVal;
 }
 
-void SuiteCVNum::TestInvalidRange()
+void SuiteConfigNum::TestInvalidRange()
 {
-    // test creating a CVNum with max < min
-    TEST_THROWS(CVNum cv(1, -1, 1), AvConfigInvalidRange);
-    TEST_THROWS(CVNum cv(1, -1), AvConfigInvalidRange);
+    // test creating a ConfigNum with max < min
+    TEST_THROWS(ConfigNum cv(1, -1, 1), AvConfigInvalidRange);
+    TEST_THROWS(ConfigNum cv(1, -1), AvConfigInvalidRange);
 }
 
-void SuiteCVNum::TestValueOutOfRangeConstructor()
+void SuiteConfigNum::TestValueOutOfRangeConstructor()
 {
-    // test creating a CVNum with val outside range min..max
-    TEST_THROWS(CVNum cv(0, 0, 1), AvConfigValueOutOfRange);
+    // test creating a ConfigNum with val outside range min..max
+    TEST_THROWS(ConfigNum cv(0, 0, 1), AvConfigValueOutOfRange);
 }
 
-void SuiteCVNum::TestGet()
+void SuiteConfigNum::TestGet()
 {
-    // test the correct value of the CVNum is returned
-    TInt val = iCVal->Get();
+    // test the correct value of the ConfigNum is returned
+    TInt val = iConfigVal->Get();
     TEST(val == kVal);
 }
 
-void SuiteCVNum::TestGetMin()
+void SuiteConfigNum::TestGetMin()
 {
     // test the correct value for min is returned
-    TInt min = iCVal->Min();
+    TInt min = iConfigVal->Min();
     TEST(min == kMin);
 }
 
-void SuiteCVNum::TestGetMax()
+void SuiteConfigNum::TestGetMax()
 {
     // test the correct value for max is returned
-    TInt max = iCVal->Max();
+    TInt max = iConfigVal->Max();
     TEST(max == kMax);
 }
 
-void SuiteCVNum::TestSetUpdate()
+void SuiteConfigNum::TestSetUpdate()
 {
-    // test that calling set with a new value updates the value of the CVNum
+    // test that calling set with a new value updates the value of the ConfigNum
     // (and that any observers are notified)
     TUint changedCount = iChangedCount;
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVNum::NotifyChanged));
-    TBool updated = iCVal->Set(kVal+1);
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigNum::NotifyChanged));
+    TBool updated = iConfigVal->Set(kVal+1);
 
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
 
-    TInt val = iCVal->Get();
+    TInt val = iConfigVal->Get();
     TEST(val == kVal+1);
 
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 }
 
-void SuiteCVNum::TestSetNoUpdate()
+void SuiteConfigNum::TestSetNoUpdate()
 {
-    // test that calling set with the existing value of CVNum causing no change
-    // to the CVNum, and that no observers are notified
+    // test that calling set with the existing value of ConfigNum causing no change
+    // to the ConfigNum, and that no observers are notified
     TUint changedCount = iChangedCount;
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVNum::NotifyChanged));
-    TBool updated = iCVal->Set(iCVal->Get());
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigNum::NotifyChanged));
+    TBool updated = iConfigVal->Set(iConfigVal->Get());
 
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
 
-    TInt val = iCVal->Get();
+    TInt val = iConfigVal->Get();
     TEST(val == kVal);
 
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 }
 
-void SuiteCVNum::TestSetValueOutOfRange()
+void SuiteConfigNum::TestSetValueOutOfRange()
 {
-    // test attempting to set CVNum's value outwith the range min..max
-    TInt valBefore = iCVal->Get();
-    TEST_THROWS(iCVal->Set(kMax+1), AvConfigValueOutOfRange);
-    TInt valAfter = iCVal->Get();
+    // test attempting to set ConfigNum's value outwith the range min..max
+    TInt valBefore = iConfigVal->Get();
+    TEST_THROWS(iConfigVal->Set(kMax+1), AvConfigValueOutOfRange);
+    TInt valAfter = iConfigVal->Get();
     TEST(valAfter == valBefore);
 
-    valBefore = iCVal->Get();
-    TEST_THROWS(iCVal->Set(kMin-1), AvConfigValueOutOfRange);
-    valAfter = iCVal->Get();
+    valBefore = iConfigVal->Get();
+    TEST_THROWS(iConfigVal->Set(kMin-1), AvConfigValueOutOfRange);
+    valAfter = iConfigVal->Get();
     TEST(valAfter == valBefore);
 }
 
 
-// SuiteCVChoice
+// SuiteConfigChoice
 
-const Brn SuiteCVChoice::kOption1("Option1");
-const Brn SuiteCVChoice::kOption2("Option2");
-const Brn SuiteCVChoice::kOption3("Option3");
+const Brn SuiteConfigChoice::kOption1("Option1");
+const Brn SuiteConfigChoice::kOption2("Option2");
+const Brn SuiteConfigChoice::kOption3("Option3");
 
-SuiteCVChoice::SuiteCVChoice()
-    : SuiteCVNotify("SuiteCVChoice")
+SuiteConfigChoice::SuiteConfigChoice()
+    : SuiteCVNotify("SuiteConfigChoice")
 {
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestAdd));
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestAddDuplicate));
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestGet));
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestGetNoOptions));
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestSetUpdate));
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteCVChoice::TestSetIndexOutOfRange));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAddDuplicate));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGet));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoOptions));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetUpdate));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetIndexOutOfRange));
 }
 
-void SuiteCVChoice::Setup()
+void SuiteConfigChoice::Setup()
 {
     SuiteCVNotify::Setup();
-    iCVal = new CVChoice();
+    iConfigVal = new ConfigChoice();
 }
 
-void SuiteCVChoice::TearDown()
+void SuiteConfigChoice::TearDown()
 {
     SuiteCVNotify::TearDown();
-    delete iCVal;
+    delete iConfigVal;
 }
 
-void SuiteCVChoice::TestAdd()
+void SuiteConfigChoice::TestAdd()
 {
-    // test that after options are added to a CVChoice, they are available when
+    // test that after options are added to a ConfigChoice, they are available when
     // Options() is called
-    iCVal->Add(kOption1);
-    std::vector<const Brx*> options = iCVal->Options();
+    iConfigVal->Add(kOption1);
+    std::vector<const Brx*> options = iConfigVal->Options();
 
-    iCVal->Add(kOption2);
-    options = iCVal->Options();
+    iConfigVal->Add(kOption2);
+    options = iConfigVal->Options();
     TEST(options.size() == 2);
     TEST(*options[0] == kOption1);
     TEST(*options[1] == kOption2);
 
-    iCVal->Add(kOption3);
-    options = iCVal->Options();
+    iConfigVal->Add(kOption3);
+    options = iConfigVal->Options();
     TEST(options.size() == 3);
     TEST(*options[0] == kOption1);
     TEST(*options[1] == kOption2);
     TEST(*options[2] == kOption3);
 }
 
-void SuiteCVChoice::TestAddDuplicate()
+void SuiteConfigChoice::TestAddDuplicate()
 {
     // test that attempting to add a duplicate option fails
-    iCVal->Add(kOption1);
-    TEST_THROWS(iCVal->Add(kOption1), AvConfigValueAlreadyExists);
+    iConfigVal->Add(kOption1);
+    TEST_THROWS(iConfigVal->Add(kOption1), AvConfigValueExists);
 }
 
-void SuiteCVChoice::TestGet()
+void SuiteConfigChoice::TestGet()
 {
     // test that adding some options and then calling Get() (without a prior
     // Set()) returns the first option
 
-    iCVal->Add(kOption1);
-    iCVal->Add(kOption2);
-    iCVal->Add(kOption3);
+    iConfigVal->Add(kOption1);
+    iConfigVal->Add(kOption2);
+    iConfigVal->Add(kOption3);
 
-    TUint selected = iCVal->Get();
+    TUint selected = iConfigVal->Get();
     TEST(selected == 0); // the first option should be the default
 }
 
-void SuiteCVChoice::TestGetNoOptions()
+void SuiteConfigChoice::TestGetNoOptions()
 {
     // test that calling Get() before any options are added causes an assert
-    TEST_THROWS(iCVal->Get(), AssertionFailed);
+    TEST_THROWS(iConfigVal->Get(), AssertionFailed);
 }
 
-void SuiteCVChoice::TestSetUpdate()
+void SuiteConfigChoice::TestSetUpdate()
 {
-    // test that changing the selected value causes CVChoice to be updated (and
+    // test that changing the selected value causes ConfigChoice to be updated (and
     // any observers notified)
-    iCVal->Add(kOption1);
-    iCVal->Add(kOption2);
-    iCVal->Add(kOption3);
+    iConfigVal->Add(kOption1);
+    iConfigVal->Add(kOption2);
+    iConfigVal->Add(kOption3);
 
     TUint changedCount = iChangedCount;
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVChoice::NotifyChanged));
-    TBool updated = iCVal->Set(1);
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigChoice::NotifyChanged));
+    TBool updated = iConfigVal->Set(1);
 
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
 
-    TUint selected = iCVal->Get();
+    TUint selected = iConfigVal->Get();
     TEST(selected == 1);
 
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 }
 
-void SuiteCVChoice::TestSetNoUpdate()
+void SuiteConfigChoice::TestSetNoUpdate()
 {
-    // test that setting the same option index results in no change to CVChoice
+    // test that setting the same option index results in no change to ConfigChoice
     // (and observers aren't notified)
-    iCVal->Add(kOption1);
-    iCVal->Add(kOption2);
-    iCVal->Add(kOption3);
+    iConfigVal->Add(kOption1);
+    iConfigVal->Add(kOption2);
+    iConfigVal->Add(kOption3);
 
     TUint changedCount = iChangedCount;
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVChoice::NotifyChanged));
-    TBool updated = iCVal->Set(0);
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigChoice::NotifyChanged));
+    TBool updated = iConfigVal->Set(0);
 
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
 
-    TUint selected = iCVal->Get();
+    TUint selected = iConfigVal->Get();
     TEST(selected == 0);
 
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 }
 
-void SuiteCVChoice::TestSetIndexOutOfRange()
+void SuiteConfigChoice::TestSetIndexOutOfRange()
 {
-    // test that attempting to set CVChoice to an invalid option index results
+    // test that attempting to set ConfigChoice to an invalid option index results
     // in an exception
-    iCVal->Add(kOption1);
-    iCVal->Add(kOption2);
-    iCVal->Add(kOption3);
+    iConfigVal->Add(kOption1);
+    iConfigVal->Add(kOption2);
+    iConfigVal->Add(kOption3);
 
-    TUint selectedBefore = iCVal->Get();
-    TEST_THROWS(iCVal->Set(3), AvConfigIndexOutOfRange);
-    TUint selectedAfter = iCVal->Get();
+    TUint selectedBefore = iConfigVal->Get();
+    TEST_THROWS(iConfigVal->Set(3), AvConfigIndexOutOfRange);
+    TUint selectedAfter = iConfigVal->Get();
     TEST(selectedAfter == selectedBefore);
 }
 
 
-// SuiteCVText
+// SuiteConfigText
 
-SuiteCVText::SuiteCVText()
-    : SuiteCVNotify("SuiteCVText")
+SuiteConfigText::SuiteConfigText()
+    : SuiteCVNotify("SuiteConfigText")
 {
-    AddTest(MakeFunctor(*this, &SuiteCVText::TestMaxLength));
-    AddTest(MakeFunctor(*this, &SuiteCVText::TestGet));
-    AddTest(MakeFunctor(*this, &SuiteCVText::TestSetUpdate));
-    AddTest(MakeFunctor(*this, &SuiteCVText::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteCVText::TestSetValueTooLong));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestGet));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetUpdate));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetNoUpdate));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetValueTooLong));
 }
 
-void SuiteCVText::Setup()
+void SuiteConfigText::Setup()
 {
     SuiteCVNotify::Setup();
-    iCVal = new CVText(kMaxLength);
+    iConfigVal = new ConfigText(kMaxLength);
 }
 
-void SuiteCVText::TearDown()
+void SuiteConfigText::TearDown()
 {
     SuiteCVNotify::TearDown();
-    delete iCVal;
+    delete iConfigVal;
 }
 
-void SuiteCVText::TestMaxLength()
+void SuiteConfigText::TestMaxLength()
 {
     // test that the max possible length of the text buf matches init params
-    TEST(iCVal->MaxLength() == kMaxLength);
+    TEST(iConfigVal->MaxLength() == kMaxLength);
 }
 
-void SuiteCVText::TestGet()
+void SuiteConfigText::TestGet()
 {
     // test that calling Get() before Set() results in empty buffer being
     // returned
-    const Brx& buf = iCVal->Get();
+    const Brx& buf = iConfigVal->Get();
 
     TEST(buf.Bytes() == 0);
 }
 
-void SuiteCVText::TestSetUpdate()
+void SuiteConfigText::TestSetUpdate()
 {
-    // test that updating CVText with a new value results in CVText being
-    // changed and any observers notified
+    // test that updating ConfigText with a new value results in ConfigText
+    // being changed and any observers notified
     TUint changedCount = iChangedCount;
     Brn text("abcdefghijklmnopqrstuvwxyz");
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVText::NotifyChanged));
-    TBool updated = iCVal->Set(text);
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    TBool updated = iConfigVal->Set(text);
 
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
 
-    const Brx& buf = iCVal->Get();
+    const Brx& buf = iConfigVal->Get();
     TEST(buf == text);
 
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 }
 
-void SuiteCVText::TestSetNoUpdate()
+void SuiteConfigText::TestSetNoUpdate()
 {
-    // test that updating CVText with the same value results in no change to
-    // CVText and no observers being notified
+    // test that updating ConfigText with the same value results in no change to
+    // ConfigText and no observers being notified
     TUint changedCount = iChangedCount;
 
     // test updating the empty string, then test updating a string with
     // length > 0
     Brn empty("");
-    TUint id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVText::NotifyChanged));
-    TBool updated = iCVal->Set(empty);
+    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    TBool updated = iConfigVal->Set(empty);
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
-    const Brx& buf1 = iCVal->Get();
+    const Brx& buf1 = iConfigVal->Get();
     TEST(buf1 == empty);
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 
     Brn text("abcdefghijklmnopqrstuvwxyz");
-    updated = iCVal->Set(text);
-    id = iCVal->Subscribe(MakeFunctor(*this, &SuiteCVText::NotifyChanged));
-    updated = iCVal->Set(text);
+    updated = iConfigVal->Set(text);
+    id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    updated = iConfigVal->Set(text);
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
-    const Brx& buf2 = iCVal->Get();
+    const Brx& buf2 = iConfigVal->Get();
     TEST(buf2 == text);
-    iCVal->Unsubscribe(id);
+    iConfigVal->Unsubscribe(id);
 }
 
-void SuiteCVText::TestSetValueTooLong()
+void SuiteConfigText::TestSetValueTooLong()
 {
-    // test that attempting to set CVText to a value with length > maxbytes
+    // test that attempting to set ConfigText to a value with length > maxbytes
     // causes an exception to be thrown
     Bws<kMaxLength+1> buf;
     buf.SetBytes(buf.MaxBytes());
 
-    const Brx& bufBefore = iCVal->Get();
-    TEST_THROWS(iCVal->Set(buf), AvConfigValueTooLong);
-    const Brx& bufAfter = iCVal->Get();
+    const Brx& bufBefore = iConfigVal->Get();
+    TEST_THROWS(iConfigVal->Set(buf), AvConfigValueTooLong);
+    const Brx& bufAfter = iConfigVal->Get();
     TEST(bufAfter == bufBefore);
 }
 
@@ -709,7 +709,7 @@ SuiteConfigurationManager::SuiteConfigurationManager()
     : SuiteUnitTest("SuiteConfigurationManager")
 {
     // Creating different instances of SuiteConfigurationManager for each of
-    // CVNum, CVChoice and CVText would end up in a lot of boilerplate code.
+    // ConfigNum, ConfigChoice and ConfigText would end up in a lot of boilerplate code.
     // Just group functions for each val class in a single generic unit test
     // for each type of ConfigurationManager function to maintain clarity and
     // small test size.
@@ -728,12 +728,12 @@ SuiteConfigurationManager::SuiteConfigurationManager()
 void SuiteConfigurationManager::Setup()
 {
     iConfigManager = new ConfigurationManager();
-    iNum1 = new CVNum(kMinNum, kMaxNum, kMinNum);
-    iNum2 = new CVNum(kMinNum, kMaxNum, kMinNum+1);
-    iChoice1 = new CVChoice();
-    iChoice2 = new CVChoice();
-    iText1 = new CVText(kMaxText);
-    iText2 = new CVText(kMaxText);
+    iNum1 = new ConfigNum(kMinNum, kMaxNum, kMinNum);
+    iNum2 = new ConfigNum(kMinNum, kMaxNum, kMinNum+1);
+    iChoice1 = new ConfigChoice();
+    iChoice2 = new ConfigChoice();
+    iText1 = new ConfigText(kMaxText);
+    iText2 = new ConfigText(kMaxText);
 }
 
 void SuiteConfigurationManager::TearDown()
@@ -758,35 +758,35 @@ void SuiteConfigurationManager::TestAdd()
 
 void SuiteConfigurationManager::TestAddDuplicate()
 {
-    // test that an exception is throws if an attempt to add a CVal with the
-    // same ID is made twice
+    // test that an exception is throws if an attempt to add a ConfigVal with
+    // the same ID is made twice
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
     TEST(iConfigManager->HasNum(kIdNum1) == true);
-    CVNum& num = iConfigManager->GetNum(kIdNum1);
+    ConfigNum& num = iConfigManager->GetNum(kIdNum1);
     TEST(num == *iNum1);
 
-    TEST_THROWS(iConfigManager->Add(kIdNum1, *iNum1), AvConfigIdAlreadyExists);
+    TEST_THROWS(iConfigManager->Add(kIdNum1, *iNum1), AvConfigIdExists);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
     TEST(iConfigManager->HasChoice(kIdChoice1) == true);
-    CVChoice& choice = iConfigManager->GetChoice(kIdChoice1);
+    ConfigChoice& choice = iConfigManager->GetChoice(kIdChoice1);
     TEST(choice == *iChoice1);
 
-    TEST_THROWS(iConfigManager->Add(kIdChoice1, *iChoice1), AvConfigIdAlreadyExists);
+    TEST_THROWS(iConfigManager->Add(kIdChoice1, *iChoice1), AvConfigIdExists);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     TEST(iConfigManager->HasText(kIdText1) == true);
-    CVText& text = iConfigManager->GetText(kIdText1);
+    ConfigText& text = iConfigManager->GetText(kIdText1);
     TEST(text == *iText1);
 
-    TEST_THROWS(iConfigManager->Add(kIdText1, *iText1), AvConfigIdAlreadyExists);
+    TEST_THROWS(iConfigManager->Add(kIdText1, *iText1), AvConfigIdExists);
 
-    // attempt to add a CVChoice with same ID as existing CVNum - should fail
-    TEST_THROWS(iConfigManager->Add(kIdNum1, *iChoice1), AvConfigIdAlreadyExists);
+    // attempt to add a ConfigChoice with same ID as existing ConfigNum - should fail
+    TEST_THROWS(iConfigManager->Add(kIdNum1, *iChoice1), AvConfigIdExists);
 }
 
 void SuiteConfigurationManager::TestHasNoVals()
@@ -801,15 +801,15 @@ void SuiteConfigurationManager::TestHasValidId()
 {
     // test Has() returns true when a given ID exists
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
     TEST(iConfigManager->HasNum(kIdNum1) == true);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
     TEST(iConfigManager->HasChoice(kIdChoice1) == true);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     TEST(iConfigManager->HasText(kIdText1) == true);
 }
@@ -818,19 +818,19 @@ void SuiteConfigurationManager::TestHasInvalidId()
 {
     // test Has() returns false when IDs are present, but not the given ID
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
     TEST(iConfigManager->HasNum(kIdNum2) == false);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
     TEST(iConfigManager->HasChoice(kIdChoice2) == false);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     TEST(iConfigManager->HasText(kIdText2) == false);
 
-    // try call HasChoice() with the ID of CVNum
+    // try call HasChoice() with the ID of ConfigNum
     TEST(iConfigManager->HasChoice(kIdNum1) == false);
 }
 
@@ -838,19 +838,19 @@ void SuiteConfigurationManager::TestHasMultiple()
 {
     // test adding multiple values and calling Has() on the IDs
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
     iConfigManager->Add(kIdNum2, *iNum2);
     TEST(iConfigManager->HasNum(kIdNum1) == true);
     TEST(iConfigManager->HasNum(kIdNum2) == true);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
     iConfigManager->Add(kIdChoice2, *iChoice2);
     TEST(iConfigManager->HasChoice(kIdChoice1) == true);
     TEST(iConfigManager->HasChoice(kIdChoice2) == true);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     iConfigManager->Add(kIdText2, *iText2);
     TEST(iConfigManager->HasText(kIdText1) == true);
@@ -869,19 +869,19 @@ void SuiteConfigurationManager::TestGetValidId()
 {
     // test Get() returns the correct val when ID is present
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
-    CVNum& num = iConfigManager->GetNum(kIdNum1);
+    ConfigNum& num = iConfigManager->GetNum(kIdNum1);
     TEST(num == *iNum1);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
-    CVChoice& choice = iConfigManager->GetChoice(kIdChoice1);
+    ConfigChoice& choice = iConfigManager->GetChoice(kIdChoice1);
     TEST(choice == *iChoice1);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
-    CVText& text = iConfigManager->GetText(kIdText1);
+    ConfigText& text = iConfigManager->GetText(kIdText1);
     TEST(text == *iText1);
 }
 
@@ -889,19 +889,19 @@ void SuiteConfigurationManager::TestGetInvalidId()
 {
     // test that Get() causes an assertion when ID is not present
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
     TEST_THROWS(iConfigManager->GetNum(kIdNum2), AssertionFailed);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
     TEST_THROWS(iConfigManager->GetChoice(kIdChoice2), AssertionFailed);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     TEST_THROWS(iConfigManager->GetText(kIdText2), AssertionFailed);
 
-    // try call HasChoice() with the ID of CVNum
+    // try call HasChoice() with the ID of ConfigNum
     TEST_THROWS(iConfigManager->GetChoice(kIdNum1), AssertionFailed);
 }
 
@@ -909,28 +909,28 @@ void SuiteConfigurationManager::TestGetMultiple()
 {
     // test adding multiple values and calling Get() on the IDs
 
-    // test CVNum
+    // test ConfigNum
     iConfigManager->Add(kIdNum1, *iNum1);
     iConfigManager->Add(kIdNum2, *iNum2);
-    CVNum& num1 = iConfigManager->GetNum(kIdNum1);
+    ConfigNum& num1 = iConfigManager->GetNum(kIdNum1);
     TEST(num1 == *iNum1);
-    CVNum& num2 = iConfigManager->GetNum(kIdNum2);
+    ConfigNum& num2 = iConfigManager->GetNum(kIdNum2);
     TEST(num2 == *iNum2);
 
-    // test CVChoice
+    // test ConfigChoice
     iConfigManager->Add(kIdChoice1, *iChoice1);
     iConfigManager->Add(kIdChoice2, *iChoice2);
-    CVChoice& choice1 = iConfigManager->GetChoice(kIdChoice1);
+    ConfigChoice& choice1 = iConfigManager->GetChoice(kIdChoice1);
     TEST(choice1 == *iChoice1);
-    CVChoice& choice2 = iConfigManager->GetChoice(kIdChoice2);
+    ConfigChoice& choice2 = iConfigManager->GetChoice(kIdChoice2);
     TEST(choice2 == *iChoice2);
 
-    // test CVText
+    // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     iConfigManager->Add(kIdText2, *iText2);
-    CVText& text1 = iConfigManager->GetText(kIdText1);
+    ConfigText& text1 = iConfigManager->GetText(kIdText1);
     TEST(text1 == *iText1);
-    CVText& text2 = iConfigManager->GetText(kIdText2);
+    ConfigText& text2 = iConfigManager->GetText(kIdText2);
     TEST(text2 == *iText2);
 }
 
@@ -1050,7 +1050,7 @@ SuiteStoreVal::SuiteStoreVal()
 void SuiteStoreVal::Setup()
 {
     iStore = new ConfigRamStore();
-    iConfigVal = new CVNum(0, 1, 0);
+    iConfigVal = new ConfigNum(0, 1, 0);
 }
 
 void SuiteStoreVal::TearDown()
@@ -1107,7 +1107,7 @@ SuiteStoreNum::SuiteStoreNum()
 void SuiteStoreNum::Setup()
 {
     iStore = new ConfigRamStore();
-    iConfigVal = new CVNum(0, 1, 0);
+    iConfigVal = new ConfigNum(0, 1, 0);
     iStoreVal = new StoreNum(*iStore, kKey, true, iConfigVal);
 }
 
@@ -1162,7 +1162,7 @@ SuiteStoreChoice::SuiteStoreChoice()
 void SuiteStoreChoice::Setup()
 {
     iStore = new ConfigRamStore();
-    iConfigVal = new CVChoice();
+    iConfigVal = new ConfigChoice();
     iConfigVal->Add(kOption1);
     iConfigVal->Add(kOption2);
     iStoreVal = new StoreChoice(*iStore, kKey, true, iConfigVal);
@@ -1218,7 +1218,7 @@ SuiteStoreText::SuiteStoreText()
 void SuiteStoreText::Setup()
 {
     iStore = new ConfigRamStore();
-    iConfigVal = new CVText(kText.Bytes());
+    iConfigVal = new ConfigText(kText.Bytes());
     iStoreVal = new StoreText(*iStore, kKey, true, iConfigVal);
 }
 
@@ -1303,7 +1303,7 @@ void SuiteStoreManager::NotifyChanged()
 
 void SuiteStoreManager::TestCreateNum()
 {
-    const CVNum val(0, 1, 0);
+    const ConfigNum val(0, 1, 0);
 
     // try creating from key that doesn't exist in store
     TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max()), StoreKeyNotFound);
@@ -1315,17 +1315,17 @@ void SuiteStoreManager::TestCreateNum()
     TInt initialVal = iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max());
     TEST(initialVal == val.Get());
     TEST(iConfigManager->HasNum(kKey1) == true);
-    CVNum& confVal = iConfigManager->GetNum(kKey1);
+    ConfigNum& confVal = iConfigManager->GetNum(kKey1);
     TEST(confVal == val);
 
     // try creating from key that already exists as a config value
-    TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max()), AvConfigIdAlreadyExists);
+    TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max()), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWriteImmediateNum()
 {
     // test that immediate writes work
-    const CVNum val(0, 1, 0);
+    const ConfigNum val(0, 1, 0);
 
     // create value in store
     Bwh valBuf(sizeof(TInt));
@@ -1335,7 +1335,7 @@ void SuiteStoreManager::TestWriteImmediateNum()
 
     // test that callback functor has been added to config val subscribers correctly
     TEST(iConfigManager->HasNum(kKey1) == true);
-    CVNum& confVal = iConfigManager->GetNum(kKey1);
+    ConfigNum& confVal = iConfigManager->GetNum(kKey1);
     confVal.Set(1);
     TEST(iChangedCount == 1);
 
@@ -1349,7 +1349,7 @@ void SuiteStoreManager::TestWriteImmediateNum()
 void SuiteStoreManager::TestWriteDeferredNum()
 {
     // test that deferred writes work as expected
-    const CVNum val(0, 1, 0);
+    const ConfigNum val(0, 1, 0);
 
     // create a value
     Bwh valBuf(sizeof(TInt));
@@ -1359,7 +1359,7 @@ void SuiteStoreManager::TestWriteDeferredNum()
 
     // update the config value - value in store should NOT be updated
     TEST(iConfigManager->HasNum(kKey1) == true);
-    CVNum& confVal = iConfigManager->GetNum(kKey1);
+    ConfigNum& confVal = iConfigManager->GetNum(kKey1);
     // get original val
     Bwh expectedBuf(sizeof(TInt));
     expectedBuf.Append(confVal.Get());
@@ -1381,7 +1381,7 @@ void SuiteStoreManager::TestWriteDeferredNum()
 
 void SuiteStoreManager::TestCreateChoice()
 {
-    CVChoice val;
+    ConfigChoice val;
     val.Add(kFalse);
     val.Add(kTrue);
 
@@ -1399,17 +1399,17 @@ void SuiteStoreManager::TestCreateChoice()
     TUint initialVal = iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options);
     TEST(initialVal == val.Get());
     TEST(iConfigManager->HasChoice(kKey1) == true);
-    CVChoice& confVal = iConfigManager->GetChoice(kKey1);
+    ConfigChoice& confVal = iConfigManager->GetChoice(kKey1);
     TEST(confVal == val);
 
     // try creating from key that already exists as a config value
-    TEST_THROWS(iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options), AvConfigIdAlreadyExists);
+    TEST_THROWS(iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWriteImmediateChoice()
 {
     // test that immediate writes work
-    CVChoice val;
+    ConfigChoice val;
     val.Add(kFalse);
     val.Add(kTrue);
 
@@ -1425,7 +1425,7 @@ void SuiteStoreManager::TestWriteImmediateChoice()
 
     // test that callback functor has been added to config val subscribers correctly
     TEST(iConfigManager->HasChoice(kKey1) == true);
-    CVChoice& confVal = iConfigManager->GetChoice(kKey1);
+    ConfigChoice& confVal = iConfigManager->GetChoice(kKey1);
     confVal.Set(1);
     TEST(iChangedCount == 1);
 
@@ -1439,7 +1439,7 @@ void SuiteStoreManager::TestWriteImmediateChoice()
 void SuiteStoreManager::TestWriteDeferredChoice()
 {
     // test that deferred writes work as expected
-    CVChoice val;
+    ConfigChoice val;
     val.Add(kFalse);
     val.Add(kTrue);
 
@@ -1455,7 +1455,7 @@ void SuiteStoreManager::TestWriteDeferredChoice()
 
     // update the config value - value in store should NOT be updated
     TEST(iConfigManager->HasChoice(kKey1) == true);
-    CVChoice& confVal = iConfigManager->GetChoice(kKey1);
+    ConfigChoice& confVal = iConfigManager->GetChoice(kKey1);
     // get original val
     Bwh expectedBuf(sizeof(TUint));
     expectedBuf.Append(confVal.Get());
@@ -1477,7 +1477,7 @@ void SuiteStoreManager::TestWriteDeferredChoice()
 
 void SuiteStoreManager::TestCreateText()
 {
-    CVText val(kTextMaxBytes);
+    ConfigText val(kTextMaxBytes);
     val.Set(kText1);
 
     // try creating from key that doesn't exist in store
@@ -1490,17 +1490,17 @@ void SuiteStoreManager::TestCreateText()
     const Brx& initialVal = iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes);
     TEST(initialVal == val.Get());
     TEST(iConfigManager->HasText(kKey1) == true);
-    CVText& confVal = iConfigManager->GetText(kKey1);
+    ConfigText& confVal = iConfigManager->GetText(kKey1);
     TEST(confVal == val);
 
     // try creating from key that already exists as a config value
-    TEST_THROWS(iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), AvConfigIdAlreadyExists);
+    TEST_THROWS(iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWriteImmediateText()
 {
     // test that immediate writes work
-    CVText val(kTextMaxBytes);
+    ConfigText val(kTextMaxBytes);
     val.Set(kText1);
 
     // create value in store
@@ -1511,7 +1511,7 @@ void SuiteStoreManager::TestWriteImmediateText()
 
     // test that callback functor has been added to config val subscribers correctly
     TEST(iConfigManager->HasText(kKey1) == true);
-    CVText& confVal = iConfigManager->GetText(kKey1);
+    ConfigText& confVal = iConfigManager->GetText(kKey1);
     confVal.Set(kText2);
     TEST(iChangedCount == 1);
 
@@ -1525,7 +1525,7 @@ void SuiteStoreManager::TestWriteImmediateText()
 void SuiteStoreManager::TestWriteDeferredText()
 {
     // test that deferred writes work as expected
-    CVText val(kTextMaxBytes);
+    ConfigText val(kTextMaxBytes);
     val.Set(kText1);
 
     // create a value
@@ -1536,7 +1536,7 @@ void SuiteStoreManager::TestWriteDeferredText()
 
     // update the config value - value in store should NOT be updated
     TEST(iConfigManager->HasText(kKey1) == true);
-    CVText& confVal = iConfigManager->GetText(kKey1);
+    ConfigText& confVal = iConfigManager->GetText(kKey1);
     // get original val
     Bwh expectedBuf(kTextMaxBytes);
     expectedBuf.Append(confVal.Get());
@@ -1562,7 +1562,7 @@ void SuiteStoreManager::TestCreateDiffTypesSameKey()
     // store using the same key fails
 
     // create a num
-    const CVNum valNum(0, 1, 0);
+    const ConfigNum valNum(0, 1, 0);
     Bwh valBufNum(sizeof(TInt));
     valBufNum.Append(valNum.Get());
     iStore->Write(kKey1, valBufNum);
@@ -1572,10 +1572,10 @@ void SuiteStoreManager::TestCreateDiffTypesSameKey()
     std::vector<const Brx*> options;
     options.push_back(&kFalse);
     options.push_back(&kTrue);
-    TEST_THROWS(iStoreManager->CreateChoice(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options), AvConfigIdAlreadyExists);
+    TEST_THROWS(iStoreManager->CreateChoice(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options), AvConfigIdExists);
 
     // try create a text with same key
-    TEST_THROWS(iStoreManager->CreateText(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), AvConfigIdAlreadyExists);
+    TEST_THROWS(iStoreManager->CreateText(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWritePendingUpdates()
@@ -1583,15 +1583,15 @@ void SuiteStoreManager::TestWritePendingUpdates()
     // test writing pending updates for multiple different values
 
     // create a num
-    const CVNum valNum(0, 1, 0);
+    const ConfigNum valNum(0, 1, 0);
     Bwh valBufNum(sizeof(TInt));
     valBufNum.Append(valNum.Get());
     iStore->Write(kKey1, valBufNum);
     iStoreManager->CreateNum(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), valNum.Min(), valNum.Max());
-    CVNum& confValNum = iConfigManager->GetNum(kKey1);
+    ConfigNum& confValNum = iConfigManager->GetNum(kKey1);
 
     // create a choice
-    CVChoice valChoice;
+    ConfigChoice valChoice;
     valChoice.Add(kFalse);
     valChoice.Add(kTrue);
     std::vector<const Brx*> options;
@@ -1601,16 +1601,16 @@ void SuiteStoreManager::TestWritePendingUpdates()
     valBufChoice.Append(valChoice.Get());
     iStore->Write(kKey2, valBufChoice);
     iStoreManager->CreateChoice(kKey2, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options);
-    CVChoice& confValChoice = iConfigManager->GetChoice(kKey2);
+    ConfigChoice& confValChoice = iConfigManager->GetChoice(kKey2);
 
     // create a text
-    CVText valText(kTextMaxBytes);
+    ConfigText valText(kTextMaxBytes);
     valText.Set(kText1);
     Bwh valBufText(kTextMaxBytes);
     valBufText.Append(valText.Get());
     iStore->Write(kKey3, valBufText);
     iStoreManager->CreateText(kKey3, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes);
-    CVText& confValText = iConfigManager->GetText(kKey3);
+    ConfigText& confValText = iConfigManager->GetText(kKey3);
 
     // change all config vals
     Bwh expectedBufNum(sizeof(TInt));
@@ -1657,9 +1657,9 @@ void TestConfigManager()
 {
     Runner runner("ConfigManager tests\n");
     runner.Add(new SuiteCVSubscriptions());
-    runner.Add(new SuiteCVNum());
-    runner.Add(new SuiteCVChoice());
-    runner.Add(new SuiteCVText());
+    runner.Add(new SuiteConfigNum());
+    runner.Add(new SuiteConfigChoice());
+    runner.Add(new SuiteConfigText());
     runner.Add(new SuiteConfigurationManager());
     runner.Add(new SuiteRamStore());
     runner.Add(new SuiteStoreVal());
