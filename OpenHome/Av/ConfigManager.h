@@ -5,6 +5,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Av/FunctorBuf.h>
+#include <OpenHome/Av/FunctorInt.h>
+#include <OpenHome/Av/FunctorUint.h>
+#include <OpenHome/Av/IStore.h>
 
 #include <map>
 #include <vector>
@@ -88,7 +92,7 @@ public:
     ~CVChoice();
     void Add(const Brx& aVal);
     std::vector<const Brx*> Options();
-    const Brx& Get() const;
+    TUint Get() const;
     TBool Set(TUint aIndex);
     inline TBool operator==(const CVChoice& aChoice) const;
 private:
@@ -197,7 +201,7 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aId)
     Brn id(aId);
     AutoMutex a(iLock);
     typename Map::iterator it = iMap.find(id);
-    ASSERT(it != iMap.end());
+    ASSERT(it != iMap.end()); // Has() should have been called prior to this
 
     return *(it->second);
 }
@@ -219,6 +223,9 @@ public: // from IConfigurationManager
     void Add(const Brx& aId, CVChoice& aChoice);
     void Add(const Brx& aId, CVText& aText);
 
+    TBool Has(const Brx& aId);
+    CVal& Get(const Brx& aId);
+
     TBool HasNum(const Brx& aId);
     CVNum& GetNum(const Brx& aId);
     TBool HasChoice(const Brx& aId);
@@ -233,6 +240,122 @@ private:
     SerialisedMap<CVText> iMapText;
 };
 
+/*
+ * Interface for value types able to have deferred updates and that know how to
+ * write their value out to a store.
+ */
+class IStoreVal
+{
+public:
+    virtual TBool UpdatePending() = 0;
+    virtual void Write() = 0;
+};
+
+/*
+ * Wrapper class for ConfigVals that hold a reference to a read/write store and
+ * should know how to write their value out to the store. Writes can be
+ * immediate (i.e., upon update) or deferred (i.e., at power down).
+ */
+class StoreVal : public IStoreVal
+{
+protected:
+    StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVal* aVal);
+public:
+    ~StoreVal();
+public: // from IStoreVal
+    TBool UpdatePending();
+    void Write() = 0;   // can maybe do a default implementation of this, with only the part that converts to rwstore's native type being left to a function that can be overridden
+private:
+    void NotifyChanged();
+protected:
+    IStoreReadWrite& iStore;
+    const Brx& iId;
+    Mutex iLock;
+    TBool iUpdatePending;
+private:
+    CVal* iVal;
+    TUint iListenerId;
+    const TBool iUpdatesDeferred;
+};
+
+class StoreNum : public StoreVal
+{
+public:
+    StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVNum* aVal);
+public: // from StoreVal
+    void Write();
+private:
+    CVNum* iNum;
+};
+
+class StoreChoice : public StoreVal
+{
+public:
+    StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVChoice* aVal);
+public: // from StoreVal
+    void Write();
+private:
+    CVChoice* iChoice;
+};
+
+class StoreText : public StoreVal
+{
+public:
+    StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVText* aVal);
+public: // from StoreVal
+    void Write();
+private:
+    CVText* iText;
+};
+
+/*
+ * Class handling access to read/write store on behalf of any modules creating
+ * config vals.
+ */
+class StoreManager
+{
+public:
+    StoreManager(IStoreReadWrite& aStore, ConfigurationManager& aConfigManager);
+    ~StoreManager();
+    TInt CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax);
+    TUint CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions);
+    const Brx& CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxBytes);
+    void WritePendingUpdates();
+private:
+    void AddListener(const Brx& aId, TUint aListenerId);
+    void Add(const Brx& aId, TBool aUpdatesDeferred, StoreVal* aSVal);
+private:
+    IStoreReadWrite& iStore;
+    ConfigurationManager& iConfigManager;
+    Mutex iUpdateLock;
+    Mutex iListenersLock;
+    typedef std::map<Brn, StoreVal*, BufferCmp> StoreMap;
+    typedef std::map<Brn, TUint, BufferCmp> ListenerMap;
+    StoreMap iUpdateImmediate;
+    StoreMap iUpdateDeferred;
+    ListenerMap iListeners;
+};
+
+/*
+ * Class providing a basic implementation of a read/write store for storing
+ * configuration in memory (no file writing, so no persistence between runs).
+ */
+class ConfigRamStore : public IStoreReadWrite
+{
+public:
+    ConfigRamStore();
+    ~ConfigRamStore();
+public: // from IStoreReadWrite
+    void Read(const Brx& aKey, Bwx& aDest);
+    void Write(const Brx& aKey, const Brx& aSource);
+    void Delete(const Brx& aKey);
+private:
+    void Clear();
+private:
+    typedef std::map<Brn, Brh*, BufferCmp> Map;
+    Map iMap;
+    Mutex iLock;
+};
 
 } // namespace Av
 } // namespace OpenHome

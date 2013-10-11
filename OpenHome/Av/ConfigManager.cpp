@@ -1,4 +1,5 @@
 #include <OpenHome/Av/ConfigManager.h>
+#include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -139,11 +140,10 @@ std::vector<const Brx*> CVChoice::Options()
     return options;
 }
 
-const Brx& CVChoice::Get() const
+TUint CVChoice::Get() const
 {
     ASSERT(iAllowedValues.size() > 0);
-
-    return iAllowedValues[iSelected];
+    return iSelected;
 }
 
 TBool CVChoice::Set(TUint aIndex)
@@ -205,7 +205,7 @@ ConfigurationManager::~ConfigurationManager() {}
 
 template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
 {
-    if (iMapNum.Has(aId) || iMapChoice.Has(aId) || iMapText.Has(aId)) {
+    if (HasNum(aId) || HasChoice(aId) || HasText(aId)) {
         THROW(AvConfigIdAlreadyExists);
     }
 
@@ -225,6 +225,25 @@ void ConfigurationManager::Add(const Brx& aId, CVChoice& aChoice)
 void ConfigurationManager::Add(const Brx& aId, CVText& aText)
 {
     Add(iMapText, aId, aText);
+}
+
+TBool ConfigurationManager::Has(const Brx& aId)
+{
+    return HasNum(aId) || HasChoice(aId) || HasText(aId);
+}
+
+CVal& ConfigurationManager::Get(const Brx& aId)
+{
+    ASSERT(Has(aId));
+    if (HasNum(aId)) {
+        return GetNum(aId);
+    }
+    else if (HasChoice(aId)) {
+        return GetChoice(aId);
+    }
+    else {
+        return GetText(aId);
+    }
 }
 
 TBool ConfigurationManager::HasNum(const Brx& aId)
@@ -255,4 +274,300 @@ TBool ConfigurationManager::HasText(const Brx& aId)
 CVText& ConfigurationManager::GetText(const Brx& aId)
 {
     return iMapText.Get(aId);
+}
+
+
+// StoreVal
+
+StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVal* aVal)
+    : iStore(aStore)
+    , iId(aId)
+    , iVal(aVal)
+    , iLock("SVLK")
+    , iUpdatesDeferred(aUpdatesDeferred)
+    , iUpdatePending(false)
+{
+    // StoreVal takes ownership of its CVal
+    ASSERT(iVal != NULL);
+    iListenerId = aVal->Subscribe(MakeFunctor(*this, &StoreVal::NotifyChanged));
+}
+
+StoreVal::~StoreVal()
+{
+    iVal->Unsubscribe(iListenerId);
+    delete iVal;
+}
+
+TBool StoreVal::UpdatePending()
+{
+    AutoMutex a(iLock);
+    return iUpdatePending;
+}
+
+void StoreVal::NotifyChanged()
+{
+    iLock.Wait();
+    iUpdatePending = true;
+    iLock.Signal();
+    if (!iUpdatesDeferred) {
+        // the Write() method of classes deriving from this should regain iLock to set iUpdatePending
+        Write();
+    }
+}
+
+
+// StoreNum
+
+StoreNum::StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVNum* aVal)
+    : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
+    , iNum(aVal)
+{
+}
+
+void StoreNum::Write()
+{
+    AutoMutex a(iLock);
+    if (iUpdatePending) {
+        iUpdatePending = false;
+        Bws<sizeof(TInt)> buf;
+        buf.Append(iNum->Get());
+        iStore.Write(iId, buf);
+    }
+}
+
+
+// StoreChoice
+
+StoreChoice::StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVChoice* aVal)
+    : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
+    , iChoice(aVal)
+{
+}
+
+void StoreChoice::Write()
+{
+    AutoMutex a(iLock);
+    if (iUpdatePending) {
+        iUpdatePending = false;
+        Bws<sizeof(TUint)> buf;
+        buf.Append(iChoice->Get());
+        iStore.Write(iId, buf);
+    }
+}
+
+
+// StoreText
+
+StoreText::StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, CVText* aVal)
+    : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
+    , iText(aVal)
+{
+}
+
+void StoreText::Write()
+{
+    AutoMutex a(iLock);
+    if (iUpdatePending) {
+        iUpdatePending = false;
+        iStore.Write(iId, iText->Get());
+    }
+}
+
+
+// StoreManager
+
+StoreManager::StoreManager(IStoreReadWrite& aStore, ConfigurationManager& aConfigManager)
+    : iStore(aStore)
+    , iConfigManager(aConfigManager)
+    , iUpdateLock("SMUL")
+    , iListenersLock("SMLL")
+{
+}
+
+StoreManager::~StoreManager()
+{
+    // remove subscribers that were added during CreateX calls
+    AutoMutex a(iListenersLock);
+    for (ListenerMap::iterator it = iListeners.begin(); it != iListeners.end(); it++) {
+        ASSERT(iConfigManager.Has(it->first));
+        CVal& cVal = iConfigManager.Get(it->first);
+        cVal.Unsubscribe(it->second);
+    }
+    // StoreManager has ownership of its StoreVals, so delete them
+    for (StoreMap::iterator it = iUpdateImmediate.begin(); it != iUpdateImmediate.end(); it++) {
+        delete it->second;
+    }
+    for (StoreMap::iterator it = iUpdateDeferred.begin(); it != iUpdateDeferred.end(); it++) {
+        delete it->second;
+    }
+}
+
+TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax)
+{
+    if (iConfigManager.HasNum(aId)) {
+        THROW(AvConfigIdAlreadyExists);
+    }
+
+    Bws<sizeof(TInt)> storeVal;
+    iStore.Read(aId, storeVal);
+    TInt initial = Converter::BeUint32At(storeVal, 0);
+    CVNum* cVal = new CVNum(aMin, aMax, initial);
+    TUint listenerId = cVal->Subscribe(aFunc);
+    AddListener(aId, listenerId);
+    StoreNum* sVal = new StoreNum(iStore, aId, aUpdatesDeferred, cVal);
+
+    iConfigManager.Add(aId, *cVal);
+    Add(aId, aUpdatesDeferred, sVal);
+
+    return cVal->Get();
+}
+
+TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions)
+{
+    if (iConfigManager.HasChoice(aId)) {
+        THROW(AvConfigIdAlreadyExists);
+    }
+
+    Bws<sizeof(TUint)> storeVal;
+    iStore.Read(aId, storeVal);
+    TUint initial = Converter::BeUint32At(storeVal, 0);
+    CVChoice* cVal = new CVChoice();
+    for (TUint i=0; i<aOptions.size(); i++)
+    {
+        cVal->Add(*aOptions[i]);
+    }
+    cVal->Set(initial);
+    TUint listenerId = cVal->Subscribe(aFunc);
+    AddListener(aId, listenerId);
+    StoreChoice* sVal = new StoreChoice(iStore, aId, aUpdatesDeferred, cVal);
+
+    iConfigManager.Add(aId, *cVal);
+    Add(aId, aUpdatesDeferred, sVal);
+
+    return initial;
+}
+
+const Brx& StoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxBytes)
+{
+    if (iConfigManager.HasText(aId)) {
+        THROW(AvConfigIdAlreadyExists);
+    }
+
+    Bwh storeVal(aMaxBytes);
+    iStore.Read(aId, storeVal);
+    CVText* cVal = new CVText(aMaxBytes);
+    cVal->Set(storeVal);
+    TUint listenerId = cVal->Subscribe(aFunc);
+    AddListener(aId, listenerId);
+    StoreText* sVal = new StoreText(iStore, aId, aUpdatesDeferred, cVal);
+
+    iConfigManager.Add(aId, *cVal);
+    Add(aId, aUpdatesDeferred, sVal);
+
+    return cVal->Get();
+}
+
+void StoreManager::AddListener(const Brx& aId, TUint aListenerId)
+{
+    Brn id(aId);
+    AutoMutex a(iListenersLock);
+    iListeners.insert(std::pair<Brn, TUint>(id, aListenerId));
+}
+
+void StoreManager::Add(const Brx& aId, TBool aUpdatesDeferred, StoreVal* aSVal)
+{
+    ASSERT(aSVal != NULL);
+    Brn id(aId);
+    AutoMutex a(iUpdateLock);
+    if (aUpdatesDeferred) {
+        iUpdateDeferred.insert(std::pair<Brn, StoreVal*>(id, aSVal));
+    }
+    else {
+        iUpdateImmediate.insert(std::pair<Brn, StoreVal*>(id, aSVal));
+    }
+}
+
+void StoreManager::WritePendingUpdates()
+{
+    AutoMutex a(iUpdateLock);
+    for (StoreMap::iterator it = iUpdateDeferred.begin(); it != iUpdateDeferred.end(); it++) {
+        it->second->Write();
+    }
+}
+
+
+// ConfigRamStore
+
+ConfigRamStore::ConfigRamStore()
+    : iLock("RAMS")
+{
+}
+
+ConfigRamStore::~ConfigRamStore()
+{
+    Clear();
+}
+
+void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
+{
+    Brn key(aKey);
+    AutoMutex a(iLock);
+    Map::iterator it = iMap.find(key);
+    if (it == iMap.end()) {
+        THROW(StoreKeyNotFound);
+    }
+
+    if (it->second->Bytes() > aDest.MaxBytes()) {
+        THROW(StoreReadBufferUndersized);
+    }
+
+    aDest.Replace(*(it->second));
+}
+
+void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
+{
+    Brn key(aKey);
+    AutoMutex a(iLock);
+    Brh* val = new Brh(aSource);
+
+    // std::map doesn't insert a value if key exists, so first remove existing
+    // key-value pair, if new value is different
+    Map::iterator it = iMap.find(key);
+    if (it != iMap.end()) {
+        if (*(it->second) == aSource) {
+            // new value is the same; do nothing
+            return;
+        }
+        else {
+            // new value is different; remove old value
+            delete it->second;
+            iMap.erase(it);
+        }
+    }
+
+    iMap.insert(std::pair<Brn,Brh*>(key, val));
+}
+
+void ConfigRamStore::Delete(const Brx& aKey)
+{
+    Brn key(aKey);
+    AutoMutex a(iLock);
+    Map::iterator it = iMap.find(key);
+    if (it == iMap.end()) {
+        THROW(StoreKeyNotFound);
+    }
+
+    delete it->second;
+    iMap.erase(it);
+}
+
+void ConfigRamStore::Clear()
+{
+    AutoMutex a(iLock);
+    Map::iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        delete it->second;
+        it++;
+    }
+    iMap.clear();
 }
