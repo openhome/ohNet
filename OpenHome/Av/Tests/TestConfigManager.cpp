@@ -794,6 +794,9 @@ void SuiteConfigurationManager::TestHasNoVals()
     TEST(iConfigManager->HasNum(kIdNum1) == false);
     TEST(iConfigManager->HasChoice(kIdChoice1) == false);
     TEST(iConfigManager->HasText(kIdText1) == false);
+    TEST(iConfigManager->Has(kIdNum1) == false);
+    TEST(iConfigManager->Has(kIdChoice1) == false);
+    TEST(iConfigManager->Has(kIdText1) == false);
 }
 
 void SuiteConfigurationManager::TestHasValidId()
@@ -811,6 +814,11 @@ void SuiteConfigurationManager::TestHasValidId()
     // test ConfigText
     iConfigManager->Add(kIdText1, *iText1);
     TEST(iConfigManager->HasText(kIdText1) == true);
+
+    // test generic Has()
+    TEST(iConfigManager->Has(kIdNum1) == true);
+    TEST(iConfigManager->Has(kIdChoice1) == true);
+    TEST(iConfigManager->Has(kIdText1) == true);
 }
 
 void SuiteConfigurationManager::TestHasInvalidId()
@@ -831,6 +839,11 @@ void SuiteConfigurationManager::TestHasInvalidId()
 
     // try call HasChoice() with the ID of ConfigNum
     TEST(iConfigManager->HasChoice(kIdNum1) == false);
+
+    // test generic Has()
+    TEST(iConfigManager->Has(kIdNum2) == false);
+    TEST(iConfigManager->Has(kIdChoice2) == false);
+    TEST(iConfigManager->Has(kIdText2) == false);
 }
 
 void SuiteConfigurationManager::TestHasMultiple()
@@ -862,6 +875,9 @@ void SuiteConfigurationManager::TestGetNoVals()
     TEST_THROWS(iConfigManager->GetNum(kIdNum1), AssertionFailed);
     TEST_THROWS(iConfigManager->GetChoice(kIdChoice1), AssertionFailed);
     TEST_THROWS(iConfigManager->GetText(kIdText1), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kIdNum1), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kIdChoice1), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kIdText1), AssertionFailed);
 }
 
 void SuiteConfigurationManager::TestGetValidId()
@@ -882,6 +898,14 @@ void SuiteConfigurationManager::TestGetValidId()
     iConfigManager->Add(kIdText1, *iText1);
     ConfigText& text = iConfigManager->GetText(kIdText1);
     TEST(text == *iText1);
+
+    // test generic Get()
+    ConfigVal& valNum = iConfigManager->Get(kIdNum1);
+    TEST(dynamic_cast<ConfigNum&>(valNum) == *iNum1);
+    ConfigVal& valChoice = iConfigManager->Get(kIdChoice1);
+    TEST(dynamic_cast<ConfigChoice&>(valChoice) == *iChoice1);
+    ConfigVal& valText = iConfigManager->Get(kIdText1);
+    TEST(dynamic_cast<ConfigText&>(valText) == *iText1);
 }
 
 void SuiteConfigurationManager::TestGetInvalidId()
@@ -902,6 +926,11 @@ void SuiteConfigurationManager::TestGetInvalidId()
 
     // try call HasChoice() with the ID of ConfigNum
     TEST_THROWS(iConfigManager->GetChoice(kIdNum1), AssertionFailed);
+
+    // test generic Get()
+    TEST_THROWS(iConfigManager->Get(kIdNum2), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kIdChoice2), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kIdText2), AssertionFailed);
 }
 
 void SuiteConfigurationManager::TestGetMultiple()
