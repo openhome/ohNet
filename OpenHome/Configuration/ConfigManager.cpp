@@ -394,7 +394,7 @@ StoreManager::~StoreManager()
 
 TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
 {
-    if (iConfigManager.HasNum(aId)) {
+    if (iConfigManager.Has(aId)) {
         THROW(AvConfigIdExists);
     }
 
@@ -425,7 +425,7 @@ TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFu
 
 TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
 {
-    if (iConfigManager.HasChoice(aId)) {
+    if (iConfigManager.Has(aId)) {
         THROW(AvConfigIdExists);
     }
 
@@ -461,7 +461,7 @@ TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor
 
 const Brx& StoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
 {
-    if (iConfigManager.HasText(aId)) {
+    if (iConfigManager.Has(aId)) {
         THROW(AvConfigIdExists);
     }
 
