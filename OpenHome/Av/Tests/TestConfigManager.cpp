@@ -233,9 +233,6 @@ private: // from SuiteUnitTest
     void TearDown();
 private:
     void NotifyChanged();
-    void WriteToStore(const Brx& akey, TInt aInt);
-    void WriteToStore(const Brx& akey, TUint aUint);
-    void WriteToStore(const Brx& akey, const Brx& aBuf);
     ConfigNum& CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, ConfigNum& aNum, TInt& aInitial);
     ConfigChoice& CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, ConfigChoice& aChoice, TUint& aInitial);
     ConfigText& CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, ConfigText& aText, Bwx& aInitial);
@@ -1338,45 +1335,23 @@ void SuiteStoreManager::NotifyChanged()
     iChangedCount++;
 }
 
-void SuiteStoreManager::WriteToStore(const Brx& aKey, TInt aInt)
-{
-    Bwh buf(sizeof(TInt));
-    buf.Append(aInt);
-    iStore->Write(aKey, buf);
-}
-
-void SuiteStoreManager::WriteToStore(const Brx& aKey, TUint aUint)
-{
-    Bwh buf(sizeof(TUint));
-    buf.Append(aUint);
-    iStore->Write(aKey, buf);
-}
-
-void SuiteStoreManager::WriteToStore(const Brx& aKey, const Brx& aBuf)
-{
-    iStore->Write(aKey, aBuf);
-}
-
 ConfigNum& SuiteStoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, ConfigNum& aNum, TInt& aInitial)
 {
-    WriteToStore(aId, aNum.Get());
-    aInitial = iStoreManager->CreateNum(aId, aUpdatesDeferred, aFunc, aNum.Min(), aNum.Max());
+    aInitial = iStoreManager->CreateNum(aId, aUpdatesDeferred, aFunc, aNum.Min(), aNum.Max(), aNum.Get());
     ASSERT(iConfigManager->HasNum(aId) == true); // if the value we put in doesn't exist, there's a problem
     return iConfigManager->GetNum(aId);
 }
 
 ConfigChoice& SuiteStoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, ConfigChoice& aChoice, TUint& aInitial)
 {
-    WriteToStore(aId, aChoice.Get());
-    aInitial = iStoreManager->CreateChoice(aId, aUpdatesDeferred, aFunc, aChoice.Options());
+    aInitial = iStoreManager->CreateChoice(aId, aUpdatesDeferred, aFunc, aChoice.Options(), aChoice.Get());
     ASSERT(iConfigManager->HasChoice(aId) == true); // if the value we put in doesn't exist, there's a problem
     return iConfigManager->GetChoice(aId);
 }
 
 ConfigText& SuiteStoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, ConfigText& aText, Bwx& aInitial)
 {
-    WriteToStore(aId, aText.Get());
-    aInitial.Replace(iStoreManager->CreateText(aId, aUpdatesDeferred, aFunc, aText.MaxLength()));
+    aInitial.Replace(iStoreManager->CreateText(aId, aUpdatesDeferred, aFunc, aText.MaxLength(), aText.Get()));
     ASSERT(iConfigManager->HasText(aId) == true); // if the value we put in doesn't exist, there's a problem
     return iConfigManager->GetText(aId);
 }
@@ -1410,17 +1385,14 @@ void SuiteStoreManager::TestCreateNum()
 {
     ConfigNum val(0, 1, 0);
 
-    // try creating from key that doesn't exist in store
-    TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max()), StoreKeyNotFound);
-
-    // try creating from value that exists in store
+    // try creating value that doesn't yet exist in store
     TInt initial;
     ConfigNum& confVal = CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val, initial);
     TEST(initial == val.Get());
     TEST(confVal == val);
 
     // try creating from key that already exists as a config value
-    TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max()), AvConfigIdExists);
+    TEST_THROWS(iStoreManager->CreateNum(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Min(), val.Max(), val.Get()), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWriteImmediateNum()
@@ -1465,17 +1437,14 @@ void SuiteStoreManager::TestCreateChoice()
     val.Add(kFalse);
     val.Add(kTrue);
 
-    // try creating from key that doesn't exist in store
-    TEST_THROWS(iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Options()), StoreKeyNotFound);
-
-    // try creating from value that exists in store
+    // try creating value that doesn't yet exist in store
     TUint initial;
     ConfigChoice& confVal = CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val, initial);
     TEST(initial == val.Get());
     TEST(confVal == val);
 
     // try creating from key that already exists as a config value
-    TEST_THROWS(iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Options()), AvConfigIdExists);
+    TEST_THROWS(iStoreManager->CreateChoice(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val.Options(), val.Get()), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWriteImmediateChoice()
@@ -1523,17 +1492,14 @@ void SuiteStoreManager::TestCreateText()
     ConfigText val(kTextMaxBytes);
     val.Set(kText1);
 
-    // try creating from key that doesn't exist in store
-    TEST_THROWS(iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), StoreKeyNotFound);
-
-    // try creating from value that exists in store
+    // try creating value that doesn't yet exist in store
     Bwh initial(kText1.Bytes());
     ConfigText& confVal = CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), val, initial);
     TEST(initial == val.Get());
     TEST(confVal == val);
 
     // try creating from key that already exists as a config value
-    TEST_THROWS(iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), AvConfigIdExists);
+    TEST_THROWS(iStoreManager->CreateText(kKey1, false, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes, val.Get()), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWriteImmediateText()
@@ -1590,10 +1556,10 @@ void SuiteStoreManager::TestCreateDiffTypesSameKey()
     std::vector<const Brx*> options;
     options.push_back(&kFalse);
     options.push_back(&kTrue);
-    TEST_THROWS(iStoreManager->CreateChoice(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options), AvConfigIdExists);
+    TEST_THROWS(iStoreManager->CreateChoice(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), options, 0), AvConfigIdExists);
 
     // try create a text with same key
-    TEST_THROWS(iStoreManager->CreateText(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes), AvConfigIdExists);
+    TEST_THROWS(iStoreManager->CreateText(kKey1, true, MakeFunctor(*this, &SuiteStoreManager::NotifyChanged), kTextMaxBytes, kText1), AvConfigIdExists);
 }
 
 void SuiteStoreManager::TestWritePendingUpdates()

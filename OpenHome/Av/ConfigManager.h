@@ -318,9 +318,9 @@ class StoreManager
 public:
     StoreManager(IStoreReadWrite& aStore, ConfigurationManager& aConfigManager);
     ~StoreManager();
-    TInt CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax);
-    TUint CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions);
-    const Brx& CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxBytes);
+    TInt CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault);
+    TUint CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
+    const Brx& CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxLength, const Brx& aDefault);
     void WritePendingUpdates();
 private:
     void AddListener(const Brx& aId, TUint aListenerId);

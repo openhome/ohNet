@@ -392,14 +392,25 @@ StoreManager::~StoreManager()
     }
 }
 
-TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax)
+TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
 {
     if (iConfigManager.HasNum(aId)) {
         THROW(AvConfigIdExists);
     }
 
     Bws<sizeof(TInt)> storeVal;
-    iStore.Read(aId, storeVal);
+
+    // try retrieve from store; create entry if it doesn't exist
+    try {
+        iStore.Read(aId, storeVal);
+    }
+    catch (StoreKeyNotFound&) {
+        Bwh buf(sizeof(TInt));
+        buf.Append(aDefault);
+        iStore.Write(aId, buf);
+        iStore.Read(aId, storeVal);
+    }
+
     TInt initial = Converter::BeUint32At(storeVal, 0);
     ConfigNum* cVal = new ConfigNum(aMin, aMax, initial);
     TUint listenerId = cVal->Subscribe(aFunc);
@@ -412,14 +423,25 @@ TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFu
     return cVal->Get();
 }
 
-TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions)
+TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
 {
     if (iConfigManager.HasChoice(aId)) {
         THROW(AvConfigIdExists);
     }
 
     Bws<sizeof(TUint)> storeVal;
-    iStore.Read(aId, storeVal);
+
+    // try retrieve from store; create entry if it doesn't exist
+    try {
+        iStore.Read(aId, storeVal);
+    }
+    catch (StoreKeyNotFound&) {
+        Bwh buf(sizeof(TUint));
+        buf.Append(aDefault);
+        iStore.Write(aId, buf);
+        iStore.Read(aId, storeVal);
+    }
+
     TUint initial = Converter::BeUint32At(storeVal, 0);
     ConfigChoice* cVal = new ConfigChoice();
     for (TUint i=0; i<aOptions.size(); i++)
@@ -437,15 +459,24 @@ TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor
     return initial;
 }
 
-const Brx& StoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxBytes)
+const Brx& StoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
 {
     if (iConfigManager.HasText(aId)) {
         THROW(AvConfigIdExists);
     }
 
-    Bwh storeVal(aMaxBytes);
-    iStore.Read(aId, storeVal);
-    ConfigText* cVal = new ConfigText(aMaxBytes);
+    Bwh storeVal(aMaxLength);
+
+    // try retrieve from store; create entry if it doesn't exist
+    try {
+        iStore.Read(aId, storeVal);
+    }
+    catch (StoreKeyNotFound&) {
+        iStore.Write(aId, aDefault);
+        iStore.Read(aId, storeVal);
+    }
+
+    ConfigText* cVal = new ConfigText(aMaxLength);
     cVal->Set(storeVal);
     TUint listenerId = cVal->Subscribe(aFunc);
     AddListener(aId, listenerId);
