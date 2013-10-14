@@ -18,6 +18,13 @@ UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TrackFactory&
 {
 }
 
+UriProviderSingleTrack::~UriProviderSingleTrack()
+{
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
+}
+
 Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     if (iTrack != NULL) {
