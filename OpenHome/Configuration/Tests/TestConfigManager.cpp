@@ -1113,7 +1113,8 @@ void SuiteStoreVal::TestUpdateImmediate()
 
     // check updated value from store
     Bws<sizeof(TInt)> expectedBuf;
-    expectedBuf.Append(1);
+    TInt expectedVal = 1;
+    expectedBuf.Append(expectedVal);
     iStore->Read(kKey1, valBuf);
     TEST(valBuf == expectedBuf);
 }
@@ -1172,7 +1173,8 @@ void SuiteStoreNum::TestWriteUpdatePending()
     // try do a Write() when there is a (deferred) update pending
     Bws<sizeof(TInt)> valBuf;
     Bws<sizeof(TInt)> expectedBuf;
-    expectedBuf.Append(1);
+    TInt expectedVal = 1;
+    expectedBuf.Append(expectedVal);
 
     iConfigVal->Set(1);
     TEST(iStoreVal->UpdatePending() == true);
@@ -1229,7 +1231,8 @@ void SuiteStoreChoice::TestWriteUpdatePending()
     // try do a Write() when there is a (deferred) update pending
     Bws<sizeof(TUint)> valBuf;
     Bws<sizeof(TUint)> expectedBuf;
-    expectedBuf.Append(1);
+    TUint expectedVal = 1;
+    expectedBuf.Append(expectedVal);
 
     iConfigVal->Set(1);
     TEST(iStoreVal->UpdatePending() == true);
