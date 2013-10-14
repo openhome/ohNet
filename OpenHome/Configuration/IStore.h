@@ -9,7 +9,7 @@ EXCEPTION(StoreReadBufferUndersized);
 EXCEPTION(StoreWriteAllocationFailed);
 
 namespace OpenHome {
-namespace Av {
+namespace Configuration {
 
 using namespace OpenHome;
 
@@ -32,7 +32,7 @@ public:
     virtual void Delete(const Brx& aKey) = 0;
 };
 
-} // namespace Av
+} // namespace Configuration
 } // namespace OpenHome
 
 #endif // HEADER_ISTORE

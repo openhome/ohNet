@@ -1,10 +1,12 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
-#include <OpenHome/Av/ConfigManager.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
-using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 
+namespace OpenHome {
+namespace Configuration {
 
 class SuiteCVNotify : public SuiteUnitTest
 {
@@ -264,6 +266,9 @@ private:
     StoreManager* iStoreManager;
     TUint iChangedCount;
 };
+
+} // namespace Configuration
+} // namespace OpenHome
 
 
 

@@ -8,7 +8,7 @@
 #include <OpenHome/Av/FunctorBuf.h>
 #include <OpenHome/Av/FunctorInt.h>
 #include <OpenHome/Av/FunctorUint.h>
-#include <OpenHome/Av/IStore.h>
+#include <OpenHome/Configuration/IStore.h>
 
 #include <map>
 #include <vector>
@@ -21,7 +21,7 @@ EXCEPTION(AvConfigValueTooLong);
 EXCEPTION(AvConfigIdExists);
 
 namespace OpenHome {
-namespace Av {
+namespace Configuration {
 
 class IObservable
 {
@@ -358,7 +358,7 @@ private:
     Mutex iLock;
 };
 
-} // namespace Av
+} // namespace Configuration
 } // namespace OpenHome
 
 #endif // HEADER_CONFIGMANAGER

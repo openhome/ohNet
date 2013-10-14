@@ -1,8 +1,8 @@
-#include <OpenHome/Av/ConfigManager.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 
 
 // ConfigVal
