@@ -272,10 +272,10 @@ ConfigText& ConfigurationManager::GetText(const Brx& aId)
 StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigVal* aVal)
     : iStore(aStore)
     , iId(aId)
-    , iVal(aVal)
     , iLock("SVLK")
-    , iUpdatesDeferred(aUpdatesDeferred)
     , iUpdatePending(false)
+    , iVal(aVal)
+    , iUpdatesDeferred(aUpdatesDeferred)
 {
     // StoreVal takes ownership of its ConfigVal
     ASSERT(iVal != NULL);

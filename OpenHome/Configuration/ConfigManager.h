@@ -5,9 +5,6 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Av/FunctorBuf.h>
-#include <OpenHome/Av/FunctorInt.h>
-#include <OpenHome/Av/FunctorUint.h>
 #include <OpenHome/Configuration/IStore.h>
 
 #include <map>
@@ -262,7 +259,7 @@ class StoreVal : public IStoreVal
 protected:
     StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigVal* aVal);
 public:
-    ~StoreVal();
+    virtual ~StoreVal();
 public: // from IStoreVal
     TBool UpdatePending();
     void Write() = 0;
