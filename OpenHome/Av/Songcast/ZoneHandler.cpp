@@ -110,6 +110,7 @@ void ZoneHandler::Run()
                     if (iRxSocket == NULL) {
                         THROW(ReaderError);
                     }
+                    iReadBuffer.ReadFlush();
                     header.Internalise(iReadBuffer);
                     switch (header.MsgType())
                     {
