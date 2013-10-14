@@ -186,7 +186,6 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
-                'OpenHome/Av/ConfigManager.cpp',
                 'OpenHome/Av/FaultCode.cpp',
                 'OpenHome/Av/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
@@ -278,6 +277,7 @@ def build(bld):
                 'OpenHome/Av/Songcast/ProviderReceiver.cpp',
                 'OpenHome/Av/Songcast/ZoneHandler.cpp',
                 'OpenHome/Av/Songcast/SourceReceiver.cpp',
+                'OpenHome/Configuration/ConfigManager.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
@@ -485,7 +485,6 @@ def build(bld):
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Media/Tests/TestUdpServer.cpp',
-                'OpenHome/Av/Tests/TestConfigManager.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -496,6 +495,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
+                'OpenHome/Configuration/Tests/TestConfigManager.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -605,10 +605,6 @@ def build(bld):
     #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
     #        target='TestUpnpAv')
     bld.program(
-            source='OpenHome/Av/Tests/TestConfigManagerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestConfigManager')
-    bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUpnpErrors')
@@ -628,6 +624,10 @@ def build(bld):
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestMediaPlayer')
+    bld.program(
+            source='OpenHome/Configuration/Tests/TestConfigManagerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestConfigManager')
 
 # Bundles
 def bundle(ctx):
