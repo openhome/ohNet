@@ -46,7 +46,7 @@ ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::
 {
 }
 
-void ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
+ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
     iNextFlushId = MsgFlush::kIdInvalid;
     iStopped = false;
@@ -145,6 +145,7 @@ void ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpo
     if (iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);
     }
+    return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
 TUint ProtocolOhm::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)

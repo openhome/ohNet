@@ -189,6 +189,7 @@ void SuiteStarvationMonitor::Test()
     Print("\nRe-fill until gorge size\n");
     GenerateUpstreamMsgs(EStateAudioFillPostStarvation);
     WaitForEnqueueToBlock();
+    Thread::Sleep(20); // WaitForEnqueueToBlock can return very shortly before NotifyStarvationMonitorBuffering is called
     TEST(!iBuffering);
 
     // Pull audio.  Check it ramps up.

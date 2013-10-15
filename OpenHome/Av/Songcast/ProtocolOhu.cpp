@@ -88,7 +88,7 @@ void ProtocolOhu::Broadcast(OhmMsg* aMsg)
     Add(aMsg);
 }
 
-void ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
+ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
     iLeaving = false;
     iStopped = false;
@@ -204,6 +204,7 @@ void ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpo
     if (iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);
     }
+    return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
 TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)

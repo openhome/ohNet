@@ -25,7 +25,7 @@ public:
     ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
     ~ProtocolOhu();
 private: // from ProtocolOhBase
-    void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
+    Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:

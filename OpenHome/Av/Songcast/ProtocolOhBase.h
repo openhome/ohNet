@@ -28,6 +28,7 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kInitialRepairTimeoutMs = 10;
     static const TUint kSubsequentRepairTimeoutMs = 30;
     static const TUint kTimerJoinTimeoutMs = 300;
+    static const TUint kTtl = 2;
 protected:
     ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
     ~ProtocolOhBase();
@@ -38,10 +39,11 @@ protected:
     void SendListen();
     void Send(TUint aType);
 private:
-    virtual void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
+    virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
 private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri);
 private:
+    void CurrentSubnetChanged();
     void RepairReset();
     void TimerRepairExpired();
     TBool RepairBegin(OhmMsgAudioBlob& aMsg);
@@ -69,6 +71,7 @@ private:
     IOhmTimestamper& iTimestamper;
     Brn iSupportedScheme;
     Media::BwsMode iMode;
+    TUint iNacnId;
     Uri iUri; // only used inside Stream() but too large to put on the stack
     TUint iFrame;
     TBool iRunning;
