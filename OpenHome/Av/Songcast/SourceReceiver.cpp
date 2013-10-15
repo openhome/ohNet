@@ -124,7 +124,6 @@ void SourceReceiver::Play()
     if (!IsActive()) {
         DoActivate();
     }
-    iPipeline.RemoveAll();
     AutoMutex a(iLock);
     iPlaying = true;
     if (iTrackUri.Bytes() > 0) {
@@ -201,8 +200,8 @@ void SourceReceiver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 
 void SourceReceiver::DoPlay()
 {
-    iPipeline.RemoveAll();
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
+    iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider->Mode(), track->Id());
     track->RemoveRef();
     iPipeline.Play();

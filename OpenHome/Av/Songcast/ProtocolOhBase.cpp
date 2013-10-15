@@ -124,7 +124,9 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         iMutexTransport.Signal();
         res = Play(addr, kTtl, ep);
     } while (res != EProtocolStreamStopped);
-    RepairReset();
+    if (iRepairing) {
+        RepairReset();
+    }
     return res;
 }
 
