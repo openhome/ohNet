@@ -34,6 +34,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iRepairing(false)
     , iStreamMsgDue(true)
 {
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged));
     iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired));
     iRepairFrames.reserve(kMaxRepairBacklogFrames);
     iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendJoin));
@@ -48,6 +49,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
 
 ProtocolOhBase::~ProtocolOhBase()
 {
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
     delete iTimerRepair;
     delete iTimerJoin;
     delete iTimerListen;
@@ -110,36 +112,31 @@ void ProtocolOhBase::Send(TUint aType)
 
 ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
 {
-    // expects a uri of the form
-    //    [ohu|ohm]://endpoint/songcast?&interface=[TUint as string]&ttl=[TUint as string]
     iUri.Replace(aUri);
     if (iUri.Scheme() != iSupportedScheme) {
         return EProtocolErrorNotSupported;
     }
     Endpoint ep(iUri.Port(), iUri.Host());
-    /*Parser parser(iUri.Query());
-    (void)parser.Next('&');
-    Brn nif = parser.Next('&');
-    Parser parser2(nif);
-    if (parser2.Next('=') != Brn("interface")) {
-        LOG2(kSongcast, kError, "Unexpected query fragment in ohm uri: ");
-        LOG2(kSongcast, kError, nif);
-        LOG2(kSongcast, kError, "\n");
-        return EProtocolStreamErrorUnrecoverable;
-    }
-    const TUint addr = Ascii::Uint(parser2.Remaining());
-    parser2.Set(parser.Remaining());
-    if (parser2.Next('=') != Brn("ttl")) {
-        LOG2(kSongcast, kError, "Unexpected query fragment in ohm uri: ");
-        LOG2(kSongcast, kError, nif);
-        LOG2(kSongcast, kError, "\n");
-        return EProtocolStreamErrorUnrecoverable;
-    }
-    const TUint ttl = Ascii::Uint(parser2.Remaining());
-    Play(addr, ttl, ep);
-    */
-    Play(iAddr, 2, ep);
-    return EProtocolStreamErrorUnrecoverable;
+    ProtocolStreamResult res;
+    do {
+        iMutexTransport.Wait();
+        TIpAddress addr = iAddr;
+        iMutexTransport.Signal();
+        res = Play(addr, kTtl, ep);
+    } while (res != EProtocolStreamStopped);
+    return res;
+}
+
+void ProtocolOhBase::CurrentSubnetChanged()
+{
+    static const TChar* kNifCookie = "ProtocolOhBase";
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
+    ASSERT(current != NULL); // assumes we switch to loopback if not external interface is available
+    iMutexTransport.Wait();
+    iAddr = current->Address();
+    iMutexTransport.Signal();
+    current->RemoveRef(kNifCookie);
+    iSocket.ReadInterrupt();
 }
 
 TBool ProtocolOhBase::RepairBegin(OhmMsgAudioBlob& aMsg)
