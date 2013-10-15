@@ -1,5 +1,6 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Configuration;
@@ -527,6 +528,22 @@ ConfigRamStore::ConfigRamStore()
 ConfigRamStore::~ConfigRamStore()
 {
     Clear();
+}
+
+void ConfigRamStore::Print()
+{
+    Log::Print("RamStore: [\n");
+    AutoMutex a(iLock);
+    Map::iterator it = iMap.begin();
+    while (it!= iMap.end()) {
+        Log::Print("   {");
+        Log::Print(it->first);
+        Log::Print(", ");
+        Log::Print(*it->second);
+        Log::Print("}\n");
+        it++;
+    }
+    Log::Print("]\n");
 }
 
 void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
