@@ -13,22 +13,12 @@ namespace Av {
 /**
  * Helper class for test code.  Not intended for client use.
  */
-class RamStore : public IStaticDataSource, public IPersister
+class RamStore : public IStaticDataSource
 {
 public:
     virtual ~RamStore();
-    void AddItem(const TChar* aKey, const TChar* aValue);
-    void List();
 private: // from IStaticDataSource
     void LoadStaticData(IStoreLoaderStatic& aLoader);
-private: // from IPersister
-    void LoadPersistedData(IStoreLoaderDynamic& aLoader);
-    void Save(IStoreIterator& aIterator);
-private:
-    void Clear();
-private:
-    typedef std::map<Brn, Brh*, BufferCmp> Map;
-    Map iItems;
 };
 
 } // namespace Av

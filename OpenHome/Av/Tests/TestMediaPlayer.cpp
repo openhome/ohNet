@@ -11,6 +11,7 @@
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
 #include <OpenHome/Av/Source.h> // FIXME - see #169
+#include <OpenHome/Configuration/ConfigManager.h>
 
 int mygetch();
 
@@ -18,6 +19,7 @@ int mygetch();
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
+using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
@@ -55,15 +57,19 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
     // create read/write store.  This creates a number of static (constant) entries automatically
+    // FIXME - to be removed; this only exists to populate static data
     iRamStore = new RamStore();
 
+    // create a read/write store using the new config framework
+    iConfigRamStore = new ConfigRamStore();
+
     // FIXME - available store keys should be listed somewhere
-    iRamStore->AddItem("Product.Room", aRoom);
-    iRamStore->AddItem("Product.Name", aProductName);
-    iRamStore->AddItem("Radio.TuneInUserName", aTuneInUserName);
+    iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
+    iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
+    iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iRamStore);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -76,6 +82,7 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;
+    delete iConfigRamStore;
 }
 
 void TestMediaPlayer::DestroyPipeline()

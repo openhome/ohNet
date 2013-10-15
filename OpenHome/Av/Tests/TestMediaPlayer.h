@@ -28,6 +28,9 @@ namespace Media {
     class PipelineManager;
     class DriverSongcastSender;
 }
+namespace Configuration {
+    class ConfigRamStore;
+}
 namespace Av {
     class RamStore;
     class ISource;
@@ -57,6 +60,7 @@ protected:
     Net::DvDevice* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
+    Configuration::ConfigRamStore* iConfigRamStore;
 private:
     Semaphore iDisabled;
     ISource* iSourceUpnp; // FIXME - see #169
