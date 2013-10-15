@@ -150,7 +150,7 @@ void Product::GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault)
     }
     else {
         ASSERT(!iConfigManager.Has(aId)); // there is already an aId, but it is not text
-        const Brx& val = iStoreManager.CreateText(aId, false, MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, aDefault);
+        const Brx& val = iStoreManager.CreateText(aId, false, MakeFunctor(*this, &Product::ProductRoomChanged), aDest.MaxBytes(), aDefault);
         aDest.Append(val);
     }
 }
