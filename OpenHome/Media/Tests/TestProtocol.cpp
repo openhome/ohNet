@@ -280,7 +280,7 @@ int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtoco
     http://10.2.11.174:26125/content/c2/b16/f44100/d3395-co476.wma // wma (with cover art?) - exhausts recognise buf
     */
     OptionParser parser;
-    OptionString optionUrl("", "--url", Brn("ohm://239.253.131.53:51972"), "[url] http url of file to play");
+    OptionString optionUrl("", "--url", Brn("http://10.2.9.146:26125/content/c2/b16/f44100/d2336-co13582.wav"), "[url] http url of file to play");
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
