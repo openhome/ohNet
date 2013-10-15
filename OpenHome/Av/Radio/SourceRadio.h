@@ -15,6 +15,9 @@ namespace Media {
     class PipelineManager;
     class UriProviderSingleTrack;
 }
+namespace Configuration {
+    class StoreManager;
+}
 namespace Av {
 
 class ISourceRadio
@@ -37,7 +40,9 @@ class IReadStore;
 class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
 {
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IReadStore& aReadStore);
+    static const TUint kUsernameMaxLength = 40;
+public:
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::StoreManager& aStoreManager);
     ~SourceRadio();
 private: // from ISource
     void Activate();
@@ -55,6 +60,8 @@ private: // from IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+private:
+    void TuneInUsernameChanged();
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;

@@ -15,6 +15,10 @@
 EXCEPTION(AvSourceNotFound);
 
 namespace OpenHome {
+namespace Configuration {
+    class StoreManager;
+    class ConfigurationManager;
+}
 namespace Av {
 
 class IReadStore;
@@ -47,7 +51,7 @@ public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IInfoAggregator& aInfoAggregator);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::StoreManager& aStoreManager, Configuration::ConfigurationManager& aConfigManager, IInfoAggregator& aInfoAggregator);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();
@@ -68,6 +72,9 @@ public:
     TUint SourceXmlChangeCount();
 private:
     void AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue);
+    void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
+    void ProductRoomChanged();
+    void ProductNameChanged();
 private: // from IProduct
     void Activate(ISource& aSource);
 private: // from IInfoProvider
@@ -75,6 +82,8 @@ private: // from IInfoProvider
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
+    Configuration::StoreManager& iStoreManager;
+    Configuration::ConfigurationManager& iConfigManager;
     Mutex iLock;
     ProviderProduct* iProviderProduct;
     IProductObserver* iObserver;

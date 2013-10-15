@@ -6,17 +6,21 @@
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 #include <limits.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IInfoAggregator& /*aInfoAggregator*/)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, StoreManager& aStoreManager, ConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
+    , iStoreManager(aStoreManager)
+    , iConfigManager(aConfigManager)
     , iLock("PRDM")
     , iObserver(NULL)
     , iStarted(false)
@@ -89,12 +93,9 @@ void Product::GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
 
 void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri)
 {
-    if (!iReadStore.TryReadStoreItem(Brn("Product.Room"), aRoom)) {
-        aRoom.Append(Brn("Main Room"));
-    }
-    if (!iReadStore.TryReadStoreItem(Brn("Product.Name"), aName)) {
-        aName.Append(Brn("SoftPlayer")); // FIXME
-    }
+    GetConfigText(Brn("Product.Room"), aRoom, Brn("Main Room-default"));
+    GetConfigText(Brn("Product.Name"), aName, Brn("SoftPlayer-default")); // FIXME - assign appropriate product name
+
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));
@@ -141,6 +142,22 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
     aXml.Append(aTag);
     aXml.Append('>');
 }
+
+void Product::GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault)
+{
+    if (iConfigManager.HasText(aId)) {
+        aDest.Append(iConfigManager.GetText(aId).Get());
+    }
+    else {
+        ASSERT(!iConfigManager.Has(aId)); // there is already an aId, but it is not text
+        const Brx& val = iStoreManager.CreateText(aId, false, MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, aDefault);
+        aDest.Append(val);
+    }
+}
+
+void Product::ProductRoomChanged() {}
+
+void Product::ProductNameChanged() {}
 
 void Product::SetCurrentSource(TUint aIndex)
 {

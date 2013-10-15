@@ -7,14 +7,15 @@
 #include <OpenHome/Av/Radio/TuneIn.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
-#include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 #include <limits.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 using namespace OpenHome::Net;
 using namespace OpenHome::Media;
 
@@ -24,13 +25,13 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ReadStore());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.StoreManager());
 }
 
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IReadStore& aReadStore)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, StoreManager& aStoreManager)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -43,13 +44,8 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
-    Bws<40> username;
-    if (aReadStore.TryReadStoreItem(Brn("Radio.TuneInUserName"), username)) {
-        iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, username);
-    }
-    else {
-        iTuneIn = NULL; // FIXME - should maybe just initialise iTuneIn anyway (once we allow runtime change of rwstore anyway)
-    }
+    const Brx& username = aStoreManager.CreateText(Brn("Radio.TuneInUserName"), false, MakeFunctor(*this, &SourceRadio::TuneInUsernameChanged), kUsernameMaxLength, Brn("linnproducts"));
+    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, username);
     iPipeline.AddObserver(*this);
 }
 
@@ -178,3 +174,5 @@ void SourceRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     iStreamId = aStreamInfo.StreamId();
     iLock.Signal();
 }
+
+void SourceRadio::TuneInUsernameChanged() {}

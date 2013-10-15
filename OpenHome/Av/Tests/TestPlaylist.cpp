@@ -16,6 +16,7 @@
 #include <Generated/CpAvOpenhomeOrgPlaylist1.h>
 #include <OpenHome/Net/Core/CpDeviceDv.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 #include <array>
 #include <limits.h>
@@ -25,6 +26,7 @@ using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 
 namespace OpenHome {
 namespace Av {
@@ -110,6 +112,7 @@ private:
     DvStack& iDvStack;
     DvDevice* iDevice;
     RamStore* iRamStore;
+    ConfigRamStore* iConfigRamStore;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
     CpProxyAvOpenhomeOrgPlaylist1* iProxy;
@@ -351,7 +354,8 @@ void SuitePlaylist::Setup()
     iDevice->SetAttribute("Upnp.ModelName", "TestPlaylist");
 
     iRamStore = new RamStore();
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iRamStore);
+    iConfigRamStore = new ConfigRamStore();
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iRamStore, *iConfigRamStore);
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
@@ -391,6 +395,7 @@ void SuitePlaylist::TearDown()
     iDeviceDisabled.Wait();
     delete iMediaPlayer;
     delete iDriver;
+    delete iConfigRamStore;
     delete iRamStore;
     delete iDevice;
 }
