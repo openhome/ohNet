@@ -32,7 +32,7 @@ private: // from IProtocolReader
     void ReadInterrupt();
     Brn ReadRemaining();
 private:
-    static const TUint kReadBufBytes = 8 * 1024;
+    static const TUint kReadBufBytes = 9 * 1024;
     Mutex iLock;
     OpenHome::Uri iUri;
     FileStream iFileStream;
@@ -40,6 +40,7 @@ private:
     TUint iStreamId;
     TBool iStop;
     TBool iSeek;
+    TBool iFileOpen;
     TUint32 iSeekPos;
     TUint iNextFlushId;
 };
@@ -92,6 +93,7 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         free(path);
         return EProtocolStreamErrorUnrecoverable;
     }
+    iFileOpen = true;
     free(path);
     iFileStream.Interrupt(false);
     const TUint fileSize = iFileStream.Bytes();
@@ -136,7 +138,10 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         iLock.Signal();
     }
 
+    iLock.Wait();
     iFileStream.CloseFile();
+    iFileOpen = false;
+    iLock.Signal();
     if (contentProcessor != NULL) {
         contentProcessor->Reset();
     }
@@ -151,7 +156,7 @@ EStreamPlay ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     iLock.Wait();
-    const TBool streamIsValid = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool streamIsValid = (iFileOpen && iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = (TUint32)aOffset;
