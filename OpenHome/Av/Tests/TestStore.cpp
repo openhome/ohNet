@@ -29,31 +29,25 @@ SuiteStore::SuiteStore()
 void SuiteStore::Test()
 {
     RamStore* ramStore = new RamStore();
-    KvpStore* kvpStore = new KvpStore(*ramStore, *ramStore);
+    KvpStore* kvpStore = new KvpStore(*ramStore);
     IReadStore* rStore = (IReadStore*)kvpStore;
 
     // check static items can be read as static
     Brn value;
     TEST(rStore->TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, value));
     TEST(value == Brn("Test implementation of ohMediaPlayer")); // slightly dodgy duplicating ro data from RamStore
-    
-    // check static items cannot be read as dynamic
-    Bws<StoreMaxValueLength> value2;
-    TEST(!rStore->TryReadStoreItem(StaticDataKey::kBufModelInfo, value2));
 
-    // check other (missing) item cannot be read via either route
+    // check other (missing) item cannot be read
     Brn missing("missing");
     TEST(!rStore->TryReadStoreStaticItem(missing, value));
-    TEST(!rStore->TryReadStoreItem(missing, value2));
 
     // delete then recreate KvpStore
     // check static items can be read as before
     delete kvpStore;
-    kvpStore = new KvpStore(*ramStore, *ramStore);
+    kvpStore = new KvpStore(*ramStore);
     rStore = (IReadStore*)kvpStore;
     TEST(rStore->TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, value));
     TEST(value == Brn("Test implementation of ohMediaPlayer")); // slightly dodgy duplicating ro data from RamStore
-    TEST(!rStore->TryReadStoreItem(StaticDataKey::kBufModelInfo, value2));
 
     delete kvpStore;
     delete ramStore;

@@ -13,15 +13,12 @@ namespace Av {
 /**
  * Helper class for test code.  Not intended for client use.
  */
-class RamStore : public IStaticDataSource, public IPersister
+class RamStore : public IStaticDataSource
 {
 public:
     virtual ~RamStore();
 private: // from IStaticDataSource
     void LoadStaticData(IStoreLoaderStatic& aLoader);
-private: // from IPersister
-    void LoadPersistedData(IStoreLoaderDynamic& aLoader);
-    void Save(IStoreIterator& aIterator);
 };
 
 } // namespace Av

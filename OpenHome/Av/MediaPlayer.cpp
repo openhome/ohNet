@@ -27,12 +27,12 @@ using namespace OpenHome::Net;
 
 // MediaPlayer
 
-MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource, IPersister& aPersistor, IStoreReadWrite& aWriteStore)
+MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource, IStoreReadWrite& aWriteStore)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
 {
     iInfoLogger = new AllocatorInfoLogger();
-    iKvpStore = new KvpStore(aStaticDataSource, aPersistor);
+    iKvpStore = new KvpStore(aStaticDataSource);
     iConfigManager = new ConfigurationManager();
     iStoreManager = new Configuration::StoreManager(aWriteStore, *iConfigManager);
     iZoneHandler = new Av::ZoneHandler(aDvStack.Env());

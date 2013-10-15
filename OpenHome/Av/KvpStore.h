@@ -7,10 +7,7 @@
 
 #include <map>
 
-EXCEPTION(AvStoreKeyTooLong);
-EXCEPTION(AvStoreValueTooLong);
 EXCEPTION(AvStoreKeyAlreadyExists);
-EXCEPTION(AvStoreValueIsReadOnly);
 
 namespace OpenHome {
 namespace Av {
@@ -25,33 +22,13 @@ class IReadStore
 {
 public:
     // FIXME - why aren't all keys string literals?
-    virtual TBool TryReadStoreItem(const Brx& aKey, Bwx& aValue) = 0; // take copy of item (which may change at any time).  Returned values may not be nul-terminated.
     virtual TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue) = 0; // read item whose value is fixed at compile time.  Returned values are nul-terminated.
-};
-
-class IStoreLoaderDynamic
-{
-public:
-    virtual void AddPersistedItem(const Brx& aKey, const Brx& aValue) = 0;
 };
 
 class IStoreLoaderStatic
 {
 public:
     virtual void AddStaticItem(const Brx& aKey, const TChar* aValue) = 0;
-};
-
-class IStoreIterator
-{
-public:
-    virtual TBool TryReadNextPersistedItem(Brn& aKey, Brn& aValue) = 0;
-};
-
-class IPersister
-{
-public:
-    virtual void LoadPersistedData(IStoreLoaderDynamic& aLoader) = 0;
-    virtual void Save(IStoreIterator& aIterator) = 0;
 };
 
 class StaticDataKey
@@ -86,20 +63,15 @@ public:
 };
 
 class KvpStore : public IReadStore,
-                 private IStoreLoaderStatic, private IStoreLoaderDynamic, private IStoreIterator
+                 private IStoreLoaderStatic
 {
 public:
-    KvpStore(IStaticDataSource& aStaticData, IPersister& aPersister);
+    KvpStore(IStaticDataSource& aStaticData);
     virtual ~KvpStore();
-private: // from IReadWriteStore
-    TBool TryReadStoreItem(const Brx& aKey, Bwx& aValue);
+private: // from IReadStore
     TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue);
 private: // from IStoreLoaderStatic
     void AddStaticItem(const Brx& aKey, const TChar* aValue);
-private: // from IStoreLoaderDynamic
-    void AddPersistedItem(const Brx& aKey, const Brx& aValue);
-private: // from IStoreIterator
-    TBool TryReadNextPersistedItem(Brn& aKey, Brn& aValue);
 private:
     class KvpPair
     {
@@ -118,25 +90,10 @@ private:
     private:
         const TChar* iValue;
     };
-    class KvpPairPersisted : public KvpPair
-    {
-    public:
-        KvpPairPersisted(const Brx& aKey, const Brx& aValue);
-        TBool UpdateValue(const Brx& aValue);
-    private:
-        void GetValue(Brn& aValue);
-    private:
-        Bws<StoreMaxKeyLength> iKey;
-        Bws<StoreMaxValueLength> iValue;
-    };
 private:
-    IPersister& iPersister;
     Mutex iLock;
     typedef std::map<Brn, KvpPair*, BufferCmp> Map;
     Map iStaticData;
-    Map iPersistedData;
-    Map::iterator iPersisterIterator;
-    TBool iSaving;
 };
 
 } // namespace Av
