@@ -124,6 +124,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         iMutexTransport.Signal();
         res = Play(addr, kTtl, ep);
     } while (res != EProtocolStreamStopped);
+    RepairReset();
     return res;
 }
 
@@ -151,8 +152,10 @@ void ProtocolOhBase::RepairReset()
 {
     LOG(kSongcast, "RESET\n");
     iTimerRepair->Cancel();
-    iRepairFirst->RemoveRef();
-    iRepairFirst = NULL;
+    if (iRepairFirst != NULL) {
+        iRepairFirst->RemoveRef();
+        iRepairFirst = NULL;
+    }
     for (TUint i=0; i<iRepairFrames.size(); i++) {
         iRepairFrames[i]->RemoveRef();
     }

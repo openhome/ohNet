@@ -98,6 +98,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
     iZoneHandler.AddListener(*this);
+    iPipeline.AddObserver(*this);
 }
 
 SourceReceiver::~SourceReceiver()
@@ -110,12 +111,12 @@ SourceReceiver::~SourceReceiver()
 void SourceReceiver::Activate()
 {
     iActive = true;
-    Source::Deactivate();
 }
 
 void SourceReceiver::Deactivate()
 {
     iProviderReceiver->NotifyPipelineState(EPipelineStopped);
+    Source::Deactivate();
 }
 
 void SourceReceiver::Play()
