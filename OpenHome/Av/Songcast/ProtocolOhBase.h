@@ -7,7 +7,9 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
+#include <OpenHome/Av/Songcast/OhmSocket.h>
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
+#include <OpenHome/Private/Stream.h>
 
 #include <vector>
 
@@ -25,14 +27,18 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kMaxRepairMissedFrames = 20;
     static const TUint kInitialRepairTimeoutMs = 10;
     static const TUint kSubsequentRepairTimeoutMs = 30;
+    static const TUint kTimerJoinTimeoutMs = 300;
 protected:
     ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
     ~ProtocolOhBase();
     void Add(OhmMsg* aMsg);
     void ResendSeen();
+    void RequestResend(const Brx& aFrames);
+    void SendJoin();
+    void SendListen();
+    void Send(TUint aType);
 private:
     virtual void Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
-    virtual void RequestResend(const Brx& aFrames) = 0; // FIXME - ohm & ohu have identical implementations of this
 private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri);
 private:
@@ -47,8 +53,16 @@ private: // from IOhmMsgProcessor
     void Process(OhmMsgTrack& aMsg);
     void Process(OhmMsgMetatext& aMsg);
 protected:
+    static const TUint kMaxFrameBytes = 16*1024;
+    static const TUint kTimerListenTimeoutMs = 10000;
+protected:
     Environment& iEnv;
     IOhmMsgFactory& iMsgFactory;
+    OhmSocket iSocket;
+    Srs<kMaxFrameBytes> iReadBuffer;
+    Endpoint iEndpoint;
+    Timer* iTimerJoin;
+    Timer* iTimerListen;
 private:
     Mutex iMutexTransport;
     Media::TrackFactory& iTrackFactory;
