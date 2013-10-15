@@ -17,18 +17,11 @@ class RamStore : public IStaticDataSource, public IPersister
 {
 public:
     virtual ~RamStore();
-    void AddItem(const TChar* aKey, const TChar* aValue);
-    void List();
 private: // from IStaticDataSource
     void LoadStaticData(IStoreLoaderStatic& aLoader);
 private: // from IPersister
     void LoadPersistedData(IStoreLoaderDynamic& aLoader);
     void Save(IStoreIterator& aIterator);
-private:
-    void Clear();
-private:
-    typedef std::map<Brn, Brh*, BufferCmp> Map;
-    Map iItems;
 };
 
 } // namespace Av

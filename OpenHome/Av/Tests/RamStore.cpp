@@ -7,39 +7,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Av;
 
-RamStore::~RamStore()
-{
-    Clear();
-}
-
-void RamStore::AddItem(const TChar* aKey, const TChar* aValue)
-{
-    Brn key(aKey);
-    Map::iterator it = iItems.find(key);
-    if (it != iItems.end()) {
-        delete it->second;
-        it->second = new Brh(aValue);
-    }
-    else {
-        Brh* val = new Brh(aValue);
-        iItems.insert(std::pair<Brn,Brh*>(key, val));
-    }
-}
-
-void RamStore::List()
-{
-    Log::Print("RamStore: [\n");
-    Map::iterator it = iItems.begin();
-    while (it != iItems.end()) {
-        Log::Print("   {");
-        Log::Print(it->first);
-        Log::Print(", ");
-        Log::Print(*it->second);
-        Log::Print("}\n");
-        it++;
-    }
-    Log::Print("]\n");
-}
+RamStore::~RamStore() {}
 
 void RamStore::LoadStaticData(IStoreLoaderStatic& aLoader)
 {
@@ -53,32 +21,6 @@ void RamStore::LoadStaticData(IStoreLoaderStatic& aLoader)
     aLoader.AddStaticItem(StaticDataKey::kBufModelImageUrl, "http://www.openhome.org/common/images/core/open-home-logo.png");
 }
 
-void RamStore::LoadPersistedData(IStoreLoaderDynamic& aLoader)
-{
-    Map::iterator it = iItems.begin();
-    while (it != iItems.end()) {
-        aLoader.AddPersistedItem(it->first, *it->second);
-        it++;
-    }
-}
-
-void RamStore::Save(IStoreIterator& aIterator)
-{
-    Clear();
-    Brn key;
-    Brn value;
-    while (aIterator.TryReadNextPersistedItem(key, value)) {
-        Brh* val = new Brh(value);
-        iItems.insert(std::pair<Brn,Brh*>(key, val));
-    }
-}
-
-void RamStore::Clear()
-{
-    Map::iterator it = iItems.begin();
-    while (it != iItems.end()) {
-        delete it->second;
-        it++;
-    }
-    iItems.clear();
-}
+// FIXME - to be removed
+void RamStore::LoadPersistedData(IStoreLoaderDynamic& /*aLoader*/) {}
+void RamStore::Save(IStoreIterator& /*aIterator*/) {}
