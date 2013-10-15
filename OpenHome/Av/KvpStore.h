@@ -29,12 +29,6 @@ public:
     virtual TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue) = 0; // read item whose value is fixed at compile time.  Returned values are nul-terminated.
 };
 
-class IReadWriteStore : public IReadStore
-{
-public:
-    virtual TBool WriteStoreItem(const Brx& aKey, const Brx& aValue) = 0; // returns true if aValue is different from previous value
-};
-
 class IStoreLoaderDynamic
 {
 public:
@@ -91,7 +85,7 @@ public:
     virtual void LoadStaticData(IStoreLoaderStatic& aLoader) = 0;
 };
 
-class KvpStore : public IReadWriteStore,
+class KvpStore : public IReadStore,
                  private IStoreLoaderStatic, private IStoreLoaderDynamic, private IStoreIterator
 {
 public:
@@ -100,7 +94,6 @@ public:
 private: // from IReadWriteStore
     TBool TryReadStoreItem(const Brx& aKey, Bwx& aValue);
     TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue);
-    TBool WriteStoreItem(const Brx& aKey, const Brx& aValue);
 private: // from IStoreLoaderStatic
     void AddStaticItem(const Brx& aKey, const TChar* aValue);
 private: // from IStoreLoaderDynamic
