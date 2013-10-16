@@ -32,6 +32,7 @@ tests = '''
     TestContainer
     TestUdpServer
     TestConfigManager
+    TestPowerManager
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

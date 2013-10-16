@@ -343,6 +343,7 @@ class ConfigRamStore : public IStoreReadWrite
 public:
     ConfigRamStore();
     virtual ~ConfigRamStore();
+    void Print();
 public: // from IStoreReadWrite
     void Read(const Brx& aKey, Bwx& aDest);
     void Write(const Brx& aKey, const Brx& aSource);

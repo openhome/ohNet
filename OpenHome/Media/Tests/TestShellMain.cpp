@@ -32,6 +32,8 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
+ENV_TEST_DECLARATION(TestUdpServer);
+ENV_TEST_DECLARATION(TestPowerManager);
 
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
@@ -41,12 +43,6 @@ extern AudioFileCollection* TestCodecFiles();
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
 {
     TestCodec(aCpStack.Env(), CreateTestCodecPipeline, TestCodecFiles, aArgs);
-}
-
-extern void TestUdpServer(Environment& aEnv);
-static void ShellTestUdpServer(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
-{
-    TestUdpServer(aDvStack.Env());
 }
 
 extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
@@ -70,6 +66,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestVolumeManager", ShellTestVolumeManager));
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
+    shellTests.push_back(ShellTest("TestPowerManager", ShellTestPowerManager));
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
     shellTests.push_back(ShellTest("TestProtocolHttp", ShellTestProtocolHttp));
     shellTests.push_back(ShellTest("TestReporter", ShellTestReporter));

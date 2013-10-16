@@ -9,6 +9,10 @@ using namespace OpenHome::Net;
     extern void x();                \
     static void Shell##x(CpStack&, DvStack&, const std::vector<Brn>&) { x(); } \
 
+#define ENV_TEST_DECLARATION(x) \
+    extern void x(Environment&);            \
+    static void Shell##x(CpStack&, DvStack& aDvStack, const std::vector<Brn>&) { x(aDvStack.Env()); } \
+
 namespace OpenHome {
 namespace Net {
     class InitialisationParams;
