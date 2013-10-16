@@ -32,6 +32,8 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
+ENV_TEST_DECLARATION(TestUdpServer);
+ENV_TEST_DECLARATION(TestPowerManager);
 
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
@@ -41,18 +43,6 @@ extern AudioFileCollection* TestCodecFiles();
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
 {
     TestCodec(aCpStack.Env(), CreateTestCodecPipeline, TestCodecFiles, aArgs);
-}
-
-extern void TestUdpServer(Environment& aEnv);
-static void ShellTestUdpServer(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
-{
-    TestUdpServer(aDvStack.Env());
-}
-
-extern void TestPowerManager(Environment& aEnv);
-static void ShellTestPowerManager(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
-{
-    TestPowerManager(aDvStack.Env());
 }
 
 extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
