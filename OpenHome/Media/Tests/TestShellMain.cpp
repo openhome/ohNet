@@ -49,6 +49,12 @@ static void ShellTestUdpServer(CpStack& /*aCpStack*/, DvStack& aDvStack, const s
     TestUdpServer(aDvStack.Env());
 }
 
+extern void TestPowerManager(Environment& aEnv);
+static void ShellTestPowerManager(CpStack& /*aCpStack*/, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
+{
+    TestPowerManager(aDvStack.Env());
+}
+
 extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
 static void ShellTestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
 {
@@ -70,6 +76,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestVolumeManager", ShellTestVolumeManager));
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
+    shellTests.push_back(ShellTest("TestPowerManager", ShellTestPowerManager));
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
     shellTests.push_back(ShellTest("TestProtocolHttp", ShellTestProtocolHttp));
     shellTests.push_back(ShellTest("TestReporter", ShellTestReporter));
