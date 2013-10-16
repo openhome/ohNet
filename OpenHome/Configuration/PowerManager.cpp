@@ -11,6 +11,8 @@ PowerManager::PowerManager()
 {
 }
 
+PowerManager::~PowerManager() {}
+
 void PowerManager::PowerDown()
 {
     // This call can only be made ONCE as PriorityFunctors are deleted as they

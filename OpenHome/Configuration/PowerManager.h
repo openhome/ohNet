@@ -28,6 +28,7 @@ class PowerManager : public IPowerManager
 {
 public:
     PowerManager();
+    virtual ~PowerManager();
 public: // from IPowerManager
     void PowerDown();
     void RegisterObserver(Functor aFunctor, TUint aPriority);
@@ -48,7 +49,7 @@ private:
         TBool operator()(const PriorityFunctor& aFunc1, const PriorityFunctor& aFunc2) const;
     };
 private:
-    typedef std::priority_queue<const PriorityFunctor, std::vector<const PriorityFunctor>, PriorityFunctorCmp> PriorityQueue;
+    typedef std::priority_queue<const PriorityFunctor, std::vector<PriorityFunctor>, PriorityFunctorCmp> PriorityQueue;
     PriorityQueue iQueue;
     Mutex iLock;
 };
