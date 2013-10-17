@@ -231,6 +231,7 @@ namespace OpenHome.Net.Core
             {
                 Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
                 Console.WriteLine("         No exceptions should be thrown by property change delegates");
+                Console.WriteLine(e.ToString());
             }
         }
 
