@@ -27,6 +27,7 @@ public:
     virtual void EventUpdateStart() = 0;
     virtual void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor) = 0;
     virtual void EventUpdateEnd() = 0;
+    virtual void EventUpdateError() = 0;
     virtual void EventUpdatePrepareForDelete() = 0;
     virtual ~IEventProcessor() {}
 };
@@ -110,6 +111,7 @@ private: // IEventProcessor
     DllExport void EventUpdateStart();
     DllExport void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
     DllExport void EventUpdateEnd();
+    DllExport void EventUpdateError();
     DllExport void EventUpdatePrepareForDelete();
 private:
     void operator=(const CpProxy&);

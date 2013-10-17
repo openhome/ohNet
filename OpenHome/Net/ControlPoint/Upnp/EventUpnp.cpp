@@ -196,7 +196,13 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
     Brn remaining;
     try {
         for (;;) {
-            prop.Set(XmlParserBasic::Find("property", propertySet, remaining));
+            try {
+                prop.Set(XmlParserBasic::Find("property", propertySet, remaining));
+            }
+            catch (XmlError&) {
+                // we've successfully processed all <property> tags from aEntity
+                break;
+            }
             prop.Set(Ascii::Trim(prop));
             if (prop.Bytes() < 8 || prop[0] != '<' || prop[1] == '/') {
                 THROW(XmlError);
@@ -232,9 +238,11 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 
             propertySet.Set(remaining);
         }
+        aEventProcessor.EventUpdateEnd();
     }
-    catch(XmlError&) {}
-    aEventProcessor.EventUpdateEnd();
+    catch(XmlError&) {
+        aEventProcessor.EventUpdateError();
+    }
 }
 
 // EventServerUpnp
