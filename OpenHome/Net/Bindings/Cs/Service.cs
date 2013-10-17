@@ -10,6 +10,14 @@ using MonoTouch;
 namespace OpenHome.Net.Core
 {
     /// <summary>
+    /// Thrown when Value() is called on a Property whose value has never been set
+    /// </summary>
+    public class PropertyError : Exception
+    {
+    }
+
+    
+    /// <summary>
     /// Description of the type plus any bounds of action arguments plus properties.  Only intended for use by auto-generated proxies and providers.
     /// </summary>
     /// <remarks>Each action owns 0..n parameters;  each property owns exactly 1.</remarks>
@@ -277,7 +285,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern int ServicePropertyValueInt(IntPtr aHandle);
+        static extern unsafe int ServicePropertyValueInt(IntPtr aHandle, int* aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -314,9 +322,12 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Integer property value</returns>
-        public int Value()
+        public unsafe int Value()
         {
-            return ServicePropertyValueInt(iHandle);
+            int val;
+            if (ServicePropertyValueInt(iHandle, &val) == -1)
+                throw new PropertyError();
+            return val;
         }
 
         /// <summary>
@@ -353,7 +364,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern uint ServicePropertyValueUint(IntPtr aHandle);
+        static extern unsafe int ServicePropertyValueUint(IntPtr aHandle, uint* aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -390,9 +401,12 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Unsigned integer property value</returns>
-        public uint Value()
+        public unsafe uint Value()
         {
-            return ServicePropertyValueUint(iHandle);
+            uint val;
+            if (ServicePropertyValueUint(iHandle, &val) == -1)
+                throw new PropertyError();
+            return val;
         }
 
         /// <summary>
@@ -429,7 +443,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern uint ServicePropertyValueBool(IntPtr aHandle);
+        static extern unsafe int ServicePropertyValueBool(IntPtr aHandle, uint* aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -466,9 +480,11 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Boolean property value</returns>
-        public bool Value()
+        public unsafe bool Value()
         {
-            uint val = ServicePropertyValueBool(iHandle);
+            uint val;
+            if (ServicePropertyValueBool(iHandle, &val) == -1)
+                throw new PropertyError();
             return (val != 0);
         }
 
@@ -507,7 +523,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void ServicePropertyGetValueString(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        static extern unsafe int ServicePropertyGetValueString(IntPtr aHandle, IntPtr* aData, uint* aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -554,7 +570,8 @@ namespace OpenHome.Net.Core
         {
             IntPtr ptr;
             uint len;
-            ServicePropertyGetValueString(iHandle, &ptr, &len);
+            if (ServicePropertyGetValueString(iHandle, &ptr, &len) == -1)
+                throw new PropertyError();
             String str = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
             return str;
@@ -596,7 +613,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe byte* ServicePropertyGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        static extern unsafe int ServicePropertyGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -643,7 +660,8 @@ namespace OpenHome.Net.Core
         {
             IntPtr pData;
             uint len;
-            ServicePropertyGetValueBinary(iHandle, &pData, &len);
+            if (ServicePropertyGetValueBinary(iHandle, &pData, &len) == -1)
+                throw new PropertyError();
             byte[] data = new byte[len];
             Marshal.Copy(pData, data, 0, (int)len);
             OhNetFree(pData);

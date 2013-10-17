@@ -105,58 +105,95 @@ ServiceProperty STDCALL ServicePropertyCreateBinaryDv(ServiceParameter aParamete
     return (ServiceProperty)new PropertyBinary(*gEnv, param);
 }
 
-int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty)
+int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty, int32_t* aValue)
 {
     PropertyInt* prop = reinterpret_cast<PropertyInt*>(aProperty);
     ASSERT(prop != NULL);
-    return prop->Value();
+    int32_t err = 0;
+    try {
+        *aValue = prop->Value();
+    }
+    catch (PropertyError&) {
+        err = -1;
+    }
+    return err;
 }
 
-uint32_t STDCALL ServicePropertyValueUint(ServiceProperty aProperty)
+int32_t STDCALL ServicePropertyValueUint(ServiceProperty aProperty, uint32_t* aValue)
 {
     PropertyUint* prop = reinterpret_cast<PropertyUint*>(aProperty);
     ASSERT(prop != NULL);
-    return prop->Value();
+    int32_t err = 0;
+    try {
+        *aValue = prop->Value();
+    }
+    catch (PropertyError&) {
+        err = -1;
+    }
+    return err;
 }
 
-uint32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty)
+int32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty, uint32_t* aValue)
 {
     PropertyBool* prop = reinterpret_cast<PropertyBool*>(aProperty);
     ASSERT(prop != NULL);
-    TBool val = prop->Value();
-    return (val? 1 : 0);
+    int32_t err = 0;
+    TBool val;
+    try {
+        val = prop->Value();
+        *aValue = (val? 1 : 0);
+    }
+    catch (PropertyError&) {
+        err = -1;
+    }
+    return err;
 }
 
 const char* STDCALL ServicePropertyValueString(ServiceProperty aProperty)
 {
+    // FIXME - no handling of PropertyError
     PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
     ASSERT(prop != NULL);
     Brhz buf(prop->Value());
     return buf.Transfer();
 }
 
-void STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, const char** aData, uint32_t* aLen)
+int32_t STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, const char** aData, uint32_t* aLen)
 {
     PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
     ASSERT(prop != NULL);
-    Brhz buf(prop->Value());
-    if (buf.Bytes() == 0) {
-        *aData = NULL;
-        *aLen = 0;
+    int32_t err = 0;
+    try {
+        Brhz buf(prop->Value());
+        if (buf.Bytes() == 0) {
+            *aData = NULL;
+            *aLen = 0;
+        }
+        else {
+            *aLen = buf.Bytes();
+            *aData = buf.Transfer();
+        }
     }
-    else {
-        *aLen = buf.Bytes();
-        *aData = buf.Transfer();
+    catch (PropertyError&) {
+        err = -1;
     }
+    return err;
 }
 
-void STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen)
+int32_t STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen)
 {
     PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
     ASSERT(prop != NULL);
-    Brh val(prop->Value());
-    *aLen = val.Bytes();
-    *aData = (const uint8_t*)val.Extract();
+    int32_t err = 0;
+    try {
+        Brh val(prop->Value());
+        *aLen = val.Bytes();
+        *aData = (const uint8_t*)val.Extract();
+    }
+    catch (PropertyError&) {
+        err = -1;
+    }
+    return err;
 }
 
 uint32_t STDCALL ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue)
