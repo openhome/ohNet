@@ -151,11 +151,13 @@ void Thread::EntryPoint(void* aArg)
         UnhandledExceptionHandler( "Unknown Exception", "Unknown File", 0 );
     }
     LOG(kThread, "Thread::Entry(): Thread::Run returned, exiting thread %s(%p)\n", self->iName.Ptr(), self);
-    Net::InitialisationParams* initParams = OpenHome::gEnv->InitParams();
-    if (initParams != NULL) {
-        Functor& handler = initParams->ThreadExitHandler();
-        if (handler) {
-            handler();
+    if (gEnv != NULL) {
+        Net::InitialisationParams* initParams = OpenHome::gEnv->InitParams();
+        if (initParams != NULL) {
+            Functor& handler = initParams->ThreadExitHandler();
+            if (handler) {
+                handler();
+            }
         }
     }
     self->iTerminated.Signal();
