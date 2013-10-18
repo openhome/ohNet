@@ -53,6 +53,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
+    TInt IntFromStore(const Brx& aKey);
     void TestFunctorsCalled();
     void TestInvalidRange();
     void TestValueOutOfRangeConstructor();
@@ -61,8 +62,8 @@ private:
     void TestGet();
     void TestGetMin();
     void TestGetMax();
-    void TestSetUpdate(); // FIXME - test Write() here
-    void TestSetNoUpdate(); // and here
+    void TestSetUpdate();
+    void TestSetNoUpdate();
     void TestSetValueOutOfRange();
 private:
     static const TInt kMin = -1;
@@ -79,6 +80,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
+    TUint UintFromStore(const Brx& aKey);
     void TestFunctorsCalled();
     void TestValueFromStore();
     void TestValueWrittenToStore();
@@ -315,16 +317,21 @@ void SuiteConfigNum::TearDown()
     delete iConfigVal;
 }
 
+TInt SuiteConfigNum::IntFromStore(const Brx& aKey)
+{
+    Bws<sizeof(TInt)> buf;
+    iStore->Read(aKey, buf);
+    TInt val = Converter::BeUint32At(buf, 0);
+    return val;
+}
+
 void SuiteConfigNum::TestFunctorsCalled()
 {
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 1);
 
     // there is an internal write functor - check value == value in store
-    Bws<sizeof(TInt)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TInt val = Converter::BeUint32At(valBuf, 0);
-    TEST(val == iConfigVal->Get());
+    TEST(IntFromStore(kKey) == iConfigVal->Get());
 }
 
 void SuiteConfigNum::TestInvalidRange()
@@ -353,10 +360,7 @@ void SuiteConfigNum::TestValueFromStore()
     TEST(iOwnerFunctorCount == 2);
 
     // test value in store hasn't been overwritten
-    valBuf.SetBytes(0);
-    iStore->Read(key, valBuf);
-    TInt val = Converter::BeUint32At(valBuf, 0);
-    TEST(val == storeVal);
+    TEST(IntFromStore(key) == storeVal);
     // test retrieved value is correct
     TEST(num.Get() == storeVal);
 }
@@ -364,10 +368,7 @@ void SuiteConfigNum::TestValueFromStore()
 void SuiteConfigNum::TestValueWrittenToStore()
 {
     // test that the default value has been written out to store at creation
-    Bws<sizeof(TInt)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TInt storeVal = Converter::BeUint32At(valBuf, 0);
-    TEST(storeVal == kVal);
+    TEST(IntFromStore(kKey) == kVal);
 }
 
 void SuiteConfigNum::TestGet()
@@ -408,10 +409,7 @@ void SuiteConfigNum::TestSetUpdate()
     TInt val = iConfigVal->Get();
     TEST(val == newVal);
     // test that value has been written out to store
-    Bws<sizeof(TInt)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TInt storeVal = Converter::BeUint32At(valBuf, 0);
-    TEST(storeVal == newVal);
+    TEST(IntFromStore(kKey) == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -432,10 +430,7 @@ void SuiteConfigNum::TestSetNoUpdate()
     TInt val = iConfigVal->Get();
     TEST(val == kVal);
     // test value in store hasn't changed
-    Bws<sizeof(TInt)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TInt storeVal = Converter::BeUint32At(valBuf, 0);
-    TEST(storeVal == kVal);
+    TEST(IntFromStore(kKey) == kVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -492,16 +487,21 @@ void SuiteConfigChoice::TearDown()
     delete iConfigVal;
 }
 
+TUint SuiteConfigChoice::UintFromStore(const Brx& aKey)
+{
+    Bws<sizeof(TUint)> buf;
+    iStore->Read(aKey, buf);
+    TUint val = Converter::BeUint32At(buf, 0);
+    return val;
+}
+
 void SuiteConfigChoice::TestFunctorsCalled()
 {
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 1);
 
     // there is an internal write functor - check value == value in store
-    Bws<sizeof(TUint)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TUint val = Converter::BeUint32At(valBuf, 0);
-    TEST(val == iConfigVal->Get());
+    TEST(UintFromStore(kKey) == iConfigVal->Get());
 }
 
 void SuiteConfigChoice::TestValueFromStore()
@@ -523,10 +523,7 @@ void SuiteConfigChoice::TestValueFromStore()
     TEST(iOwnerFunctorCount == 2);
 
     // test value in store hasn't been overwritten
-    valBuf.SetBytes(0);
-    iStore->Read(key, valBuf);
-    TUint val = Converter::BeUint32At(valBuf, 0);
-    TEST(val == storeVal);
+    TEST(UintFromStore(key) == storeVal);
     // test retrieved value is correct
     TEST(choice.Get() == storeVal);
 }
@@ -534,10 +531,7 @@ void SuiteConfigChoice::TestValueFromStore()
 void SuiteConfigChoice::TestValueWrittenToStore()
 {
     // test that the default value has been written out to store at creation
-    Bws<sizeof(TInt)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TInt storeVal = Converter::BeUint32At(valBuf, 0);
-    TEST(storeVal == kDefault);
+    TEST(UintFromStore(kKey) == kDefault);
 }
 
 void SuiteConfigChoice::TestAdd()
@@ -593,10 +587,7 @@ void SuiteConfigChoice::TestSetUpdate()
     TUint selected = iConfigVal->Get();
     TEST(selected == newVal);
     // test that value has been written out to store
-    Bws<sizeof(TUint)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TUint storeVal = Converter::BeUint32At(valBuf, 0);
-    TEST(storeVal == newVal);
+    TEST(UintFromStore(kKey) == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -617,10 +608,7 @@ void SuiteConfigChoice::TestSetNoUpdate()
     TUint selected = iConfigVal->Get();
     TEST(selected == kDefault);
     // test value in store hasn't changed
-    Bws<sizeof(TUint)> valBuf;
-    iStore->Read(kKey, valBuf);
-    TUint storeVal = Converter::BeUint32At(valBuf, 0);
-    TEST(storeVal == kDefault);
+    TEST(UintFromStore(kKey) == kDefault);
 
     iConfigVal->Unsubscribe(id);
 }
