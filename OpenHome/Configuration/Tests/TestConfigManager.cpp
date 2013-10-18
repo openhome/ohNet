@@ -396,14 +396,22 @@ void SuiteConfigNum::TestSetUpdate()
     // test that calling set with a new value updates the value of the ConfigNum
     // (and that any observers are notified)
     TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
+    TInt newVal = kVal+1;
     TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigNum::NotifyChanged));
-    TBool updated = iConfigVal->Set(kVal+1);
+    TBool updated = iConfigVal->Set(newVal);
 
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
+    TEST(iOwnerFunctorCount == ownerFunctorCount+1);
 
     TInt val = iConfigVal->Get();
-    TEST(val == kVal+1);
+    TEST(val == newVal);
+    // test that value has been written out to store
+    Bws<sizeof(TInt)> valBuf;
+    iStore->Read(kKey, valBuf);
+    TInt storeVal = Converter::BeUint32At(valBuf, 0);
+    TEST(storeVal == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -413,14 +421,21 @@ void SuiteConfigNum::TestSetNoUpdate()
     // test that calling set with the existing value of ConfigNum causing no change
     // to the ConfigNum, and that no observers are notified
     TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
     TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigNum::NotifyChanged));
     TBool updated = iConfigVal->Set(iConfigVal->Get());
 
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
 
     TInt val = iConfigVal->Get();
     TEST(val == kVal);
+    // test value in store hasn't changed
+    Bws<sizeof(TInt)> valBuf;
+    iStore->Read(kKey, valBuf);
+    TInt storeVal = Converter::BeUint32At(valBuf, 0);
+    TEST(storeVal == kVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -566,14 +581,22 @@ void SuiteConfigChoice::TestSetUpdate()
     // test that changing the selected value causes ConfigChoice to be updated (and
     // any observers notified)
     TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
+    TUint newVal = 1;
     TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigChoice::NotifyChanged));
-    TBool updated = iConfigVal->Set(1);
+    TBool updated = iConfigVal->Set(newVal);
 
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
+    TEST(iOwnerFunctorCount == ownerFunctorCount+1);
 
     TUint selected = iConfigVal->Get();
-    TEST(selected == 1);
+    TEST(selected == newVal);
+    // test that value has been written out to store
+    Bws<sizeof(TUint)> valBuf;
+    iStore->Read(kKey, valBuf);
+    TUint storeVal = Converter::BeUint32At(valBuf, 0);
+    TEST(storeVal == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -583,14 +606,21 @@ void SuiteConfigChoice::TestSetNoUpdate()
     // test that setting the same option index results in no change to ConfigChoice
     // (and observers aren't notified)
     TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
     TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigChoice::NotifyChanged));
-    TBool updated = iConfigVal->Set(0);
+    TBool updated = iConfigVal->Set(kDefault);
 
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
 
     TUint selected = iConfigVal->Get();
-    TEST(selected == 0);
+    TEST(selected == kDefault);
+    // test value in store hasn't changed
+    Bws<sizeof(TUint)> valBuf;
+    iStore->Read(kKey, valBuf);
+    TUint storeVal = Converter::BeUint32At(valBuf, 0);
+    TEST(storeVal == kDefault);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -692,15 +722,21 @@ void SuiteConfigText::TestSetUpdate()
     // test that updating ConfigText with a new value results in ConfigText
     // being changed and any observers notified
     TUint changedCount = iChangedCount;
-    Brn text("zyxwvutsrqponmlkjihgfedcba");
+    TUint ownerFunctorCount = iOwnerFunctorCount;
+    Brn newVal("zyxwvutsrqponmlkjihgfedcba");
     TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
-    TBool updated = iConfigVal->Set(text);
+    TBool updated = iConfigVal->Set(newVal);
 
     TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
+    TEST(iOwnerFunctorCount == ownerFunctorCount+1);
 
     const Brx& buf = iConfigVal->Get();
-    TEST(buf == text);
+    TEST(buf == newVal);
+    // test that value has been written out to store
+    Bwh valBuf(kMaxLength);
+    iStore->Read(kKey, valBuf);
+    TEST(valBuf == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -710,25 +746,39 @@ void SuiteConfigText::TestSetNoUpdate()
     // test that updating ConfigText with the same value results in no change to
     // ConfigText and no observers being notified
     TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
 
-    // test updating the empty string, then test updating a string with
+    // test updating the default string, then test updating a string with
     // length > 0
     TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
     TBool updated = iConfigVal->Set(kDefault);
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
     const Brx& buf1 = iConfigVal->Get();
     TEST(buf1 == kDefault);
+    // test value in store hasn't changed
+    Bwh valBuf(kMaxLength);
+    iStore->Read(kKey, valBuf);
+    TEST(valBuf == kDefault);
     iConfigVal->Unsubscribe(id);
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
+    // set new val before then subscribing to changes
     updated = iConfigVal->Set(text);
+    ownerFunctorCount = iOwnerFunctorCount;
     id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    // now attempt to set same value again
     updated = iConfigVal->Set(text);
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
     const Brx& buf2 = iConfigVal->Get();
     TEST(buf2 == text);
+    // test value in store hasn't changed
+    valBuf.SetBytes(0);
+    iStore->Read(kKey, valBuf);
+    TEST(valBuf == text);
     iConfigVal->Unsubscribe(id);
 }
 
