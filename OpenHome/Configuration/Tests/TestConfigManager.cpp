@@ -349,6 +349,9 @@ void SuiteConfigNum::TestValueFromStore()
     iStore->Write(key, valBuf);
     ConfigNum num(*iConfigManager, key, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
 
+    TEST(iChangedCount == 0);
+    TEST(iOwnerFunctorCount == 2);
+
     // test value in store hasn't been overwritten
     valBuf.SetBytes(0);
     iStore->Read(key, valBuf);
@@ -501,6 +504,9 @@ void SuiteConfigChoice::TestValueFromStore()
     options.push_back(&kOption3);
     ConfigChoice choice(*iConfigManager, key, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
 
+    TEST(iChangedCount == 0);
+    TEST(iOwnerFunctorCount == 2);
+
     // test value in store hasn't been overwritten
     valBuf.SetBytes(0);
     iStore->Read(key, valBuf);
@@ -647,6 +653,9 @@ void SuiteConfigText::TestValueFromStore()
     Brn storeVal("zyxwvutsrqponmlkjihgfedcba");
     iStore->Write(key, storeVal);
     ConfigText text(*iConfigManager, key, MakeFunctor(*this, &SuiteConfigText::OwnerFunctor), kMaxLength, kDefault);
+
+    TEST(iChangedCount == 0);
+    TEST(iOwnerFunctorCount == 2);
 
     // test value in store hasn't been overwritten
     Bwh valBuf(kMaxLength);
