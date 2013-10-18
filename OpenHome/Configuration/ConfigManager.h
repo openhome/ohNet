@@ -10,7 +10,6 @@
 #include <map>
 #include <vector>
 
-EXCEPTION(AvConfigInvalidRange);
 EXCEPTION(AvConfigValueOutOfRange);
 EXCEPTION(AvConfigValueExists);
 EXCEPTION(AvConfigIndexOutOfRange);
@@ -71,6 +70,8 @@ public:
     TInt Get() const;
     TBool Set(TInt aVal);
     inline TBool operator==(const ConfigNum& aNum) const;
+private:
+    TBool Valid(TInt aVal);
 private: // from ConfigVal
     void Write();
 private:
@@ -103,6 +104,7 @@ public:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
     void Add(const Brx& aVal);
+    TBool Valid(TUint aVal);
 private: // from ConfigVal
     void Write();
 private:
@@ -133,6 +135,8 @@ public:
     const Brx& Get() const;
     TBool Set(const Brx& aText);
     inline TBool operator==(const ConfigText& aText) const;
+private:
+    TBool Valid(const Brx& aVal);
 private: // from ConfigVal
     void Write();
 private:

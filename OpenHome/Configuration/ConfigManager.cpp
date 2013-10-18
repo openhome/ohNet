@@ -67,18 +67,18 @@ ConfigNum::ConfigNum(ConfigurationManager& aManager, const Brx& aId, Functor aFu
     , iMin(aMin)
     , iMax(aMax)
 {
-    if (iMin > iMax) {
-        THROW(AvConfigInvalidRange);
-    }
+    ASSERT(iMax >= iMin);
 
     Bws<sizeof(TInt)> initialBuf;
     Bws<sizeof(TInt)> defaultBuf;
     defaultBuf.Append(Arch::BigEndian4(aDefault));
     iConfigManager.Read(iId, initialBuf, defaultBuf);
     TInt initialVal = Converter::BeUint32At(initialBuf, 0);
-    Set(initialVal); // FIXME - calling this causes observers to be called - do we want that?
 
+    ASSERT(Valid(initialVal));
     iConfigManager.Add(*this);
+    iVal = initialVal;
+    NotifySubscribers();
 }
 
 TInt ConfigNum::Min() const
@@ -100,7 +100,7 @@ TBool ConfigNum::Set(TInt aVal)
 {
     TBool changed = false;
 
-    if (aVal < iMin || aVal > iMax) {
+    if (!Valid(aVal)) {
         THROW(AvConfigValueOutOfRange);
     }
 
@@ -111,6 +111,14 @@ TBool ConfigNum::Set(TInt aVal)
     }
 
     return changed;
+}
+
+TBool ConfigNum::Valid(TInt aVal)
+{
+    if (aVal < iMin || aVal > iMax) {
+        return false;
+    }
+    return true;
 }
 
 void ConfigNum::Write()
@@ -136,14 +144,11 @@ ConfigChoice::ConfigChoice(ConfigurationManager& aManager, const Brx& aId, Funct
     defaultBuf.Append(Arch::BigEndian4(aDefault));
     iConfigManager.Read(iId, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
-    try {
-        Set(initialVal);
-    }
-    catch (AvConfigIndexOutOfRange&) {
-        ASSERTS();
-    }
 
+    ASSERT(Valid(initialVal));
     iConfigManager.Add(*this);
+    iSelected = initialVal;
+    NotifySubscribers();
 }
 
 void ConfigChoice::Add(const Brx& aVal)
@@ -178,7 +183,7 @@ TBool ConfigChoice::Set(TUint aIndex)
 {
     TBool changed = false;
 
-    if (aIndex >= iAllowedValues.size()) {
+    if (!Valid(aIndex)) {
         THROW(AvConfigIndexOutOfRange);
     }
 
@@ -189,6 +194,14 @@ TBool ConfigChoice::Set(TUint aIndex)
     }
 
     return changed;
+}
+
+TBool ConfigChoice::Valid(TUint aVal)
+{
+    if (aVal >= iAllowedValues.size()) {
+        return false;
+    }
+    return true;
 }
 
 void ConfigChoice::Write()
@@ -207,14 +220,11 @@ ConfigText::ConfigText(ConfigurationManager& aManager, const Brx& aId, Functor a
 {
     Bwh initialBuf(aMaxLength);
     iConfigManager.Read(iId, initialBuf, aDefault);
-    try {
-        Set(initialBuf);
-    }
-    catch (AvConfigValueTooLong&) {
-        ASSERTS();
-    }
 
+    ASSERT(Valid(initialBuf));
     iConfigManager.Add(*this);
+    iText.Replace(initialBuf);
+    NotifySubscribers();
 }
 
 TUint ConfigText::MaxLength() const
@@ -231,7 +241,7 @@ TBool ConfigText::Set(const Brx& aText)
 {
     TBool changed = false;
 
-    if (aText.Bytes() > iText.MaxBytes()) {
+    if (!Valid(aText)) {
         THROW(AvConfigValueTooLong);
     }
 
@@ -242,6 +252,14 @@ TBool ConfigText::Set(const Brx& aText)
     }
 
     return changed;
+}
+
+TBool ConfigText::Valid(const Brx& aVal)
+{
+    if (aVal.Bytes() > iText.MaxBytes()) {
+        return false;
+    }
+    return true;
 }
 
 void ConfigText::Write()

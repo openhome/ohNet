@@ -140,6 +140,9 @@ private:
     void TestGetValidId();
     void TestGetInvalidId();
     void TestGetMultiple();
+    void TestReadStoreValExists();
+    void TestReadNoStoreValExists();
+    void TestWrite();
 private:
     static const TInt kMinNum = 0;
     static const TInt kMaxNum = 2;
@@ -337,13 +340,13 @@ void SuiteConfigNum::TestFunctorsCalled()
 void SuiteConfigNum::TestInvalidRange()
 {
     // test creating a ConfigNum with max < min
-    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), 1, -1, 1), AvConfigInvalidRange);
+    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), 1, -1, 1), AssertionFailed);
 }
 
 void SuiteConfigNum::TestValueOutOfRangeConstructor()
 {
     // test creating a ConfigNum with val outside range min..max
-    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), 0, 0, 1), AvConfigValueOutOfRange);
+    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), 0, 0, 1), AssertionFailed);
 }
 
 void SuiteConfigNum::TestValueFromStore()
@@ -824,6 +827,9 @@ SuiteConfigurationManager::SuiteConfigurationManager()
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetValidId));
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetInvalidId));
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetMultiple));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestReadStoreValExists));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestReadNoStoreValExists));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestWrite));
 }
 
 void SuiteConfigurationManager::Setup()
@@ -1030,6 +1036,51 @@ void SuiteConfigurationManager::TestGetMultiple()
     TEST(text1 == *iText1);
     ConfigText& text2 = iConfigManager->GetText(kIdText2);
     TEST(text2 == text);
+}
+
+void SuiteConfigurationManager::TestReadStoreValExists()
+{
+    // test that reading from a value already in store causes store value to be
+    // returned rather than default val.
+    Bwh buf(kMaxText);
+    iConfigManager->Read(kIdText1, buf, kText2);
+    TEST(buf == kText1);
+
+    // check default value hasn't been written to store as a side-effect
+    buf.SetBytes(0);
+    iStore->Read(kIdText1, buf);
+    TEST(buf == kText1);
+}
+
+void SuiteConfigurationManager::TestReadNoStoreValExists()
+{
+    // test that reading a value not in store causes default value to be
+    // returned, and written out to store.
+    Bwh buf(kMaxText);
+
+    try { // check key isn't already in store
+        iStore->Read(kIdText2, buf);
+        ASSERTS();
+    }
+    catch (StoreKeyNotFound&) {}
+
+    iConfigManager->Read(kIdText2, buf, kText2);
+    TEST(buf == kText2);
+
+    // check value has been written to store
+    buf.SetBytes(0);
+    iStore->Read(kIdText2, buf);
+    TEST(buf == kText2);
+}
+
+void SuiteConfigurationManager::TestWrite()
+{
+    // test that writing a value via ConfigurationManager results in value
+    // being written to store.
+    Bwh buf(kMaxText);
+    iConfigManager->Write(kIdText1, kText2);
+    iStore->Read(kIdText1, buf);
+    TEST(buf == kText2);
 }
 
 
