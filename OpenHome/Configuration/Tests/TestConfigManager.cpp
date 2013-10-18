@@ -53,6 +53,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
+    void TestFunctorsCalled();
     void TestInvalidRange();
     void TestValueOutOfRangeConstructor();
     void TestValueFromStore();
@@ -78,6 +79,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
+    void TestFunctorsCalled();
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestAdd();
@@ -105,6 +107,7 @@ private: // from SuiteUnitTest
 private:
     static const TUint kMaxLength = 100;
     static const Brn kDefault;
+    void TestFunctorsCalled();
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestMaxLength();
@@ -287,6 +290,7 @@ void SuiteCVSubscriptions::TestRemoveInvalidId()
 SuiteConfigNum::SuiteConfigNum()
     : SuiteCVNotify("SuiteConfigNum")
 {
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestFunctorsCalled));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueFromStore));
@@ -303,13 +307,24 @@ void SuiteConfigNum::Setup()
 {
     SuiteCVNotify::Setup();
     iConfigVal = new ConfigNum(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
-    iChangedCount = 0;
 }
 
 void SuiteConfigNum::TearDown()
 {
     SuiteCVNotify::TearDown();
     delete iConfigVal;
+}
+
+void SuiteConfigNum::TestFunctorsCalled()
+{
+    TEST(iChangedCount == 0);
+    TEST(iOwnerFunctorCount == 1);
+
+    // there is an internal write functor - check value == value in store
+    Bws<sizeof(TInt)> valBuf;
+    iStore->Read(kKey, valBuf);
+    TInt val = Converter::BeUint32At(valBuf, 0);
+    TEST(val == iConfigVal->Get());
 }
 
 void SuiteConfigNum::TestInvalidRange()
@@ -431,6 +446,7 @@ const Brn SuiteConfigChoice::kOption3("Option3");
 SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestFunctorsCalled));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
@@ -456,6 +472,18 @@ void SuiteConfigChoice::TearDown()
 {
     SuiteCVNotify::TearDown();
     delete iConfigVal;
+}
+
+void SuiteConfigChoice::TestFunctorsCalled()
+{
+    TEST(iChangedCount == 0);
+    TEST(iOwnerFunctorCount == 1);
+
+    // there is an internal write functor - check value == value in store
+    Bws<sizeof(TUint)> valBuf;
+    iStore->Read(kKey, valBuf);
+    TUint val = Converter::BeUint32At(valBuf, 0);
+    TEST(val == iConfigVal->Get());
 }
 
 void SuiteConfigChoice::TestValueFromStore()
@@ -579,6 +607,7 @@ const Brn SuiteConfigText::kDefault("abcdefghijklmnopqrstuvwxyz");
 SuiteConfigText::SuiteConfigText()
     : SuiteCVNotify("SuiteConfigText")
 {
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestFunctorsCalled));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength));
@@ -598,6 +627,17 @@ void SuiteConfigText::TearDown()
 {
     SuiteCVNotify::TearDown();
     delete iConfigVal;
+}
+
+void SuiteConfigText::TestFunctorsCalled()
+{
+    TEST(iChangedCount == 0);
+    TEST(iOwnerFunctorCount == 1);
+
+    // there is an internal write functor - check value == value in store
+    Bwh valBuf(kMaxLength);
+    iStore->Read(kKey, valBuf);
+    TEST(valBuf == iConfigVal->Get());
 }
 
 void SuiteConfigText::TestValueFromStore()
