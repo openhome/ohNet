@@ -1,4 +1,5 @@
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -8,15 +9,26 @@ using namespace OpenHome::Configuration;
 
 // ConfigVal
 
-ConfigVal::ConfigVal()
-    : iObserverLock("CVOL")
+ConfigVal::ConfigVal(ConfigurationManager& aManager, const Brx& aId, Functor aFunc)
+    : iConfigManager(aManager)
+    , iId(aId)
+    , iObserverLock("CVOL")
     , iNextObserverId(0)
 {
+    iOwnerObserverId = Subscribe(aFunc);
+    iWriteObserverId = Subscribe(MakeFunctor(*this, &ConfigVal::Write));
 }
 
 ConfigVal::~ConfigVal()
 {
+    Unsubscribe(iWriteObserverId);
+    Unsubscribe(iOwnerObserverId);
     ASSERT(iObservers.size() == 0);
+}
+
+const Brx& ConfigVal::Id()
+{
+    return iId;
 }
 
 TUint ConfigVal::Subscribe(Functor aFunctor)
@@ -50,18 +62,23 @@ void ConfigVal::NotifySubscribers()
 
 // ConfigNum
 
-ConfigNum::ConfigNum(TInt aMin, TInt aMax, TInt aVal)
-    : iMin(aMin)
+ConfigNum::ConfigNum(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
+    : ConfigVal(aManager, aId, aFunc)
+    , iMin(aMin)
     , iMax(aMax)
-    , iVal(aVal)
 {
     if (iMin > iMax) {
         THROW(AvConfigInvalidRange);
     }
 
-    if (iVal < iMin || iVal > iMax) {
-        THROW(AvConfigValueOutOfRange);
-    }
+    Bws<sizeof(TInt)> initialBuf;
+    Bws<sizeof(TInt)> defaultBuf;
+    defaultBuf.Append(Arch::BigEndian4(aDefault));
+    iConfigManager.Read(iId, initialBuf, defaultBuf);
+    TInt initialVal = Converter::BeUint32At(initialBuf, 0);
+    Set(initialVal); // FIXME - calling this causes observers to be called - do we want that?
+
+    iConfigManager.Add(*this);
 }
 
 TInt ConfigNum::Min() const
@@ -96,18 +113,38 @@ TBool ConfigNum::Set(TInt aVal)
     return changed;
 }
 
+void ConfigNum::Write()
+{
+    Bws<sizeof(TInt)> valBuf;
+    valBuf.Append(Arch::BigEndian4(Get()));
+    iConfigManager.Write(iId, valBuf);
+}
+
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice()
-    : iSelected(0)
+ConfigChoice::ConfigChoice(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
+    : ConfigVal(aManager, aId, aFunc)
 {
-}
+    for (TUint i=0; i<aOptions.size(); i++)
+    {
+        Add(*aOptions[i]);
+    }
 
-ConfigChoice::~ConfigChoice()
-{
-}
+    Bws<sizeof(TUint)> initialBuf;
+    Bws<sizeof(TUint)> defaultBuf;
+    defaultBuf.Append(Arch::BigEndian4(aDefault));
+    iConfigManager.Read(iId, initialBuf, defaultBuf);
+    TUint initialVal = Converter::BeUint32At(initialBuf, 0);
+    try {
+        Set(initialVal);
+    }
+    catch (AvConfigIndexOutOfRange&) {
+        ASSERTS();
+    }
 
+    iConfigManager.Add(*this);
+}
 
 void ConfigChoice::Add(const Brx& aVal)
 {
@@ -154,12 +191,30 @@ TBool ConfigChoice::Set(TUint aIndex)
     return changed;
 }
 
+void ConfigChoice::Write()
+{
+    Bws<sizeof(TUint)> valBuf;
+    valBuf.Append(Arch::BigEndian4(Get()));
+    iConfigManager.Write(iId, valBuf);
+}
+
 
 // ConfigText
 
-ConfigText::ConfigText(TUint aMaxBytes)
-    : iText(aMaxBytes)
+ConfigText::ConfigText(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
+    : ConfigVal(aManager, aId, aFunc)
+    , iText(aMaxLength)
 {
+    Bwh initialBuf(aMaxLength);
+    iConfigManager.Read(iId, initialBuf, aDefault);
+    try {
+        Set(initialBuf);
+    }
+    catch (AvConfigValueTooLong&) {
+        ASSERTS();
+    }
+
+    iConfigManager.Add(*this);
 }
 
 TUint ConfigText::MaxLength() const
@@ -189,13 +244,27 @@ TBool ConfigText::Set(const Brx& aText)
     return changed;
 }
 
+void ConfigText::Write()
+{
+    iConfigManager.Write(iId, Get());
+}
+
 
 // ConfigurationManager
+
+ConfigurationManager::ConfigurationManager(IStoreReadWrite& aStore)
+    : iStore(aStore)
+    , iClosed(false)
+{
+}
 
 ConfigurationManager::~ConfigurationManager() {}
 
 template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
 {
+    if (iClosed) {
+        ASSERTS();
+    }
     if (HasNum(aId) || HasChoice(aId) || HasText(aId)) {
         THROW(AvConfigIdExists);
     }
@@ -203,27 +272,49 @@ template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const 
     aMap.Add(aId, aVal);
 }
 
-void ConfigurationManager::Add(const Brx& aId, ConfigNum& aNum)
+void ConfigurationManager::Close()
 {
-    Add(iMapNum, aId, aNum);
+    iClosed = true;
 }
 
-void ConfigurationManager::Add(const Brx& aId, ConfigChoice& aChoice)
+void ConfigurationManager::Add(ConfigNum& aNum)
 {
-    Add(iMapChoice, aId, aChoice);
+    Add(iMapNum, aNum.Id(), aNum);
 }
 
-void ConfigurationManager::Add(const Brx& aId, ConfigText& aText)
+void ConfigurationManager::Add(ConfigChoice& aChoice)
 {
-    Add(iMapText, aId, aText);
+    Add(iMapChoice, aChoice.Id(), aChoice);
 }
 
-TBool ConfigurationManager::Has(const Brx& aId)
+void ConfigurationManager::Add(ConfigText& aText)
+{
+    Add(iMapText, aText.Id(), aText);
+}
+
+void ConfigurationManager::Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
+{
+    // try retrieve from store; create entry if it doesn't exist
+    try {
+        iStore.Read(aKey, aDest);
+    }
+    catch (StoreKeyNotFound&) {
+        Write(aKey, aDefault);
+        aDest.Replace(aDefault);
+    }
+}
+
+void ConfigurationManager::Write(const Brx& aKey, const Brx& aValue)
+{
+    iStore.Write(aKey, aValue);
+}
+
+TBool ConfigurationManager::Has(const Brx& aId) const
 {
     return HasNum(aId) || HasChoice(aId) || HasText(aId);
 }
 
-ConfigVal& ConfigurationManager::Get(const Brx& aId)
+ConfigVal& ConfigurationManager::Get(const Brx& aId) const
 {
     ASSERT(Has(aId));
     if (HasNum(aId)) {
@@ -237,284 +328,34 @@ ConfigVal& ConfigurationManager::Get(const Brx& aId)
     }
 }
 
-TBool ConfigurationManager::HasNum(const Brx& aId)
+TBool ConfigurationManager::HasNum(const Brx& aId) const
 {
     return iMapNum.Has(aId);
 }
 
-ConfigNum& ConfigurationManager::GetNum(const Brx& aId)
+ConfigNum& ConfigurationManager::GetNum(const Brx& aId) const
 {
     return iMapNum.Get(aId);
 }
 
-TBool ConfigurationManager::HasChoice(const Brx& aId)
+TBool ConfigurationManager::HasChoice(const Brx& aId) const
 {
     return iMapChoice.Has(aId);
 }
 
-ConfigChoice& ConfigurationManager::GetChoice(const Brx& aId)
+ConfigChoice& ConfigurationManager::GetChoice(const Brx& aId) const
 {
     return iMapChoice.Get(aId);
 }
 
-TBool ConfigurationManager::HasText(const Brx& aId)
+TBool ConfigurationManager::HasText(const Brx& aId) const
 {
     return iMapText.Has(aId);
 }
 
-ConfigText& ConfigurationManager::GetText(const Brx& aId)
+ConfigText& ConfigurationManager::GetText(const Brx& aId) const
 {
     return iMapText.Get(aId);
-}
-
-
-// StoreVal
-
-StoreVal::StoreVal(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigVal* aVal)
-    : iStore(aStore)
-    , iId(aId)
-    , iLock("SVLK")
-    , iUpdatePending(false)
-    , iVal(aVal)
-    , iUpdatesDeferred(aUpdatesDeferred)
-{
-    // StoreVal takes ownership of its ConfigVal
-    ASSERT(iVal != NULL);
-    iListenerId = aVal->Subscribe(MakeFunctor(*this, &StoreVal::NotifyChanged));
-}
-
-StoreVal::~StoreVal()
-{
-    iVal->Unsubscribe(iListenerId);
-    delete iVal;
-}
-
-TBool StoreVal::UpdatePending()
-{
-    AutoMutex a(iLock);
-    return iUpdatePending;
-}
-
-void StoreVal::NotifyChanged()
-{
-    iLock.Wait();
-    iUpdatePending = true;
-    iLock.Signal();
-    if (!iUpdatesDeferred) {
-        // the Write() method of classes deriving from this should regain iLock to set iUpdatePending
-        Write();
-    }
-}
-
-
-// StoreNum
-
-StoreNum::StoreNum(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigNum* aVal)
-    : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
-    , iNum(aVal)
-{
-}
-
-void StoreNum::Write()
-{
-    AutoMutex a(iLock);
-    if (iUpdatePending) {
-        iUpdatePending = false;
-        Bws<sizeof(TInt)> buf;
-        buf.Append(iNum->Get());
-        iStore.Write(iId, buf);
-    }
-}
-
-
-// StoreChoice
-
-StoreChoice::StoreChoice(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigChoice* aVal)
-    : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
-    , iChoice(aVal)
-{
-}
-
-void StoreChoice::Write()
-{
-    AutoMutex a(iLock);
-    if (iUpdatePending) {
-        iUpdatePending = false;
-        Bws<sizeof(TUint)> buf;
-        buf.Append(iChoice->Get());
-        iStore.Write(iId, buf);
-    }
-}
-
-
-// StoreText
-
-StoreText::StoreText(IStoreReadWrite& aStore, const Brx& aId, TBool aUpdatesDeferred, ConfigText* aVal)
-    : StoreVal(aStore, aId, aUpdatesDeferred, aVal)
-    , iText(aVal)
-{
-}
-
-void StoreText::Write()
-{
-    AutoMutex a(iLock);
-    if (iUpdatePending) {
-        iUpdatePending = false;
-        iStore.Write(iId, iText->Get());
-    }
-}
-
-
-// StoreManager
-
-StoreManager::StoreManager(IStoreReadWrite& aStore, ConfigurationManager& aConfigManager)
-    : iStore(aStore)
-    , iConfigManager(aConfigManager)
-    , iUpdateLock("SMUL")
-    , iListenersLock("SMLL")
-{
-}
-
-StoreManager::~StoreManager()
-{
-    // remove subscribers that were added during CreateX calls
-    AutoMutex a(iListenersLock);
-    for (ListenerMap::iterator it = iListeners.begin(); it != iListeners.end(); it++) {
-        ASSERT(iConfigManager.Has(it->first));
-        ConfigVal& cVal = iConfigManager.Get(it->first);
-        cVal.Unsubscribe(it->second);
-    }
-    // StoreManager has ownership of its StoreVals, so delete them
-    for (StoreMap::iterator it = iUpdateImmediate.begin(); it != iUpdateImmediate.end(); it++) {
-        delete it->second;
-    }
-    for (StoreMap::iterator it = iUpdateDeferred.begin(); it != iUpdateDeferred.end(); it++) {
-        delete it->second;
-    }
-}
-
-TInt StoreManager::CreateNum(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
-{
-    if (iConfigManager.Has(aId)) {
-        THROW(AvConfigIdExists);
-    }
-
-    Bws<sizeof(TInt)> storeVal;
-
-    // try retrieve from store; create entry if it doesn't exist
-    try {
-        iStore.Read(aId, storeVal);
-    }
-    catch (StoreKeyNotFound&) {
-        Bwh buf(sizeof(TInt));
-        buf.Append(aDefault);
-        iStore.Write(aId, buf);
-        iStore.Read(aId, storeVal);
-    }
-
-    TInt initial = Converter::BeUint32At(storeVal, 0);
-    ConfigNum* cVal = new ConfigNum(aMin, aMax, initial);
-    TUint listenerId = cVal->Subscribe(aFunc);
-    AddListener(aId, listenerId);
-    StoreNum* sVal = new StoreNum(iStore, aId, aUpdatesDeferred, cVal);
-
-    iConfigManager.Add(aId, *cVal);
-    Add(aId, aUpdatesDeferred, sVal);
-
-    return cVal->Get();
-}
-
-TUint StoreManager::CreateChoice(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
-{
-    if (iConfigManager.Has(aId)) {
-        THROW(AvConfigIdExists);
-    }
-
-    Bws<sizeof(TUint)> storeVal;
-
-    // try retrieve from store; create entry if it doesn't exist
-    try {
-        iStore.Read(aId, storeVal);
-    }
-    catch (StoreKeyNotFound&) {
-        Bwh buf(sizeof(TUint));
-        buf.Append(aDefault);
-        iStore.Write(aId, buf);
-        iStore.Read(aId, storeVal);
-    }
-
-    TUint initial = Converter::BeUint32At(storeVal, 0);
-    ConfigChoice* cVal = new ConfigChoice();
-    for (TUint i=0; i<aOptions.size(); i++)
-    {
-        cVal->Add(*aOptions[i]);
-    }
-    cVal->Set(initial);
-    TUint listenerId = cVal->Subscribe(aFunc);
-    AddListener(aId, listenerId);
-    StoreChoice* sVal = new StoreChoice(iStore, aId, aUpdatesDeferred, cVal);
-
-    iConfigManager.Add(aId, *cVal);
-    Add(aId, aUpdatesDeferred, sVal);
-
-    return initial;
-}
-
-const Brx& StoreManager::CreateText(const Brx& aId, TBool aUpdatesDeferred, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
-{
-    if (iConfigManager.Has(aId)) {
-        THROW(AvConfigIdExists);
-    }
-
-    Bwh storeVal(aMaxLength);
-
-    // try retrieve from store; create entry if it doesn't exist
-    try {
-        iStore.Read(aId, storeVal);
-    }
-    catch (StoreKeyNotFound&) {
-        iStore.Write(aId, aDefault);
-        iStore.Read(aId, storeVal);
-    }
-
-    ConfigText* cVal = new ConfigText(aMaxLength);
-    cVal->Set(storeVal);
-    TUint listenerId = cVal->Subscribe(aFunc);
-    AddListener(aId, listenerId);
-    StoreText* sVal = new StoreText(iStore, aId, aUpdatesDeferred, cVal);
-
-    iConfigManager.Add(aId, *cVal);
-    Add(aId, aUpdatesDeferred, sVal);
-
-    return cVal->Get();
-}
-
-void StoreManager::AddListener(const Brx& aId, TUint aListenerId)
-{
-    Brn id(aId);
-    AutoMutex a(iListenersLock);
-    iListeners.insert(std::pair<Brn, TUint>(id, aListenerId));
-}
-
-void StoreManager::Add(const Brx& aId, TBool aUpdatesDeferred, StoreVal* aSVal)
-{
-    ASSERT(aSVal != NULL);
-    Brn id(aId);
-    AutoMutex a(iUpdateLock);
-    if (aUpdatesDeferred) {
-        iUpdateDeferred.insert(std::pair<Brn, StoreVal*>(id, aSVal));
-    }
-    else {
-        iUpdateImmediate.insert(std::pair<Brn, StoreVal*>(id, aSVal));
-    }
-}
-
-void StoreManager::WritePendingUpdates()
-{
-    AutoMutex a(iUpdateLock);
-    for (StoreMap::iterator it = iUpdateDeferred.begin(); it != iUpdateDeferred.end(); it++) {
-        it->second->Write();
-    }
 }
 
 

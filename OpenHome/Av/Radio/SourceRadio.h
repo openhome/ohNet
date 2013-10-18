@@ -16,7 +16,8 @@ namespace Media {
     class UriProviderSingleTrack;
 }
 namespace Configuration {
-    class StoreManager;
+    class ConfigurationManager;
+    class ConfigText;
 }
 namespace Av {
 
@@ -42,7 +43,7 @@ class SourceRadio : public Source, private ISourceRadio, private Media::IPipelin
 public:
     static const TUint kUsernameMaxLength = 40;
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::StoreManager& aStoreManager);
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::ConfigurationManager& aConfigManager);
     ~SourceRadio();
 private: // from ISource
     void Activate();
@@ -74,6 +75,7 @@ private:
     TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState;
+    Configuration::ConfigText* iConfigUserName;
 };
 
 } // namespace Av

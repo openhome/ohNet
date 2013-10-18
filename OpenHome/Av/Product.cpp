@@ -16,10 +16,9 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, StoreManager& aStoreManager, ConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, ConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
-    , iStoreManager(aStoreManager)
     , iConfigManager(aConfigManager)
     , iLock("PRDM")
     , iObserver(NULL)
@@ -27,6 +26,8 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, StoreManager& a
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
+    iConfigProductRoom = new ConfigText(iConfigManager, Brn("Product.Room"), MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room-default"));
+    iConfigProductName = new ConfigText(iConfigManager, Brn("Product.Name"), MakeFunctor(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer-default")); // FIXME - assign appropriate product name
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 
@@ -37,6 +38,8 @@ Product::~Product()
     }
     iSources.clear();
     delete iProviderProduct;
+    delete iConfigProductName;
+    delete iConfigProductRoom;
 }
 
 void Product::SetObserver(IProductObserver& aObserver)
@@ -93,9 +96,8 @@ void Product::GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
 
 void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri)
 {
-    GetConfigText(Brn("Product.Room"), aRoom, Brn("Main Room-default"));
-    GetConfigText(Brn("Product.Name"), aName, Brn("SoftPlayer-default")); // FIXME - assign appropriate product name
-
+    aRoom.Append(iConfigProductRoom->Get());
+    aName.Append(iConfigProductName->Get());
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));
@@ -141,18 +143,6 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
     aXml.Append("</");
     aXml.Append(aTag);
     aXml.Append('>');
-}
-
-void Product::GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault)
-{
-    if (iConfigManager.HasText(aId)) {
-        aDest.Append(iConfigManager.GetText(aId).Get());
-    }
-    else {
-        ASSERT(!iConfigManager.Has(aId)); // there is already an aId, but it is not text
-        const Brx& val = iStoreManager.CreateText(aId, false, MakeFunctor(*this, &Product::ProductRoomChanged), aDest.MaxBytes(), aDefault);
-        aDest.Append(val);
-    }
 }
 
 void Product::ProductRoomChanged() {}

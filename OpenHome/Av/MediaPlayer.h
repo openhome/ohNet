@@ -28,7 +28,6 @@ namespace Media {
 namespace Configuration {
     class ConfigurationManager;
     class IStoreReadWrite;
-    class StoreManager;
 }
 namespace Av {
 
@@ -54,7 +53,6 @@ public:
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::ConfigurationManager& ConfigManager() = 0;
-    virtual Configuration::StoreManager& StoreManager() = 0;
     virtual Av::ZoneHandler& ZoneHandler() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
 };
@@ -79,7 +77,6 @@ public: // from IMediaPlayer
     Media::TrackFactory& TrackFactory();
     IReadStore& ReadStore();
     Configuration::ConfigurationManager& ConfigManager();
-    Configuration::StoreManager& StoreManager();
     Av::ZoneHandler& ZoneHandler();
     void Add(Media::UriProvider* aUriProvider);
 private:
@@ -98,7 +95,6 @@ private:
     ProviderVolume* iVolume;
     KvpStore* iKvpStore;
     Configuration::ConfigurationManager* iConfigManager;
-    Configuration::StoreManager* iStoreManager;
     Av::ZoneHandler* iZoneHandler;
 };
 

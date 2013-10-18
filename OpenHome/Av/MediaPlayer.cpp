@@ -33,12 +33,11 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint a
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iConfigManager = new ConfigurationManager();
-    iStoreManager = new Configuration::StoreManager(aWriteStore, *iConfigManager);
+    iConfigManager = new ConfigurationManager(aWriteStore);
     iZoneHandler = new Av::ZoneHandler(aDvStack.Env());
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iProduct = new Product(aDevice, *iKvpStore, *iStoreManager, *iConfigManager, *iInfoLogger);
+    iProduct = new Product(aDevice, *iKvpStore, *iConfigManager, *iInfoLogger);
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -63,7 +62,6 @@ MediaPlayer::~MediaPlayer()
     delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
-    delete iStoreManager;
     delete iConfigManager;
     delete iKvpStore;
     delete iZoneHandler;
@@ -136,11 +134,6 @@ IReadStore& MediaPlayer::ReadStore()
 ConfigurationManager& MediaPlayer::ConfigManager()
 {
     return *iConfigManager;
-}
-
-StoreManager& MediaPlayer::StoreManager()
-{
-    return *iStoreManager;
 }
 
 Av::ZoneHandler& MediaPlayer::ZoneHandler()
