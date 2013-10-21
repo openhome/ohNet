@@ -27,17 +27,18 @@ using namespace OpenHome::Net;
 
 // MediaPlayer
 
-MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource, IStoreReadWrite& aWriteStore)
+MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies
+                       , IStaticDataSource& aStaticDataSource, IConfigurationManager& aConfigManager)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
+    , iConfigManager(aConfigManager)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iConfigManager = new ConfigurationManager(aWriteStore);
     iZoneHandler = new Av::ZoneHandler(aDvStack.Env());
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iProduct = new Product(aDevice, *iKvpStore, *iConfigManager, *iInfoLogger);
+    iProduct = new Product(aDevice, *iKvpStore, iConfigManager, *iInfoLogger);
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -62,7 +63,6 @@ MediaPlayer::~MediaPlayer()
     delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
-    delete iConfigManager;
     delete iKvpStore;
     delete iZoneHandler;
     delete iInfoLogger;
@@ -131,9 +131,9 @@ IReadStore& MediaPlayer::ReadStore()
     return *iKvpStore;
 }
 
-ConfigurationManager& MediaPlayer::ConfigManager()
+IConfigurationManager& MediaPlayer::ConfigManager()
 {
-    return *iConfigManager;
+    return iConfigManager;
 }
 
 Av::ZoneHandler& MediaPlayer::ZoneHandler()

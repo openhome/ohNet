@@ -16,7 +16,7 @@ namespace Media {
     class UriProviderSingleTrack;
 }
 namespace Configuration {
-    class ConfigurationManager;
+    class IConfigurationManager;
     class ConfigText;
 }
 namespace Av {
@@ -43,7 +43,7 @@ class SourceRadio : public Source, private ISourceRadio, private Media::IPipelin
 public:
     static const TUint kUsernameMaxLength = 40;
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::ConfigurationManager& aConfigManager);
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigurationManager& aConfigManager);
     ~SourceRadio();
 private: // from ISource
     void Activate();

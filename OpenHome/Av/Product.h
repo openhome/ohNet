@@ -16,7 +16,7 @@ EXCEPTION(AvSourceNotFound);
 
 namespace OpenHome {
 namespace Configuration {
-    class ConfigurationManager;
+    class IConfigurationManager;
     class ConfigText;
 }
 namespace Av {
@@ -51,7 +51,7 @@ public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::ConfigurationManager& aConfigManager, IInfoAggregator& aInfoAggregator);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IConfigurationManager& aConfigManager, IInfoAggregator& aInfoAggregator);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();
@@ -82,7 +82,7 @@ private: // from IInfoProvider
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
-    Configuration::ConfigurationManager& iConfigManager;
+    Configuration::IConfigurationManager& iConfigManager;
     Mutex iLock;
     ProviderProduct* iProviderProduct;
     IProductObserver* iObserver;

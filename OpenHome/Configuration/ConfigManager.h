@@ -30,12 +30,12 @@ public:
     virtual void Unsubscribe(TUint aId) = 0;
 };
 
-class ConfigurationManager;
+class IConfigurationManager;
 
 class ConfigVal : public IObservable
 {
 protected:
-    ConfigVal(ConfigurationManager& aManager, const Brx& aId, Functor aFunc);
+    ConfigVal(IConfigurationManager& aManager, const Brx& aId, Functor aFunc);
 public:
     virtual ~ConfigVal();
     const Brx& Id();
@@ -46,7 +46,7 @@ protected:
     void NotifySubscribers();
     virtual void Write() = 0;
 protected:
-    ConfigurationManager& iConfigManager;
+    IConfigurationManager& iConfigManager;
     const Brx& iId;
 private:
     typedef std::map<TUint,Functor> Map;
@@ -64,7 +64,7 @@ private:
 class ConfigNum : public ConfigVal
 {
 public:
-    ConfigNum(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     TInt Get() const;
@@ -97,7 +97,7 @@ inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
 class ConfigChoice : public ConfigVal
 {
 public:
-    ConfigChoice(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
+    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
     std::vector<const Brx*> Options();
     TUint Get() const;
     TBool Set(TUint aIndex);
@@ -130,7 +130,7 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
 class ConfigText : public ConfigVal
 {
 public:
-    ConfigText(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     const Brx& Get() const;
     TBool Set(const Brx& aText);

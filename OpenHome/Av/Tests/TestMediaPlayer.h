@@ -20,6 +20,7 @@
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
 
 namespace OpenHome {
+    class PowerManager;
 namespace Net {
     class DvStack;
     class DvDevice;
@@ -30,6 +31,7 @@ namespace Media {
 }
 namespace Configuration {
     class ConfigRamStore;
+    class ConfigurationManager;
 }
 namespace Av {
     class RamStore;
@@ -52,6 +54,9 @@ protected:
     virtual void RegisterPlugins(Environment& aEnv);
     void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
 private:
+    void PowerDownUpnp();
+    void PowerDownDisable(Net::DvDevice& aDevice);
+    void PowerDownUpnpCallback();
     TBool TryDisable(Net::DvDevice& aDevice);
     void Disabled();
 protected:
@@ -61,6 +66,8 @@ protected:
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
+    Configuration::ConfigurationManager* iConfigManager;
+    PowerManager* iPowerManager;
 private:
     Semaphore iDisabled;
     ISource* iSourceUpnp; // FIXME - see #169

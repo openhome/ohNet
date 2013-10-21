@@ -26,7 +26,7 @@ namespace Media {
     class TrackFactory;
 }
 namespace Configuration {
-    class ConfigurationManager;
+    class IConfigurationManager;
     class IStoreReadWrite;
 }
 namespace Av {
@@ -52,7 +52,7 @@ public:
     virtual Media::PipelineManager& Pipeline() = 0;
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
-    virtual Configuration::ConfigurationManager& ConfigManager() = 0;
+    virtual Configuration::IConfigurationManager& ConfigManager() = 0;
     virtual Av::ZoneHandler& ZoneHandler() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
 };
@@ -61,7 +61,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
 {
     static const TUint kTrackCount = 1200;
 public:
-    MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource, Configuration::IStoreReadWrite& aWriteStore);
+    MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource, Configuration::IConfigurationManager& aConfigManager);
     ~MediaPlayer();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
@@ -76,7 +76,7 @@ public: // from IMediaPlayer
     Media::PipelineManager& Pipeline();
     Media::TrackFactory& TrackFactory();
     IReadStore& ReadStore();
-    Configuration::ConfigurationManager& ConfigManager();
+    Configuration::IConfigurationManager& ConfigManager();
     Av::ZoneHandler& ZoneHandler();
     void Add(Media::UriProvider* aUriProvider);
 private:
@@ -94,7 +94,7 @@ private:
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
     KvpStore* iKvpStore;
-    Configuration::ConfigurationManager* iConfigManager;
+    Configuration::IConfigurationManager& iConfigManager;
     Av::ZoneHandler* iZoneHandler;
 };
 

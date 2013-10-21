@@ -9,7 +9,7 @@ using namespace OpenHome::Configuration;
 
 // ConfigVal
 
-ConfigVal::ConfigVal(ConfigurationManager& aManager, const Brx& aId, Functor aFunc)
+ConfigVal::ConfigVal(IConfigurationManager& aManager, const Brx& aId, Functor aFunc)
     : iConfigManager(aManager)
     , iId(aId)
     , iObserverLock("CVOL")
@@ -62,7 +62,7 @@ void ConfigVal::NotifySubscribers()
 
 // ConfigNum
 
-ConfigNum::ConfigNum(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
+ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
     : ConfigVal(aManager, aId, aFunc)
     , iMin(aMin)
     , iMax(aMax)
@@ -131,7 +131,7 @@ void ConfigNum::Write()
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
     : ConfigVal(aManager, aId, aFunc)
 {
     for (TUint i=0; i<aOptions.size(); i++)
@@ -214,7 +214,7 @@ void ConfigChoice::Write()
 
 // ConfigText
 
-ConfigText::ConfigText(ConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
+ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aId, aFunc)
     , iText(aMaxLength)
 {

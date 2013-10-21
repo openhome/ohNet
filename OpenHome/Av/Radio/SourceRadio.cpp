@@ -31,7 +31,7 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::ConfigurationManager& aConfigManager)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigurationManager& aConfigManager)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)

@@ -12,6 +12,7 @@
 #include "RamStore.h"
 #include <OpenHome/Av/Source.h> // FIXME - see #169
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/PowerManager.h>
 
 int mygetch();
 
@@ -69,8 +70,15 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
     iConfigRamStore->Print();
 
+    // create the config manager that makes use of the read store
+    iConfigManager = new ConfigurationManager(*iConfigRamStore);
+
+    // create a power manager for power failures
+    iPowerManager = new PowerManager();
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
+
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigManager);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -83,6 +91,7 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;
+    delete iConfigManager;
     delete iConfigRamStore;
 }
 
@@ -112,6 +121,7 @@ void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
 void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
+    iConfigManager->Close();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
     iMediaPlayer->Start();
@@ -122,6 +132,7 @@ void TestMediaPlayer::Run()
     Log::Print("\n");
     while (mygetch() != 'q')
         ;
+    iPowerManager->PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
 }
 
 PipelineManager& TestMediaPlayer::Pipeline()
@@ -192,6 +203,25 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     hostName.Replace(iDevice->Udn());
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+}
+
+void TestMediaPlayer::PowerDownUpnp()
+{
+    Log::Print("TestMediaPlayer::PowerDownUpnp\n");
+    PowerDownDisable(*iDevice);
+    PowerDownDisable(*iDeviceUpnpAv);
+}
+
+void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
+{
+    if (aDevice.Enabled()) {
+        aDevice.SetDisabled(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnpCallback));
+    }
+}
+
+void TestMediaPlayer::PowerDownUpnpCallback()
+{
+    // do nothing; only exists to avoid lengthy Upnp shutdown waits during power fail
 }
 
 TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)

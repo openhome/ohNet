@@ -16,7 +16,7 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, ConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigManager(aConfigManager)
