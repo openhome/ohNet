@@ -1,4 +1,7 @@
 #include <OpenHome/Configuration/PowerManager.h>
+#include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Configuration;
@@ -62,4 +65,44 @@ TUint PowerManager::PriorityFunctor::Priority() const
 TBool PowerManager::PriorityFunctorCmp::operator()(const PriorityFunctor& aFunc1, const PriorityFunctor& aFunc2) const
 {
     return aFunc1.Priority() < aFunc2.Priority();
+}
+
+
+// StoreInt
+
+StoreInt::StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
+    : iStore(aStore)
+    , iPowerManager(aPowerManager)
+    , iKey(aKey)
+    , iVal(aDefault)
+{
+    // read value from store (if it exists; otherwise write default)
+    Bws<sizeof(TInt)> buf;
+    try {
+        iStore.Read(iKey, buf);
+        iVal = Converter::BeUint32At(buf, 0);
+    }
+    catch (StoreKeyNotFound&) {
+        Write();
+    }
+
+    // register with IPowerManager
+    iPowerManager.RegisterObserver(MakeFunctor(*this, &StoreInt::Write), aPriority);
+}
+
+TInt StoreInt::Get() const
+{
+    return iVal;
+}
+
+void StoreInt::Set(TInt aValue)
+{
+    iVal = aValue;
+}
+
+void StoreInt::Write()
+{
+    Bws<sizeof(TInt)> buf;
+    buf.Append(Arch::BigEndian4(iVal));
+    iStore.Write(iKey, buf);
 }

@@ -54,6 +54,26 @@ private:
     Mutex iLock;
 };
 
+class IStoreReadWrite;
+
+/*
+ * Int class that only writes its value out to store at power down.
+ */
+class StoreInt : private INonCopyable
+{
+public:
+    StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault);
+    TInt Get() const;
+    void Set(TInt aValue); // owning class knows limits
+private:
+    void Write();
+private:
+    IStoreReadWrite& iStore;
+    IPowerManager& iPowerManager;
+    const Brx& iKey;
+    TInt iVal;
+};
+
 } // namespace Configuration
 } // namespace OpenHome
 

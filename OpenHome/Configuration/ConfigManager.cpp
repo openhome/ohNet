@@ -78,7 +78,7 @@ ConfigNum::ConfigNum(ConfigurationManager& aManager, const Brx& aId, Functor aFu
     ASSERT(Valid(initialVal));
     iConfigManager.Add(*this);
     iVal = initialVal;
-    NotifySubscribers();
+    NotifySubscribers(); // FIXME - is this safe in constructor?
 }
 
 TInt ConfigNum::Min() const
