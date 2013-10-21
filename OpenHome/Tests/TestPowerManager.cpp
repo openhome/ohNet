@@ -37,7 +37,7 @@ private:
 private:
     static const TUint kSleepTime = 1; // sleep time during callbacks to artificially increase env time
     Environment& iEnv;
-    IPowerManager* iPowerManager;
+    PowerManager* iPowerManager;
     TUint64 iTime1;
     TUint64 iTime2;
     TUint64 iTime3;
@@ -61,8 +61,8 @@ private:
     static const TUint kPowerPriority = kPowerPriorityNormal;
     static const TInt kDefault = 50;
     static const Brn kKey;
-    IStoreReadWrite* iStore;
-    IPowerManager* iPowerManager;
+    ConfigRamStore* iStore;
+    PowerManager* iPowerManager;
     StoreInt* iStoreInt;
 };
 
@@ -92,8 +92,8 @@ private:
     static const Brn kKey2;
     static const Brn kKey3;
     Environment& iEnv;
-    IStoreReadWrite* iStore;
-    IPowerManager* iPowerManager;
+    ConfigRamStore* iStore;
+    PowerManager* iPowerManager;
     StoreInt* iStoreInt1;
     StoreInt* iStoreInt2;
     StoreInt* iStoreInt3;

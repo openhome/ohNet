@@ -511,7 +511,7 @@ void SuiteConfigChoice::TestValueFromStore()
 {
     // test an existing value in store overwrites the default value at creation
     const Brn key("conf.choice.2");
-    const TInt storeVal = kDefault+1;
+    const TUint storeVal = kDefault+1;
     Bws<sizeof(TUint)> valBuf;
     valBuf.Append(Arch::BigEndian4(storeVal));
     iStore->Write(key, valBuf);
