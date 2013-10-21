@@ -1,10 +1,9 @@
-#include <OpenHome/Configuration/PowerManager.h>
+#include <OpenHome/PowerManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Converter.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Configuration;
 
 
 // PowerManager
@@ -33,8 +32,8 @@ void PowerManager::PowerDown()
 
 void PowerManager::RegisterObserver(Functor aFunctor, TUint aPriority)
 {
-    ASSERT(aPriority <= kPriorityHighest)
-    ASSERT(aPriority >= kPriorityLowest); // shouldn't matter as lowest is 0, and parameter type is TUint
+    ASSERT(aPriority <= kPowerPriorityHighest)
+    ASSERT(aPriority >= kPowerPriorityLowest); // shouldn't matter as lowest is 0, and parameter type is TUint
     const PriorityFunctor functor(aFunctor, aPriority);
     AutoMutex a(iLock);
     iQueue.push(functor); // PriorityFunctor copied into queue
@@ -70,7 +69,7 @@ TBool PowerManager::PriorityFunctorCmp::operator()(const PriorityFunctor& aFunc1
 
 // StoreInt
 
-StoreInt::StoreInt(IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
+StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
     : iStore(aStore)
     , iPowerManager(aPowerManager)
     , iKey(aKey)

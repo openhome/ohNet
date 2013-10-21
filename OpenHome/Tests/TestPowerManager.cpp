@@ -1,5 +1,5 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
-#include <OpenHome/Configuration/PowerManager.h>
+#include <OpenHome/PowerManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Arch.h>
@@ -12,7 +12,6 @@ using namespace OpenHome::TestFramework;
 using namespace OpenHome::Configuration;
 
 namespace OpenHome {
-namespace Configuration {
 
 class SuitePowerManager : public SuiteUnitTest, public INonCopyable
 {
@@ -59,7 +58,7 @@ private:
     void TestSet();
     void TestWrite();
 private:
-    static const TUint kPriority = kPriorityNormal;
+    static const TUint kPowerPriority = kPowerPriorityNormal;
     static const TInt kDefault = 50;
     static const Brn kKey;
     IStoreReadWrite* iStore;
@@ -100,7 +99,6 @@ private:
     StoreInt* iStoreInt3;
 };
 
-} // namespace Configuration
 } // namespace OpenHome
 
 
@@ -164,7 +162,7 @@ void SuitePowerManager::TestPowerDownNothingRegistered()
 void SuitePowerManager::TestPriorityLowest()
 {
     // Test that a functor with the lowest priority can be registered and called.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityLowest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityLowest);
     iPowerManager->PowerDown();
     TEST(iTime1 != 0);
 }
@@ -172,7 +170,7 @@ void SuitePowerManager::TestPriorityLowest()
 void SuitePowerManager::TestPriorityHighest()
 {
     // Test that a functor with the highest priority can be registered and called.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityHighest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
     iPowerManager->PowerDown();
     TEST(iTime1 != 0);
 }
@@ -180,7 +178,7 @@ void SuitePowerManager::TestPriorityHighest()
 void SuitePowerManager::TestPriorityNormal()
 {
     // Test that a functor with a normal priority can be registered and called.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityNormal);
     iPowerManager->PowerDown();
     TEST(iTime1 != 0);
 }
@@ -189,16 +187,16 @@ void SuitePowerManager::TestPriorityTooHigh()
 {
     // Test that PowerManager asserts when a functor with too high a priority
     // is registered.
-    TEST_THROWS(iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityHighest+1), AssertionFailed);
+    TEST_THROWS(iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest+1), AssertionFailed);
 }
 
 void SuitePowerManager::TestMultipleFunctorsAddedInOrder()
 {
     // Add multiple functors, in order of calling priority, and check they are
     // called in order.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityHighest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPriorityLowest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityLowest);
     iPowerManager->PowerDown();
     Log::Print("TestMultipleFunctorsAddedInOrder iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
     TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
@@ -210,9 +208,9 @@ void SuitePowerManager::TestMultipleFunctorsAddedInReverseOrder()
 {
     // Add multiple functors, in reverse order of calling priority, and check
     // they are called in order.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPriorityLowest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityHighest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityLowest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
     iPowerManager->PowerDown();
     Log::Print("TestMultipleFunctorsAddedInReverseOrder iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
     TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
@@ -224,9 +222,9 @@ void SuitePowerManager::TestMultipleFunctorsAddedOutOfOrder()
 {
     // Add multiple functors, in a non-linear order of calling, and check they
     // are called in order.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityHighest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPriorityLowest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityLowest);
     iPowerManager->PowerDown();
     Log::Print("TestMultipleFunctorsAddedOutOfOrder iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
     TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
@@ -239,9 +237,9 @@ void SuitePowerManager::TestMultipleFunctorsSamePriority()
     // Add multiple functors, with some having the same priority, and check
     // that functors with the same priority are called in the order they were
     // added.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityHighest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityNormal);
     iPowerManager->PowerDown();
     Log::Print("TestMultipleFunctorsSamePriority iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
     TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
@@ -253,7 +251,7 @@ void SuitePowerManager::TestPowerDownTwice()
 {
     // As PowerDown() should only be called once, test that subsequent calls to
     // it do nothing.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPriorityNormal);
+    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityNormal);
     iPowerManager->PowerDown();
     TEST(iTime1 > 0);
 
@@ -290,7 +288,7 @@ void SuiteStoreInt::Setup()
 {
     iStore = new ConfigRamStore();
     iPowerManager = new PowerManager();
-    iStoreInt = new StoreInt(*iStore, *iPowerManager, kPriority, kKey, kDefault);
+    iStoreInt = new StoreInt(*iStore, *iPowerManager, kPowerPriority, kKey, kDefault);
 }
 
 void SuiteStoreInt::TearDown()
@@ -312,7 +310,7 @@ void SuiteStoreInt::TestValueFromStore()
     iStore->Write(key, buf);
 
     // create StoreInt and check it uses value from store
-    StoreInt storeInt(*iStore, *iPowerManager, kPriority, key, kDefault);
+    StoreInt storeInt(*iStore, *iPowerManager, kPowerPriority, key, kDefault);
     TEST(storeInt.Get() == storeVal);
 
     // check store hasn't been overwritten as a side-effect
@@ -392,9 +390,9 @@ void SuiteStoreIntOrdering::Setup()
 {
     iStore = new OrderingRamStore(iEnv);
     iPowerManager = new PowerManager();
-    iStoreInt1 = new StoreInt(*iStore, *iPowerManager, kPriorityNormal, kKey1, kDefault);
-    iStoreInt2 = new StoreInt(*iStore, *iPowerManager, kPriorityLowest, kKey2, kDefault+1);
-    iStoreInt3 = new StoreInt(*iStore, *iPowerManager, kPriorityHighest, kKey3, kDefault+2);
+    iStoreInt1 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityNormal, kKey1, kDefault);
+    iStoreInt2 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityLowest, kKey2, kDefault+1);
+    iStoreInt3 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityHighest, kKey3, kDefault+2);
 }
 
 void SuiteStoreIntOrdering::TearDown()
