@@ -432,7 +432,8 @@ void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
     Map::iterator it = iMap.find(key);
     if (it != iMap.end()) {
         if (*(it->second) == aSource) {
-            // new value is the same; do nothing
+            // new value is the same; free memory
+            delete val;
             return;
         }
         else {

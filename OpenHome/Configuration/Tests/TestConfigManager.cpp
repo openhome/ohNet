@@ -1148,6 +1148,10 @@ void SuiteRamStore::TestWrite()
     Brn val2New("abc"); // shorter value
     iStore->Write(kKey1, val1New);
     iStore->Write(kKey2, val2New);
+    
+    // try update with same values again
+    iStore->Write(kKey1, val1New);
+    iStore->Write(kKey2, val2New);
 
     // read and test new values
     Bwh val1(val1New.Bytes());
