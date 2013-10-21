@@ -10,6 +10,7 @@
 
 namespace OpenHome {
     class Environment;
+    class IPowerManager;
 namespace Net {
     class DvStack;
 }
@@ -33,7 +34,7 @@ class SourceRaop : public Source, public IRaopObserver, private Media::IPipeline
 private:
     static const Brn kRaopPrefix;
 public:
-    SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort);
+    SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, IPowerManager& aPowerManager, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort);
     ~SourceRaop();
     Media::IRaopDiscovery& Discovery();
 private: // from ISource

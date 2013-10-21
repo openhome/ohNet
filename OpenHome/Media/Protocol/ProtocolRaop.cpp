@@ -172,7 +172,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         }
     }
 
-    Close();
+    Close(); // FIXME - is this the cause of reconnect problems?
     return EProtocolStreamSuccess;
 }
 

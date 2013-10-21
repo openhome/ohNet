@@ -17,6 +17,7 @@
 #include <OpenHome/Net/Core/CpDeviceDv.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/PowerManager.h>
 
 #include <array>
 #include <limits.h>
@@ -114,6 +115,7 @@ private:
     RamStore* iRamStore;
     ConfigRamStore* iConfigRamStore;
     ConfigurationManager* iConfigManager;
+    PowerManager* iPowerManager;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
     CpProxyAvOpenhomeOrgPlaylist1* iProxy;
@@ -357,7 +359,8 @@ void SuitePlaylist::Setup()
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
     iConfigManager = new ConfigurationManager(*iConfigRamStore);
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigManager);
+    iPowerManager = new PowerManager();
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigManager, *iPowerManager);
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
@@ -397,6 +400,7 @@ void SuitePlaylist::TearDown()
     iDeviceDisabled.Wait();
     delete iMediaPlayer;
     delete iDriver;
+    delete iPowerManager;
     delete iConfigManager;
     delete iConfigRamStore;
     delete iRamStore;
