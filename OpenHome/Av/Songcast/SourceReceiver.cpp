@@ -96,7 +96,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     Environment& env = aMediaPlayer.Env();
     iPipeline.Add(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
-    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
+    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf, aMediaPlayer.PowerManager()));
     iZoneHandler.AddListener(*this);
     iPipeline.AddObserver(*this);
 }

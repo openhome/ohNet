@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/PowerManager.h>
 
 namespace OpenHome {
 namespace Net {
@@ -20,7 +21,7 @@ class SimpleSongcastingDriver;
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -59,6 +60,7 @@ private: // from IPipelineObserver
 protected:
     Pipeline* iPipeline;
 private:
+    PowerManager iPowerManager;
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
     SimpleSongcastingDriver* iDriver;
