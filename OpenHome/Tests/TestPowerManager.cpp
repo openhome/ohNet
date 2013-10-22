@@ -43,34 +43,25 @@ private:
     TUint64 iTime3;
 };
 
-class SuiteStoreInt : public SuiteUnitTest, private INonCopyable
+class SuiteStoreVal : public SuiteUnitTest
 {
-public:
-    SuiteStoreInt();
-    static TInt IntFromStore(IStoreReadOnly& aStore, const Brx& aKey);
-private: // from SuiteUnitTest
+protected:
+    SuiteStoreVal(const TChar* aName);
+protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
-private:
-    void TestValueFromStore();
-    void TestValueWrittenToStore();
-    void TestGet();
-    void TestSet();
-    void TestWrite();
-private:
+protected:
     static const TUint kPowerPriority = kPowerPriorityNormal;
-    static const TInt kDefault = 50;
     static const Brn kKey;
     ConfigRamStore* iStore;
     PowerManager* iPowerManager;
-    StoreInt* iStoreInt;
 };
 
-class SuiteStoreIntOrdering : public SuiteUnitTest, private INonCopyable
+class SuiteStoreValOrdering : public SuiteUnitTest, private INonCopyable
 {
-public:
-    SuiteStoreIntOrdering(Environment& aEnv);
-private: // from SuiteUnitTest
+protected:
+    SuiteStoreValOrdering(const TChar* aName, Environment& aEnv);
+protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
@@ -86,17 +77,83 @@ private:
         static const TUint kSleepTime = 1;
         Environment& iEnv;
     };
-private:
-    static const TInt kDefault = 50;
+protected:
     static const Brn kKey1;
     static const Brn kKey2;
     static const Brn kKey3;
-    Environment& iEnv;
-    ConfigRamStore* iStore;
+    OrderingRamStore* iStore;
     PowerManager* iPowerManager;
+private:
+    Environment& iEnv;
+};
+
+class SuiteStoreInt : public SuiteStoreVal
+{
+public:
+    SuiteStoreInt();
+    static TInt IntFromStore(IStoreReadOnly& aStore, const Brx& aKey);
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    void TestValueFromStore();
+    void TestValueWrittenToStore();
+    void TestGet();
+    void TestSet();
+    void TestWrite();
+private:
+    static const TInt kDefault = 1;
+    StoreInt* iStoreInt;
+};
+
+class SuiteStoreIntOrdering : public SuiteStoreValOrdering
+{
+public:
+    SuiteStoreIntOrdering(Environment& aEnv);
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    static const TInt kDefault = 50;
     StoreInt* iStoreInt1;
     StoreInt* iStoreInt2;
     StoreInt* iStoreInt3;
+};
+
+class SuiteStoreText : public SuiteStoreVal
+{
+public:
+    SuiteStoreText();
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    void TestValueFromStore();
+    void TestValueWrittenToStore();
+    void TestGet();
+    void TestSet();
+    void TestWrite();
+private:
+    static const TUint kMaxLength = 30;
+    static const Brn kDefault;
+    StoreText* iStoreText;
+};
+
+class SuiteStoreTextOrdering : public SuiteStoreValOrdering
+{
+public:
+    SuiteStoreTextOrdering(Environment& aEnv);
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    static const TUint kMaxLength = 30;
+    static const Brn kDefault1;
+    static const Brn kDefault2;
+    static const Brn kDefault3;
+    StoreText* iStoreText1;
+    StoreText* iStoreText2;
+    StoreText* iStoreText3;
 };
 
 } // namespace OpenHome
@@ -262,12 +319,92 @@ void SuitePowerManager::TestPowerDownTwice()
 }
 
 
+// SuiteStoreVal
+
+const Brn SuiteStoreVal::kKey("store.val.key");
+
+SuiteStoreVal::SuiteStoreVal(const TChar* aName)
+    : SuiteUnitTest(aName)
+{
+}
+
+void SuiteStoreVal::Setup()
+{
+    iStore = new ConfigRamStore();
+    iPowerManager = new PowerManager();
+}
+
+void SuiteStoreVal::TearDown()
+{
+    delete iPowerManager;
+    delete iStore;
+}
+
+
+// SuiteStoreValOrdering::OrderingRamStore
+
+SuiteStoreValOrdering::OrderingRamStore::OrderingRamStore(Environment& aEnv)
+    : ConfigRamStore()
+    , iEnv(aEnv)
+{
+}
+
+void SuiteStoreValOrdering::OrderingRamStore::Write(const Brx& aKey, const Brx& /*aSource*/)
+{
+    TUint time = Os::TimeInMs(iEnv.OsCtx());
+    Bws<sizeof(TInt)> buf;
+    buf.Append(Arch::BigEndian4(time));
+    ConfigRamStore::Write(aKey, buf);
+    Thread::Sleep(kSleepTime);
+}
+
+
+// SuiteStoreValOrdering
+
+const Brn SuiteStoreValOrdering::kKey1("store.val.key1");
+const Brn SuiteStoreValOrdering::kKey2("store.val.key2");
+const Brn SuiteStoreValOrdering::kKey3("store.val.key3");
+
+SuiteStoreValOrdering::SuiteStoreValOrdering(const TChar* aName, Environment& aEnv)
+    : SuiteUnitTest(aName)
+    , iEnv(aEnv)
+{
+    AddTest(MakeFunctor(*this, &SuiteStoreValOrdering::TestPriorityPassedCorrectly));
+}
+
+void SuiteStoreValOrdering::Setup()
+{
+    iStore = new OrderingRamStore(iEnv);
+    iPowerManager = new PowerManager();
+}
+
+void SuiteStoreValOrdering::TearDown()
+{
+    delete iPowerManager;
+    delete iStore;
+}
+
+void SuiteStoreValOrdering::TestPriorityPassedCorrectly()
+{
+    // Test that the priority parameter is passed through correctly (i.e., all
+    // StoreVals are written in correct order of priority).
+    iPowerManager->PowerDown();
+
+    // test the time writers were called in expected order of priority
+    // order should now be kKey3->kKey1->kKey2
+    TUint time1 = SuiteStoreInt::IntFromStore(*iStore, kKey3);
+    TUint time2 = SuiteStoreInt::IntFromStore(*iStore, kKey1);
+    TUint time3 = SuiteStoreInt::IntFromStore(*iStore, kKey2);
+    Log::Print("TestPriorityPassedCorrectly times (ms): %u | %u | %u\n", time1, time2, time3);
+    TEST(time1 < time2);
+    TEST(time2 < time3);
+}
+
+
 // SuiteStoreInt
 
-const Brn SuiteStoreInt::kKey("store.int.key");
-
 SuiteStoreInt::SuiteStoreInt()
-    : SuiteUnitTest("SuiteStoreInt")
+    : SuiteStoreVal("SuiteStoreInt")
 {
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestValueWrittenToStore));
@@ -286,16 +423,14 @@ TInt SuiteStoreInt::IntFromStore(IStoreReadOnly& aStore, const Brx& aKey)
 
 void SuiteStoreInt::Setup()
 {
-    iStore = new ConfigRamStore();
-    iPowerManager = new PowerManager();
+    SuiteStoreVal::Setup();
     iStoreInt = new StoreInt(*iStore, *iPowerManager, kPowerPriority, kKey, kDefault);
 }
 
 void SuiteStoreInt::TearDown()
 {
     delete iStoreInt;
-    delete iPowerManager;
-    delete iStore;
+    SuiteStoreVal::TearDown();
 }
 
 void SuiteStoreInt::TestValueFromStore()
@@ -355,41 +490,16 @@ void SuiteStoreInt::TestWrite()
 }
 
 
-// SuiteStoreIntOrdering::OrderingRamStore
-
-SuiteStoreIntOrdering::OrderingRamStore::OrderingRamStore(Environment& aEnv)
-    : ConfigRamStore()
-    , iEnv(aEnv)
-{
-}
-
-void SuiteStoreIntOrdering::OrderingRamStore::Write(const Brx& aKey, const Brx& /*aSource*/)
-{
-    TUint time = Os::TimeInMs(iEnv.OsCtx());
-    Bws<sizeof(TInt)> buf;
-    buf.Append(Arch::BigEndian4(time));
-    ConfigRamStore::Write(aKey, buf);
-    Thread::Sleep(kSleepTime);
-}
-
-
 // SuiteStoreIntOrdering
 
-const Brn SuiteStoreIntOrdering::kKey1("store.int.key1");
-const Brn SuiteStoreIntOrdering::kKey2("store.int.key2");
-const Brn SuiteStoreIntOrdering::kKey3("store.int.key3");
-
 SuiteStoreIntOrdering::SuiteStoreIntOrdering(Environment& aEnv)
-    : SuiteUnitTest("SuiteStoreIntOrdering")
-    , iEnv(aEnv)
+    : SuiteStoreValOrdering("SuiteStoreIntOrdering", aEnv)
 {
-    AddTest(MakeFunctor(*this, &SuiteStoreIntOrdering::TestPriorityPassedCorrectly));
 }
 
 void SuiteStoreIntOrdering::Setup()
 {
-    iStore = new OrderingRamStore(iEnv);
-    iPowerManager = new PowerManager();
+    SuiteStoreValOrdering::Setup();
     iStoreInt1 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityNormal, kKey1, kDefault);
     iStoreInt2 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityLowest, kKey2, kDefault+1);
     iStoreInt3 = new StoreInt(*iStore, *iPowerManager, kPowerPriorityHighest, kKey3, kDefault+2);
@@ -400,24 +510,124 @@ void SuiteStoreIntOrdering::TearDown()
     delete iStoreInt1;
     delete iStoreInt2;
     delete iStoreInt3;
-    delete iPowerManager;
-    delete iStore;
+    SuiteStoreValOrdering::TearDown();
 }
 
-void SuiteStoreIntOrdering::TestPriorityPassedCorrectly()
-{
-    // Test that the priority parameter is passed through correctly (i.e., all
-    // StoreInts are written in correct order of priority).
-    iPowerManager->PowerDown();
 
-    // test the time writers were called in expected order of priority
-    // order should now be kKey3->kKey1->kKey2
-    TUint time1 = SuiteStoreInt::IntFromStore(*iStore, kKey3);
-    TUint time2 = SuiteStoreInt::IntFromStore(*iStore, kKey1);
-    TUint time3 = SuiteStoreInt::IntFromStore(*iStore, kKey2);
-    Log::Print("TestPriorityPassedCorrectly times (ms): %u | %u | %u\n", time1, time2, time3);
-    TEST(time1 < time2);
-    TEST(time2 < time3);
+// SuiteStoreText
+
+const Brn SuiteStoreText::kDefault("abcdefghijklmnopqrstuvwxyz");
+
+SuiteStoreText::SuiteStoreText()
+    : SuiteStoreVal("SuiteStoreText")
+{
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueFromStore));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestValueWrittenToStore));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestGet));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestSet));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestWrite));
+}
+
+void SuiteStoreText::Setup()
+{
+    SuiteStoreVal::Setup();
+    iStoreText = new StoreText(*iStore, *iPowerManager, kPowerPriority, kKey, kDefault, kMaxLength);
+}
+
+void SuiteStoreText::TearDown()
+{
+    delete iStoreText;
+    SuiteStoreVal::TearDown();
+}
+
+void SuiteStoreText::TestValueFromStore()
+{
+    // Test an existing value in store overwrites the default value at creation.
+
+    // add value to store
+    static const Brn key("store.text.key2");
+    Brn storeVal("zyxwvutsrqponmlkjihgfedcba");
+    iStore->Write(key, storeVal);
+
+    // create StoreText and check it uses value from store
+    StoreText storeText(*iStore, *iPowerManager, kPowerPriority, key, kDefault, kMaxLength);
+    TEST(storeText.Get() == storeVal);
+
+    // check store hasn't been overwritten as a side-effect
+    Bws<kMaxLength> buf;
+    iStore->Read(key, buf);
+    TEST(buf == storeVal);
+}
+
+void SuiteStoreText::TestValueWrittenToStore()
+{
+    // Test that the default value has been written out to store at creation.
+    Bws<kMaxLength> buf;
+    iStore->Read(kKey, buf);
+    TEST(buf == kDefault);
+}
+
+void SuiteStoreText::TestGet()
+{
+    // Test that correct value is returned.
+    TEST(iStoreText->Get() == kDefault);
+}
+
+void SuiteStoreText::TestSet()
+{
+    // Test that setting (and retrieving) a value results in a new value.
+    Brn newVal("zyxwvutsrqponmlkjihgfedcba");
+    iStoreText->Set(newVal);
+    TEST(iStoreText->Get() == newVal);
+
+    // check store hasn't been updated
+    Bws<kMaxLength> buf;
+    iStore->Read(kKey, buf);
+    TEST(buf == kDefault);
+}
+
+void SuiteStoreText::TestWrite()
+{
+    // Test that current value is written out when PowerDown() is called.
+
+    // give the StoreText a new value
+    Brn newVal("zyxwvutsrqponmlkjihgfedcba");
+    iStoreText->Set(newVal);
+
+    // write out new value and check store has been updated
+    iPowerManager->PowerDown();
+    Bws<kMaxLength> buf;
+    iStore->Read(kKey, buf);
+    TEST(buf == newVal);
+    TEST(iStoreText->Get() == newVal);
+}
+
+
+// SuiteStoreTextOrdering
+
+const Brn SuiteStoreTextOrdering::kDefault1("abc");
+const Brn SuiteStoreTextOrdering::kDefault2("def");
+const Brn SuiteStoreTextOrdering::kDefault3("ghi");
+
+SuiteStoreTextOrdering::SuiteStoreTextOrdering(Environment& aEnv)
+    : SuiteStoreValOrdering("SuiteStoreTextOrdering", aEnv)
+{
+}
+
+void SuiteStoreTextOrdering::Setup()
+{
+    SuiteStoreValOrdering::Setup();
+    iStoreText1 = new StoreText(*iStore, *iPowerManager, kPowerPriorityNormal, kKey1, kDefault1, kMaxLength);
+    iStoreText2 = new StoreText(*iStore, *iPowerManager, kPowerPriorityLowest, kKey2, kDefault2, kMaxLength);
+    iStoreText3 = new StoreText(*iStore, *iPowerManager, kPowerPriorityHighest, kKey3, kDefault3, kMaxLength);
+}
+
+void SuiteStoreTextOrdering::TearDown()
+{
+    delete iStoreText1;
+    delete iStoreText2;
+    delete iStoreText3;
+    SuiteStoreValOrdering::TearDown();
 }
 
 
@@ -428,5 +638,7 @@ void TestPowerManager(Environment& aEnv)
     runner.Add(new SuitePowerManager(aEnv));
     runner.Add(new SuiteStoreInt());
     runner.Add(new SuiteStoreIntOrdering(aEnv));
+    runner.Add(new SuiteStoreText());
+    runner.Add(new SuiteStoreTextOrdering(aEnv));
     runner.Run();
 }
