@@ -7,6 +7,7 @@
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <limits.h>
 
@@ -15,14 +16,16 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
+const Brn Product::kStartupSourceKey("Startup.Source");
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigManager(aConfigManager)
     , iLock("PRDM")
     , iObserver(NULL)
     , iStarted(false)
+    , iStartupSource(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceKey, Brn("Playlist"), ISource::kMaxSourceTypeBytes)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
@@ -49,6 +52,7 @@ void Product::SetObserver(IProductObserver& aObserver)
 
 void Product::Start()
 {
+    SetCurrentSource(iStartupSource.Get());
     iStarted = true;
     iSourceXmlChangeCount++;
     if (iObserver != NULL) {
@@ -162,7 +166,9 @@ void Product::SetCurrentSource(TUint aIndex)
         iSources[iCurrentSource]->Deactivate();
     }
     iCurrentSource = aIndex;
+    iStartupSource.Set(iSources[iCurrentSource]->Type());
     iSources[iCurrentSource]->Activate();
+
     if (iObserver != NULL) {
         iObserver->SourceIndexChanged();
     }
@@ -175,7 +181,8 @@ void Product::SetCurrentSource(const Brx& aName)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aName) {
             iCurrentSource = i;
-            // FIXME - activate new current source
+            iStartupSource.Set(iSources[iCurrentSource]->Type());
+            iSources[iCurrentSource]->Activate();
             if (iObserver != NULL) {
                 iObserver->SourceIndexChanged();
             }
@@ -224,6 +231,7 @@ void Product::Activate(ISource& aSource)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aSource.Name()) {
             iCurrentSource = i;
+            iStartupSource.Set(iSources[iCurrentSource]->Type());
             srcNew = iSources[i];
             srcNew->Activate();
             if (iObserver != NULL) {

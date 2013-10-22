@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/PowerManager.h>
 
 #include <vector>
 
@@ -16,8 +17,9 @@ EXCEPTION(AvSourceNotFound);
 
 namespace OpenHome {
 namespace Configuration {
-    class IConfigurationManager;
     class ConfigText;
+    class IConfigurationManager;
+    class IStoreReadWrite;
 }
 namespace Av {
 
@@ -51,7 +53,7 @@ public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IConfigurationManager& aConfigManager, IInfoAggregator& aInfoAggregator);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& aInfoAggregator);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();
@@ -80,6 +82,7 @@ private: // from IProduct
 private: // from IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
+    static const Brn kStartupSourceKey;
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
     Configuration::IConfigurationManager& iConfigManager;
@@ -89,6 +92,7 @@ private:
     std::vector<ISource*> iSources;
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
+    StoreText iStartupSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
     Configuration::ConfigText* iConfigProductRoom;

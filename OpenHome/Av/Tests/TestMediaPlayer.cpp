@@ -68,7 +68,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
     iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
-    iConfigRamStore->Print();
 
     // create the config manager that makes use of the read store
     iConfigManager = new ConfigurationManager(*iConfigRamStore);
@@ -78,11 +77,12 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iPowerManager->RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigManager, *iPowerManager);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iPowerManager);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
     //iProduct->SetCurrentSource(0);
+    iConfigRamStore->Print();
 }
 
 TestMediaPlayer::~TestMediaPlayer()
@@ -133,6 +133,8 @@ void TestMediaPlayer::Run()
     while (mygetch() != 'q')
         ;
     iPowerManager->PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
+    Log::Print("RamStore at PowerDown:\n");
+    iConfigRamStore->Print();
 }
 
 PipelineManager& TestMediaPlayer::Pipeline()
