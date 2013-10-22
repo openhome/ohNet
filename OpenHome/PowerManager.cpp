@@ -22,6 +22,9 @@ void PowerManager::PowerDown()
     // If it must be possible to reuse the PriorityFunctors, two pointers to
     // priority_queues can be stored, with values copied into second queue
     // before being popped, and then swapping queue pointers.
+
+    // FIXME - the caller of power down should provide some kind of interrupt
+    // for stopping any non-essential store tasks in progress
     AutoMutex a(iLock);
     while (!iQueue.empty()) {
         const PriorityFunctor& functor = iQueue.top();
