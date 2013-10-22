@@ -67,11 +67,19 @@ TBool PowerManager::PriorityFunctorCmp::operator()(const PriorityFunctor& aFunc1
 }
 
 
+// StoreVal
+
+StoreVal::StoreVal(IPowerManager& aPowerManager, TUint aPriority)
+{
+    // register with IPowerManager
+    aPowerManager.RegisterObserver(MakeFunctor(*this, &StoreVal::Write), aPriority);
+}
+
 // StoreInt
 
 StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
-    : iStore(aStore)
-    , iPowerManager(aPowerManager)
+    : StoreVal(aPowerManager, aPriority)
+    , iStore(aStore)
     , iKey(aKey)
     , iVal(aDefault)
 {
@@ -84,9 +92,6 @@ StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPower
     catch (StoreKeyNotFound&) {
         Write();
     }
-
-    // register with IPowerManager
-    iPowerManager.RegisterObserver(MakeFunctor(*this, &StoreInt::Write), aPriority);
 }
 
 TInt StoreInt::Get() const

@@ -57,19 +57,28 @@ private:
 };
 
 /*
+ * Abstract class that only writes its value out to store at power down.
+ */
+class StoreVal
+{
+protected:
+    StoreVal(IPowerManager& aPowerManager, TUint aPriority);
+    virtual void Write() = 0;
+};
+
+/*
  * Int class that only writes its value out to store at power down.
  */
-class StoreInt : private INonCopyable
+class StoreInt : public StoreVal, private INonCopyable
 {
 public:
     StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault);
     TInt Get() const;
     void Set(TInt aValue); // owning class knows limits
-private:
+private: // from StoreVal
     void Write();
 private:
     Configuration::IStoreReadWrite& iStore;
-    IPowerManager& iPowerManager;
     const Brx& iKey;
     TInt iVal;
 };
