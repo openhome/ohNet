@@ -76,6 +76,7 @@ class StoreInt : public StoreVal
 {
 public:
     StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault);
+    virtual ~StoreInt();
     TInt Get() const;
     void Set(TInt aValue); // owning class knows limits
 private: // from StoreVal
@@ -91,6 +92,7 @@ class StoreText : public StoreVal
 {
 public:
     StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength);
+    virtual ~StoreText();
     const Brx& Get() const;
     void Set(const Brx& aValue);
 private: // from StoreVal
