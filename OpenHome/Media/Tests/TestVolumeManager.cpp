@@ -48,7 +48,7 @@ public:
 public:  // from Suite
     void Test();
 private:
-    TInt IntFromStore(const Brx& aKey);
+    TUint UintFromStoreInt(const Brx& aKey);
     void TestTaps(TUint aUser, TUint aSrc, TUint aUnityGain, TUint aLeftBal, TUint aRightBal, TUint aLeftSink, TUint aRightSink);
 private:
     ConfigRamStore iStore;
@@ -127,11 +127,11 @@ SuiteVolumeManager::SuiteVolumeManager()
 {
 }
 
-TInt SuiteVolumeManager::IntFromStore(const Brx& aKey)
+TUint SuiteVolumeManager::UintFromStoreInt(const Brx& aKey)
 {
     Bws<sizeof(TInt)> buf;
     iStore.Read(aKey, buf);
-    TInt val = Converter::BeUint32At(buf, 0);
+    TUint val = Converter::BeUint32At(buf, 0);
     return val;
 }
 
@@ -177,9 +177,9 @@ void SuiteVolumeManager::Test()
     TestTaps(/*user*/40, /*src*/60, /*unity*/60, /*leftBal*/62, /*rightBal*/57, /*leftSink*/62, /*rightSink*/57);
 
     // test current volume is written out at PowerDown event
-    TEST(IntFromStore(VolumeUser::kStartupVolumeKey) == VolumeUser::kDefaultStartupVolume);
+    TEST(UintFromStoreInt(VolumeUser::kStartupVolumeKey) == VolumeUser::kDefaultStartupVolume);
     iPowerManager.PowerDown();
-    TEST(IntFromStore(VolumeUser::kStartupVolumeKey) == 40);
+    TEST(UintFromStoreInt(VolumeUser::kStartupVolumeKey) == 40);
 }
 
 //
