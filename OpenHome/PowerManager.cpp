@@ -69,18 +69,19 @@ TBool PowerManager::PriorityFunctorCmp::operator()(const PriorityFunctor& aFunc1
 
 // StoreVal
 
-StoreVal::StoreVal(IPowerManager& aPowerManager, TUint aPriority)
+StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey)
+    : iStore(aStore)
+    , iKey(aKey)
 {
     // register with IPowerManager
     aPowerManager.RegisterObserver(MakeFunctor(*this, &StoreVal::Write), aPriority);
 }
 
+
 // StoreInt
 
 StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
-    : StoreVal(aPowerManager, aPriority)
-    , iStore(aStore)
-    , iKey(aKey)
+    : StoreVal(aStore, aPowerManager, aPriority, aKey)
     , iVal(aDefault)
 {
     // read value from store (if it exists; otherwise write default)
@@ -109,4 +110,35 @@ void StoreInt::Write()
     Bws<sizeof(TInt)> buf;
     buf.Append(Arch::BigEndian4(iVal));
     iStore.Write(iKey, buf);
+}
+
+
+// StoreText
+
+StoreText::StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength)
+    : StoreVal(aStore, aPowerManager, aPriority, aKey)
+    , iVal(aMaxLength)
+{
+    try {
+        iStore.Read(iKey, iVal);
+    }
+    catch (StoreKeyNotFound&) {
+        iVal.Replace(aDefault);
+        Write();
+    }
+}
+
+const Brx& StoreText::Get() const
+{
+    return iVal;
+}
+
+void StoreText::Set(const Brx& aValue)
+{
+    iVal.Replace(aValue);
+}
+
+void StoreText::Write()
+{
+    iStore.Write(iKey, iVal);
 }

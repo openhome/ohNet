@@ -59,17 +59,20 @@ private:
 /*
  * Abstract class that only writes its value out to store at power down.
  */
-class StoreVal
+class StoreVal : private INonCopyable
 {
 protected:
-    StoreVal(IPowerManager& aPowerManager, TUint aPriority);
+    StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey);
     virtual void Write() = 0;
+protected:
+    Configuration::IStoreReadWrite& iStore;
+    const Brx& iKey;
 };
 
 /*
  * Int class that only writes its value out to store at power down.
  */
-class StoreInt : public StoreVal, private INonCopyable
+class StoreInt : public StoreVal
 {
 public:
     StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault);
@@ -78,9 +81,22 @@ public:
 private: // from StoreVal
     void Write();
 private:
-    Configuration::IStoreReadWrite& iStore;
-    const Brx& iKey;
     TInt iVal;
+};
+
+/*
+ * Text class that only writes its value out to store at power down.
+ */
+class StoreText : public StoreVal
+{
+public:
+    StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength);
+    const Brx& Get() const;
+    void Set(const Brx& aValue);
+private: // from StoreVal
+    void Write();
+private:
+    Bwh iVal;
 };
 
 } // namespace OpenHome
