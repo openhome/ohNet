@@ -2,8 +2,10 @@
 
 #include <OpenHome/Private/Standard.h>  // ASSERT()
 #include <OpenHome/Private/Printer.h>  // Log::Print() for *Logger
+#include <OpenHome/Configuration/ConfigManager.h>
 
 using namespace OpenHome;
+using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 
 //
@@ -66,10 +68,13 @@ void VolumeLimiterUser::Changed()
 }
 
 // VolumeUser
-VolumeUser::VolumeUser(IVolume& aVolume, TUint aScaleFactor)
+const Brn VolumeUser::kStartupVolumeKey("Startup.Volume");
+
+VolumeUser::VolumeUser(IVolume& aVolume, TUint aScaleFactor, IStoreReadWrite& aStore, IPowerManager& aPowerManager)
     : iVolume(aVolume)
     , iUpstreamVolume(0)
     , iScaleFactor(aScaleFactor)
+    , iStartupVolume(aStore, aPowerManager, kPowerPriorityHighest, kStartupVolumeKey, kDefaultStartupVolume)
 {
 }
 
@@ -81,6 +86,7 @@ TUint VolumeUser::UserVolume() const
 void VolumeUser::SetVolume(TUint aValue)
 {
     iUpstreamVolume = aValue;
+    iStartupVolume.Set(iUpstreamVolume);
     // fixed operation (without dynamic parameter)
     iVolume.SetVolume(iScaleFactor * aValue);
 }
@@ -227,8 +233,8 @@ TUint VolumeUserDefault::MaxSystemVolume()  // static
     return MaxUserVolume() * SystemVolumeFactor();
 }
 
-VolumeUserDefault::VolumeUserDefault(IVolume& aVolume)
-    : VolumeUser(aVolume, SystemVolumeFactor())
+VolumeUserDefault::VolumeUserDefault(IVolume& aVolume, IStoreReadWrite& aStore, IPowerManager& aPowerManager)
+    : VolumeUser(aVolume, SystemVolumeFactor(), aStore, aPowerManager)
 {
 }
 
@@ -359,7 +365,7 @@ void VolumeManager::SetUserVolumeLimit(TUint aValue)
 }
 
 // VolumeManagerDefault
-VolumeManagerDefault::VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware)
+VolumeManagerDefault::VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware, IStoreReadWrite& aStore, IPowerManager& aPowerManager)
     : VolumeManager(aLeftVolHardware, aRightVolHardware)
 {
     iLeftVolLimit = new VolumeLimiterDefault(iLeftVolHw);
@@ -367,7 +373,7 @@ VolumeManagerDefault::VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& a
     iVolBal = new VolumeBalanceUserDefault(*iLeftVolLimit, *iRightVolLimit);
     iVolUnityGain = new VolumeUnityGainDefault(*iVolBal);
     iVolSrcOff = new VolumeSourceOffset(*iVolUnityGain);
-    iVolUser = new VolumeUserDefault(*iVolSrcOff);
+    iVolUser = new VolumeUserDefault(*iVolSrcOff, aStore, aPowerManager);
     iVolLimitUser = new VolumeLimiterUserDefault(*iVolUser);
 }
 

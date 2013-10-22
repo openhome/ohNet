@@ -47,7 +47,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
-    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware);
+    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, iPowerManager);
     iTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iInfo = new ProviderInfo(aDevice, *iPipeline);

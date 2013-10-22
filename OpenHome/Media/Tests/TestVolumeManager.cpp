@@ -1,11 +1,14 @@
 #include <OpenHome/Private/TestFramework.h>
 
 #include <OpenHome/Media/VolumeManager.h>
+#include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Converter.h>
 
 // include "SuiteUnitTest.h"
 
 using namespace OpenHome::TestFramework;
 using namespace OpenHome;
+using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 
 //
@@ -45,8 +48,11 @@ public:
 public:  // from Suite
     void Test();
 private:
+    TInt IntFromStore(const Brx& aKey);
     void TestTaps(TUint aUser, TUint aSrc, TUint aUnityGain, TUint aLeftBal, TUint aRightBal, TUint aLeftSink, TUint aRightSink);
 private:
+    ConfigRamStore iStore;
+    PowerManager iPowerManager;
     VolumeSink iLeftVolSink;
     VolumeSink iRightVolSink;
     VolumeLimiterDefault iLeftVolLimitDfl;   // derived from
@@ -117,8 +123,16 @@ SuiteVolumeManager::SuiteVolumeManager()
     , iTapPostSrcOff(iVolUnityGainDfl)
     , iVolSrcOff(iTapPostSrcOff)
     , iTapPostUserDfl(iVolSrcOff)
-    , iVolUserDfl(iTapPostUserDfl)
+    , iVolUserDfl(iTapPostUserDfl, iStore, iPowerManager)
 {
+}
+
+TInt SuiteVolumeManager::IntFromStore(const Brx& aKey)
+{
+    Bws<sizeof(TInt)> buf;
+    iStore.Read(aKey, buf);
+    TInt val = Converter::BeUint32At(buf, 0);
+    return val;
 }
 
 void SuiteVolumeManager::TestTaps(TUint aUser, TUint aSrc, TUint aUnityGain, TUint aLeftBal, TUint aRightBal, TUint aLeftSink, TUint aRightSink)
@@ -161,6 +175,11 @@ void SuiteVolumeManager::Test()
     // adjust balance slightly to left
     iVolBalDfl.SetUserBalance(-6);  // attenuate left, amplify right
     TestTaps(/*user*/40, /*src*/60, /*unity*/60, /*leftBal*/62, /*rightBal*/57, /*leftSink*/62, /*rightSink*/57);
+
+    // test current volume is written out at PowerDown event
+    TEST(IntFromStore(VolumeUser::kStartupVolumeKey) == VolumeUser::kDefaultStartupVolume);
+    iPowerManager.PowerDown();
+    TEST(IntFromStore(VolumeUser::kStartupVolumeKey) == 40);
 }
 
 //
