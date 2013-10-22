@@ -98,6 +98,8 @@ StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPower
     }
 }
 
+StoreInt::~StoreInt() {}
+
 TInt StoreInt::Get() const
 {
     return iVal;
@@ -130,6 +132,8 @@ StoreText::StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPow
         Write();
     }
 }
+
+StoreText::~StoreText() {}
 
 const Brx& StoreText::Get() const
 {
