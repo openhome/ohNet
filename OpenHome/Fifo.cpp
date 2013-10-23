@@ -42,9 +42,6 @@ void FifoBase::ReadInterrupt(TBool aInterrupt)
     // between when iSemaRead.Signal() was called normally or by interrupt,
     // even in the case of ReadInterrupt(false) being subsequently called.
     AutoMutex a(iMutexInterrupt);
-    // FIXME - should we ASSERT if ((aInterrupt == false) && (iInterrupted == false))?
-    // i.e., ReadInterrupt(false) was called before ReadInterrupt(true)
-    // (although, ReadInterrupt(false) is really a no-op under those circumstances)
     if (!iInterrupted) { // don't repeat when interrupt already pending
         iSemaRead.Signal();
         iInterrupted = true;
