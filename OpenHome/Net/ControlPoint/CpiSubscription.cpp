@@ -347,6 +347,17 @@ void CpiSubscription::EventUpdateEnd()
     }
 }
 
+void CpiSubscription::EventUpdateError()
+{
+    LOG2(kEvent, kError, "ERROR: subscription sid ");
+    LOG2(kEvent, kError, iSid);
+    LOG2(kEvent, kError, " failure processing update\n");
+    SetNotificationError();
+    if (iEventProcessor != NULL) {
+        iEventProcessor->EventUpdateError();
+    }
+}
+
 void CpiSubscription::EventUpdatePrepareForDelete()
 {
     if (iEventProcessor != NULL) {

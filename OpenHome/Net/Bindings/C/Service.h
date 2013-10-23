@@ -258,29 +258,32 @@ DllExport ServiceProperty STDCALL ServicePropertyCreateBinaryDv(ServiceParameter
 /**
  * Read the current value of an integer property
  *
- * @param[in] aProperty  Returned by ServicePropertyCreateInt[Cp|Dv]
+ * @param[in]  aProperty Returned by ServicePropertyCreateInt[Cp|Dv]
+ * @param[out] aValue    Current value of the property
  *
- * @return   Current value of the property
+ * @return   0 if the property value was read.  -1 if it is not available (no value has ever been set)
  */
-DllExport int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty);
+DllExport int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty, int32_t* aValue);
 
 /**
  * Read the current value of an unsigned integer property
  *
  * @param[in] aProperty  Returned by ServicePropertyCreateUint[Cp|Dv]
+ * @param[out] aValue    Current value of the property
  *
- * @return   Current value of the property
+ * @return   0 if the property value was read.  -1 if it is not available (no value has ever been set)
  */
-DllExport uint32_t STDCALL ServicePropertyValueUint(ServiceProperty aProperty);
+DllExport int32_t STDCALL ServicePropertyValueUint(ServiceProperty aProperty, uint32_t* aValue);
 
 /**
  * Read the current value of a boolean property
  *
  * @param[in] aProperty  Returned by ServicePropertyCreateBool[Cp|Dv]
+ * @param[out] aValue    Current value of the property.  0 for false; non-zero for true
  *
- * @return   Current value of the property.  0 for false; non-zero for true
+ * @return   0 if the property value was read.  -1 if it is not available (no value has ever been set)
  */
-DllExport uint32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty);
+DllExport int32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty, uint32_t* aValue);
 
 /**
  * Read the current value of a string property
@@ -289,6 +292,8 @@ DllExport uint32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty);
  *
  * @return   Copy of the current value of the property.  Ownership is passed to the caller.
  *           Use OhNetFree to later free it
+ *
+ * @return   0 if the property value was read.  -1 if it is not available (no value has ever been set)
  */
 DllExport const char* STDCALL ServicePropertyValueString(ServiceProperty aProperty);
 
@@ -299,8 +304,10 @@ DllExport const char* STDCALL ServicePropertyValueString(ServiceProperty aProper
  * @param[out] aData      Copy of the current value of the property.  Ownership is passed to the caller.
  *                        Use OhNetFree to later free it
  * @param[out] aLen       Number of bytes of data returned
+ *
+ * @return   0 if the property value was read.  -1 if it is not available (no value has ever been set)
  */
-DllExport void STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, const char** aData, uint32_t* aLen);
+DllExport int32_t STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, const char** aData, uint32_t* aLen);
 
 /**
  * Read the current value of a binary property
@@ -309,8 +316,10 @@ DllExport void STDCALL ServicePropertyGetValueString(ServiceProperty aProperty, 
  * @param[out] aData      Copy of the current value of the property.  Ownership is passed to the caller.
  *                        Use OhNetFree to later free it
  * @param[out] aLen       Number of bytes of data returned
+ *
+ * @return   0 if the property value was read.  -1 if it is not available (no value has ever been set)
  */
-DllExport void STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen);
+DllExport int32_t STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen);
 
 /**
  * Set the current value of an integer property

@@ -17,6 +17,7 @@
 #include <map>
 
 EXCEPTION(ParameterValidationError)
+EXCEPTION(PropertyError)
 
 namespace OpenHome {
 

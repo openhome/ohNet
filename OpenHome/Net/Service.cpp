@@ -313,7 +313,9 @@ PropertyString::~PropertyString()
 const Brx& PropertyString::Value() const
 {
     AutoMutex a(iEnv.Mutex());
-    ASSERT(iSequenceNumber > 0);
+    if (iSequenceNumber == 0) {
+        THROW(PropertyError);
+    }
     return iValue;
 }
 
@@ -364,12 +366,11 @@ PropertyInt::~PropertyInt()
 
 TInt PropertyInt::Value() const
 {
-    TInt val;
-    iEnv.Mutex().Wait();
-    ASSERT(iSequenceNumber > 0);
-    val = iValue;
-    iEnv.Mutex().Signal();
-    return val;
+    AutoMutex a(iEnv.Mutex());
+    if (iSequenceNumber == 0) {
+        THROW(PropertyError);
+    }
+    return iValue;
 }
 
 void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
@@ -418,12 +419,11 @@ PropertyUint::~PropertyUint()
 
 TUint PropertyUint::Value() const
 {
-    TInt val;
-    iEnv.Mutex().Wait();
-    ASSERT(iSequenceNumber > 0);
-    val = iValue;
-    iEnv.Mutex().Signal();
-    return val;
+    AutoMutex a(iEnv.Mutex());
+    if (iSequenceNumber == 0) {
+        THROW(PropertyError);
+    }
+    return iValue;
 }
 
 void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
@@ -472,12 +472,11 @@ PropertyBool::~PropertyBool()
 
 TBool PropertyBool::Value() const
 {
-    TInt val;
-    iEnv.Mutex().Wait();
-    ASSERT(iSequenceNumber > 0);
-    val = iValue;
-    iEnv.Mutex().Signal();
-    return (val != 0);
+    AutoMutex a(iEnv.Mutex());
+    if (iSequenceNumber == 0) {
+        THROW(PropertyError);
+    }
+    return iValue;
 }
 
 void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
@@ -527,7 +526,9 @@ PropertyBinary::~PropertyBinary()
 const Brx& PropertyBinary::Value() const
 {
     AutoMutex a(iEnv.Mutex());
-    ASSERT(iSequenceNumber > 0);
+    if (iSequenceNumber == 0) {
+        THROW(PropertyError);
+    }
     return iValue;
 }
 

@@ -71,10 +71,12 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_PropertyInt_ServicePropertyVal
   (JNIEnv *aEnv, jclass aClass, jlong aProperty)
 {
 	ServiceProperty property = (ServiceProperty) (size_t)aProperty;
+	int32_t val = 0;
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jint) ServicePropertyValueInt(property);
+    ServicePropertyValueInt(property, &val);
+    return (jint)val;
 }	
 
 /*
