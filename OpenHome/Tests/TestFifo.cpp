@@ -248,6 +248,84 @@ void SuiteFifoThreadSafety::Test()
     delete th;
 }
 
+class SuiteFifoInterrupt : public Suite
+{
+public:
+    SuiteFifoInterrupt();
+    void Test();
+private:
+    void RunWriter();
+private:
+    static const TUint kSleepMs = 5;
+    // this must be > #items so a cancelled interrupt can be tested after
+    // removing all elems from fifo without fifo wrapping round
+    static const TUint kMaxQueueSize = 8;
+    Fifo<I*> iQueue;
+    Semaphore iSemWrite;
+    Semaphore iSemRead;
+};
+
+SuiteFifoInterrupt::SuiteFifoInterrupt()
+    : Suite("SuiteFifoInterrupt")
+    , iQueue(kMaxQueueSize)
+    , iSemWrite("SFIW", 0)
+    , iSemRead("SFIR", 0)
+{
+}
+
+void SuiteFifoInterrupt::Test()
+{
+    // test read interrupt cancellation pattern (i.e., ReadInterrupt(true); ReadInterrupt(false))
+
+    ThreadFunctor* tWriter = new ThreadFunctor("TFIW", MakeFunctor(*this, &SuiteFifoInterrupt::RunWriter));
+    tWriter->Start();
+
+    // test calling and cancelling interrupt before anything in queue
+    iQueue.ReadInterrupt(true);
+    iQueue.ReadInterrupt(false);
+    // there is a race condition after this between the reader and the writer;
+    // this is easiest way to set up test; to get somewhat reliable behaviour
+    // set kSleepMs to a high enough value that allows reader opportunity to
+    // read before writer writes
+    iSemWrite.Signal();
+    I* val = iQueue.Read();
+    TEST(val == &i1);
+
+    // test calling and cancelling interrupt before then emptying queue and trying to read
+    iSemRead.Wait();
+    iQueue.ReadInterrupt(true);
+    iQueue.ReadInterrupt(false);
+    while (iQueue.SlotsUsed() > 0) {
+        iQueue.Read();
+    }
+    iSemWrite.Signal();
+    val = iQueue.Read();
+    TEST(val == &i1);
+
+    // test that a normal interrupt works as expected
+    iSemRead.Wait();
+    iQueue.ReadInterrupt(true);
+    TEST_THROWS(iQueue.Read(), FifoReadError);
+
+    // test that a read after a normal interrupt works
+    val = iQueue.Read();
+    TEST(val == &i2);
+}
+
+void SuiteFifoInterrupt::RunWriter()
+{
+    // wait on a semaphore before starting to write data into a queue
+    while (true) {
+        iSemWrite.Wait();
+        Thread::Sleep(kSleepMs);
+        iQueue.Write(&i1);
+        iQueue.Write(&i2);
+        iQueue.Write(&i3);
+        iQueue.Write(&i4);
+        iSemRead.Signal();
+    }
+}
+
 class SuiteFifoLiteBasic : public Suite
 {
 public:
@@ -367,6 +445,7 @@ void TestFifo()
     Runner runner("FifoS testing\n");
     runner.Add(new SuiteFifoBasic());
     runner.Add(new SuiteFifoThreadSafety());
+    runner.Add(new SuiteFifoInterrupt());
     runner.Add(new SuiteFifoLiteBasic());
     runner.Run();
 }

@@ -33,11 +33,13 @@ protected:
     TUint iSlotsUsed;                 // protected by iMutexWrite
     mutable Mutex iMutexWrite;
     Mutex iMutexRead;
+    Mutex iMutexInterrupt;
     Semaphore iSemaRead;
     Semaphore iSemaWrite;
     TUint iReadIndex;
     TUint iWriteIndex;
     TBool iInterrupted;
+    TBool iInterruptEnabled;
 };
 
 template <class T> class Fifo : public FifoBase
