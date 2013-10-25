@@ -25,13 +25,13 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.StoreManager());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigManager());
 }
 
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, StoreManager& aStoreManager)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigurationManager& aConfigManager)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -44,14 +44,15 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
-    const Brx& username = aStoreManager.CreateText(Brn("Radio.TuneInUserName"), false, MakeFunctor(*this, &SourceRadio::TuneInUsernameChanged), kUsernameMaxLength, Brn("linnproducts"));
-    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, username);
+    iConfigUserName = new ConfigText(aConfigManager, Brn("Radio.TuneInUserName"), MakeFunctor(*this, &SourceRadio::TuneInUsernameChanged), kUsernameMaxLength, Brn("linnproducts"));
+    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, iConfigUserName->Get());
     iPipeline.AddObserver(*this);
 }
 
 SourceRadio::~SourceRadio()
 {
     delete iTuneIn;
+    delete iConfigUserName;
     delete iPresetDatabase;
     delete iProviderRadio;
     if (iTrack != NULL) {

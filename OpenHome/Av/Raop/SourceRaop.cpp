@@ -23,7 +23,7 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostNa
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aHostName, aDeviceName, aDiscoveryPort);
+    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aMediaPlayer.PowerManager(), aHostName, aDeviceName, aDiscoveryPort);
 }
 
 
@@ -31,7 +31,7 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostNa
 
 const Brn SourceRaop::kRaopPrefix("raop://");
 
-SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort)
+SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, IPowerManager& aPowerManager, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort)
     : Source("Net Aux", "Net Aux")
     , iLock("SRAO")
     , iPipeline(aPipeline)
@@ -43,7 +43,7 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aHostName, aDeviceName, aDiscoveryPort);
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, aPowerManager, *this, aHostName, aDeviceName, aDiscoveryPort);
     iAudioId = iServerManager.CreateServer(kPortAudio);
     iControlId = iServerManager.CreateServer(kPortControl);
     iTimingId = iServerManager.CreateServer(kPortTiming);

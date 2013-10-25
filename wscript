@@ -278,7 +278,7 @@ def build(bld):
                 'OpenHome/Av/Songcast/ZoneHandler.cpp',
                 'OpenHome/Av/Songcast/SourceReceiver.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
-                'OpenHome/Configuration/PowerManager.cpp',
+                'OpenHome/PowerManager.cpp',
             ],
             use=['OHNET', 'OPENSSL'],
             target='ohMediaPlayer')
@@ -497,7 +497,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
-                'OpenHome/Configuration/Tests/TestPowerManager.cpp',
+                'OpenHome/Tests/TestPowerManager.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -631,7 +631,7 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestConfigManager')
     bld.program(
-            source='OpenHome/Configuration/Tests/TestPowerManagerMain.cpp',
+            source='OpenHome/Tests/TestPowerManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPowerManager')
 

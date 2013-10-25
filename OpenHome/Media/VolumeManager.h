@@ -5,6 +5,7 @@
 #include <OpenHome/OhNetTypes.h>
 
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/PowerManager.h>
 
 //
 // volume elements are linearly chained and any contributing change
@@ -28,6 +29,9 @@
 //
 
 namespace OpenHome {
+namespace Configuration {
+    class IStoreReadWrite;
+}
 namespace Media {
 
 //
@@ -112,7 +116,10 @@ private:
 class VolumeUser : public IVolumeUser, public IVolume, public INonCopyable
 {
 public:
-    VolumeUser(IVolume& aVolume, TUint aScaleFactor);
+    static const TUint kDefaultStartupVolume = 0;
+    static const Brn kStartupVolumeKey;
+public:
+    VolumeUser(IVolume& aVolume, TUint aScaleFactor, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
     // fixed operation, not dynamically parameterised
 public:  // from IVolumeUser
     TUint UserVolume() const;
@@ -122,6 +129,7 @@ private:
     IVolume& iVolume;
     TUint iUpstreamVolume;
     TUint iScaleFactor;
+    StoreInt iStartupVolume;
 };
 
 // apply source-specific volume correction
@@ -218,7 +226,7 @@ public:
     // user volume:    [0, 100], scaled by system volume factor
     static TUint MaxSystemVolume();
 public:
-    VolumeUserDefault(IVolume& aVolume);
+    VolumeUserDefault(IVolume& aVolume, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
 };
 
 class VolumeUnityGainDefault : public VolumeUnityGain
@@ -285,7 +293,7 @@ protected:
 class VolumeManagerDefault : public VolumeManager
 {
 public:
-    VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware);
+    VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
     ~VolumeManagerDefault();
 public:  // from IVolumeManagerLimits
     TUint MaxUserVolume() const;

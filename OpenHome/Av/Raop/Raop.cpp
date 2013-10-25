@@ -8,6 +8,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/PowerManager.h>
 
 #include <openssl/evp.h>
 
@@ -669,7 +670,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort)
     : iRaopObserver(aObserver)
 {
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
@@ -690,6 +691,8 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRao
 
         iRaopDiscoverySession2 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 2);
         iRaopDiscoveryServer->Add("AIRT", iRaopDiscoverySession2);
+
+        aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
     }
     else {
         LOG(kMedia, "RaopDiscovery::RaopDiscovery no network adapter available on current subnet - not initialising TCP server\n");
@@ -750,8 +753,8 @@ void RaopDiscovery::Close()
     LOG(kMedia, "RaopDiscovery::Close\n");
     // deregister/re-register to kick off any existing controllers - confuses controllers - may need to wait a while before re-reg
     iRaopDevice->Deregister();
-    Thread::Sleep(100);
-    iRaopDevice->Register();
+    //Thread::Sleep(100);
+    //iRaopDevice->Register();
 
     iRaopDiscoverySession1->Close();
     iRaopDiscoverySession2->Close();
@@ -776,7 +779,13 @@ RaopDiscoverySession& RaopDiscovery::ActiveSession()
     }
 }
 
-
+void RaopDiscovery::PowerDown()
+{
+    // called on power failure
+    iRaopDevice->Deregister();
+    //iRaopDiscoverySession1->Close();
+    //iRaopDiscoverySession2->Close();
+}
 
 
 // HeaderCSeq

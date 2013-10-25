@@ -7,6 +7,7 @@
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <limits.h>
 
@@ -15,18 +16,21 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
+const Brn Product::kStartupSourceKey("Startup.Source");
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, StoreManager& aStoreManager, ConfigurationManager& aConfigManager, IInfoAggregator& /*aInfoAggregator*/)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
-    , iStoreManager(aStoreManager)
     , iConfigManager(aConfigManager)
     , iLock("PRDM")
     , iObserver(NULL)
     , iStarted(false)
+    , iStartupSource(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceKey, Brn("Playlist"), ISource::kMaxSourceTypeBytes)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
+    iConfigProductRoom = new ConfigText(iConfigManager, Brn("Product.Room"), MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room-default"));
+    iConfigProductName = new ConfigText(iConfigManager, Brn("Product.Name"), MakeFunctor(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer-default")); // FIXME - assign appropriate product name
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 
@@ -37,6 +41,8 @@ Product::~Product()
     }
     iSources.clear();
     delete iProviderProduct;
+    delete iConfigProductName;
+    delete iConfigProductRoom;
 }
 
 void Product::SetObserver(IProductObserver& aObserver)
@@ -46,6 +52,7 @@ void Product::SetObserver(IProductObserver& aObserver)
 
 void Product::Start()
 {
+    SetCurrentSource(iStartupSource.Get());
     iStarted = true;
     iSourceXmlChangeCount++;
     if (iObserver != NULL) {
@@ -93,9 +100,8 @@ void Product::GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
 
 void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri)
 {
-    GetConfigText(Brn("Product.Room"), aRoom, Brn("Main Room-default"));
-    GetConfigText(Brn("Product.Name"), aName, Brn("SoftPlayer-default")); // FIXME - assign appropriate product name
-
+    aRoom.Append(iConfigProductRoom->Get());
+    aName.Append(iConfigProductName->Get());
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));
@@ -143,18 +149,6 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
     aXml.Append('>');
 }
 
-void Product::GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault)
-{
-    if (iConfigManager.HasText(aId)) {
-        aDest.Append(iConfigManager.GetText(aId).Get());
-    }
-    else {
-        ASSERT(!iConfigManager.Has(aId)); // there is already an aId, but it is not text
-        const Brx& val = iStoreManager.CreateText(aId, false, MakeFunctor(*this, &Product::ProductRoomChanged), aDest.MaxBytes(), aDefault);
-        aDest.Append(val);
-    }
-}
-
 void Product::ProductRoomChanged() {}
 
 void Product::ProductNameChanged() {}
@@ -172,7 +166,9 @@ void Product::SetCurrentSource(TUint aIndex)
         iSources[iCurrentSource]->Deactivate();
     }
     iCurrentSource = aIndex;
+    iStartupSource.Set(iSources[iCurrentSource]->Type());
     iSources[iCurrentSource]->Activate();
+
     if (iObserver != NULL) {
         iObserver->SourceIndexChanged();
     }
@@ -185,7 +181,8 @@ void Product::SetCurrentSource(const Brx& aName)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aName) {
             iCurrentSource = i;
-            // FIXME - activate new current source
+            iStartupSource.Set(iSources[iCurrentSource]->Type());
+            iSources[iCurrentSource]->Activate();
             if (iObserver != NULL) {
                 iObserver->SourceIndexChanged();
             }
@@ -234,6 +231,7 @@ void Product::Activate(ISource& aSource)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aSource.Name()) {
             iCurrentSource = i;
+            iStartupSource.Set(iSources[iCurrentSource]->Type());
             srcNew = iSources[i];
             srcNew->Activate();
             if (iObserver != NULL) {

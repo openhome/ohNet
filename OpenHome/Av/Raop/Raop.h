@@ -14,6 +14,7 @@
 EXCEPTION(RaopNoActiveSession);
 
 namespace OpenHome {
+    class IPowerManager;
 namespace Media {
 
 class HeaderCSeq : public IHttpHeader
@@ -169,7 +170,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort);
     virtual ~RaopDiscovery();
 public: // from IRaopDiscovery
     const Brx &Aeskey();
@@ -185,6 +186,7 @@ public: // from IRaopObserver
     void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
 private:
     RaopDiscoverySession& ActiveSession();
+    void PowerDown();
 private:
     static const TUint kPriority = kPriorityNormal;
     static const TUint kSessionStackBytes = 10 * 1024;

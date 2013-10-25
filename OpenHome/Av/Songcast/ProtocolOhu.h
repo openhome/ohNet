@@ -8,6 +8,7 @@
 
 namespace OpenHome {
     class Environment;
+    class IPowerManager;
     class Timer;
 namespace Media {
     class TrackFactory;
@@ -22,7 +23,7 @@ class ProtocolOhu : public ProtocolOhBase
     static const TUint kTimerLeaveTimeoutMs = 50;
     static const TUint kMaxSlaveCount = 4;
 public:
-    ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
+    ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode, IPowerManager& aPowerManager);
     ~ProtocolOhu();
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
@@ -34,6 +35,7 @@ private:
     void HandleMetatext(const OhmHeader& aHeader);
     void HandleSlave(const OhmHeader& aHeader);
     void Broadcast(OhmMsg* aMsg);
+    void EmergencyStop();
     void SendLeave();
     void TimerLeaveExpired();
 private:

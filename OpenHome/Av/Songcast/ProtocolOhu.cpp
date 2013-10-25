@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/PowerManager.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -18,10 +19,11 @@ using namespace OpenHome::Media;
 
 // ProtocolOhu
 
-ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
+ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode, IPowerManager& aPowerManager)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohu", aMode)
     , iLeaveLock("POHU")
 {
+    aPowerManager.RegisterObserver(MakeFunctor(*this, &ProtocolOhu::EmergencyStop), kPowerPriorityLowest+1);
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired));
 }
 
@@ -219,11 +221,15 @@ TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return iNextFlushId;
 }
 
-/*void ProtocolOhu::EmergencyStop()
+void ProtocolOhu::EmergencyStop()
 {
-    SendLeave();
-    TimerLeaveExpired();
-}*/
+    //iLeaveLock.Wait();
+    //// FIXME - use of Send from TimerLeaveExpired isn't obviously threadsafe
+    //iStopped = true;
+    //iLeaving = true;
+    //iLeaveLock.Signal();
+    //TimerLeaveExpired();
+}
 
 void ProtocolOhu::SendLeave()
 {

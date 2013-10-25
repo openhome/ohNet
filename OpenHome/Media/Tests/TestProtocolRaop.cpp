@@ -15,6 +15,7 @@
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/PowerManager.h>
 #include "AllocatorInfoLogger.h"
 #include "SongcastingDriver.h"
 
@@ -86,6 +87,7 @@ private:
     static const TUint kPortAudio = 60400;
     static const TUint kPortControl = 60401;
     static const TUint kPortTiming = 60402;
+    PowerManager iPowerManager;
     RaopDiscovery* iRaopDiscovery;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
@@ -136,7 +138,7 @@ DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar*
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, *this, aHostName, aDeviceName, aDiscoveryPort);
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, iPowerManager, *this, aHostName, aDeviceName, aDiscoveryPort);
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     TUint audioId = iServerManager.CreateServer(kPortAudio);
     TUint controlId = iServerManager.CreateServer(kPortControl);

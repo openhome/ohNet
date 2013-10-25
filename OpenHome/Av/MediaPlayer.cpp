@@ -27,22 +27,27 @@ using namespace OpenHome::Net;
 
 // MediaPlayer
 
-MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice, TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource, IStoreReadWrite& aWriteStore)
+MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
+                       , TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource
+                       , IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager
+                       , IPowerManager& aPowerManager
+                       )
     : iDvStack(aDvStack)
     , iDevice(aDevice)
+    , iReadWriteStore(aReadWriteStore)
+    , iConfigManager(aConfigManager)
+    , iPowerManager(aPowerManager)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iConfigManager = new ConfigurationManager();
-    iStoreManager = new Configuration::StoreManager(aWriteStore, *iConfigManager);
     iZoneHandler = new Av::ZoneHandler(aDvStack.Env());
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iProduct = new Product(aDevice, *iKvpStore, *iStoreManager, *iConfigManager, *iInfoLogger);
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManager, iPowerManager, *iInfoLogger);
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
-    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware);
+    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, iPowerManager);
     iTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iInfo = new ProviderInfo(aDevice, *iPipeline);
@@ -63,8 +68,6 @@ MediaPlayer::~MediaPlayer()
     delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
-    delete iStoreManager;
-    delete iConfigManager;
     delete iKvpStore;
     delete iZoneHandler;
     delete iInfoLogger;
@@ -133,14 +136,19 @@ IReadStore& MediaPlayer::ReadStore()
     return *iKvpStore;
 }
 
-ConfigurationManager& MediaPlayer::ConfigManager()
+IStoreReadWrite& MediaPlayer::ReadWriteStore()
 {
-    return *iConfigManager;
+    return iReadWriteStore;
 }
 
-StoreManager& MediaPlayer::StoreManager()
+IConfigurationManager& MediaPlayer::ConfigManager()
 {
-    return *iStoreManager;
+    return iConfigManager;
+}
+
+IPowerManager& MediaPlayer::PowerManager()
+{
+    return iPowerManager;
 }
 
 Av::ZoneHandler& MediaPlayer::ZoneHandler()

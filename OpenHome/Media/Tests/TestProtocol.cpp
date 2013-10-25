@@ -34,7 +34,7 @@ using namespace OpenHome::Av;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager)
     : Thread("SPHt")
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
@@ -51,7 +51,7 @@ DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvide
     iProtocolManager->Add(ProtocolFactory::NewRtsp(aEnv, Brn("GUID-TestProtocol-0123456789")));
     static const Brn kSongcastMode("Songcast");
     iProtocolManager->Add(new ProtocolOhm(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode));
-    iProtocolManager->Add(new ProtocolOhu(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode));
+    iProtocolManager->Add(new ProtocolOhu(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode, aPowerManager));
 }
 
 DummyFiller::~DummyFiller()
@@ -98,7 +98,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator);
+    iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
     iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
 }
