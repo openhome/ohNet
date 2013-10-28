@@ -51,7 +51,6 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
 		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
@@ -60,8 +59,8 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     RandomiseUdn(dvStack->Env(), udn);
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
     TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
-    DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, dvStack->Env(), *(tmp->Device()), udn, optionChannel.Value(), adapter, false /*unicast*/);
-    tmp->AddAttribute("Sender");
+    DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, *dvStack, udn, optionChannel.Value());
+    //tmp->AddAttribute("Sender");
     tmp->Run();
     tmp->DestroyPipeline();
     delete driver;

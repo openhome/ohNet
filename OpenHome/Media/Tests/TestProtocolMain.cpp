@@ -6,9 +6,9 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-TestProtocol* CreateTestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocol* CreateTestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
 {
-    return new TestProtocol(aEnv, aDvStack, aUrl, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
+    return new TestProtocol(aEnv, aDvStack, aUrl, aSenderUdn, aSenderChannel);
 }
 
 int CDECL main(int aArgc, char* aArgv[])

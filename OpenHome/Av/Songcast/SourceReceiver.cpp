@@ -36,6 +36,7 @@ private: // from ISourceReceiver
     void SetSender(const Brx& aUri, const Brx& aMetadata);
 private: // from IZoneListener
     void ZoneUriChanged(const Brx& aZone, const Brx& aUri);
+    void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata);
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -143,6 +144,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
     AutoMutex a(iLock);
     iUri.Replace(aUri);
+    // FIXME - may later want to handle a 'preset' scheme to allow presets to be selected from UI code
     if (iUri.Scheme() == ZoneHandler::kProtocolZone) {
         Endpoint ep(iUri.Port(), iUri.Host());
         const Endpoint& tgt = iZoneHandler.MulticastEndpoint();
@@ -173,6 +175,11 @@ void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
             DoPlay();
         }
     }
+}
+
+void SourceReceiver::NotifyPresetInfo(TUint /*aPreset*/, const Brx& /*aMetadata*/)
+{
+    // FIXME - will need to implement this once we support preset selection via UI
 }
 
 void SourceReceiver::NotifyPipelineState(EPipelineState aState)

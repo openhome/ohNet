@@ -13,6 +13,7 @@
 #include <OpenHome/Av/Source.h> // FIXME - see #169
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
 
 int mygetch();
 
@@ -36,7 +37,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     friendlyName.Append(aProductName);
 
     // create UPnP device
-    iDevice = new DvDeviceStandard(aDvStack, aUdn);
+    iDevice = new DvDeviceStandard(aDvStack, aUdn, *this);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "MediaPlayer");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -142,7 +143,7 @@ PipelineManager& TestMediaPlayer::Pipeline()
     return iMediaPlayer->Pipeline();
 }
 
-DvDevice* TestMediaPlayer::Device()
+DvDeviceStandard* TestMediaPlayer::Device()
 {
     return iDevice;
 }
@@ -224,6 +225,16 @@ void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
 void TestMediaPlayer::PowerDownUpnpCallback()
 {
     // do nothing; only exists to avoid lengthy Upnp shutdown waits during power fail
+}
+
+void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
+{
+    Brn kSongcastSenderIcon("SongcastSenderIcon");
+    if (aUriTail == kSongcastSenderIcon) {
+        aResourceWriter.WriteResourceBegin(sizeof(kIconDriverSongcastSender), kIconDriverSongcastSenderMimeType);
+        aResourceWriter.WriteResource(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender));
+        aResourceWriter.WriteResourceEnd();
+    }
 }
 
 TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)

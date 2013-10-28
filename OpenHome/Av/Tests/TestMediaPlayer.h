@@ -38,7 +38,7 @@ namespace Av {
     class ISource;
 namespace Test {
 
-class TestMediaPlayer
+class TestMediaPlayer : private Net::IResourceManager
 {
     static const TUint kTrackCount = 1200;
     static const TUint kRaopDiscoveryPort = 5048;
@@ -49,10 +49,12 @@ public:
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     void Run();
     Media::PipelineManager& Pipeline();
-    Net::DvDevice* Device();
+    Net::DvDeviceStandard* Device();
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
     void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
+private: // from Net::IResourceManager
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter);
 private:
     void PowerDownUpnp();
     void PowerDownDisable(Net::DvDevice& aDevice);
@@ -62,7 +64,7 @@ private:
 protected:
     MediaPlayer* iMediaPlayer;
     Media::LoggingPipelineObserver* iPipelineObserver;
-    Net::DvDevice* iDevice;
+    Net::DvDeviceStandard* iDevice;
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;

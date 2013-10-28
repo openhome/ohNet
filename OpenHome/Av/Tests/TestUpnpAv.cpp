@@ -7,7 +7,7 @@
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/Tests/SongcastingDriver.h>
+#include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
@@ -99,14 +99,14 @@ class TestUpnpAv
 {
     static const TUint kTrackCount = 3;
 public:
-    TestUpnpAv(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    TestUpnpAv(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel);
     ~TestUpnpAv();
     void Run();
 private:
     AllocatorInfoLogger iInfoLogger;
     PipelineManager* iPipeline;
     TrackFactory* iTrackFactory;
-    SimpleSongcastingDriver* iDriver;
+    DriverSongcastSender* iDriver;
     UriProviderSingleTrack* iUriProvider;
     DummySourceUpnpAv* iSourceUpnpAv;
 };
@@ -249,9 +249,10 @@ void DummySourceUpnpAv::Seek(TUint aSecondsAbsolute)
 
 // TestUpnpAv
 
-TestUpnpAv::TestUpnpAv(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestUpnpAv::TestUpnpAv(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
-    iPipeline = new PipelineManager(iInfoLogger, SimpleSongcastingDriver::kMaxDriverJiffies);
+    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    iPipeline = new PipelineManager(iInfoLogger, kMaxDriverJiffies);
     iPipeline->Add(Codec::CodecFactory::NewAac());
     iPipeline->Add(Codec::CodecFactory::NewAlac());
     iPipeline->Add(Codec::CodecFactory::NewFlac());
@@ -261,7 +262,7 @@ TestUpnpAv::TestUpnpAv(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSende
     iPipeline->Add(Codec::CodecFactory::NewWma());
     iPipeline->Add(ProtocolFactory::NewHttp(aDvStack.Env()));
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
-    iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
+    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("UpnpAv", *iTrackFactory);
     iPipeline->Add(iUriProvider);
     iPipeline->Start();
@@ -292,8 +293,6 @@ int CDECL main(int aArgc, char* aArgv[])
     OptionParser parser;
     OptionString optionUdn("-u", "--udn", Brn("TestUpnpAvSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("TestUpnpAvSender"), "[name] name of the sender");
-    parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -323,7 +322,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestUpnpAv* tuav = new TestUpnpAv(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestUpnpAv* tuav = new TestUpnpAv(*dvStack, optionUdn.Value(), optionChannel.Value());
     tuav->Run();
     delete tuav;
     

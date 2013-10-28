@@ -16,23 +16,19 @@ class OhmSocket : public IReaderSource, public INonCopyable
 {
     static const TUint kSendBufBytes = 16392;
     static const TUint kReceiveBufBytes = 16392;
-
 public:
     OhmSocket(Environment& aEnv);
+    ~OhmSocket();
     void OpenUnicast(TIpAddress aInterface, TUint aTtl);
     void OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
     Endpoint This() const;
     Endpoint Sender() const;
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Close();
-    ~OhmSocket();
-
-public:
-	// IReaderSource
-    virtual void Read(Bwx& aBuffer);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
-
+public: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
     Environment& iEnv;
     SocketUdpBase* iRxSocket;
@@ -44,22 +40,18 @@ private:
 class OhzSocket : public IReaderSource, public INonCopyable
 {
     static const TUint kSendBufBytes = 1024;
-
 public:
     OhzSocket(Environment& aEnv);
+    ~OhzSocket();
 
 	const Endpoint& This() const;
 	void Open(TIpAddress aInterface, TUint aTtl);
     void Send(const Brx& aBuffer);
     void Close();
-
-    // IReaderSource
-    virtual void Read(Bwx& aBuffer);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
-    
-    ~OhzSocket();
-
+public: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
     Environment& iEnv;
     SocketUdpMulticast* iRxSocket;
@@ -68,9 +60,7 @@ private:
     UdpReader* iReader;
 };
 
-
 } // namespace Av
 } // namespace OpenHome
 
 #endif // HEADER_OHM_SOCKET
-

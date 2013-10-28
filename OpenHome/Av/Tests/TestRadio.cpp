@@ -5,7 +5,7 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/Tests/SongcastingDriver.h>
+#include <OpenHome/Media/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
@@ -32,14 +32,15 @@ using namespace OpenHome::Net;
 
 // TestRadio
 
-TestRadio::TestRadio(DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestRadio::TestRadio(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
-    iPipeline = new PipelineManager(iInfoLogger, SimpleSongcastingDriver::kMaxDriverJiffies);
+    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    iPipeline = new PipelineManager(iInfoLogger, kMaxDriverJiffies);
     iPipeline->AddObserver(*this);
     iEnv = &aDvStack.Env();
 
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
-    iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
+    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
     iPipeline->Add(iUriProvider);
 //    iSourceUpnpAv = new DummySourceUpnpAv(aDvStack, *iPipeline, *iUriProvider);
@@ -50,7 +51,6 @@ TestRadio::~TestRadio()
     delete iPipeline;
     delete iDriver;
 //    delete iSourceUpnpAv;
-    delete iUriProvider;
     delete iTrackFactory;
     delete iEnv;
 }
@@ -190,8 +190,6 @@ int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFu
     OptionParser parser;
     OptionString optionUdn("-u", "--udn", Brn("TestRadioSender"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("TestRadioSender"), "[name] name of the sender");
-    parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -217,7 +215,6 @@ int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFu
 		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
@@ -229,7 +226,7 @@ int OpenHome::Av::Test::ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFu
         (void)db->SetPreset(i, urlAsMetaData, urlAsMetaData);
     }
     db->EndSetPresets();
-    TestRadio* tr = (*aFunc)(*dvStack, adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestRadio* tr = (*aFunc)(*dvStack, optionUdn.Value(), optionChannel.Value());
     tr->Run(*db);
     delete tr;
     delete db;
