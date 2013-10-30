@@ -658,6 +658,23 @@ void SuiteMsgAudio::Test()
     TEST(jiffies == clone->Jiffies());
     clone->RemoveRef();
 
+    // Add 2 msgs.  Check their combined lengths are reported
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kJiffiesPerSecond);
+    clone = msg->Clone();
+    jiffies = msg->Jiffies();
+    TUint combinedJiffies = msg->Jiffies() + clone->Jiffies();
+    msg->Add(clone);
+    TEST(msg->Jiffies() == combinedJiffies);
+    // split inside clone
+    remaining = msg->Split(jiffies + 100);
+    TEST(msg->Jiffies() == jiffies + 100);
+    TEST(remaining->Jiffies() == combinedJiffies - (jiffies + 100));
+    // confirm clone is destroyed along with msg
+    msg->RemoveRef();
+    TEST(clone->Jiffies() == 0);
+    remaining->RemoveRef();
+    TEST(remaining->Jiffies() == 0);
+
     // Create silence msg.  Check its length is as expected
     jiffies = Jiffies::kJiffiesPerMs;
     msg = iMsgFactory->CreateMsgSilence(jiffies);

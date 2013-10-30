@@ -779,6 +779,9 @@ Msg* MsgAudioEncoded::Process(IMsgProcessor& aProcessor)
 MsgAudio* MsgAudio::Split(TUint aJiffies)
 {
     AutoMutex a(iLock);
+    if (aJiffies > iSize && iNextAudio != NULL) {
+        return iNextAudio->Split(aJiffies - iSize);
+    }
     return DoSplit(aJiffies);
 }
 
@@ -787,6 +790,7 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
     ASSERT(aJiffies > 0);
     ASSERT(aJiffies < iSize);
     MsgAudio* remaining = Allocate();
+    remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
     remaining->iSize = iSize - aJiffies;
     if (iRamp.IsEnabled()) {
@@ -796,8 +800,22 @@ MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
         remaining->iRamp.Reset();
     }
     iSize = aJiffies;
+    iNextAudio = NULL;
     SplitCompleted(*remaining);
     return remaining;
+}
+
+void MsgAudio::Add(MsgAudio* aMsg)
+{
+    iLock.Wait();
+    MsgAudio* end = this;
+    MsgAudio* next = iNextAudio;
+    while (next != NULL) {
+        end = next;
+        next = next->iNextAudio;
+    }
+    end->iNextAudio = aMsg;
+    iLock.Signal();
 }
 
 MsgAudio* MsgAudio::Clone()
@@ -807,13 +825,19 @@ MsgAudio* MsgAudio::Clone()
     clone->iSize = iSize;
     clone->iOffset = iOffset;
     clone->iRamp = iRamp;
+    clone->iNextAudio = (iNextAudio == NULL? NULL : iNextAudio->Clone());
     return clone;
 }
 
 TUint MsgAudio::Jiffies() const
 {
     iLock.Wait();
-    const TUint jiffies = iSize;
+    TUint jiffies = iSize; 
+    MsgAudio* next = iNextAudio; 
+    while (next != NULL) { 
+        jiffies += next->iSize; 
+        next = next->iNextAudio; 
+    }
     iLock.Signal();
     return jiffies;
 }
@@ -821,6 +845,7 @@ TUint MsgAudio::Jiffies() const
 TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit)  // FIXME
 {
     AutoMutex a(iLock);
+    ASSERT(iNextAudio == NULL);
     Media::Ramp split;
     TUint splitPos;
     TUint rampEnd;
@@ -854,8 +879,17 @@ MsgAudio::MsgAudio(AllocatorBase& aAllocator)
 
 void MsgAudio::Initialise()
 {
+    iNextAudio = NULL;
     iRamp.Reset();
 }
+
+void MsgAudio::Clear() 
+{
+    iSize = 0;
+    if (iNextAudio != NULL) { 
+        iNextAudio->RemoveRef(); 
+    } 
+} 
 
 void MsgAudio::SplitCompleted(MsgAudio& /*aMsg*/)
 {
@@ -886,6 +920,10 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
 
     MsgPlayablePcm* playable = iAllocatorPlayable->Allocate();
     playable->Initialise(iAudioData, sizeBytes, offsetBytes, iRamp);
+    if (iNextAudio != NULL) { 
+        MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
+        playable->Add(child); 
+    }
     RemoveRef();
     return playable;
 }
@@ -926,6 +964,7 @@ MsgAudio* MsgAudioPcm::Allocate()
 
 void MsgAudioPcm::Clear()
 {
+    MsgAudio::Clear();
     iAudioData->RemoveRef();
 }
 
@@ -951,6 +990,10 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
 
     MsgPlayableSilence* playable = iAllocatorPlayable->Allocate();
     playable->Initialise(sizeBytes, aBitDepth, aNumChannels, iRamp);
+    if (iNextAudio != NULL) { 
+        MsgPlayable* child = static_cast<MsgSilence*>(iNextAudio)->CreatePlayable(aSampleRate, aBitDepth, aNumChannels); 
+        playable->Add(child); 
+    } 
     RemoveRef();
     return playable;
 }
