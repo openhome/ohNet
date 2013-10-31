@@ -27,6 +27,8 @@ using namespace OpenHome::Net;
 
 // TestMediaPlayer
 
+const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
+
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName)
     : iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
@@ -205,7 +207,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }
 
 void TestMediaPlayer::PowerDownUpnp()
@@ -229,8 +231,7 @@ void TestMediaPlayer::PowerDownUpnpCallback()
 
 void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
 {
-    Brn kSongcastSenderIcon("SongcastSenderIcon");
-    if (aUriTail == kSongcastSenderIcon) {
+    if (aUriTail == kSongcastSenderIconFileName) {
         aResourceWriter.WriteResourceBegin(sizeof(kIconDriverSongcastSender), kIconDriverSongcastSenderMimeType);
         aResourceWriter.WriteResource(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender));
         aResourceWriter.WriteResourceEnd();

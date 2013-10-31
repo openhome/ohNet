@@ -27,11 +27,10 @@ using namespace OpenHome::Net;
 
 // MediaPlayer
 
-MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
-                       , TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource
-                       , IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager
-                       , IPowerManager& aPowerManager
-                       )
+MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                         TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
+                         IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager,
+                         IPowerManager& aPowerManager)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
@@ -40,7 +39,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iZoneHandler = new Av::ZoneHandler(aDvStack.Env(), iDevice.Udn());
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManager, iPowerManager, *iInfoLogger);
@@ -69,7 +67,6 @@ MediaPlayer::~MediaPlayer()
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iKvpStore;
-    delete iZoneHandler;
     delete iInfoLogger;
     delete iTrackFactory;
 }
@@ -116,7 +113,7 @@ Net::DvStack& MediaPlayer::DvStack()
     return iDvStack;
 }
 
-Net::DvDevice& MediaPlayer::Device()
+Net::DvDeviceStandard& MediaPlayer::Device()
 {
     return iDevice;
 }
@@ -149,11 +146,6 @@ IConfigurationManager& MediaPlayer::ConfigManager()
 IPowerManager& MediaPlayer::PowerManager()
 {
     return iPowerManager;
-}
-
-Av::ZoneHandler& MediaPlayer::ZoneHandler()
-{
-    return *iZoneHandler;
 }
 
 void MediaPlayer::Add(UriProvider* aUriProvider)

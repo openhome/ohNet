@@ -46,6 +46,7 @@ public:
     void Next();
     void Prev();
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
+    IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelineIdManager

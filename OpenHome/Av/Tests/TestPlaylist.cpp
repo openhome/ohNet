@@ -111,7 +111,7 @@ private:
     Semaphore iTrackChanged;
     CpStack& iCpStack;
     DvStack& iDvStack;
-    DvDevice* iDevice;
+    DvDeviceStandard* iDevice;
     RamStore* iRamStore;
     ConfigRamStore* iConfigRamStore;
     ConfigurationManager* iConfigManager;

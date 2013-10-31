@@ -17,6 +17,8 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 const Brn Product::kStartupSourceKey("Startup.Source");
+const Brn Product::ConfigIdRoom("Product.Room");
+const Brn Product::ConfigIdName("Product.Name");
 
 Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& /*aInfoAggregator*/)
     : iDevice(aDevice)
@@ -29,8 +31,8 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
-    iConfigProductRoom = new ConfigText(iConfigManager, Brn("Product.Room"), MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room-default"));
-    iConfigProductName = new ConfigText(iConfigManager, Brn("Product.Name"), MakeFunctor(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer-default")); // FIXME - assign appropriate product name
+    iConfigProductRoom = new ConfigText(iConfigManager, ConfigIdRoom, MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    iConfigProductName = new ConfigText(iConfigManager, ConfigIdName, MakeFunctor(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 

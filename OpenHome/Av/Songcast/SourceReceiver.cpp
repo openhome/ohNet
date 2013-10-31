@@ -14,18 +14,23 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
+#include <OpenHome/Media/Sender.h>
+#include <OpenHome/Av/Product.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 namespace OpenHome {
 namespace Media {
     class PipelineManager;
+    class Sender;
 }
 namespace Av {
 
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
 {
     static const TChar* kProtocolInfo;
+    static const TUint kSenderLatencyMs = 100; // FIXME - should get this from Pipeline
 public:
-    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper);
+    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
     void Activate();
@@ -45,18 +50,28 @@ private: // from Media::IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
     void DoPlay();
+    void ConfigRoomChanged();
+    void ConfigNameChanged();
+    void UpdateSenderName();
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
-    ZoneHandler& iZoneHandler;
+    ZoneHandler* iZoneHandler;
     ProviderReceiver* iProviderReceiver;
     Media::UriProviderSingleTrack* iUriProvider;
     OhmMsgFactory* iOhmMsgFactory;
+    Media::Sender* iSender;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
     Bws<ZoneHandler::kMaxZoneBytes> iZone;
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;
     TBool iPlaying;
+    Configuration::ConfigText* iConfigRoom;
+    TUint iConfigRoomSubscriberId;
+    Configuration::ConfigText* iConfigName;
+    TUint iConfigNameSubscriberId;
+    Bws<Product::kMaxRoomBytes> iRoom;
+    Bws<Product::kMaxNameBytes> iName;
 };
 
 } // namespace Av
@@ -67,12 +82,13 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Net;
 using namespace OpenHome::Media;
+using namespace OpenHome::Configuration;
 
 // SourceFactory
 
-ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper)
+ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
 { // static
-    return new SourceReceiver(aMediaPlayer, aTimestamper);
+    return new SourceReceiver(aMediaPlayer, aTimestamper, aSenderIconFileName);
 }
 
 
@@ -80,33 +96,53 @@ ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper&
 
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
-SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper)
+SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
     : Source("Receiver", "Receiver")
     , iLock("SRCV")
     , iPipeline(aMediaPlayer.Pipeline())
-    , iZoneHandler(aMediaPlayer.ZoneHandler())
     , iPlaying(false)
 {
-    iProviderReceiver = new ProviderReceiver(aMediaPlayer.Device(), *this, kProtocolInfo);
+    Environment& env = aMediaPlayer.Env();
+    DvDeviceStandard& device = aMediaPlayer.Device();
+    iZoneHandler = new ZoneHandler(env, device.Udn());
+
+    // Receiver
+    iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     static const TChar * kMode = "Receiver";
     const Brn kModeBuf(kMode);
     iUriProvider = new UriProviderSingleTrack(kMode, trackFactory);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
-    Environment& env = aMediaPlayer.Env();
     iPipeline.Add(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf, aMediaPlayer.PowerManager()));
-    iZoneHandler.AddListener(*this);
+    iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
+
+    // Sender
+    IConfigurationManager& configManager = aMediaPlayer.ConfigManager();
+    iSender = new Sender(env, device, *iZoneHandler, configManager, Brx::Empty(), kSenderLatencyMs, aSenderIconFileName);
+    (void)iPipeline.SetSender(*iSender);
+    iConfigRoom = &configManager.GetText(Product::ConfigIdRoom);
+    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctor(*this, &SourceReceiver::ConfigRoomChanged));
+    iConfigName = &configManager.GetText(Product::ConfigIdName);
+    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctor(*this, &SourceReceiver::ConfigNameChanged));
+    // FIXME - remove this block once subscribing to a CongifVal results in an immediate callback
+    iRoom.Replace(iConfigRoom->Get());
+    iName.Replace(iConfigName->Get());
+    UpdateSenderName();
 }
 
 SourceReceiver::~SourceReceiver()
 {
+    iConfigRoom->Unsubscribe(iConfigRoomSubscriberId);
+    iConfigName->Unsubscribe(iConfigNameSubscriberId);
+    delete iSender;
     delete iOhmMsgFactory;
-    iZoneHandler.RemoveListener(*this);
+    iZoneHandler->RemoveListener(*this);
     delete iProviderReceiver;
+    delete iZoneHandler;
 }
 
 void SourceReceiver::Activate()
@@ -147,7 +183,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
     // FIXME - may later want to handle a 'preset' scheme to allow presets to be selected from UI code
     if (iUri.Scheme() == ZoneHandler::kProtocolZone) {
         Endpoint ep(iUri.Port(), iUri.Host());
-        const Endpoint& tgt = iZoneHandler.MulticastEndpoint();
+        const Endpoint& tgt = iZoneHandler->MulticastEndpoint();
         if (ep.Address() != tgt.Address() || ep.Port() != tgt.Port()) {
             THROW(UriError);
         }
@@ -156,7 +192,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
             THROW(UriError);
         }
         iZone.Replace(path.Split(1)); // remove leading /
-        iZoneHandler.StartMonitoring(iZone);
+        iZoneHandler->StartMonitoring(iZone);
         iTrackUri.Replace(Brx::Empty());
     }
     else {
@@ -212,4 +248,29 @@ void SourceReceiver::DoPlay()
     iPipeline.Begin(iUriProvider->Mode(), track->Id());
     track->RemoveRef();
     iPipeline.Play();
+}
+
+void SourceReceiver::ConfigRoomChanged()
+{
+    AutoMutex a(iLock);
+    iRoom.Replace(iConfigRoom->Get());
+    UpdateSenderName();
+}
+
+void SourceReceiver::ConfigNameChanged()
+{
+    AutoMutex a(iLock);
+    iName.Replace(iConfigName->Get());
+    UpdateSenderName();
+}
+
+void SourceReceiver::UpdateSenderName()
+{
+    Bws<Product::kMaxRoomBytes + Product::kMaxNameBytes + 3> name;
+    name.Append(iRoom);
+    name.Append(' ');
+    name.Append('(');
+    name.Append(iName);
+    name.Append(')');
+    iSender->SetName(name);
 }

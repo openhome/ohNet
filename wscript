@@ -213,6 +213,7 @@ def build(bld):
                 'OpenHome/Media/PreDriver.cpp',
                 'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Rewinder.cpp',
+                'OpenHome/Media/Sender.cpp',
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',

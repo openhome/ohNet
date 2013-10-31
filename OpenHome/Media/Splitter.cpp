@@ -8,9 +8,9 @@ using namespace OpenHome::Media;
 
 // Splitter
 
-Splitter::Splitter(IPipelineElementUpstream& aUpstreamElement, IPipelineBranch& aBranch)
+Splitter::Splitter(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
-    , iBranch(aBranch)
+    , iBranch(NULL)
 {
 }
 
@@ -18,11 +18,20 @@ Splitter::~Splitter()
 {
 }
 
+IPipelineElementDownstream* Splitter::SetPipelineBranch(IPipelineElementDownstream& aBranch)
+{
+    IPipelineElementDownstream* prev = iBranch;
+    iBranch = &aBranch;
+    return prev;
+}
+
 Msg* Splitter::Pull()
 {
     Msg* msg = iUpstreamElement.Pull();
-    Msg* copy = msg->Process(*this);
-    iBranch.AddMsg(copy);
+    if (iBranch != NULL) {
+        Msg* copy = msg->Process(*this);
+        iBranch->Push(copy);
+    }
     return msg;
 }
 
@@ -88,12 +97,4 @@ Msg* Splitter::ProcessMsg(MsgQuit* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
-}
-
-
-// PipelineBranchNull
-
-void PipelineBranchNull::AddMsg(Msg* aMsg)
-{
-    aMsg->RemoveRef();
 }

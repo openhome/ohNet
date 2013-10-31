@@ -48,8 +48,11 @@ public:
 
 class Product : private IProduct, private IInfoProvider, private INonCopyable
 {
+    static const Brn kStartupSourceKey;
     static const TUint kMaxAttributeBytes = 1024;
 public:
+    static const Brn ConfigIdRoom;
+    static const Brn ConfigIdName;
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
@@ -82,7 +85,6 @@ private: // from IProduct
 private: // from IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
-    static const Brn kStartupSourceKey;
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
     Configuration::IConfigurationManager& iConfigManager;

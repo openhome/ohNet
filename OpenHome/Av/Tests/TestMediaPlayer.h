@@ -40,6 +40,7 @@ namespace Test {
 
 class TestMediaPlayer : private Net::IResourceManager
 {
+    static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
     static const TUint kRaopDiscoveryPort = 5048;
 public:

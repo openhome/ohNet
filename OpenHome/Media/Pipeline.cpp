@@ -84,7 +84,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
-    iSplitter = new Splitter(*iLoggerReporter, iNullSongcaster);
+    iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerSplitter, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
@@ -286,6 +286,11 @@ void Pipeline::AddObserver(ITrackObserver& aObserver)
 TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
 {
     return iCodecController->SupportsMimeType(aMimeType);
+}
+
+IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSender)
+{
+    return iSplitter->SetPipelineBranch(aSender);
 }
 
 void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
