@@ -58,6 +58,11 @@ def configure(conf):
     if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
 
+    conf.env.INCLUDES_OHNETMON = [os.path.join('dependencies', conf.options.dest_platform, 'ohNetmon', 'include')]
+    conf.env.STLIBPATH_OHNETMON = [os.path.join(conf.path.find_node('.').abspath(),
+                                                os.path.join('dependencies', conf.options.dest_platform, 'ohNetmon', 'lib'))]
+    conf.env.STLIB_OHNETMON = ['ohNetmon']
+
     conf.env.INCLUDES = [
         '.',
         conf.path.find_node('.').abspath()
@@ -281,7 +286,7 @@ def build(bld):
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'OpenHome/PowerManager.cpp',
             ],
-            use=['OHNET', 'OPENSSL'],
+            use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohMediaPlayer')
 
     # Wav
