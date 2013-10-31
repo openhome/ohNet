@@ -30,6 +30,9 @@ namespace Configuration {
     class IConfigurationManager;
     class IStoreReadWrite;
 }
+namespace Net {
+    class NetworkMonitor;
+}
 namespace Av {
 
 class IReadStore;
@@ -102,6 +105,7 @@ private:
     ProviderTime* iTime;
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
+    Net::NetworkMonitor* iNetworkMonitor;
     KvpStore* iKvpStore;
     Configuration::IStoreReadWrite& iReadWriteStore;
     Configuration::IConfigurationManager& iConfigManager;

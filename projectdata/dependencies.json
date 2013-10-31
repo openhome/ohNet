@@ -84,5 +84,12 @@
         "external-version": "1.0.0d",
         "internal-version": "0.1.19",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${external-version}-${internal-version}-${archive-platform}-${debugmode}.tar.bz2"
+    },
+    {   "name": "ohNetmon",
+        "type": "internal",
+        "platform-specific": true,
+        "version": "0.0.4",
+        "archive-suffix": "-${debugmode}",
+        "main-dir": "${dest}${name}-${platform}-${debugmode}"
     }
 ]
