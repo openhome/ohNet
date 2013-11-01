@@ -103,6 +103,7 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 
     const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::JiffiesPerSample(streamInfo.SampleRate());
     iOhmSender->SetTrack(iTrack->Uri(), iTrack->MetaData(), samplesTotal, streamInfo.SampleStart());
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), iNumChannels, iBitDepth, streamInfo.Lossless(), streamInfo.CodecName());
 
     return aMsg;
 }
@@ -185,7 +186,9 @@ void Sender::SendPendingAudio()
         playable->Read(*this);
         playable->RemoveRef();
     }
-    iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+    if (iAudioBuf.Bytes() != 0) {
+        iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+    }
     iPendingAudio.clear();
 }
 
