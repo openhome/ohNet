@@ -70,10 +70,29 @@ private:
         NetworkAdapter& iNif;
         NetworkInterfaceInfo* iMdnsInfo;
     };
+    /*
+     * Simple recursive mutex.
+     *
+     * Only works if called from at most 1 thread not created by ohNet.
+     * (i.e. one thread where Thread::Current() returns NULL).
+     */
+    class MutexRecursive
+    {
+    #define Thread_None ((Thread*)1) // assumed invalid thread address
+    public:
+        MutexRecursive();
+        ~MutexRecursive();
+        void Lock();
+        void Unlock();
+    private:
+        Mutex iMutex;
+        Thread* iOwner;
+        TUint iCount;
+    };
 private:
     Environment& iEnv;
     Brhz iHost;
-    Mutex iMutex;
+    MutexRecursive iMutex;
     ThreadFunctor* iThreadListen;
     Timer* iTimer;
     Endpoint iMulticast;

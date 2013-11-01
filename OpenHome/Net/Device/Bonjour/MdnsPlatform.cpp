@@ -19,6 +19,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
+// MdnsPlatform
+
 static const mDNSInterfaceID kInterfaceId = (mDNSInterfaceID)2;
 
 MdnsPlatform::Nif::Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo)
@@ -53,7 +55,6 @@ TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     : iEnv(aEnv)
     , iHost(aHost)
-    , iMutex("BNJ1")
     , iMulticast(5353, Brn("224.0.0.251"))
     , iReader(aEnv, 0, iMulticast)
     , iReaderController(iReader)
@@ -349,7 +350,7 @@ void MdnsPlatform::ServiceCallback(mDNS* /*m*/, ServiceRecordSet* /*aRecordSet*/
 
 void MdnsPlatform::Lock()
 {
-    iMutex.Wait();
+    iMutex.Lock();
     LOG(kBonjour, "Bonjour             Lock\n");
 }
 
@@ -359,7 +360,7 @@ void MdnsPlatform::Unlock()
     iTimer->FireAt(next);
     LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     LOG(kBonjour, "Bonjour             Unlock\n");
-    iMutex.Signal();
+    iMutex.Unlock();
 }
 
 MdnsPlatform::Status MdnsPlatform::Init()
@@ -436,7 +437,48 @@ void MdnsPlatform::AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar*
     aBuffer.Append(aValue);
 }
 
-extern "C" {    
+
+// MdnsPlatform::MutexRecursive
+
+MdnsPlatform::MutexRecursive::MutexRecursive()
+    : iMutex("MREC")
+    , iOwner(Thread_None)
+    , iCount(0)
+{
+}
+
+MdnsPlatform::MutexRecursive::~MutexRecursive()
+{
+    ASSERT(iOwner == Thread_None);
+    ASSERT(iCount == 0);
+}
+
+void MdnsPlatform::MutexRecursive::Lock()
+{
+    Thread* th = Thread::Current();
+    if (th == iOwner) {
+        iCount++;
+    }
+    else {
+        iMutex.Wait();
+        iOwner = th;
+        iCount = 1;
+    }
+}
+
+void MdnsPlatform::MutexRecursive::Unlock()
+{
+    ASSERT_DEBUG(Thread::Current() == iOwner);
+    if (--iCount == 0) {
+        iOwner = Thread_None;
+        iMutex.Signal();
+    }
+}
+
+
+// C APIs expected by mDNSCore
+
+extern "C" {
 
 mStatus mDNSPlatformInit(mDNS* m)
 {
