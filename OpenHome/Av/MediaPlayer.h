@@ -59,6 +59,7 @@ public:
     virtual Configuration::IConfigurationManager& ConfigManager() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
+    virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
 
 class MediaPlayer : public IMediaPlayer, private INonCopyable
@@ -74,7 +75,6 @@ public:
     void Add(Media::Protocol* aProtocol);
     void Add(Media::ContentProcessor* aContentProcessor);
     void Add(ISource* aSource);
-    void AddAttribute(const TChar* aAttribute); // FIXME - temp enabler for Songcasting driver setting a "Sender" attribute
     void Start();
 public: // from IMediaPlayer
     Environment& Env();
@@ -87,6 +87,7 @@ public: // from IMediaPlayer
     Configuration::IConfigurationManager& ConfigManager();
     IPowerManager& PowerManager();
     void Add(Media::UriProvider* aUriProvider);
+    void AddAttribute(const TChar* aAttribute);
 private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
