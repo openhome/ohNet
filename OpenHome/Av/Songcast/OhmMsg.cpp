@@ -309,6 +309,17 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
 
 // OhmMsgAudioBlob
 
+void OhmMsgAudioBlob::ExternaliseAsBlob(IWriter& aWriter)
+{
+    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes());  // deliberately omit RxTimestamp().
+    header.Externalise(aWriter);                                    // This allows us to (hackily) reuse OhmMsgAudio's internalise later
+
+    aWriter.Write(iBlob);
+
+    WriterBinary wb(aWriter);
+    wb.WriteUint32Be(RxTimestamp());
+}
+
 void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
 {
     aProcessor.Process(*this);
@@ -316,12 +327,10 @@ void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudioBlob::Externalise(IWriter& aWriter)
 {
-    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes()); // deliberately omit RxTimestamp().
-                                                                   // This allows us to (hackily) reuse OhmMsgAudio's internalise later
+    OhmHeader header(OhmHeader::kMsgTypeAudio, iBlob.Bytes());
+
     header.Externalise(aWriter);
     aWriter.Write(iBlob);
-    WriterBinary wb(aWriter);
-    wb.WriteUint32Be(RxTimestamp());
 }
 
 OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)

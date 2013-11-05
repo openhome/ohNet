@@ -125,6 +125,7 @@ public:
     static const TUint kMaxBytes = 9 * 1024;
 public:
     TUint Frame() const { return iFrame; }
+    void ExternaliseAsBlob(IWriter& aWriter);
 public: // from OhmMsg
     void Process(IOhmMsgProcessor& aProcessor);
     void Externalise(IWriter& aWriter);

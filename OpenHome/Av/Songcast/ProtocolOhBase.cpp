@@ -325,7 +325,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
     iMutexTransport.Signal();
     iFrameBuf.SetBytes(0);
     WriterBuffer writer(iFrameBuf);
-    aMsg.Externalise(writer);
+    aMsg.ExternaliseAsBlob(writer);
     const TUint bytesBefore = iFrameBuf.Bytes();
     if (iStreamMsgDue) {
         /* FIXME - we really need to be able to check trackLength, sampleRate, bitDepth
