@@ -57,7 +57,6 @@ ProtocolOhBase::~ProtocolOhBase()
 
 void ProtocolOhBase::Add(OhmMsg* aMsg)
 {
-    aMsg->SetRxTimestamp(iTimestamper.Timestamp());
     aMsg->Process(*this);
 }
 
@@ -356,6 +355,8 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
+    aMsg.SetRxTimestamp(iTimestamper.Timestamp());
+
     AutoMutex a(iMutexTransport);
     if (!iRunning) {
         iFrame = aMsg.Frame();
