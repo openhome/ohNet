@@ -13,7 +13,7 @@ DefaultTimestamper::DefaultTimestamper(Environment& aEnv)
 {
 }
 
-TUint DefaultTimestamper::Timestamp()
+TUint DefaultTimestamper::Timestamp(TUint aFrame)
 {
     return Os::TimeInMs(iEnv.OsCtx());
 }

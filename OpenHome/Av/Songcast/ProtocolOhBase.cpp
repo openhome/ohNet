@@ -355,7 +355,7 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
-    aMsg.SetRxTimestamp(iTimestamper.Timestamp());
+    aMsg.SetRxTimestamp(iTimestamper.Timestamp(aMsg.Frame()));
 
     AutoMutex a(iMutexTransport);
     if (!iRunning) {
