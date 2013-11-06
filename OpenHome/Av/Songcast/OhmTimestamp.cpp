@@ -15,5 +15,6 @@ DefaultTimestamper::DefaultTimestamper(Environment& aEnv)
 
 TUint DefaultTimestamper::Timestamp(TUint aFrame)
 {
+    (void)(aFrame);
     return Os::TimeInMs(iEnv.OsCtx());
 }
