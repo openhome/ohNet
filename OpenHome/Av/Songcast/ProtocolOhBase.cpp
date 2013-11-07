@@ -57,7 +57,6 @@ ProtocolOhBase::~ProtocolOhBase()
 
 void ProtocolOhBase::Add(OhmMsg* aMsg)
 {
-    aMsg->SetRxTimestamp(iTimestamper.Timestamp());
     aMsg->Process(*this);
 }
 
@@ -325,7 +324,7 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
     iMutexTransport.Signal();
     iFrameBuf.SetBytes(0);
     WriterBuffer writer(iFrameBuf);
-    aMsg.Externalise(writer);
+    aMsg.ExternaliseAsBlob(writer);
     const TUint bytesBefore = iFrameBuf.Bytes();
     if (iStreamMsgDue) {
         /* FIXME - we really need to be able to check trackLength, sampleRate, bitDepth
@@ -356,6 +355,8 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
+    aMsg.SetRxTimestamp(iTimestamper.Timestamp(aMsg.Frame()));
+
     AutoMutex a(iMutexTransport);
     if (!iRunning) {
         iFrame = aMsg.Frame();

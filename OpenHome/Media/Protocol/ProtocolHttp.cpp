@@ -58,8 +58,8 @@ class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
     static const TUint kIcyMetadataBytes = 255 * 16;
     static const TUint kMaxUriBytes = 1024;
 public:
-	ProtocolHttp(Environment& aEnv);
-private: // from Protocol	
+    ProtocolHttp(Environment& aEnv);
+private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -122,26 +122,26 @@ private:
 /*class UriEntry
 {
 public:
-	UriEntry(Brn aUri, TUint aEntry);
-	Brn Uri() const { return Brn(iUri); }
-	TUint Entry() const { return iEntry; }
+    UriEntry(Brn aUri, TUint aEntry);
+    Brn Uri() const { return Brn(iUri); }
+    TUint Entry() const { return iEntry; }
 private:
     static const TUint kMaxUriBytes = 1024;
-	Bws<kMaxUriBytes> iUri;
-	TUint iEntry;
+    Bws<kMaxUriBytes> iUri;
+    TUint iEntry;
 };
 
 class UriList
 {
 public:
-	UriList();
-	~UriList();
-	void NextEntry();
-	void AddUri(Brn aUri);
-	void FindFirst();
-	TBool FindNext(Brn& aUri);
+    UriList();
+    ~UriList();
+    void NextEntry();
+    void AddUri(Brn aUri);
+    void FindFirst();
+    TBool FindNext(Brn& aUri);
 private:
-	std::vector<UriEntry*> iUriList;
+    std::vector<UriEntry*> iUriList;
     TUint iMaxUris;
     TUint iMaxUrisEntry;
     TUint iEntry;
@@ -189,7 +189,7 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
     LOG(kMedia, "HeaderIcyMetadata::Process ");
     LOG(kMedia, aValue);
     LOG(kMedia, "\n");
-    
+
     try {
         iBytes = Ascii::Uint(aValue);
         SetReceived();
@@ -197,7 +197,7 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
     catch (AsciiError&) {
         THROW(HttpError);
     }
-    
+
     LOG(kMedia, "HeaderIcyMetadata::Process SUCCEEDED (%d)\n", iBytes);
 }
 
@@ -347,6 +347,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     iNextFlushId = MsgFlush::kIdInvalid;
     (void)iSem.Clear();
     iUri.Replace(aUri);
+    iIcyMetadata.SetBytes(0);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
     LOG(kMedia, iUri.AbsoluteUri());
@@ -357,7 +358,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         Close();
         return EProtocolErrorNotSupported;
     }
-    
+
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
         // FIXME - error msg
@@ -520,7 +521,7 @@ ProtocolStreamResult ProtocolHttp::DoStream()
         }
         break;
     }
-    
+
     iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
     iLive = (iTotalBytes == 0);
@@ -571,7 +572,7 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
     if (code != HttpStatus::kPartialContent.Code()) {
         LOG(kMedia, "ProtocolHttp::DoRestream Not seekable\n");
         return EProtocolStreamErrorUnrecoverable;
-    }       
+    }
 
     return ProcessContent();
 }
@@ -607,7 +608,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
     }
-        
+
     /* GETting ASX for BBC Scotland responds with invalid chunking if we request ICY metadata.
        Suppress this header if we're requesting a resource with an extension that matches
        a known ContentProcessor */
@@ -644,7 +645,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         LOG(kMedia, "ProtocolHttp::WriteRequest writer error\n");
         return 0;
     }
-    
+
     try {
         LOG(kMedia, "ProtocolHttp::WriteRequest read response\n");
         //iTcpClient.LogVerbose(true);
@@ -667,7 +668,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 ProtocolStreamResult ProtocolHttp::ProcessContent()
 {
     LOG(kMedia, "ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
-    
+
     if (iContentProcessor == NULL && !iStarted) {
         try {
             TUint bytes = 100;
@@ -701,19 +702,27 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
     return iContentProcessor->Stream(*this, iTotalBytes);
 }
 
+
 void ProtocolHttp::ExtractMetadata()
 {
+    Log::Print(">ProtocolHttp::ExtractMetadata() \n");
+
     Brn metadata = iReaderBuf.Read(1);
     iOffset++;
     TUint metadataBytes = metadata[0] * 16;
-#if 1 // FIXME - need to bring across DidlLite class
-    iReaderBuf.Read(metadataBytes);
     iOffset += metadataBytes;
-#else
+
+    Brn buf = iReaderBuf.Read(metadataBytes);
     Bws<kIcyMetadataBytes> newMetadata;
-    DidlLite didl;
+
     if (metadataBytes != 0) {
-        Parser data(iReaderBuf.Read(metadataBytes));
+
+        newMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
+        newMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
+        newMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
+        newMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
+
+        Parser data(buf);
         while(!data.Finished()) {
             Brn name = data.Next('=');
             if (name == Brn("StreamTitle")) {
@@ -722,20 +731,21 @@ void ProtocolHttp::ExtractMetadata()
                 data.Next('\'');
                 Brn title = data.Next(';');
                 if (title.Bytes() > 1) {
-                    didl.SetTitle(Brn(title.Ptr(), title.Bytes()-1));
+                    newMetadata.Append(Brn(title.Ptr(), title.Bytes()-1));
                 }
-                didl.SetClass(DidlLite::eObjectItem);
+
+                newMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
+                newMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
                 break;
             }
         }
-        didl.Create(newMetadata);
+
         // if the message has changed put it into the pipeline
         if (newMetadata != iIcyMetadata) {
             iIcyMetadata.Replace(newMetadata);
-            OutputMetadata(iIcyMetadata);
+            iSupply->OutputMetadata(iIcyMetadata);
         }
     }
-#endif // 0
 }
 
 #if 0
@@ -817,7 +827,7 @@ void ProtocolHttp::ProcessContentType()
         return;
     }
     LOG(kMedia, "ProtocolHttp::ProcessContentType Audio\n");
-    
+
     iStreamId = REVIEW_ME_Start(iTotalBytes, (iTotalBytes == 0? this : NULL), (iSeekable? this : NULL));
     iStarted = true;
 
@@ -888,7 +898,7 @@ C:\Documents and Settings\I\My Music\Greatest Hits\Example.ogg
 void ProtocolHttp::ProcessM3u(ReaderBuffer& aHeader)
 {
     LOG(kMedia, "ProtocolHttp::ProcessM3u\n");
-    
+
     try {
         for (;;) {
             Brn line = EntityReadLine(aHeader);
@@ -945,8 +955,8 @@ Ref2=http://212.58.252.33:80/wms/england/lrcumbria?MSWMExt=.asf
 void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
 {
     LOG(kMedia, "ProtocolHttp::ProcessAsx\n");
-    
-    // check for xml or another description format 
+
+    // check for xml or another description format
     // first character for xml is '<', alternative is '[Reference]' at start else unsupported
     try {
         for (;;) {
@@ -982,7 +992,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                         if (!Ascii::CaseInsensitiveEquals(name, Brn("ref"))) {
                             continue;
                         }
-            
+
                         Brn att = parser.Next('=');
                         if (!Ascii::CaseInsensitiveEquals(att, Brn("href"))) {
                             continue;
@@ -996,7 +1006,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                         uriList.AddUri(uri);
                     }
                 }
-                
+
                 // attempt to play each until successful
                 Brn uri;
                 uriList.FindFirst();
@@ -1010,7 +1020,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                 Parser parser(aHeader.ReadUntil(']'));    // read first tag
                 for (;;) {
                     Brn line(EntityReadLine(aHeader));
-                    Brn ref(line.Ptr(), 3);                
+                    Brn ref(line.Ptr(), 3);
                     if (Ascii::CaseInsensitiveEquals(ref, Brn("Ref"))) {
                         Parser parser(line);
                         parser.Next('=');
@@ -1031,7 +1041,7 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
                 }
             }
         }
-    }    
+    }
     catch (ReaderError&) {
     }
 }
@@ -1039,8 +1049,8 @@ void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
 void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
 {
     LOG(kMedia, "ProtocolHttp::ProcessXml\n");
-    
-    // check for xml or another description format 
+
+    // check for xml or another description format
     // first character for xml is '<', alternative is '[Reference]' at start else unsupported
     try {
         for (;;) {
@@ -1056,19 +1066,19 @@ void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
                     if (!Ascii::CaseInsensitiveEquals(name, Brn("outline"))) {
                         continue;
                     }
-                    Brn att = parser.Next('=');            
+                    Brn att = parser.Next('=');
                     if (!Ascii::CaseInsensitiveEquals(att, Brn("type"))) {
                         continue;
                     }
                     parser.Next('"');
                     Brn type = parser.Next('"');
-                    att.Set(parser.Next('='));            
+                    att.Set(parser.Next('='));
                     if (!Ascii::CaseInsensitiveEquals(att, Brn("text"))) {
                         continue;
                     }
                     parser.Next('"');
                     Brn text = parser.Next('"'); // metadata - station name
-                    att.Set(parser.Next('='));            
+                    att.Set(parser.Next('='));
                     if (!Ascii::CaseInsensitiveEquals(att, Brn("url"))) {
                         continue;
                     }

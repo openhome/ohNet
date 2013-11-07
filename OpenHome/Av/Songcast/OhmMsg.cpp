@@ -11,9 +11,6 @@ OhmMsg::OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType)
     : iFactory(&aFactory)
     , iMsgType(aMsgType)
     , iRefCount(0)
-    , iResendCount(0)
-    , iRxTimestamped(false)
-    , iRxTimestamp(0)
 {
 }
 
@@ -41,50 +38,57 @@ void OhmMsg::RemoveRef()
     iFactory->Unlock();
 }
 
-TUint OhmMsg::ResendCount() const
+void OhmMsg::Create()
 {
-    return iResendCount;
+    iRefCount = 1;
 }
 
-void OhmMsg::IncrementResendCount()
+// OhmMsgTimestamped
+
+OhmMsgTimestamped::OhmMsgTimestamped(OhmMsgFactory& aFactory, TUint aMsgType)
+    : OhmMsg(aFactory, aMsgType)
+    , iRxTimestamped(false)
+    , iRxTimestamp(0)
 {
-    iResendCount++;
 }
 
-TBool OhmMsg::RxTimestamped() const
+OhmMsgTimestamped::~OhmMsgTimestamped()
+{
+}
+
+TBool OhmMsgTimestamped::RxTimestamped() const
 {
     return iRxTimestamped;
 }
 
-TUint OhmMsg::RxTimestamp() const
+TUint OhmMsgTimestamped::RxTimestamp() const
 {
     return iRxTimestamp;
 }
 
-void OhmMsg::SetRxTimestamp(TUint aValue)
+void OhmMsgTimestamped::SetRxTimestamp(TUint aValue)
 {
     iRxTimestamp = aValue;
     iRxTimestamped = true;
 }
 
-void OhmMsg::Create()
+void OhmMsgTimestamped::Create()
 {
-    iRefCount = 1;
-    iResendCount = 0;
     iRxTimestamp = 0;
     iRxTimestamped = false;
+    OhmMsg::Create();
 }
     
 // OhmMsgAudio
 
 OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
-    : OhmMsg(aFactory, OhmHeader::kMsgTypeAudio)
+    : OhmMsgTimestamped(aFactory, OhmHeader::kMsgTypeAudio)
 {
 }
 
 void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 {
-    OhmMsg::Create();
+    OhmMsgTimestamped::Create();
     ASSERT(aHeader.MsgType() == OhmHeader::kMsgTypeAudio ||
            aHeader.MsgType() == OhmHeader::kMsgTypeAudioBlob);
     ReaderBinary reader(aReader);
@@ -139,7 +143,7 @@ void OhmMsgAudio::Create(IReader& aReader, const OhmHeader& aHeader)
 
 void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels,  const Brx& aCodec, const Brx& aAudio)
 {
-    OhmMsg::Create();
+    OhmMsgTimestamped::Create();
 
     iHalt = aHalt;
     aLossless = aLossless;
@@ -309,6 +313,17 @@ void OhmMsgAudio::Externalise(IWriter& aWriter)
 
 // OhmMsgAudioBlob
 
+void OhmMsgAudioBlob::ExternaliseAsBlob(IWriter& aWriter)
+{
+    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes());  // deliberately omit RxTimestamp().
+    header.Externalise(aWriter);                                    // This allows us to (hackily) reuse OhmMsgAudio's internalise later
+
+    aWriter.Write(iBlob);
+
+    WriterBinary wb(aWriter);
+    wb.WriteUint32Be(RxTimestamp());
+}
+
 void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
 {
     aProcessor.Process(*this);
@@ -316,22 +331,21 @@ void OhmMsgAudioBlob::Process(IOhmMsgProcessor& aProcessor)
 
 void OhmMsgAudioBlob::Externalise(IWriter& aWriter)
 {
-    OhmHeader header(OhmHeader::kMsgTypeAudioBlob, iBlob.Bytes()); // deliberately omit RxTimestamp().
-                                                                   // This allows us to (hackily) reuse OhmMsgAudio's internalise later
+    OhmHeader header(OhmHeader::kMsgTypeAudio, iBlob.Bytes());
+
     header.Externalise(aWriter);
     aWriter.Write(iBlob);
-    WriterBinary wb(aWriter);
-    wb.WriteUint32Be(RxTimestamp());
 }
 
 OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)
-    : OhmMsg(aFactory, OhmHeader::kMsgTypeAudioBlob)
+    : OhmMsgTimestamped(aFactory, OhmHeader::kMsgTypeAudioBlob)
+    , iFrame(0)
 {
 }
 
 void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
 {
-    OhmMsg::Create();
+    OhmMsgTimestamped::Create();
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
 
     iBlob.Replace(aReader.Read(aHeader.MsgBytes()));

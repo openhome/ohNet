@@ -12,7 +12,7 @@ class IOhmTimestamper
 {
 public:
     virtual ~IOhmTimestamper() {}
-    virtual TUint Timestamp() = 0;
+    virtual TUint Timestamp(TUint aFrame) = 0;
 };
 
 class DefaultTimestamper : public IOhmTimestamper, private INonCopyable // trivial implementation that just returns the current time
@@ -20,7 +20,7 @@ class DefaultTimestamper : public IOhmTimestamper, private INonCopyable // trivi
 public:
     DefaultTimestamper(Environment& aEnv);
 private: // from IOhmTimestamper
-    TUint Timestamp();
+    TUint Timestamp(TUint aFrame);
 private:
     Environment& iEnv;
 };

@@ -33,14 +33,6 @@ public:
     virtual ~OhmMsg();
     void AddRef();
     void RemoveRef();
-    TUint ResendCount() const;
-    void IncrementResendCount();
-    TBool TxTimestamped() const;
-    TBool RxTimestamped() const;
-    TUint TxTimestamp() const;
-    TUint RxTimestamp() const;
-    void SetTxTimestamp(TUint aValue);
-    void SetRxTimestamp(TUint aValue);
     virtual void Process(IOhmMsgProcessor& aProcessor) = 0;
     virtual void Externalise(IWriter& aWriter) = 0;
 protected:
@@ -50,12 +42,26 @@ private:
     OhmMsgFactory* iFactory;
     TUint iMsgType;
     TUint iRefCount;
-    TUint iResendCount;
+};
+
+class OhmMsgTimestamped : public OhmMsg
+{
+public:
+    virtual ~OhmMsgTimestamped();
+    TBool RxTimestamped() const;
+    TUint RxTimestamp() const;
+    void SetRxTimestamp(TUint aValue);
+
+protected:
+    OhmMsgTimestamped(OhmMsgFactory& aFactory, TUint aMsgType);
+    void Create();
+
+private:
     TBool iRxTimestamped;
     TUint iRxTimestamp;
 };
 
-class OhmMsgAudio : public OhmMsg
+class OhmMsgAudio : public OhmMsgTimestamped
 {
     friend class OhmMsgFactory;
     friend class OhmMsgAudioBlob;
@@ -118,13 +124,14 @@ private:
     Bws<kMaxSampleBytes> iAudio;
 };
 
-class OhmMsgAudioBlob : public OhmMsg
+class OhmMsgAudioBlob : public OhmMsgTimestamped
 {
     friend class OhmMsgFactory;
 public:
     static const TUint kMaxBytes = 9 * 1024;
 public:
     TUint Frame() const { return iFrame; }
+    void ExternaliseAsBlob(IWriter& aWriter);
 public: // from OhmMsg
     void Process(IOhmMsgProcessor& aProcessor);
     void Externalise(IWriter& aWriter);
