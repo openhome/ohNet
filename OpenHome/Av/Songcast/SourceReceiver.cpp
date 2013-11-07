@@ -124,6 +124,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     IConfigurationManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(env, device, *iZoneHandler, configManager, Brx::Empty(), kSenderLatencyMs, aSenderIconFileName);
     (void)iPipeline.SetSender(*iSender);
+    aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManager.GetText(Product::ConfigIdRoom);
     iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctor(*this, &SourceReceiver::ConfigRoomChanged));
     iConfigName = &configManager.GetText(Product::ConfigIdName);
