@@ -659,22 +659,19 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 
 void ProtocolHttp::ExtractMetadata()
 {
-    Log::Print(">ProtocolHttp::ExtractMetadata() \n");
-
     Brn metadata = iReaderBuf.Read(1);
     iOffset++;
     TUint metadataBytes = metadata[0] * 16;
     iOffset += metadataBytes;
 
-    Brn buf = iReaderBuf.Read(metadataBytes);
-    Bws<kIcyMetadataBytes> newMetadata;
-
     if (metadataBytes != 0) {
 
-        newMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
-        newMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
-        newMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
-        newMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
+        Brn buf = iReaderBuf.Read(metadataBytes);
+
+        iIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
+        iIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
+        iIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
+        iIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
 
         Parser data(buf);
         while(!data.Finished()) {
@@ -685,19 +682,17 @@ void ProtocolHttp::ExtractMetadata()
                 data.Next('\'');
                 Brn title = data.Next(';');
                 if (title.Bytes() > 1) {
-                    newMetadata.Append(Brn(title.Ptr(), title.Bytes()-1));
+                    iIcyMetadata.Append(Brn(title.Ptr(), title.Bytes()-1));
                 }
 
-                newMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
-                newMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
+                iIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
+                iIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
+                iSupply->OutputMetadata(iIcyMetadata);
                 break;
             }
         }
-
-        // if the message has changed put it into the pipeline
-        if (newMetadata != iIcyMetadata) {
-            iIcyMetadata.Replace(newMetadata);
-            iSupply->OutputMetadata(iIcyMetadata);
-        }
     }
 }
+
+
+
