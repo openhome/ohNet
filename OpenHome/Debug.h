@@ -70,8 +70,13 @@ private:
             OpenHome::Log::PrintHex(aBrx); \
          } \
         }
-    #define LOGFUNC(x) \
-        AutoLog localAutolog(OpenHome::Debug::x , __PRETTY_FUNCTION__)
+    #ifdef _MSC_VER
+        #define LOGFUNC(x) \
+            AutoLog localAutolog(OpenHome::Debug::x , __FUNCSIG__)
+    #else
+        #define LOGFUNC(x) \
+            AutoLog localAutolog(OpenHome::Debug::x , __PRETTY_FUNCTION__)
+    #endif
 #else //DEFINE_TRACE
     #define LOG(x,...)
     #define LOGF(x,...)
