@@ -101,7 +101,7 @@ TBool ConfigNum::Set(TInt aVal)
     TBool changed = false;
 
     if (!Valid(aVal)) {
-        THROW(AvConfigValueOutOfRange);
+        THROW(ConfigValueOutOfRange);
     }
 
     if (aVal != iVal) {
@@ -157,7 +157,7 @@ void ConfigChoice::Add(const Brx& aVal)
     std::vector<Brn>::iterator it;
     for (it = iAllowedValues.begin(); it != iAllowedValues.end(); it++) {
         if (*it == aVal) {
-            THROW(AvConfigValueExists);
+            THROW(ConfigValueExists);
         }
     }
     iAllowedValues.push_back(val);
@@ -184,7 +184,7 @@ TBool ConfigChoice::Set(TUint aIndex)
     TBool changed = false;
 
     if (!Valid(aIndex)) {
-        THROW(AvConfigIndexOutOfRange);
+        THROW(ConfigIndexOutOfRange);
     }
 
     if (aIndex != iSelected) {
@@ -242,7 +242,7 @@ TBool ConfigText::Set(const Brx& aText)
     TBool changed = false;
 
     if (!Valid(aText)) {
-        THROW(AvConfigValueTooLong);
+        THROW(ConfigValueTooLong);
     }
 
     if (aText != iText) {
@@ -284,7 +284,7 @@ template <class T> void ConfigurationManager::Add(SerialisedMap<T>& aMap, const 
         ASSERTS();
     }
     if (HasNum(aId) || HasChoice(aId) || HasText(aId)) {
-        THROW(AvConfigIdExists);
+        THROW(ConfigIdExists);
     }
 
     aMap.Add(aId, aVal);

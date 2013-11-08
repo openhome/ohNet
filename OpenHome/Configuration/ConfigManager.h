@@ -10,11 +10,11 @@
 #include <map>
 #include <vector>
 
-EXCEPTION(AvConfigValueOutOfRange);
-EXCEPTION(AvConfigValueExists);
-EXCEPTION(AvConfigIndexOutOfRange);
-EXCEPTION(AvConfigValueTooLong);
-EXCEPTION(AvConfigIdExists);
+EXCEPTION(ConfigValueOutOfRange);
+EXCEPTION(ConfigValueExists);
+EXCEPTION(ConfigIndexOutOfRange);
+EXCEPTION(ConfigValueTooLong);
+EXCEPTION(ConfigIdExists);
 
 namespace OpenHome {
 namespace Configuration {
@@ -201,7 +201,7 @@ template <class T> void SerialisedMap<T>::Add(const Brx& aId, T& aVal)
     AutoMutex a(iLock);
     typename Map::iterator it = iMap.find(id);
     if (it != iMap.end()) {
-        THROW(AvConfigIdExists);
+        THROW(ConfigIdExists);
     }
     iMap.insert(std::pair<Brn, T*>(id, &aVal));
 }

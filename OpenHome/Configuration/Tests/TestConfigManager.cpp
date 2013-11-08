@@ -442,12 +442,12 @@ void SuiteConfigNum::TestSetValueOutOfRange()
 {
     // test attempting to set ConfigNum's value outwith the range min..max
     TInt valBefore = iConfigVal->Get();
-    TEST_THROWS(iConfigVal->Set(kMax+1), AvConfigValueOutOfRange);
+    TEST_THROWS(iConfigVal->Set(kMax+1), ConfigValueOutOfRange);
     TInt valAfter = iConfigVal->Get();
     TEST(valAfter == valBefore);
 
     valBefore = iConfigVal->Get();
-    TEST_THROWS(iConfigVal->Set(kMin-1), AvConfigValueOutOfRange);
+    TEST_THROWS(iConfigVal->Set(kMin-1), ConfigValueOutOfRange);
     valAfter = iConfigVal->Get();
     TEST(valAfter == valBefore);
 }
@@ -555,7 +555,7 @@ void SuiteConfigChoice::TestAddDuplicate()
     std::vector<const Brx*> options;
     options.push_back(&kOption1);
     options.push_back(&kOption1);
-    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);, AvConfigValueExists);
+    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);, ConfigValueExists);
 }
 
 void SuiteConfigChoice::TestGet()
@@ -621,7 +621,7 @@ void SuiteConfigChoice::TestSetIndexOutOfRange()
     // test that attempting to set ConfigChoice to an invalid option index results
     // in an exception
     TUint selectedBefore = iConfigVal->Get();
-    TEST_THROWS(iConfigVal->Set(3), AvConfigIndexOutOfRange);
+    TEST_THROWS(iConfigVal->Set(3), ConfigIndexOutOfRange);
     TUint selectedAfter = iConfigVal->Get();
     TEST(selectedAfter == selectedBefore);
 }
@@ -781,7 +781,7 @@ void SuiteConfigText::TestSetValueTooLong()
     buf.SetBytes(buf.MaxBytes());
 
     const Brx& bufBefore = iConfigVal->Get();
-    TEST_THROWS(iConfigVal->Set(buf), AvConfigValueTooLong);
+    TEST_THROWS(iConfigVal->Set(buf), ConfigValueTooLong);
     const Brx& bufAfter = iConfigVal->Get();
     TEST(bufAfter == bufBefore);
 }
@@ -882,12 +882,12 @@ void SuiteConfigurationManager::TestAddDuplicate()
 {
     // test that an exception is throws if an attempt to add a ConfigVal with
     // the same ID is made twice
-    TEST_THROWS(iConfigManager->Add(*iNum1), AvConfigIdExists);
-    TEST_THROWS(iConfigManager->Add(*iChoice1), AvConfigIdExists);
-    TEST_THROWS(iConfigManager->Add(*iText1), AvConfigIdExists);
+    TEST_THROWS(iConfigManager->Add(*iNum1), ConfigIdExists);
+    TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigIdExists);
+    TEST_THROWS(iConfigManager->Add(*iText1), ConfigIdExists);
 
     // attempt to add a ConfigChoice with same ID as existing ConfigNum - should fail
-    TEST_THROWS(iConfigManager->Add(*iChoice1), AvConfigIdExists);
+    TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigIdExists);
 }
 
 void SuiteConfigurationManager::TestHasNoVals()
