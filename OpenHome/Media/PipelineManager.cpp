@@ -159,6 +159,11 @@ TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
     return iPipeline->SupportsMimeType(aMimeType);
 }
 
+IPipelineElementDownstream* PipelineManager::SetSender(IPipelineElementDownstream& aSender)
+{
+    return iPipeline->SetSender(aSender);
+}
+
 Msg* PipelineManager::Pull()
 {
     return iPipeline->Pull();

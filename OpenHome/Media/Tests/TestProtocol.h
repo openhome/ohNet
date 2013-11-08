@@ -16,7 +16,7 @@ namespace Av {
 }
 namespace Media {
 class ProtocolManager;
-class SimpleSongcastingDriver;
+class DriverSongcastSender;
 
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
@@ -46,7 +46,7 @@ class TestProtocol : private IPipelineObserver
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
     static const TUint kSeekStepSeconds = 10;
 public:
-    TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
     virtual ~TestProtocol();
     int Run();
 protected:
@@ -63,14 +63,14 @@ private:
     PowerManager iPowerManager;
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
-    SimpleSongcastingDriver* iDriver;
+    DriverSongcastSender* iDriver;
     Brh iUrl;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
     TUint iStreamId;
 };
 
-typedef TestProtocol* (*CreateProtocolFunc)(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+typedef TestProtocol* (*CreateProtocolFunc)(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
 int ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtocolFunc aFunc);
 
 } // namespace Media

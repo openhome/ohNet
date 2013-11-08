@@ -15,6 +15,13 @@ OhmSocket::OhmSocket(Environment& aEnv)
 {
 }
 
+OhmSocket::~OhmSocket()
+{
+    if (iRxSocket != 0) {
+        Close();
+    }
+}
+
 void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
 {
     ASSERT(!iRxSocket);
@@ -95,13 +102,6 @@ void OhmSocket::ReadInterrupt()
     iReader->ReadInterrupt();
 }
 
-OhmSocket::~OhmSocket()
-{
-    if (iRxSocket != 0) {
-        Close();
-    }
-}
-
 
 // OhzSocket
 
@@ -111,6 +111,13 @@ OhzSocket::OhzSocket(Environment& aEnv)
     , iTxSocket(0)
     , iEndpoint(51972, Brn("239.255.255.250"))
 {
+}
+
+OhzSocket::~OhzSocket()
+{
+    if (iRxSocket != 0) {
+        Close();
+    }
 }
 
 const Endpoint& OhzSocket::This() const
@@ -161,11 +168,3 @@ void OhzSocket::ReadInterrupt()
     ASSERT(iRxSocket != 0);
     iReader->ReadInterrupt();
 }
-
-OhzSocket::~OhzSocket()
-{
-    if (iRxSocket != 0) {
-        Close();
-    }
-}
-

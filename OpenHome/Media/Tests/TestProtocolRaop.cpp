@@ -17,7 +17,6 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/PowerManager.h>
 #include "AllocatorInfoLogger.h"
-#include "SongcastingDriver.h"
 
 #include <stdio.h>
 
@@ -102,7 +101,7 @@ class TestProtocolRaop : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
     virtual ~TestProtocolRaop();
     int Run();
 private: // from IPipelineObserver
@@ -115,7 +114,7 @@ private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
     Pipeline* iPipeline;
-    SimpleSongcastingDriver* iDriver;
+    DriverSongcastSender* iDriver;
     Brh iUrl;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
@@ -194,7 +193,7 @@ void DummyFiller::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*
 
 // TestProtocolRaop
 
-TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
     : iUrl(aUrl)
     , iStreamId(0)
 {
@@ -203,7 +202,7 @@ TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, co
     iPipeline->AddCodec(Codec::CodecFactory::NewRaop());
     iPipeline->Start();
 
-    iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
+    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
 }
 
 TestProtocolRaop::~TestProtocolRaop()
@@ -324,8 +323,6 @@ int CDECL main(int aArgc, char* aArgv[])
     parser.AddOption(&optionHost);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolRaop"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("TestProtocolRaop"), "[name] name of the sender");
-    parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -351,12 +348,11 @@ int CDECL main(int aArgc, char* aArgv[])
         Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, optionHost.CString(), optionUdn.Value(), optionPort.Value(), Brn("raop://dummyuri"), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, optionHost.CString(), optionUdn.Value(), optionPort.Value(), Brn("raop://dummyuri"), optionUdn.Value(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     

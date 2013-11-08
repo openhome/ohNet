@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Av/Songcast/Ohm.h>
 #include <OpenHome/Private/Printer.h>
@@ -19,22 +20,31 @@ using namespace OpenHome::Av;
 const Brn ZoneHandler::kMulticastAddress("239.255.255.250");
 const Brn ZoneHandler::kProtocolZone("ohz");
 
-ZoneHandler::ZoneHandler(Environment& aEnv)
+ZoneHandler::ZoneHandler(Environment& aEnv, const Brx& aSenderZone)
     : Thread("ZONH")
     , iEnv(aEnv)
     , iEndpoint(kMulticastPort, kMulticastAddress)
+    , iSenderZone(aSenderZone)
     , iQuit(false)
-    , iLock("ZON1")
+    , iLockRxSocket("ZON1")
     , iSem("ZON2", 0)
     , iZoneLock("ZON3")
-    , iListenerLock("ZON4")
+    , iLockListener("ZON4")
+    , iLockTxSocket("ZON5")
+    , iLockTxData("ZON6")
     , iRxSocket(NULL)
     , iReadBuffer(iReader)
     , iTxSocket(aEnv)
     , iWriter(iTxSocket, iEndpoint)
     , iWriteBuffer(iWriter)
+    , iSendZoneUriCount(0)
+    , iPresetNumber(0)
+    , iSenderMetadata(NULL)
+    , iSendPresetInfoCount(0)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ZoneHandler::CurrentSubnetChanged));
+    iTimerZoneUri = new Timer(aEnv, MakeFunctor(*this, &ZoneHandler::TimerZoneUriExpired));
+    iTimerPresetInfo = new Timer(aEnv, MakeFunctor(*this, &ZoneHandler::TimerPresetInfoExpired));
     CurrentSubnetChanged(); // start listening on any initial subnet
     Start();
 }
@@ -51,6 +61,8 @@ ZoneHandler::~ZoneHandler()
         iSem.Signal();
     }
     Join();
+    delete iTimerZoneUri;
+    delete iTimerPresetInfo;
     delete iRxSocket;
 }
 
@@ -61,21 +73,21 @@ const Endpoint& ZoneHandler::MulticastEndpoint() const
 
 void ZoneHandler::AddListener(IZoneListener& aListener)
 {
-    iListenerLock.Wait();
+    iLockListener.Wait();
     iListeners.push_back(&aListener);
-    iListenerLock.Signal();
+    iLockListener.Signal();
 }
 
 void ZoneHandler::RemoveListener(IZoneListener& aListener)
 {
-    iListenerLock.Wait();
+    iLockListener.Wait();
     for (TUint i=0; i<iListeners.size(); i++) {
         if (iListeners[i] == &aListener) {
             iListeners.erase(iListeners.begin() + i);
             break;
         }
     }
-    iListenerLock.Signal();
+    iLockListener.Signal();
 }
 
 void ZoneHandler::StartMonitoring(const Brx& aZone)
@@ -83,6 +95,8 @@ void ZoneHandler::StartMonitoring(const Brx& aZone)
     iZoneLock.Wait();
     iRxZone.Replace(aZone);
     iZoneLock.Signal();
+
+    AutoMutex a(iLockTxSocket);
     OhzHeaderZoneQuery headerZoneQuery(aZone);
     OhzHeader header(OhzHeader::kMsgTypeZoneQuery, headerZoneQuery.MsgBytes());
     header.Externalise(iWriteBuffer);
@@ -98,6 +112,23 @@ void ZoneHandler::StopMonitoring()
     iZoneLock.Signal();
 }
 
+void ZoneHandler::SetSenderUri(const Brx& aUri)
+{
+    iLockTxData.Wait();
+    iSenderUri.Replace(aUri);
+    iLockTxData.Signal();
+    SendZoneUri(3);
+}
+
+void ZoneHandler::SetPreset(TUint aPreset, ISenderMetadata& aSenderMetadata)
+{
+    iLockTxData.Wait();
+    iPresetNumber = aPreset;
+    iSenderMetadata = &aSenderMetadata;
+    iLockTxData.Signal();
+    SendPresetInfo(3); // FIXME - do we need to advertise Preset changes? (we could just wait for a query)
+}
+
 void ZoneHandler::Run()
 {
     while (!iQuit) {
@@ -106,7 +137,7 @@ void ZoneHandler::Run()
             for (;;) {
                 try {
                     OhzHeader header;
-                    AutoMutex a(iLock);
+                    AutoMutex a(iLockRxSocket);
                     if (iRxSocket == NULL) {
                         THROW(ReaderError);
                     }
@@ -115,38 +146,71 @@ void ZoneHandler::Run()
                     switch (header.MsgType())
                     {
                     case OhzHeader::kMsgTypeZoneQuery:
-                        // FIXME - not yet supported
-                        Log::Print("WARNING: ZoneQuery msg received and ignored\n");
-                        Skip(header.MsgBytes());
+                    {
+                        OhzHeaderZoneQuery headerZoneQuery;
+                        headerZoneQuery.Internalise(iReadBuffer, header);
+                        Brn zone = iReadBuffer.Read(headerZoneQuery.ZoneBytes());
+                        LOG(kMedia, "ZoneHandler::Run received zone query for ");
+                        LOG(kMedia, zone);
+                        LOG(kMedia, "\n");
+                        if (zone == iSenderZone) {
+                            SendZoneUri(1);
+                        }
+                    }
                         break;
                     case OhzHeader::kMsgTypeZoneUri:
                     {
                         OhzHeaderZoneUri zoneHeader;
                         zoneHeader.Internalise(iReadBuffer, header);
-                        iZoneBuf.ReplaceThrow(iReadBuffer.Read(zoneHeader.ZoneBytes()));
+                        Brn zoneBuf = iReadBuffer.Read(zoneHeader.ZoneBytes());
                         iZoneLock.Wait();
-                        const TBool zonesMatch = (iZoneBuf == iRxZone);
+                        const TBool zonesMatch = (zoneBuf == iRxZone);
                         iZoneLock.Signal();
                         Brn uriBuf = iReadBuffer.Read(zoneHeader.UriBytes());
                         if (zonesMatch) {
-                            iUriBuf.ReplaceThrow(uriBuf);
-                            iListenerLock.Wait();
+                            iLockListener.Wait();
                             for (TUint i=0; i<iListeners.size(); i++) {
-                                iListeners[i]->ZoneUriChanged(iZoneBuf, iUriBuf);
+                                iListeners[i]->ZoneUriChanged(zoneBuf, uriBuf);
                             }
-                            iListenerLock.Signal();
+                            iLockListener.Signal();
                         }
                     }
                         break;
                     case OhzHeader::kMsgTypePresetQuery:
-                        // FIXME - not yet supported
-                        Log::Print("WARNING: PresetQuery msg received and ignored\n");
-                        Skip(header.MsgBytes());
+                    {
+                        LOG(kSongcast, "ZoneHandler::Run received preset query\n");
+                        OhzHeaderPresetQuery headerPresetQuery;
+                        headerPresetQuery.Internalise(iReadBuffer, header);
+                        const TUint preset = headerPresetQuery.Preset();
+                        if (preset != 0) {
+                            iLockTxData.Wait();
+                            const TBool matches = (preset == iPresetNumber);
+                            iLockTxData.Signal();
+                            if (matches) {
+                                SendPresetInfo(1);
+                            }
+                        }
+                    }
                         break;
                     case OhzHeader::kMsgTypePresetInfo:
-                        // FIXME - not yet supported
-                        Log::Print("WARNING: PresetInfo msg received and ignored\n");
-                        Skip(header.MsgBytes());
+                    {
+                        LOG(kSongcast, "ZoneHandler::Run received presetinfo\n");
+                        OhzHeaderPresetInfo headerPresetInfo;
+                        headerPresetInfo.Internalise(iReadBuffer, header);
+                        const TUint metadataBytes = headerPresetInfo.MetadataBytes();
+                        if (metadataBytes > iRxPresetMetadata.MaxBytes()) {
+                            LOG2(kSongcast, kError, "ERROR: metadata for preset %u is too long - %u bytes.\n", headerPresetInfo.Preset(), metadataBytes);
+                            (void)iReadBuffer.Read(metadataBytes);
+                        }
+                        else {
+                            iRxPresetMetadata.Replace(iReadBuffer.Read(metadataBytes));
+                            iLockListener.Wait();
+                            for (TUint i=0; i<iListeners.size(); i++) {
+                                iListeners[i]->NotifyPresetInfo(headerPresetInfo.Preset(), iRxPresetMetadata);
+                            }
+                            iLockListener.Signal();
+                        }
+                    }
                         break;
                     default:
                         LOG2(kSongcast, kError, "WARNING: unexpected ohz msg type (%u) received\n", header.MsgType());
@@ -171,7 +235,7 @@ void ZoneHandler::CurrentSubnetChanged()
     if (iRxSocket != NULL) {
         iReader.ReadInterrupt();
     }
-    AutoMutex a(iLock);
+    AutoMutex a(iLockRxSocket);
     iSem.Clear();
     DestroySockets();
     static const TChar* kNifCookie = "ZoneHandler";
@@ -196,6 +260,79 @@ void ZoneHandler::DestroySockets()
     iReader.ClearSocket();
     delete iRxSocket;
     iRxSocket = NULL;
+}
+
+void ZoneHandler::SendZoneUri(TUint aCount)
+{
+    iLockTxData.Wait();
+    iSendZoneUriCount += aCount;
+    iLockTxData.Signal();
+    iTimerZoneUri->FireIn(0);
+}
+
+void ZoneHandler::SendPresetInfo(TUint aCount)
+{
+    iLockTxData.Wait();
+    iSendPresetInfoCount += aCount;
+    iLockTxData.Signal();
+    iTimerPresetInfo->FireIn(0);
+}
+
+void ZoneHandler::TimerZoneUriExpired()
+{
+    AutoMutex a(iLockTxData);
+    try
+    {
+        AutoMutex b(iLockTxSocket);
+        OhzHeaderZoneUri headerZoneUri(iSenderZone, iSenderUri);
+        OhzHeader header(OhzHeader::kMsgTypeZoneUri, headerZoneUri.MsgBytes());
+        header.Externalise(iWriteBuffer);
+        headerZoneUri.Externalise(iWriteBuffer);
+        iWriteBuffer.Write(iSenderZone);
+        iWriteBuffer.Write(iSenderUri);
+        LOG(kSongcast, "ZoneHandler::TimerZoneUriExpired %d\n", iSendZoneUriCount);
+        iWriteBuffer.WriteFlush();
+        
+        iSendZoneUriCount--;
+    }
+    catch (OhzError&) {
+        LOG2(kSongcast, kError, "ZoneHandler::TimerZoneUriExpired OhzError\n");
+    }
+    catch (WriterError&) {
+        LOG2(kSongcast, kError, "ZoneHandler::TimerZoneUriExpired WriterError\n");
+    }
+
+    if (iSendZoneUriCount > 0) {
+        iTimerZoneUri->FireIn(kTimerZoneUriDelayMs);
+    }
+}
+
+void ZoneHandler::TimerPresetInfoExpired()
+{
+    AutoMutex a(iLockTxData);
+    try
+    {
+        AutoMutex b(iLockTxSocket);
+        iSenderMetadata->GetSenderMetadata(iSenderMetadataBuf);
+        OhzHeaderPresetInfo headerPresetInfo(iPresetNumber, iSenderMetadataBuf);
+        OhzHeader header(OhzHeader::kMsgTypePresetInfo, headerPresetInfo.MsgBytes());
+        header.Externalise(iWriteBuffer);
+        headerPresetInfo.Externalise(iWriteBuffer);
+        iWriteBuffer.Write(iSenderMetadataBuf);
+        iWriteBuffer.WriteFlush();
+
+        iSendPresetInfoCount--;
+    }
+    catch (OhzError&) {
+        LOG2(kSongcast, kError, "ZoneHandler::TimerPresetInfoExpired OhzError\n");
+    }
+    catch (WriterError&) {
+        LOG2(kSongcast, kError, "ZoneHandler::TimerPresetInfoExpired WriterError\n");
+    }
+
+    if (iSendPresetInfoCount > 0) {
+        iTimerPresetInfo->FireIn(kTimerPresetInfoDelayMs);
+    }
 }
 
 void ZoneHandler::Skip(TUint aBytes)

@@ -9,7 +9,7 @@ namespace Net {
     class DvStack;
 }
 namespace Media {
-    class SimpleSongcastingDriver;
+    class DriverSongcastSender;
     class UriProviderSingleTrack;
 }
 namespace Av {
@@ -20,7 +20,7 @@ class TestRadio : private OpenHome::Media::IPipelineObserver
 {
     static const TUint kTrackCount = 3;
 public:
-    TestRadio(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+    TestRadio(Net::DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel);
     ~TestRadio();
     void Run(PresetDatabase& aDb);
 protected:
@@ -37,12 +37,12 @@ private:
     Environment* iEnv;
     Media::AllocatorInfoLogger iInfoLogger;
     Media::TrackFactory* iTrackFactory;
-    Media::SimpleSongcastingDriver* iDriver;
+    Media::DriverSongcastSender* iDriver;
     Media::UriProviderSingleTrack* iUriProvider;
     //DummySourceUpnpAv* iSourceUpnpAv;
 };
 
-typedef TestRadio* (*CreateRadioFunc)(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel);
+typedef TestRadio* (*CreateRadioFunc)(Net::DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel);
 int ExecuteTestRadio(int aArgc, char* aArgv[], CreateRadioFunc aFunc, std::vector<const TChar*> aPresets);
 
 } // namespace Test

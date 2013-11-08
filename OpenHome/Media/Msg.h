@@ -266,6 +266,7 @@ class MsgAudio : public Msg
     friend class MsgFactory;
 public:
     MsgAudio* Split(TUint aJiffies); // returns block after aAt
+    void Add(MsgAudio* aMsg); // combines MsgAudio instances so they report longer durations etc
     virtual MsgAudio* Clone(); // create new MsgAudio, copy size/offset
     TUint Jiffies() const;
     TUint SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirection aDirection, MsgAudio*& aSplit); // returns iRamp.End()
@@ -273,11 +274,13 @@ public:
 protected:
     MsgAudio(AllocatorBase& aAllocator);
     void Initialise();
+    void Clear();
 private:
     virtual MsgAudio* Allocate() = 0;
     MsgAudio* DoSplit(TUint aJiffies);
     virtual void SplitCompleted(MsgAudio& aRemaining);
 protected:
+    MsgAudio* iNextAudio;
     TUint iSize; // Jiffies
     TUint iOffset; // Jiffies
     Media::Ramp iRamp;
@@ -333,8 +336,8 @@ class IPcmProcessor;
 class MsgPlayable : public Msg
 {
 public:
-    MsgPlayable* Split(TUint aBytes); // returns block after aAt
-    void Add(MsgPlayable* aMsg); // combines MsgAudio instances so they report longer durations etc
+    MsgPlayable* Split(TUint aBytes); // returns block after aBytes
+    void Add(MsgPlayable* aMsg); // combines MsgPlayable instances so they report longer durations etc
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;

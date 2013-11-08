@@ -15,6 +15,7 @@
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
 #include <OpenHome/Av/ProviderVolume.h>
+#include <OpenHome/NetworkMonitor.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Configuration/ConfigManager.h>
@@ -27,11 +28,10 @@ using namespace OpenHome::Net;
 
 // MediaPlayer
 
-MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
-                       , TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource
-                       , IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager
-                       , IPowerManager& aPowerManager
-                       )
+MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                         TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
+                         IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager,
+                         IPowerManager& aPowerManager)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
@@ -40,7 +40,6 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iZoneHandler = new Av::ZoneHandler(aDvStack.Env());
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManager, iPowerManager, *iInfoLogger);
@@ -54,6 +53,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
     iProduct->AddAttribute("Info");
     iVolume = new ProviderVolume(aDevice, *iMuteManager, *iVolumeManager);
     iProduct->AddAttribute("Volume");
+    iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
 }
 
 MediaPlayer::~MediaPlayer()
@@ -61,6 +61,7 @@ MediaPlayer::~MediaPlayer()
     ASSERT(!iDevice.Enabled());
     delete iPipeline;
     delete iProduct;
+    delete iNetworkMonitor;
     delete iTime;
     delete iInfo;
     delete iVolume;
@@ -69,7 +70,6 @@ MediaPlayer::~MediaPlayer()
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iKvpStore;
-    delete iZoneHandler;
     delete iInfoLogger;
     delete iTrackFactory;
 }
@@ -116,7 +116,7 @@ Net::DvStack& MediaPlayer::DvStack()
     return iDvStack;
 }
 
-Net::DvDevice& MediaPlayer::Device()
+Net::DvDeviceStandard& MediaPlayer::Device()
 {
     return iDevice;
 }
@@ -149,11 +149,6 @@ IConfigurationManager& MediaPlayer::ConfigManager()
 IPowerManager& MediaPlayer::PowerManager()
 {
     return iPowerManager;
-}
-
-Av::ZoneHandler& MediaPlayer::ZoneHandler()
-{
-    return *iZoneHandler;
 }
 
 void MediaPlayer::Add(UriProvider* aUriProvider)

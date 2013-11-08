@@ -75,7 +75,6 @@ public:
     ~PipelineSongcast();
 private:
     TestProtocol* iTestProtocol;
-    Net::DvDeviceStandard* iDevice;
     DriverSongcastSender* iDriver;
 };
 

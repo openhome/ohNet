@@ -13,6 +13,7 @@
 #include <OpenHome/Av/Source.h> // FIXME - see #169
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
 
 int mygetch();
 
@@ -26,6 +27,8 @@ using namespace OpenHome::Net;
 
 // TestMediaPlayer
 
+const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
+
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName)
     : iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
@@ -36,7 +39,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     friendlyName.Append(aProductName);
 
     // create UPnP device
-    iDevice = new DvDeviceStandard(aDvStack, aUdn);
+    iDevice = new DvDeviceStandard(aDvStack, aUdn, *this);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "MediaPlayer");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -142,7 +145,7 @@ PipelineManager& TestMediaPlayer::Pipeline()
     return iMediaPlayer->Pipeline();
 }
 
-DvDevice* TestMediaPlayer::Device()
+DvDeviceStandard* TestMediaPlayer::Device()
 {
     return iDevice;
 }
@@ -204,7 +207,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iDevice->Udn(), kRaopDiscoveryPort));   // FIXME - name should be product name
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }
 
 void TestMediaPlayer::PowerDownUpnp()
@@ -224,6 +227,15 @@ void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
 void TestMediaPlayer::PowerDownUpnpCallback()
 {
     // do nothing; only exists to avoid lengthy Upnp shutdown waits during power fail
+}
+
+void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
+{
+    if (aUriTail == kSongcastSenderIconFileName) {
+        aResourceWriter.WriteResourceBegin(sizeof(kIconDriverSongcastSender), kIconDriverSongcastSenderMimeType);
+        aResourceWriter.WriteResource(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender));
+        aResourceWriter.WriteResourceEnd();
+    }
 }
 
 TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)

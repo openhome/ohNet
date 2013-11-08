@@ -9,7 +9,7 @@ namespace OpenHome {
     class IPowerManager;
 namespace Net {
     class DvStack;
-    class DvDevice;
+    class DvDeviceStandard;
 }
 namespace Media {
     class PipelineManager;
@@ -30,6 +30,9 @@ namespace Configuration {
     class IConfigurationManager;
     class IStoreReadWrite;
 }
+namespace Net {
+    class NetworkMonitor;
+}
 namespace Av {
 
 class IReadStore;
@@ -41,7 +44,6 @@ class ProviderTime;
 class ProviderInfo;
 class ProviderVolume;
 class KvpStore;
-class ZoneHandler;
 
 class IMediaPlayer
 {
@@ -49,48 +51,46 @@ public:
     virtual ~IMediaPlayer() {}
     virtual Environment& Env() = 0;
     virtual Net::DvStack& DvStack() = 0;
-    virtual Net::DvDevice& Device() = 0;
+    virtual Net::DvDeviceStandard& Device() = 0;
     virtual Media::PipelineManager& Pipeline() = 0;
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::IStoreReadWrite& ReadWriteStore() = 0;
     virtual Configuration::IConfigurationManager& ConfigManager() = 0;
     virtual IPowerManager& PowerManager() = 0;
-    virtual Av::ZoneHandler& ZoneHandler() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
+    virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
 
 class MediaPlayer : public IMediaPlayer, private INonCopyable
 {
     static const TUint kTrackCount = 1200;
 public:
-    MediaPlayer(Net::DvStack& aDvStack, Net::DvDevice& aDevice
-              , TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource
-              , Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager
-              , IPowerManager& aPowerManager
-              );
+    MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
+                TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
+                Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager,
+                IPowerManager& aPowerManager);
     ~MediaPlayer();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(Media::ContentProcessor* aContentProcessor);
     void Add(ISource* aSource);
-    void AddAttribute(const TChar* aAttribute); // FIXME - temp enabler for Songcasting driver setting a "Sender" attribute
     void Start();
 public: // from IMediaPlayer
     Environment& Env();
     Net::DvStack& DvStack();
-    Net::DvDevice& Device();
+    Net::DvDeviceStandard& Device();
     Media::PipelineManager& Pipeline();
     Media::TrackFactory& TrackFactory();
     IReadStore& ReadStore();
     Configuration::IStoreReadWrite& ReadWriteStore();
     Configuration::IConfigurationManager& ConfigManager();
     IPowerManager& PowerManager();
-    Av::ZoneHandler& ZoneHandler();
     void Add(Media::UriProvider* aUriProvider);
+    void AddAttribute(const TChar* aAttribute);
 private:
     Net::DvStack& iDvStack;
-    Net::DvDevice& iDevice;
+    Net::DvDeviceStandard& iDevice;
     Media::AllocatorInfoLogger* iInfoLogger;
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
@@ -102,11 +102,11 @@ private:
     ProviderTime* iTime;
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
+    Net::NetworkMonitor* iNetworkMonitor;
     KvpStore* iKvpStore;
     Configuration::IStoreReadWrite& iReadWriteStore;
     Configuration::IConfigurationManager& iConfigManager;
     IPowerManager& iPowerManager;
-    Av::ZoneHandler* iZoneHandler;
 };
 
 } // namespace Av

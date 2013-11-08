@@ -62,6 +62,7 @@ public:
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
+    IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
 public: // from ISupply
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
@@ -127,7 +128,6 @@ private:
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
-    PipelineBranchNull iNullSongcaster; // FIXME - placeholder for real songcaster
     EStatus iStatus;
     EStatus iTargetStatus; // status at the end of a series of async operations
     TUint iHaltCompletedIgnoreCount;

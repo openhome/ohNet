@@ -14,7 +14,6 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/Tests/SongcastingDriver.h>
 // Songcast
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
@@ -93,14 +92,14 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // TestProtocol
 
-TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
-    iDriver = new SimpleSongcastingDriver(aDvStack, *iPipeline, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
+    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
 }
 
 TestProtocol::~TestProtocol()
@@ -284,8 +283,6 @@ int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtoco
     parser.AddOption(&optionUrl);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocol"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
-    OptionString optionName("-n", "--name", Brn("TestProtocol"), "[name] name of the sender");
-    parser.AddOption(&optionName);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -310,13 +307,12 @@ int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtoco
 		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
-    TIpAddress adapter = (*subnetList)[adapterIndex]->Address();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
     //Debug::SetLevel(Debug::kSongcast);
-    TestProtocol* tph = (*aFunc)(lib->Env(), *dvStack, optionUrl.Value(), adapter, optionUdn.Value(), optionName.CString(), optionChannel.Value());
+    TestProtocol* tph = (*aFunc)(lib->Env(), *dvStack, optionUrl.Value(), optionUdn.Value(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     

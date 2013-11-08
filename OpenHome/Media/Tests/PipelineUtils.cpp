@@ -179,32 +179,15 @@ int TestProtocol::Run()
 
 PipelineSongcast::PipelineSongcast(TestProtocol* aTestProtocol, Environment& aEnv, Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
     : iTestProtocol(aTestProtocol)
-    , iDevice(0)
-    , iDriver(0)
+    , iDriver(NULL)
 {
-    iDevice = new DvDeviceStandard(aDvStack, aSenderUdn);
-    iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
-    iDevice->SetAttribute("Upnp.Type", "Sender");
-    iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", aSenderFriendlyName);
-    iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
-    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer TestProtocol");
-    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer TestProtocol");
-    iDevice->SetAttribute("Upnp.ModelNumber", "1");
-    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.SerialNumber", "");
-    iDevice->SetAttribute("Upnp.Upc", "");
-
-    iDriver = new DriverSongcastSender(iTestProtocol->GetPipeline(), iTestProtocol->GetMaxDriverJiffies(), aEnv, *iDevice, aSenderUdn, aSenderChannel, aAdapter, false);
-    iDevice->SetEnabled();
+    iDriver = new DriverSongcastSender(iTestProtocol->GetPipeline(), iTestProtocol->GetMaxDriverJiffies(), aDvStack, aSenderUdn, aSenderChannel);
 }
 
 PipelineSongcast::~PipelineSongcast()
 {
     delete iTestProtocol;
     delete iDriver;
-    delete iDevice;
 }
 
 int PipelineSongcast::Run()

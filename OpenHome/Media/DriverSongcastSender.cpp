@@ -8,7 +8,9 @@
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/Av/Songcast/ZoneHandler.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -99,11 +101,14 @@ void ProcessorPcmBufPackedDualMono::ProcessSample24(const TByte* aSample, TUint 
 
 // DriverSongcastSender
 
-DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Environment& aEnv, Net::DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aAdapter, TBool aMulticast)
+const Brn DriverSongcastSender::kSenderIconFileName("SongcastSenderIcon");
+
+DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel)
     : Thread("DSCS")
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
-    , iEnv(aEnv)
+    , iEnv(aDvStack.Env())
+    , iDeviceDisabled("DSCS", 0)
     , iSampleRate(0)
     , iNumChannels(0)
     , iJiffiesToSend(aMaxMsgSizeJiffies)
@@ -115,10 +120,32 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kJiffiesPerMs == 0);
-    iOhmSenderDriver = new Av::OhmSenderDriver(aEnv);
-    Brn imageData(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender) / sizeof(kIconDriverSongcastSender[0]));
-    Brn imageMime(kIconDriverSongcastSenderMimeType);
-    iOhmSender = new Av::OhmSender(iEnv, aDevice, *iOhmSenderDriver, aName, aChannel, aAdapter, kSongcastTtl, kSongcastLatencyMs, aMulticast, true, imageData, imageMime, kSongcastPreset);
+    iOhmSenderDriver = new Av::OhmSenderDriver(iEnv);
+
+    Bws<64> udn("Driver-");
+    udn.Append(aName);
+    Log::Print("Songcasting driver is ");
+    Log::Print(udn);
+    Log::Print("\n");
+    iDevice = new Net::DvDeviceStandard(aDvStack, udn, *this);
+    iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
+    iDevice->SetAttribute("Upnp.Type", "Songcast");
+    iDevice->SetAttribute("Upnp.Version", "1");
+    iDevice->SetAttribute("Upnp.FriendlyName", "Songcasting Driver (media player test)");
+    iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
+    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
+    iDevice->SetAttribute("Upnp.ModelDescription", "ohMediaPlayer");
+    iDevice->SetAttribute("Upnp.ModelName", "ohMediaPlayer");
+    iDevice->SetAttribute("Upnp.ModelNumber", "1");
+    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
+    iDevice->SetAttribute("Upnp.SerialNumber", "");
+    iDevice->SetAttribute("Upnp.Upc", "");
+
+    iZoneHandler = new Av::ZoneHandler(iEnv, udn);
+
+    iOhmSender = new Av::OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
+    iOhmSender->SetEnabled(true);
+    iDevice->SetEnabled();
     iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback));
     Start();
     iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
@@ -128,8 +155,12 @@ DriverSongcastSender::~DriverSongcastSender()
 {
     Join();
     delete iTimer;
+    iDevice->SetDisabled(MakeFunctor(*this, &DriverSongcastSender::DeviceDisabled));
+    iDeviceDisabled.Wait();
     delete iOhmSender;
     delete iOhmSenderDriver;
+    delete iDevice;
+    delete iZoneHandler;
 }
 
 void DriverSongcastSender::Run()
@@ -221,6 +252,11 @@ void DriverSongcastSender::SendAudio(MsgPlayable* aMsg)
     aMsg->RemoveRef();
 }
 
+void DriverSongcastSender::DeviceDisabled()
+{
+    iDeviceDisabled.Signal();
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
@@ -296,4 +332,13 @@ Msg* DriverSongcastSender::ProcessMsg(MsgQuit* aMsg)
     iQuit = true;
     aMsg->RemoveRef();
     return NULL;
+}
+
+void DriverSongcastSender::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, Net::IResourceWriter& aResourceWriter)
+{
+    if (aUriTail == kSenderIconFileName) {
+        aResourceWriter.WriteResourceBegin(sizeof(kIconDriverSongcastSender), kIconDriverSongcastSenderMimeType);
+        aResourceWriter.WriteResource(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender));
+        aResourceWriter.WriteResourceEnd();
+    }
 }

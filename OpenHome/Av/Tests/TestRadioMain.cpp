@@ -7,9 +7,9 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
 
-TestRadio* CreateRadio(Net::DvStack& aDvStack, TIpAddress aAdapter, const Brx& aSenderUdn, const TChar* aSenderFriendlyName, TUint aSenderChannel)
+TestRadio* CreateRadio(Net::DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
-    return new TestRadio(aDvStack, aAdapter, aSenderUdn, aSenderFriendlyName, aSenderChannel);
+    return new TestRadio(aDvStack, aSenderUdn, aSenderChannel);
 }
 
 int CDECL main(int aArgc, char* aArgv[])

@@ -8,12 +8,6 @@
 namespace OpenHome {
 namespace Media {
 
-class IPipelineBranch
-{
-public:
-    virtual void AddMsg(Msg* aMsg) = 0;
-};
-    
 /*
 Element which allows the pipeline to fork, with msgs going down both branches.
 Secondary branch is animated by the primary branch being Pull()ed.
@@ -23,8 +17,9 @@ When enabled, audio msgs are cloned for the branch; others have a reference clai
 class Splitter : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
 public:
-    Splitter(IPipelineElementUpstream& aUpstreamElement, IPipelineBranch& aBranch);
+    Splitter(IPipelineElementUpstream& aUpstreamElement);
     virtual ~Splitter();
+    IPipelineElementDownstream* SetPipelineBranch(IPipelineElementDownstream& aBranch);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
@@ -41,14 +36,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     IPipelineElementUpstream& iUpstreamElement;
-    IPipelineBranch& iBranch;
-};
-
-// Test code helper
-class PipelineBranchNull : public IPipelineBranch
-{
-public: // from IPipelineBranch
-    void AddMsg(Msg* aMsg);
+    IPipelineElementDownstream* iBranch;
 };
 
 } // namespace Media

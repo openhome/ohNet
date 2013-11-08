@@ -1,5 +1,5 @@
-#ifndef HEADER_PROVIDER_RADIO
-#define HEADER_PROVIDER_RADIO
+#ifndef HEADER_PROVIDER_RECEIVER
+#define HEADER_PROVIDER_RECEIVER
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -47,4 +47,4 @@ private:
 } // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PROVIDER_RADIO
+#endif // HEADER_PROVIDER_RECEIVER

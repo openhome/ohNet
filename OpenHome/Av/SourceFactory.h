@@ -20,7 +20,7 @@ public:
     static ISource* NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols);
     static ISource* NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols);
     static ISource* NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort);
-    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper);
+    static ISource* NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
 };
 
 } // namespace Av

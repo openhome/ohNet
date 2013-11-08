@@ -52,14 +52,10 @@ private:
 
 class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
 {
-    static const TUint kAudioBytes = 6 * 1024;
-//    static const TUint kEntityBufferBytes = 2 * 1024;
-//    static const TUint kEntityLineBytes = 256;
     static const TUint kIcyMetadataBytes = 255 * 16;
-    static const TUint kMaxUriBytes = 1024;
 public:
-	ProtocolHttp(Environment& aEnv);
-private: // from Protocol	
+    ProtocolHttp(Environment& aEnv);
+private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -79,13 +75,6 @@ private:
     TUint WriteRequest(TUint64 aOffset);
     ProtocolStreamResult ProcessContent();
     void ExtractMetadata();
-/*    void ProcessContentType();
-    void ProcessPls(ReaderBuffer& aHeader);
-    void ProcessM3u(ReaderBuffer& aHeader);
-    void ProcessAsx(ReaderBuffer& aHeader);
-    void ProcessXml(ReaderBuffer& aHeader);
-    Brn EntityReadLine(ReaderBuffer& aHeader);
-    Brn EntityReadTag(ReaderBuffer& aHeader);*/
 private:
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
@@ -97,11 +86,6 @@ private:
     HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     OpenHome::Uri iUri;
-//    Bws<kEntityLineBytes> iLine;
-//    Bws<kAudioBytes> iAudio;
-//    Bws<kMaxUriBytes> iMmsUri;
-//    Bws<kMaxUriBytes> iXmlUri;
-//    OpenHome::Uri iAsxUri;
     TUint64 iTotalBytes;
     TUint iStreamId;
     TBool iSeekable;
@@ -118,36 +102,6 @@ private:
     TUint iNextFlushId;
     Semaphore iSem;
 };
-
-/*class UriEntry
-{
-public:
-	UriEntry(Brn aUri, TUint aEntry);
-	Brn Uri() const { return Brn(iUri); }
-	TUint Entry() const { return iEntry; }
-private:
-    static const TUint kMaxUriBytes = 1024;
-	Bws<kMaxUriBytes> iUri;
-	TUint iEntry;
-};
-
-class UriList
-{
-public:
-	UriList();
-	~UriList();
-	void NextEntry();
-	void AddUri(Brn aUri);
-	void FindFirst();
-	TBool FindNext(Brn& aUri);
-private:
-	std::vector<UriEntry*> iUriList;
-    TUint iMaxUris;
-    TUint iMaxUrisEntry;
-    TUint iEntry;
-    TUint iUriCount;
-    TUint iUriIndex;
-};*/
 
 };  // namespace Media
 };  // namespace OpenHome
@@ -189,7 +143,7 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
     LOG(kMedia, "HeaderIcyMetadata::Process ");
     LOG(kMedia, aValue);
     LOG(kMedia, "\n");
-    
+
     try {
         iBytes = Ascii::Uint(aValue);
         SetReceived();
@@ -197,7 +151,7 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
     catch (AsciiError&) {
         THROW(HttpError);
     }
-    
+
     LOG(kMedia, "HeaderIcyMetadata::Process SUCCEEDED (%d)\n", iBytes);
 }
 
@@ -347,6 +301,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     iNextFlushId = MsgFlush::kIdInvalid;
     (void)iSem.Clear();
     iUri.Replace(aUri);
+    iIcyMetadata.SetBytes(0);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
     LOG(kMedia, iUri.AbsoluteUri());
@@ -357,7 +312,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         Close();
         return EProtocolErrorNotSupported;
     }
-    
+
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
         // FIXME - error msg
@@ -520,7 +475,7 @@ ProtocolStreamResult ProtocolHttp::DoStream()
         }
         break;
     }
-    
+
     iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
     iLive = (iTotalBytes == 0);
@@ -571,7 +526,7 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
     if (code != HttpStatus::kPartialContent.Code()) {
         LOG(kMedia, "ProtocolHttp::DoRestream Not seekable\n");
         return EProtocolStreamErrorUnrecoverable;
-    }       
+    }
 
     return ProcessContent();
 }
@@ -607,7 +562,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
     }
-        
+
     /* GETting ASX for BBC Scotland responds with invalid chunking if we request ICY metadata.
        Suppress this header if we're requesting a resource with an extension that matches
        a known ContentProcessor */
@@ -644,7 +599,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         LOG(kMedia, "ProtocolHttp::WriteRequest writer error\n");
         return 0;
     }
-    
+
     try {
         LOG(kMedia, "ProtocolHttp::WriteRequest read response\n");
         //iTcpClient.LogVerbose(true);
@@ -667,7 +622,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 ProtocolStreamResult ProtocolHttp::ProcessContent()
 {
     LOG(kMedia, "ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
-    
+
     if (iContentProcessor == NULL && !iStarted) {
         try {
             TUint bytes = 100;
@@ -701,19 +656,24 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
     return iContentProcessor->Stream(*this, iTotalBytes);
 }
 
+
 void ProtocolHttp::ExtractMetadata()
 {
     Brn metadata = iReaderBuf.Read(1);
     iOffset++;
     TUint metadataBytes = metadata[0] * 16;
-#if 1 // FIXME - need to bring across DidlLite class
-    iReaderBuf.Read(metadataBytes);
     iOffset += metadataBytes;
-#else
-    Bws<kIcyMetadataBytes> newMetadata;
-    DidlLite didl;
+
     if (metadataBytes != 0) {
-        Parser data(iReaderBuf.Read(metadataBytes));
+
+        Brn buf = iReaderBuf.Read(metadataBytes);
+
+        iIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
+        iIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
+        iIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
+        iIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
+
+        Parser data(buf);
         while(!data.Finished()) {
             Brn name = data.Next('=');
             if (name == Brn("StreamTitle")) {
@@ -722,476 +682,17 @@ void ProtocolHttp::ExtractMetadata()
                 data.Next('\'');
                 Brn title = data.Next(';');
                 if (title.Bytes() > 1) {
-                    didl.SetTitle(Brn(title.Ptr(), title.Bytes()-1));
+                    iIcyMetadata.Append(Brn(title.Ptr(), title.Bytes()-1));
                 }
-                didl.SetClass(DidlLite::eObjectItem);
+
+                iIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
+                iIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
+                iSupply->OutputMetadata(iIcyMetadata);
                 break;
             }
         }
-        didl.Create(newMetadata);
-        // if the message has changed put it into the pipeline
-        if (newMetadata != iIcyMetadata) {
-            iIcyMetadata.Replace(newMetadata);
-            OutputMetadata(iIcyMetadata);
-        }
-    }
-#endif // 0
-}
-
-#if 0
-// unused but retained until all content processors are factored out
-
-
-
-void ProtocolHttp::ProcessContentType()
-{
-    try {
-        ReaderBuffer preview;
-        TUint peekBytes = 1024;
-        if (iTotalBytes > 0 && (iTotalBytes < peekBytes)) {
-            peekBytes = (TUint)iTotalBytes;
-        }
-        preview.Set(iReaderBuf.Peek(peekBytes)); // examine start of file only
-
-        if (iHeaderContentType.Received()) {
-            LOG(kMedia, "ProtocolHttp::ProcessContentType ");
-            LOG(kMedia, iHeaderContentType.Type());
-            LOG(kMedia, "\n");
-
-            const Brx& contentType = iHeaderContentType.Type();
-            if (Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-scpls"))) {
-                ProcessPls(preview);
-                return;
-            }
-
-            if (Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-mpegurl"))
-                    || Ascii::CaseInsensitiveEquals(contentType, Brn("audio/mpegurl")) // alias
-                    ) {
-                ProcessM3u(preview);
-                return;
-            }
-
-            if (Ascii::CaseInsensitiveEquals(contentType, Brn("video/x-ms-asf"))
-                    || Ascii::CaseInsensitiveEquals(contentType, Brn("video/x-ms-wax"))
-                    || Ascii::CaseInsensitiveEquals(contentType, Brn("video/x-ms-wvx"))
-                    || Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-ms-asf"))
-                    || Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-ms-wax"))
-                    || Ascii::CaseInsensitiveEquals(contentType, Brn("audio/x-ms-wvx"))
-                    ) {
-                ProcessAsx(preview);
-                return;
-            }
-
-            if (Ascii::CaseInsensitiveEquals(contentType, Brn("text/xml"))) {
-                ProcessXml(preview);
-                return;
-            }
-        }
-
-        // content type not recognised, so parse file to determine type without using content-type
-        Brn header(preview.Read((preview.Bytes() < 100) ? preview.Bytes() : 100)); // read section from start of preview buffer for recognition process
-        preview.ReadFlush(); // then reset to the beginning of the preview buffer for next level of processing
-
-        if (Ascii::Contains(header, Brn("#EXTM3U"))) {
-            ProcessM3u(preview);
-            return;
-        }
-        if (Ascii::Contains(header, Brn("[playlist]"))) {
-            ProcessPls(preview);
-            return;
-        }
-        if (Ascii::Contains(header, Brn("<asx version"))) {
-            ProcessAsx(preview);
-            return;
-        }
-        if (Ascii::Contains(header, Brn("[Reference]"))) {
-            ProcessAsx(preview);
-            return;
-        }
-        if (Ascii::Contains(header, Brn("<opml version"))) {
-            ProcessXml(preview);
-            return;
-        }
-    }
-    catch (ReaderError&) {
-        return;
-    }
-    LOG(kMedia, "ProtocolHttp::ProcessContentType Audio\n");
-    
-    iStreamId = REVIEW_ME_Start(iTotalBytes, (iTotalBytes == 0? this : NULL), (iSeekable? this : NULL));
-    iStarted = true;
-
-    ProcessAudio();
-}
-/* Example pls file
-
-[playlist]
-NumberOfEntries=3
-
-File1=http://streamexample.com:80
-Title1=My Favorite Online Radio
-Length1=-1
-
-File2=http://example.com/song.mp3
-Title2=Remote MP3
-Length2=286
-
-File3=/home/myaccount/album.flac
-Title3=Local album
-Length3=3487
-
-Version=2
-
-*/
-
-void ProtocolHttp::ProcessPls(ReaderBuffer& aHeader)
-{
-    LOG(kMedia, "ProtocolHttp::ProcessPls\n");
-
-    try {
-        // Find [playlist]
-        for (;;) {
-            Brn line = EntityReadLine(aHeader);
-            if (line == Brn("[playlist]")) {
-                break;
-            }
-        }
-
-        for (;;) {
-            Brn line = EntityReadLine(aHeader);
-            Parser parser(line);
-            Brn key = parser.Next('=');
-            if (key.BeginsWith(Brn("File"))) {
-                Brn value = parser.Next();
-                if (Protocol::REVIEW_ME_Stream(value)) {
-                    return;
-                }
-            }
-        }
-    }
-    catch (ReaderError&) {
     }
 }
 
-/* Example m3u file
-
-#EXTM3U
-
-#EXTINF:123,Sample title
-C:\Documents and Settings\I\My Music\Sample.mp3
-
-#EXTINF:321,Example title
-C:\Documents and Settings\I\My Music\Greatest Hits\Example.ogg
-
-*/
-
-void ProtocolHttp::ProcessM3u(ReaderBuffer& aHeader)
-{
-    LOG(kMedia, "ProtocolHttp::ProcessM3u\n");
-    
-    try {
-        for (;;) {
-            Brn line = EntityReadLine(aHeader);
-            if (line.BeginsWith(Brn("#"))) {
-                continue; // comment line
-            }
-            if (Protocol::REVIEW_ME_Stream(line)) {
-                return;
-            }
-        }
-    }
-    catch (ReaderError&) {
-    }
-}
-
-/* Example asx files
-
-<asx version = "3.0">
-    <title>Absolute Classic Rock</title>
-    <entry>
-        <PARAM name="HTMLView" value="http://www.absoluteclassicrock.co.uk/" />
-        <abstract>Now playing info on our website.</abstract>
-        <ref href = "mms://wm.as34763.net/vruk_vc_hi" />
-        <ref href = "http://wm.as34763.net/vruk_vc_hi" />
-        <ref href = "mmsu://wm.as34763.net/vruk_vc_hi" />
-        <ref href = "mmst://wm.as34763.net/vruk_vc_hi" />
-        <title>Absolute Classic Rock</title>
-        <copyright>SMG Digital Radio Ltd </copyright>
-        <author>Now playing info on our website</author>
-        <MoreInfo href = "http://www.absoluteclassicrock.co.uk/" />
-    </entry>
-    <entry>
-        <abstract>probs</Abstract>
-        <PARAM name="HTMLView" value="http://www.absoluteradio.co.uk/thestation/faq/listenonline.html" />
-        <ref href = "mms://wm.as34763.net/prerolls/problems_lo.wma" />
-        <title>Absolute Classic Rock</title>
-        <copyright>SMG Digital Radio Ltd</copyright>
-        <author>Now playing info on our website</author>
-        <MoreInfo href = "http://www.absoluteclassicrock.co.uk/" />
-    </entry>
-</asx>
 
 
-OR
-
-
-[Reference]
-Ref1=http://wmlive.bbc.co.uk/wms/england/lrcumbria?MSWMExt=.asf
-Ref2=http://212.58.252.33:80/wms/england/lrcumbria?MSWMExt=.asf
-
-
-*/
-
-void ProtocolHttp::ProcessAsx(ReaderBuffer& aHeader)
-{
-    LOG(kMedia, "ProtocolHttp::ProcessAsx\n");
-    
-    // check for xml or another description format 
-    // first character for xml is '<', alternative is '[Reference]' at start else unsupported
-    try {
-        for (;;) {
-            Brn format(aHeader.Read(1));
-            if (format.BeginsWith(Brn("<"))) {
-                Parser parser(aHeader.ReadUntil('>')); // read first tag
-                if (!Ascii::CaseInsensitiveEquals(parser.Next('='), Brn("asx version"))) {
-                    continue;
-                }
-
-                // in an attempt to ignore intro uris and commence playing from the main
-                // uri, search through all uri's and start to play from the entry which
-                // contains the most.  This is certainly not ideal but will hopefully
-                // catch the majority of use cases until true support is added.
-                // correct method is to allow playing through each entry in the file - ToDo
-                // build list of uris
-                UriList uriList;
-                for (;;) {
-                    Parser parser;
-                    try {
-                        parser.Set(EntityReadTag(aHeader));
-                    }
-                    catch (ReaderError&) {
-                        break; // at end of asx data
-                    }
-                    Brn name(parser.Next());
-                    if (Ascii::CaseInsensitiveEquals(name, Brn("entry"))) {
-                        uriList.NextEntry();
-                    }
-                    else if (Ascii::CaseInsensitiveEquals(name, Brn("/entry"))) {
-                    }
-                    else {
-                        if (!Ascii::CaseInsensitiveEquals(name, Brn("ref"))) {
-                            continue;
-                        }
-            
-                        Brn att = parser.Next('=');
-                        if (!Ascii::CaseInsensitiveEquals(att, Brn("href"))) {
-                            continue;
-                        }
-                        parser.Next('"');
-                        Brn uri = parser.Next('"');
-                        TUint bytes = uri.Bytes();
-                        if (bytes == 0) {
-                            continue;
-                        }
-                        uriList.AddUri(uri);
-                    }
-                }
-                
-                // attempt to play each until successful
-                Brn uri;
-                uriList.FindFirst();
-                while(uriList.FindNext(uri)) {
-                    if (Protocol::REVIEW_ME_Stream(uri)) {
-                        return;
-                    }
-                }
-            }
-            else if (format.BeginsWith(Brn("["))) {            // alternative format
-                Parser parser(aHeader.ReadUntil(']'));    // read first tag
-                for (;;) {
-                    Brn line(EntityReadLine(aHeader));
-                    Brn ref(line.Ptr(), 3);                
-                    if (Ascii::CaseInsensitiveEquals(ref, Brn("Ref"))) {
-                        Parser parser(line);
-                        parser.Next('=');
-                        Brn value = parser.NextToEnd();
-                        if (value.Bytes()) {
-                            // When the payload format is [Reference] translate http uri to mms
-                            if (iAsxUri.Scheme() == Brn("http")) {
-                                LOG(kMedia, " replace http scheme with mms\n");
-                                iMmsUri.Replace(Brn("mms"));
-                                iMmsUri.Append(iAsxUri.AbsoluteUri().Split(4));
-                                iAsxUri.Replace(iMmsUri);
-                            }
-                            if (Protocol::REVIEW_ME_Stream(iAsxUri.AbsoluteUri())) {
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }    
-    catch (ReaderError&) {
-    }
-}
-
-void ProtocolHttp::ProcessXml(ReaderBuffer& aHeader)
-{
-    LOG(kMedia, "ProtocolHttp::ProcessXml\n");
-    
-    // check for xml or another description format 
-    // first character for xml is '<', alternative is '[Reference]' at start else unsupported
-    try {
-        for (;;) {
-            Brn format(EntityReadLine(aHeader));
-            if (format.BeginsWith(Brn("<"))) {
-                Parser parser(format);
-                if (!Ascii::CaseInsensitiveEquals(parser.Next('='), Brn("<opml version"))) {
-                    continue;
-                }
-                for (;;) {
-                    Parser parser(EntityReadTag(aHeader));
-                    Brn name = parser.Next();
-                    if (!Ascii::CaseInsensitiveEquals(name, Brn("outline"))) {
-                        continue;
-                    }
-                    Brn att = parser.Next('=');            
-                    if (!Ascii::CaseInsensitiveEquals(att, Brn("type"))) {
-                        continue;
-                    }
-                    parser.Next('"');
-                    Brn type = parser.Next('"');
-                    att.Set(parser.Next('='));            
-                    if (!Ascii::CaseInsensitiveEquals(att, Brn("text"))) {
-                        continue;
-                    }
-                    parser.Next('"');
-                    Brn text = parser.Next('"'); // metadata - station name
-                    att.Set(parser.Next('='));            
-                    if (!Ascii::CaseInsensitiveEquals(att, Brn("url"))) {
-                        continue;
-                    }
-                    parser.Next('"');
-                    Brn uri = parser.Next('"');
-                    TUint bytes = uri.Bytes();
-                    if (bytes == 0) {
-                        continue;
-                    }
-                    iXmlUri.Replace(uri);
-                    Converter::FromXmlEscaped(iXmlUri); // FIXME - Converter has slightly different functionality vs volkano's Syslib Xml::Unescape
-
-                    LOG(kMedia, "radio uri[");
-                    LOG(kMedia, iXmlUri);
-                    LOG(kMedia, "]\n");
-
-                    if (Protocol::REVIEW_ME_Stream(iXmlUri)) {
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    catch (ReaderError&) {
-    }
-}
-
-Brn ProtocolHttp::EntityReadLine(ReaderBuffer& aHeader)
-{
-    TBool done = false;
-    while (!done) {
-        Brn line;
-        try {
-            line.Set(Ascii::Trim(aHeader.ReadUntil(Ascii::kLf)));
-        }
-        catch (ReaderError&) {
-            line.Set(aHeader.ReadRemaining());
-            done = true;
-        }
-        if (line.Bytes() > 0) {
-            LOG(kMedia, line);
-            LOG(kMedia, "\n");
-
-            return line;
-        }
-    }
-    return Brx::Empty();
-}
-
-Brn ProtocolHttp::EntityReadTag(ReaderBuffer& aHeader)
-{
-    aHeader.ReadUntil('<');
-    return aHeader.ReadUntil('>');
-}
-
-
-// UriEntry
-
-UriEntry::UriEntry(Brn aUri, TUint aEntry)
-    : iUri(aUri)
-    , iEntry(aEntry)
-{
-}
-
-
-// UriList
-
-UriList::UriList()
-    : iMaxUris(0)
-    , iMaxUrisEntry(0)
-    , iEntry(0)
-    , iUriCount(0)
-    , iUriIndex(0)
-{
-}
-
-UriList::~UriList()
-{
-    for (TUint i = 0; i < (TUint)iUriList.size(); i++) {
-        delete(iUriList[i]);
-    }
-}
-
-void UriList::NextEntry()
-{
-    iEntry++;
-    iUriCount = 0;
-}
-
-void UriList::AddUri(Brn aUri)
-{
-    iUriCount++;
-    if (iMaxUris < iUriCount) {
-        iMaxUris = iUriCount;
-        iMaxUrisEntry = iEntry;
-    }
-    iUriList.push_back(new UriEntry(aUri, iEntry));
-}
-
-
-void UriList::FindFirst()
-{
-    for (iUriIndex = 0; iUriIndex < iUriList.size(); iUriIndex++) {
-        if (iUriList[iUriIndex]->Entry() == iMaxUrisEntry) {
-            return;
-        }
-    }
-
-}
-
-TBool UriList::FindNext(Brn& aUri)
-{
-    while (iUriIndex < iUriList.size()) {
-        UriEntry* uriEntry = iUriList[iUriIndex++];
-        if (uriEntry->Entry() == iMaxUrisEntry) {
-            aUri.Set(uriEntry->Uri());
-            LOG(kMedia, "uri[");
-            LOG(kMedia, aUri);
-            LOG(kMedia, "]\n");
-
-            return true;
-        }
-    }
-    return false;
-}
-#endif // 0

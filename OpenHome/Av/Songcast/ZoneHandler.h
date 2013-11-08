@@ -12,6 +12,7 @@
 
 namespace OpenHome {
     class Environment;
+    class Timer;
 namespace Av {
 
 class IZoneListener // receiver
@@ -19,46 +20,62 @@ class IZoneListener // receiver
 public:
     virtual ~IZoneListener() {}
     virtual void ZoneUriChanged(const Brx& aZone, const Brx& aUri) = 0;
+    virtual void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata) = 0;
 };
 
-// sender interface, including
-// SetId
-// SetHome / SetCurrent ?  Or can this be inferred from [Start|Stop]Monitoring
+class ISenderMetadata
+{
+public:
+    virtual ~ISenderMetadata() {}
+    virtual void GetSenderMetadata(Bwx& aMetadata) = 0;
+};
 
-// FIXME - preset handling
+// FIXME - SetHome / SetCurrent ?  Or can this be inferred from [Start|Stop]Monitoring
 
 class ZoneHandler : public Thread
 {
+    static const TUint kMaxMetadataBytes = 1000;
     static const TUint kMaxReadBytes = 1024;
     static const TUint kMaxWriteBytes = kMaxReadBytes;
     static const Brn kMulticastAddress;
     static const TUint kMulticastPort = 51972;
+    static const TUint kTimerZoneUriDelayMs = 100;
+    static const TUint kTimerPresetInfoDelayMs = 100;
 public:
     static const TUint kMaxZoneBytes = 256;
     static const Brn kProtocolZone;
 public:
-    ZoneHandler(Environment& aEnv);
+    ZoneHandler(Environment& aEnv, const Brx& aSenderZone);
     ~ZoneHandler();
     const Endpoint& MulticastEndpoint() const;
     void AddListener(IZoneListener& aListener);
     void RemoveListener(IZoneListener& aListener);
     void StartMonitoring(const Brx& aZone);
     void StopMonitoring();
+    void SetSenderUri(const Brx& aUri);
+    void SetPreset(TUint aPreset, ISenderMetadata& aSenderMetadata);
 private: // from Thread
     void Run();
 private:
     void CurrentSubnetChanged();
     void InitialiseSockets(TIpAddress aInterface);
     void DestroySockets();
+    void SendZoneUri(TUint aCount);
+    void SendPresetInfo(TUint aCount);
+    void TimerZoneUriExpired();
+    void TimerPresetInfoExpired();
     void Skip(TUint aBytes);
 private:
     Environment& iEnv;
     const Endpoint iEndpoint;
+    Bws<kMaxZoneBytes> iSenderZone;
     TBool iQuit;
-    Mutex iLock;
+    Mutex iLockRxSocket;
     Semaphore iSem;
-    Mutex iZoneLock;
-    Mutex iListenerLock;
+    Mutex iZoneLock; // FIXME - rename
+    Mutex iLockListener;
+    Mutex iLockTxSocket;
+    Mutex iLockTxData;
     std::vector<IZoneListener*> iListeners;
     SocketUdpMulticast* iRxSocket;
     UdpReader iReader;
@@ -68,9 +85,15 @@ private:
     Sws<kMaxWriteBytes> iWriteBuffer;
     Bws<kMaxZoneBytes> iRxZone;
     TUint iNacnId;
-    Media::BwsTrackUri iUriBuf; // FIXME - needed?
-    Media::BwsTrackMetaData iMetadataBuf; // FIXME - needed?
-    Bws<kMaxZoneBytes> iZoneBuf;
+    Bws<32> iSenderUri; // ohm or ohu uri returned from ZoneQuery requests
+    TUint iSendZoneUriCount;
+    TUint iPresetNumber;
+    ISenderMetadata* iSenderMetadata;
+    Bws<kMaxMetadataBytes> iSenderMetadataBuf; // only used locally but too large to put on the stack
+    Bws<kMaxMetadataBytes> iRxPresetMetadata; // only used locally but too large to put on the stack
+    TUint iSendPresetInfoCount;
+    Timer* iTimerZoneUri;
+    Timer* iTimerPresetInfo;
 };
 
 } // namespace Av
