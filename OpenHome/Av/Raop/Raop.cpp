@@ -670,7 +670,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName, TUint aDiscoveryPort)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName)
     : iRaopObserver(aObserver)
 {
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
@@ -682,8 +682,8 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
         ep.AppendAddress(addrBuf);
         LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
 
-        iRaopDevice = new RaopDevice(aDvStack, aDiscoveryPort, aHostName, aDeviceName, ipAddr, Brn("000000000001"));
-        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", aDiscoveryPort, ipAddr, kPriority, kSessionStackBytes);
+        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
+        iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aDeviceName, ipAddr, Brn("000000000001"));
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
         iRaopDiscoverySession1 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 1);
