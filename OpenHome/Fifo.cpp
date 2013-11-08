@@ -9,11 +9,13 @@ FifoBase::FifoBase(TUint aSlots)
     , iSlotsUsed(0)
     , iMutexWrite("FIMW")
     , iMutexRead("FIMR")
+    , iMutexInterrupt("FIMI")
     , iSemaRead("FISR", 0)
     , iSemaWrite("FISW", aSlots)
     , iReadIndex(0)
     , iWriteIndex(0)
     , iInterrupted(false)
+    , iInterruptEnabled(false)
 {
     ASSERT(iSlots > 0);
 }
@@ -36,10 +38,18 @@ TUint FifoBase::SlotsUsed() const
 
 void FifoBase::ReadInterrupt(TBool aInterrupt)
 {
-    iInterrupted = aInterrupt;
-    if (aInterrupt) {
+    // An interrupt should ALWAYS be signalled, as this allows distinguishing
+    // between when iSemaRead.Signal() was called normally or by interrupt,
+    // even in the case of ReadInterrupt(false) being subsequently called.
+    AutoMutex a(iMutexInterrupt);
+    if (!iInterrupted) { // don't repeat when interrupt already pending
         iSemaRead.Signal();
+        iInterrupted = true;
     }
+    // This extra flag lets us know whether we should take any special
+    // action (i.e., throw) after an interrupt caused iSemaRead.Signal(), or
+    // just go back and try read again.
+    iInterruptEnabled = aInterrupt;
 }
 
 TUint FifoBase::WriteOpen(TUint aTimeoutMs)
@@ -47,7 +57,7 @@ TUint FifoBase::WriteOpen(TUint aTimeoutMs)
     iSemaWrite.Wait(aTimeoutMs);
     iMutexWrite.Wait();
     TUint index = iWriteIndex++;
-    if(iWriteIndex == Slots()) {
+    if (iWriteIndex == Slots()) {
         iWriteIndex = 0;
     }
     return (index);
@@ -62,10 +72,21 @@ void FifoBase::WriteClose()
 
 TUint FifoBase::ReadOpen(TUint aTimeoutMs)
 {
-    iSemaRead.Wait(aTimeoutMs);
-    if (iInterrupted) {
-    	iInterrupted = false;
-        THROW(FifoReadError);
+    TBool readAllowed = false;
+    while (!readAllowed) {  // handle multiple (erroneous) calls to ReadInterrupt(false) when Read() waiting
+        iSemaRead.Wait(aTimeoutMs);
+        // check if iSemaRead was signalled legitimately or by interrupt
+        AutoMutex a(iMutexInterrupt);
+        if (iInterrupted) {
+            iInterrupted = false;
+            if (iInterruptEnabled) {
+                iInterruptEnabled = false;
+                THROW(FifoReadError);
+            }
+        }
+        else {
+            readAllowed = true;
+        }
     }
     iMutexRead.Wait();
     TUint index = iReadIndex++;
