@@ -24,6 +24,7 @@ class IPowerManager
 public:
     virtual void PowerDown() = 0;
     virtual void RegisterObserver(Functor aFunctor, TUint aPriority) = 0;
+    virtual ~IPowerManager() {}
 };
 
 class PowerManager : public IPowerManager

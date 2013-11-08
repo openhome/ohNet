@@ -169,6 +169,8 @@ public:
     virtual ConfigChoice& GetChoice(const Brx& aId) const = 0;
     virtual TBool HasText(const Brx& aId) const = 0;
     virtual ConfigText& GetText(const Brx& aId) const = 0;
+
+    virtual ~IConfigurationManager() {}
 };
 
 /*
