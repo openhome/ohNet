@@ -42,7 +42,6 @@ class TestMediaPlayer : private Net::IResourceManager
 {
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
-    static const TUint kRaopDiscoveryPort = 5048;
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
     virtual ~TestMediaPlayer();
