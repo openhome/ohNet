@@ -276,11 +276,11 @@ void CodecAac::ProcessMpeg4()
         }
         catch (CodecStreamStart&) {
             iNewStreamStarted = true;
-            //LOG(kCodec, "CodecAlac::ProcessMpeg4 caught CodecStreamStart\n");
+            //LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamStart\n");
         }
         catch (CodecStreamEnded&) {
             iStreamEnded = true;
-            //LOG(kCodec, "CodecAlac::ProcessMpeg4 caught CodecStreamEnded\n");
+            //LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamEnded\n");
         }
 
         // now decode and output
