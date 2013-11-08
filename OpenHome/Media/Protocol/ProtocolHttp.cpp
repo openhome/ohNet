@@ -659,8 +659,6 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 
 void ProtocolHttp::ExtractMetadata()
 {
-    Log::Print(">ProtocolHttp::ExtractMetadata() \n");
-
     Brn metadata = iReaderBuf.Read(1);
     iOffset++;
     TUint metadataBytes = metadata[0] * 16;
