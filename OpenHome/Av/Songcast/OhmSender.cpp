@@ -414,6 +414,7 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     , iInterface(0)
     , iLatency(aLatency)
     , iMulticast(aMulticast)
+    , iEnabled(false)
     , iImageFileName(aImageFileName)
     , iSocketOhm(aEnv)
     , iRxBuffer(iSocketOhm)
