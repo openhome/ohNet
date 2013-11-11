@@ -448,7 +448,7 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     iThreadUnicast->Start();
     
     UpdateChannel();
-    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &OhmSender::CurrentSubnetChanged));
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &OhmSender::CurrentSubnetChanged), false);
     UpdateMetadata();
 }
 
