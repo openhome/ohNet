@@ -116,8 +116,6 @@ endif
 openhome_system = ${detected_openhome_system}
 openhome_architecture = ${detected_openhome_architecture}
 
-$(info Building for system ${openhome_system} and architecture ${openhome_architecture})
-
 ifeq ($(platform),Android)
     osbuilddir = $(platform)-$(detected_openhome_architecture)
     objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
@@ -225,6 +223,8 @@ ifeq ($(platform), Core-armv6)
     link = ${CROSS_COMPILE}g++ $(platform_linkflags)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
+
+$(info Building for system ${openhome_system} and architecture ${openhome_architecture})
 
 ifneq (,$(findstring $(platform),Vanilla Linux-ppc32))
   ifeq ($(gcc4_1), yes)
