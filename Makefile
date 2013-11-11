@@ -274,12 +274,12 @@ native_only ?= no
 managed_only ?= no
 no_shared_objects ?= no
 endian ?= LITTLE
-cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -D__STDC_VERSION__=199901L -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
+cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
 else
-    cppflags = $(cflags_base) -std=c++0x -Werror
+    cppflags = $(cflags_base) -std=c++0x -D__STDC_VERSION__=199901L -Werror
 endif
 cflags = $(cflags_base) -Werror
 inc_build = Build/Include
