@@ -95,6 +95,7 @@ private:
     MutexRecursive iMutex;
     ThreadFunctor* iThreadListen;
     Timer* iTimer;
+    Mutex iTimerLock;
     Endpoint iMulticast;
     SocketUdpMulticast iReader;
     UdpReader iReaderController;

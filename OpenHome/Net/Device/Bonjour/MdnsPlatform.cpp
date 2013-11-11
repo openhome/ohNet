@@ -55,6 +55,7 @@ TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     : iEnv(aEnv)
     , iHost(aHost)
+    , iTimerLock("BNJ4")
     , iMulticast(5353, Brn("224.0.0.251"))
     , iReader(aEnv, 0, iMulticast)
     , iReaderController(iReader)
@@ -81,9 +82,12 @@ MdnsPlatform::~MdnsPlatform()
 {
     iReaderController.ReadInterrupt();
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iTimerLock.Wait();
+    delete iTimer;
+    iTimer = NULL;
+    iTimerLock.Signal();
     mDNS_Close(iMdns);
     delete iMdns;
-    delete iTimer;
     Map::iterator it = iServices.begin();
     while (it != iServices.end()) {
         delete it->second;
@@ -357,7 +361,11 @@ void MdnsPlatform::Lock()
 void MdnsPlatform::Unlock()
 {
     TInt next = iMdns->NextScheduledEvent - iMdns->timenow_adjust;
-    iTimer->FireAt(next);
+    iTimerLock.Wait();
+    if (iTimer != NULL) {
+        iTimer->FireAt(next);
+    }
+    iTimerLock.Signal();
     LOG(kBonjour, "Bonjour             Next Scheduled Event %d\n", next);
     LOG(kBonjour, "Bonjour             Unlock\n");
     iMutex.Unlock();
@@ -420,7 +428,11 @@ MdnsPlatform::Status MdnsPlatform::SendUdp(const Brx& aBuffer, const Endpoint& a
 
 void MdnsPlatform::Close()
 {
-    iTimer->Cancel();
+    iTimerLock.Wait();
+    if (iTimer != NULL) {
+        iTimer->Cancel();
+    }
+    iTimerLock.Signal();
     iStop = true;
     iThreadListen->Kill();
     iReader.Interrupt(true);
@@ -790,11 +802,14 @@ void mDNSPlatformTLSTearDownCerts()
 // Handlers for unicast browsing/dynamic update for clients who do not specify a domain
 // in browse/registration
 
-void mDNSPlatformSetDNSConfig(mDNS* const /*m*/, mDNSBool /*setservers*/, mDNSBool /*setsearch*/, domainname* const /*fqdn*/,
+void mDNSPlatformSetDNSConfig(mDNS* const /*m*/, mDNSBool /*setservers*/, mDNSBool /*setsearch*/, domainname* const fqdn,
                               DNameListElem** /*RegDomains*/, DNameListElem** /*BrowseDomains*/)
 {
     // unused, but called by Bonjour
     LOG(kBonjour, "Bonjour             mDNSPlatformSetDNSConfig\n");
+    if (fqdn != mDNSNULL) {
+        (void)memset(fqdn, 0, sizeof(*fqdn));
+    }
 }
 
 mStatus mDNSPlatformGetPrimaryInterface(mDNS* const m, mDNSAddr* v4, mDNSAddr* v6, mDNSAddr* router)
