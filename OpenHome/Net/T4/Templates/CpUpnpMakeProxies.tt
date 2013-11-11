@@ -56,11 +56,11 @@ proxies : ohNetCore $(objects_proxies)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cppflags) $(includes) $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
 <#  } #>
 
 proxy_dlls = \

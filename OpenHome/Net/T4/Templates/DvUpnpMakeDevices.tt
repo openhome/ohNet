@@ -49,11 +49,11 @@ devices : ohNetCore $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device) OpenHome/Net/Device/Providers/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cppflags) $(includes) $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
 <#  } #>
 
 device_dlls = \

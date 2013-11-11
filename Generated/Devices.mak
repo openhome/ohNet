@@ -183,167 +183,167 @@ device_java_classes_with_path = \
 devices : ohNetCore $(objects_devices)
 	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
 $(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgAVTransport1.h
-	$(compiler)DvUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport1.cpp
+	$(compiler)DvUpnpOrgAVTransport1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport1.cpp
 $(objdir)DvUpnpOrgAVTransport1Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgAVTransport1.h
-	$(compiler)DvUpnpOrgAVTransport1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp
+	$(compiler)DvUpnpOrgAVTransport1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp
 $(objdir)DvUpnpOrgAVTransport1C.$(objext) : $(deviceC)DvUpnpOrgAVTransport1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgAVTransport1.h
-	$(compiler)DvUpnpOrgAVTransport1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgAVTransport1C.cpp
+	$(compiler)DvUpnpOrgAVTransport1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgAVTransport1C.cpp
 $(objdir)DvUpnpOrgAVTransport2.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport2.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgAVTransport2.h
-	$(compiler)DvUpnpOrgAVTransport2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport2.cpp
+	$(compiler)DvUpnpOrgAVTransport2.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport2.cpp
 $(objdir)DvUpnpOrgAVTransport2Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport2Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgAVTransport2.h
-	$(compiler)DvUpnpOrgAVTransport2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgAVTransport2Std.cpp
+	$(compiler)DvUpnpOrgAVTransport2Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgAVTransport2Std.cpp
 $(objdir)DvUpnpOrgAVTransport2C.$(objext) : $(deviceC)DvUpnpOrgAVTransport2C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgAVTransport2.h
-	$(compiler)DvUpnpOrgAVTransport2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgAVTransport2C.cpp
+	$(compiler)DvUpnpOrgAVTransport2C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgAVTransport2C.cpp
 $(objdir)DvUpnpOrgConnectionManager1.$(objext) : $(deviceCppCore)DvUpnpOrgConnectionManager1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgConnectionManager1.h
-	$(compiler)DvUpnpOrgConnectionManager1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgConnectionManager1.cpp
+	$(compiler)DvUpnpOrgConnectionManager1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgConnectionManager1.cpp
 $(objdir)DvUpnpOrgConnectionManager1Std.$(objext) : $(deviceCppStd)DvUpnpOrgConnectionManager1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgConnectionManager1.h
-	$(compiler)DvUpnpOrgConnectionManager1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgConnectionManager1Std.cpp
+	$(compiler)DvUpnpOrgConnectionManager1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgConnectionManager1Std.cpp
 $(objdir)DvUpnpOrgConnectionManager1C.$(objext) : $(deviceC)DvUpnpOrgConnectionManager1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgConnectionManager1.h
-	$(compiler)DvUpnpOrgConnectionManager1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgConnectionManager1C.cpp
+	$(compiler)DvUpnpOrgConnectionManager1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgConnectionManager1C.cpp
 $(objdir)DvUpnpOrgConnectionManager2.$(objext) : $(deviceCppCore)DvUpnpOrgConnectionManager2.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgConnectionManager2.h
-	$(compiler)DvUpnpOrgConnectionManager2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgConnectionManager2.cpp
+	$(compiler)DvUpnpOrgConnectionManager2.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgConnectionManager2.cpp
 $(objdir)DvUpnpOrgConnectionManager2Std.$(objext) : $(deviceCppStd)DvUpnpOrgConnectionManager2Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgConnectionManager2.h
-	$(compiler)DvUpnpOrgConnectionManager2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgConnectionManager2Std.cpp
+	$(compiler)DvUpnpOrgConnectionManager2Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgConnectionManager2Std.cpp
 $(objdir)DvUpnpOrgConnectionManager2C.$(objext) : $(deviceC)DvUpnpOrgConnectionManager2C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgConnectionManager2.h
-	$(compiler)DvUpnpOrgConnectionManager2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgConnectionManager2C.cpp
+	$(compiler)DvUpnpOrgConnectionManager2C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgConnectionManager2C.cpp
 $(objdir)DvUpnpOrgContentDirectory1.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgContentDirectory1.h
-	$(compiler)DvUpnpOrgContentDirectory1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory1.cpp
+	$(compiler)DvUpnpOrgContentDirectory1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory1.cpp
 $(objdir)DvUpnpOrgContentDirectory1Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgContentDirectory1.h
-	$(compiler)DvUpnpOrgContentDirectory1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory1Std.cpp
+	$(compiler)DvUpnpOrgContentDirectory1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory1Std.cpp
 $(objdir)DvUpnpOrgContentDirectory1C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgContentDirectory1.h
-	$(compiler)DvUpnpOrgContentDirectory1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory1C.cpp
+	$(compiler)DvUpnpOrgContentDirectory1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory1C.cpp
 $(objdir)DvUpnpOrgContentDirectory2.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory2.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgContentDirectory2.h
-	$(compiler)DvUpnpOrgContentDirectory2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory2.cpp
+	$(compiler)DvUpnpOrgContentDirectory2.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory2.cpp
 $(objdir)DvUpnpOrgContentDirectory2Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory2Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgContentDirectory2.h
-	$(compiler)DvUpnpOrgContentDirectory2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory2Std.cpp
+	$(compiler)DvUpnpOrgContentDirectory2Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory2Std.cpp
 $(objdir)DvUpnpOrgContentDirectory2C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory2C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgContentDirectory2.h
-	$(compiler)DvUpnpOrgContentDirectory2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory2C.cpp
+	$(compiler)DvUpnpOrgContentDirectory2C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory2C.cpp
 $(objdir)DvUpnpOrgContentDirectory3.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory3.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgContentDirectory3.h
-	$(compiler)DvUpnpOrgContentDirectory3.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory3.cpp
+	$(compiler)DvUpnpOrgContentDirectory3.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory3.cpp
 $(objdir)DvUpnpOrgContentDirectory3Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory3Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgContentDirectory3.h
-	$(compiler)DvUpnpOrgContentDirectory3Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory3Std.cpp
+	$(compiler)DvUpnpOrgContentDirectory3Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory3Std.cpp
 $(objdir)DvUpnpOrgContentDirectory3C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory3C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgContentDirectory3.h
-	$(compiler)DvUpnpOrgContentDirectory3C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory3C.cpp
+	$(compiler)DvUpnpOrgContentDirectory3C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory3C.cpp
 $(objdir)DvUpnpOrgRenderingControl1.$(objext) : $(deviceCppCore)DvUpnpOrgRenderingControl1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgRenderingControl1.h
-	$(compiler)DvUpnpOrgRenderingControl1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgRenderingControl1.cpp
+	$(compiler)DvUpnpOrgRenderingControl1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgRenderingControl1.cpp
 $(objdir)DvUpnpOrgRenderingControl1Std.$(objext) : $(deviceCppStd)DvUpnpOrgRenderingControl1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgRenderingControl1.h
-	$(compiler)DvUpnpOrgRenderingControl1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgRenderingControl1Std.cpp
+	$(compiler)DvUpnpOrgRenderingControl1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgRenderingControl1Std.cpp
 $(objdir)DvUpnpOrgRenderingControl1C.$(objext) : $(deviceC)DvUpnpOrgRenderingControl1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgRenderingControl1.h
-	$(compiler)DvUpnpOrgRenderingControl1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgRenderingControl1C.cpp
+	$(compiler)DvUpnpOrgRenderingControl1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgRenderingControl1C.cpp
 $(objdir)DvUpnpOrgRenderingControl2.$(objext) : $(deviceCppCore)DvUpnpOrgRenderingControl2.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgRenderingControl2.h
-	$(compiler)DvUpnpOrgRenderingControl2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgRenderingControl2.cpp
+	$(compiler)DvUpnpOrgRenderingControl2.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgRenderingControl2.cpp
 $(objdir)DvUpnpOrgRenderingControl2Std.$(objext) : $(deviceCppStd)DvUpnpOrgRenderingControl2Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgRenderingControl2.h
-	$(compiler)DvUpnpOrgRenderingControl2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgRenderingControl2Std.cpp
+	$(compiler)DvUpnpOrgRenderingControl2Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgRenderingControl2Std.cpp
 $(objdir)DvUpnpOrgRenderingControl2C.$(objext) : $(deviceC)DvUpnpOrgRenderingControl2C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgRenderingControl2.h
-	$(compiler)DvUpnpOrgRenderingControl2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgRenderingControl2C.cpp
+	$(compiler)DvUpnpOrgRenderingControl2C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgRenderingControl2C.cpp
 $(objdir)DvUpnpOrgScheduledRecording1.$(objext) : $(deviceCppCore)DvUpnpOrgScheduledRecording1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgScheduledRecording1.h
-	$(compiler)DvUpnpOrgScheduledRecording1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgScheduledRecording1.cpp
+	$(compiler)DvUpnpOrgScheduledRecording1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgScheduledRecording1.cpp
 $(objdir)DvUpnpOrgScheduledRecording1Std.$(objext) : $(deviceCppStd)DvUpnpOrgScheduledRecording1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgScheduledRecording1.h
-	$(compiler)DvUpnpOrgScheduledRecording1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgScheduledRecording1Std.cpp
+	$(compiler)DvUpnpOrgScheduledRecording1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgScheduledRecording1Std.cpp
 $(objdir)DvUpnpOrgScheduledRecording1C.$(objext) : $(deviceC)DvUpnpOrgScheduledRecording1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgScheduledRecording1.h
-	$(compiler)DvUpnpOrgScheduledRecording1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgScheduledRecording1C.cpp
+	$(compiler)DvUpnpOrgScheduledRecording1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgScheduledRecording1C.cpp
 $(objdir)DvUpnpOrgScheduledRecording2.$(objext) : $(deviceCppCore)DvUpnpOrgScheduledRecording2.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgScheduledRecording2.h
-	$(compiler)DvUpnpOrgScheduledRecording2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgScheduledRecording2.cpp
+	$(compiler)DvUpnpOrgScheduledRecording2.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgScheduledRecording2.cpp
 $(objdir)DvUpnpOrgScheduledRecording2Std.$(objext) : $(deviceCppStd)DvUpnpOrgScheduledRecording2Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgScheduledRecording2.h
-	$(compiler)DvUpnpOrgScheduledRecording2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgScheduledRecording2Std.cpp
+	$(compiler)DvUpnpOrgScheduledRecording2Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgScheduledRecording2Std.cpp
 $(objdir)DvUpnpOrgScheduledRecording2C.$(objext) : $(deviceC)DvUpnpOrgScheduledRecording2C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgScheduledRecording2.h
-	$(compiler)DvUpnpOrgScheduledRecording2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgScheduledRecording2C.cpp
+	$(compiler)DvUpnpOrgScheduledRecording2C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgScheduledRecording2C.cpp
 $(objdir)DvUpnpOrgSwitchPower1.$(objext) : $(deviceCppCore)DvUpnpOrgSwitchPower1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgSwitchPower1.h
-	$(compiler)DvUpnpOrgSwitchPower1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgSwitchPower1.cpp
+	$(compiler)DvUpnpOrgSwitchPower1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgSwitchPower1.cpp
 $(objdir)DvUpnpOrgSwitchPower1Std.$(objext) : $(deviceCppStd)DvUpnpOrgSwitchPower1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgSwitchPower1.h
-	$(compiler)DvUpnpOrgSwitchPower1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgSwitchPower1Std.cpp
+	$(compiler)DvUpnpOrgSwitchPower1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgSwitchPower1Std.cpp
 $(objdir)DvUpnpOrgSwitchPower1C.$(objext) : $(deviceC)DvUpnpOrgSwitchPower1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgSwitchPower1.h
-	$(compiler)DvUpnpOrgSwitchPower1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgSwitchPower1C.cpp
+	$(compiler)DvUpnpOrgSwitchPower1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgSwitchPower1C.cpp
 $(objdir)DvUpnpOrgDimming1.$(objext) : $(deviceCppCore)DvUpnpOrgDimming1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvUpnpOrgDimming1.h
-	$(compiler)DvUpnpOrgDimming1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgDimming1.cpp
+	$(compiler)DvUpnpOrgDimming1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvUpnpOrgDimming1.cpp
 $(objdir)DvUpnpOrgDimming1Std.$(objext) : $(deviceCppStd)DvUpnpOrgDimming1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvUpnpOrgDimming1.h
-	$(compiler)DvUpnpOrgDimming1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgDimming1Std.cpp
+	$(compiler)DvUpnpOrgDimming1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvUpnpOrgDimming1Std.cpp
 $(objdir)DvUpnpOrgDimming1C.$(objext) : $(deviceC)DvUpnpOrgDimming1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvUpnpOrgDimming1.h
-	$(compiler)DvUpnpOrgDimming1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgDimming1C.cpp
+	$(compiler)DvUpnpOrgDimming1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvUpnpOrgDimming1C.cpp
 $(objdir)DvAvOpenhomeOrgInfo1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgInfo1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgInfo1.h
-	$(compiler)DvAvOpenhomeOrgInfo1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgInfo1.cpp
+	$(compiler)DvAvOpenhomeOrgInfo1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgInfo1.cpp
 $(objdir)DvAvOpenhomeOrgInfo1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgInfo1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgInfo1.h
-	$(compiler)DvAvOpenhomeOrgInfo1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgInfo1Std.cpp
+	$(compiler)DvAvOpenhomeOrgInfo1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgInfo1Std.cpp
 $(objdir)DvAvOpenhomeOrgInfo1C.$(objext) : $(deviceC)DvAvOpenhomeOrgInfo1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgInfo1.h
-	$(compiler)DvAvOpenhomeOrgInfo1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgInfo1C.cpp
+	$(compiler)DvAvOpenhomeOrgInfo1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgInfo1C.cpp
 $(objdir)DvAvOpenhomeOrgTime1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgTime1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgTime1.h
-	$(compiler)DvAvOpenhomeOrgTime1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgTime1.cpp
+	$(compiler)DvAvOpenhomeOrgTime1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgTime1.cpp
 $(objdir)DvAvOpenhomeOrgTime1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgTime1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgTime1.h
-	$(compiler)DvAvOpenhomeOrgTime1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgTime1Std.cpp
+	$(compiler)DvAvOpenhomeOrgTime1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgTime1Std.cpp
 $(objdir)DvAvOpenhomeOrgTime1C.$(objext) : $(deviceC)DvAvOpenhomeOrgTime1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgTime1.h
-	$(compiler)DvAvOpenhomeOrgTime1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgTime1C.cpp
+	$(compiler)DvAvOpenhomeOrgTime1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgTime1C.cpp
 $(objdir)DvAvOpenhomeOrgPlaylist1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgPlaylist1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgPlaylist1.h
-	$(compiler)DvAvOpenhomeOrgPlaylist1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgPlaylist1.cpp
+	$(compiler)DvAvOpenhomeOrgPlaylist1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgPlaylist1.cpp
 $(objdir)DvAvOpenhomeOrgPlaylist1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgPlaylist1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgPlaylist1.h
-	$(compiler)DvAvOpenhomeOrgPlaylist1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgPlaylist1Std.cpp
+	$(compiler)DvAvOpenhomeOrgPlaylist1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgPlaylist1Std.cpp
 $(objdir)DvAvOpenhomeOrgPlaylist1C.$(objext) : $(deviceC)DvAvOpenhomeOrgPlaylist1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgPlaylist1.h
-	$(compiler)DvAvOpenhomeOrgPlaylist1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgPlaylist1C.cpp
+	$(compiler)DvAvOpenhomeOrgPlaylist1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgPlaylist1C.cpp
 $(objdir)DvAvOpenhomeOrgVolume1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgVolume1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgVolume1.h
-	$(compiler)DvAvOpenhomeOrgVolume1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgVolume1.cpp
+	$(compiler)DvAvOpenhomeOrgVolume1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgVolume1.cpp
 $(objdir)DvAvOpenhomeOrgVolume1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgVolume1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgVolume1.h
-	$(compiler)DvAvOpenhomeOrgVolume1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgVolume1Std.cpp
+	$(compiler)DvAvOpenhomeOrgVolume1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgVolume1Std.cpp
 $(objdir)DvAvOpenhomeOrgVolume1C.$(objext) : $(deviceC)DvAvOpenhomeOrgVolume1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgVolume1.h
-	$(compiler)DvAvOpenhomeOrgVolume1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgVolume1C.cpp
+	$(compiler)DvAvOpenhomeOrgVolume1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgVolume1C.cpp
 $(objdir)DvAvOpenhomeOrgProduct1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgProduct1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgProduct1.h
-	$(compiler)DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgProduct1.cpp
+	$(compiler)DvAvOpenhomeOrgProduct1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgProduct1.cpp
 $(objdir)DvAvOpenhomeOrgProduct1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgProduct1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgProduct1.h
-	$(compiler)DvAvOpenhomeOrgProduct1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgProduct1Std.cpp
+	$(compiler)DvAvOpenhomeOrgProduct1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgProduct1Std.cpp
 $(objdir)DvAvOpenhomeOrgProduct1C.$(objext) : $(deviceC)DvAvOpenhomeOrgProduct1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgProduct1.h
-	$(compiler)DvAvOpenhomeOrgProduct1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgProduct1C.cpp
+	$(compiler)DvAvOpenhomeOrgProduct1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgProduct1C.cpp
 $(objdir)DvAvOpenhomeOrgRadio1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgRadio1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgRadio1.h
-	$(compiler)DvAvOpenhomeOrgRadio1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgRadio1.cpp
+	$(compiler)DvAvOpenhomeOrgRadio1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgRadio1.cpp
 $(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgRadio1.h
-	$(compiler)DvAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp
+	$(compiler)DvAvOpenhomeOrgRadio1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp
 $(objdir)DvAvOpenhomeOrgRadio1C.$(objext) : $(deviceC)DvAvOpenhomeOrgRadio1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgRadio1.h
-	$(compiler)DvAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgRadio1C.cpp
+	$(compiler)DvAvOpenhomeOrgRadio1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgRadio1C.cpp
 $(objdir)DvAvOpenhomeOrgReceiver1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgReceiver1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgReceiver1.h
-	$(compiler)DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgReceiver1.cpp
+	$(compiler)DvAvOpenhomeOrgReceiver1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgReceiver1.cpp
 $(objdir)DvAvOpenhomeOrgReceiver1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgReceiver1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgReceiver1.h
-	$(compiler)DvAvOpenhomeOrgReceiver1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgReceiver1Std.cpp
+	$(compiler)DvAvOpenhomeOrgReceiver1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgReceiver1Std.cpp
 $(objdir)DvAvOpenhomeOrgReceiver1C.$(objext) : $(deviceC)DvAvOpenhomeOrgReceiver1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgReceiver1.h
-	$(compiler)DvAvOpenhomeOrgReceiver1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgReceiver1C.cpp
+	$(compiler)DvAvOpenhomeOrgReceiver1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgReceiver1C.cpp
 $(objdir)DvAvOpenhomeOrgSender1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgSender1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgSender1.h
-	$(compiler)DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgSender1.cpp
+	$(compiler)DvAvOpenhomeOrgSender1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgSender1.cpp
 $(objdir)DvAvOpenhomeOrgSender1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgSender1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgSender1.h
-	$(compiler)DvAvOpenhomeOrgSender1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgSender1Std.cpp
+	$(compiler)DvAvOpenhomeOrgSender1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgSender1Std.cpp
 $(objdir)DvAvOpenhomeOrgSender1C.$(objext) : $(deviceC)DvAvOpenhomeOrgSender1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgSender1.h
-	$(compiler)DvAvOpenhomeOrgSender1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgSender1C.cpp
+	$(compiler)DvAvOpenhomeOrgSender1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgSender1C.cpp
 $(objdir)DvAvOpenhomeOrgPlaylistManager1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgPlaylistManager1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgPlaylistManager1.h
-	$(compiler)DvAvOpenhomeOrgPlaylistManager1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgPlaylistManager1.cpp
+	$(compiler)DvAvOpenhomeOrgPlaylistManager1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgPlaylistManager1.cpp
 $(objdir)DvAvOpenhomeOrgPlaylistManager1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgPlaylistManager1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgPlaylistManager1.h
-	$(compiler)DvAvOpenhomeOrgPlaylistManager1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgPlaylistManager1Std.cpp
+	$(compiler)DvAvOpenhomeOrgPlaylistManager1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgPlaylistManager1Std.cpp
 $(objdir)DvAvOpenhomeOrgPlaylistManager1C.$(objext) : $(deviceC)DvAvOpenhomeOrgPlaylistManager1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgPlaylistManager1.h
-	$(compiler)DvAvOpenhomeOrgPlaylistManager1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgPlaylistManager1C.cpp
+	$(compiler)DvAvOpenhomeOrgPlaylistManager1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgPlaylistManager1C.cpp
 $(objdir)DvAvOpenhomeOrgMediaServer1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgMediaServer1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgMediaServer1.h
-	$(compiler)DvAvOpenhomeOrgMediaServer1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgMediaServer1.cpp
+	$(compiler)DvAvOpenhomeOrgMediaServer1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgMediaServer1.cpp
 $(objdir)DvAvOpenhomeOrgMediaServer1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgMediaServer1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgMediaServer1.h
-	$(compiler)DvAvOpenhomeOrgMediaServer1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgMediaServer1Std.cpp
+	$(compiler)DvAvOpenhomeOrgMediaServer1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgMediaServer1Std.cpp
 $(objdir)DvAvOpenhomeOrgMediaServer1C.$(objext) : $(deviceC)DvAvOpenhomeOrgMediaServer1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgMediaServer1.h
-	$(compiler)DvAvOpenhomeOrgMediaServer1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgMediaServer1C.cpp
+	$(compiler)DvAvOpenhomeOrgMediaServer1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgMediaServer1C.cpp
 $(objdir)DvAvOpenhomeOrgNetworkMonitor1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgNetworkMonitor1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgNetworkMonitor1.h
-	$(compiler)DvAvOpenhomeOrgNetworkMonitor1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgNetworkMonitor1.cpp
+	$(compiler)DvAvOpenhomeOrgNetworkMonitor1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgNetworkMonitor1.cpp
 $(objdir)DvAvOpenhomeOrgNetworkMonitor1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgNetworkMonitor1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgNetworkMonitor1.h
-	$(compiler)DvAvOpenhomeOrgNetworkMonitor1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgNetworkMonitor1Std.cpp
+	$(compiler)DvAvOpenhomeOrgNetworkMonitor1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgNetworkMonitor1Std.cpp
 $(objdir)DvAvOpenhomeOrgNetworkMonitor1C.$(objext) : $(deviceC)DvAvOpenhomeOrgNetworkMonitor1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgNetworkMonitor1.h
-	$(compiler)DvAvOpenhomeOrgNetworkMonitor1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgNetworkMonitor1C.cpp
+	$(compiler)DvAvOpenhomeOrgNetworkMonitor1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvAvOpenhomeOrgNetworkMonitor1C.cpp
 $(objdir)DvOpenhomeOrgTestBasic1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvOpenhomeOrgTestBasic1.h
-	$(compiler)DvOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp
+	$(compiler)DvOpenhomeOrgTestBasic1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp
 $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgTestBasic1.h
-	$(compiler)DvOpenhomeOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp
+	$(compiler)DvOpenhomeOrgTestBasic1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp
 $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) : $(deviceC)DvOpenhomeOrgTestBasic1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgTestBasic1.h
-	$(compiler)DvOpenhomeOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestBasic1C.cpp
+	$(compiler)DvOpenhomeOrgTestBasic1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvOpenhomeOrgTestBasic1C.cpp
 $(objdir)DvOpenhomeOrgTestLights1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestLights1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvOpenhomeOrgTestLights1.h
-	$(compiler)DvOpenhomeOrgTestLights1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestLights1.cpp
+	$(compiler)DvOpenhomeOrgTestLights1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestLights1.cpp
 $(objdir)DvOpenhomeOrgTestLights1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestLights1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgTestLights1.h
-	$(compiler)DvOpenhomeOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestLights1Std.cpp
+	$(compiler)DvOpenhomeOrgTestLights1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestLights1Std.cpp
 $(objdir)DvOpenhomeOrgTestLights1C.$(objext) : $(deviceC)DvOpenhomeOrgTestLights1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgTestLights1.h
-	$(compiler)DvOpenhomeOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestLights1C.cpp
+	$(compiler)DvOpenhomeOrgTestLights1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvOpenhomeOrgTestLights1C.cpp
 $(objdir)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) : $(deviceCppCore)DvOpenhomeOrgSubscriptionLongPoll1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgSubscriptionLongPoll1.cpp
+	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1.$(objext) -c $(cppflags) $(includes) $(deviceCppCore)DvOpenhomeOrgSubscriptionLongPoll1.cpp
 $(objdir)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgSubscriptionLongPoll1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgSubscriptionLongPoll1Std.cpp
+	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cppflags) $(includes) $(deviceCppStd)DvOpenhomeOrgSubscriptionLongPoll1Std.cpp
 $(objdir)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) : $(deviceC)DvOpenhomeOrgSubscriptionLongPoll1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgSubscriptionLongPoll1C.cpp
+	$(compiler)DvOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cppflags) $(includes) $(deviceC)DvOpenhomeOrgSubscriptionLongPoll1C.cpp
 
 device_dlls = \
              DvUpnpOrgAVTransport1Dll \

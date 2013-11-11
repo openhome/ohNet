@@ -42,6 +42,7 @@ android_ndk_debug = 0
 ar = lib /nologo /out:$(objdir)
 cflags_third_party = $(debug_specific_cflags) /W4 /EHsc /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS
 cflags = $(cflags_third_party) /WX
+cppflags = $(cflags)
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include

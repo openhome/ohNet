@@ -190,167 +190,167 @@ proxy_java_classes_with_path = \
 proxies : ohNetCore $(objects_proxies)
 	$(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxyCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgAVTransport1.h
-	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgAVTransport1.cpp
+	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgAVTransport1.cpp
 $(objdir)CpUpnpOrgAVTransport1C.$(objext) : $(proxyC)CpUpnpOrgAVTransport1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgAVTransport1.h
-	$(compiler)CpUpnpOrgAVTransport1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgAVTransport1C.cpp
+	$(compiler)CpUpnpOrgAVTransport1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgAVTransport1C.cpp
 $(objdir)CpUpnpOrgAVTransport1Std.$(objext) : $(proxyCppStd)CpUpnpOrgAVTransport1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgAVTransport1.h
-	$(compiler)CpUpnpOrgAVTransport1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgAVTransport1Std.cpp
+	$(compiler)CpUpnpOrgAVTransport1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgAVTransport1Std.cpp
 $(objdir)CpUpnpOrgAVTransport2.$(objext) : $(proxyCppCore)CpUpnpOrgAVTransport2.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgAVTransport2.h
-	$(compiler)CpUpnpOrgAVTransport2.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgAVTransport2.cpp
+	$(compiler)CpUpnpOrgAVTransport2.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgAVTransport2.cpp
 $(objdir)CpUpnpOrgAVTransport2C.$(objext) : $(proxyC)CpUpnpOrgAVTransport2C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgAVTransport2.h
-	$(compiler)CpUpnpOrgAVTransport2C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgAVTransport2C.cpp
+	$(compiler)CpUpnpOrgAVTransport2C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgAVTransport2C.cpp
 $(objdir)CpUpnpOrgAVTransport2Std.$(objext) : $(proxyCppStd)CpUpnpOrgAVTransport2Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgAVTransport2.h
-	$(compiler)CpUpnpOrgAVTransport2Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgAVTransport2Std.cpp
+	$(compiler)CpUpnpOrgAVTransport2Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgAVTransport2Std.cpp
 $(objdir)CpUpnpOrgConnectionManager1.$(objext) : $(proxyCppCore)CpUpnpOrgConnectionManager1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgConnectionManager1.h
-	$(compiler)CpUpnpOrgConnectionManager1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgConnectionManager1.cpp
+	$(compiler)CpUpnpOrgConnectionManager1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgConnectionManager1.cpp
 $(objdir)CpUpnpOrgConnectionManager1C.$(objext) : $(proxyC)CpUpnpOrgConnectionManager1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgConnectionManager1.h
-	$(compiler)CpUpnpOrgConnectionManager1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgConnectionManager1C.cpp
+	$(compiler)CpUpnpOrgConnectionManager1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgConnectionManager1C.cpp
 $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) : $(proxyCppStd)CpUpnpOrgConnectionManager1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgConnectionManager1.h
-	$(compiler)CpUpnpOrgConnectionManager1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgConnectionManager1Std.cpp
+	$(compiler)CpUpnpOrgConnectionManager1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgConnectionManager1Std.cpp
 $(objdir)CpUpnpOrgConnectionManager2.$(objext) : $(proxyCppCore)CpUpnpOrgConnectionManager2.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgConnectionManager2.h
-	$(compiler)CpUpnpOrgConnectionManager2.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgConnectionManager2.cpp
+	$(compiler)CpUpnpOrgConnectionManager2.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgConnectionManager2.cpp
 $(objdir)CpUpnpOrgConnectionManager2C.$(objext) : $(proxyC)CpUpnpOrgConnectionManager2C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgConnectionManager2.h
-	$(compiler)CpUpnpOrgConnectionManager2C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgConnectionManager2C.cpp
+	$(compiler)CpUpnpOrgConnectionManager2C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgConnectionManager2C.cpp
 $(objdir)CpUpnpOrgConnectionManager2Std.$(objext) : $(proxyCppStd)CpUpnpOrgConnectionManager2Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgConnectionManager2.h
-	$(compiler)CpUpnpOrgConnectionManager2Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgConnectionManager2Std.cpp
+	$(compiler)CpUpnpOrgConnectionManager2Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgConnectionManager2Std.cpp
 $(objdir)CpUpnpOrgContentDirectory1.$(objext) : $(proxyCppCore)CpUpnpOrgContentDirectory1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgContentDirectory1.h
-	$(compiler)CpUpnpOrgContentDirectory1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgContentDirectory1.cpp
+	$(compiler)CpUpnpOrgContentDirectory1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgContentDirectory1.cpp
 $(objdir)CpUpnpOrgContentDirectory1C.$(objext) : $(proxyC)CpUpnpOrgContentDirectory1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgContentDirectory1.h
-	$(compiler)CpUpnpOrgContentDirectory1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgContentDirectory1C.cpp
+	$(compiler)CpUpnpOrgContentDirectory1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgContentDirectory1C.cpp
 $(objdir)CpUpnpOrgContentDirectory1Std.$(objext) : $(proxyCppStd)CpUpnpOrgContentDirectory1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgContentDirectory1.h
-	$(compiler)CpUpnpOrgContentDirectory1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgContentDirectory1Std.cpp
+	$(compiler)CpUpnpOrgContentDirectory1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgContentDirectory1Std.cpp
 $(objdir)CpUpnpOrgContentDirectory2.$(objext) : $(proxyCppCore)CpUpnpOrgContentDirectory2.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgContentDirectory2.h
-	$(compiler)CpUpnpOrgContentDirectory2.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgContentDirectory2.cpp
+	$(compiler)CpUpnpOrgContentDirectory2.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgContentDirectory2.cpp
 $(objdir)CpUpnpOrgContentDirectory2C.$(objext) : $(proxyC)CpUpnpOrgContentDirectory2C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgContentDirectory2.h
-	$(compiler)CpUpnpOrgContentDirectory2C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgContentDirectory2C.cpp
+	$(compiler)CpUpnpOrgContentDirectory2C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgContentDirectory2C.cpp
 $(objdir)CpUpnpOrgContentDirectory2Std.$(objext) : $(proxyCppStd)CpUpnpOrgContentDirectory2Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgContentDirectory2.h
-	$(compiler)CpUpnpOrgContentDirectory2Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgContentDirectory2Std.cpp
+	$(compiler)CpUpnpOrgContentDirectory2Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgContentDirectory2Std.cpp
 $(objdir)CpUpnpOrgContentDirectory3.$(objext) : $(proxyCppCore)CpUpnpOrgContentDirectory3.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgContentDirectory3.h
-	$(compiler)CpUpnpOrgContentDirectory3.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgContentDirectory3.cpp
+	$(compiler)CpUpnpOrgContentDirectory3.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgContentDirectory3.cpp
 $(objdir)CpUpnpOrgContentDirectory3C.$(objext) : $(proxyC)CpUpnpOrgContentDirectory3C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgContentDirectory3.h
-	$(compiler)CpUpnpOrgContentDirectory3C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgContentDirectory3C.cpp
+	$(compiler)CpUpnpOrgContentDirectory3C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgContentDirectory3C.cpp
 $(objdir)CpUpnpOrgContentDirectory3Std.$(objext) : $(proxyCppStd)CpUpnpOrgContentDirectory3Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgContentDirectory3.h
-	$(compiler)CpUpnpOrgContentDirectory3Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgContentDirectory3Std.cpp
+	$(compiler)CpUpnpOrgContentDirectory3Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgContentDirectory3Std.cpp
 $(objdir)CpUpnpOrgRenderingControl1.$(objext) : $(proxyCppCore)CpUpnpOrgRenderingControl1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgRenderingControl1.h
-	$(compiler)CpUpnpOrgRenderingControl1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgRenderingControl1.cpp
+	$(compiler)CpUpnpOrgRenderingControl1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgRenderingControl1.cpp
 $(objdir)CpUpnpOrgRenderingControl1C.$(objext) : $(proxyC)CpUpnpOrgRenderingControl1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgRenderingControl1.h
-	$(compiler)CpUpnpOrgRenderingControl1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgRenderingControl1C.cpp
+	$(compiler)CpUpnpOrgRenderingControl1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgRenderingControl1C.cpp
 $(objdir)CpUpnpOrgRenderingControl1Std.$(objext) : $(proxyCppStd)CpUpnpOrgRenderingControl1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgRenderingControl1.h
-	$(compiler)CpUpnpOrgRenderingControl1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgRenderingControl1Std.cpp
+	$(compiler)CpUpnpOrgRenderingControl1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgRenderingControl1Std.cpp
 $(objdir)CpUpnpOrgRenderingControl2.$(objext) : $(proxyCppCore)CpUpnpOrgRenderingControl2.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgRenderingControl2.h
-	$(compiler)CpUpnpOrgRenderingControl2.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgRenderingControl2.cpp
+	$(compiler)CpUpnpOrgRenderingControl2.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgRenderingControl2.cpp
 $(objdir)CpUpnpOrgRenderingControl2C.$(objext) : $(proxyC)CpUpnpOrgRenderingControl2C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgRenderingControl2.h
-	$(compiler)CpUpnpOrgRenderingControl2C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgRenderingControl2C.cpp
+	$(compiler)CpUpnpOrgRenderingControl2C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgRenderingControl2C.cpp
 $(objdir)CpUpnpOrgRenderingControl2Std.$(objext) : $(proxyCppStd)CpUpnpOrgRenderingControl2Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgRenderingControl2.h
-	$(compiler)CpUpnpOrgRenderingControl2Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgRenderingControl2Std.cpp
+	$(compiler)CpUpnpOrgRenderingControl2Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgRenderingControl2Std.cpp
 $(objdir)CpUpnpOrgScheduledRecording1.$(objext) : $(proxyCppCore)CpUpnpOrgScheduledRecording1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgScheduledRecording1.h
-	$(compiler)CpUpnpOrgScheduledRecording1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgScheduledRecording1.cpp
+	$(compiler)CpUpnpOrgScheduledRecording1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgScheduledRecording1.cpp
 $(objdir)CpUpnpOrgScheduledRecording1C.$(objext) : $(proxyC)CpUpnpOrgScheduledRecording1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgScheduledRecording1.h
-	$(compiler)CpUpnpOrgScheduledRecording1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgScheduledRecording1C.cpp
+	$(compiler)CpUpnpOrgScheduledRecording1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgScheduledRecording1C.cpp
 $(objdir)CpUpnpOrgScheduledRecording1Std.$(objext) : $(proxyCppStd)CpUpnpOrgScheduledRecording1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgScheduledRecording1.h
-	$(compiler)CpUpnpOrgScheduledRecording1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgScheduledRecording1Std.cpp
+	$(compiler)CpUpnpOrgScheduledRecording1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgScheduledRecording1Std.cpp
 $(objdir)CpUpnpOrgScheduledRecording2.$(objext) : $(proxyCppCore)CpUpnpOrgScheduledRecording2.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgScheduledRecording2.h
-	$(compiler)CpUpnpOrgScheduledRecording2.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgScheduledRecording2.cpp
+	$(compiler)CpUpnpOrgScheduledRecording2.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgScheduledRecording2.cpp
 $(objdir)CpUpnpOrgScheduledRecording2C.$(objext) : $(proxyC)CpUpnpOrgScheduledRecording2C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgScheduledRecording2.h
-	$(compiler)CpUpnpOrgScheduledRecording2C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgScheduledRecording2C.cpp
+	$(compiler)CpUpnpOrgScheduledRecording2C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgScheduledRecording2C.cpp
 $(objdir)CpUpnpOrgScheduledRecording2Std.$(objext) : $(proxyCppStd)CpUpnpOrgScheduledRecording2Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgScheduledRecording2.h
-	$(compiler)CpUpnpOrgScheduledRecording2Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgScheduledRecording2Std.cpp
+	$(compiler)CpUpnpOrgScheduledRecording2Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgScheduledRecording2Std.cpp
 $(objdir)CpUpnpOrgSwitchPower1.$(objext) : $(proxyCppCore)CpUpnpOrgSwitchPower1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgSwitchPower1.h
-	$(compiler)CpUpnpOrgSwitchPower1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgSwitchPower1.cpp
+	$(compiler)CpUpnpOrgSwitchPower1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgSwitchPower1.cpp
 $(objdir)CpUpnpOrgSwitchPower1C.$(objext) : $(proxyC)CpUpnpOrgSwitchPower1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgSwitchPower1.h
-	$(compiler)CpUpnpOrgSwitchPower1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgSwitchPower1C.cpp
+	$(compiler)CpUpnpOrgSwitchPower1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgSwitchPower1C.cpp
 $(objdir)CpUpnpOrgSwitchPower1Std.$(objext) : $(proxyCppStd)CpUpnpOrgSwitchPower1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgSwitchPower1.h
-	$(compiler)CpUpnpOrgSwitchPower1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgSwitchPower1Std.cpp
+	$(compiler)CpUpnpOrgSwitchPower1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgSwitchPower1Std.cpp
 $(objdir)CpUpnpOrgDimming1.$(objext) : $(proxyCppCore)CpUpnpOrgDimming1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpUpnpOrgDimming1.h
-	$(compiler)CpUpnpOrgDimming1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgDimming1.cpp
+	$(compiler)CpUpnpOrgDimming1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpUpnpOrgDimming1.cpp
 $(objdir)CpUpnpOrgDimming1C.$(objext) : $(proxyC)CpUpnpOrgDimming1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpUpnpOrgDimming1.h
-	$(compiler)CpUpnpOrgDimming1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpUpnpOrgDimming1C.cpp
+	$(compiler)CpUpnpOrgDimming1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpUpnpOrgDimming1C.cpp
 $(objdir)CpUpnpOrgDimming1Std.$(objext) : $(proxyCppStd)CpUpnpOrgDimming1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpUpnpOrgDimming1.h
-	$(compiler)CpUpnpOrgDimming1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpUpnpOrgDimming1Std.cpp
+	$(compiler)CpUpnpOrgDimming1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpUpnpOrgDimming1Std.cpp
 $(objdir)CpAvOpenhomeOrgInfo1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgInfo1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgInfo1.h
-	$(compiler)CpAvOpenhomeOrgInfo1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgInfo1.cpp
+	$(compiler)CpAvOpenhomeOrgInfo1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgInfo1.cpp
 $(objdir)CpAvOpenhomeOrgInfo1C.$(objext) : $(proxyC)CpAvOpenhomeOrgInfo1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgInfo1.h
-	$(compiler)CpAvOpenhomeOrgInfo1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgInfo1C.cpp
+	$(compiler)CpAvOpenhomeOrgInfo1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgInfo1C.cpp
 $(objdir)CpAvOpenhomeOrgInfo1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgInfo1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgInfo1.h
-	$(compiler)CpAvOpenhomeOrgInfo1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgInfo1Std.cpp
+	$(compiler)CpAvOpenhomeOrgInfo1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgInfo1Std.cpp
 $(objdir)CpAvOpenhomeOrgTime1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgTime1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgTime1.h
-	$(compiler)CpAvOpenhomeOrgTime1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgTime1.cpp
+	$(compiler)CpAvOpenhomeOrgTime1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgTime1.cpp
 $(objdir)CpAvOpenhomeOrgTime1C.$(objext) : $(proxyC)CpAvOpenhomeOrgTime1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgTime1.h
-	$(compiler)CpAvOpenhomeOrgTime1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgTime1C.cpp
+	$(compiler)CpAvOpenhomeOrgTime1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgTime1C.cpp
 $(objdir)CpAvOpenhomeOrgTime1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgTime1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgTime1.h
-	$(compiler)CpAvOpenhomeOrgTime1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgTime1Std.cpp
+	$(compiler)CpAvOpenhomeOrgTime1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgTime1Std.cpp
 $(objdir)CpAvOpenhomeOrgPlaylist1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgPlaylist1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylist1.h
-	$(compiler)CpAvOpenhomeOrgPlaylist1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgPlaylist1.cpp
+	$(compiler)CpAvOpenhomeOrgPlaylist1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgPlaylist1.cpp
 $(objdir)CpAvOpenhomeOrgPlaylist1C.$(objext) : $(proxyC)CpAvOpenhomeOrgPlaylist1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylist1.h
-	$(compiler)CpAvOpenhomeOrgPlaylist1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgPlaylist1C.cpp
+	$(compiler)CpAvOpenhomeOrgPlaylist1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgPlaylist1C.cpp
 $(objdir)CpAvOpenhomeOrgPlaylist1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgPlaylist1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylist1.h
-	$(compiler)CpAvOpenhomeOrgPlaylist1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgPlaylist1Std.cpp
+	$(compiler)CpAvOpenhomeOrgPlaylist1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgPlaylist1Std.cpp
 $(objdir)CpAvOpenhomeOrgVolume1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgVolume1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgVolume1.h
-	$(compiler)CpAvOpenhomeOrgVolume1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgVolume1.cpp
+	$(compiler)CpAvOpenhomeOrgVolume1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgVolume1.cpp
 $(objdir)CpAvOpenhomeOrgVolume1C.$(objext) : $(proxyC)CpAvOpenhomeOrgVolume1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgVolume1.h
-	$(compiler)CpAvOpenhomeOrgVolume1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgVolume1C.cpp
+	$(compiler)CpAvOpenhomeOrgVolume1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgVolume1C.cpp
 $(objdir)CpAvOpenhomeOrgVolume1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgVolume1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgVolume1.h
-	$(compiler)CpAvOpenhomeOrgVolume1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgVolume1Std.cpp
+	$(compiler)CpAvOpenhomeOrgVolume1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgVolume1Std.cpp
 $(objdir)CpAvOpenhomeOrgProduct1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgProduct1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgProduct1.h
-	$(compiler)CpAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgProduct1.cpp
+	$(compiler)CpAvOpenhomeOrgProduct1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgProduct1.cpp
 $(objdir)CpAvOpenhomeOrgProduct1C.$(objext) : $(proxyC)CpAvOpenhomeOrgProduct1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgProduct1.h
-	$(compiler)CpAvOpenhomeOrgProduct1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgProduct1C.cpp
+	$(compiler)CpAvOpenhomeOrgProduct1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgProduct1C.cpp
 $(objdir)CpAvOpenhomeOrgProduct1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgProduct1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgProduct1.h
-	$(compiler)CpAvOpenhomeOrgProduct1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgProduct1Std.cpp
+	$(compiler)CpAvOpenhomeOrgProduct1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgProduct1Std.cpp
 $(objdir)CpAvOpenhomeOrgRadio1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgRadio1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgRadio1.h
-	$(compiler)CpAvOpenhomeOrgRadio1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgRadio1.cpp
+	$(compiler)CpAvOpenhomeOrgRadio1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgRadio1.cpp
 $(objdir)CpAvOpenhomeOrgRadio1C.$(objext) : $(proxyC)CpAvOpenhomeOrgRadio1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgRadio1.h
-	$(compiler)CpAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgRadio1C.cpp
+	$(compiler)CpAvOpenhomeOrgRadio1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgRadio1C.cpp
 $(objdir)CpAvOpenhomeOrgRadio1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgRadio1.h
-	$(compiler)CpAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp
+	$(compiler)CpAvOpenhomeOrgRadio1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp
 $(objdir)CpAvOpenhomeOrgReceiver1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgReceiver1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgReceiver1.h
-	$(compiler)CpAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgReceiver1.cpp
+	$(compiler)CpAvOpenhomeOrgReceiver1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgReceiver1.cpp
 $(objdir)CpAvOpenhomeOrgReceiver1C.$(objext) : $(proxyC)CpAvOpenhomeOrgReceiver1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgReceiver1.h
-	$(compiler)CpAvOpenhomeOrgReceiver1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgReceiver1C.cpp
+	$(compiler)CpAvOpenhomeOrgReceiver1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgReceiver1C.cpp
 $(objdir)CpAvOpenhomeOrgReceiver1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgReceiver1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgReceiver1.h
-	$(compiler)CpAvOpenhomeOrgReceiver1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgReceiver1Std.cpp
+	$(compiler)CpAvOpenhomeOrgReceiver1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgReceiver1Std.cpp
 $(objdir)CpAvOpenhomeOrgSender1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgSender1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgSender1.h
-	$(compiler)CpAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgSender1.cpp
+	$(compiler)CpAvOpenhomeOrgSender1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgSender1.cpp
 $(objdir)CpAvOpenhomeOrgSender1C.$(objext) : $(proxyC)CpAvOpenhomeOrgSender1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgSender1.h
-	$(compiler)CpAvOpenhomeOrgSender1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgSender1C.cpp
+	$(compiler)CpAvOpenhomeOrgSender1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgSender1C.cpp
 $(objdir)CpAvOpenhomeOrgSender1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgSender1.h
-	$(compiler)CpAvOpenhomeOrgSender1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp
+	$(compiler)CpAvOpenhomeOrgSender1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp
 $(objdir)CpAvOpenhomeOrgPlaylistManager1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgPlaylistManager1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylistManager1.h
-	$(compiler)CpAvOpenhomeOrgPlaylistManager1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgPlaylistManager1.cpp
+	$(compiler)CpAvOpenhomeOrgPlaylistManager1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgPlaylistManager1.cpp
 $(objdir)CpAvOpenhomeOrgPlaylistManager1C.$(objext) : $(proxyC)CpAvOpenhomeOrgPlaylistManager1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylistManager1.h
-	$(compiler)CpAvOpenhomeOrgPlaylistManager1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgPlaylistManager1C.cpp
+	$(compiler)CpAvOpenhomeOrgPlaylistManager1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgPlaylistManager1C.cpp
 $(objdir)CpAvOpenhomeOrgPlaylistManager1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgPlaylistManager1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylistManager1.h
-	$(compiler)CpAvOpenhomeOrgPlaylistManager1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgPlaylistManager1Std.cpp
+	$(compiler)CpAvOpenhomeOrgPlaylistManager1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgPlaylistManager1Std.cpp
 $(objdir)CpAvOpenhomeOrgMediaServer1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgMediaServer1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgMediaServer1.h
-	$(compiler)CpAvOpenhomeOrgMediaServer1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgMediaServer1.cpp
+	$(compiler)CpAvOpenhomeOrgMediaServer1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgMediaServer1.cpp
 $(objdir)CpAvOpenhomeOrgMediaServer1C.$(objext) : $(proxyC)CpAvOpenhomeOrgMediaServer1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgMediaServer1.h
-	$(compiler)CpAvOpenhomeOrgMediaServer1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgMediaServer1C.cpp
+	$(compiler)CpAvOpenhomeOrgMediaServer1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgMediaServer1C.cpp
 $(objdir)CpAvOpenhomeOrgMediaServer1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgMediaServer1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgMediaServer1.h
-	$(compiler)CpAvOpenhomeOrgMediaServer1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgMediaServer1Std.cpp
+	$(compiler)CpAvOpenhomeOrgMediaServer1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgMediaServer1Std.cpp
 $(objdir)CpAvOpenhomeOrgNetworkMonitor1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgNetworkMonitor1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgNetworkMonitor1.h
-	$(compiler)CpAvOpenhomeOrgNetworkMonitor1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgNetworkMonitor1.cpp
+	$(compiler)CpAvOpenhomeOrgNetworkMonitor1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgNetworkMonitor1.cpp
 $(objdir)CpAvOpenhomeOrgNetworkMonitor1C.$(objext) : $(proxyC)CpAvOpenhomeOrgNetworkMonitor1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgNetworkMonitor1.h
-	$(compiler)CpAvOpenhomeOrgNetworkMonitor1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgNetworkMonitor1C.cpp
+	$(compiler)CpAvOpenhomeOrgNetworkMonitor1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpAvOpenhomeOrgNetworkMonitor1C.cpp
 $(objdir)CpAvOpenhomeOrgNetworkMonitor1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgNetworkMonitor1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgNetworkMonitor1.h
-	$(compiler)CpAvOpenhomeOrgNetworkMonitor1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgNetworkMonitor1Std.cpp
+	$(compiler)CpAvOpenhomeOrgNetworkMonitor1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgNetworkMonitor1Std.cpp
 $(objdir)CpOpenhomeOrgTestBasic1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.h
-	$(compiler)CpOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp
+	$(compiler)CpOpenhomeOrgTestBasic1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp
 $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) : $(proxyC)CpOpenhomeOrgTestBasic1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.h
-	$(compiler)CpOpenhomeOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestBasic1C.cpp
+	$(compiler)CpOpenhomeOrgTestBasic1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpOpenhomeOrgTestBasic1C.cpp
 $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestBasic1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.h
-	$(compiler)CpOpenhomeOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestBasic1Std.cpp
+	$(compiler)CpOpenhomeOrgTestBasic1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestBasic1Std.cpp
 $(objdir)CpOpenhomeOrgTestLights1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestLights1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpOpenhomeOrgTestLights1.h
-	$(compiler)CpOpenhomeOrgTestLights1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestLights1.cpp
+	$(compiler)CpOpenhomeOrgTestLights1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestLights1.cpp
 $(objdir)CpOpenhomeOrgTestLights1C.$(objext) : $(proxyC)CpOpenhomeOrgTestLights1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpOpenhomeOrgTestLights1.h
-	$(compiler)CpOpenhomeOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestLights1C.cpp
+	$(compiler)CpOpenhomeOrgTestLights1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpOpenhomeOrgTestLights1C.cpp
 $(objdir)CpOpenhomeOrgTestLights1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpOpenhomeOrgTestLights1.h
-	$(compiler)CpOpenhomeOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp
+	$(compiler)CpOpenhomeOrgTestLights1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp
 $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) : $(proxyCppCore)CpOpenhomeOrgSubscriptionLongPoll1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgSubscriptionLongPoll1.cpp
+	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1.$(objext) -c $(cppflags) $(includes) $(proxyCppCore)CpOpenhomeOrgSubscriptionLongPoll1.cpp
 $(objdir)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) : $(proxyC)CpOpenhomeOrgSubscriptionLongPoll1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgSubscriptionLongPoll1C.cpp
+	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1C.$(objext) -c $(cppflags) $(includes) $(proxyC)CpOpenhomeOrgSubscriptionLongPoll1C.cpp
 $(objdir)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgSubscriptionLongPoll1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpOpenhomeOrgSubscriptionLongPoll1.h
-	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgSubscriptionLongPoll1Std.cpp
+	$(compiler)CpOpenhomeOrgSubscriptionLongPoll1Std.$(objext) -c $(cppflags) $(includes) $(proxyCppStd)CpOpenhomeOrgSubscriptionLongPoll1Std.cpp
 
 proxy_dlls = \
              CpUpnpOrgAVTransport1Dll \
