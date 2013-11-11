@@ -1,3 +1,15 @@
+/* FunctorGeneric is heavily influenced by the article in http://www.tutok.sk/fastgl/callback.html
+   The psuedo-code in this article was based on a header (no longer obviously
+   available at tutok.sk) which included the following license:
+
+   Permission to use, copy, modify, distribute and sell this software
+   for any purpose is hereby granted without fee,
+   provided that the above copyright notice appear in all copies and
+   that both that copyright notice and this permission notice appear
+   in supporting documentation.  Rich Hickey makes no
+   representations about the suitability of this software for any
+   purpose.  It is provided "as is" without express or implied warranty.
+*/
 #ifndef HEADER_IFACE_FUNCTORGENERIC
 #define HEADER_IFACE_FUNCTORGENERIC
 
@@ -8,51 +20,38 @@
 namespace OpenHome {
 namespace Configuration {
 
-typedef void (STDCALL *OhNetFunctorGeneric)(void* aPtr, void* aType);
-
 template<class Type>
 class FunctorGeneric
 {
 public:
-    void operator()(Type& aType) const { iThunk(*this, aType); }
-    operator TBool() const { return (iObject!=NULL || iCallback!=NULL); }
+    void operator()(Type aType) const { iThunk(*this, aType); }
     typedef TAny (FunctorGeneric::*MemberFunction)();
-    typedef TAny (*Callback)();
-    FunctorGeneric() : iCallback(NULL), iObject(NULL) {}
     static const TUint kFudgeFactor = 2;
 
-    union {
-        OhNetFunctorGeneric iCallback;
-        TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
-    };
+    TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     TAny* iObject;
 
 protected:
-    typedef void (*Thunk)(const FunctorGeneric&, Type&);
+    typedef void (*Thunk)(const FunctorGeneric&, Type);
     FunctorGeneric(Thunk aT, const TAny* aObject, const TAny* aCallback, TUint aBytes)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    FunctorGeneric(Thunk aT, const TAny* aObject, OhNetFunctorGeneric aCallback)
-        : iThunk(aT)
-    {
-        iObject = (TAny*)aObject;
-        iCallback = aCallback;
-    }
 
 private:
     Thunk iThunk;
 };
+
 
 template<class Type, class Object, class MemFunc>
 class MemberTranslatorGeneric : public FunctorGeneric<Type>
 {
 public:
     MemberTranslatorGeneric(Object& aC, const MemFunc& aM) :
-        FunctorGeneric(Thunk,&aC,&aM,sizeof(MemFunc)) {}
-    static void Thunk(const FunctorGeneric& aFb, Type& aType)
+        FunctorGeneric<Type>(Thunk,&aC,&aM,sizeof(MemFunc)) {}
+    static void Thunk(const FunctorGeneric& aFb, Type aType)
     {
         Object* object = (Object*)aFb.iObject;
         MemFunc& memFunc(*(MemFunc*)(TAny*)(aFb.iCallbackMember));
@@ -60,41 +59,17 @@ public:
     }
 };
 
-/**
- * FunctionTranslator for a C-style function pointer
- */
-//template<class Type>
-//class FunctionTranslatorGeneric : public FunctorGeneric<Type>
-//{
-//public:
-//    FunctionTranslatorGeneric(void* aPtr, OhNetFunctorGeneric aCallback) :
-//        FunctorGeneric(Thunk,aPtr,aCallback) {}
-//    static void Thunk(const FunctorGeneric& aFb, Type& aType)
-//    {
-//        aFb.iCallback(aFb.iObject, &aType);
-//    }
-//};
 
 /**
  * Create a FunctorGeneric around a non-const C++ member function
  */
 template<class Type, class Object, class CallType>
-inline MemberTranslatorGeneric<Type,Object,void (CallType::*)(Type&)>
-MakeFunctorGeneric(Object& aC, void(CallType::* const &aF)(Type&))
+inline MemberTranslatorGeneric<Type,Object,void (CallType::*)(Type)>
+MakeFunctorGeneric(Object& aC, void(CallType::* const &aF)(Type))
     {
-    typedef void(CallType::*MemFunc)(Type&);
+    typedef void(CallType::*MemFunc)(Type);
     return MemberTranslatorGeneric<Type,Object,MemFunc>(aC,aF);
     }
-
-/**
- * Create a FunctorMsg around a C-style function pointer
- */
-//template<class Type>
-//inline FunctionTranslatorGeneric<Type>
-//MakeFunctorGenericC(void* aPtr, OhNetFunctorGeneric aCallback)
-//    {
-//    return FunctionTranslatorGeneric<Type>(aPtr, aCallback);
-//    }
 
 } // namespace Configuration
 } // namespace OpenHome

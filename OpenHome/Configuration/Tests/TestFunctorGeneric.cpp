@@ -16,8 +16,10 @@ protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
-    void CallbackInt(TInt& aInt);
-    void TestInt();
+    void CallbackIntByValue(TInt aInt);
+    void CallbackIntByRef(TInt& aInt);
+    void TestIntByValue();
+    void TestIntByRef();
 private:
     TInt iInt;
 };
@@ -30,8 +32,10 @@ protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
-    void CallbackBuf(const Brx& aBuf);
-    void TestBuf();
+    void CallbackBufByValue(Brn aBuf);
+    void CallbackBufByRef(const Brx& aBuf);
+    void TestBufByValue();
+    void TestBufByRef();
 private:
     static const TUint kMaxBufSize = 26;
     static const Brn kBuf;
@@ -46,7 +50,8 @@ private:
 SuiteFunctorGenericInt::SuiteFunctorGenericInt()
     : SuiteUnitTest("SuiteFunctorGenericInt")
 {
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestInt));
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByValue));
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericInt::TestIntByRef));
 }
 
 void SuiteFunctorGenericInt::Setup()
@@ -58,16 +63,30 @@ void SuiteFunctorGenericInt::TearDown()
 {
 }
 
-void SuiteFunctorGenericInt::CallbackInt(TInt& aInt)
+void SuiteFunctorGenericInt::CallbackIntByValue(TInt aInt)
 {
     iInt = aInt;
 }
 
-void SuiteFunctorGenericInt::TestInt()
+void SuiteFunctorGenericInt::CallbackIntByRef(TInt& aInt)
 {
-    // Test that we can pass an int value through a generic functor.
+    iInt = aInt;
+}
+
+void SuiteFunctorGenericInt::TestIntByValue()
+{
+    // Test that we can pass an int by value through a templated functor.
     TInt val = 1234;
-    FunctorGeneric<TInt> funcInt = MakeFunctorGeneric(*this, &SuiteFunctorGenericInt::CallbackInt);
+    FunctorGeneric<TInt> funcInt = MakeFunctorGeneric(*this, &SuiteFunctorGenericInt::CallbackIntByValue);
+    funcInt(val);
+    TEST(iInt == val);
+}
+
+void SuiteFunctorGenericInt::TestIntByRef()
+{
+    // Test that we can pass an int by ref through a templated functor.
+    TInt val = 1234;
+    FunctorGeneric<TInt&> funcInt = MakeFunctorGeneric(*this, &SuiteFunctorGenericInt::CallbackIntByRef);
     funcInt(val);
     TEST(iInt == val);
 }
@@ -79,7 +98,8 @@ const Brn SuiteFunctorGenericBuf::kBuf("abcdefghijklmnopqrstuvwxyz");
 SuiteFunctorGenericBuf::SuiteFunctorGenericBuf()
     : SuiteUnitTest("SuiteFunctorGenericBuf")
 {
-    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBuf));
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByValue));
+    AddTest(MakeFunctor(*this, &SuiteFunctorGenericBuf::TestBufByRef));
 }
 
 void SuiteFunctorGenericBuf::Setup()
@@ -91,15 +111,28 @@ void SuiteFunctorGenericBuf::TearDown()
 {
 }
 
-void SuiteFunctorGenericBuf::CallbackBuf(const Brx& aBuf)
+void SuiteFunctorGenericBuf::CallbackBufByValue(Brn aBuf)
 {
     iBuf.Replace(aBuf);
 }
 
-void SuiteFunctorGenericBuf::TestBuf()
+void SuiteFunctorGenericBuf::CallbackBufByRef(const Brx& aBuf)
 {
-    // Test that we can pass a buffer through a generic functor.
-    FunctorGeneric<const Brx> funcBuf = MakeFunctorGeneric(*this, &SuiteFunctorGenericBuf::CallbackBuf);
+    iBuf.Replace(aBuf);
+}
+
+void SuiteFunctorGenericBuf::TestBufByValue()
+{
+    // Test that we can pass a buffer by value through a templated functor.
+    FunctorGeneric<Brn> funcBuf = MakeFunctorGeneric(*this, &SuiteFunctorGenericBuf::CallbackBufByValue);
+    funcBuf(kBuf);
+    TEST(iBuf == kBuf);
+}
+
+void SuiteFunctorGenericBuf::TestBufByRef()
+{
+    // Test that we can pass a buffer by reference through a templated functor.
+    FunctorGeneric<const Brx&> funcBuf = MakeFunctorGeneric(*this, &SuiteFunctorGenericBuf::CallbackBufByRef);
     funcBuf(kBuf);
     TEST(iBuf == kBuf);
 }
