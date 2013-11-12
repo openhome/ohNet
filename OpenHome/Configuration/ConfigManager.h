@@ -24,10 +24,6 @@ template <class T>
 class IObservable
 {
 public:
-    // subscribers should either
-    // - (ideally) define a separate functor for each IObservable subscribed to
-    // OR
-    // - check all IObservable they hold for which one has changed
     virtual TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
     virtual void Unsubscribe(TUint aId) = 0;
     virtual ~IObservable() {}
@@ -62,6 +58,69 @@ private:
     TUint iWriteObserverId; // ID for own Write() observer
     TUint iNextObserverId;  // 0 is symbolic: invalid value
 };
+
+// ConfigVal
+template <class T> ConfigVal<T>::ConfigVal(IConfigurationManager& aManager, const Brx& aId)
+    : iConfigManager(aManager)
+    , iId(aId)
+    , iObserverLock("CVOL")
+    , iOwnerObserverId(0)
+    , iWriteObserverId(0)
+    , iNextObserverId(1)
+{
+}
+
+template <class T> void ConfigVal<T>::AddInitialSubscribers(FunctorGeneric<T> aOwnerFunc)
+{
+    ASSERT(iOwnerObserverId == 0);
+    ASSERT(iWriteObserverId == 0);
+    iOwnerObserverId = Subscribe(aOwnerFunc);
+    iWriteObserverId = Subscribe(MakeFunctorGeneric<T>(*this, &ConfigVal::Write));
+}
+
+template <class T> ConfigVal<T>::~ConfigVal()
+{
+    Unsubscribe(iWriteObserverId);
+    Unsubscribe(iOwnerObserverId);
+    ASSERT(iObservers.size() == 0);
+}
+
+template <class T> const Brx& ConfigVal<T>::Id()
+{
+    return iId;
+}
+
+template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
+{
+    iObserverLock.Wait();
+    Map::iterator it = iObservers.find(aId);
+    if (it != iObservers.end()) {
+        iObservers.erase(it);
+    }
+    iObserverLock.Signal();
+}
+
+template <class T> TUint ConfigVal<T>::Subscribe(FunctorGeneric<T> aFunctor, T aVal)
+{
+    iObserverLock.Wait();
+    TUint id = iNextObserverId;
+    iObservers.insert(std::pair<TUint,FunctorGeneric<T>>(id, aFunctor));
+    iNextObserverId++;
+    iObserverLock.Signal();
+    aFunctor(aVal);
+    return id;
+}
+
+template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
+{
+    ASSERT(iOwnerObserverId != 0);
+    ASSERT(iWriteObserverId != 0);
+    AutoMutex a(iObserverLock);
+    for (Map::iterator it = iObservers.begin(); it != iObservers.end(); it++) {
+        it->second(aVal);
+    }
+}
+
 
 /*
  * Class representing a numerical value, which can be positive or negative,
