@@ -50,6 +50,7 @@ DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropert
     , iUserData(aUserData)
     , iService(NULL)
     , iSequenceNumber(0)
+    , iExpired(false)
 {
     iDevice.AddWeakRef();
     aSid.TransferTo(iSid);
@@ -153,6 +154,12 @@ void DviSubscription::DoRenew(TUint& aSeconds)
 
 void DviSubscription::WriteChanges()
 {
+    if (iExpired) {
+        // reads/writes of iExpired assumed not to require thread safety
+        // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock
+        Remove();
+        return;
+    }
     IPropertyWriter* writer = NULL;
     try {
         AutoMutex a(iLock); // claim lock here to fully serialise updates to a single subscriber
@@ -256,10 +263,14 @@ DviSubscription::~DviSubscription()
 
 void DviSubscription::Expired()
 {
-    // no need to call NotifySubscriptionExpired - line below calls back into Stop() which performs the notification
-    if (iService != NULL) {
-        iService->RemoveSubscription(iSid);
-    }
+    iExpired = true;
+    // reads/writes of iExpired assumed not to require thread safety
+    // ...if this later turns out wrong, DO NOT USE iLock to protect iExpired - it'll deadlock with TimeManager's lock
+    
+    /* can't call iService->RemoveSubscription from this thread as we'd then take TimerManager/DviSubscription
+       locks in the opposite order to Publisher threads.
+       Instead, queue an update; this will happen on a Publisher thread where the subscription can safely be removed. */
+    iDvStack.SubscriptionManager().QueueUpdate(*this);
 }
 
 
