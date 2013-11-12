@@ -344,7 +344,15 @@ void ConfigRamStore::Print()
         Log::Print("   {");
         Log::Print(it->first);
         Log::Print(", ");
-        Log::Print(*it->second);
+        Brh& valBuf = *it->second;
+        if (valBuf.Bytes() == sizeof(TUint32)) {
+            TUint32 val = Converter::BeUint32At(valBuf, 0);
+            Log::Print("%u/", val);
+            Log::Print(valBuf);
+        }
+        else {
+            Log::Print(valBuf);
+        }
         Log::Print("}\n");
         it++;
     }
