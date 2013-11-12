@@ -50,8 +50,8 @@ private: // from Media::IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
     void DoPlay();
-    void ConfigRoomChanged();
-    void ConfigNameChanged();
+    void ConfigRoomChanged(const Brx& aValue);
+    void ConfigNameChanged(const Brx& aValue);
     void UpdateSenderName();
 private:
     Mutex iLock;
@@ -126,12 +126,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManager.GetText(Product::ConfigIdRoom);
-    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctor(*this, &SourceReceiver::ConfigRoomChanged));
+    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SourceReceiver::ConfigRoomChanged));
     iConfigName = &configManager.GetText(Product::ConfigIdName);
-    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctor(*this, &SourceReceiver::ConfigNameChanged));
-    // FIXME - remove this block once subscribing to a CongifVal results in an immediate callback
-    iRoom.Replace(iConfigRoom->Get());
-    iName.Replace(iConfigName->Get());
+    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SourceReceiver::ConfigNameChanged));
     UpdateSenderName();
 }
 
@@ -251,17 +248,17 @@ void SourceReceiver::DoPlay()
     iPipeline.Play();
 }
 
-void SourceReceiver::ConfigRoomChanged()
+void SourceReceiver::ConfigRoomChanged(const Brx& aValue)
 {
     AutoMutex a(iLock);
-    iRoom.Replace(iConfigRoom->Get());
+    iRoom.Replace(aValue);
     UpdateSenderName();
 }
 
-void SourceReceiver::ConfigNameChanged()
+void SourceReceiver::ConfigNameChanged(const Brx& aValue)
 {
     AutoMutex a(iLock);
-    iName.Replace(iConfigName->Get());
+    iName.Replace(aValue);
     UpdateSenderName();
 }
 
