@@ -88,7 +88,7 @@ ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGen
     iConfigManager.Read(iId, initialBuf, defaultBuf);
     TInt initialVal = Converter::BeUint32At(initialBuf, 0);
 
-    ASSERT(Valid(initialVal));
+    ASSERT(IsValid(initialVal));
     iConfigManager.Add(*this);
     iVal = initialVal;
 
@@ -114,7 +114,7 @@ TBool ConfigNum::Set(TInt aVal)
 {
     TBool changed = false;
 
-    if (!Valid(aVal)) {
+    if (!IsValid(aVal)) {
         THROW(ConfigValueOutOfRange);
     }
 
@@ -127,7 +127,7 @@ TBool ConfigNum::Set(TInt aVal)
     return changed;
 }
 
-TBool ConfigNum::Valid(TInt aVal)
+TBool ConfigNum::IsValid(TInt aVal)
 {
     if (aVal < iMin || aVal > iMax) {
         return false;
@@ -164,7 +164,7 @@ ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Func
     iConfigManager.Read(iId, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
 
-    ASSERT(Valid(initialVal));
+    ASSERT(IsValid(initialVal));
     iConfigManager.Add(*this);
     iSelected = initialVal;
 
@@ -203,7 +203,7 @@ TBool ConfigChoice::Set(TUint aIndex)
 {
     TBool changed = false;
 
-    if (!Valid(aIndex)) {
+    if (!IsValid(aIndex)) {
         THROW(ConfigIndexOutOfRange);
     }
 
@@ -216,7 +216,7 @@ TBool ConfigChoice::Set(TUint aIndex)
     return changed;
 }
 
-TBool ConfigChoice::Valid(TUint aVal)
+TBool ConfigChoice::IsValid(TUint aVal)
 {
     if (aVal >= iAllowedValues.size()) {
         return false;
@@ -246,7 +246,7 @@ ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorG
     Bwh initialBuf(aMaxLength);
     iConfigManager.Read(iId, initialBuf, aDefault);
 
-    ASSERT(Valid(initialBuf));
+    ASSERT(IsValid(initialBuf));
     iConfigManager.Add(*this);
     iText.Replace(initialBuf);
 
@@ -267,7 +267,7 @@ TBool ConfigText::Set(const Brx& aText)
 {
     TBool changed = false;
 
-    if (!Valid(aText)) {
+    if (!IsValid(aText)) {
         THROW(ConfigValueTooLong);
     }
 
@@ -280,7 +280,7 @@ TBool ConfigText::Set(const Brx& aText)
     return changed;
 }
 
-TBool ConfigText::Valid(const Brx& aVal)
+TBool ConfigText::IsValid(const Brx& aVal)
 {
     if (aVal.Bytes() > iText.MaxBytes()) {
         return false;

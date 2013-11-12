@@ -294,7 +294,7 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
 {
     // test adding and removing multiple (extra) subscriptions (and test id
     // ordering) - will assert at destruction if error
-    // IDs should start at 1, and should have 2 internal subscribers at construction
+    // IDs should start at 1, and there should be 2 internal subscribers at construction
     TUint id1 = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id1 == 3);
     TUint id2 = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteCVSubscriptions::NotifyChanged));

@@ -77,7 +77,7 @@ public:
     TBool Set(TInt aVal);
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
-    TBool Valid(TInt aVal); // FIXME - change to IsValid
+    TBool IsValid(TInt aVal);
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<TInt> aFunctor);
 private: // from ConfigVal
@@ -112,7 +112,7 @@ public:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
     void Add(const Brx& aVal);
-    TBool Valid(TUint aVal);
+    TBool IsValid(TUint aVal);
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<TUint> aFunctor);
 private: // from ConfigVal
@@ -146,7 +146,7 @@ public:
     TBool Set(const Brx& aText);
     inline TBool operator==(const ConfigText& aText) const;
 private:
-    TBool Valid(const Brx& aVal);
+    TBool IsValid(const Brx& aVal);
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<const Brx&> aFunctor);
 private: // from ConfigVal
