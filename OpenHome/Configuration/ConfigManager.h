@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Configuration/FunctorGeneric.h>
 #include <OpenHome/Configuration/IStore.h>
 
 #include <map>
@@ -19,6 +20,7 @@ EXCEPTION(ConfigIdExists);
 namespace OpenHome {
 namespace Configuration {
 
+template <class T>
 class IObservable
 {
 public:
@@ -26,54 +28,60 @@ public:
     // - (ideally) define a separate functor for each IObservable subscribed to
     // OR
     // - check all IObservable they hold for which one has changed
-    virtual TUint Subscribe(Functor aFunctor) = 0;
+    virtual TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
     virtual void Unsubscribe(TUint aId) = 0;
+    virtual ~IObservable() {}
 };
 
 class IConfigurationManager;
 
-class ConfigVal : public IObservable
+template <class T>
+class ConfigVal : public IObservable<T>
 {
 protected:
-    ConfigVal(IConfigurationManager& aManager, const Brx& aId, Functor aFunc);
+    ConfigVal(IConfigurationManager& aManager, const Brx& aId);
 public:
     virtual ~ConfigVal();
+    void AddInitialSubscribers(FunctorGeneric<T> aOwnerFunc);
     const Brx& Id();
 public: // from IObservable
-    TUint Subscribe(Functor aFunctor);
+    TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
     void Unsubscribe(TUint aId);
 protected:
-    void NotifySubscribers();
-    virtual void Write() = 0;
+    TUint Subscribe(FunctorGeneric<T> aFunctor, T aVal);
+    void NotifySubscribers(T aVal);
+    virtual void Write(T aVal) = 0;
 protected:
     IConfigurationManager& iConfigManager;
     const Brx& iId;
 private:
-    typedef std::map<TUint,Functor> Map;
+    typedef std::map<TUint,FunctorGeneric<T>> Map;
     Map iObservers;
     Mutex iObserverLock;
     TUint iOwnerObserverId;
-    TUint iWriteObserverId;  // id for own Write() observer
-    TUint iNextObserverId;
+    TUint iWriteObserverId; // ID for own Write() observer
+    TUint iNextObserverId;  // 0 is symbolic: invalid value
 };
 
 /*
  * Class representing a numerical value, which can be positive or negative,
  * with upper and lower limits.
  */
-class ConfigNum : public ConfigVal
+class ConfigNum : public ConfigVal<TInt>
 {
 public:
-    ConfigNum(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TInt> aFunc, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     TInt Get() const;
     TBool Set(TInt aVal);
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
-    TBool Valid(TInt aVal);
+    TBool Valid(TInt aVal); // FIXME - change to IsValid
+public: // from ConfigVal
+    TUint Subscribe(FunctorGeneric<TInt> aFunctor);
 private: // from ConfigVal
-    void Write();
+    void Write(TInt aVal);
 private:
     TInt iMin;
     TInt iMax;
@@ -94,10 +102,10 @@ inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
  * Empty when created. When first option value is added, defaults to that value
  * as the selected one.
  */
-class ConfigChoice : public ConfigVal
+class ConfigChoice : public ConfigVal<TUint>
 {
 public:
-    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
+    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
     std::vector<const Brx*> Options();
     TUint Get() const;
     TBool Set(TUint aIndex);
@@ -105,8 +113,10 @@ public:
 private:
     void Add(const Brx& aVal);
     TBool Valid(TUint aVal);
+public: // from ConfigVal
+    TUint Subscribe(FunctorGeneric<TUint> aFunctor);
 private: // from ConfigVal
-    void Write();
+    void Write(TUint aVal);
 private:
     std::vector<Brn> iAllowedValues;
     TUint iSelected;
@@ -127,18 +137,20 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
  * Class representing a text value. Length of text that can be allocated is
  * fixed at construction.
  */
-class ConfigText : public ConfigVal
+class ConfigText : public ConfigVal<const Brx&>
 {
 public:
-    ConfigText(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     const Brx& Get() const;
     TBool Set(const Brx& aText);
     inline TBool operator==(const ConfigText& aText) const;
 private:
     TBool Valid(const Brx& aVal);
+public: // from ConfigVal
+    TUint Subscribe(FunctorGeneric<const Brx&> aFunctor);
 private: // from ConfigVal
-    void Write();
+    void Write(const Brx&);
 private:
     Bwh iText;
 };
@@ -176,7 +188,8 @@ public:
 /*
  * Helper class for ConfigurationManager.
  */
-template <class T> class SerialisedMap
+template <class T>
+class SerialisedMap
 {
 public:
     SerialisedMap();
@@ -251,8 +264,7 @@ public: // from IConfigurationManager
     void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void Write(const Brx& aKey, const Brx& aValue);
 
-    TBool Has(const Brx& aId) const;
-    ConfigVal& Get(const Brx& aId) const;
+    TBool Has(const Brx& aId) const; // FIXME - is this required?
 
     TBool HasNum(const Brx& aId) const;
     ConfigNum& GetNum(const Brx& aId) const;

@@ -501,8 +501,8 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
-                'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Configuration/Tests/TestFunctorGeneric.cpp',
+                'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
@@ -633,13 +633,13 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestMediaPlayer')
     bld.program(
-            source='OpenHome/Configuration/Tests/TestConfigManagerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestConfigManager')
-    bld.program(
             source='OpenHome/Configuration/Tests/TestFunctorGenericMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestFunctorGeneric')
+    bld.program(
+            source='OpenHome/Configuration/Tests/TestConfigManagerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestConfigManager')
     bld.program(
             source='OpenHome/Tests/TestPowerManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

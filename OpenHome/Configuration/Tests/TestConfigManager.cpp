@@ -10,6 +10,7 @@ using namespace OpenHome::Configuration;
 namespace OpenHome {
 namespace Configuration {
 
+template <class T>
 class SuiteCVNotify : public SuiteUnitTest
 {
 protected:
@@ -19,8 +20,8 @@ protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
 protected:
-    void NotifyChanged();
-    void OwnerFunctor();
+    virtual void NotifyChanged(T aVal);
+    virtual void OwnerFunctor(T aVal);
 protected:
     static const Brn kKey;
     ConfigRamStore* iStore;
@@ -29,7 +30,7 @@ protected:
     TUint iOwnerFunctorCount;
 };
 
-class SuiteCVSubscriptions : public SuiteCVNotify
+class SuiteCVSubscriptions : public SuiteCVNotify<TInt>
 {
 public:
     SuiteCVSubscriptions();
@@ -42,19 +43,23 @@ private:
     void TestAddRemoveMultipleSubscriptions();
     void TestRemoveInvalidId();
 private:
-    ConfigVal* iConfigVal;
+    ConfigVal<TInt>* iConfigVal;
 };
 
-class SuiteConfigNum : public SuiteCVNotify
+class SuiteConfigNum : public SuiteCVNotify<TInt>
 {
 public:
     SuiteConfigNum();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
+private:  // from SuiteCVNotify
+    void NotifyChanged(TInt aVal);
+    void OwnerFunctor(TInt aVal);
 private:
     TInt IntFromStore(const Brx& aKey);
-    void TestFunctorsCalled();
+    void TestFunctorsCalledAtConstruction();
+    void TestSubscription();
     void TestInvalidRange();
     void TestValueOutOfRangeConstructor();
     void TestValueFromStore();
@@ -70,18 +75,24 @@ private:
     static const TInt kMax = 2;
     static const TInt kVal = 1;
     ConfigNum* iConfigVal;
+    TInt iLastChangeVal;
+    TInt iLastOwnerVal;
 };
 
-class SuiteConfigChoice : public SuiteCVNotify
+class SuiteConfigChoice : public SuiteCVNotify<TUint>
 {
 public:
     SuiteConfigChoice();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
+private:  // from SuiteCVNotify
+    void NotifyChanged(TUint aVal);
+    void OwnerFunctor(TUint aVal);
 private:
     TUint UintFromStore(const Brx& aKey);
-    void TestFunctorsCalled();
+    void TestFunctorsCalledAtConstruction();
+    void TestSubscription();
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestAdd();
@@ -97,19 +108,25 @@ private:
     static const Brn kOption2;
     static const Brn kOption3;
     ConfigChoice* iConfigVal;
+    TUint iLastChangeVal;
+    TUint iLastOwnerVal;
 };
 
-class SuiteConfigText : public SuiteCVNotify
+class SuiteConfigText : public SuiteCVNotify<const Brx&>
 {
 public:
     SuiteConfigText();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
+private:  // from SuiteCVNotify
+    void NotifyChanged(const Brx& aVal);
+    void OwnerFunctor(const Brx& aVal);
 private:
     static const TUint kMaxLength = 100;
     static const Brn kDefault;
-    void TestFunctorsCalled();
+    void TestFunctorsCalledAtConstruction();
+    void TestSubscription();
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestMaxLength();
@@ -118,6 +135,8 @@ private:
     void TestSetNoUpdate();
     void TestSetValueTooLong();
     ConfigText* iConfigVal;
+    Bws<kMaxLength> iLastChangeVal;
+    Bws<kMaxLength> iLastOwnerVal;
 };
 
 class SuiteConfigurationManager : public SuiteUnitTest
@@ -128,7 +147,9 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
-    void OwnerFunctor();
+    void OwnerFunctorNum(TInt aVal);
+    void OwnerFunctorChoice(TUint aVal);
+    void OwnerFunctorText(const Brx& aVal);
     void TestClose();
     void TestAdd();
     void TestAddDuplicate();
@@ -165,7 +186,6 @@ private:
     std::vector<const Brx*> iOptions;
     ConfigChoice* iChoice1;
     ConfigText* iText1;
-    TUint iOwnerFunctorCount;
 };
 
 class SuiteRamStore : public SuiteUnitTest
@@ -194,16 +214,16 @@ private:
 
 // SuiteCVNotify
 
-const Brn SuiteCVNotify::kKey("conf.key");
+template <class T> const Brn SuiteCVNotify<T>::kKey("conf.key");
 
-SuiteCVNotify::SuiteCVNotify(const TChar* aName)
+template <class T> SuiteCVNotify<T>::SuiteCVNotify(const TChar* aName)
     : SuiteUnitTest(aName)
 {
 }
 
-SuiteCVNotify::~SuiteCVNotify() {}
+template <class T> SuiteCVNotify<T>::~SuiteCVNotify() {}
 
-void SuiteCVNotify::Setup()
+template <class T> void SuiteCVNotify<T>::Setup()
 {
     iStore = new ConfigRamStore();
     iConfigManager = new ConfigurationManager(*iStore);
@@ -211,18 +231,18 @@ void SuiteCVNotify::Setup()
     iOwnerFunctorCount = 0;
 }
 
-void SuiteCVNotify::TearDown()
+template <class T> void SuiteCVNotify<T>::TearDown()
 {
     delete iConfigManager;
     delete iStore;
 }
 
-void SuiteCVNotify::NotifyChanged()
+template <class T> void SuiteCVNotify<T>::NotifyChanged(T /*aVal*/)
 {
     iChangedCount++;
 }
 
-void SuiteCVNotify::OwnerFunctor()
+template <class T> void SuiteCVNotify<T>::OwnerFunctor(T /*aVal*/)
 {
     iOwnerFunctorCount++;
 }
@@ -242,7 +262,7 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
 void SuiteCVSubscriptions::Setup()
 {
     SuiteCVNotify::Setup();
-    iConfigVal = new ConfigNum(*iConfigManager, kKey, MakeFunctor(*this, &SuiteCVSubscriptions::OwnerFunctor), 1, 1, 1);
+    iConfigVal = new ConfigNum(*iConfigManager, kKey, MakeFunctorGeneric<TInt>(*this, &SuiteCVSubscriptions::OwnerFunctor), 1, 1, 1);
 }
 
 void SuiteCVSubscriptions::TearDown()
@@ -263,7 +283,8 @@ void SuiteCVSubscriptions::TestAddRemoveSubscription()
 {
     // test adding and removing a single subscription - will assert at
     // destruction if error
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TEST(id != 0);
     iConfigVal->Unsubscribe(id);
     delete iConfigVal;
     iConfigVal = NULL;
@@ -273,10 +294,11 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
 {
     // test adding and removing multiple (extra) subscriptions (and test id
     // ordering) - will assert at destruction if error
-    TUint id1 = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
-    TEST(id1 == 2);
-    TUint id2 = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteCVSubscriptions::NotifyChanged));
-    TEST(id2 == 3);
+    // IDs should start at 1, and should have 2 internal subscribers at construction
+    TUint id1 = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TEST(id1 == 3);
+    TUint id2 = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TEST(id2 == 4);
     iConfigVal->Unsubscribe(id1);
     iConfigVal->Unsubscribe(id2);
     delete iConfigVal;
@@ -295,7 +317,8 @@ void SuiteCVSubscriptions::TestRemoveInvalidId()
 SuiteConfigNum::SuiteConfigNum()
     : SuiteCVNotify("SuiteConfigNum")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestFunctorsCalled));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestFunctorsCalledAtConstruction));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueFromStore));
@@ -311,13 +334,27 @@ SuiteConfigNum::SuiteConfigNum()
 void SuiteConfigNum::Setup()
 {
     SuiteCVNotify::Setup();
-    iConfigVal = new ConfigNum(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
+    iLastChangeVal = 0;
+    iLastOwnerVal = 0;
+    iConfigVal = new ConfigNum(*iConfigManager, kKey, MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
 }
 
 void SuiteConfigNum::TearDown()
 {
     SuiteCVNotify::TearDown();
     delete iConfigVal;
+}
+
+void SuiteConfigNum::NotifyChanged(TInt aVal)
+{
+    SuiteCVNotify::NotifyChanged(aVal);
+    iLastChangeVal = aVal;
+}
+
+void SuiteConfigNum::OwnerFunctor(TInt aVal)
+{
+    SuiteCVNotify::OwnerFunctor(aVal);
+    iLastOwnerVal = aVal;
 }
 
 TInt SuiteConfigNum::IntFromStore(const Brx& aKey)
@@ -328,7 +365,7 @@ TInt SuiteConfigNum::IntFromStore(const Brx& aKey)
     return val;
 }
 
-void SuiteConfigNum::TestFunctorsCalled()
+void SuiteConfigNum::TestFunctorsCalledAtConstruction()
 {
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 1);
@@ -337,16 +374,35 @@ void SuiteConfigNum::TestFunctorsCalled()
     TEST(IntFromStore(kKey) == iConfigVal->Get());
 }
 
+void SuiteConfigNum::TestSubscription()
+{
+    // test that functor is called back at time of subscription
+
+    // make sure we have some known values
+    iLastChangeVal = 0;
+    iLastOwnerVal = 0;
+
+    TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::NotifyChanged));
+
+    TEST(iChangedCount == changedCount+1);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
+    TEST(iLastChangeVal == kVal);
+    TEST(iLastOwnerVal == 0);
+    iConfigVal->Unsubscribe(id);
+}
+
 void SuiteConfigNum::TestInvalidRange()
 {
     // test creating a ConfigNum with max < min
-    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), 1, -1, 1), AssertionFailed);
+    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::OwnerFunctor), 1, -1, 1), AssertionFailed);
 }
 
 void SuiteConfigNum::TestValueOutOfRangeConstructor()
 {
     // test creating a ConfigNum with val outside range min..max
-    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), 0, 0, 1), AssertionFailed);
+    TEST_THROWS(ConfigNum cv(*iConfigManager, kKey, MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::OwnerFunctor), 0, 0, 1), AssertionFailed);
 }
 
 void SuiteConfigNum::TestValueFromStore()
@@ -357,7 +413,7 @@ void SuiteConfigNum::TestValueFromStore()
     Bws<sizeof(TInt)> valBuf;
     valBuf.Append(Arch::BigEndian4(storeVal));
     iStore->Write(key, valBuf);
-    ConfigNum num(*iConfigManager, key, MakeFunctor(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
+    ConfigNum num(*iConfigManager, key, MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
 
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 2);
@@ -399,10 +455,10 @@ void SuiteConfigNum::TestSetUpdate()
 {
     // test that calling set with a new value updates the value of the ConfigNum
     // (and that any observers are notified)
-    TUint changedCount = iChangedCount;
     TUint ownerFunctorCount = iOwnerFunctorCount;
     TInt newVal = kVal+1;
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
 
     TEST(updated == true);
@@ -421,9 +477,10 @@ void SuiteConfigNum::TestSetNoUpdate()
 {
     // test that calling set with the existing value of ConfigNum causing no change
     // to the ConfigNum, and that no observers are notified
-    TUint changedCount = iChangedCount;
+
     TUint ownerFunctorCount = iOwnerFunctorCount;
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(iConfigVal->Get());
 
     TEST(updated == false);
@@ -462,7 +519,8 @@ const Brn SuiteConfigChoice::kOption3("Option3");
 SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestFunctorsCalled));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestFunctorsCalledAtConstruction));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
@@ -481,13 +539,27 @@ void SuiteConfigChoice::Setup()
     options.push_back(&kOption1);
     options.push_back(&kOption2);
     options.push_back(&kOption3);
-    iConfigVal = new ConfigChoice(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
+    iLastChangeVal = 0;
+    iLastOwnerVal = 0;
+    iConfigVal = new ConfigChoice(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
 }
 
 void SuiteConfigChoice::TearDown()
 {
     SuiteCVNotify::TearDown();
     delete iConfigVal;
+}
+
+void SuiteConfigChoice::NotifyChanged(TUint aVal)
+{
+    SuiteCVNotify::NotifyChanged(aVal);
+    iLastChangeVal = aVal;
+}
+
+void SuiteConfigChoice::OwnerFunctor(TUint aVal)
+{
+    SuiteCVNotify::OwnerFunctor(aVal);
+    iLastOwnerVal = aVal;
 }
 
 TUint SuiteConfigChoice::UintFromStore(const Brx& aKey)
@@ -498,13 +570,32 @@ TUint SuiteConfigChoice::UintFromStore(const Brx& aKey)
     return val;
 }
 
-void SuiteConfigChoice::TestFunctorsCalled()
+void SuiteConfigChoice::TestFunctorsCalledAtConstruction()
 {
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 1);
 
     // there is an internal write functor - check value == value in store
     TEST(UintFromStore(kKey) == iConfigVal->Get());
+}
+
+void SuiteConfigChoice::TestSubscription()
+{
+    // test that functor is called back at time of subscription
+
+    // make sure we have some known values
+    iLastChangeVal = 1;
+    iLastOwnerVal = 1;
+
+    TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged));
+
+    TEST(iChangedCount == changedCount+1);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
+    TEST(iLastChangeVal == 0);
+    TEST(iLastOwnerVal == 1);
+    iConfigVal->Unsubscribe(id);
 }
 
 void SuiteConfigChoice::TestValueFromStore()
@@ -520,7 +611,7 @@ void SuiteConfigChoice::TestValueFromStore()
     options.push_back(&kOption1);
     options.push_back(&kOption2);
     options.push_back(&kOption3);
-    ConfigChoice choice(*iConfigManager, key, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
+    ConfigChoice choice(*iConfigManager, key, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
 
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 2);
@@ -555,7 +646,7 @@ void SuiteConfigChoice::TestAddDuplicate()
     std::vector<const Brx*> options;
     options.push_back(&kOption1);
     options.push_back(&kOption1);
-    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);, ConfigValueExists);
+    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);, ConfigValueExists);
 }
 
 void SuiteConfigChoice::TestGet()
@@ -570,17 +661,17 @@ void SuiteConfigChoice::TestGetNoOptions()
 {
     // test that creating without any options causes an assert
     std::vector<const Brx*> options;
-    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault), AssertionFailed);
+    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault), AssertionFailed);
 }
 
 void SuiteConfigChoice::TestSetUpdate()
 {
     // test that changing the selected value causes ConfigChoice to be updated (and
     // any observers notified)
-    TUint changedCount = iChangedCount;
     TUint ownerFunctorCount = iOwnerFunctorCount;
     TUint newVal = 1;
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
 
     TEST(updated == true);
@@ -599,9 +690,9 @@ void SuiteConfigChoice::TestSetNoUpdate()
 {
     // test that setting the same option index results in no change to ConfigChoice
     // (and observers aren't notified)
-    TUint changedCount = iChangedCount;
     TUint ownerFunctorCount = iOwnerFunctorCount;
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(kDefault);
 
     TEST(updated == false);
@@ -634,7 +725,8 @@ const Brn SuiteConfigText::kDefault("abcdefghijklmnopqrstuvwxyz");
 SuiteConfigText::SuiteConfigText()
     : SuiteCVNotify("SuiteConfigText")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestFunctorsCalled));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestFunctorsCalledAtConstruction));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength));
@@ -647,7 +739,9 @@ SuiteConfigText::SuiteConfigText()
 void SuiteConfigText::Setup()
 {
     SuiteCVNotify::Setup();
-    iConfigVal = new ConfigText(*iConfigManager, kKey, MakeFunctor(*this, &SuiteConfigText::OwnerFunctor), kMaxLength, kDefault);
+    iLastChangeVal.SetBytes(0);
+    iLastOwnerVal.SetBytes(0);
+    iConfigVal = new ConfigText(*iConfigManager, kKey, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::OwnerFunctor), kMaxLength, kDefault);
 }
 
 void SuiteConfigText::TearDown()
@@ -656,7 +750,19 @@ void SuiteConfigText::TearDown()
     delete iConfigVal;
 }
 
-void SuiteConfigText::TestFunctorsCalled()
+void SuiteConfigText::NotifyChanged(const Brx& aVal)
+{
+    SuiteCVNotify::NotifyChanged(aVal);
+    iLastChangeVal.Replace(aVal);
+}
+
+void SuiteConfigText::OwnerFunctor(const Brx& aVal)
+{
+    SuiteCVNotify::OwnerFunctor(aVal);
+    iLastOwnerVal.Replace(aVal);
+}
+
+void SuiteConfigText::TestFunctorsCalledAtConstruction()
 {
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 1);
@@ -667,13 +773,32 @@ void SuiteConfigText::TestFunctorsCalled()
     TEST(valBuf == iConfigVal->Get());
 }
 
+void SuiteConfigText::TestSubscription()
+{
+    // test that functor is called back at time of subscription
+
+    // make sure we have some known values
+    iLastChangeVal.SetBytes(0);
+    iLastOwnerVal.SetBytes(0);
+
+    TUint changedCount = iChangedCount;
+    TUint ownerFunctorCount = iOwnerFunctorCount;
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::NotifyChanged));
+
+    TEST(iChangedCount == changedCount+1);
+    TEST(iOwnerFunctorCount == ownerFunctorCount);
+    TEST(iLastChangeVal == kDefault);
+    TEST(iLastOwnerVal == Brn::Empty());
+    iConfigVal->Unsubscribe(id);
+}
+
 void SuiteConfigText::TestValueFromStore()
 {
     // test an existing value in store overwrites the default value at creation
     const Brn key("conf.text.2");
     Brn storeVal("zyxwvutsrqponmlkjihgfedcba");
     iStore->Write(key, storeVal);
-    ConfigText text(*iConfigManager, key, MakeFunctor(*this, &SuiteConfigText::OwnerFunctor), kMaxLength, kDefault);
+    ConfigText text(*iConfigManager, key, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::OwnerFunctor), kMaxLength, kDefault);
 
     TEST(iChangedCount == 0);
     TEST(iOwnerFunctorCount == 2);
@@ -712,10 +837,10 @@ void SuiteConfigText::TestSetUpdate()
 {
     // test that updating ConfigText with a new value results in ConfigText
     // being changed and any observers notified
-    TUint changedCount = iChangedCount;
     TUint ownerFunctorCount = iOwnerFunctorCount;
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
 
     TEST(updated == true);
@@ -736,12 +861,12 @@ void SuiteConfigText::TestSetNoUpdate()
 {
     // test that updating ConfigText with the same value results in no change to
     // ConfigText and no observers being notified
-    TUint changedCount = iChangedCount;
     TUint ownerFunctorCount = iOwnerFunctorCount;
 
     // test updating the default string, then test updating a string with
     // length > 0
-    TUint id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(kDefault);
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
@@ -758,7 +883,8 @@ void SuiteConfigText::TestSetNoUpdate()
     // set new val before then subscribing to changes
     updated = iConfigVal->Set(text);
     ownerFunctorCount = iOwnerFunctorCount;
-    id = iConfigVal->Subscribe(MakeFunctor(*this, &SuiteConfigText::NotifyChanged));
+    id = iConfigVal->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::NotifyChanged));
+    changedCount = iChangedCount;
     // now attempt to set same value again
     updated = iConfigVal->Set(text);
     TEST(updated == false);
@@ -836,12 +962,12 @@ void SuiteConfigurationManager::Setup()
 {
     iStore = new ConfigRamStore();
     iConfigManager = new ConfigurationManager(*iStore);
-    iNum1 = new ConfigNum(*iConfigManager, kIdNum1, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMinNum, kMaxNum, kMinNum);
+    iNum1 = new ConfigNum(*iConfigManager, kIdNum1, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum);
     iOptions.push_back(&kOption1);
     iOptions.push_back(&kOption2);
     iOptions.push_back(&kOption3);
-    iChoice1 = new ConfigChoice(*iConfigManager, kIdChoice1, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), iOptions, kChoiceDefault);
-    iText1 = new ConfigText(*iConfigManager, kIdText1, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMaxText, kText1);
+    iChoice1 = new ConfigChoice(*iConfigManager, kIdChoice1, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault);
+    iText1 = new ConfigText(*iConfigManager, kIdText1, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText1);
 }
 
 void SuiteConfigurationManager::TearDown()
@@ -854,9 +980,16 @@ void SuiteConfigurationManager::TearDown()
     iOptions.clear();
 }
 
-void SuiteConfigurationManager::OwnerFunctor()
+void SuiteConfigurationManager::OwnerFunctorNum(TInt /*aVal*/)
 {
-    iOwnerFunctorCount++;
+}
+
+void SuiteConfigurationManager::OwnerFunctorChoice(TUint /*aVal*/)
+{
+}
+
+void SuiteConfigurationManager::OwnerFunctorText(const Brx& /*aVal*/)
+{
 }
 
 void SuiteConfigurationManager::TestClose()
@@ -864,18 +997,18 @@ void SuiteConfigurationManager::TestClose()
     // test that ConfigurationManager ASSERTs when attempting to add a value
     // after it has been closed
     iConfigManager->Close();
-    TEST_THROWS(ConfigNum num(*iConfigManager, kIdNum2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
-    TEST_THROWS(ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), iOptions, kChoiceDefault+1), AssertionFailed);
-    TEST_THROWS(ConfigText text(*iConfigManager, kIdText2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMaxText, kText2), AssertionFailed);
+    TEST_THROWS(ConfigNum num(*iConfigManager, kIdNum2, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
+    TEST_THROWS(ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1), AssertionFailed);
+    TEST_THROWS(ConfigText text(*iConfigManager, kIdText2, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText2), AssertionFailed);
 }
 
 void SuiteConfigurationManager::TestAdd()
 {
     // completion of this test without errors suggests adding works
     // Has() and Get() are tested in their own unit tests.
-    ConfigNum num(*iConfigManager, kIdNum2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMinNum, kMaxNum, kMinNum+1);
-    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), iOptions, kChoiceDefault+1);
-    ConfigText text(*iConfigManager, kIdText2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMaxText, kText2);
+    ConfigNum num(*iConfigManager, kIdNum2, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum+1);
+    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1);
+    ConfigText text(*iConfigManager, kIdText2, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText2);
 }
 
 void SuiteConfigurationManager::TestAddDuplicate()
@@ -943,17 +1076,17 @@ void SuiteConfigurationManager::TestHasMultiple()
     // test adding multiple values and calling Has() on the IDs
 
     // test ConfigNum
-    ConfigNum num(*iConfigManager, kIdNum2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMinNum, kMaxNum, kMinNum+1);
+    ConfigNum num(*iConfigManager, kIdNum2, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum+1);
     TEST(iConfigManager->HasNum(kIdNum1) == true);
     TEST(iConfigManager->HasNum(kIdNum2) == true);
 
     // test ConfigChoice
-    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), iOptions, kChoiceDefault+1);
+    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1);
     TEST(iConfigManager->HasChoice(kIdChoice1) == true);
     TEST(iConfigManager->HasChoice(kIdChoice2) == true);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kIdText2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMaxText, kText2);
+    ConfigText text(*iConfigManager, kIdText2, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText2);
     TEST(iConfigManager->HasText(kIdText1) == true);
     TEST(iConfigManager->HasText(kIdText2) == true);
 }
@@ -966,9 +1099,6 @@ void SuiteConfigurationManager::TestGetNoVals()
     TEST_THROWS(configManager.GetNum(kIdNum1), AssertionFailed);
     TEST_THROWS(configManager.GetChoice(kIdChoice1), AssertionFailed);
     TEST_THROWS(configManager.GetText(kIdText1), AssertionFailed);
-    TEST_THROWS(configManager.Get(kIdNum1), AssertionFailed);
-    TEST_THROWS(configManager.Get(kIdChoice1), AssertionFailed);
-    TEST_THROWS(configManager.Get(kIdText1), AssertionFailed);
 }
 
 void SuiteConfigurationManager::TestGetValidId()
@@ -986,14 +1116,6 @@ void SuiteConfigurationManager::TestGetValidId()
     // test ConfigText
     ConfigText& text = iConfigManager->GetText(kIdText1);
     TEST(text == *iText1);
-
-    // test generic Get()
-    ConfigVal& valNum = iConfigManager->Get(kIdNum1);
-    TEST(dynamic_cast<ConfigNum&>(valNum) == *iNum1);
-    ConfigVal& valChoice = iConfigManager->Get(kIdChoice1);
-    TEST(dynamic_cast<ConfigChoice&>(valChoice) == *iChoice1);
-    ConfigVal& valText = iConfigManager->Get(kIdText1);
-    TEST(dynamic_cast<ConfigText&>(valText) == *iText1);
 }
 
 void SuiteConfigurationManager::TestGetInvalidId()
@@ -1005,11 +1127,6 @@ void SuiteConfigurationManager::TestGetInvalidId()
 
     // try call HasChoice() with the ID of ConfigNum
     TEST_THROWS(iConfigManager->GetChoice(kIdNum1), AssertionFailed);
-
-    // test generic Get()
-    TEST_THROWS(iConfigManager->Get(kIdNum2), AssertionFailed);
-    TEST_THROWS(iConfigManager->Get(kIdChoice2), AssertionFailed);
-    TEST_THROWS(iConfigManager->Get(kIdText2), AssertionFailed);
 }
 
 void SuiteConfigurationManager::TestGetMultiple()
@@ -1017,21 +1134,21 @@ void SuiteConfigurationManager::TestGetMultiple()
     // test adding multiple values and calling Get() on the IDs
 
     // test ConfigNum
-    ConfigNum num(*iConfigManager, kIdNum2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMinNum, kMaxNum, kMinNum+1);
+    ConfigNum num(*iConfigManager, kIdNum2, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum+1);
     ConfigNum& num1 = iConfigManager->GetNum(kIdNum1);
     TEST(num1 == *iNum1);
     ConfigNum& num2 = iConfigManager->GetNum(kIdNum2);
     TEST(num2 == num);
 
     // test ConfigChoice
-    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), iOptions, kChoiceDefault+1);
+    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1);
     ConfigChoice& choice1 = iConfigManager->GetChoice(kIdChoice1);
     TEST(choice1 == *iChoice1);
     ConfigChoice& choice2 = iConfigManager->GetChoice(kIdChoice2);
     TEST(choice2 == choice);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kIdText2, MakeFunctor(*this, &SuiteConfigurationManager::OwnerFunctor), kMaxText, kText2);
+    ConfigText text(*iConfigManager, kIdText2, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText2);
     ConfigText& text1 = iConfigManager->GetText(kIdText1);
     TEST(text1 == *iText1);
     ConfigText& text2 = iConfigManager->GetText(kIdText2);

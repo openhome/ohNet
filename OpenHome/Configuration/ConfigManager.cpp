@@ -7,41 +7,41 @@ using namespace OpenHome;
 using namespace OpenHome::Configuration;
 
 
+// FIXME - move ConfigVal templated methods into header
+
 // ConfigVal
 
-ConfigVal::ConfigVal(IConfigurationManager& aManager, const Brx& aId, Functor aFunc)
+template <class T> ConfigVal<T>::ConfigVal(IConfigurationManager& aManager, const Brx& aId)
     : iConfigManager(aManager)
     , iId(aId)
     , iObserverLock("CVOL")
-    , iNextObserverId(0)
+    , iOwnerObserverId(0)
+    , iWriteObserverId(0)
+    , iNextObserverId(1)
 {
-    iOwnerObserverId = Subscribe(aFunc);
-    iWriteObserverId = Subscribe(MakeFunctor(*this, &ConfigVal::Write));
 }
 
-ConfigVal::~ConfigVal()
+template <class T> void ConfigVal<T>::AddInitialSubscribers(FunctorGeneric<T> aOwnerFunc)
+{
+    ASSERT(iOwnerObserverId == 0);
+    ASSERT(iWriteObserverId == 0);
+    iOwnerObserverId = Subscribe(aOwnerFunc);
+    iWriteObserverId = Subscribe(MakeFunctorGeneric<T>(*this, &ConfigVal::Write));
+}
+
+template <class T> ConfigVal<T>::~ConfigVal()
 {
     Unsubscribe(iWriteObserverId);
     Unsubscribe(iOwnerObserverId);
     ASSERT(iObservers.size() == 0);
 }
 
-const Brx& ConfigVal::Id()
+template <class T> const Brx& ConfigVal<T>::Id()
 {
     return iId;
 }
 
-TUint ConfigVal::Subscribe(Functor aFunctor)
-{
-    iObserverLock.Wait();
-    TUint id = iNextObserverId;
-    iObservers.insert(std::pair<TUint,Functor>(id, aFunctor));
-    iNextObserverId++;
-    iObserverLock.Signal();
-    return id;
-}
-
-void ConfigVal::Unsubscribe(TUint aId)
+template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
 {
     iObserverLock.Wait();
     Map::iterator it = iObservers.find(aId);
@@ -51,19 +51,32 @@ void ConfigVal::Unsubscribe(TUint aId)
     iObserverLock.Signal();
 }
 
-void ConfigVal::NotifySubscribers()
+template <class T> TUint ConfigVal<T>::Subscribe(FunctorGeneric<T> aFunctor, T aVal)
 {
+    iObserverLock.Wait();
+    TUint id = iNextObserverId;
+    iObservers.insert(std::pair<TUint,FunctorGeneric<T>>(id, aFunctor));
+    iNextObserverId++;
+    iObserverLock.Signal();
+    aFunctor(aVal);
+    return id;
+}
+
+template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
+{
+    ASSERT(iOwnerObserverId != 0);
+    ASSERT(iWriteObserverId != 0);
     AutoMutex a(iObserverLock);
     for (Map::iterator it = iObservers.begin(); it != iObservers.end(); it++) {
-        it->second();
+        it->second(aVal);
     }
 }
 
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TInt aMin, TInt aMax, TInt aDefault)
-    : ConfigVal(aManager, aId, aFunc)
+ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TInt> aFunc, TInt aMin, TInt aMax, TInt aDefault)
+    : ConfigVal(aManager, aId)
     , iMin(aMin)
     , iMax(aMax)
 {
@@ -78,7 +91,8 @@ ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, Functor aF
     ASSERT(Valid(initialVal));
     iConfigManager.Add(*this);
     iVal = initialVal;
-    NotifySubscribers(); // FIXME - is this safe in constructor?
+
+    AddInitialSubscribers(aFunc);
 }
 
 TInt ConfigNum::Min() const
@@ -106,7 +120,7 @@ TBool ConfigNum::Set(TInt aVal)
 
     if (aVal != iVal) {
         iVal = aVal;
-        ConfigVal::NotifySubscribers();
+        NotifySubscribers(iVal);
         changed = true;
     }
 
@@ -121,18 +135,23 @@ TBool ConfigNum::Valid(TInt aVal)
     return true;
 }
 
-void ConfigNum::Write()
+TUint ConfigNum::Subscribe(FunctorGeneric<TInt> aFunctor)
+{
+    return ConfigVal::Subscribe(aFunctor, iVal);
+}
+
+void ConfigNum::Write(TInt aVal)
 {
     Bws<sizeof(TInt)> valBuf;
-    valBuf.Append(Arch::BigEndian4(Get()));
+    valBuf.Append(Arch::BigEndian4(aVal));
     iConfigManager.Write(iId, valBuf);
 }
 
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
-    : ConfigVal(aManager, aId, aFunc)
+ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
+    : ConfigVal(aManager, aId)
 {
     for (TUint i=0; i<aOptions.size(); i++)
     {
@@ -148,7 +167,8 @@ ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Func
     ASSERT(Valid(initialVal));
     iConfigManager.Add(*this);
     iSelected = initialVal;
-    NotifySubscribers();
+
+    AddInitialSubscribers(aFunc);
 }
 
 void ConfigChoice::Add(const Brx& aVal)
@@ -189,7 +209,7 @@ TBool ConfigChoice::Set(TUint aIndex)
 
     if (aIndex != iSelected) {
         iSelected = aIndex;
-        ConfigVal::NotifySubscribers();
+        NotifySubscribers(iSelected);
         changed = true;
     }
 
@@ -204,18 +224,23 @@ TBool ConfigChoice::Valid(TUint aVal)
     return true;
 }
 
-void ConfigChoice::Write()
+TUint ConfigChoice::Subscribe(FunctorGeneric<TUint> aFunctor)
+{
+    return ConfigVal::Subscribe(aFunctor, iSelected);
+}
+
+void ConfigChoice::Write(TUint aVal)
 {
     Bws<sizeof(TUint)> valBuf;
-    valBuf.Append(Arch::BigEndian4(Get()));
+    valBuf.Append(Arch::BigEndian4(aVal));
     iConfigManager.Write(iId, valBuf);
 }
 
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, Functor aFunc, TUint aMaxLength, const Brx& aDefault)
-    : ConfigVal(aManager, aId, aFunc)
+ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault)
+    : ConfigVal(aManager, aId)
     , iText(aMaxLength)
 {
     Bwh initialBuf(aMaxLength);
@@ -224,7 +249,8 @@ ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, Functor 
     ASSERT(Valid(initialBuf));
     iConfigManager.Add(*this);
     iText.Replace(initialBuf);
-    NotifySubscribers();
+
+    AddInitialSubscribers(aFunc);
 }
 
 TUint ConfigText::MaxLength() const
@@ -247,7 +273,7 @@ TBool ConfigText::Set(const Brx& aText)
 
     if (aText != iText) {
         iText.Replace(aText);
-        ConfigVal::NotifySubscribers();
+        NotifySubscribers(iText);
         changed = true;
     }
 
@@ -262,9 +288,14 @@ TBool ConfigText::Valid(const Brx& aVal)
     return true;
 }
 
-void ConfigText::Write()
+TUint ConfigText::Subscribe(FunctorGeneric<const Brx&> aFunctor)
 {
-    iConfigManager.Write(iId, Get());
+    return ConfigVal::Subscribe(aFunctor, iText);
+}
+
+void ConfigText::Write(const Brx& aVal)
+{
+    iConfigManager.Write(iId, aVal);
 }
 
 
@@ -330,20 +361,6 @@ void ConfigurationManager::Write(const Brx& aKey, const Brx& aValue)
 TBool ConfigurationManager::Has(const Brx& aId) const
 {
     return HasNum(aId) || HasChoice(aId) || HasText(aId);
-}
-
-ConfigVal& ConfigurationManager::Get(const Brx& aId) const
-{
-    ASSERT(Has(aId));
-    if (HasNum(aId)) {
-        return GetNum(aId);
-    }
-    else if (HasChoice(aId)) {
-        return GetChoice(aId);
-    }
-    else {
-        return GetText(aId);
-    }
 }
 
 TBool ConfigurationManager::HasNum(const Brx& aId) const
