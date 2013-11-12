@@ -132,7 +132,6 @@ public:
     ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TInt> aFunc, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
-    TInt Get() const;
     TBool Set(TInt aVal);
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
@@ -166,7 +165,6 @@ class ConfigChoice : public ConfigVal<TUint>
 public:
     ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
     std::vector<const Brx*> Options();
-    TUint Get() const;
     TBool Set(TUint aIndex);
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
@@ -201,7 +199,6 @@ class ConfigText : public ConfigVal<const Brx&>
 public:
     ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
-    const Brx& Get() const;
     TBool Set(const Brx& aText);
     inline TBool operator==(const ConfigText& aText) const;
 private:

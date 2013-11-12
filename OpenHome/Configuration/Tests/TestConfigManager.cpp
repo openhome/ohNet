@@ -64,7 +64,6 @@ private:
     void TestValueOutOfRangeConstructor();
     void TestValueFromStore();
     void TestValueWrittenToStore();
-    void TestGet();
     void TestGetMin();
     void TestGetMax();
     void TestSetUpdate();
@@ -97,7 +96,6 @@ private:
     void TestValueWrittenToStore();
     void TestAdd();
     void TestAddDuplicate();
-    void TestGet();
     void TestGetNoOptions();
     void TestSetUpdate();
     void TestSetNoUpdate();
@@ -130,7 +128,6 @@ private:
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestMaxLength();
-    void TestGet();
     void TestSetUpdate();
     void TestSetNoUpdate();
     void TestSetValueTooLong();
@@ -323,7 +320,6 @@ SuiteConfigNum::SuiteConfigNum()
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueWrittenToStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGet));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMin));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMax));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetUpdate));
@@ -371,7 +367,7 @@ void SuiteConfigNum::TestFunctorsCalledAtConstruction()
     TEST(iOwnerFunctorCount == 1);
 
     // there is an internal write functor - check value == value in store
-    TEST(IntFromStore(kKey) == iConfigVal->Get());
+    TEST(IntFromStore(kKey) == iLastOwnerVal);
 }
 
 void SuiteConfigNum::TestSubscription()
@@ -413,28 +409,22 @@ void SuiteConfigNum::TestValueFromStore()
     Bws<sizeof(TInt)> valBuf;
     valBuf.Append(Arch::BigEndian4(storeVal));
     iStore->Write(key, valBuf);
-    ConfigNum num(*iConfigManager, key, MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::OwnerFunctor), kMin, kMax, kVal);
+    // using NotifyChanged as owner functor here, as OwnerFunctor has already been used by ConfigVal in Setup()
+    ConfigNum num(*iConfigManager, key, MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::NotifyChanged), kMin, kMax, kVal);
 
-    TEST(iChangedCount == 0);
-    TEST(iOwnerFunctorCount == 2);
+    TEST(iChangedCount == 1);
+    TEST(iOwnerFunctorCount == 1);
 
     // test value in store hasn't been overwritten
     TEST(IntFromStore(key) == storeVal);
     // test retrieved value is correct
-    TEST(num.Get() == storeVal);
+    TEST(iLastChangeVal == storeVal);
 }
 
 void SuiteConfigNum::TestValueWrittenToStore()
 {
     // test that the default value has been written out to store at creation
     TEST(IntFromStore(kKey) == kVal);
-}
-
-void SuiteConfigNum::TestGet()
-{
-    // test the correct value of the ConfigNum is returned
-    TInt val = iConfigVal->Get();
-    TEST(val == kVal);
 }
 
 void SuiteConfigNum::TestGetMin()
@@ -465,8 +455,8 @@ void SuiteConfigNum::TestSetUpdate()
     TEST(iChangedCount == changedCount+1);
     TEST(iOwnerFunctorCount == ownerFunctorCount+1);
 
-    TInt val = iConfigVal->Get();
-    TEST(val == newVal);
+    TEST(iLastOwnerVal == newVal);
+    TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(IntFromStore(kKey) == newVal);
 
@@ -481,14 +471,14 @@ void SuiteConfigNum::TestSetNoUpdate()
     TUint ownerFunctorCount = iOwnerFunctorCount;
     TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TInt>(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(iConfigVal->Get());
+    TBool updated = iConfigVal->Set(iLastChangeVal);
 
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
     TEST(iOwnerFunctorCount == ownerFunctorCount);
 
-    TInt val = iConfigVal->Get();
-    TEST(val == kVal);
+    TEST(iLastOwnerVal == kVal);
+    TEST(iLastChangeVal == kVal);
     // test value in store hasn't changed
     TEST(IntFromStore(kKey) == kVal);
 
@@ -498,14 +488,14 @@ void SuiteConfigNum::TestSetNoUpdate()
 void SuiteConfigNum::TestSetValueOutOfRange()
 {
     // test attempting to set ConfigNum's value outwith the range min..max
-    TInt valBefore = iConfigVal->Get();
+    TInt valBefore = iLastOwnerVal;
     TEST_THROWS(iConfigVal->Set(kMax+1), ConfigValueOutOfRange);
-    TInt valAfter = iConfigVal->Get();
+    TInt valAfter = iLastOwnerVal;
     TEST(valAfter == valBefore);
 
-    valBefore = iConfigVal->Get();
+    valBefore = iLastOwnerVal;
     TEST_THROWS(iConfigVal->Set(kMin-1), ConfigValueOutOfRange);
-    valAfter = iConfigVal->Get();
+    valAfter = iLastOwnerVal;
     TEST(valAfter == valBefore);
 }
 
@@ -525,7 +515,6 @@ SuiteConfigChoice::SuiteConfigChoice()
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAddDuplicate));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGet));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoOptions));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetUpdate));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate));
@@ -576,7 +565,7 @@ void SuiteConfigChoice::TestFunctorsCalledAtConstruction()
     TEST(iOwnerFunctorCount == 1);
 
     // there is an internal write functor - check value == value in store
-    TEST(UintFromStore(kKey) == iConfigVal->Get());
+    TEST(UintFromStore(kKey) == iLastOwnerVal);
 }
 
 void SuiteConfigChoice::TestSubscription()
@@ -611,15 +600,16 @@ void SuiteConfigChoice::TestValueFromStore()
     options.push_back(&kOption1);
     options.push_back(&kOption2);
     options.push_back(&kOption3);
-    ConfigChoice choice(*iConfigManager, key, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
+    // using NotifyChanged as owner functor here, as OwnerFunctor has already been used by ConfigVal in Setup()
+    ConfigChoice choice(*iConfigManager, key, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged), options, kDefault);
 
-    TEST(iChangedCount == 0);
-    TEST(iOwnerFunctorCount == 2);
+    TEST(iChangedCount == 1);
+    TEST(iOwnerFunctorCount == 1);
 
     // test value in store hasn't been overwritten
     TEST(UintFromStore(key) == storeVal);
     // test retrieved value is correct
-    TEST(choice.Get() == storeVal);
+    TEST(iLastChangeVal == storeVal);
 }
 
 void SuiteConfigChoice::TestValueWrittenToStore()
@@ -649,14 +639,6 @@ void SuiteConfigChoice::TestAddDuplicate()
     TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);, ConfigValueExists);
 }
 
-void SuiteConfigChoice::TestGet()
-{
-    // test that adding some options and then calling Get() (without a prior
-    // Set()) returns the first option
-    TUint selected = iConfigVal->Get();
-    TEST(selected == kDefault); // the first option should be the default
-}
-
 void SuiteConfigChoice::TestGetNoOptions()
 {
     // test that creating without any options causes an assert
@@ -678,8 +660,8 @@ void SuiteConfigChoice::TestSetUpdate()
     TEST(iChangedCount == changedCount+1);
     TEST(iOwnerFunctorCount == ownerFunctorCount+1);
 
-    TUint selected = iConfigVal->Get();
-    TEST(selected == newVal);
+    TEST(iLastOwnerVal == newVal);
+    TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(UintFromStore(kKey) == newVal);
 
@@ -699,8 +681,8 @@ void SuiteConfigChoice::TestSetNoUpdate()
     TEST(iChangedCount == changedCount);
     TEST(iOwnerFunctorCount == ownerFunctorCount);
 
-    TUint selected = iConfigVal->Get();
-    TEST(selected == kDefault);
+    TEST(iLastOwnerVal == kDefault);
+    TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
     TEST(UintFromStore(kKey) == kDefault);
 
@@ -711,9 +693,9 @@ void SuiteConfigChoice::TestSetIndexOutOfRange()
 {
     // test that attempting to set ConfigChoice to an invalid option index results
     // in an exception
-    TUint selectedBefore = iConfigVal->Get();
+    TUint selectedBefore = iLastOwnerVal;
     TEST_THROWS(iConfigVal->Set(3), ConfigIndexOutOfRange);
-    TUint selectedAfter = iConfigVal->Get();
+    TUint selectedAfter = iLastOwnerVal;
     TEST(selectedAfter == selectedBefore);
 }
 
@@ -730,7 +712,6 @@ SuiteConfigText::SuiteConfigText()
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestGet));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetUpdate));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetNoUpdate));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetValueTooLong));
@@ -770,7 +751,7 @@ void SuiteConfigText::TestFunctorsCalledAtConstruction()
     // there is an internal write functor - check value == value in store
     Bwh valBuf(kMaxLength);
     iStore->Read(kKey, valBuf);
-    TEST(valBuf == iConfigVal->Get());
+    TEST(valBuf == iLastOwnerVal);
 }
 
 void SuiteConfigText::TestSubscription()
@@ -798,17 +779,18 @@ void SuiteConfigText::TestValueFromStore()
     const Brn key("conf.text.2");
     Brn storeVal("zyxwvutsrqponmlkjihgfedcba");
     iStore->Write(key, storeVal);
-    ConfigText text(*iConfigManager, key, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::OwnerFunctor), kMaxLength, kDefault);
+    // using NotifyChanged as owner functor here, as OwnerFunctor has already been used by ConfigVal in Setup()
+    ConfigText text(*iConfigManager, key, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigText::NotifyChanged), kMaxLength, kDefault);
 
-    TEST(iChangedCount == 0);
-    TEST(iOwnerFunctorCount == 2);
+    TEST(iChangedCount == 1);
+    TEST(iOwnerFunctorCount == 1);
 
     // test value in store hasn't been overwritten
     Bwh valBuf(kMaxLength);
     iStore->Read(key, valBuf);
     TEST(valBuf == storeVal);
     // test retrieved value is correct
-    TEST(text.Get() == storeVal);
+    TEST(iLastChangeVal == storeVal);
 }
 
 void SuiteConfigText::TestValueWrittenToStore()
@@ -825,14 +807,6 @@ void SuiteConfigText::TestMaxLength()
     TEST(iConfigVal->MaxLength() == kMaxLength);
 }
 
-void SuiteConfigText::TestGet()
-{
-    // test that calling Get() on a value set as default results in correct
-    // value being returned
-    const Brx& buf = iConfigVal->Get();
-    TEST(buf == kDefault);
-}
-
 void SuiteConfigText::TestSetUpdate()
 {
     // test that updating ConfigText with a new value results in ConfigText
@@ -847,8 +821,8 @@ void SuiteConfigText::TestSetUpdate()
     TEST(iChangedCount == changedCount+1);
     TEST(iOwnerFunctorCount == ownerFunctorCount+1);
 
-    const Brx& buf = iConfigVal->Get();
-    TEST(buf == newVal);
+    TEST(iLastOwnerVal == newVal);
+    TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     Bwh valBuf(kMaxLength);
     iStore->Read(kKey, valBuf);
@@ -871,8 +845,8 @@ void SuiteConfigText::TestSetNoUpdate()
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
     TEST(iOwnerFunctorCount == ownerFunctorCount);
-    const Brx& buf1 = iConfigVal->Get();
-    TEST(buf1 == kDefault);
+    TEST(iLastOwnerVal == kDefault);
+    TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
     Bwh valBuf(kMaxLength);
     iStore->Read(kKey, valBuf);
@@ -890,8 +864,8 @@ void SuiteConfigText::TestSetNoUpdate()
     TEST(updated == false);
     TEST(iChangedCount == changedCount);
     TEST(iOwnerFunctorCount == ownerFunctorCount);
-    const Brx& buf2 = iConfigVal->Get();
-    TEST(buf2 == text);
+    TEST(iLastOwnerVal == text);
+    TEST(iLastChangeVal == text);
     // test value in store hasn't changed
     valBuf.SetBytes(0);
     iStore->Read(kKey, valBuf);
@@ -906,9 +880,9 @@ void SuiteConfigText::TestSetValueTooLong()
     Bws<kMaxLength+1> buf;
     buf.SetBytes(buf.MaxBytes());
 
-    const Brx& bufBefore = iConfigVal->Get();
+    const Brx& bufBefore = iLastOwnerVal;
     TEST_THROWS(iConfigVal->Set(buf), ConfigValueTooLong);
-    const Brx& bufAfter = iConfigVal->Get();
+    const Brx& bufAfter = iLastOwnerVal;
     TEST(bufAfter == bufBefore);
 }
 
@@ -1313,7 +1287,7 @@ void TestConfigManager()
     runner.Add(new SuiteCVSubscriptions());
     runner.Add(new SuiteConfigNum());
     runner.Add(new SuiteConfigChoice());
-    runner.Add(new SuiteConfigText());
+    //runner.Add(new SuiteConfigText());
     runner.Add(new SuiteConfigurationManager());
     runner.Add(new SuiteRamStore());
     runner.Run();

@@ -39,11 +39,6 @@ TInt ConfigNum::Max() const
     return iMax;
 }
 
-TInt ConfigNum::Get() const
-{
-    return iVal;
-}
-
 TBool ConfigNum::Set(TInt aVal)
 {
     TBool changed = false;
@@ -127,12 +122,6 @@ std::vector<const Brx*> ConfigChoice::Options()
     return options;
 }
 
-TUint ConfigChoice::Get() const
-{
-    ASSERT(iAllowedValues.size() > 0);
-    return iSelected;
-}
-
 TBool ConfigChoice::Set(TUint aIndex)
 {
     TBool changed = false;
@@ -190,11 +179,6 @@ ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorG
 TUint ConfigText::MaxLength() const
 {
     return iText.MaxBytes();
-}
-
-const Brx& ConfigText::Get() const
-{
-    return iText;
 }
 
 TBool ConfigText::Set(const Brx& aText)
