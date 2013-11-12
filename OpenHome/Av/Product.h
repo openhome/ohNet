@@ -78,8 +78,8 @@ public:
 private:
     void AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue);
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
-    void ProductRoomChanged();
-    void ProductNameChanged();
+    void ProductRoomChanged(const Brx& aValue);
+    void ProductNameChanged(const Brx& aValue);
 private: // from IProduct
     void Activate(ISource& aSource);
 private: // from IInfoProvider
@@ -89,6 +89,7 @@ private:
     IReadStore& iReadStore;
     Configuration::IConfigurationManager& iConfigManager;
     Mutex iLock;
+    Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
     IProductObserver* iObserver;
     std::vector<ISource*> iSources;
@@ -99,6 +100,8 @@ private:
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
+    Bws<kMaxRoomBytes> iProductRoom;
+    Bws<kMaxNameBytes> iProductName;
 };
 
 } // namespace Av

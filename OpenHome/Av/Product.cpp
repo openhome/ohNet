@@ -25,14 +25,15 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iReadStore(aReadStore)
     , iConfigManager(aConfigManager)
     , iLock("PRDM")
+    , iLockDetails("PRDD")
     , iObserver(NULL)
     , iStarted(false)
     , iStartupSource(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceKey, Brn("Playlist"), ISource::kMaxSourceTypeBytes)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
-    iConfigProductRoom = new ConfigText(iConfigManager, ConfigIdRoom, MakeFunctor(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
-    iConfigProductName = new ConfigText(iConfigManager, ConfigIdName, MakeFunctor(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    iConfigProductRoom = new ConfigText(iConfigManager, ConfigIdRoom, MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    iConfigProductName = new ConfigText(iConfigManager, ConfigIdName, MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 
@@ -102,8 +103,10 @@ void Product::GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri)
 
 void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri)
 {
-    aRoom.Append(iConfigProductRoom->Get());
-    aName.Append(iConfigProductName->Get());
+    iLockDetails.Wait();
+    aRoom.Append(iProductRoom);
+    aName.Append(iProductName);
+    iLockDetails.Signal();
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelInfo, aInfo));
     // presentation url
     ASSERT(iReadStore.TryReadStoreStaticItem(StaticDataKey::kBufModelImageUrl, aImageUri));
@@ -151,9 +154,17 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
     aXml.Append('>');
 }
 
-void Product::ProductRoomChanged() {}
+void Product::ProductRoomChanged(const Brx& aValue)
+{
+    AutoMutex a(iLockDetails);
+    iProductRoom.Replace(aValue);
+}
 
-void Product::ProductNameChanged() {}
+void Product::ProductNameChanged(const Brx& aValue)
+{
+    AutoMutex a(iLockDetails);
+    iProductName.Replace(aValue);
+}
 
 void Product::SetCurrentSource(TUint aIndex)
 {
