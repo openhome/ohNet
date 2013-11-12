@@ -87,10 +87,6 @@ def configure_toolchain(conf):
         else:
             conf.env.append_value('CXXFLAGS',['/MT', '/Ox'])
         conf.env.append_value('CFLAGS', conf.env['CXXFLAGS'])
-        # C++11 support is only relevant to C++ code.
-        # ...but does seem to have some effect on the level of C supported by C++ files.
-        conf.env.append_value('CXXFLAGS', '-std=c++0x')
-        conf.env.append_value('CXXFLAGS', '-D__STDC_VERSION__=199901L')
         # Only enable warnings for C++ code as C code is typically third party and often generates many warnings
         conf.env.append_value('CXXFLAGS',['/W4', '/WX'])
     else:
@@ -98,7 +94,6 @@ def configure_toolchain(conf):
         conf.load('compiler_c')
         conf.env.append_value('CFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', '-g')
-        conf.env.append_value('CXXFLAGS', '-std=c++0x')
         conf.env.append_value('LINKFLAGS', ['-g', '-Wl,--fatal-warnings'])
         conf.env.append_value('CXXFLAGS', [
                 '-pipe', '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_TRACE',
@@ -108,6 +103,10 @@ def configure_toolchain(conf):
         else:
             conf.env.append_value('CXXFLAGS',['-O2'])
         conf.env.append_value('CFLAGS', conf.env['CXXFLAGS'])
+        # C++11 support is only relevant to C++ code.
+        # ...but does seem to have some effect on the level of C supported by C++ files.
+        conf.env.append_value('CXXFLAGS', '-std=c++0x')
+        conf.env.append_value('CXXFLAGS', '-D__STDC_VERSION__=199901L')
         # Don't enable warnings for C code as its typically third party and written to different standards
         conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-Werror'])
