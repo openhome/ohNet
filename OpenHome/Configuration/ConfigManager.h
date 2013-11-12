@@ -144,6 +144,7 @@ private:
     TInt iMin;
     TInt iMax;
     TInt iVal;
+    Mutex iMutex;
 };
 
 inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
@@ -177,6 +178,7 @@ private: // from ConfigVal
 private:
     std::vector<Brn> iAllowedValues;
     TUint iSelected;
+    Mutex iMutex;
 };
 
 inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
@@ -209,6 +211,7 @@ private: // from ConfigVal
     void Write(const Brx&);
 private:
     Bwh iText;
+    mutable Mutex iMutex;
 };
 
 inline TBool ConfigText::operator==(const ConfigText& aText) const

@@ -13,6 +13,7 @@ ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGen
     : ConfigVal(aManager, aId)
     , iMin(aMin)
     , iMax(aMax)
+    , iMutex("CVNM")
 {
     ASSERT(iMax >= iMin);
 
@@ -47,11 +48,13 @@ TBool ConfigNum::Set(TInt aVal)
         THROW(ConfigValueOutOfRange);
     }
 
+    iMutex.Wait();
     if (aVal != iVal) {
         iVal = aVal;
         NotifySubscribers(iVal);
         changed = true;
     }
+    iMutex.Signal();
 
     return changed;
 }
@@ -66,6 +69,7 @@ TBool ConfigNum::IsValid(TInt aVal)
 
 TUint ConfigNum::Subscribe(FunctorGeneric<TInt> aFunctor)
 {
+    AutoMutex a(iMutex);
     return ConfigVal::Subscribe(aFunctor, iVal);
 }
 
@@ -81,6 +85,7 @@ void ConfigNum::Write(TInt aVal)
 
 ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
     : ConfigVal(aManager, aId)
+    , iMutex("CVCM")
 {
     for (TUint i=0; i<aOptions.size(); i++)
     {
@@ -130,11 +135,13 @@ TBool ConfigChoice::Set(TUint aIndex)
         THROW(ConfigIndexOutOfRange);
     }
 
+    iMutex.Wait();
     if (aIndex != iSelected) {
         iSelected = aIndex;
         NotifySubscribers(iSelected);
         changed = true;
     }
+    iMutex.Signal();
 
     return changed;
 }
@@ -149,6 +156,7 @@ TBool ConfigChoice::IsValid(TUint aVal)
 
 TUint ConfigChoice::Subscribe(FunctorGeneric<TUint> aFunctor)
 {
+    AutoMutex a(iMutex);
     return ConfigVal::Subscribe(aFunctor, iSelected);
 }
 
@@ -165,6 +173,7 @@ void ConfigChoice::Write(TUint aVal)
 ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aId)
     , iText(aMaxLength)
+    , iMutex("CVTM")
 {
     Bwh initialBuf(aMaxLength);
     iConfigManager.Read(iId, initialBuf, aDefault);
@@ -178,12 +187,14 @@ ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorG
 
 TUint ConfigText::MaxLength() const
 {
+    AutoMutex a(iMutex);
     return iText.MaxBytes();
 }
 
 TBool ConfigText::Set(const Brx& aText)
 {
     TBool changed = false;
+    AutoMutex a(iMutex);
 
     if (!IsValid(aText)) {
         THROW(ConfigValueTooLong);
@@ -208,6 +219,7 @@ TBool ConfigText::IsValid(const Brx& aVal)
 
 TUint ConfigText::Subscribe(FunctorGeneric<const Brx&> aFunctor)
 {
+    AutoMutex a(iMutex);
     return ConfigVal::Subscribe(aFunctor, iText);
 }
 
