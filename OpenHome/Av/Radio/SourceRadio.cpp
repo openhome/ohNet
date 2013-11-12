@@ -44,8 +44,9 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
-    iConfigUserName = new ConfigText(aConfigManager, Brn("Radio.TuneInUserName"), MakeFunctor(*this, &SourceRadio::TuneInUsernameChanged), kUsernameMaxLength, Brn("linnproducts"));
-    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, iConfigUserName->Get());
+    iConfigUserName = new ConfigText(aConfigManager, Brn("Radio.TuneInUserName"), MakeFunctorGeneric<const Brx&>(*this, &SourceRadio::TuneInUsernameChanged), kUsernameMaxLength, Brn("linnproducts"));
+    ASSERT(iUserName != Brn::Empty());
+    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, iUserName);
     iPipeline.AddObserver(*this);
 }
 
@@ -176,4 +177,8 @@ void SourceRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     iLock.Signal();
 }
 
-void SourceRadio::TuneInUsernameChanged() {}
+void SourceRadio::TuneInUsernameChanged(const Brx& aValue)
+{
+    AutoMutex a(iLock);
+    iUserName.Replace(aValue);
+}

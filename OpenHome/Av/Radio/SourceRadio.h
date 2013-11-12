@@ -62,7 +62,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
-    void TuneInUsernameChanged();
+    void TuneInUsernameChanged(const Brx& aValue);
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
@@ -76,6 +76,7 @@ private:
     TUint iStreamId;
     Media::EPipelineState iTransportState;
     Configuration::ConfigText* iConfigUserName;
+    Bws<kUsernameMaxLength> iUserName;
 };
 
 } // namespace Av
