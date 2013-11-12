@@ -51,7 +51,7 @@ class MemberTranslatorGeneric : public FunctorGeneric<Type>
 public:
     MemberTranslatorGeneric(Object& aC, const MemFunc& aM) :
         FunctorGeneric<Type>(Thunk,&aC,&aM,sizeof(MemFunc)) {}
-    static void Thunk(const FunctorGeneric& aFb, Type aType)
+    static void Thunk(const FunctorGeneric<Type>& aFb, Type aType)
     {
         Object* object = (Object*)aFb.iObject;
         MemFunc& memFunc(*(MemFunc*)(TAny*)(aFb.iCallbackMember));

@@ -93,7 +93,7 @@ template <class T> const Brx& ConfigVal<T>::Id()
 template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
 {
     iObserverLock.Wait();
-    Map::iterator it = iObservers.find(aId);
+    typename Map::iterator it = iObservers.find(aId);
     if (it != iObservers.end()) {
         iObservers.erase(it);
     }
@@ -116,7 +116,8 @@ template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
     ASSERT(iOwnerObserverId != 0);
     ASSERT(iWriteObserverId != 0);
     AutoMutex a(iObserverLock);
-    for (Map::iterator it = iObservers.begin(); it != iObservers.end(); it++) {
+    typename Map::iterator it;
+    for (it = iObservers.begin(); it != iObservers.end(); it++) {
         it->second(aVal);
     }
 }

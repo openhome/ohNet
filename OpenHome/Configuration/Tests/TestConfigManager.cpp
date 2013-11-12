@@ -102,9 +102,9 @@ private:
     void TestSetNoSuchChoice();
 private:
     static const TUint kDefault = 1000;
-    static const TUint kChoice1 = 1000;
-    static const TUint kChoice2 = 1001;
-    static const TUint kChoice3 = 1002;
+    static const TUint kChoice1;
+    static const TUint kChoice2;
+    static const TUint kChoice3;
     ConfigChoice* iConfigVal;
     TUint iLastChangeVal;
     TUint iLastOwnerVal;
@@ -165,9 +165,9 @@ private:
     static const TInt kMinNum = 0;
     static const TInt kMaxNum = 2;
     static const TUint kChoiceDefault = 0;
-    static const TUint kChoice1 = 0;
-    static const TUint kChoice2 = 1;
-    static const TUint kChoice3 = 2;
+    static const TUint kChoice1;
+    static const TUint kChoice2;
+    static const TUint kChoice3;
     static const TUint kMaxText = 26;
     static const Brn kText1;
     static const Brn kText2;
@@ -501,6 +501,10 @@ void SuiteConfigNum::TestSetValueOutOfRange()
 
 
 // SuiteConfigChoice
+
+const TUint SuiteConfigChoice::kChoice1 = 1000;
+const TUint SuiteConfigChoice::kChoice2 = 1001;
+const TUint SuiteConfigChoice::kChoice3 = 1002;
 
 SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
@@ -891,6 +895,9 @@ void SuiteConfigText::TestSetValueTooLong()
  * ConfigManager.
  */
 
+const TUint SuiteConfigurationManager::kChoice1 = 0;
+const TUint SuiteConfigurationManager::kChoice2 = 1;
+const TUint SuiteConfigurationManager::kChoice3 = 2;
 const Brn SuiteConfigurationManager::kText1("abcdefghijklmnopqrstuvwxyz");
 const Brn SuiteConfigurationManager::kText2("zyxwvutsrqponmlkjihgfedcba");
 const Brn SuiteConfigurationManager::kIdNum1("cv.num.1");
