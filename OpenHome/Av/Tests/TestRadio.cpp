@@ -52,7 +52,6 @@ TestRadio::~TestRadio()
     delete iDriver;
 //    delete iSourceUpnpAv;
     delete iTrackFactory;
-    delete iEnv;
 }
 
 void TestRadio::Run(PresetDatabase& aDb)

@@ -96,6 +96,7 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iRamStore;
     delete iConfigManager;
     delete iConfigRamStore;
+    delete iPowerManager;
 }
 
 void TestMediaPlayer::DestroyPipeline()

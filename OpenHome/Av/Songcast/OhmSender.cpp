@@ -411,8 +411,10 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     , iZoneHandler(&aZoneHandler)
     , iName(aName)
     , iChannel(aChannel)
+    , iInterface(0)
     , iLatency(aLatency)
     , iMulticast(aMulticast)
+    , iEnabled(false)
     , iImageFileName(aImageFileName)
     , iSocketOhm(aEnv)
     , iRxBuffer(iSocketOhm)
@@ -446,7 +448,7 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     iThreadUnicast->Start();
     
     UpdateChannel();
-    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &OhmSender::CurrentSubnetChanged));
+    iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &OhmSender::CurrentSubnetChanged), false);
     UpdateMetadata();
 }
 
