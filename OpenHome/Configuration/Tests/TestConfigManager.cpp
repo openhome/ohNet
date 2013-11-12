@@ -96,15 +96,15 @@ private:
     void TestValueWrittenToStore();
     void TestAdd();
     void TestAddDuplicate();
-    void TestGetNoOptions();
+    void TestGetNoChoices();
     void TestSetUpdate();
     void TestSetNoUpdate();
-    void TestSetIndexOutOfRange();
+    void TestSetNoSuchChoice();
 private:
-    static const TUint kDefault = 0;
-    static const Brn kOption1;
-    static const Brn kOption2;
-    static const Brn kOption3;
+    static const TUint kDefault = 1000;
+    static const TUint kChoice1 = 1000;
+    static const TUint kChoice2 = 1001;
+    static const TUint kChoice3 = 1002;
     ConfigChoice* iConfigVal;
     TUint iLastChangeVal;
     TUint iLastOwnerVal;
@@ -165,10 +165,10 @@ private:
     static const TInt kMinNum = 0;
     static const TInt kMaxNum = 2;
     static const TUint kChoiceDefault = 0;
+    static const TUint kChoice1 = 0;
+    static const TUint kChoice2 = 1;
+    static const TUint kChoice3 = 2;
     static const TUint kMaxText = 26;
-    static const Brn kOption1;
-    static const Brn kOption2;
-    static const Brn kOption3;
     static const Brn kText1;
     static const Brn kText2;
     static const Brn kIdNum1;
@@ -180,7 +180,7 @@ private:
     ConfigRamStore* iStore;
     ConfigurationManager* iConfigManager;
     ConfigNum* iNum1;
-    std::vector<const Brx*> iOptions;
+    std::vector<TUint> iChoices;
     ConfigChoice* iChoice1;
     ConfigText* iText1;
 };
@@ -502,10 +502,6 @@ void SuiteConfigNum::TestSetValueOutOfRange()
 
 // SuiteConfigChoice
 
-const Brn SuiteConfigChoice::kOption1("Option1");
-const Brn SuiteConfigChoice::kOption2("Option2");
-const Brn SuiteConfigChoice::kOption3("Option3");
-
 SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
@@ -515,22 +511,22 @@ SuiteConfigChoice::SuiteConfigChoice()
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAddDuplicate));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoOptions));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoChoices));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetUpdate));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetIndexOutOfRange));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoSuchChoice));
 }
 
 void SuiteConfigChoice::Setup()
 {
     SuiteCVNotify::Setup();
-    std::vector<const Brx*> options;
-    options.push_back(&kOption1);
-    options.push_back(&kOption2);
-    options.push_back(&kOption3);
+    std::vector<TUint> choices;
+    choices.push_back(kChoice1);
+    choices.push_back(kChoice2);
+    choices.push_back(kChoice3);
     iLastChangeVal = 0;
     iLastOwnerVal = 0;
-    iConfigVal = new ConfigChoice(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);
+    iConfigVal = new ConfigChoice(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), choices, kDefault);
 }
 
 void SuiteConfigChoice::TearDown()
@@ -582,7 +578,7 @@ void SuiteConfigChoice::TestSubscription()
 
     TEST(iChangedCount == changedCount+1);
     TEST(iOwnerFunctorCount == ownerFunctorCount);
-    TEST(iLastChangeVal == 0);
+    TEST(iLastChangeVal == kDefault);
     TEST(iLastOwnerVal == 1);
     iConfigVal->Unsubscribe(id);
 }
@@ -596,12 +592,12 @@ void SuiteConfigChoice::TestValueFromStore()
     valBuf.Append(Arch::BigEndian4(storeVal));
     iStore->Write(key, valBuf);
 
-    std::vector<const Brx*> options;
-    options.push_back(&kOption1);
-    options.push_back(&kOption2);
-    options.push_back(&kOption3);
+    std::vector<TUint> choices;
+    choices.push_back(kChoice1);
+    choices.push_back(kChoice2);
+    choices.push_back(kChoice3);
     // using NotifyChanged as owner functor here, as OwnerFunctor has already been used by ConfigVal in Setup()
-    ConfigChoice choice(*iConfigManager, key, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged), options, kDefault);
+    ConfigChoice choice(*iConfigManager, key, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged), choices, kDefault);
 
     TEST(iChangedCount == 1);
     TEST(iOwnerFunctorCount == 1);
@@ -620,30 +616,29 @@ void SuiteConfigChoice::TestValueWrittenToStore()
 
 void SuiteConfigChoice::TestAdd()
 {
-    // test that after options are added to a ConfigChoice, they are available when
-    // Options() is called
-    std::vector<const Brx*> options = iConfigVal->Options();
-
-    TEST(options.size() == 3);
-    TEST(*options[0] == kOption1);
-    TEST(*options[1] == kOption2);
-    TEST(*options[2] == kOption3);
+    // test that after choices are added to a ConfigChoice, they are available when
+    // Choices() is called
+    const std::vector<TUint>& choices = iConfigVal->Choices();
+    TEST(choices.size() == 3);
+    TEST(choices[0] == kChoice1);
+    TEST(choices[1] == kChoice2);
+    TEST(choices[2] == kChoice3);
 }
 
 void SuiteConfigChoice::TestAddDuplicate()
 {
-    // test that creating a ConfigChoice with a duplicate option fails
-    std::vector<const Brx*> options;
-    options.push_back(&kOption1);
-    options.push_back(&kOption1);
-    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault);, ConfigValueExists);
+    // test that creating a ConfigChoice with a duplicate choice fails
+    std::vector<TUint> choices;
+    choices.push_back(kChoice1);
+    choices.push_back(kChoice1);
+    TEST_THROWS(ConfigChoice cv(*iConfigManager, Brn("test.key"), MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), choices, kDefault), ConfigValueExists);
 }
 
-void SuiteConfigChoice::TestGetNoOptions()
+void SuiteConfigChoice::TestGetNoChoices()
 {
-    // test that creating without any options causes an assert
-    std::vector<const Brx*> options;
-    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), options, kDefault), AssertionFailed);
+    // test that creating without any choices causes an assert
+    std::vector<TUint> choices;
+    TEST_THROWS(ConfigChoice cv(*iConfigManager, kKey, MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::OwnerFunctor), choices, kDefault), AssertionFailed);
 }
 
 void SuiteConfigChoice::TestSetUpdate()
@@ -651,7 +646,7 @@ void SuiteConfigChoice::TestSetUpdate()
     // test that changing the selected value causes ConfigChoice to be updated (and
     // any observers notified)
     TUint ownerFunctorCount = iOwnerFunctorCount;
-    TUint newVal = 1;
+    TUint newVal = kDefault+1;
     TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
@@ -670,7 +665,7 @@ void SuiteConfigChoice::TestSetUpdate()
 
 void SuiteConfigChoice::TestSetNoUpdate()
 {
-    // test that setting the same option index results in no change to ConfigChoice
+    // test that setting the same choice value results in no change to ConfigChoice
     // (and observers aren't notified)
     TUint ownerFunctorCount = iOwnerFunctorCount;
     TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<TUint>(*this, &SuiteConfigChoice::NotifyChanged));
@@ -689,12 +684,12 @@ void SuiteConfigChoice::TestSetNoUpdate()
     iConfigVal->Unsubscribe(id);
 }
 
-void SuiteConfigChoice::TestSetIndexOutOfRange()
+void SuiteConfigChoice::TestSetNoSuchChoice()
 {
-    // test that attempting to set ConfigChoice to an invalid option index results
-    // in an exception
+    // test that attempting to set ConfigChoice to an invalid choice results in
+    // an exception
     TUint selectedBefore = iLastOwnerVal;
-    TEST_THROWS(iConfigVal->Set(3), ConfigIndexOutOfRange);
+    TEST_THROWS(iConfigVal->Set(kDefault-1), ConfigInvalidChoice);
     TUint selectedAfter = iLastOwnerVal;
     TEST(selectedAfter == selectedBefore);
 }
@@ -896,9 +891,6 @@ void SuiteConfigText::TestSetValueTooLong()
  * ConfigManager.
  */
 
-const Brn SuiteConfigurationManager::kOption1("Option1");
-const Brn SuiteConfigurationManager::kOption2("Option2");
-const Brn SuiteConfigurationManager::kOption3("Option3");
 const Brn SuiteConfigurationManager::kText1("abcdefghijklmnopqrstuvwxyz");
 const Brn SuiteConfigurationManager::kText2("zyxwvutsrqponmlkjihgfedcba");
 const Brn SuiteConfigurationManager::kIdNum1("cv.num.1");
@@ -937,10 +929,10 @@ void SuiteConfigurationManager::Setup()
     iStore = new ConfigRamStore();
     iConfigManager = new ConfigurationManager(*iStore);
     iNum1 = new ConfigNum(*iConfigManager, kIdNum1, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum);
-    iOptions.push_back(&kOption1);
-    iOptions.push_back(&kOption2);
-    iOptions.push_back(&kOption3);
-    iChoice1 = new ConfigChoice(*iConfigManager, kIdChoice1, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault);
+    iChoices.push_back(kChoice1);
+    iChoices.push_back(kChoice2);
+    iChoices.push_back(kChoice3);
+    iChoice1 = new ConfigChoice(*iConfigManager, kIdChoice1, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iChoices, kChoiceDefault);
     iText1 = new ConfigText(*iConfigManager, kIdText1, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText1);
 }
 
@@ -951,7 +943,7 @@ void SuiteConfigurationManager::TearDown()
     delete iText1;
     delete iConfigManager;
     delete iStore;
-    iOptions.clear();
+    iChoices.clear();
 }
 
 void SuiteConfigurationManager::OwnerFunctorNum(TInt /*aVal*/)
@@ -972,7 +964,7 @@ void SuiteConfigurationManager::TestClose()
     // after it has been closed
     iConfigManager->Close();
     TEST_THROWS(ConfigNum num(*iConfigManager, kIdNum2, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
-    TEST_THROWS(ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1), AssertionFailed);
+    TEST_THROWS(ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iChoices, kChoiceDefault+1), AssertionFailed);
     TEST_THROWS(ConfigText text(*iConfigManager, kIdText2, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText2), AssertionFailed);
 }
 
@@ -981,7 +973,7 @@ void SuiteConfigurationManager::TestAdd()
     // completion of this test without errors suggests adding works
     // Has() and Get() are tested in their own unit tests.
     ConfigNum num(*iConfigManager, kIdNum2, MakeFunctorGeneric<TInt>(*this, &SuiteConfigurationManager::OwnerFunctorNum), kMinNum, kMaxNum, kMinNum+1);
-    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1);
+    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iChoices, kChoiceDefault+1);
     ConfigText text(*iConfigManager, kIdText2, MakeFunctorGeneric<const Brx&>(*this, &SuiteConfigurationManager::OwnerFunctorText), kMaxText, kText2);
 }
 
@@ -1055,7 +1047,7 @@ void SuiteConfigurationManager::TestHasMultiple()
     TEST(iConfigManager->HasNum(kIdNum2) == true);
 
     // test ConfigChoice
-    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1);
+    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iChoices, kChoiceDefault+1);
     TEST(iConfigManager->HasChoice(kIdChoice1) == true);
     TEST(iConfigManager->HasChoice(kIdChoice2) == true);
 
@@ -1115,7 +1107,7 @@ void SuiteConfigurationManager::TestGetMultiple()
     TEST(num2 == num);
 
     // test ConfigChoice
-    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iOptions, kChoiceDefault+1);
+    ConfigChoice choice(*iConfigManager, kIdChoice2, MakeFunctorGeneric<TUint>(*this, &SuiteConfigurationManager::OwnerFunctorChoice), iChoices, kChoiceDefault+1);
     ConfigChoice& choice1 = iConfigManager->GetChoice(kIdChoice1);
     TEST(choice1 == *iChoice1);
     ConfigChoice& choice2 = iConfigManager->GetChoice(kIdChoice2);
@@ -1287,7 +1279,7 @@ void TestConfigManager()
     runner.Add(new SuiteCVSubscriptions());
     runner.Add(new SuiteConfigNum());
     runner.Add(new SuiteConfigChoice());
-    //runner.Add(new SuiteConfigText());
+    runner.Add(new SuiteConfigText());
     runner.Add(new SuiteConfigurationManager());
     runner.Add(new SuiteRamStore());
     runner.Run();

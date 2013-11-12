@@ -13,7 +13,7 @@
 
 EXCEPTION(ConfigValueOutOfRange);
 EXCEPTION(ConfigValueExists);
-EXCEPTION(ConfigIndexOutOfRange);
+EXCEPTION(ConfigInvalidChoice);
 EXCEPTION(ConfigValueTooLong);
 EXCEPTION(ConfigIdExists);
 
@@ -135,7 +135,7 @@ public:
     TBool Set(TInt aVal);
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
-    TBool IsValid(TInt aVal);
+    TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<TInt> aFunctor);
 private: // from ConfigVal
@@ -158,38 +158,38 @@ inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
  * Class representing a multiple choice value (such as true/false, on/off,
  * monkey/chicken/meerkat, etc.)
  *
- * Empty when created. When first option value is added, defaults to that value
+ * Empty when created. When first choice value is added, defaults to that value
  * as the selected one.
  */
 class ConfigChoice : public ConfigVal<TUint>
 {
 public:
-    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, std::vector<const Brx*> aOptions, TUint aDefault);
-    std::vector<const Brx*> Options();
-    TBool Set(TUint aIndex);
+    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint> aChoices, TUint aDefault);
+    const std::vector<TUint>& Choices() const;
+    TBool Set(TUint aVal);
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
-    void Add(const Brx& aVal);
-    TBool IsValid(TUint aVal);
+    void AddChoice(TUint aChoice);
+    TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<TUint> aFunctor);
 private: // from ConfigVal
     void Write(TUint aVal);
 private:
-    std::vector<Brn> iAllowedValues;
+    std::vector<TUint> iChoices;
     TUint iSelected;
     Mutex iMutex;
 };
 
 inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
 {
-    TBool optionsEqual = true;
-    for (TUint i=0; i<iAllowedValues.size(); i++) {
-        if (iAllowedValues[i] != aChoice.iAllowedValues[i]) {
-            optionsEqual = false;
+    TBool choicesEqual = true;
+    for (TUint i=0; i<iChoices.size(); i++) {
+        if (iChoices[i] != aChoice.iChoices[i]) {
+            choicesEqual = false;
         }
     }
-    return optionsEqual && (iSelected == aChoice.iSelected);
+    return choicesEqual && (iSelected == aChoice.iSelected);
 }
 
 /*
@@ -204,7 +204,7 @@ public:
     TBool Set(const Brx& aText);
     inline TBool operator==(const ConfigText& aText) const;
 private:
-    TBool IsValid(const Brx& aVal);
+    TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<const Brx&> aFunctor);
 private: // from ConfigVal

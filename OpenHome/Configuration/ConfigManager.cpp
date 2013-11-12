@@ -3,6 +3,8 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Configuration;
 
@@ -59,7 +61,7 @@ TBool ConfigNum::Set(TInt aVal)
     return changed;
 }
 
-TBool ConfigNum::IsValid(TInt aVal)
+TBool ConfigNum::IsValid(TInt aVal) const
 {
     if (aVal < iMin || aVal > iMax) {
         return false;
@@ -83,13 +85,14 @@ void ConfigNum::Write(TInt aVal)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, std::vector<const Brx*> aOptions, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint> aChoices, TUint aDefault)
     : ConfigVal(aManager, aId)
+    , iChoices()
     , iMutex("CVCM")
 {
-    for (TUint i=0; i<aOptions.size(); i++)
-    {
-        Add(*aOptions[i]);
+    std::vector<TUint>::const_iterator it;
+    for (it = aChoices.begin(); it != aChoices.end(); it++) {
+        AddChoice(*it);
     }
 
     Bws<sizeof(TUint)> initialBuf;
@@ -105,39 +108,33 @@ ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Func
     AddInitialSubscribers(aFunc);
 }
 
-void ConfigChoice::Add(const Brx& aVal)
+void ConfigChoice::AddChoice(TUint aChoice)
 {
-    Brn val(aVal);
-    std::vector<Brn>::iterator it;
-    for (it = iAllowedValues.begin(); it != iAllowedValues.end(); it++) {
-        if (*it == aVal) {
+    std::vector<TUint>::const_iterator it;
+    for (it = iChoices.begin(); it != iChoices.end(); it++) {
+        if (*it == aChoice) {
             THROW(ConfigValueExists);
         }
     }
-    iAllowedValues.push_back(val);
+    iChoices.push_back(aChoice);
 }
 
-std::vector<const Brx*> ConfigChoice::Options()
+const std::vector<TUint>& ConfigChoice::Choices() const
 {
-    std::vector<const Brx*> options;
-    std::vector<Brn>::iterator it;
-    for (it = iAllowedValues.begin(); it != iAllowedValues.end(); it++) {
-        options.push_back(&*it);
-    }
-    return options;
+    return iChoices;
 }
 
-TBool ConfigChoice::Set(TUint aIndex)
+TBool ConfigChoice::Set(TUint aVal)
 {
     TBool changed = false;
 
-    if (!IsValid(aIndex)) {
-        THROW(ConfigIndexOutOfRange);
+    if (!IsValid(aVal)) {
+        THROW(ConfigInvalidChoice);
     }
 
     iMutex.Wait();
-    if (aIndex != iSelected) {
-        iSelected = aIndex;
+    if (aVal != iSelected) {
+        iSelected = aVal;
         NotifySubscribers(iSelected);
         changed = true;
     }
@@ -146,9 +143,11 @@ TBool ConfigChoice::Set(TUint aIndex)
     return changed;
 }
 
-TBool ConfigChoice::IsValid(TUint aVal)
+TBool ConfigChoice::IsValid(TUint aVal) const
 {
-    if (aVal >= iAllowedValues.size()) {
+    std::vector<TUint>::const_iterator it;
+    it = std::find(iChoices.begin(), iChoices.end(), aVal);
+    if (it == iChoices.end()) {
         return false;
     }
     return true;
@@ -209,7 +208,7 @@ TBool ConfigText::Set(const Brx& aText)
     return changed;
 }
 
-TBool ConfigText::IsValid(const Brx& aVal)
+TBool ConfigText::IsValid(const Brx& aVal) const
 {
     if (aVal.Bytes() > iText.MaxBytes()) {
         return false;
