@@ -29,11 +29,9 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aLatencyMs, false/*unicast*/, aIconFileName);
 
-    iConfigChannel = NULL; // FIXME - workaround for config val not being passed into callback
-    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, MakeFunctor(*this, &Sender::ConfigChannelChanged), kChannelMin, kChannelMax, defaultChannel);
+    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigChannelChanged), kChannelMin, kChannelMax, defaultChannel);
     iConfigMode = NULL;//new ConfigChoice(...
-    iConfigPreset = NULL; // FIXME - workaround for config val not being passed into callback
-    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, MakeFunctor(*this, &Sender::ConfigPresetChanged), kPresetMin, kPresetMax, kPresetNone);
+    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigPresetChanged), kPresetMin, kPresetMax, kPresetNone);
     iConfigEnabled = NULL;//new ConfigChoice(...
 
     iPendingAudio.reserve(100); // arbitrarily chosen value.  Doesn't need to prevent any reallocation, just avoid regular churn early on
@@ -197,11 +195,9 @@ void Sender::ConfigEnabledChanged()
     ASSERTS(); // FIXME - not yet implemented pending ConfigChoice API updates
 }
 
-void Sender::ConfigChannelChanged()
+void Sender::ConfigChannelChanged(TInt aValue)
 {
-    if (iConfigChannel != NULL) { // FIXME - remove check once value is passed into callback
-        iOhmSender->SetChannel(iConfigChannel->Get());
-    }
+    iOhmSender->SetChannel(aValue);
 }
 
 void Sender::ConfigModeChanged()
@@ -209,11 +205,9 @@ void Sender::ConfigModeChanged()
     ASSERTS(); // FIXME - not yet implemented pending ConfigChoice API updates
 }
 
-void Sender::ConfigPresetChanged()
+void Sender::ConfigPresetChanged(TInt aValue)
 {
-    if (iConfigPreset != NULL) { // FIXME - remove check once value is passed into callback
-        iOhmSender->SetPreset(iConfigPreset->Get());
-    }
+    iOhmSender->SetPreset(aValue);
 }
 
 void Sender::BeginBlock()

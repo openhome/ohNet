@@ -59,9 +59,9 @@ private:
     void ProcessAudio(MsgAudio* aMsg);
     void SendPendingAudio();
     void ConfigEnabledChanged();
-    void ConfigChannelChanged();
+    void ConfigChannelChanged(TInt aValue);
     void ConfigModeChanged();
-    void ConfigPresetChanged();
+    void ConfigPresetChanged(TInt aValue);
 private: // from IPcmProcessor
     void BeginBlock();
     TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
