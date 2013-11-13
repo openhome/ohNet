@@ -6,6 +6,9 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Av/StringIds.h>
+
+#include <vector>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -30,13 +33,17 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aLatencyMs, false/*unicast*/, aIconFileName);
 
     iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigChannelChanged), kChannelMin, kChannelMax, defaultChannel);
-    iConfigMode = NULL;//new ConfigChoice(...
+    std::vector<TUint> choices;
+    choices.push_back(eStringIdSongcastModeMulticast);
+    choices.push_back(eStringIdSongcastModeUnicast);
+    iConfigMode = new ConfigChoice(aConfigManager, kConfigIdMode, MakeFunctorGeneric<TUint>(*this, &Sender::ConfigModeChanged), choices, eStringIdSongcastModeUnicast);
     iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigPresetChanged), kPresetMin, kPresetMax, kPresetNone);
-    iConfigEnabled = NULL;//new ConfigChoice(...
+    choices.clear();
+    choices.push_back(eStringIdYes);
+    choices.push_back(eStringIdNo);
+    iConfigEnabled = new ConfigChoice(aConfigManager, kConfigIdEnabled, MakeFunctorGeneric<TUint>(*this, &Sender::ConfigEnabledChanged), choices, eStringIdYes);
 
     iPendingAudio.reserve(100); // arbitrarily chosen value.  Doesn't need to prevent any reallocation, just avoid regular churn early on
-
-    iOhmSender->SetEnabled(true); // FIXME - remove this when iConfigEnabled is created
 }
 
 Sender::~Sender()
@@ -190,9 +197,10 @@ void Sender::SendPendingAudio()
     iPendingAudio.clear();
 }
 
-void Sender::ConfigEnabledChanged()
+void Sender::ConfigEnabledChanged(TUint aStringId)
 {
-    ASSERTS(); // FIXME - not yet implemented pending ConfigChoice API updates
+    const TBool enabled = (aStringId == eStringIdYes);
+    iOhmSender->SetEnabled(enabled);
 }
 
 void Sender::ConfigChannelChanged(TInt aValue)
@@ -200,9 +208,10 @@ void Sender::ConfigChannelChanged(TInt aValue)
     iOhmSender->SetChannel(aValue);
 }
 
-void Sender::ConfigModeChanged()
+void Sender::ConfigModeChanged(TUint aStringId)
 {
-    ASSERTS(); // FIXME - not yet implemented pending ConfigChoice API updates
+    const TBool multicast = (aStringId == eStringIdSongcastModeMulticast);
+    iOhmSender->SetMulticast(multicast);
 }
 
 void Sender::ConfigPresetChanged(TInt aValue)
