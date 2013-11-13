@@ -129,12 +129,12 @@ template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
  */
 class ConfigNum : public ConfigVal<TInt>
 {
+    friend class SuiteConfigurationManager;
 public:
     ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TInt> aFunc, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     TBool Set(TInt aVal);
-    inline TBool operator==(const ConfigNum& aNum) const;
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
@@ -142,14 +142,17 @@ public: // from ConfigVal
 private: // from ConfigVal
     void Write(TInt aVal);
 private:
+    inline TBool operator==(const ConfigNum& aNum) const;
+private:
     TInt iMin;
     TInt iMax;
     TInt iVal;
-    Mutex iMutex;
+    mutable Mutex iMutex;
 };
 
 inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
 {
+    AutoMutex a(iMutex);
     return iMin == aNum.iMin
         && iVal == aNum.iVal
         && iMax == aNum.iMax;
@@ -164,11 +167,11 @@ inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
  */
 class ConfigChoice : public ConfigVal<TUint>
 {
+    friend class SuiteConfigurationManager;
 public:
     ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
-    inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
     void AddChoice(TUint aChoice);
     TBool IsValid(TUint aVal) const;
@@ -177,9 +180,11 @@ public: // from ConfigVal
 private: // from ConfigVal
     void Write(TUint aVal);
 private:
+    inline TBool operator==(const ConfigChoice& aChoice) const;
+private:
     std::vector<TUint> iChoices;
     TUint iSelected;
-    Mutex iMutex;
+    mutable Mutex iMutex;
 };
 
 inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
@@ -190,6 +195,7 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
             choicesEqual = false;
         }
     }
+    AutoMutex a(iMutex);
     return choicesEqual && (iSelected == aChoice.iSelected);
 }
 
@@ -199,11 +205,11 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
  */
 class ConfigText : public ConfigVal<const Brx&>
 {
+    friend class SuiteConfigurationManager;
 public:
     ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     TBool Set(const Brx& aText);
-    inline TBool operator==(const ConfigText& aText) const;
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
@@ -211,12 +217,15 @@ public: // from ConfigVal
 private: // from ConfigVal
     void Write(const Brx&);
 private:
+    inline TBool operator==(const ConfigText& aText) const;
+private:
     Bwh iText;
     mutable Mutex iMutex;
 };
 
 inline TBool ConfigText::operator==(const ConfigText& aText) const
 {
+    AutoMutex a(iMutex);
     return (iText == aText.iText);
 }
 
