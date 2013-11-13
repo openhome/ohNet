@@ -11,7 +11,7 @@ using namespace OpenHome::Configuration;
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TInt> aFunc, TInt aMin, TInt aMax, TInt aDefault)
+ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault)
     : ConfigVal(aManager, aId)
     , iMin(aMin)
     , iMax(aMax)
@@ -29,7 +29,7 @@ ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGen
     iConfigManager.Add(*this);
     iVal = initialVal;
 
-    AddInitialSubscribers(aFunc);
+    AddInitialSubscribers();
 }
 
 TInt ConfigNum::Min() const
@@ -85,7 +85,7 @@ void ConfigNum::Write(TInt aVal)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint>& aChoices, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aId)
     , iChoices()
     , iMutex("CVCM")
@@ -105,7 +105,7 @@ ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, Func
     iConfigManager.Add(*this);
     iSelected = initialVal;
 
-    AddInitialSubscribers(aFunc);
+    AddInitialSubscribers();
 }
 
 void ConfigChoice::AddChoice(TUint aChoice)
@@ -169,7 +169,7 @@ void ConfigChoice::Write(TUint aVal)
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault)
+ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aId)
     , iText(aMaxLength)
     , iMutex("CVTM")
@@ -181,7 +181,7 @@ ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorG
     iConfigManager.Add(*this);
     iText.Replace(initialBuf);
 
-    AddInitialSubscribers(aFunc);
+    AddInitialSubscribers();
 }
 
 TUint ConfigText::MaxLength() const

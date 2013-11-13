@@ -38,7 +38,7 @@ protected:
     ConfigVal(IConfigurationManager& aManager, const Brx& aId);
 public:
     virtual ~ConfigVal();
-    void AddInitialSubscribers(FunctorGeneric<T> aOwnerFunc);
+    void AddInitialSubscribers();
     const Brx& Id();
 public: // from IObservable
     TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
@@ -54,7 +54,6 @@ private:
     typedef std::map<TUint,FunctorGeneric<T>> Map;
     Map iObservers;
     Mutex iObserverLock;
-    TUint iOwnerObserverId;
     TUint iWriteObserverId; // ID for own Write() observer
     TUint iNextObserverId;  // 0 is symbolic: invalid value
 };
@@ -64,24 +63,20 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigurationManager& aManager, cons
     : iConfigManager(aManager)
     , iId(aId)
     , iObserverLock("CVOL")
-    , iOwnerObserverId(0)
     , iWriteObserverId(0)
     , iNextObserverId(1)
 {
 }
 
-template <class T> void ConfigVal<T>::AddInitialSubscribers(FunctorGeneric<T> aOwnerFunc)
+template <class T> void ConfigVal<T>::AddInitialSubscribers()
 {
-    ASSERT(iOwnerObserverId == 0);
     ASSERT(iWriteObserverId == 0);
-    iOwnerObserverId = Subscribe(aOwnerFunc);
     iWriteObserverId = Subscribe(MakeFunctorGeneric<T>(*this, &ConfigVal::Write));
 }
 
 template <class T> ConfigVal<T>::~ConfigVal()
 {
     Unsubscribe(iWriteObserverId);
-    Unsubscribe(iOwnerObserverId);
     ASSERT(iObservers.size() == 0);
 }
 
@@ -113,7 +108,6 @@ template <class T> TUint ConfigVal<T>::Subscribe(FunctorGeneric<T> aFunctor, T a
 
 template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
 {
-    ASSERT(iOwnerObserverId != 0);
     ASSERT(iWriteObserverId != 0);
     AutoMutex a(iObserverLock);
     typename Map::iterator it;
@@ -131,7 +125,7 @@ class ConfigNum : public ConfigVal<TInt>
 {
     friend class SuiteConfigurationManager;
 public:
-    ConfigNum(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TInt> aFunc, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigurationManager& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     TBool Set(TInt aVal);
@@ -169,7 +163,7 @@ class ConfigChoice : public ConfigVal<TUint>
 {
     friend class SuiteConfigurationManager;
 public:
-    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
 private:
@@ -207,7 +201,7 @@ class ConfigText : public ConfigVal<const Brx&>
 {
     friend class SuiteConfigurationManager;
 public:
-    ConfigText(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<const Brx&> aFunc, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigurationManager& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     TBool Set(const Brx& aText);
 private:
