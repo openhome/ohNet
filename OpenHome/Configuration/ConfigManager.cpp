@@ -87,14 +87,9 @@ void ConfigNum::Write(TInt aVal)
 
 ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aId)
-    , iChoices()
+    , iChoices(aChoices)
     , iMutex("CVCM")
 {
-    std::vector<TUint>::const_iterator it;
-    for (it = aChoices.begin(); it != aChoices.end(); it++) {
-        AddChoice(*it);
-    }
-
     Bws<sizeof(TUint)> initialBuf;
     Bws<sizeof(TUint)> defaultBuf;
     defaultBuf.Append(Arch::BigEndian4(aDefault));
@@ -106,17 +101,6 @@ ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, cons
     iSelected = initialVal;
 
     AddInitialSubscribers();
-}
-
-void ConfigChoice::AddChoice(TUint aChoice)
-{
-    std::vector<TUint>::const_iterator it;
-    for (it = iChoices.begin(); it != iChoices.end(); it++) {
-        if (*it == aChoice) {
-            THROW(ConfigValueExists);
-        }
-    }
-    iChoices.push_back(aChoice);
 }
 
 const std::vector<TUint>& ConfigChoice::Choices() const

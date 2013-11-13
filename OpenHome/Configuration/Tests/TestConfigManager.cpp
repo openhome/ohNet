@@ -90,7 +90,6 @@ private:
     void TestValueFromStore();
     void TestValueWrittenToStore();
     void TestAdd();
-    void TestAddDuplicate();
     void TestGetNoChoices();
     void TestSetUpdate();
     void TestSetNoUpdate();
@@ -474,7 +473,6 @@ SuiteConfigChoice::SuiteConfigChoice()
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAddDuplicate));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoChoices));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetUpdate));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate));
@@ -567,15 +565,6 @@ void SuiteConfigChoice::TestAdd()
     TEST(choices[0] == kChoice1);
     TEST(choices[1] == kChoice2);
     TEST(choices[2] == kChoice3);
-}
-
-void SuiteConfigChoice::TestAddDuplicate()
-{
-    // test that creating a ConfigChoice with a duplicate choice fails
-    std::vector<TUint> choices;
-    choices.push_back(kChoice1);
-    choices.push_back(kChoice1);
-    TEST_THROWS(ConfigChoice cv(*iConfigManager, Brn("test.key"), choices, kDefault), ConfigValueExists);
 }
 
 void SuiteConfigChoice::TestGetNoChoices()

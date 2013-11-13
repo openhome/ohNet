@@ -167,7 +167,6 @@ public:
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
 private:
-    void AddChoice(TUint aChoice);
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<TUint> aFunctor);
