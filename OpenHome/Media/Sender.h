@@ -58,9 +58,9 @@ private: // from IMsgProcessor
 private:
     void ProcessAudio(MsgAudio* aMsg);
     void SendPendingAudio();
-    void ConfigEnabledChanged();
+    void ConfigEnabledChanged(TUint aStringId);
     void ConfigChannelChanged(TInt aValue);
-    void ConfigModeChanged();
+    void ConfigModeChanged(TUint aStringId);
     void ConfigPresetChanged(TInt aValue);
 private: // from IPcmProcessor
     void BeginBlock();
@@ -99,9 +99,11 @@ private:
     Av::OhmSenderDriver* iOhmSenderDriver;
     Av::OhmSender* iOhmSender;
     Configuration::ConfigChoice* iConfigEnabled;
+    TUint iListenerIdConfigEnabled;
     Configuration::ConfigNum* iConfigChannel;
     TUint iListenerIdConfigChannel;
     Configuration::ConfigChoice* iConfigMode;
+    TUint iListenerIdConfigMode;
     Configuration::ConfigNum* iConfigPreset;
     TUint iListenerIdConfigPreset;
     std::vector<MsgAudio*> iPendingAudio;
