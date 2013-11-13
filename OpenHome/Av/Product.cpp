@@ -32,8 +32,10 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
-    iConfigProductRoom = new ConfigText(iConfigManager, ConfigIdRoom, MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged), kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
-    iConfigProductName = new ConfigText(iConfigManager, ConfigIdName, MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged), kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    iConfigProductRoom = new ConfigText(iConfigManager, ConfigIdRoom, kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged));
+    iConfigProductName = new ConfigText(iConfigManager, ConfigIdName, kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 
@@ -44,7 +46,9 @@ Product::~Product()
     }
     iSources.clear();
     delete iProviderProduct;
+    iConfigProductName->Unsubscribe(iListenerIdProductName);
     delete iConfigProductName;
+    iConfigProductRoom->Unsubscribe(iListenerIdProductRoom);
     delete iConfigProductRoom;
 }
 

@@ -77,6 +77,7 @@ private:
     Media::EPipelineState iTransportState;
     Configuration::ConfigText* iConfigUserName;
     Bws<kUsernameMaxLength> iUserName;
+    TUint iListenerIdConfigUserName;
 };
 
 } // namespace Av

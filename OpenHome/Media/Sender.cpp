@@ -32,16 +32,23 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aLatencyMs, false/*unicast*/, aIconFileName);
 
-    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigChannelChanged), kChannelMin, kChannelMax, defaultChannel);
+    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
+    iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorGeneric<TInt>(*this, &Sender::ConfigChannelChanged));
+
     std::vector<TUint> choices;
     choices.push_back(eStringIdSongcastModeMulticast);
     choices.push_back(eStringIdSongcastModeUnicast);
-    iConfigMode = new ConfigChoice(aConfigManager, kConfigIdMode, MakeFunctorGeneric<TUint>(*this, &Sender::ConfigModeChanged), choices, eStringIdSongcastModeUnicast);
-    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigPresetChanged), kPresetMin, kPresetMax, kPresetNone);
+    iConfigMode = new ConfigChoice(aConfigManager, kConfigIdMode, choices, eStringIdSongcastModeUnicast);
+    iListenerIdConfigMode = iConfigMode->Subscribe(MakeFunctorGeneric<TUint>(*this, &Sender::ConfigModeChanged));
+
+    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, kPresetMin, kPresetMax, kPresetNone);
+    iListenerIdConfigPreset = iConfigPreset->Subscribe(MakeFunctorGeneric<TInt>(*this, &Sender::ConfigPresetChanged));
+
     choices.clear();
     choices.push_back(eStringIdYes);
     choices.push_back(eStringIdNo);
-    iConfigEnabled = new ConfigChoice(aConfigManager, kConfigIdEnabled, MakeFunctorGeneric<TUint>(*this, &Sender::ConfigEnabledChanged), choices, eStringIdYes);
+    iConfigEnabled = new ConfigChoice(aConfigManager, kConfigIdEnabled, choices, eStringIdYes);
+    iListenerIdConfigEnabled = iConfigEnabled->Subscribe(MakeFunctorGeneric<TUint>(*this, &Sender::ConfigEnabledChanged));
 
     iPendingAudio.reserve(100); // arbitrarily chosen value.  Doesn't need to prevent any reallocation, just avoid regular churn early on
 }
@@ -53,9 +60,13 @@ Sender::~Sender()
     }
     delete iOhmSender;
     delete iOhmSenderDriver;
+    iConfigEnabled->Unsubscribe(iListenerIdConfigEnabled);
     delete iConfigEnabled;
+    iConfigChannel->Unsubscribe(iListenerIdConfigChannel);
     delete iConfigChannel;
+    iConfigMode->Unsubscribe(iListenerIdConfigMode);
     delete iConfigMode;
+    iConfigPreset->Unsubscribe(iListenerIdConfigPreset);
     delete iConfigPreset;
 }
 

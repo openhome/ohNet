@@ -99,9 +99,13 @@ private:
     Av::OhmSenderDriver* iOhmSenderDriver;
     Av::OhmSender* iOhmSender;
     Configuration::ConfigChoice* iConfigEnabled;
+    TUint iListenerIdConfigEnabled;
     Configuration::ConfigNum* iConfigChannel;
+    TUint iListenerIdConfigChannel;
     Configuration::ConfigChoice* iConfigMode;
+    TUint iListenerIdConfigMode;
     Configuration::ConfigNum* iConfigPreset;
+    TUint iListenerIdConfigPreset;
     std::vector<MsgAudio*> iPendingAudio;
     Bws<kSongcastPacketMaxBytes> iAudioBuf;
     Track* iTrack;
