@@ -44,7 +44,8 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
-    iConfigUserName = new ConfigText(aConfigManager, Brn("Radio.TuneInUserName"), MakeFunctorGeneric<const Brx&>(*this, &SourceRadio::TuneInUsernameChanged), kUsernameMaxLength, Brn("linnproducts"));
+    iConfigUserName = new ConfigText(aConfigManager, Brn("Radio.TuneInUserName"), kUsernameMaxLength, Brn("linnproducts"));
+    iListenerIdConfigUserName = iConfigUserName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SourceRadio::TuneInUsernameChanged));
     ASSERT(iUserName != Brn::Empty());
     iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, iUserName);
     iPipeline.AddObserver(*this);
@@ -53,6 +54,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 SourceRadio::~SourceRadio()
 {
     delete iTuneIn;
+    iConfigUserName->Unsubscribe(iListenerIdConfigUserName);
     delete iConfigUserName;
     delete iPresetDatabase;
     delete iProviderRadio;

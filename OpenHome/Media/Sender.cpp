@@ -29,9 +29,11 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aLatencyMs, false/*unicast*/, aIconFileName);
 
-    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigChannelChanged), kChannelMin, kChannelMax, defaultChannel);
+    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
+    iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorGeneric<TInt>(*this, &Sender::ConfigChannelChanged));
     iConfigMode = NULL;//new ConfigChoice(...
-    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, MakeFunctorGeneric<TInt>(*this, &Sender::ConfigPresetChanged), kPresetMin, kPresetMax, kPresetNone);
+    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, kPresetMin, kPresetMax, kPresetNone);
+    iListenerIdConfigPreset = iConfigPreset->Subscribe(MakeFunctorGeneric<TInt>(*this, &Sender::ConfigPresetChanged));
     iConfigEnabled = NULL;//new ConfigChoice(...
 
     iPendingAudio.reserve(100); // arbitrarily chosen value.  Doesn't need to prevent any reallocation, just avoid regular churn early on
@@ -47,8 +49,10 @@ Sender::~Sender()
     delete iOhmSender;
     delete iOhmSenderDriver;
     delete iConfigEnabled;
+    iConfigChannel->Unsubscribe(iListenerIdConfigChannel);
     delete iConfigChannel;
     delete iConfigMode;
+    iConfigPreset->Unsubscribe(iListenerIdConfigPreset);
     delete iConfigPreset;
 }
 

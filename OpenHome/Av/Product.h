@@ -101,7 +101,9 @@ private:
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Bws<kMaxRoomBytes> iProductRoom;
+    TUint iListenerIdProductRoom;
     Bws<kMaxNameBytes> iProductName;
+    TUint iListenerIdProductName;
 };
 
 } // namespace Av
