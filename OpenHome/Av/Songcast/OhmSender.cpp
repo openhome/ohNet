@@ -663,14 +663,7 @@ void OhmSender::SetMetatext(const Brx& aValue)
 
 void OhmSender::SetPreset(TUint aValue)
 {
-    iZoneHandler->SetPreset(aValue, *this);
-}
-
-void OhmSender::GetSenderMetadata(Bwx& aMetadata)
-{
-    iMutexStartStop.Wait();
-    aMetadata.Replace(iSenderMetadata);
-    iMutexStartStop.Signal();
+    iZoneHandler->SetPreset(aValue);
 }
 
 //  This runs a little state machine where the current state is reflected by:
@@ -1079,6 +1072,7 @@ void OhmSender::UpdateMetadata()
     }
 
     iProvider->SetMetadata(iSenderMetadata);
+    iZoneHandler->SetSenderMetadata(iSenderMetadata);
 }
 
 void OhmSender::Send()

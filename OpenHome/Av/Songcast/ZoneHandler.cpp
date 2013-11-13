@@ -39,7 +39,6 @@ ZoneHandler::ZoneHandler(Environment& aEnv, const Brx& aSenderZone)
     , iWriteBuffer(iWriter)
     , iSendZoneUriCount(0)
     , iPresetNumber(0)
-    , iSenderMetadata(NULL)
     , iSendPresetInfoCount(0)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ZoneHandler::CurrentSubnetChanged), false);
@@ -120,11 +119,17 @@ void ZoneHandler::SetSenderUri(const Brx& aUri)
     SendZoneUri(3);
 }
 
-void ZoneHandler::SetPreset(TUint aPreset, ISenderMetadata& aSenderMetadata)
+void ZoneHandler::SetSenderMetadata(const Brx& aMetadata)
+{
+    iLockTxData.Wait();
+    iSenderMetadataBuf.Replace(aMetadata);
+    iLockTxData.Signal();
+}
+
+void ZoneHandler::SetPreset(TUint aPreset)
 {
     iLockTxData.Wait();
     iPresetNumber = aPreset;
-    iSenderMetadata = &aSenderMetadata;
     iLockTxData.Signal();
     SendPresetInfo(3); // FIXME - do we need to advertise Preset changes? (we could just wait for a query)
 }
@@ -313,7 +318,6 @@ void ZoneHandler::TimerPresetInfoExpired()
     try
     {
         AutoMutex b(iLockTxSocket);
-        iSenderMetadata->GetSenderMetadata(iSenderMetadataBuf);
         OhzHeaderPresetInfo headerPresetInfo(iPresetNumber, iSenderMetadataBuf);
         OhzHeader header(OhzHeader::kMsgTypePresetInfo, headerPresetInfo.MsgBytes());
         header.Externalise(iWriteBuffer);

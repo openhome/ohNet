@@ -63,7 +63,7 @@ private:
     FifoLite<OhmMsgAudio*, kMaxHistoryFrames> iFifoHistory;
 };
 
-class OhmSender : private ISenderMetadata
+class OhmSender
 {
     static const TUint kMaxMetadataBytes = 1000;
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
@@ -91,8 +91,6 @@ public:
     void SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart);
     void SetMetatext(const Brx& aValue);
     void SetPreset(TUint aValue);
-private: // from ISenderMetadata
-    void GetSenderMetadata(Bwx& aMetadata);
 private:
     void RunMulticast();
     void RunUnicast();
