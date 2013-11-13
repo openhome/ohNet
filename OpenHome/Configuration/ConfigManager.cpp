@@ -85,7 +85,7 @@ void ConfigNum::Write(TInt aVal)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint> aChoices, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aId)
     , iChoices()
     , iMutex("CVCM")

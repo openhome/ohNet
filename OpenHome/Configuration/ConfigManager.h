@@ -165,7 +165,7 @@ inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
 class ConfigChoice : public ConfigVal<TUint>
 {
 public:
-    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint> aChoices, TUint aDefault);
+    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, FunctorGeneric<TUint> aFunc, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
     inline TBool operator==(const ConfigChoice& aChoice) const;
