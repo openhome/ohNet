@@ -336,7 +336,7 @@ void SuiteTrackDatabase::InsertAtEnd()
     TEST(iIdLastInsertedAfter == ITrackDatabase::kTrackIdNone);
 }
 
-#undef USE_CPP11_LAMBDA
+#define USE_CPP11_LAMBDA
 #ifndef USE_CPP11_LAMBDA
 static bool IsNotTrackIdNone(TUint aId)
 {

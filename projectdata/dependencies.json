@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.53",
+        "version": "0.0.57",
         "archive-suffix": "-Release",
         "platform-ignore": {
             "Core-armv5": false,
@@ -45,7 +45,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.159",
+        "version":          "0.0.160",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv5": false,
