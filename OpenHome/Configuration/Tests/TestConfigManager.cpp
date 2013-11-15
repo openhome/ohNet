@@ -56,6 +56,7 @@ private:  // from SuiteCVNotify
 private:
     TInt IntFromStore(const Brx& aKey);
     void TestInternalFunctorsCalledAtConstruction();
+    void TestIdStored();
     void TestSubscription();
     void TestInvalidRange();
     void TestValueOutOfRangeConstructor();
@@ -86,6 +87,7 @@ private:  // from SuiteCVNotify
 private:
     TUint UintFromStore(const Brx& aKey);
     void TestInternalFunctorsCalledAtConstruction();
+    void TestIdStored();
     void TestSubscription();
     void TestValueFromStore();
     void TestValueWrittenToStore();
@@ -116,6 +118,7 @@ private:
     static const TUint kMaxLength = 100;
     static const Brn kDefault;
     void TestInternalFunctorsCalledAtConstruction();
+    void TestIdStored();
     void TestSubscription();
     void TestValueFromStore();
     void TestValueWrittenToStore();
@@ -300,6 +303,7 @@ SuiteConfigNum::SuiteConfigNum()
     : SuiteCVNotify("SuiteConfigNum")
 {
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorsCalledAtConstruction));
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestIdStored));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange));
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor));
@@ -343,6 +347,17 @@ void SuiteConfigNum::TestInternalFunctorsCalledAtConstruction()
 {
     // there is an internal write functor - check value == value in store
     TEST(IntFromStore(kKey) == kVal);
+}
+
+void SuiteConfigNum::TestIdStored()
+{
+    // test that the id is stored internally; not just wrapping a value
+    static const Brn keyConst("temporary.id");
+    Bwh keyChangeable(keyConst);
+    ConfigNum num(*iConfigManager, keyChangeable, kMin, kMax, kVal);
+    TEST(num.Id() == keyConst);
+    keyChangeable.SetBytes(0);
+    TEST(num.Id() == keyConst);
 }
 
 void SuiteConfigNum::TestSubscription()
@@ -469,6 +484,7 @@ SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction));
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestIdStored));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
@@ -514,6 +530,22 @@ void SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction()
 {
     // there is an internal write functor - check value == value in store
     TEST(UintFromStore(kKey) == kDefault);
+}
+
+void SuiteConfigChoice::TestIdStored()
+{
+    // test that the id is stored internally; not just wrapping a value
+    static const Brn keyConst("temporary.id");
+    Bwh keyChangeable(keyConst);
+    std::vector<TUint> choices;
+    choices.push_back(kChoice1);
+    choices.push_back(kChoice2);
+    choices.push_back(kChoice3);
+
+    ConfigChoice choice(*iConfigManager, keyChangeable, choices, kDefault);
+    TEST(choice.Id() == keyConst);
+    keyChangeable.SetBytes(0);
+    TEST(choice.Id() == keyConst);
 }
 
 void SuiteConfigChoice::TestSubscription()
@@ -630,6 +662,7 @@ SuiteConfigText::SuiteConfigText()
     : SuiteCVNotify("SuiteConfigText")
 {
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorsCalledAtConstruction));
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestIdStored));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore));
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore));
@@ -664,6 +697,17 @@ void SuiteConfigText::TestInternalFunctorsCalledAtConstruction()
     Bwh valBuf(kMaxLength);
     iStore->Read(kKey, valBuf);
     TEST(valBuf == kDefault);
+}
+
+void SuiteConfigText::TestIdStored()
+{
+    // test that the id is stored internally; not just wrapping a value
+    static const Brn keyConst("temporary.id");
+    Bwh keyChangeable(keyConst);
+    ConfigText text(*iConfigManager, keyChangeable, kMaxLength, kDefault);
+    TEST(text.Id() == keyConst);
+    keyChangeable.SetBytes(0);
+    TEST(text.Id() == keyConst);
 }
 
 void SuiteConfigText::TestSubscription()
