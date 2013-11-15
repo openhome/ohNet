@@ -34,6 +34,8 @@ class IConfigurationManager;
 template <class T>
 class ConfigVal : public IObservable<T>
 {
+public:
+    static const TUint kMaxIdLength = 32;
 protected:
     ConfigVal(IConfigurationManager& aManager, const Brx& aId);
 public:
@@ -49,7 +51,7 @@ protected:
     virtual void Write(T aVal) = 0;
 protected:
     IConfigurationManager& iConfigManager;
-    const Brx& iId;
+    Bws<kMaxIdLength> iId;
 private:
     typedef std::map<TUint,FunctorGeneric<T>> Map;
     Map iObservers;
