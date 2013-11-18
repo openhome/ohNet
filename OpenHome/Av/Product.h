@@ -51,12 +51,12 @@ class Product : private IProduct, private IInfoProvider, private INonCopyable
     static const Brn kStartupSourceKey;
     static const TUint kMaxAttributeBytes = 1024;
 public:
-    static const Brn ConfigIdRoom;
-    static const Brn ConfigIdName;
+    static const Brn skConfigIdRoomBase;
+    static const Brn skConfigIdNameBase;
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& aInfoAggregator);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& aInfoAggregator, const Brx& aConfigPrefix);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();

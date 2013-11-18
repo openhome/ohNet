@@ -17,10 +17,10 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 const Brn Product::kStartupSourceKey("Startup.Source");
-const Brn Product::ConfigIdRoom("Product.Room");
-const Brn Product::ConfigIdName("Product.Name");
+const Brn Product::skConfigIdRoomBase("Product.Room");
+const Brn Product::skConfigIdNameBase("Product.Name");
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& /*aInfoAggregator*/)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& /*aInfoAggregator*/, const Brx& aConfigPrefix)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigManager(aConfigManager)
@@ -32,9 +32,19 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
-    iConfigProductRoom = new ConfigText(iConfigManager, ConfigIdRoom, kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    Bws<64> key(aConfigPrefix);
+    if (key.Bytes() > 0) {
+        key.Append('.');
+    }
+    key.Append(skConfigIdRoomBase);
+    iConfigProductRoom = new ConfigText(iConfigManager, key, kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged));
-    iConfigProductName = new ConfigText(iConfigManager, ConfigIdName, kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    key.Replace(aConfigPrefix);
+    if (key.Bytes() > 0) {
+        key.Append('.');
+    }
+    key.Append(skConfigIdNameBase);
+    iConfigProductName = new ConfigText(iConfigManager, key, kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
