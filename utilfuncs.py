@@ -178,6 +178,7 @@ def configure_toolchain(conf):
         conf.env.LINK_CC = cross_compile + 'gcc'
 
 # helper functions for guess_xxx_location
+
 def set_env_verbose(conf, varname, value):
     conf.msg(
         'Setting %s to' % varname,
@@ -186,6 +187,8 @@ def set_env_verbose(conf, varname, value):
         value)
     setattr(conf.env, varname, value)
     return value
+
+# Iterate over proposed paths - the first one that matches is returned.
 def match_path(conf, paths, message):
     import os.path
     for p in paths:
@@ -197,6 +200,42 @@ def match_path(conf, paths, message):
         if os.path.exists(fname):
             return os.path.abspath(fname)
     conf.fatal(message)
+
+def guess_libplatform_location(conf):
+    set_env_verbose(conf, 'INCLUDES_PLATFORM', match_path(
+        conf,
+        [
+            '{options.libplatform}/install/{options.dest_platform}/libplatform/include/',
+            'dependencies/{options.dest_platform}/libplatform/include'
+        ],
+        message='Specify --libplatform')
+    )
+    set_env_verbose(conf, 'STLIBPATH_PLATFORM', match_path(
+        conf,
+        [
+            '{options.libplatform}/install/{options.dest_platform}/libplatform/lib/',
+            'dependencies/{options.dest_platform}/libplatform/lib'
+        ],
+        message='Specify --libplatform')
+    )
+
+def guess_libds_location(conf):
+    set_env_verbose(conf, 'INCLUDES_DS', match_path(
+        conf,
+        [
+            '{options.libds}',
+            'dependencies/{options.dest_platform}/libds/include'
+        ],
+        message='Specify --libds')
+    )
+    set_env_verbose(conf, 'STLIBPATH_DS', match_path(
+        conf,
+        [
+            '{options.libds}/build',
+            'dependencies/{options.dest_platform}/libds/lib'
+        ],
+        message='Specify --libds')
+    )
 
 def guess_ohnet_location(conf):
     set_env_verbose(conf, 'INCLUDES_OHNET', match_path(
