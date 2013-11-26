@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include <stdlib.h>
 

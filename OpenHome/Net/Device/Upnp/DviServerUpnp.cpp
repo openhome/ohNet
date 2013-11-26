@@ -16,6 +16,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <stdlib.h>
 

@@ -16,6 +16,24 @@
 #endif // PLATFORM_MACOSX_GNU
 #include <stdlib.h>
 
+namespace OpenHome {
+
+class MListener
+{
+public:
+    MListener(Environment& aStack, TIpAddress aInterface);
+    ~MListener();
+    Net::SsdpListenerMulticast& Listener();
+    TIpAddress Interface() const;
+    void AddRef();
+    TBool RemoveRef();
+private:
+    Net::SsdpListenerMulticast iListener;
+    TInt iRefCount;
+};
+
+} // namespace OpenHome
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
@@ -161,7 +179,7 @@ Net::SsdpListenerMulticast& Environment::MulticastListenerClaim(TIpAddress aInte
     AutoMutex a(*iPrivateLock);
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
-        Environment::MListener* listener = iMulticastListeners[i];
+        MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             listener->AddRef();
             return listener->Listener();
@@ -179,7 +197,7 @@ void Environment::MulticastListenerRelease(TIpAddress aInterface)
     iPrivateLock->Wait();
     const TInt count = (TUint)iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
-        Environment::MListener* listener = iMulticastListeners[i];
+        MListener* listener = iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
             if (listener->RemoveRef()) {
                 iMulticastListeners.erase(iMulticastListeners.begin() + i);
@@ -307,34 +325,34 @@ IStack* Environment::DviStack()
 }
 
 
-// Environment::MListener
+// MListener
 
-Environment::MListener::MListener(Environment& aEnv, TIpAddress aInterface)
+MListener::MListener(Environment& aEnv, TIpAddress aInterface)
     : iListener(aEnv, aInterface)
     , iRefCount(1)
 {
 }
 
-Environment::MListener::~MListener()
+MListener::~MListener()
 {
 }
 
-Net::SsdpListenerMulticast& Environment::MListener::Listener()
+Net::SsdpListenerMulticast& MListener::Listener()
 {
     return iListener;
 }
 
-TIpAddress Environment::MListener::Interface() const
+TIpAddress MListener::Interface() const
 {
     return iListener.Interface();
 }
 
-void Environment::MListener::AddRef()
+void MListener::AddRef()
 {
     iRefCount++;
 }
 
-TBool Environment::MListener::RemoveRef()
+TBool MListener::RemoveRef()
 {
     iRefCount--;
     return (iRefCount == 0);

@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <stdlib.h>
 

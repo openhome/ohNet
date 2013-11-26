@@ -17,6 +17,7 @@
 #include <OpenHome/Net/Private/DeviceXml.h>
 #include <OpenHome/Net/Private/CpiSubscription.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <string.h>
 

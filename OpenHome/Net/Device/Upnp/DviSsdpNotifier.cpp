@@ -7,6 +7,7 @@
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/Ssdp.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <climits>
 
