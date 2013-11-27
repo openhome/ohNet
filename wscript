@@ -12,7 +12,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task
-from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location
+from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_libplatform_location
 
 def options(opt):
     opt.load('msvc')
@@ -26,6 +26,7 @@ def options(opt):
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
     opt.add_option('--cross', action='store', default=None)
+    opt.add_option('--libplatform', action='store', default=None)
 
 def configure(conf):
 
@@ -47,6 +48,7 @@ def configure(conf):
 
     configure_toolchain(conf)
     guess_ohnet_location(conf)
+    guess_libplatform_location(conf)
 
     conf.env.dest_platform = conf.options.dest_platform
     conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
