@@ -62,12 +62,14 @@ private:
  */
 class StoreVal : private INonCopyable
 {
+public:
+    static const TUint kMaxIdLength = 32;
 protected:
     StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey);
     virtual void Write() = 0;
 protected:
     Configuration::IStoreReadWrite& iStore;
-    const Brx& iKey;
+    const Bws<kMaxIdLength> iKey;
 };
 
 /*
