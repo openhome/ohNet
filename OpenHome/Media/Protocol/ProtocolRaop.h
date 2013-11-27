@@ -10,6 +10,7 @@
 #include  <openssl/aes.h>
 
 namespace OpenHome {
+    class Timer;
 namespace Media {
 
 class SocketUdpServer;
