@@ -205,7 +205,7 @@ def guess_libplatform_location(conf):
     set_env_verbose(conf, 'INCLUDES_PLATFORM', match_path(
         conf,
         [
-            '{options.libplatform}/install/{options.dest_platform}/libplatform/include/',
+            '{options.libplatform}/install/{options.dest_platform}-{debugmode_tc}/libplatform/include/',
             'dependencies/{options.dest_platform}/libplatform/include'
         ],
         message='Specify --libplatform')
@@ -213,7 +213,7 @@ def guess_libplatform_location(conf):
     set_env_verbose(conf, 'STLIBPATH_PLATFORM', match_path(
         conf,
         [
-            '{options.libplatform}/install/{options.dest_platform}/libplatform/lib/',
+            '{options.libplatform}/install/{options.dest_platform}-{debugmode_tc}/libplatform/lib/',
             'dependencies/{options.dest_platform}/libplatform/lib'
         ],
         message='Specify --libplatform')
