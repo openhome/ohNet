@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.937",
+        "version": "1.0.939",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.49",
+        "version": "0.0.51",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {   "name": "TestTones",
@@ -34,8 +34,8 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.57",
-        "archive-suffix": "-Release",
+        "version": "0.0.65",
+        "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
             "Core-armv6": false,
