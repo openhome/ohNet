@@ -15,13 +15,14 @@ class SuiteUnitTest : public Suite
 protected:
     SuiteUnitTest(const TChar* aName);
     void AddTest(Functor aTest);
+    void AddTest(Functor aTest, const TChar* aName);
 private: // from Suite
     void Test();
 private:
     virtual void Setup() = 0;
     virtual void TearDown() = 0;
 private:
-    std::vector<Functor> iTests;
+    std::vector<std::pair<Functor, const TChar*> > iTests;
 };
     
 } // namespace TestFramework
