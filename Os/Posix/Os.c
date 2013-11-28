@@ -159,7 +159,7 @@ THandle OsStackTraceCopy(THandle aStackTrace)
     copy->iSymbols = NULL;
     return copy;
 #else
-    aStackTrace = aStackTrace;
+    (void)aStackTrace;
     return kHandleNull;
 #endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
@@ -174,7 +174,7 @@ uint32_t OsStackTraceNumEntries(THandle aStackTrace)
 
     return stackTrace->iCount;
 #else
-    aStackTrace = aStackTrace;
+    (void)aStackTrace;
     return 0;
 #endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
@@ -198,8 +198,8 @@ const char* OsStackTraceEntry(THandle aStackTrace, uint32_t aIndex)
         return NULL;
     }
 #else
-    aStackTrace = aStackTrace;
-    aIndex = aIndex;
+    (void)aStackTrace;
+    (void)aIndex;
     return NULL;
 #endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
@@ -215,7 +215,7 @@ void OsStackTraceFinalise(THandle aStackTrace)
         free(stackTrace);
     }
 #else
-    aStackTrace = aStackTrace;
+    (void)aStackTrace;
 #endif /* defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS) */
 }
 
