@@ -22,11 +22,11 @@ def options(opt):
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
     opt.add_option('--testharness-dir', action='store', default=os.path.join('dependencies', 'AnyPlatform', 'testharness'))
     opt.add_option('--ohnet', action='store', default=None)
+    opt.add_option('--libplatform', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
     opt.add_option('--dest-platform', action='store', default=None)
     opt.add_option('--cross', action='store', default=None)
-    opt.add_option('--libplatform', action='store', default=None)
 
 def configure(conf):
 
@@ -48,7 +48,6 @@ def configure(conf):
 
     configure_toolchain(conf)
     guess_ohnet_location(conf)
-    guess_libplatform_location(conf)
 
     conf.env.dest_platform = conf.options.dest_platform
     conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
@@ -58,6 +57,7 @@ def configure(conf):
     conf.env.STLIB_OHNET=['TestFramework', 'ohNetCore']
 
     if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
+        guess_libplatform_location(conf)
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
 
     conf.env.INCLUDES_OHNETMON = [os.path.join('dependencies', conf.options.dest_platform, 'ohNetmon', 'include')]
