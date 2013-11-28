@@ -70,6 +70,7 @@ protected:
 protected:
     Configuration::IStoreReadWrite& iStore;
     const Bws<kMaxIdLength> iKey;
+    mutable Mutex iLock;
 };
 
 /*
@@ -96,7 +97,7 @@ class StoreText : public StoreVal
 public:
     StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength);
     virtual ~StoreText();
-    const Brx& Get() const;
+    void Get(Bwx& aVal) const;
     void Set(const Brx& aValue);
 private: // from StoreVal
     void Write();

@@ -75,6 +75,7 @@ TBool PowerManager::PriorityFunctorCmp::operator()(const PriorityFunctor& aFunc1
 StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey)
     : iStore(aStore)
     , iKey(aKey)
+    , iLock("STVM")
 {
     // register with IPowerManager
     aPowerManager.RegisterObserver(MakeFunctor(*this, &StoreVal::Write), aPriority);
@@ -89,11 +90,14 @@ StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPower
 {
     // read value from store (if it exists; otherwise write default)
     Bws<sizeof(TInt)> buf;
+    iLock.Wait();
     try {
         iStore.Read(iKey, buf);
         iVal = Converter::BeUint32At(buf, 0);
+        iLock.Signal();
     }
     catch (StoreKeyNotFound&) {
+        iLock.Signal();
         Write();
     }
 }
@@ -102,16 +106,19 @@ StoreInt::~StoreInt() {}
 
 TInt StoreInt::Get() const
 {
+    AutoMutex a(iLock);
     return iVal;
 }
 
 void StoreInt::Set(TInt aValue)
 {
+    AutoMutex a(iLock);
     iVal = aValue;
 }
 
 void StoreInt::Write()
 {
+    AutoMutex a(iLock);
     Bws<sizeof(TInt)> buf;
     buf.Append(Arch::BigEndian4(iVal));
     iStore.Write(iKey, buf);
@@ -124,28 +131,34 @@ StoreText::StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPow
     : StoreVal(aStore, aPowerManager, aPriority, aKey)
     , iVal(aMaxLength)
 {
+    iLock.Wait();
     try {
         iStore.Read(iKey, iVal);
+        iLock.Signal();
     }
     catch (StoreKeyNotFound&) {
         iVal.Replace(aDefault);
+        iLock.Signal();
         Write();
     }
 }
 
 StoreText::~StoreText() {}
 
-const Brx& StoreText::Get() const
+void StoreText::Get(Bwx& aBuf) const
 {
-    return iVal;
+    AutoMutex a(iLock);
+    return aBuf.Replace(iVal);
 }
 
 void StoreText::Set(const Brx& aValue)
 {
+    AutoMutex a(iLock);
     iVal.Replace(aValue);
 }
 
 void StoreText::Write()
 {
+    AutoMutex a(iLock);
     iStore.Write(iKey, iVal);
 }

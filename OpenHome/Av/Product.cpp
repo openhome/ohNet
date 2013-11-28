@@ -69,7 +69,9 @@ void Product::SetObserver(IProductObserver& aObserver)
 
 void Product::Start()
 {
-    SetCurrentSource(iStartupSource.Get());
+    Bws<ISource::kMaxSourceTypeBytes> startupSource;
+    iStartupSource.Get(startupSource);
+    SetCurrentSource(startupSource);
     iStarted = true;
     iSourceXmlChangeCount++;
     if (iObserver != NULL) {
