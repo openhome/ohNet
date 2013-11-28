@@ -22,7 +22,7 @@ private:
     virtual void Setup() = 0;
     virtual void TearDown() = 0;
 private:
-    std::vector<std::pair<Functor, const TChar*>> iTests;
+    std::vector<std::pair<Functor, const TChar*> > iTests;
 };
     
 } // namespace TestFramework
