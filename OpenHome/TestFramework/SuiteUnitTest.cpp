@@ -34,6 +34,9 @@ void SuiteUnitTest::Test()
         if (name != NULL && strcmp(name, "") != 0) {
             Print("Test %d: %s ", i+1, name);
         }
+        else {
+            Print("Test %d: ", i+1);
+        }
         Setup();
         iTests[i].first();
         TearDown();
