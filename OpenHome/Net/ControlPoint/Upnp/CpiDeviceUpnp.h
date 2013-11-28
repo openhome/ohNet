@@ -137,7 +137,7 @@ private:
     void NextRefreshDue();
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
-    void HandleInterfaceChange(TBool aNewSubnet);
+    void HandleInterfaceChange();
     void RemoveAll();
 protected:
     SsdpListenerUnicast* iUnicastListener;

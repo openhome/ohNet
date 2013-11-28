@@ -531,18 +531,18 @@ void CpiDeviceListUpnp::NextRefreshDue()
 
 void CpiDeviceListUpnp::CurrentNetworkAdapterChanged()
 {
-    HandleInterfaceChange(false);
+    HandleInterfaceChange();
 }
 
 void CpiDeviceListUpnp::SubnetListChanged()
 {
-    HandleInterfaceChange(true);
+    HandleInterfaceChange();
 }
 
-void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
+void CpiDeviceListUpnp::HandleInterfaceChange()
 {
     NetworkAdapter* current = iCpStack.Env().NetworkAdapterList().CurrentAdapter("CpiDeviceListUpnp::HandleInterfaceChange");
-    if (aNewSubnet && current != NULL && current->Address() == iInterface) {
+    if (current != NULL && current->Address() == iInterface) {
         // list of subnets has changed but our interface is still available so there's nothing for us to do here
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
