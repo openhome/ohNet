@@ -148,7 +148,7 @@ StoreText::~StoreText() {}
 void StoreText::Get(Bwx& aBuf) const
 {
     AutoMutex a(iLock);
-    return aBuf.Replace(iVal);
+    aBuf.Replace(iVal);
 }
 
 void StoreText::Set(const Brx& aValue)
