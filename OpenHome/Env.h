@@ -8,17 +8,18 @@
 #define HEADER_STACK
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/OsWrapper.h>
-#include <OpenHome/Net/Private/Discovery.h>
 
 #include <vector>
 #include <map>
 
 namespace OpenHome {
+class FunctorMsg;
 class TimerManager;
 class Mutex;
 class NetworkAdapterList;
 class Log;
+class MListener;
+class IStackObject;
 
 class IStack
 {
@@ -34,6 +35,9 @@ public:
 
 namespace Net {
     class InitialisationParams;
+    class CpStack;
+    class DvStack;
+    class SsdpListenerMulticast;
 } // namespace Net
 
 class Environment
@@ -75,28 +79,13 @@ private:
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
 private:
-    class MListener
-    {
-    public:
-        MListener(Environment& aStack, TIpAddress aInterface);
-        ~MListener();
-        Net::SsdpListenerMulticast& Listener();
-        TIpAddress Interface() const;
-        void AddRef();
-        TBool RemoveRef();
-    private:
-        Net::SsdpListenerMulticast iListener;
-        TInt iRefCount;
-    };
-private:
     OsContext* iOsContext;
     Log* iLogger;
     Net::InitialisationParams* iInitParams;
     OpenHome::TimerManager* iTimerManager;
     OpenHome::Mutex* iPublicLock;
     OpenHome::NetworkAdapterList* iNetworkAdapterList;
-    typedef std::vector<MListener*> MulticastListeners;
-    MulticastListeners iMulticastListeners;
+    std::vector<MListener*> iMulticastListeners;
     std::vector<IResumeObserver*> iResumeObservers;
     OpenHome::Mutex* iResumeObserverLock;
     TUint iSequenceNumber;

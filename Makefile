@@ -279,7 +279,7 @@ cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
 else
-    cppflags = $(cflags_base) -std=c++0x -Werror
+    cppflags = $(cflags_base) -std=c++0x -D__STDC_VERSION__=199901L -Werror
 endif
 cflags = $(cflags_base) -Werror
 inc_build = Build/Include

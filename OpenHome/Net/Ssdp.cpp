@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Env.h>
+#include <OpenHome/OsWrapper.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;

@@ -49,6 +49,9 @@ def build(aTarget, aParallel=False):
     if os.name == 'nt':
         buildCmd = 'nmake -s -f OhNet.mak '
     buildCmd += aTarget
+    if platform.system() == 'Darwin':
+        # No C++11 support on standard Mac build slaves
+        buildCmd += ' nocpp11=yes'
     if os.environ.has_key('CS_PLATFORM'):
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']    
     buildCmd += buildArgs()

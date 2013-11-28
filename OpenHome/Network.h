@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/OsTypes.h>
+#include <OpenHome/Private/Env.h>
 
 #include <vector>
 
@@ -236,12 +237,15 @@ private:
 };
 
 // multicast receiver
-class SocketUdpMulticast : public SocketUdpBase
+class SocketUdpMulticast : public SocketUdpBase, private IResumeObserver
 {
 public:
     SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface, const Endpoint& aEndpoint);
     ~SocketUdpMulticast();
+private: // from IResumeObserver
+    void NotifyResumed();
 private:
+    Environment& iEnv;
     TIpAddress iInterface;
     TIpAddress iAddress;
 };
