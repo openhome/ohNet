@@ -667,6 +667,11 @@ void CpiDeviceListUpnp::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx&
 
 void CpiDeviceListUpnp::NotifyResumed()
 {
+    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+    lock.Signal();
     Refresh();
 }
 
