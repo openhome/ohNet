@@ -15,6 +15,8 @@
 #include <OpenHome/Net/Core/FunctorCpDevice.h>
 #include <OpenHome/Net/Core/CpUpnpOrgConnectionManager1.h>
 #include <OpenHome/Net/Core/CpAvOpenHomeOrgPlaylist1.h>
+#include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -95,15 +97,15 @@ void DevicePicker::Removed(CpDevice& /*aDevice*/)
 
 
 
-extern "C" void OsNetworkSetTestInterfaceIndex(int32_t aIndex);
+extern "C" void OsNetworkSetTestInterfaceIndex(OsContext* aContext, int32_t aIndex);
 void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
 {
-    OsNetworkSetTestInterfaceIndex(aIndex);
+    OsNetworkSetTestInterfaceIndex(gEnv->OsCtx(), aIndex);
     aBlocker.Wait(1); /* sleep to leave room for the interface change to be processed
                        not completely reliable but using the current/subnet change listeners
                        would cause problems too as we've have to hard-code knowledge of
                        when they would/wouldn't be run */
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter("TestNetworkInterfaceChange");
+    NetworkAdapter* nif = gEnv->NetworkAdapterList().CurrentAdapter("TestNetworkInterfaceChange");
     TIpAddress addr = 0;
     if (nif != NULL) {
         addr = nif->Address();
@@ -142,7 +144,7 @@ PropertyLogger::PropertyLogger(Blocker& aBlocker)
     Brn type("ConnectionManager");
     FunctorCpDevice added = MakeFunctorCpDevice(iPicker, &DevicePicker::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(iPicker, &DevicePicker::Removed);
-    CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(domainName, type, 1, added, removed);
+    CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(*gCpStack, domainName, type, 1, added, removed);
     iBlocker.Wait(1);
     iCmDevice = iPicker.Transfer();
     delete deviceList;
@@ -154,7 +156,7 @@ PropertyLogger::PropertyLogger(Blocker& aBlocker)
 
     domainName.Set("av.openhome.org");
     type.Set("Playlist");
-    deviceList = new CpDeviceListUpnpServiceType(domainName, type, 1, added, removed);
+    deviceList = new CpDeviceListUpnpServiceType(*gCpStack, domainName, type, 1, added, removed);
     iBlocker.Wait(1);
     iPlDevice = iPicker.Transfer();
     delete deviceList;
@@ -233,7 +235,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     UpnpLibrary::StartCp(subnet);
     Debug::SetLevel(Debug::kNone);
 
-    Blocker* blocker = new Blocker;
+    Blocker* blocker = new Blocker(*gEnv);
 
     // generate device list for arbitrarily chosen service
     DeviceListLogger logger;
@@ -241,7 +243,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Brn type("Radio");
     FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
-    CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(domainName, type, 1, added, removed);
+    CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(*gCpStack, domainName, type, 1, added, removed);
     blocker->Wait(2);
     // disable all but the first network interface.  Check there are few/no changes to the list
     Print("\nDisable all but first interface...\n");
