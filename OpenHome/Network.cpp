@@ -174,7 +174,7 @@ void Socket::Interrupt(TBool aInterrupt)
     LOGF(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = OpenHome::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
-        /*LOG2F(kNetwork, kError, */Log::Print("Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
+        LOG2F(kNetwork, kError, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
     }
 }
 
@@ -734,6 +734,7 @@ SocketUdp::SocketUdp(Environment& aEnv)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp\n");
     Bind(0, 0);
+    GetPort(iPort);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
@@ -742,6 +743,7 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
     Bind(aPort, 0);
+    iPort = aPort;
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
@@ -750,6 +752,7 @@ SocketUdp::SocketUdp(Environment& aEnv, TUint aPort, TIpAddress aInterface)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
     Bind(aPort, aInterface);
+    iPort = aPort;
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
@@ -770,7 +773,6 @@ void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
 
 SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface, const Endpoint& aEndpoint)
     : SocketUdpBase(aEnv)
-    , iEnv(aEnv)
     , iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {
@@ -781,14 +783,12 @@ SocketUdpMulticast::SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface,
         THROW(NetworkError);
     }
     GetPort(iPort);
-    aEnv.AddResumeObserver(*this);
     OpenHome::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
     LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
-    iEnv.RemoveResumeObserver(*this);
     LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
     try {
         OpenHome::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
@@ -799,16 +799,16 @@ SocketUdpMulticast::~SocketUdpMulticast()
     LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 
-void SocketUdpMulticast::NotifyResumed()
+void SocketUdpMulticast::ReCreate()
 {
-    LOGF(kNetwork, "> SocketUdpMulticast::NotifyResumed\n");
-    try {
-        OpenHome::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
+    SocketUdpBase::ReCreate();
+    Endpoint ep(iPort, iAddress);
+    const TUint err = OpenHome::Os::NetworkBindMulticast(iHandle, iInterface, ep);
+    if (err != 0) {
+        LOG2(kError, kNetwork, "NetworkBindMulticast for socket %u\n", iHandle);
+        THROW(NetworkError);
     }
-    catch (NetworkError&) {
-        LOG2F(kNetwork, kError, "SocketUdpMulticast::NotifyResumed - AddMembership failed H = %d\n", iHandle);
-    }
-    LOGF(kNetwork, "< SocketUdpMulticast::NotifyResumed\n");
+    OpenHome::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
 }
 
 

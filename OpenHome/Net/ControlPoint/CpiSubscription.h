@@ -122,11 +122,13 @@ private:
      * the class doesn't get deleted before (or, worse, during) that later operation.
      */
     void Schedule(EOperation aOperation, TBool aRejectFutureOperations = false);
+    void StartSchedule(EOperation aOperation, TBool aRejectFutureOperations);
     void DoSubscribe();
     void Renew();
     void DoRenew();
     void DoUnsubscribe();
     void SetRenewTimer(TUint aMaxSeconds);
+    void HandleResumed();
 private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
@@ -179,7 +181,7 @@ class PendingSubscription;
 /**
  * Singleton which manages the pools of Subscriber and active Subscription instances
  */
-class CpiSubscriptionManager : public Thread
+class CpiSubscriptionManager : public Thread, private IResumeObserver
 {
 public:
     CpiSubscriptionManager(CpStack& aCpStack);
@@ -216,7 +218,10 @@ public:
     CpiSubscription* FindSubscription(const Brx& aSid);
     void Remove(CpiSubscription& aSubscription);
     void Schedule(CpiSubscription& aSubscription);
+    void ScheduleLocked(CpiSubscription& aSubscription);
     TUint EventServerPort();
+private: // from IResumeObserver
+    void NotifyResumed();
 private:
     class PendingSubscription
     {
@@ -231,7 +236,7 @@ private:
     void RemovePendingAdds(const Brx& aSid);
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
-    void HandleInterfaceChange();
+    void HandleInterfaceChange(TBool aNewSubnet);
     TBool ReadyForShutdown() const;
     void Run();
 private:

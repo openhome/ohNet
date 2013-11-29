@@ -176,6 +176,12 @@ CpiSubscription::~CpiSubscription()
 
 void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
+    StartSchedule(aOperation, aRejectFutureOperations);
+    iDevice.GetCpStack().SubscriptionManager().Schedule(*this);
+}
+
+void CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureOperations)
+{
     CpStack& cpStack = iDevice.GetCpStack();
     Mutex& lock = cpStack.Env().Mutex();
     lock.Wait();
@@ -189,7 +195,6 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
     iRefCount++;
     iPendingOperation = aOperation;
     lock.Signal();
-    cpStack.SubscriptionManager().Schedule(*this);
 }
 
 void CpiSubscription::DoSubscribe()
@@ -324,6 +329,12 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
     }
     TUint renewMs = iDevice.GetCpStack().Env().Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
     iTimer->FireIn(renewMs);
+}
+
+void CpiSubscription::HandleResumed()
+{
+    StartSchedule(eResubscribe, false);
+    iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
 }
 
 void CpiSubscription::EventUpdateStart()
@@ -474,6 +485,7 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
     functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
     iSubnetListenerId = ifList.AddSubnetListChangeListener(functor);
+    iCpStack.Env().AddResumeObserver(*this);
     if (currentInterface == NULL) {
         iEventServer = NULL;
     }
@@ -506,6 +518,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 
     iLock.Wait();
     iActive = false;
+    iCpStack.Env().RemoveResumeObserver(*this);
     TBool wait = !ReadyForShutdown();
     iShutdownSem.Clear();
     iLock.Signal();
@@ -600,10 +613,15 @@ void CpiSubscriptionManager::Remove(CpiSubscription& aSubscription)
 void CpiSubscriptionManager::Schedule(CpiSubscription& aSubscription)
 {
     iLock.Wait();
+    ScheduleLocked(aSubscription);
+    iLock.Signal();
+}
+
+void CpiSubscriptionManager::ScheduleLocked(CpiSubscription& aSubscription)
+{
     ASSERT(iActive);
     iList.push_back(&aSubscription);
     Signal();
-    iLock.Signal();
 }
 
 TUint CpiSubscriptionManager::EventServerPort()
@@ -614,6 +632,13 @@ TUint CpiSubscriptionManager::EventServerPort()
         THROW(ReaderError);
     }
     return server->Port();
+}
+
+void CpiSubscriptionManager::NotifyResumed()
+{
+    /* sockets are unusable on iOS when we resume so we need to perform as same actions
+       as when we change address within the current subnet */
+    HandleInterfaceChange(false);
 }
 
 void CpiSubscriptionManager::RemovePendingAdd(PendingSubscription* aPending)
@@ -642,20 +667,29 @@ void CpiSubscriptionManager::RemovePendingAdds(const Brx& aSid)
 
 void CpiSubscriptionManager::CurrentNetworkAdapterChanged()
 {
-    HandleInterfaceChange();
+    HandleInterfaceChange(false);
 }
 
 void CpiSubscriptionManager::SubnetListChanged()
 {
-    HandleInterfaceChange();
+    HandleInterfaceChange(true);
 }
 
-void CpiSubscriptionManager::HandleInterfaceChange()
+void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
     iLock.Wait();
     // trigger CpiSubscriptionManager::WaitForPendingAdd
     while (iPendingSubscriptions.size() > 0) {
         RemovePendingAdds(iPendingSubscriptions[0]->iSid);
+    }
+    if (!aNewSubnet) {
+        /* device lists map not signal that devices have been removed
+           ...so we need to try to migrate existing subscriptions */
+        Map::iterator it = iMap.begin();
+        while (it != iMap.end()) {
+            it->second->HandleResumed();
+            it++;
+        }
     }
     EventServerUpnp* server = iEventServer;
     iEventServer = NULL;

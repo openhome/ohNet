@@ -237,15 +237,13 @@ private:
 };
 
 // multicast receiver
-class SocketUdpMulticast : public SocketUdpBase, private IResumeObserver
+class SocketUdpMulticast : public SocketUdpBase
 {
 public:
     SocketUdpMulticast(Environment& aEnv, TIpAddress aInterface, const Endpoint& aEndpoint);
     ~SocketUdpMulticast();
-private: // from IResumeObserver
-    void NotifyResumed();
+    void ReCreate();
 private:
-    Environment& iEnv;
     TIpAddress iInterface;
     TIpAddress iAddress;
 };
@@ -263,9 +261,10 @@ public:
     void SetSocket(SocketUdpBase& aSocket);
     void ClearSocket();
     Endpoint Sender() const; // sender of last completed Read()
-    virtual void Read(Bwx& aBuffer);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
+public: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 protected:
     SocketUdpBase* iSocket;
 private:

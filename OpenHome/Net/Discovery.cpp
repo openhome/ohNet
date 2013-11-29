@@ -54,20 +54,23 @@ SsdpListener::SsdpListener()
 //                                                                    -> aNotify
 
 SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, TIpAddress aInterface)
-    : iLock("LMCM")
+    : iEnv(aEnv)
+    , iLock("LMCM")
     , iNextHandlerId(0)
     , iInterface(aInterface)
     , iSocket(aEnv, aInterface, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocket)
     , iReaderRequest(aEnv, iBuffer)
     , iExiting(false)
+    , iRecreateSocket(false)
 {
     try
     {
         iSocket.SetRecvBufBytes(kRecvBufBytes);
     }
     catch ( NetworkError ) {}
-    
+    aEnv.AddResumeObserver(*this);
+
     iReaderRequest.AddHeader(iHeaderHost);
     iReaderRequest.AddHeader(iHeaderCacheControl);
     iReaderRequest.AddHeader(iHeaderLocation);
@@ -135,6 +138,16 @@ void SsdpListenerMulticast::Run()
             LOG2(kSsdpMulticast, kError, "SSDP Multicast      ReaderError\n");
             if (iExiting) {
                 break;
+            }
+            if (iRecreateSocket) {
+                try {
+                    iSocket.Interrupt(false);
+                    iSocket.ReCreate();
+                    iRecreateSocket = false;
+                }
+                catch (NetworkError&) {
+                    LOG2(kSsdpMulticast, kError, "SSDP Multicast      failed to recreate socket after library Resumed\n");
+                }
             }
         }
     }
@@ -297,6 +310,7 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
 SsdpListenerMulticast::~SsdpListenerMulticast()
 {
     LOG(kSsdpMulticast, "SSDP Multicast      Destructor\n");
+    iEnv.RemoveResumeObserver(*this);
     iExiting = true;
     iReaderRequest.Interrupt();
     Join();
@@ -403,6 +417,12 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
     }
 }
 
+void SsdpListenerMulticast::NotifyResumed()
+{
+    iRecreateSocket = true;
+    iSocket.Interrupt(true);
+}
+
 
 // SsdpListenerUnicast
 
@@ -414,6 +434,7 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
 SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
     : iEnv(aEnv)
     , iNotifyHandler(aNotifyHandler)
+    , iInterface(aInterface)
     , iSocket(aEnv, 0, aInterface)
     , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iSocketReader(iSocket)
@@ -422,6 +443,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
     , iReadBuffer(iSocketReader)
     , iReaderResponse(aEnv, iReadBuffer)
     , iExiting(false)
+    , iRecreateSocket(false)
 {
     iSocket.SetTtl(aEnv.InitParams()->MsearchTtl());
     try
@@ -429,6 +451,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
         iSocket.SetRecvBufBytes(kRecvBufBytes);
     }
     catch ( NetworkError ) {}
+    aEnv.AddResumeObserver(*this);
     
     iReaderResponse.AddHeader(iHeaderCacheControl);
     iReaderResponse.AddHeader(iHeaderExt);
@@ -441,6 +464,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
 SsdpListenerUnicast::~SsdpListenerUnicast()
 {
     LOG(kSsdpUnicast, "SSDP Unicast        Destructor\n");
+    iEnv.RemoveResumeObserver(*this);
     iExiting = true;
     iSocketReader.ReadInterrupt();
     Join();
@@ -524,6 +548,16 @@ void SsdpListenerUnicast::Run()
             if (iExiting) {
                 break;
             }
+            if (iRecreateSocket) {
+                try {
+                    iSocket.Interrupt(false);
+                    iSocket.ReBind(iSocket.Port(), iInterface);
+                    iRecreateSocket = false;
+                }
+                catch (NetworkError&) {
+                    LOG2(kSsdpUnicast, kError, "SSDP Unicast      failed to recreate socket after library Resumed\n");
+                }
+            }
         }
         catch (WriterError&) {
             LOG2(kSsdpUnicast, kError, "SSDP Unicast        WriterError\n");
@@ -560,3 +594,10 @@ TUint SsdpListenerUnicast::MsearchDurationSeconds() const
 {
     return iEnv.InitParams()->MsearchTimeSecs();
 }
+
+void SsdpListenerUnicast::NotifyResumed()
+{
+    iRecreateSocket = true;
+    iSocket.Interrupt(true);
+}
+

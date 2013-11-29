@@ -48,10 +48,10 @@ public:
     SsdpSocketReader(Environment& aEnv, TIpAddress aInterface, const Endpoint& aMulticast);
     ~SsdpSocketReader();
     Endpoint Sender() const; // endpoint of the sender to the multicast address
-    // IReaderSource
-    virtual void Read(Bwx& aBuffer);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
+private: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
     UdpReader* iReader;
 };
@@ -72,7 +72,7 @@ protected:
 
 // SsdpListenerMulticast - listens to the multicast udp endpoint
 //                       - processes received messages and passes them on to either an IMsearchHandler or an INotifyHandler
-class SsdpListenerMulticast : public SsdpListener
+class SsdpListenerMulticast : public SsdpListener, private IResumeObserver
 {
     static const TUint kMaxBufferBytes = 1024;
     static const TUint kRecvBufBytes = 32 * 1024;
@@ -127,7 +127,10 @@ private:
     void Msearch(ISsdpMsearchHandler& aMsearchHandler);
     void EraseDisabled(VectorNotifyHandler& aVector);
     void EraseDisabled(VectorMsearchHandler& aVector);
+private: // from IResumeObserver
+    void NotifyResumed();
 private:
+    Environment& iEnv;
     VectorNotifyHandler iNotifyHandlers;
     VectorMsearchHandler iMsearchHandlers;
     OpenHome::Mutex iLock;
@@ -142,11 +145,12 @@ private:
     SsdpHeaderNt iHeaderNt;
     SsdpHeaderNts iHeaderNts;
     TBool iExiting;
+    TBool iRecreateSocket;
 };
 
 // SsdpListenerUnicast - sends out an msearch request and listens to the unicast responses
 //                     - processes received messages and passes them on an INotifyHandler
-class SsdpListenerUnicast : public SsdpListener
+class SsdpListenerUnicast : public SsdpListener, private IResumeObserver
 {
     static const TUint kMaxBufferBytes = 1024;
     static const TUint kRecvBufBytes = 64 * 1024;
@@ -158,12 +162,15 @@ public:
     void MsearchDeviceType(const Brx& aDomain, const Brx& aType, TUint aVersion);
     void MsearchServiceType(const Brx& aDomain, const Brx& aType, TUint aVersion);
     void MsearchAll();
+private: // from IResumeObserver
+    void NotifyResumed();
 private:
     TUint MsearchDurationSeconds() const;
     void Run();
 private:
     Environment& iEnv;
     ISsdpNotifyHandler& iNotifyHandler;
+    TIpAddress iInterface;
     SocketUdp iSocket;
     UdpWriter iSocketWriter;
     UdpReader iSocketReader;
@@ -173,6 +180,7 @@ private:
     ReaderHttpResponse iReaderResponse;
     SsdpHeaderExt iHeaderExt;
     TBool iExiting;
+    TBool iRecreateSocket;
 };
 
 } // namespace Net
