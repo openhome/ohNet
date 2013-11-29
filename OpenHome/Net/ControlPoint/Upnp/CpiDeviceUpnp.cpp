@@ -346,6 +346,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     const NetworkAdapter* current = ref.Adapter();
     iRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
     iNextRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
+    iResumedTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete));
     iPendingRefreshCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
@@ -369,6 +370,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
 CpiDeviceListUpnp::~CpiDeviceListUpnp()
 {
     iCpStack.Env().RemoveResumeObserver(*this);
+    iResumedTimer->Cancel();
     iLock.Wait();
     iActive = false;
     iLock.Signal();
@@ -386,6 +388,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iLock.Signal();
     delete iRefreshTimer;
     delete iNextRefreshTimer;
+    delete iResumedTimer;
 }
 
 void CpiDeviceListUpnp::StopListeners()
@@ -529,6 +532,16 @@ void CpiDeviceListUpnp::NextRefreshDue()
     Refresh();
 }
 
+void CpiDeviceListUpnp::ResumedTimerComplete()
+{
+    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+    lock.Signal();
+    Refresh();
+}
+
 void CpiDeviceListUpnp::CurrentNetworkAdapterChanged()
 {
     HandleInterfaceChange();
@@ -667,12 +680,9 @@ void CpiDeviceListUpnp::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx&
 
 void CpiDeviceListUpnp::NotifyResumed()
 {
-    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    lock.Signal();
-    Refresh();
+    /* UDP sockets don't seem usable immediately after we resume
+       ...so wait a short while before doing anything */
+    iResumedTimer->FireIn(kResumeDelayMs);
 }
 
 

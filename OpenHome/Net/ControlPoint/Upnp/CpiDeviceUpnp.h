@@ -135,6 +135,7 @@ private: // IResumeObserver
 private:
     void RefreshTimerComplete();
     void NextRefreshDue();
+    void ResumedTimerComplete();
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange();
@@ -144,6 +145,7 @@ protected:
     Mutex iSsdpLock;
 private:
     static const TUint kMaxMsearchRetryForNewAdapterSecs = 60;
+    static const TUint kResumeDelayMs = 5 * 1000;
     TIpAddress iInterface;
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
@@ -152,6 +154,7 @@ private:
     TBool iStarted;
     Timer* iRefreshTimer;
     Timer* iNextRefreshTimer;
+    Timer* iResumedTimer;
     TUint iPendingRefreshCount;
 };
 
