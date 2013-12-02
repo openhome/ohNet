@@ -551,7 +551,9 @@ void SuiteStoreText::TestValueFromStore()
 
     // create StoreText and check it uses value from store
     StoreText storeText(*iStore, *iPowerManager, kPowerPriority, key, kDefault, kMaxLength);
-    TEST(storeText.Get() == storeVal);
+    Bws<kMaxLength> val;
+    storeText.Get(val);
+    TEST(val == storeVal);
 
     // check store hasn't been overwritten as a side-effect
     Bws<kMaxLength> buf;
@@ -570,7 +572,9 @@ void SuiteStoreText::TestValueWrittenToStore()
 void SuiteStoreText::TestGet()
 {
     // Test that correct value is returned.
-    TEST(iStoreText->Get() == kDefault);
+    Bws<kMaxLength> val;
+    iStoreText->Get(val);
+    TEST(val == kDefault);
 }
 
 void SuiteStoreText::TestSet()
@@ -578,7 +582,9 @@ void SuiteStoreText::TestSet()
     // Test that setting (and retrieving) a value results in a new value.
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
     iStoreText->Set(newVal);
-    TEST(iStoreText->Get() == newVal);
+    Bws<kMaxLength> val;
+    iStoreText->Get(val);
+    TEST(val == newVal);
 
     // check store hasn't been updated
     Bws<kMaxLength> buf;
@@ -599,7 +605,9 @@ void SuiteStoreText::TestWrite()
     Bws<kMaxLength> buf;
     iStore->Read(kKey, buf);
     TEST(buf == newVal);
-    TEST(iStoreText->Get() == newVal);
+    Bws<kMaxLength> val;
+    iStoreText->Get(val);
+    TEST(val == newVal);
 }
 
 
