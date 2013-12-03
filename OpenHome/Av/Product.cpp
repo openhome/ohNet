@@ -68,7 +68,7 @@ void Product::SetObserver(IProductObserver& aObserver)
 
 void Product::Start()
 {
-    Bws<ISource::kMaxSourceTypeBytes> startupSource;
+    Bws<ISource::kMaxSystemNameBytes> startupSource;
     iStartupSource.Get(startupSource);
     SetCurrentSource(startupSource);
     iStarted = true;
@@ -194,7 +194,7 @@ void Product::SetCurrentSource(TUint aIndex)
         iSources[iCurrentSource]->Deactivate();
     }
     iCurrentSource = aIndex;
-    iStartupSource.Set(iSources[iCurrentSource]->Type());
+    iStartupSource.Set(iSources[iCurrentSource]->SystemName());
     iSources[iCurrentSource]->Activate();
 
     if (iObserver != NULL) {
@@ -209,7 +209,7 @@ void Product::SetCurrentSource(const Brx& aName)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aName) {
             iCurrentSource = i;
-            iStartupSource.Set(iSources[iCurrentSource]->Type());
+            iStartupSource.Set(iSources[iCurrentSource]->SystemName());
             iSources[iCurrentSource]->Activate();
             if (iObserver != NULL) {
                 iObserver->SourceIndexChanged();
@@ -259,7 +259,7 @@ void Product::Activate(ISource& aSource)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aSource.Name()) {
             iCurrentSource = i;
-            iStartupSource.Set(iSources[iCurrentSource]->Type());
+            iStartupSource.Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
             srcNew->Activate();
             if (iObserver != NULL) {
