@@ -48,11 +48,12 @@ public:
 
 class Product : private IProduct, private IInfoProvider, private INonCopyable
 {
+private:
     static const Brn kStartupSourceKey;
     static const TUint kMaxAttributeBytes = 1024;
 public:
-    static const Brn skConfigIdRoomBase;
-    static const Brn skConfigIdNameBase;
+    static const Brn kConfigIdRoomBase;
+    static const Brn kConfigIdNameBase;
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:

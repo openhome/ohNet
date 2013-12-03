@@ -16,8 +16,8 @@ using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
 const Brn Product::kStartupSourceKey("Startup.Source");
-const Brn Product::skConfigIdRoomBase("Product.Room");
-const Brn Product::skConfigIdNameBase("Product.Name");
+const Brn Product::kConfigIdRoomBase("Product.Room");
+const Brn Product::kConfigIdNameBase("Product.Name");
 
 Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix)
     : iDevice(aDevice)
@@ -35,14 +35,14 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     if (key.Bytes() > 0) {
         key.Append('.');
     }
-    key.Append(skConfigIdRoomBase);
+    key.Append(kConfigIdRoomBase);
     iConfigProductRoom = new ConfigText(iConfigManager, key, kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged));
     key.Replace(aConfigPrefix);
     if (key.Bytes() > 0) {
         key.Append('.');
     }
-    key.Append(skConfigIdNameBase);
+    key.Append(kConfigIdNameBase);
     iConfigProductName = new ConfigText(iConfigManager, key, kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
