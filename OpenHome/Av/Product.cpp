@@ -15,7 +15,7 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 
-const Brn Product::kStartupSourceKey("Startup.Source");
+const Brn Product::kStartupSourceBase("Startup.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
@@ -27,11 +27,16 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iLockDetails("PRDD")
     , iObserver(NULL)
     , iStarted(false)
-    , iStartupSource(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceKey, Brn("Playlist"), ISource::kMaxSourceTypeBytes)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
 {
     Bws<64> key(aConfigPrefix);
+    if (key.Bytes() > 0) {
+        key.Append('.');
+    }
+    key.Append(kStartupSourceBase);
+    iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, key, Brn("Playlist"), ISource::kMaxSourceTypeBytes);
+    key.Replace(aConfigPrefix);
     if (key.Bytes() > 0) {
         key.Append('.');
     }
@@ -59,6 +64,7 @@ Product::~Product()
     delete iConfigProductName;
     iConfigProductRoom->Unsubscribe(iListenerIdProductRoom);
     delete iConfigProductRoom;
+    delete iStartupSource;
 }
 
 void Product::SetObserver(IProductObserver& aObserver)
@@ -69,7 +75,7 @@ void Product::SetObserver(IProductObserver& aObserver)
 void Product::Start()
 {
     Bws<ISource::kMaxSystemNameBytes> startupSource;
-    iStartupSource.Get(startupSource);
+    iStartupSource->Get(startupSource);
     SetCurrentSource(startupSource);
     iStarted = true;
     iSourceXmlChangeCount++;
@@ -194,7 +200,7 @@ void Product::SetCurrentSource(TUint aIndex)
         iSources[iCurrentSource]->Deactivate();
     }
     iCurrentSource = aIndex;
-    iStartupSource.Set(iSources[iCurrentSource]->SystemName());
+    iStartupSource->Set(iSources[iCurrentSource]->SystemName());
     iSources[iCurrentSource]->Activate();
 
     if (iObserver != NULL) {
@@ -209,7 +215,7 @@ void Product::SetCurrentSource(const Brx& aName)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aName) {
             iCurrentSource = i;
-            iStartupSource.Set(iSources[iCurrentSource]->SystemName());
+            iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             iSources[iCurrentSource]->Activate();
             if (iObserver != NULL) {
                 iObserver->SourceIndexChanged();
@@ -259,7 +265,7 @@ void Product::Activate(ISource& aSource)
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aSource.Name()) {
             iCurrentSource = i;
-            iStartupSource.Set(iSources[iCurrentSource]->SystemName());
+            iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
             srcNew->Activate();
             if (iObserver != NULL) {

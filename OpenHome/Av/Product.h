@@ -49,7 +49,7 @@ public:
 class Product : private IProduct, private IInfoProvider, private INonCopyable
 {
 private:
-    static const Brn kStartupSourceKey;
+    static const Brn kStartupSourceBase;
     static const TUint kMaxAttributeBytes = 1024;
 public:
     static const Brn kConfigIdRoomBase;
@@ -96,7 +96,7 @@ private:
     std::vector<ISource*> iSources;
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
-    StoreText iStartupSource;
+    StoreText* iStartupSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
     Configuration::ConfigText* iConfigProductRoom;
