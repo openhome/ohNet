@@ -1,6 +1,8 @@
 #ifndef HEADER_W32GETCH
 #define HEADER_W32GETCH
 
+#include <OpenHome/Private/Thread.h>
+
 #ifdef _WIN32
 # include <conio.h>
 
@@ -13,7 +15,11 @@ int mygetch()
 
 int mygetch()
 {
-    return 0;
+    // This implementation is for embedded platforms.
+    // We intend to block here for eternity.
+    OpenHome::Semaphore localSema("private", 0);
+    localSema.Wait();
+    return 0; // will never happen.
 }
 
 #else
