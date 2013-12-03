@@ -56,7 +56,7 @@ public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& aInfoAggregator, const Brx& aConfigPrefix);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();

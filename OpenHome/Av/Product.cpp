@@ -5,7 +5,6 @@
 #include <OpenHome/Av/ProviderProduct.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/KvpStore.h>
-#include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Printer.h>
 
@@ -20,7 +19,7 @@ const Brn Product::kStartupSourceKey("Startup.Source");
 const Brn Product::skConfigIdRoomBase("Product.Room");
 const Brn Product::skConfigIdNameBase("Product.Name");
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, IInfoAggregator& /*aInfoAggregator*/, const Brx& aConfigPrefix)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigManager(aConfigManager)
