@@ -858,6 +858,7 @@ void DviSessionUpnp::Unsubscribe()
         LOG2(kDvEvent, kError, "\n");
         Error(HttpStatus::kPreconditionFailed);
     }
+    subscription->RemoveRef();
     service->RemoveSubscription(iHeaderSid.Sid());
 
     if (iHeaderExpect.Continue()) {
@@ -897,7 +898,14 @@ void DviSessionUpnp::Renew()
         Error(HttpStatus::kPreconditionFailed);
     }
     TUint duration = iHeaderTimeout.Timeout();
-    subscription->Renew(duration);
+    try {
+        subscription->Renew(duration);
+    }
+    catch (...) {
+        subscription->RemoveRef();
+        throw;
+    }
+    subscription->RemoveRef();
 
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);

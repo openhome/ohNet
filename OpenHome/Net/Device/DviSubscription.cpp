@@ -453,6 +453,7 @@ void DviSubscriptionManager::AddSubscription(DviSubscription& aSubscription)
     iLock.Wait();
     Brn sid(aSubscription.Sid());
     iMap.insert(std::pair<Brn,DviSubscription*>(sid, &aSubscription));
+    aSubscription.AddRef();
     iLock.Signal();
 }
 
@@ -462,6 +463,7 @@ void DviSubscriptionManager::RemoveSubscription(DviSubscription& aSubscription)
     Brn sid(aSubscription.Sid());
     Map::iterator it = iMap.find(sid);
     if (it != iMap.end()) {
+        it->second->RemoveRef();
         iMap.erase(it);
     }
     iLock.Signal();
@@ -475,6 +477,7 @@ DviSubscription* DviSubscriptionManager::Find(const Brx& aSid)
     Map::iterator it = iMap.find(sid);
     if (it != iMap.end()) {
         subs = it->second;
+        subs->AddRef();
     }
     iLock.Signal();
     return subs;
