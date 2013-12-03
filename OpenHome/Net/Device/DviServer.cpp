@@ -160,6 +160,12 @@ DviServer::Server::Server(SocketTcpServer* aTcpServer, NetworkAdapter& aNif)
 
 DviServer::Server::~Server()
 {
-    delete iServer;
-    iNif.RemoveRef("DviServer::Server");
+    try {
+        delete iServer;
+        iNif.RemoveRef("DviServer::Server");
+    }
+    catch (NetworkError& aEx) {
+        Log::Print("Error: DviServer::Server::~Server threw NetworkError from %s:%u\n", aEx.File(), aEx.Line());
+        ASSERTS();
+    }
 }
