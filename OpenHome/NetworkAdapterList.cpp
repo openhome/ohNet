@@ -500,7 +500,7 @@ void NetworkAdapterList::NotifyAdapterChanged(NetworkAdapter& aAdapter)
 
 void NetworkAdapterList::NotifyResumed()
 {
-    HandleInterfaceListChanged();    
+    HandleInterfaceListChanged();
 }
 
 
