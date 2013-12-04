@@ -122,7 +122,7 @@ private:
      * the class doesn't get deleted before (or, worse, during) that later operation.
      */
     void Schedule(EOperation aOperation, TBool aRejectFutureOperations = false);
-    void StartSchedule(EOperation aOperation, TBool aRejectFutureOperations);
+    TBool StartSchedule(EOperation aOperation, TBool aRejectFutureOperations);
     void DoSubscribe();
     void Renew();
     void DoRenew();

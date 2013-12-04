@@ -176,18 +176,19 @@ CpiSubscription::~CpiSubscription()
 
 void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
-    StartSchedule(aOperation, aRejectFutureOperations);
-    iDevice.GetCpStack().SubscriptionManager().Schedule(*this);
+    if (StartSchedule(aOperation, aRejectFutureOperations)) {
+        iDevice.GetCpStack().SubscriptionManager().Schedule(*this);
+    }
 }
 
-void CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureOperations)
+TBool CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
     CpStack& cpStack = iDevice.GetCpStack();
     Mutex& lock = cpStack.Env().Mutex();
     lock.Wait();
     if (iRejectFutureOperations) {
         lock.Signal();
-        return;
+        return false;
     }
     if (aRejectFutureOperations) {
         iRejectFutureOperations = true;
@@ -195,6 +196,7 @@ void CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureOp
     iRefCount++;
     iPendingOperation = aOperation;
     lock.Signal();
+    return true;
 }
 
 void CpiSubscription::DoSubscribe()
@@ -333,8 +335,9 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 
 void CpiSubscription::HandleResumed()
 {
-    StartSchedule(eResubscribe, false);
-    iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
+    if (StartSchedule(eResubscribe, false)) {
+        iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
+    }
 }
 
 void CpiSubscription::EventUpdateStart()
