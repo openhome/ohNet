@@ -442,7 +442,7 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
     return false;
 }
 
-void CpiDeviceListUpnp::Start()
+void CpiDeviceListUpnp::DoStart()
 {
     iActive = true;
     iLock.Wait();
@@ -456,6 +456,16 @@ void CpiDeviceListUpnp::Start()
         }
         iSsdpLock.Signal();
     }
+}
+
+void CpiDeviceListUpnp::Start()
+{
+    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+    lock.Signal();
+    Refresh();
 }
 
 void CpiDeviceListUpnp::Refresh()
@@ -700,7 +710,7 @@ CpiDeviceListUpnpAll::~CpiDeviceListUpnpAll()
 
 void CpiDeviceListUpnpAll::Start()
 {
-    CpiDeviceListUpnp::Start();
+    CpiDeviceListUpnp::DoStart();
     iSsdpLock.Wait();
     if (iUnicastListener != NULL) {
         try {
@@ -742,7 +752,7 @@ CpiDeviceListUpnpRoot::~CpiDeviceListUpnpRoot()
 
 void CpiDeviceListUpnpRoot::Start()
 {
-    CpiDeviceListUpnp::Start();
+    CpiDeviceListUpnp::DoStart();
     iSsdpLock.Wait();
     if (iUnicastListener != NULL) {
         try {
@@ -785,7 +795,7 @@ CpiDeviceListUpnpUuid::~CpiDeviceListUpnpUuid()
 
 void CpiDeviceListUpnpUuid::Start()
 {
-    CpiDeviceListUpnp::Start();
+    CpiDeviceListUpnp::DoStart();
     iSsdpLock.Wait();
     if (iUnicastListener != NULL) {
         try {
@@ -834,7 +844,7 @@ CpiDeviceListUpnpDeviceType::~CpiDeviceListUpnpDeviceType()
 
 void CpiDeviceListUpnpDeviceType::Start()
 {
-    CpiDeviceListUpnp::Start();
+    CpiDeviceListUpnp::DoStart();
     iSsdpLock.Wait();
     if (iUnicastListener != NULL) {
         try {
@@ -884,7 +894,7 @@ CpiDeviceListUpnpServiceType::~CpiDeviceListUpnpServiceType()
 
 void CpiDeviceListUpnpServiceType::Start()
 {
-    CpiDeviceListUpnp::Start();
+    CpiDeviceListUpnp::DoStart();
     iSsdpLock.Wait();
     if (iUnicastListener != NULL) {
         try {

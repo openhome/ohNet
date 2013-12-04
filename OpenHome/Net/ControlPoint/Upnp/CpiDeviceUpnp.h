@@ -114,12 +114,13 @@ protected:
      * false will always be returned while a list is being refreshed.
      */
     TBool Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge);
-    // CpiDeviceList
+    void DoStart();
+protected: // from CpiDeviceList
     void Start();
     void Refresh();
     TBool IsDeviceReady(CpiDevice& aDevice);
     TBool IsLocationReachable(const Brx& aLocation) const;
-    // ISsdpNotifyHandler
+protected: // from ISsdpNotifyHandler
     void SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
     void SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge);
     void SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion,
