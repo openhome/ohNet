@@ -394,15 +394,18 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
 void CpiDeviceListUpnp::StopListeners()
 {
     iSsdpLock.Wait();
-    delete iUnicastListener;
+    SsdpListenerUnicast* uListener = iUnicastListener;
     iUnicastListener = NULL;
-    if (iMulticastListener != NULL) {
-        iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
-        iNotifyHandlerId = 0;
-        iCpStack.Env().MulticastListenerRelease(iInterface);
-        iMulticastListener = NULL;
-    }
     iSsdpLock.Signal();
+    if (uListener != NULL) {
+        delete uListener;
+        if (iMulticastListener != NULL) {
+            iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
+            iNotifyHandlerId = 0;
+            iCpStack.Env().MulticastListenerRelease(iInterface);
+            iMulticastListener = NULL;
+        }
+    }
 }
 
 TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge)
@@ -450,11 +453,10 @@ void CpiDeviceListUpnp::DoStart()
     iStarted = true;
     iLock.Signal();
     if (needsStart) {
-        iSsdpLock.Wait();
+        AutoMutex a(iSsdpLock);
         if (iUnicastListener != NULL) {
             iUnicastListener->Start();
         }
-        iSsdpLock.Signal();
     }
 }
 
@@ -598,12 +600,13 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
     lock.Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
-    iSsdpLock.Wait();
-    iUnicastListener = new SsdpListenerUnicast(iCpStack.Env(), *this, iInterface);
-    iUnicastListener->Start();
-    iMulticastListener = &(iCpStack.Env().MulticastListenerClaim(iInterface));
-    iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
-    iSsdpLock.Signal();
+    {
+        AutoMutex a(iSsdpLock);
+        iUnicastListener = new SsdpListenerUnicast(iCpStack.Env(), *this, iInterface);
+        iUnicastListener->Start();
+        iMulticastListener = &(iCpStack.Env().MulticastListenerClaim(iInterface));
+        iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
+    }
     Refresh();
 }
 
@@ -711,7 +714,7 @@ CpiDeviceListUpnpAll::~CpiDeviceListUpnpAll()
 void CpiDeviceListUpnpAll::Start()
 {
     CpiDeviceListUpnp::DoStart();
-    iSsdpLock.Wait();
+    AutoMutex a(iSsdpLock);
     if (iUnicastListener != NULL) {
         try {
             iUnicastListener->MsearchAll();
@@ -723,7 +726,6 @@ void CpiDeviceListUpnpAll::Start()
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpAll\n");
         }
     }
-    iSsdpLock.Signal();
 }
 
 void CpiDeviceListUpnpAll::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
@@ -753,7 +755,7 @@ CpiDeviceListUpnpRoot::~CpiDeviceListUpnpRoot()
 void CpiDeviceListUpnpRoot::Start()
 {
     CpiDeviceListUpnp::DoStart();
-    iSsdpLock.Wait();
+    AutoMutex a(iSsdpLock);
     if (iUnicastListener != NULL) {
         try {
             iUnicastListener->MsearchRoot();
@@ -765,7 +767,6 @@ void CpiDeviceListUpnpRoot::Start()
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpRoot\n");
         }
     }
-    iSsdpLock.Signal();
 }
 
 void CpiDeviceListUpnpRoot::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
@@ -796,7 +797,7 @@ CpiDeviceListUpnpUuid::~CpiDeviceListUpnpUuid()
 void CpiDeviceListUpnpUuid::Start()
 {
     CpiDeviceListUpnp::DoStart();
-    iSsdpLock.Wait();
+    AutoMutex a(iSsdpLock);
     if (iUnicastListener != NULL) {
         try {
             iUnicastListener->MsearchUuid(iUuid);
@@ -808,7 +809,6 @@ void CpiDeviceListUpnpUuid::Start()
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpUuid\n");
         }
     }
-    iSsdpLock.Signal();
 }
 
 void CpiDeviceListUpnpUuid::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
@@ -845,7 +845,7 @@ CpiDeviceListUpnpDeviceType::~CpiDeviceListUpnpDeviceType()
 void CpiDeviceListUpnpDeviceType::Start()
 {
     CpiDeviceListUpnp::DoStart();
-    iSsdpLock.Wait();
+    AutoMutex a(iSsdpLock);
     if (iUnicastListener != NULL) {
         try {
             iUnicastListener->MsearchDeviceType(iDomainName, iDeviceType, iVersion);
@@ -857,7 +857,6 @@ void CpiDeviceListUpnpDeviceType::Start()
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpDeviceType\n");
         }
     }
-    iSsdpLock.Signal();
 }
 
 void CpiDeviceListUpnpDeviceType::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType,
@@ -895,7 +894,7 @@ CpiDeviceListUpnpServiceType::~CpiDeviceListUpnpServiceType()
 void CpiDeviceListUpnpServiceType::Start()
 {
     CpiDeviceListUpnp::DoStart();
-    iSsdpLock.Wait();
+    AutoMutex a(iSsdpLock);
     if (iUnicastListener != NULL) {
         try {
             iUnicastListener->MsearchServiceType(iDomainName, iServiceType, iVersion);
@@ -907,7 +906,6 @@ void CpiDeviceListUpnpServiceType::Start()
             LOG2(kDevice, kError, "Error sending msearch for CpiDeviceListUpnpServiceType\n");
         }
     }
-    iSsdpLock.Signal();
 }
 
 void CpiDeviceListUpnpServiceType::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType,
