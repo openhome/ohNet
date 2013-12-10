@@ -240,7 +240,7 @@ public:
 };
 
 /*
- * Interface for a writing values into a configuration manager.
+ * Interface for adding values to a configuration manager.
  * Should only ever be used by ConfigVal items and a class that decides when
  * all values have been added to the config manager.
  */
@@ -251,8 +251,8 @@ public:
     virtual void Add(ConfigNum& aNum) = 0;
     virtual void Add(ConfigChoice& aChoice) = 0;
     virtual void Add(ConfigText& aText) = 0;
-    virtual void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
-    virtual void Write(const Brx& aKey, const Brx& aValue) = 0;
+    virtual void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
+    virtual void ToStore(const Brx& aKey, const Brx& aValue) = 0;
     virtual ~IConfigurationManagerWriter() {}
 };
 
@@ -337,8 +337,8 @@ public: // from IConfigurationManagerWriter
     void Add(ConfigNum& aNum);
     void Add(ConfigChoice& aChoice);
     void Add(ConfigText& aText);
-    void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
-    void Write(const Brx& aKey, const Brx& aValue);
+    void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
+    void ToStore(const Brx& aKey, const Brx& aValue);
 public:
     TBool Has(const Brx& aId) const;
 private:

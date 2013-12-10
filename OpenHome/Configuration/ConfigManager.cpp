@@ -22,7 +22,7 @@ ConfigNum::ConfigNum(IConfigurationManagerWriter& aManager, const Brx& aId, TInt
     Bws<sizeof(TInt)> initialBuf;
     Bws<sizeof(TInt)> defaultBuf;
     defaultBuf.Append(Arch::BigEndian4(aDefault));
-    iConfigManager.Read(iId, initialBuf, defaultBuf);
+    iConfigManager.FromStore(iId, initialBuf, defaultBuf);
     TInt initialVal = Converter::BeUint32At(initialBuf, 0);
 
     ASSERT(IsValid(initialVal));
@@ -79,7 +79,7 @@ void ConfigNum::Write(TInt aVal)
 {
     Bws<sizeof(TInt)> valBuf;
     valBuf.Append(Arch::BigEndian4(aVal));
-    iConfigManager.Write(iId, valBuf);
+    iConfigManager.ToStore(iId, valBuf);
 }
 
 
@@ -93,7 +93,7 @@ ConfigChoice::ConfigChoice(IConfigurationManagerWriter& aManager, const Brx& aId
     Bws<sizeof(TUint)> initialBuf;
     Bws<sizeof(TUint)> defaultBuf;
     defaultBuf.Append(Arch::BigEndian4(aDefault));
-    iConfigManager.Read(iId, initialBuf, defaultBuf);
+    iConfigManager.FromStore(iId, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
 
     ASSERT(IsValid(initialVal));
@@ -147,7 +147,7 @@ void ConfigChoice::Write(TUint aVal)
 {
     Bws<sizeof(TUint)> valBuf;
     valBuf.Append(Arch::BigEndian4(aVal));
-    iConfigManager.Write(iId, valBuf);
+    iConfigManager.ToStore(iId, valBuf);
 }
 
 
@@ -159,7 +159,7 @@ ConfigText::ConfigText(IConfigurationManagerWriter& aManager, const Brx& aId, TU
     , iMutex("CVTM")
 {
     Bwh initialBuf(aMaxLength);
-    iConfigManager.Read(iId, initialBuf, aDefault);
+    iConfigManager.FromStore(iId, initialBuf, aDefault);
 
     ASSERT(IsValid(initialBuf));
     iConfigManager.Add(*this);
@@ -208,7 +208,7 @@ TUint ConfigText::Subscribe(FunctorGeneric<const Brx&> aFunctor)
 
 void ConfigText::Write(const Brx& aVal)
 {
-    iConfigManager.Write(iId, aVal);
+    iConfigManager.ToStore(iId, aVal);
 }
 
 
@@ -254,19 +254,19 @@ void ConfigurationManager::Add(ConfigText& aText)
     Add(iMapText, aText.Id(), aText);
 }
 
-void ConfigurationManager::Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
+void ConfigurationManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
 {
     // try retrieve from store; create entry if it doesn't exist
     try {
         iStore.Read(aKey, aDest);
     }
     catch (StoreKeyNotFound&) {
-        Write(aKey, aDefault);
+        ToStore(aKey, aDefault);
         aDest.Replace(aDefault);
     }
 }
 
-void ConfigurationManager::Write(const Brx& aKey, const Brx& aValue)
+void ConfigurationManager::ToStore(const Brx& aKey, const Brx& aValue)
 {
     iStore.Write(aKey, aValue);
 }

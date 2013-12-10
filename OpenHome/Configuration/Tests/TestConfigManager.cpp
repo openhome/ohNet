@@ -1072,7 +1072,7 @@ void SuiteConfigurationManager::TestReadStoreValExists()
     // test that reading from a value already in store causes store value to be
     // returned rather than default val.
     Bwh buf(kMaxText);
-    iConfigManager->Read(kIdText1, buf, kText2);
+    iConfigManager->FromStore(kIdText1, buf, kText2);
     TEST(buf == kText1);
 
     // check default value hasn't been written to store as a side-effect
@@ -1093,7 +1093,7 @@ void SuiteConfigurationManager::TestReadNoStoreValExists()
     }
     catch (StoreKeyNotFound&) {}
 
-    iConfigManager->Read(kIdText2, buf, kText2);
+    iConfigManager->FromStore(kIdText2, buf, kText2);
     TEST(buf == kText2);
 
     // check value has been written to store
@@ -1107,7 +1107,7 @@ void SuiteConfigurationManager::TestWrite()
     // test that writing a value via ConfigurationManager results in value
     // being written to store.
     Bwh buf(kMaxText);
-    iConfigManager->Write(kIdText1, kText2);
+    iConfigManager->ToStore(kIdText1, kText2);
     iStore->Read(kIdText1, buf);
     TEST(buf == kText2);
 }
