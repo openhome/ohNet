@@ -943,9 +943,6 @@ void SuiteConfigurationManager::TestHasNoVals()
     TEST(configManager.HasNum(kIdNum1) == false);
     TEST(configManager.HasChoice(kIdChoice1) == false);
     TEST(configManager.HasText(kIdText1) == false);
-    TEST(configManager.Has(kIdNum1) == false);
-    TEST(configManager.Has(kIdChoice1) == false);
-    TEST(configManager.Has(kIdText1) == false);
 }
 
 void SuiteConfigurationManager::TestHasValidId()
@@ -954,11 +951,6 @@ void SuiteConfigurationManager::TestHasValidId()
     TEST(iConfigManager->HasNum(kIdNum1) == true);
     TEST(iConfigManager->HasChoice(kIdChoice1) == true);
     TEST(iConfigManager->HasText(kIdText1) == true);
-
-    // test generic Has()
-    TEST(iConfigManager->Has(kIdNum1) == true);
-    TEST(iConfigManager->Has(kIdChoice1) == true);
-    TEST(iConfigManager->Has(kIdText1) == true);
 }
 
 void SuiteConfigurationManager::TestHasInvalidId()
@@ -976,11 +968,6 @@ void SuiteConfigurationManager::TestHasInvalidId()
 
     // try call HasChoice() with the ID of ConfigNum
     TEST(iConfigManager->HasChoice(kIdNum1) == false);
-
-    // test generic Has()
-    TEST(iConfigManager->Has(kIdNum2) == false);
-    TEST(iConfigManager->Has(kIdChoice2) == false);
-    TEST(iConfigManager->Has(kIdText2) == false);
 }
 
 void SuiteConfigurationManager::TestHasMultiple()

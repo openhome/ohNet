@@ -339,9 +339,8 @@ public: // from IConfigurationManagerWriter
     void Add(ConfigText& aText);
     void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void ToStore(const Brx& aKey, const Brx& aValue);
-public:
-    TBool Has(const Brx& aId) const;
 private:
+    TBool Has(const Brx& aId) const;
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal);
 private:
     IStoreReadWrite& iStore;
