@@ -30,8 +30,8 @@ using namespace OpenHome::Net;
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                         IStoreReadWrite& aReadWriteStore, IConfigurationManagerReader& aConfigReader,
-                         IConfigurationManagerWriter& aConfigWriter, IPowerManager& aPowerManager)
+                         IStoreReadWrite& aReadWriteStore, IConfigManagerReader& aConfigReader,
+                         IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
@@ -142,12 +142,12 @@ IStoreReadWrite& MediaPlayer::ReadWriteStore()
     return iReadWriteStore;
 }
 
-IConfigurationManagerReader& MediaPlayer::ConfigManagerReader()
+IConfigManagerReader& MediaPlayer::ConfigManagerReader()
 {
     return iConfigManagerReader;
 }
 
-IConfigurationManagerWriter& MediaPlayer::ConfigManagerWriter()
+IConfigManagerWriter& MediaPlayer::ConfigManagerWriter()
 {
     return iConfigManagerWriter;
 }

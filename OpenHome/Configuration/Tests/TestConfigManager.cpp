@@ -24,7 +24,7 @@ protected:
 protected:
     static const Brn kKey;
     ConfigRamStore* iStore;
-    ConfigurationManager* iConfigManager;
+    ConfigManager* iConfigManager;
     TUint iChangedCount;
 };
 
@@ -130,10 +130,10 @@ private:
     Bws<kMaxLength> iLastChangeVal;
 };
 
-class SuiteConfigurationManager : public SuiteUnitTest
+class SuiteConfigManager : public SuiteUnitTest
 {
 public:
-    SuiteConfigurationManager();
+    SuiteConfigManager();
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -172,7 +172,7 @@ private:
     static const Brn kIdText1;
     static const Brn kIdText2;
     ConfigRamStore* iStore;
-    ConfigurationManager* iConfigManager;
+    ConfigManager* iConfigManager;
     ConfigNum* iNum1;
     std::vector<TUint> iChoices;
     ConfigChoice* iChoice1;
@@ -217,7 +217,7 @@ template <class T> SuiteCVNotify<T>::~SuiteCVNotify() {}
 template <class T> void SuiteCVNotify<T>::Setup()
 {
     iStore = new ConfigRamStore();
-    iConfigManager = new ConfigurationManager(*iStore);
+    iConfigManager = new ConfigManager(*iStore);
     iChangedCount = 0;
 }
 
@@ -825,7 +825,7 @@ void SuiteConfigText::TestSetValueTooLong()
 }
 
 
-// SuiteConfigurationManager
+// SuiteConfigManager
 
 /*
  * Note: SerialisedMap is not tested, as ConfigManager is such a thin wrapper
@@ -834,46 +834,46 @@ void SuiteConfigText::TestSetValueTooLong()
  * ConfigManager.
  */
 
-const TUint SuiteConfigurationManager::kChoice1 = 0;
-const TUint SuiteConfigurationManager::kChoice2 = 1;
-const TUint SuiteConfigurationManager::kChoice3 = 2;
-const Brn SuiteConfigurationManager::kText1("abcdefghijklmnopqrstuvwxyz");
-const Brn SuiteConfigurationManager::kText2("zyxwvutsrqponmlkjihgfedcba");
-const Brn SuiteConfigurationManager::kIdNum1("cv.num.1");
-const Brn SuiteConfigurationManager::kIdNum2("cv.num.2");
-const Brn SuiteConfigurationManager::kIdChoice1("cv.choice.1");
-const Brn SuiteConfigurationManager::kIdChoice2("cv.choice.2");
-const Brn SuiteConfigurationManager::kIdText1("cv.text.1");
-const Brn SuiteConfigurationManager::kIdText2("cv.text.2");
+const TUint SuiteConfigManager::kChoice1 = 0;
+const TUint SuiteConfigManager::kChoice2 = 1;
+const TUint SuiteConfigManager::kChoice3 = 2;
+const Brn SuiteConfigManager::kText1("abcdefghijklmnopqrstuvwxyz");
+const Brn SuiteConfigManager::kText2("zyxwvutsrqponmlkjihgfedcba");
+const Brn SuiteConfigManager::kIdNum1("cv.num.1");
+const Brn SuiteConfigManager::kIdNum2("cv.num.2");
+const Brn SuiteConfigManager::kIdChoice1("cv.choice.1");
+const Brn SuiteConfigManager::kIdChoice2("cv.choice.2");
+const Brn SuiteConfigManager::kIdText1("cv.text.1");
+const Brn SuiteConfigManager::kIdText2("cv.text.2");
 
-SuiteConfigurationManager::SuiteConfigurationManager()
-    : SuiteUnitTest("SuiteConfigurationManager")
+SuiteConfigManager::SuiteConfigManager()
+    : SuiteUnitTest("SuiteConfigManager")
 {
-    // Creating different instances of SuiteConfigurationManager for each of
+    // Creating different instances of SuiteConfigManager for each of
     // ConfigNum, ConfigChoice and ConfigText would end up in a lot of boilerplate code.
     // Just group functions for each val class in a single generic unit test
-    // for each type of ConfigurationManager function to maintain clarity and
+    // for each type of ConfigManager function to maintain clarity and
     // small test size.
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestClose));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestAdd));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestAddDuplicate));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasNoVals));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasValidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasInvalidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestHasMultiple));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetNoVals));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetValidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetInvalidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestGetMultiple));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestReadStoreValExists));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestReadNoStoreValExists));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigurationManager::TestWrite));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestClose));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAdd));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAddDuplicate));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasNoVals));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasValidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasInvalidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasMultiple));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetNoVals));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetValidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetInvalidId));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetMultiple));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite));
 }
 
-void SuiteConfigurationManager::Setup()
+void SuiteConfigManager::Setup()
 {
     iStore = new ConfigRamStore();
-    iConfigManager = new ConfigurationManager(*iStore);
+    iConfigManager = new ConfigManager(*iStore);
     iNum1 = new ConfigNum(*iConfigManager, kIdNum1, kMinNum, kMaxNum, kMinNum);
     iChoices.push_back(kChoice1);
     iChoices.push_back(kChoice2);
@@ -882,7 +882,7 @@ void SuiteConfigurationManager::Setup()
     iText1 = new ConfigText(*iConfigManager, kIdText1, kMaxText, kText1);
 }
 
-void SuiteConfigurationManager::TearDown()
+void SuiteConfigManager::TearDown()
 {
     delete iNum1;
     delete iChoice1;
@@ -892,21 +892,21 @@ void SuiteConfigurationManager::TearDown()
     iChoices.clear();
 }
 
-void SuiteConfigurationManager::NotifyChangedNum(TInt /*aVal*/)
+void SuiteConfigManager::NotifyChangedNum(TInt /*aVal*/)
 {
 }
 
-void SuiteConfigurationManager::NotifyChangedChoice(TUint /*aVal*/)
+void SuiteConfigManager::NotifyChangedChoice(TUint /*aVal*/)
 {
 }
 
-void SuiteConfigurationManager::NotifyChangedText(const Brx& /*aVal*/)
+void SuiteConfigManager::NotifyChangedText(const Brx& /*aVal*/)
 {
 }
 
-void SuiteConfigurationManager::TestClose()
+void SuiteConfigManager::TestClose()
 {
-    // test that ConfigurationManager ASSERTs when attempting to add a value
+    // test that ConfigManager ASSERTs when attempting to add a value
     // after it has been closed
     iConfigManager->Close();
     TEST_THROWS(ConfigNum num(*iConfigManager, kIdNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
@@ -914,7 +914,7 @@ void SuiteConfigurationManager::TestClose()
     TEST_THROWS(ConfigText text(*iConfigManager, kIdText2, kMaxText, kText2), AssertionFailed);
 }
 
-void SuiteConfigurationManager::TestAdd()
+void SuiteConfigManager::TestAdd()
 {
     // completion of this test without errors suggests adding works
     // Has() and Get() are tested in their own unit tests.
@@ -923,7 +923,7 @@ void SuiteConfigurationManager::TestAdd()
     ConfigText text(*iConfigManager, kIdText2, kMaxText, kText2);
 }
 
-void SuiteConfigurationManager::TestAddDuplicate()
+void SuiteConfigManager::TestAddDuplicate()
 {
     // test that an exception is throws if an attempt to add a ConfigVal with
     // the same ID is made twice
@@ -935,17 +935,17 @@ void SuiteConfigurationManager::TestAddDuplicate()
     TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigIdExists);
 }
 
-void SuiteConfigurationManager::TestHasNoVals()
+void SuiteConfigManager::TestHasNoVals()
 {
     // test that calling Has() when no values are added returns false
     ConfigRamStore store;
-    ConfigurationManager configManager(store);
+    ConfigManager configManager(store);
     TEST(configManager.HasNum(kIdNum1) == false);
     TEST(configManager.HasChoice(kIdChoice1) == false);
     TEST(configManager.HasText(kIdText1) == false);
 }
 
-void SuiteConfigurationManager::TestHasValidId()
+void SuiteConfigManager::TestHasValidId()
 {
     // test Has() returns true when a given ID exists
     TEST(iConfigManager->HasNum(kIdNum1) == true);
@@ -953,7 +953,7 @@ void SuiteConfigurationManager::TestHasValidId()
     TEST(iConfigManager->HasText(kIdText1) == true);
 }
 
-void SuiteConfigurationManager::TestHasInvalidId()
+void SuiteConfigManager::TestHasInvalidId()
 {
     // test Has() returns false when IDs are present, but not the given ID
 
@@ -970,7 +970,7 @@ void SuiteConfigurationManager::TestHasInvalidId()
     TEST(iConfigManager->HasChoice(kIdNum1) == false);
 }
 
-void SuiteConfigurationManager::TestHasMultiple()
+void SuiteConfigManager::TestHasMultiple()
 {
     // test adding multiple values and calling Has() on the IDs
 
@@ -990,17 +990,17 @@ void SuiteConfigurationManager::TestHasMultiple()
     TEST(iConfigManager->HasText(kIdText2) == true);
 }
 
-void SuiteConfigurationManager::TestGetNoVals()
+void SuiteConfigManager::TestGetNoVals()
 {
     // test that Get() fails with an assertion when no values are present
     ConfigRamStore store;
-    ConfigurationManager configManager(store);
+    ConfigManager configManager(store);
     TEST_THROWS(configManager.GetNum(kIdNum1), AssertionFailed);
     TEST_THROWS(configManager.GetChoice(kIdChoice1), AssertionFailed);
     TEST_THROWS(configManager.GetText(kIdText1), AssertionFailed);
 }
 
-void SuiteConfigurationManager::TestGetValidId()
+void SuiteConfigManager::TestGetValidId()
 {
     // test Get() returns the correct val when ID is present
 
@@ -1017,7 +1017,7 @@ void SuiteConfigurationManager::TestGetValidId()
     TEST(text == *iText1);
 }
 
-void SuiteConfigurationManager::TestGetInvalidId()
+void SuiteConfigManager::TestGetInvalidId()
 {
     // test that Get() causes an assertion when ID is not present
     TEST_THROWS(iConfigManager->GetNum(kIdNum2), AssertionFailed);
@@ -1028,7 +1028,7 @@ void SuiteConfigurationManager::TestGetInvalidId()
     TEST_THROWS(iConfigManager->GetChoice(kIdNum1), AssertionFailed);
 }
 
-void SuiteConfigurationManager::TestGetMultiple()
+void SuiteConfigManager::TestGetMultiple()
 {
     // test adding multiple values and calling Get() on the IDs
 
@@ -1054,7 +1054,7 @@ void SuiteConfigurationManager::TestGetMultiple()
     TEST(text2 == text);
 }
 
-void SuiteConfigurationManager::TestReadStoreValExists()
+void SuiteConfigManager::TestReadStoreValExists()
 {
     // test that reading from a value already in store causes store value to be
     // returned rather than default val.
@@ -1068,7 +1068,7 @@ void SuiteConfigurationManager::TestReadStoreValExists()
     TEST(buf == kText1);
 }
 
-void SuiteConfigurationManager::TestReadNoStoreValExists()
+void SuiteConfigManager::TestReadNoStoreValExists()
 {
     // test that reading a value not in store causes default value to be
     // returned, and written out to store.
@@ -1089,9 +1089,9 @@ void SuiteConfigurationManager::TestReadNoStoreValExists()
     TEST(buf == kText2);
 }
 
-void SuiteConfigurationManager::TestWrite()
+void SuiteConfigManager::TestWrite()
 {
-    // test that writing a value via ConfigurationManager results in value
+    // test that writing a value via ConfigManager results in value
     // being written to store.
     Bwh buf(kMaxText);
     iConfigManager->ToStore(kIdText1, kText2);
@@ -1213,7 +1213,7 @@ void TestConfigManager()
     runner.Add(new SuiteConfigNum());
     runner.Add(new SuiteConfigChoice());
     runner.Add(new SuiteConfigText());
-    runner.Add(new SuiteConfigurationManager());
+    runner.Add(new SuiteConfigManager());
     runner.Add(new SuiteRamStore());
     runner.Run();
 }

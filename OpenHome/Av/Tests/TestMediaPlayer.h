@@ -31,7 +31,7 @@ namespace Media {
 }
 namespace Configuration {
     class ConfigRamStore;
-    class ConfigurationManager;
+    class ConfigManager;
 }
 namespace Av {
     class RamStore;
@@ -68,7 +68,7 @@ protected:
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
-    Configuration::ConfigurationManager* iConfigManager;
+    Configuration::ConfigManager* iConfigManager;
     PowerManager* iPowerManager;
 private:
     Semaphore iDisabled;

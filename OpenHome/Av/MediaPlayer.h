@@ -27,8 +27,8 @@ namespace Media {
     class TrackFactory;
 }
 namespace Configuration {
-    class IConfigurationManagerReader;
-    class IConfigurationManagerWriter;
+    class IConfigManagerReader;
+    class IConfigManagerWriter;
     class IStoreReadWrite;
 }
 namespace Net {
@@ -57,8 +57,8 @@ public:
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::IStoreReadWrite& ReadWriteStore() = 0;
-    virtual Configuration::IConfigurationManagerReader& ConfigManagerReader() = 0;
-    virtual Configuration::IConfigurationManagerWriter& ConfigManagerWriter() = 0;
+    virtual Configuration::IConfigManagerReader& ConfigManagerReader() = 0;
+    virtual Configuration::IConfigManagerWriter& ConfigManagerWriter() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
@@ -70,8 +70,8 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigurationManagerReader& aConfigReader,
-                Configuration::IConfigurationManagerWriter& aConfigWriter, IPowerManager& aPowerManager);
+                Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManagerReader& aConfigReader,
+                Configuration::IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager);
     ~MediaPlayer();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
@@ -86,8 +86,8 @@ public: // from IMediaPlayer
     Media::TrackFactory& TrackFactory();
     IReadStore& ReadStore();
     Configuration::IStoreReadWrite& ReadWriteStore();
-    Configuration::IConfigurationManagerReader& ConfigManagerReader();
-    Configuration::IConfigurationManagerWriter& ConfigManagerWriter();
+    Configuration::IConfigManagerReader& ConfigManagerReader();
+    Configuration::IConfigManagerWriter& ConfigManagerWriter();
     IPowerManager& PowerManager();
     void Add(Media::UriProvider* aUriProvider);
     void AddAttribute(const TChar* aAttribute);
@@ -108,8 +108,8 @@ private:
     Net::NetworkMonitor* iNetworkMonitor;
     KvpStore* iKvpStore;
     Configuration::IStoreReadWrite& iReadWriteStore;
-    Configuration::IConfigurationManagerReader& iConfigManagerReader;
-    Configuration::IConfigurationManagerWriter& iConfigManagerWriter;
+    Configuration::IConfigManagerReader& iConfigManagerReader;
+    Configuration::IConfigManagerWriter& iConfigManagerWriter;
     IPowerManager& iPowerManager;
 };
 

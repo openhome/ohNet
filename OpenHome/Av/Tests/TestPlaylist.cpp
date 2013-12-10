@@ -114,7 +114,7 @@ private:
     DvDeviceStandard* iDevice;
     RamStore* iRamStore;
     ConfigRamStore* iConfigRamStore;
-    ConfigurationManager* iConfigManager;
+    ConfigManager* iConfigManager;
     PowerManager* iPowerManager;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
@@ -358,7 +358,7 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    iConfigManager = new ConfigurationManager(*iConfigRamStore);
+    iConfigManager = new ConfigManager(*iConfigRamStore);
     iPowerManager = new PowerManager();
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
