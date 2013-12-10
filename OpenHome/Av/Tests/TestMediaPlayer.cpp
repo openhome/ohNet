@@ -80,7 +80,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iPowerManager->RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iPowerManager);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

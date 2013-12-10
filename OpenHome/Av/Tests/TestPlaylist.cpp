@@ -360,7 +360,7 @@ void SuitePlaylist::Setup()
     iConfigRamStore = new ConfigRamStore();
     iConfigManager = new ConfigurationManager(*iConfigRamStore);
     iPowerManager = new PowerManager();
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iPowerManager);
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors

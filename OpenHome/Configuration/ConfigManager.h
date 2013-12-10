@@ -29,7 +29,7 @@ public:
     virtual ~IObservable() {}
 };
 
-class IConfigurationManager;
+class IConfigurationManagerWriter;
 
 template <class T>
 class ConfigVal : public IObservable<T>
@@ -37,7 +37,7 @@ class ConfigVal : public IObservable<T>
 public:
     static const TUint kMaxIdLength = 32;
 protected:
-    ConfigVal(IConfigurationManager& aManager, const Brx& aId);
+    ConfigVal(IConfigurationManagerWriter& aManager, const Brx& aId);
 public:
     virtual ~ConfigVal();
     void AddInitialSubscribers();
@@ -50,7 +50,7 @@ protected:
     void NotifySubscribers(T aVal);
     virtual void Write(T aVal) = 0;
 protected:
-    IConfigurationManager& iConfigManager;
+    IConfigurationManagerWriter& iConfigManager;
     Bws<kMaxIdLength> iId;
 private:
     typedef std::map<TUint,FunctorGeneric<T>> Map;
@@ -61,7 +61,7 @@ private:
 };
 
 // ConfigVal
-template <class T> ConfigVal<T>::ConfigVal(IConfigurationManager& aManager, const Brx& aId)
+template <class T> ConfigVal<T>::ConfigVal(IConfigurationManagerWriter& aManager, const Brx& aId)
     : iConfigManager(aManager)
     , iId(aId)
     , iObserverLock("CVOL")
@@ -127,7 +127,7 @@ class ConfigNum : public ConfigVal<TInt>
 {
     friend class SuiteConfigurationManager;
 public:
-    ConfigNum(IConfigurationManager& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigurationManagerWriter& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     TBool Set(TInt aVal);
@@ -165,7 +165,7 @@ class ConfigChoice : public ConfigVal<TUint>
 {
     friend class SuiteConfigurationManager;
 public:
-    ConfigChoice(IConfigurationManager& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigurationManagerWriter& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
 private:
@@ -202,7 +202,7 @@ class ConfigText : public ConfigVal<const Brx&>
 {
     friend class SuiteConfigurationManager;
 public:
-    ConfigText(IConfigurationManager& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigurationManagerWriter& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     TBool Set(const Brx& aText);
 private:
@@ -225,28 +225,35 @@ inline TBool ConfigText::operator==(const ConfigText& aText) const
 }
 
 /*
- * Interface for a configuration manager.
+ * Interface for reading config vals from a configuration manager.
  */
-class IConfigurationManager
+class IConfigurationManagerReader
 {
 public:
-    virtual void Close() = 0;
-
-    virtual void Add(ConfigNum& aNum) = 0;
-    virtual void Add(ConfigChoice& aChoice) = 0;
-    virtual void Add(ConfigText& aText) = 0;
-
-    virtual void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
-    virtual void Write(const Brx& aKey, const Brx& aValue) = 0;
-
     virtual TBool HasNum(const Brx& aId) const = 0;
     virtual ConfigNum& GetNum(const Brx& aId) const = 0;
     virtual TBool HasChoice(const Brx& aId) const = 0;
     virtual ConfigChoice& GetChoice(const Brx& aId) const = 0;
     virtual TBool HasText(const Brx& aId) const = 0;
     virtual ConfigText& GetText(const Brx& aId) const = 0;
+    virtual ~IConfigurationManagerReader() {}
+};
 
-    virtual ~IConfigurationManager() {}
+/*
+ * Interface for a writing values into a configuration manager.
+ * Should only ever be used by ConfigVal items and a class that decides when
+ * all values have been added to the config manager.
+ */
+class IConfigurationManagerWriter
+{
+public:
+    virtual void Close() = 0;
+    virtual void Add(ConfigNum& aNum) = 0;
+    virtual void Add(ConfigChoice& aChoice) = 0;
+    virtual void Add(ConfigText& aText) = 0;
+    virtual void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
+    virtual void Write(const Brx& aKey, const Brx& aValue) = 0;
+    virtual ~IConfigurationManagerWriter() {}
 };
 
 /*
@@ -313,29 +320,27 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aId) const
  *
  * Known identifiers are listed elsewhere.
  */
-class ConfigurationManager : public IConfigurationManager
+class ConfigurationManager : public IConfigurationManagerReader, public IConfigurationManagerWriter
 {
 public:
     ConfigurationManager(IStoreReadWrite& aStore);
     virtual ~ConfigurationManager();
-public: // from IConfigurationManager
-    void Close();
-
-    void Add(ConfigNum& aNum);
-    void Add(ConfigChoice& aChoice);
-    void Add(ConfigText& aText);
-
-    void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
-    void Write(const Brx& aKey, const Brx& aValue);
-
-    TBool Has(const Brx& aId) const; // FIXME - is this required?
-
+public: // from IConfigurationManagerReader
     TBool HasNum(const Brx& aId) const;
     ConfigNum& GetNum(const Brx& aId) const;
     TBool HasChoice(const Brx& aId) const;
     ConfigChoice& GetChoice(const Brx& aId) const;
     TBool HasText(const Brx& aId) const;
     ConfigText& GetText(const Brx& aId) const;
+public: // from IConfigurationManagerWriter
+    void Close();
+    void Add(ConfigNum& aNum);
+    void Add(ConfigChoice& aChoice);
+    void Add(ConfigText& aText);
+    void Read(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
+    void Write(const Brx& aKey, const Brx& aValue);
+public:
+    TBool Has(const Brx& aId) const;
 private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal);
 private:

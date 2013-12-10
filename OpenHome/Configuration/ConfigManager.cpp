@@ -11,7 +11,7 @@ using namespace OpenHome::Configuration;
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigurationManager& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault)
+ConfigNum::ConfigNum(IConfigurationManagerWriter& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault)
     : ConfigVal(aManager, aId)
     , iMin(aMin)
     , iMax(aMax)
@@ -85,7 +85,7 @@ void ConfigNum::Write(TInt aVal)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigurationManager& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigurationManagerWriter& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aId)
     , iChoices(aChoices)
     , iMutex("CVCM")
@@ -153,7 +153,7 @@ void ConfigChoice::Write(TUint aVal)
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigurationManager& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault)
+ConfigText::ConfigText(IConfigurationManagerWriter& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aId)
     , iText(aMaxLength)
     , iMutex("CVTM")

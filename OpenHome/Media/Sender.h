@@ -17,7 +17,7 @@ namespace Av {
     class ZoneHandler;
 }
 namespace Configuration {
-    class IConfigurationManager;
+    class IConfigurationManagerWriter;
     class ConfigChoice;
     class ConfigNum;
 }
@@ -38,7 +38,7 @@ class Sender : public IPipelineElementDownstream, private IMsgProcessor, private
     static const TUint kSongcastPacketJiffies = Jiffies::kJiffiesPerMs * kSongcastPacketMs;
     static const TUint kSongcastPacketMaxBytes = 3 * DecodedAudio::kMaxNumChannels * 192 * kSongcastPacketMs;
 public:
-    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, Configuration::IConfigurationManager& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName);
+    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, Configuration::IConfigurationManagerWriter& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName);
     ~Sender();
     void SetName(const Brx& aName);
 private: // from IPipelineElementDownstream

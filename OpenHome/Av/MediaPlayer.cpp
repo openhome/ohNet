@@ -30,19 +30,20 @@ using namespace OpenHome::Net;
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                         IStoreReadWrite& aReadWriteStore, IConfigurationManager& aConfigManager,
-                         IPowerManager& aPowerManager)
+                         IStoreReadWrite& aReadWriteStore, IConfigurationManagerReader& aConfigReader,
+                         IConfigurationManagerWriter& aConfigWriter, IPowerManager& aPowerManager)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
-    , iConfigManager(aConfigManager)
+    , iConfigManagerReader(aConfigReader)
+    , iConfigManagerWriter(aConfigWriter)
     , iPowerManager(aPowerManager)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManager, iPowerManager, Brx::Empty());
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManagerWriter, iPowerManager, Brx::Empty());
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -141,9 +142,14 @@ IStoreReadWrite& MediaPlayer::ReadWriteStore()
     return iReadWriteStore;
 }
 
-IConfigurationManager& MediaPlayer::ConfigManager()
+IConfigurationManagerReader& MediaPlayer::ConfigManagerReader()
 {
-    return iConfigManager;
+    return iConfigManagerReader;
+}
+
+IConfigurationManagerWriter& MediaPlayer::ConfigManagerWriter()
+{
+    return iConfigManagerWriter;
 }
 
 IPowerManager& MediaPlayer::PowerManager()

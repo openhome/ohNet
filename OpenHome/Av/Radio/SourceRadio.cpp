@@ -25,13 +25,13 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigManager());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigManagerWriter());
 }
 
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigurationManager& aConfigManager)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigurationManagerWriter& aConfigManager)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)

@@ -21,7 +21,7 @@ const Brn Sender::kConfigIdChannel("sender.channel");
 const Brn Sender::kConfigIdMode("sender.mode");
 const Brn Sender::kConfigIdPreset("sender.preset");
 
-Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigurationManager& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName)
+Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigurationManagerWriter& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName)
     : iTrack(NULL)
     , iSampleRate(0)
     , iBitDepth(0)
