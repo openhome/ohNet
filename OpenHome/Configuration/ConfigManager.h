@@ -40,7 +40,6 @@ protected:
     ConfigVal(IConfigManagerWriter& aManager, const Brx& aId);
 public:
     virtual ~ConfigVal();
-    void AddInitialSubscribers();
     const Brx& Id();
 public: // from IObservable
     TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
@@ -48,6 +47,7 @@ public: // from IObservable
 protected:
     TUint Subscribe(FunctorGeneric<T> aFunctor, T aVal);
     void NotifySubscribers(T aVal);
+    void AddInitialSubscribers();
     virtual void Write(T aVal) = 0;
 protected:
     IConfigManagerWriter& iConfigManager;
