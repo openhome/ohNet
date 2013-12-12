@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 import os, subprocess
+import shutil
 from optparse import OptionParser
 from Helpers.valgrind_parser import *
 from Helpers.remote import *
@@ -239,6 +240,9 @@ class JenkinsBuild():
         release_targets = []
         release_targets.append('release')
         release_targets.append('debug')
+
+        # clean slate so as not to upload random junk inadvertently
+        shutil.rmtree(os.path.join('Build', 'Bundles'), ignore_errors=True)
         
         for release in release_targets:
             openhome_configuration = release.title()
@@ -281,7 +285,7 @@ class JenkinsBuild():
             if os.path.exists(native_dest):
                 os.remove(native_dest)
             os.rename(native_bundle_name, native_dest)
-            rem.check_rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
+        rem.check_rsync('releases','www.openhome.org','Build/Bundles/','~/www/artifacts/ohNet/')
                         
     
     def do_postAction(self):
