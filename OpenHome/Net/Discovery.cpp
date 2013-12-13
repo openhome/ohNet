@@ -464,10 +464,10 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
 SsdpListenerUnicast::~SsdpListenerUnicast()
 {
     LOG(kSsdpUnicast, "SSDP Unicast        Destructor\n");
-    iEnv.RemoveResumeObserver(*this);
     iExiting = true;
     iSocketReader.ReadInterrupt();
     Join();
+    iEnv.RemoveResumeObserver(*this);
 }
 
 void SsdpListenerUnicast::Run()
@@ -545,6 +545,7 @@ void SsdpListenerUnicast::Run()
         }
         catch (ReaderError&) {
             LOG2(kSsdpUnicast, kError, "SSDP Unicast        ReaderError\n");
+            Log::Print("SSDP Unicast        ReaderError\n");
             if (iExiting) {
                 break;
             }
