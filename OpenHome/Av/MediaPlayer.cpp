@@ -38,12 +38,16 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iConfigManagerReader(aConfigReader)
     , iConfigManagerWriter(aConfigWriter)
     , iPowerManager(aPowerManager)
+    , iConfigProductRoom(NULL)
+    , iConfigProductName(NULL)
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManagerWriter, iPowerManager, Brx::Empty());
+    iConfigProductRoom = new ConfigText(iConfigManagerWriter, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    iConfigProductName = new ConfigText(iConfigManagerWriter, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManagerReader, iPowerManager, Brx::Empty());
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -72,6 +76,8 @@ MediaPlayer::~MediaPlayer()
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iKvpStore;
     delete iInfoLogger;
+    delete iConfigProductRoom;
+    delete iConfigProductName;
     delete iTrackFactory;
 }
 

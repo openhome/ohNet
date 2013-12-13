@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 
 #include <vector>
@@ -57,7 +58,7 @@ public:
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManagerWriter& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManagerReader& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();
@@ -88,7 +89,7 @@ private: // from IInfoProvider
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
-    Configuration::IConfigManagerWriter& iConfigManager;
+    Configuration::IConfigManagerReader& iConfigManager;
     Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
