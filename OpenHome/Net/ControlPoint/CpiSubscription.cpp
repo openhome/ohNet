@@ -27,12 +27,13 @@ using namespace OpenHome::Net;
 
 const Brx& CpiSubscription::Sid() const
 {
+    AutoMutex a(iEnv.Mutex());
     return iSid;
 }
 
 void CpiSubscription::AddRef()
 {
-    Mutex& lock = iDevice.GetCpStack().Env().Mutex();
+    Mutex& lock = iEnv.Mutex();
     lock.Wait();
     iRefCount++;
     lock.Signal();
@@ -41,7 +42,7 @@ void CpiSubscription::AddRef()
 void CpiSubscription::RemoveRef()
 {
     TBool dead;
-    Mutex& lock = iDevice.GetCpStack().Env().Mutex();
+    Mutex& lock = iEnv.Mutex();
     lock.Wait();
     ASSERT(iRefCount != 0);
     dead = (--iRefCount == 0);
@@ -100,7 +101,7 @@ void CpiSubscription::SetInterruptHandler(IInterruptHandler* aHandler)
 
 void CpiSubscription::SetSid(Brh& aSid)
 {
-    Mutex& lock = iDevice.GetCpStack().Env().Mutex();
+    Mutex& lock = iEnv.Mutex();
     lock.Wait();
     aSid.TransferTo(iSid);
     lock.Signal();
@@ -114,7 +115,7 @@ const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
 void CpiSubscription::RunInSubscriber()
 {
     AutoMutex a(iSubscriberLock);
-    Mutex& lock = iDevice.GetCpStack().Env().Mutex();
+    Mutex& lock = iEnv.Mutex();
     lock.Wait();
     EOperation op = iPendingOperation;
     iPendingOperation = eNone;
@@ -128,7 +129,7 @@ void CpiSubscription::RunInSubscriber()
             DoSubscribe();
         }
         catch(...) {
-            LOG2(kError, kTrace, "Subscribe for device ");
+            LOG2(kError, kTrace, "Subscribe (%p) for device ", this);
             LOG2(kError, kTrace, iDevice.Udn());
             LOG2(kError, kTrace, " failed\n");
             throw;
@@ -151,27 +152,28 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     : iLock("SUBM")
     , iSubscriberLock("SBM2")
     , iDevice(aDevice)
+    , iCpStack(aDevice.GetCpStack())
+    , iEnv(iCpStack.Env())
     , iEventProcessor(&aEventProcessor)
     , iServiceType(aServiceType)
     , iPendingOperation(eNone)
     , iRefCount(1)
     , iInterruptHandler(NULL)
 {
-    iTimer = new Timer(aDevice.GetCpStack().Env(), MakeFunctor(*this, &CpiSubscription::Renew));
+    iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
     iRejectFutureOperations = false;
     Schedule(eSubscribe);
-    iDevice.GetCpStack().Env().AddObject(this);
+    iEnv.AddObject(this);
 }
 
 CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     ASSERT(iSid.Bytes() == 0);
-    Environment& env = iDevice.GetCpStack().Env();
     iDevice.RemoveRef();
     delete iTimer;
-    env.RemoveObject(this);
+    iEnv.RemoveObject(this);
 }
 
 void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperations)
@@ -183,8 +185,7 @@ void CpiSubscription::Schedule(EOperation aOperation, TBool aRejectFutureOperati
 
 TBool CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureOperations)
 {
-    CpStack& cpStack = iDevice.GetCpStack();
-    Mutex& lock = cpStack.Env().Mutex();
+    Mutex& lock = iEnv.Mutex();
     lock.Wait();
     if (iRejectFutureOperations) {
         lock.Signal();
@@ -201,16 +202,15 @@ TBool CpiSubscription::StartSchedule(EOperation aOperation, TBool aRejectFutureO
 
 void CpiSubscription::DoSubscribe()
 {
-    CpStack& cpStack = iDevice.GetCpStack();
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kSchemeHttp);
-    NetworkAdapter* nif = cpStack.Env().NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
+    NetworkAdapter* nif = iEnv.NetworkAdapterList().CurrentAdapter("CpiSubscription::DoSubscribe");
     if (nif == NULL) {
         THROW(NetworkError);
     }
     TIpAddress nifAddr = nif->Address();
     nif->RemoveRef("CpiSubscription::DoSubscribe");
-    Endpoint endpt(cpStack.SubscriptionManager().EventServerPort(), nifAddr);
+    Endpoint endpt(iCpStack.SubscriptionManager().EventServerPort(), nifAddr);
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
     uri.Append(buf);
@@ -219,7 +219,7 @@ void CpiSubscription::DoSubscribe()
 
     LOG(kEvent, "Subscribing - service = ");
     LOG(kEvent, iServiceType.FullName());
-    LOG(kEvent, "\n    subscriber = ");
+    LOG(kEvent, "\n    subscription = %p\n    subscriber = ", this);
     LOG(kEvent, subscriber.AbsoluteUri());
     LOG(kEvent, "\n");
 
@@ -235,19 +235,19 @@ void CpiSubscription::DoSubscribe()
             deviceXml.Set("[missing]");
         }
         const Brx& udn = iDevice.Udn();
-        cpStack.Env().Mutex().Wait();
+        iEnv.Mutex().Wait();
         Log::Print("XmlError attempting to subscribe to device ");
         Log::Print(udn);
         Log::Print(", with xml\n\n");
         Log::Print(deviceXml);
         Log::Print("\n\n");
-        cpStack.Env().Mutex().Signal();
+        iEnv.Mutex().Signal();
         THROW(XmlError);
     }
 
-    cpStack.SubscriptionManager().Add(*this);
+    iCpStack.SubscriptionManager().Add(*this);
 
-    LOG(kEvent, "Subscription for ");
+    LOG(kEvent, "Subscription (%p) for ", this);
     LOG(kEvent, iServiceType.FullName());
     LOG(kEvent, " completed\n    Sid is ");
     LOG(kEvent, iSid);
@@ -263,7 +263,7 @@ void CpiSubscription::Renew()
 
 void CpiSubscription::DoRenew()
 {
-    LOG(kEvent, "Renewing sid ");
+    LOG(kEvent, "Renewing (%p) sid ", this);
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
 
@@ -271,7 +271,7 @@ void CpiSubscription::DoRenew()
     try {
         renewSecs = iDevice.Renew(*this);
 
-        LOG(kEvent, "Renewed ");
+        LOG(kEvent, "Renewed (%p) ", this);
         LOG(kEvent, iSid);
         LOG(kEvent, ".  Renew again in %u secs\n", renewSecs);
 
@@ -300,7 +300,7 @@ void CpiSubscription::DoRenew()
 
 void CpiSubscription::DoUnsubscribe()
 {
-    LOG(kEvent, "Unsubscribing sid ");
+    LOG(kEvent, "Unsubscribing (%p) sid ", this);
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
 
@@ -309,14 +309,13 @@ void CpiSubscription::DoUnsubscribe()
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
         return;
     }
-    CpStack& cpStack = iDevice.GetCpStack();
-    cpStack.SubscriptionManager().Remove(*this);
+    iCpStack.SubscriptionManager().Remove(*this);
     Brh sid;
-    cpStack.Env().Mutex().Wait();
+    iEnv.Mutex().Wait();
     iSid.TransferTo(sid);
-    cpStack.Env().Mutex().Signal();
+    iEnv.Mutex().Signal();
     iDevice.Unsubscribe(*this, sid);
-    LOG(kEvent, "Unsubscribed sid ");
+    LOG(kEvent, "Unsubscribed (%p) sid ", this);
     LOG(kEvent, sid);
     LOG(kEvent, "\n");
 }
@@ -324,12 +323,12 @@ void CpiSubscription::DoUnsubscribe()
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 {
     if (aMaxSeconds == 0) {
-        LOG2(kEvent, kError, "ERROR: subscription sid ");
+        LOG2(kEvent, kError, "ERROR: subscription (%p) sid ", this);
         LOG2(kEvent, kError, iSid);
         LOG2(kEvent, kError, " has 0s renew time\n");
         return;
     }
-    TUint renewMs = iDevice.GetCpStack().Env().Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
+    TUint renewMs = iEnv.Random((aMaxSeconds*1000*3)/4, (aMaxSeconds*1000)/2);
     iTimer->FireIn(renewMs);
 }
 
@@ -338,6 +337,22 @@ void CpiSubscription::HandleResumed()
     if (StartSchedule(eResubscribe, false)) {
         iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
     }
+}
+
+void CpiSubscription::NotifySubnetChanged()
+{
+    /* We're on a new network so all existing subscriptions are pretty much useless.
+       We expect all subscriptions to be unsubscribed very shortly when a device
+       list signals that its devices have been removed.  At that point, each
+       unsubscribe attempt might block for InitParams::TcpConnectTimeoutMs() failing
+       to (tcp) connect to its device.  To avoid this, refuse any further operations
+       as soon as we know about a subnet change */
+    Mutex& lock = iEnv.Mutex();
+    lock.Wait();
+    iRejectFutureOperations = true;
+    Brh tmp;
+    iSid.TransferTo(tmp);
+    lock.Signal();
 }
 
 void CpiSubscription::EventUpdateStart()
@@ -363,7 +378,7 @@ void CpiSubscription::EventUpdateEnd()
 
 void CpiSubscription::EventUpdateError()
 {
-    LOG2(kEvent, kError, "ERROR: subscription sid ");
+    LOG2(kEvent, kError, "ERROR: subscription (%p) sid ", this);
     LOG2(kEvent, kError, iSid);
     LOG2(kEvent, kError, " failure processing update\n");
     SetNotificationError();
@@ -416,7 +431,7 @@ void Subscriber::Error(const TChar* aErr)
 void Subscriber::Error(const TChar* /*aErr*/)
 #endif
 {
-    LOG2(kEvent, kError, "Error - %s - from SID ", aErr);
+    LOG2(kEvent, kError, "Error - %s - from (%p) SID ", aErr, iSubscription);
     if (iSubscription->Sid().Bytes() > 0) {
         LOG2(kEvent, kError, iSubscription->Sid());
     }
@@ -600,16 +615,21 @@ CpiSubscription* CpiSubscriptionManager::FindSubscription(const Brx& aSid)
 void CpiSubscriptionManager::Remove(CpiSubscription& aSubscription)
 {
     iLock.Wait();
+    RemoveLocked(aSubscription);
+    TBool shutdownSignal = ReadyForShutdown();
+    iLock.Signal();
+    if (shutdownSignal) {
+        iShutdownSem.Signal();
+    }
+}
+
+void CpiSubscriptionManager::RemoveLocked(CpiSubscription& aSubscription)
+{
     Brn sid(aSubscription.Sid());
     Map::iterator it = iMap.find(sid);
     if (it != iMap.end()) {
         it->second = NULL;
         iMap.erase(it);
-    }
-    TBool shutdownSignal = ReadyForShutdown();
-    iLock.Signal();
-    if (shutdownSignal) {
-        iShutdownSem.Signal();
     }
 }
 
@@ -685,7 +705,15 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     while (iPendingSubscriptions.size() > 0) {
         RemovePendingAdds(iPendingSubscriptions[0]->iSid);
     }
-    if (!aNewSubnet) {
+    if (aNewSubnet) {
+        size_t count = iMap.size();
+        while (count-- > 0) {
+            CpiSubscription* subscription = iMap.begin()->second;
+            RemoveLocked(*subscription);
+            subscription->NotifySubnetChanged();
+        }
+    }
+    else {
         /* device lists map not signal that devices have been removed
            ...so we need to try to migrate existing subscriptions */
         Map::iterator it = iMap.begin();

@@ -129,6 +129,7 @@ private:
     void DoUnsubscribe();
     void SetRenewTimer(TUint aMaxSeconds);
     void HandleResumed();
+    void NotifySubnetChanged();
 private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
@@ -141,6 +142,8 @@ private:
     OpenHome::Mutex iLock;
     OpenHome::Mutex iSubscriberLock;
     CpiDevice& iDevice;
+    CpStack& iCpStack;
+    Environment& iEnv;
     IEventProcessor* iEventProcessor;
     OpenHome::Net::ServiceType iServiceType;
     Brh iSid;
@@ -232,6 +235,7 @@ private:
         Semaphore iSem;
     };
 private:
+    void RemoveLocked(CpiSubscription& aSubscription);
     void RemovePendingAdd(PendingSubscription* aPending);
     void RemovePendingAdds(const Brx& aSid);
     void CurrentNetworkAdapterChanged();
