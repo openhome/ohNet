@@ -545,7 +545,6 @@ void SsdpListenerUnicast::Run()
         }
         catch (ReaderError&) {
             LOG2(kSsdpUnicast, kError, "SSDP Unicast        ReaderError\n");
-            Log::Print("SSDP Unicast        ReaderError\n");
             if (iExiting) {
                 break;
             }
