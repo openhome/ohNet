@@ -277,8 +277,8 @@ void SuiteFifoInterrupt::Test()
 {
     // test read interrupt cancellation pattern (i.e., ReadInterrupt(true); ReadInterrupt(false))
 
-    ThreadFunctor* tWriter = new ThreadFunctor("TFIW", MakeFunctor(*this, &SuiteFifoInterrupt::RunWriter));
-    tWriter->Start();
+    ThreadFunctor tWriter("TFIW", MakeFunctor(*this, &SuiteFifoInterrupt::RunWriter));
+    tWriter.Start();
 
     // test calling and cancelling interrupt before anything in queue
     iQueue.ReadInterrupt(true);
@@ -310,6 +310,10 @@ void SuiteFifoInterrupt::Test()
     // test that a read after a normal interrupt works
     val = iQueue.Read();
     TEST(val == &i2);
+
+    // test shutdown: mark tWriter as killed, then unblock it.
+    tWriter.Kill();
+    iSemWrite.Signal();
 }
 
 void SuiteFifoInterrupt::RunWriter()
@@ -317,6 +321,7 @@ void SuiteFifoInterrupt::RunWriter()
     // wait on a semaphore before starting to write data into a queue
     while (true) {
         iSemWrite.Wait();
+        Thread::CheckCurrentForKill();
         Thread::Sleep(kSleepMs);
         iQueue.Write(&i1);
         iQueue.Write(&i2);
