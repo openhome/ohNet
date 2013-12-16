@@ -19,7 +19,7 @@ const Brn Product::kStartupSourceBase("Startup.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigManagerWriter& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigManagerReader& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigManager(aConfigManager)
@@ -41,14 +41,14 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
         key.Append('.');
     }
     key.Append(kConfigIdRoomBase);
-    iConfigProductRoom = new ConfigText(iConfigManager, key, kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    iConfigProductRoom = &iConfigManager.GetText(key);
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged));
     key.Replace(aConfigPrefix);
     if (key.Bytes() > 0) {
         key.Append('.');
     }
     key.Append(kConfigIdNameBase);
-    iConfigProductName = new ConfigText(iConfigManager, key, kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    iConfigProductName = &iConfigManager.GetText(key);
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
@@ -61,9 +61,7 @@ Product::~Product()
     iSources.clear();
     delete iProviderProduct;
     iConfigProductName->Unsubscribe(iListenerIdProductName);
-    delete iConfigProductName;
     iConfigProductRoom->Unsubscribe(iListenerIdProductRoom);
-    delete iConfigProductRoom;
     delete iStartupSource;
 }
 

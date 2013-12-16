@@ -30,6 +30,7 @@ namespace Configuration {
     class IConfigManagerReader;
     class IConfigManagerWriter;
     class IStoreReadWrite;
+    class ConfigText;
 }
 namespace Net {
     class NetworkMonitor;
@@ -111,6 +112,8 @@ private:
     Configuration::IConfigManagerReader& iConfigManagerReader;
     Configuration::IConfigManagerWriter& iConfigManagerWriter;
     IPowerManager& iPowerManager;
+    Configuration::ConfigText* iConfigProductRoom;
+    Configuration::ConfigText* iConfigProductName;
 };
 
 } // namespace Av
