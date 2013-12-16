@@ -745,7 +745,7 @@ private:
         MsgQueueFlushable& iQueue;
     };
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     MsgQueue iQueue;
     TUint iEncodedBytes;
     TUint iJiffies;

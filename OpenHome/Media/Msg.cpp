@@ -1792,6 +1792,7 @@ void MsgQueueFlushable::EnqueueAtHead(Msg* aMsg)
 
 TUint MsgQueueFlushable::Jiffies() const
 {
+    AutoMutex a(iLock);
     return iJiffies;
 }
 
