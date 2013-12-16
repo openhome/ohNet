@@ -1,6 +1,6 @@
-Copyright 2013, Linn Products Ltd. All rights reserved.
+Copyright 2011-13, Linn Products Ltd. All rights reserved.
 
-Unless otherwise stated, contact Linn to discuss a license for this code.
+Contact Linn to discuss a license for this code.
 
 Files at the following locations are licensed under separate terms:
   OpenHome/Functor.h
