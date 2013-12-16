@@ -1729,6 +1729,9 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
     iLock.Wait();
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
+    if (iTail == NULL) {
+        iTail = aMsg;
+    }
     iSem.Signal();
     iLock.Signal();
 }
