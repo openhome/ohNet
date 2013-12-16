@@ -17,6 +17,7 @@ NetworkAdapterList::NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSub
     , iListenerLock("MNIO")
     , iCurrent(NULL)
     , iNextListenerId(1)
+    , iSingleSubnetMode(false)
 {
     iEnv.AddObject(this);
     iEnv.AddResumeObserver(*this);
@@ -38,6 +39,12 @@ NetworkAdapterList::~NetworkAdapterList()
     DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
     iEnv.RemoveObject(this);
+}
+
+TBool NetworkAdapterList::SingleSubnetModeEnabled() const
+{
+    AutoMutex a(iListLock);
+    return iSingleSubnetMode;
 }
 
 NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
@@ -96,6 +103,7 @@ void NetworkAdapterList::DestroyNetworkAdapterList(std::vector<NetworkAdapter*>*
 void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
 {
     iListLock.Wait();
+    iSingleSubnetMode = true;
     TIpAddress oldSubnet = (iCurrent==NULL? 0 : iCurrent->Subnet());
     iDefaultSubnet = aSubnet;
     UpdateCurrentAdapter();
