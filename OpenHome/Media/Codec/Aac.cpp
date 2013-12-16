@@ -226,9 +226,7 @@ void CodecAac::StreamInitialise()
 void CodecAac::StreamCompleted()
 {
     LOG(kCodec, "CodecAac::StreamCompleted\n");
-    if (iMp4) {
-        delete iMp4;
-    }
+    delete iMp4;
 }
 
 TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
