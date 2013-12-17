@@ -34,6 +34,7 @@ public:
 public:
     NetworkAdapterList(Environment& aEnv, TIpAddress aDefaultSubnet=0);
     virtual ~NetworkAdapterList();
+    TBool SingleSubnetModeEnabled() const;
     NetworkAdapter* CurrentAdapter(const char* aCookie) const;
     const std::vector<NetworkAdapter*>& List() const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;
@@ -104,6 +105,7 @@ private:
     MapNetworkAdapter iListenersAdapterChanged;
     TUint iNextListenerId;
     NetworkAdapterChangeNotifier* iNotifierThread;
+    TBool iSingleSubnetMode;
 };
 
 class NetworkAdapterChangeNotifier : public Thread

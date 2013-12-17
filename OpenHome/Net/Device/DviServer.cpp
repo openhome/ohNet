@@ -85,7 +85,7 @@ void DviServer::SubnetListChanged()
     NetworkAdapterList& adapterList = iDvStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::SubnetListChanged");
     NetworkAdapter* current = ref.Adapter();
-    if (current != NULL) {
+    if (adapterList.SingleSubnetModeEnabled()) {
         TInt i;
         // remove servers whose interface is no longer available
         for (i = (TInt)iServers.size() - 1; i >= 0; i--) {
@@ -96,7 +96,7 @@ void DviServer::SubnetListChanged()
             }
         }
         // add server if 'current' is a new subnet
-        if (iServers.size() == 0) {
+        if (current != NULL && iServers.size() == 0) {
             AddServer(*current);
         }
     }
