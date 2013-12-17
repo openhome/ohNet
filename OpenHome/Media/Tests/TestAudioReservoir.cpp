@@ -85,6 +85,41 @@ private:
     TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
+class SuiteReservoirHistory : public Suite, private IMsgProcessor
+{
+    static const TUint kSampleRate  = 44100;
+    static const TUint kNumChannels = 2;
+    static const TUint kBitDepth = 16;
+    static const TUint kReservoirSize = Jiffies::kJiffiesPerMs * 1000;
+public:
+    SuiteReservoirHistory();
+    ~SuiteReservoirHistory();
+private: // from Suite
+    void Test();
+private:
+    void PullerThread();
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+    DecodedAudioReservoir* iReservoir;
+    ThreadFunctor* iThread;
+    TUint64 iJiffiesHistoryFull;
+    TUint64 iDequeuedJiffies;
+    TByte iBuf[DecodedAudio::kMaxBytes];
+};
+
 } // namespace Media
 } // namespace OpenHome
 
@@ -359,11 +394,143 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
 }
 
 
+// SuiteReservoirHistory
+
+SuiteReservoirHistory::SuiteReservoirHistory()
+    : Suite("DecodedReservoir History")
+    , iDequeuedJiffies(0)
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize);
+    memset(iBuf, 0xff, sizeof(iBuf));
+    iJiffiesHistoryFull = iReservoir->kUtilisationSamplePeriodJiffies * iReservoir->kMaxUtilisationSamplePoints;
+}
+
+SuiteReservoirHistory::~SuiteReservoirHistory()
+{
+    delete iReservoir;
+    delete iMsgFactory;
+}
+
+void SuiteReservoirHistory::Test()
+{
+    static const TUint kPcmMsgCount = 15;
+    iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
+    iThread->Start();
+    TUint pcmMsgs = kPcmMsgCount;
+    TUint64 trackOffset = 0;
+    Brn audioBuf(iBuf, sizeof(iBuf));
+    while (trackOffset < iJiffiesHistoryFull) {
+        MsgAudio* msg;
+        if (pcmMsgs == 0) {
+            msg = iMsgFactory->CreateMsgSilence(400 * Jiffies::kJiffiesPerMs);
+            pcmMsgs = kPcmMsgCount;
+        }
+        else {
+            msg = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, trackOffset);
+            pcmMsgs--;
+        }
+        trackOffset += msg->Jiffies();
+        iReservoir->Push(msg);
+    }
+    delete iThread;
+}
+
+void SuiteReservoirHistory::PullerThread()
+{
+    for (TUint i=0; i<iReservoir->kMaxUtilisationSamplePoints; i++) {
+        TEST(iReservoir->iHistory[i] != 0);
+    }
+
+    while (iDequeuedJiffies < iJiffiesHistoryFull) {
+        Msg* msg = iReservoir->Pull();
+        msg = msg->Process(*this);
+        msg->RemoveRef();
+    }
+
+    TEST(iReservoir->iHistoryCount == iReservoir->kMaxUtilisationSamplePoints);
+    for (TUint i=0; i<iReservoir->iHistoryCount; i++) {
+        TEST(iReservoir->iHistory[i] != 0);
+    }
+
+    // consume any remaining msgs in case pushing thread is blocked
+    while (!iReservoir->IsEmpty()) {
+        iReservoir->Pull()->RemoveRef();
+    }
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iDequeuedJiffies += aMsg->Jiffies();
+    return aMsg;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgSilence* aMsg)
+{
+    iDequeuedJiffies += aMsg->Jiffies();
+    return aMsg;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgHalt* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
 
 void TestAudioReservoir()
 {
     Runner runner("Decoded Audio Reservoir tests\n");
     runner.Add(new SuiteAudioReservoir());
+    runner.Add(new SuiteReservoirHistory());
     runner.Run();
 }
 
