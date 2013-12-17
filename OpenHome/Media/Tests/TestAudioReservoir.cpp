@@ -441,11 +441,14 @@ void SuiteReservoirHistory::PullerThread()
     for (TUint i=0; i<iReservoir->kMaxUtilisationSamplePoints; i++) {
         TEST(iReservoir->iHistory[i] != 0);
     }
-
+    Thread::Sleep(200); /* We test below that history sizes are non-zero.  Give pushing
+                           thread a chance to fill the reservoir to limit the chances
+                           of it always being close to empty */
     while (iDequeuedJiffies < iJiffiesHistoryFull) {
         Msg* msg = iReservoir->Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
+        Thread::Sleep(1);
     }
 
     TEST(iReservoir->iHistoryCount == iReservoir->kMaxUtilisationSamplePoints);

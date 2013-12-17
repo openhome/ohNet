@@ -54,6 +54,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgSilence* aMsg)
 
 Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
 {
+    // FIXME - should maybe take dfferent action if we're flushing (currently held as private state in parent)
     if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
         MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
         /* calling EnqueueAtHead risks blocking the pulling thread (if the pushing thread
