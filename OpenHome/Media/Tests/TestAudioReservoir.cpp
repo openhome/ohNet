@@ -439,7 +439,7 @@ void SuiteReservoirHistory::Test()
 void SuiteReservoirHistory::PullerThread()
 {
     for (TUint i=0; i<iReservoir->kMaxUtilisationSamplePoints; i++) {
-        TEST(iReservoir->iHistory[i] != 0);
+        TEST(iReservoir->iHistory[i] == 0);
     }
     Thread::Sleep(200); /* We test below that history sizes are non-zero.  Give pushing
                            thread a chance to fill the reservoir to limit the chances

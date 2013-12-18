@@ -15,6 +15,9 @@ DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
     , iThreadExcludeBlock(NULL)
 {
+    for (TUint i=0; i<kMaxUtilisationSamplePoints; i++) {
+        iHistory[i] = 0;
+    }
 }
 
 TUint DecodedAudioReservoir::Size() const
