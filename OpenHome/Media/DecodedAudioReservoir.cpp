@@ -72,7 +72,7 @@ Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
     if (iJiffiesUntilNextHistoryPoint == 0) {
         iHistory[iHistoryNextIndex++] = Jiffies();
         if (iHistoryNextIndex == kMaxUtilisationSamplePoints) {
-            iHistoryNextIndex = kMaxUtilisationSamplePoints;
+            iHistoryNextIndex = 0;
         }
         if (iHistoryCount < kMaxUtilisationSamplePoints) {
             iHistoryCount++;
