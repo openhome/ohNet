@@ -78,6 +78,13 @@ private:
     TBool iPlannedHalt;
     TBool iHaltDelivered;
     TBool iExit;
+
+    static const TUint kMaxUtilisationSamplePoints = 20;
+    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kJiffiesPerSecond;
+    TUint64 iHistory[kMaxUtilisationSamplePoints]; // past avg starvation buffer sizes
+    TUint iHistoryCount;
+    TUint iHistoryNextIndex;
+    TUint64 iJiffiesUntilNextHistoryPoint;
 };
 
 } // namespace Media
