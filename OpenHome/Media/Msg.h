@@ -300,6 +300,7 @@ public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
     void Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, Allocator<MsgPlayablePcm>& aAllocatorPlayable);
+    void SetTimestamps(TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp);
 private: // from MsgAudio
     MsgAudio* Allocate();
     void SplitCompleted(MsgAudio& aRemaining);
@@ -310,6 +311,11 @@ private:
     DecodedAudio* iAudioData;
     Allocator<MsgPlayablePcm>* iAllocatorPlayable;
     TUint64 iTrackOffset;
+    TUint iReceiveTimestamp;
+    TUint iMediaLatency;
+    TUint iNetworkTimestamp;
+    TUint iMediaTimestamp;
+    TUint iFlags;
 };
 
 class MsgPlayableSilence;
@@ -739,7 +745,7 @@ private:
         MsgQueueFlushable& iQueue;
     };
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     MsgQueue iQueue;
     TUint iEncodedBytes;
     TUint iJiffies;
@@ -862,6 +868,7 @@ public:
     //
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
+    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp=0, TUint aMediaTimestamp=0);
     MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);

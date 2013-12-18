@@ -948,6 +948,15 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, 
     iOffset = 0;
 }
 
+void MsgAudioPcm::SetTimestamps(TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+{
+    iReceiveTimestamp = aRxTimestamp;
+    iMediaLatency = aLatency;
+    iNetworkTimestamp = aNetworkTimestamp;
+    iMediaTimestamp = aMediaTimestamp;
+    iFlags = 0; // FIXME
+}
+
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
 {
     iAudioData->AddRef();
@@ -966,6 +975,7 @@ void MsgAudioPcm::Clear()
 {
     MsgAudio::Clear();
     iAudioData->RemoveRef();
+    iFlags = 0xffffffff;
 }
 
 Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
@@ -1719,6 +1729,9 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
     iLock.Wait();
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
+    if (iTail == NULL) {
+        iTail = aMsg;
+    }
     iSem.Signal();
     iLock.Signal();
 }
@@ -1779,6 +1792,7 @@ void MsgQueueFlushable::EnqueueAtHead(Msg* aMsg)
 
 TUint MsgQueueFlushable::Jiffies() const
 {
+    AutoMutex a(iLock);
     return iJiffies;
 }
 
@@ -2132,6 +2146,13 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
     MsgAudioPcm* msg = iAllocatorMsgAudioPcm.Allocate();
     msg->Initialise(decodedAudio, aTrackOffset, iAllocatorMsgPlayablePcm);
+    return msg;
+}
+
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+{
+    MsgAudioPcm* msg = CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
+    msg->SetTimestamps(aRxTimestamp, aLatency, aNetworkTimestamp, aMediaTimestamp);
     return msg;
 }
 

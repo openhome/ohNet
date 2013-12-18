@@ -25,6 +25,9 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
+    , iHistoryCount(0)
+    , iHistoryNextIndex(0)
+    , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
     ASSERT(iNormalMax < iGorgeSize);
@@ -112,6 +115,22 @@ Msg* StarvationMonitor::Pull()
 
 MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 {
+    if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
+        MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
+        EnqueueAtHead(remaining);
+    }
+    iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
+    if (iJiffiesUntilNextHistoryPoint == 0) {
+        iHistory[iHistoryNextIndex++] = Jiffies();
+        if (iHistoryNextIndex == kMaxUtilisationSamplePoints) {
+            iHistoryNextIndex = 0;
+        }
+        if (iHistoryCount < kMaxUtilisationSamplePoints) {
+            iHistoryCount++;
+        }
+        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    }
+
     iLock.Wait();
     ASSERT(iExit || iStatus != EBuffering);
     TUint remainingSize = Jiffies();

@@ -1801,6 +1801,24 @@ void SuiteMsgQueue::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
     dequeued->RemoveRef();
 
+    // EnqueueAtHead for empty list correctly sets Head and Tail
+    TEST(queue->IsEmpty());
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah"));
+    queue->EnqueueAtHead(msg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMetaText);
+    dequeued->RemoveRef();
+    TEST(!queue->IsEmpty());
+    dequeued = queue->Dequeue();
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgHalt);
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
     // FIXME - no check yet that reading from an empty queue blocks
     
     delete queue;
