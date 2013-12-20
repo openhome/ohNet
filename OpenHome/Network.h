@@ -199,8 +199,7 @@ private:
     TUint iSessionPriority;         // priority given to all session threads
     TUint iSessionStackBytes;       // stack bytes given to all session threads
     TBool iTerminating;
-    typedef std::vector<SocketTcpSession*> Vector;
-    Vector iVector;
+    std::vector<SocketTcpSession*> iSessions;
     TUint iPort;
     TIpAddress iInterface;
 };

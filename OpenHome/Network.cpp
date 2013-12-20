@@ -527,13 +527,13 @@ SocketTcpServer::SocketTcpServer(Environment& aEnv, const TChar* aName, TUint aP
 void SocketTcpServer::Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset)
 {
     LOGF(kNetwork, "SocketTcpServer::Add\n");
-    iVector.push_back(aSession);                    // Can only throw std::bad_alloc. Don't bother to cleanup as we consider this
+    iSessions.push_back(aSession);                    // Can only throw std::bad_alloc. Don't bother to cleanup as we consider this
                                                     // a fatal exception anyway.
     try {
         aSession->Add(*this, aName, iSessionPriority + aPriorityOffset, iSessionStackBytes);
     }
     catch ( ... ) {                                 // Don't handle the exception per se, just perform cleanup and pass it on.
-        iVector.pop_back();
+        iSessions.pop_back();
         delete aSession;
         throw;
     }
@@ -562,10 +562,10 @@ SocketTcpServer::~SocketTcpServer()
 
     // cause exception in pending AND subsequent accept attempts in session threads.
     Interrupt(true);
-    TUint count = (TUint)iVector.size();
+    TUint count = (TUint)iSessions.size();
     for (TUint i = 0; i < count; i++) {             // delete all sessions
-        iVector[i]->Terminate();                    // Kill and Join the TcpSession thread
-        delete iVector[i];
+        iSessions[i]->Terminate();                    // Kill and Join the TcpSession thread
+        delete iSessions[i];
     }
 
     Close();
