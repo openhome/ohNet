@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Private/Stream.h>

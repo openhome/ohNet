@@ -1,6 +1,7 @@
 #ifndef HEADER_HTTP_HTTP
 #define HEADER_HTTP_HTTP
 
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>

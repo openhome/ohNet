@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/Error.h>
+#include <OpenHome/Exception.h>
 
 #include <list>
 
