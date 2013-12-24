@@ -54,7 +54,10 @@ CpiDeviceLpec::~CpiDeviceLpec()
 
 void CpiDeviceLpec::Destroy()
 {
+    iLock.Wait();
+    iStateChanged = Functor();
     iDevice->RemoveRef();
+    iLock.Signal();
 }
 
 CpiDevice* CpiDeviceLpec::Device()
@@ -85,7 +88,10 @@ void CpiDeviceLpec::LpecThread()
                     LOG2(kLpec, kError, "LPEC: unable to find device ");
                     LOG2(kLpec, kError, iLpecName);
                     LOG2(kLpec, kError, ", exiting thread\n");
-                    iStateChanged();
+                    AutoMutex a(iLock);
+                    if (iStateChanged) {
+                        iStateChanged();
+                    }
                     THROW(ReaderError);
                 }
                 Brn name = parser.Next(' ');
@@ -94,7 +100,10 @@ void CpiDeviceLpec::LpecThread()
                     Brn udn = parser.Remaining();
                     iDevice = new CpiDevice(iCpStack, udn, *this, *this, NULL);
                     iConnected = true;
-                    iStateChanged();
+                    AutoMutex a(iLock);
+                    if (iStateChanged) {
+                        iStateChanged();
+                    }
                 }
             }
             if (method == Lpec::kMethodAlive) {
@@ -106,7 +115,12 @@ void CpiDeviceLpec::LpecThread()
                 Brn name = parser.Next(' ');
                 if (name == iLpecName) {
                     iConnected = false;
-                    iStateChanged();
+                    {
+                        AutoMutex a(iLock);
+                        if (iStateChanged) {
+                            iStateChanged();
+                        }
+                    }
                     iExiting = true;
                     THROW(ReaderError);
                 }
@@ -142,7 +156,10 @@ void CpiDeviceLpec::LogError(const TChar* aError)
     LOG2(kLpec, kError, "LPEC: error %s for device ", aError);
     LOG2(kLpec, kError, iLpecName);
     LOG2(kLpec, kError, ", exiting thread\n");
-    iStateChanged();
+    AutoMutex a(iLock);
+    if (iStateChanged) {
+        iStateChanged();
+    }
 }
 
 void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
