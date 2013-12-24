@@ -47,7 +47,8 @@ class DviSubscription : private IStackObject
 {
 public:
     DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
-                    IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs);
+                    IDviSubscriptionUserData* aUserData, Brh& aSid);
+    void SetDuration(TUint& aDurationSecs);
     void Start(DviService& aService);
     void Stop(); // should only be called by DviService
     void AddRef();
@@ -92,6 +93,7 @@ private: // IPropertyWriter
     void PropertyWriteUint(const Brx& aName, TUint aValue);
     void PropertyWriteBool(const Brx& aName, TBool aValue);
     void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
+    void Release();
 private:
     void WriteVariable(const Brx& aName, const Brx& aValue);
 private:

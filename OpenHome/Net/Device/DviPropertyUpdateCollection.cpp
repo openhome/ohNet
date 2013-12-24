@@ -184,6 +184,11 @@ void PropertyWriter2::PropertyWriteEnd()
     iPropertyUpdate = iMerger.MergeUpdate(iPropertyUpdate);
 }
 
+void PropertyWriter2::Release()
+{
+    delete this;
+}
+
    
 // PropertyUpdatesFlattened
 

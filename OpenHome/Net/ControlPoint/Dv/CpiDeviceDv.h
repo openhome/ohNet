@@ -110,6 +110,7 @@ private: // IPropertyWriter
     void PropertyWriteBool(const Brx& aName, TBool aValue);
     void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
     void PropertyWriteEnd();
+    void Release();
 private:
     IEventProcessor& iEventProcessor;
 };

@@ -3,6 +3,7 @@
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/OsTypes.h>
 

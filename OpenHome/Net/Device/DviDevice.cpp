@@ -4,9 +4,10 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Net/Private/DviProtocolUpnp.h> // for DviProtocolUpnp ctor only
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/DviProviderSubscriptionLongPoll.h>
+#include <OpenHome/Net/Private/DviProtocolUpnp.h> // for DviProtocolUpnp ctor only
+#include <OpenHome/Net/Private/DviProtocolLpec.h> // for DviProtocolLpec ctor only
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -400,9 +401,16 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
         iShutdownSem.Signal();
     }
     else {
+        if (aLocked) {
+            // unlock around calls to Disable in case any call back to ProtocolDisabled synchronously
+            iLock.Signal();
+        }
         Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
         for (TUint i=0; i<iProtocols.size(); i++) {
             iProtocols[i]->Disable(functor);
+        }
+        if (aLocked) {
+            iLock.Wait();
         }
     }
     // Tell services not to accept further action invocations
@@ -538,6 +546,9 @@ DviDeviceStandard::DviDeviceStandard(OpenHome::Net::DvStack& aDvStack, const Brx
 void DviDeviceStandard::Construct()
 {
     AddProtocol(new DviProtocolUpnp(*this));
+    if (iDvStack.Env().InitParams()->DvNumLpecThreads() > 0) {
+        AddProtocol(new DviProtocolLpec(*this));
+    }
 }
 
 
@@ -607,6 +618,16 @@ DviDevice* DviDeviceMap::Find(const Brx& aUdn)
     }
     iLock.Signal();
     return device;
+}
+
+std::map<Brn,DviDevice*,BufferCmp> DviDeviceMap::CopyMap() const
+{
+    Map::const_iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        it->second->AddWeakRef();
+        it++;
+    }
+    return iMap;
 }
 
 void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)

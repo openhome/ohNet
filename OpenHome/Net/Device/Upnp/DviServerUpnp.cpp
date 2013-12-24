@@ -799,9 +799,10 @@ void DviSessionUpnp::Subscribe()
     Brh sid;
     device->CreateSid(sid);
     SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri(), iReaderRequest->Version());
-    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *iPropertyWriterFactory, data, sid, duration);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *iPropertyWriterFactory, data, sid);
     iPropertyWriterFactory->SubscriptionAdded(*subscription);
     iDvStack.SubscriptionManager().AddSubscription(*subscription);
+    subscription->SetDuration(duration);
 
     if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);

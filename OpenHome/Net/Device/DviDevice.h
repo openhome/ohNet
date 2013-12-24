@@ -86,8 +86,9 @@ private:
        ,eDisabling
        ,eEnabled
     };
-private:
+protected:
     OpenHome::Net::DvStack& iDvStack;
+private:
     mutable Mutex iLock;
     Mutex iServiceLock;
     TUint iRefCount;
@@ -150,6 +151,7 @@ public:
     void Remove(DviDevice& aDevice);
     DviDevice* Find(const Brx& aUdn);
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
+    std::map<Brn,DviDevice*,BufferCmp> CopyMap() const;
 private:
     typedef std::map<Brn,DviDevice*,BufferCmp> Map;
     Mutex iLock;

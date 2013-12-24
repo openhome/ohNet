@@ -160,6 +160,7 @@ copy_build_includes:
 	copy OpenHome\Net\ControlPoint\Cpi*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\ControlPoint\FunctorCpiDevice.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\ControlPoint\Dv\CpiDeviceDv.h $(inc_build)\OpenHome\Net\Private > nul
+	copy OpenHome\Net\ControlPoint\Lpec\CpiDeviceLpec.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\ControlPoint\Proxies\*.h $(inc_build)\OpenHome\Net\Core > nul
 	copy OpenHome\Net\ControlPoint\Upnp\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\DvStack.h $(inc_build)\OpenHome\Net\Core > nul
@@ -183,6 +184,7 @@ copy_build_includes:
 	copy OpenHome\Net\Device\Bonjour\mDNSCore\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Device\Providers\*.h $(inc_build)\OpenHome\Net\Core > nul
 	copy OpenHome\Net\Device\Upnp\*.h $(inc_build)\OpenHome\Net\Private > nul
+	copy OpenHome\Net\Device\Lpec\*.h $(inc_build)\OpenHome\Net\Private > nul
 	copy OpenHome\Net\Bindings\C\*.h $(inc_build)\OpenHome\Net\C > nul
 	copy OpenHome\Net\Bindings\C\ControlPoint\*.h $(inc_build)\OpenHome\Net\C > nul
 	copy OpenHome\Net\Bindings\C\ControlPoint\Proxies\*.h $(inc_build)\OpenHome\Net\C > nul

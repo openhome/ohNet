@@ -313,6 +313,20 @@ public:
      * Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.
      */
     void SetDvEnableBonjour();
+    /**
+     * Set the number of threads which will be dedicated LPEC clients.
+     * One thread will be used per active connection so a higher number of threads
+     * will allow more concurrent clients but will also require more system
+     * resources.
+     */
+    void SetDvNumLpecThreads(uint32_t aNumThreads);
+    /**
+     * Set the tcp port number the device stack's LPEC servers will run on.
+     * The default value is 0 (meaning that the OS will assign a port).
+     * You should only set this if you know the full set of services (plus their port
+     * requirements) running on a device.
+     */
+    void SetDvLpecServerPort(uint32_t aPort);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -344,6 +358,8 @@ public:
     uint32_t DvUpnpServerPort() const;
     uint32_t DvWebSocketPort() const;
     bool DvIsBonjourEnabled() const;
+    uint32_t DvNumLpecThreads();
+    uint32_t DvLpecServerPort();
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -380,6 +396,8 @@ private:
     uint32_t iDvUpnpWebServerPort;
     uint32_t iDvWebSocketPort;
     bool iEnableBonjour;
+    uint32_t iDvNumLpecThreads;
+    uint32_t iDvLpecServerPort;
 };
 
 class CpStack;

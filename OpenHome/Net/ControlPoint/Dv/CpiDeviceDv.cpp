@@ -74,9 +74,10 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
     TUint durationSecs = iDeviceCp->GetCpStack().Env().InitParams()->SubscriptionDurationSecs();
-    iSubscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid, durationSecs);
+    iSubscriptionDv = new DviSubscription(iDeviceDv.GetDvStack(), iDeviceDv, *this, NULL, sid);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     iDeviceDv.GetDvStack().SubscriptionManager().AddSubscription(*iSubscriptionDv);
+    iSubscriptionDv->SetDuration(durationSecs);
     DviService* service = iDeviceDv.ServiceReference(aSubscription.ServiceType());
     ASSERT(service != NULL);
     service->AddSubscription(iSubscriptionDv);
@@ -418,6 +419,11 @@ void PropertyWriterDv::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
 void PropertyWriterDv::PropertyWriteEnd()
 {
     iEventProcessor.EventUpdateEnd();
+}
+
+void PropertyWriterDv::Release()
+{
+    delete this;
 }
 
 

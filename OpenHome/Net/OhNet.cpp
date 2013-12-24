@@ -363,6 +363,16 @@ void InitialisationParams::SetDvEnableBonjour()
     iEnableBonjour = true;
 }
 
+void InitialisationParams::SetDvNumLpecThreads(uint32_t aNumThreads)
+{
+    iDvNumLpecThreads = aNumThreads;
+}
+
+void InitialisationParams::SetDvLpecServerPort(uint32_t aPort)
+{
+    iDvLpecServerPort = aPort;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -517,6 +527,16 @@ bool InitialisationParams::DvIsBonjourEnabled() const
     return iEnableBonjour;
 }
 
+uint32_t InitialisationParams::DvNumLpecThreads()
+{
+    return iDvNumLpecThreads;
+}
+
+uint32_t InitialisationParams::DvLpecServerPort()
+{
+    return iDvLpecServerPort;
+}
+
 InitialisationParams::InitialisationParams()
     : iTcpConnectTimeoutMs(3000)
     , iMsearchTimeSecs(3)
@@ -538,6 +558,8 @@ InitialisationParams::InitialisationParams()
     , iDvUpnpWebServerPort(0)
     , iDvWebSocketPort(0)
     , iEnableBonjour(false)
+    , iDvNumLpecThreads(0)
+    , iDvLpecServerPort(0)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);

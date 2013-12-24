@@ -439,6 +439,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/ControlPoint/Cpi*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/FunctorCpiDevice.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.h $(inc_build)/OpenHome/Net/Private
+	$(cp) OpenHome/Net/ControlPoint/Lpec/CpiDeviceLpec.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/ControlPoint/Proxies/*.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/ControlPoint/Upnp/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/DvStack.h $(inc_build)/OpenHome/Net/Core
@@ -462,6 +463,7 @@ copy_build_includes:
 	$(cp) OpenHome/Net/Device/Bonjour/mDNSCore/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Device/Providers/*.h $(inc_build)/OpenHome/Net/Core
 	$(cp) OpenHome/Net/Device/Upnp/*.h $(inc_build)/OpenHome/Net/Private
+	$(cp) OpenHome/Net/Device/Lpec/*.h $(inc_build)/OpenHome/Net/Private
 	$(cp) OpenHome/Net/Bindings/C/*.h $(inc_build)/OpenHome/Net/C
 	$(cp) OpenHome/Net/Bindings/C/ControlPoint/*.h $(inc_build)/OpenHome/Net/C
 	$(cp) OpenHome/Net/Bindings/C/ControlPoint/Proxies/*.h $(inc_build)/OpenHome/Net/C

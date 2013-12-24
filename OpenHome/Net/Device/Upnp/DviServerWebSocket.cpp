@@ -861,7 +861,8 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     }
     Brh sid;
     device->CreateSid(sid);
-    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *this, NULL, sid, timeout);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, *this, NULL, sid);
+    subscription->SetDuration(timeout);
     Brn sidBuf(subscription->Sid());
 
     try {

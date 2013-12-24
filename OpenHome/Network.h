@@ -3,6 +3,7 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/OsTypes.h>

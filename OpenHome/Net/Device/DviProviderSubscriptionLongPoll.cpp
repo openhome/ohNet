@@ -74,7 +74,8 @@ void DviProviderSubscriptionLongPoll::Subscribe(IDvInvocation& aInvocation, cons
     Brh sid;
     device->CreateSid(sid);
     TUint timeout = aRequestedDuration;
-    DviSubscription* subscription = new DviSubscription(iDvStack, *device, iPropertyUpdateCollection, NULL, sid, timeout);
+    DviSubscription* subscription = new DviSubscription(iDvStack, *device, iPropertyUpdateCollection, NULL, sid);
+    subscription->SetDuration(timeout);
 
     aInvocation.StartResponse();
     aSid.Write(subscription->Sid());

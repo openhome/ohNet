@@ -66,6 +66,9 @@ static void RunTestDvInvocation(CpStack& aCpStack, DvStack& aDvStack, const std:
 extern void TestDvSubscription(CpStack& aCpStack, DvStack& aDvStack);
 static void RunTestDvSubscription(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDvSubscription(aCpStack, aDvStack); }
 
+extern void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack);
+static void RunTestDvLpec(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDvLpec(aCpStack, aDvStack); }
+
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Library* lib = new Library(aInitParams);
@@ -103,6 +106,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestDviDeviceList", RunTestDviDeviceList));
     shellTests.push_back(ShellTest("TestDvInvocation", RunTestDvInvocation));
     shellTests.push_back(ShellTest("TestDvSubscription", RunTestDvSubscription));
+    shellTests.push_back(ShellTest("TestDvLpec", RunTestDvLpec));
     shellTests.push_back(ShellTest("TestException", RunTestException));
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);

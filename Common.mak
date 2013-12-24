@@ -36,6 +36,7 @@ objects_core = \
 	$(objdir)CpDeviceUpnpStd.$(objext) \
 	$(objdir)CpiDevice.$(objext) \
 	$(objdir)CpiDeviceDv.$(objext) \
+	$(objdir)CpiDeviceLpec.$(objext) \
 	$(objdir)CpiDeviceUpnp.$(objext) \
 	$(objdir)CpiService.$(objext) \
 	$(objdir)CpiStack.$(objext) \
@@ -55,6 +56,8 @@ objects_core = \
 	$(objdir)DviServer.$(objext) \
 	$(objdir)DviServerUpnp.$(objext) \
 	$(objdir)DviServerWebSocket.$(objext) \
+	$(objdir)DviProtocolLpec.$(objext) \
+	$(objdir)DviServerLpec.$(objext) \
 	$(objdir)DviService.$(objext) \
 	$(objdir)DviSsdpNotifier.$(objext) \
 	$(objdir)DviStack.$(objext) \
@@ -149,6 +152,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Uri.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDevice.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDeviceDv.h \
+	$(inc_build)/OpenHome/Net/Private/CpiDeviceLpec.h \
 	$(inc_build)/OpenHome/Net/Private/CpiDeviceUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/CpiService.h \
 	$(inc_build)/OpenHome/Net/Private/CpiStack.h \
@@ -160,6 +164,8 @@ headers = \
 	$(inc_build)/OpenHome/Net/Private/DviServer.h \
 	$(inc_build)/OpenHome/Net/Private/DviServerUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/DviServerWebSocket.h \
+	$(inc_build)/OpenHome/Net/Private/DviProtocolLpec.h \
+	$(inc_build)/OpenHome/Net/Private/DviServerLpec.h \
 	$(inc_build)/OpenHome/Net/Private/DviService.h \
 	$(inc_build)/OpenHome/Net/Private/DviSsdpNotifier.h \
 	$(inc_build)/OpenHome/Net/Private/DviStack.h \
@@ -254,6 +260,8 @@ $(objdir)CpiDevice.$(objext) : OpenHome/Net/ControlPoint/CpiDevice.cpp $(headers
 	$(compiler)CpiDevice.$(objext) -c $(cppflags) $(includes) OpenHome/Net/ControlPoint/CpiDevice.cpp
 $(objdir)CpiDeviceDv.$(objext) : OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.cpp $(headers)
 	$(compiler)CpiDeviceDv.$(objext) -c $(cppflags) $(includes) OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.cpp
+$(objdir)CpiDeviceLpec.$(objext) : OpenHome/Net/ControlPoint/Lpec/CpiDeviceLpec.cpp $(headers)
+	$(compiler)CpiDeviceLpec.$(objext) -c $(cppflags) $(includes) OpenHome/Net/ControlPoint/Lpec/CpiDeviceLpec.cpp
 $(objdir)CpiDeviceUpnp.$(objext) : OpenHome/Net/ControlPoint/Upnp/CpiDeviceUpnp.cpp $(headers)
 	$(compiler)CpiDeviceUpnp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/ControlPoint/Upnp/CpiDeviceUpnp.cpp
 $(objdir)CpiService.$(objext) : OpenHome/Net/ControlPoint/CpiService.cpp $(headers)
@@ -290,6 +298,10 @@ $(objdir)DviServerUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviServerUpnp.cpp $(
 	$(compiler)DviServerUpnp.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Upnp/DviServerUpnp.cpp
 $(objdir)DviServerWebSocket.$(objext) : OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp $(headers)
 	$(compiler)DviServerWebSocket.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp
+$(objdir)DviProtocolLpec.$(objext) : OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp $(headers)
+	$(compiler)DviProtocolLpec.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp
+$(objdir)DviServerLpec.$(objext) : OpenHome/Net/Device/Lpec/DviServerLpec.cpp $(headers)
+	$(compiler)DviServerLpec.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Lpec/DviServerLpec.cpp
 $(objdir)DviService.$(objext) : OpenHome/Net/Device/DviService.cpp $(headers)
 	$(compiler)DviService.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/DviService.cpp
 $(objdir)DviSsdpNotifier.$(objext) : OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp $(headers)
@@ -626,6 +638,14 @@ $(objdir)TestDvSubscription.$(objext) : OpenHome/Net/Device/Tests/TestDvSubscrip
 $(objdir)TestDvSubscriptionMain.$(objext) : OpenHome/Net/Device/Tests/TestDvSubscriptionMain.cpp $(headers)
 	$(compiler)TestDvSubscriptionMain.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Tests/TestDvSubscriptionMain.cpp
 
+TestDvLpec: $(objdir)TestDvLpec.$(exeext) 
+$(objdir)TestDvLpec.$(exeext) :  ohNetCore $(objdir)TestDvLpec.$(objext) $(objdir)TestDvLpecMain.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvLpec.$(exeext) $(objdir)TestDvLpecMain.$(objext) $(objdir)TestDvLpec.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestDvLpec.$(objext) : OpenHome/Net/Device/Tests/TestDvLpec.cpp $(headers)
+	$(compiler)TestDvLpec.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Tests/TestDvLpec.cpp
+$(objdir)TestDvLpecMain.$(objext) : OpenHome/Net/Device/Tests/TestDvLpecMain.cpp $(headers)
+	$(compiler)TestDvLpecMain.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Device/Tests/TestDvLpecMain.cpp
+
 TestDvTestBasic: $(objdir)TestDvTestBasic.$(exeext) 
 $(objdir)TestDvTestBasic.$(exeext) :  ohNetCore $(objdir)TestDvTestBasic.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestDvTestBasic.$(exeext) $(objdir)TestDvTestBasic.$(objext) $(objdir)TestBasicDvCore.$(objext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -744,6 +764,7 @@ tests_core = \
 	$(objdir)TestDviDeviceList.$(objext) \
 	$(objdir)TestDvInvocation.$(objext) \
 	$(objdir)TestDvSubscription.$(objext) \
+	$(objdir)TestDvLpec.$(objext) \
 	$(objdir)TestBasicDvCore.$(objext) \
 	$(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
 	$(objdir)TestException.$(objext) \
@@ -752,7 +773,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFifo TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFifo TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

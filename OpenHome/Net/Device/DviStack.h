@@ -17,6 +17,7 @@
 #include <OpenHome/Net/Private/Bonjour.h>
 #include <OpenHome/Net/Private/DviPropertyUpdateCollection.h>
 #include <OpenHome/Net/Private/DviSsdpNotifier.h>
+#include <OpenHome/Net/Private/DviServerLpec.h>
 #include <OpenHome/Private/Standard.h>
 
 #include <vector>
@@ -38,6 +39,7 @@ public:
     IMdnsProvider* MdnsProvider();
     DviPropertyUpdateCollection& PropertyUpdateCollection();
     DviSsdpNotifierManager& SsdpNotifierManager();
+    DviServerLpec& LpecServer();
 private:
     ~DvStack();
 private:
@@ -51,6 +53,7 @@ private:
     IMdnsProvider* iMdns;
     DviPropertyUpdateCollection* iPropertyUpdateCollection;
     DviSsdpNotifierManager* iSsdpNotifierManager;
+    DviServerLpec* iLpecServer;
 };
 
 } // namespace Net

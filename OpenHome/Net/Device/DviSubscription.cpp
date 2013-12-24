@@ -41,7 +41,7 @@ AutoPropertiesLock::~AutoPropertiesLock()
 // DviSubscription
 
 DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
-                                 IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs)
+                                 IDviSubscriptionUserData* aUserData, Brh& aSid)
     : iDvStack(aDvStack)
     , iLock("MDSB")
     , iRefCount(1)
@@ -57,8 +57,12 @@ DviSubscription::DviSubscription(DvStack& aDvStack, DviDevice& aDevice, IPropert
     iWriterFactory.NotifySubscriptionCreated(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
     iTimer = new Timer(iDvStack.Env(), functor);
-    DoRenew(aDurationSecs);
     iDvStack.Env().AddObject(this);
+}
+
+void DviSubscription::SetDuration(TUint& aDurationSecs)
+{
+    DoRenew(aDurationSecs);
 }
 
 void DviSubscription::Start(DviService& aService)
@@ -166,7 +170,7 @@ void DviSubscription::WriteChanges()
         writer = CreateWriter();
         if (writer != NULL) {
             writer->PropertyWriteEnd();
-            delete writer;
+            writer->Release();
         }
     }
     catch(NetworkTimeout&) {
@@ -334,6 +338,11 @@ void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
     Brh buf;
     writer.TransferTo(buf);
     WriteVariable(aName, buf);
+}
+
+void PropertyWriter::Release()
+{
+    delete this;
 }
 
 void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
