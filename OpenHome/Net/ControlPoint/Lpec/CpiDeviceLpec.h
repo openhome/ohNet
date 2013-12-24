@@ -30,7 +30,9 @@ class CpiDeviceLpec : private ICpiProtocol, private ICpiDeviceObserver
 {
 public:
     CpiDeviceLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& aLpecName, Functor aStateChanged);
+    void Destroy();
     CpiDevice* Device();
+    TBool Connected() const;
 private:
     ~CpiDeviceLpec();
     void LpecThread();
@@ -91,7 +93,6 @@ private:
 
     CpStack& iCpStack;
     Mutex iLock;
-    Mutex iDeviceLock;
     SocketTcpClient iSocket;
     Srs<kMaxReadBufferBytes>* iReadBuffer;
     Sws<kMaxWriteBufferBytes>* iWriteBuffer;
@@ -102,6 +103,7 @@ private:
     ThreadFunctor* iThread;
     Invocable* iInvocable;
     ILpecResponse* iResponseHandler;
+    TBool iConnected;
     TBool iExiting;
 };
 

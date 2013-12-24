@@ -27,12 +27,12 @@ using namespace OpenHome::Net;
 CpiDeviceLpec::CpiDeviceLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& aLpecName, Functor aStateChanged)
     : iCpStack(aCpStack)
     , iLock("CLP1")
-    , iDeviceLock("CLP2")
     , iLocation(aLocation)
     , iLpecName(aLpecName)
     , iStateChanged(aStateChanged)
     , iDevice(NULL)
     , iResponseHandler(NULL)
+    , iConnected(false)
     , iExiting(false)
 {
     iReadBuffer = new Srs<kMaxReadBufferBytes>(iSocket);
@@ -52,10 +52,19 @@ CpiDeviceLpec::~CpiDeviceLpec()
     delete iReadBuffer;
 }
 
+void CpiDeviceLpec::Destroy()
+{
+    iDevice->RemoveRef();
+}
+
 CpiDevice* CpiDeviceLpec::Device()
 {
-    AutoMutex a(iDeviceLock);
     return iDevice;
+}
+
+TBool CpiDeviceLpec::Connected() const
+{
+    return iConnected;
 }
 
 void CpiDeviceLpec::LpecThread()
@@ -83,9 +92,8 @@ void CpiDeviceLpec::LpecThread()
                 if (name == iLpecName) {
                     starting = false;
                     Brn udn = parser.Remaining();
-                    iDeviceLock.Wait();
                     iDevice = new CpiDevice(iCpStack, udn, *this, *this, NULL);
-                    iDeviceLock.Signal();
+                    iConnected = true;
                     iStateChanged();
                 }
             }
@@ -97,11 +105,10 @@ void CpiDeviceLpec::LpecThread()
             else if (method == Lpec::kMethodByeBye) {
                 Brn name = parser.Next(' ');
                 if (name == iLpecName) {
-                    iDeviceLock.Wait();
-                    iDevice->RemoveRef();
-                    iDevice = NULL;
-                    iDeviceLock.Signal();
+                    iConnected = false;
                     iStateChanged();
+                    iExiting = true;
+                    THROW(ReaderError);
                 }
             }
             else if (method == Lpec::kMethodEvent) {

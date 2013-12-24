@@ -348,7 +348,6 @@ void DviSessionLpec::NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn)
 
 void DviSessionLpec::Run()
 {
-    LogVerbose(true);
     iShutdownSem.Wait();
     iByeByeLock.Wait();
     iActive = true;

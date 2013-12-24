@@ -104,6 +104,7 @@ TestLpec::TestLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& aLpecName, 
 
 TestLpec::~TestLpec()
 {
+    iCpDeviceLpec->Destroy();
     iCpDevice->RemoveRef();
 }
 
@@ -295,7 +296,7 @@ void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack)
     TestLpec* cpDevice = new TestLpec(aCpStack, location, device->LpecDeviceName(), *sem);
     sem->Wait(5*1000); // allow up to 5 seconds to connect to LPEC server and receive initial ALIVE message
     delete sem;
-    //cpDevice->TestActions();
+    cpDevice->TestActions();
     cpDevice->TestSubscriptions();
     delete cpDevice;
     delete device;
