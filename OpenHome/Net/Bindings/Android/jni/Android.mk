@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Bindings/Cpp/ControlPoint/CpDeviceUpnpStd.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiDevice.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.cpp \
+                   $(ohroot)OpenHome/Net/ControlPoint/Lpec/CpiDeviceLpec.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/Upnp/CpiDeviceUpnp.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiService.cpp \
                    $(ohroot)OpenHome/Net/ControlPoint/CpiStack.cpp \
@@ -46,6 +47,8 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)OpenHome/Net/Device/DviServer.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviServerUpnp.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviServerWebSocket.cpp \
+                   $(ohroot)OpenHome/Net/Device/Lpec/DviProtocolLpec.cpp \
+                   $(ohroot)OpenHome/Net/Device/Lpec/DviServerLpec.cpp \
                    $(ohroot)OpenHome/Net/Device/DviService.cpp \
                    $(ohroot)OpenHome/Net/Device/Upnp/DviSsdpNotifier.cpp \
                    $(ohroot)OpenHome/Net/Device/DviStack.cpp \
