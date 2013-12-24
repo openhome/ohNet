@@ -191,13 +191,6 @@ void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
             }
             (void)parser.Next(Lpec::kArgumentDelimiter);
             Brn propVal = parser.Next(Lpec::kArgumentDelimiter);
-            if (propVal.Bytes() == 0) {
-                // invalid update
-                LOG2(kLpec, kError, "LPEC: Invalid evented update - ");
-                LOG2(kLpec, kError, aUpdate);
-                LOG2(kLpec, kError, "\n");
-                break;
-            }
             processor->EventUpdate(propName, propVal, outputProcessor);
         }
         processor->EventUpdateEnd();

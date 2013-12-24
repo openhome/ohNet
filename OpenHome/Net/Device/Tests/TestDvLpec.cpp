@@ -110,10 +110,11 @@ TestLpec::~TestLpec()
 
 void TestLpec::TestActions()
 {
+    Print("  Actions...\n");
     CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*iCpDevice);
     TUint i;
 
-    Print("Unsigned integer arguments...\n");
+    Print("    Uint...\n");
     TUint valUint = 15;
     for (i=0; i<kTestIterations; i++) {
         TUint result;
@@ -122,7 +123,7 @@ void TestLpec::TestActions()
         valUint = result;
     }
 
-    Print("Integer arguments...\n");
+    Print("    Int...\n");
     TInt valInt = 3;
     for (i=0; i<kTestIterations; i++) {
         TInt result;
@@ -131,7 +132,7 @@ void TestLpec::TestActions()
         valInt = result;
     }
 
-    Print("Boolean arguments...\n");
+    Print("    Bool...\n");
     TBool valBool = true;
     for (i=0; i<kTestIterations; i++) {
         TBool result;
@@ -140,7 +141,7 @@ void TestLpec::TestActions()
         valBool = result;
     }
 
-    Print("String arguments...\n");
+    Print("    String...\n");
     Brn valStr("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
                "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
                "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in "
@@ -152,7 +153,7 @@ void TestLpec::TestActions()
         ASSERT(result == valStr);
     }
 
-    Print("Binary arguments...\n");
+    Print("    Binary...\n");
     char bin[256];
     for (i=0; i<256; i++) {
         bin[i] = (char)i;
@@ -169,6 +170,7 @@ void TestLpec::TestActions()
 
 void TestLpec::TestSubscriptions()
 {
+    Print("  Subscriptions...\n");
     CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*iCpDevice);
     Functor functor = MakeFunctor(*this, &TestLpec::UpdatesComplete);
     proxy->SetPropertyChanged(functor);
@@ -182,7 +184,7 @@ void TestLpec::TestSubscriptions()
          check that the getter action matches the property
     */
 
-    Print("Uint...\n");
+    Print("    Uint...\n");
     proxy->SyncSetUint(1);
     iUpdatesComplete.Wait();
     TUint propUint;
@@ -192,7 +194,7 @@ void TestLpec::TestSubscriptions()
     proxy->SyncGetUint(valUint);
     ASSERT(propUint == valUint);
 
-    Print("Int...\n");
+    Print("    Int...\n");
     proxy->SyncSetInt(-99);
     iUpdatesComplete.Wait();
     TInt propInt;
@@ -202,7 +204,7 @@ void TestLpec::TestSubscriptions()
     proxy->SyncGetInt(valInt);
     ASSERT(propInt == valInt);
 
-    Print("Bool...\n");
+    Print("    Bool...\n");
     proxy->SyncSetBool(true);
     iUpdatesComplete.Wait();
     TBool propBool;
@@ -212,7 +214,7 @@ void TestLpec::TestSubscriptions()
     proxy->SyncGetBool(valBool);
     ASSERT(valBool);
 
-    Print("String...\n");
+    Print("    String...\n");
     Brn str("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             "labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
             "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in "
@@ -230,7 +232,7 @@ void TestLpec::TestSubscriptions()
     proxy->SyncGetString(valStr);
     ASSERT(propStr == valStr);
 
-    Print("Binary...\n");
+    Print("    Binary...\n");
     char bin[256];
     for (TUint i=0; i<256; i++) {
         bin[i] = (char)i;
@@ -248,7 +250,7 @@ void TestLpec::TestSubscriptions()
     proxy->SyncGetBinary(valBin);
     ASSERT(propBin == valBin);
 
-    Print("Multiple...\n");
+    Print("    Multiple...\n");
     proxy->SyncSetMultiple(15, 658, false);
     iUpdatesComplete.Wait();
     proxy->PropertyVarUint(propUint);
