@@ -336,14 +336,18 @@ void DviSessionLpec::NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn)
     if (!iActive) {
         return;
     }
-    AutoMutex b(iWriteLock);
-    iWriteBuffer->Write(Lpec::kMethodByeBye);
-    iWriteBuffer->Write(' ');
-    iWriteBuffer->Write(aName);
-    iWriteBuffer->Write(' ');
-    iWriteBuffer->Write(aUdn);
-    iWriteBuffer->Write(Lpec::kMsgTerminator);
-    iWriteBuffer->WriteFlush();
+    try {
+        AutoMutex b(iWriteLock);
+        iWriteBuffer->Write(Lpec::kMethodByeBye);
+        iWriteBuffer->Write(' ');
+        iWriteBuffer->Write(aName);
+        iWriteBuffer->Write(' ');
+        iWriteBuffer->Write(aUdn);
+        iWriteBuffer->Write(Lpec::kMsgTerminator);
+        iWriteBuffer->WriteFlush();
+    }
+    catch (WriterError&) {
+    }
 }
 
 void DviSessionLpec::Run()
