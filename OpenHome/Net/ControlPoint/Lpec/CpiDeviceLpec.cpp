@@ -165,12 +165,20 @@ void CpiDeviceLpec::LogError(const TChar* aError)
 
 void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
 {
+    AutoMutex a(iLock);
     Parser parser(aUpdate);
     Brn lpecId = parser.Next(' ');
     Bws<128> sid(iDevice->Udn());
     sid.Append('-');
     sid.Append(lpecId);
     CpiSubscription* subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
+    if (subscription == NULL) {
+        /* There is a very short window between Subscribe() returning and the new
+           subscription being added to its manager.  As a lazy workaround for this,
+           sleep for a short period and retry before rejecting the update */
+        Thread::Sleep(1000);
+        subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
+    }
     if (subscription == NULL) {
         LOG(kLpec, "LPEC: evented update received for unknown subscription - ");
         LOG(kLpec, sid);
