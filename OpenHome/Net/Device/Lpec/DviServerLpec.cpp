@@ -305,6 +305,7 @@ DviSessionLpec::DviSessionLpec(DvStack& aDvStack, TIpAddress aAdapter, TUint aPo
     , iShutdownSem("DLP2", 1)
     , iSubscriptionLock("DLP3")
     , iByeByeLock("DLP4")
+    , iDeviceLock("DLP5")
     , iActive(false)
 {
     iReadBuffer = new Srs<kMaxReadBufferBytes>(*this);
@@ -336,8 +337,16 @@ void DviSessionLpec::NotifyDeviceDisabled(const Brx& aName, const Brx& aUdn)
     if (!iActive) {
         return;
     }
+    AutoMutex b(iDeviceLock);
+    Brn udn(aUdn);
+    std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.find(udn);
+    if (it == iDeviceMap.end()) {
+        return; // FIXME - assumes that ALIVEs are only sent on connection - not when (if) a device is later enabled
+    }
+    it->second->RemoveWeakRef();
+    iDeviceMap.erase(it);
     try {
-        AutoMutex b(iWriteLock);
+        AutoMutex c(iWriteLock);
         iWriteBuffer->Write(Lpec::kMethodByeBye);
         iWriteBuffer->Write(' ');
         iWriteBuffer->Write(aName);
@@ -357,7 +366,9 @@ void DviSessionLpec::Run()
     iActive = true;
     iByeByeLock.Signal();
     try {
+        iDeviceLock.Wait();
         iDeviceMap = iDvStack.DeviceMap().CopyMap();
+        iDeviceLock.Signal();
         std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin();
         while (it != iDeviceMap.end()) {
             if (!it->second->Enabled()) {
@@ -391,17 +402,21 @@ void DviSessionLpec::Run()
             }
             iParser.Set(iRequestBuf);
             Brn method = iParser.Next(' ');
-            if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodAction)) {
-                Action();
+            try {
+                if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodAction)) {
+                    Action();
+                }
+                else if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodSubscribe)) {
+                    Subscribe();
+                }
+                else if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodUnsubscribe)) {
+                    Unsubscribe();
+                }
+                else {
+                    ReportErrorNoThrow(LpecError::kMethodNotSupported);
+                }
             }
-            else if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodSubscribe)) {
-                Subscribe();
-            }
-            else if (Ascii::CaseInsensitiveEquals(method, Lpec::kMethodUnsubscribe)) {
-                Unsubscribe();
-            }
-            else {
-                ReportErrorNoThrow(LpecError::kMethodNotSupported);
+            catch (LpecParseError&) {
             }
             if (!iResponseStarted) {
                 iWriteLock.Wait();
@@ -418,11 +433,14 @@ void DviSessionLpec::Run()
     catch (WriterError&) {
     }
 
+    iDeviceLock.Wait();
     std::map<Brn,DviDevice*,BufferCmp>::iterator it = iDeviceMap.begin();
     while (it != iDeviceMap.end()) {
         it->second->RemoveWeakRef();
         it++;
     }
+    iDeviceMap.clear();
+    iDeviceLock.Signal();
     iSubscriptionLock.Wait();
     iSubscriptions.clear();
     iSubscriptionLock.Signal();
@@ -436,6 +454,7 @@ void DviSessionLpec::Run()
 void DviSessionLpec::Action()
 {
     try {
+        AutoMutex a(iDeviceLock);
         ParseDeviceAndService();
         Brn versionBuf = iParser.Next(' ');
         try {
@@ -445,6 +464,8 @@ void DviSessionLpec::Action()
             ReportError(LpecError::kVersionNotSpecified);
         }
         Invoke();
+    }
+    catch (LpecParseError&) {
     }
     catch (InvocationError&) {
     }
@@ -460,7 +481,16 @@ void DviSessionLpec::Subscribe()
             ReportError(LpecError::kTooManySubscriptions);
         }
 
-        ParseDeviceAndService();
+        AutoMutex b(iDeviceLock);
+        try {
+            ParseDeviceAndService();
+        }
+        catch (LpecParseError&) {
+            iResponseEnded = true;
+            iWriteBuffer->Write(Lpec::kMsgTerminator);
+            iWriteBuffer->WriteFlush();
+            throw;
+        }
 
         // check we don't already have a subscription for this service
         for (TUint i=0; i<iSubscriptions.size(); i++) {
@@ -523,7 +553,16 @@ void DviSessionLpec::Unsubscribe()
         // not a sid, fall through to below to check for device/service
     }
 
-    ParseDeviceAndService();
+    AutoMutex b(iDeviceLock);
+    try {
+        ParseDeviceAndService();
+    }
+    catch (LpecParseError&) {
+        iResponseEnded = true;
+        iWriteBuffer->Write(Lpec::kMsgTerminator);
+        iWriteBuffer->WriteFlush();
+        throw;
+    }
     for (TUint i=0; i<iSubscriptions.size(); i++) {
         if (iSubscriptions[i].Matches(*iTargetDevice, *iTargetService)) {
             DoUnsubscribe(i);
@@ -550,7 +589,8 @@ void DviSessionLpec::ParseDeviceAndService()
         it++;
     }
     if (iTargetDevice == NULL) {
-        ReportError(LpecError::kDeviceNotFound);
+        ReportErrorNoThrow(LpecError::kDeviceNotFound);
+        THROW(LpecParseError);
     }
 
     Brn serviceName = iParser.Next(' ');
@@ -563,7 +603,8 @@ void DviSessionLpec::ParseDeviceAndService()
         }
     }
     if (iTargetService == NULL) {
-        ReportError(LpecError::kServiceNotFound);
+        ReportErrorNoThrow(LpecError::kServiceNotFound);
+        THROW(LpecParseError);
     }
 }
 

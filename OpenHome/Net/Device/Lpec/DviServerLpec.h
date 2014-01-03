@@ -3,6 +3,7 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/DviServer.h>
@@ -12,6 +13,8 @@
 
 #include <vector>
 #include <map>
+
+EXCEPTION(LpecParseError)
 
 namespace OpenHome {
     class NetworkAdapter;
@@ -193,6 +196,7 @@ private:
     Semaphore iShutdownSem;
     Mutex iSubscriptionLock;
     Mutex iByeByeLock;
+    Mutex iDeviceLock;
     Srs<kMaxReadBufferBytes>* iReadBuffer;
     Sws<kMaxWriteBufferBytes>* iWriteBuffer;
     EventWriterAdapter* iEventWriterAdapter;
