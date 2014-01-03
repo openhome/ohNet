@@ -50,6 +50,7 @@ CpiDeviceLpec::~CpiDeviceLpec()
     delete iInvocable;
     delete iWriteBuffer;
     delete iReadBuffer;
+    iSocket.Close();
 }
 
 void CpiDeviceLpec::Destroy()
