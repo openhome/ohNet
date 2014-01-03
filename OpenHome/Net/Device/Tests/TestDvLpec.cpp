@@ -170,12 +170,13 @@ void TestLpec::TestActions()
 
 void TestLpec::TestSubscriptions()
 {
+    static const TUint kTimeoutMs = 5 * 1000;
     Print("  Subscriptions...\n");
     CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*iCpDevice);
     Functor functor = MakeFunctor(*this, &TestLpec::UpdatesComplete);
     proxy->SetPropertyChanged(functor);
     proxy->Subscribe();
-    iUpdatesComplete.Wait(); // wait for initial event
+    iUpdatesComplete.Wait(kTimeoutMs); // wait for initial event
 
     /* For each property,
          call the setter action it
@@ -186,7 +187,7 @@ void TestLpec::TestSubscriptions()
 
     Print("    Uint...\n");
     proxy->SyncSetUint(1);
-    iUpdatesComplete.Wait();
+    iUpdatesComplete.Wait(kTimeoutMs);
     TUint propUint;
     proxy->PropertyVarUint(propUint);
     ASSERT(propUint == 1);
@@ -196,7 +197,7 @@ void TestLpec::TestSubscriptions()
 
     Print("    Int...\n");
     proxy->SyncSetInt(-99);
-    iUpdatesComplete.Wait();
+    iUpdatesComplete.Wait(kTimeoutMs);
     TInt propInt;
     proxy->PropertyVarInt(propInt);
     ASSERT(propInt == -99);
@@ -206,7 +207,7 @@ void TestLpec::TestSubscriptions()
 
     Print("    Bool...\n");
     proxy->SyncSetBool(true);
-    iUpdatesComplete.Wait();
+    iUpdatesComplete.Wait(kTimeoutMs);
     TBool propBool;
     proxy->PropertyVarBool(propBool);
     ASSERT(propBool);
@@ -221,7 +222,7 @@ void TestLpec::TestSubscriptions()
             "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat "
             "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     proxy->SyncSetString(str);
-    iUpdatesComplete.Wait();
+    iUpdatesComplete.Wait(kTimeoutMs);
     Brhz propStr;
     proxy->PropertyVarStr(propStr);
     ASSERT(propStr == str);
@@ -239,7 +240,7 @@ void TestLpec::TestSubscriptions()
     }
     Brn bufBin((const TByte*)&bin[0], 256);
     proxy->SyncSetBinary(bufBin);
-    iUpdatesComplete.Wait();
+    iUpdatesComplete.Wait(kTimeoutMs);
     Brh propBin;
     proxy->PropertyVarBin(propBin);
     ASSERT(propBin == bufBin);
@@ -252,7 +253,7 @@ void TestLpec::TestSubscriptions()
 
     Print("    Multiple...\n");
     proxy->SyncSetMultiple(15, 658, false);
-    iUpdatesComplete.Wait();
+    iUpdatesComplete.Wait(kTimeoutMs);
     proxy->PropertyVarUint(propUint);
     ASSERT(propUint == 15);
     proxy->SyncGetUint(valUint);
