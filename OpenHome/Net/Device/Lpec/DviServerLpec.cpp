@@ -362,7 +362,7 @@ void DviSessionLpec::Run()
             iWriteBuffer->Write(Lpec::kMethodAlive);
             iWriteBuffer->Write(' ');
             const TChar* name = NULL;
-            it->second->GetAttribute("Lpec.Name", &name); // FIXME - nothing is setting this yet
+            it->second->GetAttribute("Lpec.Name", &name);
             if (name == NULL) {
                 Log::Print("ERROR: device ");
                 Log::Print(it->second->Udn());
