@@ -470,137 +470,137 @@ $(objdir)$(dllprefix)CpOpenhomeOrgSubscriptionLongPoll1.$(dllext) : ZappUpnpDll 
 CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
 $(objdir)CpUpnpOrgAVTransport1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgAVTransport1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgAVTransport1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgAVTransport1.cs
 $(objdir)CpUpnpOrgAVTransport2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgAVTransport2.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgAVTransport2.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgAVTransport2.cs
 $(objdir)CpUpnpOrgConnectionManager1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgConnectionManager1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgConnectionManager1.cs
 $(objdir)CpUpnpOrgConnectionManager2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgConnectionManager2.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgConnectionManager2.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgConnectionManager2.cs
 $(objdir)CpUpnpOrgContentDirectory1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgContentDirectory1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgContentDirectory1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgContentDirectory1.cs
 $(objdir)CpUpnpOrgContentDirectory2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgContentDirectory2.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgContentDirectory2.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgContentDirectory2.cs
 $(objdir)CpUpnpOrgContentDirectory3.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgContentDirectory3.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgContentDirectory3.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgContentDirectory3.cs
 $(objdir)CpUpnpOrgRenderingControl1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgRenderingControl1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgRenderingControl1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgRenderingControl1.cs
 $(objdir)CpUpnpOrgRenderingControl2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgRenderingControl2.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgRenderingControl2.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgRenderingControl2.cs
 $(objdir)CpUpnpOrgScheduledRecording1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgScheduledRecording1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgScheduledRecording1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgScheduledRecording1.cs
 $(objdir)CpUpnpOrgScheduledRecording2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgScheduledRecording2.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgScheduledRecording2.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgScheduledRecording2.cs
 $(objdir)CpUpnpOrgSwitchPower1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgSwitchPower1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgSwitchPower1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgSwitchPower1.cs
 $(objdir)CpUpnpOrgDimming1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgDimming1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpUpnpOrgDimming1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpUpnpOrgDimming1.cs
 $(objdir)CpAvOpenhomeOrgInfo1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgInfo1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgInfo1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgInfo1.cs
 $(objdir)CpAvOpenhomeOrgTime1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgTime1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgTime1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgTime1.cs
 $(objdir)CpAvOpenhomeOrgPlaylist1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgPlaylist1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgPlaylist1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgPlaylist1.cs
 $(objdir)CpAvOpenhomeOrgVolume1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgVolume1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgVolume1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgVolume1.cs
 $(objdir)CpAvOpenhomeOrgProduct1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgProduct1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgProduct1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgProduct1.cs
 $(objdir)CpAvOpenhomeOrgRadio1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgRadio1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgRadio1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgRadio1.cs
 $(objdir)CpAvOpenhomeOrgReceiver1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgReceiver1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgReceiver1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgReceiver1.cs
 $(objdir)CpAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgSender1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgSender1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgSender1.cs
 $(objdir)CpAvOpenhomeOrgPlaylistManager1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgPlaylistManager1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgPlaylistManager1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgPlaylistManager1.cs
 $(objdir)CpAvOpenhomeOrgMediaServer1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgMediaServer1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgMediaServer1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgMediaServer1.cs
 $(objdir)CpAvOpenhomeOrgNetworkMonitor1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgNetworkMonitor1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpAvOpenhomeOrgNetworkMonitor1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpAvOpenhomeOrgNetworkMonitor1.cs
 $(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpOpenhomeOrgTestBasic1.cs
 $(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestLights1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpOpenhomeOrgTestLights1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpOpenhomeOrgTestLights1.cs
 $(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)CpOpenhomeOrgSubscriptionLongPoll1.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)CpOpenhomeOrgSubscriptionLongPoll1.cs

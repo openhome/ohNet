@@ -74,7 +74,7 @@ namespace OpenHome.Net.Device
             aManager.WriteResource(aUriTail, aInterface, aLanguageList, this);
         }                              
         
-        public unsafe void WriteResourceBegin(int aTotalBytes, string aMimeType)
+        public void WriteResourceBegin(int aTotalBytes, string aMimeType)
         {
             IntPtr mimeType = InteropUtils.StringToHGlobalUtf8(aMimeType);
             int err = iWriteBegin(iWriterData, aTotalBytes, mimeType);
@@ -250,7 +250,7 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvDeviceGetUdn(IntPtr aDevice, IntPtr* aUdn, uint* aLen);
+        static extern void DvDeviceGetUdn(IntPtr aDevice, out IntPtr aUdn, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -274,7 +274,7 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, IntPtr aKey, char** aValue);
+        static extern void DvDeviceGetAttribute(IntPtr aDevice, IntPtr aKey, out IntPtr aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -298,7 +298,7 @@ namespace OpenHome.Net.Device
         /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
-        public unsafe DvDevice(string aUdn)
+        public DvDevice(string aUdn)
         {
             IntPtr udn = InteropUtils.StringToHGlobalUtf8(aUdn);
             iHandle = DvDeviceCreate(udn);
@@ -317,11 +317,11 @@ namespace OpenHome.Net.Device
         /// Query the (client-specified) unique device name
         /// </summary>
         /// <returns>The name passed to the c'tor</returns>
-        public unsafe String Udn()
+        public String Udn()
         {
             IntPtr ptr;
             uint len;
-            DvDeviceGetUdn(iHandle, &ptr, &len);
+            DvDeviceGetUdn(iHandle, out ptr, out len);
             String udn = InteropUtils.PtrToStringUtf8(ptr, len);
             return udn;
         }
@@ -383,13 +383,13 @@ namespace OpenHome.Net.Device
         /// <param name="aKey">string of the form protocol_name.protocol_specific_key.
         /// Commonly used keys are published ... (!!!! where?)</param>
         /// <param name="aValue">string containing the attribute or null if the attribute has not been set.</param>
-        public unsafe void GetAttribute(string aKey, out string aValue)
+        public void GetAttribute(string aKey, out string aValue)
         {
             IntPtr key = InteropUtils.StringToHGlobalUtf8(aKey);
-            char* value;
-            DvDeviceGetAttribute(iHandle, key, &value);
+            IntPtr value;
+            DvDeviceGetAttribute(iHandle, key, out value);
             Marshal.FreeHGlobal(key);
-            aValue = InteropUtils.PtrToStringUtf8((IntPtr)value);
+            aValue = InteropUtils.PtrToStringUtf8(value);
         }
         
         /// <summary>
@@ -397,7 +397,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aKey">string of the form protocol_name.protocol_specific_key</param>
         /// <param name="aValue">attribute will be set to a copy of this string</param>
-        public unsafe void SetAttribute(string aKey, string aValue)
+        public void SetAttribute(string aKey, string aValue)
         {
             IntPtr key = InteropUtils.StringToHGlobalUtf8(aKey);
             IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
@@ -439,7 +439,7 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr DvDeviceStandardCreateNoResources(IntPtr aUdn);
+        static extern IntPtr DvDeviceStandardCreateNoResources(IntPtr aUdn);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -451,19 +451,19 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter, IntPtr* aUri, uint* aLen);
+        static extern void DvDeviceStandardGetResourceManagerUri(IntPtr aDevice, IntPtr aAdapter, out IntPtr aUri, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe uint DvResourceWriterLanguageCount(IntPtr aHandle);
+        static extern uint DvResourceWriterLanguageCount(IntPtr aHandle);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr DvResourceWriterLanguage(IntPtr aHandle, uint aIndex);
+        static extern IntPtr DvResourceWriterLanguage(IntPtr aHandle, uint aIndex);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -487,7 +487,7 @@ namespace OpenHome.Net.Device
         /// stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
-        public unsafe DvDeviceStandard(string aUdn)
+        public DvDeviceStandard(string aUdn)
         {
             IntPtr udn = InteropUtils.StringToHGlobalUtf8(aUdn);
             iHandle = DvDeviceStandardCreateNoResources(udn);
@@ -500,7 +500,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
-        public unsafe DvDeviceStandard(string aUdn, IResourceManager aResourceManager)
+        public DvDeviceStandard(string aUdn, IResourceManager aResourceManager)
         {
             iResourceManager = aResourceManager;
             iGch = GCHandle.Alloc(this);
@@ -516,13 +516,13 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aAdapter">The network adapter to return a uri for.</param>
         /// <returns>The base uri.  May be empty if there is no resource manager.</returns>
-        public unsafe string ResourceManagerUri(Core.NetworkAdapter aAdapter)
+        public string ResourceManagerUri(Core.NetworkAdapter aAdapter)
         {
             if (aAdapter == null)
                 return "";
             IntPtr ptr;
             uint len;
-            DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle(), &ptr, &len);
+            DvDeviceStandardGetResourceManagerUri(iHandle, aAdapter.Handle(), out ptr, out len);
             string uri = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
             return uri;

@@ -230,13 +230,13 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void ActionArgumentGetValueString(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        static extern void ActionArgumentGetValueString(IntPtr aHandle, out IntPtr aData, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void OhNetFree(IntPtr aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 
         /// <summary>
         /// Constructor for string input argument for an action
@@ -245,7 +245,7 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aParameter">Defines the name plus any bounds to the value for the argument.
         /// Must have been previously added to the action using Action.AddInputParameter</param>
         /// <param name="aValue">Value for the argument</param>
-        public unsafe ArgumentString(ParameterString aParameter, String aValue)
+        public ArgumentString(ParameterString aParameter, String aValue)
         {
             IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
             iHandle = ActionArgumentCreateStringInput(aParameter.Handle(), value);
@@ -270,11 +270,11 @@ namespace OpenHome.Net.ControlPoint
         /// <remarks>Only intended for use with output arguments inside the invocation completed callback.
         /// Can only be called once as the first call extracts the string data from the underlying native object</remarks>
         /// <returns>Current value of the argument</returns>
-        unsafe String Value()
+        String Value()
         {
             IntPtr ptr;
             uint len;
-            ActionArgumentGetValueString(iHandle, &ptr, &len);
+            ActionArgumentGetValueString(iHandle, out ptr, out len);
             String ret = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
             return ret;
@@ -291,7 +291,7 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ActionArgumentCreateBinaryInput(IntPtr aParameter, IntPtr aData, int aLength);
+        static extern IntPtr ActionArgumentCreateBinaryInput(IntPtr aParameter, IntPtr aData, int aLength);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -303,13 +303,13 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void ActionArgumentGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        static extern void ActionArgumentGetValueBinary(IntPtr aHandle, out IntPtr aData, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void OhNetFree(IntPtr aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 
         /// <summary>
         /// Constructor for binary input argument for an action
@@ -318,12 +318,11 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aParameter">Defines the name for the argument.
         /// Must have been previously added to the action using Action.AddInputParameter</param>
         /// <param name="aData">Value for the argument</param>
-        public unsafe ArgumentBinary(ParameterBinary aParameter, byte[] aData)
+        public ArgumentBinary(ParameterBinary aParameter, byte[] aData)
         {
-            fixed (byte* pData = aData)
-            {
-                iHandle = ActionArgumentCreateBinaryInput(aParameter.Handle(), new IntPtr(pData), aData.Length);
-            }
+            GCHandle h = GCHandle.Alloc(aData, GCHandleType.Pinned);
+            iHandle = ActionArgumentCreateBinaryInput(aParameter.Handle(), h.AddrOfPinnedObject(), aData.Length);
+            h.Free();
         }
 
         /// <summary>
@@ -344,14 +343,14 @@ namespace OpenHome.Net.ControlPoint
         /// <remarks>Only intended for use with output arguments inside the invocation completed callback.
         /// Can only be called once as the first call extracts the string data from the underlying native object</remarks>
         /// <returns>Current value of the argument</returns>
-        unsafe byte[] Value()
+        byte[] Value()
         {
             IntPtr data;
             uint len;
-            ActionArgumentGetValueBinary(iHandle, &data, &len);
+            ActionArgumentGetValueBinary(iHandle, out data, out len);
             byte[] ret = new byte[len];
             Marshal.Copy(data, ret, 0, (int)len);
-            OhNetFree((IntPtr)data);
+            OhNetFree(data);
             return ret;
         }
     }
@@ -384,43 +383,43 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe uint CpInvocationError(IntPtr aInvocation, uint* aErrorCode, IntPtr* aErrorDesc);
+        static extern uint CpInvocationError(IntPtr aInvocation, out uint aErrorCode, out IntPtr aErrorDesc);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void OhNetFree(IntPtr aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int CpInvocationOutputInt(IntPtr aInvocation, uint aIndex);
+        static extern int CpInvocationOutputInt(IntPtr aInvocation, uint aIndex);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe uint CpInvocationOutputUint(IntPtr aInvocation, uint aIndex);
+        static extern uint CpInvocationOutputUint(IntPtr aInvocation, uint aIndex);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe uint CpInvocationOutputBool(IntPtr aInvocation, uint aIndex);
+        static extern uint CpInvocationOutputBool(IntPtr aInvocation, uint aIndex);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void CpInvocationGetOutputString(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
+        static extern void CpInvocationGetOutputString(IntPtr aInvocation, uint aIndex, out IntPtr aData, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
+        static extern void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, out IntPtr aData, out uint aLen);
 
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
         private CpProxy.CallbackActionComplete iCallbackAsyncComplete;
@@ -473,11 +472,11 @@ namespace OpenHome.Net.ControlPoint
         /// </summary>
         /// <remarks>Only intended for use in the invocation complete callback</remarks>
         /// <returns>true if the invocation failed; false if it succeeded</returns>
-        public static unsafe bool Error(IntPtr aHandle, out uint aErrorCode, out string aErrorDesc)
+        public static bool Error(IntPtr aHandle, out uint aErrorCode, out string aErrorDesc)
         {
             uint code;
             IntPtr desc;
-            uint err = CpInvocationError(aHandle, &code, &desc);
+            uint err = CpInvocationError(aHandle, out code, out desc);
             aErrorCode = code;
             aErrorDesc = InteropUtils.PtrToStringUtf8(desc);
             return (err != 0);
@@ -490,7 +489,7 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aIndex">Zero-based index into array of output arguments.
         /// Must refer to an ArgumentInt.</param>
         /// <returns>Value of the integer output argument</returns>
-        public static unsafe int OutputInt(IntPtr aHandle, uint aIndex)
+        public static int OutputInt(IntPtr aHandle, uint aIndex)
         {
             return CpInvocationOutputInt(aHandle, aIndex);
         }
@@ -502,7 +501,7 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aIndex">Zero-based index into array of output arguments.
         /// Must refer to an ArgumentUint.</param>
         /// <returns>Value of the unsigned integer output argument</returns>
-        public static unsafe uint OutputUint(IntPtr aHandle, uint aIndex)
+        public static uint OutputUint(IntPtr aHandle, uint aIndex)
         {
             return CpInvocationOutputUint(aHandle, aIndex);
         }
@@ -514,7 +513,7 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aIndex">Zero-based index into array of output arguments.
         /// Must refer to an ArgumentBool.</param>
         /// <returns>Value of the boolean output argument</returns>
-        public static unsafe bool OutputBool(IntPtr aHandle, uint aIndex)
+        public static bool OutputBool(IntPtr aHandle, uint aIndex)
         {
             uint val = CpInvocationOutputBool(aHandle, aIndex);
             return (val != 0);
@@ -530,11 +529,11 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aIndex">Zero-based index into array of output arguments.
         /// Must refer to an ArgumentString.</param>
         /// <returns>Value of the string output argument</returns>
-        public static unsafe String OutputString(IntPtr aHandle, uint aIndex)
+        public static String OutputString(IntPtr aHandle, uint aIndex)
         {
             IntPtr ptr;
             uint len;
-            CpInvocationGetOutputString(aHandle, aIndex, &ptr, &len);
+            CpInvocationGetOutputString(aHandle, aIndex, out ptr, out len);
             String str = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
             return str;
@@ -550,18 +549,18 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aIndex">Zero-based index into array of output arguments.
         /// Must refer to an ArgumentString.</param>
         /// <returns>Value of the string output argument</returns>
-        public static unsafe byte[] OutputBinary(IntPtr aHandle, uint aIndex)
+        public static byte[] OutputBinary(IntPtr aHandle, uint aIndex)
         {
             IntPtr data;
             uint len;
-            CpInvocationGetOutputBinary(aHandle, aIndex, &data, &len);
+            CpInvocationGetOutputBinary(aHandle, aIndex, out data, out len);
             if (data == IntPtr.Zero)
             {
                 return null;
             }
             byte[] bin = new byte[len];
             Marshal.Copy(data, bin, 0, (int)len);
-            OhNetFree((IntPtr)data);
+            OhNetFree(data);
             return bin;
         }
 
@@ -604,7 +603,7 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr CpServiceCreate(char* aDomain, char* aName, uint aVersion, IntPtr aDevice);
+        static extern IntPtr CpServiceCreate(IntPtr aDomain, IntPtr aName, uint aVersion, IntPtr aDevice);
 #if IOS
         [DllImport("__Internal")]
 #else

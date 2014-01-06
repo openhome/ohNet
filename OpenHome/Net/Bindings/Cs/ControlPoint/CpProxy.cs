@@ -177,7 +177,7 @@ namespace OpenHome.Net.ControlPoint
             CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
         }
 
-        protected unsafe CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
+        protected CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
         {
             IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomain);
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);

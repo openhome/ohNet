@@ -85,7 +85,7 @@ CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 <# foreach (Service s in u.iServices) #>
 <# { #>
 $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
-	$(csharp) /unsafe /t:library \
+	$(csharp) /t:library \
         /out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
         /reference:$(objdir)ohNet.net.dll \
         $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs

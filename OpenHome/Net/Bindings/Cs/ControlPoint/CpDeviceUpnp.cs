@@ -222,8 +222,8 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr CpDeviceListCreateUpnpAll(CallbackDevice aAdded, IntPtr aPtrAdded,
-                                                            CallbackDevice aRemoved, IntPtr aPtrRemoved);
+        static extern IntPtr CpDeviceListCreateUpnpAll(CallbackDevice aAdded, IntPtr aPtrAdded,
+                                                       CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
         /// Constructor
@@ -235,7 +235,7 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
-        public unsafe CpDeviceListUpnpAll(ChangeHandler aAdded, ChangeHandler aRemoved)
+        public CpDeviceListUpnpAll(ChangeHandler aAdded, ChangeHandler aRemoved)
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
@@ -254,8 +254,8 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr CpDeviceListCreateUpnpRoot(CallbackDevice aAdded, IntPtr aPtrAdded,
-                                                             CallbackDevice aRemoved, IntPtr aPtrRemoved);
+        static extern IntPtr CpDeviceListCreateUpnpRoot(CallbackDevice aAdded, IntPtr aPtrAdded,
+                                                        CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
         /// Constructor
@@ -267,7 +267,7 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
-        public unsafe CpDeviceListUpnpRoot(ChangeHandler aAdded, ChangeHandler aRemoved)
+        public CpDeviceListUpnpRoot(ChangeHandler aAdded, ChangeHandler aRemoved)
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
@@ -301,7 +301,7 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
-        public unsafe CpDeviceListUpnpUuid(String aUuid, ChangeHandler aAdded, ChangeHandler aRemoved)
+        public CpDeviceListUpnpUuid(String aUuid, ChangeHandler aAdded, ChangeHandler aRemoved)
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
@@ -339,8 +339,8 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
-        public unsafe CpDeviceListUpnpDeviceType(String aDomainName, String aDeviceType, uint aVersion,
-                                                 ChangeHandler aAdded, ChangeHandler aRemoved)
+        public CpDeviceListUpnpDeviceType(String aDomainName, String aDeviceType, uint aVersion,
+                                          ChangeHandler aAdded, ChangeHandler aRemoved)
         {
             iAdded = aAdded;
             iRemoved = aRemoved;
@@ -380,8 +380,8 @@ namespace OpenHome.Net.ControlPoint
         /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
         /// and remove the device from their local collection.
         /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
-        public unsafe CpDeviceListUpnpServiceType(String aDomainName, String aServiceType, uint aVersion,
-                                                  ChangeHandler aAdded, ChangeHandler aRemoved)
+        public CpDeviceListUpnpServiceType(String aDomainName, String aServiceType, uint aVersion,
+                                           ChangeHandler aAdded, ChangeHandler aRemoved)
         {
             iAdded = aAdded;
             iRemoved = aRemoved;

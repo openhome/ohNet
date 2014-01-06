@@ -792,7 +792,7 @@ $(objdir)ohNet.net.dll: \
 	$(csShared)OhNet.cs \
 	$(csShared)SubnetList.cs \
 	$(csCp)CpDeviceDv.cs
-	$(csharp) /unsafe /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
+	$(csharp) /t:library $(debug_csharp) $(csharpdefines) /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
 		$(csCp)CpDevice.cs \
 		$(csCp)CpDeviceUpnp.cs \
@@ -815,7 +815,7 @@ $(objdir)TestProxyCs.exe: \
 	$(csCpTests)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 	
-	$(csharp) /unsafe /t:exe $(debug_csharp) /warnaserror+\
+	$(csharp) /t:exe $(debug_csharp) /warnaserror+\
 		/out:$(objdir)TestProxyCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
@@ -832,7 +832,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(csCpTests)TestBasicCp.cs \
 	$(csDvTests)TestDvDevice.cs
 	$(csharp) \
-		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
+		$(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvDeviceCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -854,7 +854,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(csCpTests)TestBasicCp.cs \
 	$(csCpTests)TestCpDeviceDv.cs
 	$(csharp) \
-		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
+		$(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestCpDeviceDvCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -872,7 +872,7 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(csDvTests)TestBasicDv.cs \
 	$(csDvTests)TestPerformanceDv.cs
 	$(csharp) \
-		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
+		$(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestPerformanceDvCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -887,7 +887,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 	$(csCpTests)TestPerformanceCp.cs
 	$(csharp) \
-		/unsafe $(debug_csharp) /warnaserror+ /t:exe \
+		$(debug_csharp) /warnaserror+ /t:exe \
 		/out:$(objdir)TestPerformanceCpCs.exe \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \

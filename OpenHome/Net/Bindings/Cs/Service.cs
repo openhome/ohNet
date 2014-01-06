@@ -45,7 +45,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceParameterCreateInt(IntPtr aName, int aMinValue, int aMaxValue, int aStep);
+        static extern IntPtr ServiceParameterCreateInt(IntPtr aName, int aMinValue, int aMaxValue, int aStep);
 
         /// <summary>
         /// Constructor
@@ -54,7 +54,7 @@ namespace OpenHome.Net.Core
         /// <param name="aMinValue">Minimum allowed value</param>
         /// <param name="aMaxValue">Maximum allowed value</param>
         /// <param name="aStep">Gap between allowed values</param>
-        public unsafe ParameterInt(String aName, int aMinValue = Int32.MinValue, int aMaxValue = Int32.MaxValue, int aStep = 1)
+        public ParameterInt(String aName, int aMinValue = Int32.MinValue, int aMaxValue = Int32.MaxValue, int aStep = 1)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateInt(name, aMinValue, aMaxValue, aStep);
@@ -72,7 +72,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceParameterCreateUint(IntPtr aName, uint aMinValue, uint aMaxValue, uint aStep);
+        static extern IntPtr ServiceParameterCreateUint(IntPtr aName, uint aMinValue, uint aMaxValue, uint aStep);
 
         /// <summary>
         /// Constructor
@@ -81,7 +81,7 @@ namespace OpenHome.Net.Core
         /// <param name="aMinValue">Minimum allowed value</param>
         /// <param name="aMaxValue">Maximum allowed value</param>
         /// <param name="aStep">Gap between allowed values</param>
-        public unsafe ParameterUint(String aName, uint aMinValue = 0, uint aMaxValue = uint.MaxValue, uint aStep = 1)
+        public ParameterUint(String aName, uint aMinValue = 0, uint aMaxValue = uint.MaxValue, uint aStep = 1)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateUint(name, aMinValue, aMaxValue, aStep);
@@ -99,13 +99,13 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceParameterCreateBool(IntPtr aName);
+        static extern IntPtr ServiceParameterCreateBool(IntPtr aName);
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aName">Parameter name</param>
-        public unsafe ParameterBool(String aName)
+        public ParameterBool(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateBool(name);
@@ -123,21 +123,18 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceParameterCreateString(IntPtr aName, IntPtr* aAllowedValues, uint aCount);
+        static extern IntPtr ServiceParameterCreateString(IntPtr aName, IntPtr[] aAllowedValues, uint aCount);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="aName">Parameter name</param>
         /// <param name="aAllowedValues">List of allowed values for the string</param>
-        public unsafe ParameterString(String aName, List<String> aAllowedValues)
+        public ParameterString(String aName, List<String> aAllowedValues)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr[] allowed = aAllowedValues.Select<string, IntPtr>(InteropUtils.StringToHGlobalUtf8).ToArray();
-            fixed (IntPtr* pAllowed = allowed)
-            {
-                iHandle = ServiceParameterCreateString(name, pAllowed, (uint)aAllowedValues.Count);
-            }
+            iHandle = ServiceParameterCreateString(name, allowed, (uint)aAllowedValues.Count);
             foreach (IntPtr allowedValue in allowed)
             {
                 Marshal.FreeHGlobal(allowedValue);
@@ -156,13 +153,13 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceParameterCreateBinary(IntPtr aName);
+        static extern IntPtr ServiceParameterCreateBinary(IntPtr aName);
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aName">Parameter name</param>
-        public unsafe ParameterBinary(String aName)
+        public ParameterBinary(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateBinary(name);
@@ -177,9 +174,9 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceParameterCreateRelated(IntPtr aName, IntPtr aProperty);
+        static extern IntPtr ServiceParameterCreateRelated(IntPtr aName, IntPtr aProperty);
 
-        public unsafe ParameterRelated(String aName, OpenHome.Net.Core.Property aProperty)
+        public ParameterRelated(String aName, OpenHome.Net.Core.Property aProperty)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceParameterCreateRelated(name, aProperty.Handle());
@@ -198,7 +195,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServicePropertyDestroy(IntPtr aHandle);
+        static extern IntPtr ServicePropertyDestroy(IntPtr aHandle);
         
         protected delegate void Callback(IntPtr aPtr);
 
@@ -274,7 +271,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServicePropertyCreateIntCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
+        static extern IntPtr ServicePropertyCreateIntCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -286,7 +283,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int ServicePropertyValueInt(IntPtr aHandle, int* aValue);
+        static extern int ServicePropertyValueInt(IntPtr aHandle, out int aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -299,7 +296,7 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aName">Property name</param>
         /// <param name="aValueChanged">Action to run when the property's value changes</param>
-        public unsafe PropertyInt(String aName, System.Action aValueChanged)
+        public PropertyInt(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -323,10 +320,10 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Integer property value</returns>
-        public unsafe int Value()
+        public int Value()
         {
             int val;
-            if (ServicePropertyValueInt(iHandle, &val) == -1)
+            if (ServicePropertyValueInt(iHandle, out val) == -1)
                 throw new PropertyError();
             return val;
         }
@@ -353,7 +350,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServicePropertyCreateUintCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
+        static extern IntPtr ServicePropertyCreateUintCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -365,7 +362,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int ServicePropertyValueUint(IntPtr aHandle, uint* aValue);
+        static extern int ServicePropertyValueUint(IntPtr aHandle, out uint aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -378,7 +375,7 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aName">Property name</param>
         /// <param name="aValueChanged">Action to run when the property's value changes</param>
-        public unsafe PropertyUint(String aName, System.Action aValueChanged)
+        public PropertyUint(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -402,10 +399,10 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Unsigned integer property value</returns>
-        public unsafe uint Value()
+        public uint Value()
         {
             uint val;
-            if (ServicePropertyValueUint(iHandle, &val) == -1)
+            if (ServicePropertyValueUint(iHandle, out val) == -1)
                 throw new PropertyError();
             return val;
         }
@@ -432,7 +429,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServicePropertyCreateBoolCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
+        static extern IntPtr ServicePropertyCreateBoolCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -444,7 +441,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int ServicePropertyValueBool(IntPtr aHandle, uint* aValue);
+        static extern int ServicePropertyValueBool(IntPtr aHandle, out uint aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -457,7 +454,7 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aName">Property name</param>
         /// <param name="aValueChanged">Action to run when the property's value changes</param>
-        public unsafe PropertyBool(String aName, System.Action aValueChanged)
+        public PropertyBool(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -481,10 +478,10 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Boolean property value</returns>
-        public unsafe bool Value()
+        public bool Value()
         {
             uint val;
-            if (ServicePropertyValueBool(iHandle, &val) == -1)
+            if (ServicePropertyValueBool(iHandle, out val) == -1)
                 throw new PropertyError();
             return (val != 0);
         }
@@ -512,7 +509,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServicePropertyCreateStringCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
+        static extern IntPtr ServicePropertyCreateStringCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -524,7 +521,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int ServicePropertyGetValueString(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        static extern int ServicePropertyGetValueString(IntPtr aHandle, out IntPtr aData, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -543,7 +540,7 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aName">Property name</param>
         /// <param name="aValueChanged">Action to run when the property's value changes</param>
-        public unsafe PropertyString(String aName, System.Action aValueChanged)
+        public PropertyString(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -567,11 +564,11 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>String property value</returns>
-        public unsafe String Value()
+        public String Value()
         {
             IntPtr ptr;
             uint len;
-            if (ServicePropertyGetValueString(iHandle, &ptr, &len) == -1)
+            if (ServicePropertyGetValueString(iHandle, out ptr, out len) == -1)
                 throw new PropertyError();
             String str = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
@@ -602,7 +599,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServicePropertyCreateBinaryCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
+        static extern IntPtr ServicePropertyCreateBinaryCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -614,7 +611,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int ServicePropertyGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        static extern int ServicePropertyGetValueBinary(IntPtr aHandle, out IntPtr aData, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -626,14 +623,14 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void OhNetFree(IntPtr aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 
         /// <summary>
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
         /// <param name="aValueChanged">Action to run when the property's value changes</param>
-        public unsafe PropertyBinary(String aName, System.Action aValueChanged)
+        public PropertyBinary(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -657,11 +654,11 @@ namespace OpenHome.Net.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Binary property value</returns>
-        public unsafe byte[] Value()
+        public byte[] Value()
         {
             IntPtr pData;
             uint len;
-            if (ServicePropertyGetValueBinary(iHandle, &pData, &len) == -1)
+            if (ServicePropertyGetValueBinary(iHandle, out pData, out len) == -1)
                 throw new PropertyError();
             byte[] data = new byte[len];
             Marshal.Copy(pData, data, 0, (int)len);
@@ -674,13 +671,12 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aData">New value for the property</param>
         /// <returns>True if the property's value was changed; false otherwise</returns>
-        public unsafe bool SetValue(byte[] aData)
+        public bool SetValue(byte[] aData)
         {
             uint changed;
-            fixed (byte* data = aData)
-            {
-                changed = ServicePropertySetValueBinary(iHandle, new IntPtr(data), (uint)aData.Length);
-            }
+            GCHandle h = GCHandle.Alloc(aData, GCHandleType.Pinned);
+            changed = ServicePropertySetValueBinary(iHandle, h.AddrOfPinnedObject(), (uint)aData.Length);
+            h.Free();
             return (changed != 0);
         }
     }
@@ -697,7 +693,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr ServiceActionCreate(IntPtr aName);
+        static extern IntPtr ServiceActionCreate(IntPtr aName);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -721,7 +717,7 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void ServiceActionGetName(IntPtr aAction, IntPtr* aName, uint* aLen);
+        static extern void ServiceActionGetName(IntPtr aAction, out IntPtr aName, out uint aLen);
 
         private IntPtr iHandle;
         private List<Parameter> iInputParameters;
@@ -731,7 +727,7 @@ namespace OpenHome.Net.Core
         /// Constructor
         /// </summary>
         /// <param name="aName">Action name</param>
-        public unsafe Action(String aName)
+        public Action(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             iHandle = ServiceActionCreate(name);
@@ -784,11 +780,11 @@ namespace OpenHome.Net.Core
         /// Query the name of the action
         /// </summary>
         /// <returns>Action name</returns>
-        public unsafe String Name()
+        public String Name()
         {
             IntPtr str;
             uint len;
-            ServiceActionGetName(iHandle, &str, &len);
+            ServiceActionGetName(iHandle, out str, out len);
             return InteropUtils.PtrToStringUtf8(str, len);
         }
 

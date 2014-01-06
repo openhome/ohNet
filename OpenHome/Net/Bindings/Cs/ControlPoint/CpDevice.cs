@@ -21,7 +21,7 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void CpDeviceCGetUdn(IntPtr aDevice, IntPtr* aUdn, uint* aLen);
+        static extern void CpDeviceCGetUdn(IntPtr aDevice, out IntPtr aUdn, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -39,13 +39,13 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, IntPtr aKey, char** aValue);
+        static extern int CpDeviceCGetAttribute(IntPtr aDevice, IntPtr aKey, out IntPtr aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void OhNetFree(void* aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 
         private IntPtr iHandle;
 
@@ -63,11 +63,11 @@ namespace OpenHome.Net.ControlPoint
         /// Query the unique identifier associated with a device
         /// </summary>
         /// <returns>Device's (universally unique) name</returns>
-        public unsafe String Udn()
+        public String Udn()
         {
             IntPtr ptr;
             uint len;
-            CpDeviceCGetUdn(iHandle, &ptr, &len);
+            CpDeviceCGetUdn(iHandle, out ptr, out len);
             return InteropUtils.PtrToStringUtf8(ptr, len);
         }
         
@@ -98,15 +98,15 @@ namespace OpenHome.Net.ControlPoint
         /// <param name="aValue">The value of the attribute</param>
         /// <returns>true if the attribute was available on the device; false otherwise.
         /// aValue will not have been set if false is returned</returns>
-        public unsafe bool GetAttribute(string aKey, out string aValue)
+        public bool GetAttribute(string aKey, out string aValue)
         {
             IntPtr key = InteropUtils.StringToHGlobalUtf8(aKey);
-            char* value;
-            int ret = CpDeviceCGetAttribute(iHandle, key, &value);
+            IntPtr value;
+            int ret = CpDeviceCGetAttribute(iHandle, key, out value);
             Marshal.FreeHGlobal(key);
             if (ret != 0)
             {
-                aValue = InteropUtils.PtrToStringUtf8((IntPtr)value);
+                aValue = InteropUtils.PtrToStringUtf8(value);
                 OhNetFree(value);
                 return true;
             }

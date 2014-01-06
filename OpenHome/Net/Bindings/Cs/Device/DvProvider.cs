@@ -18,7 +18,7 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe IntPtr DvProviderCreate(IntPtr aDevice, IntPtr aDomain, IntPtr aType, uint aVersion);
+        static extern IntPtr DvProviderCreate(IntPtr aDevice, IntPtr aDomain, IntPtr aType, uint aVersion);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -54,31 +54,31 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvProviderSetPropertyInt(IntPtr aProvider, IntPtr aProperty, int aValue, uint* aChanged);
+        static extern int DvProviderSetPropertyInt(IntPtr aProvider, IntPtr aProperty, int aValue, out uint aChanged);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvProviderSetPropertyUint(IntPtr aProvider, IntPtr aProperty, uint aValue, uint* aChanged);
+        static extern int DvProviderSetPropertyUint(IntPtr aProvider, IntPtr aProperty, uint aValue, out uint aChanged);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvProviderSetPropertyBool(IntPtr aProvider, IntPtr aProperty, uint aValue, uint* aChanged);
+        static extern int DvProviderSetPropertyBool(IntPtr aProvider, IntPtr aProperty, uint aValue, out uint aChanged);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvProviderSetPropertyString(IntPtr aProvider, IntPtr aProperty, IntPtr aValue, uint* aChanged);
+        static extern int DvProviderSetPropertyString(IntPtr aProvider, IntPtr aProperty, IntPtr aValue, out uint aChanged);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, byte* aData, uint aLen, uint* aChanged);
+        static extern int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, IntPtr aData, uint aLen, out uint aChanged);
 
         protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation);
 
@@ -117,7 +117,7 @@ namespace OpenHome.Net.Device
         /// <param name="aDomain">Domain of the vendor who defined the service</param>
         /// <param name="aType">Name of the service</param>
         /// <param name="aVersion">Version number of the service</param>
-        protected unsafe DvProvider(DvDevice aDevice, String aDomain, String aType, uint aVersion)
+        protected DvProvider(DvDevice aDevice, String aDomain, String aType, uint aVersion)
         {
             IntPtr domain = InteropUtils.StringToHGlobalUtf8(aDomain);
             IntPtr type = InteropUtils.StringToHGlobalUtf8(aType);
@@ -163,10 +163,10 @@ namespace OpenHome.Net.Device
         /// <param name="aProperty">Property to be updated</param>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the property's value has changed (aValue was different to the previous value)</returns>
-        protected unsafe bool SetPropertyInt(PropertyInt aProperty, int aValue)
+        protected bool SetPropertyInt(PropertyInt aProperty, int aValue)
         {
             uint changed;
-            int err = DvProviderSetPropertyInt(iHandle, aProperty.Handle(), aValue, &changed);
+            int err = DvProviderSetPropertyInt(iHandle, aProperty.Handle(), aValue, out changed);
             if (err != 0)
             {
                 throw new PropertyUpdateError();
@@ -185,10 +185,10 @@ namespace OpenHome.Net.Device
         /// <param name="aProperty">Property to be updated</param>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the property's value has changed (aValue was different to the previous value)</returns>
-        protected unsafe bool SetPropertyUint(PropertyUint aProperty, uint aValue)
+        protected bool SetPropertyUint(PropertyUint aProperty, uint aValue)
         {
             uint changed;
-            int err = DvProviderSetPropertyUint(iHandle, aProperty.Handle(), aValue, &changed);
+            int err = DvProviderSetPropertyUint(iHandle, aProperty.Handle(), aValue, out changed);
             if (err != 0)
             {
                 throw new PropertyUpdateError();
@@ -204,11 +204,11 @@ namespace OpenHome.Net.Device
         /// <param name="aProperty">Property to be updated</param>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the property's value has changed (aValue was different to the previous value)</returns>
-        protected unsafe bool SetPropertyBool(PropertyBool aProperty, bool aValue)
+        protected bool SetPropertyBool(PropertyBool aProperty, bool aValue)
         {
             uint changed;
             uint val = (aValue ? 1u : 0u);
-            int err = DvProviderSetPropertyBool(iHandle, aProperty.Handle(), val, &changed);
+            int err = DvProviderSetPropertyBool(iHandle, aProperty.Handle(), val, out changed);
             if (err != 0)
             {
                 throw new PropertyUpdateError();
@@ -227,11 +227,11 @@ namespace OpenHome.Net.Device
         /// <param name="aProperty">Property to be updated</param>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the property's value has changed (aValue was different to the previous value)</returns>
-        protected unsafe bool SetPropertyString(PropertyString aProperty, String aValue)
+        protected bool SetPropertyString(PropertyString aProperty, String aValue)
         {
             uint changed;
             IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
-            int err = DvProviderSetPropertyString(iHandle, aProperty.Handle(), value, &changed);
+            int err = DvProviderSetPropertyString(iHandle, aProperty.Handle(), value, out changed);
             Marshal.FreeHGlobal(value);
             if (err != 0)
             {
@@ -248,14 +248,13 @@ namespace OpenHome.Net.Device
         /// <param name="aProperty">Property to be updated</param>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the property's value has changed (aValue was different to the previous value)</returns>
-        protected unsafe bool SetPropertyBinary(PropertyBinary aProperty, byte[] aValue)
+        protected bool SetPropertyBinary(PropertyBinary aProperty, byte[] aValue)
         {
             uint changed;
             int err;
-            fixed (byte* pValue = aValue)
-            {
-                err = DvProviderSetPropertyBinary(iHandle, aProperty.Handle(), pValue, (uint)aValue.Length, &changed);
-            }
+            GCHandle h = GCHandle.Alloc(aValue, GCHandleType.Pinned);
+            err = DvProviderSetPropertyBinary(iHandle, aProperty.Handle(), h.AddrOfPinnedObject(), (uint)aValue.Length, out changed);
+            h.Free();
             if (err != 0)
             {
                 throw new PropertyUpdateError();
@@ -318,25 +317,25 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvInvocationGetVersion(IntPtr aInvocation, uint* aVersion);
+        static extern void DvInvocationGetVersion(IntPtr aInvocation, out uint aVersion);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvInvocationGetAdapter(IntPtr aInvocation, uint* aAdapter);
+        static extern void DvInvocationGetAdapter(IntPtr aInvocation, out uint aAdapter);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, IntPtr* aPrefix, uint* aLen);
+        static extern void DvInvocationGetResourceUriPrefix(IntPtr aInvocation, out IntPtr aPrefix, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void DvInvocationGetClientEndpoint(IntPtr aInvocation, uint* aAddress, uint* aPort);
+        static extern void DvInvocationGetClientEndpoint(IntPtr aInvocation, out uint aAddress, out uint aPort);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -348,31 +347,31 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationReadInt(IntPtr aInvocation, IntPtr aName, int* aValue);
+        static extern int DvInvocationReadInt(IntPtr aInvocation, IntPtr aName, out int aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationReadUint(IntPtr aInvocation, IntPtr aName, uint* aValue);
+        static extern int DvInvocationReadUint(IntPtr aInvocation, IntPtr aName, out uint aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationReadBool(IntPtr aInvocation, IntPtr aName, uint* aValue);
+        static extern int DvInvocationReadBool(IntPtr aInvocation, IntPtr aName, out uint aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationReadStringAsBuffer(IntPtr aInvocation, IntPtr aName, IntPtr* aValue, uint* aLen);
+        static extern int DvInvocationReadStringAsBuffer(IntPtr aInvocation, IntPtr aName, out IntPtr aValue, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationReadBinary(IntPtr aInvocation, IntPtr aName, IntPtr* aData, uint* aLen);
+        static extern int DvInvocationReadBinary(IntPtr aInvocation, IntPtr aName, out IntPtr aData, out uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -384,7 +383,7 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationReportError(IntPtr aInvocation, uint aCode, IntPtr aDescription);
+        static extern int DvInvocationReportError(IntPtr aInvocation, uint aCode, IntPtr aDescription);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -396,55 +395,55 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteInt(IntPtr aInvocation, IntPtr aName, int aValue);
+        static extern int DvInvocationWriteInt(IntPtr aInvocation, IntPtr aName, int aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteUint(IntPtr aInvocation, IntPtr aName, uint aValue);
+        static extern int DvInvocationWriteUint(IntPtr aInvocation, IntPtr aName, uint aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteBool(IntPtr aInvocation, IntPtr aName, uint aValue);
+        static extern int DvInvocationWriteBool(IntPtr aInvocation, IntPtr aName, uint aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteStringStart(IntPtr aInvocation, IntPtr aName);
+        static extern int DvInvocationWriteStringStart(IntPtr aInvocation, IntPtr aName);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteString(IntPtr aInvocation, IntPtr aValue);
+        static extern int DvInvocationWriteString(IntPtr aInvocation, IntPtr aValue);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteStringEnd(IntPtr aInvocation, IntPtr aName);
+        static extern int DvInvocationWriteStringEnd(IntPtr aInvocation, IntPtr aName);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteBinaryStart(IntPtr aInvocation, IntPtr aName);
+        static extern int DvInvocationWriteBinaryStart(IntPtr aInvocation, IntPtr aName);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteBinary(IntPtr aInvocation, byte* aData, uint aLen);
+        static extern int DvInvocationWriteBinary(IntPtr aInvocation, IntPtr aData, uint aLen);
 #if IOS
         [DllImport("__Internal")]
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe int DvInvocationWriteBinaryEnd(IntPtr aInvocation, IntPtr aName);
+        static extern int DvInvocationWriteBinaryEnd(IntPtr aInvocation, IntPtr aName);
 #if IOS
         [DllImport("__Internal")]
 #else
@@ -456,7 +455,7 @@ namespace OpenHome.Net.Device
 #else
         [DllImport("ohNet")]
 #endif
-        static extern unsafe void OhNetFree(IntPtr aPtr);
+        static extern void OhNetFree(IntPtr aPtr);
 
         protected IntPtr iHandle;
         
@@ -472,31 +471,31 @@ namespace OpenHome.Net.Device
         /// Get the version number of the service requested by the caller.
         /// </summary>
         /// <returns>The version number of the service the caller expects.</returns>
-        public unsafe uint Version()
+        public uint Version()
         {
             uint version;
-            DvInvocationGetVersion(iHandle, &version);
+            DvInvocationGetVersion(iHandle, out version);
             return version;
         }
         /// <summary>
         /// Get the network adapter an action was invoked using.
         /// </summary>
         /// <returns>The network adapter used to invoke this action.</returns>
-        public unsafe uint Adapter()
+        public uint Adapter()
         {
             uint adapter;
-            DvInvocationGetAdapter(iHandle, &adapter);
+            DvInvocationGetAdapter(iHandle, out adapter);
             return adapter;
         }
         /// <summary>
         /// Get the prefix to use on any uris to resources offered by the provider.
         /// </summary>
         /// <returns>The prefix to resource uris.</returns>
-        public unsafe string ResourceUriPrefix()
+        public string ResourceUriPrefix()
         {
             IntPtr cPrefix;
             uint len;
-            DvInvocationGetResourceUriPrefix(iHandle, &cPrefix, &len);
+            DvInvocationGetResourceUriPrefix(iHandle, out cPrefix, out len);
             String prefix = InteropUtils.PtrToStringUtf8(cPrefix, len);
             return prefix;
         }
@@ -505,10 +504,10 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aAddress">IPv4 address in network byte order</param>
         /// <param name="aPort">Client's port [1..65535]</param>
-        public unsafe void GetClientEndpoint(out uint aAddress, out uint aPort)
+        public void GetClientEndpoint(out uint aAddress, out uint aPort)
         {
             uint address, port;
-            DvInvocationGetClientEndpoint(iHandle, &address, &port);
+            DvInvocationGetClientEndpoint(iHandle, out address, out port);
             aAddress = address;
             aPort = port;
         }
@@ -526,11 +525,11 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this input argument</param>
         /// <returns>Value of the input argument</returns>
-        public unsafe int ReadInt(String aName)
+        public int ReadInt(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int val;
-            int err = DvInvocationReadInt(iHandle, name, &val);
+            int err = DvInvocationReadInt(iHandle, name, out val);
             Marshal.FreeHGlobal(name);
             CheckError(err);
             return val;
@@ -540,11 +539,11 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this input argument</param>
         /// <returns>Value of the input argument</returns>
-        public unsafe uint ReadUint(String aName)
+        public uint ReadUint(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             uint val;
-            int err = DvInvocationReadUint(iHandle, name, &val);
+            int err = DvInvocationReadUint(iHandle, name, out val);
             Marshal.FreeHGlobal(name);
             CheckError(err);
             return val;
@@ -554,11 +553,11 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this input argument</param>
         /// <returns>Value of the input argument</returns>
-        public unsafe bool ReadBool(String aName)
+        public bool ReadBool(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             uint val;
-            int err = DvInvocationReadBool(iHandle, name, &val);
+            int err = DvInvocationReadBool(iHandle, name, out val);
             Marshal.FreeHGlobal(name);
             CheckError(err);
             return (val != 0);
@@ -568,12 +567,12 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this input argument</param>
         /// <returns>Value of the input argument</returns>
-        public unsafe String ReadString(String aName)
+        public String ReadString(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr ptr;
             uint len;
-            int err = DvInvocationReadStringAsBuffer(iHandle, name, &ptr, &len);
+            int err = DvInvocationReadStringAsBuffer(iHandle, name, out ptr, out len);
             Marshal.FreeHGlobal(name);
             String str = InteropUtils.PtrToStringUtf8(ptr, len);
             OhNetFree(ptr);
@@ -585,12 +584,12 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this input argument</param>
         /// <returns>Value of the input argument</returns>
-        public unsafe byte[] ReadBinary(String aName)
+        public byte[] ReadBinary(String aName)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr data;
             uint len;
-            int err = DvInvocationReadBinary(iHandle, name, &data, &len);
+            int err = DvInvocationReadBinary(iHandle, name, out data, out len);
             Marshal.FreeHGlobal(name);
 
             byte[] bin = new byte[len];
@@ -619,7 +618,7 @@ namespace OpenHome.Net.Device
         /// May be called if WriteStart() or later have been called.</remarks>
         /// <param name="aCode">Error code</param>
         /// <param name="aDescription">Error description</param>
-        public unsafe void ReportError(uint aCode, String aDescription)
+        public void ReportError(uint aCode, String aDescription)
         {
             IntPtr desc = InteropUtils.StringToHGlobalUtf8(aDescription);
             // no point in propogating any error - client code can't cope with error reporting failing
@@ -640,7 +639,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
         /// <param name="aValue">Value of the output argument</param>
-        public unsafe void WriteInt(String aName, int aValue)
+        public void WriteInt(String aName, int aValue)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int err = DvInvocationWriteInt(iHandle, name, aValue);
@@ -652,7 +651,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
         /// <param name="aValue">Value of the output argument</param>
-        public unsafe void WriteUint(String aName, uint aValue)
+        public void WriteUint(String aName, uint aValue)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int err = DvInvocationWriteUint(iHandle, name, aValue);
@@ -664,7 +663,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
         /// <param name="aValue">Value of the output argument</param>
-        public unsafe void WriteBool(String aName, bool aValue)
+        public void WriteBool(String aName, bool aValue)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             uint val = (aValue? 1u : 0u);
@@ -677,7 +676,7 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
         /// <param name="aValue">Value of the output argument</param>
-        public unsafe void WriteString(String aName, String aValue)
+        public void WriteString(String aName, String aValue)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             IntPtr value = InteropUtils.StringToHGlobalUtf8(aValue);
@@ -695,16 +694,15 @@ namespace OpenHome.Net.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
         /// <param name="aData">Value of the output argument</param>
-        public unsafe void WriteBinary(String aName, byte[] aData)
+        public void WriteBinary(String aName, byte[] aData)
         {
             IntPtr name = InteropUtils.StringToHGlobalUtf8(aName);
             int err = DvInvocationWriteBinaryStart(iHandle, name);
             if (err == 0)
             {
-                fixed (byte* data = aData)
-                {
-                    err = DvInvocationWriteBinary(iHandle, data, (uint)aData.Length);
-                }
+                GCHandle h = GCHandle.Alloc(aData, GCHandleType.Pinned);
+                err = DvInvocationWriteBinary(iHandle, h.AddrOfPinnedObject(), (uint)aData.Length);
+                h.Free();
             }
             if (err == 0)
             {
