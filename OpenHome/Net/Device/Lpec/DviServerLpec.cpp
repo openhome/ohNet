@@ -12,6 +12,10 @@
 
 #include <limits.h>
 
+#ifdef _WIN32
+# pragma warning(disable:4702) // don't warn about unreachable code (gcc can't figure out it isn't reachable)
+#endif
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
