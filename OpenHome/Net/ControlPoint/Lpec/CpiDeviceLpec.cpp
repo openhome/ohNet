@@ -89,7 +89,6 @@ void CpiDeviceLpec::LpecThread()
                     LOG2(kLpec, kError, "LPEC: unable to find device ");
                     LOG2(kLpec, kError, iLpecName);
                     LOG2(kLpec, kError, ", exiting thread\n");
-                    AutoMutex a(iLock);
                     if (iStateChanged) {
                         iStateChanged();
                     }
@@ -101,7 +100,6 @@ void CpiDeviceLpec::LpecThread()
                     Brn udn = parser.Remaining();
                     iDevice = new CpiDevice(iCpStack, udn, *this, *this, NULL);
                     iConnected = true;
-                    AutoMutex a(iLock);
                     if (iStateChanged) {
                         iStateChanged();
                     }
@@ -117,7 +115,6 @@ void CpiDeviceLpec::LpecThread()
                 if (name == iLpecName) {
                     iConnected = false;
                     {
-                        AutoMutex a(iLock);
                         if (iStateChanged) {
                             iStateChanged();
                         }
@@ -157,7 +154,6 @@ void CpiDeviceLpec::LogError(const TChar* aError)
     LOG2(kLpec, kError, "LPEC: error %s for device ", aError);
     LOG2(kLpec, kError, iLpecName);
     LOG2(kLpec, kError, ", exiting thread\n");
-    AutoMutex a(iLock);
     if (iStateChanged) {
         iStateChanged();
     }
@@ -165,7 +161,6 @@ void CpiDeviceLpec::LogError(const TChar* aError)
 
 void CpiDeviceLpec::HandleEventedUpdate(const Brx& aUpdate)
 {
-    AutoMutex a(iLock);
     Parser parser(aUpdate);
     Brn lpecId = parser.Next(' ');
     Bws<128> sid(iDevice->Udn());
