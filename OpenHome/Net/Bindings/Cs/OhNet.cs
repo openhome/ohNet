@@ -1060,6 +1060,7 @@ namespace OpenHome.Net.Core
 
         private bool iIsDisposed;
 
+        private InitParams iInitParams;
         private IDisposable iLogOutput;
         private IDisposable iFatalErrorHandler;
         private IDisposable iAsyncBeginHandler;
@@ -1099,13 +1100,14 @@ namespace OpenHome.Net.Core
         /// This must be called before any other library function.</remarks>
         public static Library Create(InitParams aParams)
         {
-            Library instance = new Library();
+            Library instance = new Library(aParams);
             instance.Initialise(aParams);
             return instance;
         }
 
-        private Library()
+        private Library(InitParams aParams)
         {
+            iInitParams = aParams;
         }
 
         /// <summary>
