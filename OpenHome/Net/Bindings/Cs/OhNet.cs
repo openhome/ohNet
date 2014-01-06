@@ -1060,7 +1060,9 @@ namespace OpenHome.Net.Core
 
         private bool iIsDisposed;
 
+#pragma warning disable 414
         private InitParams iInitParams;
+#pragma warning restore 414
         private IDisposable iLogOutput;
         private IDisposable iFatalErrorHandler;
         private IDisposable iAsyncBeginHandler;
