@@ -1229,11 +1229,11 @@ void SuiteUri::Test()
     Bws<128> uriString("testscheme://testhost:123/testpath");
     Bws<32> uriHost("testhost");
 
-    // Host can contain alpha, digit, '-' or '.'
+    // Host can contain alpha, digit, '-' or '.' or '_'
     for(i=0 ; i<128 ; i++) {
         uriString[14] = (TByte)i;
         uriHost[1] = (TByte)i;
-        if (Ascii::IsAlphabetic((TChar)i) || Ascii::IsDigit((TChar)i) || i == '-' || i == '.') {
+        if (Ascii::IsAlphabetic((TChar)i) || Ascii::IsDigit((TChar)i) || i == '-' || i == '.' || i == '_') {
             uri->Replace(uriString);
             TEST(uri->Host() == uriHost);
         }
