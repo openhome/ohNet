@@ -272,7 +272,7 @@ void Uri::ValidateHost()
     TUint i;
     for(i=0 ; i<iHost.Bytes() ; i++) {
         TChar c = iHost[i];
-        if (!(Ascii::IsAlphabetic(c) || Ascii::IsDigit(c) || c == '-' || c == '.')) {
+        if (!(Ascii::IsAlphabetic(c) || Ascii::IsDigit(c) || c == '-' || c == '.' || c == '_')) {
             THROW(UriError);
         }
     }
