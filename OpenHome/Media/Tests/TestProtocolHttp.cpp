@@ -49,7 +49,7 @@ public:
 public:
     TestHttpServer(Environment& aEnv, const TChar* aName, TUint aPort, TIpAddress aInterface);
     ~TestHttpServer();
-    const Uri ServingUri() const;
+    const Uri& ServingUri() const;
 private:
     const Uri* iUri;
 };
@@ -423,7 +423,7 @@ TestHttpServer::~TestHttpServer()
     delete iUri;
 }
 
-const Uri TestHttpServer::ServingUri() const
+const Uri& TestHttpServer::ServingUri() const
 {
     return *iUri;
 }
