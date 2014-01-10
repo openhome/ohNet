@@ -8,6 +8,7 @@
 # source code transparently converted to native line endings
 *.cpp   text
 *.h     text
+*.py	text
 
 # Windows-only files use CR+LF line endings (across all platforms)
 *.bat   eol=crlf

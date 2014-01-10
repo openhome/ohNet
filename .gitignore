@@ -8,3 +8,6 @@ tags
 /.waf-*/
 /.lock-*
 
+# Eclipse project files
+.project
+.pydevproject
