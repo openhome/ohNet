@@ -80,12 +80,13 @@ private:
     Srs<kMaxReadBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
     // Writer and buffer.
-    Sws<kMaxWriteBufBytes>* iWriterBuffer;
     Bwh iBuf;
 protected:
     HttpHeaderRange iHeaderRange;
     // Writer shared by derived classes
     WriterHttpResponse* iWriterResponse;
+    WriterHttpChunked* iWriterChunked;
+    Sws<kMaxWriteBufBytes>* iWriterBuffer;
 };
 
 class TestHttpSessionStreamFull : public TestHttpSession
@@ -131,8 +132,8 @@ class TestHttpSessionStreamLive : public TestHttpSessionStreamFull
 private:
     enum EMode
     {
-        eConnect      = 0,
-        eStream    = 1,
+        eConnect = 0,
+        eStream  = 1,
     };
 public:
     TestHttpSessionStreamLive();
@@ -161,6 +162,24 @@ private:
     EMode iMode;
 };
 
+class TestHttpSessionChunked : public TestHttpSession
+{
+public:
+    static const TUint kDataBytes = 1024 * 1024;
+public:
+    TestHttpSessionChunked();
+private: // from TestHttpSession
+    void Respond();
+private:
+    enum EMode
+    {
+        eConnect = 0,
+        eStream  = 1,
+    };
+    EMode iMode;
+};
+
+
 class SessionFactory
 {
 public:
@@ -171,10 +190,10 @@ public:
         eReconnect        = 2,
         eStreamLive       = 3,
         eLiveReconnect    = 4,
+        eChunked          = 5
     };
 public:
-    SessionFactory();
-    TestHttpSession* Create(ESession aSession);
+    static TestHttpSession* Create(ESession aSession);
 };
 
 
@@ -209,6 +228,16 @@ private:
     TUint iStreamCount;
     TUint iDataTotal;
     IStreamHandler* iStreamHandler;
+};
+
+class TestHttpSupplyChunked : public TestHttpSupplier
+{
+public:
+    TestHttpSupplyChunked();
+public: // from ISupply
+    void OutputData(const Brx& aData);
+private:
+    TUint iExpectedNextByte;
 };
 
 class TestHttpPipelineProvider : public IPipelineIdProvider
@@ -304,6 +333,23 @@ public:
     SuiteHttpLiveReconnect();
 private: // from SuiteHttp
     void Test();
+};
+
+class SuiteHttpChunked : public Suite
+{
+public:
+    SuiteHttpChunked();
+    ~SuiteHttpChunked();
+private: // from Suite
+    void Test();
+private:
+    TestHttpServer* iServer;
+    TestHttpSupplyChunked* iSupply;
+    TestHttpPipelineProvider* iProvider;
+    TestHttpFlushIdProvider* iFlushId;
+    ProtocolManager* iProtocolManager;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
 };
 
 } // namespace Media
@@ -440,7 +486,8 @@ TestHttpSession::TestHttpSession()
     iReaderRequest->AddHeader(iHeaderConnection);
     iReaderRequest->AddHeader(iHeaderRange);
 
-    iWriterBuffer = new Sws<kMaxWriteBufBytes>(*this);
+    iWriterChunked = new WriterHttpChunked(*this);
+    iWriterBuffer = new Sws<kMaxWriteBufBytes>(*iWriterChunked);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 }
 
@@ -451,6 +498,7 @@ TestHttpSession::~TestHttpSession()
     delete iReadBuffer;
     delete iWriterResponse;
     delete iWriterBuffer;
+    delete iWriterChunked;
 }
 
 void TestHttpSession::WaitOnReadRequest()
@@ -465,24 +513,24 @@ void TestHttpSession::WaitOnReadRequest()
 
 void TestHttpSession::Stream(TUint aStartPos, TUint aEndPos)
 {
-        TUint bytesRemaining = aEndPos - aStartPos;
+    TUint bytesRemaining = aEndPos - aStartPos;
 
-        // Loop until we've streamed all bytes.
-        while (bytesRemaining > 0) {
-            // Bytes to transmit.
-            TUint bytes = iBuf.MaxBytes();
-            if (bytesRemaining < bytes) {
-                bytes = bytesRemaining;
-            }
-
-            memset((void*)(iBuf.Ptr()), 0, bytes);
-            iBuf.SetBytes(bytes);   // Buffer of empty bytes.
-            bytesRemaining -= bytes;
-
-            // Write data out.
-            iWriterResponse->Write(iBuf);
+    // Loop until we've streamed all bytes.
+    while (bytesRemaining > 0) {
+        // Bytes to transmit.
+        TUint bytes = iBuf.MaxBytes();
+        if (bytesRemaining < bytes) {
+            bytes = bytesRemaining;
         }
-        iWriterBuffer->WriteFlush();
+
+        memset((void*)(iBuf.Ptr()), 0, bytes);
+        iBuf.SetBytes(bytes);   // Buffer of empty bytes.
+        bytesRemaining -= bytes;
+
+        // Write data out.
+        iWriterResponse->Write(iBuf);
+    }
+    iWriterBuffer->WriteFlush();
 }
 
 TUint TestHttpSession::DataSize() const
@@ -496,10 +544,10 @@ void TestHttpSession::Run()
         WaitOnReadRequest();
         Respond();      // From derived classes.
     }
-    catch (HttpError) {ASSERTS();}
-    catch (ReaderError) {ASSERTS();}
-    catch (WriterError) {ASSERTS();}
-    catch (NetworkError) {ASSERTS();}
+    catch (HttpError&) {ASSERTS();}
+    catch (ReaderError&) {ASSERTS();}
+    catch (WriterError&) {ASSERTS();}
+    catch (NetworkError&) {ASSERTS();}
 }
 
 
@@ -641,10 +689,40 @@ void TestHttpSessionLiveReconnect::Respond()
 }
 
 
-// SessionFactory
+// TestHttpSessionChunked
 
-SessionFactory::SessionFactory()
-{}
+TestHttpSessionChunked::TestHttpSessionChunked()
+    : iMode(eConnect)
+{
+}
+
+void TestHttpSessionChunked::Respond()
+{
+    const HttpStatus* errorStatus = &HttpStatus::kOk;
+    iWriterResponse->WriteStatus(*errorStatus, Http::eHttp11);
+    iWriterResponse->WriteHeader(Http::kHeaderTransferEncoding, Http::kTransferEncodingChunked);
+    iWriterResponse->WriteFlush();
+
+    if (iMode == eConnect) {
+        iMode = eStream;
+        return;
+    }
+
+    iWriterChunked->SetChunked(true);
+    Bws<256> buf;
+    buf.SetBytes(256);
+    for (TUint i=0; i<256; i++) {
+        buf[i] = (TByte)i;
+    }
+    ASSERT(kDataBytes % 256 == 0);
+    for (TUint i=0; i<kDataBytes; i+=256) {
+        iWriterBuffer->Write(buf);
+    }
+    iWriterBuffer->WriteFlush();
+}
+
+
+// SessionFactory
 
 TestHttpSession* SessionFactory::Create(ESession aSession)
 {
@@ -660,6 +738,8 @@ TestHttpSession* SessionFactory::Create(ESession aSession)
         return new TestHttpSessionStreamLive();
     case eLiveReconnect:
         return new TestHttpSessionLiveReconnect();
+    case eChunked:
+        return new TestHttpSessionChunked();
     default:
         ASSERTS();
         return NULL;    // Will never reach here.
@@ -761,6 +841,25 @@ void TestHttpSupplier::OutputQuit()
 }
 
 
+// TestHttpSupplyChunked : public TestHttpSupplier
+
+TestHttpSupplyChunked::TestHttpSupplyChunked()
+    : TestHttpSupplier(TestHttpSessionChunked::kDataBytes)
+    , iExpectedNextByte(0)
+{
+}
+
+void TestHttpSupplyChunked::OutputData(const Brx& aData)
+{
+    TestHttpSupplier::OutputData(aData);
+    const TUint bytes = aData.Bytes();
+    for (TUint i=0; i<bytes; i++) {
+        TEST_QUIETLY(aData[i] == iExpectedNextByte);
+        iExpectedNextByte = (iExpectedNextByte + 1) % 256;
+    }
+}
+
+
 // TestHttpPipelineProvider
 
 TestHttpPipelineProvider::TestHttpPipelineProvider()
@@ -831,8 +930,7 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     TUint dataSize = TestHttpSession::kStreamLen;
 
     // Create a custom HTTP session for testing purposes.
-    SessionFactory factory;
-    iHttpSession = factory.Create(aSession);
+    iHttpSession = SessionFactory::Create(aSession);
     iServer->Add("HTP1", iHttpSession);
 
     // Create our HTTP client.
@@ -853,7 +951,6 @@ SuiteHttp::~SuiteHttp()
     delete iProvider;
     delete iSupply;
     delete iServer;
-    //delete iHttpSession;    // Owned by iHttpSession.
     delete iFlushId;
 }
 
@@ -1009,6 +1106,56 @@ void SuiteHttpLiveReconnect::Test()
 }
 
 
+// SuiteHttpChunked
+
+SuiteHttpChunked::SuiteHttpChunked()
+    : Suite("Chunked http")
+{
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(*gEnv, Net::InitialisationParams::ELoopbackUse, "SuiteHttpChunked");
+    TIpAddress addr = (*ifs)[0]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        (*ifs)[i]->RemoveRef("SuiteHttpChunked");
+    }
+    delete ifs;
+
+    iServer = new TestHttpServer(*gEnv, "HSV1", 0, addr);
+    TestHttpSession* session = SessionFactory::Create(SessionFactory::eChunked);
+    iServer->Add("HTP1", session);
+
+    iSupply = new TestHttpSupplyChunked();
+    iProvider = new TestHttpPipelineProvider();
+    iFlushId = new TestHttpFlushIdProvider();
+
+    iProtocolManager = new ProtocolManager(*iSupply, *iProvider, *iFlushId);
+    iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv));
+
+    iTrackFactory= new TrackFactory(iInfoAggregator, 1);
+}
+
+SuiteHttpChunked::~SuiteHttpChunked()
+{
+    delete iTrackFactory;
+    delete iProtocolManager;
+    delete iProvider;
+    delete iSupply;
+    delete iServer;
+    delete iFlushId;
+}
+
+void SuiteHttpChunked::Test()
+{
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    const TBool err = iProtocolManager->DoStream(*track, Brx::Empty());
+    track->RemoveRef();
+    TEST(!err);
+    TEST(iSupply->TrackCount() == 1);
+    TEST(iSupply->StreamCount() == 1);
+    TEST(iSupply->Live());
+    TEST(iSupply->DataTotal() == TestHttpSessionChunked::kDataBytes);
+}
+
+
+
 void TestProtocolHttp()
 {
     Runner runner("HTTP tests\n");
@@ -1017,5 +1164,6 @@ void TestProtocolHttp()
     runner.Add(new SuiteHttpReconnect());
     runner.Add(new SuiteHttpStreamLive());
     runner.Add(new SuiteHttpLiveReconnect());
+    runner.Add(new SuiteHttpChunked());
     runner.Run();
 }
