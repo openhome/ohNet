@@ -91,5 +91,13 @@
         "version": "0.0.8",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}"
+    },
+    {
+        "name": "FunctionalTest",
+        "type": "openhome",
+        "version": "0.0.154",
+        "platform-specific": false,
+        "remote-archive-path": "http://www.openhome.org/releases/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
+        "dest": "dependencies/AnyPlatform/FunctionalTest"
     }
 ]
