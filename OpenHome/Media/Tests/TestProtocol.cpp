@@ -124,6 +124,7 @@ int TestProtocol::Run()
     Log::Print("n: Toggle between start/stop simulating network starvation\n");
     Log::Print("s: Stop (only valid when paused)\n");
     Log::Print("q: Quit\n");
+    Log::Print("e: Emergency stop\n");
     Log::Print("\n");
     do {
     	int key = mygetch();
@@ -154,6 +155,11 @@ int TestProtocol::Run()
             }
             break;
         case 'q':
+            quit = true;
+            break;
+        case 'e':
+            Log::Print("Calling PowerDown() on IPowerManager\n");
+            iPowerManager.PowerDown();
             quit = true;
             break;
         case '+':

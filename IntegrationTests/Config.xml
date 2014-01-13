@@ -1,0 +1,14 @@
+<configuration>
+
+    <computer name="PC887">
+        <network>192.168.1.3</network>
+        <!-- <network>10.15.1.103</network> -->
+        <!-- <network>10.2.11.71</network> -->
+    </computer>
+    
+    <computer name="pc707">
+        <network>10.15.1.102</network>
+    </computer>
+        
+</configuration>
+
