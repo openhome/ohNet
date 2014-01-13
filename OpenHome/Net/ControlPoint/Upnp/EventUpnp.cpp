@@ -127,7 +127,7 @@ void EventSessionUpnp::Run()
         if (subscription != NULL) {
             Bwh entity;
             if (iHeaderTransferEncoding.IsChunked()) {
-                ReaderHttpChunked dechunker(*iReadBuffer);
+                ReaderHttpChunkedDynamic dechunker(*iReadBuffer);
                 dechunker.Read();
                 dechunker.TransferTo(entity);
             }

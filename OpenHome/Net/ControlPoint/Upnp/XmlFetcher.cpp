@@ -179,7 +179,7 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
     }
 
     if (headerTransferEncoding.IsChunked()) {
-        ReaderHttpChunked dechunker(readBuffer);
+        ReaderHttpChunkedDynamic dechunker(readBuffer);
         dechunker.Read();
         dechunker.TransferTo(iXml);
     }

@@ -938,14 +938,14 @@ EndpointHttp::EndpointHttp(const Uri& aUri)
     SetPort(aUri.Port() == -1 ? 80 : aUri.Port());
 }
 
-// ReaderHttpChunked
+// ReaderHttpChunkedDynamic
 
-ReaderHttpChunked::ReaderHttpChunked(IReader& aReader)
+ReaderHttpChunkedDynamic::ReaderHttpChunkedDynamic(IReader& aReader)
     : iReader(aReader)
 {
 }
 
-void ReaderHttpChunked::Read()
+void ReaderHttpChunkedDynamic::Read()
 {
     for (;;) {
         Brn chunkSizeBuf = iReader.ReadUntil(Ascii::kLf);
@@ -973,7 +973,7 @@ void ReaderHttpChunked::Read()
     }
 }
 
-void ReaderHttpChunked::TransferTo(Bwh& aBuf)
+void ReaderHttpChunkedDynamic::TransferTo(Bwh& aBuf)
 {
     iEntity.TransferTo(aBuf);
 }

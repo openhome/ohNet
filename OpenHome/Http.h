@@ -1,7 +1,6 @@
 #ifndef HEADER_HTTP_HTTP
 #define HEADER_HTTP_HTTP
 
-#include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Stream.h>
@@ -459,14 +458,14 @@ public:
     EndpointHttp(const Uri& aUri);
 };
 
-class ReaderHttpChunked
+class ReaderHttpChunkedDynamic // deprecated
 {
 public:
-    ReaderHttpChunked(IReader& aReader); // IReader must allow reads at least 4k
+    ReaderHttpChunkedDynamic(IReader& aReader); // IReader must allow reads at least 4k
     void Read();
     void TransferTo(Bwh& aBuf);
 private:
-    ReaderHttpChunked& operator=(const ReaderHttpChunked&);
+    ReaderHttpChunkedDynamic& operator=(const ReaderHttpChunkedDynamic&);
 private:
     IReader& iReader;
     Bwh iEntity;
