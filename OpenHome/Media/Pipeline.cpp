@@ -88,7 +88,8 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerSplitter, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
-                                               kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration);
+                                               kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration,
+                                               iClockPuller.StarvationMonitorHistory());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iMsgFactory, *iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");

@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -10,10 +11,11 @@ using namespace OpenHome::Media;
 // StarvationMonitor
 
 StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
+                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize, IClockPuller& aClockPuller)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iClockPuller(aClockPuller)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iGorgeSize(aGorgeSize)
@@ -25,8 +27,6 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
-    , iHistoryCount(0)
-    , iHistoryNextIndex(0)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
@@ -121,13 +121,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     }
     iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
     if (iJiffiesUntilNextHistoryPoint == 0) {
-        iHistory[iHistoryNextIndex++] = Jiffies();
-        if (iHistoryNextIndex == kMaxUtilisationSamplePoints) {
-            iHistoryNextIndex = 0;
-        }
-        if (iHistoryCount < kMaxUtilisationSamplePoints) {
-            iHistoryCount++;
-        }
+        iClockPuller.NotifySize(Jiffies());
         iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     }
 

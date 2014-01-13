@@ -25,12 +25,14 @@ Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast s
 - On exit from buffering mode, ramps up iff ramped down before buffering.
 */
     
+class IClockPuller;
+
 class StarvationMonitor : private MsgQueueFlushable, public IPipelineElementUpstream
 {
     friend class SuiteStarvationMonitor;
 public:
     StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                      TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize);
+                      TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize, IClockPuller& aClockPuller);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -60,9 +62,11 @@ private: // test helpers
     TBool PullWouldBlock() const;
 private:
     static const TUint kMaxSizeSilence = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kJiffiesPerSecond;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
+    IClockPuller& iClockPuller;
     ThreadFunctor* iThread;
     TUint iNormalMax;
     TUint iStarvationThreshold;
@@ -78,12 +82,6 @@ private:
     TBool iPlannedHalt;
     TBool iHaltDelivered;
     TBool iExit;
-
-    static const TUint kMaxUtilisationSamplePoints = 20;
-    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kJiffiesPerSecond;
-    TUint64 iHistory[kMaxUtilisationSamplePoints]; // past avg starvation buffer sizes
-    TUint iHistoryCount;
-    TUint iHistoryNextIndex;
     TUint64 iJiffiesUntilNextHistoryPoint;
 };
 

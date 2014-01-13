@@ -1,6 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/ProcessorPcmUtils.h>
@@ -15,7 +16,8 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, private IMsgProcessor, private IStarvationMonitorObserver
+class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, private IMsgProcessor,
+                                             private IStarvationMonitorObserver, private IClockPuller
 {
     static const TUint kDecodedAudioCount = 1536;
     static const TUint kMsgAudioPcmCount  = 2048;
@@ -48,6 +50,9 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IStarvationMonitorObserver
     void NotifyStarvationMonitorBuffering(TBool aBuffering);
+private: // from IClockPuller
+    void NotifySize(TUint aJiffies);
+    void Stop();
 private:
     enum EMsgType
     {
@@ -105,7 +110,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iBuffering(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize);
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize, *this);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()
@@ -416,6 +421,14 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgQuit* aMsg)
 void SuiteStarvationMonitor::NotifyStarvationMonitorBuffering(TBool aBuffering)
 {
     iBuffering = aBuffering;
+}
+
+void SuiteStarvationMonitor::NotifySize(TUint /*aJiffies*/)
+{
+}
+
+void SuiteStarvationMonitor::Stop()
+{
 }
 
 
