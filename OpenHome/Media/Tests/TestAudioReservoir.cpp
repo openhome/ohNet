@@ -5,6 +5,7 @@
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 #include <string.h>
 #include <vector>
@@ -16,7 +17,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteAudioReservoir : public Suite, private IMsgProcessor
+class SuiteAudioReservoir : public Suite, private IMsgProcessor, private IClockPuller
 {
     static const TUint kDecodedAudioCount = 512;
     static const TUint kMsgAudioPcmCount  = 512;
@@ -42,6 +43,9 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IClockPuller
+    void NotifySize(TUint aJiffies);
+    void Stop();
 private:
     enum EMsgType
     {
@@ -91,6 +95,8 @@ class SuiteReservoirHistory : public Suite, private IMsgProcessor
     static const TUint kNumChannels = 2;
     static const TUint kBitDepth = 16;
     static const TUint kReservoirSize = Jiffies::kJiffiesPerMs * 1000;
+    static const TUint kMaxHistorySamples = 10;
+    static const TUint kTotalHistoryUpdates = kMaxHistorySamples * 2;
 public:
     SuiteReservoirHistory();
     ~SuiteReservoirHistory();
@@ -98,6 +104,7 @@ private: // from Suite
     void Test();
 private:
     void PullerThread();
+    void HistoryPointAdded();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -115,8 +122,10 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     DecodedAudioReservoir* iReservoir;
     ThreadFunctor* iThread;
-    TUint64 iJiffiesHistoryFull;
     TUint64 iDequeuedJiffies;
+    UtilisationHistory* iHistory;
+    TUint iHistoryPointCount;
+    TBool iStopAudioGeneration;
     TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
@@ -135,7 +144,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize, *this    );
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
@@ -389,8 +398,16 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgFlush* aMsg)
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
 {
-    iLastMsg = EMsgQuit;
+   iLastMsg = EMsgQuit;
     return aMsg;
+}
+
+void SuiteAudioReservoir::NotifySize(TUint /*aJiffies*/)
+{
+}
+
+void SuiteAudioReservoir::Stop()
+{
 }
 
 
@@ -399,16 +416,19 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
 SuiteReservoirHistory::SuiteReservoirHistory()
     : Suite("DecodedReservoir History")
     , iDequeuedJiffies(0)
+    , iHistoryPointCount(0)
+    , iStopAudioGeneration(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize);
+    iHistory = new UtilisationHistory(kMaxHistorySamples, MakeFunctor(*this, &SuiteReservoirHistory::HistoryPointAdded));
+    iReservoir = new DecodedAudioReservoir(kReservoirSize, *iHistory);
     memset(iBuf, 0xff, sizeof(iBuf));
-    iJiffiesHistoryFull = iReservoir->kUtilisationSamplePeriodJiffies * iReservoir->kMaxUtilisationSamplePoints;
 }
 
 SuiteReservoirHistory::~SuiteReservoirHistory()
 {
     delete iReservoir;
+    delete iHistory;
     delete iMsgFactory;
 }
 
@@ -420,7 +440,7 @@ void SuiteReservoirHistory::Test()
     TUint pcmMsgs = kPcmMsgCount;
     TUint64 trackOffset = 0;
     Brn audioBuf(iBuf, sizeof(iBuf));
-    while (trackOffset < iJiffiesHistoryFull) {
+    while (!iStopAudioGeneration) {
         MsgAudio* msg;
         if (pcmMsgs == 0) {
             msg = iMsgFactory->CreateMsgSilence(400 * Jiffies::kJiffiesPerMs);
@@ -438,27 +458,36 @@ void SuiteReservoirHistory::Test()
 
 void SuiteReservoirHistory::PullerThread()
 {
-    for (TUint i=0; i<iReservoir->kMaxUtilisationSamplePoints; i++) {
-        TEST(iReservoir->iHistory[i] == 0);
-    }
     Thread::Sleep(200); /* We test below that history sizes are non-zero.  Give pushing
                            thread a chance to fill the reservoir to limit the chances
                            of it always being close to empty */
-    while (iDequeuedJiffies < iJiffiesHistoryFull) {
+    while (!iStopAudioGeneration) {
         Msg* msg = iReservoir->Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
         Thread::Sleep(1);
     }
 
-    TEST(iReservoir->iHistoryCount == iReservoir->kMaxUtilisationSamplePoints);
-    for (TUint i=0; i<iReservoir->iHistoryCount; i++) {
-        TEST(iReservoir->iHistory[i] != 0);
-    }
-
     // consume any remaining msgs in case pushing thread is blocked
     while (!iReservoir->IsEmpty()) {
         iReservoir->Pull()->RemoveRef();
+    }
+}
+
+void SuiteReservoirHistory::HistoryPointAdded()
+{
+    iHistoryPointCount++;
+    const std::vector<TUint64>& history = iHistory->History();
+    TEST(history.capacity() == kMaxHistorySamples);
+    if (iHistoryPointCount > kMaxHistorySamples) {
+        TEST(iHistory->StartIndex() == iHistoryPointCount % kMaxHistorySamples);
+    }
+    for (TUint i=0; i<history.size(); i++) {
+        TEST(history[i] != 0);
+        TEST(history[i] < 0xffffffffu); // arbitrarily chosen value.  2^32 or ~70s of audio
+    }
+    if (iHistoryPointCount == kTotalHistoryUpdates) {
+        iStopAudioGeneration = true;
     }
 }
 

@@ -231,6 +231,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
+                'OpenHome/Media/ClockPuller.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Mpeg4.cpp',

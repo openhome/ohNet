@@ -1,23 +1,20 @@
 #include <OpenHome/Media/DecodedAudioReservoir.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // DecodedAudioReservoir
 
-DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize)
+DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aClockPuller)
     : AudioReservoir(aMaxSize)
+    , iClockPuller(aClockPuller)
     , iLock("DCAR")
-    , iHistoryCount(0)
-    , iHistoryNextIndex(0)
-    , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
+    , iJiffiesUntilNextUsageReport(kUtilisationSamplePeriodJiffies)
     , iThreadExcludeBlock(NULL)
 {
-    for (TUint i=0; i<kMaxUtilisationSamplePoints; i++) {
-        iHistory[i] = 0;
-    }
 }
 
 TUint DecodedAudioReservoir::Size() const
@@ -57,9 +54,9 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgSilence* aMsg)
 
 Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
 {
-    // FIXME - should maybe take dfferent action if we're flushing (currently held as private state in parent)
-    if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
-        MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
+    // FIXME - should maybe take different action if we're flushing (currently held as private state in parent)
+    if (iJiffiesUntilNextUsageReport < aMsg->Jiffies()) {
+        MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextUsageReport));
         /* calling EnqueueAtHead risks blocking the pulling thread (if the pushing thread
            has already been scheduled and filled the gap pulling this msg created).
            Avoid this by disabling calls to BlockIfFull() around the EnqueueAtHead() call */
@@ -71,16 +68,10 @@ Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
         iThreadExcludeBlock = NULL;
         iLock.Signal();
     }
-    iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
-    if (iJiffiesUntilNextHistoryPoint == 0) {
-        iHistory[iHistoryNextIndex++] = Jiffies();
-        if (iHistoryNextIndex == kMaxUtilisationSamplePoints) {
-            iHistoryNextIndex = 0;
-        }
-        if (iHistoryCount < kMaxUtilisationSamplePoints) {
-            iHistoryCount++;
-        }
-        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    iJiffiesUntilNextUsageReport -= aMsg->Jiffies();
+    if (iJiffiesUntilNextUsageReport == 0) {
+        iClockPuller.NotifySize(Jiffies());
+        iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     }
 
     return aMsg;

@@ -64,7 +64,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize, iClockPuller.DecodedReservoirHistory());
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
