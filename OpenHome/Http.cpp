@@ -6,6 +6,8 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Uri.h>
 
+#include <ctype.h>
+
 using namespace OpenHome;
 
 // Http Methods
@@ -976,6 +978,137 @@ void ReaderHttpChunkedDynamic::Read()
 void ReaderHttpChunkedDynamic::TransferTo(Bwh& aBuf)
 {
     iEntity.TransferTo(aBuf);
+}
+
+// ReaderHttpChunked
+
+ReaderHttpChunked::ReaderHttpChunked(Srx& aReader)
+    : iReader(aReader)
+    , iChunkBytesRemaining(0)
+    , iChunked(false)
+{
+}
+
+void ReaderHttpChunked::SetChunked(TBool aChunked)
+{
+    iChunked = aChunked;
+    iDechunkBuf.SetBytes(0);
+    iChunkBytesRemaining = 0;
+}
+
+Brn ReaderHttpChunked::Read(TUint aBytes)
+{
+    if (!iChunked) {
+        return iReader.Read(aBytes);
+    }
+
+    iOutputBuf.SetBytes(0);
+    TUint remaining = aBytes;
+    while (remaining > 0) {
+        Brn buf = iReader.Read(remaining);
+        Dechunk(buf);
+        remaining -= iDechunkBuf.Bytes();
+        iOutputBuf.Append(iDechunkBuf);
+        while (buf.Bytes() > 0) {
+            Dechunk(buf);
+            remaining -= iDechunkBuf.Bytes();
+            iOutputBuf.Append(iDechunkBuf);
+        }
+    }
+    return Brn(iOutputBuf);
+}
+
+Brn ReaderHttpChunked::ReadUntil(TByte aSeparator)
+{
+    ASSERT(!isalpha(aSeparator) && !isdigit(aSeparator)); // don't support scanning for characters which may appear in chunk size
+    Brn buf = iReader.ReadUntil(aSeparator);
+    return Dechunk(buf);
+}
+
+void ReaderHttpChunked::ReadFlush()
+{
+    iReader.ReadFlush();
+    iDechunkBuf.SetBytes(0);
+    iChunkBytesRemaining = 0;
+}
+
+void ReaderHttpChunked::ReadInterrupt()
+{
+    iReader.ReadInterrupt();
+}
+
+Brn ReaderHttpChunked::ReadRemaining()
+{
+    Brn remaining = iReader.Snaffle();
+    return Dechunk(remaining);
+}
+
+Brn ReaderHttpChunked::Dechunk(Brn& aBuf)
+{
+    if (!iChunked) {
+        return Brn(aBuf);
+    }
+    iDechunkBuf.SetBytes(0);
+    while (aBuf.Bytes() > 0) {
+        if (iChunkBytesRemaining == 0) {
+            ReadNextChunkSize(aBuf);
+            if (iChunkBytesRemaining == 0) {
+                return Brn(iDechunkBuf);
+            }
+        }
+
+        TUint bytes = std::min(iDechunkBuf.MaxBytes()-iDechunkBuf.Bytes(), aBuf.Bytes());
+        bytes = std::min(bytes, iChunkBytesRemaining);
+        iChunkBytesRemaining -= bytes;
+        iDechunkBuf.Append(aBuf.Ptr(), bytes);
+        aBuf.Set(aBuf.Split(bytes));
+    }
+    return Brn(iDechunkBuf);
+}
+
+void ReaderHttpChunked::ReadNextChunkSize(Brn& aBuf)
+{
+    for (;;) {
+        Bws<kChunkSizeBufBytes> chunkSizeBuf;
+        TBool haveLine = false;
+        if (aBuf.Bytes() > 0) {
+            const TUint index=Ascii::IndexOf(aBuf, Ascii::kLf);
+            haveLine = (index != aBuf.Bytes());
+            if (haveLine) {
+                if (index+1 > chunkSizeBuf.MaxBytes()) {
+                    THROW(ReaderError);
+                }
+                chunkSizeBuf.Append(aBuf.Ptr(), index+1);
+                aBuf.Set(aBuf.Split(index+1));
+            }
+            else {
+                if (aBuf.Bytes() > chunkSizeBuf.MaxBytes()) {
+                    THROW(ReaderError);
+                }
+                chunkSizeBuf.Append(aBuf);
+                aBuf.Set(aBuf.Ptr(), 0);
+            }
+        }
+        if (!haveLine) {
+            Brn b = iReader.ReadUntil(Ascii::kLf);
+            if (b.Bytes() > chunkSizeBuf.MaxBytes() - chunkSizeBuf.Bytes()) {
+                THROW(ReaderError);
+            }
+            chunkSizeBuf.Append(b);
+        }
+        Parser parser(chunkSizeBuf);
+        Brn trimmed = parser.Next(Ascii::kCr);
+        if (trimmed.Bytes() == 0) {
+            continue;
+        }
+        try {
+            iChunkBytesRemaining = Ascii::UintHex(trimmed);
+            return;
+        }
+        catch (AsciiError&) {
+            THROW(ReaderError);
+        }
+    }
 }
 
 // WriterHttpChunked

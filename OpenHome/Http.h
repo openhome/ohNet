@@ -471,6 +471,30 @@ private:
     Bwh iEntity;
 };
 
+class ReaderHttpChunked : public IReader
+{
+    static const TUint kChunkSizeBufBytes = 10;
+    static const TUint kBufSizeBytes = (10 * 1024) + kChunkSizeBufBytes; // FIXME - allow user-definable size
+public:
+    ReaderHttpChunked(Srx& aReader);
+    void SetChunked(TBool aChunked);
+    Brn ReadRemaining();
+public: // from IReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
+private:
+    Brn Dechunk(Brn& aBuf);
+    void ReadNextChunkSize(Brn& aBuf);
+private:
+    Srx& iReader;
+    Bws<kBufSizeBytes> iDechunkBuf;
+    Bws<kBufSizeBytes> iOutputBuf;
+    TUint iChunkBytesRemaining;
+    TBool iChunked;
+};
+
 class WriterHttpChunked : public IWriter
 {
     static const TUint kMaxBufferBytes = 6000;
