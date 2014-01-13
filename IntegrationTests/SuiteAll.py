@@ -16,18 +16,16 @@ import BaseSuite as Suite
 import os
 import sys
  
-logDir = None
-dut1   = '[' + os.environ['COMPUTERNAME'] + '-1]:SoftPlayer'
-dut2   = '[' + os.environ['COMPUTERNAME'] + '-2]:SoftPlayer'
+logDir  = None
+dut1    = '[' + os.environ['COMPUTERNAME'] + '-1]:SoftPlayer'
+dut2    = '[' + os.environ['COMPUTERNAME'] + '-2]:SoftPlayer'
+dut3    = '[' + os.environ['COMPUTERNAME'] + '-3]:SoftPlayer'
+dut4    = '[' + os.environ['COMPUTERNAME'] + '-4]:SoftPlayer'
 
-if 'twonky' in server.lower():    
-    avtList  = 'Music~Playlists~Encodings-ALLCodecs'
-    medList  = 'Music~Playlists~5TrackAlbums'
-    adList   = 'Music~Playlists~Mixed-ALLCodecs'
-else:
-    avtList  = 'Playlists  ~Encodings-ALLCodecs'
-    medList  = 'Playlists  ~5TrackAlbums'
-    adList   = 'Playlists  ~Mixed-ALLCodecs'
+dacpServer = os.environ['COMPUTERNAME']
+avtList = 'Playlists  ~Encodings-ALLCodecs'
+medList = 'Playlists  ~5TrackAlbums'
+adList  = 'Playlists  ~Mixed-ALLCodecs'
 
 
 try:
@@ -66,8 +64,8 @@ tests = [
 #    [ 'TestRadioPlayChannels',       'dut1', 'dut2',       'klueso',    12,          'on',        'unicast'                                             ],
     
     # Airplay
-#    [ 'TestAirplayFunctions',        'dut1', 'PC887',      'fails',     'file'                                                                          ],
-#    [ 'TestAirplayDropout',          'dut1', 'PC887',      apTrack,     '3600'                                                                          ],       
+#    [ 'TestAirplayFunctions',        'dut1', 'dacpServer', 'fails',     'file'                                                                          ],
+#    [ 'TestAirplayDropout',          'dut1', 'dacpServer', apTrack,     '3600'                                                                          ],       
 
     # Songcast
 #    [ 'TestSongcastPlayback',        'dut1', 'dut2',       'dut3',      'dut4',      'unicast',   'all',      12345,       1,           'fails', 'file' ],
