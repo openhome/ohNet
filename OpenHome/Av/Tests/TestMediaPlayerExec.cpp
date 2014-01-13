@@ -26,7 +26,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
     parser.AddOption(&optionAdapter);
-    OptionString optionTuneIn("-n", "--tunein", Brn("linnproducts"), "TuneIn user name");
+    OptionString optionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name");
     parser.AddOption(&optionTuneIn);
 
     if (!parser.Parse(aArgc, aArgv)) {
