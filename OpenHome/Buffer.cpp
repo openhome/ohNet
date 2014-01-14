@@ -116,6 +116,7 @@ void Brh::Set(const TByte* aPtr, TUint aBytes)
 {
     free((void*)iPtr);
     iPtr = (TByte*)malloc(aBytes);
+    ASSERT(iPtr != NULL);
     memcpy((void*)iPtr, aPtr, aBytes);
     iBytes = aBytes;
 }
@@ -159,6 +160,7 @@ void Brhz::Set(const TByte* aPtr, TUint aBytes)
     const TByte kZero = 0;
     free((void*)iPtr);
     iPtr = (TByte*)malloc(aBytes + 1);
+    ASSERT(iPtr != NULL);
     memcpy((void*)iPtr, aPtr, aBytes);
     memcpy((void*)(iPtr + aBytes), &kZero, 1);
     iBytes = aBytes;
@@ -428,11 +430,13 @@ Bwh::Bwh() : Bwx(0,0), iPtr(0)
 Bwh::Bwh(TUint aMaxBytes) : Bwx(0, aMaxBytes)
 {
     iPtr = (TByte*)malloc(aMaxBytes);
+    ASSERT(iPtr != NULL);
 }
 
 Bwh::Bwh(TUint aBytes, TUint aMaxBytes) : Bwx(aBytes, aMaxBytes)
 {
     iPtr = (TByte*)malloc(aMaxBytes);
+    ASSERT(iPtr != NULL);
 }
 
 Bwh::~Bwh()
@@ -448,25 +452,29 @@ const TByte* Bwh::Ptr() const
 
 Bwh::Bwh(const TChar* aStr) : Bwx(0, OhNetStrlen(aStr))
 {
-    iPtr = (TByte*)malloc(OhNetStrlen(aStr));
+    iPtr = (TByte*)malloc(iMaxBytes);
+    ASSERT(iPtr != NULL);
     Replace(aStr);
 }
 
 Bwh::Bwh(const TByte* aPtr, TUint aBytes) : Bwx(aBytes, aBytes)
 {
     iPtr = (TByte*)malloc(aBytes);
+    ASSERT(iPtr != NULL);
     Replace(aPtr, aBytes);
 }
 
 Bwh::Bwh(const Brx& aBrx) : Bwx(aBrx.Bytes(), aBrx.Bytes())
 {
     iPtr = (TByte*)malloc(aBrx.Bytes());
+    ASSERT(iPtr != NULL);
     Replace(aBrx);
 }
 
 Bwh::Bwh(const Bwh& aBuf) : Bwx(aBuf.Bytes(), aBuf.Bytes())
 {
     iPtr = (TByte*)malloc(aBuf.Bytes());
+    ASSERT(iPtr != NULL);
     Replace(aBuf);
 }
 
@@ -479,6 +487,7 @@ void Bwh::Grow(TUint aMaxBytes)
         if(aMaxBytes > iMaxBytes) {
             const TByte* oldPtr = iPtr;
             iPtr = (TByte*)malloc(aMaxBytes);
+            ASSERT(iPtr != NULL);
             Replace(oldPtr, Bytes());
             free((void*)oldPtr);
             iMaxBytes = aMaxBytes;
@@ -486,6 +495,7 @@ void Bwh::Grow(TUint aMaxBytes)
     }
     else {
         iPtr = (TByte*)malloc(aMaxBytes);
+        ASSERT(iPtr != NULL);
         iMaxBytes = aMaxBytes;
     }
 }
@@ -503,6 +513,7 @@ void Bwh::TransferTo(Brhz& aBrhz)
 {
     free((void*)aBrhz.iPtr);
     aBrhz.iPtr = (TByte*)malloc(iBytes+1);
+    ASSERT(aBrhz.iPtr != NULL);
     (void)memcpy((void*)aBrhz.iPtr, iPtr, iBytes);
     const_cast<TByte*>(aBrhz.iPtr)[iBytes] = '\0';
     aBrhz.iBytes = iBytes;
