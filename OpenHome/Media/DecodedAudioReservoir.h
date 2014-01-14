@@ -19,6 +19,7 @@ public:
 private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgAudioPcm* aMsg);
     void ProcessMsgIn(MsgSilence* aMsg);
+    Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
 private: // from AudioReservoir
@@ -32,6 +33,7 @@ private:
     Mutex iLock;
     TUint64 iJiffiesUntilNextUsageReport;
     Thread* iThreadExcludeBlock;
+    TBool iTrackIsPullable;
 };
 
 } // namespace Media

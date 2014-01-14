@@ -54,6 +54,7 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
+    Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
@@ -82,6 +83,7 @@ private:
     TBool iPlannedHalt;
     TBool iHaltDelivered;
     TBool iExit;
+    TBool iTrackIsPullable;
     TUint64 iJiffiesUntilNextHistoryPoint;
 };
 

@@ -14,6 +14,7 @@ DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aCloc
     , iLock("DCAR")
     , iJiffiesUntilNextUsageReport(kUtilisationSamplePeriodJiffies)
     , iThreadExcludeBlock(NULL)
+    , iTrackIsPullable(false)
 {
 }
 
@@ -42,6 +43,16 @@ void DecodedAudioReservoir::DoProcessMsgIn()
     }
 }
 
+Msg* DecodedAudioReservoir::ProcessMsgOut(MsgTrack* aMsg)
+{
+    iTrackIsPullable = aMsg->Track().Pullable();
+    if (iTrackIsPullable) {
+        iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
+    }
+    iClockPuller.Stop();
+    return aMsg;
+}
+
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return DoProcessMsgOut(aMsg);
@@ -54,6 +65,9 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgSilence* aMsg)
 
 Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
 {
+    if (!iTrackIsPullable) {
+        return aMsg;
+    }
     // FIXME - should maybe take different action if we're flushing (currently held as private state in parent)
     if (iJiffiesUntilNextUsageReport < aMsg->Jiffies()) {
         MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextUsageReport));

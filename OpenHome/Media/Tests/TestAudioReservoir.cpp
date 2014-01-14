@@ -119,6 +119,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     MsgFactory* iMsgFactory;
+    TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
     DecodedAudioReservoir* iReservoir;
     ThreadFunctor* iThread;
@@ -420,6 +421,7 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iStopAudioGeneration(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iHistory = new UtilisationHistory(kMaxHistorySamples, MakeFunctor(*this, &SuiteReservoirHistory::HistoryPointAdded));
     iReservoir = new DecodedAudioReservoir(kReservoirSize, *iHistory);
     memset(iBuf, 0xff, sizeof(iBuf));
@@ -430,6 +432,7 @@ SuiteReservoirHistory::~SuiteReservoirHistory()
     delete iReservoir;
     delete iHistory;
     delete iMsgFactory;
+    delete iTrackFactory;
 }
 
 void SuiteReservoirHistory::Test()
@@ -437,21 +440,25 @@ void SuiteReservoirHistory::Test()
     static const TUint kPcmMsgCount = 15;
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, true);
+    MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
+    track->RemoveRef();
+    iReservoir->Push(msgTrack);
     TUint pcmMsgs = kPcmMsgCount;
     TUint64 trackOffset = 0;
     Brn audioBuf(iBuf, sizeof(iBuf));
     while (!iStopAudioGeneration) {
-        MsgAudio* msg;
+        MsgAudio* audio;
         if (pcmMsgs == 0) {
-            msg = iMsgFactory->CreateMsgSilence(400 * Jiffies::kJiffiesPerMs);
+            audio = iMsgFactory->CreateMsgSilence(400 * Jiffies::kJiffiesPerMs);
             pcmMsgs = kPcmMsgCount;
         }
         else {
-            msg = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, trackOffset);
+            audio = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, trackOffset);
             pcmMsgs--;
         }
-        trackOffset += msg->Jiffies();
-        iReservoir->Push(msg);
+        trackOffset += audio->Jiffies();
+        iReservoir->Push(audio);
     }
     delete iThread;
 }
@@ -521,10 +528,9 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgTrack* /*aMsg*/)
+Msg* SuiteReservoirHistory::ProcessMsg(MsgTrack* aMsg)
 {
-    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return aMsg;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgEncodedStream* /*aMsg*/)

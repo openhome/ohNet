@@ -27,6 +27,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
+    , iTrackIsPullable(false)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
@@ -115,14 +116,16 @@ Msg* StarvationMonitor::Pull()
 
 MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 {
-    if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
-        MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
-        EnqueueAtHead(remaining);
-    }
-    iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
-    if (iJiffiesUntilNextHistoryPoint == 0) {
-        iClockPuller.NotifySize(Jiffies());
-        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    if (iTrackIsPullable) {
+        if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
+            MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
+            EnqueueAtHead(remaining);
+        }
+        iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
+        if (iJiffiesUntilNextHistoryPoint == 0) {
+            iClockPuller.NotifySize(Jiffies());
+            iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+        }
     }
 
     iLock.Wait();
@@ -203,6 +206,16 @@ void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
     iLock.Wait();
     iExit = true;
     iLock.Signal();
+}
+
+Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
+{
+    iTrackIsPullable = aMsg->Track().Pullable();
+    if (iTrackIsPullable) {
+        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    }
+    iClockPuller.Stop();
+    return aMsg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)
