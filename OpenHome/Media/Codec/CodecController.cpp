@@ -114,15 +114,16 @@ void CodecController::CodecThread()
 {
     iStreamStarted = false;
     iQuit = false;
+    iExpectedFlushId = MsgFlush::kIdInvalid;
+    iConsumeExpectedFlush = false;
     while (!iQuit) {
         try {
             iLock.Wait();
-            iQueueTrackData = iStreamEnded = iSeekable = iLive = iSeek = iConsumeExpectedFlush = false;
+            iQueueTrackData = iStreamEnded = iSeekable = iLive = iSeek = false;
             iActiveCodec = NULL;
             iStreamHandler = NULL;
             iStreamId = iSampleRate = iSeekSeconds = 0;
             iStreamLength = iStreamPos = 0LL;
-            iExpectedFlushId = MsgFlush::kIdInvalid;
             ReleaseAudioEncoded();
             iLock.Signal();
 
