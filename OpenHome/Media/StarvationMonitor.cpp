@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -10,10 +11,11 @@ using namespace OpenHome::Media;
 // StarvationMonitor
 
 StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize)
+                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize, IClockPuller& aClockPuller)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
+    , iClockPuller(aClockPuller)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iGorgeSize(aGorgeSize)
@@ -25,8 +27,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
-    , iHistoryCount(0)
-    , iHistoryNextIndex(0)
+    , iTrackIsPullable(false)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
@@ -115,20 +116,16 @@ Msg* StarvationMonitor::Pull()
 
 MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 {
-    if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
-        MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
-        EnqueueAtHead(remaining);
-    }
-    iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
-    if (iJiffiesUntilNextHistoryPoint == 0) {
-        iHistory[iHistoryNextIndex++] = Jiffies();
-        if (iHistoryNextIndex == kMaxUtilisationSamplePoints) {
-            iHistoryNextIndex = 0;
+    if (iTrackIsPullable) {
+        if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
+            MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
+            EnqueueAtHead(remaining);
         }
-        if (iHistoryCount < kMaxUtilisationSamplePoints) {
-            iHistoryCount++;
+        iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
+        if (iJiffiesUntilNextHistoryPoint == 0) {
+            iClockPuller.NotifySize(Jiffies());
+            iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
         }
-        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     }
 
     iLock.Wait();
@@ -209,6 +206,16 @@ void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
     iLock.Wait();
     iExit = true;
     iLock.Signal();
+}
+
+Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
+{
+    iTrackIsPullable = aMsg->Track().Pullable();
+    if (iTrackIsPullable) {
+        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
+    }
+    iClockPuller.Stop();
+    return aMsg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgAudioPcm* aMsg)

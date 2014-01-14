@@ -91,7 +91,7 @@ void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }
-        iTrack = iUriProvider.SetTrack(aUri, aMetaData);
+        iTrack = iUriProvider.SetTrack(aUri, aMetaData, true);
         iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
         if (iTransportState == Media::EPipelinePlaying) {
             iPipeline.Play();

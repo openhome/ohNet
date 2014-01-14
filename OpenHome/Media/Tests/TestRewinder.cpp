@@ -350,7 +350,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         return NULL;
     case EMsgTrack:
         {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
         msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
         track->RemoveRef();
         }

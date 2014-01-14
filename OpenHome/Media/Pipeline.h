@@ -19,6 +19,7 @@
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/PreDriver.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/ClockPuller.h>
 
 namespace OpenHome {
 namespace Media {
@@ -128,6 +129,7 @@ private:
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
+    ClockPuller iClockPuller;
     EStatus iStatus;
     EStatus iTargetStatus; // status at the end of a series of async operations
     TUint iHaltCompletedIgnoreCount;

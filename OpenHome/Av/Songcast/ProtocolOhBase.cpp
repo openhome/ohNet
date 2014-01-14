@@ -388,7 +388,7 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 {
     iTrackUri.Replace(aMsg.Uri());
     iStreamMsgDue = true;
-    Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata(), NULL);
+    Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata(), NULL, true);
     iSupply->OutputTrack(*track, iIdProvider->NextTrackId(), iMode);
     track->RemoveRef();
     aMsg.RemoveRef();

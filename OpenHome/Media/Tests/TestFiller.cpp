@@ -118,9 +118,9 @@ DummyUriProvider::DummyUriProvider()
     , iPendingIndex(-1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL);
-    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL);
-    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL);
+    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL, false);
+    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL, false);
+    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL, false);
 }
 
 DummyUriProvider::~DummyUriProvider()

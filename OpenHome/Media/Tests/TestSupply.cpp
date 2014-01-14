@@ -124,7 +124,7 @@ SuiteSupply::~SuiteSupply()
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
-    Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), NULL, false);
     iSupply->OutputTrack(*track, kTrackId, Brx::Empty());
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);

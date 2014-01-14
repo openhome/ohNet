@@ -244,7 +244,7 @@ Msg* SuiteReporter::Pull()
         return iMsgFactory->CreateMsgDecodedStream(0, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn(kCodecName), kTrackLength, 0, kLossless, false, false);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty(), NULL);
+        Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty(), NULL, false);
         Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId, Brx::Empty());
         track->RemoveRef();
         return msg;

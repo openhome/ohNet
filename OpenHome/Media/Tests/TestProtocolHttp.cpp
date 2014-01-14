@@ -965,7 +965,7 @@ SuiteHttpStreamFull::SuiteHttpStreamFull()
 void SuiteHttpStreamFull::Test()
 {
     // Test if streaming is successful.
-    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL, false);
     TBool boolStream = iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     TEST(boolStream == 1);
@@ -996,7 +996,7 @@ SuiteHttpReject::SuiteHttpReject()
 void SuiteHttpReject::Test()
 {
     // Test if streaming is successful.
-    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL, false);
     TBool boolStream = iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     TEST(boolStream == 1);
@@ -1023,7 +1023,7 @@ SuiteHttpReconnect::SuiteHttpReconnect()
 void SuiteHttpReconnect::Test()
 {
     // Test if streaming is successful.
-    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL, false);
     TBool boolStream = iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     TEST(boolStream == 1);
@@ -1054,7 +1054,7 @@ SuiteHttpStreamLive::SuiteHttpStreamLive()
 void SuiteHttpStreamLive::Test()
 {
     // Test if streaming is successful.
-    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL, false);
     TBool boolStream = iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     TEST(boolStream == false);
@@ -1085,7 +1085,7 @@ SuiteHttpLiveReconnect::SuiteHttpLiveReconnect()
 void SuiteHttpLiveReconnect::Test()
 {
     // Test if streaming is successful.
-    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL, false);
     TBool boolStream = iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     TEST(boolStream == false);
@@ -1144,7 +1144,7 @@ SuiteHttpChunked::~SuiteHttpChunked()
 
 void SuiteHttpChunked::Test()
 {
-    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty(), NULL, false);
     const TBool err = iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
     TEST(!err);

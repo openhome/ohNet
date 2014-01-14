@@ -1338,7 +1338,8 @@ void SuiteTrack::Test()
     Brn metadata("metadata#1");
     Brn mode("mode#1");
     TAny* userData = &uri;
-    Track* track = iTrackFactory->CreateTrack(uri, metadata, userData);
+    TBool pullable = true;
+    Track* track = iTrackFactory->CreateTrack(uri, metadata, userData, pullable);
     TUint id = 3;
     MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, id, mode);
     track->RemoveRef();
@@ -1348,6 +1349,7 @@ void SuiteTrack::Test()
     TEST(msg->Mode() == mode);
     TUint trackId = msg->Track().Id();
     TEST(msg->Track().UserData() == userData);
+    TEST(msg->Track().Pullable() == pullable);
     TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
 
@@ -1359,6 +1361,7 @@ void SuiteTrack::Test()
     TEST(msg->Mode() != mode);
     TEST(track->Id() != trackId);
     TEST(track->UserData() != userData);
+    TEST(track->Pullable() != pullable);
     TEST(msg->IdPipeline() != id);
 #endif
 
@@ -1367,7 +1370,8 @@ void SuiteTrack::Test()
     metadata.Set("metadata#2");
     mode.Set("style#2");
     userData = &trackId;
-    track = iTrackFactory->CreateTrack(uri, metadata, userData);
+    pullable = false;
+    track = iTrackFactory->CreateTrack(uri, metadata, userData, pullable);
     id = 6209;
     msg = iMsgFactory->CreateMsgTrack(*track, id, mode);
     TEST(msg != NULL);
@@ -1377,6 +1381,7 @@ void SuiteTrack::Test()
     TEST(msg->Track().Id() != trackId);
     trackId = msg->Track().Id();
     TEST(msg->Track().UserData() == userData);
+    TEST(msg->Track().Pullable() == pullable);
     TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
     TEST(track->Uri() == uri);
@@ -1592,7 +1597,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
     msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
     track->RemoveRef();
     TEST(msg == msg->Process(processor));
@@ -1735,7 +1740,7 @@ void SuiteMsgQueue::Test()
     dequeued->RemoveRef();
 
     // queue can be emptied then reused
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
     msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
     track->RemoveRef();
     queue->Enqueue(msg);
@@ -1851,7 +1856,7 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::ENone);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);
 
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
     Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
     track->RemoveRef();
     queue->Enqueue(msg);
@@ -1960,7 +1965,7 @@ void SuiteMsgQueueFlushable::Test()
     TEST(queue->LastIn() == TestMsgQueueFlushable::EMsgFlush);
     TEST(queue->LastOut() == TestMsgQueueFlushable::ENone);*/
     queue->Enqueue(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs));
-    track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+    track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
     queue->Enqueue(iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty()));
     track->RemoveRef();
     queue->Enqueue(iMsgFactory->CreateMsgSilence(2 * Jiffies::kJiffiesPerMs));

@@ -9,14 +9,17 @@
 namespace OpenHome {
 namespace Media {
 
+class IClockPuller;
+
 class DecodedAudioReservoir : public AudioReservoir
 {
     friend class SuiteReservoirHistory;
 public:
-    DecodedAudioReservoir(TUint aMaxSize);
+    DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aClockPuller);
 private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgAudioPcm* aMsg);
     void ProcessMsgIn(MsgSilence* aMsg);
+    Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
 private: // from AudioReservoir
@@ -25,14 +28,12 @@ private:
     void DoProcessMsgIn();
     Msg* DoProcessMsgOut(MsgAudio* aMsg);
 private:
-    static const TUint kMaxUtilisationSamplePoints = 20;
     static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kJiffiesPerSecond;
+    IClockPuller& iClockPuller;
     Mutex iLock;
-    TUint64 iHistory[kMaxUtilisationSamplePoints]; // past avg reservoir sizes
-    TUint iHistoryCount;
-    TUint iHistoryNextIndex;
-    TUint64 iJiffiesUntilNextHistoryPoint;
+    TUint64 iJiffiesUntilNextUsageReport;
     Thread* iThreadExcludeBlock;
+    TBool iTrackIsPullable;
 };
 
 } // namespace Media
