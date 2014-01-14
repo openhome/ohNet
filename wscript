@@ -492,6 +492,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestMuteManager.cpp',
                 'OpenHome/Media/Tests/TestVolumeManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
+                'OpenHome/Media/Tests/TestClockPuller.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
                 'OpenHome/Media/Tests/TestUdpServer.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
@@ -607,6 +608,10 @@ def build(bld):
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRewinder')
+    bld.program(
+            source='OpenHome/Media/Tests/TestClockPullerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestClockPuller')
     bld.program(
             source='OpenHome/Media/Tests/TestUdpServerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],

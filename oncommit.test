@@ -33,6 +33,7 @@ tests = '''
     TestUdpServer
     TestConfigManager
     TestPowerManager
+    TestClockPuller
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
