@@ -337,7 +337,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         return NULL;
     case EMsgTrack:
         {
-        Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
         msg = iMsgFactory.CreateMsgTrack(*track, iPipelineIdProvider.NextTrackId(), Brx::Empty());
         track->RemoveRef();
         }

@@ -25,12 +25,12 @@ UriProviderSingleTrack::~UriProviderSingleTrack()
     }
 }
 
-Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
+Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData, TBool aPullable)
 {
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
-    iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL);
+    iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, aPullable);
     iTrack->AddRef();
     return iTrack;
 }

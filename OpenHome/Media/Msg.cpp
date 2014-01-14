@@ -1430,7 +1430,12 @@ TAny* Track::UserData() const
     return iUserData;
 }
 
-void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData)
+TBool Track::Pullable() const
+{
+    return iPullable;
+}
+
+void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable)
 {
     iUri.ReplaceThrow(aUri);
     if (aMetaData.Bytes() > iMetaData.MaxBytes()) {
@@ -1441,6 +1446,7 @@ void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* a
     }
     iId = aId;
     iUserData = aUserData;
+    iPullable = aPullable;
 }
 
 void Track::Clear()
@@ -1450,6 +1456,7 @@ void Track::Clear()
     iMetaData.SetBytes(0);
     iId = UINT_MAX;
     iUserData = NULL;
+    iPullable = false;
 #endif // DEFINE_DEBUG
 }
 
@@ -2096,13 +2103,13 @@ TrackFactory::TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCou
 {
 }
 
-Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData)
+Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData, TBool aPullable)
 {
     Track* track = iAllocatorTrack.Allocate();
     iLock.Wait();
     TUint id = iNextId++;
     iLock.Signal();
-    track->Initialise(aUri, aMetaData, id, aUserData);
+    track->Initialise(aUri, aMetaData, id, aUserData, aPullable);
     return track;
 }
 

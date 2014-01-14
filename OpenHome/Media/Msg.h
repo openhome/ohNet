@@ -468,8 +468,9 @@ public:
     const Brx& MetaData() const;
     TUint Id() const;
     TAny* UserData() const;
+    TBool Pullable() const;
 private:
-    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData);
+    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable);
 private: // from Allocated
     void Clear();
 private:
@@ -477,6 +478,7 @@ private:
     BwsTrackMetaData iMetaData;
     TUint iId;
     TAny* iUserData;
+    TBool iPullable;
 };
 
 class MsgTrack : public Msg
@@ -849,7 +851,7 @@ class TrackFactory
 {
 public:
     TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount);
-    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData);
+    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData, TBool aPullable);
 private:
     Allocator<Track> iAllocatorTrack;
     Mutex iLock;

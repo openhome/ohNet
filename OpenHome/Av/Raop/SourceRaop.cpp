@@ -120,9 +120,9 @@ void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/
         ////Log::Print("track: ");
         ////Log::Print(track);
         ////Log::Print("\n");
-        //iTrack = iUriProvider.SetTrack(track, Brn(""));
+        //iTrack = iUriProvider.SetTrack(track, Brn(""), true);
 
-        iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""));
+        iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""), true);
         iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     }
     iLock.Wait();

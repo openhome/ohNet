@@ -85,7 +85,7 @@ void TrackDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData
     if (aIdAfter != kTrackIdNone) {
         index = TrackListUtils::IndexFromId(iTrackList, aIdAfter) + 1;
     }
-    Track* track = iTrackFactory.CreateTrack(aUri, aMetaData, NULL);
+    Track* track = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, false);
     aIdInserted = track->Id();
     iTrackList.insert(iTrackList.begin() + index, track);
     iSeq++;

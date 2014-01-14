@@ -285,7 +285,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
         msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
         track->RemoveRef();
     }

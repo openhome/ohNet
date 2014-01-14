@@ -177,7 +177,7 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
     iSupply.OutputTrack(*track, 1, Brx::Empty());
     track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);

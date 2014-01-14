@@ -453,7 +453,7 @@ Msg* SuiteStopper::Pull()
         return iMsgFactory->CreateMsgDecodedStream(iStreamId, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
         Msg* msg = iMsgFactory->CreateMsgTrack(*track, iTrackId, Brx::Empty());
         track->RemoveRef();
         return msg;

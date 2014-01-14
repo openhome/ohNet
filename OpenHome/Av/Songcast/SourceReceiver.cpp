@@ -242,7 +242,7 @@ void SourceReceiver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 
 void SourceReceiver::DoPlay()
 {
-    Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
+    Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata, true);
     iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider->Mode(), track->Id());
     track->RemoveRef();

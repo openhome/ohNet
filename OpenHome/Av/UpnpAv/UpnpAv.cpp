@@ -85,7 +85,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }
-        iTrack = iUriProvider.SetTrack(aUri, aMetaData);
+        iTrack = iUriProvider.SetTrack(aUri, aMetaData, false);
         iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
         if (iTransportState == Media::EPipelinePlaying) {
             iPipeline.Play();
