@@ -177,6 +177,8 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
 {
     // Add codecs
     iMediaPlayer->Add(Codec::CodecFactory::NewAac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewAiff());
+    iMediaPlayer->Add(Codec::CodecFactory::NewAifc());
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
