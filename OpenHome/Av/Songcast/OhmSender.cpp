@@ -23,13 +23,12 @@ class ProviderSender : public Net::DvProviderAvOpenhomeOrgSender1
     static const Brn kStatusDisabled;
     static const Brn kStatusBlocked;
 public:
-    ProviderSender(Environment& aEnv, Net::DvDevice& aDevice);
-    ~ProviderSender();
+    ProviderSender(Net::DvDevice& aDevice);
     void SetMetadata(const Brx& aValue);
     void SetStatusEnabled();
     void SetStatusDisabled();
     void SetStatusBlocked();
-    void InformAudioPresent();
+    void NotifyAudioPlaying(TBool aPlaying);
 private: // from Net::DvProviderAvOpenhomeOrgSender1
     void PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
     void Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
@@ -38,7 +37,6 @@ private: // from Net::DvProviderAvOpenhomeOrgSender1
     void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
 private:
     void UpdateMetadata();
-    void TimerAudioPresentExpired();
 private:
     mutable Mutex iLock;
     Bws<kMaxMetadataBytes> iMetadata;
@@ -59,12 +57,10 @@ const Brn ProviderSender::kStatusEnabled("Enabled");
 const Brn ProviderSender::kStatusDisabled("Disabled");
 const Brn ProviderSender::kStatusBlocked("Blocked");
 
-ProviderSender::ProviderSender(Environment& aEnv, Net::DvDevice& aDevice)
+ProviderSender::ProviderSender(Net::DvDevice& aDevice)
     : DvProviderAvOpenhomeOrgSender1(aDevice)
     , iLock("PSND")
 {
-    iTimerAudioPresent = new Timer(aEnv, MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired));
-
     EnablePropertyPresentationUrl();
     EnablePropertyMetadata();
     EnablePropertyAudio();
@@ -82,11 +78,6 @@ ProviderSender::ProviderSender(Environment& aEnv, Net::DvDevice& aDevice)
     SetPropertyAudio(false);
     SetStatusDisabled();
     SetPropertyAttributes(Brx::Empty());
-}
-
-ProviderSender::~ProviderSender()
-{
-    delete iTimerAudioPresent;
 }
 
 void ProviderSender::PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue)
@@ -170,15 +161,9 @@ void ProviderSender::SetStatusBlocked()
     SetPropertyStatus(iStatus);
 }
 
-void ProviderSender::InformAudioPresent()
+void ProviderSender::NotifyAudioPlaying(TBool aPlaying)
 {
-    SetPropertyAudio(true);
-    iTimerAudioPresent->FireIn(kTimeoutAudioPresentMs);
-}
-    
-void ProviderSender::TimerAudioPresentExpired()
-{
-    SetPropertyAudio(false);
+    SetPropertyAudio(aPlaying);
 }
 
 
@@ -430,7 +415,7 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     , iSequenceMetatext(0)
     , iClientControllingTrackMetadata(false)
 {
-    iProvider = new ProviderSender(aEnv, iDevice);
+    iProvider = new ProviderSender(iDevice);
     CurrentSubnetChanged(); // roundabout way of initialising iInterface
  
     iDriver.SetTtl(kTtl);
@@ -664,6 +649,11 @@ void OhmSender::SetMetatext(const Brx& aValue)
 void OhmSender::SetPreset(TUint aValue)
 {
     iZoneHandler->SetPreset(aValue);
+}
+
+void OhmSender::NotifyAudioPlaying(TBool aPlaying)
+{
+    iProvider->NotifyAudioPlaying(aPlaying);
 }
 
 //  This runs a little state machine where the current state is reflected by:

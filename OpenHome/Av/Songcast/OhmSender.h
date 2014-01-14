@@ -91,6 +91,7 @@ public:
     void SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart);
     void SetMetatext(const Brx& aValue);
     void SetPreset(TUint aValue);
+    void NotifyAudioPlaying(TBool aPlaying);
 private:
     void RunMulticast();
     void RunUnicast();
