@@ -8,6 +8,12 @@ sys.path.append( os.path.normpath( os.path.join( os.path.dirname( __file__ ), ro
 
 # Path to ohNet DLLs (depends on execution environment)
 if os.path.isfile( os.path.join( os.getcwd(), '_FunctionalTest.py' )):
-    sys.path.append( os.path.abspath( '../dependencies/Windows-x86/ohNet-Windows-x86-Release/lib' ))
+    if os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Release' ):
+        sys.path.append( os.path.abspath( '../dependencies/Windows-x86/ohNet-Windows-x86-Release/lib' ))
+    elif os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Debug' ):
+        sys.path.append( os.path.abspath( '../dependencies/Windows-x86/ohNet-Windows-x86-Debug/lib' ))
 elif os.path.isfile( os.path.join( os.getcwd(), 'go.bat' )):  
-    sys.path.append( os.path.abspath( 'dependencies/Windows-x86/ohNet-Windows-x86-Release/lib' ))
+    if os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Release' ):
+        sys.path.append( os.path.abspath( 'dependencies/Windows-x86/ohNet-Windows-x86-Release/lib' ))
+    elif os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Debug' ):
+        sys.path.append( os.path.abspath( 'dependencies/Windows-x86/ohNet-Windows-x86-Debug/lib' ))
