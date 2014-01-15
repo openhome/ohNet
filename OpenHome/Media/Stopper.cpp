@@ -26,6 +26,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iFlushStream(false)
     , iRemovingStream(false)
     , iResumeAfterHalt(false)
+    , iQuit(false)
     , iTargetHaltId(MsgHalt::kIdNone)
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
@@ -55,6 +56,12 @@ void Stopper::Start()
     }
     iTargetHaltId = MsgHalt::kIdNone;
     iSem.Signal();
+}
+
+void Stopper::Quit()
+{
+    iQuit = true;
+    Start();
 }
 
 void Stopper::BeginHalt()
@@ -249,9 +256,11 @@ Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 {
-    if (iTargetHaltId == MsgHalt::kIdNone || aMsg->Id() == iTargetHaltId) {
-        iState = EHalted;
-        iTargetHaltId = MsgHalt::kIdNone;
+    if (!iQuit) { // if we pull a Halt msg after being told to quit, we shouldn't halt the pipeline
+        if (iTargetHaltId == MsgHalt::kIdNone || aMsg->Id() == iTargetHaltId) {
+            iState = EHalted;
+            iTargetHaltId = MsgHalt::kIdNone;
+        }
     }
     iObserver.PipelineHalted(aMsg->Id());
     return aMsg;
