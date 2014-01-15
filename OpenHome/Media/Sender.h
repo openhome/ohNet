@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Media/PipelineObserver.h>
 
 #include <vector>
 
@@ -41,6 +42,7 @@ public:
     Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName);
     ~Sender();
     void SetName(const Brx& aName);
+    void NotifyPipelineState(EPipelineState aState);
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor

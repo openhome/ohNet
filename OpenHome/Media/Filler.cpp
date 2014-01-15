@@ -131,7 +131,6 @@ void Filler::Run()
     BwsMode mode;
     Wait();
     while (!iQuit) {
-        TBool sentHalt = false;
         for (;;) {
             iLock.Wait();
             const TBool wait = iStopped;
@@ -139,10 +138,7 @@ void Filler::Run()
             if (!wait) {
                 break;
             }
-            if (!sentHalt) {
-                iSupply.OutputHalt(iNextHaltId);
-                sentHalt = true;
-            }
+            iSupply.OutputHalt(iNextHaltId);
             Wait();
         }
         iLock.Wait();

@@ -40,6 +40,7 @@ public:
     void BeginHalt();
     void BeginHalt(TUint aHaltId);
     void RemoveCurrentStream();
+    void Quit();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 public: // from IStopper
@@ -88,6 +89,7 @@ private:
     TBool iFlushStream;
     TBool iRemovingStream;
     TBool iResumeAfterHalt;
+    TBool iQuit;
     TUint iTargetHaltId;
     TUint iTrackId;
     TUint iStreamId;

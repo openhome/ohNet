@@ -79,6 +79,7 @@ private: // from IFlushIdProvider
 private: // from IStopper
     void RemoveStream(TUint aTrackId, TUint aStreamId);
 private:
+    void DoPlay(TBool aQuit);
     void Quit();
     void NotifyStatus();
 private: // from IStopperObserver

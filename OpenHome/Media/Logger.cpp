@@ -6,6 +6,10 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+#undef LOG_METADATA /* Track metadata and stream metatext are huge.  They tend to
+                       drown out all other logging and reporting them slows pipeline
+                       progress to a crawl. */
+
 //  Logger
 
 Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
@@ -100,7 +104,11 @@ Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
         Log::Print("Pipeline (%s): encoded stream {", iId);
         Log::Print(aMsg->Uri());
         Log::Print(", metaText: ");
+#ifdef LOG_METADATA
         Log::Print(aMsg->MetaText());
+#else
+        Log::Print("(omitted)");
+#endif
         Log::Print(" , totalBytes: %llu, streamId: %u, seekable: %s, live: %s}\n",
                     aMsg->TotalBytes(), aMsg->StreamId(),
                     (aMsg->Seekable()? "true" : "false"),
@@ -115,7 +123,11 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
         Log::Print("Pipeline (%s): track {uri:", iId);
         Log::Print(aMsg->Track().Uri());
         Log::Print(", metaData: ");
+#ifdef LOG_METADATA
         Log::Print(aMsg->Track().MetaData());
+#else
+        Log::Print("(omitted)");
+#endif
         Log::Print(", id: %u, mode: ", aMsg->Track().Id());
         Log::Print(aMsg->Mode());
         Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());

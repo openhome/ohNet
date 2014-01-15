@@ -75,6 +75,11 @@ void Sender::SetName(const Brx& aName)
     iOhmSender->SetName(aName);
 }
 
+void Sender::NotifyPipelineState(EPipelineState aState)
+{
+    iOhmSender->NotifyAudioPlaying(aState == EPipelinePlaying);
+}
+
 void Sender::Push(Msg* aMsg)
 {
     Msg* msg = aMsg->Process(*this);

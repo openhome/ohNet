@@ -222,6 +222,7 @@ void SourceReceiver::NotifyPipelineState(EPipelineState aState)
     if (iActive) {
         iProviderReceiver->NotifyPipelineState(aState);
     }
+    iSender->NotifyPipelineState(aState);
 }
 
 void SourceReceiver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)

@@ -175,7 +175,7 @@ void Pipeline::Quit()
     iQuitting = true;
     /*if (iStatus != EPlaying) */ { // always send quit message and ensure pipeline is playing.
         OutputQuit();
-        Play();
+        DoPlay(true);
         iTargetStatus = EQuit;
     }
 }
@@ -215,6 +215,11 @@ MsgFactory& Pipeline::Factory()
 
 void Pipeline::Play()
 {
+    DoPlay(false);
+}
+
+void Pipeline::DoPlay(TBool aQuit)
+{
     iLock.Wait();
     if (iStatus == EPlaying) {
         iLock.Signal();
@@ -226,7 +231,12 @@ void Pipeline::Play()
     else if (iStatus == EFlushing) {
         iFlushCompletedIgnoreCount++;
     }
-    iStopper->Start();
+    if (aQuit) {
+        iStopper->Quit();
+    }
+    else {
+        iStopper->Start();
+    }
     iStatus = EPlaying;
     iTargetStatus = EPlaying;
     iLock.Signal();
