@@ -210,6 +210,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
+    iFlushStream = iRemovingStream = false;
     iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
