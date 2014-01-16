@@ -36,6 +36,12 @@ except:
     print '\n', __doc__, '\n'
     print '\n\nInvalid arguments %s' % (str( sys.argv ))
     os._exit( -1 )
+
+    
+# songcast modes, playlists etc will have to be controlled from the StartPlayer
+# controls as no Config service on device. Hence these controls have been removed
+# from the test parameters and will be setup in some sort of standalone-dut-setup
+# prior to running the actual tests    
     
     
 tests = [
@@ -46,8 +52,8 @@ tests = [
 #    [ 'TestStartPlayer',             'dut4'                                                                                                             ],
     
     # UPnP AV          
-#    [ 'TestAvTransportService',      'dut1', 'ALL'                                                                                                      ],
-#    [ 'TestRenderingControlService', 'dut1'                                                                                                             ],
+    [ 'TestAvTransportService',      'dut1', 'ALL'                                                                                                      ],
+    [ 'TestRenderingControlService', 'dut1'                                                                                                             ],
 #    [ 'TestAvTransportPlayTracks',   'dut1', 'dut2',       'ms',        avtList,     12,          'None',     'unicast',   1                            ],
 
     # OH Playlist Service
@@ -55,7 +61,7 @@ tests = [
 #    [ 'TestPlaylistModes',           'dut1', 'all',        12345                                                                                        ],
 #    [ 'TestPlaylistPlayback',        'dut1', 'all',        12345                                                                                        ],
     [ 'TestPlaylistAddDelSoak',      'dut1', 'ms',         adList,      100                                                                             ],
-    [ 'TestPlaylistPlayTracks',      'dut1', 'dut2',       'ms',        medList,     12,          'off',      'on',        'multicast'                  ],       
+    [ 'TestPlaylistPlayTracks',      'dut1', 'dut2',       'ms',        medList,     12,          'off',      'on'                                      ],       
 #    [ 'TestPlaylistDropout',         'dut1', 'None',       'None',      'unicast',   '3600'                                                             ],       
 #    [ 'TestPlaylistDropout',         'dut2', 'dut1',       'None',      'multicast', '3600'                                                             ],       
 
