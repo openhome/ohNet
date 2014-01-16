@@ -94,10 +94,10 @@
     },
     {
         "name": "FunctionalTest",
-        "type": "openhome",
-        "version": "0.0.162",
+        "type": "internal",
+        "version": "0.0.170",
         "platform-specific": false,
-        "remote-archive-path": "http://www.openhome.org/releases/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
     }
 ]
