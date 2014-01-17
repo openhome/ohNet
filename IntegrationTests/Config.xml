@@ -5,7 +5,12 @@
         <!-- <network>10.15.1.103</network> -->
         <!-- <network>10.2.11.71</network> -->
     </computer>
-    
+
+    <computer name="PC941">
+        <network>10.2.9.214</network>
+        <!-- <network>10.2.9.213</network> -->
+    </computer>
+
     <computer name="pc707">
         <network>10.15.1.102</network>
     </computer>
