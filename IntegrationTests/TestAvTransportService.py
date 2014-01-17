@@ -13,7 +13,11 @@ file.
 NOTE/ all data used in this test should be valid for the scenario being tested.
       Invalid, out-of-range and otherwise erroneous data is covered by the
       service's unit testing.
-""" 
+"""
+ 
+# Differences from DS test:
+#    - remove .NET XML handling
+
 import _FunctionalTest
 import BaseTest                         as BASE
 import Upnp.ControlPoints.Volkano       as Volkano
