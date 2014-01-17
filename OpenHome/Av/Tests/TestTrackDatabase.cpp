@@ -113,6 +113,10 @@ private:
     void PrevTrackRefShuffleOn();
     void TrackRefByIndexShuffleOff();
     void TrackRefByIndexShuffleOn();
+    void ModeToggleReshuffles();
+    void NextTrackBeyondEndReshuffles();
+    void SeekIndexTrackAlreadyReturned();
+    void SeekIndexTrackNotAlreadyReturned();
 private:
     static const TUint kNumTracks = 16; // gives us ~1 in 21 trillion chance of shuffling tracks into their original order
     Media::AllocatorInfoLogger iInfoAggregator;
@@ -162,24 +166,24 @@ private:
 SuiteTrackDatabase::SuiteTrackDatabase()
     : SuiteUnitTest("Track database (ITrackDatabase)")
 {
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertInitialTrack));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertFailsWhenIdAfterInvalid));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertFailsWhenFull));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetIdArrayDbEmpty));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetIdArrayDbPartiallyFull));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetIdArrayDbFull));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertAtStart));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertInMiddle));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertAtEnd));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::DeleteValidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::DeleteInvalidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::DeleteAll));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::SeqUpdatesOnChanges));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByValidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByInvalidIdFails));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByIdValidSeq));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByIdInvalidSeq));
-    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::MultipleObservers));
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertInitialTrack), "InsertInitialTrack");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertFailsWhenIdAfterInvalid), "InsertFailsWhenIdAfterInvalid");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertFailsWhenFull), "InsertFailsWhenFull");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetIdArrayDbEmpty), "GetIdArrayDbEmpty");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetIdArrayDbPartiallyFull), "GetIdArrayDbPartiallyFull");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetIdArrayDbFull), "GetIdArrayDbFull");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertAtStart), "InsertAtStart");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertInMiddle), "InsertInMiddle");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::InsertAtEnd), "InsertAtEnd");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::DeleteValidId), "DeleteValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::DeleteInvalidId), "DeleteInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::DeleteAll), "DeleteAll");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::SeqUpdatesOnChanges), "SeqUpdatesOnChanges");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByValidId), "GetTrackByValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByInvalidIdFails), "GetTrackByInvalidIdFails");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByIdValidSeq), "GetTrackByIdValidSeq");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::GetTrackByIdInvalidSeq), "GetTrackByIdInvalidSeq");
+    AddTest(MakeFunctor(*this, &SuiteTrackDatabase::MultipleObservers), "MultipleObservers");
 }
 
 void SuiteTrackDatabase::Setup()
@@ -564,14 +568,14 @@ void SuiteTrackDatabase::MultipleObservers()
 SuiteTrackReader::SuiteTrackReader()
     : SuiteUnitTest("Track database (ITrackDatabaseReader)")
 {
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefValidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefInvalidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::NextTrackRefValidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::NextTrackRefInvalidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::PrevTrackRefValidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::PrevTrackRefInvalidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexValidId));
-    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexInvalidId));
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefValidId), "TrackRefValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefInvalidId), "TrackRefInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::NextTrackRefValidId), "NextTrackRefValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::NextTrackRefInvalidId), "NextTrackRefInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::PrevTrackRefValidId), "PrevTrackRefValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::PrevTrackRefInvalidId), "PrevTrackRefInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexValidId), "TrackRefByIndexValidId");
+    AddTest(MakeFunctor(*this, &SuiteTrackReader::TrackRefByIndexInvalidId), "TrackRefByIndexInvalidId");
 }
 
 void SuiteTrackReader::Setup()
@@ -693,14 +697,18 @@ void SuiteTrackReader::TrackRefByIndexInvalidId()
 SuiteShuffler::SuiteShuffler()
     : SuiteUnitTest("Shuffler")
 {
-    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefShuffleOff));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefShuffleOn));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::NextTrackRefShuffleOff));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::NextTrackRefShuffleOn));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::PrevTrackRefShuffleOff));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::PrevTrackRefShuffleOn));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefByIndexShuffleOff));
-    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefByIndexShuffleOn));
+    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefShuffleOff), "TrackRefShuffleOff");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefShuffleOn), "TrackRefShuffleOn");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::NextTrackRefShuffleOff), "NextTrackRefShuffleOff");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::NextTrackRefShuffleOn), "NextTrackRefShuffleOn");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::PrevTrackRefShuffleOff), "PrevTrackRefShuffleOff");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::PrevTrackRefShuffleOn), "PrevTrackRefShuffleOn");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefByIndexShuffleOff), "TrackRefByIndexShuffleOff");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefByIndexShuffleOn), "TrackRefByIndexShuffleOn");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::ModeToggleReshuffles), "ModeToggleReshuffles");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::NextTrackBeyondEndReshuffles), "NextTrackBeyondEndReshuffles");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::SeekIndexTrackAlreadyReturned), "SeekIndexTrackAlreadyReturned");
+    AddTest(MakeFunctor(*this, &SuiteShuffler::SeekIndexTrackNotAlreadyReturned), "SeekIndexTrackNotAlreadyReturned");
 }
 
 void SuiteShuffler::Setup()
@@ -831,16 +839,7 @@ void SuiteShuffler::PrevTrackRefShuffleOn()
     static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
 
     // find id of last shuffled track
-    TUint id = ITrackDatabase::kTrackIdNone;
-    Track* track;
-    for (;;) {
-        track = iReader->NextTrackRef(id);
-        if (track == NULL) {
-            break;
-        }
-        id = track->Id();
-        track->RemoveRef();
-    }
+    TUint id = iShuffler->iShuffleList[iShuffler->iShuffleList.size()-1]->Id();
 
     TBool shuffled = false;
     for (TInt i=kNumTracks-1; i>=0; i--) {
@@ -911,20 +910,170 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
     TEST(count == 0);
 }
 
+void SuiteShuffler::ModeToggleReshuffles()
+{
+    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    std::array<TUint, kNumTracks> initialShuffle;
+    TUint id = ITrackDatabase::kTrackIdNone;
+    for (TUint i=0; i<kNumTracks; i++) {
+        Track* track = iReader->NextTrackRef(id);
+        id = track->Id();
+        initialShuffle[i] = id;
+        track->RemoveRef();
+    }
+
+    static_cast<IShuffler*>(iShuffler)->SetShuffle(false);
+    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    id = ITrackDatabase::kTrackIdNone;
+    TBool reshuffled = false;
+    for (TUint i=0; i<kNumTracks; i++) {
+        Track* track = iReader->NextTrackRef(id);
+        if (track->Id() != initialShuffle[i]) {
+            reshuffled = true;
+        }
+        track->RemoveRef();
+    }
+    TEST(reshuffled);
+}
+
+void SuiteShuffler::NextTrackBeyondEndReshuffles()
+{
+    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    std::array<TUint, kNumTracks> initialShuffle;
+    TUint id = ITrackDatabase::kTrackIdNone;
+    for (TUint i=0; i<kNumTracks; i++) {
+        Track* track = iReader->NextTrackRef(id);
+        id = track->Id();
+        initialShuffle[i] = id;
+        track->RemoveRef();
+    }
+    TEST(iReader->NextTrackRef(id) == NULL);
+
+    id = ITrackDatabase::kTrackIdNone;
+    TBool reshuffled = false;
+    for (TUint i=0; i<kNumTracks; i++) {
+        Track* track = iReader->NextTrackRef(id);
+        if (track->Id() != initialShuffle[i]) {
+            reshuffled = true;
+        }
+        track->RemoveRef();
+    }
+    TEST(reshuffled);
+}
+
+void SuiteShuffler::SeekIndexTrackAlreadyReturned()
+{
+    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+
+    static const TUint kInitialReads = 5;
+    static const TUint kSeekIndex = 3;
+    TUint id = ITrackDatabase::kTrackIdNone;
+    TUint seekId = ITrackDatabase::kTrackIdNone;
+    std::vector<TUint> idsNotToBeRepeated;
+    for (TUint i=0; i<kInitialReads; i++) {
+        Track* track = iReader->NextTrackRef(id);
+        id = track->Id();
+        if (i < kSeekIndex) {
+            idsNotToBeRepeated.push_back(id);
+        }
+        else if (i == kSeekIndex) {
+            seekId = id;
+        }
+        track->RemoveRef();
+    }
+
+    TUint seekIndex = 0;
+    for (TUint i=0; id!=seekId; i++) {
+        Track* track = static_cast<ITrackDatabaseReader*>(iDb)->TrackRefByIndex(i);
+        id = track->Id();
+        track->RemoveRef();
+        if (id == seekId) {
+            seekIndex = i;
+            break;
+        }
+    }
+
+    Track* track = iReader->TrackRefByIndex(seekIndex);
+    id = track->Id();
+    track->RemoveRef();
+    TUint count = 0;
+    for (;;) {
+        track = iReader->NextTrackRef(id);
+        if (track == NULL) {
+            break;
+        }
+        id = track->Id();
+        track->RemoveRef();
+        TEST(std::find(idsNotToBeRepeated.begin(), idsNotToBeRepeated.end(), id) == idsNotToBeRepeated.end());
+        count++;
+    }
+    TEST(count == kNumTracks - kSeekIndex - 1);
+}
+
+void SuiteShuffler::SeekIndexTrackNotAlreadyReturned()
+{
+    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+
+    static const TUint kSeekIndex = 8;
+    TUint id = ITrackDatabase::kTrackIdNone;
+    TUint seekId = ITrackDatabase::kTrackIdNone;
+    std::vector<TUint> idsNotToBeRepeated;
+    for (TUint i=0; i<=kSeekIndex; i++) {
+        Track* track = iReader->NextTrackRef(id);
+        id = track->Id();
+        track->RemoveRef();
+        if (i < kSeekIndex) {
+            idsNotToBeRepeated.push_back(id);
+        }
+        else if (i == kSeekIndex) {
+            seekId = id;
+        }
+    }
+
+    TUint seekIndex = 0;
+    for (TUint i=0; id!=seekId; i++) {
+        Track* track = static_cast<ITrackDatabaseReader*>(iDb)->TrackRefByIndex(i);
+        id = track->Id();
+        track->RemoveRef();
+        if (id == seekId) {
+            seekIndex = i;
+            break;
+        }
+    }
+    seekIndex++; // want to call TrackRefByIndex for a track we haven't yet encountered
+
+    Track* track = iReader->TrackRefByIndex(seekIndex);
+    id = track->Id();
+    track->RemoveRef();
+    TUint count = 0;
+    for (;;) {
+        track = iReader->NextTrackRef(id);
+        if (track == NULL) {
+            break;
+        }
+        id = track->Id();
+        track->RemoveRef();
+        TEST(std::find(idsNotToBeRepeated.begin(), idsNotToBeRepeated.end(), id) == idsNotToBeRepeated.end());
+        count++;
+    }
+    TEST(count == kNumTracks - kSeekIndex - 2);
+
+}
+
 
 // SuiteRepeater
 
 SuiteRepeater::SuiteRepeater()
     : SuiteUnitTest("Repeater")
 {
-    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefRepeatOff));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefRepeatOn));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::NextFromLastTrackRepeatOff));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::NextFromLastTrackRepeatOn));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::PrevFromFirstTrackRepeatOff));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::PrevFromFirstTrackRepeatOn));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefByIndexRepeatOff));
-    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefByIndexRepeatOn));
+    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefRepeatOff), "TrackRefRepeatOff");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefRepeatOn), "TrackRefRepeatOn");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::NextFromLastTrackRepeatOff), "NextFromLastTrackRepeatOff");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::NextFromLastTrackRepeatOn), "NextFromLastTrackRepeatOn");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::PrevFromFirstTrackRepeatOff), "PrevFromFirstTrackRepeatOff");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::PrevFromFirstTrackRepeatOn), "PrevFromFirstTrackRepeatOn");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefByIndexRepeatOff), "TrackRefByIndexRepeatOff");
+    AddTest(MakeFunctor(*this, &SuiteRepeater::TrackRefByIndexRepeatOn), "TrackRefByIndexRepeatOn");
 }
 
 void SuiteRepeater::Setup()
