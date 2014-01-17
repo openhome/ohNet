@@ -63,6 +63,7 @@ private:
     Track* iTrack;
     TUint iTrackId;
     TBool iStopped;
+    TBool iSendHalt;
     TBool iGetPrevious;
     TBool iQuit;
     EStreamPlay iTrackPlayStatus;
