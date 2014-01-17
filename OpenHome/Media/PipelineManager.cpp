@@ -115,7 +115,10 @@ void PipelineManager::Stop()
 {
     const TUint haltId = iFiller->Stop();
     iPipeline->Stop(haltId);
-    iIdManager->InvalidateAll();
+    iIdManager->InvalidatePending(); /* don't use InvalidateAll - iPipeline->Stop() will
+                                        have removed current stream.  InvalidateAll ends
+                                        up with Stopper trying to halt (pause) which would
+                                        override the attempt to Stop it. */
 }
 
 void PipelineManager::RemoveAll()
