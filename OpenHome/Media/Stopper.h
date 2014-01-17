@@ -62,6 +62,7 @@ private:
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void DoBeginHalt();
     void DoRemoveCurrentStream();
+    void NewStream();
 private:
     enum EState
     {

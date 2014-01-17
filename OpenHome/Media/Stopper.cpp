@@ -208,19 +208,14 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
-    iFlushStream = iRemovingStream = false;
+    NewStream();
     iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
-    iFlushStream = iRemovingStream = iResumeAfterHalt = false;
-    iState = ERunning;
+    NewStream();
 
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
@@ -340,4 +335,12 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
     if (split != NULL) {
         iQueue.EnqueueAtHead(split);
     }
+}
+
+void Stopper::NewStream()
+{
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kRampMax;
+    iFlushStream = iRemovingStream = iResumeAfterHalt = false;
+    iState = ERunning;
 }
