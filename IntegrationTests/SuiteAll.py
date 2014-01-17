@@ -23,9 +23,10 @@ dut3    = '[' + os.environ['COMPUTERNAME'] + '-3]:SoftPlayer'
 dut4    = '[' + os.environ['COMPUTERNAME'] + '-4]:SoftPlayer'
 
 dacpServer = os.environ['COMPUTERNAME']
-avtList = 'Playlists  ~Encodings-ALLCodecs'
-medList = 'Playlists  ~5TrackAlbums'
-adList  = 'Playlists  ~Mixed-ALLCodecs'
+avtList = 'Playlists  ~Encodings-FreeCodecs'
+medList = 'Playlists  ~5TrackAlbumsFreeCodecs'
+adList  = 'Playlists  ~Mixed-FreeCodecs'
+
 
 try:
     ms = sys.argv[1]
@@ -53,7 +54,7 @@ tests = [
     # UPnP AV          
     [ 'TestAvTransportService',      'dut1', 'ALL'                                                                                                      ],
     [ 'TestRenderingControlService', 'dut1'                                                                                                             ],
-#    [ 'TestAvTransportPlayTracks',   'dut1', 'dut2',       'ms',        avtList,     12,          'None',     'unicast',   1                            ],
+    [ 'TestAvTransportPlayTracks',   'dut1', 'dut2',       'ms',        avtList,     12,          1                                                     ],
 
     # OH Playlist Service
 #    [ 'TestPlaylistHandling',        'dut1', 'all',        12345                                                                                        ],
@@ -69,7 +70,7 @@ tests = [
 #    [ 'TestRadioPlayChannels',       'dut1', 'dut2',       'klueso',    12,          'on',        'unicast'                                             ],
     
     # Airplay
-#    [ 'TestAirplayFunctions',        'dut1', 'dacpServer', 'fails',     'file'                                                                          ],
+    [ 'TestAirplayFunctions',        'dut1', 'dacpServer'                                                                                               ],
 #    [ 'TestAirplayDropout',          'dut1', 'dacpServer', apTrack,     '3600'                                                                          ],       
 
     # Songcast
@@ -96,12 +97,8 @@ tests = [
 #    [ 'TestVolumeControl',           'dut1', 'startup',    'fails',     'file'                                                                          ],
     
     # Misc
-#    [ 'TestAutoPlay',                'dut1', 'dut2'                                                                                                     ],
 #    [ 'TestAudioConx',               'dut1', 'all'                                                                                                      ],
-#    [ 'TestStandbyCycleSoak',        'dut1', 'true',       'Radio',     100,         2                                                                  ],
-#    [ 'TestStandbyCycleSoak',        'dut1', 'false',      'Analog1',   100,         2                                                                  ],
-#    [ 'TestStandbyCycleSoak',        'dut1', 'false',      'TOSLINK1',  100,         2                                                                  ],
-#    [ 'TestStandbyCycleSoak',        'dut1', 'false',       'HDMI1',    100,         2                                                                  ],
+    [ 'TestStandbyCycleSoak',        'dut1',  100                                                                                                       ],
     
     # Shutdown the SoftPlayers
 #    [ 'TestStopPlayer',            'dut1'                                                                                                               ],
