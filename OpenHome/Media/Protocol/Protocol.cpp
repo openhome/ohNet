@@ -311,7 +311,10 @@ ProtocolStreamResult ProtocolManager::Stream(const Brx& aUri)
     for (TUint i=0; i<count && res==EProtocolErrorNotSupported; i++) {
         Protocol* protocol = iProtocols[i];
         if (!protocol->Active()) {
-            res = protocol->TryStream(aUri);
+            try {
+                res = protocol->TryStream(aUri);
+            }
+            catch (UriError&) {}
             ASSERT(res != EProtocolStreamErrorRecoverable);
         }
     }
