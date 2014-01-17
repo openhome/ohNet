@@ -243,6 +243,7 @@ void Shuffler::SetShuffle(TBool aShuffle)
     iShuffle = aShuffle;
     if (iShuffle) { // prefer re-shuffling over repeating the order of tracks if we play again
         std::random_shuffle(iShuffleList.begin(), iShuffleList.end());
+        LogIds("Shuffled");
     }
     iPrevTrackId = ITrackDatabase::kTrackIdNone;
     iLock.Signal();
@@ -264,8 +265,12 @@ Track* Shuffler::TrackRef(TUint aId)
             const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
             track = iShuffleList[index];
             track->AddRef();
+            iPrevTrackId = track->Id();
+            LogIds("TrackRef");
         }
-        catch (TrackDbIdNotFound&) { }
+        catch (TrackDbIdNotFound&) {
+            iPrevTrackId = ITrackDatabase::kTrackIdNone;
+        }
     }
     else {
         track = iReader.TrackRef(aId);
@@ -277,7 +282,6 @@ Track* Shuffler::NextTrackRef(TUint aId)
 {
     Track* track = NULL;
     AutoMutex a(iLock);
-    // FIXME - iPrevTrackId = aId;
     if (!iShuffle) {
         track = iReader.NextTrackRef(aId);
     }
@@ -303,14 +307,7 @@ Track* Shuffler::NextTrackRef(TUint aId)
             }
             catch (TrackDbIdNotFound&) { }
         }
-    }
-    if (iShuffle) {
-        if (track == NULL) {
-            iPrevTrackId = ITrackDatabase::kTrackIdNone;
-        }
-        else {
-            iPrevTrackId = track->Id();
-        }
+        iPrevTrackId = (track == NULL? ITrackDatabase::kTrackIdNone : track->Id());
     }
     return track;
 }
@@ -363,9 +360,10 @@ Track* Shuffler::TrackRefByIndex(TUint aIndex)
                 0 : TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId));
         if (index > cursorIndex+1) {
             iShuffleList.erase(iShuffleList.begin() + index);
-            iShuffleList.insert(iShuffleList.begin() + cursorIndex + 1, track);
+            iShuffleList.insert(iShuffleList.begin() + cursorIndex, track);
         }
         iPrevTrackId = track->Id();
+        LogIds("TrackRefByIndex");
     }
         
     return track;
@@ -389,6 +387,7 @@ void Shuffler::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfte
     if (iShuffle) {
         idBefore = (index == 0? ITrackDatabase::kTrackIdNone : iShuffleList[index-1]->Id());
         idAfter = (index == iShuffleList.size()-1? ITrackDatabase::kTrackIdNone : iShuffleList[index+1]->Id());
+        LogIds("TrackInserted");
     }
     iObserver->NotifyTrackInserted(aTrack, idBefore, idAfter);
     iLock.Signal();
@@ -414,6 +413,7 @@ void Shuffler::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aAfter)
     }
     iShuffleList[index]->RemoveRef();
     iShuffleList.erase(iShuffleList.begin() + index);
+    LogIds("TrackDeleted");
     iObserver->NotifyTrackDeleted(aId, before, after);
 }
 
@@ -424,6 +424,22 @@ void Shuffler::NotifyAllDeleted()
     TrackListUtils::Clear(iShuffleList);
     iObserver->NotifyAllDeleted();
     iLock.Signal();
+}
+
+#undef LOG_SHUFFLE
+void Shuffler::LogIds(const TChar* aPrefix)
+{
+    aPrefix = aPrefix;
+#ifdef LOG_SHUFFLE
+    Log::Print("%s.  New track order is:\n\t{ ", aPrefix);
+    if (iShuffleList.size() > 0) {
+        Log::Print("%u", iShuffleList[0]->Id());
+        for (TUint i=1; i<iShuffleList.size(); i++) {
+            Log::Print(", %u", iShuffleList[i]->Id());
+        }
+    }
+    Log::Print("}\n");
+#endif // LOG_SHUFFLE
 }
 
 

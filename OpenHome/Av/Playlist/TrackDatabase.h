@@ -121,6 +121,8 @@ private: // from ITrackDatabaseObserver
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
     void NotifyAllDeleted();
 private:
+    void LogIds(const TChar* aPrefix);
+private:
     mutable Mutex iLock;
     Environment& iEnv;
     ITrackDatabaseReader& iReader;
