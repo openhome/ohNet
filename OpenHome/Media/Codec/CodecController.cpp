@@ -156,7 +156,7 @@ void CodecController::CodecThread()
                     break;
                 }
             }
-            iRewinder.Stop(); // stop buffering audio
+            iRewinder.Stop(iTrackId, iStreamId); // stop buffering audio
             if (iQuit) {
                 break;
             }

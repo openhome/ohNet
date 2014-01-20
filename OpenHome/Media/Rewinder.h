@@ -12,7 +12,7 @@ class IRewinder
 {
 public:
     virtual void Rewind() = 0;
-    virtual void Stop() = 0;
+    virtual void Stop(TUint aTrackId, TUint aStreamId) = 0;
 };
 
 /* Class which buffers data for recognition (in case seeking back to the start
@@ -50,7 +50,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 public: // from IRewinder
     void Rewind();
-    void Stop();
+    void Stop(TUint aTrackId, TUint aStreamId);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);

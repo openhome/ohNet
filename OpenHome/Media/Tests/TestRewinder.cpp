@@ -94,6 +94,8 @@ protected:
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
     TUint iTryStopCount;
+    TUint iTrackId;
+    TUint iStreamId;
 };
 
 class SuiteRewinderNullMsgs : public SuiteRewinder
@@ -189,6 +191,8 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
     iTrySeekCount = 0;
     iLastSeekOffset = 0;
     iTryStopCount = 0;
+    iTrackId = 0;
+    iStreamId = 0;
     InitMsgOrder();
 }
 
@@ -266,6 +270,7 @@ Msg* SuiteRewinder::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iLastMsgType == EMsgTrack);
     iRcvdMsgType = EMsgTrack;
+    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -274,6 +279,7 @@ Msg* SuiteRewinder::ProcessMsg(MsgEncodedStream* aMsg)
     TEST(iLastMsgType == EMsgEncodedStream);
     iStreamHandler = aMsg->StreamHandler();
     iRcvdMsgType = EMsgEncodedStream;
+    iStreamId = aMsg->StreamId();
     return aMsg;
 }
 
@@ -462,7 +468,7 @@ void SuiteRewinder::TestStop()
     {
         PullAndProcess();
     }
-    iRewinder->Stop();
+    iRewinder->Stop(iTrackId, iStreamId);
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         PullAndProcess();
@@ -551,9 +557,8 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TEST(playRes == ePlayYes);
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
 
-
     // now call Stop and repeat calls - ALL calls should be passed through afterwards
-    iRewinder->Stop();
+    iRewinder->Stop(iTrackId, iStreamId);
     // TrySeek on current track should succeed when no longer buffering
     seekRes = iStreamHandler->TrySeek(0,0,0);
     TEST(seekRes == iCurrentFlushId);

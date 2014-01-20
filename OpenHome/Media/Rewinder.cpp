@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Rewinder.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -167,10 +168,12 @@ void Rewinder::Rewind()
     }
 }
 
-void Rewinder::Stop()
+void Rewinder::Stop(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    DoStop();
+    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+        DoStop();
+    }
 }
 
 void Rewinder::DoStop()
