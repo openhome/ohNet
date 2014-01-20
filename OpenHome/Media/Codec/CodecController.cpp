@@ -7,6 +7,8 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
@@ -295,8 +297,9 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
     }
     MsgAudioEncoded* remaining = NULL;
     const TUint bufSpace = aBuf.MaxBytes() - aBuf.Bytes();
-    if (bufSpace < iAudioEncoded->Bytes()) {
-        remaining = iAudioEncoded->Split(bufSpace);
+    const TUint toRead = std::min(bufSpace, aBytes);
+    if (toRead < iAudioEncoded->Bytes()) {
+        remaining = iAudioEncoded->Split(toRead);
     }
     const TUint bytes = iAudioEncoded->Bytes();
     ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
