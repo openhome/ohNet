@@ -294,8 +294,9 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
         return false;
     }
     MsgAudioEncoded* remaining = NULL;
-    if (iAudioEncoded->Bytes() > aBytes) {
-        remaining = iAudioEncoded->Split(aBytes);
+    const TUint bufSpace = aBuf.MaxBytes() - aBuf.Bytes();
+    if (bufSpace < iAudioEncoded->Bytes()) {
+        remaining = iAudioEncoded->Split(bufSpace);
     }
     const TUint bytes = iAudioEncoded->Bytes();
     ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
