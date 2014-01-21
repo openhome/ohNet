@@ -313,7 +313,7 @@ gJavaTests = [ TestCase('org.openhome.net.controlpoint.tests.TestProxy', [], Fal
               ,TestCase('org.openhome.net.device.tests.TestDvDevice', [], True, False)
                ]
 
-class js_test():
+class js_test:
 
     def write_dummy_results(self):
         if not os.path.exists("xout"):
