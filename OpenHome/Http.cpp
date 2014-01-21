@@ -152,11 +152,6 @@ void Http::WriteHeaderRange(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 a
     aWriter.WriteHeader(Http::kHeaderRange, buf);
 }
 
-void Http::WriteHeaderHost(WriterHttpHeader& aWriter, const Uri& aUri)
-{
-    aWriter.WriteHeader(Http::kHeaderHost, aUri.Host());
-}
-
 void Http::WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Uri& aUri)
 {
     IWriterAscii& writer = aWriter.WriteHeaderField(Http::kHeaderHost);
