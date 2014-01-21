@@ -116,6 +116,10 @@ Msg* StarvationMonitor::Pull()
 
 MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
 {
+    if (aMsg->Jiffies() > kMaxAudioPullSize) {
+        MsgAudio* remaining = aMsg->Split(kMaxAudioPullSize);
+        EnqueueAtHead(remaining);
+    }
     if (iTrackIsPullable) {
         if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
             MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
@@ -180,6 +184,26 @@ void StarvationMonitor::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 
 void StarvationMonitor::UpdateStatus(EStatus aStatus)
 {
+    /*const TChar* status;
+    switch (aStatus)
+    {
+    case ERunning:
+        status = "Running";
+        break;
+    case ERampingDown:
+        status = "RampingDown";
+        break;
+    case EBuffering:
+        status = "Buffering";
+        break;
+    case ERampingUp:
+        status = "RampingUp";
+        break;
+    default:
+        status = "unknown(!)";
+        break;
+    }
+    Log::Print("StarvationMonitor, updating status to %s\n", status);*/
     if (aStatus == EBuffering) {
         iObserver.NotifyStarvationMonitorBuffering(true);
     }
