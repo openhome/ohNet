@@ -197,6 +197,9 @@ void CodecController::CodecThread()
                     catch (CodecStreamCorrupt&) {
                         iStreamEnded = true;
                     }
+                    catch (CodecStreamFeatureUnsupported&) {
+                        iStreamEnded = true;
+                    }
                     if (iStreamEnded) {
                         break;
                     }
@@ -205,6 +208,9 @@ void CodecController::CodecThread()
             catch (CodecStreamCorrupt&) {
                 // CodecStreamCorrupt thrown during StreamInitialise()
                 // don't break here - might be waiting on a quit msg or similar
+            }
+            catch (CodecStreamFeatureUnsupported&) {
+                // copy behaviour for Corrupt
             }
         }
         catch (CodecStreamFlush&) {
