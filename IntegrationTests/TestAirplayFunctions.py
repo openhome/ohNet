@@ -48,18 +48,18 @@ class TestAirplayFunctions( BASE.BaseTest ):
             itunesServer = args[2]
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         # setup self.dacp (iTunes) control
         self.dacp = DacpClient.DacpClient( itunesServer )
-        print "\n\n-->", self.dacp.speakers
         if self.dutName not in self.dacp.speakers:
-            self.log.Abort( '%s not available as iTunes speaker' % self.dutName )
+            self.log.Abort( self.dacp.dev, '%s not available as iTunes speaker' % self.dutName )
         self.dacp.speaker = 'My Computer'
         time.sleep( 5 )        
         self.dacp.Pause()
                     
         # setup DUT
+        self.dutDev = self.dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( self.dutName, aIsDut=False )
         self.dut.product.AddSubscriber( self.__ProductEvtCb )
                         
@@ -70,9 +70,9 @@ class TestAirplayFunctions( BASE.BaseTest ):
                 self.dacp.container = kItunesCtr
                 self.tracks = self.dacp.items
             else:
-                self.log.Abort( '%s container not found in iTunes' % kItunesCtr )
+                self.log.Abort( self.dacp.dev, '%s container not found in iTunes' % kItunesCtr )
         else: 
-            self.log.Abort( '%s database not found in iTunes' % self.dacp.library )
+            self.log.Abort( self.dacp.dev, '%s database not found in iTunes' % self.dacp.library )
 
         # run the tests
         self._CheckSelect()
@@ -101,14 +101,14 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Playlist',
+        self.log.FailUnless( self.dutDev, name=='Playlist',
             '%s/Playlist - actual/expected source before Airplay started' % name )
         
         self.srcChanged.clear()
         self.dacp.speaker = self.dutName
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Playlist',
+        self.log.FailUnless( self.dutDev, name=='Playlist',
             '%s/Playlist - actual/expected source on Airplay start with Net Aux auto select disabled' % name )
         
         self.dacp.speaker = 'My Computer'
@@ -117,21 +117,21 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Playlist',
+        self.log.FailUnless( self.dutDev, name=='Playlist',
             '%s/Playlist - actual/expected source before Airplay started' % name )
         
         self.srcChanged.clear()
         self.dacp.speaker = self.dutName
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Net Aux',
+        self.log.FailUnless( self.dutDev, name=='Net Aux',
             '%s/Net Aux - actual/expected source on Airplay start with Net Aux auto select enabled' % name )
 
         self.srcChanged.clear()
         self.dacp.Pause()
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Net Aux',
+        self.log.FailUnless( self.dutDev, name=='Net Aux',
             '%s/Net Aux - actual/expected source after Airplay stopped' % name )
 
         self.srcChanged.clear()
@@ -141,7 +141,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dacp.PlayTrack( kVolTrack )
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Playlist',
+        self.log.FailUnless( self.dutDev, name=='Playlist',
             '%s/Playlist - actual/expected source after Airplay restarted' % name )
         
         self.srcChanged.clear()
@@ -151,7 +151,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         time.sleep( 5 )
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( name=='Net Aux',
+        self.log.FailUnless( self.dutDev, name=='Net Aux',
             '%s/Net Aux - actual/expected source after AirPlay speakers reselected' % name )
         
     def _CheckAudioFreq( self ):
@@ -171,7 +171,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
                     titles.append( track['title'] )
                     
         if len( titles ) < 14:
-            self.log.Fail( '%d required test tones not available on %s' % (len( titles ), self.dacp.server) )
+            self.log.Fail( self.dacp.dev, '%d required test tones not available on %s' % (len( titles ), self.dacp.server) )
                 
         for title in titles:
             msg = 'AirPlay with %s' % title
@@ -179,26 +179,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             time.sleep( 5 )
             
             # just wait a few secs and check info ticks and nothing crashes....
-            
-#            self.scope.chRange = '5V'
-#            self.scope.Capture( 1e6, 100 )
-#            self.dacp.Pause()
-#            
-#            expL = int( title.split()[0].strip('Hz'))
-#            expR = int( title.split()[2].strip('Hz'))
-#                
-#            failed = False
-#            if self.log.CheckLimits( 'GELE', self.scope.chaFreq,
-#                expL*.999, expL*1.001, 'AirPlay LEFT with %s' % title ) == 'fail':
-#                failed = True
-#            if self.log.CheckLimits( 'GELE', self.scope.chbFreq,
-#                expR*.999, expR*1.001, 'AirPlay RIGHT with %s' % title ) == 'fail':
-#                failed = True
-#            if self.plot == 'all':
-#                self.scope.Plot( msg, self.plotter, self._PlotPath() )
-#            elif self.plot == 'fails' and failed:
-#                self.scope.Plot( msg, self.plotter, self._PlotPath() )
-            
+                        
     def _CheckVolume( self ):
         "Check volume control on server is reflected in DS output"
         if self.dut.volume is not None:
@@ -213,10 +194,6 @@ class TestAirplayFunctions( BASE.BaseTest ):
         
         self.dacp.volume = 100
         time.sleep( 5 )
-#        self.scope.chRange = '5V'
-#        self.scope.Capture( 1e5, 100 )
-#        zeroDbL = self.scope.chaRms
-#        zeroDbR = self.scope.chbRms
         
         for (setVol, expVol) in [(10,-42), (20,-28), (30,-21), (40,-16), (50,-12),
                                  (60,-9),  (70,-6),  (80,-4),  (90,-2),  (100,0)]:
@@ -225,29 +202,6 @@ class TestAirplayFunctions( BASE.BaseTest ):
             time.sleep( 5 )
             
             # just wait a few secs and check info ticks and nothing crashes....
-
-            
-#            if setVol < 41:
-#                self.scope.chRange = '50mV'
-#            if setVol < 61:
-#                self.scope.chRange = '1V'
-#            else:
-#                self.scope.chRange = '5V'
-#            self.scope.Capture( 1e5, 100 )
-#            leftVol = self._ToDb( self.scope.chaRms, zeroDbL )
-#            rightVol = self._ToDb( self.scope.chbRms, zeroDbL )
-#            
-#            failed = False
-#            if self.log.CheckLimits( 'GELE', leftVol, expVol-1, expVol+1,
-#                ' AirPlay volume LEFT set to %d' % setVol ) == 'fail':
-#                failed = True
-#            if self.log.CheckLimits( 'GELE', rightVol, expVol-1, expVol+1,
-#                ' AirPlay volume RIGHT set to %d' % setVol ) == 'fail':
-#                failed = True
-#            if self.plot == 'all':
-#                self.scope.Plot( msg, self.plotter, self._PlotPath() )
-#            elif self.plot == 'fails' and failed:
-#                self.scope.Plot( msg, self.plotter, self._PlotPath() )
         
     def __ProductEvtCb( self, service, svName, svVal, svSeq ):
         "Callback on events from product service"
@@ -261,12 +215,6 @@ class TestAirplayFunctions( BASE.BaseTest ):
         except:
             db = -999
         return db
-                                
-#    def _PlotPath( self ):
-#        "Generate unique path for scope plot image"
-#        self.plotNum += 1
-#        fileName = 'AirplayFunctions_%s_Plot_%02d.png' % ( self.uniqueId, self.plotNum )
-#        return os.path.join( LogUtils.GetLogfileDir(), fileName )
         
 if __name__ == '__main__':
     

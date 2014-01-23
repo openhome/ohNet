@@ -80,7 +80,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 self.testLoops = int( args[6] )
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         if receiverName.lower() == 'none':
            receiverName = None
@@ -94,16 +94,18 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         # get playlist from server
         server = Server.MediaServer( serverName )
         if not server.device:
-            self.log.Abort( 'Server %s not available' % (serverName) )
+            self.log.Abort( serverName, 'Not available' )
         self.playlist = server.GetPlaylist( playlistName )
         server.Shutdown()
         self.numTracks = len( self.playlist )
 
         # create sender
+        self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
         
         # create receiver and connect to sender
         if receiverName:
+            self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             #time.sleep( 3 )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
@@ -118,13 +120,12 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         time.sleep( 5 )
         self.avtState = self.avt.transportState
         for self.testLoop in range( self.testLoops ):
+            self.eop.clear()        
             # subscribe to AVT renderer events
-            time.sleep(3)
             self.avt.AddSubscriber( self._AvtEventCb )
             self._StartNextTrack()
             
             # wait until playback stopped, cleanup and exit
-            self.eop.clear()        
             self.eop.wait()
             self.avt.RemoveSubscriber( self._AvtEventCb )
             if self.tickTimer:
@@ -138,7 +139,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             self.avtState         = None
             self.avtUri           = None
             if self.abortMsg:
-                self.log.Abort( self.abortMsg )
+                self.log.Abort( self.senderDev, self.abortMsg )
                 
     def Cleanup( self ):
         "Perform cleanup on test exit"
@@ -184,7 +185,6 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.avt.Stop()
         self.mutex.release()
         time.sleep(10)
-        print "--2\n\n\n\n\n"
         
     def _StartNextTrack( self ):
         "Start playback of next track - call on a seperate thread"        
@@ -194,7 +194,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             return
         
         self.log.Info( '' )
-        self.log.Info( 'Loop %d of %d: Track %d of %d' % 
+        self.log.Info( '', 'Loop %d of %d: Track %d of %d' % 
             (self.testLoop+1, self.testLoops, self.trackIndex+1, self.numTracks))
         self.log.Info( '' )
         self.noRelTime = 0
@@ -217,10 +217,10 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 title = Common.GetTitleFromDidl( self.playlist[self.trackIndex][1] )
             except:
                 title = 'UNKNOWN'
-            self.log.Warn( 'FAILED to Play: %s within 5s' % title ) 
+            self.log.Warn( self.senderDev, 'FAILED to Play: %s within 5s' % title ) 
             self.playing.wait( 5 )
             if not self.playing.isSet():
-                self.log.Fail( 'FAILED to Play: %s within 10s' % title ) 
+                self.log.Fail( self.senderDev, 'FAILED to Play: %s within 10s' % title ) 
                 self.mutex.release()
                 self._StartNextTrack()
                 return
@@ -250,7 +250,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if self.expectedPlayTime:
             loLim = self.expectedPlayTime-2 # widened as IPY timer can be 1s short
             hiLim = self.expectedPlayTime+1
-            self.log.CheckLimits( 'GELE', self.trackPlayTime, loLim, hiLim,
+            self.log.CheckLimits( self.senderDev, 'GELE', self.trackPlayTime, loLim, hiLim,
                 'track play time as expected')
                     
     def _TickCb( self ):
@@ -262,11 +262,11 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         avtSecs = self._ToSecs( posnInfo['RelTime'] )
         if avtSecs != 0:
             self.noRelTime = 0
-            self.log.CheckLimits( 'GELE', avtSecs,
+            self.log.CheckLimits( self.senderDev, 'GELE', avtSecs,
                  self.sender.time.seconds-1, self.sender.time.seconds+1, 
                 '(%d/%d) AVT/Sender seconds' % (avtSecs, self.sender.time.seconds) )
             if self.receiver:
-                self.log.CheckLimits( 'GELE', avtSecs,
+                self.log.CheckLimits( self.senderDev, 'GELE', avtSecs,
                     self.receiver.time.seconds-1, self.receiver.time.seconds+1, 
                     '(%d/%d) AVT/Receiver seconds' % (avtSecs, self.receiver.time.seconds) )
         if avtSecs != self.prevRelTime:
@@ -299,19 +299,19 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         avtUri      = self.avt.avTransportURI
         avtMetadata = self.avt.avTransportURIMetaData
         
-        self.log.FailUnless( avtDuration==self.sender.info.duration, 
+        self.log.FailUnless( self.senderDev, avtDuration==self.sender.info.duration, 
             '(%s/%s) AVT/Sender duration' % (avtDuration, self.sender.info.duration) )
-        self.log.FailUnless( avtUri==self.sender.info.uri, 
+        self.log.FailUnless( self.senderDev, avtUri==self.sender.info.uri, 
             '(%s/%s) AVT/Sender URI' % (avtUri, self.sender.info.uri) )
-        self.log.FailUnless( avtMetadata==self.sender.info.metadata, 
+        self.log.FailUnless( self.senderDev, avtMetadata==self.sender.info.metadata, 
             '(%s/%s) AVT/Sender metadata' % (avtUri, self.sender.info.metadata) )
         
         if self.receiver:
-            self.log.FailUnless( avtDuration==self.receiver.info.duration, 
+            self.log.FailUnless( self.rcvrDev, avtDuration==self.receiver.info.duration, 
                 '(%s/%s) AVT/Receiver duration' % (avtDuration, self.receiver.info.duration) )
-            self.log.FailUnless( avtUri==self.receiver.info.uri, 
+            self.log.FailUnless( self.rcvrDev, avtUri==self.receiver.info.uri, 
                 '(%s/%s) AVT/Receiver URI' % (avtUri, self.receiver.info.uri) )
-            self.log.FailUnless( avtMetadata==self.receiver.info.metadata, 
+            self.log.FailUnless( self.rcvrDev, avtMetadata==self.receiver.info.metadata, 
                 '(%s/%s) AVT/Receiver metadata' % (avtMetadata, self.receiver.info.metadata) )
         
     def _ToSecs( self, aTime ):

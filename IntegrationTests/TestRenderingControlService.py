@@ -36,11 +36,12 @@ class TestRenderingControlService( BASE.BaseTest ):
             dutName    = args[1]
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         if 'MediaRenderer' not in dutName:
             dutName += ':MediaRenderer'        
 
+        self.mrDev = dutName.split( ':' )[0]
         self.mr = MR.MediaRendererDevice( dutName )
         self.rc = self.mr.rc        
         self.rc.AddSubscriber( self._RcEventCb )
@@ -52,14 +53,14 @@ class TestRenderingControlService( BASE.BaseTest ):
         time.sleep( 5 )
 
         # test volume control / monitoring
-#        targetVol = random.randint( 1, kMaxVol-1 )
-#        self.VolStepping( kMaxVol )
-#        self.VolStepping( 0 )
-#        self.VolStepping( targetVol )
+        targetVol = random.randint( 1, kMaxVol-1 )
+        self.VolStepping( kMaxVol )
+        self.VolStepping( 0 )
+        self.VolStepping( targetVol )
         
         # test volume DB control / monitoring
-#        targetVol = random.randint( self.rc.volumeDbRange['MinValue'], self.rc.volumeDbRange['MaxValue'] )
-#        self.VolDbStepping( targetVol )
+        targetVol = random.randint( self.rc.volumeDbRange['MinValue'], self.rc.volumeDbRange['MaxValue'] )
+        self.VolDbStepping( targetVol )
         
         # test mute control / monitoring
         self.Mute( 15 )
@@ -73,7 +74,8 @@ class TestRenderingControlService( BASE.BaseTest ):
                     
     def VolStepping( self, aTarget ):
         "Step volume to aTarget (or range limit)"
-        self.log.Info( 'Stepping volume to %d' % (aTarget) )
+        self.log.Info( self.mrDev, 'Stepping volume to %d' % (aTarget) )
+        polledVolume = -1
         done = False        
         while not done:
             if aTarget > self.currVolume: 
@@ -86,14 +88,14 @@ class TestRenderingControlService( BASE.BaseTest ):
             if not self.rcEvent.isSet():
                 if self.currVolume==kMaxVol and aTarget>=self.currVolume \
                 or self.currVolume==0       and aTarget<self.currVolume:
-                    self.log.Info( 'Volume range end-point reached' )
+                    self.log.Info( self.mrDev, 'Volume range end-point reached' )
                     aTarget = self.currVolume
                 done = True
             else:
                 polledVolume = self.rc.polledVolume
-                self.log.FailUnless( self.currVolume==newVol, 
+                self.log.FailUnless( self.mrDev, self.currVolume==newVol, 
                     '%d/%d (actual/expected) EVENTED volume' % (self.currVolume, newVol) )    
-                self.log.FailUnless( polledVolume==newVol, 
+                self.log.FailUnless( self.mrDev, polledVolume==newVol, 
                     '%d/%d (actual/expected) POLLED volume' % (polledVolume, newVol) )
             if aTarget > self.currVolume: 
                 if self.currVolume>=aTarget:
@@ -102,14 +104,14 @@ class TestRenderingControlService( BASE.BaseTest ):
                 if self.currVolume<=aTarget:
                     done=True
        
-        self.log.FailUnless( self.currVolume == aTarget, 
+        self.log.FailUnless( self.mrDev, self.currVolume == aTarget, 
             'Final EVENTED volume was %d, expected %d' % (self.currVolume, aTarget) )
-        self.log.FailUnless( self.rc.polledVolume == aTarget, 
+        self.log.FailUnless( self.mrDev, self.rc.polledVolume == aTarget, 
             'Final POLLED volume was %d, expected %d' % (polledVolume, aTarget) )
                     
     def VolDbStepping( self, aTarget ):
         "Step volume to aTarget (or range limit)"
-        self.log.Info( 'Stepping volume DB to %d' % (aTarget) )
+        self.log.Info( self.mrDev, 'Stepping volume DB to %d' % (aTarget) )
         step = (self.rc.volumeDbRange['MaxValue']-self.rc.volumeDbRange['MinValue']) / 100
         done = False        
         while not done:
@@ -121,14 +123,14 @@ class TestRenderingControlService( BASE.BaseTest ):
             self.rc.volumeDb = newVol
             self.rcEvent.wait( 5 )
             polledVolumeDb = self.rc.polledVolumeDb
-            self.log.FailUnless( self.currVolumeDb==newVol, 
+            self.log.FailUnless( self.mrDev, self.currVolumeDb==newVol, 
                 '%d/%d (actual/expected) EVENTED volume DB' % (self.currVolumeDb, newVol) )    
-            self.log.FailUnless( polledVolumeDb==newVol, 
+            self.log.FailUnless( self.mrDev, polledVolumeDb==newVol, 
                 '%d/%d (actual/expected) POLLED volume DB' % (polledVolumeDb, newVol) )
             if self.currVolumeDb > (aTarget-step) and self.currVolumeDb <= aTarget:
                 done=True
-        self.log.CheckLimits( 'GTLE', self.currVolumeDb, aTarget-step, aTarget, 'Final EVENTED volume DB' )
-        self.log.CheckLimits( 'GTLE', self.rc.polledVolumeDb, aTarget-step, aTarget, 'Final EVENTED volume DB' )
+        self.log.CheckLimits( self.mrDev, 'GTLE', self.currVolumeDb, aTarget-step, aTarget, 'Final EVENTED volume DB' )
+        self.log.CheckLimits( self.mrDev, 'GTLE', self.rc.polledVolumeDb, aTarget-step, aTarget, 'Final EVENTED volume DB' )
 
     def Mute( self, aLoops ):        
         "Check mute operates correctly"
@@ -151,19 +153,19 @@ class TestRenderingControlService( BASE.BaseTest ):
             currMute = nextMute
             self.rcEvent.wait( 3 )
             if not self.rcEvent.isSet():
-                self.log.Fail( 'Toggling mute timed out' )
+                self.log.Fail( self.mrDev, 'Toggling mute timed out' )
             else:
                 polledMute = self.rc.polledMute
-                self.log.FailUnless( self.currMute==nextMute, 
+                self.log.FailUnless( self.mrDev, self.currMute==nextMute, 
                     '%s/%s (actual/expected) EVENTED mute' % (self.currMute, nextMute) )    
-                self.log.FailUnless( polledMute==nextMute, 
+                self.log.FailUnless( self.mrDev, polledMute==nextMute, 
                     '%s/%s (actual/expected) POLLED mute' % (polledMute, nextMute) )    
             
-        self.log.FailUnless( self.currMute==expMute,
+        self.log.FailUnless( self.mrDev, self.currMute==expMute,
             'Final EVENTED mute state after %d presses was %s' % (aLoops, self.currMute))
         polledMute = self.rc.polledMute
         if type( polledMute ) == int:
-            self.log.FailUnless( polledMute == nextMute, 
+            self.log.FailUnless( self.mrDev, polledMute == nextMute, 
                 'Final POLLED mute state after %d presses was %s' % (aLoops, polledMute))
         
     def _RcEventCb( self, service, svName, svVal, svSeq ):

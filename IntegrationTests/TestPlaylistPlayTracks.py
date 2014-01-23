@@ -79,26 +79,27 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.shuffle = args[7]
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         if receiverName.lower() == 'none':
            receiverName = None 
             
         if self.repeat.lower() not in ('off', 'on'):
-            self.log.Abort( 'Invalid repeat mode %s' % self.repeat )
+            self.log.Abort( '', 'Invalid repeat mode %s' % self.repeat )
             
         if self.shuffle.lower() not in ('off', 'on'):
-            self.log.Abort( 'Invalid shuffle mode %s' % self.shuffle )
+            self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
             
         # get playlist from server
         self.server = Server.MediaServer( serverName )
         if not self.server.device:
-            self.log.Abort( 'Server %s not available' % (serverName) )
+            self.log.Abort( serverName, 'Not available' )
         self.tracks = self.server.GetPlaylist( playlistName )
         self.server.Shutdown()
         self.server = None
 
         # create Sender device add subscribe to events
+        self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
         self.sender.time.AddSubscriber( self._SenderTimeCb )
@@ -110,6 +111,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         
         # create Receiver Device, put onto random source and connect to sender
         if receiverName:
+            self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             self.receiver.time.AddSubscriber( self._ReceiverTimeCb )
             self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
@@ -203,32 +205,32 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 if self.senderStarted.isSet():
                     if self.meta:
                         title = Common.GetTitleFromDidl( aTrack[1] )
-                        self.log.Fail( 'FAILED to play track %s' % title )
+                        self.log.Fail( self.senderDev, 'FAILED to play track %s' % title )
                     else:
-                        self.log.Fail( 'FAILED to play track' )
+                        self.log.Fail( self.senderDev, 'FAILED to play track' )
                 
             if self.senderStarted.isSet():
                 dsTrack = self.sender.playlist.TrackInfo( aId )
                 (uri,self.meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
                 if dsTrack['Uri'] != uri:
-                    self.log.Fail( 'Sender URI mismatch %s / %s'
+                    self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
                                     % (dsTrack['aUri'], uri) )
                 else:
-                    self.log.Pass( 'Sender URI as expected' )
+                    self.log.Pass( self.senderDev, 'Sender URI as expected' )
                 
                 if os.name == 'posix':
                     # clean up 'screwed up' unicode escaping in Linux
                     dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
                     self.meta = self.meta.replace( '\\', '' )
                 if dsTrack['Metadata'] != self.meta:
-                    self.log.Fail( 'Sender metadata mismatch %s / %s'
+                    self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
                                     % (dsTrack['Metadata'], self.meta) )
                 else:
-                    self.log.Pass( 'Sender metadata as expected' )
+                    self.log.Pass( self.senderDev, 'Sender metadata as expected' )
                     
-                self.log.FailUnless( self.sender.sender.audio, 
+                self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
                     'Sender Audio flag is %s' % self.sender.sender.audio )
-                self.log.FailUnless( self.sender.sender.status == 'Enabled', 
+                self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
                     'Sender Status is %s' % self.sender.sender.status )                         
                     
             if not self.senderStopped.isSet():
@@ -272,10 +274,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         "Setup timer to callback after specified play time"
         plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
         self.log.Info( '' )
-        self.log.Info( '----------------------------------------' )
-        self.log.Info( 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+        self.log.Info( '', '----------------------------------------' )
+        self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
             (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-        self.log.Info( '----------------------------------------' )
+        self.log.Info( '', '----------------------------------------' )
         self.log.Info( '' )
         self.senderStarted.wait()
         self.senderPlaying.wait()
@@ -287,7 +289,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             if self.senderDuration.is_set():
                 self.expectedPlayTime = self.sender.info.duration
             else:
-                self.log.Fail( 'No evented duration for track %d' % self.numTrack )
+                self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
         if self.playTime != None and self.playTime < self.expectedPlayTime:
             self.expectedPlayTime = self.playTime
             if self.playTime == 0:
@@ -330,7 +332,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # to receipt of an Id event from the Playlist service). This is to 
         # handle cases where the same track is played twice in a row, which
         # causes NO id event to be sent.
-        self.log.Info( 'Next track timer triggered track change as no Id event Rx' ) 
+        self.log.Info( self.senderDev, 'Next track timer triggered track change as no Id event Rx' ) 
         self._TrackChanged( self.sender.playlist.id )
 
     def _CheckPlayTime( self ):
@@ -338,12 +340,12 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if self.expectedPlayTime:
             loLim = self.expectedPlayTime-1
             hiLim = self.expectedPlayTime+1
-            self.log.CheckLimits( 'GELE', self.senderPlayTime, loLim, hiLim,
+            self.log.CheckLimits( self.senderDev, 'GELE', self.senderPlayTime, loLim, hiLim,
                 'reported (by Sender) play time')
             if self.receiver:
-                self.log.CheckLimits( 'GELE', self.receiverPlayTime, loLim, hiLim,
+                self.log.CheckLimits( self.rcvrDev, 'GELE', self.receiverPlayTime, loLim, hiLim,
                     'reported (by Receiver) play time')
-            self.log.CheckLimits( 'GELE', int( round( time.time()-self.startTime, 0 )),
+            self.log.CheckLimits( '', 'GELE', int( round( time.time()-self.startTime, 0 )),
                 loLim, hiLim, 'measured (by test) play time')
             
     def _CheckReadList( self ):
@@ -359,7 +361,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             totalTracks += 1
             ids.append( 9876543 )
             
-        self.log.Info( 'Checking ReadList on %d random tracks from %d' % 
+        self.log.Info( self.senderDev, 'Checking ReadList on %d random tracks from %d' % 
             (numTracks, totalTracks) )
         
         readTracks = self.sender.playlist.TracksInfo( ids )
@@ -377,14 +379,14 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 
             if( readUri != expUri ):
                 fail = True
-                self.log.Fail( 'Actual/Expected URI read from DS %s | %s' % 
+                self.log.Fail( self.senderDev, 'Actual/Expected URI read from DS %s | %s' % 
                                (readUri, expUri) )
             if( readMeta != expMeta ):
                 fail = True
-                self.log.Fail( 'Actual/Expected META read from DS %s | %s' % 
+                self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % 
                                (readMeta, expMeta) )
         if not fail:
-            self.log.Pass( 'All Playlist ReadList tracks OK' )
+            self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
 
     def _CheckReceiverInfo( self ):
         "Check receiver Info matches sender"
@@ -395,13 +397,13 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             itemTitle = item[0].upper()+item[1:]
             senderVal = eval( 'self.sender.info.polled%s' % itemTitle )
             receiverVal = eval( 'self.receiver.info.polled%s' % itemTitle )
-            self.log.FailUnless( senderVal==receiverVal, 
+            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal, 
                 '(%s/%s) POLLED Sender/Receiver value for %s' % 
                 (str( senderVal ), str( receiverVal ), item[0].upper()+item[1:] ))
             
             senderVal = eval( 'self.sender.info.%s' % item )
             receiverVal = eval( 'self.receiver.info.%s' % item )
-            self.log.FailUnless( senderVal==receiverVal, 
+            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal, 
                 '(%s/%s) EVENTED Sender/Receiver value for %s' % 
                 (str( senderVal ), str( receiverVal ), itemTitle) )
         

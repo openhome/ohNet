@@ -39,12 +39,12 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
             loops   = int( args[2] )
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
         for loop in range( loops ):
             self.log.Info( '' )
-            self.log.Info( 'Loop %d of %d' % (loop+1, loops) )
+            self.log.Info( '', 'Loop %d of %d' % (loop+1, loops) )
             self.log.Info( '' )
             self.dut.product.CycleStandby()
             time.sleep( 15 )

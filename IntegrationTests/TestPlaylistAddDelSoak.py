@@ -39,12 +39,12 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
             loops        = int( args[4] )
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         # get playlist from server
         self.server = Server.MediaServer( serverName )
         if not self.server.device:
-            self.log.Abort( 'Server %s not available' % (serverName) )
+            self.log.Abort( serverName, 'Not available' )
         playlist = self.server.GetPlaylist( playlistName )
         self.server.Shutdown()
         self.server = None
@@ -57,7 +57,7 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         # Repeatedly Add / Remove playlist
         for i in range( loops ):
             self.log.Info( '' )
-            self.log.Info( 'Loop %d of %d' % (i+1, loops) )
+            self.log.Info( '', 'Loop %d of %d' % (i+1, loops) )
             self.log.Info( '' )
             
             self.codecEvt.clear()
