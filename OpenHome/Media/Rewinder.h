@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Standard.h>
 
 namespace OpenHome {
 namespace Media {
@@ -31,7 +32,7 @@ public:
     Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     ~Rewinder();
 private:
-    Msg* GetAudioFromCurrent();
+    void TryBuffer(Msg* aMsg);
     void DrainQueue(MsgQueue& aQueue);
     void DoStop();
 public: // from IPipelineElementUpstream
@@ -61,9 +62,10 @@ private:
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
     Mutex iLock;
-    TUint iTrackId;
-    TUint iStreamId;
-    MsgQueue iFlushQueue;
+    TUint iTrackIdLatest;
+    TUint iStreamIdLatest;
+    TUint iTrackIdEarliest;
+    TUint iStreamIdEarliest;
     MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
     MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind
 };
