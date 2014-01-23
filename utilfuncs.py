@@ -154,13 +154,12 @@ def configure_toolchain(conf):
             try:
                 linkflags = os.environ['CROSS_LINKFLAGS'].split()
             except KeyError:
-                # This is a bit pants - we should configure wag with libosa/libplatform paths,
-                # and use that path here.
-                linkflags = [   '-B', '../dependencies/' + platform + '/libplatform/lib/',
+                linkflags = [   '-B', conf.env.STLIBPATH_PLATFORM,
+                                os.path.join(conf.env.STLIBPATH_PLATFORM, 'FileOpen.o'),
+                                '-lplatform',
+                                # libosa path is hardcoded here :(
                                 '-B', '../dependencies/' + platform + '/libosa/lib/',
-                                '../dependencies/' + platform + '/libplatform/lib/FileOpen.o',
-                                '-specs', 'bsp_specs',
-                                '-lplatform']
+                                '-specs', 'bsp_specs']
 
             conf.env.append_value('LINKFLAGS', linkflags)
             conf.env.append_value('LINKFLAGS',  ['-mcpu=' + cpu])
