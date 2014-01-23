@@ -62,8 +62,7 @@ tests = [
 #    [ 'TestPlaylistPlayback',        'dut1', 'all',        12345                                                                                        ],
     [ 'TestPlaylistAddDelSoak',      'dut1', 'ms',         adList,      100                                                                             ],
     [ 'TestPlaylistPlayTracks',      'dut1', 'dut2',       'ms',        medList,     12,          'off',      'on'                                      ],       
-#    [ 'TestPlaylistDropout',         'dut1', 'None',       'None',      'unicast',   '3600'                                                             ],       
-#    [ 'TestPlaylistDropout',         'dut2', 'dut1',       'None',      'multicast', '3600'                                                             ],       
+    [ 'TestPlaylistDropout',         'dut1', 'dut2',       'dut3',      '3600'                                                                          ],       
 
     # OH Radio Service
 #    [ 'TestRadioService',            'dut1', 'all'                                                                                                      ],
