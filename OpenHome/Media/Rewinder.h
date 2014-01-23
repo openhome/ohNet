@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Standard.h>
 
 namespace OpenHome {
 namespace Media {
@@ -12,7 +13,7 @@ class IRewinder
 {
 public:
     virtual void Rewind() = 0;
-    virtual void Stop() = 0;
+    virtual void Stop(TUint aTrackId, TUint aStreamId) = 0;
 };
 
 /* Class which buffers data for recognition (in case seeking back to the start
@@ -31,7 +32,7 @@ public:
     Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement);
     ~Rewinder();
 private:
-    Msg* GetAudioFromCurrent();
+    void TryBuffer(Msg* aMsg);
     void DrainQueue(MsgQueue& aQueue);
     void DoStop();
 public: // from IPipelineElementUpstream
@@ -50,7 +51,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 public: // from IRewinder
     void Rewind();
-    void Stop();
+    void Stop(TUint aTrackId, TUint aStreamId);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -61,9 +62,10 @@ private:
     IStreamHandler* iStreamHandler;
     TBool iBuffering;
     Mutex iLock;
-    TUint iTrackId;
-    TUint iStreamId;
-    MsgQueue iFlushQueue;
+    TUint iTrackIdLatest;
+    TUint iStreamIdLatest;
+    TUint iTrackIdEarliest;
+    TUint iStreamIdEarliest;
     MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
     MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind
 };

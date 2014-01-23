@@ -94,6 +94,8 @@ protected:
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
     TUint iTryStopCount;
+    TUint iTrackId;
+    TUint iStreamId;
 };
 
 class SuiteRewinderNullMsgs : public SuiteRewinder
@@ -121,6 +123,8 @@ private:
     void TestTrySeekToStartAfterMiscAudio();
 protected:
     static const TUint kStartOfNewStream = 10;
+protected:
+    TByte iStartOfStreamValue;
 };
 
 class SuiteRewinderSeekToStartMultipleStreams : public SuiteRewinderSeekToStartAfterMiscAudio
@@ -155,10 +159,10 @@ SuiteRewinder::SuiteRewinder(const TChar* aName)
 SuiteRewinder::SuiteRewinder()
     : SuiteUnitTest("Rewinder tests")
 {
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestStop));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart));
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough));
+    AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion), "TestAllocatorExhaustion");
+    AddTest(MakeFunctor(*this, &SuiteRewinder::TestStop), "TestStop");
+    AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart), "TestTrySeekToStart");
+    AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough), "TestUpstreamRequestPassThrough");
 }
 
 void SuiteRewinder::InitMsgOrder()
@@ -189,6 +193,8 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
     iTrySeekCount = 0;
     iLastSeekOffset = 0;
     iTryStopCount = 0;
+    iTrackId = 0;
+    iStreamId = 0;
     InitMsgOrder();
 }
 
@@ -266,6 +272,7 @@ Msg* SuiteRewinder::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iLastMsgType == EMsgTrack);
     iRcvdMsgType = EMsgTrack;
+    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -274,6 +281,7 @@ Msg* SuiteRewinder::ProcessMsg(MsgEncodedStream* aMsg)
     TEST(iLastMsgType == EMsgEncodedStream);
     iStreamHandler = aMsg->StreamHandler();
     iRcvdMsgType = EMsgEncodedStream;
+    iStreamId = aMsg->StreamId();
     return aMsg;
 }
 
@@ -462,7 +470,7 @@ void SuiteRewinder::TestStop()
     {
         PullAndProcess();
     }
-    iRewinder->Stop();
+    iRewinder->Stop(iTrackId, iStreamId);
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         PullAndProcess();
@@ -551,9 +559,8 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TEST(playRes == ePlayYes);
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
 
-
     // now call Stop and repeat calls - ALL calls should be passed through afterwards
-    iRewinder->Stop();
+    iRewinder->Stop(iTrackId, iStreamId);
     // TrySeek on current track should succeed when no longer buffering
     seekRes = iStreamHandler->TrySeek(0,0,0);
     TEST(seekRes == iCurrentFlushId);
@@ -686,6 +693,7 @@ void SuiteRewinderSeekToStartAfterMiscAudio::InitMsgOrder()
     for (TUint i = 0; i < kStartOfNewStream; i++) {
         iMsgOrder.push_back(EMsgAudioEncoded);
     }
+    iStartOfStreamValue = kStartOfNewStream;
     iMsgOrder.push_back(EMsgTrack);
     iMsgOrder.push_back(EMsgEncodedStream);
     for (TUint i = 0; i < 15; i++) {
@@ -698,17 +706,16 @@ void SuiteRewinderSeekToStartAfterMiscAudio::TestTrySeekToStartAfterMiscAudio()
     // test that after receiving X msgs of MsgAudioEncoded, then a
     // MsgEncodedStream followed by a TrySeek, only MsgAudioEncodeds received
     // after the MsgEncodedStream are passed through
-    for (TByte i = 0; i < iMsgOrder.size(); i++)
-    {
+    for (TByte i = 0; i < iMsgOrder.size(); i++) {
         PullAndProcess();
     }
     // try rewind back to start of stream and test that seek is to start of
     // second stream of MsgAudioEncodeds
     iRewinder->Rewind();
-    // pull next msg and test seek was to start of second stream
-    iAudioIn = kStartOfNewStream;
+    // pull next msg and test seek was to start of first stream
+    iAudioIn = iStartOfStreamValue;
     Msg* msg = iRewinder->Pull();
-    TBool isStartOfStream = TestMsgAudioEncodedValue(*dynamic_cast<MsgAudioEncoded*>(msg), kStartOfNewStream);
+    TBool isStartOfStream = TestMsgAudioEncodedValue(*dynamic_cast<MsgAudioEncoded*>(msg), iStartOfStreamValue);
     TEST(isStartOfStream == true);
     msg = msg->Process(*this);
     msg->RemoveRef();
@@ -729,6 +736,7 @@ void SuiteRewinderSeekToStartMultipleStreams::InitMsgOrder()
     for (TUint i = 0; i < kStartOfNewStream; i++) {
         iMsgOrder.push_back(EMsgAudioEncoded);
     }
+    iStartOfStreamValue = 0;
     iMsgOrder.push_back(EMsgTrack);
     iMsgOrder.push_back(EMsgEncodedStream);
     for (TUint i = 0; i < 15; i++) {

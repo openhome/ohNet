@@ -32,6 +32,7 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     , iShuffler(aShuffler)
     , iRepeater(aRepeater)
     , iProtocolInfo(aProtocolInfo)
+    , iTimerLock("PPL2")
     , iTimerActive(false)
 {
     iTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderPlaylist::TimerCallback));
@@ -215,7 +216,7 @@ void ProviderPlaylist::SeekIndex(IDvInvocation& aInvocation, TUint aValue)
 {
     try {
         iSource.SeekToTrackIndex(aValue);
-        iSource.Play(); // reqiured for volkano1 compatibility
+        iSource.Play(); // required for volkano1 compatibility
     }
     catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
@@ -395,11 +396,12 @@ void ProviderPlaylist::ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationRes
 
 void ProviderPlaylist::TrackDatabaseChanged()
 {
-    AutoMutex a(iLock);
+    iTimerLock.Wait();;
     if (!iTimerActive) {
         iTimerActive = true;
         iTimer->FireIn(kIdArrayUpdateFrequencyMillisecs);
     }
+    iTimerLock.Signal();
 }
 
 void ProviderPlaylist::SetRepeat(TBool aRepeat)
@@ -436,7 +438,9 @@ void ProviderPlaylist::UpdateIdArrayProperty()
 
 void ProviderPlaylist::TimerCallback()
 {
-    AutoMutex a(iLock);
+    iTimerLock.Wait();
     iTimerActive = false;
+    iTimerLock.Signal();
+    AutoMutex a(iLock);
     UpdateIdArrayProperty();
 }

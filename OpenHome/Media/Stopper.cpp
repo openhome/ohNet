@@ -90,7 +90,10 @@ void Stopper::BeginHalt(TUint aHaltId)
 
 void Stopper::DoBeginHalt()
 {
-    ASSERT_DEBUG(iState != EFlushing);
+    if (iState == EFlushing) {
+        // Pipeline is being stopped.  We're already removing the current stream so ignore this request to pause
+        return;
+    }
     if (iState == ERunning || iState == EStarting) {
         iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
         iState = EHalting;
@@ -208,18 +211,14 @@ Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
+    NewStream();
     iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
 Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
-    iFlushStream = iRemovingStream = iResumeAfterHalt = false;
-    iState = ERunning;
+    NewStream();
 
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
@@ -339,4 +338,12 @@ void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
     if (split != NULL) {
         iQueue.EnqueueAtHead(split);
     }
+}
+
+void Stopper::NewStream()
+{
+    iRemainingRampSize = 0;
+    iCurrentRampValue = Ramp::kRampMax;
+    iFlushStream = iRemovingStream = iResumeAfterHalt = false;
+    iState = ERunning;
 }

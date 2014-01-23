@@ -91,6 +91,7 @@ private:
     Bws<ITrackDatabase::kMaxTracks * sizeof(TUint32)> iIdArrayBuf;
     TUint iIdCurrentTrack;
     Timer* iTimer;
+    Mutex iTimerLock;
     TBool iTimerActive;
 };
 

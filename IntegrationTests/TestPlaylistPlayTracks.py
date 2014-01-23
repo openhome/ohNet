@@ -19,7 +19,6 @@ modes may be selected
 #    - removed songcast sender mode param - set in softplayer at startup
 #    - removed abort threshold param (usage obsolete)
 
-
 import _FunctionalTest
 import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano

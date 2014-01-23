@@ -7,6 +7,8 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
@@ -119,7 +121,7 @@ void CodecController::CodecThread()
     while (!iQuit) {
         try {
             iLock.Wait();
-            iQueueTrackData = iStreamEnded = iSeekable = iLive = iSeek = false;
+            iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
             iActiveCodec = NULL;
             iStreamHandler = NULL;
             iStreamId = iSampleRate = iSeekSeconds = 0;
@@ -129,8 +131,7 @@ void CodecController::CodecThread()
 
             // Find next start of stream marker, ignoring any audio or meta data we encounter
             while (!iStreamStarted && !iQuit) {
-                Msg* msg = iUpstreamElement.Pull();
-                msg = msg->Process(*this);
+                Msg* msg = PullMsg();
                 if (msg != NULL) {
                     Queue(msg);
                 }
@@ -140,23 +141,28 @@ void CodecController::CodecThread()
             }
             iQueueTrackData = true;
             iStreamStarted = iStreamEnded = false;
+            iRecognising = true;
+            const TUint trackId = iTrackId;
+            const TUint streamId = iStreamId;
 
-            for (size_t i=0; i<iCodecs.size() && !iQuit; i++) {
+            for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
                 TBool recognised = false;
                 try {
                     recognised = codec->Recognise();
                 }
-                catch (CodecStreamEnded&) {
-                    iStreamEnded = false; // give other codecs a chance to handle this (potentially tiny) stream
-                }
+                catch (CodecStreamStart&) {}
+                catch (CodecStreamEnded&) {}
+                // don't catch CodecStreamStopped - TryStop will have called Rewind/Stop if required
+                iStreamStarted = iStreamEnded = false; // Rewind() will result in us receiving any additional EncodedStream msgs again
                 Rewind();
                 if (recognised) {
                     iActiveCodec = codec;
                     break;
                 }
             }
-            iRewinder.Stop(); // stop buffering audio
+            iRecognising = false;
+            iRewinder.Stop(trackId, streamId); // stop buffering audio
             if (iQuit) {
                 break;
             }
@@ -188,11 +194,14 @@ void CodecController::CodecThread()
                             iActiveCodec->Process();
                         }
                     }
-                    catch (CodecStreamStart&) { }
+                    catch (CodecStreamStart&) {}
                     catch (CodecStreamEnded&) {
                         iStreamEnded = true;
                     }
                     catch (CodecStreamCorrupt&) {
+                        iStreamEnded = true;
+                    }
+                    catch (CodecStreamFeatureUnsupported&) {
                         iStreamEnded = true;
                     }
                     if (iStreamEnded) {
@@ -204,10 +213,12 @@ void CodecController::CodecThread()
                 // CodecStreamCorrupt thrown during StreamInitialise()
                 // don't break here - might be waiting on a quit msg or similar
             }
+            catch (CodecStreamFeatureUnsupported&) {
+                // copy behaviour for Corrupt
+            }
         }
-        catch (CodecStreamFlush&) {
-            // FIXME
-        }
+        catch (CodecStreamStopped&) {}
+        catch (CodecStreamFlush&) {}
         if (iActiveCodec != NULL) {
             iActiveCodec->StreamCompleted();
         }
@@ -230,11 +241,14 @@ void CodecController::Rewind()
     iStreamPos = 0;
 }
 
-void CodecController::PullMsg()
+Msg* CodecController::PullMsg()
 {
     Msg* msg = iUpstreamElement.Pull();
-    msg = msg->Process(*this);
-    ASSERT_DEBUG(msg == NULL);
+    {
+        AutoMutex a(iLock);
+        msg = msg->Process(*this);
+    }
+    return msg;
 }
 
 void CodecController::Queue(Msg* aMsg)
@@ -265,9 +279,12 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
         iPendingMsg = NULL;
         THROW(CodecStreamEnded);
     }
-    if (iStreamEnded) {
+    if (iStreamEnded || iStreamStopped) {
         if (DoRead(aBuf, aBytes)) {
             return;
+        }
+        if (iStreamStopped) {
+            THROW(CodecStreamStopped);
         }
         if (iStreamStarted) {
             THROW(CodecStreamStart);
@@ -275,8 +292,7 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
         THROW(CodecStreamEnded);
     }
     while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) {
-        Msg* msg = iUpstreamElement.Pull();
-        msg = msg->Process(*this);
+        Msg* msg = PullMsg();
         if (msg != NULL) {
             iPendingMsg = msg;
             break;
@@ -294,8 +310,10 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
         return false;
     }
     MsgAudioEncoded* remaining = NULL;
-    if (iAudioEncoded->Bytes() > aBytes) {
-        remaining = iAudioEncoded->Split(aBytes);
+    const TUint bufSpace = aBuf.MaxBytes() - aBuf.Bytes();
+    const TUint toRead = std::min(bufSpace, aBytes);
+    if (toRead < iAudioEncoded->Bytes()) {
+        remaining = iAudioEncoded->Split(toRead);
     }
     const TUint bytes = iAudioEncoded->Bytes();
     ASSERT(aBuf.Bytes() + bytes <= aBuf.MaxBytes());
@@ -311,8 +329,7 @@ TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
 void CodecController::ReadNextMsg(Bwx& aBuf)
 {
     while (iAudioEncoded == NULL) {
-        Msg* msg = iUpstreamElement.Pull();
-        msg = msg->Process(*this);
+        Msg* msg = PullMsg();
         if (msg != NULL) {
             Queue(msg);
         }
@@ -426,6 +443,11 @@ Msg* CodecController::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
+
     iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
@@ -433,13 +455,20 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamStarted = iStreamEnded = true;
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
+
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
     iStreamLength = aMsg->TotalBytes();
     iSeekable = aMsg->Seekable();
     iLive = aMsg->Live();
     iStreamHandler = aMsg->StreamHandler();
-    return aMsg;
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
@@ -462,7 +491,6 @@ Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 {
     ReleaseAudioEncoded();
-    AutoMutex a(iLock);
     if (iExpectedFlushId == MsgFlush::kIdInvalid) {
         Queue(aMsg);
         THROW(CodecStreamFlush);
@@ -492,4 +520,27 @@ Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
     iQuit = true;
     //iStreamEnded = true;  // will cause codec to quit prematurely
     return aMsg;
+}
+
+EStreamPlay CodecController::OkToPlay(TUint aTrackId, TUint aStreamId)
+{
+    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+}
+
+TUint CodecController::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS(); // expect Seek requests to come to this class' public API, not from downstream
+    return MsgFlush::kIdInvalid;
+}
+
+TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
+{
+    AutoMutex a(iLock);
+    if (iTrackId == aTrackId && iStreamId == aStreamId) {
+        iStreamStopped = true;
+    }
+    if (iStreamHandler == NULL) {
+        return MsgFlush::kIdInvalid;
+    }
+    return iStreamHandler->TryStop(aTrackId, aStreamId);
 }

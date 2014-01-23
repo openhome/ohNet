@@ -104,6 +104,7 @@ private:
 
 class Shuffler : public IShuffler, public ITrackDatabaseReader, public ITrackDatabaseObserver
 {
+    friend class SuiteShuffler;
 public:
     Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader);
     ~Shuffler();
@@ -120,11 +121,14 @@ private: // from ITrackDatabaseObserver
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
     void NotifyAllDeleted();
 private:
+    void LogIds(const TChar* aPrefix);
+private:
     mutable Mutex iLock;
     Environment& iEnv;
     ITrackDatabaseReader& iReader;
     ITrackDatabaseObserver* iObserver;
     std::vector<Media::Track*> iShuffleList;
+    TUint iPrevTrackId;
     TBool iShuffle;
 };
 

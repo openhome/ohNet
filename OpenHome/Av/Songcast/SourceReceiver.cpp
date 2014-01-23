@@ -97,7 +97,7 @@ ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper&
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
 SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
-    : Source("Receiver", "Receiver")
+    : Source("Songcast", "Receiver")
     , iLock("SRCV")
     , iPipeline(aMediaPlayer.Pipeline())
     , iPlaying(false)

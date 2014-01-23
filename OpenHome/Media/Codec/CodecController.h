@@ -12,6 +12,7 @@
 
 EXCEPTION(CodecStreamStart);
 EXCEPTION(CodecStreamEnded);
+EXCEPTION(CodecStreamStopped);
 EXCEPTION(CodecStreamFlush);
 EXCEPTION(CodecStreamSeek);
 EXCEPTION(CodecStreamFeatureUnsupported);
@@ -62,7 +63,7 @@ protected:
     ICodecController* iController;
 };
 
-class CodecController : private ICodecController, private IMsgProcessor, private INonCopyable
+class CodecController : private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
@@ -74,7 +75,7 @@ public:
 private:
     void CodecThread();
     void Rewind();
-    void PullMsg();
+    Msg* PullMsg();
     void Queue(Msg* aMsg);
     TBool QueueTrackData() const;
     void ReleaseAudioEncoded();
@@ -101,6 +102,10 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
@@ -116,8 +121,10 @@ private:
     TBool iQueueTrackData;
     TBool iStreamStarted;
     TBool iStreamEnded;
+    TBool iStreamStopped;
     TBool iQuit;
     TBool iSeek;
+    TBool iRecognising;
     TUint iSeekSeconds;
     TUint iExpectedFlushId;
     TBool iConsumeExpectedFlush;

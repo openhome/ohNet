@@ -114,6 +114,7 @@ Msg* Sender::ProcessMsg(MsgPlayable* aMsg)
 
 Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    ASSERT(iTrack != NULL);
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iSampleRate = streamInfo.SampleRate();
     iBitDepth = streamInfo.BitDepth();

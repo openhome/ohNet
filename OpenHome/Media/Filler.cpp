@@ -37,6 +37,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
     , iUriStreamer(NULL)
     , iTrack(NULL)
     , iStopped(true)
+    , iSendHalt(false)
     , iQuit(false)
     , iNextHaltId(MsgHalt::kIdNone + 1)
 {
@@ -87,6 +88,7 @@ TUint Filler::Stop()
     iLock.Wait();
     iStopped = true;
     const TUint id = ++iNextHaltId;
+    iSendHalt = true;
     Signal();
     iLock.Signal();
     return id;
@@ -134,11 +136,15 @@ void Filler::Run()
         for (;;) {
             iLock.Wait();
             const TBool wait = iStopped;
+            const TBool sendHalt = iSendHalt;
+            iSendHalt = false;
             iLock.Signal();
             if (!wait) {
                 break;
             }
-            iSupply.OutputHalt(iNextHaltId);
+            if (sendHalt) {
+                iSupply.OutputHalt(iNextHaltId);
+            }
             Wait();
         }
         iLock.Wait();
@@ -154,6 +160,7 @@ void Filler::Run()
         mode.Replace(iActiveUriProvider->Mode());
         if (iTrackPlayStatus == ePlayNo) {
             iSupply.OutputHalt(iStopped? iNextHaltId : MsgHalt::kIdNone);
+            iSendHalt = false;
             iLock.Signal();
             iStopped = true;
         }
