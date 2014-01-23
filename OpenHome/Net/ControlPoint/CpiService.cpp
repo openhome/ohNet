@@ -703,7 +703,7 @@ void Invoker::Run()
 // InvocationManager
 
 InvocationManager::InvocationManager(CpStack& aCpStack)
-    : Thread("INVM")
+    : Thread("InvocationManager")
     , iCpStack(aCpStack)
     , iLock("INVM")
     , iFreeInvocations(aCpStack.Env().InitParams()->NumInvocations())
@@ -711,11 +711,12 @@ InvocationManager::InvocationManager(CpStack& aCpStack)
     , iFreeInvokers(aCpStack.Env().InitParams()->NumActionInvokerThreads())
 {
     TUint i;
-    TChar thName[5] = "IN  ";
     iInvokers = (Invoker**)malloc(sizeof(*iInvokers) * iCpStack.Env().InitParams()->NumActionInvokerThreads());
     for (i=0; i<iCpStack.Env().InitParams()->NumActionInvokerThreads(); i++) {
-        thName[3] = (TChar)('0'+i);
-        iInvokers[i] = new Invoker(&thName[0], iFreeInvokers);
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("ActionInvoker %d", i);
+        thName.PtrZ();
+        iInvokers[i] = new Invoker((const TChar*)thName.Ptr(), iFreeInvokers);
         iFreeInvokers.Write(iInvokers[i]);
         iInvokers[i]->Start();
     }

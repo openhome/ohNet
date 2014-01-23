@@ -449,7 +449,7 @@ void CpiDeviceList::ListObjectDetails() const
 // CpiDeviceListUpdater
 
 CpiDeviceListUpdater::CpiDeviceListUpdater()
-    : Thread("DLUP")
+    : Thread("DeviceListUpdater")
     , iLock("DLUM")
 {
     Start();

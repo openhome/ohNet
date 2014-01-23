@@ -515,7 +515,7 @@ void NetworkAdapterList::NotifyResumed()
 // NetworkAdapterChangeNotifier
 
 NetworkAdapterChangeNotifier::NetworkAdapterChangeNotifier(INetworkAdapterChangeNotifier& aAdapterList)
-    : Thread("NACN")
+    : Thread("AdapterChange")
     , iAdapterList(aAdapterList)
     , iLock("NACN")
 {

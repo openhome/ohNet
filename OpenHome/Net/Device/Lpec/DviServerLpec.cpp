@@ -920,13 +920,14 @@ TUint DviServerLpec::Port() const
 
 SocketTcpServer* DviServerLpec::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "DSVL", iPort, aNif.Address());
-    TChar thName[5];
+    SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "LpecServer", iPort, aNif.Address());
     const TUint numThreads = iDvStack.Env().InitParams()->DvNumLpecThreads();
     for (TUint i=0; i<numThreads; i++) {
-        (void)sprintf(&thName[0], "DL%2lu", (unsigned long)i);
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("LpecSession %d", i);
+        thName.PtrZ();
         DviSessionLpec* session = new DviSessionLpec(iDvStack, aNif.Address(), iPort);
-        server->Add(&thName[0], session);
+        server->Add((const TChar*)thName.Ptr(), session);
         iSessions.push_back(session);
     }
     return server;

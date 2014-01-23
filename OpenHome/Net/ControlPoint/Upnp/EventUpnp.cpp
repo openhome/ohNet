@@ -248,16 +248,17 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
 // EventServerUpnp
 
 EventServerUpnp::EventServerUpnp(CpStack& aCpStack, TIpAddress aInterface)
-    : iTcpServer(aCpStack.Env(), "EVNT", aCpStack.Env().InitParams()->CpUpnpEventServerPort(), aInterface)
+    : iTcpServer(aCpStack.Env(), "EventServer", aCpStack.Env().InitParams()->CpUpnpEventServerPort(), aInterface)
 {
-    TChar name[5] = "ESS ";
     const TUint numThread = aCpStack.Env().InitParams()->NumEventSessionThreads();
 #ifndef _WIN32
     // nothing terribly bad would happen if this assertion failed so its not worth a separate Windows implementation
     ASSERT(numThread < 10);
 #endif
     for (TUint i=0; i<numThread; i++) {
-        name[3] = (TChar)('0' + i);
-        iTcpServer.Add(&name[0], new EventSessionUpnp(aCpStack));
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("EventSession %d", i);
+        thName.PtrZ();
+        iTcpServer.Add((const TChar*)thName.Ptr(), new EventSessionUpnp(aCpStack));
     }
 }

@@ -5,6 +5,8 @@
 #include <OpenHome/Net/Private/Globals.h> // FIXME - use of globals should be discouraged
 #include <OpenHome/Private/Env.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 
 static const Brn kThreadNameUnknown("____");
@@ -108,13 +110,9 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iKillMutex("KMTX")
 {
     ASSERT(aName != NULL);
-    iName.SetBytes(iName.MaxBytes());
-    iName.Fill(0);
-    TUint bytes = (TUint)strlen(aName);
-    if (bytes > kNameBytes) {
-        bytes = kNameBytes;
-    }
+    const TUint bytes = std::min(iName.MaxBytes(), (TUint)strlen(aName));
     iName.Replace((TByte*)aName, bytes);
+    iName.PtrZ();
 }
 
 Thread::~Thread()

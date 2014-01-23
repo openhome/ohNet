@@ -78,6 +78,7 @@ class Thread : public INonCopyable
     friend class SemaphoreActive;
 public:
     static const TUint kDefaultStackBytes;
+    static const TUint kMaxNameBytes = 18;
 public:
     /**
      * Destructor.  Automatically calls Join()
@@ -173,8 +174,7 @@ private:
     static void EntryPoint(void* aArg);
 protected:
     THandle iHandle;
-    static const TUint kNameBytes = 4;
-    Bws<kNameBytes+1> iName;
+    Bws<kMaxNameBytes+1> iName;
     Semaphore iSema;
 private:
     Semaphore iTerminated;

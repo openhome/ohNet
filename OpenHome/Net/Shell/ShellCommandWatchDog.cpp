@@ -16,7 +16,7 @@ public:
         , iRemainingSeconds(aTimeoutSeconds)
         , iThreadFunctor(NULL)
     {
-        iThreadFunctor = new ThreadFunctor("wd", MakeFunctor(*this, &WatchDog::Run));
+        iThreadFunctor = new ThreadFunctor("ShellWatchdog", MakeFunctor(*this, &WatchDog::Run));
         iThreadFunctor->Start();
     }
     ~WatchDog()

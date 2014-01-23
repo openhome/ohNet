@@ -415,18 +415,19 @@ void Publisher::Run()
 // DviSubscriptionManager
 
 DviSubscriptionManager::DviSubscriptionManager(DvStack& aDvStack)
-    : Thread("DVSM")
+    : Thread("DvSubscriptionMgr")
     , iDvStack(aDvStack)
     , iLock("DSBM")
     , iFree(aDvStack.Env().InitParams()->DvNumPublisherThreads())
 {
     const TUint numPublisherThreads = iDvStack.Env().InitParams()->DvNumPublisherThreads();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
-    TChar thName[5];
     iPublishers = (Publisher**)malloc(sizeof(*iPublishers) * numPublisherThreads);
     for (TUint i=0; i<numPublisherThreads; i++) {
-        (void)sprintf(&thName[0], "DP%2lu", (unsigned long)i);
-        iPublishers[i] = new Publisher(&thName[0], iFree);
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("Publisher %d", i);
+        thName.PtrZ();
+        iPublishers[i] = new Publisher((const TChar*)thName.Ptr(), iFree);
         iFree.Write(iPublishers[i]);
         iPublishers[i]->Start();
     }

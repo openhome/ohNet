@@ -308,20 +308,21 @@ void XmlFetcher::Run()
 // XmlFetchManager
 
 XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
-    : Thread("FETM")
+    : Thread("XmlFetchManager")
     , iCpStack(aCpStack)
     , iLock("FETL")
     , iFree(iCpStack.Env().InitParams()->NumXmlFetcherThreads())
 {
     const TUint numThreads = iCpStack.Env().InitParams()->NumXmlFetcherThreads();
     iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
-    TChar thName[5] = "FET ";
 #ifndef _WIN32
     ASSERT(numThreads <= 9);
 #endif
     for (TUint i=0; i<numThreads; i++) {
-        thName[3] = (TChar)('0'+i);
-        iFetchers[i] = new XmlFetcher(&thName[0], iFree);
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("XmlFetcher %d", i);
+        thName.PtrZ();
+        iFetchers[i] = new XmlFetcher((const TChar*)thName.Ptr(), iFree);
         iFree.Write(iFetchers[i]);
         iFetchers[i]->Start();
     }

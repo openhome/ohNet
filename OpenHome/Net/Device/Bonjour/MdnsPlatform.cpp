@@ -66,7 +66,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired));
-    iThreadListen = new ThreadFunctor("BONJ", MakeFunctor(*this, &MdnsPlatform::Listen));
+    iThreadListen = new ThreadFunctor("Bonjour", MakeFunctor(*this, &MdnsPlatform::Listen));
     iNextServiceIndex = 0;
     iMdns = new mDNS();
     Status status = mDNS_Init(iMdns, (mDNS_PlatformSupport*)this, mDNS_Init_NoCache, mDNS_Init_ZeroCacheSize,

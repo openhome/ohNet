@@ -108,7 +108,7 @@ TimerManager::TimerManager(Environment& aEnv)
     , iThreadHandle(NULL)
 {
     LOG(kTimer, ">TimerManager::TimerManager()\n");
-    iThread = new ThreadFunctor("TIMM", MakeFunctor(*this, &TimerManager::Run), kPriorityHigh);
+    iThread = new ThreadFunctor("TimerManager", MakeFunctor(*this, &TimerManager::Run), kPriorityHigh);
     iThread->Start();
     LOG(kTimer, "<TimerManager::TimerManager()\n");
 }

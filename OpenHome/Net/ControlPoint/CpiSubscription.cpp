@@ -489,7 +489,7 @@ void Subscriber::Run()
 // CpiSubscriptionManager
 
 CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
-    : Thread("SBSM")
+    : Thread("CpSubscriptionMgr")
     , iCpStack(aCpStack)
     , iLock("SBSL")
     , iFree(aCpStack.Env().InitParams()->NumSubscriberThreads())
@@ -513,15 +513,16 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
         iLock.Signal();
     }
 
-    TChar thName[5] = "SBS ";
 #ifndef _WIN32
     ASSERT(iCpStack.Env().InitParams()->NumSubscriberThreads() <= 9);
 #endif
     const TUint numThreads = iCpStack.Env().InitParams()->NumSubscriberThreads();
     iSubscribers = (Subscriber**)malloc(sizeof(*iSubscribers) * numThreads);
     for (TUint i=0; i<numThreads; i++) {
-        thName[3] = (TChar)('0'+i);
-        iSubscribers[i] = new Subscriber(&thName[0], iFree);
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("Subscriber %d", i);
+        thName.PtrZ();
+        iSubscribers[i] = new Subscriber((const TChar*)thName.Ptr(), iFree);
         iFree.Write(iSubscribers[i]);
         iSubscribers[i]->Start();
     }

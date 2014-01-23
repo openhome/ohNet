@@ -37,7 +37,7 @@ CpiDeviceLpec::CpiDeviceLpec(CpStack& aCpStack, Endpoint aLocation, const Brx& a
 {
     iReadBuffer = new Srs<kMaxReadBufferBytes>(iSocket);
     iWriteBuffer = new Sws<kMaxWriteBufferBytes>(iSocket);
-    iThread = new ThreadFunctor("CLPC", MakeFunctor(*this, &CpiDeviceLpec::LpecThread));
+    iThread = new ThreadFunctor("LpecClient", MakeFunctor(*this, &CpiDeviceLpec::LpecThread));
     iInvocable = new Invocable(*this);
     iThread->Start();
 }

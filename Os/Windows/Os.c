@@ -365,13 +365,38 @@ int32_t OsMutexUnlock(THandle aMutex)
 typedef struct
 {
     HANDLE           iThread;
-    char             iName[5];
+    char*            iName;
     ThreadEntryPoint iEntryPoint;
     void*            iArg;
     uint32_t         iPriority;
     OsContext*       iCtx;
 } ThreadData;
 
+#pragma pack(push,8)
+typedef struct tagTHREADNAME_INFO
+{
+   DWORD dwType;     // Must be 0x1000.
+   LPCSTR szName;    // Pointer to name (in user addr space).
+   DWORD dwThreadID; // Thread ID (-1=caller thread).
+   DWORD dwFlags;    // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+#pragma pack(pop)
+
+static void SetCurrentThreadName(const char* threadName)
+{
+    static const DWORD MS_VC_EXCEPTION=0x406D1388;
+
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = threadName;
+    info.dwThreadID = GetCurrentThreadId();
+    info.dwFlags = 0;
+
+    __try {
+        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+    }
+    __except(EXCEPTION_EXECUTE_HANDLER) {}
+}
 
 DWORD threadEntrypoint(LPVOID aArg)
 {
@@ -403,6 +428,7 @@ DWORD threadEntrypoint(LPVOID aArg)
     }
 
     (void)TlsSetValue(data->iCtx->iTlsIndex, data->iArg);
+    SetCurrentThreadName(data->iName);
     data->iEntryPoint(data->iArg);
 
     return 0;
@@ -415,7 +441,7 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
     if (NULL == data) {
         return kHandleNull;
     }
-    (void)strcpy(data->iName, aName);
+    data->iName = _strdup(aName);
     if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
         return kHandleNull;
     }
@@ -442,7 +468,11 @@ void* OsThreadTls(OsContext* aContext)
 
 void OsThreadDestroy(THandle aThread)
 {
-    free((ThreadData*)aThread);
+    ThreadData* data = (ThreadData*)aThread;
+    if (data != NULL) {
+        free(data->iName);
+        free(data);
+    }
 }
 
 int32_t OsThreadSupportsPriorities(OsContext* aContext)

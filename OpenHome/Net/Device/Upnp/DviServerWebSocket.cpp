@@ -1018,12 +1018,13 @@ DviServerWebSocket::DviServerWebSocket(DvStack& aDvStack)
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "WSSV", iDvStack.Env().InitParams()->DvWebSocketPort(), aNif.Address());
-    TChar thName[5];
+    SocketTcpServer* server = new SocketTcpServer(iDvStack.Env(), "WsServer", iDvStack.Env().InitParams()->DvWebSocketPort(), aNif.Address());
     const TUint numWsThreads = iDvStack.Env().InitParams()->DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {
-        (void)sprintf(&thName[0], "WS%2lu", (unsigned long)i);
-        server->Add(&thName[0], new DviSessionWebSocket(iDvStack, aNif.Address(), server->Port()));
+        Bws<Thread::kMaxNameBytes+1> thName;
+        thName.AppendPrintf("WsSession %d", i);
+        thName.PtrZ();
+        server->Add((const TChar*)thName.Ptr(), new DviSessionWebSocket(iDvStack, aNif.Address(), server->Port()));
     }
     return server;
 }
