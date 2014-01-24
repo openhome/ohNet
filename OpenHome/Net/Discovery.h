@@ -61,7 +61,7 @@ class SsdpListener : public Thread
 {
     static const TUint kPriority = kPriorityNormal;
 protected:
-    SsdpListener();
+    SsdpListener(const TChar* aName);
 protected:
     SsdpHeaderCacheControl iHeaderCacheControl;
     HttpHeaderLocation iHeaderLocation;

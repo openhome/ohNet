@@ -43,8 +43,8 @@ void SsdpSocketReader::ReadInterrupt()
 
 // SsdpListener
 
-SsdpListener::SsdpListener()
-    : Thread("SSDP", kPriority)
+SsdpListener::SsdpListener(const TChar* aName)
+    : Thread(aName, kPriority)
 {
 }
 
@@ -54,7 +54,8 @@ SsdpListener::SsdpListener()
 //                                                                    -> aNotify
 
 SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, TIpAddress aInterface)
-    : iEnv(aEnv)
+    : SsdpListener("SsdpListenerM")
+    , iEnv(aEnv)
     , iLock("LMCM")
     , iNextHandlerId(0)
     , iInterface(aInterface)
@@ -432,7 +433,8 @@ void SsdpListenerMulticast::NotifyResumed()
 //                                                                    -> aNotify
 
 SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
-    : iEnv(aEnv)
+    : SsdpListener("SsdpListenerU")
+    , iEnv(aEnv)
     , iNotifyHandler(aNotifyHandler)
     , iInterface(aInterface)
     , iSocket(aEnv, 0, aInterface)
