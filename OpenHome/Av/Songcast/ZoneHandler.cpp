@@ -21,7 +21,7 @@ const Brn ZoneHandler::kMulticastAddress("239.255.255.250");
 const Brn ZoneHandler::kProtocolZone("ohz");
 
 ZoneHandler::ZoneHandler(Environment& aEnv, const Brx& aSenderZone)
-    : Thread("ZONH")
+    : Thread("ZoneHandler")
     , iEnv(aEnv)
     , iEndpoint(kMulticastPort, kMulticastAddress)
     , iSenderZone(aSenderZone)

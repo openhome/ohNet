@@ -242,7 +242,7 @@ RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
     , iExit(false)
 {
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired));
-    iThreadControl = new ThreadFunctor("RAOC", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
+    iThreadControl = new ThreadFunctor("RaopControl", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
     iThreadControl->Start();
 
     // monitor this port to get the latency

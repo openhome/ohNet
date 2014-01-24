@@ -58,7 +58,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamLength(0)
     , iStreamPos(0)
 {
-    iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecController::CodecThread));
+    iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread));
 }
 
 CodecController::~CodecController()

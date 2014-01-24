@@ -104,7 +104,7 @@ void ProcessorPcmBufPackedDualMono::ProcessSample24(const TByte* aSample, TUint 
 const Brn DriverSongcastSender::kSenderIconFileName("SongcastSenderIcon");
 
 DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel)
-    : Thread("DSCS")
+    : Thread("SongcastingDriver")
     , iPipeline(aPipeline)
     , iMaxMsgSizeJiffies(aMaxMsgSizeJiffies)
     , iEnv(aDvStack.Env())
