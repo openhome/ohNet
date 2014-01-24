@@ -134,17 +134,18 @@ ifeq ($(platform),iOS)
 		platform_compiler=i686-apple-darwin10
 		platform_arch=i386
 	endif
-	devroot=/Applications/Xcode.app/Contents/Developer/Platforms/$(platform_prefix).platform/Developer
-	sdkroot=$(devroot)/SDKs/$(platform_prefix)6.1.sdk
+	devroot=/Applications/Xcode.app/Contents/Developer
+	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix)7.0.sdk
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/$(platform_compiler)/4.2.1/include/ -I$(sdkroot)/usr/include/ -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
 	platform_linkflags = -L$(sdkroot)/usr/lib/ -arch $(platform_arch)  -L$(sdkroot)/usr/lib/system
-	compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
+	compiler = $(toolroot)/clang -arch $(platform_arch) -isysroot $(sdkroot) -o $(objdir)
 	# No support for linking Shared Objects for ARM MAC
 	# link = $(devroot)/usr/bin/llvm-gcc-4.2  -pthread -Wl $(platform_linkflags)
-	ar = $(devroot)/usr/bin/ar rc $(objdir)
+	ar = $(toolroot)/ar rc $(objdir)
     mono_lib_dir=/Developer/MonoTouch/usr/lib/mono/2.1
 	csharpdefines = /define:IOS /r:$(mono_lib_dir)/monotouch.dll /r:$(mono_lib_dir)/System.dll /r:$(mono_lib_dir)/System.Core.dll 
 	no_shared_objects = yes
