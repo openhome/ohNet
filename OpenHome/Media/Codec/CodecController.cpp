@@ -347,9 +347,9 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
 
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
-    ReleaseAudioEncoded();
     TUint flushId = iStreamHandler->TrySeek(iTrackId, aStreamId, aBytePos);
     if (flushId != MsgFlush::kIdInvalid) {
+        ReleaseAudioEncoded();
         iExpectedFlushId = flushId;
         iStreamPos = aBytePos;
         return true;
