@@ -30,6 +30,7 @@ public:
     virtual void Read(const Brx& aKey, Bwx& aDest) = 0;
     virtual void Write(const Brx& aKey, const Brx& aSource) = 0;
     virtual void Delete(const Brx& aKey) = 0;
+    virtual ~IStoreReadWrite() {}
 };
 
 } // namespace Configuration
