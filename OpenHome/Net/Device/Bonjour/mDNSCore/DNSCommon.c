@@ -148,7 +148,7 @@ mDNSexport mDNSu32 NumCacheRecordsForInterfaceID(const mDNS *const m, mDNSInterf
 	return(used);
 	}
 
-mDNSexport char *DNSTypeName(mDNSu16 rrtype)
+mDNSexport const char *DNSTypeName(mDNSu16 rrtype)
 	{
 	switch (rrtype)
 		{
