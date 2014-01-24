@@ -88,7 +88,7 @@
     {   "name": "ohNetmon",
         "type": "internal",
         "platform-specific": true,
-        "version": "0.0.9",
+        "version": "0.0.10",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}"
     },
