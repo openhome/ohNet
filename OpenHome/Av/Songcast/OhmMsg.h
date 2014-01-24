@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Media/Msg.h> // for kTrackMetaDataMaxBytes
 
 #include "Ohm.h"
 
@@ -149,7 +150,7 @@ class OhmMsgTrack : public OhmMsg
     friend class OhmMsgFactory;
 public:
     static const TUint kMaxUriBytes = 1 * 1024;
-    static const TUint kMaxMetadataBytes = 4 * 1024;
+    static const TUint kMaxMetadataBytes = Media::kTrackMetaDataMaxBytes;
 private:
     static const TUint kHeaderBytes = 12;
 public:

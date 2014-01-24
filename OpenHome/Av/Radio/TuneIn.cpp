@@ -70,7 +70,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     uriBuf.Append(aUserName);
     iRequestUri.Replace(uriBuf);
     iReaderResponse.AddHeader(iHeaderContentLength);
-    iRefreshThread = new ThreadFunctor("RPTI", MakeFunctor(*this, &RadioPresetsTuneIn::RefreshThread));
+    iRefreshThread = new ThreadFunctor("TuneInRefresh", MakeFunctor(*this, &RadioPresetsTuneIn::RefreshThread));
     iRefreshThread->Start();
     iRefreshTimer = new Timer(aEnv, MakeFunctor(*this, &RadioPresetsTuneIn::TimerCallback));
     Refresh();
@@ -120,7 +120,7 @@ void RadioPresetsTuneIn::DoRefresh()
         // FIXME - try sending If-Modified-Since header with request. See rfr2616 14.25
         // ... this may require that we use http 1.1 in the request, so cope with a chunked response
         iWriterRequest.WriteMethod(Http::kMethodGet, iRequestUri.PathAndQuery(), Http::eHttp10);
-        Http::WriteHeaderHost(iWriterRequest, iRequestUri);
+        Http::WriteHeaderHostAndPort(iWriterRequest, iRequestUri);
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
 

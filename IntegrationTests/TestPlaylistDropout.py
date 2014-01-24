@@ -56,7 +56,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
             duration     = args[4].lower()
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         if receiverName.lower() == 'none':
            receiverName = None
@@ -73,6 +73,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         tracks = Common.GetTracks( kTrackList, self.server )
 
         # create sender, clear playlist and subscribe to events
+        self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
         if not receiverName and not slaveName:
             if self.sender.volume is not None:
@@ -83,6 +84,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
                 
         # create and connect receiver and slave (where specified)
         if receiverName:
+            self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
             if not slaveName:
@@ -91,6 +93,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.receiver.receiver.Play()
             
         if slaveName:
+            self.slaveDev = slaveName.split( ':' )[0]
             self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True )
             self.slave.receiver.SetSender( self.receiver.sender.uri, self.receiver.sender.metadata )
             if self.slave.volume is not None:
@@ -136,7 +139,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
                 self.exitTimer.start()
             self.durationDone.wait()
         else:
-            self.log.Fail( 'Playback failed to start' )
+            self.log.Fail( self.senderDev, 'Playback failed to start' )
         
         # Remove transport state monitor
         self.sender.playlist.RemoveSubscriber( self._SenderPlaylistMonitor )
@@ -169,19 +172,19 @@ class TestPlaylistDropout( BASE.BaseTest ):
         "Callback from Sender's Playlist service"
         if svName == 'TransportState':
             if svVal != 'Playing':
-                self.log.Fail( "Sender dropout detected -> state is %s" % svVal )
+                self.log.Fail( self.senderDev, "Sender dropout detected -> state is %s" % svVal )
                 
     def _ReceiverReceiverMonitor( self, service, svName, svVal, svSeq ):
         "Callback from Receiver's Receiver service"
         if svName == 'TransportState':
             if svVal != 'Playing':
-                self.log.Fail( "Receiver dropout detected -> state is %s" % svVal )
+                self.log.Fail( self.rcvrDev, "Receiver dropout detected -> state is %s" % svVal )
             
     def _SlaveReceiverMonitor( self, service, svName, svVal, svSeq ):
         "Callback from Slave's Receiver's service"
         if svName == 'TransportState':
             if svVal != 'Playing':
-                self.log.Fail( "Slave dropout detected -> state is %s" % svVal )
+                self.log.Fail( self.slaveDev, "Slave dropout detected -> state is %s" % svVal )
             
     def _DurationCb( self ):
         "Callback from duration timer"

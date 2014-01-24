@@ -426,10 +426,10 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     iTimerAliveAudio = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired));
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerExpiryExpired));
 
-    iThreadMulticast = new ThreadFunctor("MTXM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadMulticast = new ThreadFunctor("OhmSenderM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadMulticast->Start();
     
-    iThreadUnicast = new ThreadFunctor("MTXU", MakeFunctor(*this, &OhmSender::RunUnicast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadUnicast = new ThreadFunctor("OhmSenderU", MakeFunctor(*this, &OhmSender::RunUnicast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadUnicast->Start();
     
     UpdateChannel();

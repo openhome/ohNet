@@ -29,7 +29,7 @@ UriProvider::~UriProvider()
 // Filler
 
 Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
-    : Thread("Fill")
+    : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
     , iPipelineIdTracker(aIdTracker)

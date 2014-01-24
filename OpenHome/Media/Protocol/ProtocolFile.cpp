@@ -22,7 +22,6 @@ public:
 private: // from Protocol	
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private: // from IProtocolReader
@@ -146,11 +145,6 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
         contentProcessor->Reset();
     }
     return res;
-}
-
-EStreamPlay ProtocolFile::OkToPlay(TUint aTrackId, TUint aStreamId)
-{
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
 TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)

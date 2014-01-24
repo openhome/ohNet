@@ -226,6 +226,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     iLock.Wait();
     // FIXME - clear track, stream ids
     // TBool stopped = iStopped;
+    iStreamId = ProtocolManager::kStreamIdInvalid;
     iLock.Signal();
     if (iContentProcessor != NULL) {
         iContentProcessor->Reset();
@@ -448,7 +449,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
     try {
         LOG(kMedia, "ProtocolHttp::Stream send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
-        Http::WriteHeaderHost(iWriterRequest, iUri);
+        Http::WriteHeaderHostAndPort(iWriterRequest, iUri);
         iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
         Http::WriteHeaderConnectionClose(iWriterRequest);
         if (!suppressIcyHeader) {

@@ -160,7 +160,7 @@ class TestAvTransportService( BASE.BaseTest ):
             stateToTest = args[2].upper()
         except:
             print '\n', __doc__, '\n'
-            self.log.Abort( 'Invalid arguments %s' % (str( args )) )
+            self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         # setup states to test
         allStates = ['STOPPED','PLAYING','PAUSED_PLAYBACK','PAUSED_UNKNOWN']
@@ -169,7 +169,7 @@ class TestAvTransportService( BASE.BaseTest ):
         elif stateToTest in allStates:
             statesToTest = [stateToTest]
         else:
-            self.log.Abort( 'Invalid state-to-test %s' % (stateToTest) )
+            self.log.Abort( '', 'Invalid state-to-test %s' % (stateToTest) )
 
         if 'MediaRenderer' not in self.mrName:
             self.mrName += ':MediaRenderer'        
@@ -179,6 +179,7 @@ class TestAvTransportService( BASE.BaseTest ):
         self.server.Start()        
         
         # create UPnP CPs for renderer and server, and subscribe to AVT events
+        self.mrDev = self.mrName.split( ':' )[0]
         self.upnpMr = MR.MediaRendererDevice( self.mrName )
         self.avt = self.upnpMr.avt
         
@@ -187,7 +188,7 @@ class TestAvTransportService( BASE.BaseTest ):
         for sv in gStaticSvs.keys():
             msg = '%s initialised to %s, expected %s' % \
                       (sv, self.currSv[sv], gStaticSvs[sv])
-            self.log.FailIf( gStaticSvs[sv]!=self.currSv[sv], msg )
+            self.log.FailIf( self.mrDev, gStaticSvs[sv]!=self.currSv[sv], msg )
         
         # load test track info from media server into transition parameters
         xmlFile = os.path.join( kAudioRoot, 'TrackList.xml' )
@@ -224,7 +225,7 @@ class TestAvTransportService( BASE.BaseTest ):
                     self.startState = entry[gBefore]
                     prefix = '%s->%s' % (entry[gBefore], self.trans)
                     self.log.Info( '' )
-                    self.log.Info( 'Invoking %s (with %s params)' %
+                    self.log.Info( self.mrDev, 'Invoking %s (with %s params)' %
                         (prefix, str( param )) )
                     self.log.Info( '' )
                     
@@ -236,14 +237,14 @@ class TestAvTransportService( BASE.BaseTest ):
                     self._RefreshCurrentSvs()           
                     self.prevSv = copy.deepcopy( self.currSv )
                     if entry[gBefore] != 'PAUSED_UNKNOWN':
-                        self.log.FailIf(
+                        self.log.FailIf( self.mrDev,
                             self.currSv['TransportState'] != entry[gBefore], 
                             '%s: BEFORE state %s, expected %s' %
                             (prefix, self.currSv['TransportState'], entry[gBefore]))
                     
                     if entry[gBefore] == 'PLAYING':
                         self.playTime = kPlayTime
-                        self.log.Info( 'Waiting %ds into playback' % self.playTime )
+                        self.log.Info( self.mrDev, 'Waiting %ds into playback' % self.playTime )
                         time.sleep( self.playTime )
                     else:
                         self.playTime = 0
@@ -254,7 +255,7 @@ class TestAvTransportService( BASE.BaseTest ):
                     remainingSvs = self.currSv.keys()
                     
                     # check new state after action is as expected
-                    self.log.FailIf( 
+                    self.log.FailIf( self.mrDev, 
                         self.currSv['TransportState'] != entry[gAfter],
                         '%s: AFTER state %s, expected %s' %
                         (prefix, self.currSv['TransportState'], entry[gAfter]))
@@ -265,18 +266,18 @@ class TestAvTransportService( BASE.BaseTest ):
                         remainingSvs.remove( sv )
                         check = getattr( self, '_' + sv + 'Check' )
                         (ok, msg) = check( **param )
-                        self.log.FailIf( not ok, '%s: %s' % (prefix, msg) )
+                        self.log.FailIf( self.mrDev, not ok, '%s: %s' % (prefix, msg) )
                         
                     # check all unaffected SVs are unchanged
                     for sv in remainingSvs:
                         if sv == 'RelativeTimePosition':
                             # allow 1 sec slippage for execution/delay times
                             expValues = self._GetPositions( self.currSv[sv] )
-                            self.log.FailIf( self.currSv[sv] not in expValues,
+                            self.log.FailIf( self.mrDev, self.currSv[sv] not in expValues,
                                 '%s: %s expected in %s was %s' %
                                 (prefix, sv, expValues, self.currSv[sv]) )                            
                         else:
-                            self.log.FailIf( self.prevSv[sv] != self.currSv[sv],
+                            self.log.FailIf( self.mrDev, self.prevSv[sv] != self.currSv[sv],
                                 '%s: %s changed from %s to %s' %
                                 (prefix, sv, self.prevSv[sv], self.currSv[sv]) )
 
