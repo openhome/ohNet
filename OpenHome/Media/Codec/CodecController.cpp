@@ -123,7 +123,6 @@ void CodecController::CodecThread()
             iLock.Wait();
             iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
             iActiveCodec = NULL;
-            iStreamHandler = NULL;
             iStreamId = iSampleRate = iSeekSeconds = 0;
             iStreamLength = iStreamPos = 0LL;
             ReleaseAudioEncoded();
@@ -221,6 +220,12 @@ void CodecController::CodecThread()
         catch (CodecStreamFlush&) {}
         if (iActiveCodec != NULL) {
             iActiveCodec->StreamCompleted();
+        }
+        if (!iStreamStarted && !iStreamEnded) {
+            iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+            if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                iConsumeExpectedFlush = true;
+            }
         }
         // push out any pending msgs, such as a quit
         if (iPendingMsg != NULL) {
