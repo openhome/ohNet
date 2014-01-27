@@ -152,7 +152,7 @@ Test cases:
 // DummyDriver
 
 DummyDriver::DummyDriver(IPipelineElementUpstream& aPipeline)
-    : Thread("DMYD")
+    : Thread("DummyDriver")
     , iLock("DMYD")
     , iPipeline(aPipeline)
     , iJiffiesPerSample(0)
@@ -323,20 +323,20 @@ SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     , iDvStack(aDvStack)
     , iTimeSem("TPLY", 0)
 {
-    AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAll));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay));
-    AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist));
+    AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks), "TransportStateRemainsPlayingAcrossTracks");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack), "NextInterruptsCurrentTrack");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList), "PlayCompleteList");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay), "SeekIdPlay");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay), "SeekIdPrevPlay");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev), "SeekIdPlayPrev");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid), "SeekIndexValid");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid), "SeekIndexInvalid");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying), "DeletePlaying");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete), "PlayNextDelete");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete), "SeekIdPrevDelete");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAll), "PlayDeleteAll");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay), "PlayDeleteAllPlay");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist), "AddTrackJustBeforeCompletingPlaylist");
 }
 
 SuitePlaylist::~SuitePlaylist()
@@ -409,6 +409,25 @@ void SuitePlaylist::TearDown()
 
 void SuitePlaylist::NotifyPipelineState(EPipelineState aState)
 {
+    /*const TChar* state = NULL;
+    switch (aState)
+    {
+    case EPipelinePlaying:
+        state = "Playing";
+        break;
+    case EPipelinePaused:
+        state = "Paused";
+        break;
+    case EPipelineStopped:
+        state = "Stopped";
+        break;
+    case EPipelineBuffering:
+        state = "Buffering";
+        break;
+    default:
+        ASSERTS();
+    }
+    Log::Print("NotifyPipelineState - %s\n", state);*/
     iTransportState = aState;
     iTransportStateCount[aState]++;
 }
@@ -437,7 +456,6 @@ void SuitePlaylist::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 
 void SuitePlaylist::TransportStateRemainsPlayingAcrossTracks()
 {
-    Log::Print("\nTransportStateRemainsPlayingAcrossTracks  ");
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
     iProxy->SyncPlay();
     iTrackChanged.Wait();
@@ -454,7 +472,6 @@ void SuitePlaylist::TransportStateRemainsPlayingAcrossTracks()
 
 void SuitePlaylist::NextInterruptsCurrentTrack()
 {
-    Log::Print("\nNextInterruptsCurrentTrack  ");
     iProxy->SyncPlay();
     iTimeSem.Wait();
     iTimeSem.Wait();
@@ -477,7 +494,6 @@ void SuitePlaylist::NextInterruptsCurrentTrack()
 
 void SuitePlaylist::PlayCompleteList()
 {
-    Log::Print("\nPlayCompleteList  ");
     iProxy->SyncPlay();
     for (TUint i=0; i<kNumTracks; i++) {
         iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), i+1);
@@ -493,7 +509,6 @@ void SuitePlaylist::PlayCompleteList()
 
 void SuitePlaylist::SeekIdPlay()
 {
-    Log::Print("\nSeekIdPlay  ");
     iProxy->SyncSeekId(iTrackIds[1]);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iProxy->SyncPlay();
@@ -509,7 +524,6 @@ void SuitePlaylist::SeekIdPlay()
 
 void SuitePlaylist::SeekIdPrevPlay()
 {
-    Log::Print("\nSeekIdPrevPlay  ");
     iProxy->SyncSeekId(iTrackIds[1]);
     iProxy->SyncPrevious();
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
@@ -526,7 +540,6 @@ void SuitePlaylist::SeekIdPrevPlay()
 
 void SuitePlaylist::SeekIdPlayPrev()
 {
-    Log::Print("\nSeekIdPlayPrev  ");
     iProxy->SyncSeekId(iTrackIds[1]);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iProxy->SyncPlay();
@@ -545,7 +558,6 @@ void SuitePlaylist::SeekIdPlayPrev()
 
 void SuitePlaylist::SeekIndexValid()
 {
-    Log::Print("\nSeekIndexValid  ");
     iProxy->SyncSeekIndex(1);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iTrackChanged.Wait();
@@ -560,14 +572,12 @@ void SuitePlaylist::SeekIndexValid()
 
 void SuitePlaylist::SeekIndexInvalid()
 {
-    Log::Print("\nSeekIndexInvalid  ");
     iProxy->SyncSeekIndex(100);
     TEST(true);
 }
 
 void SuitePlaylist::DeletePlaying()
 {
-    Log::Print("\nDeletePlaying  ");
     iProxy->SyncPlay();
     iTimeSem.Wait();
     iTimeSem.Wait();
@@ -591,7 +601,6 @@ void SuitePlaylist::DeletePlaying()
 
 void SuitePlaylist::PlayNextDelete()
 {
-    Log::Print("\nPlayNextDelete  ");
     iProxy->SyncPlay();
     iProxy->SyncNext();
     iProxy->SyncDeleteId(iTrackIds[1]);
@@ -611,7 +620,6 @@ void SuitePlaylist::PlayNextDelete()
 
 void SuitePlaylist::SeekIdPrevDelete()
 {
-    Log::Print("\nSeekIdPrevDelete  ");
     iProxy->SyncSeekId(iTrackIds[2]);
     iProxy->SyncPrevious();
     iProxy->SyncDeleteId(iTrackIds[1]);
@@ -632,7 +640,6 @@ void SuitePlaylist::SeekIdPrevDelete()
 
 void SuitePlaylist::PlayDeleteAll()
 {
-    Log::Print("\nPlayDeleteAll  ");
     iProxy->SyncPlay();
     iTimeSem.Wait();
     iTimeSem.Wait();
@@ -650,7 +657,6 @@ void SuitePlaylist::PlayDeleteAll()
 
 void SuitePlaylist::PlayDeleteAllPlay()
 {
-    Log::Print("\nPlayDeleteAllPlay  ");
     iProxy->SyncPlay();
     iTimeSem.Wait();
     iTimeSem.Wait();
@@ -667,7 +673,6 @@ void SuitePlaylist::PlayDeleteAllPlay()
 
 void SuitePlaylist::AddTrackJustBeforeCompletingPlaylist()
 {
-    Log::Print("\nAddTrackJustBeforeCompletingPlaylist  ");
     iProxy->SyncPlay();
     for (TUint i=0; i<kNumTracks-1; i++) {
         iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), i+1);
