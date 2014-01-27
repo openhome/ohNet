@@ -132,9 +132,10 @@ void TestMediaPlayer::Run()
 
     Log::Print("\nFull (software) media player\n");
     Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
-    Log::Print("Press 'q' to quit:\n");
+    Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
-    while (mygetch() != 'q')
+    // while (mygetch() != 'q')
+    while (getchar() != 'q')	// getchar catches stdin, getch does not.....
         ;
     iPowerManager->PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
     Log::Print("RamStore at PowerDown:\n");
@@ -158,8 +159,8 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
         "http-get:*:audio/wav:*,"      // Wav
         "http-get:*:audio/wave:*,"     // Wav
         "http-get:*:audio/x-wav:*,"    // Wav
-        "http-get:*:audio/aiff:*,"     // AIFF codec not implemented
-        "http-get:*:audio/x-aiff:*,"   // AIFF codec not implemented
+        "http-get:*:audio/aiff:*,"     // AIFF
+        "http-get:*:audio/x-aiff:*,"   // AIFF
         "http-get:*:audio/x-m4a:*,"    // Alac
         "http-get:*:audio/x-scpls:*,"  // M3u (content processor)
         "http-get:*:text/xml:*,"       // Opml ??  (content processor)
