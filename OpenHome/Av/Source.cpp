@@ -75,9 +75,9 @@ void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager
     iProduct = &aProduct;
     Bws<ConfigVal<const Brx&>::kMaxIdLength> key(aConfigIdPrefix);
     key.Append("Source.");
-    key.Append(iType);
+    key.Append(iSystemName);
     key.Append(".Name");
-    iConfigName = new ConfigText(aConfigManager, key, kMaxSourceTypeBytes, iType);
+    iConfigName = new ConfigText(aConfigManager, key, kMaxSourceTypeBytes, iName);
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Source::NameChanged));
 }
 
