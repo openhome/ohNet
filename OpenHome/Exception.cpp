@@ -53,7 +53,7 @@ void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
 #endif
 }
 
-static void GetThreadName(Bws<5>& aThName)
+static void GetThreadName(Bwx& aThName)
 {
     aThName.SetBytes(0);
     aThName.Append(Thread::CurrentThreadName());
@@ -62,7 +62,7 @@ static void GetThreadName(Bws<5>& aThName)
 
 void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)
 {
-    Bws<5> thName;
+    Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n", aExceptionMessage, aFile, (unsigned long)aLine, thName.Ptr());
@@ -71,7 +71,7 @@ void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const T
 
 void OpenHome::UnhandledExceptionHandler(Exception& aException)
 {
-    Bws<5> thName;
+    Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[512];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%lu in thread %s\n", aException.Message(), aException.File(), (unsigned long)aException.Line(), thName.Ptr());
@@ -105,7 +105,7 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
 
 void OpenHome::UnhandledExceptionHandler(std::exception& aException)
 {
-    Bws<5> thName;
+    Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s in thread %s\n", aException.what(), thName.Ptr());
