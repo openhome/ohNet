@@ -138,7 +138,7 @@ TBool Product::StandbyEnabled() const
 void Product::SetStandby(TBool aStandby)
 {
     iLock.Wait();
-    const TBool changed ((aStandby && iStandby) || (!aStandby && !iStandby));
+    const TBool changed = ((aStandby && !iStandby) || (!aStandby && iStandby));
     if (changed) {
         iStandby = aStandby;
     }
