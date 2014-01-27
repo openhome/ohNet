@@ -19,36 +19,34 @@ const Brn Product::kStartupSourceBase("Startup.Source");
 const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
-Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore, IConfigManagerReader& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix)
+Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore,
+                 IConfigManagerReader& aConfigReader, Configuration::IConfigManagerWriter& aConfigWriter,
+                 IPowerManager& aPowerManager, const Brx& aConfigPrefix)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
-    , iConfigManager(aConfigManager)
+    , iConfigWriter(aConfigWriter)
     , iLock("PRDM")
     , iLockDetails("PRDD")
     , iObserver(NULL)
     , iStarted(false)
+    , iStandby(false)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
+    , iConfigPrefix(aConfigPrefix)
 {
-    Bws<64> key(aConfigPrefix);
-    if (key.Bytes() > 0) {
-        key.Append('.');
+    if (iConfigPrefix.Bytes() > 0) {
+        iConfigPrefix.Append('.');
     }
+    Bws<32> key(iConfigPrefix);
     key.Append(kStartupSourceBase);
     iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, key, Brn("Playlist"), ISource::kMaxSourceTypeBytes);
-    key.Replace(aConfigPrefix);
-    if (key.Bytes() > 0) {
-        key.Append('.');
-    }
+    key.Replace(iConfigPrefix);
     key.Append(kConfigIdRoomBase);
-    iConfigProductRoom = &iConfigManager.GetText(key);
+    iConfigProductRoom = &aConfigReader.GetText(key);
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged));
-    key.Replace(aConfigPrefix);
-    if (key.Bytes() > 0) {
-        key.Append('.');
-    }
+    key.Replace(iConfigPrefix);
     key.Append(kConfigIdNameBase);
-    iConfigProductName = &iConfigManager.GetText(key);
+    iConfigProductName = &aConfigReader.GetText(key);
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
@@ -86,7 +84,7 @@ void Product::AddSource(ISource* aSource)
 {
     ASSERT(!iStarted);
     iSources.push_back(aSource);
-    aSource->Initialise(*this);
+    aSource->Initialise(*this, iConfigWriter, iConfigPrefix);
 }
 
 void Product::AddAttribute(const TChar* aAttribute)
@@ -133,7 +131,22 @@ void Product::GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageU
 
 TBool Product::StandbyEnabled() const
 {
-    return false; // FIXME
+    AutoMutex a(iLock);
+    return iStandby;
+}
+
+void Product::SetStandby(TBool aStandby)
+{
+    iLock.Wait();
+    const TBool changed ((aStandby && iStandby) || (!aStandby && !iStandby));
+    if (changed) {
+        iStandby = aStandby;
+    }
+    iLock.Signal();
+    if (changed && iObserver != NULL) {
+        iObserver->StandbyChanged();
+        // FIXME - other observers to notify. (e.g. to disable any hardware)
+    }
 }
 
 TUint Product::SourceCount() const
@@ -273,6 +286,16 @@ void Product::Activate(ISource& aSource)
         }
     }
     THROW(AvSourceNotFound);
+}
+
+void Product::NotifySourceNameChanged(ISource& /*aSource*/)
+{
+    iLock.Wait();
+    iSourceXmlChangeCount++;
+    iLock.Signal();
+    if (iObserver != NULL) {
+        iObserver->SourceXmlChanged();
+    }
 }
 
 void Product::QueryInfo(const Brx& /*aQuery*/, IWriter& /*aWriter*/)

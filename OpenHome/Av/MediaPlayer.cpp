@@ -47,7 +47,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iConfigProductRoom = new ConfigText(iConfigManagerWriter, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(iConfigManagerWriter, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManagerReader, iPowerManager, Brx::Empty());
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManagerReader, aConfigWriter, iPowerManager, Brx::Empty());
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware

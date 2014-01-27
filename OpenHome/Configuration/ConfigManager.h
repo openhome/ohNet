@@ -36,6 +36,7 @@ class ConfigVal : public IObservable<T>
 {
 public:
     static const TUint kMaxIdLength = 32;
+    static const TUint kSubscriptionIdInvalid = 0;
 protected:
     ConfigVal(IConfigManagerWriter& aManager, const Brx& aId);
 public:
