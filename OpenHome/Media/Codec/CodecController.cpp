@@ -153,14 +153,24 @@ void CodecController::CodecThread()
                 catch (CodecStreamStart&) {}
                 catch (CodecStreamEnded&) {}
                 // don't catch CodecStreamStopped - TryStop will have called Rewind/Stop if required
+                iLock.Wait();
                 iStreamStarted = iStreamEnded = false; // Rewind() will result in us receiving any additional EncodedStream msgs again
-                Rewind();
+                if (!iStreamStopped) {
+                    Rewind();
+                }
+                iLock.Signal();
                 if (recognised) {
                     iActiveCodec = codec;
                     break;
                 }
             }
             iRecognising = false;
+            {
+                AutoMutex a(iLock);
+                if (iStreamStopped) {
+                    THROW(CodecStreamStopped);
+                }
+            }
             iRewinder.Stop(trackId, streamId); // stop buffering audio
             if (iQuit) {
                 break;
