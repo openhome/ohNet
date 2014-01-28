@@ -548,7 +548,7 @@ void SuitePlaylist::SeekIdPlayPrev()
     iProxy->SyncPrevious();
     iTrackChanged.Wait();
     TEST(iCurrentTrackId == iTrackIds[0]);
-    TEST(iTrackCount == 2);
+    TEST(iTrackCount >= 2); // can't guarantee that iTracks[2] doesn't start before we call SyncPrevious()
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
     TEST(iTransportStateCount[EPipelinePaused] == 0);
