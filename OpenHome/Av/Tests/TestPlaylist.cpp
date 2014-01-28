@@ -712,7 +712,7 @@ void SuitePlaylist::Disabled()
 
 void TestPlaylist(CpStack& aCpStack, DvStack& aDvStack)
 {
-    Runner runner("Track database tests\n");
+    Runner runner("Playlist tests\n");
     runner.Add(new SuitePlaylist(aCpStack, aDvStack));
     runner.Run();
 }
