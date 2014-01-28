@@ -259,9 +259,9 @@ Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
         if (aMsg->Id() == iTargetHaltId) {
             iState = EHalted;
             iTargetHaltId = MsgHalt::kIdNone;
+            iObserver.PipelineHalted(aMsg->Id());
         }
     }
-    iObserver.PipelineHalted(aMsg->Id());
     return aMsg;
 }
 
