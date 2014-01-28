@@ -66,7 +66,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     iAdapterListenerId = nifList.AddCurrentChangeListener(functor, false);
 
-    iServerThread = new ThreadFunctor("UDPS", MakeFunctor(*this, &SocketUdpServer::ServerThread));
+    iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread));
     iServerThread->Start();
 }
 

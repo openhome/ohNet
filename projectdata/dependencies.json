@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.997",
+        "version": "1.0.1015",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -88,7 +88,7 @@
     {   "name": "ohNetmon",
         "type": "internal",
         "platform-specific": true,
-        "version": "0.0.8",
+        "version": "0.0.10",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}"
     },

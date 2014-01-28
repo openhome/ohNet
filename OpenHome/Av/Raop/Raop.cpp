@@ -687,10 +687,10 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
         iRaopDiscoverySession1 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 1);
-        iRaopDiscoveryServer->Add("AIRD", iRaopDiscoverySession1);
+        iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
 
         iRaopDiscoverySession2 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 2);
-        iRaopDiscoveryServer->Add("AIRT", iRaopDiscoverySession2);
+        iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
 
         aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
     }

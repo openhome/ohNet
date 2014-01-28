@@ -60,6 +60,7 @@ public:
     // ...
     // other keys may have their values hard-coded
     virtual void LoadStaticData(IStoreLoaderStatic& aLoader) = 0;
+    virtual ~IStaticDataSource() {}
 };
 
 class KvpStore : public IReadStore,

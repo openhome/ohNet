@@ -6,6 +6,10 @@
 #include <OpenHome/Av/InfoProvider.h>
 
 namespace OpenHome {
+namespace Configuration{
+    class ConfigText;
+    class IConfigManagerWriter;
+}
 namespace Av {
 
 class IProduct;
@@ -28,7 +32,7 @@ public:
     virtual void Deactivate() = 0;
     virtual void SetVisible(TBool aVisible) = 0;
 private:
-    virtual void Initialise(IProduct& aProduct) = 0;
+    virtual void Initialise(IProduct& aProduct, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aConfigIdPrefix) = 0;
 };
 
 class Source : public ISource/*, protected IInfoProvider*/
@@ -43,20 +47,25 @@ protected: // from ISource
     void SetVisible(TBool aVisible);
 protected:
     Source(const TChar* aSystemName, const TChar* aType);
+    ~Source();
     TBool IsActive() const;
     void DoActivate();
 private: // from ISource
-    void Initialise(IProduct& aProduct);
+    void Initialise(IProduct& aProduct, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aConfigIdPrefix);
+private:
+    void NameChanged(const Brx& aName);
 protected:
     TBool iActive;
 private:
+    Mutex iLock;
     Brn iSystemName;
     Brn iType;
     Bws<kMaxSourceNameBytes> iName;
     TBool iVisible;
 
-    IProduct* iProduct; // FIXME - change type to IProduct
-    //PipelineManager* iPipelineManager; // FIXME - change type to IPipelineManager
+    IProduct* iProduct;
+    Configuration::ConfigText* iConfigName;
+    TUint iConfigNameSubscriptionId;
 };
 
 } // namespace Av

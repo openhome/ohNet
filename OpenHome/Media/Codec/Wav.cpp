@@ -117,9 +117,8 @@ void CodecWav::Process()
         iReadBuf.SetBytes(0);
         const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
         iController->Read(iReadBuf, bytes);
-        Brn encodedAudioBuf(iReadBuf.Ptr(), bytes);
-        iTrackOffset += iController->OutputAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
-        iAudioBytesRemaining -= bytes;
+        iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
+        iAudioBytesRemaining -= iReadBuf.Bytes();
     }
 
     LOG(kMedia, "< CodecWav::Process()\n");

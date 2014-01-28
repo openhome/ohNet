@@ -29,7 +29,7 @@ UriProvider::~UriProvider()
 // Filler
 
 Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
-    : Thread("Fill")
+    : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
     , iPipelineIdTracker(aIdTracker)
@@ -92,6 +92,13 @@ TUint Filler::Stop()
     Signal();
     iLock.Signal();
     return id;
+}
+
+void Filler::StopNoHalt()
+{
+    iLock.Wait();
+    iStopped = true;
+    iLock.Signal();
 }
 
 TBool Filler::Next(const Brx& aMode)

@@ -33,6 +33,7 @@ class IProduct
 public:
     virtual ~IProduct() {}
     virtual void Activate(ISource& aSource) = 0;
+    virtual void NotifySourceNameChanged(ISource& aSource) = 0;
 };
 
 class IProductObserver
@@ -53,12 +54,15 @@ private:
     static const Brn kStartupSourceBase;
     static const TUint kMaxAttributeBytes = 1024;
 public:
+    static const TUint kConfigPrefixMaxBytes = 12;
     static const Brn kConfigIdRoomBase;
     static const Brn kConfigIdNameBase;
     static const TUint kMaxNameBytes = 20;
     static const TUint kMaxRoomBytes = 20;
 public:
-    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManagerReader& aConfigManager, IPowerManager& aPowerManager, const Brx& aConfigPrefix);
+    Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore,
+            Configuration::IConfigManagerReader& aConfigReader, Configuration::IConfigManagerWriter& aConfigWriter,
+            IPowerManager& aPowerManager, const Brx& aConfigPrefix);
     ~Product();
     void SetObserver(IProductObserver& aObserver);
     void Start();
@@ -69,6 +73,7 @@ public:
     void GetModelDetails(Brn& aName, Brn& aInfo, Brn& aUrl, Brn& aImageUri);
     void GetProductDetails(Bwx& aRoom, Bwx& aName, Brn& aInfo, Brn& aImageUri);
     TBool StandbyEnabled() const;
+    void SetStandby(TBool aStandby);
     TUint SourceCount() const;
     TUint CurrentSourceIndex() const;
     void GetSourceXml(Bwx& aXml);
@@ -84,22 +89,25 @@ private:
     void ProductNameChanged(const Brx& aValue);
 private: // from IProduct
     void Activate(ISource& aSource);
+    void NotifySourceNameChanged(ISource& aSource);
 private: // from IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
-    Configuration::IConfigManagerReader& iConfigManager;
-    Mutex iLock;
+    Configuration::IConfigManagerWriter& iConfigWriter;
+    mutable Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
     IProductObserver* iObserver;
     std::vector<ISource*> iSources;
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;
+    TBool iStandby;
     StoreText* iStartupSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
+    Bws<kConfigPrefixMaxBytes> iConfigPrefix;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Bws<kMaxRoomBytes> iProductRoom;

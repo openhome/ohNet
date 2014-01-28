@@ -40,6 +40,7 @@ public:
     void Start(IUriStreamer& aUriStreamer);
     void Play(const Brx& aMode, TUint aTrackId);
     TUint Stop(); // returns Id of MsgHalt which will (eventually) be generated
+    void StopNoHalt(); // use during shutdown only
     TBool Next(const Brx& aMode);
     TBool Prev(const Brx& aMode);
     TBool IsStopped() const;

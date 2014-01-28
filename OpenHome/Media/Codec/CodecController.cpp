@@ -58,7 +58,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamLength(0)
     , iStreamPos(0)
 {
-    iDecoderThread = new ThreadFunctor("CDEC", MakeFunctor(*this, &CodecController::CodecThread));
+    iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread));
 }
 
 CodecController::~CodecController()
@@ -123,7 +123,6 @@ void CodecController::CodecThread()
             iLock.Wait();
             iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
             iActiveCodec = NULL;
-            iStreamHandler = NULL;
             iStreamId = iSampleRate = iSeekSeconds = 0;
             iStreamLength = iStreamPos = 0LL;
             ReleaseAudioEncoded();
@@ -154,14 +153,24 @@ void CodecController::CodecThread()
                 catch (CodecStreamStart&) {}
                 catch (CodecStreamEnded&) {}
                 // don't catch CodecStreamStopped - TryStop will have called Rewind/Stop if required
+                iLock.Wait();
                 iStreamStarted = iStreamEnded = false; // Rewind() will result in us receiving any additional EncodedStream msgs again
-                Rewind();
+                if (!iStreamStopped) {
+                    Rewind();
+                }
+                iLock.Signal();
                 if (recognised) {
                     iActiveCodec = codec;
                     break;
                 }
             }
             iRecognising = false;
+            {
+                AutoMutex a(iLock);
+                if (iStreamStopped) {
+                    THROW(CodecStreamStopped);
+                }
+            }
             iRewinder.Stop(trackId, streamId); // stop buffering audio
             if (iQuit) {
                 break;
@@ -221,6 +230,12 @@ void CodecController::CodecThread()
         catch (CodecStreamFlush&) {}
         if (iActiveCodec != NULL) {
             iActiveCodec->StreamCompleted();
+        }
+        if (!iStreamStarted && !iStreamEnded) {
+            iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+            if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                iConsumeExpectedFlush = true;
+            }
         }
         // push out any pending msgs, such as a quit
         if (iPendingMsg != NULL) {
@@ -342,9 +357,9 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
 
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
-    ReleaseAudioEncoded();
     TUint flushId = iStreamHandler->TrySeek(iTrackId, aStreamId, aBytePos);
     if (flushId != MsgFlush::kIdInvalid) {
+        ReleaseAudioEncoded();
         iExpectedFlushId = flushId;
         iStreamPos = aBytePos;
         return true;

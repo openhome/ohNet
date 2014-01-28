@@ -23,11 +23,17 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
 
 PipelineManager::~PipelineManager()
 {
-    const TUint haltId = iFiller->Stop();
-    iIdManager->InvalidatePending();
+    TUint haltId = MsgHalt::kIdInvalid;
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
+    if (waitStop) {
+        haltId = iFiller->Stop();
+    }
+    else {
+        iFiller->StopNoHalt();
+    }
     iLock.Signal();
+    iIdManager->InvalidatePending();
     if (waitStop) {
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();

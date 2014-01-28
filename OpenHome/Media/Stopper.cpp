@@ -256,12 +256,12 @@ Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 {
     if (!iQuit) { // if we pull a Halt msg after being told to quit, we shouldn't halt the pipeline
-        if (iTargetHaltId == MsgHalt::kIdNone || aMsg->Id() == iTargetHaltId) {
+        if (aMsg->Id() == iTargetHaltId) {
             iState = EHalted;
             iTargetHaltId = MsgHalt::kIdNone;
+            iObserver.PipelineHalted(aMsg->Id());
         }
     }
-    iObserver.PipelineHalted(aMsg->Id());
     return aMsg;
 }
 
