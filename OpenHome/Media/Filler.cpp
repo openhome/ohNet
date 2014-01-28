@@ -94,6 +94,13 @@ TUint Filler::Stop()
     return id;
 }
 
+void Filler::StopNoHalt()
+{
+    iLock.Wait();
+    iStopped = true;
+    iLock.Signal();
+}
+
 TBool Filler::Next(const Brx& aMode)
 {
     TBool ret = false;
