@@ -73,7 +73,7 @@ TBool CodecAac::Recognise()
         // couldn't recognise this as an MPEG4 file.
     }
     if (codec == Brn("mp4a")) {
-        LOG(kCodec, "CodecAlac::Recognise aac mp4a\n");
+        LOG(kCodec, "CodecAac::Recognise aac mp4a\n");
         return true;
     }
 
