@@ -164,8 +164,8 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
         UpdateStatus(EBuffering);
         enteredBuffering = true;
     }
-    if ((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax) ||
-        (enteredBuffering && remainingSize >= iNormalMax)) {
+    if (((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) ||
+        (enteredBuffering && (remainingSize >= iNormalMax))) {
         iSemIn.Signal();
     }
     iLock.Signal();
