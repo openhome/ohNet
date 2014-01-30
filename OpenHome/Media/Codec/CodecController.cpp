@@ -174,7 +174,7 @@ void CodecController::CodecThread()
                 }
             }
             iRecognising = false;
-            iRewinder.Stop(iTrackId, iStreamId); // stop buffering audio
+            iRewinder.Stop(); // stop buffering audio
             if (iQuit) {
                 break;
             }
@@ -472,7 +472,6 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
 {
-//    Log::Print("CodecController::ProcessMsg(MsgEncodedStream*) iRecognising=%u\n", iRecognising);
     iStreamStarted = iStreamEnded = true;
     if (iRecognising) {
         aMsg->RemoveRef();

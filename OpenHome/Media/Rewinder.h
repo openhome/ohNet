@@ -13,7 +13,7 @@ class IRewinder
 {
 public:
     virtual void Rewind() = 0;
-    virtual void Stop(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void Stop() = 0;
 };
 
 /* Class which buffers data for recognition (in case seeking back to the start
@@ -34,7 +34,6 @@ public:
 private:
     void TryBuffer(Msg* aMsg);
     void DrainQueue(MsgQueue& aQueue);
-    void DoStop();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
@@ -51,7 +50,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 public: // from IRewinder
     void Rewind();
-    void Stop(TUint aTrackId, TUint aStreamId);
+    void Stop();
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -60,12 +59,8 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStreamHandler* iStreamHandler;
-    TBool iBuffering;
+    TUint iBuffering;
     Mutex iLock;
-    TUint iTrackIdLatest;
-    TUint iStreamIdLatest;
-    TUint iTrackIdEarliest;
-    TUint iStreamIdEarliest;
     MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
     MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind
 };
