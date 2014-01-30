@@ -6,6 +6,8 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 
+#include <vector>
+
 EXCEPTION(MediaCodecRaopNotFound);
 EXCEPTION(MediaMpeg4FileInvalid);
 
@@ -52,13 +54,11 @@ public:
     ~SampleSizeTable();
     void Initialise(TUint aTableSize);
     void Deinitialise();
-    void SetSampleSize(TUint32 aSamplesize);
+    void AddSampleSize(TUint32 aSampleSize);
     TUint32 SampleSize(TUint aEntry);
     TUint Count();
 private:
-    TUint   iCount;
-    TUint   iEntry;
-    Bwx*    iTable;
+    std::vector<TUint32> iTable;
 };
 
 class SeekTable
@@ -74,6 +74,7 @@ public:
     void SetAudioSamplesPerSample(TUint32 aSampleCount, TUint32 aAudioSamples);
     void SetOffset(TUint64 aOffset);
     TUint64 Offset(TUint64& aAudioSample, TUint64& aSample);
+private:
     typedef struct {
         TUint   iFirstChunk;
         TUint   iSamples;
@@ -83,15 +84,9 @@ public:
         TUint   iAudioSamples;
     } TAudioSamplesPerSampleEntry;
 private:
-    TUint   iSPCEntries;
-    TUint   iSPCEntry;
-    Bwx*    iSamplesPerChunk;
-    TUint   iASPSEntries;
-    TUint   iASPSEntry;
-    Bwx*    iAudioSamplesPerSample;
-    TUint   iOffsetEntries;
-    TUint   iOffsetEntry;
-    Bwx*    iOffsets;
+    std::vector<TSamplesPerChunkEntry> iSamplesPerChunk;
+    std::vector<TAudioSamplesPerSampleEntry> iAudioSamplesPerSample;
+    std::vector<TUint64> iOffsets;
 };
 
 class Mpeg4Start : public ContainerBase

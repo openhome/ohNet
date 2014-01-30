@@ -7,7 +7,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
 
-#include <string.h>
+#include <vector>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -200,9 +200,8 @@ TUint Mpeg4Box::FileOffset() const
 
 // SampleSizeTable
 
-SampleSizeTable::SampleSizeTable() :  iCount(0), iEntry(0), iTable(0)
+SampleSizeTable::SampleSizeTable()
 {
-//    LOG(kCodec, "SampleSizeTable::SampleSizeTable()\n");
 }
 
 SampleSizeTable::~SampleSizeTable()
@@ -212,230 +211,148 @@ SampleSizeTable::~SampleSizeTable()
 
 void SampleSizeTable::Initialise(TUint aCount)
 {
-    //LOG(kCodec, "SampleSizeTable::Initialise(%d)\n", aCount);
-
-    TUint tablesize = aCount * sizeof(TUint32);
-    iCount = aCount;
-    iEntry = 0;
-    iTable = new Bwh(tablesize);
+    iTable.reserve(aCount);
 }
 
 void SampleSizeTable::Deinitialise()
 {
-    //LOG(kCodec, "SampleSizeTable::Deinitialise()\n");
-    if (iTable) {
-        delete iTable;
-        iTable = 0;
-    }
+    iTable.clear();
 }
 
-void SampleSizeTable::SetSampleSize(TUint32 aSize)
+void SampleSizeTable::AddSampleSize(TUint32 aSize)
 {
-    if(iEntry > iTable->MaxBytes()/sizeof(TUint32)) {
+    if (iTable.size() == iTable.capacity()) {
         THROW(MediaMpeg4FileInvalid);
     }
-
-    ((TUint32 *)iTable->Ptr())[iEntry++] = aSize;
+    iTable.push_back(aSize);
 }
 
 TUint32 SampleSizeTable::SampleSize(TUint aEntry)
 {
-    //LOG(kCodec, "SampleSizeTable::SampleSize(%d)\n", aEntry);
-
-    if(aEntry > iEntry) {
+    if(aEntry > iTable.size()-1) {
         THROW(MediaMpeg4FileInvalid);
     }
-    return ((TUint32 *)iTable->Ptr())[aEntry];
+    return iTable[aEntry];
 }
 
 TUint32 SampleSizeTable::Count()
 {
-    //LOG(kCodec, "SampleSizeTable::Count()\n");
-
-    return iCount;
+    return iTable.capacity();
 }
 
 
 // SeekTable
 // Table of samples->chunk->offset required for seeking
 
-SeekTable::SeekTable() : iSPCEntries(0), iSPCEntry(0), iSamplesPerChunk(0), iASPSEntries(0), iASPSEntry(0), iAudioSamplesPerSample(0), iOffsetEntries(0), iOffsetEntry(0), iOffsets(0)
+SeekTable::SeekTable()
 {
-//    LOG(kCodec, "SeekTable::SeekTable()\n");
 }
 
 SeekTable::~SeekTable()
 {
-    //LOG(kCodec, "SeekTable::~SeekTable()\n");
     Deinitialise();
 }
 
 void SeekTable::InitialiseSamplesPerChunk(TUint aEntries)
 {
-    //LOG(kCodec, "SeekTable::InitialiseSamplesPerChunk(%d)\n", aEntries);
-
-    TUint tablesize = aEntries * sizeof(TSamplesPerChunkEntry);
-    iSPCEntries = aEntries;
-    iSPCEntry = 0;
-    iSamplesPerChunk = new Bwh(tablesize);
+    iSamplesPerChunk.reserve(aEntries);
 }
 
 void SeekTable::InitialiseAudioSamplesPerSample(TUint aEntries)
 {
-    //LOG(kCodec, "SeekTable::InitialiseAudioSamplesPerSample(%d)\n", aEntries);
-
-    TUint tablesize = aEntries * sizeof(TAudioSamplesPerSampleEntry);
-    iASPSEntries = aEntries;
-    iASPSEntry = 0;
-    iAudioSamplesPerSample = new Bwh(tablesize);
+    iAudioSamplesPerSample.reserve(aEntries);
 }
 
 void SeekTable::InitialiseOffsets(TUint aEntries)
 {
-    //LOG(kCodec, "SeekTable::InitialiseOffsets(%d)\n", aEntries);
-    TUint tablesize = aEntries * sizeof(TUint64);
-    iOffsetEntries = aEntries;
-    iOffsetEntry = 0;
-    iOffsets = new Bwh(tablesize);
+    iOffsets.reserve(aEntries);
 }
-
 
 void SeekTable::Deinitialise()
 {
-    //LOG(kCodec, "SeekTable::Deinitialise()\n");
-    if (iSamplesPerChunk) {
-        delete iSamplesPerChunk;
-        iSamplesPerChunk = 0;
-    }
-    if (iAudioSamplesPerSample) {
-        delete iAudioSamplesPerSample;
-        iAudioSamplesPerSample = 0;
-    }
-    if (iOffsets) {
-        delete iOffsets;
-        iOffsets = 0;
-    }
+    iSamplesPerChunk.clear();
+    iAudioSamplesPerSample.clear();
+    iOffsets.clear();
 }
 
 void SeekTable::SetSamplesPerChunk(TUint aFirstChunk, TUint aSamplesPerChunk)
 {
-    //LOG(kCodec, "SeekTable::SetSamplesPerChunk(%d, %d)\n",  aFirstChunk, aSamplesPerChunk);
-    if(iSPCEntry >= iSPCEntries) {
-        THROW(MediaMpeg4FileInvalid);
-    }
-
-    ((TSamplesPerChunkEntry *)iSamplesPerChunk->Ptr())[iSPCEntry].iFirstChunk = aFirstChunk;
-    ((TSamplesPerChunkEntry *)iSamplesPerChunk->Ptr())[iSPCEntry].iSamples = aSamplesPerChunk;
-    iSPCEntry++;
+    TSamplesPerChunkEntry entry = { aFirstChunk, aSamplesPerChunk };
+    iSamplesPerChunk.push_back(entry);
 }
-
-
 
 void SeekTable::SetAudioSamplesPerSample(TUint32 aSampleCount, TUint32 aAudioSamples)
 {
-    //LOG(kCodec, "SeekTable::SetAudioSamplesPerSample(%d, %d)\n",  aSampleCount, aAudioSamples);
-    if(iASPSEntry >= iASPSEntries) {
-        THROW(MediaMpeg4FileInvalid);        // seek table empty - cannot do seek
-    }
-
-    ((TAudioSamplesPerSampleEntry *)iAudioSamplesPerSample->Ptr())[iASPSEntry].iSampleCount = aSampleCount;   // store this entry
-    ((TAudioSamplesPerSampleEntry *)iAudioSamplesPerSample->Ptr())[iASPSEntry].iAudioSamples = aAudioSamples;
-    iASPSEntry++;
+    TAudioSamplesPerSampleEntry entry = { aSampleCount, aAudioSamples };
+    iAudioSamplesPerSample.push_back(entry);
 }
-
 
 void SeekTable::SetOffset(TUint64 aOffset)
 {
-    //LOG(kCodec, "SeekTable::SetOffset(%lld)\n",  aOffset);
-    if(iOffsetEntry >= iOffsetEntries) {
-        THROW(MediaMpeg4FileInvalid);        // seek table empty - cannot do seek
-    }
-
-    ((TUint64 *)iOffsets->Ptr())[iOffsetEntry++] = aOffset;   // store this offset
+    iOffsets.push_back(aOffset);
 }
-
 
 TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 {
-    //LOG(kCodec, "SeekTable::Offset(%lld)\n", aAudioSample);
-    if((iSPCEntry == 0) || (iASPSEntry == 0) || (iOffsetEntry == 0)) {
-        THROW(CodecStreamCorrupt);        // seek table empty - cannot do seek
+    if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size()==0) {
+        THROW(CodecStreamCorrupt); // seek table empty - cannot do seek
     }
     aSample = 0;
+    // fistly determine the required sample from the audio sample using the stts data,
+    // then work through samples per chunk table (stsc data) to get the chunk number for
+    // this particular sample, then get the chunk offset from the offset table (stco data)
 
-// fistly determine the required sample from the audio sample using the stts data,
-// then work through samples per chunk table (stsc data) to get the chunk number for this particular sample
-// then get the chunk offset from the offset table (stco data)
-
-// stts:
+    // stts:
     TUint64 totalaudiosamples = 0;
     TUint64 totalsamples = 0;
     TUint32 samplecount = 0;
     TUint32 audiosamples = 0;
-    for(TUint entry = 0; entry < iASPSEntry; entry++) {
-
-        samplecount = ((TAudioSamplesPerSampleEntry *)iAudioSamplesPerSample->Ptr())[entry].iSampleCount;
-        audiosamples =  ((TAudioSamplesPerSampleEntry *)iAudioSamplesPerSample->Ptr())[entry].iAudioSamples;
-        //LOG(kCodec, "SeekTable::Offset()  - ASPS - samplecount %d, audiosamples %d\n", samplecount, audiosamples);
-
-        if( aAudioSample > (totalaudiosamples + samplecount * audiosamples)) {
-            totalaudiosamples += samplecount * audiosamples;
-            totalsamples = samplecount;
-        } else {
-            break;                  // audio samples are within this range
+    for(TUint entry = 0; entry < iAudioSamplesPerSample.size(); entry++) {
+        samplecount = iAudioSamplesPerSample[entry].iSampleCount;
+        audiosamples = iAudioSamplesPerSample[entry].iAudioSamples;
+        if (aAudioSample <= (totalaudiosamples + samplecount * audiosamples)) {
+            break; // audio samples are within this range
         }
+        totalaudiosamples += samplecount * audiosamples;
+        totalsamples = samplecount;
     }
-    if( (totalaudiosamples != 0) && (aAudioSample > totalaudiosamples)) {
-        aAudioSample = totalaudiosamples-1;		// keep within range
+    if (totalaudiosamples!=0 && aAudioSample>totalaudiosamples) {
+        aAudioSample = totalaudiosamples-1;	// keep within range
     }
-
     if(audiosamples == 0)
-        THROW(CodecStreamCorrupt);        // invalid table
+        THROW(CodecStreamCorrupt); // invalid table
 
-    aSample = totalsamples + (aAudioSample - totalaudiosamples)/audiosamples;     // convert audio sample count to codec samples
+    aSample = totalsamples + (aAudioSample - totalaudiosamples)/audiosamples; // convert audio sample count to codec samples
 
-    //LOG(kCodec, "SeekTable::Offset()  - ASPS - aSample %lld, totalsamples %lld, totalaudiosamples %lld\n", aSample, totalsamples, totalaudiosamples);
-
-// stsc:
-// chunk is found by searching to the entry in the table before samples > first chunk
-// and interpolating to get exact chunk
-
+    // stsc:
+    // chunk is found by searching to the entry in the table before samples > first chunk
+    // and interpolating to get exact chunk
     totalsamples = 0;
     TUint32 nextspc = 0, spc = 0, chunks = 0;
     TUint32 seekchunk = 0, firstchunk = 1, nextchunk = 1;
-    for(TUint entry = 0; entry < iSPCEntry; entry++) {
-
-        nextchunk = ((TSamplesPerChunkEntry *)iSamplesPerChunk->Ptr())[entry].iFirstChunk;
-        nextspc =  ((TSamplesPerChunkEntry *)iSamplesPerChunk->Ptr())[entry].iSamples;
-
+    for(TUint entry = 0; entry < iSamplesPerChunk.size(); entry++) {
+        nextchunk = iSamplesPerChunk[entry].iFirstChunk;
+        nextspc = iSamplesPerChunk[entry].iSamples;
         chunks = nextchunk - firstchunk;
         if(aSample < (totalsamples + chunks * spc)) {
-                    // sample is within previous range
-            break;
+            break; // sample is within previous range
         }
 
         totalsamples += chunks * spc;
         firstchunk = nextchunk;
         spc = nextspc;
-        //LOG(kCodec, "SeekTable::Offset()  - totalsamples %lld, firstchunk %d\n", totalsamples, firstchunk);
     }
-    seekchunk = (TUint32) (firstchunk + ((aSample-totalsamples) / spc));    // calculate chunk that this sample is in
+    seekchunk = (TUint32) (firstchunk + ((aSample-totalsamples) / spc)); // calculate chunk that this sample is in
+    TUint64 adjsample = ((seekchunk - firstchunk) * spc) + totalsamples; // calculate index to first sample in chunk
+    aAudioSample -= (aSample - adjsample) * audiosamples;                // adjust audio sample count to index first sample in chunk
+    aSample = adjsample;                                                 // adjust codec sample count to index first sample in chunk
+    seekchunk -= 1;                                                      // adjust for array index (i.e. -1)
 
-    TUint64 adjsample = ((seekchunk - firstchunk) * spc) + totalsamples;  // calculate index to first sample in chunk
-
-    aAudioSample -= (aSample - adjsample) * audiosamples;             // adjust audio sample count to index first sample in chunk
-    aSample = adjsample;                                              // adjust codec sample count to index first sample in chunk
-    //LOG(kCodec, "SeekTable::Offset()  - found chunk = %d, spc %d, adjusted sample %lld,%lld\n", seekchunk, spc, aSample, aAudioSample);
-
-    seekchunk -= 1;                                             // adjust for array index (i.e. -1)
-
-//stco:
-    if(seekchunk >= iOffsetEntries) {
-                                               // error - required chunk doesn't exist
-        //LOG(kCodec, "SeekTable::Offset()  - chunk %d doesn't exist\n", seekchunk);
-        THROW(CodecStreamCorrupt);        // asserts later on !!! ToDo
+    //stco:
+    if(seekchunk >= iOffsets.capacity()) { // error - required chunk doesn't exist
+        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo
     }
-    return ((TUint64 *)iOffsets->Ptr())[seekchunk];       // entry found - return offset to required chunk
+    return iOffsets[seekchunk]; // entry found - return offset to required chunk
 }
 
 
@@ -785,7 +702,7 @@ Mpeg4MediaInfo::Mpeg4MediaInfo(ICodecController& aController)
                     BoxL6.Read(*sampleSizeTable, entries*4);
                     for(TUint i = 0; i < entries; i++) {
                         sampleSize = Converter::BeUint32At(*sampleSizeTable, i*4);
-                        iSampleSizeTable.SetSampleSize(sampleSize);
+                        iSampleSizeTable.AddSampleSize(sampleSize);
                     }
                     delete sampleSizeTable;
                 }
