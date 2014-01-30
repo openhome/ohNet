@@ -349,7 +349,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
     seekchunk -= 1;                                                      // adjust for array index (i.e. -1)
 
     //stco:
-    if(seekchunk >= iOffsets.capacity()) { // error - required chunk doesn't exist
+    if(seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
         THROW(CodecStreamCorrupt); // asserts later on !!! ToDo
     }
     return iOffsets[seekchunk]; // entry found - return offset to required chunk
