@@ -27,7 +27,6 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iConfigWriter(aConfigWriter)
     , iLock("PRDM")
     , iLockDetails("PRDD")
-    , iObserver(NULL)
     , iStarted(false)
     , iStandby(false)
     , iCurrentSource(UINT_MAX)
@@ -63,9 +62,9 @@ Product::~Product()
     delete iStartupSource;
 }
 
-void Product::SetObserver(IProductObserver& aObserver)
+void Product::AddObserver(IProductObserver& aObserver)
 {
-    iObserver = &aObserver;
+    iObservers.push_back(&aObserver);
 }
 
 void Product::Start()
@@ -75,8 +74,8 @@ void Product::Start()
     SetCurrentSource(startupSource);
     iStarted = true;
     iSourceXmlChangeCount++;
-    if (iObserver != NULL) {
-        iObserver->Started();
+    for (TUint i=0; i<iObservers.size(); i++) {
+        iObservers[i]->Started();
     }
 }
 
@@ -143,9 +142,11 @@ void Product::SetStandby(TBool aStandby)
         iStandby = aStandby;
     }
     iLock.Signal();
-    if (changed && iObserver != NULL) {
-        iObserver->StandbyChanged();
-        // FIXME - other observers to notify. (e.g. to disable any hardware)
+    if (changed) {
+        for (TUint i=0; i<iObservers.size(); i++) {
+            iObservers[i]->StandbyChanged();
+            // FIXME - other observers to notify. (e.g. to disable any hardware)
+        }
     }
 }
 
@@ -214,8 +215,8 @@ void Product::SetCurrentSource(TUint aIndex)
     iStartupSource->Set(iSources[iCurrentSource]->SystemName());
     iSources[iCurrentSource]->Activate();
 
-    if (iObserver != NULL) {
-        iObserver->SourceIndexChanged();
+    for (TUint i=0; i<iObservers.size(); i++) {
+        iObservers[i]->SourceIndexChanged();
     }
 }
 
@@ -228,8 +229,8 @@ void Product::SetCurrentSource(const Brx& aName)
             iCurrentSource = i;
             iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             iSources[iCurrentSource]->Activate();
-            if (iObserver != NULL) {
-                iObserver->SourceIndexChanged();
+            for (TUint i=0; i<iObservers.size(); i++) {
+                iObservers[i]->SourceIndexChanged();
             }
             return;
         }
@@ -279,8 +280,8 @@ void Product::Activate(ISource& aSource)
             iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             srcNew = iSources[i];
             srcNew->Activate();
-            if (iObserver != NULL) {
-                iObserver->SourceIndexChanged();
+            for (TUint i=0; i<iObservers.size(); i++) {
+                iObservers[i]->SourceIndexChanged();
             }
             return;
         }
@@ -293,8 +294,8 @@ void Product::NotifySourceNameChanged(ISource& /*aSource*/)
     iLock.Wait();
     iSourceXmlChangeCount++;
     iLock.Signal();
-    if (iObserver != NULL) {
-        iObserver->SourceXmlChanged();
+    for (TUint i=0; i<iObservers.size(); i++) {
+        iObservers[i]->SourceXmlChanged();
     }
 }
 

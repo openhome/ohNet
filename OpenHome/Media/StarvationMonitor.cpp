@@ -135,6 +135,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     iLock.Wait();
     ASSERT(iExit || iStatus != EBuffering);
     TUint remainingSize = Jiffies();
+    TBool enteredBuffering = false;
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
         UpdateStatus(ERampingDown);
         iRampDownDuration = remainingSize + aMsg->Jiffies();
@@ -145,6 +146,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
         Ramp(aMsg, Ramp::EDown);
         if (iCurrentRampValue == Ramp::kRampMin) {
             UpdateStatus(EBuffering);
+            enteredBuffering = true;
         }
         if (remainingSize == 0) {
             ASSERT(iCurrentRampValue == Ramp::kRampMin);
@@ -160,8 +162,10 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     remainingSize = Jiffies(); // re-calculate this as Ramp() can cause a msg to be split with a fragment re-queued
     if (remainingSize == 0 && iStatus != EBuffering) {
         UpdateStatus(EBuffering);
+        enteredBuffering = true;
     }
-    if ((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) {
+    if (((remainingSize < iNormalMax) && (remainingSize + aMsg->Jiffies() >= iNormalMax)) ||
+        (enteredBuffering && (remainingSize >= iNormalMax))) {
         iSemIn.Signal();
     }
     iLock.Signal();
@@ -184,7 +188,8 @@ void StarvationMonitor::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
 
 void StarvationMonitor::UpdateStatus(EStatus aStatus)
 {
-    /*const TChar* status;
+#if 0
+    const TChar* status;
     switch (aStatus)
     {
     case ERunning:
@@ -203,7 +208,8 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
         status = "unknown(!)";
         break;
     }
-    Log::Print("StarvationMonitor, updating status to %s\n", status);*/
+    Log::Print("StarvationMonitor, updating status to %s\n", status);
+#endif
     if (aStatus == EBuffering) {
         iObserver.NotifyStarvationMonitorBuffering(true);
     }

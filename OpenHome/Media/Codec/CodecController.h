@@ -19,6 +19,7 @@ EXCEPTION(CodecStreamFeatureUnsupported);
 
 namespace OpenHome {
 namespace Media {
+    class Logger;
 namespace Codec {
 
 /*
@@ -110,7 +111,7 @@ private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
     Rewinder iRewinder;
-    IPipelineElementUpstream& iUpstreamElement;
+    Logger* iLoggerRewinder;
     IPipelineElementDownstream& iDownstreamElement;
     Mutex iLock;
     std::vector<CodecBase*> iCodecs;

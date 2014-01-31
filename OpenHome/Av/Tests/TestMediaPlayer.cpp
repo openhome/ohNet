@@ -48,7 +48,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iDevice->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
     // create separate UPnP device for standard MediaRenderer
-    Bwh udn("UpnpErrorTests");
     Bws<256> buf(aUdn);
     buf.Append("-MediaRenderer");
     iDeviceUpnpAv = new DvDeviceStandard(aDvStack, buf);

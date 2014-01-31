@@ -10,33 +10,6 @@
 namespace OpenHome {
 namespace Media {
 
-class RewindQueueProcessor : private IMsgProcessor
-{
-    static const TUint kDefaultTrackId = UINT_MAX;
-    static const TUint kDefaultStreamId = UINT_MAX;
-public:
-    RewindQueueProcessor(MsgQueue& aQueue);
-    void ClearStream();
-    TBool UpdateIds(TUint& aTrackId, TUint& aStreamId);
-private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
-    Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgEncodedStream* aMsg);
-    Msg* ProcessMsg(MsgMetaText* aMsg);
-    Msg* ProcessMsg(MsgHalt* aMsg);
-    Msg* ProcessMsg(MsgFlush* aMsg);
-    Msg* ProcessMsg(MsgQuit* aMsg);
-private:
-    MsgQueue* iQueue;
-    TUint iTrackId;
-    TUint iStreamId;
-    TBool iClearedStream;
-};
-
 class MsgCloner : private IMsgProcessor
 {
 public:
@@ -62,103 +35,6 @@ private: // from IMsgProcessor
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
-
-// RewindQueueProcessor
-
-RewindQueueProcessor::RewindQueueProcessor(MsgQueue& aQueue)
-    : iQueue(&aQueue)
-    , iTrackId(kDefaultTrackId)
-    , iStreamId(kDefaultStreamId)
-    , iClearedStream(false)
-{
-}
-
-void RewindQueueProcessor::ClearStream()
-{
-    while (!iClearedStream && !iQueue->IsEmpty()) {
-        Msg* msg = iQueue->Dequeue();
-        msg = msg->Process(*this);
-        msg->RemoveRef();
-    }
-}
-
-TBool RewindQueueProcessor::UpdateIds(TUint& aTrackId, TUint& aStreamId)
-{
-    if (iTrackId != kDefaultTrackId) {
-        aTrackId = iTrackId;
-    }
-    if (iTrackId != kDefaultStreamId) {
-        aStreamId = iStreamId;
-    }
-    return iClearedStream;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    return aMsg;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgTrack* aMsg)
-{
-    iTrackId = aMsg->IdPipeline();
-    return aMsg;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iClearedStream = true;
-    iStreamId = aMsg->StreamId();
-    return aMsg;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* RewindQueueProcessor::ProcessMsg(MsgQuit* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
 
 // MsgCloner
 
@@ -244,12 +120,8 @@ Rewinder::Rewinder(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iStreamHandler(NULL)
-    , iBuffering(false)
+    , iBuffering(0)
     , iLock("REWI")
-    , iTrackIdLatest(UINT_MAX)
-    , iStreamIdLatest(UINT_MAX)
-    , iTrackIdEarliest(UINT_MAX)
-    , iStreamIdEarliest(UINT_MAX)
 {
     iQueueCurrent = new MsgQueue();
     iQueueNext = new MsgQueue();
@@ -272,7 +144,7 @@ void Rewinder::DrainQueue(MsgQueue& aQueue)
 
 void Rewinder::TryBuffer(Msg* aMsg)
 {
-    if (iBuffering) {
+    if (iBuffering > 0) {
         try {
             Msg* copy = MsgCloner::NewRef(*aMsg);
             iQueueNext->Enqueue(copy);
@@ -339,10 +211,6 @@ Msg* Rewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
 
 Msg* Rewinder::ProcessMsg(MsgTrack* aMsg)
 {
-    iTrackIdLatest = aMsg->IdPipeline();
-    if (!iBuffering) {
-        iTrackIdEarliest = iTrackIdLatest;
-    }
     TryBuffer(aMsg);
     return aMsg;
 }
@@ -350,14 +218,10 @@ Msg* Rewinder::ProcessMsg(MsgTrack* aMsg)
 Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamHandler();
-    iStreamIdLatest = aMsg->StreamId();
-    if (!iBuffering) {
-        iStreamIdEarliest = iStreamIdLatest;
-    }
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();
     TryBuffer(msg);
-    iBuffering = true;
+    iBuffering++;
     return msg;
 }
 
@@ -384,7 +248,7 @@ Msg* Rewinder::ProcessMsg(MsgQuit* aMsg)
 void Rewinder::Rewind()
 {
     AutoMutex a(iLock);
-    ASSERT(iBuffering);
+    ASSERT(iBuffering != 0);
 
     while (!iQueueCurrent->IsEmpty()) {
         iQueueNext->Enqueue(iQueueCurrent->Dequeue());
@@ -394,20 +258,14 @@ void Rewinder::Rewind()
     iQueueNext = tmpQueue;
 }
 
-void Rewinder::Stop(TUint aTrackId, TUint aStreamId)
+void Rewinder::Stop()
 {
     AutoMutex a(iLock);
-    ASSERT(iBuffering);
-    ASSERT(aTrackId == iTrackIdEarliest);
-    ASSERT(aStreamId == iStreamIdEarliest);
-    DoStop();
-}
-
-void Rewinder::DoStop()
-{
-    RewindQueueProcessor rqp(*iQueueNext);
-    rqp.ClearStream();
-    iBuffering = rqp.UpdateIds(iTrackIdEarliest, iStreamIdEarliest);
+    ASSERT(iBuffering > 0);
+    while (!iQueueNext->IsEmpty()) {
+        iQueueNext->Dequeue()->RemoveRef();
+    }
+    iBuffering--;
 }
 
 EStreamPlay Rewinder::OkToPlay(TUint aTrackId, TUint aStreamId)
@@ -418,19 +276,11 @@ EStreamPlay Rewinder::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     AutoMutex a(iLock);
-    // can't seek if buffering current track
-    ASSERT(!iBuffering || (aTrackId != iTrackIdLatest) || (aStreamId != iStreamIdLatest));
     return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
 }
 
 TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    const TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
-    if (flushId != MsgFlush::kIdInvalid && iBuffering && aTrackId == iTrackIdLatest && aStreamId == iStreamIdLatest) {
-        ASSERT(iTrackIdEarliest == iTrackIdLatest);
-        ASSERT(iStreamIdEarliest == iStreamIdLatest);
-        DoStop();
-    }
-    return flushId;
+    return iStreamHandler->TryStop(aTrackId, aStreamId);
 }

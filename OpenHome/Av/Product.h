@@ -64,7 +64,7 @@ public:
             Configuration::IConfigManagerReader& aConfigReader, Configuration::IConfigManagerWriter& aConfigWriter,
             IPowerManager& aPowerManager, const Brx& aConfigPrefix);
     ~Product();
-    void SetObserver(IProductObserver& aObserver);
+    void AddObserver(IProductObserver& aObserver);
     void Start();
     void AddSource(ISource* aSource);
     void AddAttribute(const TChar* aAttribute);
@@ -99,7 +99,7 @@ private:
     mutable Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
-    IProductObserver* iObserver;
+    std::vector<IProductObserver*> iObservers;
     std::vector<ISource*> iSources;
     Bws<kMaxAttributeBytes> iAttributes;
     TBool iStarted;

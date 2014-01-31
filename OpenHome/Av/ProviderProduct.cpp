@@ -84,7 +84,7 @@ ProviderProduct::ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct)
     }
     SetPropertyProductUrl(Brn(presentationUrl));
 
-    iProduct.SetObserver(*this);
+    iProduct.AddObserver(*this);
 }
 
 ProviderProduct::~ProviderProduct()
