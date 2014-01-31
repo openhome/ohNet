@@ -17,11 +17,6 @@
 EXCEPTION(AvSourceNotFound);
 
 namespace OpenHome {
-namespace Configuration {
-    class ConfigText;
-    class IConfigManagerWriter;
-    class IStoreReadWrite;
-}
 namespace Av {
 
 class IReadStore;
@@ -85,8 +80,8 @@ public:
 private:
     void AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue);
     void GetConfigText(const Brx& aId, Bwx& aDest, const Brx& aDefault);
-    void ProductRoomChanged(const Brx& aValue);
-    void ProductNameChanged(const Brx& aValue);
+    void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
 private: // from IProduct
     void Activate(ISource& aSource);
     void NotifySourceNameChanged(ISource& aSource);

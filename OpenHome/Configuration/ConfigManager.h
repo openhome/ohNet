@@ -21,10 +21,41 @@ namespace OpenHome {
 namespace Configuration {
 
 template <class T>
+class KeyValuePair : public INonCopyable
+{
+public:
+    // Does not make a copy; owner is responsible for persisting parameter values.
+    KeyValuePair(const Brx& aKey, T aValue);
+    const Brx& Key() const;
+    T Value() const;
+private:
+    const Brx& iKey;
+    T iValue;
+};
+
+// KeyValuePair
+template <class T> KeyValuePair<T>::KeyValuePair(const Brx& aKey, T aValue)
+    : iKey(aKey)
+    , iValue(aValue)
+{
+}
+
+template <class T> const Brx& KeyValuePair<T>::Key() const
+{
+    return iKey;
+}
+
+template <class T> T KeyValuePair<T>::Value() const
+{
+    return iValue;
+}
+
+
+template <class T>
 class IObservable
 {
 public:
-    virtual TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
+    virtual TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor) = 0;
     virtual void Unsubscribe(TUint aId) = 0;
     virtual ~IObservable() {}
 };
@@ -43,18 +74,18 @@ public:
     virtual ~ConfigVal();
     const Brx& Id();
 public: // from IObservable
-    TUint Subscribe(FunctorGeneric<T> aFunctor) = 0;
+    virtual TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor) = 0;
     void Unsubscribe(TUint aId);
 protected:
-    TUint Subscribe(FunctorGeneric<T> aFunctor, T aVal);
+    TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor, T aVal);
     void NotifySubscribers(T aVal);
     void AddInitialSubscribers();
-    virtual void Write(T aVal) = 0;
+    virtual void Write(KeyValuePair<T>& aKvp) = 0;
 protected:
     IConfigManagerWriter& iConfigManager;
     Bws<kMaxIdLength> iId;
 private:
-    typedef std::map<TUint,FunctorGeneric<T>> Map;
+    typedef std::map<TUint,FunctorGeneric<KeyValuePair<T>&>> Map;
     Map iObservers;
     Mutex iObserverLock;
     TUint iWriteObserverId; // ID for own Write() observer
@@ -74,7 +105,7 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const
 template <class T> void ConfigVal<T>::AddInitialSubscribers()
 {
     ASSERT(iWriteObserverId == 0);
-    iWriteObserverId = Subscribe(MakeFunctorGeneric<T>(*this, &ConfigVal::Write));
+    iWriteObserverId = Subscribe(MakeFunctorGeneric<KeyValuePair<T>&>(*this, &ConfigVal::Write));
 }
 
 template <class T> ConfigVal<T>::~ConfigVal()
@@ -98,24 +129,26 @@ template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
     iObserverLock.Signal();
 }
 
-template <class T> TUint ConfigVal<T>::Subscribe(FunctorGeneric<T> aFunctor, T aVal)
+template <class T> TUint ConfigVal<T>::Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor, T aVal)
 {
+    KeyValuePair<T> kvp(iId, aVal);
     iObserverLock.Wait();
     TUint id = iNextObserverId;
-    iObservers.insert(std::pair<TUint,FunctorGeneric<T>>(id, aFunctor));
+    iObservers.insert(std::pair<TUint,FunctorGeneric<KeyValuePair<T>&>>(id, aFunctor));
     iNextObserverId++;
     iObserverLock.Signal();
-    aFunctor(aVal);
+    aFunctor(kvp);
     return id;
 }
 
 template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
 {
     ASSERT(iWriteObserverId != 0);
+    KeyValuePair<T> kvp(iId, aVal);
     AutoMutex a(iObserverLock);
     typename Map::iterator it;
     for (it = iObservers.begin(); it != iObservers.end(); it++) {
-        it->second(aVal);
+        it->second(kvp);
     }
 }
 
@@ -135,9 +168,9 @@ public:
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
-    TUint Subscribe(FunctorGeneric<TInt> aFunctor);
+    TUint Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor);
 private: // from ConfigVal
-    void Write(TInt aVal);
+    void Write(KeyValuePair<TInt>& aKvp);
 private:
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
@@ -172,9 +205,9 @@ public:
 private:
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
-    TUint Subscribe(FunctorGeneric<TUint> aFunctor);
+    TUint Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor);
 private: // from ConfigVal
-    void Write(TUint aVal);
+    void Write(KeyValuePair<TUint>& aKvp);
 private:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
@@ -209,9 +242,9 @@ public:
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
-    TUint Subscribe(FunctorGeneric<const Brx&> aFunctor);
+    TUint Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor);
 private: // from ConfigVal
-    void Write(const Brx&);
+    void Write(KeyValuePair<const Brx&>& aKvp);
 private:
     inline TBool operator==(const ConfigText& aText) const;
 private:

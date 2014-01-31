@@ -50,8 +50,8 @@ private: // from Media::IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
     void DoPlay();
-    void ConfigRoomChanged(const Brx& aValue);
-    void ConfigNameChanged(const Brx& aValue);
+    void ConfigRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void ConfigNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void UpdateSenderName();
 private:
     Mutex iLock;
@@ -127,9 +127,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManagerReader.GetText(Product::kConfigIdRoomBase);
-    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SourceReceiver::ConfigRoomChanged));
+    iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SourceReceiver::ConfigRoomChanged));
     iConfigName = &configManagerReader.GetText(Product::kConfigIdNameBase);
-    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &SourceReceiver::ConfigNameChanged));
+    iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SourceReceiver::ConfigNameChanged));
     UpdateSenderName();
 }
 
@@ -250,17 +250,17 @@ void SourceReceiver::DoPlay()
     iPipeline.Play();
 }
 
-void SourceReceiver::ConfigRoomChanged(const Brx& aValue)
+void SourceReceiver::ConfigRoomChanged(KeyValuePair<const Brx&>& aKvp)
 {
     AutoMutex a(iLock);
-    iRoom.Replace(aValue);
+    iRoom.Replace(aKvp.Value());
     UpdateSenderName();
 }
 
-void SourceReceiver::ConfigNameChanged(const Brx& aValue)
+void SourceReceiver::ConfigNameChanged(KeyValuePair<const Brx&>& aKvp)
 {
     AutoMutex a(iLock);
-    iName.Replace(aValue);
+    iName.Replace(aKvp.Value());
     UpdateSenderName();
 }
 
