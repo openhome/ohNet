@@ -2,7 +2,7 @@
 """TestAvTransportService - test AvTransport service
 
 Parameters:
-    arg#1 - UPnP device to use as DUT
+    arg#1 - MediaRenderer DUT ['local' for internal SoftPlayer]
     arg#2 - before state to test from (use ALL for all states)
             
 This performs the state-transition tests on a DUT as controlled by the UPnP
@@ -23,6 +23,7 @@ import BaseTest                         as BASE
 import Upnp.ControlPoints.Volkano       as Volkano
 import Upnp.ControlPoints.MediaRenderer as MR
 import Utils.Network.HttpServer         as HttpServer
+import _SoftPlayer                      as SoftPlayer
 import Path
 import copy
 import os
@@ -142,15 +143,16 @@ class TestAvTransportService( BASE.BaseTest ):
 
     def __init__( self ):
         BASE.BaseTest.__init__( self )
-        self.server       = None
-        self.volkano      = None
-        self.upnpMr       = None
-        self.avt          = None
-        self.prevSv       = {}
-        self.currSv       = {}
-        self.trackLen     = {}        
-        self.trackMeta    = {}
-        self.playTime     = kPlayTime 
+        self.soft      = None
+        self.server    = None
+        self.volkano   = None
+        self.upnpMr    = None
+        self.avt       = None
+        self.prevSv    = {}
+        self.currSv    = {}
+        self.trackLen  = {}        
+        self.trackMeta = {}
+        self.playTime  = kPlayTime 
         
     def Test( self, args ):
         "AVTransport state-transition test"
@@ -172,11 +174,16 @@ class TestAvTransportService( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid state-to-test %s' % (stateToTest) )
 
         if 'MediaRenderer' not in self.mrName:
-            self.mrName += ':MediaRenderer'        
+            self.mrName += ':MediaRenderer'
             
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
+        
+        # start local softplayer if required
+        if self.mrName.lower() == 'local:mediarenderer':
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr', aHost=1)
+            self.mrName = 'TestMr:SoftPlayer:MediaRenderer'
         
         # create UPnP CPs for renderer and server, and subscribe to AVT events
         self.mrDev = self.mrName.split( ':' )[0]
@@ -291,6 +298,8 @@ class TestAvTransportService( BASE.BaseTest ):
             self.volkano.Shutdown()
         if self.server:
             self.server.Shutdown()
+        if self.soft:
+            self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     def _RefreshCurrentSvs( self ):
