@@ -14,6 +14,7 @@ public class NetworkAdapter
 	private static native int OhNetNetworkAdapterMask(long aNif);
 	private static native String OhNetNetworkAdapterName(long aNif);
 	private static native String OhNetNetworkAdapterFullName(long aNif);
+    private static native void OhNetNetworkAdapterRemoveRef(long aNif);
 	
 	static
     {
@@ -22,12 +23,14 @@ public class NetworkAdapter
     }
 	
 	private long iHandle;
+    private boolean iHasRef;
 	
 	/**
 	 * Create a network adapter
 	 * @param aSubnet
+     * @param aHasRef flag indicating whether a removeRef call is needed
 	 */
-	public NetworkAdapter(long aSubnet)
+	public NetworkAdapter(long aSubnet, boolean aHasRef)
 	{
 		if (aSubnet != 0)
 		{
@@ -37,7 +40,23 @@ public class NetworkAdapter
 		{
 			throw new NullPointerException("No currently selected network adapter.");
 		}
+        this.iHasRef = aHasRef;
 	}
+    
+    /**
+     * Remove a reference to a network adapter.
+     *
+     * <p>Must be called if this object was obtained by calling
+     * {@link Library#getCurrentSubnet()}.
+     */
+    public synchronized void removeRef()
+    {
+        // ensure NetworkAdapter::RemoveRef isn't called without a valid cookie
+        if (iHasRef) {
+            OhNetNetworkAdapterRemoveRef(iHandle);
+            iHasRef = false;
+        }
+    }
 	
 	/**
 	 * Get the handle to the underlying native network adapter.

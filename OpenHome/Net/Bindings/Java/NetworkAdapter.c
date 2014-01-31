@@ -113,6 +113,21 @@ JNIEXPORT jstring JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetwork
     return jname;
 }
 
+/*
+ * Class:     org_openhome_net_core_NetworkAdapter
+ * Method:    OhNetNetworkAdapterRemoveRef
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_NetworkAdapter_OhNetNetworkAdapterRemoveRef
+  (JNIEnv *aEnv, jclass aClass, jlong aNif)
+{
+    OhNetHandleNetworkAdapter adapter = (OhNetHandleNetworkAdapter) (size_t)aNif;
+    aEnv = aEnv;
+    aClass = aClass;
+
+    OhNetNetworkAdapterRemoveRef(adapter, "Java client");    
+}
+
 #ifdef __cplusplus
 }
 #endif
