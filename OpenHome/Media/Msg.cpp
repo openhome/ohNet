@@ -1684,6 +1684,7 @@ MsgQueue::MsgQueue()
     , iSem("MSGQ", 0)
     , iHead(NULL)
     , iTail(NULL)
+    , iNumMsgs(0)
 {
 }
 
@@ -1711,6 +1712,7 @@ void MsgQueue::Enqueue(Msg* aMsg)
     }
     iTail = aMsg;
     aMsg->iNextMsg = NULL;
+    iNumMsgs++;
     iSem.Signal();
     iLock.Signal();
 }
@@ -1726,6 +1728,7 @@ Msg* MsgQueue::Dequeue()
     if (iHead == NULL) {
         iTail = NULL;
     }
+    iNumMsgs--;
     iLock.Signal();
     return head;
 }
@@ -1749,6 +1752,12 @@ TBool MsgQueue::IsEmpty() const
     const TBool empty = (iHead == NULL);
     iLock.Signal();
     return empty;
+}
+
+TUint MsgQueue::NumMsgs() const
+{
+    AutoMutex a(iLock);
+    return iNumMsgs;
 }
 
 

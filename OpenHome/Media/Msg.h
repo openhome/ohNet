@@ -663,11 +663,13 @@ public:
     Msg* Dequeue();
     void EnqueueAtHead(Msg* aMsg);
     TBool IsEmpty() const;
+    TUint NumMsgs() const; // test/debug use only
 private:
     mutable Mutex iLock;
     Semaphore iSem;
     Msg* iHead;
     Msg* iTail;
+    TUint iNumMsgs;
 };
 
 class MsgQueueFlushable
