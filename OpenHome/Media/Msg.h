@@ -796,6 +796,9 @@ enum EStreamPlay
 class IPipelineIdProvider
 {
 public:
+    static const TUint kTrackIdInvalid = 0;
+    static const TUint kStreamIdInvalid = 0;
+public:
     virtual ~IPipelineIdProvider() {}
     virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;

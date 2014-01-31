@@ -136,8 +136,6 @@ class ProtocolManager : public IUriStreamer, private IProtocolManager, private I
 {
     static const TUint kMaxUriBytes = 1024;
 public:
-    static const TUint kStreamIdInvalid = 0;
-public:
     ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider, IFlushIdProvider& aFlushIdProvider);
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
