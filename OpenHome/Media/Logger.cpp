@@ -160,7 +160,7 @@ Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
 Msg* Logger::ProcessMsg(MsgHalt* aMsg)
 {
     if (IsEnabled(EMsgHalt)) {
-        Log::Print("Pipeline (%s): halt\n", iId);
+        Log::Print("Pipeline (%s): halt { id: %u }\n", iId, aMsg->Id());
     }
     return aMsg;
 }
@@ -168,7 +168,7 @@ Msg* Logger::ProcessMsg(MsgHalt* aMsg)
 Msg* Logger::ProcessMsg(MsgFlush* aMsg)
 {
     if (IsEnabled(EMsgFlush)) {
-        Log::Print("Pipeline (%s): flush\n", iId);
+        Log::Print("Pipeline (%s): flush { id: %u }\n", iId, aMsg->Id());
     }
     return aMsg;
 }
