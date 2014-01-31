@@ -182,7 +182,7 @@ class TestAvTransportService( BASE.BaseTest ):
         
         # start local softplayer if required
         if self.mrName.lower() == 'local:mediarenderer':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr', aHost=1)
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr' )
             self.mrName = 'TestMr:SoftPlayer:MediaRenderer'
         
         # create UPnP CPs for renderer and server, and subscribe to AVT events

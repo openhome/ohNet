@@ -2,7 +2,7 @@
 """TestPlaylistAddDel - test Add/Del of playlist.
 
 Parameters:
-    arg#1 - UPnP device to use as DUT
+    arg#1 - UPnP DUT ['local' for internal SoftPlayer]
     arg#2 - UPnP media server to source media from
     arg#3 - Playlist name
     arg#4 - Loops of add/del
@@ -13,6 +13,7 @@ import _FunctionalTest
 import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano
 import Upnp.ControlPoints.MediaServer as Server
+import _SoftPlayer                    as SoftPlayer
 import sys
 import threading
 import time
@@ -31,6 +32,7 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         self.codecEvt       = threading.Event()
         self.idArrayClear   = threading.Event()
         self.idArrayContent = threading.Event()
+        self.soft           = None
 
         try:
             dutName      = args[1]
@@ -48,6 +50,11 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         playlist = self.server.GetPlaylist( playlistName )
         self.server.Shutdown()
         self.server = None
+        
+        # start local softplayer(s) as required
+        if dutName.lower() == 'local':
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            dutName = 'TestDev:SoftPlayer'
         
         # create renderer add subscribe to events
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
@@ -83,6 +90,8 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
             self.dut.playlist.RemoveSubscriber( self._PlaylistEventCb )
             self.dut.info.RemoveSubscriber( self._InfoEventCb )
             self.dut.Shutdown()
+        if self.soft:
+            self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
             
     def _PlaylistEventCb( self, service, svName, svVal, svSeq ):
