@@ -2,8 +2,8 @@
 """TestPlaylistPlayTracks - test Playing of playlists of tracks.
 
 Parameters:
-    arg#1 - Device Under Test (Sender)
-    arg#2 - Device Under Test (Receiver) - optional (None = not present)
+    arg#1 - Sender DUT ['local' for internal SoftPlayer]
+    arg#2 - Receiver DUT ['local' for internal SoftPlayer] (None->not present)
     arg#3 - Media server to source media from
     arg#4 - Playlist name
     arg#5 - Time to play before skipping to next (None = play all)
@@ -24,6 +24,7 @@ import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano
 import Upnp.ControlPoints.MediaServer as Server
 import Utils.Common                   as Common
+import _SoftPlayer                    as SoftPlayer
 import LogThread
 import os
 import random
@@ -46,6 +47,8 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
 
     def Test( self, args ):
         "Play tracks, using Media services for control"
+        self.soft1            = None 
+        self.soft2            = None 
         self.meta             = ''
         self.tracks           = []
         self.repeat           = 'off'
@@ -97,6 +100,14 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.tracks = self.server.GetPlaylist( playlistName )
         self.server.Shutdown()
         self.server = None
+
+        # start local softplayer(s) as required
+        if senderName.lower() == 'local':
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aHost=1)
+            senderName = 'TestSender:SoftPlayer'
+        if receiverName is not None and receiverName.lower() == 'local':
+            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aHost=1)
+            receiverName = 'TestRcvr:SoftPlayer'
 
         # create Sender device add subscribe to events
         self.senderDev = senderName.split( ':' )[0]
@@ -155,6 +166,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.receiver.time.RemoveSubscriber( self._ReceiverTimeCb )
             self.receiver.receiver.RemoveSubscriber( self._ReceiverReceiverCb )
             self.receiver.Shutdown() 
+        if self.soft1:
+            self.soft1.Shutdown()
+        if self.soft2:
+            self.soft2.Shutdown()
         BASE.BaseTest.Cleanup( self )               
         
     def _SenderTimeCb( self, service, svName, svVal, svSeq ):
@@ -235,10 +250,14 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                     
             if not self.senderStopped.isSet():
                 self.numTrack += 1
-                if self.sender.playlist.transportState != 'Playing':
-                    self.senderPlayed = False
-                th = LogThread.Thread( target=self._SetupPlayTimer )
-                th.start() # on its own thread as depends on DS events
+                if self.repeat=='off' and self.numTrack>len( self.tracks ): 
+                    self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
+                    self.senderStopped.set()    # force test exit
+                else:
+                    if self.sender.playlist.transportState != 'Playing':
+                        self.senderPlayed = False
+                    th = LogThread.Thread( target=self._SetupPlayTimer )
+                    th.start() # on its own thread as depends on DS events
 
     def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
         "Callback from Time Service UPnP events on receiver device"
@@ -264,10 +283,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         senderState = self.sender.playlist.transportState
         receiverState = self.receiver.receiver.transportState
         if receiverState == 'Playing':
-            self.log .FailUnless( senderState=='Playing',
+            self.log.FailUnless( self.rcvrDev, senderState=='Playing',
                 '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
         elif receiverState == 'Waiting':  
-            self.log .FailIf( senderState=='Playing',
+            self.log.FailIf( self.rcvrDev, senderState=='Playing',
                 '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
                 
     def _SetupPlayTimer( self ):
