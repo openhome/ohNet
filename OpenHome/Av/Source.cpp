@@ -78,13 +78,13 @@ void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager
     key.Append(iSystemName);
     key.Append(".Name");
     iConfigName = new ConfigText(aConfigManager, key, kMaxSourceTypeBytes, iName);
-    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Source::NameChanged));
+    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Source::NameChanged));
 }
 
-void Source::NameChanged(const Brx& aName)
+void Source::NameChanged(KeyValuePair<const Brx&>& aName)
 {
     iLock.Wait();
-    iName.Replace(aName);
+    iName.Replace(aName.Value());
     iLock.Signal();
     iProduct->NotifySourceNameChanged(*this);
 }
