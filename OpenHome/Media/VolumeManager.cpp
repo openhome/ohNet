@@ -367,6 +367,7 @@ void VolumeManager::SetUserVolumeLimit(TUint aValue)
 // VolumeManagerDefault
 VolumeManagerDefault::VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware, IStoreReadWrite& aStore, IPowerManager& aPowerManager)
     : VolumeManager(aLeftVolHardware, aRightVolHardware)
+    , iObserver(NULL)
 {
     iLeftVolLimit = new VolumeLimiterDefault(iLeftVolHw);
     iRightVolLimit = new VolumeLimiterDefault(iRightVolHw);
@@ -411,6 +412,41 @@ TUint VolumeManagerDefault::VolumeMilliDbPerStep() const
 TInt VolumeManagerDefault::MaxUserBalance() const
 {
     return VolumeBalanceUserDefault::MaximumUserBalance();
+}
+
+// XXX not thread-safe
+void VolumeManagerDefault::SetUserVolume(TUint aValue)
+{
+    TBool changed = (UserVolume() != aValue);
+    VolumeManager::SetUserVolume(aValue);
+    if (changed && (iObserver != NULL)) {
+        iObserver->UserVolumeChanged(UserVolume());
+    }
+}
+
+// XXX not thread-safe
+void VolumeManagerDefault::SetUserBalance(TInt aValue)
+{
+    TBool changed = (UserBalance() != aValue);
+    VolumeManager::SetUserBalance(aValue);
+    if (changed && (iObserver != NULL)) {
+        iObserver->UserBalanceChanged(UserBalance());
+    }
+}
+
+// XXX not thread-safe
+void VolumeManagerDefault::SetUserVolumeLimit(TUint aValue)
+{
+    TBool changed = (UserVolumeLimit() != aValue);
+    VolumeManager::SetUserVolumeLimit(aValue);
+    if (changed && (iObserver != NULL)) {
+        iObserver->UserVolumeLimitChanged(UserVolumeLimit());
+    }
+}
+
+void VolumeManagerDefault::SetObserver(IVolumeBalanceObserver& aObserver)
+{
+    iObserver = &aObserver;
 }
 
 // VolumeSinkLogger
