@@ -3,7 +3,7 @@
    as expected
 
 Parameters:
-    arg#1 - Device under test
+    arg#1 - DUT ['local' for internal SoftPlayer]
     arg#2 - Number of test loops
     
 """
@@ -18,7 +18,7 @@ Parameters:
 import _FunctionalTest
 import BaseTest                     as BASE
 import Upnp.ControlPoints.Volkano   as Volkano
-
+import _SoftPlayer                  as SoftPlayer
 import os
 import sys
 import time
@@ -30,7 +30,8 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
     def __init__( self ):
         "Constructor"
         BASE.BaseTest.__init__( self )
-        self.dut = None
+        self.dut  = None
+        self.soft = None
 
     def Test( self, args ):
         "Repeated reboots test"
@@ -40,6 +41,10 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
+
+        if dutName.lower() == 'local':
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            dutName = 'TestDev:SoftPlayer'
             
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
         for loop in range( loops ):
@@ -53,6 +58,8 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
         "Perform cleanup on test exit"
         if self.dut:
             self.dut.Shutdown()
+        if self.soft:
+            self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )                
 
 
