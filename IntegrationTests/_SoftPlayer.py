@@ -71,6 +71,7 @@ class SoftPlayer( BASE.Component ):
         self.proc.stdin.close()
         self.proc.wait()
         self.logThread.join() 
+        time.sleep( 1 )             # Let it shut down 
         
     def __Log( self ):
         "Log data received from stdout on SoftPlayer"
