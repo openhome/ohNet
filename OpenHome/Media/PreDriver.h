@@ -28,6 +28,7 @@ public: // from IPipelineElementUpstream
 private:
     Msg* NextStoredMsg();
     Msg* AddPlayable(MsgPlayable* aPlayable);
+    void CalculateMaxPlayable();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
