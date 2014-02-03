@@ -16,7 +16,7 @@ class DecodedAudioReservoir : public AudioReservoir
     friend class SuiteReservoirHistory;
 public:
     DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aClockPuller);
-private: // from MsgQueueFlushable
+private: // from MsgReservoir
     void ProcessMsgIn(MsgAudioPcm* aMsg);
     void ProcessMsgIn(MsgSilence* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
