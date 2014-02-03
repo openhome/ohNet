@@ -71,9 +71,12 @@ template <class T> T* Allocator<T>::Allocate()
     return static_cast<T*>(DoAllocate());
 }
 
+class Logger;
+
 class Allocated
 {
     friend class AllocatorBase;
+    friend class Logger;
 public:
     void AddRef();
     void RemoveRef();
