@@ -41,9 +41,9 @@ tests = [
     [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,          avtList,     12,          1                                          ],
 
     # OH Playlist Service
-#    [ 'TestPlaylistHandling',        'local', 'all',      12345                                                                             ],
-#    [ 'TestPlaylistModes',           'local', 'all',      12345                                                                             ],
-#    [ 'TestPlaylistPlayback',        'local', 'all',      12345                                                                             ],
+    [ 'TestPlaylistHandling',        'local', 'all',      12345                                                                             ],
+    [ 'TestPlaylistModes',           'local', 'all',      12345                                                                             ],
+    [ 'TestPlaylistPlayback',        'local', 'all',      12345                                                                             ],
     [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,      100                                                                  ],
     [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,          medList,     12,          'off',      'on'                           ],       
     [ 'TestPlaylistDropout',         'local', 'local',    'local',     '3600'                                                               ],       
