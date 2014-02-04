@@ -60,7 +60,7 @@ TUint FifoBase::WriteOpen()
     if (iWriteIndex == Slots()) {
         iWriteIndex = 0;
     }
-    return (index);
+    return index;
 }
 
 void FifoBase::WriteClose()
@@ -94,7 +94,7 @@ TUint FifoBase::ReadOpen()
         iReadIndex = 0;
     }
     iMutexRead.Signal();
-    return (index);
+    return index;
 }
 
 void FifoBase::ReadClose()
@@ -108,7 +108,8 @@ void FifoBase::ReadClose()
 
 // FifoByte
 
-FifoByte::FifoByte(TUint aSlots) : Fifo<TByte>(aSlots)
+FifoByte::FifoByte(TUint aSlots)
+    : Fifo<TByte>(aSlots)
 {
 }
 
@@ -132,10 +133,14 @@ void FifoByte::Read(Bwx& aBuffer, TUint aBytes)
     }
 }
 
+
 // FifoLiteBase
 
-FifoLiteBase::FifoLiteBase(TUint aSlots) : iSlots(aSlots), iSlotsUsed(0),
-    iReadIndex(0), iWriteIndex(0)
+FifoLiteBase::FifoLiteBase(TUint aSlots)
+    : iSlots(aSlots)
+    , iSlotsUsed(0)
+    , iReadIndex(0)
+    , iWriteIndex(0)
 {
 }
 
@@ -162,20 +167,7 @@ TUint FifoLiteBase::Write()
         iWriteIndex = 0;
     }
     iSlotsUsed++;
-    return (index);
-}
-
-TUint FifoLiteBase::WriteBack()
-{
-    ASSERT(iSlots > iSlotsUsed);
-    if(iReadIndex == 0) {
-        iReadIndex = iSlots - 1;;
-    }
-    else {
-        iReadIndex--;
-    }
-    iSlotsUsed++;
-    return (iReadIndex);
+    return index;
 }
 
 TUint FifoLiteBase::Read()

@@ -93,7 +93,6 @@ public:
 protected:
     FifoLiteBase(TUint aSlots);
     TUint Write();          // return index of entry to write
-    TUint WriteBack();      // return index of entry to write at rhs of fifo
     TUint Read();           // return index of entry to read
 private:
     TUint iSlots;
@@ -107,7 +106,6 @@ template <class T, TUint S> class FifoLite : public FifoLiteBase
 public:
     inline FifoLite() : FifoLiteBase(S) {}
     inline void Write(T aEntry) { iBuf[FifoLiteBase::Write()] = aEntry; }
-    inline void WriteBack(T aEntry) { iBuf[FifoLiteBase::WriteBack()] = aEntry; }
     inline T Read() { return (iBuf[FifoLiteBase::Read()]); }
 private:
     T iBuf[S];
@@ -119,7 +117,6 @@ public:
     inline FifoLiteDynamic(TUint aSlots) : FifoLiteBase(aSlots) { iBuf = new T[aSlots]; }
     inline ~FifoLiteDynamic() { delete [] iBuf; }
     inline void Write(T aEntry) { iBuf[FifoLiteBase::Write()] = aEntry; }
-    inline void WriteBack(T aEntry) { iBuf[FifoLiteBase::WriteBack()] = aEntry; }
     inline T Read() { return (iBuf[FifoLiteBase::Read()]); }
 private:
     T* iBuf;
