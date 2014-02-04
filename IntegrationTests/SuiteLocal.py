@@ -22,6 +22,7 @@ dacpServer = os.environ['COMPUTERNAME']
 avtList    = 'Playlists  ~Encodings-FreeCodecs'
 medList    = 'Playlists  ~5TrackAlbumsFreeCodecs'
 adList     = 'Playlists  ~Mixed-FreeCodecs'
+apTrack    = 'Stereo1kHz-441-16-0dB-72m' 
 
 
 try:
@@ -36,49 +37,54 @@ except:
     
 tests = [
     # UPnP AV          
-    [ 'TestAvTransportService',      'local', 'ALL'                                                                                         ],
-    [ 'TestRenderingControlService', 'local'                                                                                                ],
-    [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,          avtList,     12,          1                                          ],
+    [ 'TestAvTransportService',      'local', 'ALL'                                                 ],
+    [ 'TestRenderingControlService', 'local'                                                        ],
+    [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList, 12,    1               ],
 
     # OH Playlist Service
-    [ 'TestPlaylistHandling',        'local', 'all',      12345                                                                             ],
-    [ 'TestPlaylistModes',           'local', 'all',      12345                                                                             ],
-    [ 'TestPlaylistPlayback',        'local', 'all',      12345                                                                             ],
-    [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,      100                                                                  ],
-    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,          medList,     12,          'off',      'on'                           ],       
-    [ 'TestPlaylistDropout',         'local', 'local',    'local',     '3600'                                                               ],       
+    [ 'TestPlaylistHandling',        'local', 'all',      12345                                     ],
+    [ 'TestPlaylistModes',           'local', 'all',      12345                                     ],
+    [ 'TestPlaylistPlayback',        'local', 'all',      12345                                     ],
+    [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,   100                             ],
+    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       medList, 12,    'off',     'on' ],       
+    [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                          ],       
 
     # OH Radio Service
-#    [ 'TestRadioService',            'local', 'all'                                                                                         ],
-#    [ 'TestRadioPlayChannels',       'local', 'local',    'klueso',    12,          'on',        'unicast'                                  ],
+    [ 'TestRadioService',            'local', 'all'                                                 ],
+    [ 'TestRadioPlayChannels',       'local', 'local',    'klueso', 12,      'on'                   ],
     
     # Airplay
-    [ 'TestAirplayFunctions',        'local', dacpServer                                                                                    ],
-#    [ 'TestAirplayDropout',          'local', dacpServer, apTrack,     '3600'                                                               ],       
+    [ 'TestAirplayFunctions',        'local', dacpServer                                            ],
+    [ 'TestAirplayDropout',          'local', dacpServer, apTrack,  '3600'                          ],       
 
     # Songcast
-#    [ 'TestSongcastPlayback',        'local', 'local',    'local',     'local',     'unicast',   'all',     12345,       1, 'fails', 'file' ],
-#    [ 'TestSongcastPlayback',        'local', 'local',    'local',     'local',     'multicast', 'all',     54321,       1, 'fails', 'file' ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',     'local',     'all',       'stop',    'unicast',   1, 'fails', 'file' ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',     'local',     'all',       'source',  'multicast', 1, 'fails', 'file' ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',     'local',     'all',       'sender',  'unicast',   1, 'fails', 'file' ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',     'local',     'all',       'standby', 'multicast', 1, 'fails', 'file' ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',     'local',     'all',       'reboot',  'unicast',   1, 'fails', 'file' ],
-#    [ 'TestSongcastDelay',           'local', 'None',     'local',     'unicast' ,  'fails',     'file'                                     ],
-#    [ 'TestSongcastDelay',           'local', 'None',     'local',     'multicast', 'fails',     'file'                                     ],    
-#    [ 'TestSongcastDelay',           'local', 'None',     'local',     'unicast' ,  'fails',     'file'                                     ],
-#    [ 'TestSongcastDelay',           'local', 'None',     'local',     'multicast', 'fails',     'file'                                     ],    
-#    [ 'TestSongcastDropout',         'local', 'local',    'unicast',   0,           600,                                                    ],    
-#    [ 'TestSongcastDropout',         'local', 'local',    'multicast', 0,           600,                                                    ],    
+    [ 'TestSongcastPlayback',        'local', 'local',    'local',  'all',   12345                  ],
+    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'stop'          ],
+    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'source'        ],
+    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'sender'        ],
+    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'standby'       ],
+    [ 'TestSongcastDropout',         'local', 'local',    600,                                      ],    
 
     # Volume
-#    [ 'TestVolumeControl',           'local', 'volume',   'fails',     'file'                                                               ],
-#    [ 'TestVolumeControl',           'local', 'balance',  'fails',     'file'                                                               ],
-#    [ 'TestVolumeControl',           'local', 'startup',  'fails',     'file'                                                               ],
+    [ 'TestVolumeControl',           'local'                                                        ],
     
     # Misc
-#    [ 'TestAudioConx',               'local', 'all'                                                                                         ],
-    [ 'TestStandbyCycleSoak',        'local',  100                                                                                          ]
+    [ 'TestAudioConx',               'local', 'all'                                                 ],
+    [ 'TestStandbyCycleSoak',        'local',  100                                                  ]
+    
+    # N/A to SoftPlayer(s)
+    #    - AutoPlay
+    #    - CrossoverBitstreamLoad
+    #    - CrossoverOperation
+    #    - DelayOperation'
+    #    - DelayService
+    #    - DigitalInDecode
+    #    - DigitalOutType
+    #    - RebootSoak
+    #    - SongcastDelay
+    #    - SourceControl
+    #    - SourceSelectSoak
+    #    - VolumeControl            unity/offset/inputLevel/startup
 ]
 
 Suite.Suite( tests, logDir, ['config','status','info'] )
