@@ -800,13 +800,6 @@ static void STDCALL CallbackNetworkAdapter(void* aPtr, OhNetHandleNetworkAdapter
 
 /*
  * Class:     org_openhome_net_core_InitParams
- * Method:    OhNetInitParamsCreate
-@ -724,6 +798,106 @@
-    }
-}
-
-/*
- * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetSubnetListChangedListener
  * Signature: (JLorg/openhome/net/core/IChangeListener;)J
  */
