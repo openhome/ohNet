@@ -136,56 +136,6 @@ void FifoByte::Read(Bwx& aBuffer, TUint aBytes)
     }
 }
 
-// FifoThresholdBase
-
-FifoThresholdBase::FifoThresholdBase(TUint aSlots, FifoThresholdObserver& aObserver)
-    : FifoBase(aSlots)
-    , iObserver(aObserver)
-    , iThresholdLow(0)
-    , iThresholdHigh(aSlots)
-    , iThresholdLowActive(false)
-    , iThresholdHighActive(false)
-{
-}
-
-void FifoThresholdBase::SetThresholdLow(TUint aSlot)
-{
-    ASSERT(aSlot <= Slots());
-    iThresholdLow = aSlot;
-    CheckThresholdLow();
-}
-
-void FifoThresholdBase::SetThresholdHigh(TUint aSlot)
-{
-    ASSERT(aSlot <= Slots());
-    iThresholdHigh = aSlot;
-    CheckThresholdHigh();
-}
-
-void FifoThresholdBase::CheckThresholdHigh()
-{
-    if(iThresholdHighActive) {
-        if(SlotsUsed() < iThresholdHigh) {
-            iThresholdHighActive = false;
-        }
-    } else if(SlotsUsed() >= iThresholdHigh) {
-        iThresholdHighActive = true;
-        iObserver.NotifyThresholdHigh(*this);
-    }
-}
-
-void FifoThresholdBase::CheckThresholdLow()
-{
-    if(iThresholdLowActive) {
-        if(SlotsUsed() > iThresholdLow) {
-            iThresholdLowActive = false;
-        }
-    } else if(SlotsUsed() <= iThresholdLow) {
-        iThresholdLowActive = true;
-        iObserver.NotifyThresholdLow(*this);
-    }
-}
-
 // FifoLiteBase
 
 FifoLiteBase::FifoLiteBase(TUint aSlots) : iSlots(aSlots), iSlotsUsed(0),

@@ -97,60 +97,6 @@ public:
     void Read(Bwx& aBuffer, TUint aBytes);
 };
 
-// FifoThreshold adds low and high threshold monitoring to a standard Fifo object
-//
-// Thresholds are initially set to 0 (Low) and aSlots (High).
-
-class FifoThresholdBase;
-class FifoThresholdObserver
-{
-public:
-    virtual void NotifyThresholdLow(FifoThresholdBase& aFifo) = 0;
-    virtual void NotifyThresholdHigh(FifoThresholdBase& aFifo) = 0;
-};
-
-class FifoThresholdBase : public FifoBase
-{
-public:
-    void SetThresholdLow(TUint aSlot);
-    void SetThresholdHigh(TUint aSlot);
-protected:
-    FifoThresholdBase(TUint aSlots, FifoThresholdObserver& aObserver);
-    void CheckThresholdLow();
-    void CheckThresholdHigh();
-private:
-    FifoThresholdObserver& iObserver;
-    TUint iThresholdLow;
-    TUint iThresholdHigh;
-    TBool iThresholdLowActive;
-    TBool iThresholdHighActive;
-};
-
-template <class T> class FifoThreshold : public FifoThresholdBase
-{
-public:
-    inline FifoThreshold(TUint aSlots, FifoThresholdObserver& aObserver): FifoThresholdBase(aSlots, aObserver) { iBuf = new T[aSlots]; }
-    inline ~FifoThreshold() { delete [] iBuf; }
-    void Write(T aEntry);
-    T Read();
-private:
-    T* iBuf;
-};
-
-template <class T> void FifoThreshold<T>::Write(T aEntry)
-{
-    iBuf[WriteOpen()] = aEntry;
-    WriteClose();
-    CheckThresholdLow();
-}
-
-template <class T> T FifoThreshold<T>::Read()
-{
-    T value = iBuf[ReadOpen(0)];
-    ReadClose();
-    CheckThresholdHigh();
-    return (value);
-}
 
 // FifoLite provides lightweight thread unaware first in first out buffering
 //
