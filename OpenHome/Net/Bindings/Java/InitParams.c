@@ -724,6 +724,187 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetT
     }
 }
 
+static void STDCALL CallbackChange(void* aPtr)
+{
+    JniObjRef* ref = (JniObjRef*) aPtr;
+    JavaVM *vm = ref->vm;
+    jint ret;
+    JNIEnv *env;
+    jclass cls;
+    jmethodID mid;
+    jint attached;
+
+    attached = (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_4);
+    if (attached < 0)
+    {
+#ifdef __ANDROID__
+        ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
+#else
+        ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
+#endif
+        if (ret < 0)
+        {
+            printf("InitParamsJNI: Unable to attach thread to JVM.\n");
+            fflush(stdout);
+            return;
+        }
+    }
+    cls = (*env)->GetObjectClass(env, ref->callbackObj);
+    mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
+    (*env)->DeleteLocalRef(env, cls);
+    if (mid == 0) {
+        printf("Method ID notifyChange() not found.\n");
+        return;
+    }
+    (*env)->CallVoidMethod(env, ref->callbackObj, mid);
+    
+    // leave daemon thread attached to the VM
+}
+
+static void STDCALL CallbackNetworkAdapter(void* aPtr, OhNetHandleNetworkAdapter aAdapter)
+{
+    JniObjRef *ref = (JniObjRef*) aPtr;
+    JavaVM *vm = ref->vm;
+    jint ret;
+    JNIEnv *env;
+    jclass cls;
+    jmethodID mid;
+    jint attached;
+
+    attached = (*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_4);
+    if (attached < 0)
+    {
+#ifdef __ANDROID__
+        ret = (*vm)->AttachCurrentThreadAsDaemon(vm, &env, NULL);
+#else
+        ret = (*vm)->AttachCurrentThreadAsDaemon(vm, (void **)&env, NULL);
+#endif
+        if (ret < 0)
+        {
+            printf("InitParamsJNI: Unable to attach thread to JVM.\n");
+            fflush(stdout);
+            return;
+        }
+    }
+    cls = (*env)->GetObjectClass(env, ref->callbackObj);
+    mid = (*env)->GetMethodID(env, cls, "notifyChange", "(J)V");
+    (*env)->DeleteLocalRef(env, cls);
+    if (mid == 0) {
+        printf("Method ID notifyChange() not found.\n");
+        return;
+    }
+    (*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aAdapter);
+
+    // leave daemon thread attached to the VM
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsCreate
+@ -724,6 +798,106 @@
+    }
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubnetListChangedListener
+ * Signature: (JLorg/openhome/net/core/IChangeListener;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetListChangedListener
+  (JNIEnv *aEnv, jclass aClass, jlong aParams, jobject aListener)
+{
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    OhNetCallback callback = (OhNetCallback) &CallbackChange;
+    JniObjRef *ref = (JniObjRef*) malloc(sizeof(JniObjRef));
+    int ret;
+    aClass = aClass;
+
+    ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
+    if (ret < 0) {
+        printf("Unable to get reference to the current Java VM.\n");
+    }
+    ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aListener);
+    
+    OhNetInitParamsSetSubnetListChangedListener(params, callback, ref);
+
+    return (jlong) (size_t)ref;
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubnetAddedListener
+ * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetAddedListener
+  (JNIEnv *aEnv, jclass aClass, jlong aParams, jobject aCallback)
+{
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    OhNetCallbackNetworkAdapter callback = (OhNetCallbackNetworkAdapter) &CallbackNetworkAdapter;
+    JniObjRef *ref = (JniObjRef*) malloc(sizeof(JniObjRef));
+    int ret;
+    aClass = aClass;
+
+    ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
+    if (ret < 0) {
+        printf("Unable to get reference to the current Java VM.\n");
+    }
+    ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aCallback);
+    
+    OhNetInitParamsSetSubnetAddedListener(params, callback, ref);
+
+    return (jlong) (size_t)ref;
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubnetRemovedListener
+ * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetRemovedListener
+  (JNIEnv *aEnv, jclass aClass, jlong aParams, jobject aCallback)
+{
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    OhNetCallbackNetworkAdapter callback = (OhNetCallbackNetworkAdapter) &CallbackNetworkAdapter;
+    JniObjRef *ref = (JniObjRef*) malloc(sizeof(JniObjRef));
+    int ret;
+    aClass = aClass;
+
+    ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
+    if (ret < 0) {
+        printf("Unable to get reference to the current Java VM.\n");
+    }
+    ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aCallback);
+    
+    OhNetInitParamsSetSubnetRemovedListener(params, callback, ref);
+
+    return (jlong) (size_t)ref;
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNetworkAdapterChangedListener
+ * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNetworkAdapterChangedListener
+  (JNIEnv *aEnv, jclass aClass, jlong aParams, jobject aCallback)
+{
+    OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+    OhNetCallbackNetworkAdapter callback = (OhNetCallbackNetworkAdapter) &CallbackNetworkAdapter;
+    JniObjRef *ref = (JniObjRef*) malloc(sizeof(JniObjRef));
+    int ret;
+    aClass = aClass;
+
+    ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
+    if (ret < 0) {
+        printf("Unable to get reference to the current Java VM.\n");
+    }
+    ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aCallback);
+    
+    OhNetInitParamsSetNetworkAdapterChangedListener(params, callback, ref);
+
+    return (jlong) (size_t)ref;
+}
+
 #ifdef __cplusplus
 }
 #endif
