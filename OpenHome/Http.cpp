@@ -1156,3 +1156,225 @@ void WriterHttpChunked::WriteFlush()
     }
     iBuffer.WriteFlush();
 }
+
+
+HttpReader::HttpReader(Environment& aEnv)
+    :iEnv(aEnv)
+    ,iReadBuffer(iTcpClient)
+    ,iReaderResponse(aEnv, iReader)
+    ,iWriteBuffer(iTcpClient)
+    ,iWriterRequest(iWriteBuffer)
+    ,iReader(iReadBuffer)
+    ,iSocketIsOpen(false)
+    ,iConnected(false)
+{
+    iReaderResponse.AddHeader(iHeaderContentLength);
+    iReaderResponse.AddHeader(iHeaderLocation);
+    iReaderResponse.AddHeader(iHeaderTransferEncoding);
+}
+
+
+HttpReader::~HttpReader()
+{
+    if (iSocketIsOpen)
+    {
+        CloseSocket();
+    }
+}
+
+
+TBool HttpReader::Connect(const Uri& aUri)
+{
+    ASSERT(!iConnected);
+    Endpoint endpoint;
+
+    try
+    {
+        endpoint.SetAddress(aUri.Host());
+
+        TInt port = aUri.Port();
+        if (port == Uri::kPortNotSpecified)
+        {
+            port = kHttpPort;
+        }
+        endpoint.SetPort(port);
+    }
+    catch (NetworkError&)
+    {
+        LOG(kHttp, "<HttpReader::AccessUri error setting address and port\n");
+        return(false);
+    }
+
+    TBool connected = Connect(endpoint);
+    if (!connected)
+    {
+        return(false);
+    }
+
+    TBool headerRcvd = ProcessInitialHttpHeader(aUri, endpoint.Port());
+    if (!headerRcvd)
+    {
+        CloseSocket();
+        return(false);
+    }
+
+    iConnected = true;
+
+    return(true);
+}
+
+
+TBool HttpReader::Connect(Endpoint aEndpoint)
+{
+    LOG(kHttp, ">HttpReader::Connect\n");
+
+    OpenSocket();
+    try
+    {
+        LOG(kHttp, "-HttpReader::Connect connecting...\n");
+        iTcpClient.Connect(aEndpoint, kConnectTimeoutMs);
+    }
+    catch (NetworkTimeout&)
+    {
+        CloseSocket();
+        LOG(kHttp, "<HttpReader::Connect connection failed!\n");
+        return(false);
+    }
+
+    LOG(kHttp, "<HttpReader::Connect\n");
+    return(true);
+}
+
+
+void HttpReader::OpenSocket()
+{
+    LOG(kHttp, "HttpReader::OpenSocket\n");
+
+    iTcpClient.Open(iEnv);
+    ASSERT(!iSocketIsOpen);
+    iSocketIsOpen = true;
+}
+
+
+void HttpReader::CloseSocket()
+{
+    LOG(kHttp, "HttpReader::CloseSocket\n");
+
+    if (iSocketIsOpen) {
+        iSocketIsOpen = false;
+        iTcpClient.Close();
+    }
+}
+
+
+Brn HttpReader::Read(TUint aBytes)
+{
+    ASSERT(iConnected);
+    return(iReader.Read(aBytes));
+}
+
+
+Brn HttpReader::ReadUntil(TByte aSeparator)
+{
+    ASSERT(iConnected);
+    return(iReader.ReadUntil(aSeparator));
+}
+
+
+void HttpReader::ReadFlush()
+{
+    ASSERT(iConnected);
+    iReader.ReadFlush();
+}
+
+
+void HttpReader::ReadInterrupt()
+{
+    ASSERT(iConnected);
+    iReader.ReadInterrupt();
+}
+
+
+TUint HttpReader::WriteRequest(const Uri& aUri, TUint aPort)
+{
+    try
+    {
+        LOG(kHttp, "HttpReader::WriteRequest send request\n");
+        iWriterRequest.WriteMethod(Http::kMethodGet, aUri.PathAndQuery(), Http::eHttp11);
+        Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), aPort);
+        Http::WriteHeaderConnectionClose(iWriterRequest);
+        iWriterRequest.WriteFlush();
+    }
+    catch(WriterError&)
+    {
+        LOG(kHttp, "HttpReader::WriteRequest writer error\n");
+        return 0;
+    }
+
+    try
+    {
+        LOG(kHttp, "HttpReader::WriteRequest read response - reading...\n");
+        iReaderResponse.Read(kResponseTimeoutMs);
+    }
+    catch(HttpError&)
+    {
+        LOG(kHttp, "HttpReader::WriteRequest http error\n");
+        return 0;
+    }
+    catch(ReaderError&)
+    {
+        LOG(kHttp, "HttpReader::WriteRequest reader error\n");
+        return 0;
+    }
+
+    const TUint code = iReaderResponse.Status().Code();
+    LOG(kHttp, "HttpReader response code %d\n", code);
+
+    return code;
+}
+
+
+TBool HttpReader::ProcessInitialHttpHeader(const Uri& aUri, TUint aPort)
+{
+    Uri uri(aUri);
+
+    iReader.SetChunked(false);
+    for (;;)
+    { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
+        TUint code = WriteRequest(uri, aPort);
+
+        if (code == 0)
+        {
+            LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader failed to send HTTP request\n");
+            return(false);
+        }
+        // Check for redirection
+        if (code >= HttpStatus::kRedirectionCodes && code <= HttpStatus::kClientErrorCodes)
+        {
+            if (!iHeaderLocation.Received())
+            {
+                LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader expected redirection but did not receive a location field  %d\n", code);
+                return(false);
+            }
+
+            uri.Replace(iHeaderLocation.Location());
+            continue;
+        }
+        else if (code >= HttpStatus::kClientErrorCodes)
+        {
+            LOG(kHttp, "<HttpReader::ProcessInitialHttpHeader received error code: %u\n", code);
+            return(false);
+        }
+        if (code != 0)
+        {
+            if (iHeaderTransferEncoding.IsChunked())
+            {
+                iReader.SetChunked(true);
+            }
+            break;
+        }
+    }
+    return(true);
+}
+
+

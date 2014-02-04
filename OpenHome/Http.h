@@ -508,6 +508,52 @@ private:
     TBool iChunked;
 };
 
+
+class HttpReader : public IReader
+{
+private:
+    static const TUint kHttpPort = 80;
+    static const TUint kReadBufferBytes = 4 * 1024;
+    static const TUint kWriteBufferBytes = 1024;
+    static const TUint kConnectTimeoutMs = 3000;
+    static const TUint kResponseTimeoutMs = 60 * 1000;
+
+public:
+    HttpReader(Environment& aEnv);
+    ~HttpReader();
+
+    TBool Connect(const Uri& aUri);
+
+    // IReader
+    virtual Brn Read(TUint aBytes);
+    virtual Brn ReadUntil(TByte aSeparator);
+    virtual void ReadFlush();
+    virtual void ReadInterrupt();
+
+private:
+    TUint WriteRequest(const Uri& aUri, TUint aPort);
+    TBool ProcessInitialHttpHeader(const Uri& aUri, TUint aPort);
+    TBool Connect(Endpoint aEndpoint);
+    void OpenSocket();
+    void CloseSocket();
+
+private:
+    Environment& iEnv;
+    SocketTcpClient iTcpClient;
+    HttpHeaderContentLength iHeaderContentLength;
+    HttpHeaderLocation iHeaderLocation;
+    HttpHeaderTransferEncoding iHeaderTransferEncoding;
+    Srs<kReadBufferBytes> iReadBuffer;
+    ReaderHttpResponse iReaderResponse;
+    Sws<kWriteBufferBytes> iWriteBuffer;
+    WriterHttpRequest iWriterRequest;
+    ReaderHttpChunked iReader;
+    TBool iSocketIsOpen;
+    TBool iConnected;
+};
+
+
+
 } // namespace OpenHome
 
 #endif // HEADER_HTTP_HTTP
