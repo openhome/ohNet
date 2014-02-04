@@ -53,7 +53,7 @@ def build(aTarget, aParallel=False):
         # No C++11 support on standard Mac build slaves
         buildCmd += ' nocpp11=yes'
     if os.environ.has_key('CS_PLATFORM'):
-        buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']    
+        buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
     buildCmd += buildArgs()
     ret = os.system(buildCmd)
     if (0 != ret):
@@ -307,6 +307,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestProxyCs', [], False, False)
              ,TestCase('TestDvDeviceCs', [], True, False)
              ,TestCase('TestCpDeviceDvCs', [], True, False)
+             ,TestCase('TestHttpReader', [], True)
             ]
 gJavaTests = [ TestCase('org.openhome.net.controlpoint.tests.TestProxy', [], False, False)
               ,TestCase('org.openhome.net.controlpoint.tests.TestCpDeviceDv', [], True, False)
@@ -336,13 +337,13 @@ class js_test:
         test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.launch_url = test_devfinder.communicate()[1].rstrip()
         print 'found device at ' + self.launch_url
-        
+
     def run_browser(self):
         subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
         self.test_testbasic.terminate()
 
     def run_browser_jenkins(self):
-        subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])    
+        subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])
         self.test_testbasic.terminate()
 
 def JsTests():
