@@ -38,10 +38,11 @@ public:
     static void Escape(Bwx& aDst, const Brx& aSrc);
     static void Escape(IWriter& aWriter, const Brx& aSrc);
     static void Unescape(Bwx& aDst, const Brx& aSrc); // supports in-place unescaping
-    
+
 public:
     static const TUint kMaxDirLevels = 50;
     static const TUint kMaxUriBytes = 1024;
+    static const TInt kPortNotSpecified = -1;
 
 private:
     void Parse(const Brx& aUri);

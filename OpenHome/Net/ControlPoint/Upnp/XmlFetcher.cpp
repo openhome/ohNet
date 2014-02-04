@@ -16,6 +16,7 @@ using namespace OpenHome::Net;
 
 void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
 {
+    ASSERT(aUri->Port()!=Uri::kPortNotSpecified);
     iUri = aUri;
     iFunctor = aFunctor;
     iSequenceNumber = iCpStack.Env().SequenceNumber();
@@ -68,7 +69,7 @@ void XmlFetch::Fetch()
     LOG(kXmlFetch, "> XmlFetch::Fetch for ");
     LOG(kXmlFetch, iUri->AbsoluteUri());
     LOG(kXmlFetch, "\n");
-    
+
     OpenHome::SocketTcpClient socket;
     socket.Open(iCpStack.Env());
     AutoSocket a(socket);
@@ -153,7 +154,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
     WriterHttpRequest writerRequest(writeBuffer);
 
     writerRequest.WriteMethod(Http::kMethodGet, iUri->PathAndQuery(), Http::eHttp11);
-    Http::WriteHeaderHostAndPort(writerRequest, *iUri);
+    Http::WriteHeaderHostAndPort(writerRequest, iUri->Host(), iUri->Port());
     Http::WriteHeaderContentLength(writerRequest, 0);
     Http::WriteHeaderConnectionClose(writerRequest);
     writerRequest.WriteFlush();
@@ -299,7 +300,7 @@ void XmlFetcher::Run()
         iFetch->SignalCompleted();
         delete iFetch;
         iFetch = NULL;
-        
+
         iFree.Write(this);
     }
 }

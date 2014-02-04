@@ -26,7 +26,7 @@ void Uri::Clear()
     iAbsoluteUri.Replace(Brx::Empty());
     iScheme.Set(Brx::Empty());
     iHost.Set(Brx::Empty());
-    iPort = -1;
+    iPort = kPortNotSpecified;
     iAuthority.Set(Brx::Empty());
     iPath.Set(Brx::Empty());
     iQuery.Set(Brx::Empty());
@@ -50,17 +50,17 @@ void Uri::Replace(const Brx& aBaseUri, const Brx& aRelativeUri)
     }
     iRelative.Replace(aRelativeUri);
     Ascii::Substitute(iRelative, '\\', '/'); // convert path to use only back slashes
-    
+
     iBase.Replace(aBaseUri);
     Ascii::Substitute(iBase, '\\', '/'); // convert path to use only back slashes
-    
+
     while (iRelative.At(0) == '/') { // insure relative path starts without back slash
         iRelative.Replace(iRelative.Split(1,iRelative.Bytes()-1));
     }
     if (iBase.At(iBase.Bytes()-1) != '/') { // insure base path ends with back slash
         iBase.Append('/');
     }
-    
+
     Parser parser(iRelative);
     Brn section;
     TUint relCount = 0, relIndex = 0;
@@ -80,7 +80,7 @@ void Uri::Replace(const Brx& aBaseUri, const Brx& aRelativeUri)
         THROW(UriError);
     }
     iRelative.Replace(iRelative.Split(relIndex, iRelative.Bytes()-relIndex));
-        
+
     if (relCount > 0) {
         parser.Set(iBase);
         TUint baseCount = 0;
@@ -177,7 +177,7 @@ void Uri::Parse(const Brx& aUri)
     else {
         host.Set(authority);
         portBuff.Set(Brx::Empty());
-        port = -1;
+        port = kPortNotSpecified;
     }
 
 
@@ -185,7 +185,7 @@ void Uri::Parse(const Brx& aUri)
 
     // check length of resulting URI
     TUint length = scheme.Bytes() + 3 + host.Bytes();   // = len("scheme://host")
-    if (port != -1) {
+    if (port != kPortNotSpecified) {
         length += portBuff.Bytes() + 1;   // += len(":port")
     }
     length += EscapedBytes(path) + 1; // += len("/path")
@@ -210,7 +210,7 @@ void Uri::Parse(const Brx& aUri)
     iHost.Set(iAbsoluteUri.Split(start));
 
     // port
-    if (port != -1) {
+    if (port != kPortNotSpecified) {
         iAbsoluteUri.Append(":");
         Ascii::AppendDec(iAbsoluteUri, port);
         iPort = port;
