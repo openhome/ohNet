@@ -544,10 +544,14 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
     if (wait) {
         // wait 1 minute then proceed
         // we'll have leaked some subscriptions but this'll be logged later during shutdown
-        try {
-            iShutdownSem.Wait(60*1000);
+        iCleanShutdown = true;
+        Timer timer(iCpStack.Env(), MakeFunctor(*this, &CpiSubscriptionManager::ShutdownHasHung));
+        timer.FireIn(60*1000);
+        iShutdownSem.Wait();
+        if (iCleanShutdown) {
+            timer.Cancel();
         }
-        catch(Timeout&) {
+        else {
             Log::Print("WARNING: Subscription manager failed to shutdown cleanly\n");
             iCpStack.Env().ListObjects();
         }
@@ -748,6 +752,12 @@ TBool CpiSubscriptionManager::ReadyForShutdown() const
         }
     }
     return false;
+}
+
+void CpiSubscriptionManager::ShutdownHasHung()
+{
+    iCleanShutdown = false;
+    iShutdownSem.Signal();
 }
 
 void CpiSubscriptionManager::Run()

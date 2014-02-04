@@ -242,6 +242,7 @@ private:
     void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
     TBool ReadyForShutdown() const;
+    void ShutdownHasHung();
     void Run();
 private:
     CpStack& iCpStack;
@@ -252,6 +253,7 @@ private:
     typedef std::map<Brn,CpiSubscription*,BufferCmp> Map;
     Map iMap;
     TBool iActive;
+    TBool iCleanShutdown;
     Semaphore iWaiter;
     Semaphore iShutdownSem;
     EventServerUpnp* iEventServer;
