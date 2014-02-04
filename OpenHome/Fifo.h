@@ -23,14 +23,13 @@ public:
     void ReadInterrupt(TBool aInterrupt=true);
 protected:
     FifoBase(TUint aSlots);
-    TUint WriteOpen(TUint aTimeoutMs);// return index of entry to write
-    void WriteClose();                // complete the write
-    TUint ReadOpen(TUint aTimeoutMs); // return index of entry to read
-    void ReadClose();                 // complete the read
-    TUint DoPeek();                   // return index of entry without removing it
+    TUint WriteOpen(); // return index of entry to write
+    void WriteClose(); // complete the write
+    TUint ReadOpen();  // return index of entry to read
+    void ReadClose();  // complete the read
 protected:
     const TUint iSlots;
-    TUint iSlotsUsed;                 // protected by iMutexWrite
+    TUint iSlotsUsed;  // protected by iMutexWrite
     mutable Mutex iMutexWrite;
     Mutex iMutexRead;
     Mutex iMutexInterrupt;
@@ -48,42 +47,24 @@ public:
     inline Fifo(TUint aSlots) : FifoBase(aSlots) { iBuf = new T[aSlots]; }
     inline ~Fifo() { delete [] iBuf; }
     void Write(T aEntry);
-    void Write(T aEntry, TUint aTimeoutMs);
     T Read();
-    T Read(TUint aTimeoutMs);
-    T Peek();
 private:
     T* iBuf;
 };
 
 template <class T> void Fifo<T>::Write(T aEntry)
 {
-    Write(aEntry, 0);
-}
-
-template <class T> void Fifo<T>::Write(T aEntry, TUint aTimeoutMs)
-{
-    iBuf[WriteOpen(aTimeoutMs)] = aEntry;
+    iBuf[WriteOpen()] = aEntry;
     WriteClose();
 }
 
 template <class T> T Fifo<T>::Read()
 {
-    return Read(0);
-}
-
-template <class T> T Fifo<T>::Read(TUint aTimeoutMs)
-{
-    T value = iBuf[ReadOpen(aTimeoutMs)];
+    T value = iBuf[ReadOpen()];
     ReadClose();
-    return (value);
+    return value;
 }
 
-template <class T> T Fifo<T>::Peek()
-{
-    T value = iBuf[DoPeek()];
-    return (value);
-}
 
 // FifoByte provides a specific TByte Fifo instantiation
 // with additional buffer write and read functions

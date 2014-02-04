@@ -48,7 +48,6 @@ void SuiteFifoBasic::Test()
     TEST(q.SlotsUsed() == 1);
     TEST(q.Read() == &i2);
     TEST(q.SlotsUsed() == 0);
-    TEST_THROWS(q.Read(50), Timeout);
     TEST(q.SlotsFree() == 4);
 
     q.Write(&i1);
@@ -56,7 +55,6 @@ void SuiteFifoBasic::Test()
     q.Write(&i3);
     q.Write(&i4);
     TEST(q.SlotsUsed() == 4);
-    TEST_THROWS(q.Write(&i1, 100), Timeout);
 
     TEST(q.Read() == &i1);
     TEST(q.Read() == &i2);
@@ -70,14 +68,12 @@ void SuiteFifoBasic::Test()
     q.Write(&i3);
     TEST(q.SlotsUsed() == 4);
     TEST(q.SlotsFree() == 0);
-    TEST_THROWS(q.Write(&i1, 100), Timeout);
 
     TEST(q.Read() == &i4);
     TEST(q.Read() == &i1);
     TEST(q.Read() == &i2);
     TEST(q.Read() == &i3);
     TEST(q.SlotsUsed() == 0);
-    TEST_THROWS(q.Read(50), Timeout);
     TEST(q.SlotsFree() == 4);
 }
 

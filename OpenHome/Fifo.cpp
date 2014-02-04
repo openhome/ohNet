@@ -52,9 +52,9 @@ void FifoBase::ReadInterrupt(TBool aInterrupt)
     iInterruptEnabled = aInterrupt;
 }
 
-TUint FifoBase::WriteOpen(TUint aTimeoutMs)
+TUint FifoBase::WriteOpen()
 {
-    iSemaWrite.Wait(aTimeoutMs);
+    iSemaWrite.Wait();
     iMutexWrite.Wait();
     TUint index = iWriteIndex++;
     if (iWriteIndex == Slots()) {
@@ -70,11 +70,11 @@ void FifoBase::WriteClose()
     iSemaRead.Signal();
 }
 
-TUint FifoBase::ReadOpen(TUint aTimeoutMs)
+TUint FifoBase::ReadOpen()
 {
     TBool readAllowed = false;
     while (!readAllowed) {  // handle multiple (erroneous) calls to ReadInterrupt(false) when Read() waiting
-        iSemaRead.Wait(aTimeoutMs);
+        iSemaRead.Wait();
         // check if iSemaRead was signalled legitimately or by interrupt
         AutoMutex a(iMutexInterrupt);
         if (iInterrupted) {
@@ -105,10 +105,6 @@ void FifoBase::ReadClose()
     iSemaWrite.Signal();
 }
 
-TUint FifoBase::DoPeek()
-{
-    return iReadIndex;
-}
 
 // FifoByte
 
