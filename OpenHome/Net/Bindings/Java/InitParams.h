@@ -343,6 +343,38 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSet
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetThreadExitHandler
   (JNIEnv *, jclass , jlong, jobject);
 
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubnetListChangedListener
+ * Signature: (JLorg/openhome/net/core/IChangeListener;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetListChangedListener
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubnetAddedListener
+ * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetAddedListener
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetSubnetRemovedListener
+ * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetSubnetRemovedListener
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNetworkAdapterChangedListener
+ * Signature: (JLorg/openhome/net/core/InitParams$NetworkAdapterCallback;)J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNetworkAdapterChangedListener
+  (JNIEnv *, jclass, jlong, jobject);
+
 #ifdef __cplusplus
 }
 #endif

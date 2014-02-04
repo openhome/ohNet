@@ -161,12 +161,15 @@ public class Library
     
     /**
      * Query which network adapter is currently selected.
+     *
+     * <p>The {@link NetworkAdapter#removeRef()} method must be called on the returned
+     * {@link NetworkAdapter} object when the {@link NetworkAdapter} object is no longer required.
      * 
      * @return the currently selected adapter.
      */
     public NetworkAdapter getCurrentSubnet()
     {
-    	return new NetworkAdapter(OhNetCurrentSubnetAdapter());
+    	return new NetworkAdapter(OhNetCurrentSubnetAdapter(), true);
     }
 
     /**

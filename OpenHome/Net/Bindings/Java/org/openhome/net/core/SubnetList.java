@@ -54,7 +54,7 @@ public class SubnetList
      */
     public NetworkAdapter getSubnet(int aIndex)
     {
-        return new NetworkAdapter(OhNetSubnetAt(iHandle, aIndex));
+        return new NetworkAdapter(OhNetSubnetAt(iHandle, aIndex), false);
     }
 	
     /**

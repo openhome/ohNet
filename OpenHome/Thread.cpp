@@ -83,7 +83,7 @@ void Mutex::Wait()
             msg = "Lock attempted on uninitialised mutex";
         }    
         Brhz thBuf;
-        Bws<5> thName(Thread::CurrentThreadName());
+        Bws<Thread::kMaxNameBytes+1> thName(Thread::CurrentThreadName());
         thName.PtrZ();
         Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName.Ptr());
         ASSERT(err == 0);

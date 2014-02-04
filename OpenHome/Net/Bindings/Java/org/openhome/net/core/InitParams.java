@@ -7,6 +7,10 @@ public class InitParams
     private long iCallbackThreadExit = 0;
     private long iCallbackLogOutput = 0;
     private long iCallbackFatalError = 0;
+    private long iCallbackSubnetListChanged = 0;
+    private long iCallbackSubnetAdded = 0;
+    private long iCallbackSubnetRemoved = 0;
+    private long iCallbackNetworkAdapterChanged = 0;
 	
 	// Initialisation and destruction functions.
 	private static native long OhNetInitParamsCreate();
@@ -18,10 +22,6 @@ public class InitParams
 //	private static native void OhNetInitParamsSetAsyncBeginHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
 //	private static native void OhNetInitParamsSetAsyncEndHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
 //	private static native void OhNetInitParamsSetAsyncErrorHandler(long aParams, OhNetCallbackAsync aCallback, void* aPtr);
-//	private static native void OhNetInitParamsSetSubnetListChangedListener(long aParams, OhNetCallback aCallback, void* aPtr);
-//	private static native void OhNetInitParamsSetSubnetAddedListener(long aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
-//	private static native void OhNetInitParamsSetSubnetRemovedListener(long aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
-//	private static native void OhNetInitParamsSetNetworkAdapterChangedListener(long aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
 //	private static native void OhNetInitParamsSetFreeExternalCallback(long aParams, OhNetCallbackFreeExternal aCallback);
 
 	// Getter functions.
@@ -65,6 +65,10 @@ public class InitParams
     private static native long OhNetInitParamsSetLogOutput(long aParams, IMessageListener aListener);
     private static native long OhNetInitParamsSetFatalErrorHandler(long aParams, IMessageListener aListener);
     private static native void OhNetInitParamsSetThreadExitHandler(long aParams, IThreadExitListener aListener);
+    private static native long OhNetInitParamsSetSubnetListChangedListener(long aParams, IChangeListener aListener);
+    private static native long OhNetInitParamsSetSubnetAddedListener(long aParams, NetworkAdapterCallback aCallback);
+    private static native long OhNetInitParamsSetSubnetRemovedListener(long aParams, NetworkAdapterCallback aCallback);
+    private static native long OhNetInitParamsSetNetworkAdapterChangedListener(long aParams, NetworkAdapterCallback aCallback);
 
 
 	static
@@ -95,6 +99,18 @@ public class InitParams
         }
         if (iCallbackFatalError != 0) {
             OhNetInitParamsDisposeCallback(iCallbackFatalError);
+        }
+        if (iCallbackSubnetListChanged != 0) {
+            OhNetInitParamsDisposeCallback(iCallbackSubnetListChanged);
+        }
+        if (iCallbackSubnetAdded != 0) {
+            OhNetInitParamsDisposeCallback(iCallbackSubnetAdded);
+        }
+        if (iCallbackSubnetRemoved != 0) {
+            OhNetInitParamsDisposeCallback(iCallbackSubnetRemoved);
+        }
+        if (iCallbackNetworkAdapterChanged != 0) {
+            OhNetInitParamsDisposeCallback(iCallbackNetworkAdapterChanged);
         }
     }
 	
@@ -571,7 +587,7 @@ public class InitParams
      * 
      * @param aListener     the listener callback for log messages.
      */
-    public void setLogOutput(IMessageListener aListener)
+    public synchronized void setLogOutput(IMessageListener aListener)
     {
         long prevCallbackLogOutput = iCallbackLogOutput; 
          iCallbackLogOutput = OhNetInitParamsSetLogOutput(iHandle, aListener);
@@ -585,7 +601,7 @@ public class InitParams
      * 
      * @param aListener     the handler for fatal error messages.
      */
-    public void setFatalErrorHandler(IMessageListener aListener)
+    public synchronized void setFatalErrorHandler(IMessageListener aListener)
     {
         long prevCallbackFatalError = iCallbackFatalError; 
         iCallbackFatalError = OhNetInitParamsSetFatalErrorHandler(iHandle, aListener);
@@ -599,9 +615,68 @@ public class InitParams
      * 
      * @param aListener     the handler for thread exit events.
      */
-    public void setThreadExitHandler(IThreadExitListener aListener)
+    public synchronized void setThreadExitHandler(IThreadExitListener aListener)
     {
         OhNetInitParamsSetThreadExitHandler(iCallbackThreadExit, aListener);
+    }
+
+    /**
+     * Set the listener callback for subnet list changes.
+     * 
+     * @param aListener     the listener callback for subnet list changes.
+     */
+    public synchronized void setSubnetListChangedListener(IChangeListener aListener)
+    {
+        long prevCallbackSubnetListChanged = iCallbackSubnetListChanged; 
+        iCallbackSubnetListChanged = OhNetInitParamsSetSubnetListChangedListener(iHandle, aListener);
+        if (prevCallbackSubnetListChanged != 0) {
+            OhNetInitParamsDisposeCallback(prevCallbackSubnetListChanged);
+        }
+    }
+
+    /**
+     * Set the listener callback for subnet added events.
+     * 
+     * @param aListener     the listener callback for subnet added events.
+     */
+    public synchronized void setSubnetAddedListener(INetworkAdapterListener aListener)
+    {
+        long prevCallbackSubnetAdded = iCallbackSubnetAdded; 
+        iCallbackSubnetAdded = OhNetInitParamsSetSubnetAddedListener(iHandle,
+                                   new NetworkAdapterCallback(aListener));
+        if (prevCallbackSubnetAdded != 0) {
+            OhNetInitParamsDisposeCallback(prevCallbackSubnetAdded);
+        }
+    }
+
+    /**
+     * Set the listener callback for subnet removed events.
+     * 
+     * @param aListener     the listener callback for subnet removed events.
+     */
+    public synchronized void setSubnetRemovedListener(INetworkAdapterListener aListener)
+    {
+        long prevCallbackSubnetRemoved = iCallbackSubnetRemoved; 
+        iCallbackSubnetRemoved = OhNetInitParamsSetSubnetRemovedListener(iHandle,
+                                     new NetworkAdapterCallback(aListener));
+        if (prevCallbackSubnetRemoved != 0) {
+            OhNetInitParamsDisposeCallback(prevCallbackSubnetRemoved);
+        }
+    }
+
+    /**
+     * Set the listener callback for network adapter changed events.
+     * 
+     * @param aListener     the listener callback for network adapter changed events.
+     */
+    public synchronized void setNetworkAdapterChangedListener(INetworkAdapterListener aListener)
+    {
+        long prevCallbackNetworkAdapterChanged = iCallbackNetworkAdapterChanged; 
+        iCallbackNetworkAdapterChanged = OhNetInitParamsSetNetworkAdapterChangedListener(iHandle,
+                                             new NetworkAdapterCallback(aListener));
+        if (prevCallbackNetworkAdapterChanged != 0) {
+            OhNetInitParamsDisposeCallback(prevCallbackNetworkAdapterChanged);
+        }
     }
 	
 	public static void main(String[] args)
@@ -673,4 +748,25 @@ public class InitParams
         System.out.println("Params WebSocket port:\t\t\t" + params.getDvWebSocketPort());
         System.out.println("Params Bonjour enabled:\t\t\t" + params.getDvIsBonjourEnabled());
 	}
+
+    private static class NetworkAdapterCallback
+    {
+        private INetworkAdapterListener iListener;
+
+        private NetworkAdapterCallback(INetworkAdapterListener aListener) {
+            iListener = aListener;
+        }
+
+        /**
+         * Callback method for native code to use for a subnet or adapter change event.
+         * 
+         * @param aAdapter   handle to the network adapter.
+         */
+        public void notifyChange(long aAdapter)
+        {
+            // ohNet will call removeRef for the adapter when this callback returns
+            NetworkAdapter adapter = new NetworkAdapter(aAdapter, false);
+            iListener.notifyChange(adapter);
+        }
+    }
 }
