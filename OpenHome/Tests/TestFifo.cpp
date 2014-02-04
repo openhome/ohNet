@@ -48,7 +48,6 @@ void SuiteFifoBasic::Test()
     TEST(q.SlotsUsed() == 1);
     TEST(q.Read() == &i2);
     TEST(q.SlotsUsed() == 0);
-    TEST_THROWS(q.Read(50), Timeout);
     TEST(q.SlotsFree() == 4);
 
     q.Write(&i1);
@@ -56,7 +55,6 @@ void SuiteFifoBasic::Test()
     q.Write(&i3);
     q.Write(&i4);
     TEST(q.SlotsUsed() == 4);
-    TEST_THROWS(q.Write(&i1, 100), Timeout);
 
     TEST(q.Read() == &i1);
     TEST(q.Read() == &i2);
@@ -70,14 +68,12 @@ void SuiteFifoBasic::Test()
     q.Write(&i3);
     TEST(q.SlotsUsed() == 4);
     TEST(q.SlotsFree() == 0);
-    TEST_THROWS(q.Write(&i1, 100), Timeout);
 
     TEST(q.Read() == &i4);
     TEST(q.Read() == &i1);
     TEST(q.Read() == &i2);
     TEST(q.Read() == &i3);
     TEST(q.SlotsUsed() == 0);
-    TEST_THROWS(q.Read(50), Timeout);
     TEST(q.SlotsFree() == 4);
 }
 
@@ -404,43 +400,6 @@ void SuiteFifoLiteBasic::Test()
     TEST(q1.SlotsUsed() == 1);
     TEST(q1.Read() == &i2);
     TEST(q1.SlotsUsed() == 0);
-
-    //WriteBack
-
-    Print("\n\nWriteBack tests\n\n");
-
-    FifoLite<I*, 4> q2;
-    TEST(q2.Slots() == 4);
-    TEST(q2.SlotsUsed() == 0);
-    TEST(q2.SlotsFree() == 4);
-    
-    q2.WriteBack(&i1);
-    TEST(q2.Slots() == 4);
-    TEST(q2.SlotsUsed() == 1);
-    TEST(q2.SlotsFree() == 3);
-
-    TEST(q2.Read() == &i1);
-
-    q2.Write(&i2);
-    q2.Write(&i3);
-    q2.WriteBack(&i1);
-    q2.Write(&i4);
-    TEST(q2.Slots() == 4);
-    TEST(q2.SlotsUsed() == 4);
-    TEST(q2.SlotsFree() == 0);
-    TEST(q2.Read() == &i1);
-    TEST(q2.Read() == &i2);
-    TEST(q2.Read() == &i3);
-    TEST(q2.Read() == &i4);
-
-    q2.Write(&i2);
-    q2.Write(&i3);
-    TEST(q2.Read() == &i2);
-    q2.WriteBack(&i2);
-    TEST(q2.SlotsUsed() == 2);
-    TEST(q2.Read() == &i2);
-    TEST(q2.Read() == &i3);
-    TEST(q2.SlotsUsed() == 0);
 }
 
 void TestFifo()

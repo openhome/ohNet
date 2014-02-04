@@ -52,15 +52,15 @@ void FifoBase::ReadInterrupt(TBool aInterrupt)
     iInterruptEnabled = aInterrupt;
 }
 
-TUint FifoBase::WriteOpen(TUint aTimeoutMs)
+TUint FifoBase::WriteOpen()
 {
-    iSemaWrite.Wait(aTimeoutMs);
+    iSemaWrite.Wait();
     iMutexWrite.Wait();
     TUint index = iWriteIndex++;
     if (iWriteIndex == Slots()) {
         iWriteIndex = 0;
     }
-    return (index);
+    return index;
 }
 
 void FifoBase::WriteClose()
@@ -70,11 +70,11 @@ void FifoBase::WriteClose()
     iSemaRead.Signal();
 }
 
-TUint FifoBase::ReadOpen(TUint aTimeoutMs)
+TUint FifoBase::ReadOpen()
 {
     TBool readAllowed = false;
     while (!readAllowed) {  // handle multiple (erroneous) calls to ReadInterrupt(false) when Read() waiting
-        iSemaRead.Wait(aTimeoutMs);
+        iSemaRead.Wait();
         // check if iSemaRead was signalled legitimately or by interrupt
         AutoMutex a(iMutexInterrupt);
         if (iInterrupted) {
@@ -94,7 +94,7 @@ TUint FifoBase::ReadOpen(TUint aTimeoutMs)
         iReadIndex = 0;
     }
     iMutexRead.Signal();
-    return (index);
+    return index;
 }
 
 void FifoBase::ReadClose()
@@ -105,91 +105,14 @@ void FifoBase::ReadClose()
     iSemaWrite.Signal();
 }
 
-TUint FifoBase::DoPeek()
-{
-    return iReadIndex;
-}
-
-// FifoByte
-
-FifoByte::FifoByte(TUint aSlots) : Fifo<TByte>(aSlots)
-{
-}
-
-void FifoByte::Write(const Brx& aBuffer)
-{
-    for (TUint i = 0; i < aBuffer.Bytes(); i++) {
-        Fifo<TByte>::Write(aBuffer.At(i));
-    }
-}
-
-void FifoByte::Read(Bwx& aBuffer)
-{
-    Read(aBuffer, aBuffer.MaxBytes());
-}
-
-void FifoByte::Read(Bwx& aBuffer, TUint aBytes)
-{
-    aBuffer.SetBytes(0);
-    for (TUint i = 0; i < aBytes; i++) {
-        aBuffer.Append(Fifo<TByte>::Read());
-    }
-}
-
-// FifoThresholdBase
-
-FifoThresholdBase::FifoThresholdBase(TUint aSlots, FifoThresholdObserver& aObserver)
-    : FifoBase(aSlots)
-    , iObserver(aObserver)
-    , iThresholdLow(0)
-    , iThresholdHigh(aSlots)
-    , iThresholdLowActive(false)
-    , iThresholdHighActive(false)
-{
-}
-
-void FifoThresholdBase::SetThresholdLow(TUint aSlot)
-{
-    ASSERT(aSlot <= Slots());
-    iThresholdLow = aSlot;
-    CheckThresholdLow();
-}
-
-void FifoThresholdBase::SetThresholdHigh(TUint aSlot)
-{
-    ASSERT(aSlot <= Slots());
-    iThresholdHigh = aSlot;
-    CheckThresholdHigh();
-}
-
-void FifoThresholdBase::CheckThresholdHigh()
-{
-    if(iThresholdHighActive) {
-        if(SlotsUsed() < iThresholdHigh) {
-            iThresholdHighActive = false;
-        }
-    } else if(SlotsUsed() >= iThresholdHigh) {
-        iThresholdHighActive = true;
-        iObserver.NotifyThresholdHigh(*this);
-    }
-}
-
-void FifoThresholdBase::CheckThresholdLow()
-{
-    if(iThresholdLowActive) {
-        if(SlotsUsed() > iThresholdLow) {
-            iThresholdLowActive = false;
-        }
-    } else if(SlotsUsed() <= iThresholdLow) {
-        iThresholdLowActive = true;
-        iObserver.NotifyThresholdLow(*this);
-    }
-}
 
 // FifoLiteBase
 
-FifoLiteBase::FifoLiteBase(TUint aSlots) : iSlots(aSlots), iSlotsUsed(0),
-    iReadIndex(0), iWriteIndex(0)
+FifoLiteBase::FifoLiteBase(TUint aSlots)
+    : iSlots(aSlots)
+    , iSlotsUsed(0)
+    , iReadIndex(0)
+    , iWriteIndex(0)
 {
 }
 
@@ -216,20 +139,7 @@ TUint FifoLiteBase::Write()
         iWriteIndex = 0;
     }
     iSlotsUsed++;
-    return (index);
-}
-
-TUint FifoLiteBase::WriteBack()
-{
-    ASSERT(iSlots > iSlotsUsed);
-    if(iReadIndex == 0) {
-        iReadIndex = iSlots - 1;;
-    }
-    else {
-        iReadIndex--;
-    }
-    iSlotsUsed++;
-    return (iReadIndex);
+    return index;
 }
 
 TUint FifoLiteBase::Read()
