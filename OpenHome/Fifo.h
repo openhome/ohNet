@@ -66,19 +66,6 @@ template <class T> T Fifo<T>::Read()
 }
 
 
-// FifoByte provides a specific TByte Fifo instantiation
-// with additional buffer write and read functions
-
-class FifoByte : public Fifo<TByte>
-{
-public:
-    FifoByte(TUint aSlots);
-    void Write(const Brx& aBuffer);
-    void Read(Bwx& aBuffer);
-    void Read(Bwx& aBuffer, TUint aBytes);
-};
-
-
 // FifoLite provides lightweight thread unaware first in first out buffering
 //
 // Writes assert if the fifo is full (use SlotsFree() to check before writing)

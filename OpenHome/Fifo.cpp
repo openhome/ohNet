@@ -106,34 +106,6 @@ void FifoBase::ReadClose()
 }
 
 
-// FifoByte
-
-FifoByte::FifoByte(TUint aSlots)
-    : Fifo<TByte>(aSlots)
-{
-}
-
-void FifoByte::Write(const Brx& aBuffer)
-{
-    for (TUint i = 0; i < aBuffer.Bytes(); i++) {
-        Fifo<TByte>::Write(aBuffer.At(i));
-    }
-}
-
-void FifoByte::Read(Bwx& aBuffer)
-{
-    Read(aBuffer, aBuffer.MaxBytes());
-}
-
-void FifoByte::Read(Bwx& aBuffer, TUint aBytes)
-{
-    aBuffer.SetBytes(0);
-    for (TUint i = 0; i < aBytes; i++) {
-        aBuffer.Append(Fifo<TByte>::Read());
-    }
-}
-
-
 // FifoLiteBase
 
 FifoLiteBase::FifoLiteBase(TUint aSlots)
