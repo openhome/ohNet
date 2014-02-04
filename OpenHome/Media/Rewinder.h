@@ -33,7 +33,6 @@ public:
     ~Rewinder();
 private:
     void TryBuffer(Msg* aMsg);
-    void DrainQueue(MsgQueue& aQueue);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor

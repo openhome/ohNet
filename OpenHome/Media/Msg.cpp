@@ -1684,6 +1684,7 @@ MsgQueue::MsgQueue()
     , iSem("MSGQ", 0)
     , iHead(NULL)
     , iTail(NULL)
+    , iNumMsgs(0)
 {
 }
 
@@ -1711,6 +1712,7 @@ void MsgQueue::Enqueue(Msg* aMsg)
     }
     iTail = aMsg;
     aMsg->iNextMsg = NULL;
+    iNumMsgs++;
     iSem.Signal();
     iLock.Signal();
 }
@@ -1726,6 +1728,7 @@ Msg* MsgQueue::Dequeue()
     if (iHead == NULL) {
         iTail = NULL;
     }
+    iNumMsgs--;
     iLock.Signal();
     return head;
 }
@@ -1751,76 +1754,75 @@ TBool MsgQueue::IsEmpty() const
     return empty;
 }
 
+TUint MsgQueue::NumMsgs() const
+{
+    AutoMutex a(iLock);
+    return iNumMsgs;
+}
 
-// MsgQueueFlushable
 
-MsgQueueFlushable::MsgQueueFlushable()
+// MsgReservoir
+
+MsgReservoir::MsgReservoir()
     : iLock("MQJF")
     , iEncodedBytes(0)
     , iJiffies(0)
-    , iFlushing(false)
 {
 }
 
-MsgQueueFlushable::~MsgQueueFlushable()
+MsgReservoir::~MsgReservoir()
 {
 }
 
-void MsgQueueFlushable::DoEnqueue(Msg* aMsg)
+void MsgReservoir::DoEnqueue(Msg* aMsg)
 {
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.Enqueue(msg);
 }
 
-Msg* MsgQueueFlushable::DoDequeue()
+Msg* MsgReservoir::DoDequeue()
 {
     Msg* msg;
     do {
         msg = iQueue.Dequeue();
         ProcessorQueueOut procOut(*this);
         msg = msg->Process(procOut);
-        iLock.Wait();
-        if (iFlushing) {
-            msg->RemoveRef();
-            msg = NULL;
-        }
-        iLock.Signal();
     } while (msg == NULL);
     return msg;
 }
 
-void MsgQueueFlushable::EnqueueAtHead(Msg* aMsg)
+void MsgReservoir::EnqueueAtHead(Msg* aMsg)
 {
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.EnqueueAtHead(msg);
 }
 
-TUint MsgQueueFlushable::Jiffies() const
+TUint MsgReservoir::Jiffies() const
 {
     AutoMutex a(iLock);
     return iJiffies;
 }
 
-TUint MsgQueueFlushable::EncodedBytes() const
+TUint MsgReservoir::EncodedBytes() const
 {
     return iEncodedBytes;
 }
 
-TBool MsgQueueFlushable::IsEmpty() const
+TBool MsgReservoir::IsEmpty() const
 {
     return iQueue.IsEmpty();
 }
 
-void MsgQueueFlushable::Add(TUint& aValue, TUint aAdded)
+void MsgReservoir::Add(TUint& aValue, TUint aAdded)
 {
     iLock.Wait();
     aValue += aAdded;
     iLock.Signal();
 }
 
-void MsgQueueFlushable::Remove(TUint& aValue, TUint aRemoved)
+void MsgReservoir::Remove(TUint& aValue, TUint aRemoved)
 {
     iLock.Wait();
     ASSERT(aValue >= aRemoved);
@@ -1828,255 +1830,237 @@ void MsgQueueFlushable::Remove(TUint& aValue, TUint aRemoved)
     iLock.Signal();
 }
 
-void MsgQueueFlushable::StartFlushing()
-{
-    iLock.Wait();
-    iFlushing = true;
-    iLock.Signal();
-}
-
-void MsgQueueFlushable::StopFlushing()
-{
-    iLock.Wait();
-    iFlushing = false;
-    iLock.Signal();
-}
-
-void MsgQueueFlushable::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgSilence* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgTrack* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgMetaText* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgHalt* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgFlush* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgFlush* /*aMsg*/)
 {
 }
 
-void MsgQueueFlushable::ProcessMsgIn(MsgQuit* /*aMsg*/)
+void MsgReservoir::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioEncoded* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgAudioPcm* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgSilence* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgSilence* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgDecodedStream* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgTrack* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgEncodedStream* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgMetaText* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgMetaText* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgHalt* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgHalt* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgFlush* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgFlush* aMsg)
 {
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessMsgOut(MsgQuit* aMsg)
+Msg* MsgReservoir::ProcessMsgOut(MsgQuit* aMsg)
 {
     return aMsg;
 }
 
 
-// MsgQueueFlushable::ProcessorQueueIn
+// MsgReservoir::ProcessorQueueIn
 
-MsgQueueFlushable::ProcessorQueueIn::ProcessorQueueIn(MsgQueueFlushable& aQueue)
+MsgReservoir::ProcessorQueueIn::ProcessorQueueIn(MsgReservoir& aQueue)
     : iQueue(aQueue)
 {
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgSilence* aMsg)
 {
     iQueue.Add(iQueue.iJiffies, aMsg->Jiffies());
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    iQueue.StartFlushing();
-    return aMsg;
-}
-
-Msg* MsgQueueFlushable::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
 
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
 
-// MsgQueueFlushable::ProcessorQueueOut
 
-MsgQueueFlushable::ProcessorQueueOut::ProcessorQueueOut(MsgQueueFlushable& aQueue)
+// MsgReservoir::ProcessorQueueOut
+
+MsgReservoir::ProcessorQueueOut::ProcessorQueueOut(MsgReservoir& aQueue)
     : iQueue(aQueue)
 {
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     iQueue.Remove(iQueue.iEncodedBytes, aMsg->Bytes());
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSilence* aMsg)
 {
     iQueue.Remove(iQueue.iJiffies, aMsg->Jiffies());
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
 {
-    iQueue.StopFlushing();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
 {
-    iQueue.StopFlushing();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
-Msg* MsgQueueFlushable::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
 {
-    iQueue.StopFlushing();
     return iQueue.ProcessMsgOut(aMsg);
 }
 

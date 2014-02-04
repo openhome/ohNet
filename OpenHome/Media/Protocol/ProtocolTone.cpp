@@ -489,7 +489,7 @@ TInt32 ToneGeneratorConstant::Generate(TUint /*aOffset*/, TUint /*aMaxOffset*/)
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 {
-    iStreamId = ProtocolManager::kStreamIdInvalid;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStop = false;
     iNextFlushId = MsgFlush::kIdInvalid;
 

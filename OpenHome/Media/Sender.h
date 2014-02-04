@@ -5,6 +5,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 #include <vector>
 
@@ -16,11 +17,6 @@ namespace Av {
     class OhmSenderDriver;
     class OhmSender;
     class ZoneHandler;
-}
-namespace Configuration {
-    class IConfigManagerWriter;
-    class ConfigChoice;
-    class ConfigNum;
 }
 namespace Media {
 
@@ -60,10 +56,10 @@ private: // from IMsgProcessor
 private:
     void ProcessAudio(MsgAudio* aMsg);
     void SendPendingAudio();
-    void ConfigEnabledChanged(TUint aStringId);
-    void ConfigChannelChanged(TInt aValue);
-    void ConfigModeChanged(TUint aStringId);
-    void ConfigPresetChanged(TInt aValue);
+    void ConfigEnabledChanged(Configuration::KeyValuePair<TUint>& aStringId);
+    void ConfigChannelChanged(Configuration::KeyValuePair<TInt>& aValue);
+    void ConfigModeChanged(Configuration::KeyValuePair<TUint>& aStringId);
+    void ConfigPresetChanged(Configuration::KeyValuePair<TInt>& aValue);
 private: // from IPcmProcessor
     void BeginBlock();
     TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);

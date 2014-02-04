@@ -71,9 +71,12 @@ template <class T> T* Allocator<T>::Allocate()
     return static_cast<T*>(DoAllocate());
 }
 
+class Logger;
+
 class Allocated
 {
     friend class AllocatorBase;
+    friend class Logger;
 public:
     void AddRef();
     void RemoveRef();
@@ -663,18 +666,20 @@ public:
     Msg* Dequeue();
     void EnqueueAtHead(Msg* aMsg);
     TBool IsEmpty() const;
+    TUint NumMsgs() const; // test/debug use only
 private:
     mutable Mutex iLock;
     Semaphore iSem;
     Msg* iHead;
     Msg* iTail;
+    TUint iNumMsgs;
 };
 
-class MsgQueueFlushable
+class MsgReservoir
 {
 protected:
-    MsgQueueFlushable();
-    virtual ~MsgQueueFlushable();
+    MsgReservoir();
+    virtual ~MsgReservoir();
     void DoEnqueue(Msg* aMsg);
     Msg* DoDequeue();
     void EnqueueAtHead(Msg* aMsg);
@@ -684,8 +689,6 @@ protected:
 private:
     void Add(TUint& aValue, TUint aAdded);
     void Remove(TUint& aValue, TUint aRemoved);
-    void StartFlushing();
-    void StopFlushing();
 private:
     virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
@@ -711,7 +714,7 @@ private:
     class ProcessorQueueIn : public IMsgProcessor, private INonCopyable
     {
     public:
-        ProcessorQueueIn(MsgQueueFlushable& aQueue);
+        ProcessorQueueIn(MsgReservoir& aQueue);
     private:
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -725,12 +728,12 @@ private:
         Msg* ProcessMsg(MsgFlush* aMsg);
         Msg* ProcessMsg(MsgQuit* aMsg);
     private:
-        MsgQueueFlushable& iQueue;
+        MsgReservoir& iQueue;
     };
     class ProcessorQueueOut : public IMsgProcessor, private INonCopyable
     {
     public:
-        ProcessorQueueOut(MsgQueueFlushable& aQueue);
+        ProcessorQueueOut(MsgReservoir& aQueue);
     private:
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -744,14 +747,13 @@ private:
         Msg* ProcessMsg(MsgFlush* aMsg);
         Msg* ProcessMsg(MsgQuit* aMsg);
     private:
-        MsgQueueFlushable& iQueue;
+        MsgReservoir& iQueue;
     };
 private:
     mutable Mutex iLock;
     MsgQueue iQueue;
     TUint iEncodedBytes;
     TUint iJiffies;
-    TBool iFlushing;
 };
 
 // removes ref on destruction.  Does NOT claim ref on construction.
@@ -793,6 +795,9 @@ enum EStreamPlay
 
 class IPipelineIdProvider
 {
+public:
+    static const TUint kTrackIdInvalid = 0;
+    static const TUint kStreamIdInvalid = 0;
 public:
     virtual ~IPipelineIdProvider() {}
     virtual TUint NextTrackId() = 0;

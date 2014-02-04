@@ -133,15 +133,6 @@ Rewinder::~Rewinder()
     delete iQueueNext;
 }
 
-void Rewinder::DrainQueue(MsgQueue& aQueue)
-{
-    Msg* msg;
-    while (!aQueue.IsEmpty()) {
-        msg = aQueue.Dequeue();
-        msg->RemoveRef();
-    }
-}
-
 void Rewinder::TryBuffer(Msg* aMsg)
 {
     if (iBuffering > 0) {

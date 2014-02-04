@@ -160,7 +160,7 @@ void CodecController::CodecThread()
                     ASSERTS();
                 }
                 catch (CodecStreamFlush&) {
-                    ASSERTS();
+                    break;
                 }
                 catch (CodecStreamCorrupt&) {}
                 catch (CodecStreamFeatureUnsupported&) {}
@@ -181,10 +181,14 @@ void CodecController::CodecThread()
             if (iActiveCodec == NULL) {
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
-                iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
-                if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-                    iConsumeExpectedFlush = true;
+                iLock.Wait();
+                if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+                    iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                        iConsumeExpectedFlush = true;
+                    }
                 }
+                iLock.Signal();
                 continue;
             }
 
@@ -235,10 +239,14 @@ void CodecController::CodecThread()
             iActiveCodec->StreamCompleted();
         }
         if (!iStreamStarted && !iStreamEnded) {
-            iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
-            if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-                iConsumeExpectedFlush = true;
+            iLock.Wait();
+            if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+                iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                    iConsumeExpectedFlush = true;
+                }
             }
+            iLock.Signal();
         }
         // push out any pending msgs, such as a quit
         if (iPendingMsg != NULL) {
@@ -261,6 +269,18 @@ void CodecController::Rewind()
 
 Msg* CodecController::PullMsg()
 {
+    iLock.Wait();
+    if (iRecognising && iExpectedFlushId != MsgFlush::kIdInvalid) {
+        /* waiting for a Flush causes QueueTrackData() to discard all msgs.
+           If we're trying to recognise a new stream, Rewinder is active and will buffer all
+           the msgs we're busily discarding.  We'll probably run out of memory at this point.
+           Even if we don't, we don't want to be able to replay msgs that are certain to be
+           discarded.  Throwing here allows us to break out of the recognise loop and safely
+           allow QueueTrackData() to discard as much data as it wants. */
+        iLock.Signal();
+        THROW(CodecStreamFlush);
+    }
+    iLock.Signal();
     Msg* msg = iLoggerRewinder->Pull();
     {
         AutoMutex a(iLock);

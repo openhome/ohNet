@@ -76,6 +76,7 @@ Msg* PreDriver::NextStoredMsg()
         iPendingHalt = NULL;
     }
     else if (iPendingFormatChange != NULL) {
+        CalculateMaxPlayable();
         msg = iPendingFormatChange;
         iPendingFormatChange = NULL;
     }
@@ -110,6 +111,13 @@ Msg* PreDriver::AddPlayable(MsgPlayable* aPlayable)
         }
     }
     return ret;
+}
+
+void PreDriver::CalculateMaxPlayable()
+{
+    TUint jiffies = iMaxPlayableJiffies;
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iStreamInfo->StreamInfo().SampleRate());
+    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iStreamInfo->StreamInfo().NumChannels(), iStreamInfo->StreamInfo().BitDepth() / 8);
 }
 
 Msg* PreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
@@ -154,11 +162,9 @@ Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
     }
     iStreamInfo = aMsg;
     iStreamInfo->AddRef();
-    TUint jiffies = iMaxPlayableJiffies;
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iStreamInfo->StreamInfo().SampleRate());
-    iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iStreamInfo->StreamInfo().NumChannels(), iStreamInfo->StreamInfo().BitDepth() / 8);
     if (iHalted) {
         ASSERT(iPlayable == NULL);
+        CalculateMaxPlayable();
         return aMsg;
     }
     iHalted = true;
