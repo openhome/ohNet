@@ -103,10 +103,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
 
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aHost=1)
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
             senderName = 'TestSender:SoftPlayer'
         if receiverName is not None and receiverName.lower() == 'local':
-            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aHost=1)
+            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
             receiverName = 'TestRcvr:SoftPlayer'
 
         # create Sender device add subscribe to events

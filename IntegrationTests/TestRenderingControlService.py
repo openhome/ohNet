@@ -2,13 +2,14 @@
 """TestRenderingControlService - test UPnP AV RenderingControl service
 
 Parameters:
-    arg#1 - UPnP device to use as DUT
+    arg#1 - DUT ['local' for internal SoftPlayer]
             
 Check UPnP AV RenderingControl (Volume) service
 """ 
 import _FunctionalTest
 import BaseTest                         as BASE
 import Upnp.ControlPoints.MediaRenderer as MR
+import _SoftPlayer                      as SoftPlayer
 import random
 import sys
 import threading
@@ -26,6 +27,7 @@ class TestRenderingControlService( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
         self.mr           = None
         self.rc           = None
+        self.soft         = None
         self.currVolume   = None
         self.currVolumeDb = None
         self.currMute     = None
@@ -37,6 +39,10 @@ class TestRenderingControlService( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
+            
+        if dutName.lower() == 'local':
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            dutName = 'TestDev:SoftPlayer'
             
         if 'MediaRenderer' not in dutName:
             dutName += ':MediaRenderer'        
@@ -70,6 +76,8 @@ class TestRenderingControlService( BASE.BaseTest ):
         if self.mr:
             self.rc.RemoveSubscriber( self._RcEventCb )
             self.mr.Shutdown()
+        if self.soft:
+            self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )                
                     
     def VolStepping( self, aTarget ):

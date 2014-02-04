@@ -2,8 +2,8 @@
 """TestAvTransporttPlayTracks - test Playing of playlists of tracks using AVTransport.
 
 Parameters:
-    arg#1 - Device Under Test (AVT Renderer and Sender)
-    arg#2 - Device Under Test (Receiver) - optional (None = not present)
+    arg#1 - AVT Renderer/Sender ['local' for internal SoftPlayer]
+    arg#2 - Receiver ['local' for internal SoftPlayer] - optional (None = not present)
     arg#3 - UPnP MediaServer / Web Server to source media
     arg#4 - Playlist name
     arg#5 - Time to play before skipping to next (None = play all)
@@ -27,6 +27,7 @@ import Upnp.ControlPoints.MediaServer   as Server
 import Upnp.ControlPoints.Volkano       as Volkano
 import Utils.Network.HttpMediaServer    as HttpServer
 import Utils.Common                     as Common
+import _SoftPlayer                      as SoftPlayer
 import LogThread
 import sys
 import threading
@@ -48,6 +49,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.mr               = None
         self.sender           = None
         self.receiver         = None
+        self.soft1            = None
+        self.soft2            = None
         self.playlist         = []
         self.trackIndex       = -1
         self.numTracks        = 0
@@ -84,6 +87,10 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             
         if receiverName.lower() == 'none':
            receiverName = None
+
+        if dutName.lower() == 'local':
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            dutName = 'TestSender:SoftPlayer'
                    
         if 'MediaRenderer' in dutName:
             senderName = dutName.replace( ':MediaRenderer', '' )
@@ -105,6 +112,9 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         
         # create receiver and connect to sender
         if receiverName:
+            if receiverName.lower() == 'local':
+                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+                receiverName = 'TestRcvr:SoftPlayer'
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             #time.sleep( 3 )
@@ -146,6 +156,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if self.mr: self.mr.Shutdown()
         if self.sender: self.sender.Shutdown()
         if self.receiver: self.receiver.Shutdown()
+        if self.soft1:  self.soft1.Shutdown()
+        if self.soft2:  self.soft2.Shutdown()
         BASE.BaseTest.Cleanup( self )
         
     def _AvtEventCb( self, service, svName, svVal, svSeq ):

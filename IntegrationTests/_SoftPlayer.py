@@ -7,9 +7,11 @@ from integration tests, and to capture SoftPlayer output to test logs
 import _FunctionalTest
 import Component as BASE
 import os
+import platform
 import subprocess
 import threading
 import time
+import xml.etree.ElementTree as ET
 
 kExe = os.path.join( 'buildhudson', 'TestMediaPlayer.exe' )
 
@@ -20,7 +22,6 @@ class SoftPlayer( BASE.Component ):
     def __init__( self, 
                   aRoom         = None,     # defaults to 'SoftPlayer'
                   aName         = None,     # defaults to 'SoftPlayer'
-                  aHost         = None,     # defaults to 0 (adapter index)     
                   aTuneIn       = None,     # defaults to 'linnproducts'
                   aSenderChannel= None ):   # defaults to a random value
         """Start the SoftPlayer - all parameters are optional and will default
@@ -51,8 +52,7 @@ class SoftPlayer( BASE.Component ):
             cmd += ' -r %s' % aRoom
         if aName:
             cmd += ' -n %s' % aName
-        if aHost:
-            cmd += ' -a %d' % aHost
+        cmd += ' -a %d' % self.__GetHost()
         if aTuneIn:
             cmd += ' -t %s' % aTuneIn
         if aSenderChannel:
@@ -71,6 +71,7 @@ class SoftPlayer( BASE.Component ):
         self.proc.stdin.close()
         self.proc.wait()
         self.logThread.join() 
+        time.sleep( 1 )             # Let it shut down 
         
     def __Log( self ):
         "Log data received from stdout on SoftPlayer"
@@ -84,12 +85,35 @@ class SoftPlayer( BASE.Component ):
                 self.log.Info( self.dev, '%s' % msg )
             else:
                 self.log.Fail( self.dev, '%s' % msg )
+                self.shutdown = True        # force loop exit        
             
         msg = self.proc.stdout.readline()   # clear out remaining messages        
         while msg:
             self.log.Info( self.dev, '%s' % msg )
             msg = self.proc.stdout.readline()        
-                
+
+    def __GetHost( self ):
+        "Retrieve host adapter to use for player"
+        configFile = os.path.abspath( 'Config.xml') 
+        if not os.path.exists( configFile ):
+            host = 0 
+        else:
+            config = None
+            computerName = platform.node().split( '.' )[0]
+            xml = ET.parse( configFile )
+            computers = xml.getiterator( 'computer' )
+            for computer in computers:
+                if computer.attrib['name'] == computerName:
+                    config = computer
+                    break
+            if config is not None:
+                adapter = config.find( 'adapter' )
+                if adapter is None:
+                    host = 0
+                else:
+                    host = int( adapter.text )
+        return host
+    
     
 if __name__ == '__main__':
 
