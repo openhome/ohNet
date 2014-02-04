@@ -152,12 +152,12 @@ void Http::WriteHeaderRange(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 a
     aWriter.WriteHeader(Http::kHeaderRange, buf);
 }
 
-void Http::WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Uri& aUri)
+void Http::WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Brx& aHost, TUint aPort)
 {
     IWriterAscii& writer = aWriter.WriteHeaderField(Http::kHeaderHost);
-    writer.Write(aUri.Host());
+    writer.Write(aHost);
     writer.Write(':');
-    writer.WriteUint(aUri.Port());
+    writer.WriteUint(aPort);
     writer.WriteNewline();
 }
 
@@ -290,10 +290,10 @@ void ReaderHttpHeader::ProcessHeader(const Brx& aField, const Brx& aValue)
         IHttpHeader* header = iHeaders[i];
         if (header->Recognise(aField)) {
             iHeader = header;
-            header->Process(aValue);        
+            header->Process(aValue);
             return;
         }
-    } 
+    }
 }
 
 
@@ -344,7 +344,7 @@ void ReaderHttpRequest::Read(TUint aTimeoutMs)
         if (Ascii::IsWhitespace(line[0])) {
             continue; // a line starting with spaces is a continuation line
         }
-    
+
         Parser parser(line);
 
         if (count == 0) { // method
@@ -374,7 +374,7 @@ void ReaderHttpRequest::AddMethod(const Brx& aMethod)
 
 TBool ReaderHttpRequest::MethodNotAllowed() const
 {
-    return (iMethod == 0); 
+    return (iMethod == 0);
 }
 
 const Brx& ReaderHttpRequest::Method() const
@@ -392,7 +392,7 @@ Http::EVersion ReaderHttpRequest::Version() const
 {
     return iVersion;
 }
-    
+
 void ReaderHttpRequest::UnescapeUri()
 {
     // we assume that Uri::Unescape continues to be safe for in-place replacement
@@ -460,7 +460,7 @@ const HttpStatus& ReaderHttpResponse::Status() const
 }
 
 void ReaderHttpResponse::Read(TUint aTimeoutMs)
-{   
+{
     iReader.ReadFlush();
     ResetHeaders();
     TUint count = 0;
@@ -635,8 +635,8 @@ void WriterHttpHeader::WriteHeaderBase64(const Brx& aField, const Brx& aValue)
 
 IWriterAscii& WriterHttpHeader::WriteHeaderField(const Brx& aField)
 {
-    LOG(kHttp, "Http Write Header   ");
-    
+    LOG(kHttp, "Http Write Header  ");
+
     iWriter.Write(aField);
     iWriter.Write(Http::kHeaderSeparator);
     return (iWriter);
@@ -651,7 +651,7 @@ WriterHttpRequest::WriterHttpRequest(IWriter& aWriter) : WriterHttpHeader(aWrite
 void WriterHttpRequest::WriteMethod(const Brx& aMethod, const Brx& aUri, Http::EVersion aVersion)
 {
     LOG(kHttp, "Http Write Method   ");
-    
+
     iWriter.Write(aMethod);
     iWriter.WriteSpace();
     iWriter.Write(aUri);
@@ -788,7 +788,7 @@ TBool HttpHeaderContentType::Recognise(const Brx& aHeader)
 void HttpHeaderContentType::Process(const Brx& aValue)
 {
     Parser parser(aValue);
-    
+
     try {
         Brn type = parser.Next(';');
         Parser parser2(type);  // get first word of the type
@@ -798,10 +798,10 @@ void HttpHeaderContentType::Process(const Brx& aValue)
     catch (BufferOverflow&) {
         return;
     }
-    
+
     Brn key;
     Brn value;
-    
+
     for (;;) {
         key.Set(parser.Next('='));
         if (key.Bytes() == 0) {

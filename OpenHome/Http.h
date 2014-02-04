@@ -111,7 +111,7 @@ public:
     static const Brx& Version(EVersion aVersion);
     static void WriteHeaderRangeFirstOnly(WriterHttpHeader& aWriter, TUint64 aFirst); //bytes=<aFirst>-
     static void WriteHeaderRange(WriterHttpHeader& aWriter, TUint64 aFirst, TUint64 aLast); //bytes=<aFirst>-<aLast>
-    static void WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Uri& aUri);
+    static void WriteHeaderHostAndPort(WriterHttpHeader& aWriter, const Brx& aHost, TUint aPort);
     static void WriteHeaderContentLength(WriterHttpHeader& aWriter, TUint aLength);
     static void WriteHeaderContentType(WriterHttpHeader& aWriter, const Brx& aType);
     static void WriteHeaderConnectionClose(WriterHttpHeader& aWriter);
@@ -249,7 +249,7 @@ class ReaderHttpRequest : public ReaderHttpHeader
 {
     static const TUint kMaxMethodBytes = 20;
     static const TUint kMaxUriBytes = 200;
-public:    
+public:
     ReaderHttpRequest(Environment& aEnv, IReader& aReader);
     ~ReaderHttpRequest();
     void Read(TUint aTimeoutMs = 0);

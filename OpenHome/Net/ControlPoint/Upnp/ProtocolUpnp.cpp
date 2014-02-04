@@ -162,12 +162,13 @@ void InvocationUpnp::ReadResponse()
 
 void InvocationUpnp::WriteHeaders(WriterHttpRequest& aWriterRequest, const Uri& aUri, TUint aBodyBytes)
 {
+    ASSERT(aUri.Port()!=Uri::kPortNotSpecified);
     const Brn kContentType("text/xml; charset=\"utf-8\"");
     const Brn kSoapAction("SOAPACTION");
 
     aWriterRequest.WriteMethod(Http::kMethodPost, aUri.PathAndQuery(), Http::eHttp10);
 
-    Http::WriteHeaderHostAndPort(aWriterRequest, aUri);
+    Http::WriteHeaderHostAndPort(aWriterRequest, aUri.Host(), aUri.Port());
     Http::WriteHeaderContentLength(aWriterRequest, aBodyBytes);
     Http::WriteHeaderContentType(aWriterRequest, kContentType);
 
@@ -346,6 +347,8 @@ void EventUpnp::Interrupt()
 
 void EventUpnp::SubscribeWriteRequest(const Uri& aPublisher, const Uri& aSubscriber, TUint aDurationSecs)
 {
+    ASSERT(aPublisher.Port()!=Uri::kPortNotSpecified);
+
     const Brn kRequestMethod("SUBSCRIBE");
     const Brn kMethodCallback("CALLBACK");
     const Brn kMethodNt("NT");
@@ -354,7 +357,7 @@ void EventUpnp::SubscribeWriteRequest(const Uri& aPublisher, const Uri& aSubscri
     WriterHttpRequest writerRequest(writeBuffer);
 
     writerRequest.WriteMethod(kRequestMethod, aPublisher.PathAndQuery(), Http::eHttp11);
-    Http::WriteHeaderHostAndPort(writerRequest, aPublisher);
+    Http::WriteHeaderHostAndPort(writerRequest, aPublisher.Host(), aPublisher.Port());
 
     IWriterAscii& writerField = writerRequest.WriteHeaderField(kMethodCallback);
     writerField.Write('<');
@@ -404,6 +407,7 @@ void EventUpnp::SubscribeReadResponse(Brh& aSid, TUint& aDurationSecs)
 
 void EventUpnp::RenewSubscriptionWriteRequest(const Uri& aPublisher, TUint aDurationSecs)
 {
+    ASSERT(aPublisher.Port()!=Uri::kPortNotSpecified);
     const Brn kRequestMethod("SUBSCRIBE");
     const Brn kMethodCallback("CALLBACK");
     const Brn kMethodNt("NT");
@@ -413,7 +417,7 @@ void EventUpnp::RenewSubscriptionWriteRequest(const Uri& aPublisher, TUint aDura
     WriterAscii writerAscii(writeBuffer);
 
     writerRequest.WriteMethod(kRequestMethod, aPublisher.PathAndQuery(), Http::eHttp11);
-    Http::WriteHeaderHostAndPort(writerRequest, aPublisher);
+    Http::WriteHeaderHostAndPort(writerRequest, aPublisher.Host(), aPublisher.Port());
     WriteHeaderSid(writerRequest, iSubscription.Sid());
     WriteHeaderTimeout(writerRequest, aDurationSecs);
     writerAscii.WriteNewline();
@@ -422,13 +426,14 @@ void EventUpnp::RenewSubscriptionWriteRequest(const Uri& aPublisher, TUint aDura
 
 void EventUpnp::UnsubscribeWriteRequest(const Uri& aPublisher, const Brx& aSid)
 {
+    ASSERT(aPublisher.Port()!=Uri::kPortNotSpecified);
     const Brn kRequestMethod("UNSUBSCRIBE");
     Sws<1024> writeBuffer(iSocket);
     WriterHttpRequest writerRequest(writeBuffer);
     WriterAscii writerAscii(writeBuffer);
 
     writerRequest.WriteMethod(kRequestMethod, aPublisher.PathAndQuery(), Http::eHttp11);
-    Http::WriteHeaderHostAndPort(writerRequest, aPublisher);
+    Http::WriteHeaderHostAndPort(writerRequest, aPublisher.Host(), aPublisher.Port());
     WriteHeaderSid(writerRequest, aSid);
     writerAscii.WriteNewline();
     writerRequest.WriteFlush();
