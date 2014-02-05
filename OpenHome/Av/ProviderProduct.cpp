@@ -161,9 +161,11 @@ void ProviderProduct::Standby(IDvInvocation& aInvocation, IDvInvocationResponseB
     aInvocation.EndResponse();
 }
 
-void ProviderProduct::SetStandby(IDvInvocation& aInvocation, TBool /*aValue*/)
+void ProviderProduct::SetStandby(IDvInvocation& aInvocation, TBool aValue)
 {
-    FaultCode::Report(aInvocation, FaultCode::kActionNotImplemented); // FIXME
+    iProduct.SetStandby(aValue);
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderProduct::SourceCount(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
