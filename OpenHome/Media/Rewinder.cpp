@@ -136,15 +136,8 @@ Rewinder::~Rewinder()
 void Rewinder::TryBuffer(Msg* aMsg)
 {
     if (iBuffering > 0) {
-        try {
-            Msg* copy = MsgCloner::NewRef(*aMsg);
-            iQueueNext->Enqueue(copy);
-        }
-        catch (AllocatorNoMemory&) {
-            // can't clone msg; push back onto head of current queue so memory isn't lost
-            iQueueCurrent->EnqueueAtHead(aMsg);
-            throw; // can't do anything other than pass exception on now
-        }
+        Msg* copy = MsgCloner::NewRef(*aMsg);
+        iQueueNext->Enqueue(copy);
     }
 }
 

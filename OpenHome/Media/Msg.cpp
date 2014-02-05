@@ -40,8 +40,8 @@ void AllocatorBase::Free(Allocated* aPtr)
 {
     iLock.Wait();
     iCellsUsed--;
-    iLock.Signal();
     iFree.Write(aPtr);
+    iLock.Signal();
 }
 
 TUint AllocatorBase::CellsTotal() const
@@ -88,7 +88,7 @@ void AllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCell
 
 AllocatorBase::AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator)
     : iFree(aNumCells)
-    , iLock("PLAL")
+    , iLock("PAL1")
     , iName(aName)
     , iCellsTotal(aNumCells)
     , iCellBytes(aCellBytes)
@@ -102,16 +102,10 @@ AllocatorBase::AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellByt
 
 Allocated* AllocatorBase::DoAllocate()
 {
-    Allocated* cell;
-    try {
-        cell = iFree.Read(1); // FIXME - use ReadImmediate instead
-        cell->iRefCount = 1;
-    }
-    catch (Timeout& ) {
-        Log::Print("AllocatorNoMemory for %s\n", iName);
-        THROW(AllocatorNoMemory);
-    }
     iLock.Wait();
+    Allocated* cell = iFree.Read();
+    ASSERT_DEBUG(cell->iRefCount == 0);
+    cell->iRefCount = 1;
     iCellsUsed++;
     if (iCellsUsed > iCellsUsedMax) {
         iCellsUsedMax = iCellsUsed;
@@ -179,7 +173,7 @@ void Allocated::Clear()
 Allocated::Allocated(AllocatorBase& aAllocator)
     : iAllocator(aAllocator)
     , iLock("ALOC")
-    , iRefCount(1)
+    , iRefCount(0)
 {
 }
 

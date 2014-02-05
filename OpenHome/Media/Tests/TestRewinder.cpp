@@ -51,7 +51,6 @@ private:
     void SetLastCount(TByte aCount);
     MsgAudioEncoded* CreateAudio();
     Msg* GenerateMsg(EMsgType aType);
-    void TestAllocatorExhaustion();
     void TestStop();
     void TestTrySeekToStart();
     void TestUpstreamRequestPassThrough();
@@ -159,7 +158,6 @@ SuiteRewinder::SuiteRewinder(const TChar* aName)
 SuiteRewinder::SuiteRewinder()
     : SuiteUnitTest("Rewinder tests")
 {
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion), "TestAllocatorExhaustion");
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestStop), "TestStop");
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart), "TestTrySeekToStart");
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough), "TestUpstreamRequestPassThrough");
@@ -447,16 +445,6 @@ void SuiteRewinder::PullFlush()
     iLastMsgType = EMsgFlush;
     PullAndProcess();
     iLastMsgType = tmpType;
-}
-
-void SuiteRewinder::TestAllocatorExhaustion()
-{
-    // test that pulling kMsgAudioEncodedCount+1 into Rewinder causes AllocatorNoMemory to be thrown
-    for (TUint i = 0; i < kPreAudioMsgCount+kMsgAudioEncodedCount-1; i++)
-    {
-        PullAndProcess();
-    }
-    TEST_THROWS(iRewinder->Pull(), AllocatorNoMemory);
 }
 
 void SuiteRewinder::TestStop()
