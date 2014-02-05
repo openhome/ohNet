@@ -79,7 +79,10 @@ class Config:
             
             aDut.playlist.AddSubscriber( _EventCb )
             playingEvent.clear()
-            aDut.playlist.SeekIndex( self.track )
+            if self.track != '-':
+                aDut.playlist.SeekIndex( self.track )
+            else:
+                aDut.playlist.Play()
             playingEvent.wait( 5 )
             aDut.playlist.RemoveSubscriber( _EventCb )
             self.listorder = aDut.playlist.idArray
@@ -190,7 +193,7 @@ class Config:
         def Check( self, aDut ):
             "Check outcome on specified renderer"
             plLen   = self.precon.plLen
-            start   = self.precon.track
+            track   = self.precon.track
             repeat  = self.precon.repeat
             shuffle = self.precon.shuffle
             seek    = self.stim.seek
@@ -199,10 +202,15 @@ class Config:
             
             for id in self.stim.playorder:
                 meas.append( aDut.playlist.PlaylistIndex( id ))
+
+            if track == '-':
+                start = 0       # started by Play() - use 0 as calculation index
+            else:
+                start = track
                 
             self.log.Info( '' )
-            self.log.Info( self.dev, 'Tracks: %d,  Start: %d,  Repeat: %s,  Shuffle: %s, Seek: %s' \
-                           % (plLen, start, repeat, shuffle, seek) )
+            self.log.Info( self.dev, 'Tracks: %d,  Start: %s,  Repeat: %s,  Shuffle: %s, Seek: %s' \
+                           % (plLen, str( track ), repeat, shuffle, seek) )
             self.log.Info( '', 'Actual:   %s' % meas )
                 
             if shuffle == 'off':
@@ -226,7 +234,7 @@ class Config:
                 self.log.FailUnless( self.dev, meas==exp, 'Playback order')
                 
             else:
-                # check playlist contains expected tracks (any order after 1st)
+                # check playlist contains expected tracks (any order)
                 missing = range( 0, plLen )
                 invalid = []
                 extra   = []
@@ -251,8 +259,9 @@ class Config:
                                 'Invalid track(s) in list %s' % invalid )
                 self.log.FailIf( self.dev, len( missing ),
                                 'Missing track(s) from list %s' % missing )
-                self.log.FailUnless( self.dev, meas[0]==start,
-                    'Actual/Expected 1st track %d/%d' % (meas[0], start ) )
+                if not (track=='-' and shuffle=='on'):
+                    self.log.FailUnless( self.dev, meas[0]==start,
+                        'Actual/Expected 1st track %d/%d' % (meas[0], start ) )
             self.log.Info( '' )
                         
 
@@ -380,7 +389,11 @@ configTable = \
     # 'Setup' is the setup order -> Playlist BEFORE/AFTER modes 
     # 'Track' is the start track for the test
     # 'Seek'  is the seek direction for navgating playback
-    #                           
+    #
+    # Macros:    @N: last track in list
+    #            @m: 1 <= track < last track
+    #            -:  don't seek specific track, just Play()
+    #  
     # Id    Setup  Track    Rpt   Shfl   Seek 
     ( 10, 'before',  '0', 'off', 'off', 'next' ), 
     ( 11, 'before',  '0', 'off', 'off', 'previous' ), 
@@ -409,32 +422,50 @@ configTable = \
     ( 36, 'before', '@N',  'on',  'on', 'next' ), 
     ( 37, 'before', '@N',  'on',  'on', 'previous' ), 
     
-    ( 40,  'after',  '0', 'off', 'off', 'next' ), 
-    ( 41,  'after',  '0', 'off', 'off', 'previous' ), 
-    ( 42,  'after',  '0', 'off',  'on', 'next' ), 
-    ( 43,  'after',  '0', 'off',  'on', 'previous' ), 
-    ( 44,  'after',  '0',  'on', 'off', 'next' ), 
-    ( 45,  'after',  '0',  'on', 'off', 'previous' ), 
-    ( 46,  'after',  '0',  'on',  'on', 'next' ), 
-    ( 47,  'after',  '0',  'on',  'on', 'previous' ), 
+    ( 40, 'before', '-',  'off', 'off', 'next' ), 
+    ( 41, 'before', '-',  'off', 'off', 'previous' ), 
+    ( 42, 'before', '-',  'off',  'on', 'next' ), 
+    ( 43, 'before', '-',  'off',  'on', 'previous' ), 
+    ( 44, 'before', '-',   'on', 'off', 'next' ), 
+    ( 45, 'before', '-',   'on', 'off', 'previous' ), 
+    ( 46, 'before', '-',   'on',  'on', 'next' ), 
+    ( 47, 'before', '-',   'on',  'on', 'previous' ), 
     
-    ( 50,  'after', '@m', 'off', 'off', 'next' ), 
-    ( 51,  'after', '@m', 'off', 'off', 'previous' ), 
-    ( 52,  'after', '@m', 'off',  'on', 'next' ), 
-    ( 53,  'after', '@m', 'off',  'on', 'previous' ), 
-    ( 54,  'after', '@m',  'on', 'off', 'next' ), 
-    ( 55,  'after', '@m',  'on', 'off', 'previous' ), 
-    ( 56,  'after', '@m',  'on',  'on', 'next' ), 
-    ( 57,  'after', '@m',  'on',  'on', 'previous' ), 
+    ( 50,  'after',  '0', 'off', 'off', 'next' ), 
+    ( 51,  'after',  '0', 'off', 'off', 'previous' ), 
+    ( 52,  'after',  '0', 'off',  'on', 'next' ), 
+    ( 53,  'after',  '0', 'off',  'on', 'previous' ), 
+    ( 54,  'after',  '0',  'on', 'off', 'next' ), 
+    ( 55,  'after',  '0',  'on', 'off', 'previous' ), 
+    ( 56,  'after',  '0',  'on',  'on', 'next' ), 
+    ( 57,  'after',  '0',  'on',  'on', 'previous' ), 
     
-    ( 60,  'after', '@N', 'off', 'off', 'next' ), 
-    ( 61,  'after', '@N', 'off', 'off', 'previous' ), 
-    ( 62,  'after', '@N', 'off',  'on', 'next' ), 
-    ( 63,  'after', '@N', 'off',  'on', 'previous' ), 
-    ( 64,  'after', '@N',  'on', 'off', 'next' ), 
-    ( 65,  'after', '@N',  'on', 'off', 'previous' ), 
-    ( 66,  'after', '@N',  'on',  'on', 'next' ), 
-    ( 67,  'after', '@N',  'on',  'on', 'previous' )
+    ( 60,  'after', '@m', 'off', 'off', 'next' ), 
+    ( 61,  'after', '@m', 'off', 'off', 'previous' ), 
+    ( 62,  'after', '@m', 'off',  'on', 'next' ), 
+    ( 63,  'after', '@m', 'off',  'on', 'previous' ), 
+    ( 64,  'after', '@m',  'on', 'off', 'next' ), 
+    ( 65,  'after', '@m',  'on', 'off', 'previous' ), 
+    ( 66,  'after', '@m',  'on',  'on', 'next' ), 
+    ( 67,  'after', '@m',  'on',  'on', 'previous' ), 
+    
+    ( 70,  'after', '@N', 'off', 'off', 'next' ), 
+    ( 71,  'after', '@N', 'off', 'off', 'previous' ), 
+    ( 72,  'after', '@N', 'off',  'on', 'next' ), 
+    ( 73,  'after', '@N', 'off',  'on', 'previous' ), 
+    ( 74,  'after', '@N',  'on', 'off', 'next' ), 
+    ( 75,  'after', '@N',  'on', 'off', 'previous' ), 
+    ( 76,  'after', '@N',  'on',  'on', 'next' ), 
+    ( 77,  'after', '@N',  'on',  'on', 'previous' ),
+
+    ( 80, 'after',  '-',  'off', 'off', 'next' ), 
+    ( 81, 'after',  '-',  'off', 'off', 'previous' ), 
+    ( 82, 'after',  '-',  'off',  'on', 'next' ), 
+    ( 83, 'after',  '-',  'off',  'on', 'previous' ), 
+    ( 84, 'after',  '-',   'on', 'off', 'next' ), 
+    ( 85, 'after',  '-',   'on', 'off', 'previous' ), 
+    ( 86, 'after',  '-',   'on',  'on', 'next' ), 
+    ( 87, 'after',  '-',   'on',  'on', 'previous' ) 
     ]
 
 
