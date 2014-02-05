@@ -120,7 +120,8 @@ void RadioPresetsTuneIn::DoRefresh()
         // FIXME - try sending If-Modified-Since header with request. See rfr2616 14.25
         // ... this may require that we use http 1.1 in the request, so cope with a chunked response
         iWriterRequest.WriteMethod(Http::kMethodGet, iRequestUri.PathAndQuery(), Http::eHttp10);
-        Http::WriteHeaderHostAndPort(iWriterRequest, iRequestUri);
+        const TUint port = (iRequestUri.Port() == -1? 80 : (TUint)iRequestUri.Port());
+        Http::WriteHeaderHostAndPort(iWriterRequest, iRequestUri.Host(), port);
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
 
