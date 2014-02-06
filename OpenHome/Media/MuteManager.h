@@ -73,6 +73,8 @@ public:
 public:  // from IMute
     void Mute();
     void Unmute();
+public:  // XXX enhance IMute generally?
+    TBool Muted() const { return iMuted; }
 public: // from IMuteObservable
     void SetObserver(IMuteObserver& aObserver);
 private:
