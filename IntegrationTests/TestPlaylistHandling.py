@@ -103,6 +103,7 @@ class Config:
             if self.track != -1:
                 durationEvt.clear()
                 aDut.playlist.SeekIndex( self.track )
+                time.sleep(0.1)                         # Workaround #789 ###########################################
                 if self.state == 'Stopped':
                     aDut.playlist.Stop()
                 elif self.state in ['Playing', 'Paused']:
