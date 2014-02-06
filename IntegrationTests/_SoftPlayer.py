@@ -76,6 +76,8 @@ class SoftPlayer( BASE.Component ):
     def __Log( self ):
         "Log data received from stdout on SoftPlayer"
         exception = False
+        
+        # running - handle log messages until shutdown called
         while not self.shutdown:
             msg = self.proc.stdout.readline()
             if 'Unhandled' in msg:
@@ -87,10 +89,15 @@ class SoftPlayer( BASE.Component ):
                 self.log.Fail( self.dev, '%s' % msg )
                 self.shutdown = True        # force loop exit        
             
-        msg = self.proc.stdout.readline()   # clear out remaining messages        
+        # shutting down - clear out remaining messages and exit logging
+        msg = self.proc.stdout.readline()        
         while msg:
-            self.log.Info( self.dev, '%s' % msg )
-            msg = self.proc.stdout.readline()        
+            if not exception: 
+                self.log.Info( self.dev, '%s' % msg )
+            else:
+                self.log.Fail( self.dev, '%s' % msg )
+            msg = self.proc.stdout.readline()
+        self.log.Info( self.dev, 'SoftPlayer logger shut down' )
 
     def __GetHost( self ):
         "Retrieve host adapter to use for player"
