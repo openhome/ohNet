@@ -51,10 +51,10 @@ Msg* Splitter::ProcessMsg(MsgSilence* aMsg)
     return aMsg->Clone();
 }
 
-Msg* Splitter::ProcessMsg(MsgPlayable* aMsg)
+Msg* Splitter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
-    aMsg->AddRef();
-    return aMsg;
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Splitter::ProcessMsg(MsgDecodedStream* aMsg)

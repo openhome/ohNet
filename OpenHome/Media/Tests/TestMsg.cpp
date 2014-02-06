@@ -344,6 +344,7 @@ void SuiteAllocator::Test()
     TEST(allocator->CellsUsed() == kNumTestCells);
     TEST(allocator->CellsUsedMax() == kNumTestCells);
     for (TUint i=0; i<kNumTestCells; i++) {
+        cells[i]->iRefCount--; // clear ref from Allocate() to avoid assertion if we re-Allocate() this object
         allocator->Free(cells[i]);
         TEST(allocator->CellsUsed() == kNumTestCells - i - 1);
         TEST(allocator->CellsUsedMax() == kNumTestCells);

@@ -447,7 +447,8 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
     try {
         LOG(kMedia, "ProtocolHttp::Stream send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
-        Http::WriteHeaderHostAndPort(iWriterRequest, iUri);
+        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
         iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
         Http::WriteHeaderConnectionClose(iWriterRequest);
         if (!suppressIcyHeader) {

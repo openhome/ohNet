@@ -12,8 +12,6 @@
 
 #include <limits.h>
 
-EXCEPTION(AllocatorNoMemory); // heaps are expected to be setup to avoid this.  Any instance of this exception indicates a system design error.
-
 namespace OpenHome {
 namespace Media {
 
@@ -36,7 +34,7 @@ protected:
 private: // from Av::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 protected:
-    Fifo<Allocated*> iFree;
+    FifoLiteDynamic<Allocated*> iFree;
 private:
     mutable Mutex iLock;
     const TChar* iName;
@@ -76,6 +74,7 @@ class Logger;
 class Allocated
 {
     friend class AllocatorBase;
+    friend class SuiteAllocator;
     friend class Logger;
 public:
     void AddRef();
