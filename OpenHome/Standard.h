@@ -10,10 +10,10 @@ namespace OpenHome {
 
 #define ASSERT(x)                             \
     if(!(x)) {                                \
-        CallAssertHandler(__FILE__,__LINE__); \
+        OpenHome::CallAssertHandler(__FILE__,__LINE__); \
     }
 
-#define ASSERTS()  CallAssertHandler(__FILE__,__LINE__)
+#define ASSERTS()  OpenHome::CallAssertHandler(__FILE__,__LINE__)
 
 #ifdef DEFINE_DEBUG
 # define ASSERT_DEBUG(x) ASSERT(x)
