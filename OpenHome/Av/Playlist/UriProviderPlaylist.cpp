@@ -123,7 +123,7 @@ TBool UriProviderPlaylist::MovePrevious()
         iPendingCanPlay = ePlayYes;
     }
     else {
-        iPending = iDatabase.PrevTrackRef(ITrackDatabase::kTrackIdNone);
+        iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
         iPendingCanPlay = (iPending == NULL? ePlayNo : ePlayLater);
     }
     iPendingDirection = eBackwards;
