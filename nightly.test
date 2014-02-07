@@ -34,7 +34,6 @@ tests = '''
     TestConfigManager
     TestPowerManager
     TestClockPuller
-    TestPlaylist
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
