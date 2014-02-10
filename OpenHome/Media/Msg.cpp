@@ -11,13 +11,10 @@
 
 #include <string.h>
 #include <climits>
+#include <algorithm>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
-
-#ifndef MIN
-# define MIN(a, b) ((a) < (b)? (a) : (b))
-#endif // MIN
 
 // AllocatorBase
 
@@ -512,11 +509,11 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
                 // split this Ramp; the first portion rises to the intersection of the two ramps, the second drops to the lower final value
                 aSplitPos = intersectX;
                 aSplit.iStart = intersectY;
-                aSplit.iEnd = MIN(iEnd, rampEnd);
+                aSplit.iEnd = std::min(iEnd, rampEnd);
                 aSplit.iDirection = EDown;
                 aSplit.iEnabled = true;
                 iDirection = EUp;
-                iStart = MIN(iStart, aStart);
+                iStart = std::min(iStart, aStart);
                 iEnd = intersectY;
             }
         }
@@ -527,8 +524,8 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
 
 void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
 {
-    iStart = MIN(iStart, aRequestedStart);
-    iEnd = MIN(iEnd, aRequestedEnd);
+    iStart = std::min(iStart, aRequestedStart);
+    iEnd = std::min(iEnd, aRequestedEnd);
     if (iStart == iEnd) {
         iDirection = ENone;
     }
