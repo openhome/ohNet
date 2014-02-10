@@ -51,7 +51,6 @@ private:
     void SetLastCount(TByte aCount);
     MsgAudioEncoded* CreateAudio();
     Msg* GenerateMsg(EMsgType aType);
-    void TestAllocatorExhaustion();
     void TestStop();
     void TestTrySeekToStart();
     void TestUpstreamRequestPassThrough();
@@ -159,7 +158,6 @@ SuiteRewinder::SuiteRewinder(const TChar* aName)
 SuiteRewinder::SuiteRewinder()
     : SuiteUnitTest("Rewinder tests")
 {
-    AddTest(MakeFunctor(*this, &SuiteRewinder::TestAllocatorExhaustion), "TestAllocatorExhaustion");
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestStop), "TestStop");
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestTrySeekToStart), "TestTrySeekToStart");
     AddTest(MakeFunctor(*this, &SuiteRewinder::TestUpstreamRequestPassThrough), "TestUpstreamRequestPassThrough");
@@ -449,16 +447,6 @@ void SuiteRewinder::PullFlush()
     iLastMsgType = tmpType;
 }
 
-void SuiteRewinder::TestAllocatorExhaustion()
-{
-    // test that pulling kMsgAudioEncodedCount+1 into Rewinder causes AllocatorNoMemory to be thrown
-    for (TUint i = 0; i < kPreAudioMsgCount+kMsgAudioEncodedCount-1; i++)
-    {
-        PullAndProcess();
-    }
-    TEST_THROWS(iRewinder->Pull(), AllocatorNoMemory);
-}
-
 void SuiteRewinder::TestStop()
 {
     // test that normal sequence can be pulled, then TryStop to tell Rewinder
@@ -470,7 +458,7 @@ void SuiteRewinder::TestStop()
     {
         PullAndProcess();
     }
-    iRewinder->Stop(iTrackId, iStreamId);
+    iRewinder->Stop();
     for (TUint i = 0; i < kPostTryStopAudioCount; i++)
     {
         PullAndProcess();
@@ -522,9 +510,7 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
         PullAndProcess();
     }
 
-    // should ASSERT if TrySeek called while buffering current track
-    TEST_THROWS(iStreamHandler->TrySeek(0,0,0), AssertionFailed);
-    // TrySeek should be passed through while buffering if not current track or stream
+    // TrySeek should be passed through, regardless of buffering state
     // non-current track
     seekRes = iStreamHandler->TrySeek(1,0,1);
     TEST(seekRes == iCurrentFlushId);
@@ -535,7 +521,7 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 2);
-    // non-current track or stream
+    // non-current track and stream
     seekRes = iStreamHandler->TrySeek(1,1,3);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
@@ -560,7 +546,7 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
 
     // now call Stop and repeat calls - ALL calls should be passed through afterwards
-    iRewinder->Stop(iTrackId, iStreamId);
+    iRewinder->Stop();
     // TrySeek on current track should succeed when no longer buffering
     seekRes = iStreamHandler->TrySeek(0,0,0);
     TEST(seekRes == iCurrentFlushId);

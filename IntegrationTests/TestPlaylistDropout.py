@@ -2,13 +2,12 @@
 """TestPlaylistDropout - test for audio dropout in playlists
 
 Parameters:
-    arg#1 - Device Under Test (Sender)
-    arg#2 - Device Under Test (Receiver/Repeater) - optional (None = not present)
-    arg#3 - Device Under Test (Receiver/Slave) - optional (None = not present)
+    arg#1 - Sender ['local' for internal SoftPlayer]
+    arg#2 - Receiver/Repeater ['local' for internal SoftPlayer] - optional (None = not present)
+    arg#3 - Receiver/Slave ['local' for internal SoftPlayer] - optional (None = not present)
     arg#4 - Test duration (secs) or 'forever'
     
-This verifies playlist audio output by the DUT does not suffer from audio
-dropout.
+This verifies playlist audio output by the DUT does not suffer from audio dropout.
 """ 
 
 # Differences from DS test:
@@ -22,6 +21,7 @@ import Upnp.ControlPoints.Volkano       as Volkano
 import Upnp.ControlPoints.MediaServer   as Server
 import Utils.Network.HttpServer         as HttpServer
 import Utils.Common                     as Common
+import _SoftPlayer                  as SoftPlayer
 import LogThread
 import Path
 import os
@@ -42,6 +42,9 @@ class TestPlaylistDropout( BASE.BaseTest ):
         self.receiver     = None
         self.slave        = None
         self.server       = None
+        self.soft1        = None
+        self.soft2        = None
+        self.soft3        = None
         self.playing      = threading.Event()
         self.durationDone = threading.Event() 
         BASE.BaseTest.__init__( self )
@@ -73,6 +76,9 @@ class TestPlaylistDropout( BASE.BaseTest ):
         tracks = Common.GetTracks( kTrackList, self.server )
 
         # create sender, clear playlist and subscribe to events
+        if senderName.lower() == 'local':
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            senderName = 'TestSender:SoftPlayer'
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
         if not receiverName and not slaveName:
@@ -84,6 +90,9 @@ class TestPlaylistDropout( BASE.BaseTest ):
                 
         # create and connect receiver and slave (where specified)
         if receiverName:
+            if receiverName.lower() == 'local':
+                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+                receiverName = 'TestRcvr:SoftPlayer'
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
@@ -93,6 +102,9 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.receiver.receiver.Play()
             
         if slaveName:
+            if slaveName.lower() == 'local':
+                self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestSlave' )
+                slaveName = 'TestSlave:SoftPlayer'
             self.slaveDev = slaveName.split( ':' )[0]
             self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True )
             self.slave.receiver.SetSender( self.receiver.sender.uri, self.receiver.sender.metadata )
@@ -160,6 +172,12 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.slave.Shutdown()
         if self.server:
             self.server.Shutdown()
+        if self.soft1:
+            self.soft1.Shutdown()
+        if self.soft2:
+            self.soft2.Shutdown()
+        if self.soft3:
+            self.soft3.Shutdown()
         BASE.BaseTest.Cleanup( self )                
         
     def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):

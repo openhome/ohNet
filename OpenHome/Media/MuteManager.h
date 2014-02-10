@@ -10,6 +10,20 @@
 namespace OpenHome {
 namespace Media {
 
+class IMuteObserver
+{
+public:
+    virtual void MuteChanged(TBool aValue) = 0;
+    virtual ~IMuteObserver() { /*NOP*/ }
+};
+
+class IMuteObservable
+{
+public:
+    virtual void SetObserver(IMuteObserver& aObserver) = 0;
+    virtual ~IMuteObservable() { /*NOP*/ }
+};
+
 // element interface
 class IMute
 {
@@ -52,11 +66,20 @@ private:
 // dummy mute element
 // generic code may expect lookup of particular mute by name to succeed
 // even when hardware does not actually provide capability
-class MuteNull : public IMute
+class MuteNull : public IMute, public IMuteObservable
 {
+public:
+    MuteNull();
 public:  // from IMute
     void Mute();
     void Unmute();
+public:  // XXX enhance IMute generally?
+    TBool Muted() const { return iMuted; }
+public: // from IMuteObservable
+    void SetObserver(IMuteObserver& aObserver);
+private:
+    IMuteObserver* iObserver;
+    TBool iMuted;
 };
 
 // manager interface

@@ -31,7 +31,7 @@ void ProtocolRtsp::OutputStream() {
 ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
 {
     //iTcpClient.LogVerbose(true);
-    iStreamId = ProtocolManager::kStreamIdInvalid;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStopped = false;
     iNextFlushId = MsgFlush::kIdInvalid;
     iUri.Replace(aUri);

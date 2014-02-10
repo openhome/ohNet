@@ -6,6 +6,8 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
+#include <OpenHome/Media/Rewinder.h>
+#include <OpenHome/Media/Logger.h>
 
 #include <algorithm>
 
@@ -43,7 +45,6 @@ void CodecBase::Construct(ICodecController& aController)
 CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement)
     : iMsgFactory(aMsgFactory)
     , iRewinder(aMsgFactory, aUpstreamElement)
-    , iUpstreamElement(iRewinder)
     , iDownstreamElement(aDownstreamElement)
     , iLock("CDCC")
     , iActiveCodec(NULL)
@@ -59,6 +60,9 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamPos(0)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread));
+    iLoggerRewinder = new Logger(iRewinder, "Rewinder");
+    //iLoggerRewinder->SetEnabled(true);
+    //iLoggerRewinder->SetFilter(Logger::EMsgAll);
 }
 
 CodecController::~CodecController()
@@ -72,6 +76,7 @@ CodecController::~CodecController()
     if (iPostSeekStreamInfo != NULL) {
         iPostSeekStreamInfo->RemoveRef();
     }
+    delete iLoggerRewinder;
 }
 
 void CodecController::AddCodec(CodecBase* aCodec)
@@ -141,8 +146,6 @@ void CodecController::CodecThread()
             iQueueTrackData = true;
             iStreamStarted = iStreamEnded = false;
             iRecognising = true;
-            const TUint trackId = iTrackId;
-            const TUint streamId = iStreamId;
 
             for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
@@ -152,12 +155,18 @@ void CodecController::CodecThread()
                 }
                 catch (CodecStreamStart&) {}
                 catch (CodecStreamEnded&) {}
-                // don't catch CodecStreamStopped - TryStop will have called Rewind/Stop if required
-                iLock.Wait();
-                iStreamStarted = iStreamEnded = false; // Rewind() will result in us receiving any additional EncodedStream msgs again
-                if (!iStreamStopped) {
-                    Rewind();
+                catch (CodecStreamStopped&) {}
+                catch (CodecStreamSeek&) {
+                    ASSERTS();
                 }
+                catch (CodecStreamFlush&) {
+                    break;
+                }
+                catch (CodecStreamCorrupt&) {}
+                catch (CodecStreamFeatureUnsupported&) {}
+                iLock.Wait();
+                iStreamStarted = iStreamEnded = false; // Rewind() will result in us receiving any additional Track or EncodedStream msgs again
+                Rewind();
                 iLock.Signal();
                 if (recognised) {
                     iActiveCodec = codec;
@@ -165,23 +174,21 @@ void CodecController::CodecThread()
                 }
             }
             iRecognising = false;
-            {
-                AutoMutex a(iLock);
-                if (iStreamStopped) {
-                    THROW(CodecStreamStopped);
-                }
-            }
-            iRewinder.Stop(trackId, streamId); // stop buffering audio
+            iRewinder.Stop(); // stop buffering audio
             if (iQuit) {
                 break;
             }
             if (iActiveCodec == NULL) {
                 Log::Print("Failed to recognise audio format, flushing stream...\n");
                 // FIXME - send error indication down the pipeline?
-                iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
-                if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-                    iConsumeExpectedFlush = true;
+                iLock.Wait();
+                if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+                    iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                        iConsumeExpectedFlush = true;
+                    }
                 }
+                iLock.Signal();
                 continue;
             }
 
@@ -232,10 +239,14 @@ void CodecController::CodecThread()
             iActiveCodec->StreamCompleted();
         }
         if (!iStreamStarted && !iStreamEnded) {
-            iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
-            if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-                iConsumeExpectedFlush = true;
+            iLock.Wait();
+            if (iExpectedFlushId == MsgFlush::kIdInvalid) {
+                iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                if (iExpectedFlushId != MsgFlush::kIdInvalid) {
+                    iConsumeExpectedFlush = true;
+                }
             }
+            iLock.Signal();
         }
         // push out any pending msgs, such as a quit
         if (iPendingMsg != NULL) {
@@ -258,7 +269,19 @@ void CodecController::Rewind()
 
 Msg* CodecController::PullMsg()
 {
-    Msg* msg = iUpstreamElement.Pull();
+    iLock.Wait();
+    if (iRecognising && iExpectedFlushId != MsgFlush::kIdInvalid) {
+        /* waiting for a Flush causes QueueTrackData() to discard all msgs.
+           If we're trying to recognise a new stream, Rewinder is active and will buffer all
+           the msgs we're busily discarding.  We'll probably run out of memory at this point.
+           Even if we don't, we don't want to be able to replay msgs that are certain to be
+           discarded.  Throwing here allows us to break out of the recognise loop and safely
+           allow QueueTrackData() to discard as much data as it wants. */
+        iLock.Signal();
+        THROW(CodecStreamFlush);
+    }
+    iLock.Signal();
+    Msg* msg = iLoggerRewinder->Pull();
     {
         AutoMutex a(iLock);
         msg = msg->Process(*this);
@@ -557,5 +580,11 @@ TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
     if (iStreamHandler == NULL) {
         return MsgFlush::kIdInvalid;
     }
-    return iStreamHandler->TryStop(aTrackId, aStreamId);
+    const TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+    if (flushId != MsgFlush::kIdInvalid) {
+        iExpectedFlushId = flushId;
+        iConsumeExpectedFlush = false;
+    }
+
+    return flushId;
 }

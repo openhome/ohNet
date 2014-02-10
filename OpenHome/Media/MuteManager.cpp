@@ -95,14 +95,36 @@ void MuteCollection::Unmute()
 // dummy mute element
 //
 
-void MuteNull::Mute()
+MuteNull::MuteNull()
+    : iObserver(NULL)
+    , iMuted(false)
 {
-    // NOP: dummy
+    // NOP
 }
 
+// XXX not thread-safe
+void MuteNull::Mute()
+{
+    TBool changed = (iMuted != true);
+    iMuted = true;
+    if (changed && (iObserver != NULL)) {
+        iObserver->MuteChanged(iMuted);
+    }
+}
+
+// XXX not thread-safe
 void MuteNull::Unmute()
 {
-    // NOP: dummy
+    TBool changed = (iMuted != false);
+    iMuted = false;
+    if (changed && (iObserver != NULL)) {
+        iObserver->MuteChanged(iMuted);
+    }
+}
+
+void MuteNull::SetObserver(IMuteObserver& aObserver)
+{
+    iObserver = &aObserver;
 }
 
 //

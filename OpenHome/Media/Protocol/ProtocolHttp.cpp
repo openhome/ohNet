@@ -156,7 +156,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
 ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
     iTotalBytes = iSeekPos = iOffset = 0;
-    iStreamId = ProtocolManager::kStreamIdInvalid;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
     iDataChunkSize = iDataChunkRemaining = 0;
     iContentProcessor = NULL;
@@ -220,13 +220,11 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
             Thread::Sleep(50);
         }
     }
-    if (res == EProtocolStreamStopped) {
+    iLock.Wait();
+    if (iStopped) {
         iSupply->OutputFlush(iNextFlushId);
     }
-    iLock.Wait();
-    // FIXME - clear track, stream ids
-    // TBool stopped = iStopped;
-    iStreamId = ProtocolManager::kStreamIdInvalid;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
     if (iContentProcessor != NULL) {
         iContentProcessor->Reset();
@@ -449,7 +447,8 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
     try {
         LOG(kMedia, "ProtocolHttp::Stream send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
-        Http::WriteHeaderHostAndPort(iWriterRequest, iUri);
+        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
         iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
         Http::WriteHeaderConnectionClose(iWriterRequest);
         if (!suppressIcyHeader) {

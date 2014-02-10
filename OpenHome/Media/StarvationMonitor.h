@@ -27,7 +27,7 @@ Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast s
     
 class IClockPuller;
 
-class StarvationMonitor : private MsgQueueFlushable, public IPipelineElementUpstream
+class StarvationMonitor : private MsgReservoir, public IPipelineElementUpstream
 {
     friend class SuiteStarvationMonitor;
 public:
@@ -50,7 +50,7 @@ private:
     MsgAudio* DoProcessMsgOut(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
-private: // from MsgQueueFlushable
+private: // from MsgReservoir
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);

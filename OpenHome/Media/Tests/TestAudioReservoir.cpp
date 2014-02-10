@@ -181,7 +181,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == NULL);
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         EMsgType msgType = types[i];
         GenerateMsg(msgType);
@@ -203,20 +203,11 @@ void SuiteAudioReservoir::Test()
     Thread::Sleep(25);
     TEST(iReservoir->Jiffies() == jiffies);
 
-    // Pull single audio msg.  Add Flush; check that next msg Pull()ed is the Flush and that reservoir is now empty.
+    // Pull single msg to unblock iThread
     msg = iReservoir->Pull();
     msg = msg->Process(*this);
-    TEST(iLastMsg == EMsgAudioPcm);
     ASSERT(msg == NULL);
     iSemUpstreamComplete.Wait();
-
-    GenerateMsg(EMsgFlush);
-    iSemUpstreamComplete.Wait();
-    msg = iReservoir->Pull();
-    msg = msg->Process(*this);
-    msg->RemoveRef();
-    TEST(iLastMsg == EMsgFlush);
-    TEST(iReservoir->Jiffies() == 0);
 }
 
 void SuiteAudioReservoir::GenerateMsg(EMsgType aType)

@@ -62,7 +62,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
-    void TuneInUsernameChanged(const Brx& aValue);
+    void TuneInUsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;

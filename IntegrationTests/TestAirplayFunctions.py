@@ -2,7 +2,7 @@
 """TestAirplayFunctions - test Net Aux source functionality.
  
 Parameters:
-    arg#1 - UPnP device to use as DUT
+    arg#1 - DUT ['local' for internal SoftPlayer]
     arg#2 - iTunes server (PC name)
     
 NOTES
@@ -20,6 +20,7 @@ import _FunctionalTest
 import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano
 import Instruments.Network.DacpClient as DacpClient
+import _SoftPlayer                    as SoftPlayer
 import math
 import sys
 import threading
@@ -37,6 +38,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
         self.dacp       = None
         self.dut        = None
+        self.soft       = None
         self.tracks     = None
         self.srcChanged = threading.Event()
 
@@ -49,6 +51,10 @@ class TestAirplayFunctions( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
+
+        if self.dutName.lower() == 'local':
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            self.dutName = 'TestDev:SoftPlayer'
 
         # setup self.dacp (iTunes) control
         self.dacp = DacpClient.DacpClient( itunesServer )
@@ -88,6 +94,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             except:
                 pass
         if self.dut: self.dut.Shutdown()
+        if self.soft: self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     def _CheckSelect( self ):

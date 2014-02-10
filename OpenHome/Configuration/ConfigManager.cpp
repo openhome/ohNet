@@ -69,16 +69,16 @@ TBool ConfigNum::IsValid(TInt aVal) const
     return true;
 }
 
-TUint ConfigNum::Subscribe(FunctorGeneric<TInt> aFunctor)
+TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
 {
     AutoMutex a(iMutex);
     return ConfigVal::Subscribe(aFunctor, iVal);
 }
 
-void ConfigNum::Write(TInt aVal)
+void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 {
     Bws<sizeof(TInt)> valBuf;
-    valBuf.Append(Arch::BigEndian4(aVal));
+    valBuf.Append(Arch::BigEndian4(aKvp.Value()));
     iConfigManager.ToStore(iId, valBuf);
 }
 
@@ -137,16 +137,16 @@ TBool ConfigChoice::IsValid(TUint aVal) const
     return true;
 }
 
-TUint ConfigChoice::Subscribe(FunctorGeneric<TUint> aFunctor)
+TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
 {
     AutoMutex a(iMutex);
     return ConfigVal::Subscribe(aFunctor, iSelected);
 }
 
-void ConfigChoice::Write(TUint aVal)
+void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 {
     Bws<sizeof(TUint)> valBuf;
-    valBuf.Append(Arch::BigEndian4(aVal));
+    valBuf.Append(Arch::BigEndian4(aKvp.Value()));
     iConfigManager.ToStore(iId, valBuf);
 }
 
@@ -200,15 +200,15 @@ TBool ConfigText::IsValid(const Brx& aVal) const
     return true;
 }
 
-TUint ConfigText::Subscribe(FunctorGeneric<const Brx&> aFunctor)
+TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
 {
     AutoMutex a(iMutex);
     return ConfigVal::Subscribe(aFunctor, iText);
 }
 
-void ConfigText::Write(const Brx& aVal)
+void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
 {
-    iConfigManager.ToStore(iId, aVal);
+    iConfigManager.ToStore(iId, aKvp.Value());
 }
 
 

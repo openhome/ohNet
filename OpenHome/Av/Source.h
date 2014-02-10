@@ -4,12 +4,9 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 namespace OpenHome {
-namespace Configuration{
-    class ConfigText;
-    class IConfigManagerWriter;
-}
 namespace Av {
 
 class IProduct;
@@ -53,7 +50,7 @@ protected:
 private: // from ISource
     void Initialise(IProduct& aProduct, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aConfigIdPrefix);
 private:
-    void NameChanged(const Brx& aName);
+    void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
 protected:
     TBool iActive;
 private:

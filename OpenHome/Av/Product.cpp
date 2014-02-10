@@ -42,11 +42,11 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     key.Replace(iConfigPrefix);
     key.Append(kConfigIdRoomBase);
     iConfigProductRoom = &aConfigReader.GetText(key);
-    iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductRoomChanged));
+    iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Product::ProductRoomChanged));
     key.Replace(iConfigPrefix);
     key.Append(kConfigIdNameBase);
     iConfigProductName = &aConfigReader.GetText(key);
-    iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<const Brx&>(*this, &Product::ProductNameChanged));
+    iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 
@@ -187,16 +187,16 @@ void Product::AppendTag(Bwx& aXml, const TChar* aTag, const Brx& aValue)
     aXml.Append('>');
 }
 
-void Product::ProductRoomChanged(const Brx& aValue)
+void Product::ProductRoomChanged(KeyValuePair<const Brx&>& aKvp)
 {
     AutoMutex a(iLockDetails);
-    iProductRoom.Replace(aValue);
+    iProductRoom.Replace(aKvp.Value());
 }
 
-void Product::ProductNameChanged(const Brx& aValue)
+void Product::ProductNameChanged(KeyValuePair<const Brx&>& aKvp)
 {
     AutoMutex a(iLockDetails);
-    iProductName.Replace(aValue);
+    iProductName.Replace(aKvp.Value());
 }
 
 void Product::SetCurrentSource(TUint aIndex)

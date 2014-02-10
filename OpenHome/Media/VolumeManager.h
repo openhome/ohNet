@@ -38,6 +38,22 @@ namespace Media {
 // generic class declarations
 //
 
+class IVolumeBalanceObserver
+{
+public:
+    virtual void UserBalanceChanged(TInt aValue) = 0;
+    virtual void UserVolumeChanged(TUint aValue) = 0;
+    virtual void UserVolumeLimitChanged(TUint aValue) = 0;
+    virtual ~IVolumeBalanceObserver() { /*NOP*/ }
+};
+
+class IVolumeBalanceObservable
+{
+public:
+    virtual void SetObserver(IVolumeBalanceObserver& aObserver) = 0;
+    virtual ~IVolumeBalanceObservable() { /*NOP*/ }
+};
+
 // fundamental interfaces
 class IVolume
 {
@@ -290,7 +306,7 @@ protected:
 };
 
 // concrete class with specific value limits
-class VolumeManagerDefault : public VolumeManager
+class VolumeManagerDefault : public VolumeManager, public IVolumeBalanceObservable
 {
 public:
     VolumeManagerDefault(IVolume& aLeftVolHardware, IVolume& aRightVolHardware, Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager);
@@ -301,6 +317,14 @@ public:  // from IVolumeManagerLimits
     TUint VolumeSteps() const;
     TUint VolumeMilliDbPerStep() const;
     TInt MaxUserBalance() const;
+public:  // overridden to add notification of observer (if any)
+    void SetUserVolume(TUint aValue);
+    void SetUserBalance(TInt aValue);
+    void SetUserVolumeLimit(TUint aValue);
+public:  // from IVolumeBalanceObservable
+    void SetObserver(IVolumeBalanceObserver& aObserver);
+private:
+    IVolumeBalanceObserver* iObserver;
 };
 
 //
