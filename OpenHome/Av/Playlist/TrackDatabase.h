@@ -55,6 +55,7 @@ public:
     virtual Media::Track* NextTrackRef(TUint aId) = 0;
     virtual Media::Track* PrevTrackRef(TUint aId) = 0;
     virtual Media::Track* TrackRefByIndex(TUint aIndex) = 0;
+    virtual Media::Track* TrackRefByIndexSorted(TUint aIndex) = 0;
 };
 
 class IShuffler
@@ -91,6 +92,7 @@ private: // from ITrackDatabaseReader
     Media::Track* NextTrackRef(TUint aId);
     Media::Track* PrevTrackRef(TUint aId);
     Media::Track* TrackRefByIndex(TUint aIndex);
+    Media::Track* TrackRefByIndexSorted(TUint aIndex);
 private:
     void GetTrackByIdLocked(TUint aId, Media::Track*& aTrack) const;
     TBool TryGetTrackById(TUint aId, Media::Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const;
@@ -116,6 +118,7 @@ private: // from ITrackDatabaseReader
     Media::Track* NextTrackRef(TUint aId);
     Media::Track* PrevTrackRef(TUint aId);
     Media::Track* TrackRefByIndex(TUint aIndex);
+    Media::Track* TrackRefByIndexSorted(TUint aIndex);
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
@@ -144,6 +147,7 @@ private: // from ITrackDatabaseReader
     Media::Track* NextTrackRef(TUint aId);
     Media::Track* PrevTrackRef(TUint aId);
     Media::Track* TrackRefByIndex(TUint aIndex);
+    Media::Track* TrackRefByIndexSorted(TUint aIndex);
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
