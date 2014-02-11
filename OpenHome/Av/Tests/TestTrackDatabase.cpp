@@ -119,8 +119,6 @@ private:
     void TrackRefByIndexSortedShuffleOn();
     void ModeToggleReshuffles();
     void NextTrackBeyondEndReshuffles();
-    void SeekIndexTrackAlreadyReturned();
-    void SeekIndexTrackNotAlreadyReturned();
 private:
     static const TUint kNumTracks = 16; // gives us ~1 in 21 trillion chance of shuffling tracks into their original order
     Media::AllocatorInfoLogger iInfoAggregator;
@@ -707,8 +705,6 @@ SuiteShuffler::SuiteShuffler()
     AddTest(MakeFunctor(*this, &SuiteShuffler::TrackRefByIndexSortedShuffleOn), "TrackRefByIndexSortedShuffleOn");
     AddTest(MakeFunctor(*this, &SuiteShuffler::ModeToggleReshuffles), "ModeToggleReshuffles");
     AddTest(MakeFunctor(*this, &SuiteShuffler::NextTrackBeyondEndReshuffles), "NextTrackBeyondEndReshuffles");
-    AddTest(MakeFunctor(*this, &SuiteShuffler::SeekIndexTrackAlreadyReturned), "SeekIndexTrackAlreadyReturned");
-    AddTest(MakeFunctor(*this, &SuiteShuffler::SeekIndexTrackNotAlreadyReturned), "SeekIndexTrackNotAlreadyReturned");
 }
 
 void SuiteShuffler::Setup()
@@ -978,104 +974,6 @@ void SuiteShuffler::NextTrackBeyondEndReshuffles()
         track->RemoveRef();
     }
     TEST(reshuffled);
-}
-
-void SuiteShuffler::SeekIndexTrackAlreadyReturned()
-{
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
-
-    static const TUint kInitialReads = 5;
-    static const TUint kSeekIndex = 3;
-    TUint id = ITrackDatabase::kTrackIdNone;
-    TUint seekId = ITrackDatabase::kTrackIdNone;
-    std::vector<TUint> idsNotToBeRepeated;
-    for (TUint i=0; i<kInitialReads; i++) {
-        Track* track = iReader->NextTrackRef(id);
-        id = track->Id();
-        if (i < kSeekIndex) {
-            idsNotToBeRepeated.push_back(id);
-        }
-        else if (i == kSeekIndex) {
-            seekId = id;
-        }
-        track->RemoveRef();
-    }
-
-    TUint seekIndex = 0;
-    for (TUint i=0; id!=seekId; i++) {
-        Track* track = static_cast<ITrackDatabaseReader*>(iDb)->TrackRefByIndex(i);
-        id = track->Id();
-        track->RemoveRef();
-        if (id == seekId) {
-            seekIndex = i;
-            break;
-        }
-    }
-
-    Track* track = iReader->TrackRefByIndex(seekIndex);
-    id = track->Id();
-    track->RemoveRef();
-    TUint count = 0;
-    for (;;) {
-        track = iReader->NextTrackRef(id);
-        if (track == NULL) {
-            break;
-        }
-        id = track->Id();
-        track->RemoveRef();
-        TEST(std::find(idsNotToBeRepeated.begin(), idsNotToBeRepeated.end(), id) == idsNotToBeRepeated.end());
-        count++;
-    }
-    TEST(count == kNumTracks - kSeekIndex - 1);
-}
-
-void SuiteShuffler::SeekIndexTrackNotAlreadyReturned()
-{
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
-
-    static const TUint kSeekIndex = 8;
-    TUint id = ITrackDatabase::kTrackIdNone;
-    TUint seekId = ITrackDatabase::kTrackIdNone;
-    std::vector<TUint> idsNotToBeRepeated;
-    for (TUint i=0; i<=kSeekIndex; i++) {
-        Track* track = iReader->NextTrackRef(id);
-        id = track->Id();
-        track->RemoveRef();
-        if (i < kSeekIndex) {
-            idsNotToBeRepeated.push_back(id);
-        }
-        else if (i == kSeekIndex) {
-            seekId = id;
-        }
-    }
-
-    TUint seekIndex = 0;
-    for (TUint i=0; id!=seekId; i++) {
-        Track* track = static_cast<ITrackDatabaseReader*>(iDb)->TrackRefByIndex(i);
-        id = track->Id();
-        track->RemoveRef();
-        if (id == seekId) {
-            seekIndex = i;
-            break;
-        }
-    }
-    seekIndex++; // want to call TrackRefByIndex for a track we haven't yet encountered
-
-    Track* track = iReader->TrackRefByIndex(seekIndex);
-    id = track->Id();
-    track->RemoveRef();
-    TUint count = 0;
-    for (;;) {
-        track = iReader->NextTrackRef(id);
-        if (track == NULL) {
-            break;
-        }
-        id = track->Id();
-        track->RemoveRef();
-        TEST(std::find(idsNotToBeRepeated.begin(), idsNotToBeRepeated.end(), id) == idsNotToBeRepeated.end());
-        count++;
-    }
-    Print("Expected %u, got %u\n", kNumTracks - kSeekIndex - 1, count);
 }
 
 
