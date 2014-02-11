@@ -204,6 +204,12 @@ Track* TrackDatabase::TrackRefByIndex(TUint aIndex)
     return track;
 }
 
+Track* TrackDatabase::TrackRefByIndexSorted(TUint /*aIndex*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 TBool TrackDatabase::TryGetTrackById(TUint aId, Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const
 {
     for (TUint i=aStartIndex; i<aEndIndex; i++) {
@@ -303,6 +309,7 @@ Track* Shuffler::NextTrackRef(TUint aId)
                     // we've run through the entire list
                     // prefer re-shuffling over repeating the order of tracks if we play again
                     std::random_shuffle(iShuffleList.begin(), iShuffleList.end());
+                    LogIds("NextTrackRef");
                 }
             }
             catch (TrackDbIdNotFound&) { }
@@ -366,6 +373,20 @@ Track* Shuffler::TrackRefByIndex(TUint aIndex)
         LogIds("TrackRefByIndex");
     }
         
+    return track;
+}
+
+Track* Shuffler::TrackRefByIndexSorted(TUint aIndex)
+{
+    Track* track = NULL;
+    AutoMutex a(iLock);
+    if (!iShuffle) {
+        track = iReader.TrackRefByIndex(aIndex);
+    }
+    else if (aIndex < iShuffleList.size()) {
+        track = iShuffleList[aIndex];
+        track->AddRef();
+    }
     return track;
 }
 
@@ -490,12 +511,18 @@ Track* Repeater::TrackRefByIndex(TUint aIndex)
     return iReader.TrackRefByIndex(aIndex);
 }
 
+Track* Repeater::TrackRefByIndexSorted(TUint /*aIndex*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Track* Repeater::PrevTrackRef(TUint aId)
 {
     AutoMutex a(iLock);
     Track* track = iReader.PrevTrackRef(aId);
     if (track == NULL && iRepeat) {
-        track = iReader.TrackRefByIndex(iTrackCount-1);
+        track = iReader.TrackRefByIndexSorted(iTrackCount-1);
     }
     return track;
 }
