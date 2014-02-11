@@ -48,6 +48,7 @@ Source::Source(const TChar* aSystemName, const TChar* aType)
     , iProduct(NULL)
     , iConfigName(NULL)
     , iConfigNameSubscriptionId(ConfigVal<const Brx&>::kSubscriptionIdInvalid)
+    , iConfigNameCreated(false)
 {
 }
 
@@ -56,7 +57,9 @@ Source::~Source()
     if (iConfigName != NULL) {
         iConfigName->Unsubscribe(iConfigNameSubscriptionId);
     }
-    delete iConfigName;
+    if (iConfigNameCreated) {
+        delete iConfigName;
+    }
 }
 
 TBool Source::IsActive() const
@@ -70,14 +73,20 @@ void Source::DoActivate()
     iProduct->Activate(*this);
 }
 
-void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager, const Brx& aConfigIdPrefix)
+void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManagerWriter, IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix)
 {
     iProduct = &aProduct;
     Bws<ConfigVal<const Brx&>::kMaxIdLength> key(aConfigIdPrefix);
     key.Append("Source.");
     key.Append(iSystemName);
     key.Append(".Name");
-    iConfigName = new ConfigText(aConfigManager, key, kMaxSystemNameBytes, iName);
+    if (aConfigManagerReader.HasText(key)) {
+        iConfigName = &aConfigManagerReader.GetText(key);
+        iConfigNameCreated = false;
+    } else {
+        iConfigName = new ConfigText(aConfigManagerWriter, key, kMaxSystemNameBytes, iName);
+        iConfigNameCreated = true;
+    }
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Source::NameChanged));
 }
 
