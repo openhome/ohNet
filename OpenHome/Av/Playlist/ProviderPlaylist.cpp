@@ -105,13 +105,20 @@ void ProviderPlaylist::NotifyTrackInserted(Track& /*aTrack*/, TUint /*aIdBefore*
     TrackDatabaseChanged();
 }
 
-void ProviderPlaylist::NotifyTrackDeleted(TUint /*aId*/, Track* /*aBefore*/, Track* /*aAfter*/)
+void ProviderPlaylist::NotifyTrackDeleted(TUint /*aId*/, Track* aBefore, Track* aAfter)
 {
+    /* Deleting one of many tracks in a playlist will result in a new track starting to play
+       and NotifyTrack() being called.  If we've just deleted the last track, we'll stop
+       receiving pipeline events so will need to manually reset the current track id. */
+    if (aBefore == NULL && aAfter == NULL) {
+        NotifyTrack(ITrackDatabase::kTrackIdNone);
+    }
     TrackDatabaseChanged();
 }
 
 void ProviderPlaylist::NotifyAllDeleted()
 {
+    NotifyTrack(ITrackDatabase::kTrackIdNone);
     TrackDatabaseChanged();
 }
 
@@ -397,7 +404,7 @@ void ProviderPlaylist::ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationRes
 
 void ProviderPlaylist::TrackDatabaseChanged()
 {
-    iTimerLock.Wait();;
+    iTimerLock.Wait();
     if (!iTimerActive) {
         iTimerActive = true;
         iTimer->FireIn(kIdArrayUpdateFrequencyMillisecs);
