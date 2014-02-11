@@ -24,6 +24,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
                  IPowerManager& aPowerManager, const Brx& aConfigPrefix)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
+    , iConfigReader(aConfigReader)
     , iConfigWriter(aConfigWriter)
     , iLock("PRDM")
     , iLockDetails("PRDD")
@@ -83,7 +84,7 @@ void Product::AddSource(ISource* aSource)
 {
     ASSERT(!iStarted);
     iSources.push_back(aSource);
-    aSource->Initialise(*this, iConfigWriter, iConfigPrefix);
+    aSource->Initialise(*this, iConfigWriter, iConfigReader, iConfigPrefix);
 }
 
 void Product::AddAttribute(const TChar* aAttribute)

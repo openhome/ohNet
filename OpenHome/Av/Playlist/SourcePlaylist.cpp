@@ -43,7 +43,7 @@ private: // from ISourcePlaylist
     void SeekAbsolute(TUint aSeconds);
     void SeekRelative(TUint aSeconds);
     void SeekToTrackId(TUint aId);
-    void SeekToTrackIndex(TUint aIndex);
+    TBool SeekToTrackIndex(TUint aIndex);
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -197,18 +197,19 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
     iLock.Signal();
 }
 
-void SourcePlaylist::SeekToTrackIndex(TUint aIndex)
+TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 {
     if (!IsActive()) {
         DoActivate();
     }
     AutoMutex a(iLock);
-    iPipeline.RemoveAll();
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
     if (track != NULL) {
         AutoAllocatedRef r(track);
+        iPipeline.RemoveAll();
         iPipeline.Begin(iUriProvider->Mode(), track->Id());
     }
+    return (track!=NULL);
 }
 
 void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)

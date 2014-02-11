@@ -66,7 +66,7 @@ template <class T>
 class ConfigVal : public IObservable<T>
 {
 public:
-    static const TUint kMaxIdLength = 32;
+    static const TUint kMaxIdLength = 48;  // XXX consistent naming: better called kMaxKeyBytes?!
     static const TUint kSubscriptionIdInvalid = 0;
 protected:
     ConfigVal(IConfigManagerWriter& aManager, const Brx& aId);

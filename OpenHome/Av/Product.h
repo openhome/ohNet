@@ -90,6 +90,7 @@ private: // from IInfoProvider
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
+    Configuration::IConfigManagerReader& iConfigReader;
     Configuration::IConfigManagerWriter& iConfigWriter;
     mutable Mutex iLock;
     Mutex iLockDetails;
