@@ -280,7 +280,7 @@ void Pipeline::Stop(TUint aHaltId)
 
 void Pipeline::RemoveCurrentStream()
 {
-    iStopper->RemoveCurrentStream();
+    iStopper->RemoveCurrentStream(!iBuffering);
 }
 
 TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
@@ -409,7 +409,7 @@ TUint Pipeline::NextFlushId()
 
 void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)
 {
-    iStopper->RemoveStream(aTrackId, aStreamId);
+    iStopper->RemoveStream(aTrackId, aStreamId, !iBuffering);
 }
 
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)

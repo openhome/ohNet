@@ -356,7 +356,7 @@ void SuiteStopper::Test()
     }
     TEST(iLastMsg == EMsgAudioPcm);
     TEST(iStopper->iState == Stopper::ERunning);
-    iStopper->RemoveCurrentStream();
+    iStopper->RemoveCurrentStream(true);
     iJiffies = 0;
     iNextGeneratedMsg = EMsgAudioPcm;
     do {
@@ -412,7 +412,7 @@ void SuiteStopper::Test()
     TEST(iPipelineHaltedCount == ++pipelineHaltedCount);
     TEST(iStopper->iState == Stopper::EHalted);
     TEST(iLastMsg == EMsgHalt);
-    iStopper->RemoveCurrentStream();
+    iStopper->RemoveCurrentStream(true);
     iStopper->Start();
     iAudioMsgsDue = 5;
     iNextGeneratedMsg = EMsgEncodedStream;

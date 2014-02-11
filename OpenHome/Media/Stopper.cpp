@@ -144,16 +144,16 @@ Msg* Stopper::Pull()
     return msg;
 }
 
-void Stopper::RemoveCurrentStream()
+void Stopper::RemoveCurrentStream(TBool aRampDown)
 {
     iLock.Wait();
-    DoRemoveCurrentStream();
+    DoRemoveCurrentStream(aRampDown);
     iLock.Signal();
 }
 
-void Stopper::DoRemoveCurrentStream()
+void Stopper::DoRemoveCurrentStream(TBool aRampDown)
 {
-    if (iState == EHalted || iState == EHaltPending) {
+    if (!aRampDown || iState == EHalted || iState == EHaltPending) {
         if (iStreamHandler != NULL) {
             /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
         }
@@ -165,11 +165,11 @@ void Stopper::DoRemoveCurrentStream()
     }
 }
 
-void Stopper::RemoveStream(TUint aTrackId, TUint aStreamId)
+void Stopper::RemoveStream(TUint aTrackId, TUint aStreamId, TBool aRampDown)
 {
     iLock.Wait();
     if (iTrackId == aTrackId && iStreamId == aStreamId) {
-        DoRemoveCurrentStream();
+        DoRemoveCurrentStream(aRampDown);
     }
     iLock.Signal();
 }

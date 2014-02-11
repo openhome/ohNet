@@ -32,6 +32,7 @@ PipelineManager::~PipelineManager()
     else {
         iFiller->StopNoHalt();
     }
+    iPipeline->RemoveCurrentStream();
     iLock.Signal();
     iIdManager->InvalidatePending();
     if (waitStop) {
