@@ -42,8 +42,9 @@ class Config:
     class Precon:
         "Configuration subclass for precondition info and setup"
         
-        def __init__( self, aState, aPlLen, aTrack, aSecs, aRepeat, aTracks, aLog, aDev ):
+        def __init__( self, aId, aState, aPlLen, aTrack, aSecs, aRepeat, aTracks, aLog, aDev ):
             "Initialise class data"
+            self.id            = aId
             self.state         = aState
             self.plLen         = None
             self.plLen         = self._SubstMacros( aPlLen )
@@ -51,6 +52,7 @@ class Config:
             self.secs          = aSecs
             self.repeat        = aRepeat
             self.duration      = None
+            self.evtTime       = -1
             self.durationEvent = threading.Event()
             self.idArrayEvent  = threading.Event()
             self.stoppedEvent  = threading.Event()
@@ -75,18 +77,19 @@ class Config:
             self.log.Info( self.dev, 'Added playlist of %d tracks' % self.plLen )
             aDut.playlist.repeat = self.repeat
             aDut.info.AddSubscriber( self._InfoEventCb )
+            aDut.time.AddSubscriber( self._TimeEventCb )
             
             if self.track != -1:
                 self.durationEvent.clear()
                 self.playingEvent.clear()
                 aDut.playlist.SeekIndex( self.track )
+                self.playingEvent.wait( 5 )                    
                 if self.state == 'Stopped':
                     self.stoppedEvent.clear()
                     aDut.playlist.Stop()
                     self.stoppedEvent.wait( 5 )
                     self.duration = None
                 elif self.state in ['Playing', 'Paused']:
-                    self.playingEvent.wait( 5 )                    
                     if self.secs == '@T':
                         self.durationEvent.wait( 5 )
                         self.duration = aDut.info.duration
@@ -99,16 +102,26 @@ class Config:
                         else:
                             self.log.Warn( self.dev, 'Duration value not updated' )  
                             self.secs = random.randint( 5, 95 )
-                        self.playingEvent.clear()
+                        self.timeEvent.clear()
                         aDut.playlist.SeekSecondAbsolute( self.secs )
-                        self.playingEvent.wait( 5 ) # wait to avoid race conds on seekSecsRel
+                        tries = 0
+                        while self.evtTime != self.secs and tries < 5:
+                            tries += 1
+                            self.timeEvent.wait( 2 )
+                            self.timeEvent.clear()
                     if self.state == 'Paused':
                         self.pausedEvent.clear()
                         aDut.playlist.Pause()
                         self.pausedEvent.wait( 5 )
+            aDut.time.RemoveSubscriber( self._TimeEventCb )
             aDut.info.RemoveSubscriber( self._InfoEventCb )
             aDut.playlist.RemoveSubscriber( self._PlaylistEventCb )
-            self.log.Info( self.dev, 'Preconditions setup' ) 
+            dutState = aDut.playlist.transportState
+            if dutState == self.state:
+                self.log.Info( self.dev, '[%d] Preconditions setup' % self.id )
+            else:
+                self.log.Fail( self.dev, '[%d] Actual/Required precondition state %s/%s' %
+                    (self.id, dutState, self.state) )
             
         def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values.
@@ -131,6 +144,12 @@ class Config:
             "Callback from Info service events"
             if aSvName == 'Duration' and aSvVal not in [0,'0']:
                 self.durationEvent.set()
+                
+        def _TimeEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
+            "Callback from Time service events"
+            if aSvName == 'Seconds':
+                self.evtTime = int( aSvVal )
+                self.timeEvent.set()
                 
         def _PlaylistEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
             "Callback from Playlist service events"
@@ -230,7 +249,7 @@ class Config:
 
             # wait a few secs (from time event/timeout) and check values
             time.sleep( delay1 )
-            if expState == 'Playing' and aDut.playlist.transportState == 'Playing':            
+            if expState == 'Playing':            
                 expSecs += delay1
                 (expState, expTrack, expSecs) = \
                     self._RecalcExpected( aDut, expState, expTrack, expSecs )
@@ -239,7 +258,7 @@ class Config:
             # wait a few more secs and check that values are changing correctly
             # (if Playing) or not changing as expected (if Paused, Stopped)
             time.sleep( delay2 )
-            if expState == 'Playing' and aDut.playlist.transportState == 'Playing':
+            if expState == 'Playing':
                 expSecs += delay2
                 (expState, expTrack, expSecs) = \
                     self._RecalcExpected( aDut, expState, expTrack, expSecs )
@@ -391,7 +410,7 @@ class Config:
         self.id   = aConf[0]
         self.dut  = aDut
         self.dev  = aDev
-        self.pre  = self.Precon( aConf[1], aConf[2], aConf[3],
+        self.pre  = self.Precon( self.id, aConf[1], aConf[2], aConf[3],
                                  aConf[4], aConf[5], aTracks, self.log, aDev )
         self.stim = self.Stimulus( aConf[6], aConf[7], aConf[8], self.pre )
         self.out  = self.Outcome( self.id, aConf[9], aConf[10], aConf[11],
