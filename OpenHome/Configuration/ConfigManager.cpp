@@ -224,9 +224,7 @@ ConfigManager::~ConfigManager() {}
 
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
 {
-    if (iClosed) {
-        ASSERTS();
-    }
+    ASSERT(!iClosed);
     if (HasNum(aId) || HasChoice(aId) || HasText(aId)) {
         THROW(ConfigIdExists);
     }
