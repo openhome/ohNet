@@ -232,6 +232,10 @@ void CodecController::CodecThread()
             catch (CodecStreamFeatureUnsupported&) {
                 // copy behaviour for Corrupt
             }
+            catch (CodecStreamStart&) {}
+            catch (CodecStreamEnded&) {
+                iStreamEnded = true;
+            }
         }
         catch (CodecStreamStopped&) {}
         catch (CodecStreamFlush&) {}

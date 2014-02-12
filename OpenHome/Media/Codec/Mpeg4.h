@@ -109,9 +109,9 @@ class Mpeg4MediaInfoBase
 public:
     static const TUint kMaxCSDSize = 100;    // 100 bytes of codec specific data can be stored
 public:
-    Mpeg4MediaInfoBase();
     Mpeg4MediaInfoBase(ICodecController& aController);
     ~Mpeg4MediaInfoBase();
+    virtual void Process();
 public:
     const Brx& CodecSpecificData() const;
     TUint32 SampleRate() const;
@@ -120,6 +120,7 @@ public:
     TUint16 BitDepth() const;
     TUint64 Duration() const;
 protected:
+    ICodecController& iController;
     Bws<kMaxCSDSize> iCodecSpecificData;
     TUint32 iSampleRate;
     TUint32 iTimescale;
@@ -137,6 +138,8 @@ public:
     SeekTable& GetSeekTable();
 public:
     static void GetCodec(const Brx& aData, Bwx& aCodec);
+public: // from Mpeg4MediaInfoBase
+    void Process();
 private:
     SampleSizeTable iSampleSizeTable;
     SeekTable iSeekTable;

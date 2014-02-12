@@ -91,6 +91,15 @@ void CodecAlac::StreamInitialise()
     LOG(kCodec, "CodecAlac::StreamInitialise\n");
 
     iMp4 = new Mpeg4MediaInfo(*iController);
+    try {
+        iMp4->Process();
+    }
+    catch (MediaMpeg4EndOfData&) {
+        THROW(CodecStreamEnded);
+    }
+    catch (MediaMpeg4FileInvalid&) {
+        THROW(CodecStreamCorrupt);
+    }
     iContainer = iMp4;
 
     CodecAlacBase::Initialise();

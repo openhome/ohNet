@@ -453,18 +453,22 @@ Msg* Mpeg4Start::ProcessMsg(MsgAudioEncoded* aMsg)
 
 // Mpeg4MediaInfoBase
 
-// this is a fake header constructed for airplay
-Mpeg4MediaInfoBase::Mpeg4MediaInfoBase()
+Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
+    : iController(aController)
 {
 }
 
-Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
+Mpeg4MediaInfoBase::~Mpeg4MediaInfoBase()
+{
+}
+
+void Mpeg4MediaInfoBase::Process()
 {
     LOG(kMedia, "Checking for Raop container\n");
 
     try {
         Bws<60> data;
-        aController.Read(data, 4);
+        iController.Read(data, 4);
 
         LOG(kMedia, "data %x {", data[0]);
         LOG(kMedia, data);
@@ -482,10 +486,10 @@ Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
         // extract enough info from this for codec selector, then pass the raw fmtp through for alac decoder
         // first read the number of bytes in for the fmtp
         data.SetBytes(0);
-        aController.Read(data, 4);
+        iController.Read(data, 4);
         TUint bytes = Ascii::Uint(data);    // size of fmtp string
         data.SetBytes(0);
-        aController.Read(data, bytes);
+        iController.Read(data, bytes);
         Parser fmtp(data);
 
         LOG(kMedia, "fmtp [");
@@ -531,10 +535,6 @@ Mpeg4MediaInfoBase::Mpeg4MediaInfoBase(ICodecController& aController)
     }
 }
 
-Mpeg4MediaInfoBase::~Mpeg4MediaInfoBase()
-{
-}
-
 const Brx& Mpeg4MediaInfoBase::CodecSpecificData() const
 {
     return iCodecSpecificData;
@@ -569,13 +569,69 @@ TUint64 Mpeg4MediaInfoBase::Duration() const
 // Mpeg4MediaInfo
 
 Mpeg4MediaInfo::Mpeg4MediaInfo(ICodecController& aController)
+    : Mpeg4MediaInfoBase(aController)
+{
+}
+
+Mpeg4MediaInfo::~Mpeg4MediaInfo()
+{
+    //LOG(kCodec, "Mpeg4MediaInfo::~Mpeg4MediaInfo\n");
+    iSampleSizeTable.Deinitialise();
+    iSeekTable.Deinitialise();
+}
+
+SampleSizeTable& Mpeg4MediaInfo::GetSampleSizeTable()
+{
+    return iSampleSizeTable;
+}
+
+SeekTable& Mpeg4MediaInfo::GetSeekTable()
+{
+    return iSeekTable;
+}
+
+void Mpeg4MediaInfo::GetCodec(const Brx& aData, Bwx& aCodec)
+{
+    //LOG(kCodec, "Mpeg4MediaInfo::GetCodec\n");
+
+    // May throw a MediaMpeg4FileInvalid exception.
+
+    TUint offset = 0;
+    TBool codecFound = false;
+
+    for (;;) {
+        Mpeg4Box BoxL4(aData, NULL, NULL, offset);
+        if(BoxL4.Match("minf")) {
+            Mpeg4Box BoxL5(aData, &BoxL4, "stbl");
+            while (!BoxL5.Empty()) {
+                Mpeg4Box BoxL6(aData, &BoxL5);
+                if(BoxL6.Match("stsd")) {
+                    BoxL6.Skip(12);
+                    // Read the codec value.
+                    aCodec.SetBytes(0);
+                    BoxL6.Read(aCodec, 4);
+                    codecFound = true;
+                    break;
+                }
+            }
+        }
+        if (codecFound) {
+            break;
+        }
+        BoxL4.SkipEntry();
+        offset += BoxL4.BytesRead();
+    }
+}
+
+
+void Mpeg4MediaInfo::Process()
 {
     //LOG(kCodec, "Mpeg4MediaInfo::Mpeg4MediaInfo\n");
     Bws<100> data;
     Bws<4> codec;
 
     for (;;) {
-        Mpeg4Box BoxL4(aController);   // Starting from level 4, because Mpeg4Start should have ended on a L3 box.
+        Mpeg4Box BoxL4(iController);   // Starting from level 4, because Mpeg4Start should have ended on a L3 box.
         if(BoxL4.Match("mdat")) {
             //LOG(kCodec, "Mpeg4 data found\n");
             // some files contain extra text at start of the data section which needs to be skipped
@@ -604,9 +660,9 @@ Mpeg4MediaInfo::Mpeg4MediaInfo(ICodecController& aController)
                 iSamplesTotal = Converter::BeUint32At(data, 0);
             }
         } else if(BoxL4.Match("minf")) {
-            Mpeg4Box BoxL5(aController, &BoxL4, "stbl");
+            Mpeg4Box BoxL5(iController, &BoxL4, "stbl");
             while (!BoxL5.Empty()) {
-                Mpeg4Box BoxL6(aController, &BoxL5);
+                Mpeg4Box BoxL6(iController, &BoxL5);
                 if(BoxL6.Match("stsd")) {
                     BoxL6.Skip(12);
                     data.SetBytes(0);
@@ -630,7 +686,7 @@ Mpeg4MediaInfo::Mpeg4MediaInfo(ICodecController& aController)
                     BoxL6.Skip(2);              // LSB's of sample rate are ignored
 
                     if(!BoxL6.Empty()) {
-                        Mpeg4Box BoxL7(aController, &BoxL6);         // any codec specific info should follow immediately
+                        Mpeg4Box BoxL7(iController, &BoxL6);         // any codec specific info should follow immediately
                         if(BoxL7.Match("alac")) {
                             // extract alac specific info
                             data.SetBytes(0);
@@ -711,55 +767,5 @@ Mpeg4MediaInfo::Mpeg4MediaInfo(ICodecController& aController)
             BoxL5.SkipEntry();
         }
         BoxL4.SkipEntry();                    // skip to next entry
-    }
-}
-
-Mpeg4MediaInfo::~Mpeg4MediaInfo()
-{
-    //LOG(kCodec, "Mpeg4MediaInfo::~Mpeg4MediaInfo\n");
-    iSampleSizeTable.Deinitialise();
-    iSeekTable.Deinitialise();
-}
-
-SampleSizeTable& Mpeg4MediaInfo::GetSampleSizeTable()
-{
-    return iSampleSizeTable;
-}
-
-SeekTable& Mpeg4MediaInfo::GetSeekTable()
-{
-    return iSeekTable;
-}
-
-void Mpeg4MediaInfo::GetCodec(const Brx& aData, Bwx& aCodec)
-{
-    //LOG(kCodec, "Mpeg4MediaInfo::GetCodec\n");
-
-    // May throw a MediaMpeg4FileInvalid exception.
-
-    TUint offset = 0;
-    TBool codecFound = false;
-
-    for (;;) {
-        Mpeg4Box BoxL4(aData, NULL, NULL, offset);
-        if(BoxL4.Match("minf")) {
-            Mpeg4Box BoxL5(aData, &BoxL4, "stbl");
-            while (!BoxL5.Empty()) {
-                Mpeg4Box BoxL6(aData, &BoxL5);
-                if(BoxL6.Match("stsd")) {
-                    BoxL6.Skip(12);
-                    // Read the codec value.
-                    aCodec.SetBytes(0);
-                    BoxL6.Read(aCodec, 4);
-                    codecFound = true;
-                    break;
-                }
-            }
-        }
-        if (codecFound) {
-            break;
-        }
-        BoxL4.SkipEntry();
-        offset += BoxL4.BytesRead();
     }
 }
