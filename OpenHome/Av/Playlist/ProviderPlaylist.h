@@ -28,7 +28,7 @@ public:
     virtual void Next() = 0;
     virtual void Prev() = 0;
     virtual void SeekAbsolute(TUint aSeconds) = 0;
-    virtual void SeekRelative(TUint aSeconds) = 0;
+    virtual void SeekRelative(TInt aSeconds) = 0;
     virtual void SeekToTrackId(TUint aId) = 0;
     virtual TBool SeekToTrackIndex(TUint aIndex) = 0;
 };

@@ -46,9 +46,11 @@ void ProviderTime::Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& a
     aInvocation.EndResponse();
 }
 
-void ProviderTime::NotifyPipelineState(EPipelineState /*aState*/)
+void ProviderTime::NotifyPipelineState(EPipelineState aState)
 {
-    // NOP -- playing, paused, stopped, buffering
+    if (aState == EPipelineStopped) {
+        NotifyTime(0, 0);
+    }
 }
 
 void ProviderTime::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)

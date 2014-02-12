@@ -41,7 +41,7 @@ private: // from ISourcePlaylist
     void Next();
     void Prev();
     void SeekAbsolute(TUint aSeconds);
-    void SeekRelative(TUint aSeconds);
+    void SeekRelative(TInt aSeconds);
     void SeekToTrackId(TUint aId);
     TBool SeekToTrackIndex(TUint aIndex);
 private: // from Media::IPipelineObserver
@@ -183,9 +183,15 @@ void SourcePlaylist::SeekAbsolute(TUint aSeconds)
     }
 }
 
-void SourcePlaylist::SeekRelative(TUint aSeconds)
+void SourcePlaylist::SeekRelative(TInt aSeconds)
 {
-    SeekAbsolute(aSeconds + iTrackPosSeconds);
+    iLock.Wait();
+    TUint pos = aSeconds + iTrackPosSeconds;
+    if (aSeconds < 0 && -aSeconds > (TInt)iTrackPosSeconds) {
+        pos = 0;
+    }
+    iLock.Signal();
+    SeekAbsolute(pos);
 }
 
 void SourcePlaylist::SeekToTrackId(TUint aId)
