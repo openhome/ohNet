@@ -30,7 +30,7 @@ RemoveCurrentStream ramps down as with pause then discards audio + metatext cont
 Flush msgs are not propogated.  Any audio which gets past this element is guaranteed to be played
 */
 
-class Stopper : public IPipelineElementUpstream, public IStopper, private IMsgProcessor
+class Stopper : public IPipelineElementUpstream, private IMsgProcessor
 {
     friend class SuiteStopper;
 public:
@@ -39,12 +39,11 @@ public:
     void Start();
     void BeginHalt();
     void BeginHalt(TUint aHaltId);
-    void RemoveCurrentStream();
+    void RemoveCurrentStream(TBool aRampDown);
     void Quit();
+    void RemoveStream(TUint aTrackId, TUint aStreamId, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull();
-public: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
@@ -61,7 +60,7 @@ private:
     Msg* ProcessMsgAudio(MsgAudio* aMsg);
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void DoBeginHalt();
-    void DoRemoveCurrentStream();
+    void DoRemoveCurrentStream(TBool aRampDown);
     void NewStream();
 private:
     enum EState

@@ -13,7 +13,7 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 
-kExe = os.path.join( 'buildhudson', 'TestMediaPlayer.exe' )
+kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer.exe' )
 
 
 class SoftPlayer( BASE.Component ):

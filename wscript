@@ -2,6 +2,7 @@
 
 import sys
 import os
+import shutil
 
 from waflib.Node import Node
 
@@ -513,145 +514,181 @@ def build(bld):
             target='ohMediaPlayerTestUtils')
 
     bld.program(
-           source='OpenHome/Media/Tests/TestShellMain.cpp',
-           use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-           target='TestShell')
+            source='OpenHome/Media/Tests/TestShellMain.cpp',
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestShell',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestMsgMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestMsg')
+            target='TestMsg',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStarvationMonitor')
+            target='TestStarvationMonitor',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestStopperMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStopper')
+            target='TestStopper',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestSupplyMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestSupply')
+            target='TestSupply',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestAudioReservoirMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestAudioReservoir')
+            target='TestAudioReservoir',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestVariableDelayMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestVariableDelay')
+            target='TestVariableDelay',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestTrackInspector')
+            target='TestTrackInspector',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestReporterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestReporter')
+            target='TestReporter',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestPreDriver')
+            target='TestPreDriver',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestContentProcessorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestContentProcessor')
+            target='TestContentProcessor',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPipelineMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestPipeline')
+            target='TestPipeline',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestProtocol')
+            target='TestProtocol',
+            install_path=None)
     bld.program(
            source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-           target='TestProtocolRaop')
+           target='TestProtocolRaop',
+            install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestStore')
+            target='TestStore',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestProtocolHttpMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestProtocolHttp')
+            target='TestProtocolHttp',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestCodecMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestCodec')
+            target='TestCodec',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestContainerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestContainer')
+            target='TestContainer',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestIdProviderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestIdProvider')
+            target='TestIdProvider',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestFillerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestFiller')
+            target='TestFiller',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestToneGeneratorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestToneGenerator')
+            target='TestToneGenerator',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestMuteManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestMuteManager')
+            target='TestMuteManager',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestVolumeManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestVolumeManager')
+            target='TestVolumeManager',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestRewinderMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestRewinder')
+            target='TestRewinder',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestClockPullerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestClockPuller')
+            target='TestClockPuller',
+            install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestUdpServerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestUdpServer')
+            target='TestUdpServer',
+            install_path=None)
     #bld.program(
     #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='TestUpnpAv')
+    #        target='TestUpnpAv',
+    #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestUpnpErrors')
+            target='TestUpnpErrors',
+            install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestTrackDatabaseMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestTrackDatabase')
+            target='TestTrackDatabase',
+            install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestPlaylist')
+            target='TestPlaylist',
+            install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestRadioMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestRadio')
+            target='TestRadio',
+            install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-            target='TestMediaPlayer')
+            target='TestMediaPlayer',
+            install_path='install/bin')
     bld.program(
             source='OpenHome/Configuration/Tests/TestFunctorGenericMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestFunctorGeneric')
+            target='TestFunctorGeneric',
+            install_path=None)
     bld.program(
             source='OpenHome/Configuration/Tests/TestConfigManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestConfigManager')
+            target='TestConfigManager',
+            install_path=None)
     bld.program(
             source='OpenHome/Tests/TestPowerManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestPowerManager')
+            target='TestPowerManager',
+            install_path=None)
+
 
 # Bundles
 def bundle(ctx):

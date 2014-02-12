@@ -69,7 +69,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         }
         else {
             UpdateStatus(ERampingUp);
-            ASSERT(iCurrentRampValue == Ramp::kRampMin);
+            iCurrentRampValue = Ramp::kRampMin;
             iRemainingRampSize = iRampUpSize;
         }
         iSemOut.Signal();
@@ -139,7 +139,7 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
         UpdateStatus(ERampingDown);
         iRampDownDuration = remainingSize + aMsg->Jiffies();
-        ASSERT(iCurrentRampValue == Ramp::kRampMax);
+        iCurrentRampValue = Ramp::kRampMax;
         iRemainingRampSize = iRampDownDuration;
     }
     if (iStatus == ERampingDown) {
