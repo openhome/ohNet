@@ -10,6 +10,7 @@
 
 EXCEPTION(MediaCodecRaopNotFound);
 EXCEPTION(MediaMpeg4FileInvalid);
+EXCEPTION(MediaMpeg4EndOfData);
 
 namespace OpenHome {
 namespace Media {
