@@ -15,7 +15,7 @@ using namespace OpenHome::Media::Codec;
 
 
 // Mpeg4Box
-
+// FIXME - shouldn't be doing any work in constructors
 Mpeg4Box::Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent, const TChar* aIdName)
     : iController(&aController)
     , iInput(NULL)
