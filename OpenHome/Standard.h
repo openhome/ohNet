@@ -6,8 +6,6 @@
 
 EXCEPTION(AssertionFailed)
 
-namespace OpenHome {
-
 #define ASSERT(x)                             \
     if(!(x)) {                                \
         OpenHome::CallAssertHandler(__FILE__,__LINE__); \
@@ -20,6 +18,8 @@ namespace OpenHome {
 #else //DEFINE_DEBUG
 # define ASSERT_DEBUG(x)
 #endif //DEFINE_DEBUG
+
+namespace OpenHome {
 
 class INonCopyable
 {
