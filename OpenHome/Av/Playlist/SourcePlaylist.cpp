@@ -131,6 +131,9 @@ void SourcePlaylist::Play()
         DoActivate();
     }
     const TUint trackId = iUriProvider->CurrentTrackId();
+    if (iTransportState == Media::EPipelinePlaying) {
+        iPipeline.RemoveAll();
+    }
     iPipeline.Begin(iUriProvider->Mode(), trackId);
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;

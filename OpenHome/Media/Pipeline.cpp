@@ -258,11 +258,24 @@ void Pipeline::Pause()
 
 void Pipeline::Stop(TUint aHaltId)
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
+    /* FIXME - is there any race where iBuffering is true but the pipeline is also
+               running, meaning that we want to allow Stopper to ramp down? */
+    if (iBuffering) {
+        iTargetHaltId = MsgHalt::kIdInvalid;
+        iStatus = iTargetStatus = EFlushed;
+        iStopper->RemoveCurrentStream(false);
+        iLock.Signal();
+        NotifyStatus();
+        return;
+    }
+
     iTargetHaltId = aHaltId;
     iStopper->BeginHalt(aHaltId);
     iStatus = EHalting;
     iTargetStatus = EFlushed;
+
+    iLock.Signal();
 
     /*if (iTargetStatus == EFlushed || iTargetStatus == EQuit) {
         return; // already stopped or in the process of stopping so ignore this additional request
@@ -401,9 +414,10 @@ void Pipeline::PipelineHalted(TUint aHaltId)
 
 TUint Pipeline::NextFlushId()
 {
-    iLock.Wait();
+    /* non-use of iLock is deliberate.  It isn't absolutely required since all callers
+       run in the Filler thread.  If we re-instate the lock, the call to
+       RemoveCurrentStream() in Stop() will need to move outside its lock. */
     TUint id = iNextFlushId++;
-    iLock.Signal();
     return id;
 }
 
