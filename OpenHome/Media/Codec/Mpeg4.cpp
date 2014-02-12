@@ -295,7 +295,7 @@ void SeekTable::SetOffset(TUint64 aOffset)
 TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 {
     if (iSamplesPerChunk.size() == 0 || iAudioSamplesPerSample.size() == 0 || iOffsets.size()==0) {
-        THROW(MediaMpeg4FileInvalid); // seek table empty - cannot do seek
+        THROW(CodecStreamCorrupt); // seek table empty - cannot do seek
     }
     aSample = 0;
     // fistly determine the required sample from the audio sample using the stts data,
@@ -320,7 +320,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
         aAudioSample = totalaudiosamples-1;	// keep within range
     }
     if(audiosamples == 0)
-        THROW(MediaMpeg4FileInvalid); // invalid table
+        THROW(CodecStreamCorrupt); // invalid table
 
     aSample = totalsamples + (aAudioSample - totalaudiosamples)/audiosamples; // convert audio sample count to codec samples
 
@@ -350,7 +350,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
 
     //stco:
     if(seekchunk >= iOffsets.size()) { // error - required chunk doesn't exist
-        THROW(MediaMpeg4FileInvalid); // asserts later on !!! ToDo
+        THROW(CodecStreamCorrupt); // asserts later on !!! ToDo
     }
     return iOffsets[seekchunk]; // entry found - return offset to required chunk
 }
