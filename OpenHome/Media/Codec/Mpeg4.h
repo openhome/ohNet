@@ -22,6 +22,7 @@ public:
     Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL);
     Mpeg4Box(const Brx& aBuffer, Mpeg4Box* aParent = NULL, const TChar* aIdName = NULL, TUint aOffset = 0);
     ~Mpeg4Box();
+    void Initialise();
     void Read(Bwx& aData, TUint aBytes);
     void SkipEntry();
     void Skip(TUint32 aBytes);
@@ -41,6 +42,7 @@ private:
     ICodecController* iController;
     const Brx* iInput;
     Mpeg4Box *iParent;
+    const TChar* iIdName;
     Bws<4> iId;             // ID of box.
     Bws<32> iBuf;           // Local buffer.
     TUint iBytesRead;       // Bytes read for current entry.

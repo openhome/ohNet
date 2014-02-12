@@ -15,24 +15,23 @@ using namespace OpenHome::Media::Codec;
 
 
 // Mpeg4Box
-// FIXME - shouldn't be doing any work in constructors
+
 Mpeg4Box::Mpeg4Box(ICodecController& aController, Mpeg4Box* aParent, const TChar* aIdName)
     : iController(&aController)
     , iInput(NULL)
     , iParent(aParent)
+    , iIdName(aIdName)
     , iBytesRead(0)
     , iBoxSize(0)
     , iOffset(0)
 {
-    ExtractHeaderId();
-    if (aIdName != NULL)
-        FindBox(aIdName);
 }
 
 Mpeg4Box::Mpeg4Box(const Brx& aBuffer, Mpeg4Box* aParent, const TChar* aIdName, TUint aOffset)
     : iController(NULL)
     , iInput(&aBuffer)
     , iParent(aParent)
+    , iIdName(aIdName)
     , iBytesRead(0)
     , iBoxSize(0)
     , iOffset(aOffset)
@@ -40,13 +39,17 @@ Mpeg4Box::Mpeg4Box(const Brx& aBuffer, Mpeg4Box* aParent, const TChar* aIdName, 
     if (iParent != NULL) {
         iOffset = iParent->FileOffset();
     }
-    ExtractHeaderId();
-    if (aIdName != NULL)
-        FindBox(aIdName);
 }
 
 Mpeg4Box::~Mpeg4Box()
 {
+}
+
+void Mpeg4Box::Initialise()
+{
+    ExtractHeaderId();
+    if (iIdName != NULL)
+        FindBox(iIdName);
 }
 
 TBool Mpeg4Box::FindBox(const TChar* aIdName)
@@ -375,6 +378,7 @@ TBool Mpeg4Start::Recognise(Brx& aBuf)
     // The mdia box contains children with media info about a track.
 
     Mpeg4Box BoxL0(aBuf);
+    BoxL0.Initialise();
     if (!BoxL0.Match("ftyp")) {
         LOG(kMedia, "Mpeg4Start no ftyp found at start of file\n");
         return false;
@@ -385,11 +389,14 @@ TBool Mpeg4Start::Recognise(Brx& aBuf)
 
     for (;;) {      // keep on reading until start of data found
         Mpeg4Box BoxL1(aBuf, &BoxL0, NULL, BoxL0.FileOffset());
+        BoxL1.Initialise();
         if(BoxL1.Match("moov")) {
             // Search through levels until we find mdia box;
             // the container for media info.
             Mpeg4Box BoxL2(aBuf, &BoxL1, "trak");
+            BoxL2.Initialise();
             Mpeg4Box BoxL3(aBuf, &BoxL2);
+            BoxL3.Initialise();
             TBool foundMdia = BoxL3.FindBox("mdia");
             if (foundMdia) {
                 // Should be pointing at mdhd box, for media
@@ -601,10 +608,13 @@ void Mpeg4MediaInfo::GetCodec(const Brx& aData, Bwx& aCodec)
 
     for (;;) {
         Mpeg4Box BoxL4(aData, NULL, NULL, offset);
+        BoxL4.Initialise();
         if(BoxL4.Match("minf")) {
             Mpeg4Box BoxL5(aData, &BoxL4, "stbl");
+            BoxL5.Initialise();
             while (!BoxL5.Empty()) {
                 Mpeg4Box BoxL6(aData, &BoxL5);
+                BoxL6.Initialise();
                 if(BoxL6.Match("stsd")) {
                     BoxL6.Skip(12);
                     // Read the codec value.
@@ -632,6 +642,7 @@ void Mpeg4MediaInfo::Process()
 
     for (;;) {
         Mpeg4Box BoxL4(iController);   // Starting from level 4, because Mpeg4Start should have ended on a L3 box.
+        BoxL4.Initialise();
         if(BoxL4.Match("mdat")) {
             //LOG(kCodec, "Mpeg4 data found\n");
             // some files contain extra text at start of the data section which needs to be skipped
@@ -661,8 +672,10 @@ void Mpeg4MediaInfo::Process()
             }
         } else if(BoxL4.Match("minf")) {
             Mpeg4Box BoxL5(iController, &BoxL4, "stbl");
+            BoxL5.Initialise();
             while (!BoxL5.Empty()) {
                 Mpeg4Box BoxL6(iController, &BoxL5);
+                BoxL6.Initialise();
                 if(BoxL6.Match("stsd")) {
                     BoxL6.Skip(12);
                     data.SetBytes(0);
@@ -687,6 +700,7 @@ void Mpeg4MediaInfo::Process()
 
                     if(!BoxL6.Empty()) {
                         Mpeg4Box BoxL7(iController, &BoxL6);         // any codec specific info should follow immediately
+                        BoxL7.Initialise();
                         if(BoxL7.Match("alac")) {
                             // extract alac specific info
                             data.SetBytes(0);
