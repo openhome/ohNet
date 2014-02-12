@@ -112,7 +112,7 @@ public:
     static const TUint kMaxCSDSize = 100;    // 100 bytes of codec specific data can be stored
 public:
     Mpeg4MediaInfoBase(ICodecController& aController);
-    ~Mpeg4MediaInfoBase();
+    virtual ~Mpeg4MediaInfoBase();
     virtual void Process();
 public:
     const Brx& CodecSpecificData() const;
