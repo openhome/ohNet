@@ -102,7 +102,17 @@ void CodecAac::StreamInitialise()
     CodecAacBase::StreamInitialise();
 
     iCurrentSample = 0;
+
     iMp4 = new Mpeg4MediaInfo(*iController);
+    try {
+        iMp4->Process();
+    }
+    catch (MediaMpeg4EndOfData&) {
+        THROW(CodecStreamEnded);
+    }
+    catch (MediaMpeg4FileInvalid&) {
+        THROW(CodecStreamCorrupt);
+    }
 
     info.Append(iMp4->CodecSpecificData());   // get data extracted from MPEG-4 header
     // see http://wiki.multimedia.cx/index.php?title=Understanding_AAC for details

@@ -197,40 +197,30 @@ void CodecController::CodecThread()
             try {
                 iActiveCodec->StreamInitialise();
                 for (;;) {
-                    try {
-                        iLock.Wait();
-                        TBool seek = iSeek;
-                        iLock.Signal();
-                        if (seek) {
-                            iSeek = false;
-                            TUint64 sampleNum = iSeekSeconds * iSampleRate;
-                            (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
-                        }
-                        else {
-                            iActiveCodec->Process();
-                        }
+                    iLock.Wait();
+                    TBool seek = iSeek;
+                    iLock.Signal();
+                    if (seek) {
+                        iSeek = false;
+                        TUint64 sampleNum = iSeekSeconds * iSampleRate;
+                        (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
                     }
-                    catch (CodecStreamStart&) {}
-                    catch (CodecStreamEnded&) {
-                        iStreamEnded = true;
-                    }
-                    catch (CodecStreamCorrupt&) {
-                        iStreamEnded = true;
-                    }
-                    catch (CodecStreamFeatureUnsupported&) {
-                        iStreamEnded = true;
-                    }
-                    if (iStreamEnded) {
-                        break;
+                    else {
+                        iActiveCodec->Process();
                     }
                 }
             }
+            catch (CodecStreamStart&) {}
+            catch (CodecStreamEnded&) {
+                iStreamEnded = true;
+            }
             catch (CodecStreamCorrupt&) {
-                // CodecStreamCorrupt thrown during StreamInitialise()
                 // don't break here - might be waiting on a quit msg or similar
+                iStreamEnded = true;
             }
             catch (CodecStreamFeatureUnsupported&) {
                 // copy behaviour for Corrupt
+                iStreamEnded = true;
             }
         }
         catch (CodecStreamStopped&) {}

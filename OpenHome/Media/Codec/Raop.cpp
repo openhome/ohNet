@@ -74,6 +74,16 @@ void CodecRaop::StreamInitialise()
     LOG(kCodec, "CodecRaop::StreamInitialise\n");
 
     iContainer = new Mpeg4MediaInfoBase(*iController);
+    try {
+        iContainer->Process();
+    }
+    catch (MediaMpeg4EndOfData&) {
+        THROW(CodecStreamEnded);
+    }
+    catch (MediaMpeg4FileInvalid&) {
+        THROW(CodecStreamCorrupt);
+    }
+
     CodecAlacBase::Initialise();
 }
 
