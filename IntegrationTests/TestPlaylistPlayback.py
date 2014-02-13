@@ -25,6 +25,7 @@ import Upnp.ControlPoints.Volkano as Volkano
 import Utils.Network.HttpServer   as HttpServer
 import Utils.Common               as Common
 import _SoftPlayer                as SoftPlayer
+import LogThread
 import Path
 import os
 import random
@@ -34,6 +35,8 @@ import threading
 
 kAudioRoot = os.path.join( Path.AudioDir(), 'MusicTracks/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
+kDelay1    = 3
+kDelay2    = 8
 
 
 class Config:
@@ -103,12 +106,15 @@ class Config:
                             self.log.Warn( self.dev, 'Duration value not updated' )  
                             self.secs = random.randint( 5, 95 )
                         self.timeEvent.clear()
+                        self.playingEvent.clear()
                         aDut.playlist.SeekSecondAbsolute( self.secs )
                         tries = 0
                         while self.evtTime != self.secs and tries < 5:
                             tries += 1
                             self.timeEvent.wait( 2 )
                             self.timeEvent.clear()
+                        if aDut.playlist.transportState != 'Playing':
+                            self.playingEvent.wait( 3 )
                     if self.state == 'Paused':
                         self.pausedEvent.clear()
                         aDut.playlist.Pause()
@@ -118,7 +124,7 @@ class Config:
             aDut.playlist.RemoveSubscriber( self._PlaylistEventCb )
             dutState = aDut.playlist.transportState
             if dutState == self.state:
-                self.log.Info( self.dev, '[%d] Preconditions setup' % self.id )
+                self.log.Pass( self.dev, '[%d] Preconditions setup' % self.id )
             else:
                 self.log.Fail( self.dev, '[%d] Actual/Required precondition state %s/%s' %
                     (self.id, dutState, self.state) )
@@ -167,12 +173,14 @@ class Config:
     class Stimulus:
         "Configuration subclass for stimulus info and invokation"
         
-        def __init__( self, aAction, aMinVal, aMaxVal, aPrecon ):
+        def __init__( self, aAction, aMinVal, aMaxVal, aPrecon, aTimer1, aTimer2 ):
             "Initialise class data"
             self.action = aAction
             self.precon = aPrecon
             self.minVal = aMinVal
             self.maxVal = aMaxVal
+            self.timer1 = aTimer1
+            self.timer2 = aTimer2
             self.val    = 0
             self.timeEvent= threading.Event()
         
@@ -195,6 +203,8 @@ class Config:
                 else:
                     self.val = random.randint( min, max )
                 getattr( aDut.playlist, self.action )( self.val )
+            self.timer1.start()
+            self.timer2.start()
             # either DS will start playback in which case need to wait for event
             # before starting outcome timers, or will not be playing in which
             # case wait will timeout without any affect on the result (#2527)
@@ -230,7 +240,7 @@ class Config:
     class Outcome:
         "Configuration subclass for outcome checking"
         
-        def __init__( self, aId, aState, aTrack, aSecs, aPrecon, aStim ):
+        def __init__( self, aId, aState, aTrack, aSecs, aPrecon, aStim, aDelay1, aDelay2 ):
             "Initialise class data"
             self.id     = aId
             self.state  = aState
@@ -238,32 +248,32 @@ class Config:
             self.secs   = aSecs
             self.precon = aPrecon
             self.stim   = aStim
+            self.delay1 = aDelay1
+            self.delay2 = aDelay2
 
         def Check( self, aLog, aDut, aDev ):
             "Check outcome on specified renderer"
-            delay1   = 3
-            delay2   = 5
             expState = self.state
             expTrack = int( self._SubstMacros( self.track ))
             expSecs  = int( self._SubstMacros( self.secs, aDut ))
 
             # wait a few secs (from time event/timeout) and check values
-            time.sleep( delay1 )
-            if expState == 'Playing':            
-                expSecs += delay1
+            self.delay1.wait()
+            if expState == 'Playing': 
+                expSecs += kDelay1
                 (expState, expTrack, expSecs) = \
                     self._RecalcExpected( aDut, expState, expTrack, expSecs )
-            self._CheckValues( aLog, aDut, aDev, expState, expTrack, expSecs, delay1 )
+            self._CheckValues( aLog, aDut, aDev, expState, expTrack, expSecs, kDelay1 )
 
             # wait a few more secs and check that values are changing correctly
             # (if Playing) or not changing as expected (if Paused, Stopped)
-            time.sleep( delay2 )
+            self.delay2.wait()
             if expState == 'Playing':
-                expSecs += delay2
+                expSecs += kDelay2-kDelay1
                 (expState, expTrack, expSecs) = \
                     self._RecalcExpected( aDut, expState, expTrack, expSecs )
             self._CheckValues( 
-                aLog, aDut, aDev, expState, expTrack, expSecs, delay1+delay2 )
+                aLog, aDut, aDev, expState, expTrack, expSecs, kDelay2 )
 
         def _CheckValues( self, aLog, aDut, aDev, aState, aTrack, aSecs, aAfter ):
             "Check values from DS are as expected"
@@ -406,15 +416,21 @@ class Config:
 
     def __init__( self, aLog, aDev, aDut, aConf, aTracks ):
         "Initialise class (and sub-class) data"
-        self.log  = aLog
-        self.id   = aConf[0]
-        self.dut  = aDut
-        self.dev  = aDev
+        self.log    = aLog
+        self.id     = aConf[0]
+        self.dut    = aDut
+        self.dev    = aDev
+        self.delay1 = threading.Event()
+        self.delay2 = threading.Event()
+        timer1      = LogThread.Timer( kDelay1, self.__t1Cb )
+        timer2      = LogThread.Timer( kDelay2, self.__t2Cb )
+        
         self.pre  = self.Precon( self.id, aConf[1], aConf[2], aConf[3],
                                  aConf[4], aConf[5], aTracks, self.log, aDev )
-        self.stim = self.Stimulus( aConf[6], aConf[7], aConf[8], self.pre )
+        self.stim = self.Stimulus( aConf[6], aConf[7], aConf[8], self.pre,
+                                   timer1, timer2 )
         self.out  = self.Outcome( self.id, aConf[9], aConf[10], aConf[11],
-                                  self.pre, self.stim )
+                                  self.pre, self.stim, self.delay1, self.delay2 )
         
     def Setup( self ):
         self.pre.Setup( self.dut )
@@ -424,6 +440,12 @@ class Config:
         
     def CheckOutcome( self ):
         self.out.Check( self.log, self.dut, self.dev )
+        
+    def __t1Cb( self ):
+        self.delay1.set()
+
+    def __t2Cb( self ):
+        self.delay2.set()
 
 
 class TestPlaylistPlayback( BASE.BaseTest ):
