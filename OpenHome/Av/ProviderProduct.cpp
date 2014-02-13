@@ -138,7 +138,8 @@ void ProviderProduct::Product(IDvInvocation& aInvocation, IDvInvocationResponseS
     Brn info;
     Brn imageUri;
     iProduct.GetProductDetails(room, name, info, imageUri);
-    Brn presentationUrl(aInvocation.ResourceUriPrefix());
+    const TChar* p = aInvocation.ResourceUriPrefix();
+    const Brx& presentationUrl = (p != NULL) ? Brn(p) : Brx::Empty();
 
     aInvocation.StartResponse();
     aRoom.Write(room);
