@@ -15,6 +15,7 @@ import Upnp.ControlPoints.Volkano      as Volkano
 import _SoftPlayer                as SoftPlayer
 import os
 import sys
+import threading
 
 
 class TestVolumeControl( BASE.BaseTest ):
@@ -22,8 +23,9 @@ class TestVolumeControl( BASE.BaseTest ):
     def __init__( self ):
         "Constructor - initalise base class"
         BASE.BaseTest.__init__( self )
-        self.dut  = None
-        self.soft = None
+        self.dut    = None
+        self.soft   = None
+        self.volEvt = threading.Event()
         
     def Test( self, args ):
         "Tests for volume functionality"
@@ -39,6 +41,7 @@ class TestVolumeControl( BASE.BaseTest ):
             dutName = 'TestDev:SoftPlayer'
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut.volume.AddSubscriber( self._VolEventCb )
 
         # Execute the actual tests
         self._TestSetAndMute()
@@ -49,6 +52,7 @@ class TestVolumeControl( BASE.BaseTest ):
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.dut:
+            self.dut.volume.RemoveSubscriber( self._VolEventCb )
             self.dut.Shutdown()
         if self.soft:
             self.soft.Shutdown()
@@ -60,43 +64,61 @@ class TestVolumeControl( BASE.BaseTest ):
     
     def _TestSetAndMute( self ):
         "Check setting of spot volumes and mute functionality"
-        for i in range( 10, 101, 10 ):
+        for vol in range( 10, 101, 10 ):
             self.log.Info( '' )
-            self.log.Info( self.dutDev, 'Checking volume setting -> %d' % i )
+            self.log.Info( self.dutDev, 'Checking volume setting -> %d' % vol )
             self.log.Info( '' )
-            self.dut.volume.volume = i
             
-            # these just need to check evented/polled values
-            # self._CheckVolume( expVol, expVol, 'on %s (set to %d)' % (aSource['name'], i) )
-            # self._CheckMute( aSource['name'] )
+            self.volEvt.clear()
+            self.dut.volume.volume = vol
+            self.volEvt.wait( 5 )
+            self._CheckVolume( vol, 'before mute' )
+            
+            self.volEvt.clear()
+            self.dut.volume.mute = True
+            self.volEvt.wait( 5 )
+            self._CheckMute( True )
+            self._CheckVolume( vol, 'whilst muted' )
+            
+            self.volEvt.clear()
+            self.dut.volume.mute = False
+            self.volEvt.wait( 5 )
+            self._CheckMute( False )
+            self._CheckVolume( vol, 'after unmute' )
             
     def _TestVolIncDec( self ):
         "Check volume increment/decrement functionality"
         vol = 60
+        self.volEvt.clear()
         self.dut.volume.volume = vol
+        self.volEvt.wait( 5 )
         for action in ['VolInc','VolDec']:
             for i in range( 5 ):
                 self.log.Info( '' )
-                self.log.Info( self.dutDev, 'Checking %s from %d on %s' % (action, vol, aSource['name']) )
+                self.log.Info( self.dutDev, 'Checking %s from %d' % (action, vol) )
                 self.log.Info( '' )
+                self.volEvt.clear()
                 getattr( self.dut.volume, action )()
+                self.volEvt.wait( 5 )
                 if action == 'VolInc':
                     vol += 1
                 else:
                     vol -= 1
-                expVol = vol-kVolumeUnityGain
-                # just check evented / polled values
-                #self._CheckVolume( expVol, expVol, 'on %s (%s to %d)' % (aSource['name'], action, vol) )
+                self._CheckVolume( vol, 'after %s' % action )
                 
     def _TestBalSet( self ):        
         "Check balance. Balance range is -15(L) -> +15(R)"
-        for i in range( -15, 16 ):
+        for bal in range( -15, 16 ):
             self.log.Info( '' )
-            self.log.Info( self.dutDev, 'Checking balance on %s -> %d  (vol=%d)' % (aSource['name'], i, vol) )
+            self.log.Info( self.dutDev, 'Checking balance set to %d' % bal )
             self.log.Info( '' )
-            self.dut.volume.balance = i
-            ## self._CheckVolume( left, right, 'on %s (balance at %d)' % (aSource['name'], i) )
+            self.volEvt.clear()
+            self.dut.volume.balance = bal
+            self.volEvt.wait( 5 )
+            self._CheckBalance( bal, 'set to %d' % bal )
+        self.volEvt.clear()
         self.dut.volume.balance = 0
+        self.volEvt.wait( 5 )
         
     def _TestBalIncDec( self ):
         "Check balance increment/decrement functionality"
@@ -104,10 +126,14 @@ class TestVolumeControl( BASE.BaseTest ):
         self.log.Info( self.dutDev, 'Checking balance incremant/decrement actions' )
         self.log.Info( '' )
         bal = -15
+        self.volEvt.clear()
         self.dut.volume.balance = bal
+        self.volEvt.wait( 5 )
         for action in ['BalInc','BalDec']:
-            for i in range( 31 ):
+            for i in range( 30 ):
+                self.volEvt.clear()
                 getattr( self.dut.volume, action )()
+                self.volEvt.wait( 5 )
                 measBal = self.dut.volume.polledBalance
                 if action == 'BalInc':
                     bal += 1
@@ -117,20 +143,44 @@ class TestVolumeControl( BASE.BaseTest ):
                     bal = -15
                 elif bal > 15:
                     bal = 15
-                self.log.FailUnless( self.dutDev, measBal==bal,
-                    '%d/%d Actual/Expected balance on %s after %s' % 
-                    (measBal, bal, aSource['name'], action) )
+                self._CheckBalance( bal, 'after %s' % action )
+        self.volEvt.clear()
         self.dut.volume.balance = 0
+        self.volEvt.wait( 5 )
             
     #
     # Test utilities
     #
+    
+    def _CheckVolume( self, aVol, aMsg='' ):
+        "Check volume (evented and polled) as expected"
+        eventedVol = self.dut.volume.volume
+        polledVol  = self.dut.volume.polledVolume
+        self.log.FailUnless( self.dutDev, eventedVol==aVol,
+            '%d/%d  Actual/Expected EVENTED volume %s' % (eventedVol, aVol, aMsg) ) 
+        self.log.FailUnless( self.dutDev, polledVol==aVol,
+            '%d/%d  Actual/Expected POLLED volume %s' % (polledVol, aVol, aMsg) )
         
-    def _CheckMute( self ):
-        "Checks mute functionality"
-        self.dut.volume.mute = True
-#        self._CheckVolume( -85, -85, 'on %s muted' % aSource )
-        self.dut.volume.mute = False
+    def _CheckMute( self, aMute, aMsg='' ):
+        "Check mute (evented and polled) as expected"
+        eventedMute = self.dut.volume.mute
+        polledMute  = self.dut.volume.polledMute
+        self.log.FailUnless( self.dutDev, eventedMute==aMute,
+            '%d/%d  Actual/Expected EVENTED mute %s' % (eventedMute, aMute, aMsg) ) 
+        self.log.FailUnless( self.dutDev, polledMute==aMute,
+            '%d/%d  Actual/Expected POLLED mute %s' % (polledMute, aMute, aMsg) )
+    
+    def _CheckBalance( self, aBal, aMsg='' ):
+        "Check balance (evented and polled) as expected"
+        eventedBal = self.dut.volume.balance
+        polledBal  = self.dut.volume.polledBalance
+        self.log.FailUnless( self.dutDev, eventedBal==aBal,
+            '%d/%d  Actual/Expected EVENTED balance %s' % (eventedBal, aBal, aMsg) ) 
+        self.log.FailUnless( self.dutDev, polledBal==aBal,
+            '%d/%d  Actual/Expected POLLED balance %s' % (polledBal, aBal, aMsg) )
+        
+    def _VolEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
+        self.volEvt.set()
                
 
 if __name__ == '__main__':
