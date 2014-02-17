@@ -79,15 +79,16 @@ void CpiSubscription::SetNotificationError()
 void CpiSubscription::Unsubscribe()
 {
     AddRef();
-    iLock.Wait();
-    if (iEventProcessor != NULL) {
-        iEventProcessor->EventUpdatePrepareForDelete();
-        iEventProcessor = NULL;
+    {
+        AutoMutex a(iLock);
+        if (iEventProcessor != NULL) {
+            iEventProcessor->EventUpdatePrepareForDelete();
+            iEventProcessor = NULL;
+        }
+        if (iInterruptHandler != NULL) {
+            iInterruptHandler->Interrupt();
+        }
     }
-    if (iInterruptHandler != NULL) {
-        iInterruptHandler->Interrupt();
-    }
-    iLock.Signal();
     Schedule(eUnsubscribe, true);
     RemoveRef();
 }
