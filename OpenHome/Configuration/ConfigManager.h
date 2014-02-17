@@ -66,7 +66,7 @@ template <class T>
 class ConfigVal : public IObservable<T>
 {
 public:
-    static const TUint kMaxIdLength = 48;  // XXX consistent naming: better called kMaxKeyBytes?!
+    static const TUint kMaxKeyBytes = 48;
     static const TUint kSubscriptionIdInvalid = 0;
 protected:
     ConfigVal(IConfigManagerWriter& aManager, const Brx& aId);
@@ -83,7 +83,7 @@ protected:
     virtual void Write(KeyValuePair<T>& aKvp) = 0;
 protected:
     IConfigManagerWriter& iConfigManager;
-    Bws<kMaxIdLength> iId;
+    Bws<kMaxKeyBytes> iId;
 private:
     typedef std::map<TUint,FunctorGeneric<KeyValuePair<T>&>> Map;
     Map iObservers;

@@ -76,7 +76,7 @@ void Source::DoActivate()
 void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManagerWriter, IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix)
 {
     iProduct = &aProduct;
-    Bws<ConfigVal<const Brx&>::kMaxIdLength> key(aConfigIdPrefix);
+    Bws<ConfigVal<const Brx&>::kMaxKeyBytes> key(aConfigIdPrefix);
     key.Append("Source.");
     key.Append(iSystemName);
     key.Append(".Name");
