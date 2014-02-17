@@ -12,6 +12,7 @@ tests = '''
     TestSupply
     TestAudioReservoir
     TestVariableDelay
+    TestSeeker
     TestSkipper
     TestStopper
     TestTrackInspector

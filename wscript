@@ -221,6 +221,7 @@ def build(bld):
                 'OpenHome/Media/PreDriver.cpp',
                 'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Rewinder.cpp',
+                'OpenHome/Media/Seeker.cpp',
                 'OpenHome/Media/Sender.cpp',
                 'OpenHome/Media/Skipper.cpp',
                 'OpenHome/Media/Splitter.cpp',
@@ -475,6 +476,7 @@ def build(bld):
                 #'OpenHome/Media/Tests/PipelineUtils.cpp',  #FIXME - to be deleted if no longer used
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
+                'OpenHome/Media/Tests/TestSeeker.cpp',
                 'OpenHome/Media/Tests/TestSkipper.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
                 'OpenHome/Media/Tests/TestSupply.cpp',
@@ -530,6 +532,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStarvationMonitor',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestSeekerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSeeker',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestSkipperMain.cpp',

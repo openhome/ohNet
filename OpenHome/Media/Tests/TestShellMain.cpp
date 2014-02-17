@@ -26,6 +26,7 @@ SIMPLE_TEST_DECLARATION(TestPreDriver);
 SIMPLE_TEST_DECLARATION(TestProtocolHttp);
 SIMPLE_TEST_DECLARATION(TestReporter);
 SIMPLE_TEST_DECLARATION(TestRewinder);
+SIMPLE_TEST_DECLARATION(TestSeeker);
 SIMPLE_TEST_DECLARATION(TestSkipper);
 SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestStopper);
@@ -73,6 +74,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
     shellTests.push_back(ShellTest("TestProtocolHttp", ShellTestProtocolHttp));
     shellTests.push_back(ShellTest("TestReporter", ShellTestReporter));
+    shellTests.push_back(ShellTest("TestSeeker", ShellTestSeeker));
     shellTests.push_back(ShellTest("TestSkipper", ShellTestSkipper));
     shellTests.push_back(ShellTest("TestStarvationMonitor", ShellTestStarvationMonitor));
     shellTests.push_back(ShellTest("TestStopper", ShellTestStopper));
