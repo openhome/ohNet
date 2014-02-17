@@ -218,6 +218,17 @@ void EncodedAudio::Clear()
     
 // Jiffies
 
+TBool Jiffies::IsValidSampleRate(TUint aSampleRate)
+{ // static
+    try {
+        JiffiesPerSample(aSampleRate); // only want to check if sample rate is supported
+    }
+    catch (MsgInvalidSampleRate) {
+        return false;
+    }
+    return true;
+}
+
 TUint Jiffies::JiffiesPerSample(TUint aSampleRate)
 { // static
     switch (aSampleRate)
@@ -255,9 +266,8 @@ TUint Jiffies::JiffiesPerSample(TUint aSampleRate)
     case 192000:
         return kJiffies192000;
     default:
-        ASSERTS(); // FIXME - should throw rather than assert in response to unexpected externally provided data
+        THROW(MsgInvalidSampleRate);
     }
-    return 0; // will never get here but compiler doesn't realise that ASSERTS doesn't return
 }
 
 TUint Jiffies::BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample)
