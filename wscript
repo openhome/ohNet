@@ -222,9 +222,11 @@ def build(bld):
                 'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Rewinder.cpp',
                 'OpenHome/Media/Sender.cpp',
+                'OpenHome/Media/Skipper.cpp',
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
+                'OpenHome/Media/Stopper2.cpp',
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
@@ -473,6 +475,7 @@ def build(bld):
                 #'OpenHome/Media/Tests/PipelineUtils.cpp',  #FIXME - to be deleted if no longer used
                 'OpenHome/Media/Tests/TestMsg.cpp',
                 'OpenHome/Media/Tests/TestStarvationMonitor.cpp',
+                'OpenHome/Media/Tests/TestSkipper.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
                 'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
@@ -527,6 +530,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestStarvationMonitorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStarvationMonitor',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestSkipperMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSkipper',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestStopperMain.cpp',
