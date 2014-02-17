@@ -133,11 +133,33 @@ TUint CodecAiffBase::DetermineRate(TUint16 aExponent, TUint32 aMantissa)
      * exp = exp - 16382
      * exp = 32 - exp
      * srate = mant >> exp
+     *
+     * Some AIFF files use 22255Hz and 11127Hz sample rates, which are
+     * old Macintosh "good enough" sample rates. Adjust these into playable
+     * sample rates here.
+     *
+     * Source:
+     * http://homepages.gold.ac.uk/ems/pdf/Hyperprism/Files/hppc_digital_audio.html
      */
-    aExponent -= 16382;
-    TUint srate = aMantissa >> aExponent;
+    TUint rate = 0;
 
-    return srate;
+    if (aExponent < kUnder65kHz) {
+        rate = aMantissa >> (0x401e - aExponent);
+    }
+    else {
+        rate = aMantissa >> (aExponent - 0x4007);
+    }
+
+    if (rate == k22255Hz) {
+        LOG(kCodec, "CodecAiffBase::DetermineRate Adjusting 22255Hz to 22050Hz\n");
+        rate = k22050Hz;
+    }
+    else if (rate ==  k11127Hz) {
+        LOG(kCodec, "CodecAiffBase::DetermineRate Adjusting 11127Hz to 11025Hz\n");
+        rate = k11025Hz;
+    }
+
+    return rate;
 }
 
 void CodecAiffBase::ProcessHeader()
