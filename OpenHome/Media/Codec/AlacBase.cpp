@@ -71,11 +71,11 @@ void CodecAlacBase::Initialise()
     iCurrentSample = 0;
     iSamplesWrittenTotal = 0;
 
-    iTrackLengthJiffies = (iContainer->Duration() * Jiffies::kJiffiesPerSecond) / iContainer->SampleRate();
+    iTrackLengthJiffies = (iContainer->Duration() * Jiffies::kJiffiesPerSecond) / iContainer->Timescale();
     iTrackOffset = 0;
 
-    LOG(kCodec, "CodecAlacBase::StreamInitialise  iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
-    iController->OutputDecodedStream(0, iContainer->BitDepth(), iContainer->SampleRate(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
+    LOG(kCodec, "CodecAlacBase::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);
+    iController->OutputDecodedStream(0, iContainer->BitDepth(), iContainer->Timescale(), iContainer->Channels(), kCodecAlac, iTrackLengthJiffies, 0, true);
 }
 
 TBool CodecAlacBase::SupportsMimeType(const Brx& aMimeType)
@@ -163,7 +163,7 @@ void CodecAlacBase::Decode()
         BigEndianData(samples, samplesWritten);
         iOutBuf.SetBytes(iOutBuf.Bytes() + bytes);
         if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)(iBitDepth/8) * iContainer->Channels()) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->SampleRate(),
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->Timescale(),
                 iBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
@@ -179,7 +179,7 @@ void CodecAlacBase::OutputFinal()
     if (iStreamStarted || iStreamEnded) {
         // flush remaining samples
         if (iOutBuf.Bytes() > 0) {
-            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->SampleRate(),
+            iTrackOffset += iController->OutputAudioPcm(iOutBuf, iContainer->Channels(), iContainer->Timescale(),
                 iBitDepth, EMediaDataBigEndian, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
