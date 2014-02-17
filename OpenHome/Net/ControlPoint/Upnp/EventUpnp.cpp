@@ -106,15 +106,9 @@ void EventSessionUpnp::Run()
                 Error(HttpStatus::kPreconditionFailed);
             }
         }
-
-        if (!subscription->UpdateSequenceNumber(iHeaderSeq.Seq())) {
-            subscription->SetNotificationError();
-            subscription->RemoveRef();
-            subscription = NULL;
-        }
     }
-    catch(HttpError) {}
-    catch(ReaderError) {}
+    catch(HttpError&) {}
+    catch(ReaderError&) {}
 
     try {
         // write response
@@ -144,7 +138,7 @@ void EventSessionUpnp::Run()
                         try {
                             Read(buffer);
                         }
-                        catch (ReaderError) {
+                        catch (ReaderError&) {
                             // thrown for remote socket closed or network error 
                             break;
                         }
@@ -163,26 +157,39 @@ void EventSessionUpnp::Run()
             LOG(kEvent, "EventSessionUpnp::Run, sid - ");
             LOG(kEvent, iHeaderSid.Sid());
             LOG(kEvent, " seq - %u\n", iHeaderSeq.Seq());
-            ProcessNotification(*subscription, entity);
+
+            /* defer validating the seq number till now to avoid holding subscription's lock during
+               potentially long-running network reads */
+            if (subscription->UpdateSequenceNumber(iHeaderSeq.Seq())) {
+                try {
+                    ProcessNotification(*subscription, entity);
+                }
+                catch (Exception&) {
+                    ASSERTS(); // ProcessNotification isn't expected to throw
+                }
+                subscription->Unlock();
+            }
+            else {
+                subscription->SetNotificationError();
+            }
         }
     }
-    catch(HttpError) {
+    catch(HttpError&) {
         LogError(subscription, "HttpError");
     }
-    catch(ReaderError) {
+    catch(ReaderError&) {
         LogError(subscription, "ReaderError");
     }
-    catch(WriterError) {
+    catch(WriterError&) {
         LogError(subscription, "WriterError");
     }
-    catch(NetworkError) {
+    catch(NetworkError&) {
         LogError(subscription, "NetworkError");
     }
-    catch(XmlError) {
+    catch(XmlError&) {
         LogError(subscription, "XmlError");
     }
     if (subscription != NULL) {
-        subscription->Unlock();
         subscription->RemoveRef();
     }    
 }
