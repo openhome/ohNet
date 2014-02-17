@@ -462,11 +462,6 @@ void CpiDeviceListUpnp::DoStart()
 
 void CpiDeviceListUpnp::Start()
 {
-    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    lock.Signal();
     Refresh();
 }
 
@@ -475,6 +470,14 @@ void CpiDeviceListUpnp::Refresh()
     if (StartRefresh()) {
         return;
     }
+    const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
+    /* Always attempt multiple refreshes until we start receiving responses
+       Poor quality iOS networking means that we risk MSEARCHes not being sent otherwise,
+       resulting in all devices being removed. */
+    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+    lock.Signal();
     Start();
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
     delayMs += 100; /* allow slightly longer to cope with devices which send
@@ -593,11 +596,6 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
     iLock.Wait();
     iInterface = current->Address();
     iLock.Signal();
-    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    lock.Signal();
     current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
 
     {
