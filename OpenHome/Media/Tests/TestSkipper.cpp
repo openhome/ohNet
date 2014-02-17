@@ -89,6 +89,7 @@ private:
     TUint iTrackId;
     TUint iStreamId;
     TUint64 iTrackOffset;
+    TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
     TUint iNextTrackId;
@@ -127,6 +128,7 @@ void SuiteSkipper::Setup()
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
     iTrackId = iStreamId = UINT_MAX;
     iTrackOffset = 0;
+    iJiffies = 0;
     iRamping = false;
     iLastSubsample = 0xffffff;
     iNextTrackId = 1;
@@ -181,6 +183,7 @@ Msg* SuiteSkipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 Msg* SuiteSkipper::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastPulledMsg = EMsgAudioPcm;
+    iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
     ProcessorPcmBufPacked pcmProcessor;
     playable->Read(pcmProcessor);
@@ -347,10 +350,12 @@ void SuiteSkipper::TestRemoveStreamRampAudioRampsDown()
 
     iSkipper->RemoveCurrentStream(true);
     iRamping = true;
+    iJiffies = 0;
     while (iRamping) {
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
     }
+    TEST(iJiffies == kRampDuration);
 }
 
 void SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown()
