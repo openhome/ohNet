@@ -233,38 +233,6 @@ MsgAudioPcm* SuitePreDriver::CreateAudio()
     return audio;
 }
 
-Msg* SuitePreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgPlayable* aMsg)
-{
-    iLastMsg = EMsgPlayable;
-    return aMsg;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    TEST(aMsg->StreamInfo().BitDepth() == iBitDepth);
-    TEST(aMsg->StreamInfo().SampleRate() == iSampleRate);
-    iLastMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
 Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
@@ -272,6 +240,12 @@ Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
@@ -293,6 +267,32 @@ Msg* SuitePreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    TEST(aMsg->StreamInfo().BitDepth() == iBitDepth);
+    TEST(aMsg->StreamInfo().SampleRate() == iSampleRate);
+    iLastMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgPlayable* aMsg)
+{
+    iLastMsg = EMsgPlayable;
+    return aMsg;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgQuit* aMsg)

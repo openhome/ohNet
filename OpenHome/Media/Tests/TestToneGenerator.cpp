@@ -556,11 +556,62 @@ void SuiteGeneratorAny::Push(Msg* aMsg)
     }
 }
 
+Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
+{
+    TEST(eMsgTrack == iExpectedMsgType);
+    iExpectedMsgType = eMsgEncodedStream;
+    // reset audio data accu for next track
+    iAccumulatedJiffies = 0;  
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    TEST(eMsgEncodedStream== iExpectedMsgType);
+    iExpectedMsgType = eMsgDecodedStream;
+    return aMsg;
+}
+
 // callbacks from aMsg->Process; actually check output (TEST)
 Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     ASSERTS();
     return aMsg;  // unreachable, but required to acquiesce compiler
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgHalt* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgFlush* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    TEST(eMsgDecodedStream == iExpectedMsgType);
+    iExpectedMsgType = eMsgAudioPcm;
+    const DecodedStreamInfo& info = aMsg->StreamInfo();
+    TEST(info.CodecName() == Brn("WAV"));
+    TEST(info.Lossless());
+    TEST(!info.Seekable());
+    TEST(!info.Live());
+    TEST(info.BitDepth() == iExpectedToneParams.BitsPerSample());
+    TEST(info.SampleRate() == iExpectedToneParams.SampleRate());
+    // interpretation of pitch is generator-specific
+    TEST(info.NumChannels() == iExpectedToneParams.NumChannels());
+    // duration checked by accumulating jiffies from PCM audio msgs
+    return aMsg;
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgAudioPcm* aMsg)
@@ -664,57 +715,6 @@ Msg* SuiteGeneratorAny::ProcessMsg(MsgSilence* aMsg)
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    TEST(eMsgDecodedStream == iExpectedMsgType);
-    iExpectedMsgType = eMsgAudioPcm;
-    const DecodedStreamInfo& info = aMsg->StreamInfo();
-    TEST(info.CodecName() == Brn("WAV"));
-    TEST(info.Lossless());
-    TEST(!info.Seekable());
-    TEST(!info.Live());
-    TEST(info.BitDepth() == iExpectedToneParams.BitsPerSample());
-    TEST(info.SampleRate() == iExpectedToneParams.SampleRate());
-    // interpretation of pitch is generator-specific
-    TEST(info.NumChannels() == iExpectedToneParams.NumChannels());
-    // duration checked by accumulating jiffies from PCM audio msgs
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgTrack* aMsg)
-{
-    TEST(eMsgTrack == iExpectedMsgType);
-    iExpectedMsgType = eMsgEncodedStream;
-    // reset audio data accu for next track
-    iAccumulatedJiffies = 0;  
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    TEST(eMsgEncodedStream== iExpectedMsgType);
-    iExpectedMsgType = eMsgDecodedStream;
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgMetaText* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgHalt* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* SuiteGeneratorAny::ProcessMsg(MsgFlush* aMsg)
 {
     ASSERTS();
     return aMsg;

@@ -174,10 +174,48 @@ TUint SuiteSkipper::TryStop(TUint aTrackId, TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
+Msg* SuiteSkipper::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastPulledMsg = EMsgTrack;
+    iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgEncodedStream;
+    iStreamId = aMsg->StreamId();
+    return aMsg;
+}
+
 Msg* SuiteSkipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastPulledMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgDecodedStream;
+    return aMsg;
 }
 
 Msg* SuiteSkipper::ProcessMsg(MsgAudioPcm* aMsg)
@@ -221,44 +259,6 @@ Msg* SuiteSkipper::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastPulledMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgTrack* aMsg)
-{
-    iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
-    return aMsg;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iLastPulledMsg = EMsgEncodedStream;
-    iStreamId = aMsg->StreamId();
-    return aMsg;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgMetaText* aMsg)
-{
-    iLastPulledMsg = EMsgMetaText;
-    return aMsg;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastPulledMsg = EMsgHalt;
-    return aMsg;
-}
-
-Msg* SuiteSkipper::ProcessMsg(MsgFlush* aMsg)
-{
-    iLastPulledMsg = EMsgFlush;
-    return aMsg;
 }
 
 Msg* SuiteSkipper::ProcessMsg(MsgQuit* aMsg)

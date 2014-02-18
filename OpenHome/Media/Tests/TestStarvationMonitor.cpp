@@ -329,9 +329,45 @@ MsgAudio* SuiteStarvationMonitor::CreateAudio()
     return audio;
 }
 
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS(); // MsgTrack not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS(); // MsgEncodedStream not used in this test
+    return NULL;
+}
+
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS(); // MsgMetaText not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS(); // MsgFlush not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); // MsgDecodedStream not used in this test
     return NULL;
 }
 
@@ -373,42 +409,6 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgSilence* /*aMsg*/)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not used in this test
-    return NULL;
-}
-
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
-{
-    ASSERTS(); // MsgDecodedStream not used in this test
-    return NULL;
-}
-
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS(); // MsgTrack not used in this test
-    return NULL;
-}
-
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS(); // MsgEncodedStream not used in this test
-    return NULL;
-}
-
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS(); // MsgMetaText not used in this test
-    return NULL;
-}
-
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastMsg = EMsgHalt;
-    return aMsg;
-}
-
-Msg* SuiteStarvationMonitor::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS(); // MsgFlush not used in this test
     return NULL;
 }
 

@@ -252,10 +252,46 @@ MsgAudio* SuiteVariableDelay::CreateAudio()
     return audio;
 }
 
+Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastMsg = EMsgEncodedStream;
+    return aMsg;
+}
+
 Msg* SuiteVariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
     return NULL;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastMsg = EMsgDecodedStream;
+    return aMsg;
 }
 
 Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
@@ -304,42 +340,6 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not expected at this stage of the pipeline
     return NULL;
-}
-
-Msg* SuiteVariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
-Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
-{
-    iLastMsg = EMsgTrack;
-    return aMsg;
-}
-
-Msg* SuiteVariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iLastMsg = EMsgEncodedStream;
-    return aMsg;
-}
-
-Msg* SuiteVariableDelay::ProcessMsg(MsgMetaText* aMsg)
-{
-    iLastMsg = EMsgMetaText;
-    return aMsg;
-}
-
-Msg* SuiteVariableDelay::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastMsg = EMsgHalt;
-    return aMsg;
-}
-
-Msg* SuiteVariableDelay::ProcessMsg(MsgFlush* aMsg)
-{
-    iLastMsg = EMsgFlush;
-    return aMsg;
 }
 
 Msg* SuiteVariableDelay::ProcessMsg(MsgQuit* aMsg)

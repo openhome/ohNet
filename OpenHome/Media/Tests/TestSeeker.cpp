@@ -184,10 +184,48 @@ TUint SuiteSeeker::TryStop(TUint aTrackId, TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
+Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastPulledMsg = EMsgTrack;
+    iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgEncodedStream;
+    iStreamId = aMsg->StreamId();
+    return aMsg;
+}
+
 Msg* SuiteSeeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastPulledMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgDecodedStream;
+    return aMsg;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
@@ -242,44 +280,6 @@ Msg* SuiteSeeker::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastPulledMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
-{
-    iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iLastPulledMsg = EMsgEncodedStream;
-    iStreamId = aMsg->StreamId();
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgMetaText* aMsg)
-{
-    iLastPulledMsg = EMsgMetaText;
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastPulledMsg = EMsgHalt;
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
-{
-    iLastPulledMsg = EMsgFlush;
-    return aMsg;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgQuit* aMsg)
