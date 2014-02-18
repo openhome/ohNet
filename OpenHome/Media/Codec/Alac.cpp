@@ -116,8 +116,8 @@ TBool CodecAlac::TrySeek(TUint aStreamId, TUint64 aSample)
     if (canSeek) {
         iSamplesWrittenTotal = aSample;
         iCurrentSample = startSample;
-        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->SampleRate();
-        iController->OutputDecodedStream(0, iMp4->BitDepth(), iMp4->SampleRate(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, aSample, true);
+        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->Timescale();
+        iController->OutputDecodedStream(0, iMp4->BitDepth(), iMp4->Timescale(), iMp4->Channels(), kCodecAlac, iTrackLengthJiffies, aSample, true);
     }
     return canSeek;
 }

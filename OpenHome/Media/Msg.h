@@ -12,6 +12,8 @@
 
 #include <limits.h>
 
+EXCEPTION(MsgInvalidSampleRate);
+
 namespace OpenHome {
 namespace Media {
 
@@ -124,6 +126,7 @@ public:
     static const TUint kJiffiesPerSecond = 56448000; // lcm(384000, 352800)
     static const TUint kJiffiesPerMs = kJiffiesPerSecond / 1000;
 public:
+    static TBool IsValidSampleRate(TUint aSampleRate);
     static TUint JiffiesPerSample(TUint aSampleRate);
     static TUint BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
 private:

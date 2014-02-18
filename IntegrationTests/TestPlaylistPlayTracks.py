@@ -209,7 +209,9 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 # code if NO Id event is received (same track plays 2x in a row)
                 self.nextTimer.cancel()
                 self.nextTimer = None
-            self._TrackChanged( int( svVal) )
+            # Run on seperate thread so Playback events not blocked
+            thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal)] )
+            thread.start()                
             
     def _TrackChanged( self, aId ):
         "Track changed - check results and setup timer for next track"            
@@ -219,7 +221,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             else:
                 if self.senderStarted.isSet():
                     if self.meta:
-                        title = Common.GetTitleFromDidl( aTrack[1] )
+                        title = Common.GetTitleFromDidl( self.meta )
                         self.log.Fail( self.senderDev, 'FAILED to play track %s' % title )
                     else:
                         self.log.Fail( self.senderDev, 'FAILED to play track' )
@@ -251,13 +253,14 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             if not self.senderStopped.isSet():
                 self.numTrack += 1
                 if self.repeat=='off' and self.numTrack>len( self.tracks ): 
-                    self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
-                    self.senderStopped.set()    # force test exit
+                    self.senderStopped.wait( 3 )
+                    if not self.senderStopped.isSet():
+                        self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
+                        self.senderStopped.set()    # force test exit
                 else:
                     if self.sender.playlist.transportState != 'Playing':
                         self.senderPlayed = False
-                    th = LogThread.Thread( target=self._SetupPlayTimer )
-                    th.start() # on its own thread as depends on DS events
+                    self._SetupPlayTimer()                
 
     def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
         "Callback from Time Service UPnP events on receiver device"
@@ -331,8 +334,9 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             # be cancelled before expiry if an Id event (new track) is received
             # from the Playlist service. This case is where same track played 
             # twice in a row, and no PlayTimer set 
-            self.nextTimer = LogThread.Timer( self.sender.info.duration+1, self._NextTimerCb )
-            self.nextTimer.start()
+            if not self.nextTimer:
+               self.nextTimer = LogThread.Timer( self.sender.info.duration+1, self._NextTimerCb )
+               self.nextTimer.start()
         
     def _PlayTimerCb( self ):
         "Callback from playtime timer - skips to next track"
@@ -341,8 +345,9 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # has been no track change (same track played twice in a row). It will
         # be cancelled before expiry if an Id event (new track) is received
         # from the Playlist service 
-        self.nextTimer = LogThread.Timer( 1, self._NextTimerCb )
-        self.nextTimer.start()
+        if not self.nextTimer:
+            self.nextTimer = LogThread.Timer( 1, self._NextTimerCb )
+            self.nextTimer.start()
         
     def _NextTimerCb( self ):
         "Next Timer CB - called on expiry of th e 'NextTimer'"

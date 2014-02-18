@@ -392,6 +392,9 @@ TUint64 CodecController::StreamPos() const
 
 void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
 {
+    if (!Jiffies::IsValidSampleRate(aSampleRate)) {
+        THROW(CodecStreamCorrupt);
+    }
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive);
     iLock.Wait();
     iSampleRate = aSampleRate;

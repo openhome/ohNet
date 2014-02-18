@@ -37,6 +37,11 @@ protected:
     Bws<DecodedAudio::kMaxBytes> iReadBuf;
     TUint64 iTrackStart;
 private:
+    static const TUint kUnder65kHz = 0x4013;
+    static const TUint k11127Hz = 11127; // Macintosh "close enough" sample rate
+    static const TUint k11025Hz = 11025;
+    static const TUint k22255Hz = 22255; // Macintosh "close enough" sample rate
+    static const TUint k22050Hz = 22050;
     Brn iName;
     TUint iNumChannels;
     TUint64 iSamplesTotal;
