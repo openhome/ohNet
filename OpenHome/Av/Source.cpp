@@ -91,7 +91,7 @@ void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager
         iConfigName = new ConfigText(aConfigManagerWriter, key, kMaxSystemNameBytes, iName);
         iConfigNameCreated = true;
     }
-    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Source::NameChanged));
+    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &Source::NameChanged));
 }
 
 void Source::NameChanged(KeyValuePair<const Brx&>& aName)
