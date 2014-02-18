@@ -64,34 +64,6 @@ Msg* Seeker::Pull()
     return msg;
 }
 
-Msg* Seeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Seeker::ProcessMsg(MsgSilence* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Seeker::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    ASSERT(iState == ERunning);
-    return aMsg;
-}
-
 Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
@@ -105,6 +77,12 @@ Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
     return aMsg;
+}
+
+Msg* Seeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Seeker::ProcessMsg(MsgMetaText* aMsg)
@@ -129,6 +107,28 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
         return NULL;
     }
     return aMsg;
+}
+
+Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERT(iState == ERunning);
+    return aMsg;
+}
+
+Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+
+Msg* Seeker::ProcessMsg(MsgSilence* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+
+Msg* Seeker::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Seeker::ProcessMsg(MsgQuit* aMsg)

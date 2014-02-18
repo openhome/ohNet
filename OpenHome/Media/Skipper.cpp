@@ -53,34 +53,6 @@ Msg* Skipper::Pull()
     return msg;
 }
 
-Msg* Skipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Skipper::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    ASSERT(iState == ERunning);
-    return aMsg;
-}
-
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
@@ -94,6 +66,12 @@ Msg* Skipper::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
     return aMsg;
+}
+
+Msg* Skipper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Skipper::ProcessMsg(MsgMetaText* aMsg)
@@ -115,6 +93,28 @@ Msg* Skipper::ProcessMsg(MsgFlush* aMsg)
         return NULL;
     }
     return aMsg;
+}
+
+Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERT(iState == ERunning);
+    return aMsg;
+}
+
+Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+
+Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+
+Msg* Skipper::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Skipper::ProcessMsg(MsgQuit* aMsg)

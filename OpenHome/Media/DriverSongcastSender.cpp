@@ -257,46 +257,6 @@ void DriverSongcastSender::DeviceDisabled()
     iDeviceDisabled.Signal();
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgPlayable* aMsg)
-{
-    SendAudio(aMsg);
-    return NULL;
-}
-
-Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    const DecodedStreamInfo& stream = aMsg->StreamInfo();
-    iSampleRate = stream.SampleRate();
-    iNumChannels = stream.NumChannels();
-    TUint reportedChannels = iNumChannels;
-    if (reportedChannels == 1) {
-        reportedChannels = 2;   // output mono as stereo
-    }
-    iBitDepth = stream.BitDepth();
-    iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
-    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels, iBitDepth, stream.Lossless(), stream.CodecName());
-    aMsg->RemoveRef();
-    return NULL;
-}
-
 Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
@@ -304,6 +264,12 @@ Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
 }
 
 Msg* DriverSongcastSender::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
@@ -324,6 +290,40 @@ Msg* DriverSongcastSender::ProcessMsg(MsgHalt* aMsg)
 Msg* DriverSongcastSender::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    const DecodedStreamInfo& stream = aMsg->StreamInfo();
+    iSampleRate = stream.SampleRate();
+    iNumChannels = stream.NumChannels();
+    TUint reportedChannels = iNumChannels;
+    if (reportedChannels == 1) {
+        reportedChannels = 2;   // output mono as stereo
+    }
+    iBitDepth = stream.BitDepth();
+    iJiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
+    iOhmSenderDriver->SetAudioFormat(iSampleRate, stream.BitRate(), reportedChannels, iBitDepth, stream.Lossless(), stream.CodecName());
+    aMsg->RemoveRef();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgPlayable* aMsg)
+{
+    SendAudio(aMsg);
     return NULL;
 }
 

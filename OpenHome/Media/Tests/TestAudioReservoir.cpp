@@ -32,16 +32,16 @@ public:
     ~SuiteAudioReservoir();
     void Test();
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IClockPuller
     void NotifySize(TUint aJiffies);
@@ -106,16 +106,16 @@ private:
     void PullerThread();
     void HistoryPointAdded();
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     MsgFactory* iMsgFactory;
@@ -313,10 +313,46 @@ MsgAudio* SuiteAudioReservoir::CreateAudio()
     return audio;
 }
 
+Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastMsg = EMsgEncodedStream;
+    return aMsg;
+}
+
 Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
     return NULL;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastMsg = EMsgDecodedStream;
+    return aMsg;
 }
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgAudioPcm* aMsg)
@@ -350,42 +386,6 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS(); // MsgPlayable not used in this test
     return NULL;
-}
-
-Msg* SuiteAudioReservoir::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
-Msg* SuiteAudioReservoir::ProcessMsg(MsgTrack* aMsg)
-{
-    iLastMsg = EMsgTrack;
-    return aMsg;
-}
-
-Msg* SuiteAudioReservoir::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iLastMsg = EMsgEncodedStream;
-    return aMsg;
-}
-
-Msg* SuiteAudioReservoir::ProcessMsg(MsgMetaText* aMsg)
-{
-    iLastMsg = EMsgMetaText;
-    return aMsg;
-}
-
-Msg* SuiteAudioReservoir::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastMsg = EMsgHalt;
-    return aMsg;
-}
-
-Msg* SuiteAudioReservoir::ProcessMsg(MsgFlush* aMsg)
-{
-    iLastMsg = EMsgFlush;
-    return aMsg;
 }
 
 Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)

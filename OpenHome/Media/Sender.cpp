@@ -88,25 +88,45 @@ void Sender::Push(Msg* aMsg)
     }
 }
 
+Msg* Sender::ProcessMsg(MsgTrack* aMsg)
+{
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+    }
+    iTrack = &aMsg->Track();
+    iTrack->AddRef();
+    return aMsg;
+}
+
+Msg* Sender::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    ASSERTS(); // don't expect this msg at this stage of the pipeline
+    return aMsg;
+}
+
 Msg* Sender::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     ASSERTS(); // don't expect this msg at this stage of the pipeline
     return aMsg;
 }
 
-Msg* Sender::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* Sender::ProcessMsg(MsgMetaText* aMsg)
 {
-    ProcessAudio(aMsg);
-    return NULL;
+    // don't bother to send pending audio.  It doesn't matter if metatext is processed very slightly out of order
+    // (in fact its unavoidable since only audio frames are numbered.  songcast protocol offers no guarantees about
+    // when metadata is received/processed relative to text.)
+    iOhmSender->SetMetatext(aMsg->MetaText());
+    return aMsg;
 }
 
-Msg* Sender::ProcessMsg(MsgSilence* aMsg)
+Msg* Sender::ProcessMsg(MsgHalt* aMsg)
 {
-    ProcessAudio(aMsg);
-    return NULL;
+    SendPendingAudio();
+    // FIXME - no way to pass this through OhmSender
+    return aMsg;
 }
 
-Msg* Sender::ProcessMsg(MsgPlayable* aMsg)
+Msg* Sender::ProcessMsg(MsgFlush* aMsg)
 {
     ASSERTS(); // don't expect this msg at this stage of the pipeline
     return aMsg;
@@ -130,39 +150,19 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
-Msg* Sender::ProcessMsg(MsgTrack* aMsg)
+Msg* Sender::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-    }
-    iTrack = &aMsg->Track();
-    iTrack->AddRef();
-    return aMsg;
+    ProcessAudio(aMsg);
+    return NULL;
 }
 
-Msg* Sender::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* Sender::ProcessMsg(MsgSilence* aMsg)
 {
-    ASSERTS(); // don't expect this msg at this stage of the pipeline
-    return aMsg;
+    ProcessAudio(aMsg);
+    return NULL;
 }
 
-Msg* Sender::ProcessMsg(MsgMetaText* aMsg)
-{
-    // don't bother to send pending audio.  It doesn't matter if metatext is processed very slightly out of order
-    // (in fact its unavoidable since only audio frames are numbered.  songcast protocol offers no guarantees about
-    // when metadata is received/processed relative to text.)
-    iOhmSender->SetMetatext(aMsg->MetaText());
-    return aMsg;
-}
-
-Msg* Sender::ProcessMsg(MsgHalt* aMsg)
-{
-    SendPendingAudio();
-    // FIXME - no way to pass this through OhmSender
-    return aMsg;
-}
-
-Msg* Sender::ProcessMsg(MsgFlush* aMsg)
+Msg* Sender::ProcessMsg(MsgPlayable* aMsg)
 {
     ASSERTS(); // don't expect this msg at this stage of the pipeline
     return aMsg;
@@ -297,36 +297,6 @@ MsgPlayable* Sender::PlayableCreator::Process(MsgAudio* aMsg)
     return iPlayable;
 }
 
-Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    iPlayable = aMsg->CreatePlayable();
-    return NULL;
-}
-
-Msg* Sender::PlayableCreator::ProcessMsg(MsgSilence* aMsg)
-{
-    iPlayable = aMsg->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
-    return NULL;
-}
-
-Msg* Sender::PlayableCreator::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Sender::PlayableCreator::ProcessMsg(MsgDecodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
 Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
@@ -334,6 +304,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
@@ -352,6 +328,30 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgHalt* /*aMsg*/)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iPlayable = aMsg->CreatePlayable();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgSilence* aMsg)
+{
+    iPlayable = aMsg->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
