@@ -57,7 +57,9 @@ template <class T>
 class IObservable
 {
 public:
-    virtual TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor) = 0;
+    typedef FunctorGeneric<KeyValuePair<T>&> FunctorObserver;
+public:
+    virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
     virtual void Unsubscribe(TUint aId) = 0;
     virtual ~IObservable() {}
 };
@@ -77,10 +79,10 @@ public:
     virtual void Serialise(IWriter& aWriter) const = 0;
     virtual TBool Deserialise(const Brx& aString) = 0;
 public: // from IObservable
-    virtual TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor) = 0;
+    virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
     void Unsubscribe(TUint aId);
 protected:
-    TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor, T aVal);
+    TUint Subscribe(FunctorObserver aFunctor, T aVal);
     void NotifySubscribers(T aVal);
     void AddInitialSubscribers();
     virtual void Write(KeyValuePair<T>& aKvp) = 0;
@@ -88,7 +90,7 @@ protected:
     IConfigManagerWriter& iConfigManager;
     Bwh iId;
 private:
-    typedef std::map<TUint,FunctorGeneric<KeyValuePair<T>&>> Map;
+    typedef std::map<TUint,FunctorObserver> Map;
     Map iObservers;
     Mutex iObserverLock;
     TUint iWriteObserverId; // ID for own Write() observer
@@ -132,12 +134,12 @@ template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
     iObserverLock.Signal();
 }
 
-template <class T> TUint ConfigVal<T>::Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor, T aVal)
+template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVal)
 {
     KeyValuePair<T> kvp(iId, aVal);
     iObserverLock.Wait();
     TUint id = iNextObserverId;
-    iObservers.insert(std::pair<TUint,FunctorGeneric<KeyValuePair<T>&>>(id, aFunctor));
+    iObservers.insert(std::pair<TUint,FunctorObserver>(id, aFunctor));
     iNextObserverId++;
     iObserverLock.Signal();
     aFunctor(kvp);
@@ -164,6 +166,8 @@ class ConfigNum : public ConfigVal<TInt>
 {
     friend class SuiteConfigManager;
 public:
+    typedef FunctorGeneric<KeyValuePair<TInt>&> FunctorConfigNum;
+public:
     ConfigNum(IConfigManagerWriter& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
@@ -174,7 +178,7 @@ public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
     TBool Deserialise(const Brx& aString);
 public: // from ConfigVal
-    TUint Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor);
+    TUint Subscribe(FunctorConfigNum aFunctor);
 private: // from ConfigVal
     void Write(KeyValuePair<TInt>& aKvp);
 private:
@@ -205,6 +209,8 @@ class ConfigChoice : public ConfigVal<TUint>
 {
     friend class SuiteConfigManager;
 public:
+    typedef FunctorGeneric<KeyValuePair<TUint>&> FunctorConfigChoice;
+public:
     ConfigChoice(IConfigManagerWriter& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
@@ -214,7 +220,7 @@ public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
     TBool Deserialise(const Brx& aString);
 public: // from ConfigVal
-    TUint Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor);
+    TUint Subscribe(FunctorConfigChoice aFunctor);
 private: // from ConfigVal
     void Write(KeyValuePair<TUint>& aKvp);
 private:
@@ -245,6 +251,8 @@ class ConfigText : public ConfigVal<const Brx&>
 {
     friend class SuiteConfigManager;
 public:
+    typedef FunctorGeneric<KeyValuePair<const Brx&>&> FunctorConfigText;
+public:
     ConfigText(IConfigManagerWriter& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     TBool Set(const Brx& aText);
@@ -254,7 +262,7 @@ public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
     TBool Deserialise(const Brx& aString);
 public: // from ConfigVal
-    TUint Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor);
+    TUint Subscribe(FunctorConfigText aFunctor);
 private: // from ConfigVal
     void Write(KeyValuePair<const Brx&>& aKvp);
 private:
