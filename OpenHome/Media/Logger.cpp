@@ -65,10 +65,85 @@ void Logger::Push(Msg* aMsg)
     iDownstreamElement->Push(aMsg);
 }
 
+Msg* Logger::ProcessMsg(MsgTrack* aMsg)
+{
+    if (IsEnabled(EMsgTrack)) {
+        Log::Print("Pipeline (%s): track {uri:", iId);
+        Log::Print(aMsg->Track().Uri());
+        Log::Print(", metaData: ");
+#ifdef LOG_METADATA
+        Log::Print(aMsg->Track().MetaData());
+#else
+        Log::Print("(omitted)");
+#endif
+        Log::Print(", id: %u, mode: ", aMsg->Track().Id());
+        Log::Print(aMsg->Mode());
+        Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    if (IsEnabled(EMsgEncodedStream)) {
+        Log::Print("Pipeline (%s): encoded stream {", iId);
+        Log::Print(aMsg->Uri());
+        Log::Print(", metaText: ");
+#ifdef LOG_METADATA
+        Log::Print(aMsg->MetaText());
+#else
+        Log::Print("(omitted)");
+#endif
+        Log::Print(" , totalBytes: %llu, streamId: %u, seekable: %s, live: %s}\n",
+                    aMsg->TotalBytes(), aMsg->StreamId(),
+                    (aMsg->Seekable()? "true" : "false"),
+                    (aMsg->Live()? "true" : "false"));
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     if (IsEnabled(EMsgAudioEncoded)) {
         Log::Print("Pipeline (%s): encoded {bytes: %u}\n", iId, aMsg->Bytes());
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
+{
+    if (IsEnabled(EMsgMetaText)) {
+        Log::Print("Pipeline (%s): metaText {", iId);
+        Log::Print(aMsg->MetaText());
+        Log::Print("}\n");
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgHalt* aMsg)
+{
+    if (IsEnabled(EMsgHalt)) {
+        Log::Print("Pipeline (%s): halt { id: %u }\n", iId, aMsg->Id());
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgFlush* aMsg)
+{
+    if (IsEnabled(EMsgFlush)) {
+        Log::Print("Pipeline (%s): flush { id: %u }\n", iId, aMsg->Id());
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    if (IsEnabled(EMsgDecodedStream)) {
+        const DecodedStreamInfo& stream = aMsg->StreamInfo();
+        Log::Print("Pipeline (%s): audio format {streamId: %u, bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ",
+                    iId, stream.StreamId(), stream.BitRate(), stream.BitDepth(), stream.SampleRate());
+        Log::Print(stream.CodecName());
+        Log::Print(", trackLength: %llu, sampleStart: %u, lossless: %s}\n", stream.TrackLength(), stream.SampleStart(), (stream.Lossless()? "true" : "false"));
     }
     return aMsg;
 }
@@ -99,81 +174,6 @@ Msg* Logger::ProcessMsg(MsgPlayable* aMsg)
         Log::Print("Pipeline (%s): playable {bytes: %u}", iId, aMsg->Bytes());
         LogRamp(aMsg->Ramp());
         Log::Print("\n");
-    }
-    return aMsg;
-}
-
-Msg* Logger::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    if (IsEnabled(EMsgEncodedStream)) {
-        Log::Print("Pipeline (%s): encoded stream {", iId);
-        Log::Print(aMsg->Uri());
-        Log::Print(", metaText: ");
-#ifdef LOG_METADATA
-        Log::Print(aMsg->MetaText());
-#else
-        Log::Print("(omitted)");
-#endif
-        Log::Print(" , totalBytes: %llu, streamId: %u, seekable: %s, live: %s}\n",
-                    aMsg->TotalBytes(), aMsg->StreamId(),
-                    (aMsg->Seekable()? "true" : "false"),
-                    (aMsg->Live()? "true" : "false"));
-    }
-    return aMsg;
-}
-
-Msg* Logger::ProcessMsg(MsgTrack* aMsg)
-{
-    if (IsEnabled(EMsgTrack)) {
-        Log::Print("Pipeline (%s): track {uri:", iId);
-        Log::Print(aMsg->Track().Uri());
-        Log::Print(", metaData: ");
-#ifdef LOG_METADATA
-        Log::Print(aMsg->Track().MetaData());
-#else
-        Log::Print("(omitted)");
-#endif
-        Log::Print(", id: %u, mode: ", aMsg->Track().Id());
-        Log::Print(aMsg->Mode());
-        Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());
-    }
-    return aMsg;
-}
-
-Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    if (IsEnabled(EMsgDecodedStream)) {
-        const DecodedStreamInfo& stream = aMsg->StreamInfo();
-        Log::Print("Pipeline (%s): audio format {streamId: %u, bitRate: %u, bitDepth: %u, sampleRate: %u, codec: ",
-                    iId, stream.StreamId(), stream.BitRate(), stream.BitDepth(), stream.SampleRate());
-        Log::Print(stream.CodecName());
-        Log::Print(", trackLength: %llu, sampleStart: %u, lossless: %s}\n", stream.TrackLength(), stream.SampleStart(), (stream.Lossless()? "true" : "false"));
-    }
-    return aMsg;
-}
-
-Msg* Logger::ProcessMsg(MsgMetaText* aMsg)
-{
-    if (IsEnabled(EMsgMetaText)) {
-        Log::Print("Pipeline (%s): metaText {", iId);
-        Log::Print(aMsg->MetaText());
-        Log::Print("}\n");
-    }
-    return aMsg;
-}
-
-Msg* Logger::ProcessMsg(MsgHalt* aMsg)
-{
-    if (IsEnabled(EMsgHalt)) {
-        Log::Print("Pipeline (%s): halt { id: %u }\n", iId, aMsg->Id());
-    }
-    return aMsg;
-}
-
-Msg* Logger::ProcessMsg(MsgFlush* aMsg)
-{
-    if (IsEnabled(EMsgFlush)) {
-        Log::Print("Pipeline (%s): flush { id: %u }\n", iId, aMsg->Id());
     }
     return aMsg;
 }

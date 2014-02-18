@@ -38,16 +38,16 @@ public:
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     enum EMsgType
@@ -148,44 +148,6 @@ void SuiteSupply::Push(Msg* aMsg)
     iMsgPushCount++;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    iLastMsg = EMsgAudioEncoded;
-    TEST(aMsg->Bytes() == sizeof(kTestData)-1);
-    TByte audioEnc[64];
-    aMsg->CopyTo(audioEnc);
-    TEST(memcmp(kTestData, audioEnc, sizeof(kTestData)-1) == 0);
-    return aMsg;
-}
-
-Msg* SuiteSupply::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgAudioPcm;
-    return aMsg;
-}
-
-Msg* SuiteSupply::ProcessMsg(MsgSilence* aMsg)
-{
-    ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgSilence;
-    return aMsg;
-}
-
-Msg* SuiteSupply::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgPlayable;
-    return aMsg;
-}
-
-Msg* SuiteSupply::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
 Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
@@ -208,6 +170,16 @@ Msg* SuiteSupply::ProcessMsg(MsgEncodedStream* aMsg)
     return aMsg;
 }
 
+Msg* SuiteSupply::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    iLastMsg = EMsgAudioEncoded;
+    TEST(aMsg->Bytes() == sizeof(kTestData)-1);
+    TByte audioEnc[64];
+    aMsg->CopyTo(audioEnc);
+    TEST(memcmp(kTestData, audioEnc, sizeof(kTestData)-1) == 0);
+    return aMsg;
+}
+
 Msg* SuiteSupply::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
@@ -224,6 +196,34 @@ Msg* SuiteSupply::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteSupply::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
+    iLastMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
+    iLastMsg = EMsgAudioPcm;
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgSilence* aMsg)
+{
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
+    iLastMsg = EMsgSilence;
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgPlayable* aMsg)
+{
+    ASSERTS(); // don't expect this type of msg at the start of the pipeline
+    iLastMsg = EMsgPlayable;
     return aMsg;
 }
 

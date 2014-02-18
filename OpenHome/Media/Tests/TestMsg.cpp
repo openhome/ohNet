@@ -194,16 +194,16 @@ public:
     ProcessorMsgType();
     EMsgType LastMsgType() const;
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     EMsgType iLastMsgType;
@@ -1644,36 +1644,6 @@ ProcessorMsgType::EMsgType ProcessorMsgType::LastMsgType() const
     return iLastMsgType;
 }
 
-Msg* ProcessorMsgType::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgAudioEncoded;
-    return aMsg;
-}
-
-Msg* ProcessorMsgType::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgAudioPcm;
-    return aMsg;
-}
-
-Msg* ProcessorMsgType::ProcessMsg(MsgSilence* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgSilence;
-    return aMsg;
-}
-
-Msg* ProcessorMsgType::ProcessMsg(MsgPlayable* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgPlayable;
-    return aMsg;
-}
-
-Msg* ProcessorMsgType::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastMsgType = ProcessorMsgType::EMsgDecodedStream;
-    return aMsg;
-}
-
 Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgTrack;
@@ -1683,6 +1653,12 @@ Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
 Msg* ProcessorMsgType::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgEncodedStream;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgAudioEncoded;
     return aMsg;
 }
 
@@ -1701,6 +1677,30 @@ Msg* ProcessorMsgType::ProcessMsg(MsgHalt* aMsg)
 Msg* ProcessorMsgType::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgFlush;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgAudioPcm;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgSilence* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgSilence;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgPlayable* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgPlayable;
     return aMsg;
 }
 

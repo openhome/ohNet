@@ -64,16 +64,16 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 protected:
     AllocatorInfoLogger iInfoAggregator;
@@ -233,39 +233,6 @@ TUint SuiteRewinder::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ++iCurrentFlushId;
 }
 
-Msg* SuiteRewinder::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    TBool isCorrectMsg = TestMsgAudioEncodedValue(*aMsg, iAudioIn);
-    TEST(isCorrectMsg == true);
-    iAudioIn++;
-    iRcvdMsgType = EMsgAudioEncoded;
-    return aMsg;
-}
-
-Msg* SuiteRewinder::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
-}
-
-Msg* SuiteRewinder::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
-}
-
-Msg* SuiteRewinder::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
-}
-
-Msg* SuiteRewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
-    return NULL;
-}
-
 Msg* SuiteRewinder::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iLastMsgType == EMsgTrack);
@@ -280,6 +247,15 @@ Msg* SuiteRewinder::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler = aMsg->StreamHandler();
     iRcvdMsgType = EMsgEncodedStream;
     iStreamId = aMsg->StreamId();
+    return aMsg;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    TBool isCorrectMsg = TestMsgAudioEncodedValue(*aMsg, iAudioIn);
+    TEST(isCorrectMsg == true);
+    iAudioIn++;
+    iRcvdMsgType = EMsgAudioEncoded;
     return aMsg;
 }
 
@@ -302,6 +278,30 @@ Msg* SuiteRewinder::ProcessMsg(MsgFlush* aMsg)
     TEST(iLastMsgType == EMsgFlush);
     iRcvdMsgType = EMsgFlush;
     return aMsg;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return NULL;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return NULL;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return NULL;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* SuiteRewinder::ProcessMsg(MsgQuit* aMsg)

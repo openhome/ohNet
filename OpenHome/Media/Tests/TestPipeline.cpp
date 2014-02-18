@@ -73,16 +73,16 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     AllocatorInfoLogger iInfoAggregator;
@@ -491,9 +491,50 @@ void SuitePipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 #endif
 }
 
+Msg* SuitePipeline::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* SuitePipeline::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastMsgWasAudio = false;
+    aMsg->RemoveRef();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastMsgWasAudio = false;
+    iSampleRate = aMsg->StreamInfo().SampleRate();
+    iNumChannels = aMsg->StreamInfo().NumChannels();
+    iBitDepth = aMsg->StreamInfo().BitDepth();
+    aMsg->RemoveRef();
     return NULL;
 }
 
@@ -541,47 +582,6 @@ Msg* SuitePipeline::ProcessMsg(MsgPlayable* aMsg)
     const TUint numSamples = bytes / bytesPerSample;
     iLastMsgJiffies = Jiffies::JiffiesPerSample(iSampleRate) * numSamples;
     iJiffies += iLastMsgJiffies;
-    return NULL;
-}
-
-Msg* SuitePipeline::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastMsgWasAudio = false;
-    iSampleRate = aMsg->StreamInfo().SampleRate();
-    iNumChannels = aMsg->StreamInfo().NumChannels();
-    iBitDepth = aMsg->StreamInfo().BitDepth();
-    aMsg->RemoveRef();
-    return NULL;
-}
-
-Msg* SuitePipeline::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePipeline::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePipeline::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePipeline::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastMsgWasAudio = false;
-    aMsg->RemoveRef();
-    return NULL;
-}
-
-Msg* SuitePipeline::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS();
     return NULL;
 }
 

@@ -38,16 +38,16 @@ private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     enum EMsgType
@@ -184,10 +184,48 @@ TUint SuiteSeeker::TryStop(TUint aTrackId, TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
+Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastPulledMsg = EMsgTrack;
+    iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgEncodedStream;
+    iStreamId = aMsg->StreamId();
+    return aMsg;
+}
+
 Msg* SuiteSeeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastPulledMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgDecodedStream;
+    return aMsg;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
@@ -242,44 +280,6 @@ Msg* SuiteSeeker::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iLastPulledMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
-{
-    iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iLastPulledMsg = EMsgEncodedStream;
-    iStreamId = aMsg->StreamId();
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgMetaText* aMsg)
-{
-    iLastPulledMsg = EMsgMetaText;
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
-{
-    iLastPulledMsg = EMsgHalt;
-    return aMsg;
-}
-
-Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
-{
-    iLastPulledMsg = EMsgFlush;
-    return aMsg;
 }
 
 Msg* SuiteSeeker::ProcessMsg(MsgQuit* aMsg)

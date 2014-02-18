@@ -143,10 +143,40 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     }
 }
 
+Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
     return NULL;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgFlush* aMsg)
+{
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
@@ -164,36 +194,6 @@ Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
     // MsgPlayable not supported at this stage of the pipeline (as we don't know how to ramp it)
     ASSERTS();
     return NULL;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
-{
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgMetaText* aMsg)
-{
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgHalt* aMsg)
-{
-    return aMsg;
-}
-
-Msg* VariableDelay::ProcessMsg(MsgFlush* aMsg)
-{
-    return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)

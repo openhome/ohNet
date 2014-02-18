@@ -660,6 +660,182 @@ void RampApplicator::GetNextSample(TByte* aDest)
     iLoopCount++;
 }
 
+ 
+// Track
+
+Track::Track(AllocatorBase& aAllocator)
+    : Allocated(aAllocator)
+{
+    Clear();
+}
+
+const Brx& Track::Uri() const
+{
+    return iUri;
+}
+
+const Brx& Track::MetaData() const
+{
+    return iMetaData;
+}
+
+TUint Track::Id() const
+{
+    return iId;
+}
+
+TAny* Track::UserData() const
+{
+    return iUserData;
+}
+
+TBool Track::Pullable() const
+{
+    return iPullable;
+}
+
+void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable)
+{
+    iUri.ReplaceThrow(aUri);
+    if (aMetaData.Bytes() > iMetaData.MaxBytes()) {
+        iMetaData.Replace(aMetaData.Split(0, iMetaData.MaxBytes()));
+    }
+    else {
+        iMetaData.Replace(aMetaData);
+    }
+    iId = aId;
+    iUserData = aUserData;
+    iPullable = aPullable;
+}
+
+void Track::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iUri.SetBytes(0);
+    iMetaData.SetBytes(0);
+    iId = UINT_MAX;
+    iUserData = NULL;
+    iPullable = false;
+#endif // DEFINE_DEBUG
+}
+
+    
+// MsgTrack
+
+MsgTrack::MsgTrack(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Media::Track& MsgTrack::Track() const
+{
+    ASSERT(iTrack != NULL);
+    return *iTrack;
+}
+
+TUint MsgTrack::IdPipeline() const
+{
+    return iIdPipeline;
+}
+
+const Brx& MsgTrack::Mode() const
+{
+    return iMode;
+}
+
+void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
+{
+    iTrack = &aTrack;
+    iTrack->AddRef();
+    iIdPipeline = aIdPipeline;
+    iMode.Replace(aMode);
+}
+
+void MsgTrack::Clear()
+{
+    iTrack->RemoveRef();
+    iTrack = NULL;
+    iIdPipeline = UINT_MAX;
+    iMode.Replace(Brx::Empty());
+}
+
+Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgEncodedStream
+
+MsgEncodedStream::MsgEncodedStream(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+const Brx& MsgEncodedStream::Uri() const
+{
+    return iUri;
+}
+
+const Brx& MsgEncodedStream::MetaText() const
+{
+    return iMetaText;
+}
+
+TUint64 MsgEncodedStream::TotalBytes() const
+{
+    return iTotalBytes;
+}
+
+TUint MsgEncodedStream::StreamId() const
+{
+    return iStreamId;
+}
+
+TBool MsgEncodedStream::Seekable() const
+{
+    return iSeekable;
+}
+
+TBool MsgEncodedStream::Live() const
+{
+    return iLive;
+}
+
+IStreamHandler* MsgEncodedStream::StreamHandler() const
+{
+    return iStreamHandler;
+}
+
+void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+{
+    iUri.Replace(aUri);
+    iMetaText.Replace(aMetaText);
+    iTotalBytes = aTotalBytes;
+    iStreamId = aStreamId;
+    iSeekable = aSeekable;
+    iLive = aLive;
+    iStreamHandler = aStreamHandler;
+}
+
+void MsgEncodedStream::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iUri.SetBytes(0);
+    iMetaText.SetBytes(0);
+    iTotalBytes = UINT_MAX;
+    iStreamId = UINT_MAX;
+    iSeekable = false;
+    iLive = false;
+    iStreamHandler = NULL;
+#endif
+}
+
+Msg* MsgEncodedStream::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
 
 // MsgAudioEncoded
 
@@ -770,6 +946,151 @@ void MsgAudioEncoded::Clear()
 }
 
 Msg* MsgAudioEncoded::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgMetaText
+
+MsgMetaText::MsgMetaText(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+const Brx& MsgMetaText::MetaText() const
+{
+    return iMetaText;
+}
+
+void MsgMetaText::Initialise(const Brx& aMetaText)
+{
+    iMetaText.Replace(aMetaText);
+}
+
+void MsgMetaText::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iMetaText.SetBytes(0);
+#endif
+}
+
+Msg* MsgMetaText::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgHalt
+
+MsgHalt::MsgHalt(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+TUint MsgHalt::Id() const
+{
+    return iId;
+}
+
+void MsgHalt::Initialise(TUint aId)
+{
+    iId = aId;
+}
+
+void MsgHalt::Clear()
+{
+    iId = UINT_MAX;
+}
+
+Msg* MsgHalt::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgFlush
+
+MsgFlush::MsgFlush(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+void MsgFlush::Initialise(TUint aId)
+{
+    iId = aId;
+}
+
+TUint MsgFlush::Id() const
+{
+    return iId;
+}
+
+void MsgFlush::Clear()
+{
+    iId = kIdInvalid;
+}
+
+Msg* MsgFlush::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// DecodedStreamInfo
+
+DecodedStreamInfo::DecodedStreamInfo()
+    : iBitRate(0)
+    , iBitDepth(0)
+    , iSampleRate(0)
+    , iNumChannels(0)
+    , iCodecName("")
+    , iTrackLength(0)
+    , iLossless(false)
+{
+}
+
+void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive)
+{
+    iStreamId = aStreamId;
+    iBitRate = aBitRate;
+    iBitDepth = aBitDepth;
+    iSampleRate = aSampleRate;
+    iNumChannels = aNumChannels;
+    iCodecName.Replace(aCodecName);
+    iTrackLength = aTrackLength;
+    iSampleStart = aSampleStart;
+    iLossless = aLossless;
+    iSeekable = aSeekable;
+    iLive = aLive;
+}
+
+
+// MsgDecodedStream
+
+MsgDecodedStream::MsgDecodedStream(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+const DecodedStreamInfo& MsgDecodedStream::StreamInfo() const
+{
+    return iStreamInfo;
+}
+
+void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive)
+{
+    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive);
+}
+
+void MsgDecodedStream::Clear()
+{
+#ifdef DEFINE_DEBUG
+    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false);
+#endif
+}
+
+Msg* MsgDecodedStream::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
 }
@@ -1344,327 +1665,6 @@ MsgPlayable* MsgPlayableSilence::Allocate()
 }
 
 
-// DecodedStreamInfo
-
-DecodedStreamInfo::DecodedStreamInfo()
-    : iBitRate(0)
-    , iBitDepth(0)
-    , iSampleRate(0)
-    , iNumChannels(0)
-    , iCodecName("")
-    , iTrackLength(0)
-    , iLossless(false)
-{
-}
-
-void DecodedStreamInfo::Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive)
-{
-    iStreamId = aStreamId;
-    iBitRate = aBitRate;
-    iBitDepth = aBitDepth;
-    iSampleRate = aSampleRate;
-    iNumChannels = aNumChannels;
-    iCodecName.Replace(aCodecName);
-    iTrackLength = aTrackLength;
-    iSampleStart = aSampleStart;
-    iLossless = aLossless;
-    iSeekable = aSeekable;
-    iLive = aLive;
-}
-
-
-// MsgDecodedStream
-
-MsgDecodedStream::MsgDecodedStream(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-const DecodedStreamInfo& MsgDecodedStream::StreamInfo() const
-{
-    return iStreamInfo;
-}
-
-void MsgDecodedStream::Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive)
-{
-    iStreamInfo.Set(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive);
-}
-
-void MsgDecodedStream::Clear()
-{
-#ifdef DEFINE_DEBUG
-    iStreamInfo.Set(UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, UINT_MAX, Brx::Empty(), ULONG_MAX, ULONG_MAX, false, false, false);
-#endif
-}
-
-Msg* MsgDecodedStream::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
- 
-// Track
-
-Track::Track(AllocatorBase& aAllocator)
-    : Allocated(aAllocator)
-{
-    Clear();
-}
-
-const Brx& Track::Uri() const
-{
-    return iUri;
-}
-
-const Brx& Track::MetaData() const
-{
-    return iMetaData;
-}
-
-TUint Track::Id() const
-{
-    return iId;
-}
-
-TAny* Track::UserData() const
-{
-    return iUserData;
-}
-
-TBool Track::Pullable() const
-{
-    return iPullable;
-}
-
-void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable)
-{
-    iUri.ReplaceThrow(aUri);
-    if (aMetaData.Bytes() > iMetaData.MaxBytes()) {
-        iMetaData.Replace(aMetaData.Split(0, iMetaData.MaxBytes()));
-    }
-    else {
-        iMetaData.Replace(aMetaData);
-    }
-    iId = aId;
-    iUserData = aUserData;
-    iPullable = aPullable;
-}
-
-void Track::Clear()
-{
-#ifdef DEFINE_DEBUG
-    iUri.SetBytes(0);
-    iMetaData.SetBytes(0);
-    iId = UINT_MAX;
-    iUserData = NULL;
-    iPullable = false;
-#endif // DEFINE_DEBUG
-}
-
-    
-// MsgTrack
-
-MsgTrack::MsgTrack(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-Media::Track& MsgTrack::Track() const
-{
-    ASSERT(iTrack != NULL);
-    return *iTrack;
-}
-
-TUint MsgTrack::IdPipeline() const
-{
-    return iIdPipeline;
-}
-
-const Brx& MsgTrack::Mode() const
-{
-    return iMode;
-}
-
-void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
-{
-    iTrack = &aTrack;
-    iTrack->AddRef();
-    iIdPipeline = aIdPipeline;
-    iMode.Replace(aMode);
-}
-
-void MsgTrack::Clear()
-{
-    iTrack->RemoveRef();
-    iTrack = NULL;
-    iIdPipeline = UINT_MAX;
-    iMode.Replace(Brx::Empty());
-}
-
-Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
-
-// MsgEncodedStream
-
-MsgEncodedStream::MsgEncodedStream(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-const Brx& MsgEncodedStream::Uri() const
-{
-    return iUri;
-}
-
-const Brx& MsgEncodedStream::MetaText() const
-{
-    return iMetaText;
-}
-
-TUint64 MsgEncodedStream::TotalBytes() const
-{
-    return iTotalBytes;
-}
-
-TUint MsgEncodedStream::StreamId() const
-{
-    return iStreamId;
-}
-
-TBool MsgEncodedStream::Seekable() const
-{
-    return iSeekable;
-}
-
-TBool MsgEncodedStream::Live() const
-{
-    return iLive;
-}
-
-IStreamHandler* MsgEncodedStream::StreamHandler() const
-{
-    return iStreamHandler;
-}
-
-void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
-{
-    iUri.Replace(aUri);
-    iMetaText.Replace(aMetaText);
-    iTotalBytes = aTotalBytes;
-    iStreamId = aStreamId;
-    iSeekable = aSeekable;
-    iLive = aLive;
-    iStreamHandler = aStreamHandler;
-}
-
-void MsgEncodedStream::Clear()
-{
-#ifdef DEFINE_DEBUG
-    iUri.SetBytes(0);
-    iMetaText.SetBytes(0);
-    iTotalBytes = UINT_MAX;
-    iStreamId = UINT_MAX;
-    iSeekable = false;
-    iLive = false;
-    iStreamHandler = NULL;
-#endif
-}
-
-Msg* MsgEncodedStream::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
-
-// MsgMetaText
-
-MsgMetaText::MsgMetaText(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-const Brx& MsgMetaText::MetaText() const
-{
-    return iMetaText;
-}
-
-void MsgMetaText::Initialise(const Brx& aMetaText)
-{
-    iMetaText.Replace(aMetaText);
-}
-
-void MsgMetaText::Clear()
-{
-#ifdef DEFINE_DEBUG
-    iMetaText.SetBytes(0);
-#endif
-}
-
-Msg* MsgMetaText::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
-
-// MsgHalt
-
-MsgHalt::MsgHalt(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-TUint MsgHalt::Id() const
-{
-    return iId;
-}
-
-void MsgHalt::Initialise(TUint aId)
-{
-    iId = aId;
-}
-
-void MsgHalt::Clear()
-{
-    iId = UINT_MAX;
-}
-
-Msg* MsgHalt::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
-
-// MsgFlush
-
-MsgFlush::MsgFlush(AllocatorBase& aAllocator)
-    : Msg(aAllocator)
-{
-}
-
-void MsgFlush::Initialise(TUint aId)
-{
-    iId = aId;
-}
-
-TUint MsgFlush::Id() const
-{
-    return iId;
-}
-
-void MsgFlush::Clear()
-{
-    iId = kIdInvalid;
-}
-
-Msg* MsgFlush::Process(IMsgProcessor& aProcessor)
-{
-    return aProcessor.ProcessMsg(this);
-}
-
-
 // MsgQuit
 
 MsgQuit::MsgQuit(AllocatorBase& aAllocator)
@@ -1831,27 +1831,15 @@ void MsgReservoir::Remove(TUint& aValue, TUint aRemoved)
     iLock.Signal();
 }
 
-void MsgReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
-{
-}
-
-void MsgReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
-{
-}
-
-void MsgReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
-{
-}
-
-void MsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
-{
-}
-
 void MsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
 
 void MsgReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
+{
+}
+
+void MsgReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)
 {
 }
 
@@ -1867,28 +1855,20 @@ void MsgReservoir::ProcessMsgIn(MsgFlush* /*aMsg*/)
 {
 }
 
+void MsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
+{
+}
+
+void MsgReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
+{
+}
+
+void MsgReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
+{
+}
+
 void MsgReservoir::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
-}
-
-Msg* MsgReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessMsgOut(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
-{
-    return aMsg;
 }
 
 Msg* MsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
@@ -1897,6 +1877,11 @@ Msg* MsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
 }
 
 Msg* MsgReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgAudioEncoded* aMsg)
 {
     return aMsg;
 }
@@ -1916,6 +1901,21 @@ Msg* MsgReservoir::ProcessMsgOut(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* MsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgAudioPcm* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgSilence* aMsg)
+{
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessMsgOut(MsgQuit* aMsg)
 {
     return aMsg;
@@ -1929,9 +1929,45 @@ MsgReservoir::ProcessorQueueIn::ProcessorQueueIn(MsgReservoir& aQueue)
 {
 }
 
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDecodedStream* aMsg)
+{
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
@@ -1956,42 +1992,6 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMetaText* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgHalt* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
-Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgFlush* aMsg)
-{
-    iQueue.ProcessMsgIn(aMsg);
-    return aMsg;
-}
-
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgQuit* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
@@ -2006,9 +2006,39 @@ MsgReservoir::ProcessorQueueOut::ProcessorQueueOut(MsgReservoir& aQueue)
 {
 }
 
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     iQueue.Remove(iQueue.iEncodedBytes, aMsg->Bytes());
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
+{
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2028,36 +2058,6 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
-}
-
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    return iQueue.ProcessMsgOut(aMsg);
-}
-
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
-{
-    return iQueue.ProcessMsgOut(aMsg);
-}
-
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
-{
-    return iQueue.ProcessMsgOut(aMsg);
-}
-
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMetaText* aMsg)
-{
-    return iQueue.ProcessMsgOut(aMsg);
-}
-
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgHalt* aMsg)
-{
-    return iQueue.ProcessMsgOut(aMsg);
-}
-
-Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgFlush* aMsg)
-{
-    return iQueue.ProcessMsgOut(aMsg);
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgQuit* aMsg)
@@ -2125,11 +2125,53 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     iNextFlushId = MsgFlush::kIdInvalid + 1;
 }
 
+MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
+{
+    MsgTrack* msg = iAllocatorMsgTrack.Allocate();
+    msg->Initialise(aTrack, aIdPipeline, aMode);
+    return msg;
+}
+
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
+{
+    MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
+    msg->Initialise(aUri, aMetaText, aTotalBytes, aStreamId, aSeekable, aLive, aStreamHandler);
+    return msg;
+}
+
 MsgAudioEncoded* MsgFactory::CreateMsgAudioEncoded(const Brx& aData)
 {
     EncodedAudio* encodedAudio = CreateEncodedAudio(aData);
     MsgAudioEncoded* msg = iAllocatorMsgAudioEncoded.Allocate();
     msg->Initialise(encodedAudio);
+    return msg;
+}
+
+MsgMetaText* MsgFactory::CreateMsgMetaText(const Brx& aMetaText)
+{
+    MsgMetaText* msg = iAllocatorMsgMetaText.Allocate();
+    msg->Initialise(aMetaText);
+    return msg;
+}
+
+MsgHalt* MsgFactory::CreateMsgHalt(TUint aId)
+{
+    MsgHalt* msg = iAllocatorMsgHalt.Allocate();
+    msg->Initialise(aId);
+    return msg;
+}
+
+MsgFlush* MsgFactory::CreateMsgFlush(TUint aId)
+{
+    MsgFlush* flush = iAllocatorMsgFlush.Allocate();
+    flush->Initialise(aId);
+    return flush;
+}
+
+MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive)
+{
+    MsgDecodedStream* msg = iAllocatorMsgDecodedStream.Allocate();
+    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive);
     return msg;
 }
 
@@ -2153,48 +2195,6 @@ MsgSilence* MsgFactory::CreateMsgSilence(TUint aSizeJiffies)
     MsgSilence* msg = iAllocatorMsgSilence.Allocate();
     msg->Initialise(aSizeJiffies, iAllocatorMsgPlayableSilence);
     return msg;
-}
-
-MsgDecodedStream* MsgFactory::CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive)
-{
-    MsgDecodedStream* msg = iAllocatorMsgDecodedStream.Allocate();
-    msg->Initialise(aStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, aSeekable, aLive);
-    return msg;
-}
-
-MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
-{
-    MsgTrack* msg = iAllocatorMsgTrack.Allocate();
-    msg->Initialise(aTrack, aIdPipeline, aMode);
-    return msg;
-}
-
-MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
-{
-    MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
-    msg->Initialise(aUri, aMetaText, aTotalBytes, aStreamId, aSeekable, aLive, aStreamHandler);
-    return msg;
-}
-
-MsgMetaText* MsgFactory::CreateMsgMetaText(const Brx& aMetaText)
-{
-    MsgMetaText* msg = iAllocatorMsgMetaText.Allocate();
-    msg->Initialise(aMetaText);
-    return msg;
-}
-
-MsgHalt* MsgFactory::CreateMsgHalt(TUint aId)
-{
-    MsgHalt* msg = iAllocatorMsgHalt.Allocate();
-    msg->Initialise(aId);
-    return msg;
-}
-
-MsgFlush* MsgFactory::CreateMsgFlush(TUint aId)
-{
-    MsgFlush* flush = iAllocatorMsgFlush.Allocate();
-    flush->Initialise(aId);
-    return flush;
 }
 
 MsgQuit* MsgFactory::CreateMsgQuit()

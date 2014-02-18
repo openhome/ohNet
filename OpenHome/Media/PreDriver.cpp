@@ -120,30 +120,45 @@ void PreDriver::CalculateMaxPlayable()
     iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iStreamInfo->StreamInfo().NumChannels(), iStreamInfo->StreamInfo().BitDepth() / 8);
 }
 
+Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
+Msg* PreDriver::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* PreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
     return NULL;
 }
 
-Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* PreDriver::ProcessMsg(MsgMetaText* aMsg)
 {
-    iHalted = false;
-    MsgPlayable* playable = aMsg->CreatePlayable();
-    return AddPlayable(playable);
+    aMsg->RemoveRef();
+    return NULL;
 }
 
-Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
+Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
 {
-    iHalted = false;
-    const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
-    MsgPlayable* playable = aMsg->CreatePlayable(stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
-    return AddPlayable(playable);
+    iHalted = true;
+    if (iPlayable != NULL) {
+        iPendingHalt = aMsg;
+        Msg* msg = iPlayable;
+        iPlayable = NULL;
+        return msg;
+    }
+    return aMsg;
 }
 
-Msg* PreDriver::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
-    ASSERTS(); // we're the only generator of MsgPlayable so don't expect them to appear from upstream
+    ASSERTS(); // don't expect to encounter MsgFlush this far down the pipeline
     return NULL;
 }
 
@@ -173,39 +188,24 @@ Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
     return NextStoredMsg();
 }
 
-Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
+Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    aMsg->RemoveRef();
-    return NULL;
+    iHalted = false;
+    MsgPlayable* playable = aMsg->CreatePlayable();
+    return AddPlayable(playable);
 }
 
-Msg* PreDriver::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
-    aMsg->RemoveRef();
-    return NULL;
+    iHalted = false;
+    const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
+    MsgPlayable* playable = aMsg->CreatePlayable(stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
+    return AddPlayable(playable);
 }
 
-Msg* PreDriver::ProcessMsg(MsgMetaText* aMsg)
+Msg* PreDriver::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
-    aMsg->RemoveRef();
-    return NULL;
-}
-
-Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
-{
-    iHalted = true;
-    if (iPlayable != NULL) {
-        iPendingHalt = aMsg;
-        Msg* msg = iPlayable;
-        iPlayable = NULL;
-        return msg;
-    }
-    return aMsg;
-}
-
-Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS(); // don't expect to encounter MsgFlush this far down the pipeline
+    ASSERTS(); // we're the only generator of MsgPlayable so don't expect them to appear from upstream
     return NULL;
 }
 
