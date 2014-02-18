@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 
+EXCEPTION(ConfigInvalidValue);
 EXCEPTION(ConfigValueOutOfRange);
 EXCEPTION(ConfigValueExists);
 EXCEPTION(ConfigInvalidChoice);
@@ -18,6 +19,7 @@ EXCEPTION(ConfigValueTooLong);
 EXCEPTION(ConfigIdExists);
 
 namespace OpenHome {
+    class IWriter;
 namespace Configuration {
 
 template <class T>
@@ -72,6 +74,8 @@ protected:
 public:
     virtual ~ConfigVal();
     const Brx& Id();
+    virtual void Serialise(IWriter& aWriter) const = 0;
+    virtual TBool Deserialise(const Brx& aString) = 0;
 public: // from IObservable
     virtual TUint Subscribe(FunctorGeneric<KeyValuePair<T>&> aFunctor) = 0;
     void Unsubscribe(TUint aId);
@@ -167,6 +171,9 @@ public:
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
+    void Serialise(IWriter& aWriter) const;
+    TBool Deserialise(const Brx& aString);
+public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor);
 private: // from ConfigVal
     void Write(KeyValuePair<TInt>& aKvp);
@@ -204,6 +211,9 @@ public:
 private:
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
+    void Serialise(IWriter& aWriter) const;
+    TBool Deserialise(const Brx& aString);
+public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor);
 private: // from ConfigVal
     void Write(KeyValuePair<TUint>& aKvp);
@@ -240,6 +250,9 @@ public:
     TBool Set(const Brx& aText);
 private:
     TBool IsValid(const Brx& aVal) const;
+public: // from ConfigVal
+    void Serialise(IWriter& aWriter) const;
+    TBool Deserialise(const Brx& aString);
 public: // from ConfigVal
     TUint Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor);
 private: // from ConfigVal

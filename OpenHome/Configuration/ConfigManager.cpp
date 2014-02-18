@@ -1,7 +1,9 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Stream.h>
 
 #include <algorithm>
 
@@ -67,6 +69,28 @@ TBool ConfigNum::IsValid(TInt aVal) const
         return false;
     }
     return true;
+}
+
+void ConfigNum::Serialise(IWriter& aWriter) const
+{
+    Bws<sizeof(TInt)> buf;
+    AutoMutex a(iMutex);
+    Ascii::AppendDec(buf, iVal);
+    aWriter.Write(buf);
+}
+
+TBool ConfigNum::Deserialise(const Brx& aString)
+{
+    TInt val = 0;
+
+    try {
+        val = Ascii::Int(aString);
+    }
+    catch (AsciiError&) {
+        THROW(ConfigInvalidValue);
+    }
+
+    return Set(val);
 }
 
 TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
@@ -137,6 +161,28 @@ TBool ConfigChoice::IsValid(TUint aVal) const
     return true;
 }
 
+void ConfigChoice::Serialise(IWriter& aWriter) const
+{
+    Bws<sizeof(TUint)> buf;
+    AutoMutex a(iMutex);
+    Ascii::AppendDec(buf, iSelected);
+    aWriter.Write(buf);
+}
+
+TBool ConfigChoice::Deserialise(const Brx& aString)
+{
+    TUint val = 0;
+
+    try {
+        val = Ascii::Uint(aString);
+    }
+    catch (AsciiError&) {
+        THROW(ConfigInvalidValue);
+    }
+
+    return Set(val);
+}
+
 TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
 {
     AutoMutex a(iMutex);
@@ -198,6 +244,17 @@ TBool ConfigText::IsValid(const Brx& aVal) const
         return false;
     }
     return true;
+}
+
+void ConfigText::Serialise(IWriter& aWriter) const
+{
+    AutoMutex a(iMutex);
+    aWriter.Write(iText);
+}
+
+TBool ConfigText::Deserialise(const Brx& aString)
+{
+    return Set(aString);
 }
 
 TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
