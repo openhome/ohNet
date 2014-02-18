@@ -268,10 +268,10 @@ template <class T> void SuiteCVNotify<T>::NotifyChanged(KeyValuePair<T>& /*aKvp*
 SuiteCVSubscriptions::SuiteCVSubscriptions()
     : SuiteCVNotify("SuiteCVSubscriptions")
 {
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestNoSubscriptions));
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveSubscription));
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions));
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidId));
+    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestNoSubscriptions), "TestNoSubscriptions");
+    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveSubscription), "TestAddRemoveSubscription");
+    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions), "TestAddRemoveMultipleSubscriptions");
+    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidId), "TestRemoveInvalidId");
 }
 
 void SuiteCVSubscriptions::Setup()
@@ -356,19 +356,18 @@ void TestHelperWriter::WriteFlush()
 SuiteConfigNum::SuiteConfigNum()
     : SuiteCVNotify("SuiteConfigNum")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorsCalledAtConstruction));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestIdStored));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueFromStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueWrittenToStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMin));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMax));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetValueOutOfRange));
-
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestIdStored), "TestIdStored");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription), "TestSubscription");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange), "TestInvalidRange");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor), "TestValueOutOfRangeConstructor");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueFromStore), "TestValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueWrittenToStore), "TestValueWrittenToStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMin), "TestGetMin");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestGetMax), "TestGetMax");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetUpdate), "TestSetUpdate");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetNoUpdate), "TestSetNoUpdate");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetValueOutOfRange), "TestSetValueOutOfRange");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialise), "TestSerialise");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
@@ -620,17 +619,16 @@ const TUint SuiteConfigChoice::kChoice3 = 1002;
 SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestIdStored));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoChoices));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoSuchChoice));
-
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestIdStored), "TestIdStored");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription), "TestSubscription");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore), "TestValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore), "TestValueWrittenToStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestAdd), "TestAdd");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestGetNoChoices), "TestGetNoChoices");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetUpdate), "TestSetUpdate");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate), "TestSetNoUpdate");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoSuchChoice), "TestSetNoSuchChoice");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSerialise), "TestSerialise");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
@@ -874,16 +872,15 @@ const Brn SuiteConfigText::kDefault("abcdefghijklmnopqrstuvwxyz");
 SuiteConfigText::SuiteConfigText()
     : SuiteCVNotify("SuiteConfigText")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorsCalledAtConstruction));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestIdStored));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetNoUpdate));
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetValueTooLong));
-
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestIdStored), "TestIdStored");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription), "TestSubscription");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore), "TestValueFromStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore), "TestValueWrittenToStore");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestMaxLength), "TestMaxLength");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetUpdate), "TestSetUpdate");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetNoUpdate), "TestSetNoUpdate");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetValueTooLong), "TestSetValueTooLong");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSerialise), "TestSerialise");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
@@ -1145,20 +1142,20 @@ SuiteConfigManager::SuiteConfigManager()
     // Just group functions for each val class in a single generic unit test
     // for each type of ConfigManager function to maintain clarity and
     // small test size.
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestClose));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAdd));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAddDuplicate));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasNoVals));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasValidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasInvalidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasMultiple));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetNoVals));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetValidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetInvalidId));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetMultiple));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestClose), "TestClose");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAdd), "TestAdd");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAddDuplicate), "TestAddDuplicate");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasNoVals), "TestHasNoVals");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasValidId), "TestHasValidId");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasInvalidId), "TestHasInvalidId");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasMultiple), "TestHasMultiple");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetNoVals), "TestGetNoVals");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetValidId), "TestGetValidId");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetInvalidId), "TestGetInvalidId");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetMultiple), "TestGetMultiple");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists), "TestReadStoreValExists");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists), "TestReadNoStoreValExists");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite), "TestWrite");
 }
 
 void SuiteConfigManager::Setup()
@@ -1401,9 +1398,9 @@ const Brn SuiteRamStore::kVal2("zyxwvutsrqpomnlkjihgfedcba");
 SuiteRamStore::SuiteRamStore()
     : SuiteUnitTest("SuiteRamStore")
 {
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteRamStore::TestRead));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteRamStore::TestWrite));
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteRamStore::TestDelete));
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteRamStore::TestRead), "TestRead");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteRamStore::TestWrite), "TestWrite");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteRamStore::TestDelete), "TestDelete");
 }
 
 void SuiteRamStore::Setup()
