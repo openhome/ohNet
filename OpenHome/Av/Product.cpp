@@ -43,11 +43,11 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     key.Replace(iConfigPrefix);
     key.Append(kConfigIdRoomBase);
     iConfigProductRoom = &aConfigReader.GetText(key);
-    iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Product::ProductRoomChanged));
+    iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
     key.Replace(iConfigPrefix);
     key.Append(kConfigIdNameBase);
     iConfigProductName = &aConfigReader.GetText(key);
-    iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Product::ProductNameChanged));
+    iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorConfigText(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
 

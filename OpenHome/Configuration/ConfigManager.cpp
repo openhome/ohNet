@@ -1,7 +1,9 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Stream.h>
 
 #include <algorithm>
 
@@ -11,8 +13,8 @@ using namespace OpenHome::Configuration;
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigManagerWriter& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault)
-    : ConfigVal(aManager, aId)
+ConfigNum::ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
+    : ConfigVal(aManager, aKey)
     , iMin(aMin)
     , iMax(aMax)
     , iMutex("CVNM")
@@ -22,7 +24,7 @@ ConfigNum::ConfigNum(IConfigManagerWriter& aManager, const Brx& aId, TInt aMin, 
     Bws<sizeof(TInt)> initialBuf;
     Bws<sizeof(TInt)> defaultBuf;
     defaultBuf.Append(Arch::BigEndian4(aDefault));
-    iConfigManager.FromStore(iId, initialBuf, defaultBuf);
+    iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TInt initialVal = Converter::BeUint32At(initialBuf, 0);
 
     ASSERT(IsValid(initialVal));
@@ -69,6 +71,28 @@ TBool ConfigNum::IsValid(TInt aVal) const
     return true;
 }
 
+void ConfigNum::Serialise(IWriter& aWriter) const
+{
+    Bws<sizeof(TInt)> buf;
+    AutoMutex a(iMutex);
+    Ascii::AppendDec(buf, iVal);
+    aWriter.Write(buf);
+}
+
+TBool ConfigNum::Deserialise(const Brx& aString)
+{
+    TInt val = 0;
+
+    try {
+        val = Ascii::Int(aString);
+    }
+    catch (AsciiError&) {
+        THROW(ConfigInvalidValue);
+    }
+
+    return Set(val);
+}
+
 TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
 {
     AutoMutex a(iMutex);
@@ -79,21 +103,21 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 {
     Bws<sizeof(TInt)> valBuf;
     valBuf.Append(Arch::BigEndian4(aKvp.Value()));
-    iConfigManager.ToStore(iId, valBuf);
+    iConfigManager.ToStore(iKey, valBuf);
 }
 
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigManagerWriter& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault)
-    : ConfigVal(aManager, aId)
+ConfigChoice::ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
+    : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
     , iMutex("CVCM")
 {
     Bws<sizeof(TUint)> initialBuf;
     Bws<sizeof(TUint)> defaultBuf;
     defaultBuf.Append(Arch::BigEndian4(aDefault));
-    iConfigManager.FromStore(iId, initialBuf, defaultBuf);
+    iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
 
     ASSERT(IsValid(initialVal));
@@ -137,6 +161,28 @@ TBool ConfigChoice::IsValid(TUint aVal) const
     return true;
 }
 
+void ConfigChoice::Serialise(IWriter& aWriter) const
+{
+    Bws<sizeof(TUint)> buf;
+    AutoMutex a(iMutex);
+    Ascii::AppendDec(buf, iSelected);
+    aWriter.Write(buf);
+}
+
+TBool ConfigChoice::Deserialise(const Brx& aString)
+{
+    TUint val = 0;
+
+    try {
+        val = Ascii::Uint(aString);
+    }
+    catch (AsciiError&) {
+        THROW(ConfigInvalidValue);
+    }
+
+    return Set(val);
+}
+
 TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
 {
     AutoMutex a(iMutex);
@@ -147,19 +193,19 @@ void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 {
     Bws<sizeof(TUint)> valBuf;
     valBuf.Append(Arch::BigEndian4(aKvp.Value()));
-    iConfigManager.ToStore(iId, valBuf);
+    iConfigManager.ToStore(iKey, valBuf);
 }
 
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigManagerWriter& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault)
-    : ConfigVal(aManager, aId)
+ConfigText::ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
+    : ConfigVal(aManager, aKey)
     , iText(aMaxLength)
     , iMutex("CVTM")
 {
     Bwh initialBuf(aMaxLength);
-    iConfigManager.FromStore(iId, initialBuf, aDefault);
+    iConfigManager.FromStore(iKey, initialBuf, aDefault);
 
     ASSERT(IsValid(initialBuf));
     iConfigManager.Add(*this);
@@ -200,6 +246,17 @@ TBool ConfigText::IsValid(const Brx& aVal) const
     return true;
 }
 
+void ConfigText::Serialise(IWriter& aWriter) const
+{
+    AutoMutex a(iMutex);
+    aWriter.Write(iText);
+}
+
+TBool ConfigText::Deserialise(const Brx& aString)
+{
+    return Set(aString);
+}
+
 TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
 {
     AutoMutex a(iMutex);
@@ -208,7 +265,7 @@ TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
 
 void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
 {
-    iConfigManager.ToStore(iId, aKvp.Value());
+    iConfigManager.ToStore(iKey, aKvp.Value());
 }
 
 
@@ -222,14 +279,14 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 
 ConfigManager::~ConfigManager() {}
 
-template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal)
+template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
 {
     ASSERT(!iClosed);
-    if (HasNum(aId) || HasChoice(aId) || HasText(aId)) {
-        THROW(ConfigIdExists);
+    if (HasNum(aKey) || HasChoice(aKey) || HasText(aKey)) {
+        THROW(ConfigKeyExists);
     }
 
-    aMap.Add(aId, aVal);
+    aMap.Add(aKey, aVal);
 }
 
 void ConfigManager::Close()
@@ -239,17 +296,17 @@ void ConfigManager::Close()
 
 void ConfigManager::Add(ConfigNum& aNum)
 {
-    Add(iMapNum, aNum.Id(), aNum);
+    Add(iMapNum, aNum.Key(), aNum);
 }
 
 void ConfigManager::Add(ConfigChoice& aChoice)
 {
-    Add(iMapChoice, aChoice.Id(), aChoice);
+    Add(iMapChoice, aChoice.Key(), aChoice);
 }
 
 void ConfigManager::Add(ConfigText& aText)
 {
-    Add(iMapText, aText.Id(), aText);
+    Add(iMapText, aText.Key(), aText);
 }
 
 void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
@@ -269,39 +326,39 @@ void ConfigManager::ToStore(const Brx& aKey, const Brx& aValue)
     iStore.Write(aKey, aValue);
 }
 
-TBool ConfigManager::Has(const Brx& aId) const
+TBool ConfigManager::Has(const Brx& aKey) const
 {
-    return HasNum(aId) || HasChoice(aId) || HasText(aId);
+    return HasNum(aKey) || HasChoice(aKey) || HasText(aKey);
 }
 
-TBool ConfigManager::HasNum(const Brx& aId) const
+TBool ConfigManager::HasNum(const Brx& aKey) const
 {
-    return iMapNum.Has(aId);
+    return iMapNum.Has(aKey);
 }
 
-ConfigNum& ConfigManager::GetNum(const Brx& aId) const
+ConfigNum& ConfigManager::GetNum(const Brx& aKey) const
 {
-    return iMapNum.Get(aId);
+    return iMapNum.Get(aKey);
 }
 
-TBool ConfigManager::HasChoice(const Brx& aId) const
+TBool ConfigManager::HasChoice(const Brx& aKey) const
 {
-    return iMapChoice.Has(aId);
+    return iMapChoice.Has(aKey);
 }
 
-ConfigChoice& ConfigManager::GetChoice(const Brx& aId) const
+ConfigChoice& ConfigManager::GetChoice(const Brx& aKey) const
 {
-    return iMapChoice.Get(aId);
+    return iMapChoice.Get(aKey);
 }
 
-TBool ConfigManager::HasText(const Brx& aId) const
+TBool ConfigManager::HasText(const Brx& aKey) const
 {
-    return iMapText.Has(aId);
+    return iMapText.Has(aKey);
 }
 
-ConfigText& ConfigManager::GetText(const Brx& aId) const
+ConfigText& ConfigManager::GetText(const Brx& aKey) const
 {
-    return iMapText.Get(aId);
+    return iMapText.Get(aKey);
 }
 
 

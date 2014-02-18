@@ -105,6 +105,9 @@ void CodecWav::Process()
 
     if (iNumChannels == 0) {
         iController->Read(iReadBuf, kHeaderBytes);
+        if (iReadBuf.Bytes() != kHeaderBytes) {
+            THROW(CodecStreamEnded);
+        }
         ProcessHeader(iReadBuf);
         SendMsgDecodedStream(0);
     }
@@ -117,8 +120,21 @@ void CodecWav::Process()
         iReadBuf.SetBytes(0);
         const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
         iController->Read(iReadBuf, bytes);
+
+        // Truncate to a sensible sample boundary.
+        TUint remainder = iReadBuf.Bytes() % (iNumChannels * (iBitDepth/8));
+        Brn split = iReadBuf.Split(iReadBuf.Bytes()-remainder);
+        iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
+
         iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
         iAudioBytesRemaining -= iReadBuf.Bytes();
+
+        if (remainder > 0) {
+            iReadBuf.Replace(split);
+        }
+        if (iReadBuf.Bytes() < bytes) { // stream ended unexpectedly
+            THROW(CodecStreamEnded);
+        }
     }
 
     LOG(kMedia, "< CodecWav::Process()\n");

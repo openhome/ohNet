@@ -33,22 +33,22 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aLatencyMs, false/*unicast*/, aIconFileName);
 
     iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
-    iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &Sender::ConfigChannelChanged));
+    iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigChannelChanged));
 
     std::vector<TUint> choices;
     choices.push_back(eStringIdSongcastModeMulticast);
     choices.push_back(eStringIdSongcastModeUnicast);
     iConfigMode = new ConfigChoice(aConfigManager, kConfigIdMode, choices, eStringIdSongcastModeUnicast);
-    iListenerIdConfigMode = iConfigMode->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &Sender::ConfigModeChanged));
+    iListenerIdConfigMode = iConfigMode->Subscribe(MakeFunctorConfigChoice(*this, &Sender::ConfigModeChanged));
 
     iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, kPresetMin, kPresetMax, kPresetNone);
-    iListenerIdConfigPreset = iConfigPreset->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &Sender::ConfigPresetChanged));
+    iListenerIdConfigPreset = iConfigPreset->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigPresetChanged));
 
     choices.clear();
     choices.push_back(eStringIdYes);
     choices.push_back(eStringIdNo);
     iConfigEnabled = new ConfigChoice(aConfigManager, kConfigIdEnabled, choices, eStringIdYes);
-    iListenerIdConfigEnabled = iConfigEnabled->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &Sender::ConfigEnabledChanged));
+    iListenerIdConfigEnabled = iConfigEnabled->Subscribe(MakeFunctorConfigChoice(*this, &Sender::ConfigEnabledChanged));
 
     iPendingAudio.reserve(100); // arbitrarily chosen value.  Doesn't need to prevent any reallocation, just avoid regular churn early on
 }

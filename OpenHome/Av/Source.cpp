@@ -75,11 +75,15 @@ void Source::DoActivate()
 
 void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManagerWriter, IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix)
 {
+    const Brn prefix("Source.");
+    const Brn suffix(".Name");
+    const TUint maxKeyBytes = aConfigIdPrefix.Bytes() + prefix.Bytes()
+            + kMaxSystemNameBytes + suffix.Bytes();
     iProduct = &aProduct;
-    Bws<ConfigVal<const Brx&>::kMaxIdLength> key(aConfigIdPrefix);
-    key.Append("Source.");
+    Bwh key(maxKeyBytes);
+    key.Append(prefix);
     key.Append(iSystemName);
-    key.Append(".Name");
+    key.Append(suffix);
     if (aConfigManagerReader.HasText(key)) {
         iConfigName = &aConfigManagerReader.GetText(key);
         iConfigNameCreated = false;
@@ -87,7 +91,7 @@ void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager
         iConfigName = new ConfigText(aConfigManagerWriter, key, kMaxSystemNameBytes, iName);
         iConfigNameCreated = true;
     }
-    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &Source::NameChanged));
+    iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &Source::NameChanged));
 }
 
 void Source::NameChanged(KeyValuePair<const Brx&>& aName)
