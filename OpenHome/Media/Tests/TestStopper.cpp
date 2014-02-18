@@ -359,6 +359,7 @@ void SuiteStopper::TestHaltedThread()
     for (;;) {
         iThreadHalted->Wait();
         Msg* msg = iStopper->Pull();
+        msg = msg->Process(*this);
         msg->RemoveRef();
         iSemHalted.Signal();
     }
@@ -429,6 +430,7 @@ void SuiteStopper::TestPauseRamps()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
     iStopper->BeginPause();
+    iJiffies = 0;
     iRampingDown = true;
     while (iRampingDown) {
         iPendingMsgs.push_back(CreateAudio());
@@ -436,18 +438,21 @@ void SuiteStopper::TestPauseRamps()
     }
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
+    TEST(iJiffies == kRampDuration);
+    iJiffies = 0;
+    iRampingUp = true;
     PullNext(EMsgHalt);
     TestHalted();
 
     // check that calling Play() now ramps up
     iStopper->Play();
-    iRampingUp = true;
     while (iRampingUp) {
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
     }
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
+    TEST(iJiffies == kRampDuration);
 }
 
 void SuiteStopper::TestInterruptRamps()
@@ -555,6 +560,7 @@ void SuiteStopper::TestStopFromPlay()
 
     iStopper->BeginStop(5);
     iRampingDown = true;
+    iJiffies = 0;
     while (iRampingDown) {
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
@@ -562,6 +568,7 @@ void SuiteStopper::TestStopFromPlay()
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iJiffies == kRampDuration);
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
