@@ -27,6 +27,7 @@ public:
     ~UriProviderPlaylist();
 private: // from UriProvider
     void Begin(TUint aTrackId);
+    void BeginLater(TUint aTrackId);
     Media::EStreamPlay GetNext(Media::Track*& aTrack);
     TUint CurrentTrackId() const;
     TBool MoveNext();
@@ -45,6 +46,7 @@ private: // from Media::ITrackObserver
     void NotifyTrackPlay(Media::Track& aTrack);
     void NotifyTrackFail(Media::Track& aTrack);
 private:
+    void DoBegin(TUint aTrackId, Media::EStreamPlay aPendingCanPlay);
     TUint CurrentTrackIdLocked() const;
 private:
     enum EPendingDirection

@@ -26,6 +26,7 @@ public:
     TUint IdByIndex(TUint aIndex) const;
 private: // from UriProvider
     void Begin(TUint aTrackId);
+    void BeginLater(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
     TUint CurrentTrackId() const;
     TBool MoveNext();
@@ -151,6 +152,11 @@ void DummyUriProvider::Begin(TUint aTrackId)
         THROW(UriProviderInvalidId);
     }
     iIndex = index-1;
+}
+
+void DummyUriProvider::BeginLater(TUint /*aTrackId*/)
+{
+    ASSERTS(); // don't expect this to ever be called
 }
 
 EStreamPlay DummyUriProvider::GetNext(Track*& aTrack)

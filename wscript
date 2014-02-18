@@ -227,7 +227,6 @@ def build(bld):
                 'OpenHome/Media/Splitter.cpp',
                 'OpenHome/Media/StarvationMonitor.cpp',
                 'OpenHome/Media/Stopper.cpp',
-                'OpenHome/Media/Stopper2.cpp',
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',

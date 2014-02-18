@@ -128,6 +128,15 @@ void PipelineManager::Stop()
                                         override the attempt to Stop it. */
 }
 
+void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
+{
+    /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
+    iPipeline->RemoveCurrentStream();
+    iIdManager->InvalidatePending();
+    iFiller->PlayLater(aMode, aTrackId);
+    iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
+}
+
 void PipelineManager::RemoveAll()
 {
     /*TUint haltId = */iFiller->Stop();

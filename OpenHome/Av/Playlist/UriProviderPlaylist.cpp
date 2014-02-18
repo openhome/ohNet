@@ -37,17 +37,12 @@ UriProviderPlaylist::~UriProviderPlaylist()
 
 void UriProviderPlaylist::Begin(TUint aTrackId)
 {
-    AutoMutex a(iLock);
-    if (iPending != NULL) {
-        iPending->RemoveRef();
-        iPending = NULL;
-    }
-    iPending = iDatabase.TrackRef(aTrackId);
-    if (iPending == NULL) {
-        iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
-    }
-    iPendingCanPlay = ePlayYes;
-    iPendingDirection = eJumpTo;
+    DoBegin(aTrackId, ePlayYes);
+}
+
+void UriProviderPlaylist::BeginLater(TUint aTrackId)
+{
+    DoBegin(aTrackId, ePlayLater);
 }
 
 EStreamPlay UriProviderPlaylist::GetNext(Media::Track*& aTrack)
@@ -128,6 +123,21 @@ TBool UriProviderPlaylist::MovePrevious()
     }
     iPendingDirection = eBackwards;
     return true;
+}
+
+void UriProviderPlaylist::DoBegin(TUint aTrackId, EStreamPlay aPendingCanPlay)
+{
+    AutoMutex a(iLock);
+    if (iPending != NULL) {
+        iPending->RemoveRef();
+        iPending = NULL;
+    }
+    iPending = iDatabase.TrackRef(aTrackId);
+    if (iPending == NULL) {
+        iPending = iDatabase.NextTrackRef(ITrackDatabase::kTrackIdNone);
+    }
+    iPendingCanPlay = aPendingCanPlay;
+    iPendingDirection = eJumpTo;
 }
 
 TUint UriProviderPlaylist::CurrentTrackIdLocked() const

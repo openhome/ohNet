@@ -21,6 +21,7 @@ public:
     virtual ~UriProvider();
     const Brx& Mode() const;
     virtual void Begin(TUint aTrackId) = 0;
+    virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
     virtual TUint CurrentTrackId() const = 0; // Id of last delivered track.  Or of pending track requested via Begin or Move[After|Before]
     virtual TBool MoveNext() = 0;
@@ -39,11 +40,14 @@ public:
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
     void Play(const Brx& aMode, TUint aTrackId);
+    void PlayLater(const Brx& aMode, TUint aTrackId);
     TUint Stop(); // returns Id of MsgHalt which will (eventually) be generated
     void StopNoHalt(); // use during shutdown only
     TBool Next(const Brx& aMode);
     TBool Prev(const Brx& aMode);
     TBool IsStopped() const;
+private:
+    void UpdateActiveUriProvider(const Brx& aMode);
 private: // from Thread
     void Run();
 private: // from ISupply

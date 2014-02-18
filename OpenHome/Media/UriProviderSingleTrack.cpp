@@ -15,6 +15,7 @@ UriProviderSingleTrack::UriProviderSingleTrack(const TChar* aMode, TrackFactory&
     , iTrackFactory(aTrackFactory)
     , iTrack(NULL)
     , iIgnoreNext(true)
+    , iPlayLater(false)
 {
 }
 
@@ -45,11 +46,12 @@ void UriProviderSingleTrack::SetTrack(Track* aTrack)
 
 void UriProviderSingleTrack::Begin(TUint aTrackId)
 {
-    iLock.Wait();
-    ASSERT(iTrack != NULL);
-    ASSERT(iTrack->Id() == aTrackId);
-    iIgnoreNext = false;
-    iLock.Signal();
+    DoBegin(aTrackId, false);
+}
+
+void UriProviderSingleTrack::BeginLater(TUint aTrackId)
+{
+    DoBegin(aTrackId, true);
 }
 
 EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
@@ -62,7 +64,7 @@ EStreamPlay UriProviderSingleTrack::GetNext(Track*& aTrack)
     aTrack = iTrack;
     aTrack->AddRef();
     iIgnoreNext = true;
-    return ePlayYes;
+    return (iPlayLater? ePlayLater : ePlayYes);
 }
 
 TUint UriProviderSingleTrack::CurrentTrackId() const
@@ -84,6 +86,16 @@ TBool UriProviderSingleTrack::MoveNext()
 TBool UriProviderSingleTrack::MovePrevious()
 {
     return MoveCursor();
+}
+
+void UriProviderSingleTrack::DoBegin(TUint aTrackId, TBool aLater)
+{
+    iLock.Wait();
+    ASSERT(iTrack != NULL);
+    ASSERT(iTrack->Id() == aTrackId);
+    iIgnoreNext = false;
+    iPlayLater = aLater;
+    iLock.Signal();
 }
 
 TBool UriProviderSingleTrack::MoveCursor()
