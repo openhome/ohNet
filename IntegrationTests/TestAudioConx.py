@@ -268,7 +268,7 @@ class TestAudioConx( BASE.BaseTest ):
         try:
             loops = int( aLoops )
         except:
-            loops = 10
+            loops = 3
         self._LogHeader( 'Testing with Server responding/not responding' )
         self.playing.clear()
         self.dut.playlist.SeekIndex( 0 )
@@ -277,14 +277,14 @@ class TestAudioConx( BASE.BaseTest ):
         for loop in range( loops ):
             self.buffering.clear()
             self.audioSrv.StopResponding()
-            self.buffering.wait( 20 )
+            self.buffering.wait( 60 )
             time.sleep( 5 )
             self.log.FailUnless( self.dutDev, self.buffering.isSet(),
                 '%d of %d: Buffering - server not responding' % (loop+1, loops ))
             
             self.playing.clear()
             self.audioSrv.StartResponding()
-            self.playing.wait( 20 )
+            self.playing.wait( 10 )
             time.sleep( 5 )
             self.log.FailUnless( self.dutDev, self.playing.isSet(),
                 '%d of %d: Playing - server responding' % (loop+1, loops ))
