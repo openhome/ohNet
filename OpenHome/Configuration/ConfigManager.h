@@ -64,6 +64,17 @@ public:
     virtual ~IObservable() {}
 };
 
+/*
+ * Helper function for creating a FunctorObserver.
+ */
+template<class Type, class Object, class CallType>
+inline MemberTranslatorGeneric<KeyValuePair<Type>&,Object,void (CallType::*)(KeyValuePair<Type>&)>
+    MakeFunctorObserver(Object& aC, void(CallType::* const &aF)(KeyValuePair<Type>&))
+{
+    typedef void(CallType::*MemFunc)(KeyValuePair<Type>&);
+    return MemberTranslatorGeneric<KeyValuePair<Type>&,Object,MemFunc>(aC,aF);
+}
+
 class IConfigManagerWriter;
 
 template <class T>
@@ -110,7 +121,7 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const
 template <class T> void ConfigVal<T>::AddInitialSubscribers()
 {
     ASSERT(iWriteObserverId == 0);
-    iWriteObserverId = Subscribe(MakeFunctorGeneric<KeyValuePair<T>&>(*this, &ConfigVal::Write));
+    iWriteObserverId = Subscribe(MakeFunctorObserver<T>(*this, &ConfigVal::Write));
 }
 
 template <class T> ConfigVal<T>::~ConfigVal()
@@ -157,7 +168,6 @@ template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
     }
 }
 
-
 /*
  * Class representing a numerical value, which can be positive or negative,
  * with upper and lower limits.
@@ -196,6 +206,17 @@ inline TBool ConfigNum::operator==(const ConfigNum& aNum) const
     return iMin == aNum.iMin
         && iVal == aNum.iVal
         && iMax == aNum.iMax;
+}
+
+/*
+ * Helper function for creating a FunctorConfigNum.
+ */
+template<class Object, class CallType>
+inline MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,void (CallType::*)(KeyValuePair<TInt>&)>
+    MakeFunctorConfigNum(Object& aC, void(CallType::* const &aF)(KeyValuePair<TInt>&))
+{
+    typedef void(CallType::*MemFunc)(KeyValuePair<TInt>&);
+    return MemberTranslatorGeneric<KeyValuePair<TInt>&,Object,MemFunc>(aC,aF);
 }
 
 /*
@@ -244,6 +265,17 @@ inline TBool ConfigChoice::operator==(const ConfigChoice& aChoice) const
 }
 
 /*
+ * Helper function for creating a FunctorConfigChoice.
+ */
+template<class Object, class CallType>
+inline MemberTranslatorGeneric<KeyValuePair<TUint>&,Object,void (CallType::*)(KeyValuePair<TUint>&)>
+    MakeFunctorConfigChoice(Object& aC, void(CallType::* const &aF)(KeyValuePair<TUint>&))
+{
+    typedef void(CallType::*MemFunc)(KeyValuePair<TUint>&);
+    return MemberTranslatorGeneric<KeyValuePair<TUint>&,Object,MemFunc>(aC,aF);
+}
+
+/*
  * Class representing a text value. Length of text that can be allocated is
  * fixed at construction.
  */
@@ -276,6 +308,17 @@ inline TBool ConfigText::operator==(const ConfigText& aText) const
 {
     AutoMutex a(iMutex);
     return (iText == aText.iText);
+}
+
+/*
+ * Helper function for creating a FunctorConfigText.
+ */
+template<class Object, class CallType>
+inline MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,void (CallType::*)(KeyValuePair<const Brx&>&)>
+    MakeFunctorConfigText(Object& aC, void(CallType::* const &aF)(KeyValuePair<const Brx&>&))
+{
+    typedef void(CallType::*MemFunc)(KeyValuePair<const Brx&>&);
+    return MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,MemFunc>(aC,aF);
 }
 
 /*

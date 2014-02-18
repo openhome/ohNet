@@ -298,7 +298,7 @@ void SuiteCVSubscriptions::TestAddRemoveSubscription()
 {
     // test adding and removing a single subscription - will assert at
     // destruction if error
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id != 0);
     iConfigVal->Unsubscribe(id);
     delete iConfigVal;
@@ -310,9 +310,9 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
     // test adding and removing multiple (extra) subscriptions (and test id
     // ordering) - will assert at destruction if error
     // IDs should start at 1, and there should be 2 internal subscribers at construction
-    TUint id1 = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TUint id1 = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id1 == 2);
-    TUint id2 = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteCVSubscriptions::NotifyChanged));
+    TUint id2 = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id2 == 3);
     iConfigVal->Unsubscribe(id1);
     iConfigVal->Unsubscribe(id2);
@@ -423,7 +423,7 @@ void SuiteConfigNum::TestSubscription()
 {
     // test that functor is called back at time of subscription
     TUint changedCount = iChangedCount;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
 
     TEST(iChangedCount == changedCount+1);
     TEST(iLastChangeVal == kVal);
@@ -451,7 +451,7 @@ void SuiteConfigNum::TestValueFromStore()
     valBuf.Append(Arch::BigEndian4(storeVal));
     iStore->Write(key, valBuf);
     ConfigNum num(*iConfigManager, key, kMin, kMax, kVal);
-    TUint id = num.Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = num.Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
 
     // test value in store hasn't been overwritten
     TEST(IntFromStore(key) == storeVal);
@@ -485,7 +485,7 @@ void SuiteConfigNum::TestSetUpdate()
     // test that calling set with a new value updates the value of the ConfigNum
     // (and that any observers are notified)
     TInt newVal = kVal+1;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
 
@@ -504,7 +504,7 @@ void SuiteConfigNum::TestSetNoUpdate()
     // test that calling set with the existing value of ConfigNum causing no change
     // to the ConfigNum, and that no observers are notified
 
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(iLastChangeVal);
 
@@ -548,7 +548,7 @@ void SuiteConfigNum::TestDeserialiseUpdate()
     Bws<kIntMaxLength> buf;
     Ascii::AppendDec(buf, newVal);
 
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Deserialise(buf);
 
@@ -565,7 +565,7 @@ void SuiteConfigNum::TestDeserialiseUpdate()
 void SuiteConfigNum::TestDeserialiseNoUpdate()
 {
     Bws<kIntMaxLength> buf;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TInt>&>(*this, &SuiteConfigNum::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     Ascii::AppendDec(buf, iLastChangeVal);
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Deserialise(buf);
@@ -693,7 +693,7 @@ void SuiteConfigChoice::TestSubscription()
 {
     // test that functor is called back at time of subscription
     TUint changedCount = iChangedCount;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
 
     TEST(iChangedCount == changedCount+1);
     TEST(iLastChangeVal == kDefault);
@@ -714,7 +714,7 @@ void SuiteConfigChoice::TestValueFromStore()
     choices.push_back(kChoice2);
     choices.push_back(kChoice3);
     ConfigChoice choice(*iConfigManager, key, choices, kDefault);
-    TUint id = choice.Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = choice.Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
 
     // test value in store hasn't been overwritten
     TEST(UintFromStore(key) == storeVal);
@@ -752,7 +752,7 @@ void SuiteConfigChoice::TestSetUpdate()
     // test that changing the selected value causes ConfigChoice to be updated (and
     // any observers notified)
     TUint newVal = kDefault+1;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
 
@@ -770,7 +770,7 @@ void SuiteConfigChoice::TestSetNoUpdate()
 {
     // test that setting the same choice value results in no change to ConfigChoice
     // (and observers aren't notified)
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(kDefault);
 
@@ -810,7 +810,7 @@ void SuiteConfigChoice::TestDeserialiseUpdate()
     Bws<kUintMaxLength> buf;
     Ascii::AppendDec(buf, newVal);
 
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Deserialise(buf);
 
@@ -827,7 +827,7 @@ void SuiteConfigChoice::TestDeserialiseUpdate()
 void SuiteConfigChoice::TestDeserialiseNoUpdate()
 {
     Bws<kUintMaxLength> buf;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<TUint>&>(*this, &SuiteConfigChoice::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     Ascii::AppendDec(buf, iLastChangeVal);
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Deserialise(buf);
@@ -929,7 +929,7 @@ void SuiteConfigText::TestSubscription()
 {
     // test that functor is called back at time of subscription
     TUint changedCount = iChangedCount;
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
 
     TEST(iChangedCount == changedCount+1);
     TEST(iLastChangeVal == kDefault);
@@ -943,7 +943,7 @@ void SuiteConfigText::TestValueFromStore()
     Brn storeVal("zyxwvutsrqponmlkjihgfedcba");
     iStore->Write(key, storeVal);
     ConfigText text(*iConfigManager, key, kMaxLength, kDefault);
-    TUint id = text.Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = text.Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
 
     // test value in store hasn't been overwritten
     Bwh valBuf(kMaxLength);
@@ -973,7 +973,7 @@ void SuiteConfigText::TestSetUpdate()
     // test that updating ConfigText with a new value results in ConfigText
     // being changed and any observers notified
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(newVal);
 
@@ -996,7 +996,7 @@ void SuiteConfigText::TestSetNoUpdate()
 
     // test updating the default string, then test updating a string with
     // length > 0
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Set(kDefault);
     TEST(updated == false);
@@ -1012,7 +1012,7 @@ void SuiteConfigText::TestSetNoUpdate()
     // set new val before then subscribing to changes
     updated = iConfigVal->Set(text);
     changedCount = iChangedCount;
-    id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     changedCount = iChangedCount;
     // now attempt to set same value again
     updated = iConfigVal->Set(text);
@@ -1051,7 +1051,7 @@ void SuiteConfigText::TestSerialise()
 void SuiteConfigText::TestDeserialiseUpdate()
 {
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Deserialise(newVal);
 
@@ -1071,7 +1071,7 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
 {
     // test updating the default string, then test updating a string with
     // length > 0
-    TUint id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
     TBool updated = iConfigVal->Deserialise(kDefault);
     TEST(updated == false);
@@ -1087,7 +1087,7 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
     // set new val before then subscribing to changes
     updated = iConfigVal->Deserialise(text);
     changedCount = iChangedCount;
-    id = iConfigVal->Subscribe(MakeFunctorGeneric<KeyValuePair<const Brx&>&>(*this, &SuiteConfigText::NotifyChanged));
+    id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     changedCount = iChangedCount;
     // now attempt to set same value again
     updated = iConfigVal->Deserialise(text);
