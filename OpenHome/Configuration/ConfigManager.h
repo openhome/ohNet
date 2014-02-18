@@ -16,7 +16,7 @@ EXCEPTION(ConfigValueOutOfRange);
 EXCEPTION(ConfigValueExists);
 EXCEPTION(ConfigInvalidChoice);
 EXCEPTION(ConfigValueTooLong);
-EXCEPTION(ConfigIdExists);
+EXCEPTION(ConfigKeyExists);
 
 namespace OpenHome {
     class IWriter;
@@ -83,10 +83,10 @@ class ConfigVal : public IObservable<T>
 public:
     static const TUint kSubscriptionIdInvalid = 0;
 protected:
-    ConfigVal(IConfigManagerWriter& aManager, const Brx& aId);
+    ConfigVal(IConfigManagerWriter& aManager, const Brx& aKey);
 public:
     virtual ~ConfigVal();
-    const Brx& Id();
+    const Brx& Key();
     virtual void Serialise(IWriter& aWriter) const = 0;
     virtual TBool Deserialise(const Brx& aString) = 0;
 public: // from IObservable
@@ -99,7 +99,7 @@ protected:
     virtual void Write(KeyValuePair<T>& aKvp) = 0;
 protected:
     IConfigManagerWriter& iConfigManager;
-    Bwh iId;
+    Bwh iKey;
 private:
     typedef std::map<TUint,FunctorObserver> Map;
     Map iObservers;
@@ -109,9 +109,9 @@ private:
 };
 
 // ConfigVal
-template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const Brx& aId)
+template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const Brx& aKey)
     : iConfigManager(aManager)
-    , iId(aId)
+    , iKey(aKey)
     , iObserverLock("CVOL")
     , iWriteObserverId(0)
     , iNextObserverId(1)
@@ -130,9 +130,9 @@ template <class T> ConfigVal<T>::~ConfigVal()
     ASSERT(iObservers.size() == 0);
 }
 
-template <class T> const Brx& ConfigVal<T>::Id()
+template <class T> const Brx& ConfigVal<T>::Key()
 {
-    return iId;
+    return iKey;
 }
 
 template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
@@ -147,7 +147,7 @@ template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
 
 template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVal)
 {
-    KeyValuePair<T> kvp(iId, aVal);
+    KeyValuePair<T> kvp(iKey, aVal);
     iObserverLock.Wait();
     TUint id = iNextObserverId;
     iObservers.insert(std::pair<TUint,FunctorObserver>(id, aFunctor));
@@ -160,7 +160,7 @@ template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVa
 template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
 {
     ASSERT(iWriteObserverId != 0);
-    KeyValuePair<T> kvp(iId, aVal);
+    KeyValuePair<T> kvp(iKey, aVal);
     AutoMutex a(iObserverLock);
     typename Map::iterator it;
     for (it = iObservers.begin(); it != iObservers.end(); it++) {
@@ -178,7 +178,7 @@ class ConfigNum : public ConfigVal<TInt>
 public:
     typedef FunctorGeneric<KeyValuePair<TInt>&> FunctorConfigNum;
 public:
-    ConfigNum(IConfigManagerWriter& aManager, const Brx& aId, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     TBool Set(TInt aVal);
@@ -232,7 +232,7 @@ class ConfigChoice : public ConfigVal<TUint>
 public:
     typedef FunctorGeneric<KeyValuePair<TUint>&> FunctorConfigChoice;
 public:
-    ConfigChoice(IConfigManagerWriter& aManager, const Brx& aId, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     TBool Set(TUint aVal);
 private:
@@ -285,7 +285,7 @@ class ConfigText : public ConfigVal<const Brx&>
 public:
     typedef FunctorGeneric<KeyValuePair<const Brx&>&> FunctorConfigText;
 public:
-    ConfigText(IConfigManagerWriter& aManager, const Brx& aId, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     TBool Set(const Brx& aText);
 private:
@@ -327,12 +327,12 @@ inline MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,void (CallType::
 class IConfigManagerReader
 {
 public:
-    virtual TBool HasNum(const Brx& aId) const = 0;
-    virtual ConfigNum& GetNum(const Brx& aId) const = 0;
-    virtual TBool HasChoice(const Brx& aId) const = 0;
-    virtual ConfigChoice& GetChoice(const Brx& aId) const = 0;
-    virtual TBool HasText(const Brx& aId) const = 0;
-    virtual ConfigText& GetText(const Brx& aId) const = 0;
+    virtual TBool HasNum(const Brx& aKey) const = 0;
+    virtual ConfigNum& GetNum(const Brx& aKey) const = 0;
+    virtual TBool HasChoice(const Brx& aKey) const = 0;
+    virtual ConfigChoice& GetChoice(const Brx& aKey) const = 0;
+    virtual TBool HasText(const Brx& aKey) const = 0;
+    virtual ConfigText& GetText(const Brx& aKey) const = 0;
     virtual ~IConfigManagerReader() {}
 };
 
@@ -361,9 +361,9 @@ class SerialisedMap
 {
 public:
     SerialisedMap();
-    void Add(const Brx& aId, T& aVal);
-    TBool Has(const Brx& aId) const;
-    T& Get(const Brx& aId) const;
+    void Add(const Brx& aKey, T& aVal);
+    TBool Has(const Brx& aKey) const;
+    T& Get(const Brx& aKey) const;
 private:
     typedef std::map<Brn, T*, BufferCmp> Map;
     Map iMap;
@@ -376,23 +376,23 @@ template <class T> SerialisedMap<T>::SerialisedMap()
 {
 }
 
-template <class T> void SerialisedMap<T>::Add(const Brx& aId, T& aVal)
+template <class T> void SerialisedMap<T>::Add(const Brx& aKey, T& aVal)
 {
-    Brn id(aId);
+    Brn key(aKey);
     AutoMutex a(iLock);
-    typename Map::iterator it = iMap.find(id);
+    typename Map::iterator it = iMap.find(key);
     if (it != iMap.end()) {
-        THROW(ConfigIdExists);
+        THROW(ConfigKeyExists);
     }
-    iMap.insert(std::pair<Brn, T*>(id, &aVal));
+    iMap.insert(std::pair<Brn, T*>(key, &aVal));
 }
 
-template <class T> TBool SerialisedMap<T>::Has(const Brx& aId) const
+template <class T> TBool SerialisedMap<T>::Has(const Brx& aKey) const
 {
     TBool found = false;
-    Brn id(aId);
+    Brn key(aKey);
     AutoMutex a(iLock);
-    typename Map::const_iterator it = iMap.find(id);
+    typename Map::const_iterator it = iMap.find(key);
     if (it != iMap.end()) {
         found = true;
     }
@@ -400,12 +400,12 @@ template <class T> TBool SerialisedMap<T>::Has(const Brx& aId) const
     return found;
 }
 
-template <class T> T& SerialisedMap<T>::Get(const Brx& aId) const
+template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
 {
-    Brn id(aId);
+    Brn key(aKey);
     AutoMutex a(iLock);
-    typename Map::const_iterator it = iMap.find(id);
-    ASSERT(it != iMap.end()); // assert value with ID of aId exists
+    typename Map::const_iterator it = iMap.find(key);
+    ASSERT(it != iMap.end()); // assert value with ID of aKey exists
 
     return *(it->second);
 }
@@ -423,12 +423,12 @@ public:
     ConfigManager(IStoreReadWrite& aStore);
     virtual ~ConfigManager();
 public: // from IConfigManagerReader
-    TBool HasNum(const Brx& aId) const;
-    ConfigNum& GetNum(const Brx& aId) const;
-    TBool HasChoice(const Brx& aId) const;
-    ConfigChoice& GetChoice(const Brx& aId) const;
-    TBool HasText(const Brx& aId) const;
-    ConfigText& GetText(const Brx& aId) const;
+    TBool HasNum(const Brx& aKey) const;
+    ConfigNum& GetNum(const Brx& aKey) const;
+    TBool HasChoice(const Brx& aKey) const;
+    ConfigChoice& GetChoice(const Brx& aKey) const;
+    TBool HasText(const Brx& aKey) const;
+    ConfigText& GetText(const Brx& aKey) const;
 public: // from IConfigManagerWriter
     void Close();
     void Add(ConfigNum& aNum);
@@ -437,8 +437,8 @@ public: // from IConfigManagerWriter
     void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void ToStore(const Brx& aKey, const Brx& aValue);
 private:
-    TBool Has(const Brx& aId) const;
-    template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aId, T& aVal);
+    TBool Has(const Brx& aKey) const;
+    template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
 private:
     IStoreReadWrite& iStore;
     SerialisedMap<ConfigNum> iMapNum;

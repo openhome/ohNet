@@ -40,7 +40,7 @@ private:
     void TestNoSubscriptions();
     void TestAddRemoveSubscription();
     void TestAddRemoveMultipleSubscriptions();
-    void TestRemoveInvalidId();
+    void TestRemoveInvalidKey();
 private:
     ConfigVal<TInt>* iConfigVal;
 };
@@ -69,7 +69,7 @@ private:  // from SuiteCVNotify
 private:
     TInt IntFromStore(const Brx& aKey);
     void TestInternalFunctorsCalledAtConstruction();
-    void TestIdStored();
+    void TestKeyStored();
     void TestSubscription();
     void TestInvalidRange();
     void TestValueOutOfRangeConstructor();
@@ -106,7 +106,7 @@ private:  // from SuiteCVNotify
 private:
     TUint UintFromStore(const Brx& aKey);
     void TestInternalFunctorsCalledAtConstruction();
-    void TestIdStored();
+    void TestKeyStored();
     void TestSubscription();
     void TestValueFromStore();
     void TestValueWrittenToStore();
@@ -141,7 +141,7 @@ private:  // from SuiteCVNotify
     void NotifyChanged(KeyValuePair<const Brx&>& aKvp);
 private:
     void TestInternalFunctorsCalledAtConstruction();
-    void TestIdStored();
+    void TestKeyStored();
     void TestSubscription();
     void TestValueFromStore();
     void TestValueWrittenToStore();
@@ -175,12 +175,12 @@ private:
     void TestAdd();
     void TestAddDuplicate();
     void TestHasNoVals();
-    void TestHasValidId();
-    void TestHasInvalidId();
+    void TestHasValidKey();
+    void TestHasInvalidKey();
     void TestHasMultiple();
     void TestGetNoVals();
-    void TestGetValidId();
-    void TestGetInvalidId();
+    void TestGetValidKey();
+    void TestGetInvalidKey();
     void TestGetMultiple();
     void TestReadStoreValExists();
     void TestReadNoStoreValExists();
@@ -195,12 +195,12 @@ private:
     static const TUint kMaxText = 26;
     static const Brn kText1;
     static const Brn kText2;
-    static const Brn kIdNum1;
-    static const Brn kIdNum2;
-    static const Brn kIdChoice1;
-    static const Brn kIdChoice2;
-    static const Brn kIdText1;
-    static const Brn kIdText2;
+    static const Brn kKeyNum1;
+    static const Brn kKeyNum2;
+    static const Brn kKeyChoice1;
+    static const Brn kKeyChoice2;
+    static const Brn kKeyText1;
+    static const Brn kKeyText2;
     ConfigRamStore* iStore;
     ConfigManager* iConfigManager;
     ConfigNum* iNum1;
@@ -271,7 +271,7 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestNoSubscriptions), "TestNoSubscriptions");
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveSubscription), "TestAddRemoveSubscription");
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions), "TestAddRemoveMultipleSubscriptions");
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidId), "TestRemoveInvalidId");
+    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidKey), "TestRemoveInvalidKey");
 }
 
 void SuiteCVSubscriptions::Setup()
@@ -309,8 +309,10 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
 {
     // test adding and removing multiple (extra) subscriptions (and test id
     // ordering) - will assert at destruction if error
-    // IDs should start at 1, and there should be 2 internal subscribers at construction
+
+    // Keys should start at 1, and there should be 2 internal subscribers at construction
     TUint id1 = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteCVSubscriptions::NotifyChanged));
+
     TEST(id1 == 2);
     TUint id2 = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteCVSubscriptions::NotifyChanged));
     TEST(id2 == 3);
@@ -320,7 +322,7 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
     iConfigVal = NULL;
 }
 
-void SuiteCVSubscriptions::TestRemoveInvalidId()
+void SuiteCVSubscriptions::TestRemoveInvalidKey()
 {
     // test that trying to unsubscribe using an invalid id does nothing
     iConfigVal->Unsubscribe(0);
@@ -357,7 +359,7 @@ SuiteConfigNum::SuiteConfigNum()
     : SuiteCVNotify("SuiteConfigNum")
 {
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestIdStored), "TestIdStored");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription), "TestSubscription");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange), "TestInvalidRange");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestValueOutOfRangeConstructor), "TestValueOutOfRangeConstructor");
@@ -408,15 +410,15 @@ void SuiteConfigNum::TestInternalFunctorsCalledAtConstruction()
     TEST(IntFromStore(kKey) == kVal);
 }
 
-void SuiteConfigNum::TestIdStored()
+void SuiteConfigNum::TestKeyStored()
 {
     // test that the id is stored internally; not just wrapping a value
     static const Brn keyConst("temporary.id");
     Bwh keyChangeable(keyConst);
     ConfigNum num(*iConfigManager, keyChangeable, kMin, kMax, kVal);
-    TEST(num.Id() == keyConst);
+    TEST(num.Key() == keyConst);
     keyChangeable.SetBytes(0);
-    TEST(num.Id() == keyConst);
+    TEST(num.Key() == keyConst);
 }
 
 void SuiteConfigNum::TestSubscription()
@@ -620,7 +622,7 @@ SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestIdStored), "TestIdStored");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription), "TestSubscription");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore), "TestValueFromStore");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueWrittenToStore), "TestValueWrittenToStore");
@@ -673,7 +675,7 @@ void SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction()
     TEST(UintFromStore(kKey) == kDefault);
 }
 
-void SuiteConfigChoice::TestIdStored()
+void SuiteConfigChoice::TestKeyStored()
 {
     // test that the id is stored internally; not just wrapping a value
     static const Brn keyConst("temporary.id");
@@ -684,9 +686,9 @@ void SuiteConfigChoice::TestIdStored()
     choices.push_back(kChoice3);
 
     ConfigChoice choice(*iConfigManager, keyChangeable, choices, kDefault);
-    TEST(choice.Id() == keyConst);
+    TEST(choice.Key() == keyConst);
     keyChangeable.SetBytes(0);
-    TEST(choice.Id() == keyConst);
+    TEST(choice.Key() == keyConst);
 }
 
 void SuiteConfigChoice::TestSubscription()
@@ -873,7 +875,7 @@ SuiteConfigText::SuiteConfigText()
     : SuiteCVNotify("SuiteConfigText")
 {
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestIdStored), "TestIdStored");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription), "TestSubscription");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore), "TestValueFromStore");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueWrittenToStore), "TestValueWrittenToStore");
@@ -914,15 +916,15 @@ void SuiteConfigText::TestInternalFunctorsCalledAtConstruction()
     TEST(valBuf == kDefault);
 }
 
-void SuiteConfigText::TestIdStored()
+void SuiteConfigText::TestKeyStored()
 {
     // test that the id is stored internally; not just wrapping a value
     static const Brn keyConst("temporary.id");
     Bwh keyChangeable(keyConst);
     ConfigText text(*iConfigManager, keyChangeable, kMaxLength, kDefault);
-    TEST(text.Id() == keyConst);
+    TEST(text.Key() == keyConst);
     keyChangeable.SetBytes(0);
-    TEST(text.Id() == keyConst);
+    TEST(text.Key() == keyConst);
 }
 
 void SuiteConfigText::TestSubscription()
@@ -1127,12 +1129,12 @@ const TUint SuiteConfigManager::kChoice2 = 1;
 const TUint SuiteConfigManager::kChoice3 = 2;
 const Brn SuiteConfigManager::kText1("abcdefghijklmnopqrstuvwxyz");
 const Brn SuiteConfigManager::kText2("zyxwvutsrqponmlkjihgfedcba");
-const Brn SuiteConfigManager::kIdNum1("cv.num.1");
-const Brn SuiteConfigManager::kIdNum2("cv.num.2");
-const Brn SuiteConfigManager::kIdChoice1("cv.choice.1");
-const Brn SuiteConfigManager::kIdChoice2("cv.choice.2");
-const Brn SuiteConfigManager::kIdText1("cv.text.1");
-const Brn SuiteConfigManager::kIdText2("cv.text.2");
+const Brn SuiteConfigManager::kKeyNum1("cv.num.1");
+const Brn SuiteConfigManager::kKeyNum2("cv.num.2");
+const Brn SuiteConfigManager::kKeyChoice1("cv.choice.1");
+const Brn SuiteConfigManager::kKeyChoice2("cv.choice.2");
+const Brn SuiteConfigManager::kKeyText1("cv.text.1");
+const Brn SuiteConfigManager::kKeyText2("cv.text.2");
 
 SuiteConfigManager::SuiteConfigManager()
     : SuiteUnitTest("SuiteConfigManager")
@@ -1146,12 +1148,12 @@ SuiteConfigManager::SuiteConfigManager()
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAdd), "TestAdd");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAddDuplicate), "TestAddDuplicate");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasNoVals), "TestHasNoVals");
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasValidId), "TestHasValidId");
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasInvalidId), "TestHasInvalidId");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasValidKey), "TestHasValidKey");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasInvalidKey), "TestHasInvalidKey");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasMultiple), "TestHasMultiple");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetNoVals), "TestGetNoVals");
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetValidId), "TestGetValidId");
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetInvalidId), "TestGetInvalidId");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetValidKey), "TestGetValidKey");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetInvalidKey), "TestGetInvalidKey");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestGetMultiple), "TestGetMultiple");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists), "TestReadStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists), "TestReadNoStoreValExists");
@@ -1162,12 +1164,12 @@ void SuiteConfigManager::Setup()
 {
     iStore = new ConfigRamStore();
     iConfigManager = new ConfigManager(*iStore);
-    iNum1 = new ConfigNum(*iConfigManager, kIdNum1, kMinNum, kMaxNum, kMinNum);
+    iNum1 = new ConfigNum(*iConfigManager, kKeyNum1, kMinNum, kMaxNum, kMinNum);
     iChoices.push_back(kChoice1);
     iChoices.push_back(kChoice2);
     iChoices.push_back(kChoice3);
-    iChoice1 = new ConfigChoice(*iConfigManager, kIdChoice1, iChoices, kChoiceDefault);
-    iText1 = new ConfigText(*iConfigManager, kIdText1, kMaxText, kText1);
+    iChoice1 = new ConfigChoice(*iConfigManager, kKeyChoice1, iChoices, kChoiceDefault);
+    iText1 = new ConfigText(*iConfigManager, kKeyText1, kMaxText, kText1);
 }
 
 void SuiteConfigManager::TearDown()
@@ -1197,30 +1199,30 @@ void SuiteConfigManager::TestClose()
     // test that ConfigManager ASSERTs when attempting to add a value
     // after it has been closed
     iConfigManager->Close();
-    TEST_THROWS(ConfigNum num(*iConfigManager, kIdNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
-    TEST_THROWS(ConfigChoice choice(*iConfigManager, kIdChoice2, iChoices, kChoiceDefault+1), AssertionFailed);
-    TEST_THROWS(ConfigText text(*iConfigManager, kIdText2, kMaxText, kText2), AssertionFailed);
+    TEST_THROWS(ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
+    TEST_THROWS(ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1), AssertionFailed);
+    TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2), AssertionFailed);
 }
 
 void SuiteConfigManager::TestAdd()
 {
     // completion of this test without errors suggests adding works
     // Has() and Get() are tested in their own unit tests.
-    ConfigNum num(*iConfigManager, kIdNum2, kMinNum, kMaxNum, kMinNum+1);
-    ConfigChoice choice(*iConfigManager, kIdChoice2, iChoices, kChoiceDefault+1);
-    ConfigText text(*iConfigManager, kIdText2, kMaxText, kText2);
+    ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1);
+    ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
 }
 
 void SuiteConfigManager::TestAddDuplicate()
 {
     // test that an exception is throws if an attempt to add a ConfigVal with
-    // the same ID is made twice
-    TEST_THROWS(iConfigManager->Add(*iNum1), ConfigIdExists);
-    TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigIdExists);
-    TEST_THROWS(iConfigManager->Add(*iText1), ConfigIdExists);
+    // the same key is made twice
+    TEST_THROWS(iConfigManager->Add(*iNum1), ConfigKeyExists);
+    TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigKeyExists);
+    TEST_THROWS(iConfigManager->Add(*iText1), ConfigKeyExists);
 
-    // attempt to add a ConfigChoice with same ID as existing ConfigNum - should fail
-    TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigIdExists);
+    // attempt to add a ConfigChoice with same key as existing ConfigNum - should fail
+    TEST_THROWS(iConfigManager->Add(*iChoice1), ConfigKeyExists);
 }
 
 void SuiteConfigManager::TestHasNoVals()
@@ -1228,54 +1230,54 @@ void SuiteConfigManager::TestHasNoVals()
     // test that calling Has() when no values are added returns false
     ConfigRamStore store;
     ConfigManager configManager(store);
-    TEST(configManager.HasNum(kIdNum1) == false);
-    TEST(configManager.HasChoice(kIdChoice1) == false);
-    TEST(configManager.HasText(kIdText1) == false);
+    TEST(configManager.HasNum(kKeyNum1) == false);
+    TEST(configManager.HasChoice(kKeyChoice1) == false);
+    TEST(configManager.HasText(kKeyText1) == false);
 }
 
-void SuiteConfigManager::TestHasValidId()
+void SuiteConfigManager::TestHasValidKey()
 {
-    // test Has() returns true when a given ID exists
-    TEST(iConfigManager->HasNum(kIdNum1) == true);
-    TEST(iConfigManager->HasChoice(kIdChoice1) == true);
-    TEST(iConfigManager->HasText(kIdText1) == true);
+    // test Has() returns true when a given key exists
+    TEST(iConfigManager->HasNum(kKeyNum1) == true);
+    TEST(iConfigManager->HasChoice(kKeyChoice1) == true);
+    TEST(iConfigManager->HasText(kKeyText1) == true);
 }
 
-void SuiteConfigManager::TestHasInvalidId()
+void SuiteConfigManager::TestHasInvalidKey()
 {
-    // test Has() returns false when IDs are present, but not the given ID
+    // test Has() returns false when keys are present, but not the given key
 
     // test ConfigNum
-    TEST(iConfigManager->HasNum(kIdNum2) == false);
+    TEST(iConfigManager->HasNum(kKeyNum2) == false);
 
     // test ConfigChoice
-    TEST(iConfigManager->HasChoice(kIdChoice2) == false);
+    TEST(iConfigManager->HasChoice(kKeyChoice2) == false);
 
     // test ConfigText
-    TEST(iConfigManager->HasText(kIdText2) == false);
+    TEST(iConfigManager->HasText(kKeyText2) == false);
 
-    // try call HasChoice() with the ID of ConfigNum
-    TEST(iConfigManager->HasChoice(kIdNum1) == false);
+    // try call HasChoice() with the key of ConfigNum
+    TEST(iConfigManager->HasChoice(kKeyNum1) == false);
 }
 
 void SuiteConfigManager::TestHasMultiple()
 {
-    // test adding multiple values and calling Has() on the IDs
+    // test adding multiple values and calling Has() on the keys
 
     // test ConfigNum
-    ConfigNum num(*iConfigManager, kIdNum2, kMinNum, kMaxNum, kMinNum+1);
-    TEST(iConfigManager->HasNum(kIdNum1) == true);
-    TEST(iConfigManager->HasNum(kIdNum2) == true);
+    ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1);
+    TEST(iConfigManager->HasNum(kKeyNum1) == true);
+    TEST(iConfigManager->HasNum(kKeyNum2) == true);
 
     // test ConfigChoice
-    ConfigChoice choice(*iConfigManager, kIdChoice2, iChoices, kChoiceDefault+1);
-    TEST(iConfigManager->HasChoice(kIdChoice1) == true);
-    TEST(iConfigManager->HasChoice(kIdChoice2) == true);
+    ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1);
+    TEST(iConfigManager->HasChoice(kKeyChoice1) == true);
+    TEST(iConfigManager->HasChoice(kKeyChoice2) == true);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kIdText2, kMaxText, kText2);
-    TEST(iConfigManager->HasText(kIdText1) == true);
-    TEST(iConfigManager->HasText(kIdText2) == true);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    TEST(iConfigManager->HasText(kKeyText1) == true);
+    TEST(iConfigManager->HasText(kKeyText2) == true);
 }
 
 void SuiteConfigManager::TestGetNoVals()
@@ -1283,62 +1285,62 @@ void SuiteConfigManager::TestGetNoVals()
     // test that Get() fails with an assertion when no values are present
     ConfigRamStore store;
     ConfigManager configManager(store);
-    TEST_THROWS(configManager.GetNum(kIdNum1), AssertionFailed);
-    TEST_THROWS(configManager.GetChoice(kIdChoice1), AssertionFailed);
-    TEST_THROWS(configManager.GetText(kIdText1), AssertionFailed);
+    TEST_THROWS(configManager.GetNum(kKeyNum1), AssertionFailed);
+    TEST_THROWS(configManager.GetChoice(kKeyChoice1), AssertionFailed);
+    TEST_THROWS(configManager.GetText(kKeyText1), AssertionFailed);
 }
 
-void SuiteConfigManager::TestGetValidId()
+void SuiteConfigManager::TestGetValidKey()
 {
-    // test Get() returns the correct val when ID is present
+    // test Get() returns the correct val when key is present
 
     // test ConfigNum
-    ConfigNum& num = iConfigManager->GetNum(kIdNum1);
+    ConfigNum& num = iConfigManager->GetNum(kKeyNum1);
     TEST(num == *iNum1);
 
     // test ConfigChoice
-    ConfigChoice& choice = iConfigManager->GetChoice(kIdChoice1);
+    ConfigChoice& choice = iConfigManager->GetChoice(kKeyChoice1);
     TEST(choice == *iChoice1);
 
     // test ConfigText
-    ConfigText& text = iConfigManager->GetText(kIdText1);
+    ConfigText& text = iConfigManager->GetText(kKeyText1);
     TEST(text == *iText1);
 }
 
-void SuiteConfigManager::TestGetInvalidId()
+void SuiteConfigManager::TestGetInvalidKey()
 {
-    // test that Get() causes an assertion when ID is not present
-    TEST_THROWS(iConfigManager->GetNum(kIdNum2), AssertionFailed);
-    TEST_THROWS(iConfigManager->GetChoice(kIdChoice2), AssertionFailed);
-    TEST_THROWS(iConfigManager->GetText(kIdText2), AssertionFailed);
+    // test that Get() causes an assertion when key is not present
+    TEST_THROWS(iConfigManager->GetNum(kKeyNum2), AssertionFailed);
+    TEST_THROWS(iConfigManager->GetChoice(kKeyChoice2), AssertionFailed);
+    TEST_THROWS(iConfigManager->GetText(kKeyText2), AssertionFailed);
 
-    // try call HasChoice() with the ID of ConfigNum
-    TEST_THROWS(iConfigManager->GetChoice(kIdNum1), AssertionFailed);
+    // try call HasChoice() with the key of ConfigNum
+    TEST_THROWS(iConfigManager->GetChoice(kKeyNum1), AssertionFailed);
 }
 
 void SuiteConfigManager::TestGetMultiple()
 {
-    // test adding multiple values and calling Get() on the IDs
+    // test adding multiple values and calling Get() on the keys
 
     // test ConfigNum
-    ConfigNum num(*iConfigManager, kIdNum2, kMinNum, kMaxNum, kMinNum+1);
-    ConfigNum& num1 = iConfigManager->GetNum(kIdNum1);
+    ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1);
+    ConfigNum& num1 = iConfigManager->GetNum(kKeyNum1);
     TEST(num1 == *iNum1);
-    ConfigNum& num2 = iConfigManager->GetNum(kIdNum2);
+    ConfigNum& num2 = iConfigManager->GetNum(kKeyNum2);
     TEST(num2 == num);
 
     // test ConfigChoice
-    ConfigChoice choice(*iConfigManager, kIdChoice2, iChoices, kChoiceDefault+1);
-    ConfigChoice& choice1 = iConfigManager->GetChoice(kIdChoice1);
+    ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1);
+    ConfigChoice& choice1 = iConfigManager->GetChoice(kKeyChoice1);
     TEST(choice1 == *iChoice1);
-    ConfigChoice& choice2 = iConfigManager->GetChoice(kIdChoice2);
+    ConfigChoice& choice2 = iConfigManager->GetChoice(kKeyChoice2);
     TEST(choice2 == choice);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kIdText2, kMaxText, kText2);
-    ConfigText& text1 = iConfigManager->GetText(kIdText1);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText& text1 = iConfigManager->GetText(kKeyText1);
     TEST(text1 == *iText1);
-    ConfigText& text2 = iConfigManager->GetText(kIdText2);
+    ConfigText& text2 = iConfigManager->GetText(kKeyText2);
     TEST(text2 == text);
 }
 
@@ -1347,12 +1349,12 @@ void SuiteConfigManager::TestReadStoreValExists()
     // test that reading from a value already in store causes store value to be
     // returned rather than default val.
     Bwh buf(kMaxText);
-    iConfigManager->FromStore(kIdText1, buf, kText2);
+    iConfigManager->FromStore(kKeyText1, buf, kText2);
     TEST(buf == kText1);
 
     // check default value hasn't been written to store as a side-effect
     buf.SetBytes(0);
-    iStore->Read(kIdText1, buf);
+    iStore->Read(kKeyText1, buf);
     TEST(buf == kText1);
 }
 
@@ -1363,17 +1365,17 @@ void SuiteConfigManager::TestReadNoStoreValExists()
     Bwh buf(kMaxText);
 
     try { // check key isn't already in store
-        iStore->Read(kIdText2, buf);
+        iStore->Read(kKeyText2, buf);
         ASSERTS();
     }
     catch (StoreKeyNotFound&) {}
 
-    iConfigManager->FromStore(kIdText2, buf, kText2);
+    iConfigManager->FromStore(kKeyText2, buf, kText2);
     TEST(buf == kText2);
 
     // check value has been written to store
     buf.SetBytes(0);
-    iStore->Read(kIdText2, buf);
+    iStore->Read(kKeyText2, buf);
     TEST(buf == kText2);
 }
 
@@ -1382,8 +1384,8 @@ void SuiteConfigManager::TestWrite()
     // test that writing a value via ConfigManager results in value
     // being written to store.
     Bwh buf(kMaxText);
-    iConfigManager->ToStore(kIdText1, kText2);
-    iStore->Read(kIdText1, buf);
+    iConfigManager->ToStore(kKeyText1, kText2);
+    iStore->Read(kKeyText1, buf);
     TEST(buf == kText2);
 }
 
