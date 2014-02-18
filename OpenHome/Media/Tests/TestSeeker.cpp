@@ -1,0 +1,667 @@
+#include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Private/SuiteUnitTest.h>
+#include <OpenHome/Media/Seeker.h>
+#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Av/InfoProvider.h>
+#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/ProcessorPcmUtils.h>
+
+#include <list>
+#include <limits.h>
+
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
+using namespace OpenHome::Media;
+
+namespace OpenHome {
+namespace Media {
+
+class SuiteSeeker : public SuiteUnitTest, private IPipelineElementUpstream, private ISeeker, private IStreamHandler, private IMsgProcessor
+{
+    static const TUint kRampDuration = Jiffies::kJiffiesPerMs * 20;
+    static const TUint kExpectedFlushId = 5;
+    static const TUint kExpectedSeekSeconds = 51;
+    static const TUint kSampleRate = 44100;
+    static const TUint kNumChannels = 2;
+public:
+    SuiteSeeker();
+    ~SuiteSeeker();
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private: // from IPipelineElementUpstream
+    Msg* Pull();
+private: // from ISeeker
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgMetaText* aMsg);
+    Msg* ProcessMsg(MsgHalt* aMsg);
+    Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg);
+private:
+    enum EMsgType
+    {
+        ENone
+       ,EMsgTrack
+       ,EMsgEncodedStream
+       ,EMsgMetaText
+       ,EMsgDecodedStream
+       ,EMsgAudioPcm
+       ,EMsgSilence
+       ,EMsgHalt
+       ,EMsgFlush
+       ,EMsgQuit
+    };
+private:
+    void PullNext();
+    void PullNext(EMsgType aExpectedMsg);
+    Msg* CreateTrack();
+    Msg* CreateEncodedStream();
+    Msg* CreateDecodedStream();
+    Msg* CreateAudio();
+    void TestAllMsgsPassWhileNotSeeking();
+    void TestRampInvalidTrackId();
+    void TestRampInvalidStreamId();
+    void TestRampSeekerRejects();
+    void TestRampSeekerAccepts();
+    void TestNoRampSeekerRejects();
+    void TestNoRampSeekerAccepts();
+    void TestNewTrackCancelsRampDownAndSeek();
+    void TestNewTrackCancelsRampUp();
+    void TestOverlappingSeekIgnored();
+private:
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
+    MsgFactory* iMsgFactory;
+    Seeker* iSeeker;
+    EMsgType iLastPulledMsg;
+    TBool iRampingDown;
+    TBool iRampingUp;
+    TUint iTrackId;
+    TUint iStreamId;
+    TUint64 iTrackOffset;
+    TUint64 iJiffies;
+    std::list<Msg*> iPendingMsgs;
+    TUint iLastSubsample;
+    TUint iNextTrackId;
+    TUint iNextStreamId;
+    TUint iNextSeekResponse;
+    TUint iSeekSeconds;
+};
+
+} // namespace Media
+} // namespace OpenHome
+
+
+SuiteSeeker::SuiteSeeker()
+    : SuiteUnitTest("Seeker")
+{
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestAllMsgsPassWhileNotSeeking), "TestAllMsgsPassWhileNotSeeking");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampInvalidTrackId), "TestRampInvalidTrackId");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampInvalidStreamId), "TestRampInvalidStreamId");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampSeekerRejects), "TestRampSeekerRejects");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampSeekerAccepts), "TestRampSeekerAccepts");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestNoRampSeekerRejects), "TestNoRampSeekerRejects");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestNoRampSeekerAccepts), "TestNoRampSeekerAccepts");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestNewTrackCancelsRampDownAndSeek), "TestNewTrackCancelsRampDownAndSeek");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestNewTrackCancelsRampUp), "TestNewTrackCancelsRampUp");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestOverlappingSeekIgnored), "TestOverlappingSeekIgnored");
+}
+
+SuiteSeeker::~SuiteSeeker()
+{
+}
+
+void SuiteSeeker::Setup()
+{
+    iTrackFactory = new TrackFactory(iInfoAggregator, 5);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1);
+    iSeeker = new Seeker(*iMsgFactory, *this, *this, kRampDuration);
+    iTrackId = iStreamId = UINT_MAX;
+    iTrackOffset = 0;
+    iRampingDown = iRampingUp = false;
+    iLastSubsample = 0xffffff;
+    iNextTrackId = 1;
+    iNextStreamId = 1;
+    iJiffies = 0;
+    iNextSeekResponse = MsgFlush::kIdInvalid;
+    iSeekSeconds = UINT_MAX;
+}
+
+void SuiteSeeker::TearDown()
+{
+    while (iPendingMsgs.size() > 0) {
+        iPendingMsgs.front()->RemoveRef();
+        iPendingMsgs.pop_front();
+    }
+    delete iSeeker;
+    delete iMsgFactory;
+    delete iTrackFactory;
+}
+
+Msg* SuiteSeeker::Pull()
+{
+    ASSERT(iPendingMsgs.size() > 0);
+    Msg* msg = iPendingMsgs.front();
+    iPendingMsgs.pop_front();
+    return msg;
+}
+
+EStreamPlay SuiteSeeker::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return ePlayNo;
+}
+
+TUint SuiteSeeker::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSecondsAbsolute)
+{
+    iSeekSeconds = aSecondsAbsolute;
+    return iNextSeekResponse;
+}
+
+TUint SuiteSeeker::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteSeeker::TryStop(TUint aTrackId, TUint aStreamId)
+{
+    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+        return kExpectedFlushId;
+    }
+    return MsgFlush::kIdInvalid;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    iLastPulledMsg = EMsgAudioPcm;
+    iJiffies += aMsg->Jiffies();
+    MsgPlayable* playable = aMsg->CreatePlayable();
+    ProcessorPcmBufPacked pcmProcessor;
+    playable->Read(pcmProcessor);
+    Brn buf(pcmProcessor.Buf());
+    ASSERT(buf.Bytes() >= 6);
+    const TByte* ptr = buf.Ptr();
+    const TUint bytes = buf.Bytes();
+    const TUint firstSubsample = (ptr[0]<<16) | (ptr[1]<<8) | ptr[2];
+
+    if (iRampingDown) {
+        ASSERT(!iRampingUp);
+    }
+    
+    if (iRampingDown) {
+        TEST(firstSubsample <= iLastSubsample);
+    }
+    else if (iRampingUp) {
+        TEST(firstSubsample >= iLastSubsample);
+    }
+    else {
+        TEST(firstSubsample == 0x7f7f7f);
+    }
+    iLastSubsample = (ptr[bytes-3]<<16) | (ptr[bytes-2]<<8) | ptr[bytes-1];
+    if (iRampingDown) {
+        TEST(iLastSubsample < firstSubsample);
+        iRampingDown = (iLastSubsample > 0);
+    }
+    else if (iRampingUp) {
+        TEST(iLastSubsample > firstSubsample);
+        iRampingUp = (iLastSubsample < 0x7f7f7e); // FIXME - see #830
+    }
+    else {
+        TEST(firstSubsample == 0x7f7f7f);
+    }
+
+    return playable;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgSilence* aMsg)
+{
+    iLastPulledMsg = EMsgSilence;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
+{
+    iLastPulledMsg = EMsgTrack;
+    iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    iLastPulledMsg = EMsgEncodedStream;
+    iStreamId = aMsg->StreamId();
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgMetaText* aMsg)
+{
+    iLastPulledMsg = EMsgMetaText;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
+{
+    iLastPulledMsg = EMsgHalt;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
+{
+    iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgQuit* aMsg)
+{
+    iLastPulledMsg = EMsgQuit;
+    return aMsg;
+}
+
+void SuiteSeeker::PullNext()
+{
+    Msg* msg = iSeeker->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+}
+
+void SuiteSeeker::PullNext(EMsgType aExpectedMsg)
+{
+    Msg* msg = iSeeker->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+    TEST(iLastPulledMsg == aExpectedMsg);
+}
+
+Msg* SuiteSeeker::CreateTrack()
+{
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++, Brn("testmode"));
+    track->RemoveRef();
+    return msg;
+}
+
+Msg* SuiteSeeker::CreateEncodedStream()
+{
+    return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, true, false, this);
+}
+
+Msg* SuiteSeeker::CreateDecodedStream()
+{
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false);
+}
+
+Msg* SuiteSeeker::CreateAudio()
+{
+    static const TUint kDataBytes = 960;
+    TByte encodedAudioData[kDataBytes];
+    (void)memset(encodedAudioData, 0x7f, kDataBytes);
+    Brn encodedAudioBuf(encodedAudioData, kDataBytes);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, EMediaDataLittleEndian, iTrackOffset);
+    iTrackOffset += audio->Jiffies();
+    return audio;
+}
+
+void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    iPendingMsgs.push_back(CreateTrack());
+
+    PullNext(EMsgTrack);
+    PullNext(EMsgEncodedStream);
+    PullNext(EMsgMetaText);
+    PullNext(EMsgDecodedStream);
+    PullNext(EMsgAudioPcm);
+    PullNext(EMsgSilence);
+    PullNext(EMsgHalt);
+    PullNext(EMsgFlush);
+    PullNext(EMsgQuit);
+    PullNext(EMsgTrack);
+}
+
+void SuiteSeeker::TestRampInvalidTrackId()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+
+    TEST(!iSeeker->Seek(iTrackId+1, iStreamId, kExpectedSeekSeconds, true));
+    iPendingMsgs.push_back(CreateAudio());
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+}
+
+void SuiteSeeker::TestRampInvalidStreamId()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+
+    TEST(!iSeeker->Seek(iTrackId, iStreamId+1, kExpectedSeekSeconds, true));
+    iPendingMsgs.push_back(CreateAudio());
+    TEST(iLastPulledMsg == EMsgAudioPcm);
+}
+
+void SuiteSeeker::TestRampSeekerRejects()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, true));
+    iRampingDown = true;
+    iJiffies = 0;
+    while (iRampingDown) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iJiffies == kRampDuration);
+    // no MsgHalt - the seek failed so there is no possible break in the stream
+    iRampingUp = true;
+    iJiffies = 0;
+    while (!iSeeker->iQueue.IsEmpty()) {
+        PullNext(EMsgAudioPcm);
+    }
+
+    // non-audio msgs are passed through
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    PullNext(EMsgMetaText);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+
+    // audio is immediately ramped up
+    while (iRampingUp) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iJiffies == kRampDuration);
+    while (!iSeeker->iQueue.IsEmpty()) {
+        PullNext(EMsgAudioPcm);
+    }
+}
+
+void SuiteSeeker::TestRampSeekerAccepts()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    iNextSeekResponse = kExpectedFlushId;
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, true));
+    iRampingDown = true;
+    iJiffies = 0;
+    while (iRampingDown) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iJiffies == kRampDuration);
+    PullNext(EMsgHalt);
+    // no audio retained from end-of-ramp
+    TEST(iSeeker->iQueue.IsEmpty());
+
+    // very few msg types get through while we're flushing
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+
+    // end of seek Flush is consumed
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    TEST(iSeeker->iQueue.IsEmpty());
+    // ramping up now
+    iRampingUp = true;
+    iJiffies = 0;
+
+    // non-audio msgs are passed through
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    PullNext(EMsgMetaText);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+
+    // audio is immediately ramped up
+    while (iRampingUp) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iJiffies == kRampDuration);
+}
+
+void SuiteSeeker::TestNoRampSeekerRejects()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, false));
+
+    // non-audio msgs are passed through
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    PullNext(EMsgMetaText);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+
+    // audio remains at full ramp
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+}
+
+void SuiteSeeker::TestNoRampSeekerAccepts()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    iNextSeekResponse = kExpectedFlushId;
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, false));
+    PullNext(EMsgHalt);
+    // no audio retained from end-of-ramp
+    TEST(iSeeker->iQueue.IsEmpty());
+
+    // very few msg types get through while we're flushing
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    iPendingMsgs.push_back(CreateAudio());
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+
+    // end of seek Flush is consumed
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    TEST(iSeeker->iQueue.IsEmpty());
+    // ramping up now
+    iRampingUp = true;
+    iJiffies = 0;
+
+    // non-audio msgs are passed through
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
+    PullNext(EMsgMetaText);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
+    PullNext(EMsgHalt);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
+    PullNext(EMsgQuit);
+
+    // audio is immediately ramped up
+    iLastSubsample = 0;
+    while (iRampingUp) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iJiffies == kRampDuration);
+}
+
+void SuiteSeeker::TestNewTrackCancelsRampDownAndSeek()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    iNextSeekResponse = kExpectedFlushId;
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, true));
+    iRampingDown = true;
+    if (iSeeker->iQueue.IsEmpty()) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    else {
+        while (!iSeeker->iQueue.IsEmpty()) {
+            PullNext(EMsgAudioPcm);
+        }
+    }
+    TEST(iRampingDown);
+
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iRampingDown = false;
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+
+    for (TUint i=0; i<20; i++) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iSeekSeconds == UINT_MAX); // i.e. TrySeek has not been called
+}
+
+void SuiteSeeker::TestNewTrackCancelsRampUp()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    iNextSeekResponse = kExpectedFlushId;
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, false));
+    PullNext(EMsgHalt);
+    iRampingUp = true;
+    iLastSubsample = 0;
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kExpectedFlushId));
+    TEST(iSeeker->iQueue.IsEmpty());
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    TEST(iRampingUp);
+}
+
+void SuiteSeeker::TestOverlappingSeekIgnored()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    iNextSeekResponse = kExpectedFlushId;
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, true));
+    TEST(iSeekSeconds != kExpectedSeekSeconds);
+    iRampingDown = true;
+    TEST(!iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds+10, true));
+    TEST(iSeekSeconds != kExpectedSeekSeconds);
+    iJiffies = 0;
+    while (iRampingDown) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iSeekSeconds == kExpectedSeekSeconds);
+}
+
+
+
+void TestSeeker()
+{
+    Runner runner("Seeker tests\n");
+    runner.Add(new SuiteSeeker());
+    runner.Run();
+}

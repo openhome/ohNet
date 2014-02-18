@@ -66,19 +66,17 @@ void Filler::Start(IUriStreamer& aUriStreamer)
 void Filler::Play(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex a(iLock);
-    iActiveUriProvider = NULL;
-    for (TUint i=0; i<iUriProviders.size(); i++) {
-        UriProvider* uriProvider = iUriProviders[i];
-        if (uriProvider->Mode() == aMode) {
-            iActiveUriProvider = uriProvider;
-            break;
-        }
-    }
-    if (iActiveUriProvider == NULL) {
-        iStopped = true;
-        THROW(FillerInvalidMode);
-    }
+    UpdateActiveUriProvider(aMode);
     iActiveUriProvider->Begin(aTrackId);
+    iStopped = false;
+    Signal();
+}
+
+void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
+{
+    AutoMutex a(iLock);
+    UpdateActiveUriProvider(aMode);
+    iActiveUriProvider->BeginLater(aTrackId);
     iStopped = false;
     Signal();
 }
@@ -133,6 +131,22 @@ TBool Filler::IsStopped() const
     const TBool stopped = iStopped;
     iLock.Signal();
     return stopped;
+}
+
+void Filler::UpdateActiveUriProvider(const Brx& aMode)
+{
+    iActiveUriProvider = NULL;
+    for (TUint i=0; i<iUriProviders.size(); i++) {
+        UriProvider* uriProvider = iUriProviders[i];
+        if (uriProvider->Mode() == aMode) {
+            iActiveUriProvider = uriProvider;
+            break;
+        }
+    }
+    if (iActiveUriProvider == NULL) {
+        iStopped = true;
+        THROW(FillerInvalidMode);
+    }
 }
 
 void Filler::Run()

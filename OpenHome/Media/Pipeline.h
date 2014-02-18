@@ -10,8 +10,10 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Seeker.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/TrackInspector.h>
+#include <OpenHome/Media/Skipper.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
@@ -44,7 +46,9 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
     static const TUint kDecodedReservoirSize                 = Jiffies::kJiffiesPerMs * 1000;
+    static const TUint kSeekerRampDuration                   = Jiffies::kJiffiesPerMs * 20;
     static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 200;
+    static const TUint kSkipperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 100;
     static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 50;
@@ -83,7 +87,9 @@ private:
     void Quit();
     void NotifyStatus();
 private: // from IStopperObserver
-    void PipelineHalted(TUint aHaltId);
+    void PipelinePaused();
+    void PipelineStopped();
+//    void PipelineHalted(TUint aHaltId);
 private: // from IPipelinePropertyObserver
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
@@ -95,11 +101,8 @@ private:
     enum EStatus
     {
         EPlaying
-       ,EHalting
-       ,EHalted
-       ,EFlushing
-       ,EFlushed
-       ,EQuit
+       ,EPaused
+       ,EStopped
     };
 private:
     IPipelineObserver& iObserver;
@@ -115,10 +118,14 @@ private:
     Logger* iLoggerCodecController;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
+    Seeker* iSeeker;
+    Logger* iLoggerSeeker;
     VariableDelay* iVariableDelay;
     Logger* iLoggerVariableDelay;
     TrackInspector* iTrackInspector;
     Logger* iLoggerTrackInspector;
+    Skipper* iSkipper;
+    Logger* iLoggerSkipper;
     Stopper* iStopper;
     Logger* iLoggerStopper;
     Reporter* iReporter;
@@ -131,14 +138,10 @@ private:
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
     ClockPuller iClockPuller;
-    EStatus iStatus;
-    EStatus iTargetStatus; // status at the end of a series of async operations
-    TUint iHaltCompletedIgnoreCount;
-    TUint iFlushCompletedIgnoreCount;
+    EStatus iState;
     TBool iBuffering;
     TBool iQuitting;
     TUint iNextFlushId;
-    TUint iTargetHaltId;
 };
 
 } // namespace Media

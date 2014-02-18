@@ -8,40 +8,38 @@
 namespace OpenHome {
 namespace Media {
 
-class IStopperObserver
-{
-public:
-    virtual void PipelineHalted(TUint aHaltId) = 0;
-};
-    
 /*
-Element which implements ramp up/down around a pause
-...or ramps down before removing the currently playing stream.
+Element which implements ramp up/down around a Pause
+...or flushes (pulls then discards) all data from the pipeline before signalling Stopped.
 Doesn't hold any audio itself (bar the special case where applying a ramp forces a msg to be split).
-Halt (pause) is implemented by telling the stopper to BeginHalt
-...RampDuration of audio is then passed through, gradually ramping down
-...Pull then blocks until Start() is called again
-Halt(aId) is implemented by telling the stopper to start
+Pause is implemented by telling the stopper to BeginPause
+...if the Stopper was running, RampDuration of audio is then passed through, gradually ramping down
+...Pull then blocks until Play() is called again
+BeginStop(aId) is implemented by telling the stopper to Play
 ...then ramping down as for pause
 ...followed by calling IStreamHandler::TryStop to attempt to stop delivery of the current stream
 ...followed by pulling/discarding all remaining content for that stream
 ...repeat for any other streams until a Halt msg with id==aId is pulled
-RemoveCurrentStream ramps down as with pause then discards audio + metatext content until the next MsgEncodedStream
 Flush msgs are not propogated.  Any audio which gets past this element is guaranteed to be played
 */
+
+class IStopperObserver
+{
+public:
+    virtual void PipelinePaused() = 0;
+    virtual void PipelineStopped() = 0;
+};
 
 class Stopper : public IPipelineElementUpstream, private IMsgProcessor
 {
     friend class SuiteStopper;
 public:
-    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISupply& aSupply, IFlushIdProvider& aIdProvider, IStopperObserver& aObserver, TUint aRampDuration);
+    Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
     virtual ~Stopper();
-    void Start();
-    void BeginHalt();
-    void BeginHalt(TUint aHaltId);
-    void RemoveCurrentStream(TBool aRampDown);
+    void Play();
+    void BeginPause();
+    void BeginStop(TUint aHaltId);
     void Quit();
-    void RemoveStream(TUint aTrackId, TUint aStreamId, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
@@ -57,27 +55,24 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgFlush* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    Msg* ProcessMsgAudio(MsgAudio* aMsg);
-    void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
-    void DoBeginHalt();
-    void DoRemoveCurrentStream(TBool aRampDown);
+    Msg* ProcessFlushable(Msg* aMsg);
+    void OkToPlay();
+    Msg* ProcessAudio(MsgAudio* aMsg);
     void NewStream();
+    void HandleStopped();
 private:
     enum EState
     {
         ERunning
-       ,EHalted
-       ,EStarting
-       ,EHalting
-       ,EHaltPending
-       ,EFlushPending
+       ,ERampingDown
+       ,ERampingUp
+       ,EPaused
+       ,EStopped
        ,EFlushing
     };
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
-    ISupply& iSupply;
-    IFlushIdProvider& iIdProvider;
     IStopperObserver& iObserver;
     Mutex iLock;
     Semaphore iSem;
@@ -86,14 +81,13 @@ private:
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
-    TBool iFlushStream;
-    TBool iRemovingStream;
-    TBool iResumeAfterHalt;
-    TBool iQuit;
     TUint iTargetHaltId;
     TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
+    TBool iHaltPending;
+    TBool iFlushStream;
+    TBool iQuit;
 };
 
 } // namespace Media

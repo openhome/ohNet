@@ -1,212 +1,182 @@
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
-
-#include <limits.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-// Stopper
-
-Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISupply& aSupply, IFlushIdProvider& aIdProvider, IStopperObserver& aObserver, TUint aRampDuration)
+Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
-    , iSupply(aSupply)
-    , iIdProvider(aIdProvider)
     , iObserver(aObserver)
-    , iLock("MSTP")
-    , iSem("SSTP", 0)
-    , iState(EHalted)
+    , iLock("STP1")
+    , iSem("STP2", 0)
     , iRampDuration(aRampDuration)
-    , iRemainingRampSize(0)
-    , iCurrentRampValue(Ramp::kRampMin)
-    , iFlushStream(false)
-    , iRemovingStream(false)
-    , iResumeAfterHalt(false)
-    , iQuit(false)
-    , iTargetHaltId(MsgHalt::kIdNone)
+    , iTargetHaltId(MsgHalt::kIdInvalid)
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iStreamHandler(NULL)
+    , iQuit(false)
 {
+    NewStream();
+    iState = EStopped;
 }
 
 Stopper::~Stopper()
 {
 }
 
-void Stopper::Start()
+void Stopper::Play()
 {
     AutoMutex a(iLock);
-    if (iState == ERunning) {
+    switch (iState)
+    {
+    case ERunning:
+        break;
+    case ERampingDown:
+        iState = ERampingUp;
+        iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        // don't change iCurrentRampValue - just start ramp up from whatever value it is already at
+        break;
+    case ERampingUp:
+        // We're already starting.  No Benefit in allowing another Play request to interrupt this.
+        break;
+    case EPaused:
+        iState = ERampingUp;
+        iRemainingRampSize = iRampDuration;
+        iSem.Signal();
+        break;
+    case EStopped:
+        iState = ERunning;
+        iSem.Signal();
+        break;
+    case EFlushing:
+        break;
+    }
+    iTargetHaltId = MsgHalt::kIdInvalid;
+}
+
+void Stopper::BeginPause()
+{
+    AutoMutex a(iLock);
+    if (iQuit) {
         return;
     }
-    if (iRemainingRampSize == iRampDuration || iFlushStream) {
-        iState = ERunning;
-        iRemainingRampSize = 0;
+    switch (iState)
+    {
+    case ERunning:
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kRampMax;
+        iState = ERampingDown;
+        break;
+    case ERampingDown:
+        // We're already pausing.  No Benefit in allowing another Pause request to interrupt this.
+        return;
+    case ERampingUp:
+        iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
+        iState = ERampingDown;
+        break;
+    case EPaused:
+    case EStopped:
+        return;
+    case EFlushing:
+        HandleStopped();
+        break;
     }
-    else {
-        iState = EStarting;
-        if (!iRemovingStream) {
-            iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
-        }
+}
+
+void Stopper::BeginStop(TUint aHaltId)
+{
+    if (iQuit) {
+        return;
     }
-    iTargetHaltId = MsgHalt::kIdNone;
-    iSem.Signal();
+
+    switch (iState)
+    {
+    case ERunning:
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kRampMax;
+        iState = ERampingDown;
+        break;
+    case ERampingDown:
+        break;
+    case ERampingUp:
+        iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
+        iState = ERampingDown;
+        break;
+    case EPaused:
+        // restart pulling, discarding data until a new stream or our target MsgHalt
+        iSem.Signal();
+        iFlushStream = true;
+        break;
+    case EStopped:
+        return;
+    case EFlushing:
+        HandleStopped();
+        break;
+    }
+
+    iTargetHaltId = aHaltId;
 }
 
 void Stopper::Quit()
 {
     iQuit = true;
-    Start();
-}
-
-void Stopper::BeginHalt()
-{
-    iLock.Wait();
-    iTargetHaltId = MsgHalt::kIdNone;
-    DoBeginHalt();
-    iLock.Signal();
-}
-
-void Stopper::BeginHalt(TUint aHaltId)
-{
-    iLock.Wait();
-    iTargetHaltId = aHaltId;
-    iResumeAfterHalt = false;
-    if (iState == EHalted) {
-        // Currently paused.  Need to unblock Pull() until we fetch MsgHalt with the above id
-        iState = EFlushing;
-        iSem.Signal();
-    }
-    else {
-        DoBeginHalt();
-    }
-    iLock.Signal();
-}
-
-void Stopper::DoBeginHalt()
-{
-    if (iState == EFlushing) {
-        // Pipeline is being stopped.  We're already removing the current stream so ignore this request to pause
-        return;
-    }
-    if (iState == ERunning || iState == EStarting) {
-        iRemainingRampSize = (iRemainingRampSize == 0? iRampDuration : iRampDuration - iRemainingRampSize);
-        iState = EHalting;
-    }
+    Play();
 }
 
 Msg* Stopper::Pull()
 {
     Msg* msg;
     do {
-        iLock.Wait();
-        TBool wait = false;
-        if (iState == EHalted) {
-            wait = true;
-            (void)iSem.Clear();
-        }
-        iLock.Signal();
-        if (wait) {
-            iSem.Wait();
-        }
-        if (iState == EHaltPending) {
+        if (iHaltPending) {
             msg = iMsgFactory.CreateMsgHalt();
-            if (iResumeAfterHalt) {
-                iState = ERunning;
-                iResumeAfterHalt = false;
-            }
-            else {
-                iState = EHalted;
-                iObserver.PipelineHalted(static_cast<MsgHalt*>(msg)->Id());
-            }
+            iHaltPending = false;
         }
         else {
-            msg = iQueue.IsEmpty()? iUpstreamElement.Pull() :
-                                    iQueue.Dequeue();
+            if (iState == EPaused || iState == EStopped) {
+                iSem.Wait();
+            }
+            msg = (iQueue.IsEmpty()? iUpstreamElement.Pull() : iQueue.Dequeue());
             iLock.Wait();
             msg = msg->Process(*this);
             iLock.Signal();
-        }
-        // handling of EFlushing state is common across all message types so we might as well do it here
-        if (iState == EFlushing && msg != NULL) {
-            msg->RemoveRef();
-            msg = NULL;
-        }
-        if (iState == EFlushPending) {
-            iState = EFlushing;
         }
     } while (msg == NULL);
     return msg;
 }
 
-void Stopper::RemoveCurrentStream(TBool aRampDown)
-{
-    iLock.Wait();
-    DoRemoveCurrentStream(aRampDown);
-    iLock.Signal();
-}
-
-void Stopper::DoRemoveCurrentStream(TBool aRampDown)
-{
-    if (!aRampDown || iState == EHalted || iState == EHaltPending) {
-        if (iStreamHandler != NULL) {
-            /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
-        }
-        iFlushStream = true;
-    }
-    else {
-        iRemovingStream = true;
-        DoBeginHalt();
-    }
-}
-
-void Stopper::RemoveStream(TUint aTrackId, TUint aStreamId, TBool aRampDown)
-{
-    iLock.Wait();
-    if (iTrackId == aTrackId && iStreamId == aStreamId) {
-        DoRemoveCurrentStream(aRampDown);
-    }
-    iLock.Signal();
-}
-
 Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
-    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    ASSERTS();
     return NULL;
 }
 
 Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    if (iFlushStream) {
-        aMsg->RemoveRef();
-        return NULL;
-    }
-    return ProcessMsgAudio(aMsg);
+    return ProcessAudio(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
 {
-    if (iFlushStream) {
-        aMsg->RemoveRef();
-        return NULL;
-    }
-    return ProcessMsgAudio(aMsg);
+    return ProcessAudio(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
-    ASSERTS(); // can't process MsgPlayable sensibly (e.g. they can't be ramped)
+    ASSERTS();
     return NULL;
 }
 
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    return aMsg;
+    if (!aMsg->StreamInfo().Live()) {
+        OkToPlay();
+    }
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
@@ -219,48 +189,29 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
 {
     NewStream();
-
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
-    EStreamPlay canPlay = iStreamHandler->OkToPlay(iTrackId, iStreamId);
-    switch (canPlay)
-    {
-    case ePlayYes:
-        break;
-    case ePlayNo:
-        /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
-        iFlushStream = true;
-        break;
-    case ePlayLater:
-        iState = EHaltPending;
-        iRemainingRampSize = iRampDuration; // avoid ramp up when we eventually start this stream
-        break;
-    default:
-        ASSERTS();
+    if (aMsg->Live()) {
+        /* we won't receive MsgDecodedStream (or anything else) until we call OkToPlay
+           Don't want to do this unconditionally, as waiting for MsgDecodedStream for
+           non-live streams allows additional metadata to make it to the Reporter before
+           we risk the pipeline stalling when response to OkToPlay is eLater. */
+        OkToPlay();
     }
-    // FIXME - should maybe issue a halt if OkToPlay returns false (all cases) or true (for a live stream)
-    // FIXME - Reporter may expect to receive either aMsg or, preferably, a MsgDecodedStream.  Even in the ePlayLater case
     aMsg->RemoveRef();
     return NULL;
 }
 
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (iFlushStream) {
-        aMsg->RemoveRef();
-        return NULL;
-    }
-    return aMsg;
+    return ProcessFlushable(aMsg);
 }
 
 Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 {
-    if (!iQuit) { // if we pull a Halt msg after being told to quit, we shouldn't halt the pipeline
-        if (aMsg->Id() == iTargetHaltId) {
-            iState = EHalted;
-            iTargetHaltId = MsgHalt::kIdNone;
-            iObserver.PipelineHalted(aMsg->Id());
-        }
+    if (iTargetHaltId == aMsg->Id()) {
+        iTargetHaltId = MsgHalt::kIdInvalid;
+        HandleStopped();
     }
     return aMsg;
 }
@@ -276,74 +227,88 @@ Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-Msg* Stopper::ProcessMsgAudio(MsgAudio* aMsg)
+Msg* Stopper::ProcessFlushable(Msg* aMsg)
 {
-    switch (iState)
-    {
-    case ERunning:
-    case EFlushing:
-        break;
-    case EHalted:
-        ASSERT(iRemovingStream);
-        break;
-    case EStarting:
-        Ramp(aMsg, Ramp::EUp);
-        if (iRemainingRampSize == 0) {
-            iState = ERunning;
-        }
-        break;
-    case EHalting:
-        Ramp(aMsg, Ramp::EDown);
-        if (iRemainingRampSize == 0) {
-            if (iTargetHaltId != MsgHalt::kIdNone) {
-                iState = EFlushPending;
-                iFlushStream = true;
-                /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
-            }
-            else {
-                iState = EHaltPending;
-                if (iRemovingStream) {
-                    iRemovingStream = false;
-                    iResumeAfterHalt = true;
-                    /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
-                    iFlushStream = true;
-                }
-            }
-            // FIXME - may need to empty/delete iQueue
-            // ... or could hang onto them and see whether they're still relevant if we restart playing?
-        }
-        break;
-    default:
-        ASSERTS();
-        break;
+    if (iFlushStream) {
+        aMsg->RemoveRef();
+        return NULL;
     }
     return aMsg;
 }
 
-void Stopper::Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection)
+void Stopper::OkToPlay()
 {
-    if (iRemainingRampSize == 0) {
-        // may happen if we receive a MsgTrack while ramping
-        return;
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(iTrackId, iStreamId);
+    switch (canPlay)
+    {
+    case ePlayYes:
+        break;
+    case ePlayNo:
+        /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
+        iState = EFlushing;
+        iFlushStream = true;
+        iHaltPending = true;
+        break;
+    case ePlayLater:
+        HandleStopped();
+        iHaltPending = true;
+        break;
+    default:
+        ASSERTS();
     }
-    MsgAudio* split;
-    if (aMsg->Jiffies() > iRemainingRampSize) {
-        split = aMsg->Split(iRemainingRampSize);
+}
+
+Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
+{
+    if (iState == ERampingDown || iState == ERampingUp) {
+        MsgAudio* split;
+        if (aMsg->Jiffies() > iRemainingRampSize) {
+            split = aMsg->Split(iRemainingRampSize);
+            if (split != NULL) {
+                iQueue.EnqueueAtHead(split);
+            }
+        }
+        split = NULL;
+        const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
+        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
         if (split != NULL) {
             iQueue.EnqueueAtHead(split);
         }
+        if (iRemainingRampSize == 0) {
+            if (iState == ERampingDown) {
+                if (iTargetHaltId == MsgHalt::kIdInvalid) {
+                    iState = EPaused;
+                    (void)iSem.Clear();
+                    iObserver.PipelinePaused();
+                }
+                else {
+                    iState = ERunning;
+                    iFlushStream = true;
+                }
+                iHaltPending = true;
+            }
+            else { // iState == ERampingUp
+                iState = ERunning;
+            }
+        }
+        return aMsg;
     }
-    split = NULL;
-    iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, aDirection, split);
-    if (split != NULL) {
-        iQueue.EnqueueAtHead(split);
-    }
+
+    return ProcessFlushable(aMsg);
 }
 
 void Stopper::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
-    iFlushStream = iRemovingStream = iResumeAfterHalt = false;
     iState = ERunning;
+    iHaltPending = false;
+    iFlushStream = false;
+}
+
+void Stopper::HandleStopped()
+{
+    iState = EStopped;
+    (void)iSem.Clear();
+    iObserver.PipelineStopped();
 }

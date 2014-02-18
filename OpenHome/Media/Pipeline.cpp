@@ -8,7 +8,10 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Seeker.h>
 #include <OpenHome/Media/VariableDelay.h>
+#include <OpenHome/Media/TrackInspector.h>
+#include <OpenHome/Media/Skipper.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
@@ -27,26 +30,10 @@ using namespace OpenHome::Media;
 Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
     : iObserver(aObserver)
     , iLock("PLMG")
-    , iLoggerSupply(NULL)
-    , iLoggerEncodedAudioReservoir(NULL)
-    , iLoggerContainer(NULL)
-    , iLoggerCodecController(NULL)
-    , iLoggerDecodedAudioReservoir(NULL)
-    , iLoggerVariableDelay(NULL)
-    , iLoggerTrackInspector(NULL)
-    , iLoggerStopper(NULL)
-    , iLoggerReporter(NULL)
-    , iLoggerSplitter(NULL)
-    , iLoggerStarvationMonitor(NULL)
-    , iLoggerPreDriver(NULL)
-    , iStatus(EFlushed)
-    , iTargetStatus(EFlushed)
-    , iHaltCompletedIgnoreCount(0)
-    , iFlushCompletedIgnoreCount(0)
+    , iState(EStopped)
     , iBuffering(false)
     , iQuitting(false)
     , iNextFlushId(MsgFlush::kIdInvalid + 1)
-    , iTargetHaltId(MsgHalt::kIdInvalid)
 {
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
@@ -76,11 +63,17 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioReservoir);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController);
 
+    iSeeker = NULL;
+    iLoggerSeeker = NULL;
+    //iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, ISeeker& aSeeker, kSeekerRampDuration);
+    //iLoggerSeeker = new Logger(*iSeeker, "Seeker");
     iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iTrackInspector = new TrackInspector(*iLoggerVariableDelay);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
-    iStopper = new Stopper(*iMsgFactory, *iLoggerTrackInspector, *iSupply, *this, *this, kStopperRampDuration);
+    iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, kSkipperRampDuration);
+    iLoggerSkipper = new Logger(*iSkipper, "Skipper");
+    iStopper = new Stopper(*iMsgFactory, *iLoggerSkipper, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -104,8 +97,10 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
+    //iLoggerSeeker->SetEnabled(true);
     //iLoggerVariableDelay->SetEnabled(true);
     //iLoggerTrackInspector->SetEnabled(true);
+    //iLoggerSkipper->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
@@ -117,8 +112,10 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
+    //iLoggerSeeker->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerTrackInspector->SetFilter(Logger::EMsgAll);
+    //iLoggerSkipper->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
@@ -143,10 +140,14 @@ Pipeline::~Pipeline()
     delete iReporter;
     delete iLoggerStopper;
     delete iStopper;
+    delete iLoggerSkipper;
+    delete iSkipper;
     delete iLoggerTrackInspector;
     delete iTrackInspector;
     delete iLoggerVariableDelay;
     delete iVariableDelay;
+    delete iLoggerSeeker;
+    delete iSeeker;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
     delete iLoggerCodecController;
@@ -173,11 +174,8 @@ void Pipeline::Start()
 void Pipeline::Quit()
 {
     iQuitting = true;
-    /*if (iStatus != EPlaying) */ { // always send quit message and ensure pipeline is playing.
-        OutputQuit();
-        DoPlay(true);
-        iTargetStatus = EQuit;
-    }
+    OutputQuit();
+    DoPlay(true);
 }
 
 void Pipeline::NotifyStatus()
@@ -188,16 +186,15 @@ void Pipeline::NotifyStatus()
         iLock.Signal();
         return;
     }
-    ASSERT(iTargetStatus == iStatus);
-    switch (iTargetStatus)
+    switch (iState)
     {
     case EPlaying:
         state = (iBuffering? EPipelineBuffering : EPipelinePlaying);
         break;
-    case EHalted:
+    case EPaused:
         state = EPipelinePaused;
         break;
-    case EFlushed:
+    case EStopped:
         state = EPipelineStopped;
         break;
     default:
@@ -221,24 +218,17 @@ void Pipeline::Play()
 void Pipeline::DoPlay(TBool aQuit)
 {
     iLock.Wait();
-    if (iStatus == EPlaying) {
+    if (iState == EPlaying) {
         iLock.Signal();
         return; // already playing so ignore this additional request
-    }
-    if (iStatus == EHalting) {
-        iHaltCompletedIgnoreCount++;
-    }
-    else if (iStatus == EFlushing) {
-        iFlushCompletedIgnoreCount++;
     }
     if (aQuit) {
         iStopper->Quit();
     }
     else {
-        iStopper->Start();
+        iStopper->Play();
     }
-    iStatus = EPlaying;
-    iTargetStatus = EPlaying;
+    iState = EPlaying;
     iLock.Signal();
     NotifyStatus();
 }
@@ -246,14 +236,7 @@ void Pipeline::DoPlay(TBool aQuit)
 void Pipeline::Pause()
 {
     AutoMutex a(iLock);
-    if (iTargetStatus != EPlaying) {
-        // any other status means we're already halting, halted or beyond halted (flush is preceded by halt)
-        // in any of these cases we can safely ignore this additional request
-        return;
-    }
-    iTargetStatus = EHalted;
-    iStopper->BeginHalt();
-    iStatus = EHalting;
+    iStopper->BeginPause();
 }
 
 void Pipeline::Stop(TUint aHaltId)
@@ -262,43 +245,25 @@ void Pipeline::Stop(TUint aHaltId)
     /* FIXME - is there any race where iBuffering is true but the pipeline is also
                running, meaning that we want to allow Stopper to ramp down? */
     if (iBuffering) {
-        iTargetHaltId = MsgHalt::kIdInvalid;
-        iStatus = iTargetStatus = EFlushed;
-        iStopper->RemoveCurrentStream(false);
+        // FIXME - should maybe tell StarvationMonitor to skip to next track also
+        iState = EStopped;
+        iSkipper->RemoveCurrentStream(false);
         iLock.Signal();
         NotifyStatus();
         return;
     }
-
-    iTargetHaltId = aHaltId;
-    iStopper->BeginHalt(aHaltId);
-    iStatus = EHalting;
-    iTargetStatus = EFlushed;
-
+    iStopper->BeginStop(aHaltId);
     iLock.Signal();
-
-    /*if (iTargetStatus == EFlushed || iTargetStatus == EQuit) {
-        return; // already stopped or in the process of stopping so ignore this additional request
-    }
-    iTargetStatus = EFlushed;
-    if (iStatus == EPlaying) {
-        iStopper->BeginHalt();
-        iStatus = EHalting;
-    }
-    else if (iStatus == EHalted) {
-        iStopper->BeginFlush();
-        iStatus = EFlushing;
-    }*/
 }
 
 void Pipeline::RemoveCurrentStream()
 {
-    iStopper->RemoveCurrentStream(!iBuffering);
+    iSkipper->RemoveCurrentStream(!iBuffering);
 }
 
 TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
-    // FIXME - update iTargetStatus
+    // FIXME - use iSeeker
     return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
@@ -357,59 +322,20 @@ Msg* Pipeline::Pull()
     return iPipelineEnd->Pull();
 }
 
-void Pipeline::PipelineHalted(TUint aHaltId)
+void Pipeline::PipelinePaused()
 {
     iLock.Wait();
-    if (iTargetHaltId != MsgHalt::kIdInvalid && iTargetHaltId != aHaltId) {
-        iLock.Signal();
-        return;
-    }
-    iTargetHaltId = MsgHalt::kIdInvalid;
-    switch (iTargetStatus)
-    {
-    case EPlaying:
-        iTargetStatus = EHalted;
-        // fallthrough
-    case EHalted:
-        iStatus = EHalted;
-        break;
-    case EFlushed:
-    case EQuit:
-        iStatus = EFlushed;
-        break;
-    default:
-        ASSERTS();
-        break;
-    }
+    iState = EPaused;
     iLock.Signal();
     NotifyStatus();
+}
 
-    /*iLock.Wait();
-    if (iHaltCompletedIgnoreCount > 0) {
-        iHaltCompletedIgnoreCount--;
-        iLock.Signal();
-        return;
-    }
-    switch (iTargetStatus)
-    {
-    case EPlaying:
-        iTargetStatus = EHalted;
-        // fallthrough
-    case EHalted:
-        iStatus = EHalted;
-        iLock.Signal();
-        NotifyStatus();
-        break;
-    case EFlushed:
-    case EQuit:
-        iStatus = EFlushing;
-        iLock.Signal();
-        iStopper->BeginFlush();
-        break;
-    default:
-        ASSERTS();
-        break;
-    }*/
+void Pipeline::PipelineStopped()
+{
+    iLock.Wait();
+    iState = EStopped;
+    iLock.Signal();
+    NotifyStatus();
 }
 
 TUint Pipeline::NextFlushId()
@@ -423,7 +349,7 @@ TUint Pipeline::NextFlushId()
 
 void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)
 {
-    iStopper->RemoveStream(aTrackId, aStreamId, !iBuffering);
+    (void)iSkipper->TryRemoveStream(aTrackId, aStreamId, !iBuffering);
 }
 
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
@@ -450,7 +376,7 @@ void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
 {
     iLock.Wait();
     iBuffering = aBuffering;
-    const TBool notify = (iStatus == EPlaying);
+    const TBool notify = (iState == EPlaying);
     iLock.Signal();
     if (notify) {
         NotifyStatus();

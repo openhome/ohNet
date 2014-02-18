@@ -19,17 +19,20 @@ public:
     void SetTrack(Track* aTrack);
 private: // from UriProvider
     void Begin(TUint aTrackId);
+    void BeginLater(TUint aTrackId);
     EStreamPlay GetNext(Track*& aTrack);
     TUint CurrentTrackId() const;
     TBool MoveNext();
     TBool MovePrevious();
 private:
+    void DoBegin(TUint aTrackId, TBool aLater);
     TBool MoveCursor();
 private:
     mutable Mutex iLock;
     TrackFactory& iTrackFactory;
     Track* iTrack;
     TBool iIgnoreNext;
+    TBool iPlayLater;
 };
 
 } // namespace Media
