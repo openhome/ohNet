@@ -239,8 +239,93 @@ private:
     TUint iLoopCount;
 };
 
-
 class MsgFactory;
+
+
+static const TUint kModeMaxBytes          = 32;
+static const TUint kTrackUriMaxBytes      = 1024;
+static const TUint kTrackMetaDataMaxBytes = 5 * 1024;
+
+typedef Bws<kModeMaxBytes>          BwsMode;
+typedef Bws<kTrackUriMaxBytes>      BwsTrackUri;
+typedef Bws<kTrackMetaDataMaxBytes> BwsTrackMetaData;
+
+class Track : public Allocated
+{
+    friend class TrackFactory;
+public:
+    static const TUint kIdNone = 0;
+public:
+    Track(AllocatorBase& aAllocator);
+    const Brx& Uri() const;
+    const Brx& MetaData() const;
+    TUint Id() const;
+    TAny* UserData() const;
+    TBool Pullable() const;
+private:
+    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable);
+private: // from Allocated
+    void Clear();
+private:
+    BwsTrackUri iUri;
+    BwsTrackMetaData iMetaData;
+    TUint iId;
+    TAny* iUserData;
+    TBool iPullable;
+};
+
+class MsgTrack : public Msg
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxUriBytes = 1024;
+public:
+    MsgTrack(AllocatorBase& aAllocator);
+    Media::Track& Track() const;
+    TUint IdPipeline() const;
+    const Brx& Mode() const;
+private:
+    void Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Media::Track* iTrack;
+    TUint iIdPipeline;
+    BwsMode iMode;
+};
+
+class IStreamHandler;
+
+class MsgEncodedStream : public Msg
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxUriBytes = 1024;
+    static const TUint kMaxMetaTextBytes = 1024;
+public:
+    MsgEncodedStream(AllocatorBase& aAllocator);
+    const Brx& Uri() const;
+    const Brx& MetaText() const;
+    TUint64 TotalBytes() const;
+    TUint StreamId() const;
+    TBool Seekable() const;
+    TBool Live() const;
+    IStreamHandler* StreamHandler() const;
+private:
+    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Bws<kMaxUriBytes> iUri;
+    Bws<kMaxMetaTextBytes> iMetaText;
+    TUint64 iTotalBytes;
+    TUint iStreamId;
+    TBool iSeekable;
+    TBool iLive;
+    IStreamHandler* iStreamHandler;
+};
 
 class MsgAudioEncoded : public Msg
 {
@@ -264,6 +349,105 @@ private:
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
     EncodedAudio* iAudioData;
+};
+
+class MsgMetaText : public Msg
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxBytes = 1024;
+public:
+    MsgMetaText(AllocatorBase& aAllocator);
+    const Brx& MetaText() const;
+private:
+    void Initialise(const Brx& aMetaText);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Bws<kMaxBytes> iMetaText;
+};
+
+class MsgHalt : public Msg
+{
+    friend class MsgFactory;
+public:
+    static const TUint kIdNone    = 0;
+    static const TUint kIdInvalid = UINT_MAX;
+public:
+    MsgHalt(AllocatorBase& aAllocator);
+    TUint Id() const;
+private:
+    void Initialise(TUint aId);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iId;
+};
+
+class MsgFlush : public Msg
+{
+public:
+    static const TUint kIdInvalid = 0;
+public:
+    MsgFlush(AllocatorBase& aAllocator);
+    void Initialise(TUint aId);
+    TUint Id() const;
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iId;
+};
+
+class DecodedStreamInfo
+{
+    friend class MsgDecodedStream;
+public:
+    static const TUint kMaxCodecNameBytes = 32;
+public:
+    TUint StreamId() const { return iStreamId; }
+    TUint BitRate() const { return iBitRate; }
+    TUint BitDepth() const { return iBitDepth; }
+    TUint SampleRate() const { return iSampleRate; }
+    TUint NumChannels() const { return iNumChannels; }
+    const Brx& CodecName() const { return iCodecName; }
+    TUint64 TrackLength() const { return iTrackLength; }
+    TUint64 SampleStart() const { return iSampleStart; }
+    TBool Lossless() const { return iLossless; }
+    TBool Seekable() const { return iSeekable; }
+    TBool Live() const { return iLive; }
+private:
+    DecodedStreamInfo();
+    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
+private:
+    TUint iStreamId;
+    TUint iBitRate;
+    TUint iBitDepth;
+    TUint iSampleRate;
+    TUint iNumChannels;
+    Bws<kMaxCodecNameBytes> iCodecName;
+    TUint64 iTrackLength; // jiffies
+    TUint64 iSampleStart;
+    TBool iLossless;
+    TBool iSeekable;
+    TBool iLive;
+};
+
+class MsgDecodedStream : public Msg
+{
+    friend class MsgFactory;
+public:
+    MsgDecodedStream(AllocatorBase& aAllocator);
+    const DecodedStreamInfo& StreamInfo() const;
+private:
+    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    DecodedStreamInfo iStreamInfo;
 };
 
 class MsgAudio : public Msg
@@ -403,190 +587,6 @@ private:
     TUint iNumChannels;
 };
 
-class IStreamHandler;
-
-class DecodedStreamInfo
-{
-    friend class MsgDecodedStream;
-public:
-    static const TUint kMaxCodecNameBytes = 32;
-public:
-    TUint StreamId() const { return iStreamId; }
-    TUint BitRate() const { return iBitRate; }
-    TUint BitDepth() const { return iBitDepth; }
-    TUint SampleRate() const { return iSampleRate; }
-    TUint NumChannels() const { return iNumChannels; }
-    const Brx& CodecName() const { return iCodecName; }
-    TUint64 TrackLength() const { return iTrackLength; }
-    TUint64 SampleStart() const { return iSampleStart; }
-    TBool Lossless() const { return iLossless; }
-    TBool Seekable() const { return iSeekable; }
-    TBool Live() const { return iLive; }
-private:
-    DecodedStreamInfo();
-    void Set(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
-private:
-    TUint iStreamId;
-    TUint iBitRate;
-    TUint iBitDepth;
-    TUint iSampleRate;
-    TUint iNumChannels;
-    Bws<kMaxCodecNameBytes> iCodecName;
-    TUint64 iTrackLength; // jiffies
-    TUint64 iSampleStart;
-    TBool iLossless;
-    TBool iSeekable;
-    TBool iLive;
-};
-
-class MsgDecodedStream : public Msg
-{
-    friend class MsgFactory;
-public:
-    MsgDecodedStream(AllocatorBase& aAllocator);
-    const DecodedStreamInfo& StreamInfo() const;
-private:
-    void Initialise(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    DecodedStreamInfo iStreamInfo;
-};
-
-static const TUint kModeMaxBytes          = 32;
-static const TUint kTrackUriMaxBytes      = 1024;
-static const TUint kTrackMetaDataMaxBytes = 5 * 1024;
-
-typedef Bws<kModeMaxBytes>          BwsMode;
-typedef Bws<kTrackUriMaxBytes>      BwsTrackUri;
-typedef Bws<kTrackMetaDataMaxBytes> BwsTrackMetaData;
-
-class Track : public Allocated
-{
-    friend class TrackFactory;
-public:
-    static const TUint kIdNone = 0;
-public:
-    Track(AllocatorBase& aAllocator);
-    const Brx& Uri() const;
-    const Brx& MetaData() const;
-    TUint Id() const;
-    TAny* UserData() const;
-    TBool Pullable() const;
-private:
-    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable);
-private: // from Allocated
-    void Clear();
-private:
-    BwsTrackUri iUri;
-    BwsTrackMetaData iMetaData;
-    TUint iId;
-    TAny* iUserData;
-    TBool iPullable;
-};
-
-class MsgTrack : public Msg
-{
-    friend class MsgFactory;
-public:
-    static const TUint kMaxUriBytes = 1024;
-public:
-    MsgTrack(AllocatorBase& aAllocator);
-    Media::Track& Track() const;
-    TUint IdPipeline() const;
-    const Brx& Mode() const;
-private:
-    void Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    Media::Track* iTrack;
-    TUint iIdPipeline;
-    BwsMode iMode;
-};
-
-class MsgEncodedStream : public Msg
-{
-    friend class MsgFactory;
-public:
-    static const TUint kMaxUriBytes = 1024;
-    static const TUint kMaxMetaTextBytes = 1024;
-public:
-    MsgEncodedStream(AllocatorBase& aAllocator);
-    const Brx& Uri() const;
-    const Brx& MetaText() const;
-    TUint64 TotalBytes() const;
-    TUint StreamId() const;
-    TBool Seekable() const;
-    TBool Live() const;
-    IStreamHandler* StreamHandler() const;
-private:
-    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    Bws<kMaxUriBytes> iUri;
-    Bws<kMaxMetaTextBytes> iMetaText;
-    TUint64 iTotalBytes;
-    TUint iStreamId;
-    TBool iSeekable;
-    TBool iLive;
-    IStreamHandler* iStreamHandler;
-};
-
-class MsgMetaText : public Msg
-{
-    friend class MsgFactory;
-public:
-    static const TUint kMaxBytes = 1024;
-public:
-    MsgMetaText(AllocatorBase& aAllocator);
-    const Brx& MetaText() const;
-private:
-    void Initialise(const Brx& aMetaText);
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    Bws<kMaxBytes> iMetaText;
-};
-
-class MsgHalt : public Msg
-{
-    friend class MsgFactory;
-public:
-    static const TUint kIdNone    = 0;
-    static const TUint kIdInvalid = UINT_MAX;
-public:
-    MsgHalt(AllocatorBase& aAllocator);
-    TUint Id() const;
-private:
-    void Initialise(TUint aId);
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    TUint iId;
-};
-
-class MsgFlush : public Msg
-{
-public:
-    static const TUint kIdInvalid = 0;
-public:
-    MsgFlush(AllocatorBase& aAllocator);
-    void Initialise(TUint aId);
-    TUint Id() const;
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    TUint iId;
-};
-
 class MsgQuit : public Msg
 {
 public:
@@ -599,16 +599,16 @@ class IMsgProcessor
 {
 public:
     virtual ~IMsgProcessor() {}
-    virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
-    virtual Msg* ProcessMsg(MsgDecodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgEncodedStream* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgDecodedStream* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgPlayable* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgQuit* aMsg) = 0;
 };
 
@@ -692,25 +692,25 @@ private:
     void Add(TUint& aValue, TUint aAdded);
     void Remove(TUint& aValue, TUint aRemoved);
 private:
-    virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
-    virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
-    virtual void ProcessMsgIn(MsgSilence* aMsg);
-    virtual void ProcessMsgIn(MsgDecodedStream* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgEncodedStream* aMsg);
+    virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
     virtual void ProcessMsgIn(MsgHalt* aMsg);
     virtual void ProcessMsgIn(MsgFlush* aMsg);
+    virtual void ProcessMsgIn(MsgDecodedStream* aMsg);
+    virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
+    virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgQuit* aMsg);
-    virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
-    virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
-    virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
-    virtual Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
+    virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
     virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
     virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
+    virtual Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
+    virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
+    virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
     virtual Msg* ProcessMsgOut(MsgQuit* aMsg);
 private:
     class ProcessorQueueIn : public IMsgProcessor, private INonCopyable
@@ -718,16 +718,16 @@ private:
     public:
         ProcessorQueueIn(MsgReservoir& aQueue);
     private:
-        Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-        Msg* ProcessMsg(MsgAudioPcm* aMsg);
-        Msg* ProcessMsg(MsgSilence* aMsg);
-        Msg* ProcessMsg(MsgPlayable* aMsg);
-        Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
+        Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgDecodedStream* aMsg);
+        Msg* ProcessMsg(MsgAudioPcm* aMsg);
+        Msg* ProcessMsg(MsgSilence* aMsg);
+        Msg* ProcessMsg(MsgPlayable* aMsg);
         Msg* ProcessMsg(MsgQuit* aMsg);
     private:
         MsgReservoir& iQueue;
@@ -737,16 +737,16 @@ private:
     public:
         ProcessorQueueOut(MsgReservoir& aQueue);
     private:
-        Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-        Msg* ProcessMsg(MsgAudioPcm* aMsg);
-        Msg* ProcessMsg(MsgSilence* aMsg);
-        Msg* ProcessMsg(MsgPlayable* aMsg);
-        Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
+        Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgDecodedStream* aMsg);
+        Msg* ProcessMsg(MsgAudioPcm* aMsg);
+        Msg* ProcessMsg(MsgSilence* aMsg);
+        Msg* ProcessMsg(MsgPlayable* aMsg);
         Msg* ProcessMsg(MsgQuit* aMsg);
     private:
         MsgReservoir& iQueue;
@@ -875,16 +875,16 @@ public:
                TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
                TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgQuitCount);
     //
-    MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
-    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
-    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp=0, TUint aMediaTimestamp=0);
-    MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
-    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);
     MsgFlush* CreateMsgFlush(TUint aId);
+    MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
+    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
+    MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp=0, TUint aMediaTimestamp=0);
+    MsgSilence* CreateMsgSilence(TUint aSizeJiffies);
     MsgQuit* CreateMsgQuit();
 private:
     EncodedAudio* CreateEncodedAudio(const Brx& aData);

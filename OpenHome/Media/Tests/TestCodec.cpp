@@ -331,35 +331,6 @@ MsgProcessor::~MsgProcessor()
 {
 }
 
-Msg* MsgProcessor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioEncoded\n");
-    ASSERTS();
-    return NULL;
-}
-Msg* MsgProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioPcm\n");
-    ASSERTS();
-    return NULL;
-}
-Msg* MsgProcessor::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    //LOG(kMedia, ">MsgProcessor::ProcessMsgSilence\n");
-    ASSERTS();
-    return NULL;
-}
-Msg* MsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    //LOG(kMedia, ">MsgProcessor::ProcessMsgPlayable\n");
-    ASSERTS();
-    return NULL;
-}
-Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    //LOG(kMedia, ">MsgProcessor::ProcessMsgDecodedStream\n");
-    return aMsg;
-}
 Msg* MsgProcessor::ProcessMsg(MsgTrack* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgTrack\n");
@@ -369,6 +340,12 @@ Msg* MsgProcessor::ProcessMsg(MsgEncodedStream* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgEncodedStream\n");
     return aMsg;
+}
+Msg* MsgProcessor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioEncoded\n");
+    ASSERTS();
+    return NULL;
 }
 Msg* MsgProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
@@ -386,6 +363,29 @@ Msg* MsgProcessor::ProcessMsg(MsgFlush* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgFlush\n");
     aMsg->RemoveRef();
+    return NULL;
+}
+Msg* MsgProcessor::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgDecodedStream\n");
+    return aMsg;
+}
+Msg* MsgProcessor::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgAudioPcm\n");
+    ASSERTS();
+    return NULL;
+}
+Msg* MsgProcessor::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgSilence\n");
+    ASSERTS();
+    return NULL;
+}
+Msg* MsgProcessor::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgPlayable\n");
+    ASSERTS();
     return NULL;
 }
 Msg* MsgProcessor::ProcessMsg(MsgQuit* aMsg)

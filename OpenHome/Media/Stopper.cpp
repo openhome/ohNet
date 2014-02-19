@@ -149,36 +149,6 @@ Msg* Stopper::Pull()
     return msg;
 }
 
-Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
-{
-    return ProcessAudio(aMsg);
-}
-
-Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    if (!aMsg->StreamInfo().Live()) {
-        OkToPlay();
-    }
-    return ProcessFlushable(aMsg);
-}
-
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
@@ -202,6 +172,12 @@ Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
     return NULL;
 }
 
+Msg* Stopper::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* Stopper::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
@@ -219,6 +195,30 @@ Msg* Stopper::ProcessMsg(MsgHalt* aMsg)
 Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 {
     aMsg->RemoveRef();
+    return NULL;
+}
+
+Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    if (!aMsg->StreamInfo().Live()) {
+        OkToPlay();
+    }
+    return ProcessFlushable(aMsg);
+}
+
+Msg* Stopper::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+
+Msg* Stopper::ProcessMsg(MsgSilence* aMsg)
+{
+    return ProcessAudio(aMsg);
+}
+
+Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
     return NULL;
 }
 
@@ -282,6 +282,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
                     iObserver.PipelinePaused();
                 }
                 else {
+                    (void)iStreamHandler->TryStop(iTrackId, iStreamId);
                     iState = ERunning;
                     iFlushStream = true;
                 }

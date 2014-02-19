@@ -92,16 +92,16 @@ private: // ICodecController
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp);
     void OutputHalt();
 private: // IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);

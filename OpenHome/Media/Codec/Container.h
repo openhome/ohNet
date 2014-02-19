@@ -65,16 +65,16 @@ public: // from IRecogniser
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -115,16 +115,16 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -155,16 +155,16 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);

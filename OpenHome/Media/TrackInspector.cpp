@@ -54,43 +54,6 @@ void TrackInspector::NotifyTrackFailed()
     iTrack = NULL;
 }
 
-Msg* TrackInspector::ProcessMsg(MsgAudioEncoded* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    if (iTrack != NULL) {
-        NotifyTrackPlaying();
-    }
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgSilence* aMsg)
-{
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgPlayable* aMsg)
-{
-    ASSERTS();
-    return aMsg;
-}
-
-Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    if (iTrack != NULL && aMsg->StreamInfo().Live()) {
-        /* Live streams wait for the stopper to tell them to start generating audio.
-           Its possible we'll see this msg but no audio for a perfectly good stream
-           ...so assume that generation of MsgDecodedStream implies the track is good
-           ...(more accurately, not utterly bad) */
-        NotifyTrackPlaying();
-    }
-    return aMsg;
-}
-
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != NULL) {
@@ -103,6 +66,12 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    ASSERTS();
     return aMsg;
 }
 
@@ -122,6 +91,37 @@ Msg* TrackInspector::ProcessMsg(MsgFlush* aMsg)
         iTrack->RemoveRef();
         iTrack = NULL;
     }
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    if (iTrack != NULL && aMsg->StreamInfo().Live()) {
+        /* Live streams wait for the stopper to tell them to start generating audio.
+           Its possible we'll see this msg but no audio for a perfectly good stream
+           ...so assume that generation of MsgDecodedStream implies the track is good
+           ...(more accurately, not utterly bad) */
+        NotifyTrackPlaying();
+    }
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    if (iTrack != NULL) {
+        NotifyTrackPlaying();
+    }
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgSilence* aMsg)
+{
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgPlayable* aMsg)
+{
+    ASSERTS();
     return aMsg;
 }
 

@@ -47,16 +47,16 @@ private: // from Thread
 private:
     void TrackCompleted();
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     Mutex iLock;
@@ -228,10 +228,49 @@ void DummyDriver::TrackCompleted()
     }
 }
 
+Msg* DummyDriver::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
 Msg* DummyDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
     return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgHalt* aMsg)
+{
+    TrackCompleted();
+    return aMsg;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    ASSERT(aMsg->StreamInfo().BitDepth() == 16); // ProcessMsg for MsgPlayable will need to change if this isn't true
+    iJiffiesPerSample = Jiffies::JiffiesPerSample(aMsg->StreamInfo().SampleRate());
+    iBitDepth = aMsg->StreamInfo().BitDepth();
+    iNumChannels = aMsg->StreamInfo().NumChannels();
+    return aMsg;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
@@ -264,45 +303,6 @@ Msg* DummyDriver::ProcessMsg(MsgPlayable* aMsg)
         iTrackChanged = Functor();
     }
     return aMsg;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    ASSERT(aMsg->StreamInfo().BitDepth() == 16); // ProcessMsg for MsgPlayable will need to change if this isn't true
-    iJiffiesPerSample = Jiffies::JiffiesPerSample(aMsg->StreamInfo().SampleRate());
-    iBitDepth = aMsg->StreamInfo().BitDepth();
-    iNumChannels = aMsg->StreamInfo().NumChannels();
-    return aMsg;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgTrack* /*aMsg*/)
-{
-    ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
-{
-    ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
-{
-    ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgHalt* aMsg)
-{
-    TrackCompleted();
-    return aMsg;
-}
-
-Msg* DummyDriver::ProcessMsg(MsgFlush* /*aMsg*/)
-{
-    ASSERTS(); // msg type not expected at the far right of the pipeline
-    return NULL;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgQuit* aMsg)

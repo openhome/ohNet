@@ -28,16 +28,16 @@ public:
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgDecodedStream* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgSilence* aMsg);
+    Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     enum EMsgType
@@ -233,38 +233,6 @@ MsgAudioPcm* SuitePreDriver::CreateAudio()
     return audio;
 }
 
-Msg* SuitePreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgSilence* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgPlayable* aMsg)
-{
-    iLastMsg = EMsgPlayable;
-    return aMsg;
-}
-
-Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    TEST(aMsg->StreamInfo().BitDepth() == iBitDepth);
-    TEST(aMsg->StreamInfo().SampleRate() == iSampleRate);
-    iLastMsg = EMsgDecodedStream;
-    return aMsg;
-}
-
 Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();
@@ -272,6 +240,12 @@ Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
@@ -293,6 +267,32 @@ Msg* SuitePreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    TEST(aMsg->StreamInfo().BitDepth() == iBitDepth);
+    TEST(aMsg->StreamInfo().SampleRate() == iSampleRate);
+    iLastMsg = EMsgDecodedStream;
+    return aMsg;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgAudioPcm* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgSilence* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgPlayable* aMsg)
+{
+    iLastMsg = EMsgPlayable;
+    return aMsg;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgQuit* aMsg)

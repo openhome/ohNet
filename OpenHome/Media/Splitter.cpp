@@ -35,34 +35,6 @@ Msg* Splitter::Pull()
     return msg;
 }
 
-Msg* Splitter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
-{
-    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
-    return NULL;
-}
-
-Msg* Splitter::ProcessMsg(MsgAudioPcm* aMsg)
-{
-    return aMsg->Clone();
-}
-
-Msg* Splitter::ProcessMsg(MsgSilence* aMsg)
-{
-    return aMsg->Clone();
-}
-
-Msg* Splitter::ProcessMsg(MsgPlayable* /*aMsg*/)
-{
-    ASSERTS();
-    return NULL;
-}
-
-Msg* Splitter::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    aMsg->AddRef();
-    return aMsg;
-}
-
 Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
 {
     aMsg->AddRef();
@@ -73,6 +45,12 @@ Msg* Splitter::ProcessMsg(MsgEncodedStream* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
+}
+
+Msg* Splitter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+{
+    ASSERTS(); /* only expect to deal with decoded audio at this stage of the pipeline */
+    return NULL;
 }
 
 Msg* Splitter::ProcessMsg(MsgMetaText* aMsg)
@@ -91,6 +69,28 @@ Msg* Splitter::ProcessMsg(MsgFlush* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
+}
+
+Msg* Splitter::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
+Msg* Splitter::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    return aMsg->Clone();
+}
+
+Msg* Splitter::ProcessMsg(MsgSilence* aMsg)
+{
+    return aMsg->Clone();
+}
+
+Msg* Splitter::ProcessMsg(MsgPlayable* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Splitter::ProcessMsg(MsgQuit* aMsg)

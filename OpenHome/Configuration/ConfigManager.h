@@ -87,6 +87,7 @@ public:
 template <class T>
 class ConfigVal : public IObservable<T>, public ISerialisable
 {
+    using typename IObservable<T>::FunctorObserver;
 public:
     static const TUint kSubscriptionIdInvalid = 0;
 protected:

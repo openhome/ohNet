@@ -268,7 +268,7 @@ class TestAudioConx( BASE.BaseTest ):
         try:
             loops = int( aLoops )
         except:
-            loops = 10
+            loops = 3
         self._LogHeader( 'Testing with Server responding/not responding' )
         self.playing.clear()
         self.dut.playlist.SeekIndex( 0 )
@@ -277,14 +277,14 @@ class TestAudioConx( BASE.BaseTest ):
         for loop in range( loops ):
             self.buffering.clear()
             self.audioSrv.StopResponding()
-            self.buffering.wait( 20 )
+            self.buffering.wait( 60 )
             time.sleep( 5 )
             self.log.FailUnless( self.dutDev, self.buffering.isSet(),
                 '%d of %d: Buffering - server not responding' % (loop+1, loops ))
             
             self.playing.clear()
             self.audioSrv.StartResponding()
-            self.playing.wait( 20 )
+            self.playing.wait( 10 )
             time.sleep( 5 )
             self.log.FailUnless( self.dutDev, self.playing.isSet(),
                 '%d of %d: Playing - server responding' % (loop+1, loops ))
@@ -304,38 +304,40 @@ class TestAudioConx( BASE.BaseTest ):
             self.playing.wait( 3 )
             self.buffering.clear()
             self.audioSrv.StopResponding()
-            self.buffering.wait( 20 )
-            time.sleep( 5 )
-            
-            if invoke == 'Pause':
-                self.paused.clear()
-                self.dut.playlist.Pause()
-                self.paused.wait( 5 )
-                self.log.FailUnless( self.dutDev, self.paused.isSet(),
-                    '%s/Paused actual/expect state after %s whilst buffering'
-                     % (self.state, invoke) )
-            elif invoke == 'Stop':
-                self.stopped.clear()
-                self.dut.playlist.Stop()
-                self.stopped.wait( 5 )
-                self.log.FailUnless( self.dutDev, self.stopped.isSet(),
-                    '%s/Stopped actual/expect state after %s whilst buffering'
-                     % (self.state, invoke) )
+            self.buffering.wait( 60 )
+            if self.dut.playlist.transportState != 'Buffering':
+                self.log.Fail( self.dutDev, 'Failed to enter buffering state on data starvation' )
             else:
-                if invoke == 'Play':
-                    self.dut.playlist.Play()
-                elif invoke == 'SeekSecondAbsolute':
-                    self.dut.playlist.SeekSecondAbsolute( 30 )
-                elif invoke == 'SeekSecondRelative':
-                    self.dut.playlist.SeekSecondRelative( 30 )
-                elif invoke == 'SeekTrackAbsolute':
-                    self.dut.playlist.SeekTrackAbsolute( 3 )
-                elif invoke == 'SeekTrackRelative':
-                    self.dut.playlist.SeekTrackRelative( 3 )
                 time.sleep( 5 )
-                self.log.FailUnless( self.dutDev, self.state == 'Buffering',
-                    '%s/Buffering actual/expect state after %s whilst buffering'
-                     % (self.state, invoke) )
+                if invoke == 'Pause':
+                    self.paused.clear()
+                    self.dut.playlist.Pause()
+                    self.paused.wait( 5 )
+                    self.log.FailUnless( self.dutDev, self.paused.isSet(),
+                        '%s/Paused actual/expect state after %s whilst buffering'
+                         % (self.state, invoke) )
+                elif invoke == 'Stop':
+                    self.stopped.clear()
+                    self.dut.playlist.Stop()
+                    self.stopped.wait( 5 )
+                    self.log.FailUnless( self.dutDev, self.stopped.isSet(),
+                        '%s/Stopped actual/expect state after %s whilst buffering'
+                         % (self.state, invoke) )
+                else:
+                    if invoke == 'Play':
+                        self.dut.playlist.Play()
+                    elif invoke == 'SeekSecondAbsolute':
+                        self.dut.playlist.SeekSecondAbsolute( 30 )
+                    elif invoke == 'SeekSecondRelative':
+                        self.dut.playlist.SeekSecondRelative( 30 )
+                    elif invoke == 'SeekTrackAbsolute':
+                        self.dut.playlist.SeekTrackAbsolute( 3 )
+                    elif invoke == 'SeekTrackRelative':
+                        self.dut.playlist.SeekTrackRelative( 3 )
+                    time.sleep( 5 )
+                    self.log.FailUnless( self.dutDev, self.state == 'Buffering',
+                        '%s/Buffering actual/expect state after %s whilst buffering'
+                         % (self.state, invoke) )
             self.audioSrv.StartResponding()
     
     def _TestClose( self ):
@@ -349,10 +351,13 @@ class TestAudioConx( BASE.BaseTest ):
         
         self.buffering.clear()
         self.audioSrv.CloseConnection()
-        self.buffering.wait( 20 )
-        time.sleep( 5 )
-        self.log.FailUnless( self.dutDev, self.buffering.isSet(),
-            'Buffering when server closed TCP conx' )
+        self.buffering.wait( 60 )
+        if self.dut.playlist.transportState != 'Buffering':
+            self.log.Fail( self.dutDev, 'Failed to enter buffering state on data starvation' )
+        else:
+            time.sleep( 5 )
+            self.log.FailUnless( self.dutDev, self.buffering.isSet(),
+                'Buffering when server closed TCP conx' )
 
     def _LogHeader( self, aMsg ):
         "Log a header message"
