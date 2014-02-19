@@ -13,7 +13,6 @@
 
 EXCEPTION(ConfigInvalidValue);
 EXCEPTION(ConfigValueOutOfRange);
-EXCEPTION(ConfigValueExists);
 EXCEPTION(ConfigInvalidChoice);
 EXCEPTION(ConfigValueTooLong);
 EXCEPTION(ConfigKeyExists);
