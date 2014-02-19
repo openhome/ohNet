@@ -282,6 +282,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
                     iObserver.PipelinePaused();
                 }
                 else {
+                    (void)iStreamHandler->TryStop(iTrackId, iStreamId);
                     iState = ERunning;
                     iFlushStream = true;
                 }
