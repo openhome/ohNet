@@ -33,6 +33,7 @@ namespace Configuration {
     class IConfigManagerWriter;
     class IStoreReadWrite;
     class ConfigText;
+    class ProviderConfig;
 }
 namespace Net {
     class NetworkMonitor;
@@ -113,6 +114,7 @@ private:
     ProviderTime* iTime;
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
+    Configuration::ProviderConfig* iProviderConfig;
     Net::NetworkMonitor* iNetworkMonitor;
 };
 

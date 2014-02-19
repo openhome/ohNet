@@ -19,6 +19,7 @@
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/ProviderConfig.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -56,6 +57,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Info");
     iVolume = new ProviderVolume(aDevice, *iMuteManager, *iVolumeManager);
     iProduct->AddAttribute("Volume");
+    iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
+    iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
 }
 
@@ -65,6 +68,7 @@ MediaPlayer::~MediaPlayer()
     delete iPipeline;
     delete iProduct;
     delete iNetworkMonitor;
+    delete iProviderConfig;
     delete iTime;
     delete iInfo;
     delete iVolume;
