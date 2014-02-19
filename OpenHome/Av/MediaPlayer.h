@@ -97,8 +97,14 @@ private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
     Media::AllocatorInfoLogger* iInfoLogger;
+    KvpStore* iKvpStore;
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
+    Configuration::IStoreReadWrite& iReadWriteStore;
+    Configuration::ConfigManager* iConfigManager;
+    OpenHome::PowerManager* iPowerManager;
+    Configuration::ConfigText* iConfigProductRoom;
+    Configuration::ConfigText* iConfigProductName;
     Product* iProduct;
     Media::IMuteManager* iMuteManager;
     Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
@@ -108,12 +114,6 @@ private:
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
     Net::NetworkMonitor* iNetworkMonitor;
-    KvpStore* iKvpStore;
-    Configuration::IStoreReadWrite& iReadWriteStore;
-    Configuration::ConfigManager* iConfigManager;
-    OpenHome::PowerManager* iPowerManager;
-    Configuration::ConfigText* iConfigProductRoom;
-    Configuration::ConfigText* iConfigProductName;
 };
 
 } // namespace Av

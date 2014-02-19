@@ -72,13 +72,13 @@ MediaPlayer::~MediaPlayer()
     delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
-    delete iKvpStore;
-    delete iInfoLogger;
     delete iConfigProductRoom;
     delete iConfigProductName;
     delete iPowerManager;
     delete iConfigManager;
     delete iTrackFactory;
+    delete iKvpStore;
+    delete iInfoLogger;
 }
 
 void MediaPlayer::Add(Codec::CodecBase* aCodec)
