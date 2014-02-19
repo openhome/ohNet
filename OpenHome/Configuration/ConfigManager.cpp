@@ -79,10 +79,11 @@ TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
 
 void ConfigNum::Serialise(IWriter& aWriter) const
 {
-    Bws<sizeof(TInt)> buf;
+    Bws<kMaxNumLength> buf;
     AutoMutex a(iMutex);
     Ascii::AppendDec(buf, iVal);
     aWriter.Write(buf);
+    aWriter.WriteFlush();
 }
 
 TBool ConfigNum::Deserialise(const Brx& aString)
@@ -169,10 +170,11 @@ TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
 
 void ConfigChoice::Serialise(IWriter& aWriter) const
 {
-    Bws<sizeof(TUint)> buf;
+    Bws<kMaxChoiceLength> buf;
     AutoMutex a(iMutex);
     Ascii::AppendDec(buf, iSelected);
     aWriter.Write(buf);
+    aWriter.WriteFlush();
 }
 
 TBool ConfigChoice::Deserialise(const Brx& aString)
@@ -256,6 +258,7 @@ void ConfigText::Serialise(IWriter& aWriter) const
 {
     AutoMutex a(iMutex);
     aWriter.Write(iText);
+    aWriter.WriteFlush();
 }
 
 TBool ConfigText::Deserialise(const Brx& aString)

@@ -81,6 +81,8 @@ private:
     void TestSetNoUpdate();
     void TestSetValueOutOfRange();
     void TestSerialise();
+    void TestSerialiseMaxLengthNegative();
+    void TestSerialiseMaxLengthPositive();
     void TestDeserialiseUpdate();
     void TestDeserialiseNoUpdate();
     void TestDeserialiseOutOfRange();
@@ -89,7 +91,9 @@ private:
     static const TInt kMin = -1;
     static const TInt kMax = 2;
     static const TInt kVal = 1;
-    static const TUint kIntMaxLength = 10;
+    static const TInt kIntMin = 0x80000000;
+    static const TInt kIntMax = 0x7fffffff;
+    static const TUint kIntMaxLength = 11;
     ConfigNum* iConfigVal;
     TInt iLastChangeVal;
 };
@@ -116,12 +120,15 @@ private:
     void TestSetNoUpdate();
     void TestSetNoSuchChoice();
     void TestSerialise();
+    void TestSerialiseMaxLength();
     void TestDeserialiseUpdate();
     void TestDeserialiseNoUpdate();
     void TestDeserialiseNoSuchChoice();
     void TestDeserialiseInvalid();
 private:
     static const TUint kDefault = 1000;
+    static const TUint kUintMin = 0x00000000;
+    static const TUint kUintMax = 0xffffffff;
     static const TUint kChoice1;
     static const TUint kChoice2;
     static const TUint kChoice3;
@@ -150,6 +157,7 @@ private:
     void TestSetNoUpdate();
     void TestSetValueTooLong();
     void TestSerialise();
+    void TestSerialiseMaxLength();
     void TestDeserialiseUpdate();
     void TestDeserialiseNoUpdate();
     void TestDeserialiseValueTooLong();
@@ -373,6 +381,8 @@ SuiteConfigNum::SuiteConfigNum()
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetNoUpdate), "TestSetNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetValueOutOfRange), "TestSetValueOutOfRange");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialise), "TestSerialise");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialiseMaxLengthNegative), "TestSerialiseMaxLengthNegative");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialiseMaxLengthPositive), "TestSerialiseMaxLengthPositive");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseOutOfRange), "TestDeserialiseOutOfRange");
@@ -546,6 +556,30 @@ void SuiteConfigNum::TestSerialise()
     TEST(val == kVal);
 }
 
+void SuiteConfigNum::TestSerialiseMaxLengthNegative()
+{
+    const Brn key("conf.num.2");
+    Bws<kIntMaxLength> buf;
+    ConfigNum num(*iConfigManager, key, kIntMin, kIntMax, kIntMin);
+
+    TestHelperWriter writer(buf);
+    num.Serialise(writer);
+    TInt val = Ascii::Int(buf);
+    TEST(val == kIntMin);
+}
+
+void SuiteConfigNum::TestSerialiseMaxLengthPositive()
+{
+    const Brn key("conf.num.2");
+    Bws<kIntMaxLength> buf;
+    ConfigNum num(*iConfigManager, key, kIntMin, kIntMax, kIntMax);
+
+    TestHelperWriter writer(buf);
+    num.Serialise(writer);
+    TInt val = Ascii::Int(buf);
+    TEST(val == kIntMax);
+}
+
 void SuiteConfigNum::TestDeserialiseUpdate()
 {
     TInt newVal = kVal+1;
@@ -634,6 +668,7 @@ SuiteConfigChoice::SuiteConfigChoice()
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate), "TestSetNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoSuchChoice), "TestSetNoSuchChoice");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSerialise), "TestSerialise");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSerialiseMaxLength), "TestSerialiseMaxLength");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseNoSuchChoice), "TestDeserialiseNoSuchChoice");
@@ -808,6 +843,22 @@ void SuiteConfigChoice::TestSerialise()
     TEST(val == kDefault);
 }
 
+void SuiteConfigChoice::TestSerialiseMaxLength()
+{
+    const Brn key("conf.choice.2");
+    Bws<kUintMaxLength> buf;
+
+    std::vector<TUint> choices;
+    choices.push_back(kUintMin);
+    choices.push_back(kUintMax);
+    ConfigChoice choice(*iConfigManager, key, choices, kUintMax);
+
+    TestHelperWriter writer(buf);
+    choice.Serialise(writer);
+    TInt val = Ascii::Uint(buf);
+    TEST(val == kUintMax);
+}
+
 void SuiteConfigChoice::TestDeserialiseUpdate()
 {
     TUint newVal = kDefault+1;
@@ -886,6 +937,7 @@ SuiteConfigText::SuiteConfigText()
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetNoUpdate), "TestSetNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetValueTooLong), "TestSetValueTooLong");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSerialise), "TestSerialise");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSerialiseMaxLength), "TestSerialiseMaxLength");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseValueTooLong), "TestDeserialiseValueTooLong");
@@ -1050,6 +1102,22 @@ void SuiteConfigText::TestSerialise()
     iConfigVal->Serialise(writer);
 
     TEST(buf == kDefault);
+}
+
+void SuiteConfigText::TestSerialiseMaxLength()
+{
+    const Brn key("conf.text.2");
+    const TUint maxLength = 52;
+    Bws<maxLength> val;
+    ASSERT(kDefault.Bytes()*2 == val.MaxBytes());
+    val.Replace(kDefault);
+    val.Append(kDefault);
+    Bws<maxLength> buf;
+    ConfigText text(*iConfigManager, key, maxLength, val);
+
+    TestHelperWriter writer(buf);
+    text.Serialise(writer);
+    TEST(buf == val);
 }
 
 void SuiteConfigText::TestDeserialiseUpdate()

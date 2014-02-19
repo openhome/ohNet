@@ -203,6 +203,7 @@ private: // from ConfigVal
 private:
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
+    static const TUint kMaxNumLength = 11;
     TInt iMin;
     TInt iMax;
     TInt iVal;
@@ -256,6 +257,7 @@ private: // from ConfigVal
 private:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
+    static const TUint kMaxChoiceLength = 10;
     std::vector<TUint> iChoices;
     TUint iSelected;
     mutable Mutex iMutex;
