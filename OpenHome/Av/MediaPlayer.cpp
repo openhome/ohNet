@@ -30,11 +30,10 @@ using namespace OpenHome::Net;
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                         IStoreReadWrite& aReadWriteStore, IPowerManager& aPowerManager)
+                         IStoreReadWrite& aReadWriteStore)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
-    , iPowerManager(aPowerManager)
     , iConfigProductRoom(NULL)
     , iConfigProductName(NULL)
 {
@@ -43,13 +42,14 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iConfigManager = new ConfigManager(iReadWriteStore);
+    iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, iPowerManager, Brx::Empty());
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager, Brx::Empty());
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
-    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, iPowerManager);
+    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, *iPowerManager);
     iTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iInfo = new ProviderInfo(aDevice, *iPipeline);
@@ -76,6 +76,7 @@ MediaPlayer::~MediaPlayer()
     delete iInfoLogger;
     delete iConfigProductRoom;
     delete iConfigProductName;
+    delete iPowerManager;
     delete iConfigManager;
     delete iTrackFactory;
 }
@@ -160,7 +161,7 @@ IConfigManagerWriter& MediaPlayer::ConfigManagerWriter()
 
 IPowerManager& MediaPlayer::PowerManager()
 {
-    return iPowerManager;
+    return *iPowerManager;
 }
 
 void MediaPlayer::Add(UriProvider* aUriProvider)

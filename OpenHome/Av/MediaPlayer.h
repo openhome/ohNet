@@ -7,6 +7,7 @@
 namespace OpenHome {
     class Environment;
     class IPowerManager;
+    class PowerManager;
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
@@ -72,7 +73,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                Configuration::IStoreReadWrite& aReadWriteStore, IPowerManager& aPowerManager);
+                Configuration::IStoreReadWrite& aReadWriteStore);
     ~MediaPlayer();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
@@ -110,7 +111,7 @@ private:
     KvpStore* iKvpStore;
     Configuration::IStoreReadWrite& iReadWriteStore;
     Configuration::ConfigManager* iConfigManager;
-    IPowerManager& iPowerManager;
+    OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
 };

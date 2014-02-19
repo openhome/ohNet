@@ -114,7 +114,6 @@ private:
     DvDeviceStandard* iDevice;
     RamStore* iRamStore;
     ConfigRamStore* iConfigRamStore;
-    PowerManager* iPowerManager;
     MediaPlayer* iMediaPlayer;
     DummyDriver* iDriver;
     CpProxyAvOpenhomeOrgPlaylist1* iProxy;
@@ -357,8 +356,7 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    iPowerManager = new PowerManager();
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigRamStore, *iPowerManager);
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigRamStore);
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
@@ -398,7 +396,6 @@ void SuitePlaylist::TearDown()
     iDeviceDisabled.Wait();
     delete iMediaPlayer;
     delete iDriver;
-    delete iPowerManager;
     delete iConfigRamStore;
     delete iRamStore;
     delete iDevice;

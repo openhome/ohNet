@@ -68,7 +68,6 @@ protected:
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
-    PowerManager* iPowerManager;
 private:
     Semaphore iDisabled;
     ISource* iSourceUpnp; // FIXME - see #169

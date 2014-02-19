@@ -71,14 +71,14 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
     iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
 
-    // create a power manager for power failures
-    iPowerManager = new PowerManager();
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
-
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore, *iPowerManager);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
+
+    // register our PowerDownUpnp function with the PowerManager
+    IPowerManager& powerManager = iMediaPlayer->PowerManager();
+    powerManager.RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
     //iProduct->SetCurrentSource(0);
     iConfigRamStore->Print();
@@ -91,7 +91,6 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDeviceUpnpAv;
     delete iRamStore;
     delete iConfigRamStore;
-    delete iPowerManager;
 }
 
 void TestMediaPlayer::DestroyPipeline()
@@ -129,9 +128,10 @@ void TestMediaPlayer::Run()
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
     // while (mygetch() != 'q')
-    while (getchar() != 'q')	// getchar catches stdin, getch does not.....
+    while (getchar() != 'q')    // getchar catches stdin, getch does not.....
         ;
-    iPowerManager->PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
+    IPowerManager& powerManager = iMediaPlayer->PowerManager();
+    powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
     Log::Print("RamStore at PowerDown:\n");
     iConfigRamStore->Print();
 }
