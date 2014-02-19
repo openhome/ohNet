@@ -68,7 +68,6 @@ protected:
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
-    Configuration::ConfigManager* iConfigManager;
     PowerManager* iPowerManager;
 private:
     Semaphore iDisabled;

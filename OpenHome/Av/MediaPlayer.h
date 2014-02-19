@@ -27,6 +27,7 @@ namespace Media {
     class TrackFactory;
 }
 namespace Configuration {
+    class ConfigManager;
     class IConfigManagerReader;
     class IConfigManagerWriter;
     class IStoreReadWrite;
@@ -71,8 +72,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManagerReader& aConfigReader,
-                Configuration::IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager);
+                Configuration::IStoreReadWrite& aReadWriteStore, IPowerManager& aPowerManager);
     ~MediaPlayer();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
@@ -109,8 +109,7 @@ private:
     Net::NetworkMonitor* iNetworkMonitor;
     KvpStore* iKvpStore;
     Configuration::IStoreReadWrite& iReadWriteStore;
-    Configuration::IConfigManagerReader& iConfigManagerReader;
-    Configuration::IConfigManagerWriter& iConfigManagerWriter;
+    Configuration::ConfigManager* iConfigManager;
     IPowerManager& iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;

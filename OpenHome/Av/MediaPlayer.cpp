@@ -30,13 +30,10 @@ using namespace OpenHome::Net;
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                         IStoreReadWrite& aReadWriteStore, IConfigManagerReader& aConfigReader,
-                         IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager)
+                         IStoreReadWrite& aReadWriteStore, IPowerManager& aPowerManager)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
-    , iConfigManagerReader(aConfigReader)
-    , iConfigManagerWriter(aConfigWriter)
     , iPowerManager(aPowerManager)
     , iConfigProductRoom(NULL)
     , iConfigProductName(NULL)
@@ -45,9 +42,10 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iKvpStore = new KvpStore(aStaticDataSource);
     iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iConfigProductRoom = new ConfigText(iConfigManagerWriter, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
-    iConfigProductName = new ConfigText(iConfigManagerWriter, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, iConfigManagerReader, aConfigWriter, iPowerManager, Brx::Empty());
+    iConfigManager = new ConfigManager(iReadWriteStore);
+    iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
+    iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, iPowerManager, Brx::Empty());
     iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -78,6 +76,7 @@ MediaPlayer::~MediaPlayer()
     delete iInfoLogger;
     delete iConfigProductRoom;
     delete iConfigProductName;
+    delete iConfigManager;
     delete iTrackFactory;
 }
 
@@ -108,6 +107,7 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void MediaPlayer::Start()
 {
+    iConfigManager->Close();
     iProduct->SetCurrentSource(0); // FIXME - could be available (and left) to client code
     iPipeline->Start();
     iProduct->Start();
@@ -150,12 +150,12 @@ IStoreReadWrite& MediaPlayer::ReadWriteStore()
 
 IConfigManagerReader& MediaPlayer::ConfigManagerReader()
 {
-    return iConfigManagerReader;
+    return *iConfigManager;
 }
 
 IConfigManagerWriter& MediaPlayer::ConfigManagerWriter()
 {
-    return iConfigManagerWriter;
+    return *iConfigManager;
 }
 
 IPowerManager& MediaPlayer::PowerManager()

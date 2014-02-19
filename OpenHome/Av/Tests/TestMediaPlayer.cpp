@@ -71,15 +71,12 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
     iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
 
-    // create the config manager that makes use of the read store
-    iConfigManager = new ConfigManager(*iConfigRamStore);
-
     // create a power manager for power failures
     iPowerManager = new PowerManager();
     iPowerManager->RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore, *iConfigManager, *iConfigManager, *iPowerManager);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, aMaxDriverJiffies, *iRamStore, *iConfigRamStore, *iPowerManager);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -93,7 +90,6 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;
-    delete iConfigManager;
     delete iConfigRamStore;
     delete iPowerManager;
 }
@@ -124,7 +120,6 @@ void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
 void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
-    iConfigManager->Close();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
     iMediaPlayer->Start();
