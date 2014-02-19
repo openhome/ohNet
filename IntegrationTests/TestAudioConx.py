@@ -351,10 +351,13 @@ class TestAudioConx( BASE.BaseTest ):
         
         self.buffering.clear()
         self.audioSrv.CloseConnection()
-        self.buffering.wait( 20 )
-        time.sleep( 5 )
-        self.log.FailUnless( self.dutDev, self.buffering.isSet(),
-            'Buffering when server closed TCP conx' )
+        self.buffering.wait( 60 )
+        if self.dut.playlist.transportState != 'Buffering':
+            self.log.Fail( self.dutDev, 'Failed to enter buffering state on data starvation' )
+        else:
+            time.sleep( 5 )
+            self.log.FailUnless( self.dutDev, self.buffering.isSet(),
+                'Buffering when server closed TCP conx' )
 
     def _LogHeader( self, aMsg ):
         "Log a header message"
