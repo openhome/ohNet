@@ -71,6 +71,12 @@ TBool ConfigNum::IsValid(TInt aVal) const
     return true;
 }
 
+TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
+{
+    AutoMutex a(iMutex);
+    return ConfigVal::Subscribe(aFunctor, iVal);
+}
+
 void ConfigNum::Serialise(IWriter& aWriter) const
 {
     Bws<sizeof(TInt)> buf;
@@ -91,12 +97,6 @@ TBool ConfigNum::Deserialise(const Brx& aString)
     }
 
     return Set(val);
-}
-
-TUint ConfigNum::Subscribe(FunctorGeneric<KeyValuePair<TInt>&> aFunctor)
-{
-    AutoMutex a(iMutex);
-    return ConfigVal::Subscribe(aFunctor, iVal);
 }
 
 void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
@@ -161,6 +161,12 @@ TBool ConfigChoice::IsValid(TUint aVal) const
     return true;
 }
 
+TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
+{
+    AutoMutex a(iMutex);
+    return ConfigVal::Subscribe(aFunctor, iSelected);
+}
+
 void ConfigChoice::Serialise(IWriter& aWriter) const
 {
     Bws<sizeof(TUint)> buf;
@@ -181,12 +187,6 @@ TBool ConfigChoice::Deserialise(const Brx& aString)
     }
 
     return Set(val);
-}
-
-TUint ConfigChoice::Subscribe(FunctorGeneric<KeyValuePair<TUint>&> aFunctor)
-{
-    AutoMutex a(iMutex);
-    return ConfigVal::Subscribe(aFunctor, iSelected);
 }
 
 void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
@@ -246,6 +246,12 @@ TBool ConfigText::IsValid(const Brx& aVal) const
     return true;
 }
 
+TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
+{
+    AutoMutex a(iMutex);
+    return ConfigVal::Subscribe(aFunctor, iText);
+}
+
 void ConfigText::Serialise(IWriter& aWriter) const
 {
     AutoMutex a(iMutex);
@@ -255,12 +261,6 @@ void ConfigText::Serialise(IWriter& aWriter) const
 TBool ConfigText::Deserialise(const Brx& aString)
 {
     return Set(aString);
-}
-
-TUint ConfigText::Subscribe(FunctorGeneric<KeyValuePair<const Brx&>&> aFunctor)
-{
-    AutoMutex a(iMutex);
-    return ConfigVal::Subscribe(aFunctor, iText);
 }
 
 void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
@@ -279,14 +279,56 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 
 ConfigManager::~ConfigManager() {}
 
-template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
+TBool ConfigManager::HasNum(const Brx& aKey) const
 {
-    ASSERT(!iClosed);
-    if (HasNum(aKey) || HasChoice(aKey) || HasText(aKey)) {
-        THROW(ConfigKeyExists);
-    }
+    return iMapNum.Has(aKey);
+}
 
-    aMap.Add(aKey, aVal);
+ConfigNum& ConfigManager::GetNum(const Brx& aKey) const
+{
+    return iMapNum.Get(aKey);
+}
+
+TBool ConfigManager::HasChoice(const Brx& aKey) const
+{
+    return iMapChoice.Has(aKey);
+}
+
+ConfigChoice& ConfigManager::GetChoice(const Brx& aKey) const
+{
+    return iMapChoice.Get(aKey);
+}
+
+TBool ConfigManager::HasText(const Brx& aKey) const
+{
+    return iMapText.Has(aKey);
+}
+
+ConfigText& ConfigManager::GetText(const Brx& aKey) const
+{
+    return iMapText.Get(aKey);
+}
+
+TBool ConfigManager::Has(const Brx& aKey) const
+{
+    return HasNum(aKey) || HasChoice(aKey) || HasText(aKey);
+}
+
+ISerialisable& ConfigManager::Get(const Brx& aKey) const
+{
+    if (HasNum(aKey)) {
+        return iMapNum.Get(aKey);
+    }
+    else if (HasChoice(aKey)) {
+        return iMapChoice.Get(aKey);
+    }
+    else if (HasText(aKey)) {
+        return iMapText.Get(aKey);
+    }
+    else {
+        ASSERTS();
+        return iMapNum.Get(aKey); // control will never reach here
+    }
 }
 
 void ConfigManager::Close()
@@ -326,39 +368,14 @@ void ConfigManager::ToStore(const Brx& aKey, const Brx& aValue)
     iStore.Write(aKey, aValue);
 }
 
-TBool ConfigManager::Has(const Brx& aKey) const
+template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
 {
-    return HasNum(aKey) || HasChoice(aKey) || HasText(aKey);
-}
+    ASSERT(!iClosed);
+    if (HasNum(aKey) || HasChoice(aKey) || HasText(aKey)) {
+        THROW(ConfigKeyExists);
+    }
 
-TBool ConfigManager::HasNum(const Brx& aKey) const
-{
-    return iMapNum.Has(aKey);
-}
-
-ConfigNum& ConfigManager::GetNum(const Brx& aKey) const
-{
-    return iMapNum.Get(aKey);
-}
-
-TBool ConfigManager::HasChoice(const Brx& aKey) const
-{
-    return iMapChoice.Has(aKey);
-}
-
-ConfigChoice& ConfigManager::GetChoice(const Brx& aKey) const
-{
-    return iMapChoice.Get(aKey);
-}
-
-TBool ConfigManager::HasText(const Brx& aKey) const
-{
-    return iMapText.Has(aKey);
-}
-
-ConfigText& ConfigManager::GetText(const Brx& aKey) const
-{
-    return iMapText.Get(aKey);
+    aMap.Add(aKey, aVal);
 }
 
 

@@ -186,13 +186,15 @@ private:
     void TestReadNoStoreValExists();
     void TestWrite();
 private:
+    static const TUint kMaxNumBytes = 10;
     static const TInt kMinNum = 0;
     static const TInt kMaxNum = 2;
+    static const TUint kMaxChoiceBytes = 10;
     static const TUint kChoiceDefault = 0;
     static const TUint kChoice1;
     static const TUint kChoice2;
     static const TUint kChoice3;
-    static const TUint kMaxText = 26;
+    static const TUint kMaxTextBytes = 26;
     static const Brn kText1;
     static const Brn kText2;
     static const Brn kKeyNum1;
@@ -1169,7 +1171,7 @@ void SuiteConfigManager::Setup()
     iChoices.push_back(kChoice2);
     iChoices.push_back(kChoice3);
     iChoice1 = new ConfigChoice(*iConfigManager, kKeyChoice1, iChoices, kChoiceDefault);
-    iText1 = new ConfigText(*iConfigManager, kKeyText1, kMaxText, kText1);
+    iText1 = new ConfigText(*iConfigManager, kKeyText1, kMaxTextBytes, kText1);
 }
 
 void SuiteConfigManager::TearDown()
@@ -1201,7 +1203,7 @@ void SuiteConfigManager::TestClose()
     iConfigManager->Close();
     TEST_THROWS(ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
     TEST_THROWS(ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1), AssertionFailed);
-    TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2), AssertionFailed);
+    TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2), AssertionFailed);
 }
 
 void SuiteConfigManager::TestAdd()
@@ -1210,7 +1212,7 @@ void SuiteConfigManager::TestAdd()
     // Has() and Get() are tested in their own unit tests.
     ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1);
     ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1);
-    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2);
 }
 
 void SuiteConfigManager::TestAddDuplicate()
@@ -1233,6 +1235,10 @@ void SuiteConfigManager::TestHasNoVals()
     TEST(configManager.HasNum(kKeyNum1) == false);
     TEST(configManager.HasChoice(kKeyChoice1) == false);
     TEST(configManager.HasText(kKeyText1) == false);
+
+    TEST(configManager.Has(kKeyNum1) == false);
+    TEST(configManager.Has(kKeyChoice1) == false);
+    TEST(configManager.Has(kKeyText1) == false);
 }
 
 void SuiteConfigManager::TestHasValidKey()
@@ -1241,6 +1247,11 @@ void SuiteConfigManager::TestHasValidKey()
     TEST(iConfigManager->HasNum(kKeyNum1) == true);
     TEST(iConfigManager->HasChoice(kKeyChoice1) == true);
     TEST(iConfigManager->HasText(kKeyText1) == true);
+
+    // test generic Has()
+    TEST(iConfigManager->Has(kKeyNum1) == true);
+    TEST(iConfigManager->Has(kKeyChoice1) == true);
+    TEST(iConfigManager->Has(kKeyText1) == true);
 }
 
 void SuiteConfigManager::TestHasInvalidKey()
@@ -1258,6 +1269,11 @@ void SuiteConfigManager::TestHasInvalidKey()
 
     // try call HasChoice() with the key of ConfigNum
     TEST(iConfigManager->HasChoice(kKeyNum1) == false);
+
+    // test generic Has()
+    TEST(iConfigManager->Has(kKeyNum2) == false);
+    TEST(iConfigManager->Has(kKeyChoice2) == false);
+    TEST(iConfigManager->Has(kKeyText2) == false);
 }
 
 void SuiteConfigManager::TestHasMultiple()
@@ -1275,7 +1291,7 @@ void SuiteConfigManager::TestHasMultiple()
     TEST(iConfigManager->HasChoice(kKeyChoice2) == true);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2);
     TEST(iConfigManager->HasText(kKeyText1) == true);
     TEST(iConfigManager->HasText(kKeyText2) == true);
 }
@@ -1288,6 +1304,10 @@ void SuiteConfigManager::TestGetNoVals()
     TEST_THROWS(configManager.GetNum(kKeyNum1), AssertionFailed);
     TEST_THROWS(configManager.GetChoice(kKeyChoice1), AssertionFailed);
     TEST_THROWS(configManager.GetText(kKeyText1), AssertionFailed);
+
+    TEST_THROWS(configManager.Get(kKeyNum1), AssertionFailed);
+    TEST_THROWS(configManager.Get(kKeyChoice1), AssertionFailed);
+    TEST_THROWS(configManager.Get(kKeyText1), AssertionFailed);
 }
 
 void SuiteConfigManager::TestGetValidKey()
@@ -1305,6 +1325,31 @@ void SuiteConfigManager::TestGetValidKey()
     // test ConfigText
     ConfigText& text = iConfigManager->GetText(kKeyText1);
     TEST(text == *iText1);
+
+
+    // test generic Get()
+    // test ConfigNum
+    ISerialisable& serNum = iConfigManager->Get(kKeyNum1);
+    Bws<kMaxNumBytes> bufNum;
+    TestHelperWriter writerNum(bufNum);
+    serNum.Serialise(writerNum);
+    TInt valNum = Ascii::Int(bufNum);
+    TEST(valNum == kMinNum);
+
+    // test ConfigChoice
+    ISerialisable& serChoice = iConfigManager->Get(kKeyChoice1);
+    Bws<kMaxChoiceBytes> bufChoice;
+    TestHelperWriter writerChoice(bufChoice);
+    serChoice.Serialise(writerChoice);
+    TUint valChoice = Ascii::Uint(bufChoice);
+    TEST(valChoice == kChoiceDefault);
+
+    // test ConfigText
+    ISerialisable& serText = iConfigManager->Get(kKeyText1);
+    Bws<kMaxTextBytes> bufText;
+    TestHelperWriter writerText(bufText);
+    serText.Serialise(writerText);
+    TEST(bufText == kText1);
 }
 
 void SuiteConfigManager::TestGetInvalidKey()
@@ -1316,6 +1361,11 @@ void SuiteConfigManager::TestGetInvalidKey()
 
     // try call HasChoice() with the key of ConfigNum
     TEST_THROWS(iConfigManager->GetChoice(kKeyNum1), AssertionFailed);
+
+    // test generic Get()
+    TEST_THROWS(iConfigManager->Get(kKeyNum2), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kKeyChoice2), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kKeyText2), AssertionFailed);
 }
 
 void SuiteConfigManager::TestGetMultiple()
@@ -1337,7 +1387,7 @@ void SuiteConfigManager::TestGetMultiple()
     TEST(choice2 == choice);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2);
     ConfigText& text1 = iConfigManager->GetText(kKeyText1);
     TEST(text1 == *iText1);
     ConfigText& text2 = iConfigManager->GetText(kKeyText2);
@@ -1348,7 +1398,7 @@ void SuiteConfigManager::TestReadStoreValExists()
 {
     // test that reading from a value already in store causes store value to be
     // returned rather than default val.
-    Bwh buf(kMaxText);
+    Bwh buf(kMaxTextBytes);
     iConfigManager->FromStore(kKeyText1, buf, kText2);
     TEST(buf == kText1);
 
@@ -1362,7 +1412,7 @@ void SuiteConfigManager::TestReadNoStoreValExists()
 {
     // test that reading a value not in store causes default value to be
     // returned, and written out to store.
-    Bwh buf(kMaxText);
+    Bwh buf(kMaxTextBytes);
 
     try { // check key isn't already in store
         iStore->Read(kKeyText2, buf);
@@ -1383,7 +1433,7 @@ void SuiteConfigManager::TestWrite()
 {
     // test that writing a value via ConfigManager results in value
     // being written to store.
-    Bwh buf(kMaxText);
+    Bwh buf(kMaxTextBytes);
     iConfigManager->ToStore(kKeyText1, kText2);
     iStore->Read(kKeyText1, buf);
     TEST(buf == kText2);
