@@ -58,6 +58,9 @@ protected:
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter);
 private:
+    static TUint Hash(const Brx& aBuf);
+    static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
+    void MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr);
     void PowerDownUpnp();
     void PowerDownDisable(Net::DvDevice& aDevice);
     void PowerDownUpnpCallback();

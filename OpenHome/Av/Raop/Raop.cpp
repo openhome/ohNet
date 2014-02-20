@@ -31,6 +31,10 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar
     iName.Append("@");
     iName.Append(aFriendlyName);
 
+    Log::Print("RAOP device is ");
+    Log::Print(iName);
+    Log::Print("\n");
+
     iHandleRaop = iProvider.MdnsCreateService();
 
     aDvStack.MdnsProvider()->MdnsSetHostName(aHost);

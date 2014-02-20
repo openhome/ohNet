@@ -213,12 +213,50 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
 
-    Bws<12> macAddr("000000000001");
+    Bws<12> macAddr;
+    MacAddrFromUdn(aEnv, macAddr);
     const TChar* friendlyName;
     iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), friendlyName, macAddr));
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+}
+
+TUint TestMediaPlayer::Hash(const Brx& aBuf)
+{
+    TUint hash = 0;
+    for (TUint i=0; i<aBuf.Bytes(); i++) {
+        hash += aBuf[i];
+    }
+    return hash;
+}
+
+void TestMediaPlayer::GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr)
+{
+    // Generate a 48-bit, 12-byte hex string.
+    // Method:
+    // - Generate two random numbers in the range 0 - 2^24
+    // - Get the hex representation of these numbers
+    // - Combine the two hex representations into the output buffer, aMacAddr
+    const TUint maxLimit = 0x01000000;
+    Bws<8> macBuf1;
+    Bws<8> macBuf2;
+
+    aEnv.SetRandomSeed(aSeed);
+    TUint mac1 = aEnv.Random(maxLimit, 0);
+    TUint mac2 = aEnv.Random(maxLimit, 0);
+
+    Ascii::AppendHex(macBuf1, mac1);
+    Ascii::AppendHex(macBuf2, mac2);
+
+    aMacAddr.Append(macBuf1.Split(2));
+    aMacAddr.Append(macBuf2.Split(2));
+}
+
+void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
+{
+    TUint hash = Hash(iDevice->Udn());
+    GenerateMacAddr(aEnv, hash, aMacAddr);
 }
 
 void TestMediaPlayer::PowerDownUpnp()
