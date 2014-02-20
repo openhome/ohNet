@@ -348,7 +348,6 @@ class TestAudioConx( BASE.BaseTest ):
         self.dut.playlist.SeekIndex( 0 )
         self.playing.wait( 3 )
         time.sleep( 5 )
-        
         self.buffering.clear()
         self.audioSrv.CloseConnection()
         self.buffering.wait( 60 )
