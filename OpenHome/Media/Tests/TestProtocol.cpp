@@ -127,7 +127,7 @@ int TestProtocol::Run()
     Log::Print("e: Emergency stop\n");
     Log::Print("\n");
     do {
-    	int key = mygetch();
+        int key = mygetch();
         switch (key)
         {
         case 'p':
@@ -299,18 +299,18 @@ int OpenHome::Media::ExecuteTestProtocol(int aArgc, char* aArgv[], CreateProtoco
     }
 
     InitialisationParams* initParams = InitialisationParams::Create();
-	Net::Library* lib = new Net::Library(initParams);
+    Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     const TUint adapterIndex = optionAdapter.Value();
     if (subnetList->size() <= adapterIndex) {
-		Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
-		ASSERTS();
+        Log::Print("ERROR: adapter %d doesn't exist\n", adapterIndex);
+        ASSERTS();
     }
     Log::Print ("adapter list:\n");
     for (unsigned i=0; i<subnetList->size(); ++i) {
-		TIpAddress addr = (*subnetList)[i]->Address();
-		Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+        TIpAddress addr = (*subnetList)[i]->Address();
+        Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     Library::DestroySubnetList(subnetList);

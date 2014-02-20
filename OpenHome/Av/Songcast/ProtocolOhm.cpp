@@ -50,98 +50,98 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
 {
     iNextFlushId = MsgFlush::kIdInvalid;
     iStopped = false;
-	iEndpoint.Replace(aEndpoint);
-	iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
+    iEndpoint.Replace(aEndpoint);
+    iSocket.OpenMulticast(aInterface, aTtl, iEndpoint);
     do {
         try {
             OhmHeader header;
             SendJoin();
 
-		    // Phase 1, periodically send join until Track and Metatext have been received
-		    TBool joinComplete = false;
-		    TBool receivedTrack = false;
-		    TBool receivedMetatext = false;
+            // Phase 1, periodically send join until Track and Metatext have been received
+            TBool joinComplete = false;
+            TBool receivedTrack = false;
+            TBool receivedMetatext = false;
 
-		    while (!joinComplete) {
+            while (!joinComplete) {
                 try {
                     header.Internalise(iReadBuffer);
 
-				    switch (header.MsgType())
+                    switch (header.MsgType())
                     {
-				    case OhmHeader::kMsgTypeJoin:
-				    case OhmHeader::kMsgTypeListen:
-				    case OhmHeader::kMsgTypeLeave:
-				    case OhmHeader::kMsgTypeSlave:
-					    break;
-				    case OhmHeader::kMsgTypeAudio:
-					    Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
-					    break;
-				    case OhmHeader::kMsgTypeTrack:
-					    Add(iMsgFactory.CreateTrack(iReadBuffer, header));
-					    receivedTrack = true;
-					    joinComplete = receivedMetatext;
-					    break;
-				    case OhmHeader::kMsgTypeMetatext:
-					    Add(iMsgFactory.CreateMetatext(iReadBuffer, header));
-					    receivedMetatext = true;
-					    joinComplete = receivedTrack;
-					    break;
-				    case OhmHeader::kMsgTypeResend:
-					    ResendSeen();
-					    break;
-				    }
+                    case OhmHeader::kMsgTypeJoin:
+                    case OhmHeader::kMsgTypeListen:
+                    case OhmHeader::kMsgTypeLeave:
+                    case OhmHeader::kMsgTypeSlave:
+                        break;
+                    case OhmHeader::kMsgTypeAudio:
+                        Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
+                        break;
+                    case OhmHeader::kMsgTypeTrack:
+                        Add(iMsgFactory.CreateTrack(iReadBuffer, header));
+                        receivedTrack = true;
+                        joinComplete = receivedMetatext;
+                        break;
+                    case OhmHeader::kMsgTypeMetatext:
+                        Add(iMsgFactory.CreateMetatext(iReadBuffer, header));
+                        receivedMetatext = true;
+                        joinComplete = receivedTrack;
+                        break;
+                    case OhmHeader::kMsgTypeResend:
+                        ResendSeen();
+                        break;
+                    }
 
                     iReadBuffer.ReadFlush();
-			    }
+                }
                 catch (OhmError&) {
                 }
-		    }
+            }
             
-		    iTimerJoin->Cancel();
+            iTimerJoin->Cancel();
 
-		    // Phase 2, periodically send listen if required
-	        iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
+            // Phase 2, periodically send listen if required
+            iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
             for (;;) {
                 try {
                     header.Internalise(iReadBuffer);
 
-				    switch (header.MsgType())
+                    switch (header.MsgType())
                     {
-				    case OhmHeader::kMsgTypeJoin:
-				    case OhmHeader::kMsgTypeLeave:
-				    case OhmHeader::kMsgTypeSlave:
-					    break;
-				    case OhmHeader::kMsgTypeListen:
+                    case OhmHeader::kMsgTypeJoin:
+                    case OhmHeader::kMsgTypeLeave:
+                    case OhmHeader::kMsgTypeSlave:
+                        break;
+                    case OhmHeader::kMsgTypeListen:
                         iTimerListen->FireIn((kTimerListenTimeoutMs >> 1) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen secondary timeout
-					    break;
-				    case OhmHeader::kMsgTypeAudio:
-					    Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
-					    break;
-				    case OhmHeader::kMsgTypeTrack:
-					    Add(iMsgFactory.CreateTrack(iReadBuffer, header));
-					    break;
-				    case OhmHeader::kMsgTypeMetatext:
-					    Add(iMsgFactory.CreateMetatext(iReadBuffer, header));
-					    break;
-				    case OhmHeader::kMsgTypeResend:
-					    ResendSeen();
-					    break;
-				    }
+                        break;
+                    case OhmHeader::kMsgTypeAudio:
+                        Add(iMsgFactory.CreateAudioBlob(iReadBuffer, header));
+                        break;
+                    case OhmHeader::kMsgTypeTrack:
+                        Add(iMsgFactory.CreateTrack(iReadBuffer, header));
+                        break;
+                    case OhmHeader::kMsgTypeMetatext:
+                        Add(iMsgFactory.CreateMetatext(iReadBuffer, header));
+                        break;
+                    case OhmHeader::kMsgTypeResend:
+                        ResendSeen();
+                        break;
+                    }
 
                     iReadBuffer.ReadFlush();
-			    }
+                }
                 catch (OhmError&) {
                 }
-		    }
+            }
         }
         catch (ReaderError&) {
         }
     } while (!iStopped);
     
     iReadBuffer.ReadFlush();
-   	iTimerJoin->Cancel();
+    iTimerJoin->Cancel();
     iTimerListen->Cancel();
-	iSocket.Close();
+    iSocket.Close();
     if (iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);
     }

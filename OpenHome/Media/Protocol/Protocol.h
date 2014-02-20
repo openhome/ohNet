@@ -90,7 +90,7 @@ protected:
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 3000;
 protected:
-	ProtocolNetwork(Environment& aEnv);
+    ProtocolNetwork(Environment& aEnv);
     TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
 protected: // from Protocol
     void Interrupt(TBool aInterrupt);

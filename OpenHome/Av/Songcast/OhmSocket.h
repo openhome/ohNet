@@ -32,7 +32,7 @@ public: // from IReaderSource
 private:
     Environment& iEnv;
     SocketUdpBase* iRxSocket;
-	SocketUdpBase* iTxSocket;
+    SocketUdpBase* iTxSocket;
     UdpReader* iReader;
     Endpoint iThis;
 };
@@ -44,8 +44,8 @@ public:
     OhzSocket(Environment& aEnv);
     ~OhzSocket();
 
-	const Endpoint& This() const;
-	void Open(TIpAddress aInterface, TUint aTtl);
+    const Endpoint& This() const;
+    void Open(TIpAddress aInterface, TUint aTtl);
     void Send(const Brx& aBuffer);
     void Close();
 public: // from IReaderSource

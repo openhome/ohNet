@@ -193,31 +193,31 @@ void CodecFlac::StreamInitialise()
 
     FLAC__StreamDecoderInitStatus initState;
     if(iOgg) {
-    	initState= FLAC__stream_decoder_init_ogg_stream(
-			iDecoder,
-			::CallbackRead,
-			::CallbackSeek,
-			::CallbackTell,
-			::CallbackLength,
-			::CallbackEof,
-			::CallbackWrite,
-			::CallbackMetadata,
-			::CallbackError,
-			this);
-	}
+        initState= FLAC__stream_decoder_init_ogg_stream(
+            iDecoder,
+            ::CallbackRead,
+            ::CallbackSeek,
+            ::CallbackTell,
+            ::CallbackLength,
+            ::CallbackEof,
+            ::CallbackWrite,
+            ::CallbackMetadata,
+            ::CallbackError,
+            this);
+    }
     else {
-    	initState = FLAC__stream_decoder_init_stream(
-			iDecoder,
-			::CallbackRead,
-			::CallbackSeek,
-			::CallbackTell,
-			::CallbackLength,
-			::CallbackEof,
-			::CallbackWrite,
-			::CallbackMetadata,
-			::CallbackError,
-			this);
-	}
+        initState = FLAC__stream_decoder_init_stream(
+            iDecoder,
+            ::CallbackRead,
+            ::CallbackSeek,
+            ::CallbackTell,
+            ::CallbackLength,
+            ::CallbackEof,
+            ::CallbackWrite,
+            ::CallbackMetadata,
+            ::CallbackError,
+            this);
+    }
 
     if(initState != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
         state = FLAC__stream_decoder_get_state(iDecoder);
@@ -227,13 +227,13 @@ void CodecFlac::StreamInitialise()
     }
 
     while(!iMsgFormatRequired) {
-		// Decode until the streaminfo metadata block or an audio frame are found, both of which put out the Soa.
-    	// There may be other metadata types decoded first, eg picture metadata, which will be ignored.
-		if(!FLAC__stream_decoder_process_single(iDecoder)) {
-			state = FLAC__stream_decoder_get_state(iDecoder);
-			LOG(kError, "Flac::Initialise failed to get metadata or decode anything, decoder state: %d\n", state);
-			ASSERTS();
-		}
+        // Decode until the streaminfo metadata block or an audio frame are found, both of which put out the Soa.
+        // There may be other metadata types decoded first, eg picture metadata, which will be ignored.
+        if(!FLAC__stream_decoder_process_single(iDecoder)) {
+            state = FLAC__stream_decoder_get_state(iDecoder);
+            LOG(kError, "Flac::Initialise failed to get metadata or decode anything, decoder state: %d\n", state);
+            ASSERTS();
+        }
     }
 }
 

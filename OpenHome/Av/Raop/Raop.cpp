@@ -432,9 +432,9 @@ void RaopDiscoverySession::Run()
                             //    TInt vol = Int(vStr);
                             //    vol = 300 + vol; // range 0-300
                             //    if(vol < 0) {
-                            //        vol = 0;	// muted
+                            //        vol = 0;  // muted
                             //    }
-                            //    vol *= vol;		// convert from linear scale
+                            //    vol *= vol;       // convert from linear scale
                             //    vol /= 90; // range 0-1000
 
                             //    vol *= Linn::Media::Volume::kUnityGain;

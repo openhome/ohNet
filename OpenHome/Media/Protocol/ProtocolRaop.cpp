@@ -312,11 +312,11 @@ void RaopControl::Run()
                 if(control.Bytes() < 18) {
                     THROW(ReaderError);
                 }
-                //TUint mclk = iI2sDriver.MclkCount();	// record current mclk count at dac - use this to calculate the drift
-                //mclk /= 256;	// convert to samples
+                //TUint mclk = iI2sDriver.MclkCount();  // record current mclk count at dac - use this to calculate the drift
+                //mclk /= 256;  // convert to samples
                 iMutex.Wait();
                 iLatency = Converter::BeUint32At(control, 14) - Converter::BeUint32At(control, 2);
-                //iSenderSkew = Converter::BeUint32At(control, 2) - mclk;	// calculate count when this should play relative to current mclk count
+                //iSenderSkew = Converter::BeUint32At(control, 2) - mclk;   // calculate count when this should play relative to current mclk count
                 iMutex.Signal();
                 //LOG(kMedia, " RaopControl: now %u, play at %u, iSenderSkew %u, iLatency %u, mclk %u, iResend %d\n", Converter::BeUint32At(control, 14), Converter::BeUint32At(control, 2), iSenderSkew, iLatency, mclk, iResend);
                 LOG(kMedia, " RaopControl: now %u, play at %u, iSenderSkew %u, iLatency %u, iResend %d\n", Converter::BeUint32At(control, 14), Converter::BeUint32At(control, 2), iSenderSkew, iLatency, iResend);
