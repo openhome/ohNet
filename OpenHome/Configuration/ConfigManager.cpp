@@ -44,23 +44,17 @@ TInt ConfigNum::Max() const
     return iMax;
 }
 
-TBool ConfigNum::Set(TInt aVal)
+void ConfigNum::Set(TInt aVal)
 {
-    TBool changed = false;
-
     if (!IsValid(aVal)) {
         THROW(ConfigValueOutOfRange);
     }
 
-    iMutex.Wait();
+    AutoMutex a(iMutex);
     if (aVal != iVal) {
         iVal = aVal;
         NotifySubscribers(iVal);
-        changed = true;
     }
-    iMutex.Signal();
-
-    return changed;
 }
 
 TBool ConfigNum::IsValid(TInt aVal) const
@@ -86,7 +80,7 @@ void ConfigNum::Serialise(IWriter& aWriter) const
     aWriter.WriteFlush();
 }
 
-TBool ConfigNum::Deserialise(const Brx& aString)
+void ConfigNum::Deserialise(const Brx& aString)
 {
     TInt val = 0;
 
@@ -96,8 +90,7 @@ TBool ConfigNum::Deserialise(const Brx& aString)
     catch (AsciiError&) {
         THROW(ConfigNotANumber);
     }
-
-    return Set(val);
+    Set(val);
 }
 
 void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
@@ -133,23 +126,17 @@ const std::vector<TUint>& ConfigChoice::Choices() const
     return iChoices;
 }
 
-TBool ConfigChoice::Set(TUint aVal)
+void ConfigChoice::Set(TUint aVal)
 {
-    TBool changed = false;
-
     if (!IsValid(aVal)) {
         THROW(ConfigInvalidSelection);
     }
 
-    iMutex.Wait();
+    AutoMutex a(iMutex);
     if (aVal != iSelected) {
         iSelected = aVal;
         NotifySubscribers(iSelected);
-        changed = true;
     }
-    iMutex.Signal();
-
-    return changed;
 }
 
 TBool ConfigChoice::IsValid(TUint aVal) const
@@ -177,7 +164,7 @@ void ConfigChoice::Serialise(IWriter& aWriter) const
     aWriter.WriteFlush();
 }
 
-TBool ConfigChoice::Deserialise(const Brx& aString)
+void ConfigChoice::Deserialise(const Brx& aString)
 {
     TUint val = 0;
 
@@ -187,8 +174,7 @@ TBool ConfigChoice::Deserialise(const Brx& aString)
     catch (AsciiError&) {
         THROW(ConfigNotANumber);
     }
-
-    return Set(val);
+    Set(val);
 }
 
 void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
@@ -222,22 +208,17 @@ TUint ConfigText::MaxLength() const
     return iText.MaxBytes();
 }
 
-TBool ConfigText::Set(const Brx& aText)
+void ConfigText::Set(const Brx& aText)
 {
-    TBool changed = false;
-    AutoMutex a(iMutex);
-
     if (!IsValid(aText)) {
         THROW(ConfigValueTooLong);
     }
 
+    AutoMutex a(iMutex);
     if (aText != iText) {
         iText.Replace(aText);
         NotifySubscribers(iText);
-        changed = true;
     }
-
-    return changed;
 }
 
 TBool ConfigText::IsValid(const Brx& aVal) const
@@ -261,9 +242,9 @@ void ConfigText::Serialise(IWriter& aWriter) const
     aWriter.WriteFlush();
 }
 
-TBool ConfigText::Deserialise(const Brx& aString)
+void ConfigText::Deserialise(const Brx& aString)
 {
-    return Set(aString);
+    Set(aString);
 }
 
 void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)

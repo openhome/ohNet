@@ -501,11 +501,9 @@ void SuiteConfigNum::TestSetUpdate()
     TInt newVal = kVal+1;
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(newVal);
+    iConfigVal->Set(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(IntFromStore(kKey) == newVal);
@@ -520,11 +518,9 @@ void SuiteConfigNum::TestSetNoUpdate()
 
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(iLastChangeVal);
+    iConfigVal->Set(iLastChangeVal);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kVal);
     // test value in store hasn't changed
     TEST(IntFromStore(kKey) == kVal);
@@ -588,11 +584,9 @@ void SuiteConfigNum::TestDeserialiseUpdate()
 
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(IntFromStore(kKey) == newVal);
@@ -606,11 +600,9 @@ void SuiteConfigNum::TestDeserialiseNoUpdate()
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     Ascii::AppendDec(buf, iLastChangeVal);
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kVal);
     // test value in store hasn't changed
     TEST(IntFromStore(kKey) == kVal);
@@ -793,11 +785,9 @@ void SuiteConfigChoice::TestSetUpdate()
     TUint newVal = kDefault+1;
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(newVal);
+    iConfigVal->Set(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(UintFromStore(kKey) == newVal);
@@ -811,11 +801,9 @@ void SuiteConfigChoice::TestSetNoUpdate()
     // (and observers aren't notified)
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(kDefault);
+    iConfigVal->Set(kDefault);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
     TEST(UintFromStore(kKey) == kDefault);
@@ -867,11 +855,9 @@ void SuiteConfigChoice::TestDeserialiseUpdate()
 
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(UintFromStore(kKey) == newVal);
@@ -885,11 +871,9 @@ void SuiteConfigChoice::TestDeserialiseNoUpdate()
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     Ascii::AppendDec(buf, iLastChangeVal);
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
     TEST(UintFromStore(kKey) == kDefault);
@@ -1031,11 +1015,9 @@ void SuiteConfigText::TestSetUpdate()
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(newVal);
+    iConfigVal->Set(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     Bwh valBuf(kMaxLength);
@@ -1054,8 +1036,7 @@ void SuiteConfigText::TestSetNoUpdate()
     // length > 0
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(kDefault);
-    TEST(updated == false);
+    iConfigVal->Set(kDefault);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
@@ -1066,13 +1047,12 @@ void SuiteConfigText::TestSetNoUpdate()
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
     // set new val before then subscribing to changes
-    updated = iConfigVal->Set(text);
+    iConfigVal->Set(text);
     changedCount = iChangedCount;
     id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     changedCount = iChangedCount;
     // now attempt to set same value again
-    updated = iConfigVal->Set(text);
-    TEST(updated == false);
+    iConfigVal->Set(text);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == text);
     // test value in store hasn't changed
@@ -1125,11 +1105,9 @@ void SuiteConfigText::TestDeserialiseUpdate()
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(newVal);
+    iConfigVal->Deserialise(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     Bwh valBuf(kMaxLength);
@@ -1145,8 +1123,7 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
     // length > 0
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(kDefault);
-    TEST(updated == false);
+    iConfigVal->Deserialise(kDefault);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
@@ -1157,13 +1134,12 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
     // set new val before then subscribing to changes
-    updated = iConfigVal->Deserialise(text);
+    iConfigVal->Deserialise(text);
     changedCount = iChangedCount;
     id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     changedCount = iChangedCount;
     // now attempt to set same value again
-    updated = iConfigVal->Deserialise(text);
-    TEST(updated == false);
+    iConfigVal->Deserialise(text);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == text);
     // test value in store hasn't changed

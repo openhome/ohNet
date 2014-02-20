@@ -80,7 +80,7 @@ class ISerialisable
 {
 public:
     virtual void Serialise(IWriter& aWriter) const = 0;
-    virtual TBool Deserialise(const Brx& aString) = 0;
+    virtual void Deserialise(const Brx& aString) = 0;
     virtual ~ISerialisable() {}
 };
 
@@ -100,7 +100,7 @@ public: // from IObservable
     void Unsubscribe(TUint aId);
 public: // from ISerialisable
     virtual void Serialise(IWriter& aWriter) const = 0;
-    virtual TBool Deserialise(const Brx& aString) = 0;
+    virtual void Deserialise(const Brx& aString) = 0;
 protected:
     TUint Subscribe(FunctorObserver aFunctor, T aVal);
     void NotifySubscribers(T aVal);
@@ -190,14 +190,14 @@ public:
     ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
-    TBool Set(TInt aVal);
+    void Set(TInt aVal);
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigNum aFunctor);
 public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
-    TBool Deserialise(const Brx& aString);
+    void Deserialise(const Brx& aString);
 private: // from ConfigVal
     void Write(KeyValuePair<TInt>& aKvp);
 private:
@@ -244,14 +244,14 @@ public:
 public:
     ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
-    TBool Set(TUint aVal);
+    void Set(TUint aVal);
 private:
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigChoice aFunctor);
 public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
-    TBool Deserialise(const Brx& aString);
+    void Deserialise(const Brx& aString);
 private: // from ConfigVal
     void Write(KeyValuePair<TUint>& aKvp);
 private:
@@ -298,14 +298,14 @@ public:
 public:
     ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
-    TBool Set(const Brx& aText);
+    void Set(const Brx& aText);
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigText aFunctor);
 public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
-    TBool Deserialise(const Brx& aString);
+    void Deserialise(const Brx& aString);
 private: // from ConfigVal
     void Write(KeyValuePair<const Brx&>& aKvp);
 private:
