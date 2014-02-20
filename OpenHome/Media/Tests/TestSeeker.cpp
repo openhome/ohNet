@@ -101,6 +101,7 @@ private:
     TUint iNextStreamId;
     ISeekObserver* iSeekObserver;
     TUint iSeekHandle;
+    Semaphore iSeekerResponse;
     TUint iNextSeekResponse;
     TUint iSeekSeconds;
     ThreadFunctor* iSeekResponseThread;
@@ -112,6 +113,7 @@ private:
 
 SuiteSeeker::SuiteSeeker()
     : SuiteUnitTest("Seeker")
+    , iSeekerResponse("TSEK", 0)
 {
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestAllMsgsPassWhileNotSeeking), "TestAllMsgsPassWhileNotSeeking");
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestRampInvalidTrackId), "TestRampInvalidTrackId");
@@ -150,6 +152,7 @@ void SuiteSeeker::Setup()
     iJiffies = 0;
     iSeekObserver = NULL;
     iSeekHandle = 0;
+    iSeekerResponse.Clear();
     iNextSeekResponse = MsgFlush::kIdInvalid;
     iSeekSeconds = UINT_MAX;
 }
@@ -355,6 +358,7 @@ void SuiteSeeker::SeekResponseThread()
 {
     iSeekResponseThread->Wait();
     iSeekObserver->NotifySeekComplete(iSeekHandle, iNextSeekResponse);
+    iSeekerResponse.Signal();
 }
 
 void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
@@ -453,6 +457,7 @@ void SuiteSeeker::TestRampSeekerAccepts()
     PullNext(EMsgHalt);
     // no audio retained from end-of-ramp
     TEST(iSeeker->iQueue.IsEmpty());
+    iSeekerResponse.Wait();
 
     // very few msg types get through while we're flushing
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -505,6 +510,7 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     PullNext(EMsgHalt);
     // no audio retained from end-of-ramp
     TEST(iSeeker->iQueue.IsEmpty());
+    iSeekerResponse.Wait();
 
     // very few msg types get through while we're flushing
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -592,6 +598,7 @@ void SuiteSeeker::TestNewTrackCancelsRampUp()
 
     iNextSeekResponse = kExpectedFlushId;
     TEST(iSeeker->Seek(iTrackId, iStreamId, kExpectedSeekSeconds, false));
+    iSeekerResponse.Wait();
     PullNext(EMsgHalt);
     iRampingUp = true;
     iLastSubsample = 0;
