@@ -17,9 +17,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // RaopDevice
-RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const Brx& aName, TIpAddress aIpAddr, const Brx& aMacAddr)
+RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
-    , iName(aName)
+    , iName(aFriendlyName)
     , iPort(aDiscoveryPort)
     , iEndpoint(iPort, aIpAddr)
     , iMacAddress(aMacAddr)
@@ -29,7 +29,11 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar
     iName.Replace("");
     iName.Append(iMacAddress);
     iName.Append("@");
-    iName.Append(aName);
+    iName.Append(aFriendlyName);
+
+    Log::Print("RAOP device is ");
+    Log::Print(iName);
+    Log::Print("\n");
 
     iHandleRaop = iProvider.MdnsCreateService();
 
@@ -670,7 +674,7 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const Brx& aDeviceName)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : iRaopObserver(aObserver)
 {
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
@@ -683,7 +687,7 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
         LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
 
         iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
-        iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aDeviceName, ipAddr, Brn("000000000001"));
+        iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aFriendlyName, ipAddr, aMacAddr);
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
         iRaopDiscoverySession1 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 1);
