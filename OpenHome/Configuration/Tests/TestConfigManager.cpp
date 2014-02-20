@@ -843,7 +843,7 @@ void SuiteConfigChoice::TestSerialiseMaxLength()
 
     TestHelperWriter writer(buf);
     choice.Serialise(writer);
-    TInt val = Ascii::Uint(buf);
+    TUint val = Ascii::Uint(buf);
     TEST(val == kUintMax);
 }
 
