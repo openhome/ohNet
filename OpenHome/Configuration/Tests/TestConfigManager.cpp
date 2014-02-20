@@ -127,8 +127,8 @@ private:
     void TestDeserialiseInvalid();
 private:
     static const TUint kDefault = 1000;
-    static const TUint kUintMin = 0x00000000;
-    static const TUint kUintMax = 0xffffffff;
+    static const TUint kUintMin;
+    static const TUint kUintMax;
     static const TUint kChoice1;
     static const TUint kChoice2;
     static const TUint kChoice3;
@@ -642,6 +642,8 @@ void SuiteConfigNum::TestDeserialiseInvalid()
 
 // SuiteConfigChoice
 
+const TUint SuiteConfigChoice::kUintMin = 0x00000000;
+const TUint SuiteConfigChoice::kUintMax = 0xffffffff;
 const TUint SuiteConfigChoice::kChoice1 = 1000;
 const TUint SuiteConfigChoice::kChoice2 = 1001;
 const TUint SuiteConfigChoice::kChoice3 = 1002;
