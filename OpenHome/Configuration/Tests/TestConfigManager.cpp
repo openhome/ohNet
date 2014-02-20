@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
+#include <climits>
+
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Configuration;
@@ -81,6 +83,8 @@ private:
     void TestSetNoUpdate();
     void TestSetValueOutOfRange();
     void TestSerialise();
+    void TestSerialiseMaxLengthNegative();
+    void TestSerialiseMaxLengthPositive();
     void TestDeserialiseUpdate();
     void TestDeserialiseNoUpdate();
     void TestDeserialiseOutOfRange();
@@ -89,7 +93,9 @@ private:
     static const TInt kMin = -1;
     static const TInt kMax = 2;
     static const TInt kVal = 1;
-    static const TUint kIntMaxLength = 10;
+    static const TInt kIntMin = INT_MIN;
+    static const TInt kIntMax = INT_MAX;
+    static const TUint kIntMaxLength = 11;
     ConfigNum* iConfigVal;
     TInt iLastChangeVal;
 };
@@ -116,12 +122,15 @@ private:
     void TestSetNoUpdate();
     void TestSetNoSuchChoice();
     void TestSerialise();
+    void TestSerialiseMaxLength();
     void TestDeserialiseUpdate();
     void TestDeserialiseNoUpdate();
     void TestDeserialiseNoSuchChoice();
     void TestDeserialiseInvalid();
 private:
     static const TUint kDefault = 1000;
+    static const TUint kUintMin;
+    static const TUint kUintMax;
     static const TUint kChoice1;
     static const TUint kChoice2;
     static const TUint kChoice3;
@@ -150,6 +159,7 @@ private:
     void TestSetNoUpdate();
     void TestSetValueTooLong();
     void TestSerialise();
+    void TestSerialiseMaxLength();
     void TestDeserialiseUpdate();
     void TestDeserialiseNoUpdate();
     void TestDeserialiseValueTooLong();
@@ -186,13 +196,15 @@ private:
     void TestReadNoStoreValExists();
     void TestWrite();
 private:
+    static const TUint kMaxNumBytes = 10;
     static const TInt kMinNum = 0;
     static const TInt kMaxNum = 2;
+    static const TUint kMaxChoiceBytes = 10;
     static const TUint kChoiceDefault = 0;
     static const TUint kChoice1;
     static const TUint kChoice2;
     static const TUint kChoice3;
-    static const TUint kMaxText = 26;
+    static const TUint kMaxTextBytes = 26;
     static const Brn kText1;
     static const Brn kText2;
     static const Brn kKeyNum1;
@@ -371,6 +383,8 @@ SuiteConfigNum::SuiteConfigNum()
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetNoUpdate), "TestSetNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSetValueOutOfRange), "TestSetValueOutOfRange");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialise), "TestSerialise");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialiseMaxLengthNegative), "TestSerialiseMaxLengthNegative");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSerialiseMaxLengthPositive), "TestSerialiseMaxLengthPositive");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestDeserialiseOutOfRange), "TestDeserialiseOutOfRange");
@@ -489,11 +503,9 @@ void SuiteConfigNum::TestSetUpdate()
     TInt newVal = kVal+1;
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(newVal);
+    iConfigVal->Set(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(IntFromStore(kKey) == newVal);
@@ -508,11 +520,9 @@ void SuiteConfigNum::TestSetNoUpdate()
 
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(iLastChangeVal);
+    iConfigVal->Set(iLastChangeVal);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kVal);
     // test value in store hasn't changed
     TEST(IntFromStore(kKey) == kVal);
@@ -544,6 +554,30 @@ void SuiteConfigNum::TestSerialise()
     TEST(val == kVal);
 }
 
+void SuiteConfigNum::TestSerialiseMaxLengthNegative()
+{
+    const Brn key("conf.num.2");
+    Bws<kIntMaxLength> buf;
+    ConfigNum num(*iConfigManager, key, kIntMin, kIntMax, kIntMin);
+
+    TestHelperWriter writer(buf);
+    num.Serialise(writer);
+    TInt val = Ascii::Int(buf);
+    TEST(val == kIntMin);
+}
+
+void SuiteConfigNum::TestSerialiseMaxLengthPositive()
+{
+    const Brn key("conf.num.2");
+    Bws<kIntMaxLength> buf;
+    ConfigNum num(*iConfigManager, key, kIntMin, kIntMax, kIntMax);
+
+    TestHelperWriter writer(buf);
+    num.Serialise(writer);
+    TInt val = Ascii::Int(buf);
+    TEST(val == kIntMax);
+}
+
 void SuiteConfigNum::TestDeserialiseUpdate()
 {
     TInt newVal = kVal+1;
@@ -552,11 +586,9 @@ void SuiteConfigNum::TestDeserialiseUpdate()
 
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(IntFromStore(kKey) == newVal);
@@ -570,11 +602,9 @@ void SuiteConfigNum::TestDeserialiseNoUpdate()
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
     Ascii::AppendDec(buf, iLastChangeVal);
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kVal);
     // test value in store hasn't changed
     TEST(IntFromStore(kKey) == kVal);
@@ -606,7 +636,7 @@ void SuiteConfigNum::TestDeserialiseInvalid()
     buf.Append(Brn("abcd"));
 
     TInt valBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidValue);
+    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigNotANumber);
     TInt valAfter = iLastChangeVal;
     TEST(valAfter == valBefore);
 }
@@ -614,6 +644,8 @@ void SuiteConfigNum::TestDeserialiseInvalid()
 
 // SuiteConfigChoice
 
+const TUint SuiteConfigChoice::kUintMin = 0x00000000;
+const TUint SuiteConfigChoice::kUintMax = UINT_MAX;
 const TUint SuiteConfigChoice::kChoice1 = 1000;
 const TUint SuiteConfigChoice::kChoice2 = 1001;
 const TUint SuiteConfigChoice::kChoice3 = 1002;
@@ -632,6 +664,7 @@ SuiteConfigChoice::SuiteConfigChoice()
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoUpdate), "TestSetNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSetNoSuchChoice), "TestSetNoSuchChoice");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSerialise), "TestSerialise");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSerialiseMaxLength), "TestSerialiseMaxLength");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestDeserialiseNoSuchChoice), "TestDeserialiseNoSuchChoice");
@@ -756,11 +789,9 @@ void SuiteConfigChoice::TestSetUpdate()
     TUint newVal = kDefault+1;
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(newVal);
+    iConfigVal->Set(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(UintFromStore(kKey) == newVal);
@@ -774,11 +805,9 @@ void SuiteConfigChoice::TestSetNoUpdate()
     // (and observers aren't notified)
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(kDefault);
+    iConfigVal->Set(kDefault);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
     TEST(UintFromStore(kKey) == kDefault);
@@ -791,7 +820,7 @@ void SuiteConfigChoice::TestSetNoSuchChoice()
     // test that attempting to set ConfigChoice to an invalid choice results in
     // an exception
     TUint selectedBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Set(kDefault-1), ConfigInvalidChoice);
+    TEST_THROWS(iConfigVal->Set(kDefault-1), ConfigInvalidSelection);
     TUint selectedAfter = iLastChangeVal;
     TEST(selectedAfter == selectedBefore);
 }
@@ -806,6 +835,22 @@ void SuiteConfigChoice::TestSerialise()
     TEST(val == kDefault);
 }
 
+void SuiteConfigChoice::TestSerialiseMaxLength()
+{
+    const Brn key("conf.choice.2");
+    Bws<kUintMaxLength> buf;
+
+    std::vector<TUint> choices;
+    choices.push_back(kUintMin);
+    choices.push_back(kUintMax);
+    ConfigChoice choice(*iConfigManager, key, choices, kUintMax);
+
+    TestHelperWriter writer(buf);
+    choice.Serialise(writer);
+    TUint val = Ascii::Uint(buf);
+    TEST(val == kUintMax);
+}
+
 void SuiteConfigChoice::TestDeserialiseUpdate()
 {
     TUint newVal = kDefault+1;
@@ -814,11 +859,9 @@ void SuiteConfigChoice::TestDeserialiseUpdate()
 
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     TEST(UintFromStore(kKey) == newVal);
@@ -832,11 +875,9 @@ void SuiteConfigChoice::TestDeserialiseNoUpdate()
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigChoice(*this, &SuiteConfigChoice::NotifyChanged));
     Ascii::AppendDec(buf, iLastChangeVal);
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(buf);
+    iConfigVal->Deserialise(buf);
 
-    TEST(updated == false);
     TEST(iChangedCount == changedCount);
-
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
     TEST(UintFromStore(kKey) == kDefault);
@@ -850,7 +891,7 @@ void SuiteConfigChoice::TestDeserialiseNoSuchChoice()
     Ascii::AppendDec(buf, kDefault-1);
 
     TUint selectedBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidChoice);
+    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidSelection);
     TUint selectedAfter = iLastChangeVal;
     TEST(selectedAfter == selectedBefore);
 }
@@ -861,7 +902,7 @@ void SuiteConfigChoice::TestDeserialiseInvalid()
     buf.Append(Brn("abcd"));
 
     TUint valBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidValue);
+    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigNotANumber);
     TUint valAfter = iLastChangeVal;
     TEST(valAfter == valBefore);
 }
@@ -884,6 +925,7 @@ SuiteConfigText::SuiteConfigText()
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetNoUpdate), "TestSetNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSetValueTooLong), "TestSetValueTooLong");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSerialise), "TestSerialise");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestSerialiseMaxLength), "TestSerialiseMaxLength");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseUpdate), "TestDeserialiseUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseNoUpdate), "TestDeserialiseNoUpdate");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestDeserialiseValueTooLong), "TestDeserialiseValueTooLong");
@@ -977,11 +1019,9 @@ void SuiteConfigText::TestSetUpdate()
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(newVal);
+    iConfigVal->Set(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     Bwh valBuf(kMaxLength);
@@ -1000,8 +1040,7 @@ void SuiteConfigText::TestSetNoUpdate()
     // length > 0
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Set(kDefault);
-    TEST(updated == false);
+    iConfigVal->Set(kDefault);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
@@ -1012,13 +1051,12 @@ void SuiteConfigText::TestSetNoUpdate()
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
     // set new val before then subscribing to changes
-    updated = iConfigVal->Set(text);
+    iConfigVal->Set(text);
     changedCount = iChangedCount;
     id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     changedCount = iChangedCount;
     // now attempt to set same value again
-    updated = iConfigVal->Set(text);
-    TEST(updated == false);
+    iConfigVal->Set(text);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == text);
     // test value in store hasn't changed
@@ -1050,16 +1088,30 @@ void SuiteConfigText::TestSerialise()
     TEST(buf == kDefault);
 }
 
+void SuiteConfigText::TestSerialiseMaxLength()
+{
+    const Brn key("conf.text.2");
+    const TUint maxLength = 52;
+    Bws<maxLength> val;
+    ASSERT(kDefault.Bytes()*2 == val.MaxBytes());
+    val.Replace(kDefault);
+    val.Append(kDefault);
+    Bws<maxLength> buf;
+    ConfigText text(*iConfigManager, key, maxLength, val);
+
+    TestHelperWriter writer(buf);
+    text.Serialise(writer);
+    TEST(buf == val);
+}
+
 void SuiteConfigText::TestDeserialiseUpdate()
 {
     Brn newVal("zyxwvutsrqponmlkjihgfedcba");
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(newVal);
+    iConfigVal->Deserialise(newVal);
 
-    TEST(updated == true);
     TEST(iChangedCount == changedCount+1);
-
     TEST(iLastChangeVal == newVal);
     // test that value has been written out to store
     Bwh valBuf(kMaxLength);
@@ -1075,8 +1127,7 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
     // length > 0
     TUint id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     TUint changedCount = iChangedCount;
-    TBool updated = iConfigVal->Deserialise(kDefault);
-    TEST(updated == false);
+    iConfigVal->Deserialise(kDefault);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
     // test value in store hasn't changed
@@ -1087,13 +1138,12 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
     // set new val before then subscribing to changes
-    updated = iConfigVal->Deserialise(text);
+    iConfigVal->Deserialise(text);
     changedCount = iChangedCount;
     id = iConfigVal->Subscribe(MakeFunctorConfigText(*this, &SuiteConfigText::NotifyChanged));
     changedCount = iChangedCount;
     // now attempt to set same value again
-    updated = iConfigVal->Deserialise(text);
-    TEST(updated == false);
+    iConfigVal->Deserialise(text);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == text);
     // test value in store hasn't changed
@@ -1169,7 +1219,7 @@ void SuiteConfigManager::Setup()
     iChoices.push_back(kChoice2);
     iChoices.push_back(kChoice3);
     iChoice1 = new ConfigChoice(*iConfigManager, kKeyChoice1, iChoices, kChoiceDefault);
-    iText1 = new ConfigText(*iConfigManager, kKeyText1, kMaxText, kText1);
+    iText1 = new ConfigText(*iConfigManager, kKeyText1, kMaxTextBytes, kText1);
 }
 
 void SuiteConfigManager::TearDown()
@@ -1201,7 +1251,7 @@ void SuiteConfigManager::TestClose()
     iConfigManager->Close();
     TEST_THROWS(ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
     TEST_THROWS(ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1), AssertionFailed);
-    TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2), AssertionFailed);
+    TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2), AssertionFailed);
 }
 
 void SuiteConfigManager::TestAdd()
@@ -1210,7 +1260,7 @@ void SuiteConfigManager::TestAdd()
     // Has() and Get() are tested in their own unit tests.
     ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1);
     ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1);
-    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2);
 }
 
 void SuiteConfigManager::TestAddDuplicate()
@@ -1233,6 +1283,10 @@ void SuiteConfigManager::TestHasNoVals()
     TEST(configManager.HasNum(kKeyNum1) == false);
     TEST(configManager.HasChoice(kKeyChoice1) == false);
     TEST(configManager.HasText(kKeyText1) == false);
+
+    TEST(configManager.Has(kKeyNum1) == false);
+    TEST(configManager.Has(kKeyChoice1) == false);
+    TEST(configManager.Has(kKeyText1) == false);
 }
 
 void SuiteConfigManager::TestHasValidKey()
@@ -1241,6 +1295,11 @@ void SuiteConfigManager::TestHasValidKey()
     TEST(iConfigManager->HasNum(kKeyNum1) == true);
     TEST(iConfigManager->HasChoice(kKeyChoice1) == true);
     TEST(iConfigManager->HasText(kKeyText1) == true);
+
+    // test generic Has()
+    TEST(iConfigManager->Has(kKeyNum1) == true);
+    TEST(iConfigManager->Has(kKeyChoice1) == true);
+    TEST(iConfigManager->Has(kKeyText1) == true);
 }
 
 void SuiteConfigManager::TestHasInvalidKey()
@@ -1258,6 +1317,11 @@ void SuiteConfigManager::TestHasInvalidKey()
 
     // try call HasChoice() with the key of ConfigNum
     TEST(iConfigManager->HasChoice(kKeyNum1) == false);
+
+    // test generic Has()
+    TEST(iConfigManager->Has(kKeyNum2) == false);
+    TEST(iConfigManager->Has(kKeyChoice2) == false);
+    TEST(iConfigManager->Has(kKeyText2) == false);
 }
 
 void SuiteConfigManager::TestHasMultiple()
@@ -1275,7 +1339,7 @@ void SuiteConfigManager::TestHasMultiple()
     TEST(iConfigManager->HasChoice(kKeyChoice2) == true);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2);
     TEST(iConfigManager->HasText(kKeyText1) == true);
     TEST(iConfigManager->HasText(kKeyText2) == true);
 }
@@ -1288,6 +1352,10 @@ void SuiteConfigManager::TestGetNoVals()
     TEST_THROWS(configManager.GetNum(kKeyNum1), AssertionFailed);
     TEST_THROWS(configManager.GetChoice(kKeyChoice1), AssertionFailed);
     TEST_THROWS(configManager.GetText(kKeyText1), AssertionFailed);
+
+    TEST_THROWS(configManager.Get(kKeyNum1), AssertionFailed);
+    TEST_THROWS(configManager.Get(kKeyChoice1), AssertionFailed);
+    TEST_THROWS(configManager.Get(kKeyText1), AssertionFailed);
 }
 
 void SuiteConfigManager::TestGetValidKey()
@@ -1305,6 +1373,31 @@ void SuiteConfigManager::TestGetValidKey()
     // test ConfigText
     ConfigText& text = iConfigManager->GetText(kKeyText1);
     TEST(text == *iText1);
+
+
+    // test generic Get()
+    // test ConfigNum
+    ISerialisable& serNum = iConfigManager->Get(kKeyNum1);
+    Bws<kMaxNumBytes> bufNum;
+    TestHelperWriter writerNum(bufNum);
+    serNum.Serialise(writerNum);
+    TInt valNum = Ascii::Int(bufNum);
+    TEST(valNum == kMinNum);
+
+    // test ConfigChoice
+    ISerialisable& serChoice = iConfigManager->Get(kKeyChoice1);
+    Bws<kMaxChoiceBytes> bufChoice;
+    TestHelperWriter writerChoice(bufChoice);
+    serChoice.Serialise(writerChoice);
+    TUint valChoice = Ascii::Uint(bufChoice);
+    TEST(valChoice == kChoiceDefault);
+
+    // test ConfigText
+    ISerialisable& serText = iConfigManager->Get(kKeyText1);
+    Bws<kMaxTextBytes> bufText;
+    TestHelperWriter writerText(bufText);
+    serText.Serialise(writerText);
+    TEST(bufText == kText1);
 }
 
 void SuiteConfigManager::TestGetInvalidKey()
@@ -1316,6 +1409,11 @@ void SuiteConfigManager::TestGetInvalidKey()
 
     // try call HasChoice() with the key of ConfigNum
     TEST_THROWS(iConfigManager->GetChoice(kKeyNum1), AssertionFailed);
+
+    // test generic Get()
+    TEST_THROWS(iConfigManager->Get(kKeyNum2), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kKeyChoice2), AssertionFailed);
+    TEST_THROWS(iConfigManager->Get(kKeyText2), AssertionFailed);
 }
 
 void SuiteConfigManager::TestGetMultiple()
@@ -1337,7 +1435,7 @@ void SuiteConfigManager::TestGetMultiple()
     TEST(choice2 == choice);
 
     // test ConfigText
-    ConfigText text(*iConfigManager, kKeyText2, kMaxText, kText2);
+    ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2);
     ConfigText& text1 = iConfigManager->GetText(kKeyText1);
     TEST(text1 == *iText1);
     ConfigText& text2 = iConfigManager->GetText(kKeyText2);
@@ -1348,7 +1446,7 @@ void SuiteConfigManager::TestReadStoreValExists()
 {
     // test that reading from a value already in store causes store value to be
     // returned rather than default val.
-    Bwh buf(kMaxText);
+    Bwh buf(kMaxTextBytes);
     iConfigManager->FromStore(kKeyText1, buf, kText2);
     TEST(buf == kText1);
 
@@ -1362,7 +1460,7 @@ void SuiteConfigManager::TestReadNoStoreValExists()
 {
     // test that reading a value not in store causes default value to be
     // returned, and written out to store.
-    Bwh buf(kMaxText);
+    Bwh buf(kMaxTextBytes);
 
     try { // check key isn't already in store
         iStore->Read(kKeyText2, buf);
@@ -1383,7 +1481,7 @@ void SuiteConfigManager::TestWrite()
 {
     // test that writing a value via ConfigManager results in value
     // being written to store.
-    Bwh buf(kMaxText);
+    Bwh buf(kMaxTextBytes);
     iConfigManager->ToStore(kKeyText1, kText2);
     iStore->Read(kKeyText1, buf);
     TEST(buf == kText2);

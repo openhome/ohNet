@@ -200,7 +200,7 @@ Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (!aMsg->StreamInfo().Live()) {
+    if (!aMsg->StreamInfo().Live() && !iCheckedStreamPlayable) {
         OkToPlay();
     }
     return ProcessFlushable(aMsg);
@@ -256,6 +256,7 @@ void Stopper::OkToPlay()
     default:
         ASSERTS();
     }
+    iCheckedStreamPlayable = true;
 }
 
 Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
@@ -303,6 +304,7 @@ void Stopper::NewStream()
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
     iState = ERunning;
+    iCheckedStreamPlayable = false;
     iHaltPending = false;
     iFlushStream = false;
 }

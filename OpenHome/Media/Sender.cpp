@@ -16,10 +16,10 @@ using namespace OpenHome::Configuration;
 
 // Sender
 
-const Brn Sender::kConfigIdEnabled("sender.enabled");
-const Brn Sender::kConfigIdChannel("sender.channel");
-const Brn Sender::kConfigIdMode("sender.mode");
-const Brn Sender::kConfigIdPreset("sender.preset");
+const Brn Sender::kConfigIdEnabled("Sender.Enabled");
+const Brn Sender::kConfigIdChannel("Sender.Channel");
+const Brn Sender::kConfigIdMode("Sender.Mode");
+const Brn Sender::kConfigIdPreset("Sender.Preset");
 
 Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName)
     : iTrack(NULL)

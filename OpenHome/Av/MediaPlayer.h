@@ -7,6 +7,7 @@
 namespace OpenHome {
     class Environment;
     class IPowerManager;
+    class PowerManager;
 namespace Net {
     class DvStack;
     class DvDeviceStandard;
@@ -27,10 +28,12 @@ namespace Media {
     class TrackFactory;
 }
 namespace Configuration {
+    class ConfigManager;
     class IConfigManagerReader;
     class IConfigManagerWriter;
     class IStoreReadWrite;
     class ConfigText;
+    class ProviderConfig;
 }
 namespace Net {
     class NetworkMonitor;
@@ -71,8 +74,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
-                Configuration::IStoreReadWrite& aReadWriteStore, Configuration::IConfigManagerReader& aConfigReader,
-                Configuration::IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager);
+                Configuration::IStoreReadWrite& aReadWriteStore);
     ~MediaPlayer();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
@@ -96,8 +98,14 @@ private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
     Media::AllocatorInfoLogger* iInfoLogger;
+    KvpStore* iKvpStore;
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
+    Configuration::IStoreReadWrite& iReadWriteStore;
+    Configuration::ConfigManager* iConfigManager;
+    OpenHome::PowerManager* iPowerManager;
+    Configuration::ConfigText* iConfigProductRoom;
+    Configuration::ConfigText* iConfigProductName;
     Product* iProduct;
     Media::IMuteManager* iMuteManager;
     Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
@@ -106,14 +114,8 @@ private:
     ProviderTime* iTime;
     ProviderInfo* iInfo;
     ProviderVolume* iVolume;
+    Configuration::ProviderConfig* iProviderConfig;
     Net::NetworkMonitor* iNetworkMonitor;
-    KvpStore* iKvpStore;
-    Configuration::IStoreReadWrite& iReadWriteStore;
-    Configuration::IConfigManagerReader& iConfigManagerReader;
-    Configuration::IConfigManagerWriter& iConfigManagerWriter;
-    IPowerManager& iPowerManager;
-    Configuration::ConfigText* iConfigProductRoom;
-    Configuration::ConfigText* iConfigProductName;
 };
 
 } // namespace Av
