@@ -126,7 +126,7 @@ private:
     IMsgProcessor& iMsgProcessor;
 };
 
-class TestCodecMinimalPipeline
+class TestCodecMinimalPipeline : private ISeekObserver
 {
 private:
     static const TUint kEncodedAudioCount = 100;
@@ -140,6 +140,8 @@ public:
     TBool SeekCurrentTrack(TUint aSecondsAbsolute);
 protected:
     virtual void RegisterPlugins();
+private: // ISeekObserver
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 protected:
     Container* iContainer;
     CodecController* iController;

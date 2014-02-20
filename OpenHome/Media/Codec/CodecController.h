@@ -64,14 +64,13 @@ protected:
     ICodecController* iController;
 };
 
-class CodecController : private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable
+class CodecController : public ISeeker, private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
     CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     TBool SupportsMimeType(const Brx& aMimeType);
 private:
     void CodecThread();
@@ -81,6 +80,8 @@ private:
     TBool QueueTrackData() const;
     void ReleaseAudioEncoded();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
+private: // ISeeker
+    TUint StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
     void ReadNextMsg(Bwx& aBuf);
@@ -129,6 +130,8 @@ private:
     TUint iSeekSeconds;
     TUint iExpectedFlushId;
     TBool iConsumeExpectedFlush;
+    ISeekObserver* iSeekObserver;
+    TUint iSeekHandle;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
     TByte iReadBuf[kMaxRecogniseBytes];
