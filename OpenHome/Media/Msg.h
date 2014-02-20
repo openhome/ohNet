@@ -833,6 +833,20 @@ public:
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
 };
 
+class ISeekObserver
+{
+public:
+    virtual void NotifySeekComplete(TUint aHandle, TUint aFlushId) = 0;
+};
+
+class ISeeker
+{
+public:
+    static const TUint kHandleError = UINT_MAX;
+public:
+    virtual TUint StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver) = 0; // returns handle passed to NotifySeekComplete or kHandleError
+};
+
 class IStopper
 {
 public:

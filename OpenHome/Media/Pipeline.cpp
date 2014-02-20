@@ -65,9 +65,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
 
     iSeeker = NULL;
     iLoggerSeeker = NULL;
-    //iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, ISeeker& aSeeker, kSeekerRampDuration);
-    //iLoggerSeeker = new Logger(*iSeeker, "Seeker");
-    iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerDecodedAudioReservoir, kVariableDelayRampDuration);
+    iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, kSeekerRampDuration);
+    iLoggerSeeker = new Logger(*iSeeker, "Seeker");
+    iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerSeeker, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iTrackInspector = new TrackInspector(*iLoggerVariableDelay);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
@@ -263,8 +263,7 @@ void Pipeline::RemoveCurrentStream()
 
 TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
-    // FIXME - use iSeeker
-    return iCodecController->Seek(aTrackId, aStreamId, aSecondsAbsolute);
+    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, !iBuffering);
 }
 
 void Pipeline::AddObserver(ITrackObserver& aObserver)
