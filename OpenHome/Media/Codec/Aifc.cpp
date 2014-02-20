@@ -17,7 +17,6 @@ public:
     CodecAifc();
     ~CodecAifc();
 private: // from CodecAiffBase
-    void ProcessMiscChunks();
     TUint GetCommChunkHeader();
     void ProcessCommChunkExtra();
 };
@@ -44,20 +43,6 @@ CodecAifc::CodecAifc()
 
 CodecAifc::~CodecAifc()
 {
-}
-
-void CodecAifc::ProcessMiscChunks()
-{
-    // Find the FVER chunk - should check it exists, but it contains no useful data
-    TUint fverChunkBytes = FindChunk(Brn("FVER"));
-    if (fverChunkBytes != 4) {
-        THROW(CodecStreamCorrupt);
-    }
-    // read remainder of chunk
-    iReadBuf.SetBytes(0);
-    iController->Read(iReadBuf, fverChunkBytes);
-
-    iTrackStart += fverChunkBytes + 8;
 }
 
 TUint CodecAifc::GetCommChunkHeader()

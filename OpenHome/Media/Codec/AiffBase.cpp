@@ -169,7 +169,6 @@ void CodecAiffBase::ProcessHeader()
     // FIXME - these could appear be in any order, i.e. metadata could be after
     // audio; still need to parse them in this kind of order, but should be
     // able to seek back if above is the case
-    ProcessMiscChunks();
     ProcessCommChunk();
     ProcessSsndChunk();
 }
@@ -193,11 +192,6 @@ void CodecAiffBase::ProcessFormChunk()
     ASSERT(strncmp((const TChar*)header+8, (const TChar*)iName.Ptr(), 4) == 0);
 
     iTrackStart += 12;
-}
-
-void CodecAiffBase::ProcessMiscChunks()
-{
-    // do nothing by default
 }
 
 void CodecAiffBase::ParseCommChunk(TUint aChunkSize)
