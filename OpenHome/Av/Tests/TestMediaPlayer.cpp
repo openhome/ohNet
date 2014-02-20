@@ -14,6 +14,8 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
+#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Net/Private/ShellCommandDebug.h>
 
 int mygetch();
 
@@ -80,6 +82,10 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
     powerManager.RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
+    // create a shell
+    iShell = new Shell(aDvStack.Env());
+    iShellDebug = new ShellCommandDebug(*iShell);
+
     //iProduct->SetCurrentSource(0);
     iConfigRamStore->Print();
 }
@@ -87,6 +93,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 TestMediaPlayer::~TestMediaPlayer()
 {
     ASSERT(!iDevice->Enabled());
+    delete iShellDebug;
+    delete iShell;
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;

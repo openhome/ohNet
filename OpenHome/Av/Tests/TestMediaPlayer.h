@@ -24,6 +24,8 @@ namespace OpenHome {
 namespace Net {
     class DvStack;
     class DvDevice;
+    class Shell;
+    class ShellCommandDebug;
 }
 namespace Media {
     class PipelineManager;
@@ -72,6 +74,8 @@ private:
     Semaphore iDisabled;
     ISource* iSourceUpnp; // FIXME - see #169
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
+    Net::Shell* iShell;
+    Net::ShellCommandDebug* iShellDebug;
 };
 
 typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
