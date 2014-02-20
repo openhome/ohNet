@@ -69,7 +69,7 @@ namespace Media {
 class DummyFiller : public Thread, private IPipelineIdProvider, private Av::IRaopObserver
 {
 public:
-    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -101,7 +101,7 @@ class TestProtocolRaop : private IPipelineObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
-    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
+    TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
     virtual ~TestProtocolRaop();
     int Run();
 private: // from IPipelineObserver
@@ -131,13 +131,13 @@ using namespace OpenHome::Net;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
     , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, iPowerManager, *this, aHostName, aFriendlyName);
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, iPowerManager, *this, aHostName, aFriendlyName, aMacAddr);
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     TUint audioId = iServerManager.CreateServer(kPortAudio);
     TUint controlId = iServerManager.CreateServer(kPortControl);
@@ -193,12 +193,12 @@ void DummyFiller::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*
 
 // TestProtocolRaop
 
-TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
+TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
-    iFiller = new DummyFiller(aEnv, aDvStack, aHostName, aFriendlyName, *iPipeline, *iPipeline, iInfoAggregator);
+    iFiller = new DummyFiller(aEnv, aDvStack, aHostName, aFriendlyName, aMacAddr, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(Codec::CodecFactory::NewRaop());
     iPipeline->Start();
 
@@ -323,6 +323,8 @@ int CDECL main(int aArgc, char* aArgv[])
     parser.AddOption(&optionName);
     OptionString optionUdn("-u", "--udn", Brn("TestProtocolRaop"), "[udn] udn for the upnp device");
     parser.AddOption(&optionUdn);
+    OptionString optionMac("-m", "--mac", Brn("000000000001"), "[mac] mac address for advertising via raop");
+    parser.AddOption(&optionMac);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -352,7 +354,7 @@ int CDECL main(int aArgc, char* aArgv[])
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
-    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, optionHost.CString(), optionName.CString(), Brn("raop://dummyuri"), optionUdn.Value(), optionChannel.Value());
+    TestProtocolRaop* tph = new TestProtocolRaop(lib->Env(), *dvStack, optionHost.CString(), optionName.CString(), optionMac.Value(), Brn("raop://dummyuri"), optionUdn.Value(), optionChannel.Value());
     const int ret = tph->Run();
     delete tph;
     
