@@ -530,6 +530,8 @@ void SuiteStopper::TestOkToPlayCalledOnceForLiveStream()
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateDecodedStream()); // multiple DecodedStream possible when seeking
+    PullNext(EMsgDecodedStream);
     TEST(iOkToPlayCount == 1);
 }
 
@@ -542,6 +544,8 @@ void SuiteStopper::TestOkToPlayCalledOnceForNonLiveStream()
     PullNext(EMsgTrack);
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateDecodedStream()); // multiple DecodedStream possible when seeking
     PullNext(EMsgDecodedStream);
     TEST(iOkToPlayCount == 1);
 }

@@ -85,6 +85,7 @@ private:
     TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
+    TBool iCheckedStreamPlayable;
     TBool iHaltPending;
     TBool iFlushStream;
     TBool iQuit;
