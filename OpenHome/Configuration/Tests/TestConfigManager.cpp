@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
+#include <climits>
+
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Configuration;
@@ -91,8 +93,8 @@ private:
     static const TInt kMin = -1;
     static const TInt kMax = 2;
     static const TInt kVal = 1;
-    static const TInt kIntMin = 0x80000000;
-    static const TInt kIntMax = 0x7fffffff;
+    static const TInt kIntMin = INT_MIN;
+    static const TInt kIntMax = INT_MAX;
     static const TUint kIntMaxLength = 11;
     ConfigNum* iConfigVal;
     TInt iLastChangeVal;
@@ -128,7 +130,7 @@ private:
 private:
     static const TUint kDefault = 1000;
     static const TUint kUintMin = 0x00000000;
-    static const TUint kUintMax = 0xffffffff;
+    static const TUint kUintMax = UINT_MAX;
     static const TUint kChoice1;
     static const TUint kChoice2;
     static const TUint kChoice3;
