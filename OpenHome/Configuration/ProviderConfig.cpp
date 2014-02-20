@@ -9,7 +9,10 @@ using namespace OpenHome::Net;
 // ProviderConfig
 
 const Brn ProviderConfig::kErrorDescInvalidKey("Invalid key");
-const Brn ProviderConfig::kErrorDescInvalidValue("Invalid value");
+const Brn ProviderConfig::kErrorDescNotANumber("Expected numerical value");
+const Brn ProviderConfig::kErrorDescValueOutOfRange("Value outwith expected range");
+const Brn ProviderConfig::kErrorDescInvalidSelection("Expected value selected from list of options");
+const Brn ProviderConfig::kErrorDescValueTooLong("Value too long");
 
 ProviderConfig::ProviderConfig(DvDevice& aDevice, Configuration::IConfigManagerReader& aConfigManager)
     : DvProviderAvOpenhomeOrgConfiguration1(aDevice)
@@ -29,17 +32,17 @@ void ProviderConfig::SetValue(IDvInvocation& aInvocation, const Brx& aKey, const
     try {
         ser.Deserialise(aValue);
     }
-    catch (ConfigInvalidValue&) {
-        aInvocation.Error(kErrorCodeInvalidValue, kErrorDescInvalidValue);
+    catch (ConfigNotANumber&) {
+        aInvocation.Error(kErrorCodeNotANumber, kErrorDescNotANumber);
     }
     catch (ConfigValueOutOfRange) {
-        aInvocation.Error(kErrorCodeInvalidValue, kErrorDescInvalidValue);
+        aInvocation.Error(kErrorCodeValueOutOfRange, kErrorDescValueOutOfRange);
     }
-    catch (ConfigInvalidChoice) {
-        aInvocation.Error(kErrorCodeInvalidValue, kErrorDescInvalidValue);
+    catch (ConfigInvalidSelection) {
+        aInvocation.Error(kErrorCodeInvalidSelection, kErrorDescInvalidSelection);
     }
     catch (ConfigValueTooLong) {
-        aInvocation.Error(kErrorCodeInvalidValue, kErrorDescInvalidValue);
+        aInvocation.Error(kErrorCodeValueTooLong, kErrorDescValueTooLong);
     }
 
     aInvocation.StartResponse();

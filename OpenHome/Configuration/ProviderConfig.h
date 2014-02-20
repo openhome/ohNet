@@ -16,9 +16,15 @@ private: // from DvProviderAvOpenhomeOrgConfiguration1
     void GetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseString& aValue);
 private:
     static const TUint kErrorCodeInvalidKey = 800;
-    static const TUint kErrorCodeInvalidValue = 801;
+    static const TUint kErrorCodeNotANumber = 801;
+    static const TUint kErrorCodeValueOutOfRange = 802;
+    static const TUint kErrorCodeInvalidSelection = 803;
+    static const TUint kErrorCodeValueTooLong = 804;
     static const Brn kErrorDescInvalidKey;
-    static const Brn kErrorDescInvalidValue;
+    static const Brn kErrorDescNotANumber;
+    static const Brn kErrorDescValueOutOfRange;
+    static const Brn kErrorDescInvalidSelection;
+    static const Brn kErrorDescValueTooLong;
     Configuration::IConfigManagerReader& iConfigManager;
 };
 

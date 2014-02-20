@@ -94,7 +94,7 @@ TBool ConfigNum::Deserialise(const Brx& aString)
         val = Ascii::Int(aString);
     }
     catch (AsciiError&) {
-        THROW(ConfigInvalidValue);
+        THROW(ConfigNotANumber);
     }
 
     return Set(val);
@@ -138,7 +138,7 @@ TBool ConfigChoice::Set(TUint aVal)
     TBool changed = false;
 
     if (!IsValid(aVal)) {
-        THROW(ConfigInvalidChoice);
+        THROW(ConfigInvalidSelection);
     }
 
     iMutex.Wait();
@@ -185,7 +185,7 @@ TBool ConfigChoice::Deserialise(const Brx& aString)
         val = Ascii::Uint(aString);
     }
     catch (AsciiError&) {
-        THROW(ConfigInvalidValue);
+        THROW(ConfigNotANumber);
     }
 
     return Set(val);

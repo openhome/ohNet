@@ -11,11 +11,11 @@
 #include <map>
 #include <vector>
 
-EXCEPTION(ConfigInvalidValue);
-EXCEPTION(ConfigValueOutOfRange);
-EXCEPTION(ConfigInvalidChoice);
-EXCEPTION(ConfigValueTooLong);
 EXCEPTION(ConfigKeyExists);
+EXCEPTION(ConfigNotANumber);
+EXCEPTION(ConfigValueOutOfRange);
+EXCEPTION(ConfigInvalidSelection);
+EXCEPTION(ConfigValueTooLong);
 
 namespace OpenHome {
     class IWriter;

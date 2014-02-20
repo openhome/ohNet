@@ -642,7 +642,7 @@ void SuiteConfigNum::TestDeserialiseInvalid()
     buf.Append(Brn("abcd"));
 
     TInt valBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidValue);
+    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigNotANumber);
     TInt valAfter = iLastChangeVal;
     TEST(valAfter == valBefore);
 }
@@ -828,7 +828,7 @@ void SuiteConfigChoice::TestSetNoSuchChoice()
     // test that attempting to set ConfigChoice to an invalid choice results in
     // an exception
     TUint selectedBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Set(kDefault-1), ConfigInvalidChoice);
+    TEST_THROWS(iConfigVal->Set(kDefault-1), ConfigInvalidSelection);
     TUint selectedAfter = iLastChangeVal;
     TEST(selectedAfter == selectedBefore);
 }
@@ -903,7 +903,7 @@ void SuiteConfigChoice::TestDeserialiseNoSuchChoice()
     Ascii::AppendDec(buf, kDefault-1);
 
     TUint selectedBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidChoice);
+    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidSelection);
     TUint selectedAfter = iLastChangeVal;
     TEST(selectedAfter == selectedBefore);
 }
@@ -914,7 +914,7 @@ void SuiteConfigChoice::TestDeserialiseInvalid()
     buf.Append(Brn("abcd"));
 
     TUint valBefore = iLastChangeVal;
-    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigInvalidValue);
+    TEST_THROWS(iConfigVal->Deserialise(buf), ConfigNotANumber);
     TUint valAfter = iLastChangeVal;
     TEST(valAfter == valBefore);
 }
