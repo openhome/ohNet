@@ -11,12 +11,11 @@
 #include <map>
 #include <vector>
 
-EXCEPTION(ConfigInvalidValue);
-EXCEPTION(ConfigValueOutOfRange);
-EXCEPTION(ConfigValueExists);
-EXCEPTION(ConfigInvalidChoice);
-EXCEPTION(ConfigValueTooLong);
 EXCEPTION(ConfigKeyExists);
+EXCEPTION(ConfigNotANumber);
+EXCEPTION(ConfigValueOutOfRange);
+EXCEPTION(ConfigInvalidSelection);
+EXCEPTION(ConfigValueTooLong);
 
 namespace OpenHome {
     class IWriter;
@@ -77,8 +76,16 @@ inline MemberTranslatorGeneric<KeyValuePair<Type>&,Object,void (CallType::*)(Key
 
 class IConfigManagerWriter;
 
+class ISerialisable
+{
+public:
+    virtual void Serialise(IWriter& aWriter) const = 0;
+    virtual void Deserialise(const Brx& aString) = 0;
+    virtual ~ISerialisable() {}
+};
+
 template <class T>
-class ConfigVal : public IObservable<T>
+class ConfigVal : public IObservable<T>, public ISerialisable
 {
     using typename IObservable<T>::FunctorObserver;
 public:
@@ -88,11 +95,12 @@ protected:
 public:
     virtual ~ConfigVal();
     const Brx& Key();
-    virtual void Serialise(IWriter& aWriter) const = 0;
-    virtual TBool Deserialise(const Brx& aString) = 0;
 public: // from IObservable
     virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
     void Unsubscribe(TUint aId);
+public: // from ISerialisable
+    virtual void Serialise(IWriter& aWriter) const = 0;
+    virtual void Deserialise(const Brx& aString) = 0;
 protected:
     TUint Subscribe(FunctorObserver aFunctor, T aVal);
     void NotifySubscribers(T aVal);
@@ -106,7 +114,7 @@ private:
     Map iObservers;
     Mutex iObserverLock;
     TUint iWriteObserverId; // ID for own Write() observer
-    TUint iNextObserverId;  // 0 is symbolic: invalid value
+    TUint iNextObserverId;
 };
 
 // ConfigVal
@@ -182,19 +190,20 @@ public:
     ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
-    TBool Set(TInt aVal);
+    void Set(TInt aVal);
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
-    void Serialise(IWriter& aWriter) const;
-    TBool Deserialise(const Brx& aString);
-public: // from ConfigVal
     TUint Subscribe(FunctorConfigNum aFunctor);
+public: // from ConfigVal
+    void Serialise(IWriter& aWriter) const;
+    void Deserialise(const Brx& aString);
 private: // from ConfigVal
     void Write(KeyValuePair<TInt>& aKvp);
 private:
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
+    static const TUint kMaxNumLength = 11;
     TInt iMin;
     TInt iMax;
     TInt iVal;
@@ -235,19 +244,20 @@ public:
 public:
     ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
-    TBool Set(TUint aVal);
+    void Set(TUint aVal);
 private:
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
-    void Serialise(IWriter& aWriter) const;
-    TBool Deserialise(const Brx& aString);
-public: // from ConfigVal
     TUint Subscribe(FunctorConfigChoice aFunctor);
+public: // from ConfigVal
+    void Serialise(IWriter& aWriter) const;
+    void Deserialise(const Brx& aString);
 private: // from ConfigVal
     void Write(KeyValuePair<TUint>& aKvp);
 private:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
+    static const TUint kMaxChoiceLength = 10;
     std::vector<TUint> iChoices;
     TUint iSelected;
     mutable Mutex iMutex;
@@ -288,14 +298,14 @@ public:
 public:
     ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
-    TBool Set(const Brx& aText);
+    void Set(const Brx& aText);
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
-    void Serialise(IWriter& aWriter) const;
-    TBool Deserialise(const Brx& aString);
-public: // from ConfigVal
     TUint Subscribe(FunctorConfigText aFunctor);
+public: // from ConfigVal
+    void Serialise(IWriter& aWriter) const;
+    void Deserialise(const Brx& aString);
 private: // from ConfigVal
     void Write(KeyValuePair<const Brx&>& aKvp);
 private:
@@ -334,6 +344,8 @@ public:
     virtual ConfigChoice& GetChoice(const Brx& aKey) const = 0;
     virtual TBool HasText(const Brx& aKey) const = 0;
     virtual ConfigText& GetText(const Brx& aKey) const = 0;
+    virtual TBool Has(const Brx& aKey) const = 0;
+    virtual ISerialisable& Get(const Brx& aKey) const = 0;
     virtual ~IConfigManagerReader() {}
 };
 
@@ -430,6 +442,8 @@ public: // from IConfigManagerReader
     ConfigChoice& GetChoice(const Brx& aKey) const;
     TBool HasText(const Brx& aKey) const;
     ConfigText& GetText(const Brx& aKey) const;
+    TBool Has(const Brx& aKey) const;
+    ISerialisable& Get(const Brx& aKey) const;
 public: // from IConfigManagerWriter
     void Close();
     void Add(ConfigNum& aNum);
@@ -438,7 +452,6 @@ public: // from IConfigManagerWriter
     void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void ToStore(const Brx& aKey, const Brx& aValue);
 private:
-    TBool Has(const Brx& aKey) const;
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
 private:
     IStoreReadWrite& iStore;
