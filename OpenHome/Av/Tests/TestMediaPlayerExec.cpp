@@ -18,7 +18,7 @@ using namespace OpenHome::Net;
 int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateMediaPlayerFunc aFunc)
 {
     OptionParser parser;
-    OptionString optionRoom("-r", "--room", Brn("SoftPlayer"), "room the Product service will report");
+    OptionString optionRoom("-r", "--room", Brn(""), "room the Product service will report");
     parser.AddOption(&optionRoom);
     OptionString optionName("-n", "--name", Brn("SoftPlayer"), "Product name");
     parser.AddOption(&optionName);
@@ -55,8 +55,22 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     lib->SetCurrentSubnet(subnet);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
+    const Brx& room = optionRoom.Value();
+    if (room == Brx::Empty()) {
+        Log::Print("ERROR: room must be set\n");
+        ASSERTS();
+    }
+    // Re-seed random number generator with hash of (unique) room name,
+    // to avoid UDN clashes.
+    Environment& env = dvStack->Env();
+    TUint hash = 0;
+    for (TUint i=0; i<room.Bytes(); i++) {
+        hash += room[i];
+    }
+    env.SetRandomSeed(hash);
+
     Bwh udn("TestMediaPlayer");
-    RandomiseUdn(dvStack->Env(), udn);
+    RandomiseUdn(env, udn);
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
     TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
     DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, *dvStack, udn, optionChannel.Value());
