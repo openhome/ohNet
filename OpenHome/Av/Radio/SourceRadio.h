@@ -15,10 +15,6 @@ namespace Media {
     class PipelineManager;
     class UriProviderSingleTrack;
 }
-namespace Configuration {
-    class IConfigManagerWriter;
-    class ConfigText;
-}
 namespace Av {
 
 class ISourceRadio
@@ -41,8 +37,6 @@ class IReadStore;
 class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
 {
 public:
-    static const TUint kUsernameMaxLength = 40;
-public:
     SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigManagerWriter& aConfigManager);
     ~SourceRadio();
 private: // from ISource
@@ -62,8 +56,6 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
-    void TuneInUsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
-private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
@@ -75,9 +67,6 @@ private:
     TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState;
-    Configuration::ConfigText* iConfigUserName;
-    Bws<kUsernameMaxLength> iUserName;
-    TUint iListenerIdConfigUserName;
 };
 
 } // namespace Av
