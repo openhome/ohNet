@@ -55,6 +55,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         if self.dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
             self.dutName = 'TestDev:SoftPlayer'
+            time.sleep( 5 )     # allow time for iTunes to discover device
 
         # setup self.dacp (iTunes) control
         self.dacp = DacpClient.DacpClient( itunesServer )
@@ -104,22 +105,22 @@ class TestAirplayFunctions( BASE.BaseTest ):
         time.sleep( 5 )
          
 #        self.dut.config.Set( 'Net Aux', 'Auto Select', 'false' )
-        self.srcChanged.clear()
-        self.dut.product.sourceIndexByName = 'Playlist'
-        self.srcChanged.wait( 5 )
-        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( self.dutDev, name=='Playlist',
-            '%s/Playlist - actual/expected source before Airplay started' % name )
+#        self.srcChanged.clear()
+#        self.dut.product.sourceIndexByName = 'Playlist'
+#        self.srcChanged.wait( 5 )
+#        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
+#        self.log.FailUnless( self.dutDev, name=='Playlist',
+#            '%s/Playlist - actual/expected source before Airplay started' % name )
         
-        self.srcChanged.clear()
-        self.dacp.speaker = self.dutName
-        self.srcChanged.wait( 5 )
-        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-        self.log.FailUnless( self.dutDev, name=='Playlist',
-            '%s/Playlist - actual/expected source on Airplay start with Net Aux auto select disabled' % name )
+#        self.srcChanged.clear()
+#        self.dacp.speaker = self.dutName
+#        self.srcChanged.wait( 5 )
+#        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
+#        self.log.FailUnless( self.dutDev, name=='Playlist',
+#            '%s/Playlist - actual/expected source on Airplay start with Net Aux auto select disabled' % name )
         
-        self.dacp.speaker = 'My Computer'
-        self.dut.config.Set( 'Net Aux', 'Auto Select', 'true' )
+#        self.dacp.speaker = 'My Computer'
+#        self.dut.config.Set( 'Net Aux', 'Auto Select', 'true' )
         self.srcChanged.clear()
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
