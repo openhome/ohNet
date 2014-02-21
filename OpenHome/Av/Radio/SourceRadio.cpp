@@ -31,7 +31,7 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigManagerWriter& aConfigManager)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IConfigManagerWriter& aConfigManager)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -44,18 +44,13 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
-    iConfigUserName = new ConfigText(aConfigManager, Brn("Radio.TuneInUserName"), kUsernameMaxLength, Brn("linnproducts"));
-    iListenerIdConfigUserName = iConfigUserName->Subscribe(MakeFunctorConfigText(*this, &SourceRadio::TuneInUsernameChanged));
-    ASSERT(iUserName != Brn::Empty());
-    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, iUserName);
+    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, aConfigManager);
     iPipeline.AddObserver(*this);
 }
 
 SourceRadio::~SourceRadio()
 {
     delete iTuneIn;
-    iConfigUserName->Unsubscribe(iListenerIdConfigUserName);
-    delete iConfigUserName;
     delete iPresetDatabase;
     delete iProviderRadio;
     if (iTrack != NULL) {
@@ -177,10 +172,4 @@ void SourceRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     iLock.Wait();
     iStreamId = aStreamInfo.StreamId();
     iLock.Signal();
-}
-
-void SourceRadio::TuneInUsernameChanged(KeyValuePair<const Brx&>& aKvp)
-{
-    AutoMutex a(iLock);
-    iUserName.Replace(aKvp.Value());
 }

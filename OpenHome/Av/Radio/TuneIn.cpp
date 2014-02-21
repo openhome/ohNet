@@ -18,7 +18,10 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 
+const Brn RadioPresetsTuneIn::kConfigUsernameBase("Radio.TuneInUserName");
+const Brn RadioPresetsTuneIn::kConfigUsernameDefault("linnproducts");
 const Brn RadioPresetsTuneIn::kTuneInPresetsRequest("http://opml.radiotime.com/Browse.ashx?&c=presets&options=recurse:tuneShows");
 //const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg");
 const Brn RadioPresetsTuneIn::kPartnerId("&partnerId=ah2rjr68");
@@ -30,7 +33,7 @@ typedef struct MimeTuneInPair
     const TChar* iTuneInFormat;
 } MimeTuneInPair;
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, const Brx& aUserName)
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, IConfigManagerWriter& aConfigManager)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)
@@ -62,18 +65,15 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     Log::Print("iSupportedFormats = ");
     Log::Print(iSupportedFormats);
     Log::Print("\n");
-    Bws<256> uriBuf;
-    uriBuf.Append(kTuneInPresetsRequest);
-    uriBuf.Append(iSupportedFormats);
-    uriBuf.Append(kPartnerId);
-    uriBuf.Append(kUsername);
-    uriBuf.Append(aUserName);
-    iRequestUri.Replace(uriBuf);
+
     iReaderResponse.AddHeader(iHeaderContentLength);
     iRefreshThread = new ThreadFunctor("TuneInRefresh", MakeFunctor(*this, &RadioPresetsTuneIn::RefreshThread));
     iRefreshThread->Start();
     iRefreshTimer = new Timer(aEnv, MakeFunctor(*this, &RadioPresetsTuneIn::TimerCallback));
-    Refresh();
+
+    // Get username from store.
+    iConfigUsername = new ConfigText(aConfigManager, kConfigUsernameBase, kMaxUserNameBytes, kConfigUsernameDefault);
+    iListenerId = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &RadioPresetsTuneIn::UsernameChanged));
 }
 
 RadioPresetsTuneIn::~RadioPresetsTuneIn()
@@ -81,8 +81,26 @@ RadioPresetsTuneIn::~RadioPresetsTuneIn()
     // FIXME - not remotely threadsafe atm
     iSocket.Interrupt(true);
     iRefreshTimer->Cancel();
+    iConfigUsername->Unsubscribe(iListenerId);
     delete iRefreshThread;
     delete iRefreshTimer;
+}
+
+void RadioPresetsTuneIn::UpdateUsername(const Brx& aUsername)
+{
+    Bws<256> uriBuf;
+    uriBuf.Append(kTuneInPresetsRequest);
+    uriBuf.Append(iSupportedFormats);
+    uriBuf.Append(kPartnerId);
+    uriBuf.Append(kUsername);
+    uriBuf.Append(aUsername);
+    iRequestUri.Replace(uriBuf);
+}
+
+void RadioPresetsTuneIn::UsernameChanged(KeyValuePair<const Brx&>& aKvp)
+{
+    UpdateUsername(aKvp.Value());
+    Refresh();
 }
 
 void RadioPresetsTuneIn::Refresh()
