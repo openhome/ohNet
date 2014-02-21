@@ -198,7 +198,7 @@ TBool CodecAdts::Recognise()
                 if(!iAdts.ReadHeader(Brn(iRecogBuf.Ptr()+iAdts.StartOffset(), iRecogBuf.Bytes()-iAdts.StartOffset()))) {    // save info from first frame
                     break;                          // not a valid header so keep searching
                 }
-                iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);	// record average payload size over 3 frames
+                iAdts.SetPayloadBytesAve(payloadBytes / kAdtsConsecutiveFrames);    // record average payload size over 3 frames
                 LOG(kCodec, "CodecAlac::Recognise aac adts\n");
                 return true;      
             }

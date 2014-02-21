@@ -408,7 +408,7 @@ void HttpHeaderRange::Process(const Brx& aValue)
 
         Brn start(range.Ptr(), indHyphen);      // Get the start value.
         indHyphen++; // Shift index so we skip over separator.
-        end = range.Split(indHyphen, range.Bytes()-indHyphen);	// Get the end value.
+        end = range.Split(indHyphen, range.Bytes()-indHyphen);  // Get the end value.
 
         iStart = Ascii::Uint(start);
         if (end.Bytes() == 0) { // End range may be empty.

@@ -18,8 +18,8 @@ namespace Media {
 class ProtocolFile : public Protocol, private IProtocolReader
 {
 public:
-	ProtocolFile(Environment& aEnv);
-private: // from Protocol	
+    ProtocolFile(Environment& aEnv);
+private: // from Protocol   
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);

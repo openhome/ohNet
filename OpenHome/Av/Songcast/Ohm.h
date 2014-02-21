@@ -77,8 +77,8 @@ public:
     
     OhmHeaderAudio(TBool aHalt, 
                    TBool aLossless,
-				   TBool aTimestamped,
-				   TBool aResent,
+                   TBool aTimestamped,
+                   TBool aResent,
                    TUint aSamples,
                    TUint aFrame,
                    TUint aNetworkTimestamp,
@@ -130,7 +130,7 @@ private:
     //28        8                       Samples Total (total samples for this track)
     //36        4                       Sample Rate
     //40        4                       Bit Rate
-    //44		2						Volume Offset
+    //44        2                       Volume Offset
     //46        1                       Bit depth of audio (16, 24)
     //47        1                       Channels
     //48        1                       Reserved (must be zero)
@@ -141,7 +141,7 @@ private:
     TBool iHalt;
     TBool iLossless;
     TBool iTimestamped;
-	TBool iResent;
+    TBool iResent;
     TUint iSamples;
     TUint iFrame;
     TUint iNetworkTimestamp;
@@ -363,9 +363,9 @@ public:
 
 private:
     //Offset    Bytes                   Desc
-	//0         4                       Preset Number (query)
+    //0         4                       Preset Number (query)
 
-	TUint iPreset;
+    TUint iPreset;
 };
 
 class OhzHeaderPresetInfo
@@ -389,7 +389,7 @@ private:
     //ZonepusHeaderPresetResponse
     //ByteStart Bytes                   Desc
     //0         4                       Preset Number (response)
-    //4         4						Metadata Bytes (n)
+    //4         4                       Metadata Bytes (n)
     //8         n                       n bytes of metadata
 
     TUint iPreset;

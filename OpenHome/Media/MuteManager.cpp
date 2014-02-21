@@ -206,17 +206,17 @@ IMute& MuteManager::Find(const TChar* aName) const
 {
     AutoMutex mutex(iMutex);
 
-	IMute* mute = NULL;
+    IMute* mute = NULL;
 
     for (TUint i = 0; i < iMuteCollection.size(); ++i) {
         if (iMuteCollection[i]->Name() == Brn(aName)) {
             // do not unwrap, since implicit locking desired
             mute = iMuteCollection[i];
-			break;
+            break;
         }
     }
 
-	ASSERT(mute != NULL);
+    ASSERT(mute != NULL);
 
-	return (*mute);
+    return (*mute);
 }
