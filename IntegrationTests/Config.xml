@@ -7,6 +7,10 @@
         <!-- <adapter>2</adapter> -->
         <!-- <network>10.2.11.71</network> -->
         <!-- <adapter>0</adapter> -->
+        <itunes>
+            <guid>0x328084CE247B12D3</guid>
+            <library>Grahams Library</library>
+        </itunes>
     </computer>
 
     <computer name="PC941">
@@ -16,6 +20,10 @@
 
     <computer name="pc707">
         <network>10.15.1.102</network>
+        <itunes>
+            <guid>0x65F74C872DA2941D</guid>
+            <library>Linns Library</library>
+        </itunes>
     </computer>
         
 </configuration>

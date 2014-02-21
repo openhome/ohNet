@@ -16,11 +16,11 @@ in the TestRadioPlayback test script)
 Relies on LinnEngRadio Icecast radio server at 10.2.8.201
 """ 
 
-# The following test preset lists have been created. They are all accessed using 
-# the password 'klueso' :-
-#     - linn-test-presets-1    :- selection of stations/shows
-#     - linn-test-presets-2    :- empty list
-#     - linn-test-presets-3    :- slection of >100 stations/shows
+# Uses the following TuneIn account fro sourciing radio information. The presets
+# contained have been selected to test all aspects of the radio functionality
+# whilst working on the basis of only free codec support (so ohMediaPlayer can
+# be tested 
+#     - linn-test-presets-1 / password:klueso
 
 import _FunctionalTest
 import BaseTest                   as BASE
@@ -33,42 +33,60 @@ import threading
 import urllib
 import xml.etree.ElementTree as ET
 
-
-gPresetLists     = ['linn-test-presets-1',
-                    'linn-test-presets-2',
-                    'linn-test-presets-3']
-gExpProtocolInfo = 'http-get:*:audio/x-flac:*,'         +\
-                   'http-get:*:audio/wav:*,'            +\
-                   'http-get:*:audio/wave:*,'           +\
-                   'http-get:*:audio/x-wav:*,'          +\
-                   'http-get:*:audio/mpeg:*,'           +\
-                   'http-get:*:audio/x-mpeg:*,'         +\
-                   'http-get:*:audio/mp1:*,'            +\
-                   'http-get:*:audio/aiff:*,'           +\
-                   'http-get:*:audio/x-aiff:*,'         +\
-                   'http-get:*:audio/x-m4a:*,'          +\
-                   'http-get:*:audio/x-ms-wma:*,'       +\
-                   'rtsp-rtp-udp:*:audio/x-ms-wma:*,'   +\
-                   'http-get:*:audio/x-scpls:*,'        +\
-                   'http-get:*:audio/x-mpegurl:*,'      +\
-                   'http-get:*:audio/x-ms-asf:*,'       +\
-                   'http-get:*:audio/x-ms-wax:*,'       +\
-                   'http-get:*:audio/x-ms-wvx:*,'       +\
-                   'http-get:*:video/x-ms-asf:*,'       +\
-                   'http-get:*:video/x-ms-wax:*,'       +\
-                   'http-get:*:video/x-ms-wvx:*,'       +\
-                   'http-get:*:text/xml:*,'             +\
-                   'http-get:*:audio/aac:*,'            +\
-                   'http-get:*:audio/aacp:*,'           +\
-                   'http-get:*:audio/mp4:*,'            +\
-                   'http-get:*:audio/ogg:*,'            +\
-                   'http-get:*:audio/x-ogg:*,'          +\
-                   'http-get:*:application/ogg:*'   
-gExpChannelsMax  = 100
-gLocalChannels   = [{'uri' : 'http://10.2.8.201:8000/mp3-128k-stereo',
-                     'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 128k Stereo</dc:title><res>http://10.2.8.201:8000/mp3-128k-stereo</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'},
-                    {'uri' : 'http://10.2.8.201:8000/mp3-32k-mono',
-                     'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
+kTuneInUser       = 'linn-test-presets-1'
+kTuneInUrl        = 'http://opml.radiotime.com/'
+kTuneInPartner    = 'ah2rjr68'
+kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg'
+kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg'
+kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'       +\
+                    'http-get:*:audio/wav:*,'          +\
+                    'http-get:*:audio/wave:*,'         +\
+                    'http-get:*:audio/x-wav:*,'        +\
+                    'http-get:*:audio/mpeg:*,'         +\
+                    'http-get:*:audio/x-mpeg:*,'       +\
+                    'http-get:*:audio/mp1:*,'          +\
+                    'http-get:*:audio/aiff:*,'         +\
+                    'http-get:*:audio/x-aiff:*,'       +\
+                    'http-get:*:audio/x-m4a:*,'        +\
+                    'http-get:*:audio/x-ms-wma:*,'     +\
+                    'rtsp-rtp-udp:*:audio/x-ms-wma:*,' +\
+                    'http-get:*:audio/x-scpls:*,'      +\
+                    'http-get:*:audio/x-mpegurl:*,'    +\
+                    'http-get:*:audio/x-ms-asf:*,'     +\
+                    'http-get:*:audio/x-ms-wax:*,'     +\
+                    'http-get:*:audio/x-ms-wvx:*,'     +\
+                    'http-get:*:video/x-ms-asf:*,'     +\
+                    'http-get:*:video/x-ms-wax:*,'     +\
+                    'http-get:*:video/x-ms-wvx:*,'     +\
+                    'http-get:*:text/xml:*,'           +\
+                    'http-get:*:audio/aac:*,'          +\
+                    'http-get:*:audio/aacp:*,'         +\
+                    'http-get:*:audio/mp4:*,'          +\
+                    'http-get:*:audio/ogg:*,'          +\
+                    'http-get:*:audio/x-ogg:*,'        +\
+                    'http-get:*:application/ogg:*'   
+kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
+                    'http-get:*:audio/wav:*,'          +\
+                    'http-get:*:audio/wave:*,'         +\
+                    'http-get:*:audio/x-wav:*,'        +\
+                    'http-get:*:audio/aiff:*,'         +\
+                    'http-get:*:audio/x-aiff:*,'       +\
+                    'http-get:*:audio/x-m4a:*,'        +\
+                    'http-get:*:audio/x-scpls:*,'      +\
+                    'http-get:*:text/xml:*,'           +\
+                    'http-get:*:audio/aac:*,'          +\
+                    'http-get:*:audio/aacp:*,'         +\
+                    'http-get:*:audio/mp4:*,'          +\
+                    'http-get:*:audio/ogg:*,'          +\
+                    'http-get:*:audio/x-ogg:*,'        +\
+                    'http-get:*:application/ogg:*'   
+kChannelsMax      = 100
+kLocalChannels    = [ # Although these channels will actually serve, for the
+                      # purposes of this test it doesn't matter if they work or not
+                     {'uri' : 'http://10.2.8.201:8000/mp3-128k-stereo',
+                      'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 128k Stereo</dc:title><res>http://10.2.8.201:8000/mp3-128k-stereo</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'},
+                     {'uri' : 'http://10.2.8.201:8000/mp3-32k-mono',
+                      'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
 
 
 class TestRadioService( BASE.BaseTest ):
@@ -93,8 +111,11 @@ class TestRadioService( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
+        if mode not in ['all', 'fixed', 'presets', 'manual']:
+            self.log.Abort( '', 'Invalid test mode:- %s' % mode )
+
         if radioName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=kTuneInUser )
             radioName = 'TestDev:SoftPlayer'
         self.dutDev = radioName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True ) 
@@ -120,41 +141,38 @@ class TestRadioService( BASE.BaseTest ):
         self.log.Info( '' )
         self.log.Info( self.dutDev, 'Testing fixed parameters' )
         self.log.Info( '' )
-        self.log.FailUnless( self.dutDev, self.dut.radio.polledProtocolInfo==gExpProtocolInfo,
+        
+        if self.soft:
+            expProtocolInfo = kProtocolInfoFree
+        else:
+            expProtocolInfo = kProtocolInfoAll
+            
+        self.log.FailUnless( self.dutDev, self.dut.radio.polledProtocolInfo==expProtocolInfo,
             'Actual/Expected POLLED ProtocolInfo %s/%s' %
-            (self.dut.radio.polledProtocolInfo,gExpProtocolInfo) )
-        self.log.FailUnless( self.dutDev, self.dut.radio.protocolInfo==gExpProtocolInfo,
+            (self.dut.radio.polledProtocolInfo,expProtocolInfo) )
+        self.log.FailUnless( self.dutDev, self.dut.radio.protocolInfo==expProtocolInfo,
             'Actual/Expected EVENTED ProtocolInfo %s/%s' %
-            (self.dut.radio.protocolInfo,gExpProtocolInfo) )
-        self.log.FailUnless( self.dutDev, self.dut.radio.polledChannelsMax==gExpChannelsMax,
+            (self.dut.radio.protocolInfo,expProtocolInfo) )
+        self.log.FailUnless( self.dutDev, self.dut.radio.polledChannelsMax==kChannelsMax,
             'Actual/Expected POLLED ChannelsMax %s/%s' %
-            (self.dut.radio.polledChannelsMax,gExpChannelsMax) )
-        self.log.FailUnless( self.dutDev, self.dut.radio.channelsMax==gExpChannelsMax,
+            (self.dut.radio.polledChannelsMax,kChannelsMax) )
+        self.log.FailUnless( self.dutDev, self.dut.radio.channelsMax==kChannelsMax,
             'Actual/Expected EVENTED ChannelsMax %s/%s' %
-            (self.dut.radio.channelsMax,gExpChannelsMax) )
+            (self.dut.radio.channelsMax,kChannelsMax) )
     
     def TestPresets( self ):
         "Verify preset lists from TuneIn are handled correctly"
-        
-        def _PresetsEvtCb( aService, aSvName, aSvVal, aSvSeq ):
-            if aSvName == 'IdArray':
-                self.presetsUpdate.set()
-        
         self.log.Info( '' )
-        self.log.Info( self.dutDev, 'Testing setup and reporting of TuneIn presets' )
+        self.log.Info( self.dutDev, 'Testing handling of presets supplied by TuneIn' )
         self.log.Info( '' )
-        self.dut.radio.AddSubscriber( _PresetsEvtCb )
-        for user in gPresetLists:            
-            self.presetsUpdate.clear()
-            self._SetCheckUser( user )
-            self.presetsUpdate.wait( 10 )
-            self.log.FailUnless( self.dutDev, self.presetsUpdate.isSet(), 
-                'Presets updated after switching user to %s' % user )
-            
-            dsPresets = self.dut.radio.AllChannels()
-            rtPresets = self._GetTuneInPresets( user )
-                        
-            for i in range( len( dsPresets )):
+        
+        dsPresets = self.dut.radio.AllChannels()
+        rtPresets = self._GetTuneInPresets( kTuneInUser )
+        
+        for i in range( len( dsPresets )):
+            if i >= len( rtPresets ):
+                self.log.Fail( self.dutDev, '[%d] No TuneIn preset' % i )
+            else:
                 if dsPresets[i][0]:
                     dsUri = Common.GetUriFromDidl( dsPresets[i][1] )
                     dsTitle = Common.GetTitleFromDidl( dsPresets[i][1] )
@@ -175,32 +193,18 @@ class TestRadioService( BASE.BaseTest ):
                         '[%d] TuneIn URI for empty entry: %s' % (i,rtPresets[i][0]) ) 
                     self.log.FailUnless( self.dutDev, rtPresets[i][1]=='',
                         '[%d] TuneIn Title for empty entry: %s' % (i,rtPresets[i][1]) ) 
-        self.dut.radio.RemoveSubscriber( _PresetsEvtCb )        
-    
-    def _SetCheckUser( self, aUser ):
-        "Set TuneIn user and check set"
-        self.log.Warn( 'TODO', 'Restart softplayer with correct username')
-#        def _ConfigEvtCb( aService, aSvName, aSvVal, aSvSeq ):
-#            if aSvName == 'ParameterXml':
-#                self.configUpdate.set()
-#            
-#        self.configUpdate.clear()
-#        self.dut.config.AddSubscriber( _ConfigEvtCb )
-#        self.dut.config.Set( 'TuneIn Radio', 'Username', aUser )
-#        self.configUpdate.wait( 10 )
-#        evUser = self.dut.config.Get( 'TuneIn Radio', 'Username' )
-#        self.log.FailUnless( self.dutDev, evUser==aUser,
-#            '(%s/%s) Actual/Expected EVENTED user' % (evUser, aUser) )
-#        self.dut.config.RemoveSubscriber( _ConfigEvtCb )
-        
+            
     def _GetTuneInPresets( self, aUser ):
         "Read preset channel info directly from TuneIn"
-        hdr    = 'http://opml.radiotime.com/'
-        id     = '&username=%s&partnerId=ah2rjr68' % aUser
-        resp   = self._UrlQuery( hdr + 'Preset.ashx?c=listFolders' + id )
-        dflt   = self._GetFromOpmlDefault( resp )
-        resp   = self._UrlQuery( hdr + 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg' + id )
-        uri    = self._GetFromOpmlUri( resp, dflt )
+        if self.soft:
+            browse = kTuneInBrowseFree
+        else:
+            browse = kTuneInBrowseAll
+        id   = '&username=%s&partnerId=%s' % (kTuneInUser, kTuneInPartner)
+        resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + id )
+        dflt = self._GetFromOpmlDefault( resp )
+        resp = self._UrlQuery( kTuneInUrl + browse + id )
+        uri  = self._GetFromOpmlUri( resp, dflt )
         if uri:
             resp = self._UrlQuery( uri )
         return self._GetPresetsFromOpml( resp )
@@ -266,7 +270,7 @@ class TestRadioService( BASE.BaseTest ):
         self.dut.radio.SetChannel( 'uri', 'meta' )
         self.uriUpdated.wait( 5 )
         
-        for channel in gLocalChannels:
+        for channel in kLocalChannels:
             self.uriUpdated.clear()
             self.metaUpdated.clear()
             self.dut.radio.SetChannel( channel['uri'], channel['meta'] )

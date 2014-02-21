@@ -286,6 +286,12 @@ static int count_leading_zeros(int input)
         : "r" (input));
     return (0x1f - output);
 }
+#elif defined(__GNUC__)
+static int count_leading_zeros(int input)
+{
+    if (!input) return 32;
+    return __builtin_clz(input);
+}
 #elif defined(_MSC_VER) && defined(_M_IX86)
 static int count_leading_zeros(int input)
 {
