@@ -10,8 +10,8 @@
     </computer>
 
     <computer name="PC941">
-        <network>10.2.9.182</network>
-        <!-- <network>10.2.9.178</network> -->
+        <network>10.2.9.201</network>
+        <!-- <network>10.2.9.199</network> -->
     </computer>
 
     <computer name="pc707">
