@@ -213,7 +213,6 @@ void ProviderPlaylist::SeekId(IDvInvocation& aInvocation, TUint aValue)
 {
     try {
         iSource.SeekToTrackId(aValue);
-        iSource.Play(); // required for volkano1 compatibility
     }
     catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
