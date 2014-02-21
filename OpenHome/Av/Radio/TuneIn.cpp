@@ -182,7 +182,8 @@ void RadioPresetsTuneIn::DoRefresh()
             for (;presetIndex<maxPresets;) {
                 iReadBuffer.ReadUntil('<');
                 buf.Set(iReadBuffer.ReadUntil('>'));
-                if (!buf.BeginsWith(Brn("outline type=\"audio\""))) {
+                if (!buf.BeginsWith(Brn("outline type=\"audio\"")) &&
+                    !buf.BeginsWith(Brn("outline type=\"link\""))) {
                     continue;
                 }
                 Parser parser(buf);
@@ -191,16 +192,17 @@ void RadioPresetsTuneIn::DoRefresh()
                 (void)parser.Next('\"');
 
                 if (!ReadElement(parser, "text", iPresetTitle) ||
-                    !ReadElement(parser, "URL", iPresetUrl) ||
-                    !ValidateKey(parser, "bitrate")) {
+                    !ReadElement(parser, "URL", iPresetUrl)) {
                     continue;
                 }
-                (void)parser.Next('\"');
-                Brn value = parser.Next('\"');
-                TUint byteRate = Ascii::Uint(value);
-                byteRate *= 125; // convert from kbits/sec to bytes/sec
                 Bws<Ascii::kMaxUintStringBytes> byteRateBuf;
-                Ascii::AppendDec(byteRateBuf, byteRate);
+                if (ValidateKey(parser, "bitrate")) {
+                    (void)parser.Next('\"');
+                    Brn value = parser.Next('\"');
+                    TUint byteRate = Ascii::Uint(value);
+                    byteRate *= 125; // convert from kbits/sec to bytes/sec
+                    Ascii::AppendDec(byteRateBuf, byteRate);
+                }
 
                 const TChar* imageKey = "image";
                 Brn imageKeyBuf(imageKey);
@@ -258,11 +260,11 @@ void RadioPresetsTuneIn::DoRefresh()
             buf.Append(iReadBuffer.Read(readBytes));
             length -= readBytes;
         }
-#if 1
+# if 1
         Log::Print("Response from TuneIn is...\n\n");
         Log::Print(buf);
         Log::Print("\n\n");
-#endif
+# endif
 #endif // OLD_DEBUGGING_CODE
     }
     catch (NetworkError&) {
