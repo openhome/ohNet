@@ -60,8 +60,8 @@ OhmHeaderAudio::OhmHeaderAudio()
  
 OhmHeaderAudio::OhmHeaderAudio(TBool aHalt, 
                                TBool aLossless,
-							   TBool aTimestamped,
-							   TBool aResent,
+                               TBool aTimestamped,
+                               TBool aResent,
                                TUint aSamples,
                                TUint aFrame,
                                TUint aNetworkTimestamp,
@@ -78,7 +78,7 @@ OhmHeaderAudio::OhmHeaderAudio(TBool aHalt,
     : iHalt(aHalt)
     , iLossless(aLossless)
     , iTimestamped(aTimestamped)
-	, iResent(aResent)
+    , iResent(aResent)
     , iSamples(aSamples)
     , iFrame(aFrame)
     , iNetworkTimestamp(aNetworkTimestamp)
@@ -111,8 +111,8 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
 
     iHalt = false;
     iLossless = false;
-	iTimestamped = false;
-	iResent = false;
+    iTimestamped = false;
+    iResent = false;
 
     TUint flags = readerBinary.ReadUintBe(1);
     
@@ -177,13 +177,13 @@ void OhmHeaderAudio::Externalise(IWriter& aWriter) const
         flags |= kFlagLossless;
     }
 
-	if (iTimestamped) {
-		flags |= kFlagTimestamped;
-	}
+    if (iTimestamped) {
+        flags |= kFlagTimestamped;
+    }
 
-	if (iResent) {
-		flags |= kFlagResent;
-	}
+    if (iResent) {
+        flags |= kFlagResent;
+    }
     
     writer.WriteUint8(kHeaderBytes);
     writer.WriteUint8(flags);
@@ -460,7 +460,7 @@ OhzHeaderPresetQuery::OhzHeaderPresetQuery()
 
 OhzHeaderPresetQuery::OhzHeaderPresetQuery(TUint aPreset)
 {
-	iPreset = aPreset;
+    iPreset = aPreset;
 }
 
 void OhzHeaderPresetQuery::Internalise(IReader& aReader, const OhzHeader& aHeader)
@@ -469,14 +469,14 @@ void OhzHeaderPresetQuery::Internalise(IReader& aReader, const OhzHeader& aHeade
 
     ReaderBinary readerBinary(aReader);
 
-	iPreset = readerBinary.ReadUintBe(4);
+    iPreset = readerBinary.ReadUintBe(4);
 }
 
 void OhzHeaderPresetQuery::Externalise(IWriter& aWriter) const
 {
-	WriterBinary writer(aWriter);
+    WriterBinary writer(aWriter);
 
-	writer.WriteUint32Be(iPreset);
+    writer.WriteUint32Be(iPreset);
 }
 
 // ZonepusHeaderUri
@@ -487,7 +487,7 @@ OhzHeaderPresetInfo::OhzHeaderPresetInfo()
 
 OhzHeaderPresetInfo::OhzHeaderPresetInfo(TUint aPreset, const Brx& aMetadata)
 {
-	iPreset = aPreset;
+    iPreset = aPreset;
     iMetadataBytes = aMetadata.Bytes();
 }
 

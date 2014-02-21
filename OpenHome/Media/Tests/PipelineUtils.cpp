@@ -125,7 +125,7 @@ int TestProtocol::Run()
     Log::Print("q: Quit\n");
     Log::Print("\n");
     do {
-    	int key = mygetch();
+        int key = mygetch();
         switch (key)
         {
         case 'p':

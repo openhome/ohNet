@@ -299,7 +299,13 @@ void TestCodecMinimalPipeline::StartStreaming(const Brx& aUrl)
 
 TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute)
 {
-    return iController->Seek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute);
+    ISeeker* seeker = static_cast<ISeeker*>(iController);
+    const TUint handle = seeker->StartSeek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute, *this);
+    return (handle != ISeeker::kHandleError);
+}
+
+void TestCodecMinimalPipeline::NotifySeekComplete(TUint /*aHandle*/, TUint /*aFlushId*/)
+{
 }
 
 void TestCodecMinimalPipeline::RegisterPlugins()

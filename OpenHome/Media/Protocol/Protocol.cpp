@@ -69,7 +69,7 @@ Protocol::AutoStream::~AutoStream()
 }
 
 
-// ProtocolNetwork	
+// ProtocolNetwork  
 
 ProtocolNetwork::ProtocolNetwork(Environment& aEnv)
     : Protocol(aEnv)
@@ -282,14 +282,14 @@ ProtocolManager::~ProtocolManager()
 
 void ProtocolManager::Add(Protocol* aProtocol)
 {
-	LOG(kMedia, "ProtocolManager::Add(Protocol*)\n");
-	iProtocols.push_back(aProtocol);
+    LOG(kMedia, "ProtocolManager::Add(Protocol*)\n");
+    iProtocols.push_back(aProtocol);
     aProtocol->Initialise(*this, iIdProvider, iSupply, iFlushIdProvider);
 }
 
 void ProtocolManager::Add(ContentProcessor* aProcessor)
 {
-	LOG(kMedia, "ProtocolManager::Add(ContentProcessor*)\n");
+    LOG(kMedia, "ProtocolManager::Add(ContentProcessor*)\n");
     iContentProcessors.push_back(aProcessor);
     aProcessor->Initialise(*this);
 }

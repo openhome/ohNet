@@ -179,7 +179,9 @@ void SourcePlaylist::Prev()
 void SourcePlaylist::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        (void)iPipeline.Seek(iPipelineTrackId, iStreamId, aSeconds);
+        if (iPipeline.Seek(iPipelineTrackId, iStreamId, aSeconds)) {
+            iPipeline.Play();
+        }
     }
 }
 
@@ -201,6 +203,7 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
     }
     iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider->Mode(), aId);
+    iPipeline.Play();
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
@@ -217,6 +220,7 @@ TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
         AutoAllocatedRef r(track);
         iPipeline.RemoveAll();
         iPipeline.Begin(iUriProvider->Mode(), track->Id());
+        iPipeline.Play();
     }
     return (track!=NULL);
 }

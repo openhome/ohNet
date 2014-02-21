@@ -320,7 +320,7 @@ TUint64 SeekTable::Offset(TUint64& aAudioSample, TUint64& aSample)
         totalsamples = samplecount;
     }
     if (totalaudiosamples!=0 && aAudioSample>totalaudiosamples) {
-        aAudioSample = totalaudiosamples-1;	// keep within range
+        aAudioSample = totalaudiosamples-1; // keep within range
     }
     if(audiosamples == 0)
         THROW(CodecStreamCorrupt); // invalid table

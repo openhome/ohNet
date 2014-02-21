@@ -21,6 +21,8 @@ static const TUint kIdNotFoundCode = 800;
 static const Brn kIdNotFoundMsg("Id not found");
 static const TInt kPlaylistFull = 801;
 static const Brn kPlaylistFullMsg("Playlist full");
+static const TUint kIndexNotFoundCode = 802;
+static const Brn kIndexNotFoundMsg("Index not found");
 
 // ProviderPlaylist
 
@@ -211,7 +213,6 @@ void ProviderPlaylist::SeekId(IDvInvocation& aInvocation, TUint aValue)
 {
     try {
         iSource.SeekToTrackId(aValue);
-        iSource.Play(); // required for volkano1 compatibility
     }
     catch (TrackDbIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
@@ -222,8 +223,8 @@ void ProviderPlaylist::SeekId(IDvInvocation& aInvocation, TUint aValue)
 
 void ProviderPlaylist::SeekIndex(IDvInvocation& aInvocation, TUint aValue)
 {
-    if (iSource.SeekToTrackIndex(aValue)) {
-        iSource.Play(); // required for volkano1 compatibility
+    if (!iSource.SeekToTrackIndex(aValue)) {
+        aInvocation.Error(kIndexNotFoundCode, kIndexNotFoundMsg);
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();

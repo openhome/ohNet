@@ -49,6 +49,8 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iLock("CDCC")
     , iActiveCodec(NULL)
     , iPendingMsg(NULL)
+    , iSeekObserver(NULL)
+    , iSeekHandle(0)
     , iPostSeekStreamInfo(NULL)
     , iAudioEncoded(NULL)
     , iSeekable(false)
@@ -90,21 +92,20 @@ void CodecController::Start()
     iDecoderThread->Start();
 }
 
-TBool CodecController::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+TUint CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver)
 {
     AutoMutex a(iLock);
     if (iTrackId != aTrackId || aStreamId != iStreamId) {
-        return false;
+        return ISeeker::kHandleError;
     }
     if (iActiveCodec == NULL || !iSeekable) {
-        return false;
+        return ISeeker::kHandleError;
     }
+    iSeekObserver = &aObserver;
     iSeek = true;
     iSeekSeconds = aSecondsAbsolute;
-    /* If we're very near the end of the track, we may return success here but later fail to seek.
-       Its hard to imagine what sort of UI would display error indication from seek so it doesn't
-       seem worth worrying about this. */
-    return true;
+
+    return ++iSeekHandle;
 }
 
 TBool CodecController::SupportsMimeType(const Brx& aMimeType)
@@ -120,6 +121,7 @@ TBool CodecController::SupportsMimeType(const Brx& aMimeType)
 void CodecController::CodecThread()
 {
     iStreamStarted = false;
+    iSeek = false;
     iQuit = false;
     iExpectedFlushId = MsgFlush::kIdInvalid;
     iConsumeExpectedFlush = false;
@@ -199,11 +201,13 @@ void CodecController::CodecThread()
                 for (;;) {
                     iLock.Wait();
                     TBool seek = iSeek;
+                    iSeek = false;
+                    ISeekObserver* seekObserver = iSeekObserver;
                     iLock.Signal();
                     if (seek) {
-                        iSeek = false;
                         TUint64 sampleNum = iSeekSeconds * iSampleRate;
                         (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
+                        seekObserver->NotifySeekComplete(iSeekHandle, iExpectedFlushId);
                     }
                     else {
                         iActiveCodec->Process();

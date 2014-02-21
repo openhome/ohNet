@@ -18,15 +18,8 @@ If the track is playing when Seek() is called, it is first ramped down
 Calls to Seek() are ignored if a previous seek is in progress
 If TrySeek returned a valid flush id, the MsgFlush with this id is consumed
 */
-    
-// FIXME - move to somewhere visible to CodecController
-class ISeeker
-{
-public:
-    virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute) = 0;
-};
 
-class Seeker : public IPipelineElementUpstream, private IMsgProcessor
+class Seeker : public IPipelineElementUpstream, private IMsgProcessor, private ISeekObserver
 {
     friend class SuiteSeeker;
 public:
@@ -47,6 +40,8 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from ISeekObserver
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
     void DoSeek();
     Msg* ProcessFlushable(Msg* aMsg);
@@ -71,10 +66,12 @@ private:
     TUint iCurrentRampValue;
     TUint iSeekSeconds;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
+    TUint iSeekHandle;
     TUint iTargetFlushId;
     TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
+    TBool iStreamIsSeekable;
 };
 
 } // namespace Media

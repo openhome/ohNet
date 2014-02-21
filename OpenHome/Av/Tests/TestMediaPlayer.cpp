@@ -14,6 +14,8 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
+#include <OpenHome/Net/Private/Shell.h>
+#include <OpenHome/Net/Private/ShellCommandDebug.h>
 
 int mygetch();
 
@@ -80,6 +82,10 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
     powerManager.RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
+    // create a shell
+    iShell = new Shell(aDvStack.Env());
+    iShellDebug = new ShellCommandDebug(*iShell);
+
     //iProduct->SetCurrentSource(0);
     iConfigRamStore->Print();
 }
@@ -87,6 +93,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 TestMediaPlayer::~TestMediaPlayer()
 {
     ASSERT(!iDevice->Enabled());
+    delete iShellDebug;
+    delete iShell;
     delete iDevice;
     delete iDeviceUpnpAv;
     delete iRamStore;
@@ -204,8 +212,51 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols);
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
-    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), iDevice->Udn()));   // FIXME - name should be product name
+
+    Bws<12> macAddr;
+    MacAddrFromUdn(aEnv, macAddr);
+    const TChar* friendlyName;
+    iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
+    iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), friendlyName, macAddr));
+
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+}
+
+TUint TestMediaPlayer::Hash(const Brx& aBuf)
+{
+    TUint hash = 0;
+    for (TUint i=0; i<aBuf.Bytes(); i++) {
+        hash += aBuf[i];
+    }
+    return hash;
+}
+
+void TestMediaPlayer::GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr)
+{
+    // Generate a 48-bit, 12-byte hex string.
+    // Method:
+    // - Generate two random numbers in the range 0 - 2^24
+    // - Get the hex representation of these numbers
+    // - Combine the two hex representations into the output buffer, aMacAddr
+    const TUint maxLimit = 0x01000000;
+    Bws<8> macBuf1;
+    Bws<8> macBuf2;
+
+    aEnv.SetRandomSeed(aSeed);
+    TUint mac1 = aEnv.Random(maxLimit, 0);
+    TUint mac2 = aEnv.Random(maxLimit, 0);
+
+    Ascii::AppendHex(macBuf1, mac1);
+    Ascii::AppendHex(macBuf2, mac2);
+
+    aMacAddr.Append(macBuf1.Split(2));
+    aMacAddr.Append(macBuf2.Split(2));
+}
+
+void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
+{
+    TUint hash = Hash(iDevice->Udn());
+    GenerateMacAddr(aEnv, hash, aMacAddr);
 }
 
 void TestMediaPlayer::PowerDownUpnp()

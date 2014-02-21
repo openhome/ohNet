@@ -22,7 +22,6 @@ private: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
 protected:
     TUint FindChunk(const Brx& aChunkId);
-    virtual void ProcessMiscChunks();
     virtual TUint GetCommChunkHeader() = 0;
     virtual void ProcessCommChunkExtra(); // for e.g., getting compression format for AIFC
 private:

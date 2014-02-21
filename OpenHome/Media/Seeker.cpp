@@ -30,7 +30,7 @@ Seeker::~Seeker()
 TBool Seeker::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
 {
     AutoMutex a(iLock);
-    if (iState != ERunning || iTrackId != aTrackId || iStreamId != aStreamId) {
+    if (iState != ERunning || iTrackId != aTrackId || iStreamId != aStreamId || !iStreamIsSeekable) {
         return false;
     }
 
@@ -76,6 +76,7 @@ Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
     NewStream();
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
+    iStreamIsSeekable = aMsg->Seekable();
     return aMsg;
 }
 
@@ -111,7 +112,6 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    ASSERT(iState == ERunning);
     return aMsg;
 }
 
@@ -136,24 +136,29 @@ Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
+void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
+{
+    if (aHandle != iSeekHandle) {
+        return;
+    }
+    ASSERT(iState == EFlushing);
+    iTargetFlushId = aFlushId;
+    if (iTargetFlushId == MsgFlush::kIdInvalid) {
+        iState = ERampingUp;
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kRampMin;
+    }
+}
+
 void Seeker::DoSeek()
 {
-    iTargetFlushId = iSeeker.TrySeek(iTrackId, iStreamId, iSeekSeconds);
-    if (iTargetFlushId == MsgFlush::kIdInvalid) {
-        if (iState != ERunning) {
-            iState = ERampingUp;
-            iRemainingRampSize = iRampDuration;
-            iCurrentRampValue = Ramp::kRampMin;
-        }
+    iSeekHandle = iSeeker.StartSeek(iTrackId, iStreamId, iSeekSeconds, *this);
+    iState = EFlushing;
+    while (!iQueue.IsEmpty()) {
+        iQueue.Dequeue()->RemoveRef();
     }
-    else {
-        iState = EFlushing;
-        while (!iQueue.IsEmpty()) {
-            iQueue.Dequeue()->RemoveRef();
-        }
-        iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
-                                                        that any subsequent break in audio is expected */
-    }
+    iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
+                                                    that any subsequent break in audio is expected */
 }
 
 Msg* Seeker::ProcessFlushable(Msg* aMsg)
@@ -200,4 +205,6 @@ void Seeker::NewStream()
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
     iState = ERunning;
+    iSeekHandle = ISeeker::kHandleError;
+    iStreamIsSeekable = true;
 }
