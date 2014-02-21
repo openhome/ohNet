@@ -295,7 +295,6 @@ void MdnsPlatform::DeregisterService(TUint aHandle)
     Map::iterator it = iServices.find(aHandle);
     if (it != iServices.end()) {
         mDNS_DeregisterService(iMdns, it->second);
-        iServices.erase(it);
     }
     iServicesLock.Signal();
     LOG(kBonjour, "Bonjour             DeregisterService - Complete\n");
