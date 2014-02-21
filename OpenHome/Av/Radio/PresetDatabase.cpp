@@ -109,7 +109,12 @@ void PresetDatabase::SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaDa
     Preset& preset = iPresets[aIndex];
     aId = preset.Id();
     if (preset.MetaData() != aMetaData) {
-        aId = iNextId++;
+        if (aMetaData == Brx::Empty()) {
+            aId = kPresetIdNone;
+        }
+        else {
+            aId = iNextId++;
+        }
         preset.Set(aId, aUri, aMetaData);
         iSeq++;
         iUpdated = true;
