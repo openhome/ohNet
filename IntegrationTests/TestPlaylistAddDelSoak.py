@@ -87,8 +87,6 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         if self.server:
             self.server.Shutdown()
         if self.dut: 
-            self.dut.playlist.RemoveSubscriber( self._PlaylistEventCb )
-            self.dut.info.RemoveSubscriber( self._InfoEventCb )
             self.dut.Shutdown()
         if self.soft:
             self.soft.Shutdown()
