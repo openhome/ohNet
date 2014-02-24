@@ -186,6 +186,7 @@ class ConfigNum : public ConfigVal<TInt>
     friend class SuiteConfigManager;
 public:
     typedef FunctorGeneric<KeyValuePair<TInt>&> FunctorConfigNum;
+    typedef KeyValuePair<TInt> KvpNum;
 public:
     ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
@@ -199,7 +200,7 @@ public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
     void Deserialise(const Brx& aString);
 private: // from ConfigVal
-    void Write(KeyValuePair<TInt>& aKvp);
+    void Write(KvpNum& aKvp);
 private:
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
@@ -241,6 +242,7 @@ class ConfigChoice : public ConfigVal<TUint>
     friend class SuiteConfigManager;
 public:
     typedef FunctorGeneric<KeyValuePair<TUint>&> FunctorConfigChoice;
+    typedef KeyValuePair<TUint> KvpChoice;
 public:
     ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
@@ -253,7 +255,7 @@ public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
     void Deserialise(const Brx& aString);
 private: // from ConfigVal
-    void Write(KeyValuePair<TUint>& aKvp);
+    void Write(KvpChoice& aKvp);
 private:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
@@ -295,6 +297,7 @@ class ConfigText : public ConfigVal<const Brx&>
     friend class SuiteConfigManager;
 public:
     typedef FunctorGeneric<KeyValuePair<const Brx&>&> FunctorConfigText;
+    typedef KeyValuePair<const Brx&> KvpText;
 public:
     ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
@@ -307,7 +310,7 @@ public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
     void Deserialise(const Brx& aString);
 private: // from ConfigVal
-    void Write(KeyValuePair<const Brx&>& aKvp);
+    void Write(KvpText& aKvp);
 private:
     inline TBool operator==(const ConfigText& aText) const;
 private:
