@@ -143,10 +143,12 @@ class TestSongcastDropout( BASE.BaseTest ):
         for rcvr in self.rcvrs:            
             rcvr.receiver.RemoveSubscriber( self._RcvrReceiverMonitor )
 
+        # stop playback            
+        self.sender.playlist.Stop()
+
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.sender:
-            self.sender.playlist.Stop()
             self.sender.Shutdown()
         for rcvr in self.rcvrs:
             rcvr.Shutdown()

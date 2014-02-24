@@ -150,7 +150,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # wait until playback stopped
         self.senderStopped.clear()        
         self.senderStopped.wait()
-        
+                
     def Cleanup( self ):
         "Perform post-test cleanup" 
         if self.playTimer:
@@ -158,13 +158,8 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if self.server:
             self.server.Shutdown()
         if self.sender: 
-            self.sender.time.RemoveSubscriber( self._SenderTimeCb )
-            self.sender.playlist.RemoveSubscriber( self._SenderPlaylistCb )
-            time.sleep( 1 )
             self.sender.Shutdown()
         if self.receiver: 
-            self.receiver.time.RemoveSubscriber( self._ReceiverTimeCb )
-            self.receiver.receiver.RemoveSubscriber( self._ReceiverReceiverCb )
             self.receiver.Shutdown() 
         if self.soft1:
             self.soft1.Shutdown()

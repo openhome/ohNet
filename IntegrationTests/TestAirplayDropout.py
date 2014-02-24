@@ -89,15 +89,15 @@ class TestAirplayDropout( BASE.BaseTest ):
             self.dacp.speaker = dutName
         self.dacp.PlayTrack( track )
         self.dacp.repeat  = True
-        time.sleep( 10 )    # let playback start up
+        time.sleep( 5 )
                     
         # setup playback and boundary condition monitor
         self.tick = LogThread.Timer( 1, self.__TickCb )
         self.tick.start()
         
-        ## start duration timer and wait for expiry
+        # start duration timer and wait for expiry
         if duration != 'forever':
-            self.timer = LogThread.Timer( 1, self.__DurationCb )
+            self.timer = LogThread.Timer( duration, self.__DurationCb )
             self.timer.start()
         self.finished.wait()
                             
@@ -121,7 +121,6 @@ class TestAirplayDropout( BASE.BaseTest ):
         try:
             info = self.dacp.nowPlaying
             self.log.Info( self.dacp.dev, info )        
-            timeRemaining = info['remains']
         except:
             # DACP has thrown connection error
             self.dacp = None
