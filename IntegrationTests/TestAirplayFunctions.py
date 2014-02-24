@@ -21,6 +21,7 @@ import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano
 import Instruments.Network.DacpClient as DacpClient
 import _SoftPlayer                    as SoftPlayer
+import LogThread
 import math
 import sys
 import threading
@@ -40,6 +41,8 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dut        = None
         self.soft       = None
         self.tracks     = None
+        self.timedOut   = False
+        self.timeEvent  = threading.Event()
         self.srcChanged = threading.Event()
 
     def Test( self, args ):
@@ -104,36 +107,45 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dacp.PlayTrack( kVolTrack )
         time.sleep( 5 )
          
-#        self.dut.config.Set( 'Net Aux', 'Auto Select', 'false' )
-#        self.srcChanged.clear()
-#        self.dut.product.sourceIndexByName = 'Playlist'
-#        self.srcChanged.wait( 5 )
-#        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-#        self.log.FailUnless( self.dutDev, name=='Playlist',
-#            '%s/Playlist - actual/expected source before Airplay started' % name )
-        
-#        self.srcChanged.clear()
-#        self.dacp.speaker = self.dutName
-#        self.srcChanged.wait( 5 )
-#        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
-#        self.log.FailUnless( self.dutDev, name=='Playlist',
-#            '%s/Playlist - actual/expected source on Airplay start with Net Aux auto select disabled' % name )
-        
-#        self.dacp.speaker = 'My Computer'
-#        self.dut.config.Set( 'Net Aux', 'Auto Select', 'true' )
+        # Airplay connect/disconnect 
+        # DS on Playlist -> Set as Airplay speaker -> Playlist reselected -> Airplay disconnected 
         self.srcChanged.clear()
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
         self.log.FailUnless( self.dutDev, name=='Playlist',
             '%s/Playlist - actual/expected source before Airplay started' % name )
-        
+         
         self.srcChanged.clear()
         self.dacp.speaker = self.dutName
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
         self.log.FailUnless( self.dutDev, name=='Net Aux',
-            '%s/Net Aux - actual/expected source on Airplay start with Net Aux auto select enabled' % name )
+            '%s/Net Aux - actual/expected source on Airplay start' % name )
+         
+        self.srcChanged.clear()
+        self.dut.product.sourceIndexByName = 'Playlist'
+        self.srcChanged.wait( 5 )
+        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
+        self.log.FailUnless( self.dutDev, name=='Playlist',
+            '%s/Playlist - actual/expected source after Playlist re-selected' % name )
+         
+        self.srcChanged.clear()
+        self.dacp.speaker = 'My Computer'
+        self.srcChanged.wait( 5 )
+        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
+        self.log.FailUnless( self.dutDev, name=='Playlist',
+            '%s/Playlist - actual/expected source after Airplay disconnected' % name )
+         
+        # Airplay to DS -> Pause Airplay -> DS to playlist -> start Airplay playback
+        # -> reselect Airplay on DS         
+         
+        self.srcChanged.clear()
+        self.dacp.speaker = self.dutName
+        self.srcChanged.wait( 5 )
+        name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
+        self.log.FailUnless( self.dutDev, name=='Net Aux',
+            '%s/Net Aux - actual/expected source on Airplay re-start (1)' % name )
 
         self.srcChanged.clear()
         self.dacp.Pause()
@@ -150,7 +162,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
         self.log.FailUnless( self.dutDev, name=='Playlist',
-            '%s/Playlist - actual/expected source after Airplay restarted' % name )
+            '%s/Playlist - actual/expected source after Airplay re-start (2)' % name )
         
         self.srcChanged.clear()
         self.dacp.speaker = 'My Computer'
@@ -160,7 +172,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
         self.log.FailUnless( self.dutDev, name=='Net Aux',
-            '%s/Net Aux - actual/expected source after AirPlay speakers reselected' % name )
+            '%s/Net Aux - actual/expected source after AirPlay speakers re-selected' % name )
         
     def _CheckAudioFreq( self ):
         "Check audio frequency of Net Aux tracks"
@@ -182,12 +194,12 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Fail( self.dacp.dev, '%d required test tones not available on %s' % (len( titles ), self.dacp.server) )
                 
         for title in titles:
-            msg = 'AirPlay with %s' % title
+            self.log.Info( '' )
+            self.log.Info( 'AirPlay playback with %s' % title )
+            self.log.Info( '' )
             self.dacp.PlayTrack( title )
-            time.sleep( 5 )
+            self._MonitorPlayback( 10 )
             
-            # just wait a few secs and check info ticks and nothing crashes....
-                        
     def _CheckVolume( self ):
         "Check volume control on server is reflected in DS output"
         if self.dut.volume is not None:
@@ -199,22 +211,32 @@ class TestAirplayFunctions( BASE.BaseTest ):
         time.sleep( 5 )
         self.dacp.PlayTrack( kVolTrack )
         self.srcChanged.wait( 5 )
-        
         self.dacp.volume = 100
         time.sleep( 5 )
         
         for (setVol, expVol) in [(10,-42), (20,-28), (30,-21), (40,-16), (50,-12),
                                  (60,-9),  (70,-6),  (80,-4),  (90,-2),  (100,0)]:
-            msg = 'AirPlay volume set to %d' % setVol
+            self.log.Info ( '' )
+            self.log.Info( 'AirPlay volume set to %d' % setVol )
+            self.log.Info ( '' )
             self.dacp.volume = setVol
-            time.sleep( 5 )
+            self._MonitorPlayback( 10 )
             
-            # just wait a few secs and check info ticks and nothing crashes....
-        
-    def __ProductEvtCb( self, service, svName, svVal, svSeq ):
-        "Callback on events from product service"
-        if svName == 'SourceIndex':
-            self.srcChanged.set()
+    def _MonitorPlayback( self, aSecs ):
+        "Monitor AirPlay playback"
+        self.dut.time.AddSubscriber( self.__TimeEvtCb )
+        self.timedOut = False
+        t = LogThread.Timer( aSecs, self.__TimerCb )
+        t.start()
+        while not self.timedOut:
+            self.timeEvent.clear()
+            self.timeEvent.wait( 2 )
+            if not self.timeEvent.is_set():
+                self.log.Fail( self.dutDev, 'No time update for 2s during Airplay playback' )
+            else:
+                info = self.dacp.nowPlaying
+                self.log.Info( self.dacp.dev, info )        
+        self.dut.time.RemoveSubscriber( self.__TimeEvtCb )
 
     def _ToDb( self, aVmeas, aVzero ):
         "Convert amplitude from Vrms to dB"
@@ -223,6 +245,19 @@ class TestAirplayFunctions( BASE.BaseTest ):
         except:
             db = -999
         return db
+        
+    def __ProductEvtCb( self, service, svName, svVal, svSeq ):
+        "Callback on events from product service"
+        if svName == 'SourceIndex':
+            self.srcChanged.set()
+            
+    def __TimeEvtCb( self, service, svName, svVal, svSeq ):
+        "Callback on events from Time service"
+        self.timeEvent.set()
+
+    def __TimerCb( self ):
+        "Timer CB - set flag on expiry"
+        self.timedOut = True
         
 if __name__ == '__main__':
     
