@@ -67,7 +67,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:  // from SuiteCVNotify
-    void NotifyChanged(KeyValuePair<TInt>& aKvp);
+    void NotifyChanged(ConfigNum::KvpNum& aKvp);
 private:
     TInt IntFromStore(const Brx& aKey);
     void TestInternalFunctorsCalledAtConstruction();
@@ -108,7 +108,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:  // from SuiteCVNotify
-    void NotifyChanged(KeyValuePair<TUint>& aKvp);
+    void NotifyChanged(ConfigChoice::KvpChoice& aKvp);
 private:
     TUint UintFromStore(const Brx& aKey);
     void TestInternalFunctorsCalledAtConstruction();
@@ -147,7 +147,7 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:  // from SuiteCVNotify
-    void NotifyChanged(KeyValuePair<const Brx&>& aKvp);
+    void NotifyChanged(ConfigText::KvpText& aKvp);
 private:
     void TestInternalFunctorsCalledAtConstruction();
     void TestKeyStored();
@@ -404,7 +404,7 @@ void SuiteConfigNum::TearDown()
     delete iConfigVal;
 }
 
-void SuiteConfigNum::NotifyChanged(KeyValuePair<TInt>& aKvp)
+void SuiteConfigNum::NotifyChanged(ConfigNum::KvpNum& aKvp)
 {
     SuiteCVNotify::NotifyChanged(aKvp);
     iLastChangeVal = aKvp.Value();
@@ -688,7 +688,7 @@ void SuiteConfigChoice::TearDown()
     delete iConfigVal;
 }
 
-void SuiteConfigChoice::NotifyChanged(KeyValuePair<TUint>& aKvp)
+void SuiteConfigChoice::NotifyChanged(ConfigChoice::KvpChoice& aKvp)
 {
     SuiteCVNotify::NotifyChanged(aKvp);
     iLastChangeVal = aKvp.Value();
@@ -944,7 +944,7 @@ void SuiteConfigText::TearDown()
     delete iConfigVal;
 }
 
-void SuiteConfigText::NotifyChanged(KeyValuePair<const Brx&>& aKvp)
+void SuiteConfigText::NotifyChanged(ConfigText::KvpText& aKvp)
 {
     SuiteCVNotify::NotifyChanged(aKvp);
     iLastChangeVal.Replace(aKvp.Value());
