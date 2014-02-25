@@ -124,12 +124,13 @@ class TestAudioConx( BASE.BaseTest ):
             self._TestBuffInvoke( param )
         if test in ['all','close']:
             self._TestClose()
-                    
+
+        # stop playback            
+        self.dut.playlist.Stop()
+            
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.dut:                     
-            self.dut.playlist.Stop()
-            self.dut.playlist.RemoveSubscriber( self._PlaylistEventCb )
             self.dut.Shutdown()
         if self.audioSrv:
             self.audioSrv.Shutdown()
@@ -348,7 +349,6 @@ class TestAudioConx( BASE.BaseTest ):
         self.dut.playlist.SeekIndex( 0 )
         self.playing.wait( 3 )
         time.sleep( 5 )
-        
         self.buffering.clear()
         self.audioSrv.CloseConnection()
         self.buffering.wait( 60 )

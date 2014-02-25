@@ -52,7 +52,6 @@ class TestVolumeControl( BASE.BaseTest ):
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.dut:
-            self.dut.volume.RemoveSubscriber( self._VolEventCb )
             self.dut.Shutdown()
         if self.soft:
             self.soft.Shutdown()

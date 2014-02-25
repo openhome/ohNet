@@ -287,14 +287,14 @@ class TestAvTransportService( BASE.BaseTest ):
                             self.log.FailIf( self.mrDev, self.prevSv[sv] != self.currSv[sv],
                                 '%s: %s changed from %s to %s' %
                                 (prefix, sv, self.prevSv[sv], self.currSv[sv]) )
+        # stop playback            
+        self.avt.Stop()
 
     def Cleanup( self ):
         "Perform post-test cleanup" 
         if self.upnpMr:          
-            self.avt.Stop()
             self.upnpMr.Shutdown()
         if self.volkano:
-            self.volkano.config.Set( 'Device', 'Handset Commands Accepted', 'None' )
             self.volkano.Shutdown()
         if self.server:
             self.server.Shutdown()
