@@ -87,7 +87,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShellDebug = new ShellCommandDebug(*iShell);
 
     //iProduct->SetCurrentSource(0);
-    iConfigRamStore->Print();
 }
 
 TestMediaPlayer::~TestMediaPlayer()
@@ -130,6 +129,8 @@ void TestMediaPlayer::Run()
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
     iMediaPlayer->Start();
+
+    iConfigRamStore->Print();
 
     Log::Print("\nFull (software) media player\n");
     Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
