@@ -453,11 +453,13 @@ class TestPlaylistHandling( BASE.BaseTest ):
             config.Setup()
             config.InvokeStimulus()
             config.CheckOutcome()
+            
+        # stop playback            
+        self.dut.playlist.Stop() 
 
     def Cleanup( self ):
         "Perform post-test cleanup" 
         if self.dut:
-            self.dut.playlist.Stop() 
             self.dut.Shutdown()
         if self.server:
             self.server.Shutdown()

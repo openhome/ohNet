@@ -201,33 +201,23 @@ class TestSongcastConnect( BASE.BaseTest ):
                 self.__TestScenario4()
             if '5' in scenario or 'all' in scenario:
                 self.__TestScenario5()
+
+        # stop playback            
+        self.dut4.playlist.Stop()
+        self.dut3.playlist.Stop()
+        self.dut2.playlist.Stop()
+        self.dut1.playlist.Stop()
                     
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.dut4:
-            try:
-                self.dut4.playlist.Stop()
-                self.dut4.Shutdown()
-            except:
-                self.log.Fail( self.dut4Dev, 'Problem shutting down' )
+            self.dut4.Shutdown()
         if self.dut3:
-            try:
-                self.dut3.playlist.Stop()
-                self.dut3.Shutdown()
-            except:
-                self.log.Fail( self.dut3Dev, 'Problem shutting down' )
+            self.dut3.Shutdown()
         if self.dut2:
-            try:
-                self.dut2.playlist.Stop()
-                self.dut2.Shutdown()
-            except:
-                self.log.Fail( self.dut3Dev, 'Problem shutting down' )
+            self.dut2.Shutdown()
         if self.dut1:
-            try:
-                self.dut1.playlist.Stop()
-                self.dut1.Shutdown()
-            except:
-                self.log.Fail( self.dut1Dev, 'Problem shutting down' )
+            self.dut1.Shutdown()
         if self.soft4:
             self.soft4.Shutdown()
         if self.soft3:

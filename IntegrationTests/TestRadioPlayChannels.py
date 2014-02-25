@@ -174,19 +174,18 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             if not self.isStopped.isSet():
                 self.log.Fail( self.senderDev, 'Playback failed to STOP' )
 
-            
     def Cleanup( self ):
         "Perform post-test cleanup" 
         self.log.Info( '', 'Cleaning Up' )
-        if self.playTimer:  self.playTimer.cancel()
-        if self.stateTimer: self.stateTimer.cancel()
-        if self.checkTimer: self.checkTimer.cancel()
+        if self.playTimer:
+            self.playTimer.cancel()
+        if self.stateTimer:
+            self.stateTimer.cancel()
+        if self.checkTimer:
+            self.checkTimer.cancel()
         if self.sender:
-            self.sender.radio.RemoveSubscriber( self._radioEventCb )
-            self.sender.info.RemoveSubscriber( self._infoEventCb )
             self.sender.Shutdown()
         if self.receiver:
-            self.receiver.receiver.RemoveSubscriber( self._receiverEventCb )
             self.receiver.Shutdown()
         if self.soft2:
             self.soft2.Shutdown()

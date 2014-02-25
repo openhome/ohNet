@@ -74,7 +74,6 @@ class TestRenderingControlService( BASE.BaseTest ):
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.mr:
-            self.rc.RemoveSubscriber( self._RcEventCb )
             self.mr.Shutdown()
         if self.soft:
             self.soft.Shutdown()

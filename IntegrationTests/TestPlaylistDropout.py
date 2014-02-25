@@ -152,19 +152,10 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.durationDone.wait()
         else:
             self.log.Fail( self.senderDev, 'Playback failed to start' )
-        
-        # Remove transport state monitor
-        self.sender.playlist.RemoveSubscriber( self._SenderPlaylistMonitor )
-        if self.receiver:
-            self.receiver.receiver.RemoveSubscriber( self._ReceiverReceiverMonitor )
-        if self.slave:
-            self.slave.receiver.RemoveSubscriber( self._SlaveReceiverMonitor )
 
     def Cleanup( self ):
         "Perform cleanup on test exit"
         if self.sender:    
-            self.sender.playlist.Stop()                 
-            self.sender.playlist.RemoveSubscriber( self._SenderPlaylistCb )
             self.sender.Shutdown()
         if self.receiver:
             self.receiver.Shutdown()

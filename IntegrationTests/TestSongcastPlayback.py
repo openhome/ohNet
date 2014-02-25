@@ -361,6 +361,11 @@ class TestSongcastPlayback( BASE.BaseTest ):
             config.CheckSenders( duts )
             config.CheckReceivers( duts )
 
+        # stop playback            
+        self.dut3.playlist.Stop()
+        self.dut2.playlist.Stop()
+        self.dut1.playlist.Stop()
+
     def Cleanup( self ):
         "Perform cleanup on test exit"
         self.log.Info( '' )
@@ -368,13 +373,10 @@ class TestSongcastPlayback( BASE.BaseTest ):
         self.log.Info( '', 'Shutting Down' )
         self.log.Info( '' )
         if self.dut3:
-            self.dut3.playlist.Stop()
             self.dut3.Shutdown()
         if self.dut2: 
-            self.dut2.playlist.Stop()
             self.dut2.Shutdown()
         if self.dut1: 
-            self.dut1.playlist.Stop()
             self.dut1.Shutdown()
         if self.soft3:
             self.soft3.Shutdown()
