@@ -23,7 +23,7 @@ namespace Av {
 class UriProviderPlaylist : public Media::UriProvider, private ITrackDatabaseObserver, private Media::IPipelineObserver, private Media::ITrackObserver
 {
 public:
-    UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Media::PipelineManager& aPipeline);
+    UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Media::PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver);
     ~UriProviderPlaylist();
 private: // from UriProvider
     void Begin(TUint aTrackId);
@@ -59,6 +59,7 @@ private:
     mutable Mutex iLock;
     ITrackDatabaseReader& iDatabase;
     Media::IPipelineIdManager& iIdManager;
+    ITrackDatabaseObserver& iObserver;
     Media::Track* iPending;
     Media::EStreamPlay iPendingCanPlay;
     EPendingDirection iPendingDirection;

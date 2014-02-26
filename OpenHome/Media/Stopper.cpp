@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 
 using namespace OpenHome;

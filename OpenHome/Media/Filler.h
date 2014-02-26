@@ -24,8 +24,8 @@ public:
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
     virtual TUint CurrentTrackId() const = 0; // Id of last delivered track.  Or of pending track requested via Begin or Move[After|Before]
-    virtual TBool MoveNext() = 0;
-    virtual TBool MovePrevious() = 0;
+    virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
+    virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
     UriProvider(const TChar* aMode);
 private:
