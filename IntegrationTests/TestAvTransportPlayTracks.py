@@ -4,7 +4,7 @@
 Parameters:
     arg#1 - AVT Renderer/Sender ['local' for internal SoftPlayer]
     arg#2 - Receiver ['local' for internal SoftPlayer] - optional (None = not present)
-    arg#3 - UPnP MediaServer / Web Server to source media
+    arg#3 - UPnP MediaServer
     arg#4 - Playlist name
     arg#5 - Time to play before skipping to next (None = play all)
     arg#6 - Test loops (optional - default 1)    
@@ -61,6 +61,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.expectedPlayTime = 0
         self.avtState         = None
         self.avtUri           = None
+        self.testLoop         = 0
         self.testLoops        = 1
         self.noRelTime        = 0
         self.stuckRelTime     = 0
@@ -129,6 +130,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.avt.SetUri( '', '' )
         time.sleep( 5 )
         self.avtState = self.avt.transportState
+        
         for self.testLoop in range( self.testLoops ):
             self.eop.clear()        
             # subscribe to AVT renderer events
@@ -146,8 +148,6 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             self.currentPlayTime  = 0
             self.trackPlayTime    = 0
             self.expectedPlayTime = 0
-            self.avtState         = None
-            self.avtUri           = None
             if self.abortMsg:
                 self.log.Abort( self.senderDev, self.abortMsg )
                 
@@ -180,6 +180,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if self.currentTrackDuration:
             self.trackDuration.set()
             
+                    
         if evAvtUri != self.avtUri:
             self.newUri.set()
                 
@@ -193,13 +194,15 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                                         
     def _PlayTimerCb( self ):
         "Callback from playtime timer - skips to next track"
+        if self.tickTimer:
+            self.tickTimer.cancel()
+            self.tickTimer = None
         self.mutex.acquire()
         self.avt.Stop()
         self.mutex.release()
-        time.sleep(10)
         
     def _StartNextTrack( self ):
-        "Start playback of next track - call on a seperate thread"        
+        "Start playback of next track - call on a seperate thread"
         self.trackIndex += 1
         if self.trackIndex >= self.numTracks:
             self.eop.set()
