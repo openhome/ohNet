@@ -116,7 +116,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.time.AddSubscriber( self._SenderTimeCb )
         self.sender.info.AddSubscriber( self._SenderInfoCb )
                 
-        # Put sender onto random source before starting playback (catch #2968) 
+        # Put sender onto random source before starting playback (catch Volkano #2968, Network #894) 
         self.sender.product.sourceIndex = random.randint( 0, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
@@ -137,19 +137,22 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.playlist.repeat = self.repeat
         self.sender.playlist.shuffle = self.shuffle
         self.sender.playlist.AddPlaylist( self.tracks )
+        time.sleep( 2 )
         
         # check the playlist ReadList operation
         self._CheckReadList()
             
         # start playback
-        self.senderPlaying.clear()
+        self.log.Info( self.senderDev, 'Starting on source %s' % self.sender.product.sourceIndex )
         self.sender.playlist.SeekIndex( 0 )
-        self.sender.playlist.Play()
         self.playActioned = True
-        
-        # wait until playback stopped
-        self.senderStopped.clear()        
-        self.senderStopped.wait()
+        self.senderPlaying.wait( 10 )
+        if not self.senderPlaying.is_set():
+            self.log.Fail( self.senderDev, 'Playback never started' )
+        else:
+            # wait until playback stopped
+            self.senderStopped.clear()        
+            self.senderStopped.wait()
                 
     def Cleanup( self ):
         "Perform post-test cleanup" 
