@@ -85,6 +85,11 @@ MediaPlayer::~MediaPlayer()
     delete iInfoLogger;
 }
 
+void MediaPlayer::Quit()
+{
+    iPipeline->Quit();
+}
+
 void MediaPlayer::Add(Codec::CodecBase* aCodec)
 {
     iPipeline->Add(aCodec);

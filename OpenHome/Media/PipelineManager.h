@@ -29,6 +29,7 @@ class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManag
 public:
     PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes); // FIXME - config options
     ~PipelineManager();
+    void Quit();
     void Add(Codec::CodecBase* aCodec);
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aContentProcessor);
@@ -44,8 +45,8 @@ public:
     void StopPrefetch(const Brx& aMode, TUint aTrackId);
     void RemoveAll();
     TBool Seek(TUint aPipelineTrackId, TUint aStreamId, TUint aSecondsAbsolute);
-    void Next();
-    void Prev();
+    TBool Next(); // returns true if a new track should be immediately played
+    TBool Prev(); // returns true if a new track should be immediately played
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
 private: // from IPipelineElementUpstream

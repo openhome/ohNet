@@ -59,6 +59,7 @@ public:
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
+    void Quit();
     MsgFactory& Factory();
     void Play();
     void Pause();
@@ -84,7 +85,6 @@ private: // from IStopper
     void RemoveStream(TUint aTrackId, TUint aStreamId);
 private:
     void DoPlay(TBool aQuit);
-    void Quit();
     void NotifyStatus();
 private: // from IStopperObserver
     void PipelinePaused();

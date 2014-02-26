@@ -75,7 +75,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
     DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, *dvStack, udn, optionChannel.Value());
     tmp->Run();
-    tmp->DestroyPipeline();
+    tmp->StopPipeline();
     delete driver;
     delete tmp;
     

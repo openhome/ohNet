@@ -23,6 +23,17 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
 
 PipelineManager::~PipelineManager()
 {
+    delete iPipeline;
+    delete iProtocolManager;
+    delete iFiller;
+    delete iIdManager;
+    for (TUint i=0; i<iUriProviders.size(); i++) {
+        delete iUriProviders[i];
+    }
+}
+
+void PipelineManager::Quit()
+{
     TUint haltId = MsgHalt::kIdInvalid;
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
@@ -39,14 +50,7 @@ PipelineManager::~PipelineManager()
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
     }
-
-    delete iPipeline;
-    delete iProtocolManager;
-    delete iFiller;
-    delete iIdManager;
-    for (TUint i=0; i<iUriProviders.size(); i++) {
-        delete iUriProviders[i];
-    }
+    iPipeline->Quit();
 }
 
 void PipelineManager::Add(Codec::CodecBase* aCodec)
@@ -151,26 +155,26 @@ TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
     return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
-void PipelineManager::Next()
+TBool PipelineManager::Next()
 {
     if (iMode.Bytes() == 0) {
-        return; // nothing playing or ready to be played so nothing we can advance relative to
+        return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
     iFiller->Stop();
     // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
     // can always revert to an equivalent implementation to Prev() if this proves incorrect
     iIdManager->InvalidateAt(iTrackId);
-    iFiller->Next(iMode);
+    return iFiller->Next(iMode);
 }
 
-void PipelineManager::Prev()
+TBool PipelineManager::Prev()
 {
     if (iMode.Bytes() == 0) {
-        return; // nothing playing or ready to be played so nothing we can advance relative to
+        return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
     iFiller->Stop();
     iIdManager->InvalidateAll();
-    iFiller->Prev(iMode);
+    return iFiller->Prev(iMode);
 }
 
 TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
