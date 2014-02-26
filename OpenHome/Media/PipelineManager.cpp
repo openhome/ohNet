@@ -23,6 +23,17 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDr
 
 PipelineManager::~PipelineManager()
 {
+    delete iPipeline;
+    delete iProtocolManager;
+    delete iFiller;
+    delete iIdManager;
+    for (TUint i=0; i<iUriProviders.size(); i++) {
+        delete iUriProviders[i];
+    }
+}
+
+void PipelineManager::Quit()
+{
     TUint haltId = MsgHalt::kIdInvalid;
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
@@ -39,14 +50,7 @@ PipelineManager::~PipelineManager()
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
     }
-
-    delete iPipeline;
-    delete iProtocolManager;
-    delete iFiller;
-    delete iIdManager;
-    for (TUint i=0; i<iUriProviders.size(); i++) {
-        delete iUriProviders[i];
-    }
+    iPipeline->Quit();
 }
 
 void PipelineManager::Add(Codec::CodecBase* aCodec)

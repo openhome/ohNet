@@ -29,6 +29,7 @@ class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManag
 public:
     PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes); // FIXME - config options
     ~PipelineManager();
+    void Quit();
     void Add(Codec::CodecBase* aCodec);
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aContentProcessor);
