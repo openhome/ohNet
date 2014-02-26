@@ -165,8 +165,9 @@ void SourcePlaylist::Stop()
     if (IsActive()) {
         iLock.Wait();
         iTransportState = Media::EPipelineStopped;
+        const TUint trackId = iTrackId;
         iLock.Signal();
-        iPipeline.Stop();
+        iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
     }
 }
 
