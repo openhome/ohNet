@@ -117,7 +117,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.info.AddSubscriber( self._SenderInfoCb )
                 
         # Put sender onto random source before starting playback (catch Volkano #2968, Network #894) 
-        self.sender.product.sourceIndex = random.randint( 0, self.sender.product.sourceCount-1 )
+        self.sender.product.sourceIndex = 0######random.randint( 0, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
         # create Receiver Device, put onto random source and connect to sender
@@ -226,27 +226,31 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 
             if self.senderStarted.isSet():
                 dsTrack = self.sender.playlist.TrackInfo( aId )
-                (uri,self.meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
-                if dsTrack['Uri'] != uri:
-                    self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
-                                    % (dsTrack['aUri'], uri) )
-                else:
-                    self.log.Pass( self.senderDev, 'Sender URI as expected' )
-                
-                if os.name == 'posix':
-                    # clean up 'screwed up' unicode escaping in Linux
-                    dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
-                    self.meta = self.meta.replace( '\\', '' )
-                if dsTrack['Metadata'] != self.meta:
-                    self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
-                                    % (dsTrack['Metadata'], self.meta) )
-                else:
-                    self.log.Pass( self.senderDev, 'Sender metadata as expected' )
+                if dsTrack:
+                    (uri,self.meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
+                    if dsTrack['Uri'] != uri:
+                        self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
+                                        % (dsTrack['aUri'], uri) )
+                    else:
+                        self.log.Pass( self.senderDev, 'Sender URI as expected' )
                     
-                self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
-                    'Sender Audio flag is %s' % self.sender.sender.audio )
-                self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
-                    'Sender Status is %s' % self.sender.sender.status )                         
+                    if os.name == 'posix':
+                        # clean up 'screwed up' unicode escaping in Linux
+                        dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
+                        self.meta = self.meta.replace( '\\', '' )
+                    if dsTrack['Metadata'] != self.meta:
+                        self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
+                                        % (dsTrack['Metadata'], self.meta) )
+                    else:
+                        self.log.Pass( self.senderDev, 'Sender metadata as expected' )
+                        
+                    self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
+                        'Sender Audio flag is %s' % self.sender.sender.audio )
+                    self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
+                        'Sender Status is %s' % self.sender.sender.status )
+                else:                         
+                    self.log.Fail( self.senderDev, 'No track data returned' )
+                    self.senderStopped.set()     # force test exit
                     
             if not self.senderStopped.isSet():
                 self.numTrack += 1
