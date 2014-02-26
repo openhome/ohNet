@@ -81,6 +81,7 @@ void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager
             + kMaxSystemNameBytes + suffix.Bytes();
     iProduct = &aProduct;
     Bwh key(maxKeyBytes);
+    key.Replace(aConfigIdPrefix);
     key.Append(prefix);
     key.Append(iSystemName);
     key.Append(suffix);
