@@ -47,7 +47,7 @@ class TestMediaPlayer : private Net::IResourceManager
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName);
     virtual ~TestMediaPlayer();
-    void DestroyPipeline();
+    void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     void Run();
     Media::PipelineManager& Pipeline();
