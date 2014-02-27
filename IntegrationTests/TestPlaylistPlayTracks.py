@@ -53,7 +53,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
-        self.numTrack         = 0
+        self.numTrack         = 1
         self.startTime        = 0
         self.playTime         = None
         self.senderPlayTime   = 0
@@ -144,9 +144,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             
         # start playback
         self.log.Info( self.senderDev, 'Starting on source %s' % self.sender.product.sourceIndex )
-        self.sender.playlist.SeekIndex( 0 )
+        self.sender.playlist.Play()
         self.playActioned = True
         self.senderPlaying.wait( 10 )
+        self._CheckTrackInfo( self.sender.playlist.id )
         if not self.senderPlaying.is_set():
             self.log.Fail( self.senderDev, 'Playback never started' )
         else:
@@ -223,6 +224,18 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                         self.log.Fail( self.senderDev, 'FAILED to play track %s' % title )
                     else:
                         self.log.Fail( self.senderDev, 'FAILED to play track' )
+            self._CheckTrackInfo( aId )
+
+    def _CheckTrackInfo( self, aId ): 
+        "Update 'now playing' log and check reported track info" 
+        if self.playActioned:               
+            plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
+            self.log.Info( '' )
+            self.log.Info( '', '----------------------------------------' )
+            self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+            self.log.Info( '', '----------------------------------------' )
+            self.log.Info( '' )
                 
             if self.senderStarted.isSet():
                 dsTrack = self.sender.playlist.TrackInfo( aId )
@@ -254,7 +267,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                     
             if not self.senderStopped.isSet():
                 self.numTrack += 1
-                if self.repeat=='off' and self.numTrack>len( self.tracks ): 
+                if self.repeat=='off' and self.numTrack>len( self.tracks )+1: 
                     self.senderStopped.wait( 3 )
                     if not self.senderStopped.isSet():
                         self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
@@ -296,13 +309,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 
     def _SetupPlayTimer( self ):
         "Setup timer to callback after specified play time"
-        plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
-        self.log.Info( '' )
-        self.log.Info( '', '----------------------------------------' )
-        self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
-            (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-        self.log.Info( '', '----------------------------------------' )
-        self.log.Info( '' )
         self.senderStarted.wait()
         self.senderPlaying.wait()
         self.startTime = time.time()
