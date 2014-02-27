@@ -11,7 +11,7 @@ System requirements:
 - others (binary)
 
 Before building, clone ohdevtools (git@github.com:openhome/ohdevtools.git) then run
-'go fetch'.
+'go fetch [--debug]'.
 
 If you want to debug into ohNet classes, clone ohNet (https://github.com/openhome/ohNet)
 and build it as described in its README.
@@ -23,7 +23,7 @@ To build ohMediaPlayer:
 
 where:
 --dest-platform is one of Windows-x86, Linux-x86, Linux-ppc32, Core-ppc32, Core-armv6
---ohnet points to either your ohNet source directory or the fetched binaries
+--ohnet is optional and points to either your ohNet source directory or the fetched binaries
         (under your ohMediaPlayer/dependencies directory)
 --debug is optional and only required for debug builds.
         The default build is ndebug (aka release)
