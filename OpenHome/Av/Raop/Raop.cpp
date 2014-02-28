@@ -326,7 +326,9 @@ void RaopDiscoverySession::Run()
                 KeepAlive();
 
                 const Brx& method = iReaderRequest->Method();
-                LOG(kMedia, "RaopDiscoverySession::Run - Read Method "); LOG(kMedia, method); LOG(kMedia, ", instance %d\n", iInstance);
+                LOG(kMedia, "RaopDiscoverySession::Run - Read Method ");
+                LOG(kMedia, method);
+                LOG(kMedia, ", instance %d\n", iInstance);
                 if(method == RtspMethod::kPost) {
                     Brn data(iReaderBuffer->Read(iHeaderContentLength.ContentLength()));
 
@@ -471,7 +473,6 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
-                    iDiscovery.NotifyStreamStart(iClientControlPort, iClientTimingPort); // restart
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -480,7 +481,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
                     Deactivate();
                     LOG(kMedia, "RaopDiscoverySession::Run - kTeardown\n");
-                    return;
+                    break;
                 }
             }
             catch (HttpError) {
@@ -502,7 +503,6 @@ void RaopDiscoverySession::Run()
 void RaopDiscoverySession::Close()
 {
     LOG(kMedia, "RaopDiscoverySession::Close iActive = %d, instance %d\n", iActive, iInstance);
-
     // set timeout and deactivate on expiry
     KeepAlive();
 }
@@ -517,7 +517,7 @@ void RaopDiscoverySession::SetListeningPorts(TUint aAudio, TUint aControl, TUint
 void RaopDiscoverySession::KeepAlive()
 {
     if(iActive) {
-        iDeactivateTimer->FireIn(10000);  // 10s timeout - deactivate of no data received
+        iDeactivateTimer->FireIn(10000);  // 10s timeout - deactivate if no data received
     }
 }
 
@@ -738,6 +738,7 @@ void RaopDiscovery::Deactivate()
 {
     LOG(kMedia, "RaopDiscovery::Deactivate\n");
 
+    // deactivate RAOP source
     iRaopDiscoverySession1->Deactivate();
     iRaopDiscoverySession2->Deactivate();
 }
