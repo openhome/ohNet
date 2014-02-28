@@ -54,10 +54,6 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.currVolume = self.rc.volume
         self.currVolumeDb = self.rc.volumeDb
 
-        # get unit out-of-standby and let startup volume kick-in
-        self.rc.mute = False
-        time.sleep( 5 )
-
         # test volume control / monitoring
         targetVol = random.randint( 1, kMaxVol-1 )
         self.VolStepping( kMaxVol )
