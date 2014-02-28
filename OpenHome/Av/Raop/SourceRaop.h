@@ -25,8 +25,8 @@ namespace Av {
 class IRaopObserver
 {
 public:
-    //virtual ~IObserverRaop() {}
     virtual void NotifyStreamStart(TUint aControlPort, TUint aTimingPort) = 0;
+    virtual ~IRaopObserver() {}
 };
 
 class SourceRaop : public Source, public IRaopObserver, private Media::IPipelineObserver
