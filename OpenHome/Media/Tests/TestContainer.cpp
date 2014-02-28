@@ -708,7 +708,7 @@ void SuiteContainerBase::TestEndOfStreamQuit()
         PullAndProcess();
     }
 
-    // OkToPlay/TrySeek/TryStop should all fail after a MsgQuit has been pulled
+    // OkToPlay/TrySeek should fail after a MsgQuit has been pulled; TryStop should work as before
     EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iTrackId, iStreamId);
     TEST(iOkToPlayRes == ePlayNo);
     TEST(iProvider->OkToPlayCount() == 0);
@@ -716,8 +716,8 @@ void SuiteContainerBase::TestEndOfStreamQuit()
     TEST(iSeekRes == MsgFlush::kIdInvalid);
     TEST(iProvider->SeekCount() == 0);
     TUint iStopRes = iContainer->TryStop(iTrackId, iStreamId);
-    TEST(iStopRes == MsgFlush::kIdInvalid);
-    TEST(iProvider->StopCount() == 0);
+    TEST(iStopRes != MsgFlush::kIdInvalid);
+    TEST(iProvider->StopCount() == 1);
 }
 
 void SuiteContainerBase::TestNewStream()
