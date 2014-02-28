@@ -105,26 +105,26 @@ void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/
     if (!IsActive()) {
         DoActivate();
     }
-    if (iTrack == NULL) {
-        iPipeline.RemoveAll();
-        if (iTrack != NULL) {
-            iTrack->RemoveRef();
-        }
-        //const TUint maxPortBytes = 5;
-        //const TUint portCount = 2;
-        //Bwh track(kRaopPrefix.Bytes() + portCount*maxPortBytes + portCount-1); // raop://xxxxx.yyyyy.zzzzz
-        //track.Append(kRaopPrefix);
-        //Ascii::AppendDec(track, aControlPort);
-        //track.Append('.');
-        //Ascii::AppendDec(track, aTimingPort);
-        ////Log::Print("track: ");
-        ////Log::Print(track);
-        ////Log::Print("\n");
-        //iTrack = iUriProvider.SetTrack(track, Brn(""), true);
 
-        iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""), true);
-        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+    iPipeline.RemoveAll();
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
     }
+    //const TUint maxPortBytes = 5;
+    //const TUint portCount = 2;
+    //Bwh track(kRaopPrefix.Bytes() + portCount*maxPortBytes + portCount-1); // raop://xxxxx.yyyyy.zzzzz
+    //track.Append(kRaopPrefix);
+    //Ascii::AppendDec(track, aControlPort);
+    //track.Append('.');
+    //Ascii::AppendDec(track, aTimingPort);
+    ////Log::Print("track: ");
+    ////Log::Print(track);
+    ////Log::Print("\n");
+    //iTrack = iUriProvider.SetTrack(track, Brn(""), true);
+
+    iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""), true);
+    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
