@@ -3,6 +3,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Media/IdManager.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

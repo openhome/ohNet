@@ -2,6 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Media/Protocol/Protocol.h>

@@ -16,7 +16,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iRampDuration(aRampDuration)
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iTrackId(UINT_MAX)
-    , iStreamId(UINT_MAX)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
     , iQuit(false)
 {
@@ -154,6 +154,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
     iTrackId = aMsg->IdPipeline();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
 
@@ -225,6 +226,9 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
+    if (iStreamHandler != NULL) {
+        iStreamHandler->TryStop(iTrackId, iStreamId);
+    }
     return aMsg;
 }
 
