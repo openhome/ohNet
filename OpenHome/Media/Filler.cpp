@@ -29,7 +29,7 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
+Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory)
     : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
@@ -42,6 +42,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
     , iQuit(false)
     , iNextHaltId(MsgHalt::kIdNone + 1)
 {
+    iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
 }
 
 Filler::~Filler()
@@ -51,6 +52,7 @@ Filler::~Filler()
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
+    iNullTrack->RemoveRef();
 }
 
 void Filler::Add(UriProvider& aUriProvider)
@@ -181,10 +183,15 @@ void Filler::Run()
         iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
         mode.Replace(iActiveUriProvider->Mode());
         if (iTrackPlayStatus == ePlayNo) {
-            iSupply.OutputHalt(iStopped? iNextHaltId : MsgHalt::kIdNone);
+
+            iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
+            iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
+            if (iStopped) {
+                iSupply.OutputHalt(iNextHaltId);
+            }
             iSendHalt = false;
-            iLock.Signal();
             iStopped = true;
+            iLock.Signal();
         }
         else {
             iLock.Signal();
@@ -231,4 +238,28 @@ void Filler::OutputQuit()
     iQuit = true;
     iSupply.OutputQuit();
     Signal();
+}
+
+
+// Filler::NullTrackStreamHandler
+
+EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint aTrackId, TUint aStreamId)
+{
+    ASSERT(aTrackId == kNullTrackId);
+    ASSERT(aStreamId == kNullTrackStreamId);
+    return ePlayLater;
+}
+
+TUint Filler::NullTrackStreamHandler::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 /*aOffset*/)
+{
+    ASSERT(aTrackId == kNullTrackId);
+    ASSERT(aStreamId == kNullTrackStreamId);
+    return MsgFlush::kIdInvalid;
+}
+
+TUint Filler::NullTrackStreamHandler::TryStop(TUint aTrackId, TUint aStreamId)
+{
+    ASSERT(aTrackId == kNullTrackId);
+    ASSERT(aStreamId == kNullTrackStreamId);
+    return MsgFlush::kIdInvalid;
 }

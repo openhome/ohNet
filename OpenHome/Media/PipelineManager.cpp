@@ -10,14 +10,14 @@ using namespace OpenHome::Media;
 
 // PipelineManager
 
-PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes)
+PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, TUint aDriverMaxAudioBytes)
     : iLock("PLMG")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLMG", 1)
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager);
+    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory);
     iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
