@@ -31,6 +31,23 @@ uint32_t ProxyError::Code() const
     return iCode;
 }
 
+ProxyError::ProxyError(const ProxyError& aProxyError)
+    : Exception(aProxyError)
+{
+    iLevel = aProxyError.Level();
+    iCode = aProxyError.Code();
+}
+
+ProxyError& ProxyError::operator=(const ProxyError& aProxyError)
+{
+    if (this != &aProxyError) {
+        Exception::operator=(aProxyError);
+        iLevel = aProxyError.Level();
+        iCode = aProxyError.Code();
+    }
+    return *this;
+}
+
 
 // CpProxy
 

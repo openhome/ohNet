@@ -162,6 +162,7 @@ Exception& Exception::operator= (const Exception& aException)
         iMsg = aException.iMsg;
         iFile = aException.iFile;
         iLine = aException.iLine;
+        Os::StackTraceFinalise(iStackTrace);
         iStackTrace = Os::StackTraceCopy(aException.iStackTrace);
     }
     return *this;

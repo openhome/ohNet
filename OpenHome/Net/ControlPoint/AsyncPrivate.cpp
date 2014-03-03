@@ -39,7 +39,7 @@ void SyncProxyAction::Completed(IAsync& aAsync)
     catch(ProxyError& aProxyError) {
         iError = aProxyError;
         iSem.Signal();
-        throw(aProxyError);
+        throw;
     }
     iSem.Signal();
 }

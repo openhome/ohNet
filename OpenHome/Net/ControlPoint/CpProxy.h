@@ -42,6 +42,8 @@ public:
     DllExport ProxyError(const TChar* aFile, TUint aLine, uint32_t aLevel, uint32_t aCode);
     TUint Level() const;
     DllExport uint32_t Code() const;
+    DllExport ProxyError(const ProxyError& aProxyError);
+    DllExport ProxyError& operator=(const ProxyError&);
 private:
     TUint iLevel;
     TUint iCode;
