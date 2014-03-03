@@ -271,7 +271,6 @@ void SourcePlaylist::NotifyTrackDeleted(TUint aId, Media::Track* /*aBefore*/, Me
 
 void SourcePlaylist::NotifyAllDeleted()
 {
-    // FIXME - have Reporter clear its current track
 }
 
 void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
