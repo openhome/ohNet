@@ -592,7 +592,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // need integer arithmetic, but cannot ignore potentially 5% error (e.g. 44100Hz sample rate with 13Hz pitch)
     const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.Pitch()) % params.SampleRate();
 
+    iLock.Wait();
     iStreamId = iIdProvider->NextStreamId();
+    iLock.Signal();
     iSupply->OutputStream(aUri, iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, iStreamId);
 
     TUint x = 0;
@@ -601,8 +603,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         iLock.Wait();
         if (iStop) {
             iAudioBuf.SetBytes(0); // discard any pending audio (avoiding another test of iStop beneath this loop)
-            iLock.Signal();
             iSupply->OutputFlush(iNextFlushId);
+            iStop = false;
+            iLock.Signal();
             break;
         }
         iLock.Signal();
@@ -658,6 +661,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
 #endif  // DEFINE_DEBUG_JOHNH
     iSupply->OutputData(iAudioBuf);
+
+    iLock.Wait();
+    if (iStop) {
+        iSupply->OutputFlush(iNextFlushId);
+        iStop = false;
+    }
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iLock.Signal();
 
     return EProtocolStreamSuccess;
 }
