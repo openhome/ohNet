@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/UdpServer.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 
 namespace OpenHome {
     class Environment;
@@ -34,7 +35,7 @@ class SourceRaop : public Source, public IRaopObserver, private Media::IPipeline
 private:
     static const Brn kRaopPrefix;
 public:
-    SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, Configuration::IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
     ~SourceRaop();
     Media::IRaopDiscovery& Discovery();
 private: // from ISource
@@ -49,16 +50,28 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
+    void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
+    void ActivateIfInactive();
+    void DeactivateIfActive();
+private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
     static const TUint kPortAudio = 60400;
     static const TUint kPortControl = 60401;
     static const TUint kPortTiming = 60402;
+    static const TUint kAutoNetAuxOn;
+    static const TUint kAutoNetAuxOffVisible;
+    static const TUint kAutoNetAuxOffNotVisible;
+    static const Brn kKeyNetAux;
     Mutex iLock;
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
     Media::RaopDiscovery* iRaopDiscovery;
     Media::UdpServerManager iServerManager;
+    Configuration::ConfigChoice* iConfigNetAux;
+    TUint iConfigSubId;
+    TUint iAutoNetAux;
+    TBool iAutoSwitch;
     Media::Track* iTrack;
     TUint iTrackPosSeconds;
     TUint iPipelineTrackId;

@@ -137,8 +137,6 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDi
     iWriterRequest = new WriterRtspRequest(*iWriterBuffer);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
-    iRaopDevice.Register();
-
     iReaderRequest->AddHeader(iHeaderContentLength);
     iReaderRequest->AddHeader(iHeaderContentType);
     iReaderRequest->AddHeader(iHeaderCSeq);
@@ -677,6 +675,8 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : iRaopObserver(aObserver)
 {
+    // NOTE: iRaopDevice is not registered by default
+
     AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
     const NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
@@ -741,6 +741,17 @@ void RaopDiscovery::Deactivate()
     // deactivate RAOP source
     iRaopDiscoverySession1->Deactivate();
     iRaopDiscoverySession2->Deactivate();
+}
+
+void RaopDiscovery::Enable()
+{
+    iRaopDevice->Register();
+}
+
+void RaopDiscovery::Disable()
+{
+    iRaopDevice->Deregister();
+    Deactivate();
 }
 
 void RaopDiscovery::KeepAlive()

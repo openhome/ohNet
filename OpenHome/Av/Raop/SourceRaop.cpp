@@ -14,6 +14,7 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
 
@@ -23,20 +24,26 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostNa
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr);
+    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aMediaPlayer.ConfigManagerWriter(), aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr);
 }
 
 
 // SourceRaop
 
 const Brn SourceRaop::kRaopPrefix("raop://");
+const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
+const TUint SourceRaop::kAutoNetAuxOn = 0;              // Always visible via Airplay; auto switch when stream starts
+const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // Always visible via Airplay; don't auto switch
+const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airplay when Net Aux source selected
 
-SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : Source("Net Aux", "Net Aux")
     , iLock("SRAO")
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
     , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
+    , iAutoNetAux(kAutoNetAuxOn)
+    , iAutoSwitch(true)
     , iTrack(NULL)
     , iTrackPosSeconds(0)
     , iPipelineTrackId(UINT_MAX)
@@ -54,6 +61,13 @@ SourceRaop::SourceRaop(Environment& aEnv, Net::DvStack& aDvStack, Media::Pipelin
     SocketUdpServer& controlServer = iServerManager.Find(iControlId);
     SocketUdpServer& timingServer = iServerManager.Find(iTimingId);
     iRaopDiscovery->SetListeningPorts(audioServer.Port(), controlServer.Port(), timingServer.Port());
+
+    std::vector<TUint> choices;
+    choices.push_back(kAutoNetAuxOn);
+    choices.push_back(kAutoNetAuxOffVisible);
+    choices.push_back(kAutoNetAuxOffNotVisible);
+    iConfigNetAux = new ConfigChoice(aConfigWriter, kKeyNetAux, choices, iAutoNetAux);
+    iConfigSubId = iConfigNetAux->Subscribe(MakeFunctorConfigChoice(*this, &SourceRaop::AutoNetAuxChanged));
 }
 
 SourceRaop::~SourceRaop()
@@ -71,9 +85,13 @@ IRaopDiscovery& SourceRaop::Discovery()
 
 void SourceRaop::Activate()
 {
+    AutoMutex a(iLock);
     iServerManager.OpenAll();
     iTrackPosSeconds = 0;
     iActive = true;
+    if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
+        iRaopDiscovery->Enable();
+    }
 }
 
 void SourceRaop::Deactivate()
@@ -83,6 +101,11 @@ void SourceRaop::Deactivate()
     if (iTrack != NULL) {
         iTrack->RemoveRef();
         iTrack = NULL;
+    }
+    if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
+        // Disable RAOP visibility if config val was updated while Net Aux was
+        // selected source.
+        iRaopDiscovery->Disable();
     }
     iLock.Signal();
     iServerManager.CloseAll();
@@ -166,4 +189,39 @@ void SourceRaop::NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo)
     iLock.Wait();
     iStreamId = aStreamInfo.StreamId();
     iLock.Signal();
+}
+
+void SourceRaop::AutoNetAuxChanged(ConfigChoice::KvpChoice& aKvp)
+{
+    AutoMutex a(iLock);
+    iAutoNetAux = aKvp.Value();
+
+    switch (iAutoNetAux) {
+    case kAutoNetAuxOn:
+        ActivateIfInactive();
+        iAutoSwitch = true;
+        break;
+    case kAutoNetAuxOffVisible:
+        ActivateIfInactive();
+        iAutoSwitch = false;
+        break;
+    case kAutoNetAuxOffNotVisible:
+        DeactivateIfActive();
+        iAutoSwitch = false;
+        break;
+    default:
+        ASSERTS();
+    }
+}
+
+void SourceRaop::ActivateIfInactive()
+{
+    iRaopDiscovery->Enable();
+}
+
+void SourceRaop::DeactivateIfActive()
+{
+    if (!iActive) {
+        iRaopDiscovery->Disable();
+    }
 }

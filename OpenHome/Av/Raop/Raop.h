@@ -178,6 +178,8 @@ public: // from IRaopDiscovery
     const Brx &Fmtp();
     TBool Active();
     void Deactivate();
+    void Enable();
+    void Disable();
     void KeepAlive();
     TUint AesSid();
     void Close();
