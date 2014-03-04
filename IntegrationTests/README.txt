@@ -11,12 +11,13 @@ Required Dependencies
     Iron Python V2.7 - install from http://ironpython.net/
     
     iTunes (for Airplay tests) - running on local machine, session key setup in
-         DacpClient.py (this needs sorting out - key in local lookup etc...)
+         Config.xml
          
     Access to UPnP media server with necessary files/playlists (for tests using
         UPnP media server to serve the test data [audio] files)
         
-    Test PC network interface defined in Config.xml (if more than one i/f present)
+    Where more than one network interface available, the one to use defined as
+    environment variable FUNCTEST_IFACE (takes either IP or MAC address)
     
             
 Test and Suite Execution
