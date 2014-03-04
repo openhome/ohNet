@@ -117,7 +117,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.info.AddSubscriber( self._SenderInfoCb )
                 
         # Put sender onto random source before starting playback (catch Volkano #2968, Network #894) 
-        self.sender.product.sourceIndex = 0######random.randint( 0, self.sender.product.sourceCount-1 )
+        self.sender.product.sourceIndex = random.randint( 0, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
         # create Receiver Device, put onto random source and connect to sender
