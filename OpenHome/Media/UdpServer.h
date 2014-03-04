@@ -14,14 +14,13 @@ class MsgUdp
 {
 public:
     MsgUdp(TUint aMaxSize);
-    MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint);
     ~MsgUdp();
-    Bwx& Buffer();
-    Endpoint& GetEndpoint();
-    void Clear();
+    void Read(SocketUdp& aSocket);
+    const Brx& Buffer();
+    OpenHome::Endpoint& Endpoint();
 private:
     Bwh iBuf;
-    Endpoint iEndpoint;
+    OpenHome::Endpoint iEndpoint;
 };
 
 /**
@@ -38,8 +37,8 @@ public:
 public: // from SocketUdpBase
     Endpoint Receive(Bwx& aBuf);
 private:
-    void ClearAndRequeue(MsgUdp& aMsg);
-    void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
+    static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
+    void Requeue(MsgUdp& aMsg);
     void ServerThread();
     void CurrentAdapterChanged();
 private:
@@ -50,6 +49,7 @@ private:
     Fifo<MsgUdp*> iFifoReady;
     Mutex iWaitingLock;
     Mutex iReadyLock;
+    Mutex iLock;
     ThreadFunctor* iServerThread;
     TBool iQuit;
     TUint iAdapterListenerId;
