@@ -183,8 +183,8 @@ void Filler::Run()
         iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
         mode.Replace(iActiveUriProvider->Mode());
         if (iTrackPlayStatus == ePlayNo) {
-
             iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
+            iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
             iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
             if (iStopped) {
                 iSupply.OutputHalt(iNextHaltId);
