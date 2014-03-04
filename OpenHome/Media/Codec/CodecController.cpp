@@ -218,14 +218,8 @@ void CodecController::CodecThread()
             catch (CodecStreamEnded&) {
                 iStreamEnded = true;
             }
-            catch (CodecStreamCorrupt&) {
-                // don't break here - might be waiting on a quit msg or similar
-                iStreamEnded = true;
-            }
-            catch (CodecStreamFeatureUnsupported&) {
-                // copy behaviour for Corrupt
-                iStreamEnded = true;
-            }
+            catch (CodecStreamCorrupt&) {}
+            catch (CodecStreamFeatureUnsupported&) {}
         }
         catch (CodecStreamStopped&) {}
         catch (CodecStreamFlush&) {}

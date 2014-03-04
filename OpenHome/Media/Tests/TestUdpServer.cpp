@@ -9,103 +9,62 @@ using namespace OpenHome::TestFramework;
 
 
 // SuiteMsgUdp
-class SuiteMsgUdp : public SuiteUnitTest
+class SuiteMsgUdp : public SuiteUnitTest, public INonCopyable
 {
 public:
-    SuiteMsgUdp();
+    SuiteMsgUdp(Environment& aEnv, TIpAddress aInterface);
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
-    void TestBufferSize();
-    void TestChangeBuffer();
-    void TestReplaceEndpoint();
-    void TestClear();
+    void TestRead();
 private:
     static const TUint kMaxMsgSize = 1000;
+    static const TUint kSendWaitMs = 3;
+    Environment& iEnv;
+    TIpAddress iInterface;
     MsgUdp* iMsg;
+    SocketUdp* iSender;
+    SocketUdp* iReceiver;
+    Endpoint* iEndpoint;
 };
 
-SuiteMsgUdp::SuiteMsgUdp()
+SuiteMsgUdp::SuiteMsgUdp(Environment& aEnv, TIpAddress aInterface)
     : SuiteUnitTest("SuiteMsgUdp")
+    , iEnv(aEnv)
+    , iInterface(aInterface)
 {
-    AddTest(MakeFunctor(*this, &SuiteMsgUdp::TestBufferSize));
-    AddTest(MakeFunctor(*this, &SuiteMsgUdp::TestChangeBuffer));
-    AddTest(MakeFunctor(*this, &SuiteMsgUdp::TestReplaceEndpoint));
-    AddTest(MakeFunctor(*this, &SuiteMsgUdp::TestClear));
+    AddTest(MakeFunctor(*this, &SuiteMsgUdp::TestRead), "TestRead");
 }
 
 void SuiteMsgUdp::Setup()
 {
     iMsg = new MsgUdp(kMaxMsgSize);
+    iSender = new SocketUdp(iEnv);
+    iReceiver = new SocketUdp(iEnv);
+    iEndpoint = new Endpoint(iReceiver->Port(), iInterface);
 }
 
 void SuiteMsgUdp::TearDown()
 {
+    delete iEndpoint;
+    delete iReceiver;
+    delete iSender;
     delete iMsg;
 }
 
-void SuiteMsgUdp::TestBufferSize()
+void SuiteMsgUdp::TestRead()
 {
-    // test if a buffer with the correct size is initialised
-    TEST(iMsg->Buffer().Bytes() == 0);
-    TEST(iMsg->Buffer().MaxBytes() == kMaxMsgSize);
-}
+    // This also tests the Buffer() and GetEndpoint() methods of MsgUdp.
+    Brn sendBuf("SuiteMsgUdp test buffer");
+    iSender->Send(sendBuf, *iEndpoint);
+    Thread::Sleep(kSendWaitMs);
+    iMsg->Read(*iReceiver);
 
-void SuiteMsgUdp::TestChangeBuffer()
-{
-    // test that making changes to the buffer actually results in the buffer
-    // being held by the msg being changed
-    static const TByte val = 1;
-    Bwx& buf1 = iMsg->Buffer();
-    memset((void*)buf1.Ptr(), val, buf1.MaxBytes());
-    buf1.SetBytes(buf1.MaxBytes());
-
-    Bwx& buf2 = iMsg->Buffer();
-    TEST(buf2.Bytes() == kMaxMsgSize);
-    TEST(buf2[0] == val);
-    TEST(buf2[buf2.Bytes()-1] == val);
-}
-
-void SuiteMsgUdp::TestReplaceEndpoint()
-{
-    // test that making changes to the endpoint results in the endpoint being
-    // held by the msg being changed
-    Endpoint epNew = Endpoint(1234, 1234);
-    Endpoint& epMsg = iMsg->GetEndpoint();
-
-    epMsg.Replace(epNew);
-
-    epMsg = iMsg->GetEndpoint();
-    TEST(epMsg.Port() == epNew.Port());
-    TEST(epMsg.Address() == epNew.Address());
-}
-
-void SuiteMsgUdp::TestClear()
-{
-    // test that the Clear() method resets the buffer and endpoint held within
-    // a msg
-
-    // populate msg with some data
-    static const TByte val = 1;
-    Bwx& buf1 = iMsg->Buffer();
-    memset((void*)buf1.Ptr(), val, buf1.MaxBytes());
-    buf1.SetBytes(buf1.MaxBytes());
-
-    Endpoint epNew = Endpoint(1234, 1234);
-    Endpoint& epMsg = iMsg->GetEndpoint();
-    epMsg.Replace(epNew);
-
-
-    // now clear it
-    iMsg->Clear();
-    Bwx& buf2 = iMsg->Buffer();
-    TEST(buf2.Bytes() == 0);
-    TEST(buf2.MaxBytes() == kMaxMsgSize);
-
-    epMsg = iMsg->GetEndpoint();
-    TEST(epMsg.Port() == 0);
-    TEST(epMsg.Address() == 0);
+    Endpoint& ep = iMsg->Endpoint();
+    TEST(ep.Port() == iSender->Port());
+    TEST(ep.Address() == iInterface);
+    TEST(iMsg->Buffer() == sendBuf);
 }
 
 
@@ -163,14 +122,14 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     , iEnv(aEnv)
     , iInterface(aInterface)
 {
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenWhenInitialised));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClose));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReopen));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrdering));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed));
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded));
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenWhenInitialised), "TestOpenWhenInitialised");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClose), "TestClose");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReopen), "TestReopen");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed), "TestMsgQueueClearedWhenClosed");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrdering), "TestMsgOrdering");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart), "TestMsgsDisposedStart");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed), "TestMsgsDisposed");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded), "TestMsgsDisposedCapacityExceeded");
     //AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSubnetChanged));
 }
 
@@ -424,10 +383,10 @@ SuiteUdpServerManager::SuiteUdpServerManager(Environment& aEnv, TIpAddress aInte
     , iEnv(aEnv)
     , iInterface(aInterface)
 {
-    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestEmpty));
-    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestCreateOneServer));
-    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestCreateMultipleServers));
-    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestFindInvalidId));
+    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestEmpty), "TestEmpty");
+    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestCreateOneServer), "TestCreateOneServer");
+    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestCreateMultipleServers), "TestCreateMultipleServers");
+    AddTest(MakeFunctor(*this, &SuiteUdpServerManager::TestFindInvalidId), "TestFindInvalidId");
 }
 
 void SuiteUdpServerManager::Setup()
@@ -504,7 +463,7 @@ void TestUdpServer(Environment& aEnv)
     ASSERT(current != NULL); // should probably never be the case, but tests would fail if it was
 
     Runner runner("UdpServer tests");
-    runner.Add(new SuiteMsgUdp());
+    runner.Add(new SuiteMsgUdp(aEnv, current->Address()));
     runner.Add(new SuiteSocketUdpServer(aEnv, current->Address()));
     runner.Add(new SuiteUdpServerManager(aEnv, current->Address()));
     runner.Run();

@@ -48,9 +48,10 @@ private:
 private:
     enum EState
     {
-        ERunning
-       ,ERamping
-       ,EFlushing
+        eRunning
+       ,eStarting
+       ,eRamping
+       ,eFlushing
     };
 private:
     MsgFactory& iMsgFactory;

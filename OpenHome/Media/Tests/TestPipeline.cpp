@@ -235,7 +235,7 @@ SuitePipeline::SuitePipeline()
 
 SuitePipeline::~SuitePipeline()
 {
-    delete iSupplier; // stop generating pipeline msgs
+    iSupplier->Exit(0);
     // Pipeline d'tor will block until the driver pulls a Quit msg
     // we've been cheating by running a driver in this thread up until now
     // ...so we cheat some more by creating a worker thread to pull until Quit is read
@@ -243,6 +243,7 @@ SuitePipeline::~SuitePipeline()
     th->Start();
     iPipeline->Quit();
     iSemQuit.Wait();
+    delete iSupplier;
     delete iPipeline;
     delete iTrackFactory;
     delete th;

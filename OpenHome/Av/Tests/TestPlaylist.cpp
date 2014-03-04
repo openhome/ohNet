@@ -688,7 +688,7 @@ void SuitePlaylist::AddTrackJustBeforeCompletingPlaylist()
     iProxy->SyncInsert(iTrackIds[kNumTracks-1], tone, Brx::Empty(), trackId);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), kNumTracks+1);
     iTrackChanged.Wait();
-    TEST(iCurrentTrackId == kNumTracks+1);
+    TEST(iCurrentTrackId == trackId);
     TEST(iTrackCount == kNumTracks+1);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);

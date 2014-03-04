@@ -20,7 +20,7 @@ namespace TestFiller {
 class DummyUriProvider : public UriProvider
 {
 public:
-    DummyUriProvider();
+    DummyUriProvider(TrackFactory& aTrackFactory);
     ~DummyUriProvider();
     const Brx& TrackUriByIndex(TUint aIndex) const;
     TUint IdByIndex(TUint aIndex) const;
@@ -33,8 +33,7 @@ private: // from UriProvider
     TBool MovePrevious();
 private:
     static const TInt kNumEntries = 3;
-    TrackFactory* iTrackFactory;
-    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory& iTrackFactory;
     Track* iTracks[kNumEntries];
     TInt iIndex;
     TInt iPendingIndex;
@@ -95,6 +94,8 @@ private: // from IPipelineIdTracker
 private:
     Semaphore iTrackAddedSem;
     Semaphore iTrackCompleteSem;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
     Filler* iFiller;
     DummyUriProvider* iUriProvider;
     DummyUriStreamer* iUriStreamer;
@@ -113,15 +114,15 @@ using namespace OpenHome::Media::TestFiller;
 
 // DummyUriProvider
 
-DummyUriProvider::DummyUriProvider()
+DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
     : UriProvider("Dummy")
+    , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
 {
-    iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL, false);
-    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL, false);
-    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL, false);
+    iTracks[0] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL, false);
+    iTracks[1] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL, false);
+    iTracks[2] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL, false);
 }
 
 DummyUriProvider::~DummyUriProvider()
@@ -129,7 +130,6 @@ DummyUriProvider::~DummyUriProvider()
     iTracks[0]->RemoveRef();
     iTracks[1]->RemoveRef();
     iTracks[2]->RemoveRef();
-    delete iTrackFactory;
 }
 
 const Brx& DummyUriProvider::TrackUriByIndex(TUint aIndex) const
@@ -325,9 +325,10 @@ SuiteFiller::SuiteFiller()
     , iTrackAddedSem("TASM", 0)
     , iTrackCompleteSem("TCSM", 0)
 {
+    iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this);
-    iUriProvider = new DummyUriProvider();
+    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory);
+    iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
     iFiller->Start(*iUriStreamer);
@@ -339,6 +340,7 @@ SuiteFiller::~SuiteFiller()
     delete iFiller;
     delete iUriProvider;
     delete iDummySupply;
+    delete iTrackFactory;
 }
 
 void SuiteFiller::Test()

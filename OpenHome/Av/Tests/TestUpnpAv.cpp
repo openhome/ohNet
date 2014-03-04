@@ -252,7 +252,8 @@ void DummySourceUpnpAv::Seek(TUint aSecondsAbsolute)
 TestUpnpAv::TestUpnpAv(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
-    iPipeline = new PipelineManager(iInfoLogger, kMaxDriverJiffies);
+    iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
+    iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory, kMaxDriverJiffies);
     iPipeline->Add(Codec::CodecFactory::NewAac());
     iPipeline->Add(Codec::CodecFactory::NewAlac());
     iPipeline->Add(Codec::CodecFactory::NewFlac());
@@ -261,7 +262,6 @@ TestUpnpAv::TestUpnpAv(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderCh
     iPipeline->Add(Codec::CodecFactory::NewWav());
     iPipeline->Add(Codec::CodecFactory::NewWma());
     iPipeline->Add(ProtocolFactory::NewHttp(aDvStack.Env()));
-    iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("UpnpAv", *iTrackFactory);
     iPipeline->Add(iUriProvider);
