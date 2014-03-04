@@ -15,7 +15,7 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iSem("STP2", 0)
     , iRampDuration(aRampDuration)
     , iTargetHaltId(MsgHalt::kIdInvalid)
-    , iTrackId(UINT_MAX)
+    , iTrackId(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
     , iQuit(false)
@@ -152,6 +152,15 @@ Msg* Stopper::Pull()
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
+    /* IdManager expects OkToPlay to be called for every stream that is added to it.
+       This isn't the case if CodecController fails to recognise the format of a stream.
+       Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to play a stream.
+       iTrack!=0 check is a nasty way of skipping the null track which isn't (but probably should be)
+       known to IdManager. */
+    if (!iCheckedStreamPlayable && iTrackId != 0 && iStreamHandler != NULL) {
+        (void)iStreamHandler->OkToPlay(iTrackId, iStreamId);
+    }
+
     NewStream();
     iTrackId = aMsg->IdPipeline();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
