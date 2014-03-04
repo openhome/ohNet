@@ -115,6 +115,7 @@ protected:
      */
     TBool Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge);
     void DoStart();
+    void DoRefresh(TBool aStartRefreshLoop);
 protected: // from CpiDeviceList
     void Start();
     void Refresh();

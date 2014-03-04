@@ -415,7 +415,7 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
     }
     iLock.Wait();
     iCpStack.Env().Mutex().Wait();
-    if (iRefreshing && iPendingRefreshCount > 1) {
+    if (iPendingRefreshCount > 1) {
         // we need at most one final msearch once a network card starts working following an adapter change
         iPendingRefreshCount = 1;
     }
@@ -467,17 +467,24 @@ void CpiDeviceListUpnp::Start()
 
 void CpiDeviceListUpnp::Refresh()
 {
+    DoRefresh(true);
+}
+
+void CpiDeviceListUpnp::DoRefresh(TBool aStartRefreshLoop)
+{
     if (StartRefresh()) {
         return;
     }
-    const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    /* Always attempt multiple refreshes until we start receiving responses
-       Poor quality iOS networking means that we risk MSEARCHes not being sent otherwise,
-       resulting in all devices being removed. */
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    lock.Signal();
+    if (aStartRefreshLoop) {
+        const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
+        Mutex& lock = iCpStack.Env().Mutex();
+        lock.Wait();
+        /* Always attempt multiple refreshes until we start receiving responses
+           Poor quality iOS networking means that we risk MSEARCHes not being sent otherwise,
+           resulting in all devices being removed. */
+        iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
+        lock.Signal();
+    }
     Start();
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
     delayMs += 100; /* allow slightly longer to cope with devices which send
@@ -544,7 +551,7 @@ void CpiDeviceListUpnp::RefreshTimerComplete()
 
 void CpiDeviceListUpnp::NextRefreshDue()
 {
-    Refresh();
+    DoRefresh(false);
 }
 
 void CpiDeviceListUpnp::ResumedTimerComplete()
