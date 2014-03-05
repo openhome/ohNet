@@ -44,6 +44,7 @@ SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aP
     , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
     , iAutoNetAux(kAutoNetAuxOn)
     , iAutoSwitch(true)
+    , iSessionActive(false)
     , iTrack(NULL)
     , iTrackPosSeconds(0)
     , iPipelineTrackId(UINT_MAX)
@@ -85,12 +86,22 @@ IRaopDiscovery& SourceRaop::Discovery()
 
 void SourceRaop::Activate()
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     iServerManager.OpenAll();
     iTrackPosSeconds = 0;
     iActive = true;
     if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
+        Log::Print("disabling RAOP\n");
         iRaopDiscovery->Enable();
+    }
+
+    if (iSessionActive) {
+        StartNewTrack();
+        iLock.Signal();
+        iPipeline.Play();
+    }
+    else {
+        iLock.Signal();
     }
 }
 
@@ -107,9 +118,35 @@ void SourceRaop::Deactivate()
         // selected source.
         iRaopDiscovery->Disable();
     }
+    StopTrack();
+
     iLock.Signal();
     iServerManager.CloseAll();
     Source::Deactivate();
+}
+
+void SourceRaop::StartNewTrack()
+{
+    iPipeline.RemoveAll();
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+        iTrack = NULL;
+    }
+
+    iTrack = iUriProvider.SetTrack(iNextTrackUri, Brn(""), true);
+    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+
+    iTransportState = Media::EPipelinePlaying;
+}
+
+void SourceRaop::StopTrack()
+{
+    iPipeline.RemoveAll();
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+        iTrack = NULL;
+    }
+    iTransportState = Media::EPipelineStopped;
 }
 
 void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
@@ -129,29 +166,33 @@ void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/
         DoActivate();
     }
 
-    iPipeline.RemoveAll();
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-    }
-    //const TUint maxPortBytes = 5;
-    //const TUint portCount = 2;
-    //Bwh track(kRaopPrefix.Bytes() + portCount*maxPortBytes + portCount-1); // raop://xxxxx.yyyyy.zzzzz
-    //track.Append(kRaopPrefix);
-    //Ascii::AppendDec(track, aControlPort);
-    //track.Append('.');
-    //Ascii::AppendDec(track, aTimingPort);
-    ////Log::Print("track: ");
-    ////Log::Print(track);
-    ////Log::Print("\n");
-    //iTrack = iUriProvider.SetTrack(track, Brn(""), true);
-
-    iTrack = iUriProvider.SetTrack(Brn("raop://dummyuri"), Brn(""), true);
-    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
-
     iLock.Wait();
-    iTransportState = Media::EPipelinePlaying;
-    iLock.Signal();
-    iPipeline.Play();
+    iSessionActive = true;
+
+    //iNextTrackUri.Replace(kRaopPrefix);
+    //Ascii::AppendDec(iNextTrackUri, aControlPort);
+    //iNextTrackUri.Append('.');
+    //Ascii::AppendDec(iNextTrackUri, aTimingPort);
+
+    iNextTrackUri.Replace(kRaopPrefix);
+    iNextTrackUri.Append(Brn("dummyuri"));
+
+    if (iAutoSwitch || IsActive()) {
+        StartNewTrack();
+        iLock.Signal();
+        iPipeline.Play();
+    }
+    else {
+        iLock.Signal();
+    }
+}
+
+void SourceRaop::NotifyStreamEnd()
+{
+    AutoMutex a(iLock);
+    StopTrack();
+    iNextTrackUri.SetBytes(0);
+    iSessionActive = false;
 }
 
 void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)

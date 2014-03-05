@@ -27,6 +27,7 @@ class IRaopObserver
 {
 public:
     virtual void NotifyStreamStart(TUint aControlPort, TUint aTimingPort) = 0;
+    virtual void NotifyStreamEnd() = 0;
     virtual ~IRaopObserver() {}
 };
 
@@ -43,6 +44,7 @@ private: // from ISource
     void Deactivate();
 private: // from IRaopObserver
     void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
+    void NotifyStreamEnd();
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -50,15 +52,20 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
+    void StartNewTrack();
+    void StopTrack();
     void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
     void ActivateIfInactive();
     void DeactivateIfActive();
 private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
+    static const TUint kRaopPrefixBytes = 7;
+    static const TUint kMaxPortBytes = 5; // 0-65535
     static const TUint kPortAudio = 60400;
     static const TUint kPortControl = 60401;
     static const TUint kPortTiming = 60402;
+    static const TUint kMaxUriBytes = kRaopPrefixBytes+kMaxPortBytes*3+2;   // raop://xxxxx.yyyyy.zzzzz
     static const TUint kAutoNetAuxOn;
     static const TUint kAutoNetAuxOffVisible;
     static const TUint kAutoNetAuxOffNotVisible;
@@ -72,6 +79,8 @@ private:
     TUint iConfigSubId;
     TUint iAutoNetAux;
     TBool iAutoSwitch;
+    TBool iSessionActive;
+    Bws<kMaxUriBytes> iNextTrackUri;
     Media::Track* iTrack;
     TUint iTrackPosSeconds;
     TUint iPipelineTrackId;

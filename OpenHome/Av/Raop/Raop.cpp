@@ -478,6 +478,7 @@ void RaopDiscoverySession::Run()
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
                     Deactivate();
+                    iDiscovery.NotifyStreamEnd();
                     LOG(kMedia, "RaopDiscoverySession::Run - kTeardown\n");
                     break;
                 }
@@ -711,7 +712,12 @@ RaopDiscovery::~RaopDiscovery()
 
 void RaopDiscovery::NotifyStreamStart(TUint aControlPort, TUint aTimingPort)
 {
-    return iRaopObserver.NotifyStreamStart(aControlPort, aTimingPort);
+    iRaopObserver.NotifyStreamStart(aControlPort, aTimingPort);
+}
+
+void RaopDiscovery::NotifyStreamEnd()
+{
+    iRaopObserver.NotifyStreamEnd();
 }
 
 const Brx& RaopDiscovery::Aeskey()

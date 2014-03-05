@@ -80,6 +80,7 @@ private: // from IPipelineIdProvider
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private: // from IRaopObserver
     void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
+    void NotifyStreamEnd();
 private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
@@ -187,6 +188,10 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 }
 
 void DummyFiller::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
+{
+}
+
+void DummyFiller::NotifyStreamEnd()
 {
 }
 
