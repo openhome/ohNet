@@ -243,9 +243,8 @@ void SocketUdpServer::ServerThread()
                 continue;
             }
 
-            MsgUdp* msg = iFifoWaiting.Read();
             iFifoReady.Write(iDiscard);
-            iDiscard = msg;
+            iDiscard = iFifoWaiting.Read();
         }
 
         iFifoReady.ReadInterrupt(false);
