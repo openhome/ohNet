@@ -34,7 +34,6 @@ public:
     ~SocketUdpServer();
     void Open();
     void Close();
-public: // from SocketUdpBase
     Endpoint Receive(Bwx& aBuf);
 private:
     static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
@@ -47,9 +46,9 @@ private:
     TBool iOpen;
     Fifo<MsgUdp*> iFifoWaiting;
     Fifo<MsgUdp*> iFifoReady;
-    Mutex iWaitingLock;
-    Mutex iReadyLock;
+    MsgUdp* iDiscard;
     Mutex iLock;
+    Semaphore iSemaphore;
     ThreadFunctor* iServerThread;
     TBool iQuit;
     TUint iAdapterListenerId;
