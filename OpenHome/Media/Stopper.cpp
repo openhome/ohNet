@@ -154,10 +154,9 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     /* IdManager expects OkToPlay to be called for every stream that is added to it.
        This isn't the case if CodecController fails to recognise the format of a stream.
-       Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to play a stream.
-       iTrack!=0 check is a nasty way of skipping the null track which isn't (but probably should be)
-       known to IdManager. */
-    if (!iCheckedStreamPlayable && iTrackId != 0 && iStreamHandler != NULL) {
+       Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
+       play a stream. */
+    if (!iCheckedStreamPlayable && iStreamHandler != NULL) {
         (void)iStreamHandler->OkToPlay(iTrackId, iStreamId);
     }
 

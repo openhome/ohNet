@@ -162,9 +162,11 @@ TBool PipelineManager::Next()
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
     iFiller->Stop();
-    // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
-    // can always revert to an equivalent implementation to Prev() if this proves incorrect
-    iIdManager->InvalidateAt(iTrackId);
+    /* Previously tried using iIdManager->InvalidateAt() to invalidate the current track only.
+       If we're playing a low res track, there is a large window when we'll be playing that but
+       pre-fetching the track to follow it.  InvalidateAt() will fail to clear that following
+       track from the pipeline. */
+    iIdManager->InvalidateAll();
     return iFiller->Next(iMode);
 }
 
