@@ -93,7 +93,10 @@ private:
     void TestCloseTwice();
     void TestReopen();
     void TestMsgQueueClearedWhenClosed();
-    void TestMsgOrdering();
+    void TestMsgOrderingReceive();
+    void TestMsgOrderingRead();
+    void TestReadFlush();
+    void TestReadInterrupt();
     void TestMsgsDisposedStart();
     void TestMsgsDisposed();
     void TestMsgsDisposedCapacityExceeded();
@@ -128,7 +131,10 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestCloseTwice), "TestCloseTwice");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReopen), "TestReopen");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed), "TestMsgQueueClearedWhenClosed");
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrdering), "TestMsgOrdering");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrderingReceive), "TestMsgOrderingReceive");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrderingRead), "TestMsgOrderingRead");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReadFlush), "TestReadFlush");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReadInterrupt), "TestReadInterrupt");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart), "TestMsgsDisposedStart");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed), "TestMsgsDisposed");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded), "TestMsgsDisposedCapacityExceeded");
@@ -259,12 +265,53 @@ void SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed()
     }
 }
 
-void SuiteSocketUdpServer::TestMsgOrdering()
+void SuiteSocketUdpServer::TestMsgOrderingReceive()
 {
     // test msgs are received in correct order (when sent in a synchronised manner)
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
+        CheckMsgValue(iInBuf, iMsgCount++);
+    }
+}
+
+void SuiteSocketUdpServer::TestMsgOrderingRead()
+{
+    // test msgs are read in correct order (when sent in a synchronised manner)
+    for (TUint i=0; i<kMaxMsgCount; i++) {
+        SendNextMsg(iOutBuf);
+        iServer->Read(iInBuf);
+        CheckMsgValue(iInBuf, iMsgCount++);
+    }
+}
+
+void SuiteSocketUdpServer::TestReadFlush()
+{
+    // test that a read flush does nothing to the msg stream
+    for (TUint i=0; i<kMaxMsgCount; i++) {
+        SendNextMsg(iOutBuf);
+        iServer->Read(iInBuf);
+        iServer->ReadFlush();
+        CheckMsgValue(iInBuf, iMsgCount++);
+    }
+}
+
+void SuiteSocketUdpServer::TestReadInterrupt()
+{
+    // interrupt server while it should be waiting on reading udp packet and
+    // try resume
+    for (TUint i=0; i<kMaxMsgCount; i++) {
+        SendNextMsg(iOutBuf);
+        iServer->Read(iInBuf);
+        CheckMsgValue(iInBuf, iMsgCount++);
+    }
+
+    iServer->ReadInterrupt();
+    iServer->Interrupt(false);
+
+    for (TUint i=0; i<kMaxMsgCount; i++) {
+        SendNextMsg(iOutBuf);
+        iServer->Read(iInBuf);
         CheckMsgValue(iInBuf, iMsgCount++);
     }
 }

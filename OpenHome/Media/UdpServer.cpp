@@ -169,8 +169,22 @@ Endpoint SocketUdpServer::Receive(Bwx& aBuf)
         return ep;
     }
     catch (FifoReadError&) {
-        THROW(NetworkError);
+        THROW(ReaderError);
     }
+}
+
+void SocketUdpServer::Read(Bwx& aBuffer)
+{
+    Receive(aBuffer);
+}
+
+void SocketUdpServer::ReadFlush()
+{
+}
+
+void SocketUdpServer::ReadInterrupt()
+{
+    Interrupt(true);
 }
 
 void SocketUdpServer::CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint)

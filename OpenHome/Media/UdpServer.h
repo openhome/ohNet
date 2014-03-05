@@ -27,7 +27,7 @@ private:
  * Class for a continuously running server which buffers packets while active
  * and discards packets when deactivated
  */
-class SocketUdpServer : public SocketUdp
+class SocketUdpServer : public SocketUdp, public IReaderSource
 {
 public:
     SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
@@ -35,6 +35,10 @@ public:
     void Open();
     void Close();
     Endpoint Receive(Bwx& aBuf);
+public: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
     static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
     void ServerThread();
