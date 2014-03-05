@@ -87,8 +87,10 @@ private:
     void GenerateNextMsg(Bwx& aBuf);
     void SendNextMsg(Bwx& aBuf);
     void CheckMsgValue(Brx& aBuf, TByte aVal);
-    void TestOpenWhenInitialised();
+    void TestOpen();
+    void TestOpenTwice();
     void TestClose();
+    void TestCloseTwice();
     void TestReopen();
     void TestMsgQueueClearedWhenClosed();
     void TestMsgOrdering();
@@ -120,8 +122,10 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     , iEnv(aEnv)
     , iInterface(aInterface)
 {
-    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenWhenInitialised), "TestOpenWhenInitialised");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpen), "TestOpen");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenTwice), "TestOpenTwice");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClose), "TestClose");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestCloseTwice), "TestCloseTwice");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestReopen), "TestReopen");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed), "TestMsgQueueClearedWhenClosed");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgOrdering), "TestMsgOrdering");
@@ -183,12 +187,18 @@ void SuiteSocketUdpServer::CheckMsgValue(Brx& aBuf, TByte aVal)
     TEST(aBuf[aBuf.Bytes()-1] == aVal);
 }
 
-void SuiteSocketUdpServer::TestOpenWhenInitialised()
+void SuiteSocketUdpServer::TestOpen()
 {
-    // test calls to Receive are allowed immediately after initialisation
+    // test calls to Receive are allowed immediately after call to Open()
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
+}
+
+void SuiteSocketUdpServer::TestOpenTwice()
+{
+    // test Open() cannot be called when server already open
+    TEST_THROWS(iServer->Open(), AssertionFailed);
 }
 
 void SuiteSocketUdpServer::TestClose()
@@ -199,6 +209,12 @@ void SuiteSocketUdpServer::TestClose()
     TEST_THROWS(iServer->Receive(buf), AssertionFailed);
 }
 
+void SuiteSocketUdpServer::TestCloseTwice()
+{
+    // test Close() cannot be called when server already closed
+    iServer->Close();
+    TEST_THROWS(iServer->Close(), AssertionFailed);
+}
 void SuiteSocketUdpServer::TestReopen()
 {
     // test server can be successfully closed and re-opened
