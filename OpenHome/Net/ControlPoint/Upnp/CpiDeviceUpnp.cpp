@@ -472,10 +472,10 @@ void CpiDeviceListUpnp::Refresh()
 
 void CpiDeviceListUpnp::DoRefresh(TBool aStartRefreshLoop)
 {
-    if (StartRefresh()) {
-        return;
-    }
     if (aStartRefreshLoop) {
+        if (StartRefresh()) {
+            return;
+        }
         const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
         Mutex& lock = iCpStack.Env().Mutex();
         lock.Wait();
