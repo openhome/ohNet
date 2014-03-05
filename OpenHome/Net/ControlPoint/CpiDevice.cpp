@@ -436,8 +436,14 @@ void CpiDeviceList::NotifyRefreshed()
             }
         }
     }
-    ClearMap(iRefreshMap);
+    /* can't clear iRefreshMap with iLock held.  Clearing the map may remove the last reference
+       from some devices, causing them to be deleted.  If their d'tors delete any Timers, we'll
+       hold iLock then try to take the TimeManager lock.  Timer callbacks may take these locks
+       in the opposite order => deadlock. */
+    Map oldRefresh(iRefreshMap);
+    iRefreshMap.clear();
     iLock.Signal();
+    ClearMap(oldRefresh);
 }
 
 void CpiDeviceList::ListObjectDetails() const
