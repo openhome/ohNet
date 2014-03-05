@@ -60,6 +60,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 
     iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread));
     iServerThread->Start();
+    iSemaphore.Wait();
 }
 
 SocketUdpServer::~SocketUdpServer()
@@ -182,6 +183,8 @@ void SocketUdpServer::CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint)
 
 void SocketUdpServer::ServerThread()
 {
+    iSemaphore.Signal();
+
     for (;;) {
 
         // closed
