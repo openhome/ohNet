@@ -39,7 +39,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     : SocketUdp(aEnv, aPort, aInterface)
     , iEnv(aEnv)
     , iMaxSize(aMaxSize)
-    , iOpen(true)
+    , iOpen(false)
     , iFifoWaiting(aMaxPackets)
     , iFifoReady(aMaxPackets)
     , iLock("UDPL")
@@ -113,6 +113,8 @@ void SocketUdpServer::Open()
     iLock.Signal();
 
     iSemaphore.Wait();
+
+    Interrupt(false);
 }
 
 void SocketUdpServer::Close()
@@ -182,9 +184,34 @@ void SocketUdpServer::ServerThread()
 {
     for (;;) {
 
-        // opened
+        // closed
 
-        Interrupt(false);
+        for (;;) {
+            iLock.Wait();
+
+            if (iQuit) {
+                iLock.Signal();
+                return;
+            }
+
+            if (iOpen)
+            {
+                iLock.Signal();
+                break;
+            }
+
+            iLock.Signal();
+
+            try {
+                iDiscard->Read(*this);
+            }
+            catch (NetworkError&) {
+            }
+        }
+
+        iSemaphore.Signal();
+
+        // opened
 
         for (;;) {
             iLock.Wait();
@@ -224,34 +251,6 @@ void SocketUdpServer::ServerThread()
         while (iFifoReady.SlotsUsed() > 0) {
             MsgUdp* msg = iFifoReady.Read();
             iFifoWaiting.Write(msg);
-        }
-
-        iSemaphore.Signal();
-
-
-        // closed
-
-        for (;;) {
-            iLock.Wait();
-
-            if (iQuit) {
-                iLock.Signal();
-                return;
-            }
-
-            if (iOpen)
-            {
-                iLock.Signal();
-                break;
-            }
-
-            iLock.Signal();
-
-            try {
-                iDiscard->Read(*this);
-            }
-            catch (NetworkError&) {
-            }
         }
 
         iSemaphore.Signal();

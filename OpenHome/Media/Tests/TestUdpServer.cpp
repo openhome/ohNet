@@ -147,6 +147,7 @@ void SuiteSocketUdpServer::Setup()
     iOutBuf.SetBytes(0);
     iInBuf.SetBytes(0);
     iMsgCount = 0;
+    iServer->Open();
 }
 
 void SuiteSocketUdpServer::TearDown()
