@@ -472,10 +472,10 @@ void CpiDeviceListUpnp::Refresh()
 
 void CpiDeviceListUpnp::DoRefresh(TBool aStartRefreshLoop)
 {
+    if (StartRefresh()) {
+        return;
+    }
     if (aStartRefreshLoop) {
-        if (StartRefresh()) {
-            return;
-        }
         const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
         Mutex& lock = iCpStack.Env().Mutex();
         lock.Wait();
@@ -619,12 +619,12 @@ void CpiDeviceListUpnp::RemoveAll()
 {
     iRefreshTimer->Cancel();
     iNextRefreshTimer->Cancel();
-    iLock.Wait();
     CancelRefresh();
     Mutex& lock = iCpStack.Env().Mutex();
     lock.Wait();
     iPendingRefreshCount = 0;
     lock.Signal();
+    iLock.Wait();
     std::vector<CpiDevice*> devices;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {

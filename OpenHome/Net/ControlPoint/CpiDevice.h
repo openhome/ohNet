@@ -273,6 +273,7 @@ protected:
     Map iRefreshMap;
     std::vector<CpiDevice*> iPendingRemove;
     mutable OpenHome::Mutex iLock;
+    OpenHome::Mutex iRefreshLock;
 private:
     FunctorCpiDevice iAdded;
     FunctorCpiDevice iRemoved;

@@ -179,7 +179,8 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
     : iCpStack(aCpStack)
     , iActive(false)
     , iRefreshing(false)
-    , iLock("CDLM")
+    , iLock("CDL1")
+    , iRefreshLock("CDL2")
     , iAdded(aAdded)
     , iRemoved(aRemoved)
     , iRefCount(0)
@@ -220,6 +221,7 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
         iLock.Signal();
         return;
     }
+    iRefreshLock.Wait();
     if (iRefreshing) {
         Brn udn(aDevice->Udn());
         Map::iterator it = iRefreshMap.find(udn);
@@ -228,6 +230,7 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
             aDevice->AddRef(); // for refresh list
         }
     }
+    iRefreshLock.Signal();
     CpiDevice* tmp = RefDeviceLocked(aDevice->Udn());
     if (tmp != NULL) {
         // device is already in the list, ignore this call to Add()
@@ -275,10 +278,10 @@ TBool CpiDeviceList::IsDeviceReady(CpiDevice& /*aDevice*/)
 TBool CpiDeviceList::StartRefresh()
 {
     TBool refreshAlreadyInProgress;
-    iLock.Wait();
+    iRefreshLock.Wait();
     refreshAlreadyInProgress = iRefreshing;
     iRefreshing = true;
-    iLock.Signal();
+    iRefreshLock.Signal();
     return refreshAlreadyInProgress;
 }
 
@@ -289,8 +292,10 @@ void CpiDeviceList::RefreshComplete()
 
 void CpiDeviceList::CancelRefresh()
 {
+    iRefreshLock.Wait();
     iRefreshing = false;
     ClearMap(iRefreshMap);
+    iRefreshLock.Signal();
 }
 
 void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
@@ -402,16 +407,21 @@ TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
 
 void CpiDeviceList::NotifyRefreshed()
 {
-    iLock.Wait();
+    iRefreshLock.Wait();
+    Map refreshMap(iRefreshMap);
+    iRefreshMap.clear();
     iRefreshing = false;
+    iRefreshLock.Signal();
+
+    iLock.Wait();
     if (iActive) {
         /* map iterator is invalidated by removing an item so we'll need to iterate once per removal
            assume that the 0.5 * O(n^2) ish cost is bearable as refresh is a rare operation which
            can only feasibly run once ever few seconds in the worst possible case */
         Map::iterator it = iMap.begin();
         while (it != iMap.end()) {
-            Map::iterator found = iRefreshMap.find(it->first);
-            if (found != iRefreshMap.end()) {
+            Map::iterator found = refreshMap.find(it->first);
+            if (found != refreshMap.end()) {
                 // device still exists
                 it++;
             }
@@ -436,14 +446,8 @@ void CpiDeviceList::NotifyRefreshed()
             }
         }
     }
-    /* can't clear iRefreshMap with iLock held.  Clearing the map may remove the last reference
-       from some devices, causing them to be deleted.  If their d'tors delete any Timers, we'll
-       hold iLock then try to take the TimeManager lock.  Timer callbacks may take these locks
-       in the opposite order => deadlock. */
-    Map oldRefresh(iRefreshMap);
-    iRefreshMap.clear();
     iLock.Signal();
-    ClearMap(oldRefresh);
+    ClearMap(refreshMap);
 }
 
 void CpiDeviceList::ListObjectDetails() const
