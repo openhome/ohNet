@@ -20,7 +20,6 @@ private:
     void TestRead();
 private:
     static const TUint kMaxMsgSize = 1000;
-    static const TUint kSendWaitMs = 3;
     Environment& iEnv;
     TIpAddress iInterface;
     MsgUdp* iMsg;
@@ -58,7 +57,6 @@ void SuiteMsgUdp::TestRead()
     // This also tests the Buffer() and GetEndpoint() methods of MsgUdp.
     Brn sendBuf("SuiteMsgUdp test buffer");
     iSender->Send(sendBuf, *iEndpoint);
-    Thread::Sleep(kSendWaitMs);
     iMsg->Read(*iReceiver);
 
     Endpoint& ep = iMsg->Endpoint();

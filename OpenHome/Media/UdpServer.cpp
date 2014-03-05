@@ -11,7 +11,6 @@ using namespace Media;
 
 MsgUdp::MsgUdp(TUint aMaxSize)
     : iBuf(aMaxSize)
-    , iEndpoint()
 {
 }
 
@@ -52,6 +51,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     while (iFifoWaiting.SlotsFree() > 0) {
         iFifoWaiting.Write(new MsgUdp(iMaxSize));
     }
+
     iDiscard = new MsgUdp(iMaxSize);
 
     Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
@@ -108,6 +108,7 @@ void SocketUdpServer::Open()
     }
 
     iOpen = true;
+    Interrupt(true);
 
     iLock.Signal();
 
@@ -180,6 +181,54 @@ void SocketUdpServer::CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint)
 void SocketUdpServer::ServerThread()
 {
     for (;;) {
+
+        // opened
+
+        Interrupt(false);
+
+        for (;;) {
+            iLock.Wait();
+
+            if (iQuit) {
+                iLock.Signal();
+                return;
+            }
+
+            if (!iOpen)
+            {
+                iLock.Signal();
+                break;
+            }
+
+            iLock.Signal();
+
+            try {
+                iDiscard->Read(*this);
+            }
+            catch (NetworkError&) {
+                continue;
+            }
+
+            if (iFifoWaiting.SlotsUsed() == 0) {
+                continue;
+            }
+
+            MsgUdp* msg = iFifoWaiting.Read();
+            iFifoReady.Write(iDiscard);
+            iDiscard = msg;
+        }
+
+        iFifoReady.ReadInterrupt(false);
+        // Move all messages from ready queue back to waiting queue
+
+        while (iFifoReady.SlotsUsed() > 0) {
+            MsgUdp* msg = iFifoReady.Read();
+            iFifoWaiting.Write(msg);
+        }
+
+        iSemaphore.Signal();
+
+
         // closed
 
         for (;;) {
@@ -203,59 +252,6 @@ void SocketUdpServer::ServerThread()
             }
             catch (NetworkError&) {
             }
-        }
-
-        iSemaphore.Signal();
-
-        // opened
-
-        for (;;) {
-            iLock.Wait();
-
-            if (iQuit) {
-                iLock.Signal();
-                return;
-            }
-
-            if (!iOpen)
-            {
-                iLock.Signal();
-                break;
-            }
-
-            if (iFifoWaiting.SlotsUsed() == 0)
-            {
-                iLock.Signal();
-
-                try {
-                    iDiscard->Read(*this);
-                }
-                catch (NetworkError&) {
-                }
-
-                continue;
-            }
-
-            iLock.Signal();
-
-            MsgUdp* msg = iFifoWaiting.Read();
-
-            try {
-                msg->Read(*this);
-                iFifoReady.Write(msg);
-            }
-            catch (NetworkError&) {
-                // Nothing we can do to recover packet, or Interrupt has been
-                // called as server is quitting.
-                iFifoWaiting.Write(msg);
-            }
-        }
-
-        // Move all messages from ready queue back to waiting queue
-
-        while (iFifoReady.SlotsUsed() > 0) {
-            MsgUdp* msg = iFifoReady.Read();
-            iFifoWaiting.Write(msg);
         }
 
         iSemaphore.Signal();

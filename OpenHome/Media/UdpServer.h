@@ -37,7 +37,6 @@ public:
     Endpoint Receive(Bwx& aBuf);
 private:
     static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
-    void Requeue(MsgUdp& aMsg);
     void ServerThread();
     void CurrentAdapterChanged();
 private:
