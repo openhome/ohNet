@@ -16,12 +16,12 @@ This verifies playlist audio output by the DUT does not suffer from audio dropou
 #    - removed songcast mode param (as N/A)
 
 import _FunctionalTest
-import BaseTest                         as BASE
-import Upnp.ControlPoints.Volkano       as Volkano
-import Upnp.ControlPoints.MediaServer   as Server
-import Utils.Network.HttpServer         as HttpServer
-import Utils.Common                     as Common
-import _SoftPlayer                  as SoftPlayer
+import BaseTest                       as BASE
+import Upnp.ControlPoints.Volkano     as Volkano
+import Upnp.ControlPoints.MediaServer as Server
+import Utils.Network.HttpServer       as HttpServer
+import Utils.Common                   as Common
+import _SoftPlayer                    as SoftPlayer
 import LogThread
 import Path
 import os
@@ -38,15 +38,20 @@ class TestPlaylistDropout( BASE.BaseTest ):
     
     def __init__( self ):
         "Constructor for AudioDropout test"
-        self.sender       = None
-        self.receiver     = None
-        self.slave        = None
-        self.server       = None
-        self.soft1        = None
-        self.soft2        = None
-        self.soft3        = None
-        self.playing      = threading.Event()
-        self.durationDone = threading.Event() 
+        self.sender          = None
+        self.receiver        = None
+        self.slave           = None
+        self.server          = None
+        self.soft1           = None
+        self.soft2           = None
+        self.soft3           = None
+        self.monitor         = False
+        self.senderPlaying   = threading.Event()
+        self.receiverPlaying = threading.Event()
+        self.slavePlaying    = threading.Event()
+        self.receiverUri     = threading.Event()
+        self.slaveUri        = threading.Event()
+        self.durationDone    = threading.Event() 
         BASE.BaseTest.__init__( self )
 
     def Test( self, args ):
@@ -75,83 +80,71 @@ class TestPlaylistDropout( BASE.BaseTest ):
         self.server.Start()        
         tracks = Common.GetTracks( kTrackList, self.server )
 
-        # create sender, clear playlist and subscribe to events
+        # create and configure sender
         if senderName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
             senderName = 'TestSender:SoftPlayer'
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
-        if not receiverName and not slaveName:
-            if self.sender.volume is not None:
-                self.sender.volume.volume = 65
-            
-        self.sender.playlist.DeleteAllTracks()
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
                 
-        # create and connect receiver and slave (where specified)
+        # load sender's playlist and start playback
+        self.sender.playlist.repeat = 'on';
+        self.sender.playlist.shuffle = 'on';
+        self.sender.playlist.DeleteAllTracks()
+        self.sender.playlist.AddPlaylist( tracks )
+        self.sender.playlist.SeekIndex( 0 )
+        self.senderPlaying.wait( 10 )
+        if self.sender.playlist.transportState != 'Playing':
+            self.log.Abort( self.senderDev, 'Sender failed to start playback' )
+                
+        # create and connect receiver (if specified)
         if receiverName:
             if receiverName.lower() == 'local':
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
                 receiverName = 'TestRcvr:SoftPlayer'
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
+            self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
-            if not slaveName:
-                if self.receiver.volume is not None:
-                    self.receiver.volume.volume = 65
-            self.receiver.receiver.Play()
+            self.receiverUri.wait( 5 )
+            if self.receiver.receiver.transportState != 'Playing':
+                self.receiver.receiver.Play()
+                self.receiverPlaying.wait( 5 )
+                if self.receiver.receiver.transportState != 'Playing':
+                    self.log.Abort( self.rcvrDev, 'Receiver failed to start playback' )
             
+        # create and connect slave (if specified)
         if slaveName:
             if slaveName.lower() == 'local':
                 self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestSlave' )
                 slaveName = 'TestSlave:SoftPlayer'
             self.slaveDev = slaveName.split( ':' )[0]
             self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True )
+            self.slave.receiver.AddSubscriber( self._SlaveReceiverCb )
             self.slave.receiver.SetSender( self.receiver.sender.uri, self.receiver.sender.metadata )
-            if self.slave.volume is not None:
-                self.slave.volume.volume = 65
-            self.slave.receiver.Play()
+            self.slaveUri.wait( 5 )
+            if self.slave.receiver.transportState != 'Playing':
+                self.slave.receiver.Play()
+                self.slavePlaying.wait( 5 )
+                if self.slave.receiver.transportState != 'Playing':
+                    self.log.Abort( self.slaveDev, 'Slave failed to start playback' )
+
+        # Monitor events until timer expired / forever
+        self.monitor = True
+        self.durationDone.clear()
+        if duration != 'forever':
+            self.exitTimer = LogThread.Timer( duration, self._DurationCb )
+            self.exitTimer.start()
+        self.durationDone.wait()
         
-        # Handle 'hub' products
-        if slaveName:
-            if self.slave.exakt is not None:
-                import Utils.Audio.DigitalCrossover as DigitalCrossover
-                DigitalCrossover.SetAllFlat( self.slave )
-        elif receiverName:
-            if self.receiver.exakt is not None:
-                import Utils.Audio.DigitalCrossover as DigitalCrossover
-                DigitalCrossover.SetAllFlat( self.receiver )
-        else:
-            if self.sender.exakt is not None:
-                import Utils.Audio.DigitalCrossover as DigitalCrossover
-                DigitalCrossover.SetAllFlat( self.sender )
-                
-        # load playlist and start playback
-        self.sender.playlist.repeat = 'on';
-        self.sender.playlist.shuffle = 'on';
-        self.sender.playlist.AddPlaylist( tracks )
-        self.playing.clear()
-        self.sender.playlist.SeekIndex( 0 )
-        self.sender.playlist.Play()
-        self.playing.wait( 10 )
-        if self.playing.is_set():
-            time.sleep( 2 )         # let track info update
-    
-            # Add transport state monitors
-            self.sender.playlist.AddSubscriber( self._SenderPlaylistMonitor )
-            if self.receiver:
-                self.receiver.receiver.AddSubscriber( self._ReceiverReceiverMonitor )
-            if self.slave:
-                self.slave.receiver.AddSubscriber( self._SlaveReceiverMonitor )
-            
-            # Monitor events until timer expired / forever
-            self.durationDone.clear()
-            if duration != 'forever':
-                self.exitTimer = LogThread.Timer( duration, self._DurationCb )
-                self.exitTimer.start()
-            self.durationDone.wait()
-        else:
-            self.log.Fail( self.senderDev, 'Playback failed to start' )
+        # Cleanup
+        self.sender.playlist.RemoveSubscriber( self._SenderPlaylistCb )
+        self.sender.playlist.Stop()                 
+        if self.receiver:
+            self.receiver.receiver.RemoveSubscriber( self._ReceiverReceiverCb )
+        if self.slave:
+            self.slave.receiver.RemoveSubscriber( self._SlaveReceiverCb )        
 
     def Cleanup( self ):
         "Perform cleanup on test exit"
@@ -172,28 +165,35 @@ class TestPlaylistDropout( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )                
         
     def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):
-        "Callback from Playlist service on Sender device"
-        if svName == 'TransportState':
-            if svVal == 'Playing':
-                self.playing.set()
-            
-    def _SenderPlaylistMonitor( self, service, svName, svVal, svSeq ):
         "Callback from Sender's Playlist service"
         if svName == 'TransportState':
-            if svVal != 'Playing':
-                self.log.Fail( self.senderDev, "Sender dropout detected -> state is %s" % svVal )
+            if svVal == 'Playing':
+                self.senderPlaying.set()
+            else:
+                if self.monitor:
+                    self.log.Fail( self.senderDev, "Sender dropout detected -> state is %s" % svVal )
                 
-    def _ReceiverReceiverMonitor( self, service, svName, svVal, svSeq ):
+    def _ReceiverReceiverCb( self, service, svName, svVal, svSeq ):
         "Callback from Receiver's Receiver service"
         if svName == 'TransportState':
-            if svVal != 'Playing':
-                self.log.Fail( self.rcvrDev, "Receiver dropout detected -> state is %s" % svVal )
+            if svVal == 'Playing':
+                self.receiverPlaying.set()
+            else:
+                if self.monitor:
+                    self.log.Fail( self.rcvrDev, "Receiver dropout detected -> state is %s" % svVal )
+        elif svName == 'Uri':
+            self.receiverUri.set()
             
-    def _SlaveReceiverMonitor( self, service, svName, svVal, svSeq ):
+    def _SlaveReceiverCb( self, service, svName, svVal, svSeq ):
         "Callback from Slave's Receiver's service"
         if svName == 'TransportState':
-            if svVal != 'Playing':
-                self.log.Fail( self.slaveDev, "Slave dropout detected -> state is %s" % svVal )
+            if svVal == 'Playing':
+                self.slavePlaying.set()
+            else:
+                if self.monitor:
+                    self.log.Fail( self.slaveDev, "Slave dropout detected -> state is %s" % svVal )
+        elif svName == 'Uri':
+            self.slaveUri.set()
             
     def _DurationCb( self ):
         "Callback from duration timer"

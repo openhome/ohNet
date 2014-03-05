@@ -76,6 +76,7 @@ public:
                 TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore);
     ~MediaPlayer();
+    void Quit();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
     void Add(Media::ContentProcessor* aContentProcessor);

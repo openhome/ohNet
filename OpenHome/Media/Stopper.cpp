@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 
 using namespace OpenHome;
@@ -14,8 +15,8 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iSem("STP2", 0)
     , iRampDuration(aRampDuration)
     , iTargetHaltId(MsgHalt::kIdInvalid)
-    , iTrackId(UINT_MAX)
-    , iStreamId(UINT_MAX)
+    , iTrackId(0)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
     , iQuit(false)
 {
@@ -151,8 +152,17 @@ Msg* Stopper::Pull()
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
+    /* IdManager expects OkToPlay to be called for every stream that is added to it.
+       This isn't the case if CodecController fails to recognise the format of a stream.
+       Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
+       play a stream. */
+    if (!iCheckedStreamPlayable && iStreamHandler != NULL) {
+        (void)iStreamHandler->OkToPlay(iTrackId, iStreamId);
+    }
+
     NewStream();
     iTrackId = aMsg->IdPipeline();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
 
@@ -224,6 +234,9 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
+    if (iStreamHandler != NULL) {
+        iStreamHandler->TryStop(iTrackId, iStreamId);
+    }
     return aMsg;
 }
 

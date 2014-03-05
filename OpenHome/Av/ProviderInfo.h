@@ -22,6 +22,8 @@ class ProviderInfo : public DvProviderAvOpenhomeOrgInfo1, private IPipelineObser
 public:
     ProviderInfo(DvDevice& aDevice, PipelineManager& aPipelineManager);
     ~ProviderInfo();
+private:
+    void ClearStreamInfo(const Brx& aTrackUri, const Brx& aMetaData);
 private: // from DvProviderAvOpenhomeOrgInfo1 (and only ever invoked from base class)
     void Counters(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount);
     void Track(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);

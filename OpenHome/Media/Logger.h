@@ -64,7 +64,6 @@ private:
     TBool iEnabled;
     TInt iFilter;
     Semaphore iShutdownSem;
-    Msg* iPrevMsg;
 };
 
 } // namespace Media

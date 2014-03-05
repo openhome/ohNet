@@ -35,11 +35,11 @@ using namespace OpenHome::Net;
 TestRadio::TestRadio(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
-    iPipeline = new PipelineManager(iInfoLogger, kMaxDriverJiffies);
+    iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
+    iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory, kMaxDriverJiffies);
     iPipeline->AddObserver(*this);
     iEnv = &aDvStack.Env();
 
-    iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("Radio", *iTrackFactory);
     iPipeline->Add(iUriProvider);

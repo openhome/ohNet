@@ -92,6 +92,9 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 TestMediaPlayer::~TestMediaPlayer()
 {
     ASSERT(!iDevice->Enabled());
+    delete iSourceUpnp;
+    delete iMediaPlayer;
+    delete iPipelineObserver;
     delete iShellDebug;
     delete iShell;
     delete iDevice;
@@ -100,7 +103,7 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iConfigRamStore;
 }
 
-void TestMediaPlayer::DestroyPipeline()
+void TestMediaPlayer::StopPipeline()
 {
     TUint waitCount = 0;
     if (TryDisable(*iDevice)) {
@@ -113,9 +116,7 @@ void TestMediaPlayer::DestroyPipeline()
         iDisabled.Wait();
         waitCount--;
     }
-    delete iSourceUpnp;
-    delete iMediaPlayer;
-    delete iPipelineObserver;
+    iMediaPlayer->Quit();
 }
 
 void TestMediaPlayer::AddAttribute(const TChar* aAttribute)

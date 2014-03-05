@@ -102,9 +102,8 @@ class SoftPlayer( BASE.Component ):
     def __GetHost( self ):
         "Retrieve host adapter to use for player"
         configFile = os.path.abspath( 'Config.xml') 
-        if not os.path.exists( configFile ):
-            host = 0 
-        else:
+        host = 0
+        if os.path.exists( configFile ):
             config = None
             computerName = platform.node().split( '.' )[0]
             xml = ET.parse( configFile )
@@ -115,9 +114,7 @@ class SoftPlayer( BASE.Component ):
                     break
             if config is not None:
                 adapter = config.find( 'adapter' )
-                if adapter is None:
-                    host = 0
-                else:
+                if adapter is not None:
                     host = int( adapter.text )
         return host
     

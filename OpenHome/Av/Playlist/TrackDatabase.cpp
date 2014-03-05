@@ -13,10 +13,25 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
+static inline void AddRefIfNonNull(Track* aTrack)
+{
+    if (aTrack != NULL) {
+        aTrack->AddRef();
+    }
+}
+
+static inline void RemoveRefIfNonNull(Track* aTrack)
+{
+    if (aTrack != NULL) {
+        aTrack->RemoveRef();
+    }
+}
+
 // TrackDatabase
 
 TrackDatabase::TrackDatabase(TrackFactory& aTrackFactory)
-    : iLock("TRDB")
+    : iLock("TDB1")
+    , iObserverLock("TDB2")
     , iTrackFactory(aTrackFactory)
     , iSeq(0)
 {
@@ -77,37 +92,60 @@ void TrackDatabase::GetTrackById(TUint aId, TUint aSeq, Track*& aTrack, TUint& a
 
 void TrackDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData, TUint& aIdInserted)
 {
-    AutoMutex a(iLock);
-    if (iTrackList.size() == kMaxTracks) {
-        THROW(TrackDbFull);
+    Track* track;
+    TUint idBefore, idAfter;
+    {
+        AutoMutex a(iLock);
+        if (iTrackList.size() == kMaxTracks) {
+            THROW(TrackDbFull);
+        }
+        TUint index = 0;
+        if (aIdAfter != kTrackIdNone) {
+            index = TrackListUtils::IndexFromId(iTrackList, aIdAfter) + 1;
+        }
+        track = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, false);
+        aIdInserted = track->Id();
+        iTrackList.insert(iTrackList.begin() + index, track);
+        iSeq++;
+        idBefore = aIdAfter;
+        idAfter = (index == iTrackList.size()-1? kTrackIdNone : index+1);
+        /* Unusual looking interleaving of locks is deliberate.
+           We want observers to be able to query track db state but don't want observer
+           callbacks to be run out of order.  Interleaving the locks appears to deliver this. */
+        iObserverLock.Wait();
     }
-    TUint index = 0;
-    if (aIdAfter != kTrackIdNone) {
-        index = TrackListUtils::IndexFromId(iTrackList, aIdAfter) + 1;
-    }
-    Track* track = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, false);
-    aIdInserted = track->Id();
-    iTrackList.insert(iTrackList.begin() + index, track);
-    iSeq++;
-    const TUint idBefore = aIdAfter;
-    const TUint idAfter = (index == iTrackList.size()-1? kTrackIdNone : index+1);
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrackInserted(*track, idBefore, idAfter);
     }
+    iObserverLock.Signal();
 }
 
 void TrackDatabase::DeleteId(TUint aId)
 {
-    AutoMutex a(iLock);
-    TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
-    Track* before = (index==0? NULL : iTrackList[index-1]);
-    Track* after = (index==iTrackList.size()-1? NULL : iTrackList[index+1]);
-    iTrackList[index]->RemoveRef();
-    (void)iTrackList.erase(iTrackList.begin() + index);
-    iSeq++;
+    Track* before = NULL;
+    Track* after = NULL;
+    {
+        AutoMutex a(iLock);
+        TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
+        if (index > 0) {
+            before = iTrackList[index-1];
+            before->AddRef();
+        }
+        if (index < iTrackList.size()-1) {
+            after = iTrackList[index+1];
+            after->AddRef();
+        }
+        iTrackList[index]->RemoveRef();
+        (void)iTrackList.erase(iTrackList.begin() + index);
+        iSeq++;
+        iObserverLock.Wait();
+    }
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrackDeleted(aId, before, after);
     }
+    iObserverLock.Signal();
+    RemoveRefIfNonNull(before);
+    RemoveRefIfNonNull(after);
 }
 
 void TrackDatabase::DeleteAll()
@@ -118,12 +156,14 @@ void TrackDatabase::DeleteAll()
         TrackListUtils::Clear(iTrackList);
         iSeq++;
     }
+    iObserverLock.Wait();
+    iLock.Signal();
     if (changed) {
         for (TUint i=0; i<iObservers.size(); i++) {
             iObservers[i]->NotifyAllDeleted();
         }
     }
-    iLock.Signal();
+    iObserverLock.Signal();
 }
 
 TUint TrackDatabase::TrackCount() const
@@ -394,48 +434,61 @@ void Shuffler::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfte
 {
     TUint idBefore = aIdBefore;
     TUint idAfter = aIdAfter;
-    iLock.Wait();
-    TUint index = 0;
-    if (iShuffleList.size() > 0) {
-        TUint min = 0;
-        if (iPrevTrackId != ITrackDatabase::kTrackIdNone) {
-            min = TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId);
+    try {
+        AutoMutex a(iLock);
+        TUint index = 0;
+        if (iShuffleList.size() > 0) {
+            TUint min = 0;
+            if (iPrevTrackId != ITrackDatabase::kTrackIdNone) {
+                min = TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId);
+            }
+            index = iEnv.Random(iShuffleList.size(), min);
         }
-        index = iEnv.Random(iShuffleList.size(), min);
+        iShuffleList.insert(iShuffleList.begin() + index, &aTrack);
+        aTrack.AddRef();
+        if (iShuffle) {
+            idBefore = (index == 0? ITrackDatabase::kTrackIdNone : iShuffleList[index-1]->Id());
+            idAfter = (index == iShuffleList.size()-1? ITrackDatabase::kTrackIdNone : iShuffleList[index+1]->Id());
+            LogIds("TrackInserted");
+        }
     }
-    iShuffleList.insert(iShuffleList.begin() + index, &aTrack);
-    aTrack.AddRef();
-    if (iShuffle) {
-        idBefore = (index == 0? ITrackDatabase::kTrackIdNone : iShuffleList[index-1]->Id());
-        idAfter = (index == iShuffleList.size()-1? ITrackDatabase::kTrackIdNone : iShuffleList[index+1]->Id());
-        LogIds("TrackInserted");
+    catch (TrackDbIdNotFound&) {
+        return;
     }
     iObserver->NotifyTrackInserted(aTrack, idBefore, idAfter);
-    iLock.Signal();
 }
 
 void Shuffler::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aAfter)
 {
-    AutoMutex a(iLock);
-    const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
     Track* before = aBefore;
     Track* after = aAfter;
-    if (iShuffle) {
-        before = (index==0? NULL : iShuffleList[index-1]);
-        after = (index==iShuffleList.size()-1? NULL : iShuffleList[index+1]);
-        if (iShuffleList[index]->Id() == iPrevTrackId) {
-            if (index == 0) {
-                iPrevTrackId = ITrackDatabase::kTrackIdNone;
-            }
-            else {
-                iPrevTrackId = iShuffleList[index-1]->Id();
+    try {
+        AutoMutex a(iLock);
+        const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
+        if (iShuffle) {
+            before = (index==0? NULL : iShuffleList[index-1]);
+            after = (index==iShuffleList.size()-1? NULL : iShuffleList[index+1]);
+            if (iShuffleList[index]->Id() == iPrevTrackId) {
+                if (index == 0) {
+                    iPrevTrackId = ITrackDatabase::kTrackIdNone;
+                }
+                else {
+                    iPrevTrackId = iShuffleList[index-1]->Id();
+                }
             }
         }
+        iShuffleList[index]->RemoveRef();
+        iShuffleList.erase(iShuffleList.begin() + index);
+        LogIds("TrackDeleted");
+        AddRefIfNonNull(before);
+        AddRefIfNonNull(after);
     }
-    iShuffleList[index]->RemoveRef();
-    iShuffleList.erase(iShuffleList.begin() + index);
-    LogIds("TrackDeleted");
+    catch (TrackDbIdNotFound&) {
+        return;
+    }
     iObserver->NotifyTrackDeleted(aId, before, after);
+    RemoveRefIfNonNull(before);
+    RemoveRefIfNonNull(after);
 }
 
 void Shuffler::NotifyAllDeleted()
@@ -443,8 +496,8 @@ void Shuffler::NotifyAllDeleted()
     iLock.Wait();
     iPrevTrackId = ITrackDatabase::kTrackIdNone;
     TrackListUtils::Clear(iShuffleList);
-    iObserver->NotifyAllDeleted();
     iLock.Signal();
+    iObserver->NotifyAllDeleted();
 }
 
 #undef LOG_SHUFFLE
@@ -529,24 +582,27 @@ Track* Repeater::PrevTrackRef(TUint aId)
 
 void Repeater::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfter)
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     iTrackCount++;
     ASSERT(iTrackCount <= ITrackDatabase::kMaxTracks);
+    iLock.Signal();
     iObserver->NotifyTrackInserted(aTrack, aIdBefore, aIdAfter);
 }
 
 void Repeater::NotifyTrackDeleted(TUint aId, Track* aBefore, Track* aAfter)
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     iTrackCount--;
     ASSERT(iTrackCount <= ITrackDatabase::kMaxTracks);
+    iLock.Signal();
     iObserver->NotifyTrackDeleted(aId, aBefore, aAfter);
 }
 
 void Repeater::NotifyAllDeleted()
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     iTrackCount = 0;
+    iLock.Signal();
     iObserver->NotifyAllDeleted();
 }
 

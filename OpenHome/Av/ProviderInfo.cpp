@@ -28,17 +28,7 @@ ProviderInfo::ProviderInfo(DvDevice& aDevice, PipelineManager& aPipelineManager)
     EnablePropertyMetatext();
 
     SetPropertyTrackCount(0);
-    SetPropertyDetailsCount(0);
-    SetPropertyMetatextCount(0);
-    SetPropertyUri(iTrackUri);
-    SetPropertyMetadata(iMetaData);
-    SetPropertyDuration(0);
-    SetPropertyBitRate(0);
-    SetPropertyBitDepth(0);
-    SetPropertySampleRate(0);
-    SetPropertyLossless(false);
-    SetPropertyCodecName(iCodecName);
-    SetPropertyMetatext(iMetaText);
+    ClearStreamInfo(Brx::Empty(), Brx::Empty());
 
     EnableActionCounters();
     EnableActionTrack();
@@ -50,6 +40,25 @@ ProviderInfo::ProviderInfo(DvDevice& aDevice, PipelineManager& aPipelineManager)
 
 ProviderInfo::~ProviderInfo()
 {
+}
+
+void ProviderInfo::ClearStreamInfo(const Brx& aTrackUri, const Brx& aMetaData)
+{
+    iTrackUri.Replace(aTrackUri);
+    SetPropertyUri(iTrackUri);
+    iMetaData.Replace(aMetaData);
+    SetPropertyMetadata(iMetaData);
+    SetPropertyDetailsCount(0);
+    SetPropertyDuration(0);
+    SetPropertyBitRate(0);
+    SetPropertyBitDepth(0);
+    SetPropertySampleRate(0);
+    SetPropertyLossless(false);
+    iCodecName.Replace(Brx::Empty());
+    SetPropertyCodecName(iCodecName);
+    SetPropertyMetatextCount(0);
+    iMetaText.Replace(Brx::Empty());
+    SetPropertyMetatext(iMetaText);
 }
 
 void ProviderInfo::Counters(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount)
@@ -128,33 +137,16 @@ void ProviderInfo::NotifyPipelineState(EPipelineState /*aState*/)
 void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
     TUint n = 0;
-
     AutoMutex mutex(iLock);
-
     PropertiesLock();
     GetPropertyTrackCount(n);
     SetPropertyTrackCount(n + 1);
-    iTrackUri.Replace(aTrack.Uri());
-    SetPropertyUri(iTrackUri);
-    iMetaData.Replace(aTrack.MetaData());
-    SetPropertyMetadata(iMetaData);
-    SetPropertyDetailsCount(0);
-    SetPropertyDuration(0);
-    SetPropertyBitRate(0);
-    SetPropertyBitDepth(0);
-    SetPropertySampleRate(0);
-    SetPropertyLossless(false);
-    iCodecName.Replace(Brx::Empty());
-    SetPropertyCodecName(iCodecName);
-    SetPropertyMetatextCount(0);
-    iMetaText.Replace(Brx::Empty());
-    SetPropertyMetatext(iMetaText);
+    ClearStreamInfo(aTrack.Uri(), aTrack.MetaData());
     PropertiesUnlock();
 }
 
 void ProviderInfo::NotifyMetaText(const Brx& aText)
 {
-    // XXX currently only invoked by Internet radio stations
     TUint n = 0;
 
     AutoMutex mutex(iLock);

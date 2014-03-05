@@ -24,8 +24,8 @@ public:
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
     virtual TUint CurrentTrackId() const = 0; // Id of last delivered track.  Or of pending track requested via Begin or Move[After|Before]
-    virtual TBool MoveNext() = 0;
-    virtual TBool MovePrevious() = 0;
+    virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
+    virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
     UriProvider(const TChar* aMode);
 private:
@@ -35,7 +35,7 @@ private:
 class Filler : private Thread, public ISupply
 {
 public:
-    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker);
+    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -59,6 +59,17 @@ private: // from ISupply
     void OutputHalt(TUint aHaltId);
     void OutputQuit();
 private:
+    class NullTrackStreamHandler : public IStreamHandler
+    {
+    public:
+        static const TUint kNullTrackId = 0;
+        static const TUint kNullTrackStreamId = 1;
+    private: // from IStreamHandler
+        EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+        TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+        TUint TryStop(TUint aTrackId, TUint aStreamId);
+    };
+private:
     mutable Mutex iLock;
     ISupply& iSupply;
     IPipelineIdTracker& iPipelineIdTracker;
@@ -73,6 +84,8 @@ private:
     TBool iQuit;
     EStreamPlay iTrackPlayStatus;
     TUint iNextHaltId;
+    Track* iNullTrack; // delivered when uri provider cannot return a Track
+    NullTrackStreamHandler iNullTrackStreamHandler;
 };
 
 } // namespace Media

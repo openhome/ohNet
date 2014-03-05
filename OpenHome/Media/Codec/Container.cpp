@@ -455,15 +455,11 @@ TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 TUint ContainerFront::TryStop(TUint aTrackId, TUint aStreamId)
 {
     LOG(kMedia, "ContainerFront::TryStop\n");
-    // IStreamHandler calls after MsgQuit shouldn't reach here,
-    // but best to check in case of a bug or badly behaved container plugin.
-    if (!iQuit) {
+    if (iStreamHandler != NULL) {
         iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
         return iExpectedFlushId;
     }
-    else {
-        return MsgFlush::kIdInvalid;
-    }
+    return MsgFlush::kIdInvalid;
 }
 
 

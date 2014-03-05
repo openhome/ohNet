@@ -173,6 +173,9 @@ void Pipeline::Start()
 
 void Pipeline::Quit()
 {
+    if (iQuitting) {
+        return;
+    }
     iQuitting = true;
     OutputQuit();
     DoPlay(true);
@@ -258,12 +261,14 @@ void Pipeline::Stop(TUint aHaltId)
 
 void Pipeline::RemoveCurrentStream()
 {
-    iSkipper->RemoveCurrentStream(!iBuffering);
+    const TBool rampDown = (iState == EPlaying);
+    iSkipper->RemoveCurrentStream(rampDown);
 }
 
 TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
-    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, !iBuffering);
+    const TBool rampDown = (iState == EPlaying);
+    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, rampDown);
 }
 
 void Pipeline::AddObserver(ITrackObserver& aObserver)

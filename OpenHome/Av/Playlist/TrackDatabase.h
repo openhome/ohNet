@@ -98,6 +98,7 @@ private:
     TBool TryGetTrackById(TUint aId, Media::Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const;
 private:
     mutable Mutex iLock;
+    Mutex iObserverLock;
     Media::TrackFactory& iTrackFactory;
     std::vector<ITrackDatabaseObserver*> iObservers;
     std::vector<Media::Track*> iTrackList;

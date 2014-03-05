@@ -16,7 +16,7 @@
 #include <OpenHome/Media/Msg.h>  // XXX MsgFlush::kIdInvalid
 #include <cctype>  // XXX isprint()
 
-#undef DEFINE_DEBUG_JOHNH
+#undef TONE_LOG_VERBOSE
 
 using namespace OpenHome;
 using namespace OpenHome::Media;;
@@ -492,6 +492,7 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iStop = false;
     iNextFlushId = MsgFlush::kIdInvalid;
+    iAudioBuf.SetBytes(0);
 
     if (!aUri.BeginsWith(Brn("tone://"))) {
         // quietly decline offer to handle other URL schemes; leave it to other protocol modules
@@ -521,14 +522,14 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 
     const ToneParams& params = uriParser.Params();
 
-#ifdef DEFINE_DEBUG_JOHNH
+#ifdef TONE_LOG_VERBOSE
     Log::Print("@@  bitdepth =   %6u\n", params.BitsPerSample());
     Log::Print("@@  samplerate = %6u\n", params.SampleRate());
     Log::Print("@@  pitch =      %6u\n", params.Pitch());
     Log::Print("@@  channels =   %6u\n", params.NumChannels());
     Log::Print("@@  duration =   %6u\n", params.DurationSeconds());
     Log::Print("\n");
-#endif  // DEFINE_DEBUG_JOHNH
+#endif  // TONE_LOG_VERBOSE
 
     //
     // output WAV header:  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
@@ -571,9 +572,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     iAudioBuf.Append("data");
     LE4(subchunkTwoSize)
 
-#ifdef DEFINE_DEBUG_JOHNH
+#ifdef TONE_LOG_VERBOSE
     HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
-#endif  // DEFINE_DEBUG_JOHNH
+#endif  // TONE_LOG_VERBOSE
 
     //
     // output audio data (data members inherited from Protocol)
@@ -592,7 +593,9 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     // need integer arithmetic, but cannot ignore potentially 5% error (e.g. 44100Hz sample rate with 13Hz pitch)
     const TInt virtualSamplesRemainder = (kMaxVirtualSamplesPerPeriod * params.Pitch()) % params.SampleRate();
 
+    iLock.Wait();
     iStreamId = iIdProvider->NextStreamId();
+    iLock.Signal();
     iSupply->OutputStream(aUri, iAudioBuf.Bytes() + nSamples * blockAlign, /*aSeekable*/ false, /*aLive*/ false, /*IStreamHandler*/ *this, iStreamId);
 
     TUint x = 0;
@@ -600,18 +603,18 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     for (TUint i = 0; i < nSamples; ++i) {
         iLock.Wait();
         if (iStop) {
-            iAudioBuf.SetBytes(0); // discard any pending audio (avoiding another test of iStop beneath this loop)
-            iLock.Signal();
             iSupply->OutputFlush(iNextFlushId);
+            iStop = false;
+            iLock.Signal();
             break;
         }
         iLock.Signal();
         // ensure sufficient capacity for another (multi-channel) audio sample
         if (iAudioBuf.Bytes() + blockAlign > iAudioBuf.MaxBytes()) {
-#ifdef DEFINE_DEBUG_JOHNH
+#ifdef TONE_LOG_VERBOSE
             Log::Print("flushing audio buffer: %u[B]\n", iAudioBuf.Bytes());
             HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
-#endif  // DEFINE_DEBUG_JOHNH
+#endif  // TONE_LOG_VERBOSE
             iSupply->OutputData(iAudioBuf);
             iAudioBuf.SetBytes(0);  // reset audio buffer
         }
@@ -652,12 +655,22 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
         x = x % kMaxVirtualSamplesPerPeriod;
     }
 
-    // flush final audio data (if any) from (partially) filled audio buffer
-#ifdef DEFINE_DEBUG_JOHNH
-    Log::Print("flushing final audio buffer: %u[B]\n", iAudioBuf.Bytes());
-    HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
-#endif  // DEFINE_DEBUG_JOHNH
-    iSupply->OutputData(iAudioBuf);
+
+    iLock.Wait();
+    if (iStop) {
+        iSupply->OutputFlush(iNextFlushId);
+        iStop = false;
+    }
+    else {
+        // flush final audio data (if any) from (partially) filled audio buffer
+#ifdef TONE_LOG_VERBOSE
+        Log::Print("flushing final audio buffer: %u[B]\n", iAudioBuf.Bytes());
+        HexDump(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+#endif  // TONE_LOG_VERBOSE
+        iSupply->OutputData(iAudioBuf);
+    }
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iLock.Signal();
 
     return EProtocolStreamSuccess;
 }

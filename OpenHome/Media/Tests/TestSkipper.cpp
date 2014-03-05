@@ -70,6 +70,7 @@ private:
     void TestAllMsgsPassWhileNotSkipping();
     void TestRemoveStreamRampAudioRampsDown();
     void TestRemoveStreamRampHaltDeliveredOnRampDown();
+    void TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately();
     void TestRemoveStreamRampAllMsgsPassDuringRamp();
     void TestRemoveStreamRampFewMsgsPassAfterRamp();
     void TestRemoveStreamRampNewTrackResets();
@@ -106,6 +107,7 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestAllMsgsPassWhileNotSkipping), "TestAllMsgsPassWhileNotSkipping");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAudioRampsDown), "TestRemoveStreamRampAudioRampsDown");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown), "TestRemoveStreamRampHaltDeliveredOnRampDown");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately), "TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp), "TestRemoveStreamRampAllMsgsPassDuringRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp), "TestRemoveStreamRampFewMsgsPassAfterRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewTrackResets), "TestRemoveStreamRampNewTrackResets");
@@ -363,7 +365,8 @@ void SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown()
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
-    for (TUint i=0; i<3; i++) {
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
         PullNext();
     }
 
@@ -376,16 +379,29 @@ void SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown()
     PullNext(EMsgHalt);
 }
 
+void SuiteSkipper::TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    for (TUint i=0; i<3; i++) {
+        PullNext();
+    }
+    iSkipper->RemoveCurrentStream(true);
+    PullNext(EMsgHalt);
+}
+
 void SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp()
 {
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
 
-    for (TUint i=0; i<3; i++) {
+    for (TUint i=0; i<4; i++) {
         PullNext();
     }
-    TEST(iLastPulledMsg == EMsgDecodedStream);
+    TEST(iLastPulledMsg == EMsgAudioPcm);
 
     iSkipper->RemoveCurrentStream(true);
     iRamping = true;
@@ -408,11 +424,12 @@ void SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp()
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
 
-    for (TUint i=0; i<3; i++) {
+    for (TUint i=0; i<4; i++) {
         PullNext();
     }
-    TEST(iLastPulledMsg == EMsgDecodedStream);
+    TEST(iLastPulledMsg == EMsgAudioPcm);
 
     iSkipper->RemoveCurrentStream(true);
     iRamping = true;
@@ -489,11 +506,12 @@ void SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass()
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
 
-    for (TUint i=0; i<3; i++) {
+    for (TUint i=0; i<4; i++) {
         PullNext();
     }
-    TEST(iLastPulledMsg == EMsgDecodedStream);
+    TEST(iLastPulledMsg == EMsgAudioPcm);
 
     iSkipper->RemoveCurrentStream(false);
     // don't expect a Halt - not ramping implies that the pipeline is already halted (or buffering)
@@ -545,11 +563,12 @@ void SuiteSkipper::TestTryRemoveRampValidTrackAndStream()
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
 
-    for (TUint i=0; i<3; i++) {
+    for (TUint i=0; i<4; i++) {
         PullNext();
     }
-    TEST(iLastPulledMsg == EMsgDecodedStream);
+    TEST(iLastPulledMsg == EMsgAudioPcm);
 
     TEST(iSkipper->TryRemoveStream(iTrackId, iStreamId, true));
     iRamping = true;
@@ -592,11 +611,12 @@ void SuiteSkipper::TestTryRemoveNoRampValidTrackAndStream()
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
     iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
 
-    for (TUint i=0; i<3; i++) {
+    for (TUint i=0; i<4; i++) {
         PullNext();
     }
-    TEST(iLastPulledMsg == EMsgDecodedStream);
+    TEST(iLastPulledMsg == EMsgAudioPcm);
 
     TEST(iSkipper->TryRemoveStream(iTrackId, iStreamId, false));
     iRamping = false;

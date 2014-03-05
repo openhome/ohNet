@@ -14,32 +14,33 @@ class MsgUdp
 {
 public:
     MsgUdp(TUint aMaxSize);
-    MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint);
     ~MsgUdp();
-    Bwx& Buffer();
-    Endpoint& GetEndpoint();
-    void Clear();
+    void Read(SocketUdp& aSocket);
+    const Brx& Buffer();
+    OpenHome::Endpoint& Endpoint();
 private:
     Bwh iBuf;
-    Endpoint iEndpoint;
+    OpenHome::Endpoint iEndpoint;
 };
 
 /**
  * Class for a continuously running server which buffers packets while active
  * and discards packets when deactivated
  */
-class SocketUdpServer : public SocketUdp
+class SocketUdpServer : public SocketUdp, public IReaderSource
 {
 public:
     SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
     ~SocketUdpServer();
     void Open();
     void Close();
-public: // from SocketUdpBase
     Endpoint Receive(Bwx& aBuf);
+public: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
-    void ClearAndRequeue(MsgUdp& aMsg);
-    void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
+    static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
     void ServerThread();
     void CurrentAdapterChanged();
 private:
@@ -48,8 +49,9 @@ private:
     TBool iOpen;
     Fifo<MsgUdp*> iFifoWaiting;
     Fifo<MsgUdp*> iFifoReady;
-    Mutex iWaitingLock;
-    Mutex iReadyLock;
+    MsgUdp* iDiscard;
+    Mutex iLock;
+    Semaphore iSemaphore;
     ThreadFunctor* iServerThread;
     TBool iQuit;
     TUint iAdapterListenerId;
