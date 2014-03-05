@@ -1,0 +1,3 @@
+REPOSITORY = 'ohMediaPlayer'
+REVIEWBOARD_URL = 'http://core.linn.co.uk/reviewboard/'
+
