@@ -51,6 +51,8 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
+    GenerateMetadata();
+
     iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), *this, aHostName, aFriendlyName, aMacAddr);
     iAudioId = iServerManager.CreateServer();
     iControlId = iServerManager.CreateServer();
@@ -126,6 +128,21 @@ void SourceRaop::Deactivate()
     Source::Deactivate();
 }
 
+void SourceRaop::GenerateMetadata()
+/**
+ * Helper method - should only be called during construction.
+ */
+{
+    iDidlLite.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
+    iDidlLite.Append("<item id=\"\" parentID=\"\" restricted=\"True\">");
+    iDidlLite.Append("<dc:title>");
+    iDidlLite.Append("Net Aux");
+    iDidlLite.Append("</dc:title>");
+    iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
+    iDidlLite.Append("</item>");
+    iDidlLite.Append("</DIDL-Lite>");
+}
+
 void SourceRaop::OpenServers()
 {
     iServerAudio->Open();
@@ -146,7 +163,7 @@ void SourceRaop::StartNewTrack()
         iTrack = NULL;
     }
 
-    iTrack = iUriProvider.SetTrack(iNextTrackUri, Brn(""), true);
+    iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
     iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
 
     iTransportState = Media::EPipelinePlaying;

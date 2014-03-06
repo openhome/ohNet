@@ -52,6 +52,7 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
+    void GenerateMetadata();
     void OpenServers();
     void CloseServers();
     void StartNewTrack();
@@ -82,6 +83,7 @@ private:
     TUint iAutoNetAux;
     TBool iAutoSwitch;
     TBool iSessionActive;
+    Bws<Media::kTrackMetaDataMaxBytes> iDidlLite;
     Bws<kMaxUriBytes> iNextTrackUri;
     Media::Track* iTrack;
     TUint iTrackPosSeconds;
