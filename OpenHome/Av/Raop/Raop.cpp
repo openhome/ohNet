@@ -417,7 +417,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteFlush();
 
                     // activate RAOP source
-                    iDiscovery.NotifyStreamStart(iClientControlPort, iClientTimingPort);
+                    iDiscovery.NotifySessionStart(iClientControlPort, iClientTimingPort);
                     LOG(kMedia, "RaopDiscoverySession::Run - Playing\n");
                 }
                 else if(method == RtspMethod::kSetParameter) {
@@ -478,7 +478,7 @@ void RaopDiscoverySession::Run()
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
                     Deactivate();
-                    iDiscovery.NotifyStreamEnd();
+                    iDiscovery.NotifySessionEnd();
                     LOG(kMedia, "RaopDiscoverySession::Run - kTeardown\n");
                     break;
                 }
@@ -710,14 +710,14 @@ RaopDiscovery::~RaopDiscovery()
     delete iRaopDevice;
 }
 
-void RaopDiscovery::NotifyStreamStart(TUint aControlPort, TUint aTimingPort)
+void RaopDiscovery::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
-    iRaopObserver.NotifyStreamStart(aControlPort, aTimingPort);
+    iRaopObserver.NotifySessionStart(aControlPort, aTimingPort);
 }
 
-void RaopDiscovery::NotifyStreamEnd()
+void RaopDiscovery::NotifySessionEnd()
 {
-    iRaopObserver.NotifyStreamEnd();
+    iRaopObserver.NotifySessionEnd();
 }
 
 const Brx& RaopDiscovery::Aeskey()

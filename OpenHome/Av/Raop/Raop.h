@@ -185,8 +185,8 @@ public: // from IRaopDiscovery
     void Close();
     void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
 public: // from IRaopObserver
-    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
-    void NotifyStreamEnd();
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd();
 private:
     RaopDiscoverySession& ActiveSession();
     void PowerDown();
