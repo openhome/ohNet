@@ -76,16 +76,12 @@ private:
     TBool iExit;
 };
 
-//class RaopTiming
-//{
-//    static const TUint kMaxReadBufferBytes = 1000;
-//public:
-//    RaopTiming(SocketUdpServer& aServer);
-//private:
-//    SocketUdpServer iUdpServer;
-//    Bws<kMaxReadBufferBytes> iDataBuffer;
-//};
-
+// NOTE: there are three channels to monitor:
+// - Audio
+// - Control
+// - Timing
+// However, the timing channel was never monitored in the previous codebase,
+// so no RaopTiming class exists here.
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
@@ -111,7 +107,6 @@ private:
     UdpServerManager& iServerManager;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
-    //RaopTiming iRaopTiming;
 
     Bws<kMaxReadBufferBytes> iResentData;
 

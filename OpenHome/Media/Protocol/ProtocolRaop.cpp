@@ -19,13 +19,15 @@ Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery
     return new ProtocolRaop(aEnv, aDiscovery, aServerManager, aAudioId, aControlId, aTimingId);
 }
 
+
+// ProtocolRaop
+
 ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint /*aTimingId*/)
     : ProtocolNetwork(aEnv)
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
     , iRaopAudio(iServerManager.Find(aAudioId))
     , iRaopControl(aEnv, iServerManager.Find(aControlId))
-//  , iRaopTiming(iServerManager.Find(aTimingId))
     , iLockRaop("PRAL")
 {
 }
@@ -251,6 +253,9 @@ void ProtocolRaop::Deactivate()
     LOG(kMedia, "ProtocolRaop::Deactivate\n");
     iDiscovery.Deactivate();
 }
+
+
+// RaopControl
 
 RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
     : iServer(aServer)
@@ -501,11 +506,8 @@ void RaopControl::TimerExpired()
 
 }
 
-//RaopTiming::RaopTiming(SocketUdpServer& aServer)
-//    : iServer(aServer)
-//{
-//}
 
+// RaopAudio
 
 RaopAudio::RaopAudio(SocketUdpServer& aServer)
     : iServer(aServer)
