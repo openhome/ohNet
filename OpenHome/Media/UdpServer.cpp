@@ -141,13 +141,24 @@ void SocketUdpServer::Close()
     iFifoReady.ReadInterrupt(false);
 }
 
+TBool SocketUdpServer::IsOpen()
+{
+    AutoMutex a(iLock);
+    return iOpen;
+}
+
 Endpoint SocketUdpServer::Receive(Bwx& aBuf)
 {
     iLock.Wait();
 
-    if (iQuit || !iOpen) { // allows this assertion to be unit testable
+    if (iQuit) {
         iLock.Signal();
         ASSERTS();
+    }
+
+    if (!iOpen) {
+        iLock.Signal();
+        THROW(UdpServerClosed);
     }
 
     iLock.Signal();
@@ -173,9 +184,23 @@ Endpoint SocketUdpServer::Receive(Bwx& aBuf)
     }
 }
 
+Endpoint SocketUdpServer::Sender() const
+{
+    AutoMutex a(iLock);
+    return iSender;
+}
+
 void SocketUdpServer::Read(Bwx& aBuffer)
 {
-    Receive(aBuffer);
+    try {
+        Endpoint ep = Receive(aBuffer);
+        iLock.Wait();
+        iSender.Replace(ep);
+        iLock.Signal();
+    }
+    catch (UdpServerClosed&) {
+        THROW(ReaderError);
+    }
 }
 
 void SocketUdpServer::ReadFlush()

@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Network.h>
 
+EXCEPTION(UdpServerClosed);
+
 namespace OpenHome {
 namespace Media {
 
@@ -27,14 +29,16 @@ private:
  * Class for a continuously running server which buffers packets while active
  * and discards packets when deactivated
  */
-class SocketUdpServer : public SocketUdp, public IReaderSource
+class SocketUdpServer : public SocketUdp, public IReaderSource // FIXME - don't extend SocketUdp; hold it as a member
 {
 public:
     SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
     ~SocketUdpServer();
     void Open();
     void Close();
+    TBool IsOpen();
     Endpoint Receive(Bwx& aBuf);
+    Endpoint Sender() const; // sender of last completed Read()
 public: // from IReaderSource
     void Read(Bwx& aBuffer);
     void ReadFlush();
@@ -50,7 +54,8 @@ private:
     Fifo<MsgUdp*> iFifoWaiting;
     Fifo<MsgUdp*> iFifoReady;
     MsgUdp* iDiscard;
-    Mutex iLock;
+    Endpoint iSender;
+    mutable Mutex iLock;
     Semaphore iSemaphore;
     ThreadFunctor* iServerThread;
     TBool iQuit;
