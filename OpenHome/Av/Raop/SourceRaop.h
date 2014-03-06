@@ -26,8 +26,8 @@ namespace Av {
 class IRaopObserver
 {
 public:
-    virtual void NotifyStreamStart(TUint aControlPort, TUint aTimingPort) = 0;
-    virtual void NotifyStreamEnd() = 0;
+    virtual void NotifySessionStart(TUint aControlPort, TUint aTimingPort) = 0;
+    virtual void NotifySessionEnd() = 0;
     virtual ~IRaopObserver() {}
 };
 
@@ -43,8 +43,8 @@ private: // from ISource
     void Activate();
     void Deactivate();
 private: // from IRaopObserver
-    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
-    void NotifyStreamEnd();
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd();
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
@@ -52,6 +52,8 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
+    void OpenServers();
+    void CloseServers();
     void StartNewTrack();
     void StopTrack();
     void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
@@ -75,6 +77,9 @@ private:
     Media::UriProviderSingleTrack& iUriProvider;
     Media::RaopDiscovery* iRaopDiscovery;
     Media::UdpServerManager iServerManager;
+    Media::SocketUdpServer* iServerAudio;   // no ownership
+    Media::SocketUdpServer* iServerControl; // no ownership
+    Media::SocketUdpServer* iServerTiming;  // no ownership
     Configuration::ConfigChoice* iConfigNetAux;
     TUint iConfigSubId;
     TUint iAutoNetAux;

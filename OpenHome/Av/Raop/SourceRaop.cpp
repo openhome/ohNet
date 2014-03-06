@@ -58,10 +58,10 @@ SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aP
     iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, iAudioId, iControlId, iTimingId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
 
-    SocketUdpServer& audioServer = iServerManager.Find(iAudioId);
-    SocketUdpServer& controlServer = iServerManager.Find(iControlId);
-    SocketUdpServer& timingServer = iServerManager.Find(iTimingId);
-    iRaopDiscovery->SetListeningPorts(audioServer.Port(), controlServer.Port(), timingServer.Port());
+    iServerAudio = &iServerManager.Find(iAudioId);
+    iServerControl = &iServerManager.Find(iControlId);
+    iServerTiming = &iServerManager.Find(iTimingId);
+    iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
 
     std::vector<TUint> choices;
     choices.push_back(kAutoNetAuxOn);
@@ -87,7 +87,6 @@ IRaopDiscovery& SourceRaop::Discovery()
 void SourceRaop::Activate()
 {
     iLock.Wait();
-    iServerManager.OpenAll();
     iTrackPosSeconds = 0;
     iActive = true;
     if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
@@ -96,6 +95,7 @@ void SourceRaop::Activate()
     }
 
     if (iSessionActive) {
+        OpenServers();
         StartNewTrack();
         iLock.Signal();
         iPipeline.Play();
@@ -119,10 +119,26 @@ void SourceRaop::Deactivate()
         iRaopDiscovery->Disable();
     }
     StopTrack();
+    if (iSessionActive) {
+        CloseServers();
+    }
 
     iLock.Signal();
-    iServerManager.CloseAll();
     Source::Deactivate();
+}
+
+void SourceRaop::OpenServers()
+{
+    iServerAudio->Open();
+    iServerControl->Open();
+    iServerTiming->Open();
+}
+
+void SourceRaop::CloseServers()
+{
+    iServerAudio->Close();
+    iServerControl->Close();
+    iServerTiming->Close();
 }
 
 void SourceRaop::StartNewTrack()
@@ -149,7 +165,7 @@ void SourceRaop::StopTrack()
     iTransportState = Media::EPipelineStopped;
 }
 
-void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
+void SourceRaop::NotifySessionStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
     // FIXME - get client UDP ports via params, then compose into URI so that
     // control and timing servers know ports to send on - currently just send
     // to ports that packets were sent from, which also happen to be the
@@ -167,6 +183,9 @@ void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/
     }
 
     iLock.Wait();
+    if (!iSessionActive) {
+        OpenServers();
+    }
     iSessionActive = true;
 
     //iNextTrackUri.Replace(kRaopPrefix);
@@ -187,11 +206,16 @@ void SourceRaop::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/
     }
 }
 
-void SourceRaop::NotifyStreamEnd()
+void SourceRaop::NotifySessionEnd()
 {
     AutoMutex a(iLock);
     StopTrack();
     iNextTrackUri.SetBytes(0);
+
+    if (IsActive() && iSessionActive) {
+        CloseServers();
+    }
+
     iSessionActive = false;
 }
 
