@@ -64,10 +64,7 @@ private:
     static const TUint kMaxUdpPackets = 25;
     static const TUint kRaopPrefixBytes = 7;
     static const TUint kMaxPortBytes = 5; // 0-65535
-    static const TUint kPortAudio = 60400;
-    static const TUint kPortControl = 60401;
-    static const TUint kPortTiming = 60402;
-    static const TUint kMaxUriBytes = kRaopPrefixBytes+kMaxPortBytes*3+2;   // raop://xxxxx.yyyyy.zzzzz
+    static const TUint kMaxUriBytes = kRaopPrefixBytes+kMaxPortBytes*2+1;   // raop://xxxxx.yyyyy
     static const TUint kAutoNetAuxOn;
     static const TUint kAutoNetAuxOffVisible;
     static const TUint kAutoNetAuxOffNotVisible;

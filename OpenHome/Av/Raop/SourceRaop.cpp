@@ -52,9 +52,9 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iTransportState(Media::EPipelineStopped)
 {
     iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), *this, aHostName, aFriendlyName, aMacAddr);
-    iAudioId = iServerManager.CreateServer(kPortAudio);
-    iControlId = iServerManager.CreateServer(kPortControl);
-    iTimingId = iServerManager.CreateServer(kPortTiming);
+    iAudioId = iServerManager.CreateServer();
+    iControlId = iServerManager.CreateServer();
+    iTimingId = iServerManager.CreateServer();
     iPipeline.Add(ProtocolFactory::NewRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
 
