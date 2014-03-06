@@ -90,7 +90,6 @@ void SourceRaop::Activate()
     iTrackPosSeconds = 0;
     iActive = true;
     if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
-        Log::Print("disabling RAOP\n");
         iRaopDiscovery->Enable();
     }
 

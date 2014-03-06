@@ -32,7 +32,6 @@ public:
     void SetMute();
 private:
     SocketUdpServer& iServer;
-    UdpReader iSocketReader;
     Bws<kMaxReadBufferBytes> iDataBuffer;
     Bws<kMaxReadBufferBytes> iAudio;
     Bws<sizeof(AES_KEY)> iAeskey;
@@ -94,7 +93,6 @@ public:
     ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint aTimingId);
     ~ProtocolRaop();
 public:
-    void DoInterrupt();
     TBool Active();
     void Deactivate();
     void Close();
@@ -106,6 +104,7 @@ private:
     void StartStream();
     void OutputAudio(const Brn &aPacket);
     void OutputContainer(const Brn &aFmtp);
+    void DoInterrupt();
 private:
     static const TUint kMaxReadBufferBytes = 1500;
 
@@ -122,6 +121,7 @@ private:
     TUint iStreamId;
     TUint iNextFlushId;
     TBool iStopped;
+    Mutex iLockRaop;
 };
 
 };  // namespace Media
