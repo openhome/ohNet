@@ -254,8 +254,7 @@ void ProtocolRaop::Deactivate()
 
 RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
     : iServer(aServer)
-    , iSocketReader(iServer)
-    , iReceive(iSocketReader)
+    , iReceive(iServer)
     , iMutex("raoc")
     , iMutexRx("raoR")
     , iSemaResend("raoc", 0)
@@ -278,7 +277,7 @@ RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
 RaopControl::~RaopControl()
 {
     iExit = true;
-    iSocketReader.ReadInterrupt();
+    iServer.ReadInterrupt();
     delete iThreadControl;
     delete iTimerExpiry;
 }
@@ -318,7 +317,7 @@ void RaopControl::Run()
     while (!iExit) {
         try {
             Brn id = iReceive.Read(2);
-            iEndpoint = iSocketReader.Sender(); // FIXME - will the sender (iTunes) always be using the same port for in/out?
+            iEndpoint = iServer.Sender(); // FIXME - will the sender (iTunes) always be using the same port for in/out?
             if(id.Bytes() < 2) {
                 LOG(kMedia, " RaopControl id bytes %d\n", id.Bytes());
                 continue;
@@ -328,7 +327,7 @@ void RaopControl::Run()
             if(type == 0x80D4) {
                 //read rest of header
                 Brn control = iReceive.Read(18);
-                iEndpoint = iSocketReader.Sender();
+                iEndpoint = iServer.Sender();
                 //extract timing info from control message and allow mutexed external access to data...
                 if(control.Bytes() < 18) {
                     THROW(ReaderError);
@@ -346,10 +345,10 @@ void RaopControl::Run()
             else if(type == 0x80D6) {
                 // resent packet
                 iReceive.Read(2);   //ignore next 2 bytes
-                iEndpoint = iSocketReader.Sender();
+                iEndpoint = iServer.Sender();
                 Bws<kMaxReadBufferBytes> data;
-                iSocketReader.Read(data);   // read a full udp packet
-                iEndpoint = iSocketReader.Sender();
+                iServer.Read(data);   // read a full udp packet
+                iEndpoint = iServer.Sender();
                 LOG(kMedia, "RaopControl read %d bytes, iResend %d\n", data.Bytes(), iResend);
                 iMutexRx.Wait();    // wait for processing of previous resend message
                 iMutex.Wait();

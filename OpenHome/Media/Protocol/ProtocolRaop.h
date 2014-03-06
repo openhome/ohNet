@@ -63,7 +63,6 @@ private:
 private:
     Endpoint iEndpoint;
     SocketUdpServer& iServer;
-    UdpReader iSocketReader;
     Srs<kMaxReadBufferBytes> iReceive;
     Bws<kMaxReadBufferBytes> iResentData;
     ThreadFunctor* iThreadControl;
