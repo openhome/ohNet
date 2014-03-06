@@ -24,7 +24,7 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostNa
 { // static
     UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
-    return new SourceRaop(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.Pipeline(), *raopUriProvider, aMediaPlayer.ConfigManagerWriter(), aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr);
+    return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
 }
 
 
@@ -36,12 +36,12 @@ const TUint SourceRaop::kAutoNetAuxOn = 0;              // Always visible via Ai
 const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // Always visible via Airplay; don't auto switch
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airplay when Net Aux source selected
 
-SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, IConfigManagerWriter& aConfigWriter, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : Source("Net Aux", "Net Aux")
     , iLock("SRAO")
-    , iPipeline(aPipeline)
+    , iPipeline(aMediaPlayer.Pipeline())
     , iUriProvider(aUriProvider)
-    , iServerManager(aEnv, kMaxUdpSize, kMaxUdpPackets)
+    , iServerManager(aMediaPlayer.Env(), kMaxUdpSize, kMaxUdpPackets)
     , iAutoNetAux(kAutoNetAuxOn)
     , iAutoSwitch(true)
     , iSessionActive(false)
@@ -51,11 +51,11 @@ SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aP
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, aPowerManager, *this, aHostName, aFriendlyName, aMacAddr);
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), *this, aHostName, aFriendlyName, aMacAddr);
     iAudioId = iServerManager.CreateServer(kPortAudio);
     iControlId = iServerManager.CreateServer(kPortControl);
     iTimingId = iServerManager.CreateServer(kPortTiming);
-    iPipeline.Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, iAudioId, iControlId, iTimingId)); // bypassing MediaPlayer
+    iPipeline.Add(ProtocolFactory::NewRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId, iTimingId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
 
     iServerAudio = &iServerManager.Find(iAudioId);
@@ -67,7 +67,7 @@ SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aP
     choices.push_back(kAutoNetAuxOn);
     choices.push_back(kAutoNetAuxOffVisible);
     choices.push_back(kAutoNetAuxOffNotVisible);
-    iConfigNetAux = new ConfigChoice(aConfigWriter, kKeyNetAux, choices, iAutoNetAux);
+    iConfigNetAux = new ConfigChoice(aMediaPlayer.ConfigManagerWriter(), kKeyNetAux, choices, iAutoNetAux);
     iConfigSubId = iConfigNetAux->Subscribe(MakeFunctorConfigChoice(*this, &SourceRaop::AutoNetAuxChanged));
 }
 
