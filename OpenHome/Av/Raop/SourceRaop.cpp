@@ -55,7 +55,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     iAudioId = iServerManager.CreateServer(kPortAudio);
     iControlId = iServerManager.CreateServer(kPortControl);
     iTimingId = iServerManager.CreateServer(kPortTiming);
-    iPipeline.Add(ProtocolFactory::NewRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId, iTimingId)); // bypassing MediaPlayer
+    iPipeline.Add(ProtocolFactory::NewRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId)); // bypassing MediaPlayer
     iPipeline.AddObserver(*this);
 
     iServerAudio = &iServerManager.Find(iAudioId);

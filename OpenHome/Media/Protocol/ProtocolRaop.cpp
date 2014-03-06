@@ -16,15 +16,15 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint aTimingId)
+Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
 { // static
-    return new ProtocolRaop(aEnv, aDiscovery, aServerManager, aAudioId, aControlId, aTimingId);
+    return new ProtocolRaop(aEnv, aDiscovery, aServerManager, aAudioId, aControlId);
 }
 
 
 // ProtocolRaop
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint /*aTimingId*/)
+ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
     : ProtocolNetwork(aEnv)
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
