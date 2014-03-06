@@ -196,6 +196,7 @@ void SuiteSocketUdpServer::CheckMsgValue(Brx& aBuf, TByte aVal)
 void SuiteSocketUdpServer::TestOpen()
 {
     // test calls to Receive are allowed immediately after call to Open()
+    TEST(iServer->IsOpen() == true);
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
@@ -212,6 +213,7 @@ void SuiteSocketUdpServer::TestClose()
     // test calls to Receive are not allowed when server is closed
     Bws<kMaxMsgSize> buf;
     iServer->Close();
+    TEST(iServer->IsOpen() == false);
     TEST_THROWS(iServer->Receive(buf), UdpServerClosed);
     TEST_THROWS(iServer->Read(buf), ReaderError);
 }
