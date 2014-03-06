@@ -212,7 +212,8 @@ void SuiteSocketUdpServer::TestClose()
     // test calls to Receive are not allowed when server is closed
     Bws<kMaxMsgSize> buf;
     iServer->Close();
-    TEST_THROWS(iServer->Receive(buf), AssertionFailed);
+    TEST_THROWS(iServer->Receive(buf), UdpServerClosed);
+    TEST_THROWS(iServer->Read(buf), ReaderError);
 }
 
 void SuiteSocketUdpServer::TestCloseTwice()
