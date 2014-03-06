@@ -114,8 +114,6 @@ void SocketUdpServer::Open()
     iLock.Signal();
 
     iSemaphore.Wait();
-
-    Interrupt(false);
 }
 
 void SocketUdpServer::Close()
@@ -136,9 +134,6 @@ void SocketUdpServer::Close()
     iLock.Signal();
 
     iSemaphore.Wait();
-
-    Interrupt(false);
-    iFifoReady.ReadInterrupt(false);
 }
 
 TBool SocketUdpServer::IsOpen()
@@ -251,6 +246,7 @@ void SocketUdpServer::ServerThread()
             }
         }
 
+        Interrupt(false);
         iSemaphore.Signal();
 
         // opened
@@ -294,6 +290,8 @@ void SocketUdpServer::ServerThread()
             iFifoWaiting.Write(msg);
         }
 
+        Interrupt(false);
+        iFifoReady.ReadInterrupt(false);
         iSemaphore.Signal();
     }
 }
