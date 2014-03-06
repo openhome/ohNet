@@ -30,6 +30,7 @@ ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostNa
 
 // SourceRaop
 
+const TChar* SourceRaop::kSourceNameStr = "Net Aux";
 const Brn SourceRaop::kRaopPrefix("raop://");
 const Brn SourceRaop::kKeyNetAux("Source.NetAux.Auto");
 const TUint SourceRaop::kAutoNetAuxOn = 0;              // Always visible via Airplay; auto switch when stream starts
@@ -37,7 +38,7 @@ const TUint SourceRaop::kAutoNetAuxOffVisible = 1;      // Always visible via Ai
 const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airplay when Net Aux source selected
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
-    : Source("Net Aux", "Net Aux")
+    : Source(kSourceNameStr, kSourceNameStr)
     , iLock("SRAO")
     , iPipeline(aMediaPlayer.Pipeline())
     , iUriProvider(aUriProvider)
@@ -136,7 +137,7 @@ void SourceRaop::GenerateMetadata()
     iDidlLite.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
     iDidlLite.Append("<item id=\"\" parentID=\"\" restricted=\"True\">");
     iDidlLite.Append("<dc:title>");
-    iDidlLite.Append("Net Aux");
+    iDidlLite.Append(kSourceNameStr);
     iDidlLite.Append("</dc:title>");
     iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
     iDidlLite.Append("</item>");
