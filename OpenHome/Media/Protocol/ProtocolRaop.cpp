@@ -1,7 +1,9 @@
 #include <OpenHome/Media/Protocol/RaopHeader.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Raop/Raop.h>
 
@@ -52,8 +54,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     iLockRaop.Signal();
 
     // raop doesn't actually stream from a URI, so just expect a dummy uri
-    Uri uri;
-    uri.Replace(aUri);
+    Uri uri(aUri);
     LOG(kMedia, "ProtocolRaop::Stream ");
     LOG(kMedia, uri.AbsoluteUri());
     LOG(kMedia, "\n");
@@ -66,17 +67,17 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         return EProtocolErrorNotSupported;
     }
 
-    // FIXME - parse uri to get ports for sending control/timing info to
-    // (could also get server ids for audio/control/timing and retrieve servers
-    // on behalf of them, and pass in servers while resetting)
+    // Parse URI to get client control/timing ports.
+    // (Timing channel isn't monitored, so don't bother parsing port.)
+    Parser p(aUri);
+    p.Forward(7);   // skip raop://
+    Brn ctrlPortBuf = p.Next('.');
+    TUint ctrlPort = Ascii::Uint(ctrlPortBuf);
 
     TBool start = true;
     TUint aesSid = 0;
-    // FIXME - should we pass an ID into Reset() methods here and update server
-    // each time, instead of doing it in constructor? - would require dynamic
-    // re-allocation of UdpReader
-    iRaopControl.Reset();
     iRaopAudio.Reset();
+    iRaopControl.Reset(ctrlPort);
     Brn audio;
     TUint16 expected = 0;
 
@@ -258,7 +259,8 @@ void ProtocolRaop::Deactivate()
 // RaopControl
 
 RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
-    : iServer(aServer)
+    : iClientPort(0)
+    , iServer(aServer)
     , iReceive(iServer)
     , iMutex("raoc")
     , iMutexRx("raoR")
@@ -309,9 +311,11 @@ void RaopControl::DoInterrupt()
     iMutex.Signal();
 }
 
-void RaopControl::Reset()
+void RaopControl::Reset(TUint aClientPort)
 {
-    // FIXME - should take a TUint aPort as param and set up iEndpoint here
+    iMutex.Wait();
+    iClientPort = aClientPort;
+    iMutex.Signal();
 }
 
 void RaopControl::Run()
@@ -322,7 +326,7 @@ void RaopControl::Run()
     while (!iExit) {
         try {
             Brn id = iReceive.Read(2);
-            iEndpoint = iServer.Sender(); // FIXME - will the sender (iTunes) always be using the same port for in/out?
+            iEndpoint = iServer.Sender();
             if(id.Bytes() < 2) {
                 LOG(kMedia, " RaopControl id bytes %d\n", id.Bytes());
                 continue;
@@ -332,7 +336,6 @@ void RaopControl::Run()
             if(type == 0x80D4) {
                 //read rest of header
                 Brn control = iReceive.Read(18);
-                iEndpoint = iServer.Sender();
                 //extract timing info from control message and allow mutexed external access to data...
                 if(control.Bytes() < 18) {
                     THROW(ReaderError);
@@ -350,7 +353,6 @@ void RaopControl::Run()
             else if(type == 0x80D6) {
                 // resent packet
                 iReceive.Read(2);   //ignore next 2 bytes
-                iEndpoint = iServer.Sender();
                 Bws<kMaxReadBufferBytes> data;
                 iServer.Read(data);   // read a full udp packet
                 iEndpoint = iServer.Sender();
@@ -432,6 +434,9 @@ void RaopControl::RequestResend(TUint aPacketId, TUint aPackets)
         request.Append((TByte)((aPackets) & 0xff));
 
         try {
+            iMutex.Wait();
+            iEndpoint.SetPort(iClientPort); // send to client listening port
+            iMutex.Signal();
             iServer.Send(request, iEndpoint);
         }
         catch(NetworkError) {

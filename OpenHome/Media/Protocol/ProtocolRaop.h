@@ -51,7 +51,7 @@ public:
     RaopControl(Environment& aEnv, SocketUdpServer& aServer);
     ~RaopControl();
     void DoInterrupt();
-    void Reset();
+    void Reset(TUint aClientPort);
     void Time(TUint& aSenderSkew, TUint& aLatency);
     void RequestResend(TUint aPacketId, TUint aPackets);
     void GetResentData(Bwx& aData, TUint16 aCount);
@@ -62,6 +62,7 @@ private:
     void TimerExpired();
 private:
     Endpoint iEndpoint;
+    TUint iClientPort;
     SocketUdpServer& iServer;
     Srs<kMaxReadBufferBytes> iReceive;
     Bws<kMaxReadBufferBytes> iResentData;

@@ -60,7 +60,7 @@ SourceRaop::SourceRaop(Environment& aEnv, DvStack& aDvStack, PipelineManager& aP
 
     iServerAudio = &iServerManager.Find(iAudioId);
     iServerControl = &iServerManager.Find(iControlId);
-    iServerTiming = &iServerManager.Find(iTimingId);
+    iServerTiming = &iServerManager.Find(iTimingId);    // never Open() this
     iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
 
     std::vector<TUint> choices;
@@ -130,14 +130,12 @@ void SourceRaop::OpenServers()
 {
     iServerAudio->Open();
     iServerControl->Open();
-    iServerTiming->Open();
 }
 
 void SourceRaop::CloseServers()
 {
     iServerAudio->Close();
     iServerControl->Close();
-    iServerTiming->Close();
 }
 
 void SourceRaop::StartNewTrack()
@@ -164,18 +162,7 @@ void SourceRaop::StopTrack()
     iTransportState = Media::EPipelineStopped;
 }
 
-void SourceRaop::NotifySessionStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
-    // FIXME - get client UDP ports via params, then compose into URI so that
-    // control and timing servers know ports to send on - currently just send
-    // to ports that packets were sent from, which also happen to be the
-    // receiving ports.
-    // Can also compose UDP servers/ports into URI, so that ProtocolRaop can
-    // retrieve servers at the start of each streaming session for each member
-    // class requiring a server.
-
-    // Current implementation of getting client UDP ports below causes
-    // streaming to fail - possible race condition? Without it, works at least
-    // as well as existing solution.
+void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
     if (!IsActive()) {
         DoActivate();
@@ -187,13 +174,10 @@ void SourceRaop::NotifySessionStart(TUint /*aControlPort*/, TUint /*aTimingPort*
     }
     iSessionActive = true;
 
-    //iNextTrackUri.Replace(kRaopPrefix);
-    //Ascii::AppendDec(iNextTrackUri, aControlPort);
-    //iNextTrackUri.Append('.');
-    //Ascii::AppendDec(iNextTrackUri, aTimingPort);
-
     iNextTrackUri.Replace(kRaopPrefix);
-    iNextTrackUri.Append(Brn("dummyuri"));
+    Ascii::AppendDec(iNextTrackUri, aControlPort);
+    iNextTrackUri.Append('.');
+    Ascii::AppendDec(iNextTrackUri, aTimingPort);
 
     if (iAutoSwitch || IsActive()) {
         StartNewTrack();
