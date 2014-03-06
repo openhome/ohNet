@@ -100,6 +100,7 @@ private:
     void TestMsgsDisposedStart();
     void TestMsgsDisposed();
     void TestMsgsDisposedCapacityExceeded();
+    void TestSender();
     //void TestSubnetChanged();
 private:
     static const TUint kUdpRecvBufSize = 8192;
@@ -138,6 +139,7 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart), "TestMsgsDisposedStart");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed), "TestMsgsDisposed");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded), "TestMsgsDisposedCapacityExceeded");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSender), "TestSender");
     //AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSubnetChanged));
 }
 
@@ -407,6 +409,21 @@ void SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded()
         CheckMsgValue(iInBuf, iMsgCount++);
         ASSERT(notDisposed < kDisposedCount);
     }
+}
+
+void SuiteSocketUdpServer::TestSender()
+{
+    Endpoint empty;
+    Endpoint ep = iServer->Sender(); // no call to Read() has been made
+    TEST(ep.Address() == empty.Address());
+    TEST(ep.Port() == empty.Port());
+
+    Endpoint expected(iSender->Port(), iInterface);
+    SendNextMsg(iOutBuf);
+    iServer->Read(iInBuf);
+    ep = iServer->Sender();
+    TEST(ep.Address() == expected.Address());
+    TEST(ep.Port() == expected.Port());
 }
 
 //void SuiteSocketUdpServer::TestSubnetChanged()
