@@ -100,6 +100,9 @@ private:
     void TestMsgsDisposedStart();
     void TestMsgsDisposed();
     void TestMsgsDisposedCapacityExceeded();
+    void TestSend();
+    void TestPort();
+    void TestSender();
     //void TestSubnetChanged();
 private:
     static const TUint kUdpRecvBufSize = 8192;
@@ -138,6 +141,9 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart), "TestMsgsDisposedStart");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed), "TestMsgsDisposed");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded), "TestMsgsDisposedCapacityExceeded");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSend), "TestSend");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestPort), "TestPort");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSender), "TestSender");
     //AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSubnetChanged));
 }
 
@@ -196,6 +202,7 @@ void SuiteSocketUdpServer::CheckMsgValue(Brx& aBuf, TByte aVal)
 void SuiteSocketUdpServer::TestOpen()
 {
     // test calls to Receive are allowed immediately after call to Open()
+    TEST(iServer->IsOpen() == true);
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
@@ -212,7 +219,9 @@ void SuiteSocketUdpServer::TestClose()
     // test calls to Receive are not allowed when server is closed
     Bws<kMaxMsgSize> buf;
     iServer->Close();
-    TEST_THROWS(iServer->Receive(buf), AssertionFailed);
+    TEST(iServer->IsOpen() == false);
+    TEST_THROWS(iServer->Receive(buf), UdpServerClosed);
+    TEST_THROWS(iServer->Read(buf), ReaderError);
 }
 
 void SuiteSocketUdpServer::TestCloseTwice()
@@ -307,7 +316,6 @@ void SuiteSocketUdpServer::TestReadInterrupt()
     }
 
     iServer->ReadInterrupt();
-    iServer->Interrupt(false);
 
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
@@ -404,6 +412,59 @@ void SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded()
         CheckMsgValue(iInBuf, iMsgCount++);
         ASSERT(notDisposed < kDisposedCount);
     }
+}
+
+void SuiteSocketUdpServer::TestSend()
+{
+    // Switch roles of iSender and iServer only for this test.
+
+    Endpoint senderEp(iSender->Port(), iInterface);
+
+    // packet 1
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    iSender->Receive(iInBuf);
+    CheckMsgValue(iInBuf, iMsgCount++);
+
+    // packet 2
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    iSender->Receive(iInBuf);
+    CheckMsgValue(iInBuf, iMsgCount++);
+
+    // packet 3
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    iSender->Receive(iInBuf);
+    CheckMsgValue(iInBuf, iMsgCount++);
+}
+
+void SuiteSocketUdpServer::TestPort()
+{
+    // Send packet from iServer to iSender; verify port value against that.
+
+    Endpoint senderEp(iSender->Port(), iInterface);
+
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    Endpoint ep = iSender->Receive(iInBuf);
+
+    TEST(iServer->Port() == ep.Port());
+}
+
+void SuiteSocketUdpServer::TestSender()
+{
+    Endpoint empty;
+    Endpoint ep = iServer->Sender(); // no call to Read() has been made
+    TEST(ep.Address() == empty.Address());
+    TEST(ep.Port() == empty.Port());
+
+    Endpoint expected(iSender->Port(), iInterface);
+    SendNextMsg(iOutBuf);
+    iServer->Read(iInBuf);
+    ep = iServer->Sender();
+    TEST(ep.Address() == expected.Address());
+    TEST(ep.Port() == expected.Port());
 }
 
 //void SuiteSocketUdpServer::TestSubnetChanged()
