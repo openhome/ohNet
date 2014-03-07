@@ -29,7 +29,7 @@ private:
  * Class for a continuously running server which buffers packets while active
  * and discards packets when deactivated
  */
-class SocketUdpServer : public SocketUdp, public IReaderSource // FIXME - don't extend SocketUdp; hold it as a member
+class SocketUdpServer : public IReaderSource
 {
 public:
     SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
@@ -37,8 +37,15 @@ public:
     void Open();
     void Close();
     TBool IsOpen();
+    void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuf);
     Endpoint Sender() const; // sender of last completed Read()
+    TUint Port() const;
+
+    void SetSendBufBytes(TUint aBytes);
+    void SetRecvBufBytes(TUint aBytes);
+    void SetRecvTimeout(TUint aMs);
+    void SetTtl(TUint aTtl);
 public: // from IReaderSource
     void Read(Bwx& aBuffer);
     void ReadFlush();
@@ -49,6 +56,7 @@ private:
     void CurrentAdapterChanged();
 private:
     Environment& iEnv;
+    SocketUdp iSocket;
     TUint iMaxSize;
     TBool iOpen;
     Fifo<MsgUdp*> iFifoWaiting;
@@ -56,6 +64,7 @@ private:
     MsgUdp* iDiscard;
     Endpoint iSender;
     mutable Mutex iLock;
+    Mutex iReadyLock;
     Semaphore iSemaphore;
     ThreadFunctor* iServerThread;
     TBool iQuit;

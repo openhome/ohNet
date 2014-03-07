@@ -100,6 +100,8 @@ private:
     void TestMsgsDisposedStart();
     void TestMsgsDisposed();
     void TestMsgsDisposedCapacityExceeded();
+    void TestSend();
+    void TestPort();
     void TestSender();
     //void TestSubnetChanged();
 private:
@@ -139,6 +141,8 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedStart), "TestMsgsDisposedStart");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposed), "TestMsgsDisposed");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded), "TestMsgsDisposedCapacityExceeded");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSend), "TestSend");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestPort), "TestPort");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSender), "TestSender");
     //AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestSubnetChanged));
 }
@@ -312,7 +316,6 @@ void SuiteSocketUdpServer::TestReadInterrupt()
     }
 
     iServer->ReadInterrupt();
-    iServer->Interrupt(false);
 
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
@@ -409,6 +412,44 @@ void SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded()
         CheckMsgValue(iInBuf, iMsgCount++);
         ASSERT(notDisposed < kDisposedCount);
     }
+}
+
+void SuiteSocketUdpServer::TestSend()
+{
+    // Switch roles of iSender and iServer only for this test.
+
+    Endpoint senderEp(iSender->Port(), iInterface);
+
+    // packet 1
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    iSender->Receive(iInBuf);
+    CheckMsgValue(iInBuf, iMsgCount++);
+
+    // packet 2
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    iSender->Receive(iInBuf);
+    CheckMsgValue(iInBuf, iMsgCount++);
+
+    // packet 3
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    iSender->Receive(iInBuf);
+    CheckMsgValue(iInBuf, iMsgCount++);
+}
+
+void SuiteSocketUdpServer::TestPort()
+{
+    // Send packet from iServer to iSender; verify port value against that.
+
+    Endpoint senderEp(iSender->Port(), iInterface);
+
+    GenerateNextMsg(iOutBuf);
+    iServer->Send(iOutBuf, senderEp);
+    Endpoint ep = iSender->Receive(iInBuf);
+
+    TEST(iServer->Port() == ep.Port());
 }
 
 void SuiteSocketUdpServer::TestSender()
