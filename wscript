@@ -596,9 +596,9 @@ def build(bld):
             target='TestProtocol',
             install_path=None)
     bld.program(
-           source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
-           use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-           target='TestProtocolRaop',
+            source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            target='TestProtocolRaop',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',

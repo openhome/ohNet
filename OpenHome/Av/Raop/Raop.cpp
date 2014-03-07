@@ -406,7 +406,6 @@ void RaopDiscoverySession::Run()
 
                     ASSERT(iAudioPort != 0 && iControlPort != 0 && iTimingPort != 0); // make sure ports have been set
                     iWriterResponse->WriteHeader(Brn("Transport"), transResponse);
-                    //iWriterResponse->WriteHeader(Brn("Transport"), Brn("RTP/AVP/UDP;unicast;mode=record;server_port=60400;control_port=60401;timing_port=60402"));
                     iWriterResponse->WriteFlush();
                 }
                 else if(method == RtspMethod::kRecord) {

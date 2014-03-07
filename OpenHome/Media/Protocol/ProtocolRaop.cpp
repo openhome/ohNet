@@ -531,7 +531,6 @@ void RaopAudio::Reset()
     iAesiv.SetBytes(0);
     iInitId = true;
     iInterrupted = false;
-    iServer.Interrupt(false);
     iServer.ReadFlush();  // set to read next udp packet
 }
 
