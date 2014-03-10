@@ -294,7 +294,10 @@ void MdnsPlatform::DeregisterService(TUint aHandle)
     iServicesLock.Wait();
     Map::iterator it = iServices.find(aHandle);
     if (it != iServices.end()) {
-        mDNS_DeregisterService(iMdns, it->second);
+        if (it->second != NULL) {
+            mDNS_DeregisterService(iMdns, it->second);
+            it->second = NULL;
+        }
     }
     iServicesLock.Signal();
     LOG(kBonjour, "Bonjour             DeregisterService - Complete\n");
@@ -320,7 +323,7 @@ void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TCha
     SetDomainName(domain, "local");
     SetDomainName(host, "");
     SetPort(port, aPort);
-    
+
     mDNS_RegisterService(iMdns, service, &name, &type, &domain, 0, port, (const mDNSu8*)aInfo, (mDNSu16)strlen(aInfo), 0, 0, (mDNSInterfaceID)aInterface, ServiceCallback, this, 0);
 
     LOG(kBonjour, "Bonjour             RegisterService - Complete\n");
