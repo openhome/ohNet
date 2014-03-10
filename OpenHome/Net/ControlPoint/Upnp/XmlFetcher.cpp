@@ -316,9 +316,6 @@ XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
 {
     const TUint numThreads = iCpStack.Env().InitParams()->NumXmlFetcherThreads();
     iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
-#ifndef _WIN32
-    ASSERT(numThreads <= 9);
-#endif
     for (TUint i=0; i<numThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("XmlFetcher %d", i);
