@@ -99,6 +99,7 @@ public:
 class DllExportClass Bwx : public Brx, public INonCopyable
 {
 public:
+    virtual ~Bwx() {};
     void Replace(const Brx& aBuf);
     void ReplaceThrow(const Brx& aBuf);
     void Replace(const TByte* aPtr, TUint aBytes);
