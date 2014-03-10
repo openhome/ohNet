@@ -4,6 +4,8 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -166,7 +168,7 @@ CpiDevice* CpiDeviceList::RefDevice(const Brx& aUdn)
 CpiDevice* CpiDeviceList::RefDeviceLocked(const Brx& aUdn)
 {
     Brn udn(aUdn);
-    Map::iterator it = iMap.find(udn);
+    CpDeviceMap::iterator it = iMap.find(udn);
     if (it == iMap.end()) {
         return NULL;
     }
@@ -224,7 +226,7 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
     iRefreshLock.Wait();
     if (iRefreshing) {
         Brn udn(aDevice->Udn());
-        Map::iterator it = iRefreshMap.find(udn);
+        CpDeviceMap::iterator it = iRefreshMap.find(udn);
         if (it == iRefreshMap.end()) {
             iRefreshMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
             aDevice->AddRef(); // for refresh list
@@ -256,7 +258,7 @@ void CpiDeviceList::Remove(const Brx& aUdn)
 {
     iLock.Wait();
     Brn udn(aUdn);
-    Map::iterator it = iMap.find(udn);
+    CpDeviceMap::iterator it = iMap.find(udn);
     if (it == iMap.end()) {
         // device isn't in this list
         iLock.Signal();
@@ -287,7 +289,11 @@ TBool CpiDeviceList::StartRefresh()
 
 void CpiDeviceList::RefreshComplete()
 {
-    iCpStack.DeviceListUpdater().QueueRefreshed(*this);
+    iRefreshLock.Wait();
+    iCpStack.DeviceListUpdater().QueueRefreshed(*this, iRefreshMap);
+    iRefreshMap.clear();
+    iRefreshing = false;
+    iRefreshLock.Signal();
 }
 
 void CpiDeviceList::CancelRefresh()
@@ -304,9 +310,9 @@ void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
     iCpStack.DeviceListUpdater().QueueAdded(*this, aDevice);
 }
 
-void CpiDeviceList::ClearMap(Map& aMap)
+void CpiDeviceList::ClearMap(CpDeviceMap& aMap)
 {
-    Map::iterator it = aMap.begin();
+    CpDeviceMap::iterator it = aMap.begin();
     while (it != aMap.end()) {
         it->second->RemoveRef();
         it->second = NULL;
@@ -405,23 +411,17 @@ TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
     return true;
 }
 
-void CpiDeviceList::NotifyRefreshed()
+void CpiDeviceList::NotifyRefreshed(CpDeviceMap& aRefreshMap)
 {
-    iRefreshLock.Wait();
-    Map refreshMap(iRefreshMap);
-    iRefreshMap.clear();
-    iRefreshing = false;
-    iRefreshLock.Signal();
-
     iLock.Wait();
     if (iActive) {
         /* map iterator is invalidated by removing an item so we'll need to iterate once per removal
            assume that the 0.5 * O(n^2) ish cost is bearable as refresh is a rare operation which
            can only feasibly run once ever few seconds in the worst possible case */
-        Map::iterator it = iMap.begin();
+        CpDeviceMap::iterator it = iMap.begin();
         while (it != iMap.end()) {
-            Map::iterator found = refreshMap.find(it->first);
-            if (found != refreshMap.end()) {
+            CpDeviceMap::iterator found = aRefreshMap.find(it->first);
+            if (found != aRefreshMap.end()) {
                 // device still exists
                 it++;
             }
@@ -447,7 +447,7 @@ void CpiDeviceList::NotifyRefreshed()
         }
     }
     iLock.Signal();
-    ClearMap(refreshMap);
+    ClearMap(aRefreshMap);
 }
 
 void CpiDeviceList::ListObjectDetails() const
@@ -488,9 +488,9 @@ void CpiDeviceListUpdater::QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice&
     CpiDeviceListUpdater::Queue(new UpdateRemoved(aUpdater, aDevice));
 }
 
-void CpiDeviceListUpdater::QueueRefreshed(IDeviceListUpdater& aUpdater)
+void CpiDeviceListUpdater::QueueRefreshed(IDeviceListUpdater& aUpdater, CpDeviceMap& aRefreshMap)
 {
-    Queue(new UpdateRefresh(aUpdater));
+    Queue(new UpdateRefresh(aUpdater, aRefreshMap));
 }
 
 void CpiDeviceListUpdater::Queue(UpdateBase* aUpdate)
@@ -571,12 +571,13 @@ void CpiDeviceListUpdater::UpdateRemoved::Update()
 
 // CpiDeviceListUpdater::UpdateRefresh
 
-CpiDeviceListUpdater::UpdateRefresh::UpdateRefresh(IDeviceListUpdater& aUpdater)
+CpiDeviceListUpdater::UpdateRefresh::UpdateRefresh(IDeviceListUpdater& aUpdater, CpDeviceMap& aRefreshMap)
     : CpiDeviceListUpdater::UpdateBase(aUpdater)
+    , iRefreshMap(aRefreshMap)
 {
 }
 
 void CpiDeviceListUpdater::UpdateRefresh::Update()
 {
-    iUpdater.NotifyRefreshed();
+    iUpdater.NotifyRefreshed(iRefreshMap);
 }

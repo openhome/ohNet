@@ -115,7 +115,7 @@ protected:
      */
     TBool Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge);
     void DoStart();
-    void DoRefresh(TBool aStartRefreshLoop);
+    void DoRefresh();
 protected: // from CpiDeviceList
     void Start();
     void Refresh();
@@ -136,7 +136,6 @@ private: // IResumeObserver
     void NotifyResumed();
 private:
     void RefreshTimerComplete();
-    void NextRefreshDue();
     void ResumedTimerComplete();
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
@@ -147,7 +146,8 @@ protected:
     Mutex iSsdpLock;
 private:
     static const TUint kMaxMsearchRetryForNewAdapterSecs = 60;
-    static const TUint kResumeDelayMs = 5 * 1000;
+    static const TUint kResumeDelayMs = 2 * 1000;
+    static const TUint kRefreshRetries = 4;
     TIpAddress iInterface;
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
@@ -155,9 +155,8 @@ private:
     TUint iSubnetListChangeListenerId;
     TBool iStarted;
     Timer* iRefreshTimer;
-    Timer* iNextRefreshTimer;
     Timer* iResumedTimer;
-    TUint iPendingRefreshCount;
+    TUint iRefreshRepeatCount;
 };
 
 /**

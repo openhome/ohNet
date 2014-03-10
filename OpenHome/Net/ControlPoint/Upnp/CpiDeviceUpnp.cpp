@@ -18,6 +18,7 @@
 #include <OpenHome/Net/Private/CpiSubscription.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string.h>
 
@@ -345,9 +346,8 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiDeviceListUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
     iRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
-    iNextRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
     iResumedTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete));
-    iPendingRefreshCount = 0;
+    iRefreshRepeatCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
     iSsdpLock.Wait();
@@ -377,7 +377,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iCpStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
     iCpStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iLock.Wait();
-    Map::iterator it = iMap.begin();
+    CpDeviceMap::iterator it = iMap.begin();
     while (it != iMap.end()) {
         reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData())->InterruptXmlFetch();
         it++;
@@ -387,7 +387,6 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     }
     iLock.Signal();
     delete iRefreshTimer;
-    delete iNextRefreshTimer;
     delete iResumedTimer;
 }
 
@@ -414,12 +413,6 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         return false;
     }
     iLock.Wait();
-    iCpStack.Env().Mutex().Wait();
-    if (iPendingRefreshCount > 1) {
-        // we need at most one final msearch once a network card starts working following an adapter change
-        iPendingRefreshCount = 1;
-    }
-    iCpStack.Env().Mutex().Signal();
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
@@ -467,28 +460,25 @@ void CpiDeviceListUpnp::Start()
 
 void CpiDeviceListUpnp::Refresh()
 {
-    DoRefresh(true);
-}
-
-void CpiDeviceListUpnp::DoRefresh(TBool aStartRefreshLoop)
-{
     if (StartRefresh()) {
         return;
     }
-    if (aStartRefreshLoop) {
-        const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-        Mutex& lock = iCpStack.Env().Mutex();
-        lock.Wait();
-        /* Always attempt multiple refreshes until we start receiving responses
-           Poor quality iOS networking means that we risk MSEARCHes not being sent otherwise,
-           resulting in all devices being removed. */
-        iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-        lock.Signal();
-    }
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
+    /* Always attempt multiple refreshes.
+        Poor quality wifi (particularly on iOS) means that we risk MSEARCHes not being
+        sent otherwise, resulting in all devices being removed. */
+    iRefreshRepeatCount = kRefreshRetries;
+    lock.Signal();
+    DoRefresh();
+}
+
+void CpiDeviceListUpnp::DoRefresh()
+{
     Start();
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
-    delayMs += 100; /* allow slightly longer to cope with devices which send
-                       out Alive messages at the last possible moment */
+    delayMs += 500; /* allow slightly longer to cope with wifi delays and devices
+                       which send out Alive messages at the last possible moment */
     iRefreshTimer->FireIn(delayMs);
     /*  during refresh...
             on every Add():
@@ -539,28 +529,16 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
-    RefreshComplete();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    if (iPendingRefreshCount > 0) {
-        iNextRefreshTimer->FireIn(iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000);
-        iPendingRefreshCount--;
+    if (--iRefreshRepeatCount == 0) {
+        RefreshComplete();
     }
-    lock.Signal();
-}
-
-void CpiDeviceListUpnp::NextRefreshDue()
-{
-    DoRefresh(false);
+    else {
+        DoRefresh();
+    }
 }
 
 void CpiDeviceListUpnp::ResumedTimerComplete()
 {
-    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    lock.Signal();
     Refresh();
 }
 
@@ -582,10 +560,6 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
     }
-    iNextRefreshTimer->Cancel();
-    iCpStack.Env().Mutex().Wait();
-    iPendingRefreshCount = 0;
-    iCpStack.Env().Mutex().Signal();
     StopListeners();
 
     if (current == NULL) {
@@ -618,15 +592,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
 void CpiDeviceListUpnp::RemoveAll()
 {
     iRefreshTimer->Cancel();
-    iNextRefreshTimer->Cancel();
     CancelRefresh();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = 0;
-    lock.Signal();
     iLock.Wait();
     std::vector<CpiDevice*> devices;
-    Map::iterator it = iMap.begin();
+    CpDeviceMap::iterator it = iMap.begin();
     while (it != iMap.end()) {
         devices.push_back(it->second);
         it->second->AddRef();
