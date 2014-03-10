@@ -427,11 +427,6 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
         iLock.Signal();
-        LOG(kTrace, "Device alive {udn{");
-        LOG(kTrace, aUdn);
-        LOG(kTrace, "}, location{");
-        LOG(kTrace, aLocation);
-        LOG(kTrace, "}}\n");
         return !iRefreshing;
     }
     iLock.Signal();
@@ -611,11 +606,11 @@ void CpiDeviceListUpnp::RemoveAll()
 void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
 {
     if (aError) {
-        LOG(kTrace, "Device xml fetch error {udn{");
-        LOG(kTrace, aDevice.Udn());
-        LOG(kTrace, "}, location{");
-        LOG(kTrace, aDevice.Location());
-        LOG(kTrace, "}}\n");
+        LOG2(kTrace, kError, "Device xml fetch error {udn{");
+        LOG2(kTrace, kError, aDevice.Udn());
+        LOG2(kTrace, kError, "}, location{");
+        LOG2(kTrace, kError, aDevice.Location());
+        LOG2(kTrace, kError, "}}\n");
         Remove(aDevice.Udn());
     }
     else {
