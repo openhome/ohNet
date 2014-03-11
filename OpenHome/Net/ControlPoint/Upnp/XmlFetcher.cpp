@@ -22,6 +22,15 @@ void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
     iSequenceNumber = iCpStack.Env().SequenceNumber();
 }
 
+void XmlFetch::CheckContactable(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
+{
+    ASSERT(aUri->Port()!=Uri::kPortNotSpecified);
+    iCheckContactable = true;
+    iUri = aUri;
+    iFunctor = aFunctor;
+    iSequenceNumber = iCpStack.Env().SequenceNumber();
+}
+
 XmlFetch::~XmlFetch()
 {
     delete iUri;
@@ -129,7 +138,7 @@ TBool XmlFetch::Interrupted() const
 }
 
 Bwh& XmlFetch::Xml(IAsync& aAsync)
-{
+{ // static
     ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
     XmlFetch& self = (XmlFetch&)aAsync;
     if (self.Error()) {
@@ -138,12 +147,24 @@ Bwh& XmlFetch::Xml(IAsync& aAsync)
     return self.iXml;
 }
 
+TBool XmlFetch::WasContactable(IAsync& aAsync)
+{ // static
+    ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
+    XmlFetch& self = (XmlFetch&)aAsync;
+    if (self.Error()) {
+        THROW(XmlFetchError);
+    }
+    return self.iContactable;
+}
+
 XmlFetch::XmlFetch(CpStack& aCpStack)
     : iCpStack(aCpStack)
     , iUri(NULL)
     , iSequenceNumber(0)
     , iLock("XMLM")
     , iInterrupted(false)
+    , iCheckContactable(false)
+    , iContactable(false)
     , iSocket(NULL)
 {
 }
@@ -153,7 +174,7 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
     Sws<kRwBufferLength> writeBuffer(aSocket);
     WriterHttpRequest writerRequest(writeBuffer);
 
-    writerRequest.WriteMethod(Http::kMethodGet, iUri->PathAndQuery(), Http::eHttp11);
+    writerRequest.WriteMethod((iCheckContactable? Http::kMethodHead : Http::kMethodGet), iUri->PathAndQuery(), Http::eHttp11);
     Http::WriteHeaderHostAndPort(writerRequest, iUri->Host(), iUri->Port());
     Http::WriteHeaderContentLength(writerRequest, 0);
     Http::WriteHeaderConnectionClose(writerRequest);
@@ -177,6 +198,10 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
         LOG2(kXmlFetch, kError, "\n");
         SetError(Error::eHttp, status.Code(), status.Reason());
         THROW(HttpError);
+    }
+    if (iCheckContactable) {
+        iContactable = true;
+        return;
     }
 
     if (headerTransferEncoding.IsChunked()) {

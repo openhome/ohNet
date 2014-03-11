@@ -39,6 +39,8 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iList(&aList)
     , iSemReady("CDUS", 0)
     , iRemoved(false)
+    , iNewLocation(NULL)
+    , iXmlCheck(NULL)
 {
     iDevice = new CpiDevice(aCpStack, aUdn, *this, *this, this);
     iTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
@@ -93,7 +95,32 @@ void CpiDeviceUpnp::InterruptXmlFetch()
         iXmlFetch->Interrupt();
         iXmlFetch = NULL;
     }
+    if (iXmlCheck != NULL) {
+        iXmlCheck->Interrupt();
+        iXmlCheck = NULL;
+    }
     iList = NULL;
+}
+
+void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
+{
+    AutoMutex a(iLock);
+    if (iNewLocation != NULL) {
+        if (iNewLocation->Location() == aNewLocation->Location()) {
+            aNewLocation->iDevice->RemoveRef();
+            return;
+        }
+        iNewLocation->iDevice->RemoveRef();
+        return;
+    }
+    iNewLocation = aNewLocation;
+    XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
+    iXmlCheck = xmlFetchManager.Fetch();
+    Uri* uri = new Uri(iLocation);
+    iDevice->AddRef();
+    FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckCompleted);
+    iXmlCheck->CheckContactable(uri, functor);
+    xmlFetchManager.Fetch(iXmlCheck);
 }
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
@@ -304,13 +331,35 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iLock.Wait();
     if (iList != NULL) {
         iList->XmlFetchCompleted(*this, err);
-        iList = NULL;
     }
     iLock.Signal();
     iSemReady.Signal();
     iDevice->RemoveRef();
     // Don't add code after the RemoveRef(), we might have
     // just deleted this object!
+}
+
+void CpiDeviceUpnp::XmlCheckCompleted(IAsync& aAsync)
+{
+    iLock.Wait();
+    iXmlCheck = NULL;
+    CpiDeviceUpnp* newLocation = iNewLocation;
+    iNewLocation = NULL;
+    iLock.Signal();
+    if (!iRemoved) {
+        TBool contactable = false;
+        try {
+            contactable = XmlFetch::WasContactable(aAsync);
+        }
+        catch (XmlFetchError&) {}
+        if (!contactable) {
+            iLock.Wait();
+            if (iList != NULL) {
+                iList->DeviceLocationChanged(this, newLocation);
+            }
+            iLock.Signal();
+        }
+    }
 }
 
 
@@ -417,12 +466,15 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
         if (deviceUpnp->Location() != aLocation) {
-            // device appears to have moved to a new location.
-            // Remove the old record, leaving the caller to add the new one.
+            /* Device appears to have moved to a new location.
+               Ask it to check whether the old location is still contactable.  If it is,
+               stick with the older location; if it isn't, remove the old device and add
+               a new one. */
             iLock.Signal();
-            Remove(aUdn);
+            CpiDeviceUpnp* newDevice = new CpiDeviceUpnp(iCpStack, aUdn, aLocation, aMaxAge, *this, *this);
+            deviceUpnp->CheckStillAvailable(newDevice);
             device->RemoveRef();
-            return false;
+            return true;
         }
         deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
@@ -616,6 +668,12 @@ void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
     else {
         SetDeviceReady(aDevice.Device());
     }
+}
+
+void CpiDeviceListUpnp::DeviceLocationChanged(CpiDeviceUpnp* aOriginal, CpiDeviceUpnp* aNew)
+{
+    Remove(aOriginal->Udn());
+    Add(&aNew->Device());
 }
 
 void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
