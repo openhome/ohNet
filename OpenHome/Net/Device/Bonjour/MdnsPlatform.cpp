@@ -63,6 +63,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     , iInterfacesLock("BNJ2")
     , iServicesLock("BNJ3")
     , iStop(false)
+    , iTimerDisabled(false)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
     iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired));
@@ -83,9 +84,10 @@ MdnsPlatform::~MdnsPlatform()
     iReaderController.ReadInterrupt();
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iTimerLock.Wait();
+    iTimerDisabled = true;
+    iTimerLock.Signal();
     delete iTimer;
     iTimer = NULL;
-    iTimerLock.Signal();
     mDNS_Close(iMdns);
     delete iMdns;
     Map::iterator it = iServices.begin();
@@ -361,7 +363,7 @@ void MdnsPlatform::Unlock()
 {
     TInt next = iMdns->NextScheduledEvent - iMdns->timenow_adjust;
     iTimerLock.Wait();
-    if (iTimer != NULL) {
+    if (!iTimerDisabled) {
         iTimer->FireAt(next);
     }
     iTimerLock.Signal();
@@ -427,11 +429,7 @@ MdnsPlatform::Status MdnsPlatform::SendUdp(const Brx& aBuffer, const Endpoint& a
 
 void MdnsPlatform::Close()
 {
-    iTimerLock.Wait();
-    if (iTimer != NULL) {
-        iTimer->Cancel();
-    }
-    iTimerLock.Signal();
+    ASSERT(iTimerDisabled);
     iStop = true;
     iThreadListen->Kill();
     iReader.Interrupt(true);
