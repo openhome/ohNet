@@ -41,6 +41,11 @@ NetworkAdapter& MdnsPlatform::Nif::Adapter()
     return iNif;
 }
 
+NetworkInterfaceInfo& MdnsPlatform::Nif::Info()
+{
+    return *iMdnsInfo;
+}
+
 TIpAddress MdnsPlatform::Nif::Address() const
 {
     return iNif.Address();
@@ -111,6 +116,7 @@ void MdnsPlatform::SubnetListChanged()
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
         if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
+            mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
             delete iInterfaces[i];
             iInterfaces.erase(iInterfaces.begin()+i);
         }
@@ -341,17 +347,14 @@ void MdnsPlatform::RenameAndReregisterService(TUint aHandle, const TChar* aName)
 
 void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
 {
-    LOG(kBonjour, "Bonjour             InitCallback\n");
+    LOG(kBonjour, "Bonjour             InitCallback - aStatus %d\n", aStatus);
     m->mDNSPlatformStatus = aStatus;
-    if (aStatus != mStatus_NoError) {
-        Log::Print("Bonjour initialisation error - %d\n", aStatus);
-    }
     ASSERT(aStatus == mStatus_NoError);
 }
 
-void MdnsPlatform::ServiceCallback(mDNS* /*m*/, ServiceRecordSet* /*aRecordSet*/, mStatus /*aStatus*/)
+void MdnsPlatform::ServiceCallback(mDNS* /*m*/, ServiceRecordSet* aRecordSet, mStatus aStatus)
 {
-    LOG(kBonjour, "Bonjour             ServiceCallback\n");
+    LOG(kBonjour, "Bonjour             ServiceCallback - aRecordSet: %p, aStatus: %d\n", aRecordSet, aStatus);
 }
 
 void MdnsPlatform::Lock()

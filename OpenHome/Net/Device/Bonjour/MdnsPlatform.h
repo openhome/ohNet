@@ -64,6 +64,7 @@ private:
         Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo);
         ~Nif();
         NetworkAdapter& Adapter();
+        NetworkInterfaceInfo& Info();
         TIpAddress Address() const;
         TBool ContainsAddress(TIpAddress aAddress) const;
     private:
