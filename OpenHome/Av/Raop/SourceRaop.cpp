@@ -80,6 +80,8 @@ SourceRaop::~SourceRaop()
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
+    iConfigNetAux->Unsubscribe(iConfigSubId);
+    delete iConfigNetAux;
 }
 
 IRaopDiscovery& SourceRaop::Discovery()

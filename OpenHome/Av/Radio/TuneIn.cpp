@@ -82,6 +82,7 @@ RadioPresetsTuneIn::~RadioPresetsTuneIn()
     iSocket.Interrupt(true);
     iRefreshTimer->Cancel();
     iConfigUsername->Unsubscribe(iListenerId);
+    delete iConfigUsername;
     delete iRefreshThread;
     delete iRefreshTimer;
 }
