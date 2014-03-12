@@ -181,9 +181,11 @@ MdnsPlatform::~MdnsPlatform()
     }
 
     iFifoFree.ReadInterrupt(true);
+    iFifoFree.ReadInterrupt(false);
     while (iFifoFree.SlotsUsed() > 0) {
         delete iFifoFree.Read();
     }
+    iFifoPending.ReadInterrupt(false);
     while (iFifoPending.SlotsUsed() > 0) {
         delete iFifoPending.Read();
     }
@@ -570,6 +572,7 @@ void MdnsPlatform::Close()
 
     iThreadService->Kill();
     iFifoPending.ReadInterrupt(true);
+    iSem.Signal();
     delete iThreadService;
 }
 
