@@ -33,6 +33,7 @@ public:
     ~SourcePlaylist();
 private:
     void EnsureActive();
+    TBool StartedShuffled();
 private: // from ISource
     void Activate();
     void Deactivate();
@@ -46,6 +47,7 @@ private: // from ISourcePlaylist
     void SeekRelative(TInt aSeconds);
     void SeekToTrackId(TUint aId);
     TBool SeekToTrackIndex(TUint aIndex);
+    void SetShuffle(TBool aShuffle);
 private: // from ITrackDatabaseObserver
     void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
@@ -71,6 +73,7 @@ private:
     Media::EPipelineState iTransportState; // FIXME - this appears to be set but never used
     TUint iTrackId;
     TBool iNoPipelineStateChangeOnActivation;
+    TBool iNewPlaylist;
 };
     
 } // namespace Av
@@ -103,13 +106,14 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     , iTransportState(Media::EPipelineStopped)
     , iTrackId(ITrackDatabase::kTrackIdNone)
     , iNoPipelineStateChangeOnActivation(false)
+    , iNewPlaylist(true)
 {
     iDatabase = new TrackDatabase(aTrackFactory);
     iShuffler = new Shuffler(aEnv, *iDatabase);
     iRepeater = new Repeater(*iShuffler);
     iUriProvider = new UriProviderPlaylist(*iRepeater, aPipeline, *this);
     iPipeline.Add(iUriProvider); // ownership passes to iPipeline
-    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iShuffler, *iRepeater, aProtocolInfo);
+    iProviderPlaylist = new ProviderPlaylist(aDevice, aEnv, *this, *iDatabase, *iRepeater, aProtocolInfo);
     iPipeline.AddObserver(*this);
 }
 
@@ -131,6 +135,20 @@ void SourcePlaylist::EnsureActive()
     iNoPipelineStateChangeOnActivation = false;
 }
 
+TBool SourcePlaylist::StartedShuffled()
+{
+    AutoMutex a(iLock);
+    const TBool startShuffled = (iNewPlaylist && iShuffler->Enabled());
+    if (startShuffled) {
+        iShuffler->Reshuffle(); /* Pre-fetching will leave Shuffler with track#1 always appearing first.
+                                   Force a reshuffle to allow us to start on a random track # */
+        iPipeline.RemoveAll();
+        iPipeline.Begin(iUriProvider->Mode(), ITrackDatabase::kTrackIdNone);
+    }
+    iNewPlaylist = false;
+    return startShuffled;
+}
+
 void SourcePlaylist::Activate()
 {
     iTrackPosSeconds = 0;
@@ -139,7 +157,6 @@ void SourcePlaylist::Activate()
     if (!iNoPipelineStateChangeOnActivation && static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
         iPipeline.StopPrefetch(iUriProvider->Mode(), iUriProvider->CurrentTrackId());
     }
-    // FIXME - else push a blank track through Reporter ?
 }
 
 void SourcePlaylist::Deactivate()
@@ -154,10 +171,11 @@ void SourcePlaylist::Play()
 {
     EnsureActive();
 
-    const TUint trackId = iUriProvider->CurrentTrackId();
-    if (iTransportState == Media::EPipelinePlaying) {
-        iPipeline.RemoveAll();
-        iPipeline.Begin(iUriProvider->Mode(), trackId);
+    if (!StartedShuffled()) {
+        if (iTransportState == Media::EPipelinePlaying) {
+            iPipeline.RemoveAll();
+            iPipeline.Begin(iUriProvider->Mode(), iUriProvider->CurrentTrackId());
+        }
     }
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
@@ -189,7 +207,9 @@ void SourcePlaylist::Stop()
 void SourcePlaylist::Next()
 {
     if (IsActive()) {
-        (void)iPipeline.Next();
+        if (!StartedShuffled()) {
+            (void)iPipeline.Next();
+        }
         iPipeline.Play();
     }
 }
@@ -197,7 +217,9 @@ void SourcePlaylist::Next()
 void SourcePlaylist::Prev()
 {
     if (IsActive()) {
-        (void)iPipeline.Prev();
+        if (!StartedShuffled()) {
+            (void)iPipeline.Prev();
+        }
         iPipeline.Play();
     }
 }
@@ -249,6 +271,15 @@ TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
     return (track!=NULL);
 }
 
+void SourcePlaylist::SetShuffle(TBool aShuffle)
+{
+    AutoMutex a(iLock);
+    iShuffler->SetShuffle(aShuffle);
+    if (aShuffle && iTransportState == Media::EPipelineStopped) {
+        iNewPlaylist = true;
+    }
+}
+
 void SourcePlaylist::NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter)
 {
     if (   IsActive()
@@ -267,15 +298,29 @@ void SourcePlaylist::NotifyTrackDeleted(TUint aId, Media::Track* /*aBefore*/, Me
             iPipeline.StopPrefetch(iUriProvider->Mode(), id);
         }
     }
+    iLock.Wait();
+    if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
+        iNewPlaylist = true;
+    }
+    iLock.Signal();
 }
 
 void SourcePlaylist::NotifyAllDeleted()
 {
+    iLock.Wait();
+    iNewPlaylist = true;
+    iLock.Signal();
+    if (IsActive() && iTransportState != Media::EPipelinePlaying) {
+        iPipeline.StopPrefetch(iUriProvider->Mode(), ITrackDatabase::kTrackIdNone);
+    }
 }
 
 void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
 {
     if (IsActive()) {
+        iLock.Wait();
+        iTransportState = aState;
+        iLock.Signal();
         iProviderPlaylist->NotifyPipelineState(aState);
     }
 }

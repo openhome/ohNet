@@ -58,13 +58,6 @@ public:
     virtual Media::Track* TrackRefByIndexSorted(TUint aIndex) = 0;
 };
 
-class IShuffler
-{
-public:
-    virtual ~IShuffler() {}
-    virtual void SetShuffle(TBool aShuffle) = 0;
-};
-
 class IRepeater
 {
 public:
@@ -105,14 +98,15 @@ private:
     TUint iSeq;
 };
 
-class Shuffler : public IShuffler, public ITrackDatabaseReader, public ITrackDatabaseObserver
+class Shuffler : public ITrackDatabaseReader, public ITrackDatabaseObserver
 {
     friend class SuiteShuffler;
 public:
     Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader);
     ~Shuffler();
-private: // from IShuffler
+    TBool Enabled() const;
     void SetShuffle(TBool aShuffle);
+    void Reshuffle();
 private: // from ITrackDatabaseReader
     void SetObserver(ITrackDatabaseObserver& aObserver);
     Media::Track* TrackRef(TUint aId);
@@ -125,6 +119,7 @@ private: // from ITrackDatabaseObserver
     void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
     void NotifyAllDeleted();
 private:
+    void DoReshuffle(const TChar* aLogPrefix);
     void LogIds(const TChar* aPrefix);
 private:
     mutable Mutex iLock;

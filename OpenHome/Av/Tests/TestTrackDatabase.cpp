@@ -759,7 +759,7 @@ void SuiteShuffler::TrackRefShuffleOff()
 
 void SuiteShuffler::TrackRefShuffleOn()
 {
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
     // requesting track by id should have identical behaviour with/without shuffle
     TrackRefShuffleOff();
 }
@@ -783,7 +783,7 @@ void SuiteShuffler::NextTrackRefShuffleOn()
         availableIds[i] = iIds[i];
     }
     std::array<TUint, kNumTracks>::iterator it;
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
 
     TBool shuffled = false;
     TUint id = ITrackDatabase::kTrackIdNone;
@@ -828,7 +828,7 @@ void SuiteShuffler::PrevTrackRefShuffleOn()
         availableIds[i] = iIds[i];
     }
     std::array<TUint, kNumTracks>::iterator it;
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
 
     // find id of last shuffled track
     TUint id = iShuffler->iShuffleList[iShuffler->iShuffleList.size()-1]->Id();
@@ -875,7 +875,7 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
         availableIds[i] = iIds[i];
     }
     std::array<TUint, kNumTracks>::iterator it;
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
     TBool shuffled = false;
 
     for (TUint i=0; i<kNumTracks; i++) {
@@ -911,7 +911,7 @@ void SuiteShuffler::TrackRefByIndexSortedShuffleOff()
 
 void SuiteShuffler::TrackRefByIndexSortedShuffleOn()
 {
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
     Track* track;
     for (TUint i=0; i<kNumTracks; i++) {
         track = iReader->TrackRefByIndexSorted(i);
@@ -927,7 +927,7 @@ void SuiteShuffler::TrackRefByIndexSortedShuffleOn()
 
 void SuiteShuffler::ModeToggleReshuffles()
 {
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
     std::array<TUint, kNumTracks> initialShuffle;
     TUint id = ITrackDatabase::kTrackIdNone;
     for (TUint i=0; i<kNumTracks; i++) {
@@ -937,8 +937,8 @@ void SuiteShuffler::ModeToggleReshuffles()
         track->RemoveRef();
     }
 
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(false);
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(false);
+    iShuffler->SetShuffle(true);
     id = ITrackDatabase::kTrackIdNone;
     TBool reshuffled = false;
     for (TUint i=0; i<kNumTracks; i++) {
@@ -953,7 +953,7 @@ void SuiteShuffler::ModeToggleReshuffles()
 
 void SuiteShuffler::NextTrackBeyondEndReshuffles()
 {
-    static_cast<IShuffler*>(iShuffler)->SetShuffle(true);
+    iShuffler->SetShuffle(true);
     std::array<TUint, kNumTracks> initialShuffle;
     TUint id = ITrackDatabase::kTrackIdNone;
     for (TUint i=0; i<kNumTracks; i++) {
