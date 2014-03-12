@@ -60,6 +60,7 @@ private:
     void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
     void ActivateIfInactive();
     void DeactivateIfActive();
+    void HandleInterfaceChange();
 private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
@@ -71,6 +72,7 @@ private:
     static const TUint kAutoNetAuxOffNotVisible;
     static const TChar* kSourceNameStr;
     static const Brn kKeyNetAux;
+    Environment& iEnv;
     Mutex iLock;
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
@@ -81,6 +83,8 @@ private:
     Media::SocketUdpServer* iServerTiming;  // no ownership
     Configuration::ConfigChoice* iConfigNetAux;
     TUint iConfigSubId;
+    TUint iCurrentAdapterChangeListenerId;
+    TUint iSubnetListChangeListenerId;
     TUint iAutoNetAux;
     TBool iAutoSwitch;
     TBool iSessionActive;

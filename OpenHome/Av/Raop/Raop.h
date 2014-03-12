@@ -73,6 +73,7 @@ class RaopDevice
 public:
     // aMacAddr in hex of form 001122334455
     RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    void SetEndpoint(const Endpoint& aEndpoint);
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
@@ -82,10 +83,10 @@ private:
     Net::IMdnsProvider& iProvider;
     TUint iHandleRaop;
     Bws<kMaxNameBytes> iName;
-    TUint iPort;
     Endpoint iEndpoint;
     const Bws<kMacAddrBytes> iMacAddress;
     TBool iRegistered;
+    Mutex iLock;
 };
 
 class ProtocolRaop;
@@ -189,16 +190,19 @@ public: // from IRaopObserver
     void NotifySessionEnd();
 private:
     RaopDiscoverySession& ActiveSession();
+    void HandleInterfaceChange();
     void PowerDown();
 private:
     static const TUint kPriority = kPriorityNormal;
     static const TUint kSessionStackBytes = 10 * 1024;
-
+    Environment& iEnv;
     Av::IRaopObserver& iRaopObserver;
     RaopDevice* iRaopDevice;
     SocketTcpServer* iRaopDiscoveryServer;
     RaopDiscoverySession* iRaopDiscoverySession1;
     RaopDiscoverySession* iRaopDiscoverySession2;
+    TUint iCurrentAdapterChangeListenerId;
+    TUint iSubnetListChangeListenerId;
 };
 
 
