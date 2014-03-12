@@ -111,10 +111,12 @@ void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
             return;
         }
         iNewLocation->iDevice->RemoveRef();
+        iNewLocation = aNewLocation;
         return;
     }
     iNewLocation = aNewLocation;
     XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
+    ASSERT(iXmlCheck == NULL);
     iXmlCheck = xmlFetchManager.Fetch();
     Uri* uri = new Uri(iLocation);
     iDevice->AddRef();
@@ -356,10 +358,15 @@ void CpiDeviceUpnp::XmlCheckCompleted(IAsync& aAsync)
             iLock.Wait();
             if (iList != NULL) {
                 iList->DeviceLocationChanged(this, newLocation);
+                newLocation = NULL;
             }
             iLock.Signal();
         }
     }
+    if (newLocation != NULL) {
+        newLocation->Device().RemoveRef();
+    }
+    iDevice->RemoveRef();
 }
 
 
