@@ -260,7 +260,6 @@ TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 {
     EnsureActive();
 
-    AutoMutex a(iLock);
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
     if (track != NULL) {
         AutoAllocatedRef r(track);
