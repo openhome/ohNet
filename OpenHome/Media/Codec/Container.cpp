@@ -27,6 +27,9 @@ ContainerBase::ContainerBase()
 ContainerBase::~ContainerBase()
 {
     ReleaseAudioEncoded();
+    if (iPendingMsg != NULL) {
+        iPendingMsg->RemoveRef();
+    }
 }
 
 Msg* ContainerBase::PullMsg()
@@ -65,6 +68,7 @@ void ContainerBase::PullAudio(TUint aBytes)
         Msg* msg = iUpstreamElement->Pull();
         msg = msg->Process(*this);
         if (msg != NULL) {
+            ASSERT(iPendingMsg == NULL);
             iPendingMsg = msg;
             break;
         }
@@ -130,11 +134,11 @@ Msg* ContainerBase::Pull()
     // before the remaining iAudioEncoded can be handed off, it should override
     // this Pull method)
     while (msg == NULL) {
-        if ((iPendingMsg) && (iAudioEncoded != NULL)) {
+        if (iPendingMsg != NULL && iAudioEncoded != NULL) {
             msg = iAudioEncoded;
             iAudioEncoded = NULL;
         }
-        else if (iPendingMsg) {
+        else if (iPendingMsg != NULL) {
             msg = iPendingMsg;
             iPendingMsg = NULL;
         }
