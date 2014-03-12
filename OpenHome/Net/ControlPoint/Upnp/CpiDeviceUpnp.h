@@ -49,6 +49,7 @@ public:
 
     void FetchXml();
     void InterruptXmlFetch();
+    void CheckStillAvailable(CpiDeviceUpnp* aNewDevice);
 private: // ICpiProtocol
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
     void InvokeAction(Invocation& aInvocation);
@@ -63,6 +64,7 @@ private:
     void TimerExpired();
     void GetServiceUri(Uri& aUri, const TChar* aType, const ServiceType& aServiceType);
     void XmlFetchCompleted(IAsync& aAsync);
+    void XmlCheckCompleted(IAsync& aAsync);
     static TBool UdnMatches(const Brx& aFound, const Brx& aTarget);
 private:
     class Invocable : public IInvocable, private INonCopyable
@@ -88,6 +90,8 @@ private:
     Invocable* iInvocable;
     Semaphore iSemReady;
     TBool iRemoved;
+    CpiDeviceUpnp* iNewLocation;
+    XmlFetch* iXmlCheck;
     friend class Invocable;
 };
 
@@ -100,6 +104,7 @@ class CpiDeviceListUpnp : public CpiDeviceList, public ISsdpNotifyHandler, priva
 {
 public:
     void XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError);
+    void DeviceLocationChanged(CpiDeviceUpnp* aOriginal, CpiDeviceUpnp* aNew);
 protected:
     CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnp();
@@ -115,7 +120,7 @@ protected:
      */
     TBool Update(const Brx& aUdn, const Brx& aLocation, TUint aMaxAge);
     void DoStart();
-    void DoRefresh(TBool aStartRefreshLoop);
+    void DoRefresh();
 protected: // from CpiDeviceList
     void Start();
     void Refresh();
@@ -136,7 +141,6 @@ private: // IResumeObserver
     void NotifyResumed();
 private:
     void RefreshTimerComplete();
-    void NextRefreshDue();
     void ResumedTimerComplete();
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
@@ -147,7 +151,8 @@ protected:
     Mutex iSsdpLock;
 private:
     static const TUint kMaxMsearchRetryForNewAdapterSecs = 60;
-    static const TUint kResumeDelayMs = 5 * 1000;
+    static const TUint kResumeDelayMs = 2 * 1000;
+    static const TUint kRefreshRetries = 4;
     TIpAddress iInterface;
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
@@ -155,9 +160,8 @@ private:
     TUint iSubnetListChangeListenerId;
     TBool iStarted;
     Timer* iRefreshTimer;
-    Timer* iNextRefreshTimer;
     Timer* iResumedTimer;
-    TUint iPendingRefreshCount;
+    TUint iRefreshRepeatCount;
 };
 
 /**

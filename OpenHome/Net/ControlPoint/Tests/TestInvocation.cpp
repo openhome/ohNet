@@ -157,7 +157,8 @@ void DeviceListTI::GetProtocolInfoComplete(IAsync& aAsync)
             sink.TransferTo(iExpectedSink);
         }
         else {
-            ASSERT(sink == iExpectedSink);
+            //ASSERT(sink == iExpectedSink);
+            // can't use the above assertion.  aVia Media Renderer sometimes responds with two copies of its supported protocols
         }
     }
     iLock.Signal();

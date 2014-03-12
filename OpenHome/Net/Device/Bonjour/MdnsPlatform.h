@@ -148,6 +148,7 @@ private:
     Map iServices;
     TUint iNextServiceIndex;
     TBool iStop;
+    TBool iTimerDisabled;
 };
 
 } // namespace Net

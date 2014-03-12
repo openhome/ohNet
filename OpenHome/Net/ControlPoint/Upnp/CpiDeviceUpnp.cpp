@@ -18,6 +18,7 @@
 #include <OpenHome/Net/Private/CpiSubscription.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <string.h>
 
@@ -38,6 +39,8 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iList(&aList)
     , iSemReady("CDUS", 0)
     , iRemoved(false)
+    , iNewLocation(NULL)
+    , iXmlCheck(NULL)
 {
     iDevice = new CpiDevice(aCpStack, aUdn, *this, *this, this);
     iTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
@@ -92,7 +95,34 @@ void CpiDeviceUpnp::InterruptXmlFetch()
         iXmlFetch->Interrupt();
         iXmlFetch = NULL;
     }
+    if (iXmlCheck != NULL) {
+        iXmlCheck->Interrupt();
+        iXmlCheck = NULL;
+    }
     iList = NULL;
+}
+
+void CpiDeviceUpnp::CheckStillAvailable(CpiDeviceUpnp* aNewLocation)
+{
+    AutoMutex a(iLock);
+    if (iNewLocation != NULL) {
+        if (iNewLocation->Location() == aNewLocation->Location()) {
+            aNewLocation->iDevice->RemoveRef();
+            return;
+        }
+        iNewLocation->iDevice->RemoveRef();
+        iNewLocation = aNewLocation;
+        return;
+    }
+    iNewLocation = aNewLocation;
+    XmlFetchManager& xmlFetchManager = iDevice->GetCpStack().XmlFetchManager();
+    ASSERT(iXmlCheck == NULL);
+    iXmlCheck = xmlFetchManager.Fetch();
+    Uri* uri = new Uri(iLocation);
+    iDevice->AddRef();
+    FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlCheckCompleted);
+    iXmlCheck->CheckContactable(uri, functor);
+    xmlFetchManager.Fetch(iXmlCheck);
 }
 
 TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
@@ -303,13 +333,40 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iLock.Wait();
     if (iList != NULL) {
         iList->XmlFetchCompleted(*this, err);
-        iList = NULL;
     }
     iLock.Signal();
     iSemReady.Signal();
     iDevice->RemoveRef();
     // Don't add code after the RemoveRef(), we might have
     // just deleted this object!
+}
+
+void CpiDeviceUpnp::XmlCheckCompleted(IAsync& aAsync)
+{
+    iLock.Wait();
+    iXmlCheck = NULL;
+    CpiDeviceUpnp* newLocation = iNewLocation;
+    iNewLocation = NULL;
+    iLock.Signal();
+    if (!iRemoved) {
+        TBool contactable = false;
+        try {
+            contactable = XmlFetch::WasContactable(aAsync);
+        }
+        catch (XmlFetchError&) {}
+        if (!contactable) {
+            iLock.Wait();
+            if (iList != NULL) {
+                iList->DeviceLocationChanged(this, newLocation);
+                newLocation = NULL;
+            }
+            iLock.Signal();
+        }
+    }
+    if (newLocation != NULL) {
+        newLocation->Device().RemoveRef();
+    }
+    iDevice->RemoveRef();
 }
 
 
@@ -345,9 +402,8 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiDeviceListUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
     iRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
-    iNextRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::NextRefreshDue));
     iResumedTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete));
-    iPendingRefreshCount = 0;
+    iRefreshRepeatCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
     iSsdpLock.Wait();
@@ -377,7 +433,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iCpStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
     iCpStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     iLock.Wait();
-    Map::iterator it = iMap.begin();
+    CpDeviceMap::iterator it = iMap.begin();
     while (it != iMap.end()) {
         reinterpret_cast<CpiDeviceUpnp*>(it->second->OwnerData())->InterruptXmlFetch();
         it++;
@@ -387,7 +443,6 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     }
     iLock.Signal();
     delete iRefreshTimer;
-    delete iNextRefreshTimer;
     delete iResumedTimer;
 }
 
@@ -414,31 +469,23 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, const Brx& aLocation, TUint aMa
         return false;
     }
     iLock.Wait();
-    iCpStack.Env().Mutex().Wait();
-    if (iPendingRefreshCount > 1) {
-        // we need at most one final msearch once a network card starts working following an adapter change
-        iPendingRefreshCount = 1;
-    }
-    iCpStack.Env().Mutex().Signal();
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         CpiDeviceUpnp* deviceUpnp = reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData());
         if (deviceUpnp->Location() != aLocation) {
-            // device appears to have moved to a new location.
-            // Remove the old record, leaving the caller to add the new one.
+            /* Device appears to have moved to a new location.
+               Ask it to check whether the old location is still contactable.  If it is,
+               stick with the older location; if it isn't, remove the old device and add
+               a new one. */
             iLock.Signal();
-            Remove(aUdn);
+            CpiDeviceUpnp* newDevice = new CpiDeviceUpnp(iCpStack, aUdn, aLocation, aMaxAge, *this, *this);
+            deviceUpnp->CheckStillAvailable(newDevice);
             device->RemoveRef();
-            return false;
+            return true;
         }
         deviceUpnp->UpdateMaxAge(aMaxAge);
         device->RemoveRef();
         iLock.Signal();
-        LOG(kTrace, "Device alive {udn{");
-        LOG(kTrace, aUdn);
-        LOG(kTrace, "}, location{");
-        LOG(kTrace, aLocation);
-        LOG(kTrace, "}}\n");
         return !iRefreshing;
     }
     iLock.Signal();
@@ -467,28 +514,25 @@ void CpiDeviceListUpnp::Start()
 
 void CpiDeviceListUpnp::Refresh()
 {
-    DoRefresh(true);
-}
-
-void CpiDeviceListUpnp::DoRefresh(TBool aStartRefreshLoop)
-{
     if (StartRefresh()) {
         return;
     }
-    if (aStartRefreshLoop) {
-        const TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-        Mutex& lock = iCpStack.Env().Mutex();
-        lock.Wait();
-        /* Always attempt multiple refreshes until we start receiving responses
-           Poor quality iOS networking means that we risk MSEARCHes not being sent otherwise,
-           resulting in all devices being removed. */
-        iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-        lock.Signal();
-    }
+    Mutex& lock = iCpStack.Env().Mutex();
+    lock.Wait();
+    /* Always attempt multiple refreshes.
+        Poor quality wifi (particularly on iOS) means that we risk MSEARCHes not being
+        sent otherwise, resulting in all devices being removed. */
+    iRefreshRepeatCount = kRefreshRetries;
+    lock.Signal();
+    DoRefresh();
+}
+
+void CpiDeviceListUpnp::DoRefresh()
+{
     Start();
     TUint delayMs = iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000;
-    delayMs += 100; /* allow slightly longer to cope with devices which send
-                       out Alive messages at the last possible moment */
+    delayMs += 500; /* allow slightly longer to cope with wifi delays and devices
+                       which send out Alive messages at the last possible moment */
     iRefreshTimer->FireIn(delayMs);
     /*  during refresh...
             on every Add():
@@ -539,28 +583,16 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
-    RefreshComplete();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    if (iPendingRefreshCount > 0) {
-        iNextRefreshTimer->FireIn(iCpStack.Env().InitParams()->MsearchTimeSecs() * 1000);
-        iPendingRefreshCount--;
+    if (--iRefreshRepeatCount == 0) {
+        RefreshComplete();
     }
-    lock.Signal();
-}
-
-void CpiDeviceListUpnp::NextRefreshDue()
-{
-    DoRefresh(false);
+    else {
+        DoRefresh();
+    }
 }
 
 void CpiDeviceListUpnp::ResumedTimerComplete()
 {
-    TUint msearchTime = iCpStack.Env().InitParams()->MsearchTimeSecs();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = (kMaxMsearchRetryForNewAdapterSecs + msearchTime - 1) / (2 * msearchTime);
-    lock.Signal();
     Refresh();
 }
 
@@ -582,10 +614,6 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
         current->RemoveRef("CpiDeviceListUpnp::HandleInterfaceChange");
         return;
     }
-    iNextRefreshTimer->Cancel();
-    iCpStack.Env().Mutex().Wait();
-    iPendingRefreshCount = 0;
-    iCpStack.Env().Mutex().Signal();
     StopListeners();
 
     if (current == NULL) {
@@ -618,15 +646,10 @@ void CpiDeviceListUpnp::HandleInterfaceChange()
 void CpiDeviceListUpnp::RemoveAll()
 {
     iRefreshTimer->Cancel();
-    iNextRefreshTimer->Cancel();
     CancelRefresh();
-    Mutex& lock = iCpStack.Env().Mutex();
-    lock.Wait();
-    iPendingRefreshCount = 0;
-    lock.Signal();
     iLock.Wait();
     std::vector<CpiDevice*> devices;
-    Map::iterator it = iMap.begin();
+    CpDeviceMap::iterator it = iMap.begin();
     while (it != iMap.end()) {
         devices.push_back(it->second);
         it->second->AddRef();
@@ -642,16 +665,22 @@ void CpiDeviceListUpnp::RemoveAll()
 void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
 {
     if (aError) {
-        LOG(kTrace, "Device xml fetch error {udn{");
-        LOG(kTrace, aDevice.Udn());
-        LOG(kTrace, "}, location{");
-        LOG(kTrace, aDevice.Location());
-        LOG(kTrace, "}}\n");
+        LOG2(kTrace, kError, "Device xml fetch error {udn{");
+        LOG2(kTrace, kError, aDevice.Udn());
+        LOG2(kTrace, kError, "}, location{");
+        LOG2(kTrace, kError, aDevice.Location());
+        LOG2(kTrace, kError, "}}\n");
         Remove(aDevice.Udn());
     }
     else {
         SetDeviceReady(aDevice.Device());
     }
+}
+
+void CpiDeviceListUpnp::DeviceLocationChanged(CpiDeviceUpnp* aOriginal, CpiDeviceUpnp* aNew)
+{
+    Remove(aOriginal->Udn());
+    Add(&aNew->Device());
 }
 
 void CpiDeviceListUpnp::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint aMaxAge)
