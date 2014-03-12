@@ -2,6 +2,7 @@
 #define HEADER_MDNSPLATFORM
 
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Network.h>
@@ -27,6 +28,7 @@ class MdnsPlatform
 
     static const TUint kMaxHostBytes = 16;
     static const TUint kMaxMessageBytes = 4096;
+    static const TUint kMaxQueueLength = 25;
 public: 
     MdnsPlatform(Environment& aStack, const TChar* aHost);
     ~MdnsPlatform();
@@ -39,10 +41,11 @@ public:
     void SetHostName(const TChar* aName);
     TUint CreateService();
     void DeregisterService(TUint aHandle);
-    void RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress Interface, TUint aPort, const TChar* aInfo);
+    void RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
     void RenameAndReregisterService(TUint aHandle, const TChar* aName);
     void AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue);
 private:
+    void ServiceThread();
     void Listen();
     void TimerExpired();
     void SubnetListChanged();
@@ -70,6 +73,36 @@ private:
     private:
         NetworkAdapter& iNif;
         NetworkInterfaceInfo* iMdnsInfo;
+    };
+    enum MdnsServiceAction
+    {
+        eInvalid,
+        eRegister,
+        eDeregister,
+        eRenameAndReregister,
+    };
+    class MdnsService
+    {
+    public:
+        MdnsService(mDNS& aMdns, MdnsPlatform& aPlatform);
+        void Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo);
+        TUint PerformAction();
+    private:
+        TUint Register();
+        TUint Deregister();
+        TUint RenameAndReregister();
+    private:
+        // NOTE: all buffer sizes taken from mDNSEmbeddedAPI.h
+        mDNS& iMdns;
+        MdnsPlatform& iPlatform;
+        MdnsServiceAction iAction;
+        TUint iHandle;
+        ServiceRecordSet* iService;
+        Bws<MAX_DOMAIN_LABEL-1> iName;
+        Bws<MAX_DOMAIN_NAME-1> iType;
+        TIpAddress iInterface;
+        TUint iPort;
+        Bws<2048> iInfo;
     };
     /*
      * Simple recursive mutex.
@@ -108,6 +141,10 @@ private:
     Bws<kMaxMessageBytes> iMessage;
     typedef std::map<TUint, ServiceRecordSet*> Map;
     Mutex iServicesLock;
+    Fifo<MdnsService*> iFifoFree;
+    Fifo<MdnsService*> iFifoPending;
+    Semaphore iSem;
+    ThreadFunctor* iThreadService;
     Map iServices;
     TUint iNextServiceIndex;
     TBool iStop;
