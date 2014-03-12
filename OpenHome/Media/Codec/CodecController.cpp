@@ -320,6 +320,7 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
     while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) {
         Msg* msg = PullMsg();
         if (msg != NULL) {
+            ASSERT(iPendingMsg == NULL);
             iPendingMsg = msg;
             break;
         }
