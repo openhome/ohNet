@@ -284,6 +284,7 @@ void ProviderRadio::SetChannel(TUint aPresetId, const Brx& aUri, const Brx& aMet
     iMetaData.Replace(aMetadata);
     iLock.Signal();
     (void)SetPropertyId(aPresetId);
+    (void)SetPropertyUri(aUri);
     (void)SetPropertyMetadata(iMetaData);
     iSource.Fetch(aUri, aMetadata);
 }
