@@ -288,12 +288,16 @@ void MdnsPlatform::ServiceThread()
      * queue of pending calls and have a thread that processes them in order.
      */
     while (!iStop) {
-        MdnsService* service = iFifoPending.Read();
-        TUint status = service->PerformAction();
-        iFifoFree.Write(service);
-        if (status == mStatus_NoError) {
-            iSem.Wait();
+        try {
+            MdnsService* service = iFifoPending.Read();
+            TUint status = service->PerformAction();
+            iFifoFree.Write(service);
+            if (status == mStatus_NoError) {
+                iSem.Wait();
+            }
         }
+        catch (FifoReadError&)
+        {}
     }
 }
 
