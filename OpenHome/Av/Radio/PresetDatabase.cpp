@@ -85,7 +85,13 @@ TBool PresetDatabase::TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TU
             return true;
         }
     }
-    // FIXME - search from 0..aIndex-1 in case client requests presets out of order
+    for (TUint i=0; i<aIndex; i++) {
+        if (iPresets[i].Id() == aId) {
+            aMetaData.Replace(iPresets[i].MetaData());
+            aIndex = i;
+            return true;
+        }
+    }
     return false;
 }
 

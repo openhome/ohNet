@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Private/Ascii.h>
@@ -219,7 +220,9 @@ void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDv
             if (iDbReader.TryGetPresetById(id, seq, metadata, index)) {
                 aChannelList.Write(entryStart);
                 aChannelList.Write(idStart);
-                aChannelList.Write(idBuf);
+                Bws<Ascii::kMaxUintStringBytes> idBuf2;
+                Ascii::AppendDec(idBuf2, id);
+                aChannelList.Write(idBuf2);
                 aChannelList.Write(idEnd);
                 aChannelList.Write(metaStart);
                 WriterInvocationResponseString writer(aChannelList);
