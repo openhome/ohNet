@@ -65,22 +65,22 @@ Msg* MsgCloner::ProcessMsg(MsgAudioEncoded* aMsg)
     return aMsg->Clone();
 }
 
-Msg* MsgCloner::ProcessMsg(MsgMetaText* /*aMsg*/)
+Msg* MsgCloner::ProcessMsg(MsgMetaText* aMsg)
 {
-    ASSERTS();
-    return NULL;
+    aMsg->AddRef();
+    return aMsg;
 }
 
-Msg* MsgCloner::ProcessMsg(MsgHalt* /*aMsg*/)
+Msg* MsgCloner::ProcessMsg(MsgHalt* aMsg)
 {
-    ASSERTS();
-    return NULL;
+    aMsg->AddRef();
+    return aMsg;
 }
 
-Msg* MsgCloner::ProcessMsg(MsgFlush* /*aMsg*/)
+Msg* MsgCloner::ProcessMsg(MsgFlush* aMsg)
 {
-    ASSERTS();
-    return NULL;
+    aMsg->AddRef();
+    return aMsg;
 }
 
 Msg* MsgCloner::ProcessMsg(MsgDecodedStream* /*aMsg*/)
@@ -107,10 +107,10 @@ Msg* MsgCloner::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* MsgCloner::ProcessMsg(MsgQuit* /*aMsg*/)
+Msg* MsgCloner::ProcessMsg(MsgQuit* aMsg)
 {
-    ASSERTS();
-    return NULL;
+    aMsg->AddRef();
+    return aMsg;
 }
 
 
