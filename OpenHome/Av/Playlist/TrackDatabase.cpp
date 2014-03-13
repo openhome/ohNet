@@ -278,6 +278,14 @@ Shuffler::Shuffler(Environment& aEnv, ITrackDatabaseReader& aReader)
     iShuffleList.reserve(ITrackDatabase::kMaxTracks);
 }
 
+TBool Shuffler::Enabled() const
+{
+    iLock.Wait();
+    const TBool enabled = iShuffle;
+    iLock.Signal();
+    return enabled;
+}
+
 Shuffler::~Shuffler()
 {
     TrackListUtils::Clear(iShuffleList);
@@ -287,11 +295,14 @@ void Shuffler::SetShuffle(TBool aShuffle)
 {
     iLock.Wait();
     iShuffle = aShuffle;
-    if (iShuffle) { // prefer re-shuffling over repeating the order of tracks if we play again
-        std::random_shuffle(iShuffleList.begin(), iShuffleList.end());
-        LogIds("Shuffled");
-    }
-    iPrevTrackId = ITrackDatabase::kTrackIdNone;
+    DoReshuffle("Shuffled");
+    iLock.Signal();
+}
+
+void Shuffler::Reshuffle()
+{
+    iLock.Wait();
+    DoReshuffle("Reshuffle");
     iLock.Signal();
 }
 
@@ -440,9 +451,14 @@ void Shuffler::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TUint aIdAfte
         if (iShuffleList.size() > 0) {
             TUint min = 0;
             if (iPrevTrackId != ITrackDatabase::kTrackIdNone) {
-                min = TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId);
+                min = TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId) + 1;
             }
-            index = iEnv.Random(iShuffleList.size(), min);
+            if (min == iShuffleList.size()) {
+                index = min;
+            }
+            else {
+                index = iEnv.Random(iShuffleList.size(), min);
+            }
         }
         iShuffleList.insert(iShuffleList.begin() + index, &aTrack);
         aTrack.AddRef();
@@ -498,6 +514,15 @@ void Shuffler::NotifyAllDeleted()
     TrackListUtils::Clear(iShuffleList);
     iLock.Signal();
     iObserver->NotifyAllDeleted();
+}
+
+void Shuffler::DoReshuffle(const TChar* aLogPrefix)
+{
+    if (iShuffle) { // prefer re-shuffling over repeating the order of tracks if we play again
+        std::random_shuffle(iShuffleList.begin(), iShuffleList.end());
+        LogIds(aLogPrefix);
+        iPrevTrackId = ITrackDatabase::kTrackIdNone;
+    }
 }
 
 #undef LOG_SHUFFLE

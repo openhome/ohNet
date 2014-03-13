@@ -26,12 +26,11 @@ static const Brn kIndexNotFoundMsg("Index not found");
 
 // ProviderPlaylist
 
-ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IShuffler& aShuffler, IRepeater& aRepeater, const Brx& aProtocolInfo)
+ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgPlaylist1(aDevice)
     , iLock("PPLY")
     , iSource(aSource)
     , iDatabase(aDatabase)
-    , iShuffler(aShuffler)
     , iRepeater(aRepeater)
     , iProtocolInfo(aProtocolInfo)
     , iTimerLock("PPL2")
@@ -418,7 +417,7 @@ void ProviderPlaylist::SetRepeat(TBool aRepeat)
 void ProviderPlaylist::SetShuffle(TBool aShuffle)
 {
     (void)SetPropertyShuffle(aShuffle);
-    iShuffler.SetShuffle(aShuffle);
+    iSource.SetShuffle(aShuffle);
 }
 
 void ProviderPlaylist::UpdateIdArray()
