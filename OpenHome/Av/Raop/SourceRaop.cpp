@@ -1,5 +1,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Network.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Raop/SourceRaop.h>
@@ -39,6 +41,7 @@ const TUint SourceRaop::kAutoNetAuxOffNotVisible = 2;   // Only visible via Airp
 
 SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : Source(kSourceNameStr, kSourceNameStr)
+    , iEnv(aMediaPlayer.Env())
     , iLock("SRAO")
     , iPipeline(aMediaPlayer.Pipeline())
     , iUriProvider(aUriProvider)
@@ -72,10 +75,18 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     choices.push_back(kAutoNetAuxOffNotVisible);
     iConfigNetAux = new ConfigChoice(aMediaPlayer.ConfigManagerWriter(), kKeyNetAux, choices, iAutoNetAux);
     iConfigSubId = iConfigNetAux->Subscribe(MakeFunctorConfigChoice(*this, &SourceRaop::AutoNetAuxChanged));
+
+
+    NetworkAdapterList& adapterList = iEnv.NetworkAdapterList();
+    Functor functor = MakeFunctor(*this, &SourceRaop::HandleInterfaceChange);
+    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
+    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
 }
 
 SourceRaop::~SourceRaop()
 {
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
+    iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     delete iRaopDiscovery;
     if (iTrack != NULL) {
         iTrack->RemoveRef();
@@ -292,4 +303,11 @@ void SourceRaop::DeactivateIfActive()
     if (!iActive) {
         iRaopDiscovery->Disable();
     }
+}
+
+void SourceRaop::HandleInterfaceChange()
+{
+    iRaopDiscovery->Disable();
+    iRaopDiscovery->Enable();
+    iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
 }
