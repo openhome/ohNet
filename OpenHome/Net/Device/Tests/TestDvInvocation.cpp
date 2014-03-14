@@ -73,6 +73,24 @@ void CpDevices::Test()
         valUint = result;
     }
 
+    TUint resUint;
+    for (valUint=10; valUint<=20; valUint++) {
+        proxy->SyncEchoAllowedRangeUint(valUint, resUint);
+    }
+    // can't easily validate handling of unsupported values - it asserts rather than throws
+#if 0
+    try {
+        proxy->SyncEchoAllowedRangeUint(9, resUint);
+        ASSERTS();
+    }
+    catch (ProxyError&) {}
+    try {
+        proxy->SyncEchoAllowedRangeUint(21, resUint);
+        ASSERTS();
+    }
+    catch (ProxyError&) {}
+#endif
+
     Print("Integer arguments...\n");
     TInt valInt = 3;
     for (i=0; i<kTestIterations; i++) {
@@ -102,6 +120,25 @@ void CpDevices::Test()
         proxy->SyncEchoString(valStr, result);
         ASSERT(result == valStr);
     }
+
+    Brh resStr;
+    proxy->SyncEchoAllowedValueString(Brn("One"), resStr);
+    proxy->SyncEchoAllowedValueString(Brn("Two"), resStr);
+    proxy->SyncEchoAllowedValueString(Brn("Three"), resStr);
+    proxy->SyncEchoAllowedValueString(Brn("Four"), resStr);
+    // can't easily validate handling of unsupported values - it asserts rather than throws
+#if 0
+    try {
+        proxy->SyncEchoAllowedValueString(Brn("Four"), resStr);
+        ASSERTS();
+    }
+    catch (ProxyError&) {}
+    try {
+        proxy->SyncEchoAllowedValueString(Brn(""), resStr);
+        ASSERTS();
+    }
+    catch (ProxyError&) {}
+#endif
 
     Print("Binary arguments...\n");
     char bin[256];

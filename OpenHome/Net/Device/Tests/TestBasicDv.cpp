@@ -32,9 +32,11 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     SetPropertyVarBin(Brx::Empty());
 
     EnableActionIncrement();
+    EnableActionEchoAllowedRangeUint();
     EnableActionDecrement();
     EnableActionToggle();
     EnableActionEchoString();
+    EnableActionEchoAllowedValueString();
     EnableActionEchoBinary();
     EnableActionSetUint();
     EnableActionGetUint();
@@ -43,6 +45,7 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     EnableActionSetBool();
     EnableActionGetBool();
     EnableActionSetMultiple();
+    EnableActionGetMultiple();
     EnableActionSetString();
     EnableActionGetString();
     EnableActionSetBinary();
@@ -55,6 +58,13 @@ void ProviderTestBasic::Increment(IDvInvocation& aInvocation, TUint aValue, IDvI
 {
     aInvocation.StartResponse();
     aResult.Write(++aValue);
+    aInvocation.EndResponse();
+}
+
+void ProviderTestBasic::EchoAllowedRangeUint(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult)
+{
+    aInvocation.StartResponse();
+    aResult.Write(aValue);
     aInvocation.EndResponse();
 }
 
@@ -73,6 +83,14 @@ void ProviderTestBasic::Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvo
 }
 
 void ProviderTestBasic::EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
+{
+    aInvocation.StartResponse();
+    aResult.Write(aValue);
+    aResult.WriteFlush();
+    aInvocation.EndResponse();
+}
+
+void ProviderTestBasic::EchoAllowedValueString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult)
 {
     aInvocation.StartResponse();
     aResult.Write(aValue);
@@ -144,6 +162,21 @@ void ProviderTestBasic::SetMultiple(IDvInvocation& aInvocation, TUint aValueUint
     SetPropertyVarBool(aValueBool);
     PropertiesUnlock();
     aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
+void ProviderTestBasic::GetMultiple(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint, IDvInvocationResponseInt& aValueInt, IDvInvocationResponseBool& aValueBool)
+{
+    aInvocation.StartResponse();
+    TUint valUint;
+    GetPropertyVarUint(valUint);
+    aValueUint.Write(valUint);
+    TInt valInt;
+    GetPropertyVarInt(valInt);
+    aValueInt.Write(valInt);
+    TBool valBool;
+    GetPropertyVarBool(valBool);
+    aValueBool.Write(valBool);
     aInvocation.EndResponse();
 }
 
