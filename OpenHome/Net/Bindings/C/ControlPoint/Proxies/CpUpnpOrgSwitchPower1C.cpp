@@ -171,9 +171,9 @@ void CpProxyUpnpOrgSwitchPower1C::EndSetTarget(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetTarget"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -201,9 +201,9 @@ void CpProxyUpnpOrgSwitchPower1C::EndGetTarget(IAsync& aAsync, TBool& aRetTarget
     ASSERT(invocation.Action().Name() == Brn("GetTarget"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -233,9 +233,9 @@ void CpProxyUpnpOrgSwitchPower1C::EndGetStatus(IAsync& aAsync, TBool& aResultSta
     ASSERT(invocation.Action().Name() == Brn("GetStatus"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

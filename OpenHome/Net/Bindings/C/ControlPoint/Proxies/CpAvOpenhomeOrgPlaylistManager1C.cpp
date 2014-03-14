@@ -816,9 +816,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndMetadata(IAsync& aAsync, Brh& aMe
     ASSERT(invocation.Action().Name() == Brn("Metadata"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -848,9 +848,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndImagesXml(IAsync& aAsync, Brh& aI
     ASSERT(invocation.Action().Name() == Brn("ImagesXml"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -883,9 +883,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistReadArray(IAsync& aAsync,
     ASSERT(invocation.Action().Name() == Brn("PlaylistReadArray"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -918,9 +918,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistReadList(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("PlaylistReadList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -955,9 +955,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistRead(IAsync& aAsync, Brh&
     ASSERT(invocation.Action().Name() == Brn("PlaylistRead"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -990,9 +990,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistSetName(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("PlaylistSetName"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1021,9 +1021,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistSetDescription(IAsync& aA
     ASSERT(invocation.Action().Name() == Brn("PlaylistSetDescription"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1052,9 +1052,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistSetImageId(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("PlaylistSetImageId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1088,9 +1088,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistInsert(IAsync& aAsync, TU
     ASSERT(invocation.Action().Name() == Brn("PlaylistInsert"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1120,9 +1120,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistDeleteId(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("PlaylistDeleteId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1151,9 +1151,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistMove(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("PlaylistMove"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1181,9 +1181,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistsMax(IAsync& aAsync, TUin
     ASSERT(invocation.Action().Name() == Brn("PlaylistsMax"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1213,9 +1213,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndTracksMax(IAsync& aAsync, TUint& 
     ASSERT(invocation.Action().Name() == Brn("TracksMax"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1247,9 +1247,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistArrays(IAsync& aAsync, TU
     ASSERT(invocation.Action().Name() == Brn("PlaylistArrays"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1284,9 +1284,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistArraysChanged(IAsync& aAs
     ASSERT(invocation.Action().Name() == Brn("PlaylistArraysChanged"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1320,9 +1320,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndRead(IAsync& aAsync, Brh& aMetada
     ASSERT(invocation.Action().Name() == Brn("Read"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1356,9 +1356,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndReadList(IAsync& aAsync, Brh& aTr
     ASSERT(invocation.Action().Name() == Brn("ReadList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1393,9 +1393,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndInsert(IAsync& aAsync, TUint& aNe
     ASSERT(invocation.Action().Name() == Brn("Insert"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1426,9 +1426,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndDeleteId(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1456,9 +1456,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndDeleteAll(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteAll"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }

@@ -328,9 +328,9 @@ void CpProxyAvOpenhomeOrgInfo1C::EndCounters(IAsync& aAsync, TUint& aTrackCount,
     ASSERT(invocation.Action().Name() == Brn("Counters"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -363,9 +363,9 @@ void CpProxyAvOpenhomeOrgInfo1C::EndTrack(IAsync& aAsync, Brh& aUri, Brh& aMetad
     ASSERT(invocation.Action().Name() == Brn("Track"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -401,9 +401,9 @@ void CpProxyAvOpenhomeOrgInfo1C::EndDetails(IAsync& aAsync, TUint& aDuration, TU
     ASSERT(invocation.Action().Name() == Brn("Details"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -438,9 +438,9 @@ void CpProxyAvOpenhomeOrgInfo1C::EndMetatext(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Metatext"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

@@ -690,9 +690,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndManufacturer(IAsync& aAsync, Brh& aName, 
     ASSERT(invocation.Action().Name() == Brn("Manufacturer"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -728,9 +728,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndModel(IAsync& aAsync, Brh& aName, Brh& aI
     ASSERT(invocation.Action().Name() == Brn("Model"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -767,9 +767,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndProduct(IAsync& aAsync, Brh& aRoom, Brh& 
     ASSERT(invocation.Action().Name() == Brn("Product"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -803,9 +803,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndStandby(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Standby"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -835,9 +835,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSetStandby(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetStandby"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -865,9 +865,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSourceCount(IAsync& aAsync, TUint& aValue
     ASSERT(invocation.Action().Name() == Brn("SourceCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -897,9 +897,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSourceXml(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("SourceXml"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -929,9 +929,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSourceIndex(IAsync& aAsync, TUint& aValue
     ASSERT(invocation.Action().Name() == Brn("SourceIndex"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -961,9 +961,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSetSourceIndex(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetSourceIndex"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -991,9 +991,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSetSourceIndexByName(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetSourceIndexByName"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1027,9 +1027,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSource(IAsync& aAsync, Brh& aSystemName, 
     ASSERT(invocation.Action().Name() == Brn("Source"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1062,9 +1062,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndAttributes(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Attributes"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1094,9 +1094,9 @@ void CpProxyAvOpenhomeOrgProduct1C::EndSourceXmlChangeCount(IAsync& aAsync, TUin
     ASSERT(invocation.Action().Name() == Brn("SourceXmlChangeCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

@@ -245,7 +245,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public Subscribe endSubscribe(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -300,7 +300,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public void endUnsubscribe(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -357,7 +357,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public long endRenew(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -415,7 +415,7 @@ public class CpProxyOpenhomeOrgSubscriptionLongPoll1 extends CpProxy implements 
      */
     public String endGetPropertyUpdates(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

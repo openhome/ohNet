@@ -779,9 +779,9 @@ void CpProxyUpnpOrgDimming1C::EndSetLoadLevelTarget(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetLoadLevelTarget"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -809,9 +809,9 @@ void CpProxyUpnpOrgDimming1C::EndGetLoadLevelTarget(IAsync& aAsync, TUint& aGetL
     ASSERT(invocation.Action().Name() == Brn("GetLoadLevelTarget"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -841,9 +841,9 @@ void CpProxyUpnpOrgDimming1C::EndGetLoadLevelStatus(IAsync& aAsync, TUint& aretL
     ASSERT(invocation.Action().Name() == Brn("GetLoadLevelStatus"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -873,9 +873,9 @@ void CpProxyUpnpOrgDimming1C::EndSetOnEffectLevel(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetOnEffectLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -903,9 +903,9 @@ void CpProxyUpnpOrgDimming1C::EndSetOnEffect(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetOnEffect"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -934,9 +934,9 @@ void CpProxyUpnpOrgDimming1C::EndGetOnEffectParameters(IAsync& aAsync, Brh& aret
     ASSERT(invocation.Action().Name() == Brn("GetOnEffectParameters"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -964,9 +964,9 @@ void CpProxyUpnpOrgDimming1C::EndStepUp(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StepUp"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -991,9 +991,9 @@ void CpProxyUpnpOrgDimming1C::EndStepDown(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StepDown"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1018,9 +1018,9 @@ void CpProxyUpnpOrgDimming1C::EndStartRampUp(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StartRampUp"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1045,9 +1045,9 @@ void CpProxyUpnpOrgDimming1C::EndStartRampDown(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StartRampDown"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1072,9 +1072,9 @@ void CpProxyUpnpOrgDimming1C::EndStopRamp(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StopRamp"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1103,9 +1103,9 @@ void CpProxyUpnpOrgDimming1C::EndStartRampToLevel(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StartRampToLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1133,9 +1133,9 @@ void CpProxyUpnpOrgDimming1C::EndSetStepDelta(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetStepDelta"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1163,9 +1163,9 @@ void CpProxyUpnpOrgDimming1C::EndGetStepDelta(IAsync& aAsync, TUint& aretStepDel
     ASSERT(invocation.Action().Name() == Brn("GetStepDelta"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1195,9 +1195,9 @@ void CpProxyUpnpOrgDimming1C::EndSetRampRate(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetRampRate"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1225,9 +1225,9 @@ void CpProxyUpnpOrgDimming1C::EndGetRampRate(IAsync& aAsync, TUint& aretRampRate
     ASSERT(invocation.Action().Name() == Brn("GetRampRate"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1254,9 +1254,9 @@ void CpProxyUpnpOrgDimming1C::EndPauseRamp(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("PauseRamp"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1281,9 +1281,9 @@ void CpProxyUpnpOrgDimming1C::EndResumeRamp(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("ResumeRamp"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1311,9 +1311,9 @@ void CpProxyUpnpOrgDimming1C::EndGetIsRamping(IAsync& aAsync, TBool& aretIsRampi
     ASSERT(invocation.Action().Name() == Brn("GetIsRamping"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1343,9 +1343,9 @@ void CpProxyUpnpOrgDimming1C::EndGetRampPaused(IAsync& aAsync, TBool& aretRampPa
     ASSERT(invocation.Action().Name() == Brn("GetRampPaused"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1375,9 +1375,9 @@ void CpProxyUpnpOrgDimming1C::EndGetRampTime(IAsync& aAsync, TUint& aretRampTime
     ASSERT(invocation.Action().Name() == Brn("GetRampTime"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

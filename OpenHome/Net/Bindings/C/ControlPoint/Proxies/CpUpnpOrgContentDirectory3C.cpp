@@ -860,9 +860,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetSearchCapabilities(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("GetSearchCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -892,9 +892,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetSortCapabilities(IAsync& aAsync, Br
     ASSERT(invocation.Action().Name() == Brn("GetSortCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -924,9 +924,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetSortExtensionCapabilities(IAsync& a
     ASSERT(invocation.Action().Name() == Brn("GetSortExtensionCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -956,9 +956,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetFeatureList(IAsync& aAsync, Brh& aF
     ASSERT(invocation.Action().Name() == Brn("GetFeatureList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -988,9 +988,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetSystemUpdateID(IAsync& aAsync, TUin
     ASSERT(invocation.Action().Name() == Brn("GetSystemUpdateID"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1020,9 +1020,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetServiceResetToken(IAsync& aAsync, B
     ASSERT(invocation.Action().Name() == Brn("GetServiceResetToken"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1063,9 +1063,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndBrowse(IAsync& aAsync, Brh& aResult, T
     ASSERT(invocation.Action().Name() == Brn("Browse"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1109,9 +1109,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndSearch(IAsync& aAsync, Brh& aResult, T
     ASSERT(invocation.Action().Name() == Brn("Search"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1149,9 +1149,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndCreateObject(IAsync& aAsync, Brh& aObj
     ASSERT(invocation.Action().Name() == Brn("CreateObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1182,9 +1182,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndDestroyObject(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DestroyObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1214,9 +1214,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndUpdateObject(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("UpdateObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1248,9 +1248,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndMoveObject(IAsync& aAsync, Brh& aNewOb
     ASSERT(invocation.Action().Name() == Brn("MoveObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1284,9 +1284,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndImportResource(IAsync& aAsync, TUint& 
     ASSERT(invocation.Action().Name() == Brn("ImportResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1320,9 +1320,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndExportResource(IAsync& aAsync, TUint& 
     ASSERT(invocation.Action().Name() == Brn("ExportResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1352,9 +1352,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndDeleteResource(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1382,9 +1382,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndStopTransferResource(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StopTransferResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1417,9 +1417,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetTransferProgress(IAsync& aAsync, Br
     ASSERT(invocation.Action().Name() == Brn("GetTransferProgress"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1455,9 +1455,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndCreateReference(IAsync& aAsync, Brh& a
     ASSERT(invocation.Action().Name() == Brn("CreateReference"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1493,9 +1493,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndFreeFormQuery(IAsync& aAsync, Brh& aQu
     ASSERT(invocation.Action().Name() == Brn("FreeFormQuery"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1526,9 +1526,9 @@ void CpProxyUpnpOrgContentDirectory3C::EndGetFreeFormQueryCapabilities(IAsync& a
     ASSERT(invocation.Action().Name() == Brn("GetFreeFormQueryCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

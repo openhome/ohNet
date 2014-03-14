@@ -300,8 +300,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCount"></param>
         public void EndGetCount(IntPtr aAsyncHandle, out uint aCount)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -353,8 +353,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRoomName"></param>
         public void EndGetRoom(IntPtr aAsyncHandle, out String aRoomName)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -406,8 +406,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aFriendlyName"></param>
         public void EndGetName(IntPtr aAsyncHandle, out String aFriendlyName)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -467,8 +467,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aZ"></param>
         public void EndGetPosition(IntPtr aAsyncHandle, out uint aX, out uint aY, out uint aZ)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -520,8 +520,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetColor(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -571,8 +571,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aColor"></param>
         public void EndGetColor(IntPtr aAsyncHandle, out uint aColor)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -636,8 +636,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aBlue"></param>
         public void EndGetColorComponents(IntPtr aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);

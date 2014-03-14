@@ -310,8 +310,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aSink"></param>
         public void EndGetProtocolInfo(IntPtr aAsyncHandle, out String aSource, out String aSink)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -381,8 +381,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aRcsID"></param>
         public void EndPrepareForConnection(IntPtr aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -431,8 +431,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndConnectionComplete(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -478,8 +478,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aConnectionIDs"></param>
         public void EndGetCurrentConnectionIDs(IntPtr aAsyncHandle, out String aConnectionIDs)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -555,8 +555,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aStatus"></param>
         public void EndGetCurrentConnectionInfo(IntPtr aAsyncHandle, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);

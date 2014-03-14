@@ -273,9 +273,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndGetCount(IAsync& aAsync, uint32_t& aCo
     ASSERT(invocation.Action().Name() == Brn("GetCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -308,9 +308,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndGetRoom(IAsync& aAsync, std::string& a
     ASSERT(invocation.Action().Name() == Brn("GetRoom"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -346,9 +346,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndGetName(IAsync& aAsync, std::string& a
     ASSERT(invocation.Action().Name() == Brn("GetName"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -386,9 +386,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndGetPosition(IAsync& aAsync, uint32_t& 
     ASSERT(invocation.Action().Name() == Brn("GetPosition"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -421,9 +421,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndSetColor(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetColor"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -454,9 +454,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndGetColor(IAsync& aAsync, uint32_t& aCo
     ASSERT(invocation.Action().Name() == Brn("GetColor"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -492,9 +492,9 @@ void CpProxyOpenhomeOrgTestLights1Cpp::EndGetColorComponents(IAsync& aAsync, uin
     ASSERT(invocation.Action().Name() == Brn("GetColorComponents"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

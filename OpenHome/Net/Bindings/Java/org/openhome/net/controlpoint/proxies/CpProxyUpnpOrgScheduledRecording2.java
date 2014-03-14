@@ -946,7 +946,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetSortCapabilities endGetSortCapabilities(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1008,7 +1008,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public String endGetPropertyList(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1068,7 +1068,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public String endGetAllowedValues(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1123,7 +1123,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public long endGetStateUpdateID(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1195,7 +1195,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public BrowseRecordSchedules endBrowseRecordSchedules(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1277,7 +1277,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public BrowseRecordTasks endBrowseRecordTasks(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1349,7 +1349,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public CreateRecordSchedule endCreateRecordSchedule(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1406,7 +1406,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDeleteRecordSchedule(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1467,7 +1467,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordSchedule endGetRecordSchedule(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1522,7 +1522,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endEnableRecordSchedule(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1570,7 +1570,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDisableRecordSchedule(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1618,7 +1618,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDeleteRecordTask(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1679,7 +1679,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordTask endGetRecordTask(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1734,7 +1734,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endEnableRecordTask(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1782,7 +1782,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endDisableRecordTask(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1830,7 +1830,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public void endResetRecordTask(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1889,7 +1889,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordScheduleConflicts endGetRecordScheduleConflicts(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1955,7 +1955,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
      */
     public GetRecordTaskConflicts endGetRecordTaskConflicts(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

@@ -180,9 +180,9 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1::EndSubscribe(IAsync& aAsync, Brh& 
     ASSERT(invocation.Action().Name() == Brn("Subscribe"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -213,9 +213,9 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1::EndUnsubscribe(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Unsubscribe"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -247,9 +247,9 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1::EndRenew(IAsync& aAsync, TUint& aD
     ASSERT(invocation.Action().Name() == Brn("Renew"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -282,9 +282,9 @@ void CpProxyOpenhomeOrgSubscriptionLongPoll1::EndGetPropertyUpdates(IAsync& aAsy
     ASSERT(invocation.Action().Name() == Brn("GetPropertyUpdates"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

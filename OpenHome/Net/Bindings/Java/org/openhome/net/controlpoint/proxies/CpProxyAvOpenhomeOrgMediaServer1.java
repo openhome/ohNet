@@ -682,7 +682,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Manufacturer endManufacturer(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -753,7 +753,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Model endModel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -824,7 +824,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public Product endProduct(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -887,7 +887,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public String endAttributes(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -942,7 +942,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endQueryPort(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -997,7 +997,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endBrowsePort(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1052,7 +1052,7 @@ public class CpProxyAvOpenhomeOrgMediaServer1 extends CpProxy implements ICpProx
      */
     public long endUpdateCount(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

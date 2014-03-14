@@ -251,9 +251,9 @@ void <#=className#>C::End<#=a.name#>(<#=PrefixedOutArgTypesAndNamesCpp("IAsync& 
     ASSERT(invocation.Action().Name() == Brn("<#=a.name#>"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 <#      if (a.outargs.Count > 0) #>

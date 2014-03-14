@@ -210,9 +210,9 @@ void CpProxyAvOpenhomeOrgSender1::EndPresentationUrl(IAsync& aAsync, Brh& aValue
     ASSERT(invocation.Action().Name() == Brn("PresentationUrl"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -242,9 +242,9 @@ void CpProxyAvOpenhomeOrgSender1::EndMetadata(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Metadata"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -274,9 +274,9 @@ void CpProxyAvOpenhomeOrgSender1::EndAudio(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Audio"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -306,9 +306,9 @@ void CpProxyAvOpenhomeOrgSender1::EndStatus(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Status"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -338,9 +338,9 @@ void CpProxyAvOpenhomeOrgSender1::EndAttributes(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Attributes"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

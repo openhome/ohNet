@@ -675,9 +675,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndCharacteristics(IAsync& aAsync, TUint& aVo
     ASSERT(invocation.Action().Name() == Brn("Characteristics"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -712,9 +712,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetVolume(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetVolume"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -739,9 +739,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolumeInc(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("VolumeInc"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -766,9 +766,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolumeDec(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("VolumeDec"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -796,9 +796,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolume(IAsync& aAsync, TUint& aValue)
     ASSERT(invocation.Action().Name() == Brn("Volume"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -828,9 +828,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetBalance(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetBalance"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -855,9 +855,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndBalanceInc(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("BalanceInc"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -882,9 +882,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndBalanceDec(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("BalanceDec"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -912,9 +912,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndBalance(IAsync& aAsync, TInt& aValue)
     ASSERT(invocation.Action().Name() == Brn("Balance"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -944,9 +944,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetFade(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetFade"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -971,9 +971,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndFadeInc(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("FadeInc"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -998,9 +998,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndFadeDec(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("FadeDec"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1028,9 +1028,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndFade(IAsync& aAsync, TInt& aValue)
     ASSERT(invocation.Action().Name() == Brn("Fade"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1060,9 +1060,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndSetMute(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetMute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1090,9 +1090,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndMute(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Mute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1122,9 +1122,9 @@ void CpProxyAvOpenhomeOrgVolume1C::EndVolumeLimit(IAsync& aAsync, TUint& aValue)
     ASSERT(invocation.Action().Name() == Brn("VolumeLimit"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;

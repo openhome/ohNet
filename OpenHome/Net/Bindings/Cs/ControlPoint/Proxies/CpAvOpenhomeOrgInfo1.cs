@@ -317,8 +317,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMetatextCount"></param>
         public void EndCounters(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -372,8 +372,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMetadata"></param>
         public void EndTrack(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -442,8 +442,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aCodecName"></param>
         public void EndDetails(IntPtr aAsyncHandle, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out String aCodecName)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -496,8 +496,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndMetatext(IntPtr aAsyncHandle, out String aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
