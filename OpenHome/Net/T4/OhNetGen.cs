@@ -276,7 +276,6 @@ namespace OpenHome.Net
             for (int i = 0; i < templates.Count; i++)
             {
                 Process proc = new Process();
-                //ProcessStartInfo startInfo = new ProcessStartInfo();
                 proc.StartInfo.FileName = Path.Combine(ttPath, "TextTransform.exe");
                 String ttArgs = String.Format("-o {0}{1}{2}{3} OpenHome/Net/T4/Templates/{4} -a \"xml:{5}\" -a domain:{6} -a type:{7} -a version:{8} {9}",
                                                 outputDir, outputFileName, templates[i].OutputNameAdornment, templates[i].Ext, templates[i].Template, xmlInput, domain, type, version, templates[i].Args);
