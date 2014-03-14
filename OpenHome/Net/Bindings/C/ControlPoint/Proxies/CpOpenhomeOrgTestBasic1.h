@@ -91,6 +91,44 @@ DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndIncrement(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoAllowedRangeUint(THandle aHandle, uint32_t aValue, uint32_t* aResult);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aValue
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1BeginEchoAllowedRangeUint(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aResult
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoAllowedRangeUint(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResult);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aValue
+ * @param[out] aResult
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncDecrement(THandle aHandle, int32_t aValue, int32_t* aResult);
 /**
  * Invoke the action asynchronously.
@@ -193,6 +231,44 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1BeginEchoString(THandle aHand
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoString(THandle aHandle, OhNetHandleAsync aAsync, char** aResult);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aValue
+ * @param[out] aResult
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncEchoAllowedValueString(THandle aHandle, const char* aValue, char** aResult);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aValue
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1BeginEchoAllowedValueString(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aResult
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndEchoAllowedValueString(THandle aHandle, OhNetHandleAsync aAsync, char** aResult);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -491,6 +567,46 @@ DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1BeginSetMultiple(THandle aHan
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndSetMultiple(THandle aHandle, OhNetHandleAsync aAsync);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[out] aValueUint
+ * @param[out] aValueInt
+ * @param[out] aValueBool
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1SyncGetMultiple(THandle aHandle, uint32_t* aValueUint, int32_t* aValueInt, uint32_t* aValueBool);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyOpenhomeOrgTestBasic1BeginGetMultiple(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aValueUint
+ * @param[out] aValueInt
+ * @param[out] aValueBool
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyOpenhomeOrgTestBasic1EndGetMultiple(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValueUint, int32_t* aValueInt, uint32_t* aValueBool);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed

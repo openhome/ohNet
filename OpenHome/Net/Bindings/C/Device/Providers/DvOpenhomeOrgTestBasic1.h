@@ -33,6 +33,19 @@ extern "C" {
  */
 typedef int32_t (STDCALL *CallbackTestBasic1Increment)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue, uint32_t* aResult);
 /**
+ * Callback which runs when the EchoAllowedRangeUint action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionEchoAllowedRangeUint
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ * @param[in]  aValue
+ * @param[out] aResult
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackTestBasic1EchoAllowedRangeUint)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValue, uint32_t* aResult);
+/**
  * Callback which runs when the Decrement action is invoked
  *
  * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionDecrement
@@ -71,6 +84,19 @@ typedef int32_t (STDCALL *CallbackTestBasic1Toggle)(void* aPtr, IDvInvocationC* 
  * @return  0 if the action succeeded; non-zero if the action failed
  */
 typedef int32_t (STDCALL *CallbackTestBasic1EchoString)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aValue, char** aResult);
+/**
+ * Callback which runs when the EchoAllowedValueString action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionEchoAllowedValueString
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ * @param[in]  aValue
+ * @param[out] aResult
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackTestBasic1EchoAllowedValueString)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, const char* aValue, char** aResult);
 /**
  * Callback which runs when the EchoBinary action is invoked
  *
@@ -172,6 +198,20 @@ typedef int32_t (STDCALL *CallbackTestBasic1GetBool)(void* aPtr, IDvInvocationC*
  * @return  0 if the action succeeded; non-zero if the action failed
  */
 typedef int32_t (STDCALL *CallbackTestBasic1SetMultiple)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool);
+/**
+ * Callback which runs when the GetMultiple action is invoked
+ *
+ * @param[in]  aPtr           Opaque data passed to DvProviderOpenhomeOrgTestBasic1EnableActionGetMultiple
+ * @param[in]  aInvocation    Table of function pointers allowing access to the version of the service being used
+ *                            and other queries.
+ * @param[in] aInvocationPtr  aPtr argument to all functions contained in aInvocation.
+ * @param[out] aValueUint
+ * @param[out] aValueInt
+ * @param[out] aValueBool
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackTestBasic1GetMultiple)(void* aPtr, IDvInvocationC* aInvocation, void* aInvocationPtr, uint32_t* aValueUint, int32_t* aValueInt, uint32_t* aValueBool);
 /**
  * Callback which runs when the SetString action is invoked
  *
@@ -307,6 +347,17 @@ DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnablePropertyVarBin(THand
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr);
 /**
+ * Register a callback for the action EchoAllowedRangeUint
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoAllowedRangeUint(THandle aProvider, CallbackTestBasic1EchoAllowedRangeUint aCallback, void* aPtr);
+/**
  * Register a callback for the action Decrement
  *
  * If this is called, the action's availability will be published in the device's service.xml.
@@ -339,6 +390,17 @@ DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr);
+/**
+ * Register a callback for the action EchoAllowedValueString
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoAllowedValueString(THandle aProvider, CallbackTestBasic1EchoAllowedValueString aCallback, void* aPtr);
 /**
  * Register a callback for the action EchoBinary
  *
@@ -427,6 +489,17 @@ DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandl
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr);
+/**
+ * Register a callback for the action GetMultiple
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetMultiple(THandle aProvider, CallbackTestBasic1GetMultiple aCallback, void* aPtr);
 /**
  * Register a callback for the action SetString
  *

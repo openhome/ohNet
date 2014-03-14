@@ -138,6 +138,28 @@ CpProxyOpenhomeOrgTestBasic1.prototype.Increment = function(Value, successFuncti
 
 
 /**
+* A service action to EchoAllowedRangeUint
+* @method EchoAllowedRangeUint
+* @param {Int} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyOpenhomeOrgTestBasic1.prototype.EchoAllowedRangeUint = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("EchoAllowedRangeUint", this.url, this.domain, this.type, this.version);     
+    request.writeIntParameter("Value", Value);
+    request.send(function(result){
+        result["Result"] = ohnet.soaprequest.readIntParameter(result["Result"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
 * A service action to Decrement
 * @method Decrement
 * @param {Int} Value An action parameter
@@ -190,6 +212,28 @@ CpProxyOpenhomeOrgTestBasic1.prototype.Toggle = function(Value, successFunction,
 */
 CpProxyOpenhomeOrgTestBasic1.prototype.EchoString = function(Value, successFunction, errorFunction){ 
     var request = new ohnet.soaprequest("EchoString", this.url, this.domain, this.type, this.version);     
+    request.writeStringParameter("Value", Value);
+    request.send(function(result){
+        result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
+* A service action to EchoAllowedValueString
+* @method EchoAllowedValueString
+* @param {String} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyOpenhomeOrgTestBasic1.prototype.EchoAllowedValueString = function(Value, successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("EchoAllowedValueString", this.url, this.domain, this.type, this.version);     
     request.writeStringParameter("Value", Value);
     request.send(function(result){
         result["Result"] = ohnet.soaprequest.readStringParameter(result["Result"]); 
@@ -363,6 +407,28 @@ CpProxyOpenhomeOrgTestBasic1.prototype.SetMultiple = function(ValueUint, ValueIn
     request.writeIntParameter("ValueInt", ValueInt);
     request.writeBoolParameter("ValueBool", ValueBool);
     request.send(function(result){
+    
+        if (successFunction){
+            successFunction(result);
+        }
+    }, function(message, transport) {
+        if (errorFunction) {errorFunction(message, transport);}
+    });
+}
+
+
+/**
+* A service action to GetMultiple
+* @method GetMultiple
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyOpenhomeOrgTestBasic1.prototype.GetMultiple = function(successFunction, errorFunction){ 
+    var request = new ohnet.soaprequest("GetMultiple", this.url, this.domain, this.type, this.version);     
+    request.send(function(result){
+        result["ValueUint"] = ohnet.soaprequest.readIntParameter(result["ValueUint"]); 
+        result["ValueInt"] = ohnet.soaprequest.readIntParameter(result["ValueInt"]); 
+        result["ValueBool"] = ohnet.soaprequest.readBoolParameter(result["ValueBool"]); 
     
         if (successFunction){
             successFunction(result);

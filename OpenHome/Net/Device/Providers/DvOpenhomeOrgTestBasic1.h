@@ -135,6 +135,12 @@ protected:
      */
     void EnableActionIncrement();
     /**
+     * Signal that the action EchoAllowedRangeUint is supported.
+     * The action's availability will be published in the device's service.xml.
+     * EchoAllowedRangeUint must be overridden if this is called.
+     */
+    void EnableActionEchoAllowedRangeUint();
+    /**
      * Signal that the action Decrement is supported.
      * The action's availability will be published in the device's service.xml.
      * Decrement must be overridden if this is called.
@@ -152,6 +158,12 @@ protected:
      * EchoString must be overridden if this is called.
      */
     void EnableActionEchoString();
+    /**
+     * Signal that the action EchoAllowedValueString is supported.
+     * The action's availability will be published in the device's service.xml.
+     * EchoAllowedValueString must be overridden if this is called.
+     */
+    void EnableActionEchoAllowedValueString();
     /**
      * Signal that the action EchoBinary is supported.
      * The action's availability will be published in the device's service.xml.
@@ -200,6 +212,12 @@ protected:
      * SetMultiple must be overridden if this is called.
      */
     void EnableActionSetMultiple();
+    /**
+     * Signal that the action GetMultiple is supported.
+     * The action's availability will be published in the device's service.xml.
+     * GetMultiple must be overridden if this is called.
+     */
+    void EnableActionGetMultiple();
     /**
      * Signal that the action SetString is supported.
      * The action's availability will be published in the device's service.xml.
@@ -252,6 +270,14 @@ private:
      */
     virtual void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
     /**
+     * EchoAllowedRangeUint action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * EchoAllowedRangeUint action for the owning device.
+     * Must be implemented iff EnableActionEchoAllowedRangeUint was called.
+     */
+    virtual void EchoAllowedRangeUint(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
+    /**
      * Decrement action.
      *
      * Will be called when the device stack receives an invocation of the
@@ -275,6 +301,14 @@ private:
      * Must be implemented iff EnableActionEchoString was called.
      */
     virtual void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
+    /**
+     * EchoAllowedValueString action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * EchoAllowedValueString action for the owning device.
+     * Must be implemented iff EnableActionEchoAllowedValueString was called.
+     */
+    virtual void EchoAllowedValueString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
     /**
      * EchoBinary action.
      *
@@ -340,6 +374,14 @@ private:
      */
     virtual void SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool);
     /**
+     * GetMultiple action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * GetMultiple action for the owning device.
+     * Must be implemented iff EnableActionGetMultiple was called.
+     */
+    virtual void GetMultiple(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint, IDvInvocationResponseInt& aValueInt, IDvInvocationResponseBool& aValueBool);
+    /**
      * SetString action.
      *
      * Will be called when the device stack receives an invocation of the
@@ -399,9 +441,11 @@ private:
     DvProviderOpenhomeOrgTestBasic1();
     void Construct();
     void DoIncrement(IDviInvocation& aInvocation);
+    void DoEchoAllowedRangeUint(IDviInvocation& aInvocation);
     void DoDecrement(IDviInvocation& aInvocation);
     void DoToggle(IDviInvocation& aInvocation);
     void DoEchoString(IDviInvocation& aInvocation);
+    void DoEchoAllowedValueString(IDviInvocation& aInvocation);
     void DoEchoBinary(IDviInvocation& aInvocation);
     void DoSetUint(IDviInvocation& aInvocation);
     void DoGetUint(IDviInvocation& aInvocation);
@@ -410,6 +454,7 @@ private:
     void DoSetBool(IDviInvocation& aInvocation);
     void DoGetBool(IDviInvocation& aInvocation);
     void DoSetMultiple(IDviInvocation& aInvocation);
+    void DoGetMultiple(IDviInvocation& aInvocation);
     void DoSetString(IDviInvocation& aInvocation);
     void DoGetString(IDviInvocation& aInvocation);
     void DoSetBinary(IDviInvocation& aInvocation);

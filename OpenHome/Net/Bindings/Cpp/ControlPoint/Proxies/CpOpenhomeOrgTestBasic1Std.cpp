@@ -36,6 +36,29 @@ void SyncIncrementOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy, uint32_t& aResult);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp() {}
+private:
+    CpProxyOpenhomeOrgTestBasic1Cpp& iService;
+    uint32_t& iResult;
+};
+
+SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp::SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy, uint32_t& aResult)
+    : iService(aProxy)
+    , iResult(aResult)
+{
+}
+
+void SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndEchoAllowedRangeUint(aAsync, iResult);
+}
+
+
 class SyncDecrementOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
@@ -102,6 +125,29 @@ SyncEchoStringOpenhomeOrgTestBasic1Cpp::SyncEchoStringOpenhomeOrgTestBasic1Cpp(C
 void SyncEchoStringOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 {
     iService.EndEchoString(aAsync, iResult);
+}
+
+
+class SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy, std::string& aResult);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp() {}
+private:
+    CpProxyOpenhomeOrgTestBasic1Cpp& iService;
+    std::string& iResult;
+};
+
+SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp::SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy, std::string& aResult)
+    : iService(aProxy)
+    , iResult(aResult)
+{
+}
+
+void SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndEchoAllowedValueString(aAsync, iResult);
 }
 
 
@@ -281,6 +327,33 @@ void SyncSetMultipleOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncGetMultipleOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncGetMultipleOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy, uint32_t& aValueUint, int32_t& aValueInt, bool& aValueBool);
+    virtual void CompleteRequest(IAsync& aAsync);
+    virtual ~SyncGetMultipleOpenhomeOrgTestBasic1Cpp() {}
+private:
+    CpProxyOpenhomeOrgTestBasic1Cpp& iService;
+    uint32_t& iValueUint;
+    int32_t& iValueInt;
+    bool& iValueBool;
+};
+
+SyncGetMultipleOpenhomeOrgTestBasic1Cpp::SyncGetMultipleOpenhomeOrgTestBasic1Cpp(CpProxyOpenhomeOrgTestBasic1Cpp& aProxy, uint32_t& aValueUint, int32_t& aValueInt, bool& aValueBool)
+    : iService(aProxy)
+    , iValueUint(aValueUint)
+    , iValueInt(aValueInt)
+    , iValueBool(aValueBool)
+{
+}
+
+void SyncGetMultipleOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndGetMultiple(aAsync, iValueUint, iValueInt, iValueBool);
+}
+
+
 class SyncSetStringOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
@@ -436,12 +509,20 @@ CpProxyOpenhomeOrgTestBasic1Cpp::CpProxyOpenhomeOrgTestBasic1Cpp(CpDeviceCpp& aD
     : CpProxy("openhome-org", "TestBasic", 1, aDevice.Device())
 {
     OpenHome::Net::Parameter* param;
+    TChar** allowedValues;
+    TUint index;
 
     iActionIncrement = new Action("Increment");
     param = new OpenHome::Net::ParameterUint("Value");
     iActionIncrement->AddInputParameter(param);
     param = new OpenHome::Net::ParameterUint("Result");
     iActionIncrement->AddOutputParameter(param);
+
+    iActionEchoAllowedRangeUint = new Action("EchoAllowedRangeUint");
+    param = new OpenHome::Net::ParameterUint("Value", 10, 20);
+    iActionEchoAllowedRangeUint->AddInputParameter(param);
+    param = new OpenHome::Net::ParameterUint("Result");
+    iActionEchoAllowedRangeUint->AddOutputParameter(param);
 
     iActionDecrement = new Action("Decrement");
     param = new OpenHome::Net::ParameterInt("Value");
@@ -460,6 +541,19 @@ CpProxyOpenhomeOrgTestBasic1Cpp::CpProxyOpenhomeOrgTestBasic1Cpp(CpDeviceCpp& aD
     iActionEchoString->AddInputParameter(param);
     param = new OpenHome::Net::ParameterString("Result");
     iActionEchoString->AddOutputParameter(param);
+
+    iActionEchoAllowedValueString = new Action("EchoAllowedValueString");
+    index = 0;
+    allowedValues = new TChar*[4];
+    allowedValues[index++] = (TChar*)"One";
+    allowedValues[index++] = (TChar*)"Two";
+    allowedValues[index++] = (TChar*)"Three";
+    allowedValues[index++] = (TChar*)"Four";
+    param = new OpenHome::Net::ParameterString("Value", allowedValues, 4);
+    iActionEchoAllowedValueString->AddInputParameter(param);
+    delete[] allowedValues;
+    param = new OpenHome::Net::ParameterString("Result");
+    iActionEchoAllowedValueString->AddOutputParameter(param);
 
     iActionEchoBinary = new Action("EchoBinary");
     param = new OpenHome::Net::ParameterBinary("Value");
@@ -498,6 +592,14 @@ CpProxyOpenhomeOrgTestBasic1Cpp::CpProxyOpenhomeOrgTestBasic1Cpp(CpDeviceCpp& aD
     iActionSetMultiple->AddInputParameter(param);
     param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionSetMultiple->AddInputParameter(param);
+
+    iActionGetMultiple = new Action("GetMultiple");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
+    iActionGetMultiple->AddOutputParameter(param);
+    param = new OpenHome::Net::ParameterInt("ValueInt");
+    iActionGetMultiple->AddOutputParameter(param);
+    param = new OpenHome::Net::ParameterBool("ValueBool");
+    iActionGetMultiple->AddOutputParameter(param);
 
     iActionSetString = new Action("SetString");
     param = new OpenHome::Net::ParameterString("ValueStr");
@@ -547,9 +649,11 @@ CpProxyOpenhomeOrgTestBasic1Cpp::~CpProxyOpenhomeOrgTestBasic1Cpp()
 {
     DestroyService();
     delete iActionIncrement;
+    delete iActionEchoAllowedRangeUint;
     delete iActionDecrement;
     delete iActionToggle;
     delete iActionEchoString;
+    delete iActionEchoAllowedValueString;
     delete iActionEchoBinary;
     delete iActionSetUint;
     delete iActionGetUint;
@@ -558,6 +662,7 @@ CpProxyOpenhomeOrgTestBasic1Cpp::~CpProxyOpenhomeOrgTestBasic1Cpp()
     delete iActionSetBool;
     delete iActionGetBool;
     delete iActionSetMultiple;
+    delete iActionGetMultiple;
     delete iActionSetString;
     delete iActionGetString;
     delete iActionSetBinary;
@@ -591,6 +696,41 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::EndIncrement(IAsync& aAsync, uint32_t& aRe
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("Increment"));
+
+    Error::ELevel level;
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
+        THROW_PROXYERROR(level, code);
+    }
+    TUint index = 0;
+    aResult = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::SyncEchoAllowedRangeUint(uint32_t aValue, uint32_t& aResult)
+{
+    SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1Cpp sync(*this, aResult);
+    BeginEchoAllowedRangeUint(aValue, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::BeginEchoAllowedRangeUint(uint32_t aValue, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionEchoAllowedRangeUint, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionEchoAllowedRangeUint->InputParameters();
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValue));
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionEchoAllowedRangeUint->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::EndEchoAllowedRangeUint(IAsync& aAsync, uint32_t& aResult)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("EchoAllowedRangeUint"));
 
     Error::ELevel level;
     TUint code;
@@ -699,6 +839,47 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::EndEchoString(IAsync& aAsync, std::string&
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("EchoString"));
+
+    Error::ELevel level;
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
+        THROW_PROXYERROR(level, code);
+    }
+    TUint index = 0;
+    {
+        const Brx& val = ((ArgumentString*)invocation.OutputArguments()[index++])->Value();
+        aResult.assign((const char*)val.Ptr(), val.Bytes());
+    }
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::SyncEchoAllowedValueString(const std::string& aValue, std::string& aResult)
+{
+    SyncEchoAllowedValueStringOpenhomeOrgTestBasic1Cpp sync(*this, aResult);
+    BeginEchoAllowedValueString(aValue, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::BeginEchoAllowedValueString(const std::string& aValue, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionEchoAllowedValueString, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionEchoAllowedValueString->InputParameters();
+    {
+        Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+        invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
+    }
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionEchoAllowedValueString->OutputParameters();
+    invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::EndEchoAllowedValueString(IAsync& aAsync, std::string& aResult)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("EchoAllowedValueString"));
 
     Error::ELevel level;
     TUint code;
@@ -970,6 +1151,42 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::EndSetMultiple(IAsync& aAsync)
     if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::SyncGetMultiple(uint32_t& aValueUint, int32_t& aValueInt, bool& aValueBool)
+{
+    SyncGetMultipleOpenhomeOrgTestBasic1Cpp sync(*this, aValueUint, aValueInt, aValueBool);
+    BeginGetMultiple(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::BeginGetMultiple(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionGetMultiple, aFunctor);
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionGetMultiple->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
+    invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyOpenhomeOrgTestBasic1Cpp::EndGetMultiple(IAsync& aAsync, uint32_t& aValueUint, int32_t& aValueInt, bool& aValueBool)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("GetMultiple"));
+
+    Error::ELevel level;
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
+        THROW_PROXYERROR(level, code);
+    }
+    TUint index = 0;
+    aValueUint = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+    aValueInt = ((ArgumentInt*)invocation.OutputArguments()[index++])->Value();
+    aValueBool = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::SyncSetString(const std::string& aValueStr)
