@@ -47,7 +47,7 @@ TBool TestStack::IsEmpty() const
 }
 
 
-static TestStack* gEnv;
+static TestStack* gTestStack;
 
 class TestThread : public Thread
 {
@@ -68,7 +68,7 @@ void TestThread::Run()
 {
     while(1) {
         Wait();
-        gEnv->Push(iChar);
+        gTestStack->Push(iChar);
     }
 }
 
@@ -91,21 +91,21 @@ void SuiteStartStop::Test()
     threadB->Start();
 
     for( TUint i = 0 ; i< 10; ++i) {
-        TEST(gEnv->IsEmpty());
+        TEST(gTestStack->IsEmpty());
         threadA->Signal();
         // use sleeps to avoid dependency on thread priorities being supported
         Thread::Sleep(kSleepMs);
-        TEST(gEnv->Pop('A'));
+        TEST(gTestStack->Pop('A'));
 
         threadB->Signal();
         Thread::Sleep(kSleepMs);
-        TEST(gEnv->Pop('B'));
+        TEST(gTestStack->Pop('B'));
 
         threadA->Signal();
         Thread::Sleep(kSleepMs);
-        TEST(gEnv->Pop('A'));
+        TEST(gTestStack->Pop('A'));
     }
-    TEST(gEnv->IsEmpty());
+    TEST(gTestStack->IsEmpty());
 
     delete threadA;
     delete threadB;
@@ -122,33 +122,33 @@ void SuitePriority::Test()
 {
     Thread* threadA = new TestThread("THDA", 'A', kPriorityLow);
     Thread* threadB = new TestThread("THDB", 'B', kPriorityLow + kPriorityLess);
-    TEST(gEnv->IsEmpty());
+    TEST(gTestStack->IsEmpty());
 
     threadA->Start();
     threadB->Start();
-    TEST(gEnv->IsEmpty());    
+    TEST(gTestStack->IsEmpty());
     threadA->Signal();
     threadB->Signal();
-    TEST(gEnv->IsEmpty());
+    TEST(gTestStack->IsEmpty());
     Thread::Sleep(kSleepMs);
-    TEST(gEnv->Pop('B')); //thread B ran second
-    TEST(gEnv->Pop('A')); //thread A ran first
-    TEST(gEnv->IsEmpty());
+    TEST(gTestStack->Pop('B')); //thread B ran second
+    TEST(gTestStack->Pop('A')); //thread A ran first
+    TEST(gTestStack->IsEmpty());
     delete threadA;
     delete threadB;
 
     threadA = new TestThread("THDA", 'a', kPriorityLowest);
     threadB = new TestThread("THDB", 'b', kPriorityLowest+1);
-    TEST(gEnv->IsEmpty());
+    TEST(gTestStack->IsEmpty());
 
     threadA->Start();
     threadB->Start();
     threadA->Signal();
     threadB->Signal();
     Thread::Sleep(kSleepMs);
-    TEST(gEnv->Pop('a')); //thread A ran second
-    TEST(gEnv->Pop('b')); //thread B ran first
-    TEST(gEnv->IsEmpty());
+    TEST(gTestStack->Pop('a')); //thread A ran second
+    TEST(gTestStack->Pop('b')); //thread B ran first
+    TEST(gTestStack->IsEmpty());
     delete threadA;
     delete threadB;
 }
@@ -693,10 +693,10 @@ void MainTestThread::Run()
 
 void TestThread()
 {
-    gEnv = new TestStack();
+    gTestStack = new TestStack();
     Thread* th = new MainTestThread();
     th->Start();
     th->Wait();
     delete th;
-    delete gEnv;
+    delete gTestStack;
 }
