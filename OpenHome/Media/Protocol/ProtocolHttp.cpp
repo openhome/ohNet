@@ -269,6 +269,9 @@ TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;
         iTcpClient.Interrupt(true);
+        if (iLive) {
+            iSem.Signal();
+        }
     }
     iLock.Signal();
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
