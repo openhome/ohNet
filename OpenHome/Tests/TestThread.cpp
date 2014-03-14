@@ -18,7 +18,7 @@ private:
     static const TUint kMaxStackEntries = 2;
     TChar iEnv[kMaxStackEntries];
     TUint iCount;
-    Mutex iLock;
+    mutable Mutex iLock;
 };
 
 TestStack::TestStack()
@@ -27,30 +27,23 @@ TestStack::TestStack()
 
 void TestStack::Push(TChar aChar)
 {
-    iLock.Wait();
+    AutoMutex _(iLock);
     ASSERT(iCount < kMaxStackEntries);
     iEnv[iCount++] = aChar;
-    iLock.Signal();
 }
 
 TBool TestStack::Pop(TChar aChar)
 {
-    TBool matches;
-    iLock.Wait();
+    AutoMutex _(iLock);
     ASSERT(iCount != 0);
     iCount--;
-    matches = (aChar==iEnv[iCount]);
-    iLock.Signal();
-    return matches;
+    return aChar == iEnv[iCount];
 }
 
 TBool TestStack::IsEmpty() const
 {
-    TBool empty;
-    const_cast<Mutex&>(iLock).Wait();
-    empty = (iCount==0);
-    const_cast<Mutex&>(iLock).Signal();
-    return empty;
+    AutoMutex _(iLock);
+    return iCount == 0;
 }
 
 
