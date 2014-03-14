@@ -11,7 +11,7 @@ using namespace OpenHome::Net;
 static const Brn kAlive("ssdp:alive");
 static const Brn kByeBye("ssdp:byebye");
 
-static const TUint kMinMaxAge = 1800;
+//static const TUint kMinMaxAge = 1800;
 static const TByte kMaxAgeSeparator('=');
 static const Brn kMaxAge("max-age");
 
@@ -28,7 +28,6 @@ static const Brn kMsearchUrn("urn");
 static const Brn kMsearchDevice("device");
 static const Brn kMsearchService("service");
 
-static const TByte kIpAddressSeparator('.');
 static const Brn kUsnSeparator("::");
 static const Brn kVersionSeparator(":");
 static const Brn kSsdpPortSeparator(":");
@@ -37,7 +36,6 @@ static const Brn kSsdpHttp("http://");
 
 static const TUint kMaxDomainBytes = 64;
 
-static const TUint kSsdpMinMaxAge = 1800;
 static const TByte kSsdpMaxAgeSeparator('=');
 static const Brn kSsdpMaxAge("max-age");
 

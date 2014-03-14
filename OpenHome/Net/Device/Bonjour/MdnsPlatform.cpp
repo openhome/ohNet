@@ -41,6 +41,11 @@ NetworkAdapter& MdnsPlatform::Nif::Adapter()
     return iNif;
 }
 
+NetworkInterfaceInfo& MdnsPlatform::Nif::Info()
+{
+    return *iMdnsInfo;
+}
+
 TIpAddress MdnsPlatform::Nif::Address() const
 {
     return iNif.Address();
@@ -52,6 +57,73 @@ TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 }
 
 
+// MdnsPlatform::MdnsService
+MdnsPlatform::MdnsService::MdnsService(mDNS& aMdns, MdnsPlatform& aPlatform)
+    : iMdns(aMdns)
+    , iPlatform(aPlatform)
+    , iAction(eInvalid)
+{
+}
+
+void MdnsPlatform::MdnsService::Set(MdnsServiceAction aAction, TUint aHandle, ServiceRecordSet& aService, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo)
+{
+    iAction = aAction;
+    iHandle = aHandle;
+    iService = &aService;
+    iName.Replace((aName == NULL) ? "" : aName);
+    iType.Replace((aType == NULL) ? "" : aType);
+    iInterface = aInterface;
+    iPort = aPort;
+    iInfo.Replace((aInfo == NULL) ? "" : aInfo);
+}
+
+TUint MdnsPlatform::MdnsService::PerformAction()
+{
+    switch (iAction)
+    {
+    case eRegister:
+        return Register();
+    case eDeregister:
+        return Deregister();
+    case eRenameAndReregister:
+        return RenameAndReregister();
+    case eInvalid:
+    default:
+        ASSERTS();
+        return 0;
+    }
+}
+
+TUint MdnsPlatform::MdnsService::Register()
+{
+    domainlabel name;
+    domainname type;
+    domainname domain;
+    domainname host;
+    mDNSIPPort port;
+    SetDomainLabel(name, iName.PtrZ());
+    SetDomainName(type, iType.PtrZ());
+    SetDomainName(domain, "local");
+    SetDomainName(host, "");
+    SetPort(port, iPort);
+
+    return mDNS_RegisterService(&iMdns, iService, &name, &type, &domain, 0, port, (const mDNSu8*)iInfo.PtrZ(), (mDNSu16)strlen(iInfo.PtrZ()), 0, 0, (mDNSInterfaceID)iInterface, &MdnsPlatform::ServiceCallback, this, 0);
+}
+
+TUint MdnsPlatform::MdnsService::Deregister()
+{
+    return mDNS_DeregisterService(&iMdns, iService);
+}
+
+TUint MdnsPlatform::MdnsService::RenameAndReregister()
+{
+    domainlabel name;
+    SetDomainLabel(name, iName.PtrZ());
+    return mDNS_RenameAndReregisterService(&iMdns, iService, &name);
+}
+
+
+// MdnsPlatform
 MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     : iEnv(aEnv)
     , iHost(aHost)
@@ -62,6 +134,9 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     , iClient(aEnv, 5353)
     , iInterfacesLock("BNJ2")
     , iServicesLock("BNJ3")
+    , iFifoFree(kMaxQueueLength)
+    , iFifoPending(kMaxQueueLength)
+    , iSem("BNJS", 0)
     , iStop(false)
     , iTimerDisabled(false)
 {
@@ -77,6 +152,14 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     LOG(kBonjour, "Bonjour             Init - Start listener thread\n");
     iThreadListen->Start();
     LOG(kBonjour, "Bonjour             Constructor completed\n");
+
+    for (TUint i=0; i<kMaxQueueLength; i++) {
+        iFifoFree.Write(new MdnsService(*iMdns, *this));
+    }
+
+    LOG(kBonjour, "Bonjour             Init - Start service thread\n");
+    iThreadService = new ThreadFunctor("MdnsServiceThread", MakeFunctor(*this, &MdnsPlatform::ServiceThread));
+    iThreadService->Start();
 }
 
 MdnsPlatform::~MdnsPlatform()
@@ -98,6 +181,16 @@ MdnsPlatform::~MdnsPlatform()
     for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
         delete iInterfaces[i];
     }
+
+    iFifoFree.ReadInterrupt(true);
+    iFifoFree.ReadInterrupt(false);
+    while (iFifoFree.SlotsUsed() > 0) {
+        delete iFifoFree.Read();
+    }
+    iFifoPending.ReadInterrupt(false);
+    while (iFifoPending.SlotsUsed() > 0) {
+        delete iFifoPending.Read();
+    }
 }
 
 void MdnsPlatform::TimerExpired()
@@ -113,6 +206,7 @@ void MdnsPlatform::SubnetListChanged()
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
         if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
+            mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
             delete iInterfaces[i];
             iInterfaces.erase(iInterfaces.begin()+i);
         }
@@ -177,6 +271,34 @@ TBool MdnsPlatform::NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter&
         return true;
     }
     return false;
+}
+
+void MdnsPlatform::ServiceThread()
+{
+    /* mDNS_Register, mDNS_Deregister and mDNS_RenameAndReregister calls are
+     * all asynchronous.
+     *
+     * We need to ensure one call on a service record has been completed before
+     * we initiate another call. Otherwise, if we try deregister and register a
+     * service the register call may fail as we could still be waiting on the
+     * deregister call to respond.
+     *
+     * From profiling, calls to register can take ~600ms and calls to
+     * deregister can take ~4000ms before the callback is made, so we store a
+     * queue of pending calls and have a thread that processes them in order.
+     */
+    while (!iStop) {
+        try {
+            MdnsService* service = iFifoPending.Read();
+            TUint status = service->PerformAction();
+            iFifoFree.Write(service);
+            if (status == mStatus_NoError) {
+                iSem.Wait();
+            }
+        }
+        catch (FifoReadError&)
+        {}
+    }
 }
 
 void MdnsPlatform::Listen()
@@ -296,7 +418,16 @@ void MdnsPlatform::DeregisterService(TUint aHandle)
     iServicesLock.Wait();
     Map::iterator it = iServices.find(aHandle);
     if (it != iServices.end()) {
-        mDNS_DeregisterService(iMdns, it->second);
+        MdnsService* mdnsService;
+        try {
+            mdnsService = iFifoFree.Read();
+        }
+        catch (FifoReadError&) {
+            iServicesLock.Signal();
+            return;
+        }
+        mdnsService->Set(eDeregister, aHandle, *it->second, NULL, NULL, 0, 0, NULL);
+        iFifoPending.Write(mdnsService);
     }
     iServicesLock.Signal();
     LOG(kBonjour, "Bonjour             DeregisterService - Complete\n");
@@ -311,46 +442,53 @@ void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TCha
     ASSERT(it != iServices.end());
     ServiceRecordSet* service = it->second;
     iServicesLock.Signal();
-    
-    domainlabel name;
-    domainname type;
-    domainname domain;
-    domainname host;
-    mDNSIPPort port;
-    SetDomainLabel(name, aName);
-    SetDomainName(type, aType);
-    SetDomainName(domain, "local");
-    SetDomainName(host, "");
-    SetPort(port, aPort);
-    
-    mDNS_RegisterService(iMdns, service, &name, &type, &domain, 0, port, (const mDNSu8*)aInfo, (mDNSu16)strlen(aInfo), 0, 0, (mDNSInterfaceID)aInterface, ServiceCallback, this, 0);
+    MdnsService* mdnsService;
+
+    try {
+        mdnsService = iFifoFree.Read();
+    }
+    catch (FifoReadError&) {
+        return;
+    }
+    mdnsService->Set(eRegister, aHandle, *service, aName, aType, aInterface, aPort, aInfo);
+    iFifoPending.Write(mdnsService);
 
     LOG(kBonjour, "Bonjour             RegisterService - Complete\n");
 }
 
 void MdnsPlatform::RenameAndReregisterService(TUint aHandle, const TChar* aName)
 {
-    LOG(kBonjour, "Bonjour             RenameService\n");
+    LOG(kBonjour, "Bonjour             RenameAndReregisterService\n");
+    iServicesLock.Wait();
     ServiceRecordSet* service = iServices[aHandle];
-    domainlabel name;
-    SetDomainLabel(name, aName);
-    mDNS_RenameAndReregisterService(iMdns, service, &name);
-    LOG(kBonjour, "Bonjour             RenameService - Complete\n");
+    iServicesLock.Signal();
+    MdnsService* mdnsService;
+
+    try {
+        mdnsService = iFifoFree.Read();
+    }
+    catch (FifoReadError) {
+        return;
+    }
+    mdnsService->Set(eRenameAndReregister, aHandle, *service, aName, NULL, 0, 0, NULL);
+    iFifoPending.Write(mdnsService);
+
+    LOG(kBonjour, "Bonjour             RenameAndReregisterService - Complete\n");
 }
 
 void MdnsPlatform::InitCallback(mDNS* m, mStatus aStatus)
 {
-    LOG(kBonjour, "Bonjour             InitCallback\n");
+    LOG(kBonjour, "Bonjour             InitCallback - aStatus %d\n", aStatus);
     m->mDNSPlatformStatus = aStatus;
-    if (aStatus != mStatus_NoError) {
-        Log::Print("Bonjour initialisation error - %d\n", aStatus);
-    }
     ASSERT(aStatus == mStatus_NoError);
 }
 
-void MdnsPlatform::ServiceCallback(mDNS* /*m*/, ServiceRecordSet* /*aRecordSet*/, mStatus /*aStatus*/)
+void MdnsPlatform::ServiceCallback(mDNS* m, ServiceRecordSet* aRecordSet, mStatus aStatus)
 {
-    LOG(kBonjour, "Bonjour             ServiceCallback\n");
+    LOG(kBonjour, "Bonjour             ServiceCallback - aRecordSet: %p, aStatus: %d\n", aRecordSet, aStatus);
+
+    MdnsPlatform& platform = *(MdnsPlatform*) m->p;
+    platform.iSem.Signal();
 }
 
 void MdnsPlatform::Lock()
@@ -434,6 +572,11 @@ void MdnsPlatform::Close()
     iThreadListen->Kill();
     iReader.Interrupt(true);
     delete iThreadListen;
+
+    iThreadService->Kill();
+    iFifoPending.ReadInterrupt(true);
+    iSem.Signal();
+    delete iThreadService;
 }
 
 void MdnsPlatform::AppendTxtRecord(Bwx& aBuffer, const TChar* aKey, const TChar* aValue)
@@ -524,7 +667,18 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
         aAddress->ip.v4.b[3] );
     
     Endpoint endpoint(Arch::BigEndian2(aPort.NotAnInteger), address);
-    return platform.SendUdp(buffer, endpoint);
+    mStatus status;
+    try{
+        status = platform.SendUdp(buffer, endpoint);
+    }
+    catch (NetworkError&)
+    {
+        LOG(kError, "mDNSPlatformSendUDP caught NetworkError. Endpoint port %u, address: ", aPort.NotAnInteger);
+        LOG(kError, address);
+        LOG(kError, "\n");
+        status = mStatus_UnknownErr;
+    }
+    return status;
 }
 
 void* mDNSPlatformMemAllocate(mDNSu32 /*aLength*/)
