@@ -311,8 +311,7 @@ namespace OpenHome.Net.Core
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             NetworkAdapterListener listener = (NetworkAdapterListener)gch.Target;
-            gch = GCHandle.FromIntPtr(aAdapter);
-            NetworkAdapter adapter = (NetworkAdapter)gch.Target;
+            NetworkAdapter adapter = new NetworkAdapter(aAdapter);
             if(listener.iHandler != null)
             {
                 listener.iHandler(adapter);
