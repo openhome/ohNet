@@ -667,7 +667,18 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
         aAddress->ip.v4.b[3] );
     
     Endpoint endpoint(Arch::BigEndian2(aPort.NotAnInteger), address);
-    return platform.SendUdp(buffer, endpoint);
+    mStatus status;
+    try{
+        status = platform.SendUdp(buffer, endpoint);
+    }
+    catch (NetworkError&)
+    {
+        LOG(kError, "mDNSPlatformSendUDP caught NetworkError. Endpoint port %u, address: ", aPort.NotAnInteger);
+        LOG(kError, address);
+        LOG(kError, "\n");
+        status = mStatus_UnknownErr;
+    }
+    return status;
 }
 
 void* mDNSPlatformMemAllocate(mDNSu32 /*aLength*/)
