@@ -17,6 +17,13 @@
 
 using namespace OpenHome;
 
+static IExitHandler* gExitHandler = 0;
+
+void SetExitHandler(IExitHandler& aExitHandler)
+{
+    gExitHandler = &aExitHandler;
+}
+
 AssertHandler gAssertHandler = 0;
 
 AssertHandler OpenHome::SetAssertHandler(AssertHandler aHandler)
@@ -28,11 +35,19 @@ AssertHandler OpenHome::SetAssertHandler(AssertHandler aHandler)
 
 void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
 {
+    if ( gExitHandler ) {
+        gExitHandler->AssertionFailure(aFile, aLine);
+    }
+
     gAssertHandler(aFile, aLine);
 }
 
 static void CallFatalErrorHandler(const char* aMsg)
 {
+    if ( gExitHandler ) {
+        gExitHandler->FatalErrorHandler(aMsg);
+    }
+
     if (gEnv == NULL || gEnv->InitParams() == NULL) {
         Os::ConsoleWrite(aMsg);
     }
@@ -62,6 +77,10 @@ static void GetThreadName(Bwx& aThName)
 
 void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)
 {
+    if ( gExitHandler ) {
+        gExitHandler->UnhandledExceptionHandler(aExceptionMessage, aFile, aLine);
+    }
+
     Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[1024];
@@ -71,6 +90,10 @@ void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const T
 
 void OpenHome::UnhandledExceptionHandler(Exception& aException)
 {
+    if ( gExitHandler ) {
+        gExitHandler->UnhandledExceptionHandler(aException);
+    }
+
     Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[512];
@@ -105,6 +128,10 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
 
 void OpenHome::UnhandledExceptionHandler(std::exception& aException)
 {
+    if ( gExitHandler ) {
+        gExitHandler->UnhandledExceptionHandler(aException);
+    }
+
     Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[1024];
