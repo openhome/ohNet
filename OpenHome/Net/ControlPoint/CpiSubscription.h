@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Net/Private/EventUpnp.h>
 #include <OpenHome/Functor.h>
@@ -32,9 +33,16 @@ class CpiSubscription : public IEventProcessor, private IStackObject, private IN
 {
 public:
     /**
-     * Return the unique subscription identifier
+     * Return the unique subscription identifier (assigned by the device subscribed to)
      */
     const Brx& Sid() const;
+
+    /**
+     * Return the unique subscription identifier (assigned locally).
+     * This will be set as the path for the event server and avoids the normal race between
+     * subscription completion and initial event.
+     */
+    TUint Id() const;
     
     /**
      * Claim a reference.
@@ -114,7 +122,7 @@ private:
      * in a Subscriber thread)
      * Clients are not notified about any failure of the subscription
      */
-    CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
+    CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType, TUint aId);
     ~CpiSubscription();
     /**
      * Schedule a (subscribe, renew or unsubscribe operation) which will be processed
@@ -146,6 +154,7 @@ private:
     Environment& iEnv;
     IEventProcessor* iEventProcessor;
     OpenHome::Net::ServiceType iServiceType;
+    TUint iId;
     Brh iSid;
     Timer* iTimer;
     TUint iNextSequenceNumber;
@@ -195,29 +204,11 @@ public:
     CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
     
     /**
-     * The UPnP specification contains a race condition where it is possible to
-     * attempt to process initial notification of property state before processing
-     * the response from the subscription request.  Since this response contains
-     * the unique subscription id used to identify which subscription the notification
-     * applies to, this causes obvious problems...
-     *
-     * Handlers of notification messages who find that FindSubscription() returns
-     * NULL should try calling this function.  WaitForPendingAdd() blocks until all
-     * pending subscriptions have completed.  (It also times out after a reasonable
-     * delay to avoid being block indefinitely by any badly behaved client which issues
-     * streams of (un)subscribe requests.)  After this completes, FindSubscription()
-     * should be tried again before treating the notification as an error.
-     */
-    void WaitForPendingAdd(const Brx& aSid);
-    void Add(CpiSubscription& aSubscription);
-
-    /**
      * Returns the subscription with unique id aSid, or NULL if the subscription
      * doesn't exist.  Claims a reference to any subscription returned.  The caller
      * is responsible for releasing this reference.
-     *
-     * See also WaitForPendingAdd()
      */
+    CpiSubscription* FindSubscription(TUint aId);
     CpiSubscription* FindSubscription(const Brx& aSid);
     void Remove(CpiSubscription& aSubscription);
     void Schedule(CpiSubscription& aSubscription);
@@ -236,8 +227,6 @@ private:
     };
 private:
     void RemoveLocked(CpiSubscription& aSubscription);
-    void RemovePendingAdd(PendingSubscription* aPending);
-    void RemovePendingAdds(const Brx& aSid);
     void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
@@ -250,16 +239,15 @@ private:
     std::list<CpiSubscription*> iList;
     Fifo<Subscriber*> iFree;
     Subscriber** iSubscribers;
-    typedef std::map<Brn,CpiSubscription*,BufferCmp> Map;
-    Map iMap;
+    std::map<TUint,CpiSubscription*> iMap;
     TBool iActive;
     TBool iCleanShutdown;
     Semaphore iWaiter;
     Semaphore iShutdownSem;
     EventServerUpnp* iEventServer;
-    std::vector<PendingSubscription*> iPendingSubscriptions;
     TUint iInterfaceListListenerId;
     TUint iSubnetListenerId;
+    TUint iNextSubscriptionId;
 };
 
 } // namespace Net

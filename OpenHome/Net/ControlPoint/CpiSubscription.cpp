@@ -31,6 +31,11 @@ const Brx& CpiSubscription::Sid() const
     return iSid;
 }
 
+TUint CpiSubscription::Id() const
+{
+    return iId;
+}
+
 void CpiSubscription::AddRef()
 {
     Mutex& lock = iEnv.Mutex();
@@ -149,7 +154,7 @@ void CpiSubscription::RunInSubscriber()
     }
 }
 
-CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
+CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType, TUint aId)
     : iLock("SUBM")
     , iSubscriberLock("SBM2")
     , iDevice(aDevice)
@@ -157,6 +162,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iEnv(iCpStack.Env())
     , iEventProcessor(&aEventProcessor)
     , iServiceType(aServiceType)
+    , iId(aId)
     , iPendingOperation(eNone)
     , iRefCount(1)
     , iInterruptHandler(NULL)
@@ -164,7 +170,6 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
     iRejectFutureOperations = false;
-    Schedule(eSubscribe);
     iEnv.AddObject(this);
 }
 
@@ -172,6 +177,7 @@ CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     ASSERT(iSid.Bytes() == 0);
+    iCpStack.SubscriptionManager().Remove(*this); // in case we never subscribed, so never need to unsubscribe
     iDevice.RemoveRef();
     delete iTimer;
     iEnv.RemoveObject(this);
@@ -216,6 +222,8 @@ void CpiSubscription::DoSubscribe()
     endpt.AppendEndpoint(buf);
     uri.Append(buf);
     uri.Append('/');
+    Ascii::AppendDec(uri, iId);
+    uri.Append('/');
     Uri subscriber(uri);
 
     LOG(kEvent, "Subscribing - service = ");
@@ -243,10 +251,8 @@ void CpiSubscription::DoSubscribe()
         Log::Print(deviceXml);
         Log::Print("\n\n");
         iEnv.Mutex().Signal();
-        THROW(XmlError);
+        throw;
     }
-
-    iCpStack.SubscriptionManager().Add(*this);
 
     LOG(kEvent, "Subscription (%p) for ", this);
     LOG(kEvent, iServiceType.FullName());
@@ -496,6 +502,7 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     , iFree(aCpStack.Env().InitParams()->NumSubscriberThreads())
     , iWaiter("SBSS", 0)
     , iShutdownSem("SBMS", 0)
+    , iNextSubscriptionId(1)
 {
     NetworkAdapterList& ifList = iCpStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiSubscriptionManager ctor");
@@ -575,46 +582,38 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 
 CpiSubscription* CpiSubscriptionManager::NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
 {
-    return new CpiSubscription(aDevice, aEventProcessor, aServiceType);
-}
-
-void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
-{
     iLock.Wait();
-    PendingSubscription* pending = new PendingSubscription(aSid);
-    iPendingSubscriptions.push_back(pending);
+    const TUint id = iNextSubscriptionId++;
+    CpiSubscription* subscription = new CpiSubscription(aDevice, aEventProcessor, aServiceType, id);
+    iMap.insert(std::pair<TUint,CpiSubscription*>(id, subscription));
     iLock.Signal();
-    try {
-        pending->iSem.Wait(iCpStack.Env().InitParams()->PendingSubscriptionTimeoutMs());
-    }
-    catch(Timeout&) {
-        iLock.Wait();
-        RemovePendingAdd(pending);
-        iLock.Signal();
-    }
-    delete pending;
+    subscription->Schedule(CpiSubscription::eSubscribe);
+    return subscription;
 }
 
-void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
-{
-    iLock.Wait();
-    Brn sid(aSubscription.Sid());
-    ASSERT(sid.Bytes() > 0);
-    iMap.insert(std::pair<Brn,CpiSubscription*>(sid, &aSubscription));
-    RemovePendingAdds(sid);
-    iLock.Signal();
-}
-
-CpiSubscription* CpiSubscriptionManager::FindSubscription(const Brx& aSid)
+CpiSubscription* CpiSubscriptionManager::FindSubscription(TUint aId)
 {
     AutoMutex a(iLock);
-    Brn sid(aSid);
-    Map::iterator it = iMap.find(sid);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.find(aId);
     if (it == iMap.end()) {
         return NULL;
     }
     CpiSubscription* subscription = it->second;
     subscription->AddRef();
+    return subscription;
+}
+
+CpiSubscription* CpiSubscriptionManager::FindSubscription(const Brx& aSid)
+{
+    AutoMutex a(iLock);
+    CpiSubscription* subscription = NULL;
+    for (std::map<TUint,CpiSubscription*>::iterator it=iMap.begin(); it!=iMap.end(); ++it) {
+        if (it->second->Sid() == aSid) {
+            subscription = it->second;
+            subscription->AddRef();
+            break;
+        }
+    }
     return subscription;
 }
 
@@ -631,8 +630,7 @@ void CpiSubscriptionManager::Remove(CpiSubscription& aSubscription)
 
 void CpiSubscriptionManager::RemoveLocked(CpiSubscription& aSubscription)
 {
-    Brn sid(aSubscription.Sid());
-    Map::iterator it = iMap.find(sid);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.find(aSubscription.Id());
     if (it != iMap.end()) {
         it->second = NULL;
         iMap.erase(it);
@@ -670,30 +668,6 @@ void CpiSubscriptionManager::NotifyResumed()
     HandleInterfaceChange(false);
 }
 
-void CpiSubscriptionManager::RemovePendingAdd(PendingSubscription* aPending)
-{
-    for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
-        PendingSubscription* pending = iPendingSubscriptions[i];
-        if (pending == aPending) {
-            pending->iSem.Signal();
-            iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
-            break;
-        }
-    }
-}
-
-void CpiSubscriptionManager::RemovePendingAdds(const Brx& aSid)
-{
-    for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
-        PendingSubscription* pending = iPendingSubscriptions[i];
-        if (pending->iSid == aSid) {
-            pending->iSem.Signal();
-            iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
-            i--;
-        }
-    }
-}
-
 void CpiSubscriptionManager::CurrentNetworkAdapterChanged()
 {
     HandleInterfaceChange(false);
@@ -707,10 +681,6 @@ void CpiSubscriptionManager::SubnetListChanged()
 void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
     iLock.Wait();
-    // trigger CpiSubscriptionManager::WaitForPendingAdd
-    while (iPendingSubscriptions.size() > 0) {
-        RemovePendingAdds(iPendingSubscriptions[0]->iSid);
-    }
     if (aNewSubnet) {
         size_t count = iMap.size();
         while (count-- > 0) {
@@ -722,7 +692,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     else {
         /* device lists map not signal that devices have been removed
            ...so we need to try to migrate existing subscriptions */
-        Map::iterator it = iMap.begin();
+        std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
         while (it != iMap.end()) {
             it->second->HandleResumed();
             it++;

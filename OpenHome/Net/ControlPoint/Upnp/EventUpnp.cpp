@@ -90,21 +90,25 @@ void EventSessionUpnp::Run()
             Error(HttpStatus::kPreconditionFailed);
         }
 
-        const Brx& sid = iHeaderSid.Sid();
-        subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
+        Parser parser(iReaderRequest->Uri());
+        (void)parser.Next('/');
+        Brn idBuf = parser.Next('/');
+        TUint id = 0;
+        try {
+            id = Ascii::Uint(idBuf);
+        }
+        catch (AsciiError&) {
+            LOG2(kEvent, kError, "notification for ");
+            LOG2(kEvent, kError, iHeaderSid.Sid());
+            LOG2(kEvent, kError, " failed to include id in path\n");
+            Error(HttpStatus::kPreconditionFailed);
+        }
+        subscription = iCpStack.SubscriptionManager().FindSubscription(id);
         if (subscription == NULL) {
-            /* the UPnP spec contains a potential race condition where the first NOTIFY
-               message can be processed ahead of the SUBSCRIBE reply which provides
-               the sid.  Wait until any in-progress subscriptions complete and try
-               again in case that's what has happened here */
-            iCpStack.SubscriptionManager().WaitForPendingAdd(sid);
-            subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
-            if (subscription == NULL) {
-                LOG2(kEvent, kError, "notification for unexpected device - ")
-                LOG2(kEvent, kError, iHeaderSid.Sid());
-                LOG2(kEvent, kError, "\n");
-                Error(HttpStatus::kPreconditionFailed);
-            }
+            LOG2(kEvent, kError, "notification for unexpected device - ")
+            LOG2(kEvent, kError, iHeaderSid.Sid());
+            LOG2(kEvent, kError, "\n");
+            Error(HttpStatus::kPreconditionFailed);
         }
     }
     catch(HttpError&) {}
