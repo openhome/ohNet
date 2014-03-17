@@ -24,24 +24,6 @@ void SetExitHandler(IExitHandler& aExitHandler)
     gExitHandler = &aExitHandler;
 }
 
-AssertHandler gAssertHandler = 0;
-
-AssertHandler OpenHome::SetAssertHandler(AssertHandler aHandler)
-{
-    AssertHandler temp = gAssertHandler;
-    gAssertHandler = aHandler;
-    return temp;
-}
-
-void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
-{
-    if ( gExitHandler ) {
-        gExitHandler->AssertionFailure(aFile, aLine);
-    }
-
-    gAssertHandler(aFile, aLine);
-}
-
 static void CallFatalErrorHandler(const char* aMsg)
 {
     if ( gExitHandler ) {
@@ -57,7 +39,14 @@ static void CallFatalErrorHandler(const char* aMsg)
     }
 }
 
-void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
+static TBool gAssertThrows = false;
+
+void OpenHome::SetAssertThrows(TBool aAssertThrows)
+{
+    gAssertThrows = aAssertThrows;
+}
+
+static void AssertHandlerDefault(const TChar* aFile, TUint aLine)
 {
     THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
 #if 0 // previous ASSERT implementation
@@ -66,6 +55,19 @@ void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
     CallFatalErrorHandler(buf);
     Os::Quit(OpenHome::gEnv->OsCtx());
 #endif
+}
+
+void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
+{
+    if ( gAssertThrows ) {
+        THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
+    }
+
+    if ( gExitHandler ) {
+        gExitHandler->AssertionFailure(aFile, aLine);
+    }
+
+    AssertHandlerDefault(aFile, aLine);
 }
 
 static void GetThreadName(Bwx& aThName)

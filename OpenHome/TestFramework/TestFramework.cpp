@@ -24,13 +24,6 @@ TUint gPass;
 const TChar* gLastSuccessfulFile;
 TUint gLastSuccessfulLine;
 
-// AssertHandler
-
-void OpenHome::TestFramework::AssertHandlerTest(const TChar* aFile, TUint aLine)
-{
-    THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
-}
-
 // Suite
 
 Suite::Suite(const TChar* aDesc) : iNext(0), iDesc(aDesc)
@@ -73,7 +66,7 @@ void Runner::Add(Suite* aSuite)
 void Runner::Run()
 {
     Print("Starting Test Runner: %s\n", iDesc);
-    SetAssertHandler(AssertHandlerTest);
+    SetAssertThrows(true);
     gPass = 0;
     gFail = 0;
 
