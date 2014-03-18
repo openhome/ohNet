@@ -1743,6 +1743,7 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
     if (iTail == NULL) {
         iTail = aMsg;
     }
+    iNumMsgs++;
     iSem.Signal();
     iLock.Signal();
 }
