@@ -813,7 +813,7 @@ public:
     virtual ~IPipelineIdManager() {}
     virtual void InvalidateAt(TUint aId) = 0;
     virtual void InvalidateAfter(TUint aId) = 0;
-    virtual void InvalidatePending() = 0; // FIXME - not clear this is required
+    virtual void InvalidatePending() = 0;
     virtual void InvalidateAll() = 0;
 };
 
