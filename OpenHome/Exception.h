@@ -42,11 +42,8 @@ namespace OpenHome {
  * @@ {
  */
 
-typedef void (*AssertHandler)(const TChar*, TUint);
+DllExport void SetAssertThrows(TBool aAssertThrows);
 
-void AssertHandlerDefault(const TChar*, TUint);
-
-AssertHandler SetAssertHandler(AssertHandler);
 DllExport void CallAssertHandler(const TChar*, TUint);
 
 /** Base class for all ohNet exceptions.  Some may be recoverable, others may
@@ -77,6 +74,22 @@ private:
 void UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine);
 void UnhandledExceptionHandler(std::exception& aException);
 void UnhandledExceptionHandler(Exception& aException);
+
+class IExitHandler
+{
+public:
+    ~IExitHandler() {}
+    virtual void UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine) = 0;
+    virtual void UnhandledExceptionHandler(std::exception& aException) = 0;
+    virtual void UnhandledExceptionHandler(Exception& aException) = 0;
+    virtual void AssertionFailure(const TChar* aFile, TUint aLine) = 0;
+    virtual void FatalErrorHandler(const TChar* aMessage) = 0;
+};
+
+// By default, there is no ExitHandler installed. After installing one via SetExitHandler(),
+// all the static error handling functions will call the corresponding IExitHandler method
+// before continuing.
+void SetExitHandler(IExitHandler& aExitHandler);
 
 /* @@} */
 
