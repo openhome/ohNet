@@ -19,7 +19,7 @@ using namespace OpenHome;
 
 static IExitHandler* gExitHandler = 0;
 
-void SetExitHandler(IExitHandler& aExitHandler)
+void OpenHome::SetExitHandler(IExitHandler& aExitHandler)
 {
     gExitHandler = &aExitHandler;
 }
