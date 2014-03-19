@@ -1825,8 +1825,69 @@ void SuiteMsgQueue::Test()
     dequeued->RemoveRef();
     TEST(queue->IsEmpty());
 
+    // Enqueueing the same msg consecutively fails
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    TEST_THROWS(queue->Enqueue(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+    // Enqueueing the same msg at head consecutively fails
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->EnqueueAtHead(msg);
+    TEST_THROWS(queue->EnqueueAtHead(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+    // Enqueueing the same msg at head and tail consecutively fails
+    // queue at tail first, then head
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah")); // filler msg so that iHead != iTail
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    TEST_THROWS(queue->EnqueueAtHead(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+    // queue at head first, then tail
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah")); // filler msg so that iHead != iTail
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->EnqueueAtHead(msg);
+    TEST_THROWS(queue->Enqueue(msg), AssertionFailed);
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+
+#ifdef DEFINE_DEBUG
+    // Enqueueing the same msg as a msg already in queue fails
+    msg = iMsgFactory->CreateMsgMetaText(Brn("blah")); // filler msg so that iHead != iTail
+    queue->Enqueue(msg);
+    Msg* flushMsg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(flushMsg);
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    TEST_THROWS(queue->Enqueue(flushMsg), AssertionFailed);
+    // try do the same again, but by enqueuing at head
+    TEST_THROWS(queue->EnqueueAtHead(flushMsg), AssertionFailed);
+    // clear queue
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    dequeued->RemoveRef();
+    TEST(queue->IsEmpty());
+#endif
+
     // FIXME - no check yet that reading from an empty queue blocks
-    
+
     delete queue;
 }
 
