@@ -37,6 +37,7 @@ public: // from IPipelineElementUpstream
 private:
     void NotifyTrackPlaying();
     void NotifyTrackFailed();
+    Msg* TryQueue(Msg* aMsg);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -53,6 +54,8 @@ private:
     IPipelineElementUpstream& iUpstreamElement;
     std::vector<ITrackObserver*> iObservers;
     Track* iTrack;
+    MsgQueue iQueue;
+    TBool iWaitingForAudio;
 };
 
 } // namespace Media
