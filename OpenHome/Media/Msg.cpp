@@ -1704,25 +1704,8 @@ MsgQueue::~MsgQueue()
 void MsgQueue::Enqueue(Msg* aMsg)
 {
     ASSERT(aMsg != NULL);
-    iLock.Wait();
-    if (iTail == aMsg || iHead == aMsg) { // duplicate msg
-        iLock.Signal();
-        ASSERTS();
-    }
-#ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
-    TUint iCount = 0;
-    for (Msg* msg = iHead; msg != NULL; msg = msg->iNextMsg) {
-        if (aMsg == msg) {
-            iLock.Signal();
-            ASSERTS();
-        }
-        iCount++;
-    }
-    if (iCount != iNumMsgs) { // ensure a msg mid-queue hasn't had iNextMsg modified
-        iLock.Signal();
-        ASSERTS();
-    }
-#endif
+    AutoMutex a(iLock);
+    CheckMsgNotQueued(aMsg); // duplicate checking
     if (iHead == NULL) {
         iHead = aMsg;
     }
@@ -1733,7 +1716,6 @@ void MsgQueue::Enqueue(Msg* aMsg)
     aMsg->iNextMsg = NULL;
     iNumMsgs++;
     iSem.Signal();
-    iLock.Signal();
 }
 
 Msg* MsgQueue::Dequeue()
@@ -1755,25 +1737,8 @@ Msg* MsgQueue::Dequeue()
 void MsgQueue::EnqueueAtHead(Msg* aMsg)
 {
     ASSERT(aMsg != NULL);
-    iLock.Wait();
-    if (iHead == aMsg || iTail == aMsg) { // duplicate msg
-        iLock.Signal();
-        ASSERTS();
-    }
-#ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
-    TUint iCount = 0;
-    for (Msg* msg = iHead; msg != NULL; msg = msg->iNextMsg) {
-        if (aMsg == msg) {
-            iLock.Signal();
-            ASSERTS();
-        }
-        iCount++;
-    }
-    if (iCount != iNumMsgs) { // ensure a msg mid-queue hasn't had iNextMsg modified
-        iLock.Signal();
-        ASSERTS();
-    }
-#endif
+    AutoMutex a(iLock);
+    CheckMsgNotQueued(aMsg); // duplicate checking
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
     if (iTail == NULL) {
@@ -1781,7 +1746,6 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
     }
     iNumMsgs++;
     iSem.Signal();
-    iLock.Signal();
 }
 
 TBool MsgQueue::IsEmpty() const
@@ -1796,6 +1760,24 @@ TUint MsgQueue::NumMsgs() const
 {
     AutoMutex a(iLock);
     return iNumMsgs;
+}
+
+void MsgQueue::CheckMsgNotQueued(Msg* aMsg) const
+{
+    // iLock must be held (using an AutoMutex)
+    ASSERT(aMsg != iTail);
+    ASSERT(aMsg != iHead);
+#ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
+    TUint count = 0;
+    for (Msg* msg = iHead; msg != NULL; msg = msg->iNextMsg) {
+        ASSERT(aMsg != msg);
+        count++;
+    }
+    if (count != iNumMsgs) {    // ensure a msg mid-queue hasn't had iNextMsg
+                                // modified elsewhere
+        ASSERTS();
+    }
+#endif
 }
 
 
