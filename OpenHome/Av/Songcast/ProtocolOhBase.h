@@ -41,6 +41,7 @@ protected:
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
 private: // from Media::Protocol
+    void Interrupt(TBool aInterrupt);
     Media::ProtocolStreamResult Stream(const Brx& aUri);
 private:
     void CurrentSubnetChanged();

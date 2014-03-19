@@ -116,11 +116,8 @@ void ProtocolNetwork::Interrupt(TBool aInterrupt)
 {
     LOG(kMedia, ">ProtocolNetwork::Interrupt\n");
 
-    iLock.Wait(); // FIXME - almost the only access of iSocketIsOpen that is protected
-    TBool open = iSocketIsOpen;
-    if (open) {
-        iTcpClient.Interrupt(aInterrupt);
-    }
+    iLock.Wait();
+    iTcpClient.Interrupt(aInterrupt);
     iLock.Signal();
 
     LOG(kMedia, "<ProtocolNetwork::Interrupt\n");
@@ -292,6 +289,16 @@ void ProtocolManager::Add(ContentProcessor* aProcessor)
     LOG(kMedia, "ProtocolManager::Add(ContentProcessor*)\n");
     iContentProcessors.push_back(aProcessor);
     aProcessor->Initialise(*this);
+}
+
+void ProtocolManager::Interrupt()
+{
+    /* Deliberately don't take iLock.  Avoids any possibility of deadlock with protocols
+       who're holding a local lock while calling IProtocolManager::Stream.  iProtocols
+       never changes size/order so we can safelt access it without locks. */
+    for (auto it=iProtocols.begin(); it!=iProtocols.end(); ++it) {
+        (*it)->Interrupt(true);
+    }
 }
 
 TBool ProtocolManager::DoStream(Track& aTrack, const Brx& aMode)

@@ -83,7 +83,18 @@ void OhmSocket::Close()
         iTxSocket = NULL;
     }
 }
-    
+
+void OhmSocket::Interrupt(TBool aInterrupt)
+{
+    // FIXME - thread-safety
+    if (iRxSocket != NULL) {
+        iRxSocket->Interrupt(aInterrupt);
+    }
+    if (iTxSocket != NULL) {
+        iTxSocket->Interrupt(aInterrupt);
+    }
+}
+
 void OhmSocket::Read(Bwx& aBuffer)
 {
     ASSERT(iReader);

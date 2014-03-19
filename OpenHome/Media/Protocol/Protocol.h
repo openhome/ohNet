@@ -56,6 +56,7 @@ public:
     ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
     TBool Active() const;
+    virtual void Interrupt(TBool aInterrupt) = 0;
 protected:
     Protocol(Environment& aEnv);
 private: // from IStreamHandler
@@ -140,6 +141,7 @@ public:
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
+    void Interrupt();
 public: // from IUriStreamer
     TBool DoStream(Track& aTrack, const Brx& aMode);
 private: // from IProtocolManager

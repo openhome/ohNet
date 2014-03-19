@@ -203,63 +203,71 @@ void Filler::Run()
 
 void Filler::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
-    iTrackId = aTrackId;
-    iSupply.OutputTrack(aTrack, aTrackId, aMode);
+    if (!iQuit) {
+        iTrackId = aTrackId;
+        iSupply.OutputTrack(aTrack, aTrackId, aMode);
+    }
 }
 
 void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
-    iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
-    iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
+    if (!iQuit) {
+        iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
+        iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
+    }
 }
 
 void Filler::OutputData(const Brx& aData)
 {
-    iSupply.OutputData(aData);
+    if (!iQuit) {
+        iSupply.OutputData(aData);
+    }
 }
 
 void Filler::OutputMetadata(const Brx& aMetadata)
 {
-    iSupply.OutputMetadata(aMetadata);
+    if (!iQuit) {
+        iSupply.OutputMetadata(aMetadata);
+    }
 }
 
 void Filler::OutputFlush(TUint aFlushId)
 {
-    iSupply.OutputFlush(aFlushId);
+    if (!iQuit) {
+        iSupply.OutputFlush(aFlushId);
+    }
 }
 
 void Filler::OutputHalt(TUint aHaltId)
 {
-    iSupply.OutputHalt(aHaltId);
+    if (!iQuit) {
+        iSupply.OutputHalt(aHaltId);
+    }
 }
 
 void Filler::OutputQuit()
 {
-    iQuit = true;
-    iSupply.OutputQuit();
-    Signal();
+    if (!iQuit) {
+        iQuit = true;
+        iSupply.OutputQuit();
+        Signal();
+    }
 }
 
 
 // Filler::NullTrackStreamHandler
 
-EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    ASSERT(aTrackId == kNullTrackId);
-    ASSERT(aStreamId == kNullTrackStreamId);
     return ePlayLater;
 }
 
-TUint Filler::NullTrackStreamHandler::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 /*aOffset*/)
+TUint Filler::NullTrackStreamHandler::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
-    ASSERT(aTrackId == kNullTrackId);
-    ASSERT(aStreamId == kNullTrackStreamId);
     return MsgFlush::kIdInvalid;
 }
 
-TUint Filler::NullTrackStreamHandler::TryStop(TUint aTrackId, TUint aStreamId)
+TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
-    ASSERT(aTrackId == kNullTrackId);
-    ASSERT(aStreamId == kNullTrackStreamId);
     return MsgFlush::kIdInvalid;
 }
