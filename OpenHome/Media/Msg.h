@@ -670,6 +670,8 @@ public:
     TBool IsEmpty() const;
     TUint NumMsgs() const; // test/debug use only
 private:
+    void CheckMsgNotQueued(Msg* aMsg) const;
+private:
     mutable Mutex iLock;
     Semaphore iSem;
     Msg* iHead;
