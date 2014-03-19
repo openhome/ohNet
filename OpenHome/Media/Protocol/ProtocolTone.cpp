@@ -486,6 +486,14 @@ TInt32 ToneGeneratorConstant::Generate(TUint /*aOffset*/, TUint /*aMaxOffset*/)
     return iValue<<16;
 }
 
+void ProtocolTone::Interrupt(TBool aInterrupt)
+{
+    iLock.Wait();
+    if (aInterrupt) {
+        iStop = true;
+    }
+    iLock.Signal();
+}
 
 ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
 {

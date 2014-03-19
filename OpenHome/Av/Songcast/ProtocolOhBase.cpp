@@ -111,6 +111,11 @@ void ProtocolOhBase::Send(TUint aType)
     }
 }
 
+void ProtocolOhBase::Interrupt(TBool aInterrupt)
+{
+    iSocket.Interrupt(aInterrupt);
+}
+
 ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
 {
     iUri.Replace(aUri);

@@ -148,6 +148,7 @@ private:
     void HexDump(const TByte *aBase, TUint aSize) const;
 #endif  // DEFINE_DEBUG
 private: // from Protocol
+    void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
 private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);

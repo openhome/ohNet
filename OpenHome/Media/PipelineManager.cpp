@@ -44,6 +44,7 @@ void PipelineManager::Quit()
     else {
         iFiller->StopNoHalt();
     }
+    iProtocolManager->Interrupt();
     iPipeline->RemoveCurrentStream();
     iLock.Signal();
     iIdManager->InvalidatePending();
