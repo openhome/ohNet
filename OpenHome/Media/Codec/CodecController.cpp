@@ -496,11 +496,7 @@ Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 {
     ReleaseAudioEncoded();
-    if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-        Queue(aMsg);
-        THROW(CodecStreamFlush);
-    }
-    if (iExpectedFlushId != aMsg->Id()) {
+    if (iExpectedFlushId == MsgFlush::kIdInvalid || iExpectedFlushId != aMsg->Id()) {
         Queue(aMsg);
     }
     else {
