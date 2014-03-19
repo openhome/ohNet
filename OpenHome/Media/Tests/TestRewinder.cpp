@@ -34,6 +34,7 @@ enum EMsgType
         ,EMsgMetaText
         ,EMsgHalt
         ,EMsgFlush
+        ,EMsgWait
         ,EMsgQuit
     };
 public:
@@ -70,6 +71,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -176,7 +178,7 @@ void SuiteRewinder::InitMsgOrder()
 
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;
@@ -277,6 +279,13 @@ Msg* SuiteRewinder::ProcessMsg(MsgFlush* aMsg)
 {
     TEST(iLastMsgType == EMsgFlush);
     iRcvdMsgType = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgWait* aMsg)
+{
+    TEST(iLastMsgType == EMsgWait);
+    iRcvdMsgType = EMsgWait;
     return aMsg;
 }
 

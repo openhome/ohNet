@@ -44,6 +44,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -61,6 +62,7 @@ private:
        ,EMsgSilence
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -138,7 +140,7 @@ SuiteSeeker::~SuiteSeeker()
 void SuiteSeeker::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1);
     iSeeker = new Seeker(*iMsgFactory, *this, *this, kRampDuration);
     iSeekResponseThread = new ThreadFunctor("SeekResponse", MakeFunctor(*this, &SuiteSeeker::SeekResponseThread));
     iSeekResponseThread->Start();
@@ -241,6 +243,12 @@ Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
 {
     iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgWait* aMsg)
+{
+    iLastPulledMsg = EMsgWait;
     return aMsg;
 }
 

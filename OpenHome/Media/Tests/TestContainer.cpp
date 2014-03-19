@@ -45,6 +45,7 @@ public:
         ,EMsgMetaText
         ,EMsgHalt
         ,EMsgFlush
+        ,EMsgWait
         ,EMsgQuit
     };
 public:
@@ -132,6 +133,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 protected:
     void AddBaseTests();
@@ -499,7 +501,7 @@ SuiteContainerBase::~SuiteContainerBase()
 void SuiteContainerBase::Setup()
 {
     iProvider = new TestContainerProvider();
-    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
@@ -598,6 +600,12 @@ Msg* SuiteContainerBase::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteContainerBase::ProcessMsg(MsgFlush* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgFlush);
+    return aMsg;
+}
+
+Msg* SuiteContainerBase::ProcessMsg(MsgWait* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgWait);
     return aMsg;
 }
 

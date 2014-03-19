@@ -40,6 +40,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -58,6 +59,7 @@ private:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -89,7 +91,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iAudioMsgSizeJiffies(0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);
 }
@@ -285,6 +287,12 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgWait* aMsg)
+{
+    iLastMsg = EMsgWait;
     return aMsg;
 }
 

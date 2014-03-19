@@ -41,6 +41,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -58,6 +59,7 @@ private:
        ,EMsgSilence
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -126,7 +128,7 @@ SuiteSkipper::~SuiteSkipper()
 void SuiteSkipper::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1);
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
     iTrackId = iStreamId = UINT_MAX;
     iTrackOffset = 0;
@@ -211,6 +213,12 @@ Msg* SuiteSkipper::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteSkipper::ProcessMsg(MsgFlush* aMsg)
 {
     iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgWait* aMsg)
+{
+    iLastPulledMsg = EMsgWait;
     return aMsg;
 }
 

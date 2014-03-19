@@ -74,6 +74,7 @@ private: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputWait();
     void OutputHalt(TUint aHaltId);
     void OutputQuit();
 private:
@@ -305,6 +306,11 @@ void DummySupply::OutputMetadata(const Brx& /*aMetadata*/)
 }
 
 void DummySupply::OutputFlush(TUint /*aFlushId*/)
+{
+    ASSERTS();
+}
+
+void DummySupply::OutputWait()
 {
     ASSERTS();
 }

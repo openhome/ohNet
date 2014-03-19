@@ -35,6 +35,7 @@ private: // from IPipelineElementUpstream
 private: // from IStopperObserver
     void PipelinePaused();
     void PipelineStopped();
+    void PipelineWaiting(TBool aWaiting);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -46,6 +47,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -63,6 +65,7 @@ private:
        ,EMsgSilence
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -104,6 +107,9 @@ private:
     TUint iNextStreamId;
     TUint iPausedCount;
     TUint iStoppedCount;
+    TUint iWaitingCount;
+    TUint iWaitingTrueCount;
+    TUint iWaitingFalseCount;
     TUint iOkToPlayCount;
     EStreamPlay iNextCanPlay;
     Semaphore iSemHalted;
@@ -119,7 +125,7 @@ SuiteStopper::SuiteStopper()
     , iSemHalted("TSTP", 0)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1);
     iThreadHalted = new ThreadFunctor("StoppedChecker", MakeFunctor(*this, &SuiteStopper::TestHaltedThread));
     iThreadHalted->Start();
 
@@ -155,6 +161,7 @@ void SuiteStopper::Setup()
     iNextStreamId = 1;
     iJiffies = 0;
     iPausedCount = iStoppedCount = iOkToPlayCount = 0;
+    iWaitingCount = iWaitingTrueCount = iWaitingFalseCount = 0;
     iNextCanPlay = ePlayYes;
     iSemHalted.Clear();
 }
@@ -184,6 +191,17 @@ void SuiteStopper::PipelinePaused()
 void SuiteStopper::PipelineStopped()
 {
     iStoppedCount++;
+}
+
+void SuiteStopper::PipelineWaiting(TBool aWaiting)
+{
+    iWaitingCount++;
+    if (aWaiting) {
+        iWaitingTrueCount++;
+    }
+    else {
+        iWaitingFalseCount++;
+    }
 }
 
 EStreamPlay SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -241,6 +259,12 @@ Msg* SuiteStopper::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgFlush* aMsg)
 {
     iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteStopper::ProcessMsg(MsgWait* aMsg)
+{
+    iLastPulledMsg = EMsgWait;
     return aMsg;
 }
 
