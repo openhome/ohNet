@@ -65,10 +65,21 @@ Msg* Splitter::ProcessMsg(MsgHalt* aMsg)
     return aMsg;
 }
 
-Msg* Splitter::ProcessMsg(MsgFlush* aMsg)
+Msg* Splitter::ProcessMsg(MsgFlush* /*aMsg*/)
 {
-    aMsg->AddRef();
-    return aMsg;
+    ASSERTS(); // don't expect to see MsgFlush at this stage of the pipeline
+    return NULL;
+}
+
+Msg* Splitter::ProcessMsg(MsgWait* /*aMsg*/)
+{
+    // FIXME - should add a ref and return aMsg.
+    // Splitter should then have a ProcessMsgOut set of routines which can
+    // remove a reference for the original aMsg and return NULL.
+    // The Pull() method should ensure than a NULL value is skipped and never
+    // passed downstream.
+    ASSERTS();
+    return NULL;
 }
 
 Msg* Splitter::ProcessMsg(MsgDecodedStream* aMsg)

@@ -48,6 +48,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -82,6 +83,7 @@ private:
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgWait* aMsg);
         Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);

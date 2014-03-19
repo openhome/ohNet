@@ -110,6 +110,11 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* Seeker::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return aMsg;

@@ -14,6 +14,7 @@
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/TrackInspector.h>
 #include <OpenHome/Media/Skipper.h>
+#include <OpenHome/Media/Waiter.h>
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
@@ -26,7 +27,7 @@
 namespace OpenHome {
 namespace Media {
 
-class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
     static const TUint kMsgCountEncodedAudio    = 768;
@@ -42,6 +43,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountMetaText        = 20;
     static const TUint kMsgCountHalt            = 20;
     static const TUint kMsgCountFlush           = 16;
+    static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountQuit            = 1;
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
@@ -49,6 +51,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kSeekerRampDuration                   = Jiffies::kJiffiesPerMs * 20;
     static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 200;
     static const TUint kSkipperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
+    static const TUint kWaiterRampDuration                   = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 100;
     static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 50;
@@ -63,6 +66,7 @@ public:
     MsgFactory& Factory();
     void Play();
     void Pause();
+    void Wait(TUint aFlushId);
     void Stop(TUint aHaltId);
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
@@ -75,12 +79,15 @@ public: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputWait();
     void OutputHalt(TUint aHaltId);
     void OutputQuit();
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IFlushIdProvider
     TUint NextFlushId();
+private: // from IWaiterObserver
+    void PipelineWaiting(TBool aWaiting);
 private: // from IStopper
     void RemoveStream(TUint aTrackId, TUint aStreamId);
 private:
@@ -103,6 +110,7 @@ private:
         EPlaying
        ,EPaused
        ,EStopped
+       ,EWaiting
     };
 private:
     IPipelineObserver& iObserver;
@@ -126,6 +134,8 @@ private:
     Logger* iLoggerTrackInspector;
     Skipper* iSkipper;
     Logger* iLoggerSkipper;
+    Waiter* iWaiter;
+    Logger* iLoggerWaiter;
     Stopper* iStopper;
     Logger* iLoggerStopper;
     Reporter* iReporter;

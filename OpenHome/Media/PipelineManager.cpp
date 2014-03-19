@@ -124,6 +124,11 @@ void PipelineManager::Pause()
     iPipeline->Pause();
 }
 
+void PipelineManager::Wait(TUint aFlushId)
+{
+    iPipeline->Wait(aFlushId);
+}
+
 void PipelineManager::Stop()
 {
     const TUint haltId = iFiller->Stop();

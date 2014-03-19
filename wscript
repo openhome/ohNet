@@ -231,6 +231,7 @@ def build(bld):
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
+                'OpenHome/Media/Waiter.cpp',
                 'OpenHome/Media/UdpServer.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',

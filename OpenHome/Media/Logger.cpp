@@ -132,6 +132,14 @@ Msg* Logger::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgWait* aMsg)
+{
+    if (IsEnabled(EMsgWait)) {
+        Log::Print("Pipeline (%s): wait\n", iId);
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgDecodedStream* aMsg)
 {
     if (IsEnabled(EMsgDecodedStream)) {
