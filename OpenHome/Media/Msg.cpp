@@ -1705,6 +1705,24 @@ void MsgQueue::Enqueue(Msg* aMsg)
 {
     ASSERT(aMsg != NULL);
     iLock.Wait();
+    if (iTail == aMsg || iHead == aMsg) { // duplicate msg
+        iLock.Signal();
+        ASSERTS();
+    }
+#ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
+    TUint iCount = 0;
+    for (Msg* msg = iHead; msg != NULL; msg = msg->iNextMsg) {
+        if (aMsg == msg) {
+            iLock.Signal();
+            ASSERTS();
+        }
+        iCount++;
+    }
+    if (iCount != iNumMsgs) { // ensure a msg mid-queue hasn't had iNextMsg modified
+        iLock.Signal();
+        ASSERTS();
+    }
+#endif
     if (iHead == NULL) {
         iHead = aMsg;
     }
@@ -1738,6 +1756,24 @@ void MsgQueue::EnqueueAtHead(Msg* aMsg)
 {
     ASSERT(aMsg != NULL);
     iLock.Wait();
+    if (iHead == aMsg || iTail == aMsg) { // duplicate msg
+        iLock.Signal();
+        ASSERTS();
+    }
+#ifdef DEFINE_DEBUG // iterate over queue, comparing aMsg to all msg pointers
+    TUint iCount = 0;
+    for (Msg* msg = iHead; msg != NULL; msg = msg->iNextMsg) {
+        if (aMsg == msg) {
+            iLock.Signal();
+            ASSERTS();
+        }
+        iCount++;
+    }
+    if (iCount != iNumMsgs) { // ensure a msg mid-queue hasn't had iNextMsg modified
+        iLock.Signal();
+        ASSERTS();
+    }
+#endif
     aMsg->iNextMsg = iHead;
     iHead = aMsg;
     if (iTail == NULL) {
