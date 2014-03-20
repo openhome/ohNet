@@ -246,7 +246,12 @@ void RadioPresetsTuneIn::DoRefresh()
                     LOG2(kProducts, kError, "\n");
                     continue;
                 }
-                iAllocatedPresets[presetNumber-1] = 1;
+                if (presetNumber > maxPresets) {
+                    LOG2(kProducts, kError, "Ignoring preset number %u (index too high)\n", presetNumber);
+                    continue;
+                }
+                const TUint presetIndex = presetNumber-1;
+                iAllocatedPresets[presetIndex] = 1;
 
                 iDidlLite.SetBytes(0);
                 //iDidlLite.Append("<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
@@ -268,7 +273,8 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
                 iDidlLite.Append("</item>");
                 iDidlLite.Append("</DIDL-Lite>");
-                iDbWriter.SetPreset(presetNumber-1, iPresetUrl, iDidlLite);
+
+                iDbWriter.SetPreset(presetIndex, iPresetUrl, iDidlLite);
             }
         }
         catch (ReaderError&) {
