@@ -435,6 +435,7 @@ void CodecController::OutputHalt()
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
+        iStreamStarted = iStreamEnded = true;
         aMsg->RemoveRef();
         return NULL;
     }
