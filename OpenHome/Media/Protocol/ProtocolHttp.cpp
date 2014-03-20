@@ -62,6 +62,7 @@ private:
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HeaderIcyMetadata iHeaderIcyMetadata;
     Bws<kIcyMetadataBytes> iIcyMetadata;
+    Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
     OpenHome::Uri iUri;
     TUint64 iTotalBytes;
     TUint iStreamId;
@@ -164,6 +165,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     (void)iSem.Clear();
     iUri.Replace(aUri);
     iIcyMetadata.SetBytes(0);
+    iNewIcyMetadata.SetBytes(0);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
     LOG(kMedia, iUri.AbsoluteUri());
@@ -533,10 +535,10 @@ void ProtocolHttp::ExtractMetadata()
 
         Brn buf = iReaderBuf.Read(metadataBytes);
 
-        iIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
-        iIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
-        iIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
-        iIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
+        iNewIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
+        iNewIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
+        iNewIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
+        iNewIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
 
         Parser data(buf);
         while(!data.Finished()) {
@@ -547,12 +549,15 @@ void ProtocolHttp::ExtractMetadata()
                 data.Next('\'');
                 Brn title = data.Next(';');
                 if (title.Bytes() > 1) {
-                    iIcyMetadata.Append(Brn(title.Ptr(), title.Bytes()-1));
+                    iNewIcyMetadata.Append(Brn(title.Ptr(), title.Bytes()-1));
                 }
 
-                iIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
-                iIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
-                iSupply->OutputMetadata(iIcyMetadata);
+                iNewIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
+                iNewIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
+                if (iNewIcyMetadata != iIcyMetadata) {
+                    iIcyMetadata.Replace(iNewIcyMetadata);
+                    iSupply->OutputMetadata(iIcyMetadata);
+                }
                 break;
             }
         }
