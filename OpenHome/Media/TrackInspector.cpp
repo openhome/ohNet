@@ -12,6 +12,7 @@ using namespace OpenHome::Media;
 TrackInspector::TrackInspector(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
     , iTrack(NULL)
+    , iWaitingForAudio(false)
 {
 }
 
@@ -29,8 +30,16 @@ void TrackInspector::AddObserver(ITrackObserver& aObserver)
 
 Msg* TrackInspector::Pull()
 {
-    Msg* msg = iUpstreamElement.Pull();
-    (void)msg->Process(*this);
+    Msg* msg = NULL;
+    do {
+        if (iWaitingForAudio || iQueue.IsEmpty()) {
+            msg = iUpstreamElement.Pull();
+            msg = msg->Process(*this);
+        }
+        else {
+            msg = iQueue.Dequeue();
+        }
+    } while (msg == NULL);
     return msg;
 }
 
@@ -54,35 +63,52 @@ void TrackInspector::NotifyTrackFailed()
     iTrack = NULL;
 }
 
+Msg* TrackInspector::TryQueue(Msg* aMsg)
+{
+    if (iWaitingForAudio) {
+        iQueue.Enqueue(aMsg);
+        return NULL;
+    }
+    return aMsg;
+}
+
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
+    if (iWaitingForAudio) {
+        /* The last track contains no audio data.  Discard any queued msgs rather than risk
+           them adding to an ever-growing queue in a downstream component which buffers audio (StarvationMonitor) */
+        while (!iQueue.IsEmpty()) {
+            iQueue.Dequeue()->RemoveRef();
+        }
+    }
+    iWaitingForAudio = true;
     if (iTrack != NULL) {
         NotifyTrackFailed();
     }
     iTrack = &aMsg->Track();
     iTrack->AddRef();
-    return aMsg;
+    return TryQueue(aMsg); // will always queue aMsg.  Saves us duplicating the (short) body of TryQueue if we call it.
 }
 
 Msg* TrackInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    return aMsg;
+    return TryQueue(aMsg);
 }
 
-Msg* TrackInspector::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* TrackInspector::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
-    return aMsg;
+    return NULL;
 }
 
 Msg* TrackInspector::ProcessMsg(MsgMetaText* aMsg)
 {
-    return aMsg;
+    return TryQueue(aMsg);
 }
 
 Msg* TrackInspector::ProcessMsg(MsgHalt* aMsg)
 {
-    return aMsg;
+    return TryQueue(aMsg);
 }
 
 Msg* TrackInspector::ProcessMsg(MsgFlush* aMsg)
@@ -91,7 +117,7 @@ Msg* TrackInspector::ProcessMsg(MsgFlush* aMsg)
         iTrack->RemoveRef();
         iTrack = NULL;
     }
-    return aMsg;
+    return TryQueue(aMsg);
 }
 
 Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
@@ -103,7 +129,7 @@ Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
            ...(more accurately, not utterly bad) */
         NotifyTrackPlaying();
     }
-    return aMsg;
+    return TryQueue(aMsg);
 }
 
 Msg* TrackInspector::ProcessMsg(MsgAudioPcm* aMsg)
@@ -111,21 +137,27 @@ Msg* TrackInspector::ProcessMsg(MsgAudioPcm* aMsg)
     if (iTrack != NULL) {
         NotifyTrackPlaying();
     }
-    return aMsg;
+    Msg* msg = TryQueue(aMsg);
+    iWaitingForAudio = false;
+    return msg;
 }
 
 Msg* TrackInspector::ProcessMsg(MsgSilence* aMsg)
 {
-    return aMsg;
+    Msg* msg = TryQueue(aMsg);
+    iWaitingForAudio = false;
+    return msg;
 }
 
-Msg* TrackInspector::ProcessMsg(MsgPlayable* aMsg)
+Msg* TrackInspector::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
-    return aMsg;
+    return NULL;
 }
 
 Msg* TrackInspector::ProcessMsg(MsgQuit* aMsg)
 {
-    return aMsg;
+    Msg* msg = TryQueue(aMsg);
+    iWaitingForAudio = false;
+    return msg;
 }

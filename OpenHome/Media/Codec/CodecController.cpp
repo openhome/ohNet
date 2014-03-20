@@ -435,6 +435,7 @@ void CodecController::OutputHalt()
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
+        iStreamStarted = iStreamEnded = true;
         aMsg->RemoveRef();
         return NULL;
     }
@@ -478,7 +479,7 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (!QueueTrackData()) {
+    if (iRecognising || !QueueTrackData()) {
         aMsg->RemoveRef();
     }
     else {
@@ -490,6 +491,10 @@ Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
     iStreamEnded = true;
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
     return aMsg;
 }
 
