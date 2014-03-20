@@ -249,6 +249,7 @@ public:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 public:
@@ -270,6 +271,7 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgMetaText* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
+    void ProcessMsgIn(MsgWait* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
@@ -278,6 +280,7 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgMetaText* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
     Msg* ProcessMsgOut(MsgFlush* aMsg);
+    Msg* ProcessMsgOut(MsgWait* aMsg);
     Msg* ProcessMsgOut(MsgQuit* aMsg);
 private:
     EMsgType iLastMsgIn;
@@ -1627,6 +1630,11 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
     msg->RemoveRef();
 
+    msg = iMsgFactory->CreateMsgWait();
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgWait);
+    msg->RemoveRef();
+
     msg = iMsgFactory->CreateMsgQuit();
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgQuit);
@@ -1766,6 +1774,8 @@ void SuiteMsgQueue::Test()
     queue->Enqueue(msg);
     msg = iMsgFactory->CreateMsgFlush(1);
     queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgWait();
+    queue->Enqueue(msg);
     msg = iMsgFactory->CreateMsgQuit();
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
@@ -1784,6 +1794,11 @@ void SuiteMsgQueue::Test()
     TEST(!queue->IsEmpty());
     dequeued->Process(processor);
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgFlush);
+    dequeued->RemoveRef();
+    dequeued = queue->Dequeue();
+    TEST(!queue->IsEmpty());
+    dequeued->Process(processor);
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgWait);
     dequeued->RemoveRef();
     dequeued = queue->Dequeue();
     TEST(queue->IsEmpty());
@@ -1960,6 +1975,12 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgFlush);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
+    msg = iMsgFactory->CreateMsgWait();
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == jiffies);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgWait);
+    TEST(queue->LastOut() == TestMsgReservoir::ENone);
+
     msg = iMsgFactory->CreateMsgQuit();
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == jiffies);
@@ -2012,6 +2033,12 @@ void SuiteMsgReservoir::Test()
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgFlush);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgReservoir::EMsgWait);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -2098,6 +2125,11 @@ void TestMsgReservoir::ProcessMsgIn(MsgFlush* /*aMsg*/)
     iLastMsgIn = EMsgFlush;
 }
 
+void TestMsgReservoir::ProcessMsgIn(MsgWait* /*aMsg*/)
+{
+    iLastMsgIn = EMsgWait;
+}
+
 void TestMsgReservoir::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
     iLastMsgIn = EMsgQuit;
@@ -2142,6 +2174,12 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgHalt* aMsg)
 Msg* TestMsgReservoir::ProcessMsgOut(MsgFlush* aMsg)
 {
     iLastMsgOut = EMsgFlush;
+    return aMsg;
+}
+
+Msg* TestMsgReservoir::ProcessMsgOut(MsgWait* aMsg)
+{
+    iLastMsgOut = EMsgWait;
     return aMsg;
 }
 

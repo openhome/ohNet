@@ -379,6 +379,7 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     iPendingMsgs.push_back(CreateTrack());
 
@@ -390,6 +391,7 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
     PullNext(EMsgFlush);
+    PullNext(EMsgWait);
     PullNext(EMsgQuit);
     PullNext(EMsgTrack);
 }
@@ -475,6 +477,8 @@ void SuiteSeeker::TestRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -492,6 +496,8 @@ void SuiteSeeker::TestRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -528,6 +534,8 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -545,6 +553,8 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 

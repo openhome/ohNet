@@ -184,7 +184,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == NULL);
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgHalt, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgWait, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         EMsgType msgType = types[i];
         GenerateMsg(msgType);
@@ -296,6 +296,9 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     case EMsgFlush:
         msg = iMsgFactory->CreateMsgFlush(1);
+        break;
+    case EMsgWait:
+        msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgQuit:
         msg = iMsgFactory->CreateMsgQuit();

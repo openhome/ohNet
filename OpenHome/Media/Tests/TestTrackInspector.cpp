@@ -29,6 +29,7 @@ private:
        ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgHalt
+       ,EMsgWait
        ,EMsgFlush
     };
 private:
@@ -44,6 +45,7 @@ private:
     void TrackTrackReportsFailNonLiveStreamAudioReportsPlay();
     void TrackLiveStreamReportsPlayTrackTrackReportsFail();
     void TrackLiveStreamReportsPlayTrackFlushReportsNothing();
+    void TrackLiveStreamReportsPlayWaitReportsNothing();
     void TwoObserversNotified();
 private: // from ITrackObserver
     void NotifyTrackPlay(Track& aTrack);
@@ -83,6 +85,7 @@ SuiteTrackInspector::SuiteTrackInspector()
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayTrackTrackReportsFail));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayWaitReportsNothing));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TwoObserversNotified));
 }
 
@@ -278,6 +281,27 @@ void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing()
     TEST(iFailCount == 0);
 }
 
+void SuiteTrackInspector::TrackLiveStreamReportsPlayWaitReportsNothing()
+{
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    iLiveStream = true;
+    Pull(EMsgDecodedStream);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgAudioPcm);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    // check that MsgWait doesn't increase number of notifications
+    Pull(EMsgWait);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgAudioPcm);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+}
+
 void SuiteTrackInspector::TwoObserversNotified()
 {
     iTrackInspector->AddObserver(*this);
@@ -351,6 +375,8 @@ Msg* SuiteTrackInspector::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     default:
         ASSERTS();
         return NULL;

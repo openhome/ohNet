@@ -160,8 +160,8 @@ void SuiteVariableDelay::Test()
     TEST(iLastMsg == EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 
-    // Check that Silence, Track, AudioStream, MetaText, Halt, Flush & Quit msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
+    // Check that Silence, Track, AudioStream, MetaText, Halt, Flush, Wait & Quit msgs are passed through.
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgWait, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iVariableDelay->Pull();
@@ -234,6 +234,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:

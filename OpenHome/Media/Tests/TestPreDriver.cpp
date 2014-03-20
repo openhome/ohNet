@@ -219,6 +219,8 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     }
