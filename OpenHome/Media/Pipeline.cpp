@@ -15,6 +15,7 @@
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
+#include <OpenHome/Media/Pruner.h>
 #include <OpenHome/Media/Logger.h>
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/PreDriver.h>
@@ -79,7 +80,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerSplitter, *this,
+    iPruner = new Pruner(*iLoggerSplitter);
+    iLoggerPruner = new Logger(*iPruner, "Pruner");
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration,
                                                iClockPuller.StarvationMonitorHistory());
@@ -104,6 +107,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
+    //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
@@ -119,6 +123,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
+    //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
 }
@@ -134,6 +139,8 @@ Pipeline::~Pipeline()
     delete iPreDriver;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
+    delete iLoggerPruner;
+    delete iPruner;
     delete iLoggerSplitter;
     delete iSplitter;
     delete iLoggerReporter;

@@ -17,6 +17,7 @@
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
+#include <OpenHome/Media/Pruner.h>
 #include <OpenHome/Media/Logger.h>
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/PreDriver.h>
@@ -132,6 +133,8 @@ private:
     Logger* iLoggerReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;
+    Pruner* iPruner;
+    Logger* iLoggerPruner;
     StarvationMonitor* iStarvationMonitor;
     Logger* iLoggerStarvationMonitor;
     PreDriver* iPreDriver;
