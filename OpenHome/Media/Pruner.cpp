@@ -92,6 +92,12 @@ Msg* Pruner::ProcessMsg(MsgFlush* /*aMsg*/)
     return NULL;
 }
 
+Msg* Pruner::ProcessMsg(MsgWait* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Pruner::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return TryQueue(aMsg);
