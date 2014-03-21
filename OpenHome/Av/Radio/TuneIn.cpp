@@ -246,7 +246,23 @@ void RadioPresetsTuneIn::DoRefresh()
                     LOG2(kProducts, kError, "\n");
                     continue;
                 }
-                iAllocatedPresets[presetNumber-1] = 1;
+                if (presetNumber > maxPresets) {
+                    LOG2(kProducts, kError, "Ignoring preset number %u (index too high)\n", presetNumber);
+                    continue;
+                }
+                const TUint presetIndex = presetNumber-1;
+                iAllocatedPresets[presetIndex] = 1;
+
+                /* Only report changes if url has changed.
+                   Changes in metadata only - e.g. . 'Station ABC (Genre 1)' -> 'Station ABC (Genre 2)' - are
+                   deliberately suppressed.  These result in the preset id changing, likely causing control
+                   points (certainly Kinsky/Kazoo) to reset their view.  The small benefit in having preset
+                   titles updated is therefore outweighed by the cost of control points not coping well when
+                   a station changes its preset id. */
+                iDbWriter.ReadPreset(presetIndex, iDbUri, iDbMetaData);
+                if (iDbUri == iPresetUrl) {
+                    continue;
+                }
 
                 iDidlLite.SetBytes(0);
                 //iDidlLite.Append("<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
@@ -268,7 +284,8 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
                 iDidlLite.Append("</item>");
                 iDidlLite.Append("</DIDL-Lite>");
-                iDbWriter.SetPreset(presetNumber-1, iPresetUrl, iDidlLite);
+
+                iDbWriter.SetPreset(presetIndex, iPresetUrl, iDidlLite);
             }
         }
         catch (ReaderError&) {

@@ -143,6 +143,13 @@ void PresetDatabase::SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaDa
     SetPreset(aIndex, aUri, aMetaData, ignore);
 }
 
+void PresetDatabase::ReadPreset(TUint aIndex, Bwx& aUri, Bwx& aMetaData)
+{
+    ASSERT(aIndex < kMaxPresets);
+    aUri.Replace(iPresets[aIndex].Uri());
+    aMetaData.Replace(iPresets[aIndex].MetaData());
+}
+
 void PresetDatabase::ClearPreset(TUint aIndex)
 {
     (void)SetPreset(aIndex, Brx::Empty(), Brx::Empty());

@@ -153,9 +153,10 @@ void SourcePlaylist::Activate()
 {
     iTrackPosSeconds = 0;
     iActive = true;
-    AutoMutex a(iLock);
-    if (!iNoPipelineStateChangeOnActivation && static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0) {
-        iPipeline.StopPrefetch(iUriProvider->Mode(), iUriProvider->CurrentTrackId());
+    if (!iNoPipelineStateChangeOnActivation) {
+        const TUint trackId = (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() > 0?
+                                  iUriProvider->CurrentTrackId() : ITrackDatabase::kTrackIdNone);
+        iPipeline.StopPrefetch(iUriProvider->Mode(), trackId);
     }
 }
 
