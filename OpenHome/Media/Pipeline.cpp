@@ -40,7 +40,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
                                  kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
-                                 kMsgCountHalt, kMsgCountFlush, kMsgCountQuit);
+                                 kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountQuit);
 
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
@@ -69,7 +69,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iSkipper = new Skipper(*iMsgFactory, *iLoggerVariableDelay, kSkipperRampDuration);
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
-    iStopper = new Stopper(*iMsgFactory, *iLoggerSkipper, *this, kStopperRampDuration);
+    iWaiter = new Waiter(*iMsgFactory, *iLoggerSkipper, *this, kWaiterRampDuration);
+    iLoggerWaiter = new Logger(*iWaiter, "Waiter");
+    iStopper = new Stopper(*iMsgFactory, *iLoggerWaiter, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -198,6 +200,9 @@ void Pipeline::NotifyStatus()
     case EStopped:
         state = EPipelineStopped;
         break;
+    case EWaiting:
+        state = EPipelineWaiting;
+        break;
     default:
         ASSERTS();
         state = EPipelineBuffering; // will never reach here but the compiler doesn't realise this
@@ -238,6 +243,12 @@ void Pipeline::Pause()
 {
     AutoMutex a(iLock);
     iStopper->BeginPause();
+}
+
+void Pipeline::Wait(TUint aFlushId)
+{
+    const TBool rampDown = (iState == EPlaying);
+    iWaiter->Wait(aFlushId, rampDown);
 }
 
 void Pipeline::Stop(TUint aHaltId)
@@ -309,6 +320,11 @@ void Pipeline::OutputFlush(TUint aFlushId)
     iSupply->OutputFlush(aFlushId);
 }
 
+void Pipeline::OutputWait()
+{
+    iSupply->OutputWait();
+}
+
 void Pipeline::OutputHalt(TUint aHaltId)
 {
     iSupply->OutputHalt(aHaltId);
@@ -347,6 +363,19 @@ TUint Pipeline::NextFlushId()
        RemoveCurrentStream() in Stop() will need to move outside its lock. */
     TUint id = iNextFlushId++;
     return id;
+}
+
+void Pipeline::PipelineWaiting(TBool aWaiting)
+{
+    iLock.Wait();
+    if (aWaiting) {
+        iState = EWaiting;
+    }
+    else {
+        iState = EPlaying;
+    }
+    iLock.Signal();
+    NotifyStatus();
 }
 
 void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)

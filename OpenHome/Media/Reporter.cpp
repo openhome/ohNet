@@ -69,6 +69,11 @@ Msg* Reporter::ProcessMsg(MsgFlush* /*aMsg*/)
     return NULL;
 }
 
+Msg* Reporter::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();

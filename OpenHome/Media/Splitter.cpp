@@ -65,7 +65,13 @@ Msg* Splitter::ProcessMsg(MsgHalt* aMsg)
     return aMsg;
 }
 
-Msg* Splitter::ProcessMsg(MsgFlush* aMsg)
+Msg* Splitter::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS(); // don't expect to see MsgFlush at this stage of the pipeline
+    return NULL;
+}
+
+Msg* Splitter::ProcessMsg(MsgWait* aMsg)
 {
     aMsg->AddRef();
     return aMsg;

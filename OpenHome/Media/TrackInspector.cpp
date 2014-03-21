@@ -120,6 +120,11 @@ Msg* TrackInspector::ProcessMsg(MsgFlush* aMsg)
     return TryQueue(aMsg);
 }
 
+Msg* TrackInspector::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
     if (iTrack != NULL && aMsg->StreamInfo().Live()) {

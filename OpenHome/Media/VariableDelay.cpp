@@ -174,6 +174,11 @@ Msg* VariableDelay::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* VariableDelay::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return aMsg;

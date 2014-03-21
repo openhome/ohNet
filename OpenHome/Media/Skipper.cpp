@@ -96,6 +96,11 @@ Msg* Skipper::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* Skipper::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iState = eStarting;

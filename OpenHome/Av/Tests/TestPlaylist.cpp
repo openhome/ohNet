@@ -63,6 +63,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -280,6 +281,12 @@ Msg* DummyDriver::ProcessMsg(MsgHalt* aMsg)
 }
 
 Msg* DummyDriver::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
     return NULL;

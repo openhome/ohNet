@@ -29,6 +29,7 @@ private:
        ,EMsgDecodedStream
        ,EMsgTrack
        ,EMsgHalt
+       ,EMsgWait
        ,EMsgFlush
        ,EMsgQuit
     };
@@ -46,6 +47,7 @@ private:
     void TrackTrackReportsFailNonLiveStreamAudioReportsPlay();
     void TrackLiveStreamReportsPlayTrackTrackReportsFail();
     void TrackLiveStreamReportsPlayTrackFlushReportsNothing();
+    void TrackLiveStreamReportsPlayWaitReportsNothing();
     void TwoObserversNotified();
 private: // from ITrackObserver
     void NotifyTrackPlay(Track& aTrack);
@@ -91,7 +93,7 @@ SuiteTrackInspector::SuiteTrackInspector()
 
 void SuiteTrackInspector::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTrackInspector = new TrackInspector(*this);
     iTrackInspector->AddObserver(*this);
@@ -254,6 +256,27 @@ void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing()
     TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
 }
 
+void SuiteTrackInspector::TrackLiveStreamReportsPlayWaitReportsNothing()
+{
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    iLiveStream = true;
+    Pull(EMsgDecodedStream);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgAudioPcm);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    // check that MsgWait doesn't increase number of notifications
+    Pull(EMsgWait);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgAudioPcm);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+}
+
 void SuiteTrackInspector::TwoObserversNotified()
 {
     iTrackInspector->AddObserver(*this);
@@ -329,6 +352,8 @@ Msg* SuiteTrackInspector::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:

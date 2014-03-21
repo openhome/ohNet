@@ -238,6 +238,13 @@ void Filler::OutputFlush(TUint aFlushId)
     }
 }
 
+void Filler::OutputWait()
+{
+    if (!iQuit) {
+        iSupply.OutputWait();
+    }
+}
+
 void Filler::OutputHalt(TUint aHaltId)
 {
     if (!iQuit) {
