@@ -109,9 +109,14 @@ Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 {
-    //ASSERT(iState == ERunning || iState == EWaiting);
-    iState = EWaiting;
-    iObserver.PipelineWaiting(true);
+    // Can receive a MsgWait here that we've queued ourselves in response to an
+    // expected MsgFlush, or coming down through the pipeline via Songcast.
+
+    if (iState != EFlushing) {
+        // Received a MsgWait through the pipeline, via Songcast protocol.
+        iState = EWaiting;
+        iObserver.PipelineWaiting(true);
+    }
     return aMsg;
 }
 
@@ -149,6 +154,8 @@ void Waiter::DoWait()
     }
     iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
                                                     that any subsequent break in audio is expected */
+    iQueue.Enqueue(iMsgFactory.CreateMsgWait()); /* inform downstream elements (Songcast Sender)
+                                                    of waiting state */
     iObserver.PipelineWaiting(true);
 }
 

@@ -368,8 +368,9 @@ void SuiteWaiter::TestWaitFromPlayingRampDown()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
@@ -393,8 +394,9 @@ void SuiteWaiter::TestWaitFromPlayingNoRampDown()
     TEST(iWaitingTrueCount == 0);
     iWaiter->Wait(kWaitFlushId, kRampDown);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
@@ -429,8 +431,9 @@ void SuiteWaiter::TestPlayingFromWaitRampsUp()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
@@ -520,8 +523,9 @@ void SuiteWaiter::TestMsgsPassWhileWaitPending()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
@@ -556,8 +560,9 @@ void SuiteWaiter::TestMsgsPassWhileWaiting()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
@@ -605,8 +610,9 @@ void SuiteWaiter::TestAudioFlushedWhileWaiting()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
 
     // All audio before MsgFlush should be consumed
     iPendingMsgs.push_back(CreateAudio());
@@ -647,8 +653,9 @@ void SuiteWaiter::TestWaitDuringWaitAsserts()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
 
     // Calling Wait() while in a waiting mode should cause an assertion.
     TEST_THROWS(iWaiter->Wait(kWaitFlushId, kRampDown), AssertionFailed);
@@ -703,8 +710,9 @@ void SuiteWaiter::TestWaitDuringRampingUpAsserts()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
@@ -746,8 +754,9 @@ void SuiteWaiter::TestMsgTrackDuringWaitAsserts()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
 
     // No MsgTrack is expected, so should ASSERT()
     iPendingMsgs.push_back(CreateTrack());
@@ -803,8 +812,9 @@ void SuiteWaiter::TestMsgTrackDuringRampingUpAsserts()
     TEST(iWaitingCount == 1);
     TEST(iWaitingTrueCount == 1);
 
-    // MsgHalt is created and passed on after ramping down.
+    // MsgHalt and MsgWait are created and passed on after ramping down.
     PullNext(EMsgHalt);
+    PullNext(EMsgWait);
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
