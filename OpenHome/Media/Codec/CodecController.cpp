@@ -92,20 +92,17 @@ void CodecController::Start()
     iDecoderThread->Start();
 }
 
-TUint CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver)
+void CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (iTrackId != aTrackId || aStreamId != iStreamId) {
-        return ISeeker::kHandleError;
+    if (iTrackId != aTrackId || aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
+        aHandle = ISeeker::kHandleError;
+        return;
     }
-    if (iActiveCodec == NULL || !iSeekable) {
-        return ISeeker::kHandleError;
-    }
+    aHandle = ++iSeekHandle;
     iSeekObserver = &aObserver;
     iSeek = true;
     iSeekSeconds = aSecondsAbsolute;
-
-    return ++iSeekHandle;
 }
 
 TBool CodecController::SupportsMimeType(const Brx& aMimeType)

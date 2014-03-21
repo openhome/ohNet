@@ -32,7 +32,7 @@ private: // from SuiteUnitTest
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from ISeeker
-    TUint StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver);
+    void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -185,13 +185,12 @@ EStreamPlay SuiteSeeker::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayNo;
 }
 
-TUint SuiteSeeker::StartSeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSecondsAbsolute, ISeekObserver& aObserver)
+void SuiteSeeker::StartSeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     iSeekSeconds = aSecondsAbsolute;
     iSeekObserver = &aObserver;
-    TUint ret = ++iSeekHandle;
+    aHandle = ++iSeekHandle;
     iSeekResponseThread->Signal();
-    return ret;
 }
 
 TUint SuiteSeeker::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)

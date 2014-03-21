@@ -81,7 +81,7 @@ private:
     void ReleaseAudioEncoded();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
 private: // ISeeker
-    TUint StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver);
+    void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
     void ReadNextMsg(Bwx& aBuf);
