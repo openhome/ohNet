@@ -9,7 +9,7 @@ namespace OpenHome {
 namespace Media {
 
 /*
-Element which removes msgs which aren't needed downstream.  This includes
+Element which removes msgs which aren't needed downstream:
     MsgEncodedStream
     MsgMetaText
     All content for tracks that don't contain any audio
