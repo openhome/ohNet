@@ -30,11 +30,9 @@ private:
        ,EMsgTrack
        ,EMsgHalt
        ,EMsgFlush
-       ,EMsgQuit
     };
 private:
     void Pull(EMsgType aGenerateType);
-    void DoPull();
     void TrackNonLiveStreamAudioReportsPlay();
     void TrackLiveStreamAudioReportsPlay();
     void TrackFlushReportsNothing();
@@ -64,7 +62,6 @@ private:
     TUint iNextTrackId;
     TBool iLiveStream;
     std::vector<TUint> iTrackIds;
-    std::vector<EMsgType> iPendingMsgs;
 };
 
 } // namespace Media
@@ -75,23 +72,23 @@ private:
 SuiteTrackInspector::SuiteTrackInspector()
     : SuiteUnitTest("TrackInspector tests")
 {
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamAudioReportsPlay), "TrackNonLiveStreamAudioReportsPlay");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamAudioReportsPlay), "TrackLiveStreamAudioReportsPlay");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushReportsNothing), "TrackFlushReportsNothing");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamFlushReportsNothing), "TrackNonLiveStreamFlushReportsNothing");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushTrackReportsNothing), "TrackFlushTrackReportsNothing");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamFlushReportsPlay), "TrackLiveStreamFlushReportsPlay");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackTrackReportsFail), "TrackTrackReportsFail");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackHaltTrackReportsFail), "TrackHaltTrackReportsFail");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay), "TrackTrackReportsFailNonLiveStreamAudioReportsPlay");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayTrackTrackReportsFail), "TrackLiveStreamReportsPlayTrackTrackReportsFail");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing), "TrackLiveStreamReportsPlayTrackFlushReportsNothing");
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TwoObserversNotified), "TwoObserversNotified");
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamAudioReportsPlay));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamAudioReportsPlay));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushReportsNothing));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamFlushReportsNothing));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushTrackReportsNothing));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamFlushReportsPlay));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackTrackReportsFail));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackHaltTrackReportsFail));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayTrackTrackReportsFail));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TwoObserversNotified));
 }
 
 void SuiteTrackInspector::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTrackInspector = new TrackInspector(*this);
     iTrackInspector->AddObserver(*this);
@@ -120,150 +117,177 @@ void SuiteTrackInspector::Pull(EMsgType aGenerateType)
     msg->RemoveRef();
 }
 
-void SuiteTrackInspector::DoPull()
-{
-    iTrackInspector->Pull()->RemoveRef();
-}
-
-#define NUM_EMEMS(arr) sizeof(arr) / sizeof(arr[0])
-
 void SuiteTrackInspector::TrackNonLiveStreamAudioReportsPlay()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgAudioPcm, EMsgAudioPcm };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgDecodedStream);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgAudioPcm);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 1);
     // also check that subsequent audio doesn't increase number of notifications
-    while (iPendingMsgs.size() > 0) {
-        DoPull();
-        TEST(iPlayCount == 1);
-        TEST(iFailCount == 0);
-    }
+    Pull(EMsgAudioPcm);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TrackLiveStreamAudioReportsPlay()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
     iLiveStream = true;
-
-    DoPull();
+    Pull(EMsgDecodedStream);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
+    // also check that subsequent audio doesn't increase number of notifications
+    Pull(EMsgAudioPcm);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TrackFlushReportsNothing()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgFlush, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
+    Pull(EMsgFlush);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TrackNonLiveStreamFlushReportsNothing()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgFlush, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
+    Pull(EMsgDecodedStream);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgFlush);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TrackFlushTrackReportsNothing()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgFlush, EMsgTrack, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
+    Pull(EMsgFlush);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TrackLiveStreamFlushReportsPlay()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgFlush, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
     iLiveStream = true;
-    DoPull();
+    Pull(EMsgDecodedStream);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
+    Pull(EMsgFlush);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TrackTrackReportsFail()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgTrack, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 1);
-    TEST(iPendingMsgs.size() == 0);
     // confirm that first track is the one that failed
     TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
 }
 
 void SuiteTrackInspector::TrackHaltTrackReportsFail()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgHalt, EMsgTrack, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgHalt);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 1);
-    TEST(iPendingMsgs.size() == 0);
     TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
 }
 
 void SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgTrack, EMsgDecodedStream, EMsgAudioPcm };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
-    DoPull();
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 1);
+    TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
+    Pull(EMsgDecodedStream);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 1);
+    Pull(EMsgAudioPcm);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 1);
-    TEST(iPendingMsgs.size() == 0);
     TEST(iLastNotifiedTrack->Id() == iTrackIds[1]);
 }
 
 void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackTrackReportsFail()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgTrack, EMsgTrack, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
     iLiveStream = true;
-    DoPull();
+    Pull(EMsgDecodedStream);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgTrack);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 1);
-    TEST(iPendingMsgs.size() == 0);
     TEST(iLastNotifiedTrack->Id() == iTrackIds[1]);
 }
 
 void SuiteTrackInspector::TrackLiveStreamReportsPlayTrackFlushReportsNothing()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgTrack, EMsgFlush, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
     iLiveStream = true;
-    DoPull();
+    Pull(EMsgDecodedStream);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
-    TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
+    Pull(EMsgFlush);
+    TEST(iPlayCount == 1);
+    TEST(iFailCount == 0);
 }
 
 void SuiteTrackInspector::TwoObserversNotified()
 {
     iTrackInspector->AddObserver(*this);
-    EMsgType msgs[] = { EMsgTrack, EMsgDecodedStream, EMsgQuit };
-    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    Pull(EMsgTrack);
+    TEST(iPlayCount == 0);
+    TEST(iFailCount == 0);
     iLiveStream = true;
-    DoPull();
+    Pull(EMsgDecodedStream);
     TEST(iPlayCount == 2);
     TEST(iFailCount == 0);
-    TEST(iPendingMsgs.size() == 0);
 }
 
 void SuiteTrackInspector::NotifyTrackPlay(Track& aTrack)
@@ -298,9 +322,7 @@ Msg* SuiteTrackInspector::Pull()
     static const TUint kNumChannels   = 2;
     static TUint64 iTrackOffset = 0;
 
-    EMsgType msgType = iPendingMsgs[0];
-    iPendingMsgs.erase(iPendingMsgs.begin());
-    switch (msgType)
+    switch (iNextGeneratedMsg)
     {
     case EMsgAudioPcm:
     {
@@ -329,8 +351,6 @@ Msg* SuiteTrackInspector::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
-    case EMsgQuit:
-        return iMsgFactory->CreateMsgQuit();
     default:
         ASSERTS();
         return NULL;
