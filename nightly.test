@@ -12,9 +12,12 @@ tests = '''
     TestSupply
     TestAudioReservoir
     TestVariableDelay
+    TestSeeker
+    TestSkipper
     TestStopper
     TestTrackInspector
     TestReporter
+    TestPruner
     TestStarvationMonitor
     TestPreDriver
     TestContentProcessor

@@ -220,6 +220,7 @@ def build(bld):
                 'OpenHome/Media/Logger.cpp',
                 'OpenHome/Media/Msg.cpp',
                 'OpenHome/Media/PreDriver.cpp',
+                'OpenHome/Media/Pruner.cpp',
                 'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Rewinder.cpp',
                 'OpenHome/Media/Seeker.cpp',
@@ -487,6 +488,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
+                'OpenHome/Media/Tests/TestPruner.cpp',
                 'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 'OpenHome/Media/Tests/TestProtocol.cpp',
@@ -579,6 +581,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPreDriver',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestPrunerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestPruner',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestContentProcessorMain.cpp',
