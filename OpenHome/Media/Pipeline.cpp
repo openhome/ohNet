@@ -142,6 +142,8 @@ Pipeline::~Pipeline()
     delete iReporter;
     delete iLoggerStopper;
     delete iStopper;
+    delete iLoggerWaiter;
+    delete iWaiter;
     delete iLoggerSkipper;
     delete iSkipper;
     delete iLoggerVariableDelay;
