@@ -103,7 +103,7 @@ Msg* Skipper::ProcessMsg(MsgWait* aMsg)
 
 Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iState = eStarting;
+    iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
     return aMsg;
 }
 
@@ -195,5 +195,5 @@ void Skipper::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
-    iState = eStarting;
+    iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
 }
