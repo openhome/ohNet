@@ -718,12 +718,12 @@ void TestPlaylist(CpStack& aCpStack, DvStack& aDvStack)
     InitialisationParams* initParams = aDvStack.Env().InitParams();
     FunctorAsync oldAsyncErrorHandler = initParams->AsyncErrorHandler();
     initParams->SetAsyncErrorHandler(MakeFunctorAsync(errorSuppressor, &DummyAsyncOutput::LogError));
-    AssertHandler assertHandler = SetAssertHandler(AssertHandlerDefault); /* TestFramework handler is only required for TEST_THROWS(..., AssertionFailed).
-                                                                             We don't use that; the TF handler obfuscates all other assertion failures
-                                                                             so is better disabled. */
+    /* TestFramework handler is only required for TEST_THROWS(..., AssertionFailed).
+       We don't use that; the TF handler obfuscates all other assertion failures so is better disabled. */
+    //AssertHandler assertHandler = SetAssertHandler(AssertHandlerDefault);
     Runner runner("Playlist tests\n");
     runner.Add(new SuitePlaylist(aCpStack, aDvStack));
     runner.Run();
     initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
-    (void)SetAssertHandler(assertHandler);
+    //(void)SetAssertHandler(assertHandler);
 }
