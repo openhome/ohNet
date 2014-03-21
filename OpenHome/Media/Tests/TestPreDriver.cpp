@@ -137,14 +137,8 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgQuit);
 
-    // Send Track, AudioStream, MetaText; check neither are passed on.
+    // Send Track; check it isn't passed on.
     iNextGeneratedMsg = EMsgTrack;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgPlayable);
-    iNextGeneratedMsg = EMsgEncodedStream;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgPlayable);
-    iNextGeneratedMsg = EMsgMetaText;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
 
