@@ -217,6 +217,7 @@ public: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputWait();
     void OutputHalt(TUint aHaltId);
     void OutputQuit();
 private:
@@ -829,6 +830,11 @@ void TestHttpSupplier::OutputMetadata(const Brx& /*aMetadata*/)
 void TestHttpSupplier::OutputFlush(TUint /*aFlushId*/)
 {
     //Log::Print("TestHttpSupplier::OutputFlush\n");
+}
+
+void TestHttpSupplier::OutputWait()
+{
+    //Log::Print("TestHttpSupplier::OutputWait\n");
 }
 
 void TestHttpSupplier::OutputHalt(TUint /*aHaltId*/)

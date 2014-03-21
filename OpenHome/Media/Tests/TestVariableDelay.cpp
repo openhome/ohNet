@@ -40,6 +40,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -58,6 +59,7 @@ private:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -89,7 +91,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iAudioMsgSizeJiffies(0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);
 }
@@ -158,8 +160,8 @@ void SuiteVariableDelay::Test()
     TEST(iLastMsg == EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 
-    // Check that Silence, Track, AudioStream, MetaText, Halt, Flush & Quit msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgQuit };
+    // Check that Silence, Track, AudioStream, MetaText, Halt, Flush, Wait & Quit msgs are passed through.
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgWait, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iVariableDelay->Pull();
@@ -232,6 +234,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:
@@ -285,6 +289,12 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgWait* aMsg)
+{
+    iLastMsg = EMsgWait;
     return aMsg;
 }
 

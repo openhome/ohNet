@@ -79,6 +79,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -524,6 +525,12 @@ Msg* SuitePipeline::ProcessMsg(MsgHalt* aMsg)
 }
 
 Msg* SuitePipeline::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

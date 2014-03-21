@@ -34,6 +34,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -52,6 +53,7 @@ private:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -81,7 +83,7 @@ SuitePreDriver::SuitePreDriver()
     , iLastMsg(ENone)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     MsgAudioPcm* audio = CreateAudio();
     iAudioMsgSizeJiffies = audio->Jiffies();
@@ -211,6 +213,8 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     }
@@ -258,6 +262,12 @@ Msg* SuitePreDriver::ProcessMsg(MsgHalt* aMsg)
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

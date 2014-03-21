@@ -208,6 +208,11 @@ Msg* Stopper::ProcessMsg(MsgFlush* aMsg)
     return NULL;
 }
 
+Msg* Stopper::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgDecodedStream* aMsg)
 {
     if (!aMsg->StreamInfo().Live() && !iCheckedStreamPlayable) {

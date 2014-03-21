@@ -132,6 +132,13 @@ Msg* Sender::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* Sender::ProcessMsg(MsgWait* aMsg)
+{
+    // FIXME - Songcast should signal the arrival of this msg to receivers
+    ASSERTS();
+    return aMsg;
+}
+
 Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERT(iTrack != NULL);
@@ -328,6 +335,12 @@ Msg* Sender::PlayableCreator::ProcessMsg(MsgHalt* /*aMsg*/)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

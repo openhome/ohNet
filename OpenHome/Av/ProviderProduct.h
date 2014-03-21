@@ -15,6 +15,8 @@ namespace Av {
 class ProviderProduct : public Net::DvProviderAvOpenhomeOrgProduct1, private IProductObserver
 {
 public:
+    static const TUint kMaxSourceXmlBytes = 1024 * 2;
+public:
     ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct);
     ~ProviderProduct();
 private: // from DvProviderAvOpenhomeOrgProduct1
@@ -39,8 +41,6 @@ private: // from IProductObserver
     void SourceIndexChanged();
     void SourceXmlChanged();
 private:
-    static const TUint kMaxSourceXmlBytes = 1024 * 2;
-
     Av::Product& iProduct;
     Mutex iLock;
     Bws<kMaxSourceXmlBytes> iSourceXml;

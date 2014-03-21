@@ -232,6 +232,7 @@ def build(bld):
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
+                'OpenHome/Media/Waiter.cpp',
                 'OpenHome/Media/UdpServer.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',
@@ -482,6 +483,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestSeeker.cpp',
                 'OpenHome/Media/Tests/TestSkipper.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
+                'OpenHome/Media/Tests/TestWaiter.cpp',
                 'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
@@ -551,6 +553,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestStopperMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStopper',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestWaiterMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestWaiter',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestSupplyMain.cpp',

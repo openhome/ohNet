@@ -30,6 +30,7 @@ public:
        ,EMsgHalt          = 1<<9
        ,EMsgFlush         = 1<<10
        ,EMsgQuit          = 1<<11
+       ,EMsgWait          = 1<<12
        ,EMsgAll           = 0x7fffffff
     };
 public:
@@ -49,6 +50,7 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);

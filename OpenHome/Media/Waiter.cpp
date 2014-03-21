@@ -1,40 +1,34 @@
-#include <OpenHome/Media/Seeker.h>
+#include <OpenHome/Media/Waiter.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, TUint aRampDuration)
+Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IWaiterObserver& aObserver, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
-    , iSeeker(aSeeker)
-    , iLock("SEEK")
+    , iObserver(aObserver)
+    , iLock("WAIT")
     , iState(ERunning)
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kRampMax)
-    , iSeekSeconds(UINT_MAX)
     , iTargetFlushId(MsgFlush::kIdInvalid)
-    , iTrackId(UINT_MAX)
-    , iStreamId(UINT_MAX)
-    , iStreamHandler(NULL)
 {
 }
 
-Seeker::~Seeker()
+Waiter::~Waiter()
 {
 }
 
-TBool Seeker::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
+void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 {
     AutoMutex a(iLock);
-    if (iState != ERunning || iTrackId != aTrackId || iStreamId != aStreamId || !iStreamIsSeekable) {
-        return false;
-    }
-
-    iSeekSeconds = aSecondsAbsolute;
+    ASSERT(iState == ERunning); // Already in process of waiting.
+    iTargetFlushId = aFlushId;
 
     if (iState == ERampingUp) {
         iState = ERampingDown;
@@ -42,17 +36,16 @@ TBool Seeker::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBoo
         // leave iCurrentRampValue unchanged
     }
     else if (!aRampDown || iState == EFlushing) {
-        DoSeek();
+        DoWait();
     }
     else {
         iState = ERampingDown;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kRampMax;
     }
-    return true;
 }
 
-Msg* Seeker::Pull()
+Msg* Waiter::Pull()
 {
     Msg* msg;
     do {
@@ -64,42 +57,46 @@ Msg* Seeker::Pull()
     return msg;
 }
 
-Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
+Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
+    if (iState != ERunning) {
+        aMsg->RemoveRef();
+        ASSERTS();
+    }
     NewStream();
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* Waiter::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    if (iState != ERunning) {
+        aMsg->RemoveRef();
+        ASSERTS();
+    }
     NewStream();
-    iStreamId = aMsg->StreamId();
-    iStreamHandler = aMsg->StreamHandler();
-    iStreamIsSeekable = aMsg->Seekable();
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+Msg* Waiter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* Seeker::ProcessMsg(MsgMetaText* aMsg)
+Msg* Waiter::ProcessMsg(MsgMetaText* aMsg)
 {
     return ProcessFlushable(aMsg);
 }
 
-Msg* Seeker::ProcessMsg(MsgHalt* aMsg)
+Msg* Waiter::ProcessMsg(MsgHalt* aMsg)
 {
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
+Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        ASSERT(iState == EFlushing);
+        ASSERT(iState == EFlushing); // haven't received enough audio for a full ramp down
         aMsg->RemoveRef();
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
@@ -110,63 +107,59 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgWait* aMsg)
+Msg* Waiter::ProcessMsg(MsgWait* aMsg)
+{
+    // Can receive a MsgWait here that we've queued ourselves in response to an
+    // expected MsgFlush, or coming down through the pipeline via Songcast.
+
+    if (iState != EFlushing) {
+        // Received a MsgWait through the pipeline, via Songcast protocol.
+        iState = EWaiting;
+        iObserver.PipelineWaiting(true);
+    }
+    return aMsg;
+}
+
+Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return aMsg;
 }
 
-Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Seeker::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* Waiter::ProcessMsg(MsgAudioPcm* aMsg)
 {
     return ProcessAudio(aMsg);
 }
 
-Msg* Seeker::ProcessMsg(MsgSilence* aMsg)
+Msg* Waiter::ProcessMsg(MsgSilence* aMsg)
 {
     return ProcessAudio(aMsg);
 }
 
-Msg* Seeker::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* Waiter::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
+Msg* Waiter::ProcessMsg(MsgQuit* aMsg)
 {
     return aMsg;
 }
 
-void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
+void Waiter::DoWait()
 {
-    if (aHandle != iSeekHandle) {
-        return;
-    }
-    ASSERT(iState == EFlushing);
-    iTargetFlushId = aFlushId;
-    if (iTargetFlushId == MsgFlush::kIdInvalid) {
-        iState = ERampingUp;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMin;
-    }
-}
-
-void Seeker::DoSeek()
-{
-    iSeekHandle = iSeeker.StartSeek(iTrackId, iStreamId, iSeekSeconds, *this);
     iState = EFlushing;
     while (!iQueue.IsEmpty()) {
         iQueue.Dequeue()->RemoveRef();
     }
     iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
                                                     that any subsequent break in audio is expected */
+    iQueue.Enqueue(iMsgFactory.CreateMsgWait()); /* inform downstream elements (Songcast Sender)
+                                                    of waiting state */
+    iObserver.PipelineWaiting(true);
 }
 
-Msg* Seeker::ProcessFlushable(Msg* aMsg)
+Msg* Waiter::ProcessFlushable(Msg* aMsg)
 {
     if (iState == EFlushing) {
         aMsg->RemoveRef();
@@ -175,9 +168,14 @@ Msg* Seeker::ProcessFlushable(Msg* aMsg)
     return aMsg;
 }
 
-Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
+Msg* Waiter::ProcessAudio(MsgAudio* aMsg)
 {
     if (iState == ERampingDown || iState == ERampingUp) {
+        if (iState == ERampingUp && iCurrentRampValue == Ramp::kRampMin) {
+            // Start of ramping up.
+            iObserver.PipelineWaiting(false);
+        }
+
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
@@ -193,7 +191,7 @@ Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
         }
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
-                DoSeek();
+                DoWait();
             }
             else { // iState == ERampingUp
                 iState = ERunning;
@@ -201,15 +199,17 @@ Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
         }
         return aMsg;
     }
+    else if (iState == EWaiting) {
+        iState = ERunning;
+        iObserver.PipelineWaiting(false);
+    }
 
     return ProcessFlushable(aMsg);
 }
 
-void Seeker::NewStream()
+void Waiter::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
     iState = ERunning;
-    iSeekHandle = ISeeker::kHandleError;
-    iStreamIsSeekable = true;
 }

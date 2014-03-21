@@ -26,6 +26,9 @@ const TChar* TransportState::FromPipelineState(EPipelineState aState)
     case EPipelineBuffering:
         state = "Buffering";
         break;
+    case EPipelineWaiting:
+        state = "Waiting";
+        break;
     default:
         ASSERTS();
         state = "";
@@ -90,6 +93,9 @@ void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
         break;
     case EPipelineBuffering:
         state = "buffering";
+        break;
+    case EPipelineWaiting:
+        state = "waiting";
         break;
     default:
         ASSERTS();

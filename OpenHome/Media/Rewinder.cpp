@@ -23,6 +23,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -78,6 +79,12 @@ Msg* MsgCloner::ProcessMsg(MsgHalt* aMsg)
 }
 
 Msg* MsgCloner::ProcessMsg(MsgFlush* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
+Msg* MsgCloner::ProcessMsg(MsgWait* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
@@ -196,6 +203,11 @@ Msg* Rewinder::ProcessMsg(MsgHalt* aMsg)
 }
 
 Msg* Rewinder::ProcessMsg(MsgFlush* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Rewinder::ProcessMsg(MsgWait* aMsg)
 {
     return aMsg;
 }

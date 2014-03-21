@@ -14,6 +14,7 @@ enum EPipelineState
    ,EPipelinePaused
    ,EPipelineStopped
    ,EPipelineBuffering
+   ,EPipelineWaiting
    ,EPipelineStateCount // Count of available states. Never reported as a state itself
 };
 

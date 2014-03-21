@@ -41,6 +41,7 @@ public:
     void Begin(const Brx& aMode, TUint aTrackId);
     void Play();
     void Pause();
+    void Wait(TUint aFlushId);
     void Stop();
     void StopPrefetch(const Brx& aMode, TUint aTrackId);
     void RemoveAll();

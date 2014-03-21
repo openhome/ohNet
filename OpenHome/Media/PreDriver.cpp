@@ -162,6 +162,12 @@ Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
     return NULL;
 }
 
+Msg* PreDriver::ProcessMsg(MsgWait* /*aMsg*/)
+{
+    ASSERTS(); // don't expect to encounter MsgWait this far down the pipeline
+    return NULL;
+}
+
 Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();

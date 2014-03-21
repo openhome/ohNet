@@ -43,6 +43,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -66,6 +67,7 @@ private:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 enum EMsgGenerationState
@@ -109,7 +111,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iTrackOffset(0)
     , iBuffering(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize, *this);
 }
 
@@ -362,6 +364,12 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // MsgFlush not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgWait* /*aMsg*/)
+{
+    ASSERTS(); // MsgWait not used in this test
     return NULL;
 }
 

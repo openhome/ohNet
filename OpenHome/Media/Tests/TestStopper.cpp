@@ -46,6 +46,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -63,6 +64,7 @@ private:
        ,EMsgSilence
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -119,7 +121,7 @@ SuiteStopper::SuiteStopper()
     , iSemHalted("TSTP", 0)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1);
     iThreadHalted = new ThreadFunctor("StoppedChecker", MakeFunctor(*this, &SuiteStopper::TestHaltedThread));
     iThreadHalted->Start();
 
@@ -241,6 +243,12 @@ Msg* SuiteStopper::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgFlush* aMsg)
 {
     iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteStopper::ProcessMsg(MsgWait* aMsg)
+{
+    iLastPulledMsg = EMsgWait;
     return aMsg;
 }
 
@@ -397,6 +405,8 @@ void SuiteStopper::TestMsgsPassWhilePlaying()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2)); // not passed on
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 }
@@ -578,6 +588,8 @@ void SuiteStopper::TestStopFromPlay()
     iPendingMsgs.push_back(CreateAudio());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
@@ -639,6 +651,8 @@ void SuiteStopper::TestPlayNoFlushes()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 

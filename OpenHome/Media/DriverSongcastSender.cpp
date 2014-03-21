@@ -305,6 +305,12 @@ Msg* DriverSongcastSender::ProcessMsg(MsgFlush* /*aMsg*/)
     return NULL;
 }
 
+Msg* DriverSongcastSender::ProcessMsg(MsgWait* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();

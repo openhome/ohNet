@@ -34,6 +34,7 @@ enum EMsgType
         ,EMsgMetaText
         ,EMsgHalt
         ,EMsgFlush
+        ,EMsgWait
         ,EMsgQuit
     };
 public:
@@ -70,6 +71,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -176,7 +178,7 @@ void SuiteRewinder::InitMsgOrder()
 
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;
@@ -277,6 +279,13 @@ Msg* SuiteRewinder::ProcessMsg(MsgFlush* aMsg)
 {
     TEST(iLastMsgType == EMsgFlush);
     iRcvdMsgType = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgWait* aMsg)
+{
+    TEST(iLastMsgType == EMsgWait);
+    iRcvdMsgType = EMsgWait;
     return aMsg;
 }
 
@@ -382,6 +391,10 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgFlush(0);
         iLastMsgType = EMsgFlush;
         break;
+    case EMsgWait:
+        msg = iMsgFactory->CreateMsgWait();
+        iLastMsgType = EMsgWait;
+        break;
     case EMsgQuit:
         msg = iMsgFactory->CreateMsgQuit();
         iLastMsgType = EMsgQuit;
@@ -392,44 +405,8 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
 
 Msg* SuiteRewinder::GenerateNextMsg()
 {
-    Msg* msg = NULL;
     ASSERT(iMsgCount < iMsgOrder.size());
-    switch (iMsgOrder[iMsgCount++])
-    {
-    default:
-    case ENone:
-    case EMsgPlayable:
-    case EMsgAudioPcm:
-    case EMsgSilence:
-    case EMsgDecodedStream:
-        ASSERTS();
-        break;
-    case ENull:
-        msg = NULL;
-        break;
-    case EMsgTrack:
-        msg = GenerateMsg(EMsgTrack);
-        break;
-    case EMsgEncodedStream:
-        msg = GenerateMsg(EMsgEncodedStream);
-        break;
-    case EMsgAudioEncoded:
-        msg = GenerateMsg(EMsgAudioEncoded);
-        break;
-    case EMsgMetaText:
-        msg = GenerateMsg(EMsgMetaText);
-        break;
-    case EMsgHalt:
-        msg = GenerateMsg(EMsgHalt);
-        break;
-    case EMsgFlush:
-        msg = GenerateMsg(EMsgFlush);
-        break;
-    case EMsgQuit:
-        msg = GenerateMsg(EMsgQuit);
-        break;
-    }
-    return msg;
+    return GenerateMsg(iMsgOrder[iMsgCount++]);
 }
 
 void SuiteRewinder::PullAndProcess()
@@ -749,6 +726,8 @@ void SuiteRewinderMsgOrdering::InitMsgOrder()
     iMsgOrder.push_back(EMsgMetaText);
     iMsgOrder.push_back(EMsgAudioEncoded);
     iMsgOrder.push_back(EMsgFlush);
+    iMsgOrder.push_back(EMsgAudioEncoded);
+    iMsgOrder.push_back(EMsgWait);
     iMsgOrder.push_back(EMsgAudioEncoded);
     iMsgOrder.push_back(EMsgHalt);
     iMsgOrder.push_back(EMsgAudioEncoded);

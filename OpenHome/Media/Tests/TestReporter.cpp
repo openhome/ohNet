@@ -51,6 +51,7 @@ private:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -90,7 +91,7 @@ SuiteReporter::SuiteReporter()
     , iSeconds(0)
     , iTrackDurationSeconds(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReporter = new Reporter(*this, *this);
 }
@@ -130,8 +131,8 @@ void SuiteReporter::Test()
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
 
-    // deliver MsgHalt, MsgQuit.  Check these are passed through and don't cause any notifications.
-    EMsgType types[] = { EMsgHalt, EMsgQuit };
+    // deliver MsgWait, MsgHalt, MsgQuit.  Check these are passed through and don't cause any notifications.
+    EMsgType types[] = { EMsgWait, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iReporter->Pull();
@@ -255,6 +256,8 @@ Msg* SuiteReporter::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();
     default:

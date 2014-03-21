@@ -401,6 +401,14 @@ private:
     TUint iId;
 };
 
+class MsgWait : public Msg
+{
+public:
+    MsgWait(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
+};
+
 class DecodedStreamInfo
 {
     friend class MsgDecodedStream;
@@ -605,6 +613,7 @@ public:
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgHalt* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgFlush* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgWait* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDecodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioPcm* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgSilence* aMsg) = 0;
@@ -700,6 +709,7 @@ private:
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
     virtual void ProcessMsgIn(MsgHalt* aMsg);
     virtual void ProcessMsgIn(MsgFlush* aMsg);
+    virtual void ProcessMsgIn(MsgWait* aMsg);
     virtual void ProcessMsgIn(MsgDecodedStream* aMsg);
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
     virtual void ProcessMsgIn(MsgSilence* aMsg);
@@ -710,6 +720,7 @@ private:
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
     virtual Msg* ProcessMsgOut(MsgHalt* aMsg);
     virtual Msg* ProcessMsgOut(MsgFlush* aMsg);
+    virtual Msg* ProcessMsgOut(MsgWait* aMsg);
     virtual Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     virtual Msg* ProcessMsgOut(MsgSilence* aMsg);
@@ -726,6 +737,7 @@ private:
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgWait* aMsg);
         Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
@@ -745,6 +757,7 @@ private:
         Msg* ProcessMsg(MsgMetaText* aMsg);
         Msg* ProcessMsg(MsgHalt* aMsg);
         Msg* ProcessMsg(MsgFlush* aMsg);
+        Msg* ProcessMsg(MsgWait* aMsg);
         Msg* ProcessMsg(MsgDecodedStream* aMsg);
         Msg* ProcessMsg(MsgAudioPcm* aMsg);
         Msg* ProcessMsg(MsgSilence* aMsg);
@@ -779,6 +792,7 @@ public:
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
     virtual void OutputFlush(TUint aFlushId) = 0;
+    virtual void OutputWait() = 0;
     virtual void OutputHalt(TUint aHaltId) = 0;
     virtual void OutputQuit() = 0;
 };
@@ -889,7 +903,7 @@ public:
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
                TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
-               TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgQuitCount);
+               TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount, TUint aMsgQuitCount);
     //
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
@@ -897,6 +911,7 @@ public:
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);
     MsgFlush* CreateMsgFlush(TUint aId);
+    MsgWait* CreateMsgWait();
     MsgDecodedStream* CreateMsgDecodedStream(TUint aStreamId, TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless, TBool aSeekable, TBool aLive);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
     MsgAudioPcm* CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp=0, TUint aMediaTimestamp=0);
@@ -919,6 +934,7 @@ private:
     Allocator<MsgMetaText> iAllocatorMsgMetaText;
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
+    Allocator<MsgWait> iAllocatorMsgWait;
     Allocator<MsgQuit> iAllocatorMsgQuit;
     TUint iNextFlushId;
 };

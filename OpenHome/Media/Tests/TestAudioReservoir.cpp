@@ -38,6 +38,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -59,6 +60,7 @@ private:
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 enum EMsgGenerationState
@@ -112,6 +114,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -143,7 +146,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iSemUpstreamComplete("TRSV", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize, *this    );
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
@@ -181,7 +184,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == NULL);
 
     // Check that Silence, Track, AudioStream, MetaText, Quit & Halt msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgHalt, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgWait, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         EMsgType msgType = types[i];
         GenerateMsg(msgType);
@@ -294,6 +297,9 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgFlush:
         msg = iMsgFactory->CreateMsgFlush(1);
         break;
+    case EMsgWait:
+        msg = iMsgFactory->CreateMsgWait();
+        break;
     case EMsgQuit:
         msg = iMsgFactory->CreateMsgQuit();
         break;
@@ -346,6 +352,12 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteAudioReservoir::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgWait* aMsg)
+{
+    iLastMsg = EMsgWait;
     return aMsg;
 }
 
@@ -411,7 +423,7 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iHistoryPointCount(0)
     , iStopAudioGeneration(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iHistory = new UtilisationHistory(kMaxHistorySamples, MakeFunctor(*this, &SuiteReservoirHistory::HistoryPointAdded));
     iReservoir = new DecodedAudioReservoir(kReservoirSize, *iHistory);
@@ -543,6 +555,12 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgHalt* /*aMsg*/)
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgFlush* /*aMsg*/)
+{
+    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
+    return NULL;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgWait* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
     return NULL;
