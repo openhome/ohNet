@@ -106,6 +106,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerVariableDelay->SetEnabled(true);
     //iLoggerTrackInspector->SetEnabled(true);
     //iLoggerSkipper->SetEnabled(true);
+    //iLoggerWaiter->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
@@ -122,6 +123,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerTrackInspector->SetFilter(Logger::EMsgAll);
     //iLoggerSkipper->SetFilter(Logger::EMsgAll);
+    //iLoggerWaiter->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
