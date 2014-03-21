@@ -78,11 +78,14 @@ DviProtocolUpnp::~DviProtocolUpnp()
     iLock.Wait();
     iDvStack.Env().NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iDvStack.Env().NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
-    for (TUint i=0; i<iAdapters.size(); i++) {
-        iAdapters[i]->Destroy();
-    }
+    // Don't delete elements from iAdapters with iLock held - this risks deadlock with SsdpListenerMulticast's lock
+    std::vector<DviProtocolUpnpAdapterSpecificData*> adapters(iAdapters);
+    iAdapters.clear();
     iSuppressScheduledEvents = true;
     iLock.Signal();
+    for (TUint i=0; i<adapters.size(); i++) {
+        adapters[i]->Destroy();
+    }
     iDvStack.SsdpNotifierManager().Stop(iDevice.Udn());
 }
 
