@@ -35,7 +35,6 @@ private: // from IPipelineElementUpstream
 private: // from IStopperObserver
     void PipelinePaused();
     void PipelineStopped();
-    void PipelineWaiting(TBool aWaiting);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -107,9 +106,6 @@ private:
     TUint iNextStreamId;
     TUint iPausedCount;
     TUint iStoppedCount;
-    TUint iWaitingCount;
-    TUint iWaitingTrueCount;
-    TUint iWaitingFalseCount;
     TUint iOkToPlayCount;
     EStreamPlay iNextCanPlay;
     Semaphore iSemHalted;
@@ -161,7 +157,6 @@ void SuiteStopper::Setup()
     iNextStreamId = 1;
     iJiffies = 0;
     iPausedCount = iStoppedCount = iOkToPlayCount = 0;
-    iWaitingCount = iWaitingTrueCount = iWaitingFalseCount = 0;
     iNextCanPlay = ePlayYes;
     iSemHalted.Clear();
 }
@@ -191,17 +186,6 @@ void SuiteStopper::PipelinePaused()
 void SuiteStopper::PipelineStopped()
 {
     iStoppedCount++;
-}
-
-void SuiteStopper::PipelineWaiting(TBool aWaiting)
-{
-    iWaitingCount++;
-    if (aWaiting) {
-        iWaitingTrueCount++;
-    }
-    else {
-        iWaitingFalseCount++;
-    }
 }
 
 EStreamPlay SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
