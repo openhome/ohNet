@@ -374,13 +374,8 @@ Msg* SuiteTrackInspector::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgFlush:
         return iMsgFactory->CreateMsgFlush(1);
-<<<<<<< HEAD
-=======
     case EMsgWait:
         return iMsgFactory->CreateMsgWait();
-    case EMsgQuit:
-        return iMsgFactory->CreateMsgQuit();
->>>>>>> 66f06bc257b435e57bacd77dce2128aa69b2de46
     default:
         ASSERTS();
         return NULL;
