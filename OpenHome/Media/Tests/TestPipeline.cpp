@@ -25,6 +25,7 @@ public:
     ~Supplier();
     void Block();
     void Unblock();
+    void SendFlush(TUint aFlushId);
     void Exit(TUint aHaltId);
 private: // from Thread
     void Run();
@@ -40,6 +41,7 @@ private:
     Msg* iPendingMsg;
     TBool iBlock;
     TBool iQuit;
+    TUint iFlushId;
     TUint iHaltId;
 };
 
@@ -143,6 +145,7 @@ Supplier::Supplier(ISupply& aSupply, TrackFactory& aTrackFactory)
     , iBlocker("TSUP", 0)
     , iBlock(false)
     , iQuit(false)
+    , iFlushId(MsgFlush::kIdInvalid)
     , iHaltId(MsgHalt::kIdInvalid)
 {
     Start();
@@ -166,6 +169,11 @@ void Supplier::Unblock()
     iBlock = false;
 }
 
+void Supplier::SendFlush(TUint aFlushId)
+{
+    iFlushId = aFlushId;
+}
+
 void Supplier::Exit(TUint aHaltId)
 {
     iHaltId = aHaltId;
@@ -187,7 +195,13 @@ void Supplier::Run()
         if (iBlock) {
             iBlocker.Wait();
         }
-        iSupply.OutputData(encodedAudioBuf);
+        if (iFlushId != MsgFlush::kIdInvalid) {
+            iSupply.OutputFlush(iFlushId);
+            iFlushId = MsgFlush::kIdInvalid;
+        }
+        else {
+            iSupply.OutputData(encodedAudioBuf);
+        }
         Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
     iSupply.OutputHalt(iHaltId);
@@ -326,6 +340,23 @@ void SuitePipeline::Test()
     TEST(iPipelineState == EPipelinePlaying);
     TestJiffies(Pipeline::kStopperRampDuration);
 
+    // Wait. Check for ramp down in Pipeline::kWaiterRampDuration.
+    // Send down expected MsgFlush, then check for ramp up in
+    // Pipeline::kWaiterRampDuration.
+    Print("\nWait\n");
+    iJiffies = 0;
+    static const TUint kFlushId = 5; // randomly chosen value
+    iPipeline->Wait(kFlushId);
+    PullUntilEnd(ERampDownDeferred);
+    TEST(iPipelineState == EPipelineWaiting);
+    TestJiffies(Pipeline::kWaiterRampDuration);
+    // push flush, then ramp back up
+    iJiffies = 0;
+    iSupplier->SendFlush(kFlushId);
+    PullUntilEnd(ERampUp);
+    TEST(iPipelineState == EPipelinePlaying);
+    TestJiffies(Pipeline::kWaiterRampDuration);
+
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
     iJiffies = 0;
@@ -439,6 +470,9 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
         break;
     case EPipelineBuffering:
         state = "buffering";
+        break;
+    case EPipelineWaiting:
+        state = "waiting";
         break;
     default:
         ASSERTS();
