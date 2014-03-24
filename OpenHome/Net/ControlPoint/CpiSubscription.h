@@ -246,6 +246,7 @@ private:
     Semaphore iShutdownSem;
     EventServerUpnp* iEventServer;
     TUint iInterfaceListListenerId;
+    TUint iInterface;
     TUint iSubnetListenerId;
     TUint iNextSubscriptionId;
 };

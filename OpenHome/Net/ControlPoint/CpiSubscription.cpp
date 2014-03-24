@@ -502,6 +502,7 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     , iFree(aCpStack.Env().InitParams()->NumSubscriberThreads())
     , iWaiter("SBSS", 0)
     , iShutdownSem("SBMS", 0)
+    , iInterface(0)
     , iNextSubscriptionId(1)
 {
     NetworkAdapterList& ifList = iCpStack.Env().NetworkAdapterList();
@@ -517,7 +518,8 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     }
     else {
         iLock.Wait();
-        iEventServer = new EventServerUpnp(iCpStack, currentInterface->Address());
+        iInterface = currentInterface->Address();
+        iEventServer = new EventServerUpnp(iCpStack, iInterface);
         iLock.Signal();
     }
 
@@ -681,7 +683,13 @@ void CpiSubscriptionManager::SubnetListChanged()
 void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
     iLock.Wait();
+    AutoNetworkAdapterRef ref(iCpStack.Env(), "CpiSubscriptionManager::HandleInterfaceChange");
+    const NetworkAdapter* currentInterface = ref.Adapter();
     if (aNewSubnet) {
+        if (currentInterface != NULL && currentInterface->Address() == iInterface) {
+            iLock.Signal();
+            return;
+        }
         size_t count = iMap.size();
         while (count-- > 0) {
             CpiSubscription* subscription = iMap.begin()->second;
@@ -700,18 +708,16 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     }
     EventServerUpnp* server = iEventServer;
     iEventServer = NULL;
-    // releasing the lock here leaves a tiny window in which an event session thread can
-    // block at CpiSubscriptionManager::WaitForPendingAdds.  This will add a very rare delay
-    // of a few seconds so it's acceptable to risk this rather than add complicated, hard
-    // to test, code.
     iLock.Signal();
 
     // recreate the event server on the new interface
     delete server;
-    AutoNetworkAdapterRef ref(iCpStack.Env(), "CpiSubscriptionManager::HandleInterfaceChange");
-    const NetworkAdapter* currentInterface = ref.Adapter();
-    if (currentInterface != NULL) {
-        iEventServer = new EventServerUpnp(iCpStack, currentInterface->Address());
+    if (currentInterface == NULL) {
+        iInterface = 0;
+    }
+    else {
+        iInterface = currentInterface->Address();
+        iEventServer = new EventServerUpnp(iCpStack, iInterface);
     }
 }
 
