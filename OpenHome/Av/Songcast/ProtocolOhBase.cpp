@@ -136,7 +136,9 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         res = Play(addr, kTtl, ep);
     } while (res != EProtocolStreamStopped);
     if (iRepairing) {
+        iMutexTransport.Wait();
         RepairReset();
+        iMutexTransport.Signal();
     }
     return res;
 }
@@ -164,7 +166,11 @@ TBool ProtocolOhBase::RepairBegin(OhmMsgAudioBlob& aMsg)
 void ProtocolOhBase::RepairReset()
 {
     LOG(kSongcast, "RESET\n");
+    /* TimerRepairExpired() claims iMutexTransport.  Release it briefly to avoid possible deadlock.
+       TimerManager guarantees that TimerRepairExpired() won't be called once Cancel() returns... */
+    iMutexTransport.Signal();
     iTimerRepair->Cancel();
+    iMutexTransport.Wait();
     if (iRepairFirst != NULL) {
         iRepairFirst->RemoveRef();
         iRepairFirst = NULL;
