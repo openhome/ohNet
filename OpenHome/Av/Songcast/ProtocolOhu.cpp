@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 #include <OpenHome/PowerManager.h>
 
 using namespace OpenHome;
@@ -92,6 +93,7 @@ void ProtocolOhu::Broadcast(OhmMsg* aMsg)
 
 ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
+    LOG(kSongcast, "OHU: Play(%08x, %u, %08x:%u\n", aInterface, aTtl, aEndpoint.Address(), aEndpoint.Port());
     iLeaving = false;
     iStopped = false;
     iSlaveCount = 0;
@@ -122,11 +124,13 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
                         HandleAudio(header);
                         break;
                     case OhmHeader::kMsgTypeTrack:
+                        LOG(kSongcast, "OHU: Joining, received track\n");
                         HandleTrack(header);
                         receivedTrack = true;
                         joinComplete = receivedMetatext;
                         break;
                     case OhmHeader::kMsgTypeMetatext:
+                        LOG(kSongcast, "OHU: Joining, metatext\n");
                         HandleMetatext(header);
                         receivedMetatext = true;
                         joinComplete = receivedTrack;
@@ -144,10 +148,12 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
                     iReadBuffer.ReadFlush();
                 }
                 catch (OhmError&) {
+                    LOG2(kSongcast, kError, "OHU: OhmError while joining\n");
                 }
             }
             
             iTimerJoin->Cancel();
+            LOG(kSongcast, "OHU: Joined\n");
 
             // Phase 2, periodically send listen if required
             iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
@@ -185,10 +191,12 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
                     iReadBuffer.ReadFlush();
                 }
                 catch (OhmError&) {
+                    LOG2(kSongcast, kError, "OHU: OhmError while playing\n");
                 }
             }
         }
         catch (ReaderError&) {
+            LOG2(kSongcast, kError, "OHU: ReaderError\n");
         }
     } while (!iStopped);
     
@@ -209,8 +217,21 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
+void ProtocolOhu::Interrupt(TBool aInterrupt)
+{
+    LOG(kSongcast, "OHU: Interrupt(%u)\n", aInterrupt);
+    if (aInterrupt) {
+        iLeaveLock.Wait();
+        iStopped = true;
+        iLeaving = true;
+        iLeaveLock.Signal();
+    }
+    ProtocolOhBase::Interrupt(aInterrupt);
+}
+
 TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
+    LOG(kSongcast, "OHU: TryStop()\n");
     // omit tests of aTrackId, aStreamId.  Any request to Stop() should probably result in us breaking the stream
     iLeaveLock.Wait();
     iNextFlushId = iFlushIdProvider->NextFlushId();
