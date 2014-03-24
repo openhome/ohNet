@@ -82,7 +82,12 @@ void ProtocolOhBase::RequestResend(const Brx& aFrames)
         header.Externalise(writer);
         headerResend.Externalise(writer);
         writer.Write(aFrames);
-        iSocket.Send(buffer, iEndpoint);
+        try {
+            iSocket.Send(buffer, iEndpoint);
+        }
+        catch (NetworkError&) {
+            LOG2(kSongcast, kError, "NetworkError in ProtocolOhBase::RequestResend()\n");
+        }
     }
 }
 
