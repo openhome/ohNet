@@ -51,10 +51,10 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
 
 void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    if (iTxSocket) {
+    if (iTxSocket != NULL) {
         iTxSocket->Send(aBuffer, aEndpoint);
     }
-    else {
+    else if (iRxSocket != NULL) {
         iRxSocket->Send(aBuffer, aEndpoint);
     }
 }
