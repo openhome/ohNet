@@ -35,16 +35,9 @@ PipelineManager::~PipelineManager()
 
 void PipelineManager::Quit()
 {
-    TUint haltId = MsgHalt::kIdInvalid;
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
-    if (waitStop) {
-        haltId = iFiller->Stop();
-    }
-    else {
-        iFiller->StopNoHalt();
-    }
-    iProtocolManager->Interrupt();
+    const TUint haltId = iFiller->Stop();
     iPipeline->RemoveCurrentStream();
     iLock.Signal();
     iIdManager->InvalidatePending();
@@ -167,7 +160,7 @@ TBool PipelineManager::Next()
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    iFiller->Stop();
+    (void)iFiller->Stop();
     /* Previously tried using iIdManager->InvalidateAt() to invalidate the current track only.
        If we're playing a low res track, there is a large window when we'll be playing that but
        pre-fetching the track to follow it.  InvalidateAt() will fail to clear that following
@@ -181,7 +174,7 @@ TBool PipelineManager::Prev()
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iIdManager->InvalidateAll();
     return iFiller->Prev(iMode);
 }

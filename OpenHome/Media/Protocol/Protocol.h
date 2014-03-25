@@ -26,6 +26,7 @@ class IUriStreamer
 {
 public:
     virtual TBool DoStream(Track& aTrack, const Brx& aMode) = 0;
+    virtual void Interrupt(TBool aInterrupt) = 0;
 };
 
 class IProtocolSet
@@ -141,9 +142,9 @@ public:
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
-    void Interrupt();
 public: // from IUriStreamer
     TBool DoStream(Track& aTrack, const Brx& aMode);
+    void Interrupt(TBool aInterrupt);
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;

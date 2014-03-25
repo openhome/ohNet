@@ -490,7 +490,7 @@ void ProtocolTone::Interrupt(TBool aInterrupt)
 {
     iLock.Wait();
     if (aInterrupt) {
-        iStop = true;
+        iStop = aInterrupt;
     }
     iLock.Signal();
 }

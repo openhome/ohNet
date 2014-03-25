@@ -48,6 +48,7 @@ public:
     TUint StreamId() const;
 private: // from IUriStreamer
     TBool DoStream(Track& aTrack, const Brx& aMode);
+    void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -240,6 +241,10 @@ TBool DummyUriStreamer::DoStream(Track& aTrack, const Brx& aMode)
     return true;
 }
 
+void DummyUriStreamer::Interrupt(TBool /*aInterrupt*/)
+{
+}
+
 EStreamPlay DummyUriStreamer::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -387,7 +392,7 @@ void SuiteFiller::Test()
     trackId = iTrackId;
 
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
     // test for invalid Next() arg
     TEST(!iFiller->Next(Brn("InvalidMode")));
@@ -407,7 +412,7 @@ void SuiteFiller::Test()
     trackId = iTrackId;
 
     // Stop/Prev during third track.  Once track completes IUriStreamer should be passed uri for second track
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
     TEST(iFiller->Prev(iUriProvider->Mode()));
     iTrackAddedSem.Wait();
@@ -447,7 +452,7 @@ void SuiteFiller::Test()
     TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(!iPlayNow);
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
 }
 

@@ -86,20 +86,16 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 
 TUint Filler::Stop()
 {
-    iLock.Wait();
-    iStopped = true;
-    const TUint id = ++iNextHaltId;
-    iSendHalt = true;
+    AutoMutex a(iLock);
+    TUint haltId = MsgHalt::kIdNone;
+    if (!iStopped) {
+        haltId = ++iNextHaltId;
+        iStopped = true;
+        iSendHalt = true;
+    }
+    iUriStreamer->Interrupt(true);
     Signal();
-    iLock.Signal();
-    return id;
-}
-
-void Filler::StopNoHalt()
-{
-    iLock.Wait();
-    iStopped = true;
-    iLock.Signal();
+    return haltId;
 }
 
 TBool Filler::Next(const Brx& aMode)
@@ -194,6 +190,8 @@ void Filler::Run()
             iLock.Signal();
         }
         else {
+            iUriStreamer->Interrupt(false); // FIXME - this could incorrectly over-ride a call to Interrupt() that was scheduled between Wait() and iLock being acquired
+            ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
             iLock.Signal();
             ASSERT(iTrack != NULL);
             (void)iUriStreamer->DoStream(*iTrack, mode);

@@ -222,8 +222,8 @@ void ProtocolOhu::Interrupt(TBool aInterrupt)
     LOG(kSongcast, "OHU: Interrupt(%u)\n", aInterrupt);
     if (aInterrupt) {
         iLeaveLock.Wait();
-        iStopped = true;
-        iLeaving = true;
+        iStopped = aInterrupt;
+        iLeaving = aInterrupt;
         iLeaveLock.Signal();
     }
     ProtocolOhBase::Interrupt(aInterrupt);

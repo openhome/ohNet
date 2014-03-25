@@ -291,13 +291,13 @@ void ProtocolManager::Add(ContentProcessor* aProcessor)
     aProcessor->Initialise(*this);
 }
 
-void ProtocolManager::Interrupt()
+void ProtocolManager::Interrupt(TBool aInterrupt)
 {
     /* Deliberately don't take iLock.  Avoids any possibility of deadlock with protocols
        who're holding a local lock while calling IProtocolManager::Stream.  iProtocols
-       never changes size/order so we can safelt access it without locks. */
+       never changes size/order so we can safely access it without locks. */
     for (auto it=iProtocols.begin(); it!=iProtocols.end(); ++it) {
-        (*it)->Interrupt(true);
+        (*it)->Interrupt(aInterrupt);
     }
 }
 

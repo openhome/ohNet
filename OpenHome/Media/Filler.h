@@ -41,8 +41,7 @@ public:
     void Start(IUriStreamer& aUriStreamer);
     void Play(const Brx& aMode, TUint aTrackId);
     void PlayLater(const Brx& aMode, TUint aTrackId);
-    TUint Stop(); // returns Id of MsgHalt which will (eventually) be generated
-    void StopNoHalt(); // use during shutdown only
+    TUint Stop(); // Stops filler and encourages protocols to stop.  Returns haltId iff filler was active
     TBool Next(const Brx& aMode);
     TBool Prev(const Brx& aMode);
     TBool IsStopped() const;
