@@ -152,6 +152,7 @@ void SourceReceiver::Activate()
 void SourceReceiver::Deactivate()
 {
     iProviderReceiver->NotifyPipelineState(EPipelineStopped);
+    iZoneHandler->ClearCurrentSenderUri();
     Source::Deactivate();
 }
 
@@ -206,7 +207,8 @@ void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
     AutoMutex a(iLock);
     if (aZone == iZone && aUri != iTrackUri) {
         iTrackUri.Replace(aUri);
-        if (iPlaying) {
+        iZoneHandler->SetCurrentSenderUri(aUri);
+        if (IsActive() && iPlaying) {
             DoPlay();
         }
     }

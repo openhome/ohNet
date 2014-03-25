@@ -1009,7 +1009,7 @@ void OhmSender::UpdateUri()
         iUri.Replace("ohu://0.0.0.0:0");
     }
 
-    iZoneHandler->SetSenderUri(iUri);
+    iZoneHandler->SetHomeSenderUri(iUri);
 }
 
 void OhmSender::UpdateMetadata()

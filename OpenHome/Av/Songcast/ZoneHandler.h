@@ -23,8 +23,6 @@ public:
     virtual void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata) = 0;
 };
 
-// FIXME - SetHome / SetCurrent ?  Or can this be inferred from [Start|Stop]Monitoring
-
 class ZoneHandler : public Thread
 {
     static const TUint kMaxMetadataBytes = 1000;
@@ -45,7 +43,9 @@ public:
     void RemoveListener(IZoneListener& aListener);
     void StartMonitoring(const Brx& aZone);
     void StopMonitoring();
-    void SetSenderUri(const Brx& aUri);
+    void SetHomeSenderUri(const Brx& aUri);
+    void SetCurrentSenderUri(const Brx& aUri);
+    void ClearCurrentSenderUri();
     void SetSenderMetadata(const Brx& aMetadata);
     void SetPreset(TUint aPreset);
 private: // from Thread
@@ -79,7 +79,8 @@ private:
     Sws<kMaxWriteBytes> iWriteBuffer;
     Bws<kMaxZoneBytes> iRxZone;
     TUint iNacnId;
-    Bws<32> iSenderUri; // ohm or ohu uri returned from ZoneQuery requests
+    Bws<32> iSenderUriHome; // ohm or ohu uri returned from ZoneQuery requests
+    Bws<32> iSenderUriCurrent; // only set if we're listening to another sender.  Over-rides iSenderUriHome
     TUint iSendZoneUriCount;
     TUint iPresetNumber;
     Bws<kMaxMetadataBytes> iSenderMetadataBuf; // only used locally but too large to put on the stack

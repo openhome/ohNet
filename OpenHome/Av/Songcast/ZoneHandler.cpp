@@ -111,12 +111,40 @@ void ZoneHandler::StopMonitoring()
     iZoneLock.Signal();
 }
 
-void ZoneHandler::SetSenderUri(const Brx& aUri)
+void ZoneHandler::SetHomeSenderUri(const Brx& aUri)
 {
     iLockTxData.Wait();
-    iSenderUri.Replace(aUri);
+    iSenderUriHome.Replace(aUri);
     iLockTxData.Signal();
     SendZoneUri(3);
+}
+
+void ZoneHandler::SetCurrentSenderUri(const Brx& aUri)
+{
+    if (aUri.Bytes() > iSenderUriCurrent.MaxBytes()) {
+        LOG2(kSongcast, kError, "ERROR: unexpectedly long currentSenderUri - ");
+        LOG2(kSongcast, kError, aUri);
+        LOG2(kSongcast, kError, "\n");
+        return;
+    }
+    iLockTxData.Wait();
+    iSenderUriCurrent.Replace(aUri);
+    iLockTxData.Signal();
+    SendZoneUri(3);
+}
+
+void ZoneHandler::ClearCurrentSenderUri()
+{
+    iLockTxData.Wait();
+    TBool sendUpdates = false;
+    if (iSenderUriCurrent.Bytes() > 0) {
+        iSenderUriCurrent.SetBytes(0);
+        sendUpdates = true;
+    }
+    iLockTxData.Signal();
+    if (sendUpdates) {
+        SendZoneUri(3);
+    }
 }
 
 void ZoneHandler::SetSenderMetadata(const Brx& aMetadata)
@@ -288,13 +316,14 @@ void ZoneHandler::TimerZoneUriExpired()
     AutoMutex a(iLockTxData);
     try
     {
+        Brn senderUri(iSenderUriCurrent.Bytes() > 0? iSenderUriCurrent : iSenderUriHome);
         AutoMutex b(iLockTxSocket);
-        OhzHeaderZoneUri headerZoneUri(iSenderZone, iSenderUri);
+        OhzHeaderZoneUri headerZoneUri(iSenderZone, senderUri);
         OhzHeader header(OhzHeader::kMsgTypeZoneUri, headerZoneUri.MsgBytes());
         header.Externalise(iWriteBuffer);
         headerZoneUri.Externalise(iWriteBuffer);
         iWriteBuffer.Write(iSenderZone);
-        iWriteBuffer.Write(iSenderUri);
+        iWriteBuffer.Write(senderUri);
         LOG(kSongcast, "ZoneHandler::TimerZoneUriExpired %d\n", iSendZoneUriCount);
         iWriteBuffer.WriteFlush();
         
