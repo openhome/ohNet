@@ -109,8 +109,9 @@ void OhmSocket::ReadFlush()
 
 void OhmSocket::ReadInterrupt()
 {
-    ASSERT(iReader);
-    iReader->ReadInterrupt();
+    if (iReader != NULL) {
+        iReader->ReadInterrupt();
+    }
 }
 
 
