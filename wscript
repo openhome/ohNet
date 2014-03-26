@@ -238,6 +238,7 @@ def build(bld):
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
                 'OpenHome/Media/ClockPuller.cpp',
+                'OpenHome/Media/DriverBasic.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Mpeg4.cpp',
