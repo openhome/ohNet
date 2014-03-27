@@ -385,7 +385,7 @@ void RaopControl::Run()
                 iReceive.ReadFlush(); // unexpected so ignore
             }
         }
-        catch (ReaderError) {
+        catch (ReaderError&) {
             LOG(kMedia, "RaopControl Exception - iResend %d\n", iResend);
 
             // either no data or invalid header
