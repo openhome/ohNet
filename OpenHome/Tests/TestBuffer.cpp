@@ -67,7 +67,7 @@ void SuiteConstruction::Test()
     //7) Exception test
     //The (void)buf4 just gets rid of compile warning about unused variable
     TEST_THROWS(Bws<4> buf4(5); (void)buf4, AssertionFailed);
-    
+
     Bws<4> buf5(4);
     TEST(buf5.Bytes() == 4);
     TEST_THROWS(buf5.SetBytes(5), AssertionFailed);
