@@ -48,6 +48,11 @@ ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::
 
 ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
+    if (aEndpoint.Address() == 0) {
+        // ohm null address
+        // return immediately and leave the Filler to clear all track data
+        return EProtocolStreamStopped;
+    }
     iNextFlushId = MsgFlush::kIdInvalid;
     iStopped = false;
     iEndpoint.Replace(aEndpoint);
