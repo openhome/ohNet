@@ -119,6 +119,7 @@ public:
     void Fill(TByte aFillByte);
     inline void FillZ();
     inline TUint MaxBytes() const;
+    inline TUint BytesRemaining() const;
     void SetBytes(TUint aBytes);
     inline TByte& operator[](TUint aByteIndex);
     TByte& At(TUint aByteIndex);
