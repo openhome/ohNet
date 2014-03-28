@@ -67,12 +67,20 @@ void SuiteConstruction::Test()
     //7) Exception test
     //The (void)buf4 just gets rid of compile warning about unused variable
     TEST_THROWS(Bws<4> buf4(5); (void)buf4, AssertionFailed);
-    
+
     Bws<4> buf5(4);
     TEST(buf5.Bytes() == 4);
     TEST_THROWS(buf5.SetBytes(5), AssertionFailed);
     buf5.SetBytes(0);
     TEST(buf5.Bytes() == 0);
+
+    //8> BytesRemaining()
+    Bws<8> buf6;
+    TEST(buf6.BytesRemaining() == 8);
+    buf6.SetBytes(3);
+    TEST(buf6.BytesRemaining() == 5);
+    buf6.SetBytes(8);
+    TEST(buf6.BytesRemaining() == 0);
 }
 
 class SuiteModification : public Suite
