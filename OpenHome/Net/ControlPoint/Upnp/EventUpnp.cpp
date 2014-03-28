@@ -168,7 +168,8 @@ void EventSessionUpnp::Run()
                 try {
                     ProcessNotification(*subscription, entity);
                 }
-                catch (Exception&) {
+                catch (Exception& ex) {
+                    Log::Print("EventSessionUpnp::Run() unexpected exception %s from %s:%u\n", ex.Message(), ex.File(), ex.Line());
                     ASSERTS(); // ProcessNotification isn't expected to throw
                 }
                 subscription->Unlock();
