@@ -244,8 +244,11 @@ void CpiSubscription::DoSubscribe()
             deviceXml.Set("[missing]");
         }
         const Brx& udn = iDevice.Udn();
+        const Brx& serviceType = iServiceType.FullName();
         iEnv.Mutex().Wait();
-        Log::Print("XmlError attempting to subscribe to device ");
+        Log::Print("XmlError attempting to subscribe to ");
+        Log::Print(serviceType);
+        Log::Print(" service on device ");
         Log::Print(udn);
         Log::Print(", with xml\n\n");
         Log::Print(deviceXml);
