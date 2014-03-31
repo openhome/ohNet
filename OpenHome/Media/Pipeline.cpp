@@ -190,7 +190,6 @@ void Pipeline::Quit()
         return;
     }
     iQuitting = true;
-    OutputQuit();
     DoPlay(true);
 }
 

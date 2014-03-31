@@ -45,6 +45,7 @@ void PipelineManager::Quit()
         iPipeline->Stop(haltId);
         iPipelineStoppedSem.Wait();
     }
+    iFiller->Quit();
     iPipeline->Quit();
 }
 

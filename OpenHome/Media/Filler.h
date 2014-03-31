@@ -39,6 +39,7 @@ public:
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
+    void Quit();
     void Play(const Brx& aMode, TUint aTrackId);
     void PlayLater(const Brx& aMode, TUint aTrackId);
     TUint Stop(); // Stops filler and encourages protocols to stop.  Returns haltId iff filler was active
