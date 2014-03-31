@@ -137,12 +137,20 @@ void SourceRaop::Deactivate()
         // selected source.
         iRaopDiscovery->Disable();
     }
-    StopTrack();
+
+    iPipeline.RemoveAll();
+    if (iTrack != NULL) {
+        iTrack->RemoveRef();
+        iTrack = NULL;
+    }
+    iTransportState = Media::EPipelineStopped;
+
     if (iSessionActive) {
         CloseServers();
     }
 
     iLock.Signal();
+    iPipeline.Stop();
     Source::Deactivate();
 }
 
@@ -187,17 +195,6 @@ void SourceRaop::StartNewTrack()
     iTransportState = Media::EPipelinePlaying;
 }
 
-void SourceRaop::StopTrack()
-{
-    iPipeline.RemoveAll();
-    iPipeline.Stop();
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
-    iTransportState = Media::EPipelineStopped;
-}
-
 void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
     if (!IsActive()) {
@@ -227,15 +224,26 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 
 void SourceRaop::NotifySessionEnd()
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     iNextTrackUri.SetBytes(0);
 
-    if (IsActive() && iSessionActive) {
-        StopTrack();
+    TBool shouldStop = (IsActive() && iSessionActive) ? true : false;
+    if (shouldStop) {
+        iPipeline.RemoveAll();
+        if (iTrack != NULL) {
+            iTrack->RemoveRef();
+            iTrack = NULL;
+        }
         CloseServers();
     }
 
     iSessionActive = false;
+    iTransportState = Media::EPipelineStopped;
+    iLock.Signal();
+
+    if (shouldStop) {
+        iPipeline.Stop();
+    }
 }
 
 void SourceRaop::NotifySessionWait()
