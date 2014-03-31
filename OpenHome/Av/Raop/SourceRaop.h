@@ -52,7 +52,6 @@ private:
     void OpenServers();
     void CloseServers();
     void StartNewTrack();
-    void StopTrack();
     void AutoNetAuxChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
     void ActivateIfInactive();
     void DeactivateIfActive();
