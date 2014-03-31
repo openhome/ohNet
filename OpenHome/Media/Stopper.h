@@ -56,12 +56,6 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    Msg* ProcessFlushable(Msg* aMsg);
-    void OkToPlay();
-    Msg* ProcessAudio(MsgAudio* aMsg);
-    void NewStream();
-    void HandleStopped();
-private:
     enum EState
     {
         ERunning
@@ -71,6 +65,15 @@ private:
        ,EStopped
        ,EFlushing
     };
+private:
+    Msg* ProcessFlushable(Msg* aMsg);
+    void OkToPlay();
+    Msg* ProcessAudio(MsgAudio* aMsg);
+    void NewStream();
+    void HandleStopped();
+    void SetState(EState aState);
+    const TChar* State() const;
+    static const TChar* State(EState aState);
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;

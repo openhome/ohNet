@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -20,8 +21,8 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iStreamHandler(NULL)
     , iQuit(false)
 {
-    NewStream();
     iState = EStopped;
+    NewStream();
 }
 
 Stopper::~Stopper()
@@ -31,12 +32,13 @@ Stopper::~Stopper()
 void Stopper::Play()
 {
     AutoMutex a(iLock);
+    LOG(kPipeline, "Stopper::Play(), iState=%s\n", State());
     switch (iState)
     {
     case ERunning:
         break;
     case ERampingDown:
-        iState = ERampingUp;
+        SetState(ERampingUp);
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         // don't change iCurrentRampValue - just start ramp up from whatever value it is already at
         break;
@@ -44,12 +46,12 @@ void Stopper::Play()
         // We're already starting.  No Benefit in allowing another Play request to interrupt this.
         break;
     case EPaused:
-        iState = ERampingUp;
+        SetState(ERampingUp);
         iRemainingRampSize = iRampDuration;
         iSem.Signal();
         break;
     case EStopped:
-        iState = ERunning;
+        SetState(ERunning);
         iSem.Signal();
         break;
     case EFlushing:
@@ -61,6 +63,7 @@ void Stopper::Play()
 void Stopper::BeginPause()
 {
     AutoMutex a(iLock);
+    LOG(kPipeline, "Stopper::BeginPause(), iState=%s\n", State());
     if (iQuit) {
         return;
     }
@@ -69,7 +72,7 @@ void Stopper::BeginPause()
     case ERunning:
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kRampMax;
-        iState = ERampingDown;
+        SetState(ERampingDown);
         break;
     case ERampingDown:
         // We're already pausing.  No Benefit in allowing another Pause request to interrupt this.
@@ -77,7 +80,7 @@ void Stopper::BeginPause()
     case ERampingUp:
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
-        iState = ERampingDown;
+        SetState(ERampingDown);
         break;
     case EPaused:
     case EStopped:
@@ -90,6 +93,8 @@ void Stopper::BeginPause()
 
 void Stopper::BeginStop(TUint aHaltId)
 {
+    AutoMutex a(iLock);
+    LOG(kPipeline, "Stopper::BeginStop(%u), iState=%s\n", aHaltId, State());
     if (iQuit) {
         return;
     }
@@ -99,14 +104,14 @@ void Stopper::BeginStop(TUint aHaltId)
     case ERunning:
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kRampMax;
-        iState = ERampingDown;
+        SetState(ERampingDown);
         break;
     case ERampingDown:
         break;
     case ERampingUp:
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
         // don't change iCurrentRampValue - just start ramp down from whatever value it is already at
-        iState = ERampingDown;
+        SetState(ERampingDown);
         break;
     case EPaused:
         // restart pulling, discarding data until a new stream or our target MsgHalt
@@ -139,6 +144,7 @@ Msg* Stopper::Pull()
         }
         else {
             if (iState == EPaused || iState == EStopped) {
+                LOG(kPipeline, "Stopper::Pull(), waiting, iState=%s\n", State());
                 iSem.Wait();
             }
             msg = (iQueue.IsEmpty()? iUpstreamElement.Pull() : iQueue.Dequeue());
@@ -263,7 +269,7 @@ void Stopper::OkToPlay()
         break;
     case ePlayNo:
         /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
-        iState = EFlushing;
+        SetState(EFlushing);
         iFlushStream = true;
         iHaltPending = true;
         break;
@@ -296,19 +302,19 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
         if (iRemainingRampSize == 0) {
             if (iState == ERampingDown) {
                 if (iTargetHaltId == MsgHalt::kIdInvalid) {
-                    iState = EPaused;
+                    SetState(EPaused);
                     (void)iSem.Clear();
                     iObserver.PipelinePaused();
                 }
                 else {
                     (void)iStreamHandler->TryStop(iTrackId, iStreamId);
-                    iState = ERunning;
+                    SetState(ERunning);
                     iFlushStream = true;
                 }
                 iHaltPending = true;
             }
             else { // iState == ERampingUp
-                iState = ERunning;
+                SetState(ERunning);
             }
         }
         return aMsg;
@@ -321,7 +327,7 @@ void Stopper::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
-    iState = ERunning;
+    SetState(ERunning);
     iCheckedStreamPlayable = false;
     iHaltPending = false;
     iFlushStream = false;
@@ -329,7 +335,47 @@ void Stopper::NewStream()
 
 void Stopper::HandleStopped()
 {
-    iState = EStopped;
+    SetState(EStopped);
     (void)iSem.Clear();
     iObserver.PipelineStopped();
+}
+
+void Stopper::SetState(EState aState)
+{
+    LOG(kPipeline, "Stopper changing state from %s to %s\n", State(), State(aState));
+    iState = aState;
+}
+
+const TChar* Stopper::State() const
+{
+    return State(iState);
+}
+
+const TChar* Stopper::State(EState aState)
+{ // static
+    const TChar* state = NULL;
+    switch (aState)
+    {
+    case ERunning:
+        state = "Running";
+        break;
+    case ERampingDown:
+        state = "RampingDown";
+        break;
+    case ERampingUp:
+        state = "RampingUp";
+        break;
+    case EPaused:
+        state = "Paused";
+        break;
+    case EStopped:
+        state = "Stopped";
+        break;
+    case EFlushing:
+        state = "Flushing";
+        break;
+    default:
+        ASSERTS();
+    }
+    return state;
 }
