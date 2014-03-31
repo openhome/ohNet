@@ -3,43 +3,27 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Media/IdManager.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // PipelineManager
 
-PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TUint aDriverMaxAudioBytes)
+PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, TUint aDriverMaxAudioBytes)
     : iLock("PLMG")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLMG", 1)
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager);
+    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory);
     iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
 
 PipelineManager::~PipelineManager()
 {
-    TUint haltId = MsgHalt::kIdInvalid;
-    iLock.Wait();
-    const TBool waitStop = (iPipelineState != EPipelineStopped);
-    if (waitStop) {
-        haltId = iFiller->Stop();
-    }
-    else {
-        iFiller->StopNoHalt();
-    }
-    iPipeline->RemoveCurrentStream();
-    iLock.Signal();
-    iIdManager->InvalidatePending();
-    if (waitStop) {
-        iPipeline->Stop(haltId);
-        iPipelineStoppedSem.Wait();
-    }
-
     delete iPipeline;
     delete iProtocolManager;
     delete iFiller;
@@ -47,6 +31,21 @@ PipelineManager::~PipelineManager()
     for (TUint i=0; i<iUriProviders.size(); i++) {
         delete iUriProviders[i];
     }
+}
+
+void PipelineManager::Quit()
+{
+    iLock.Wait();
+    const TBool waitStop = (iPipelineState != EPipelineStopped);
+    const TUint haltId = iFiller->Stop();
+    iPipeline->RemoveCurrentStream();
+    iLock.Signal();
+    iIdManager->InvalidatePending();
+    if (waitStop) {
+        iPipeline->Stop(haltId);
+        iPipelineStoppedSem.Wait();
+    }
+    iPipeline->Quit();
 }
 
 void PipelineManager::Add(Codec::CodecBase* aCodec)
@@ -118,6 +117,11 @@ void PipelineManager::Pause()
     iPipeline->Pause();
 }
 
+void PipelineManager::Wait(TUint aFlushId)
+{
+    iPipeline->Wait(aFlushId);
+}
+
 void PipelineManager::Stop()
 {
     const TUint haltId = iFiller->Stop();
@@ -151,26 +155,28 @@ TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsol
     return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
-void PipelineManager::Next()
+TBool PipelineManager::Next()
 {
     if (iMode.Bytes() == 0) {
-        return; // nothing playing or ready to be played so nothing we can advance relative to
+        return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    iFiller->Stop();
-    // I think its safe to invalidate the current track only, leaving the uri provider to invalidate any others
-    // can always revert to an equivalent implementation to Prev() if this proves incorrect
-    iIdManager->InvalidateAt(iTrackId);
-    iFiller->Next(iMode);
+    (void)iFiller->Stop();
+    /* Previously tried using iIdManager->InvalidateAt() to invalidate the current track only.
+       If we're playing a low res track, there is a large window when we'll be playing that but
+       pre-fetching the track to follow it.  InvalidateAt() will fail to clear that following
+       track from the pipeline. */
+    iIdManager->InvalidateAll();
+    return iFiller->Next(iMode);
 }
 
-void PipelineManager::Prev()
+TBool PipelineManager::Prev()
 {
     if (iMode.Bytes() == 0) {
-        return; // nothing playing or ready to be played so nothing we can advance relative to
+        return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iIdManager->InvalidateAll();
-    iFiller->Prev(iMode);
+    return iFiller->Prev(iMode);
 }
 
 TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)

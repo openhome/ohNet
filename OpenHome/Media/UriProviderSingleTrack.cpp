@@ -91,9 +91,7 @@ TBool UriProviderSingleTrack::MovePrevious()
 void UriProviderSingleTrack::DoBegin(TUint aTrackId, TBool aLater)
 {
     iLock.Wait();
-    ASSERT(iTrack != NULL);
-    ASSERT(iTrack->Id() == aTrackId);
-    iIgnoreNext = false;
+    iIgnoreNext = (iTrack == NULL || iTrack->Id() != aTrackId);
     iPlayLater = aLater;
     iLock.Signal();
 }

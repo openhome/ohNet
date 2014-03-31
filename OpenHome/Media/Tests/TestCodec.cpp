@@ -262,7 +262,7 @@ void TestCodecPipelineElementDownstream::Push(Msg* aMsg)
 TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProcessor& aMsgProcessor)
 {
     iInfoAggregator = new TestCodecInfoAggregator();
-    iMsgFactory = new MsgFactory(*iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(*iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 5, 5, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1);
     // iFiller(ProtocolManager) -> iSupply -> iReservoir -> iContainer -> iController -> iElementDownstream(this)
     iFlushIdProvider = new TestCodecFlushIdProvider();
     iElementDownstream = new TestCodecPipelineElementDownstream(aMsgProcessor);
@@ -300,7 +300,8 @@ void TestCodecMinimalPipeline::StartStreaming(const Brx& aUrl)
 TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute)
 {
     ISeeker* seeker = static_cast<ISeeker*>(iController);
-    const TUint handle = seeker->StartSeek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute, *this);
+    TUint handle;
+    seeker->StartSeek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute, *this, handle);
     return (handle != ISeeker::kHandleError);
 }
 
@@ -368,6 +369,12 @@ Msg* MsgProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
 Msg* MsgProcessor::ProcessMsg(MsgFlush* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgFlush\n");
+    aMsg->RemoveRef();
+    return NULL;
+}
+Msg* MsgProcessor::ProcessMsg(MsgWait* aMsg)
+{
+    //LOG(kMedia, ">MsgProcessor::ProcessMsgWait\n");
     aMsg->RemoveRef();
     return NULL;
 }

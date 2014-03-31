@@ -31,6 +31,7 @@ public:
     virtual void SeekRelative(TInt aSeconds) = 0;
     virtual void SeekToTrackId(TUint aId) = 0;
     virtual TBool SeekToTrackIndex(TUint aIndex) = 0;
+    virtual void SetShuffle(TBool aShuffle) = 0;
 };
 
 
@@ -38,7 +39,7 @@ class ProviderPlaylist : public DvProviderAvOpenhomeOrgPlaylist1, private ITrack
 {
     static const TUint kIdArrayUpdateFrequencyMillisecs = 300;
 public:
-    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IShuffler& aShuffler, IRepeater& aRepeater, const Brx& aProtocolInfo);
+    ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, ISourcePlaylist& aSource, ITrackDatabase& aDatabase, IRepeater& aRepeater, const Brx& aProtocolInfo);
     ~ProviderPlaylist();
     void NotifyPipelineState(Media::EPipelineState aState);
     void NotifyTrack(TUint aId);
@@ -82,7 +83,6 @@ private:
     Mutex iLock;
     ISourcePlaylist& iSource;
     ITrackDatabase& iDatabase;
-    IShuffler& iShuffler;
     IRepeater& iRepeater;
     Brn iProtocolInfo;
     Media::EPipelineState iPipelineState;

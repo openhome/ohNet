@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Http.h>
+#include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/PowerManager.h>
@@ -14,16 +15,17 @@
 
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 // RaopDevice
 RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
     , iName(aFriendlyName)
-    , iPort(aDiscoveryPort)
-    , iEndpoint(iPort, aIpAddr)
+    , iEndpoint(aDiscoveryPort, aIpAddr)
     , iMacAddress(aMacAddr)
     , iRegistered(false)
+    , iLock("RADL")
 {
     ASSERT(aMacAddr.Bytes() == 12);
     iName.Replace("");
@@ -40,9 +42,18 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar
     aDvStack.MdnsProvider()->MdnsSetHostName(aHost);
 }
 
+void RaopDevice::SetEndpoint(const Endpoint& aEndpoint)
+{
+    iLock.Wait();
+    iEndpoint.Replace(aEndpoint); // need to re-register after updating this - responsibility of clients
+    iLock.Signal();
+}
+
 void RaopDevice::Register()
 {
+    iLock.Wait();
     if(iRegistered) {
+        iLock.Signal();
         return; // already registered
     }
 
@@ -63,22 +74,26 @@ void RaopDevice::Register()
     iProvider.MdnsAppendTxtRecord(info, "tp", "UDP");
     iProvider.MdnsAppendTxtRecord(info, "vn", "3");
 
-    LOG(kCodec, "RaopDevice::Register name: ");
-    LOG(kCodec, iName);
-    LOG(kCodec, "\n");
+    LOG(kBonjour, "RaopDevice::Register name: ");
+    LOG(kBonjour, iName);
+    LOG(kBonjour, " port: %u, address: %u\n", iEndpoint.Port(), iEndpoint.Address());
 
-    iProvider.MdnsRegisterService(iHandleRaop, iName.PtrZ(), "_raop._tcp", iEndpoint.Address(), iPort, info.PtrZ());
+    iProvider.MdnsRegisterService(iHandleRaop, iName.PtrZ(), "_raop._tcp", iEndpoint.Address(), iEndpoint.Port(), info.PtrZ());
     iRegistered = true;
+    iLock.Signal();
 }
 
 void RaopDevice::Deregister()
 {
+    iLock.Wait();
     if(!iRegistered) {
+        iLock.Signal();
         return;     // not registered
     }
 
     iProvider.MdnsDeregisterService(iHandleRaop);
     iRegistered = false;
+    iLock.Signal();
 }
 
 const Endpoint& RaopDevice::GetEndpoint() const
@@ -93,7 +108,7 @@ const Brx& RaopDevice::MacAddress() const
 
 void RaopDevice::MacAddressOctets(TByte (&aOctets)[6]) const
 {
-    LOG(kMedia, ">RaopDevice::MacAddressOctets\n");
+    LOG(kBonjour, ">RaopDevice::MacAddressOctets\n");
     aOctets[0] = static_cast<TByte>(Ascii::UintHex(Brn(iMacAddress.Ptr(), 2)));
     aOctets[1] = static_cast<TByte>(Ascii::UintHex(Brn(iMacAddress.Ptr()+2, 2)));
     aOctets[2] = static_cast<TByte>(Ascii::UintHex(Brn(iMacAddress.Ptr()+4, 2)));
@@ -101,16 +116,16 @@ void RaopDevice::MacAddressOctets(TByte (&aOctets)[6]) const
     aOctets[4] = static_cast<TByte>(Ascii::UintHex(Brn(iMacAddress.Ptr()+8, 2)));
     aOctets[5] = static_cast<TByte>(Ascii::UintHex(Brn(iMacAddress.Ptr()+10, 2)));
 
-    LOG(kMedia, "RaopDevice::MacAddressOctets ");
+    LOG(kBonjour, "RaopDevice::MacAddressOctets ");
     for (TUint i=0; i<sizeof(aOctets); i++) {
         if (i==sizeof(aOctets)-1) {
-            LOG(kMedia, "%u", aOctets[i]);
+            LOG(kBonjour, "%u", aOctets[i]);
         }
         else {
-            LOG(kMedia, "%u:", aOctets[i]);
+            LOG(kBonjour, "%u:", aOctets[i]);
         }
     }
-    LOG(kMedia, "\n");
+    LOG(kBonjour, "\n");
 }
 
 
@@ -136,8 +151,6 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDi
     iReaderRequest = new ReaderHttpRequest(aEnv, *iReaderBuffer);
     iWriterRequest = new WriterRtspRequest(*iWriterBuffer);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
-
-    iRaopDevice.Register();
 
     iReaderRequest->AddHeader(iHeaderContentLength);
     iReaderRequest->AddHeader(iHeaderContentType);
@@ -326,7 +339,9 @@ void RaopDiscoverySession::Run()
                 KeepAlive();
 
                 const Brx& method = iReaderRequest->Method();
-                LOG(kMedia, "RaopDiscoverySession::Run - Read Method "); LOG(kMedia, method); LOG(kMedia, ", instance %d\n", iInstance);
+                LOG(kMedia, "RaopDiscoverySession::Run - Read Method ");
+                LOG(kMedia, method);
+                LOG(kMedia, ", instance %d\n", iInstance);
                 if(method == RtspMethod::kPost) {
                     Brn data(iReaderBuffer->Read(iHeaderContentLength.ContentLength()));
 
@@ -406,18 +421,17 @@ void RaopDiscoverySession::Run()
 
                     ASSERT(iAudioPort != 0 && iControlPort != 0 && iTimingPort != 0); // make sure ports have been set
                     iWriterResponse->WriteHeader(Brn("Transport"), transResponse);
-                    //iWriterResponse->WriteHeader(Brn("Transport"), Brn("RTP/AVP/UDP;unicast;mode=record;server_port=60400;control_port=60401;timing_port=60402"));
                     iWriterResponse->WriteFlush();
                 }
                 else if(method == RtspMethod::kRecord) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
-                    //iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));  // has no effect on iTunes 
+                    //iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));  // has no effect on iTunes
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
 
                     // activate RAOP source
-                    iDiscovery.NotifyStreamStart(iClientControlPort, iClientTimingPort);
+                    iDiscovery.NotifySessionStart(iClientControlPort, iClientTimingPort);
                     LOG(kMedia, "RaopDiscoverySession::Run - Playing\n");
                 }
                 else if(method == RtspMethod::kSetParameter) {
@@ -471,7 +485,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
-                    iDiscovery.NotifyStreamStart(iClientControlPort, iClientTimingPort); // restart
+                    iDiscovery.NotifySessionWait();
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -479,8 +493,9 @@ void RaopDiscoverySession::Run()
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
                     Deactivate();
+                    iDiscovery.NotifySessionEnd();
                     LOG(kMedia, "RaopDiscoverySession::Run - kTeardown\n");
-                    return;
+                    break;
                 }
             }
             catch (HttpError) {
@@ -502,7 +517,6 @@ void RaopDiscoverySession::Run()
 void RaopDiscoverySession::Close()
 {
     LOG(kMedia, "RaopDiscoverySession::Close iActive = %d, instance %d\n", iActive, iInstance);
-
     // set timeout and deactivate on expiry
     KeepAlive();
 }
@@ -514,10 +528,14 @@ void RaopDiscoverySession::SetListeningPorts(TUint aAudio, TUint aControl, TUint
     iTimingPort = aTiming;
 }
 
+void RaopDiscoverySession::AddObserver(IRaopObserver& /*aObserver*/)
+{
+}
+
 void RaopDiscoverySession::KeepAlive()
 {
     if(iActive) {
-        iDeactivateTimer->FireIn(10000);  // 10s timeout - deactivate of no data received
+        iDeactivateTimer->FireIn(10000);  // 10s timeout - deactivate if no data received
     }
 }
 
@@ -674,10 +692,18 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
-    : iRaopObserver(aObserver)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+    : iEnv(aEnv)
+    , iObserversLock("RDOL")
 {
-    AutoNetworkAdapterRef ref(aEnv, "RaopDiscovery ctor");
+    // NOTE: iRaopDevice is not registered by default
+
+    NetworkAdapterList& adapterList = iEnv.NetworkAdapterList();
+    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
+    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
+    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
+
+    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
     const NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         TIpAddress ipAddr = current->Address();
@@ -686,32 +712,58 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
         ep.AppendAddress(addrBuf);
         LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
 
-        iRaopDiscoveryServer = new SocketTcpServer(aEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
+        iRaopDiscoveryServer = new SocketTcpServer(iEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
         iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aFriendlyName, ipAddr, aMacAddr);
 
         // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
-        iRaopDiscoverySession1 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 1);
+        iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 1);
         iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
 
-        iRaopDiscoverySession2 = new RaopDiscoverySession(aEnv, *this, *iRaopDevice, 2);
+        iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 2);
         iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
-
-        aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
     }
     else {
         LOG(kMedia, "RaopDiscovery::RaopDiscovery no network adapter available on current subnet - not initialising TCP server\n");
     }
+    aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
 }
 
 RaopDiscovery::~RaopDiscovery()
 {
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
+    iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     delete iRaopDiscoveryServer;
     delete iRaopDevice;
 }
 
-void RaopDiscovery::NotifyStreamStart(TUint aControlPort, TUint aTimingPort)
+void RaopDiscovery::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
-    return iRaopObserver.NotifyStreamStart(aControlPort, aTimingPort);
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionStart(aControlPort, aTimingPort);
+        ++it;
+    }
+}
+
+void RaopDiscovery::NotifySessionEnd()
+{
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionEnd();
+        ++it;
+    }
+}
+
+void RaopDiscovery::NotifySessionWait()
+{
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionWait();
+        ++it;
+    }
 }
 
 const Brx& RaopDiscovery::Aeskey()
@@ -738,8 +790,20 @@ void RaopDiscovery::Deactivate()
 {
     LOG(kMedia, "RaopDiscovery::Deactivate\n");
 
+    // deactivate RAOP source
     iRaopDiscoverySession1->Deactivate();
     iRaopDiscoverySession2->Deactivate();
+}
+
+void RaopDiscovery::Enable()
+{
+    iRaopDevice->Register();
+}
+
+void RaopDiscovery::Disable()
+{
+    iRaopDevice->Deregister();
+    Deactivate();
 }
 
 void RaopDiscovery::KeepAlive()
@@ -770,6 +834,12 @@ void RaopDiscovery::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTimin
     iRaopDiscoverySession2->SetListeningPorts(aAudio, aControl, aTiming);
 }
 
+void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
+{
+    AutoMutex a(iObserversLock);
+    iObservers.push_back(&aObserver);
+}
+
 RaopDiscoverySession& RaopDiscovery::ActiveSession()
 {
     if (iRaopDiscoverySession1->Active()) {
@@ -780,6 +850,56 @@ RaopDiscoverySession& RaopDiscovery::ActiveSession()
     }
     else {
         THROW(RaopNoActiveSession);
+    }
+}
+
+void RaopDiscovery::HandleInterfaceChange()
+{
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery::HandleInterfaceChange");
+    NetworkAdapter* current = ref.Adapter();
+
+    // Get current subnet, otherwise choose first from a list
+    if (current == NULL) {
+        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+        if (subnetList->size() > 0) {
+            current = (*subnetList)[0];
+        }
+        else {
+            LOG(kMedia, "RaopDiscovery::HandleInterfaceChange no available subnets\n");
+        }
+        NetworkAdapterList::DestroySubnetList(subnetList);
+    }
+
+    // Recreate server only if we have an adapter to rebind to.
+    if (current != NULL) {
+        AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery::HandleInterfaceChange");
+        const NetworkAdapter* current = ref.Adapter();
+        if (current != NULL) {
+            Deactivate();
+            delete iRaopDiscoveryServer; // iRaopDiscoveryServer owns its sessions
+
+            TIpAddress ipAddr = current->Address();
+
+            // Print the current adapter
+            Endpoint::AddressBuf addrBuf;
+            Endpoint ep(0, ipAddr);
+            ep.AppendAddress(addrBuf);
+            LOG(kMedia, "RaopDiscovery::RaopDiscovery using address %s\n", addrBuf.Ptr());
+
+            // Recreate Discovery server and update Bonjour device.
+            iRaopDiscoveryServer = new SocketTcpServer(iEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
+            iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 1);
+            iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
+
+            iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 2);
+            iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
+
+            ep.SetPort(iRaopDiscoveryServer->Port());
+            iRaopDevice->Deregister();
+            iRaopDevice->SetEndpoint(ep);
+            iRaopDevice->Register();
+        }
     }
 }
 

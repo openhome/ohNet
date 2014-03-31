@@ -25,6 +25,7 @@ public:
     virtual TUint MaxNumPresets() const = 0;
     virtual void BeginSetPresets() = 0;
     virtual void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData) = 0;
+    virtual void ReadPreset(TUint aIndex, Bwx& aUri, Bwx& aMetaData) = 0; // required to enable writers to check for near duplicates
     virtual void ClearPreset(TUint aIndex) = 0;
     virtual void EndSetPresets() = 0;
 };
@@ -66,6 +67,7 @@ public: // from IPresetDatabaseWriter
     TUint MaxNumPresets() const;
     void BeginSetPresets();
     void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData);
+    void ReadPreset(TUint aIndex, Bwx& aUri, Bwx& aMetaData); // required to enable writers to check for near duplicates
     void ClearPreset(TUint aIndex);
     void EndSetPresets();
 private:

@@ -20,7 +20,7 @@ namespace TestFiller {
 class DummyUriProvider : public UriProvider
 {
 public:
-    DummyUriProvider();
+    DummyUriProvider(TrackFactory& aTrackFactory);
     ~DummyUriProvider();
     const Brx& TrackUriByIndex(TUint aIndex) const;
     TUint IdByIndex(TUint aIndex) const;
@@ -33,8 +33,7 @@ private: // from UriProvider
     TBool MovePrevious();
 private:
     static const TInt kNumEntries = 3;
-    TrackFactory* iTrackFactory;
-    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory& iTrackFactory;
     Track* iTracks[kNumEntries];
     TInt iIndex;
     TInt iPendingIndex;
@@ -49,6 +48,7 @@ public:
     TUint StreamId() const;
 private: // from IUriStreamer
     TBool DoStream(Track& aTrack, const Brx& aMode);
+    void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -75,6 +75,7 @@ private: // from ISupply
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
     void OutputFlush(TUint aFlushId);
+    void OutputWait();
     void OutputHalt(TUint aHaltId);
     void OutputQuit();
 private:
@@ -95,6 +96,8 @@ private: // from IPipelineIdTracker
 private:
     Semaphore iTrackAddedSem;
     Semaphore iTrackCompleteSem;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
     Filler* iFiller;
     DummyUriProvider* iUriProvider;
     DummyUriStreamer* iUriStreamer;
@@ -113,15 +116,15 @@ using namespace OpenHome::Media::TestFiller;
 
 // DummyUriProvider
 
-DummyUriProvider::DummyUriProvider()
+DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
     : UriProvider("Dummy")
+    , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
 {
-    iTrackFactory = new TrackFactory(iInfoAggregator, 3);
-    iTracks[0] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL, false);
-    iTracks[1] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL, false);
-    iTracks[2] = iTrackFactory->CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL, false);
+    iTracks[0] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL, false);
+    iTracks[1] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL, false);
+    iTracks[2] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL, false);
 }
 
 DummyUriProvider::~DummyUriProvider()
@@ -129,7 +132,6 @@ DummyUriProvider::~DummyUriProvider()
     iTracks[0]->RemoveRef();
     iTracks[1]->RemoveRef();
     iTracks[2]->RemoveRef();
-    delete iTrackFactory;
 }
 
 const Brx& DummyUriProvider::TrackUriByIndex(TUint aIndex) const
@@ -239,6 +241,10 @@ TBool DummyUriStreamer::DoStream(Track& aTrack, const Brx& aMode)
     return true;
 }
 
+void DummyUriStreamer::Interrupt(TBool /*aInterrupt*/)
+{
+}
+
 EStreamPlay DummyUriStreamer::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
@@ -309,6 +315,11 @@ void DummySupply::OutputFlush(TUint /*aFlushId*/)
     ASSERTS();
 }
 
+void DummySupply::OutputWait()
+{
+    ASSERTS();
+}
+
 void DummySupply::OutputHalt(TUint /*aHaltId*/)
 {
 }
@@ -325,9 +336,10 @@ SuiteFiller::SuiteFiller()
     , iTrackAddedSem("TASM", 0)
     , iTrackCompleteSem("TCSM", 0)
 {
+    iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this);
-    iUriProvider = new DummyUriProvider();
+    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory);
+    iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
     iFiller->Start(*iUriStreamer);
@@ -339,6 +351,7 @@ SuiteFiller::~SuiteFiller()
     delete iFiller;
     delete iUriProvider;
     delete iDummySupply;
+    delete iTrackFactory;
 }
 
 void SuiteFiller::Test()
@@ -379,7 +392,7 @@ void SuiteFiller::Test()
     trackId = iTrackId;
 
     // Stop/Next during second track.  Once track completes IUriStreamer should be passed uri for third track
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
     // test for invalid Next() arg
     TEST(!iFiller->Next(Brn("InvalidMode")));
@@ -399,7 +412,7 @@ void SuiteFiller::Test()
     trackId = iTrackId;
 
     // Stop/Prev during third track.  Once track completes IUriStreamer should be passed uri for second track
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
     TEST(iFiller->Prev(iUriProvider->Mode()));
     iTrackAddedSem.Wait();
@@ -439,7 +452,7 @@ void SuiteFiller::Test()
     TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(!iPlayNow);
-    iFiller->Stop();
+    (void)iFiller->Stop();
     iTrackCompleteSem.Signal();
 }
 

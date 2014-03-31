@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Skipper.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 
 using namespace OpenHome;
@@ -10,7 +11,7 @@ Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iLock("SKIP")
-    , iState(ERunning)
+    , iState(eStarting)
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kRampMax)
@@ -87,7 +88,7 @@ Msg* Skipper::ProcessMsg(MsgHalt* aMsg)
 Msg* Skipper::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        ASSERT(iState == EFlushing);
+        ASSERT(iState == eFlushing);
         aMsg->RemoveRef();
         iTargetFlushId = MsgFlush::kIdInvalid;
         return NULL;
@@ -95,19 +96,30 @@ Msg* Skipper::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* Skipper::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Skipper::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    ASSERT(iState == ERunning);
+    iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
     return aMsg;
 }
 
 Msg* Skipper::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    if (iState == eStarting) {
+        iState = eRunning;
+    }
     return ProcessAudio(aMsg);
 }
 
 Msg* Skipper::ProcessMsg(MsgSilence* aMsg)
 {
+    if (iState == eStarting) {
+        iState = eRunning;
+    }
     return ProcessAudio(aMsg);
 }
 
@@ -125,11 +137,11 @@ Msg* Skipper::ProcessMsg(MsgQuit* aMsg)
 TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
 {
     EState state = iState;
-    if (!aRampDown) {
-        StartFlushing(false); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
+    if (!aRampDown || iState == eStarting) {
+        StartFlushing(iState==eStarting); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
     }
-    else if (iState == ERunning) {
-        iState = ERamping;
+    else if (iState == eRunning) {
+        iState = eRamping;
         iRemainingRampSize = iRampDuration;
         iCurrentRampValue = Ramp::kRampMax;
     }
@@ -142,13 +154,13 @@ void Skipper::StartFlushing(TBool aSendHalt)
         iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
                                                         that any subsequent break in audio is expected */
     }
-    iState = EFlushing;
+    iState = eFlushing;
     iTargetFlushId = (iStreamHandler==NULL? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iTrackId, iStreamId));
 }
 
 Msg* Skipper::ProcessFlushable(Msg* aMsg)
 {
-    if (iState == EFlushing) {
+    if (iState == eFlushing) {
         aMsg->RemoveRef();
         return NULL;
     }
@@ -157,7 +169,7 @@ Msg* Skipper::ProcessFlushable(Msg* aMsg)
 
 Msg* Skipper::ProcessAudio(MsgAudio* aMsg)
 {
-    if (iState == ERamping) {
+    if (iState == eRamping) {
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
             split = aMsg->Split(iRemainingRampSize);
@@ -183,5 +195,5 @@ void Skipper::NewStream()
 {
     iRemainingRampSize = 0;
     iCurrentRampValue = Ramp::kRampMax;
-    iState = ERunning;
+    iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
 }

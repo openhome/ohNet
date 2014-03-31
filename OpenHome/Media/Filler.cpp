@@ -2,6 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
@@ -28,7 +29,7 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
+Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory)
     : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
@@ -41,6 +42,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker)
     , iQuit(false)
     , iNextHaltId(MsgHalt::kIdNone + 1)
 {
+    iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
 }
 
 Filler::~Filler()
@@ -50,6 +52,7 @@ Filler::~Filler()
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
+    iNullTrack->RemoveRef();
 }
 
 void Filler::Add(UriProvider& aUriProvider)
@@ -83,20 +86,16 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 
 TUint Filler::Stop()
 {
-    iLock.Wait();
-    iStopped = true;
-    const TUint id = ++iNextHaltId;
-    iSendHalt = true;
+    AutoMutex a(iLock);
+    TUint haltId = MsgHalt::kIdNone;
+    if (!iStopped) {
+        haltId = ++iNextHaltId;
+        iStopped = true;
+        iSendHalt = true;
+    }
+    iUriStreamer->Interrupt(true);
     Signal();
-    iLock.Signal();
-    return id;
-}
-
-void Filler::StopNoHalt()
-{
-    iLock.Wait();
-    iStopped = true;
-    iLock.Signal();
+    return haltId;
 }
 
 TBool Filler::Next(const Brx& aMode)
@@ -180,12 +179,19 @@ void Filler::Run()
         iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
         mode.Replace(iActiveUriProvider->Mode());
         if (iTrackPlayStatus == ePlayNo) {
-            iSupply.OutputHalt(iStopped? iNextHaltId : MsgHalt::kIdNone);
+            iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
+            iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
+            iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
+            if (iStopped) {
+                iSupply.OutputHalt(iNextHaltId);
+            }
             iSendHalt = false;
-            iLock.Signal();
             iStopped = true;
+            iLock.Signal();
         }
         else {
+            iUriStreamer->Interrupt(false); // FIXME - this could incorrectly over-ride a call to Interrupt() that was scheduled between Wait() and iLock being acquired
+            ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
             iLock.Signal();
             ASSERT(iTrack != NULL);
             (void)iUriStreamer->DoStream(*iTrack, mode);
@@ -195,39 +201,78 @@ void Filler::Run()
 
 void Filler::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
-    iTrackId = aTrackId;
-    iSupply.OutputTrack(aTrack, aTrackId, aMode);
+    if (!iQuit) {
+        iTrackId = aTrackId;
+        iSupply.OutputTrack(aTrack, aTrackId, aMode);
+    }
 }
 
 void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
 {
-    iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
-    iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
+    if (!iQuit) {
+        iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
+        iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
+    }
 }
 
 void Filler::OutputData(const Brx& aData)
 {
-    iSupply.OutputData(aData);
+    if (!iQuit) {
+        iSupply.OutputData(aData);
+    }
 }
 
 void Filler::OutputMetadata(const Brx& aMetadata)
 {
-    iSupply.OutputMetadata(aMetadata);
+    if (!iQuit) {
+        iSupply.OutputMetadata(aMetadata);
+    }
 }
 
 void Filler::OutputFlush(TUint aFlushId)
 {
-    iSupply.OutputFlush(aFlushId);
+    if (!iQuit) {
+        iSupply.OutputFlush(aFlushId);
+    }
+}
+
+void Filler::OutputWait()
+{
+    if (!iQuit) {
+        iSupply.OutputWait();
+    }
 }
 
 void Filler::OutputHalt(TUint aHaltId)
 {
-    iSupply.OutputHalt(aHaltId);
+    if (!iQuit) {
+        iSupply.OutputHalt(aHaltId);
+    }
 }
 
 void Filler::OutputQuit()
 {
-    iQuit = true;
-    iSupply.OutputQuit();
-    Signal();
+    if (!iQuit) {
+        iQuit = true;
+        iSupply.OutputQuit();
+        Signal();
+    }
+}
+
+
+// Filler::NullTrackStreamHandler
+
+EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    return ePlayLater;
+}
+
+TUint Filler::NullTrackStreamHandler::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    return MsgFlush::kIdInvalid;
+}
+
+TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    return MsgFlush::kIdInvalid;
 }

@@ -11,9 +11,13 @@
 
 namespace OpenHome {
     class Timer;
+namespace Av {
+    class MediaPlayer;
+}
 namespace Media {
 
 class SocketUdpServer;
+class UdpServerManager;
 
 class RaopAudio
 {
@@ -32,7 +36,6 @@ public:
     void SetMute();
 private:
     SocketUdpServer& iServer;
-    UdpReader iSocketReader;
     Bws<kMaxReadBufferBytes> iDataBuffer;
     Bws<kMaxReadBufferBytes> iAudio;
     Bws<sizeof(AES_KEY)> iAeskey;
@@ -52,7 +55,7 @@ public:
     RaopControl(Environment& aEnv, SocketUdpServer& aServer);
     ~RaopControl();
     void DoInterrupt();
-    void Reset();
+    void Reset(TUint aClientPort);
     void Time(TUint& aSenderSkew, TUint& aLatency);
     void RequestResend(TUint aPacketId, TUint aPackets);
     void GetResentData(Bwx& aData, TUint16 aCount);
@@ -63,8 +66,8 @@ private:
     void TimerExpired();
 private:
     Endpoint iEndpoint;
+    TUint iClientPort;
     SocketUdpServer& iServer;
-    UdpReader iSocketReader;
     Srs<kMaxReadBufferBytes> iReceive;
     Bws<kMaxReadBufferBytes> iResentData;
     ThreadFunctor* iThreadControl;
@@ -78,26 +81,25 @@ private:
     TBool iExit;
 };
 
-//class RaopTiming
-//{
-//    static const TUint kMaxReadBufferBytes = 1000;
-//public:
-//    RaopTiming(SocketUdpServer& aServer);
-//private:
-//    SocketUdpServer iUdpServer;
-//    Bws<kMaxReadBufferBytes> iDataBuffer;
-//};
-
+// NOTE: there are three channels to monitor:
+// - Audio
+// - Control
+// - Timing
+// However, the timing channel was never monitored in the previous codebase,
+// so no RaopTiming class exists here.
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint aTimingId);
+    ProtocolRaop(Environment& aEnv, Av::IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
-public:
-    void DoInterrupt();
     TBool Active();
     void Deactivate();
     void Close();
+    TUint SendFlush();
+public:
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd();
+    void NotifySessionWait();
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
@@ -106,14 +108,14 @@ private:
     void StartStream();
     void OutputAudio(const Brn &aPacket);
     void OutputContainer(const Brn &aFmtp);
+    void DoInterrupt();
 private:
     static const TUint kMaxReadBufferBytes = 1500;
 
-    IRaopDiscovery& iDiscovery;
+    Av::IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
-    //RaopTiming iRaopTiming;
 
     Bws<kMaxReadBufferBytes> iResentData;
 
@@ -121,7 +123,10 @@ private:
     Bws<16> iAesiv;
     TUint iStreamId;
     TUint iNextFlushId;
+    TBool iActive;
+    TBool iWaiting;
     TBool iStopped;
+    Mutex iLockRaop;
 };
 
 };  // namespace Media

@@ -32,7 +32,7 @@ private: // from SuiteUnitTest
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from ISeeker
-    TUint StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver);
+    void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -44,6 +44,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -61,6 +62,7 @@ private:
        ,EMsgSilence
        ,EMsgHalt
        ,EMsgFlush
+       ,EMsgWait
        ,EMsgQuit
     };
 private:
@@ -138,7 +140,7 @@ SuiteSeeker::~SuiteSeeker()
 void SuiteSeeker::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1);
     iSeeker = new Seeker(*iMsgFactory, *this, *this, kRampDuration);
     iSeekResponseThread = new ThreadFunctor("SeekResponse", MakeFunctor(*this, &SuiteSeeker::SeekResponseThread));
     iSeekResponseThread->Start();
@@ -183,13 +185,12 @@ EStreamPlay SuiteSeeker::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayNo;
 }
 
-TUint SuiteSeeker::StartSeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSecondsAbsolute, ISeekObserver& aObserver)
+void SuiteSeeker::StartSeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     iSeekSeconds = aSecondsAbsolute;
     iSeekObserver = &aObserver;
-    TUint ret = ++iSeekHandle;
+    aHandle = ++iSeekHandle;
     iSeekResponseThread->Signal();
-    return ret;
 }
 
 TUint SuiteSeeker::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -241,6 +242,12 @@ Msg* SuiteSeeker::ProcessMsg(MsgHalt* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgFlush* aMsg)
 {
     iLastPulledMsg = EMsgFlush;
+    return aMsg;
+}
+
+Msg* SuiteSeeker::ProcessMsg(MsgWait* aMsg)
+{
+    iLastPulledMsg = EMsgWait;
     return aMsg;
 }
 
@@ -371,6 +378,7 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     iPendingMsgs.push_back(CreateTrack());
 
@@ -382,6 +390,7 @@ void SuiteSeeker::TestAllMsgsPassWhileNotSeeking()
     PullNext(EMsgSilence);
     PullNext(EMsgHalt);
     PullNext(EMsgFlush);
+    PullNext(EMsgWait);
     PullNext(EMsgQuit);
     PullNext(EMsgTrack);
 }
@@ -467,6 +476,8 @@ void SuiteSeeker::TestRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -484,6 +495,8 @@ void SuiteSeeker::TestRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -520,6 +533,8 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 
@@ -537,6 +552,8 @@ void SuiteSeeker::TestNoRampSeekerAccepts()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     PullNext(EMsgFlush);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
 

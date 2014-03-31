@@ -25,6 +25,7 @@ public:
     Endpoint Sender() const;
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Close();
+    void Interrupt(TBool aInterrupt);
 public: // from IReaderSource
     void Read(Bwx& aBuffer);
     void ReadFlush();

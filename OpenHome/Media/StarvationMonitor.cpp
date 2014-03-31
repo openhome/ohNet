@@ -231,6 +231,11 @@ void StarvationMonitor::ProcessMsgIn(MsgFlush* /*aMsg*/)
     ASSERTS(); // don't expect flushes to propogate this far down the pipeline
 }
 
+void StarvationMonitor::ProcessMsgIn(MsgWait* /*aMsg*/)
+{
+    ASSERTS(); // don't expect MsgWait to propogate this far down the pipeline
+}
+
 void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
     iLock.Wait();

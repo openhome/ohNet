@@ -21,6 +21,7 @@
 
 #include <array>
 #include <limits.h>
+#include <string.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -32,6 +33,15 @@ using namespace OpenHome::Configuration;
 namespace OpenHome {
 namespace Av {
 namespace TestPlaylist {
+
+class DummyAsyncOutput : private IAsyncOutput
+{
+public:
+    void LogError(IAsync& aAsync);
+    virtual ~DummyAsyncOutput() {}
+private:
+    void Output(const TChar* aKey, const TChar* aValue);
+};
 
 class DummyDriver : public Thread, private IMsgProcessor
 {
@@ -53,6 +63,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
     Msg* ProcessMsg(MsgFlush* aMsg);
+    Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgDecodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
     Msg* ProcessMsg(MsgSilence* aMsg);
@@ -74,8 +85,9 @@ private:
     
 class SuitePlaylist : public SuiteUnitTest, private IPipelineObserver
 {
-    static const TUint kNumTracks = 5;
+    static const TUint kNumTracks = 4;
     static const TUint kDriverMaxJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TChar* kFmtTone;
 public:
     SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack);
     ~SuitePlaylist();
@@ -92,9 +104,8 @@ private:
     void TransportStateRemainsPlayingAcrossTracks();
     void NextInterruptsCurrentTrack();
     void PlayCompleteList();
-    void SeekIdPlay();
-    void SeekIdPrevPlay();
-    void SeekIdPlayPrev();
+    void SeekId();
+    void SeekIdPrev();
     void SeekIndexValid();
     void SeekIndexInvalid();
     void DeletePlaying();
@@ -123,6 +134,7 @@ private:
     EPipelineState iTransportState;
     TUint iTransportStateCount[EPipelineStateCount];
     Semaphore iTimeSem;
+    Semaphore iStoppedSem;
 };
 
 } // namespace TestPlaylist
@@ -146,6 +158,18 @@ Test cases:
     - Play then DeleteAll.  Check TransportState changes to ??? within Stopper + StarvationMonitor bounds
     - Seek to last track.  Add new track after it when we're ~2secs from the end.  Check this new track is played.
 */
+
+// DummyAsyncOutput
+
+void DummyAsyncOutput::LogError(IAsync& aAsync)
+{
+    aAsync.Output(*this);
+}
+
+void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
+{
+}
+
 
 // DummyDriver
 
@@ -262,6 +286,12 @@ Msg* DummyDriver::ProcessMsg(MsgFlush* /*aMsg*/)
     return NULL;
 }
 
+Msg* DummyDriver::ProcessMsg(MsgWait* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
 Msg* DummyDriver::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERT(aMsg->StreamInfo().BitDepth() == 16); // ProcessMsg for MsgPlayable will need to change if this isn't true
@@ -313,20 +343,22 @@ Msg* DummyDriver::ProcessMsg(MsgQuit* aMsg)
 
 // SuitePlaylist
 
+const TChar* SuitePlaylist::kFmtTone = "tone://constant-%u.wav?bitdepth=16&samplerate=44100&pitch=50&channels=1&duration=5";
+
 SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     : SuiteUnitTest("Playlist")
     , iDeviceDisabled("TPLY", 0)
     , iTrackChanged("TPLY", 0)
     , iCpStack(aCpStack)
     , iDvStack(aDvStack)
-    , iTimeSem("TPLY", 0)
+    , iTimeSem("TPL1", 0)
+    , iStoppedSem("TPL2", 0)
 {
     AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks), "TransportStateRemainsPlayingAcrossTracks");
     AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack), "NextInterruptsCurrentTrack");
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayCompleteList), "PlayCompleteList");
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlay), "SeekIdPlay");
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevPlay), "SeekIdPrevPlay");
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPlayPrev), "SeekIdPlayPrev");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekId), "SeekId");
+    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrev), "SeekIdPrev");
     AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexValid), "SeekIndexValid");
     AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid), "SeekIndexInvalid");
     AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying), "DeletePlaying");
@@ -371,22 +403,25 @@ void SuitePlaylist::Setup()
     iProxy = new CpProxyAvOpenhomeOrgPlaylist1(*cpDevice);
     cpDevice->RemoveRef(); // iProxy will have claimed a reference to the device so no need for us to hang onto another
 
-    TUint after = Track::kIdNone;
-    Bws<128> tone;
-    for (TUint i=0; i<kNumTracks; i++) {
-        tone.SetBytes(0);
-        tone.AppendPrintf("tone://constant-%u.wav?bitdepth=16&samplerate=44100&pitch=50&channels=1&duration=5", i+1);
-        iProxy->SyncInsert(after, tone, Brx::Empty(), iTrackIds[i]);
-        after = iTrackIds[i];
-    }
     iCurrentTrackId = Track::kIdNone;
     iTrackCount = 0;
     iTransportState = EPipelineStateCount;
     for (TInt i=0; i<EPipelineStateCount; i++) {
         iTransportStateCount[i] = 0;
     }
+
+    iStoppedSem.Clear();
+    TUint after = Track::kIdNone;
+    Bws<128> tone;
+    for (TUint i=0; i<kNumTracks; i++) {
+        tone.SetBytes(0);
+        tone.AppendPrintf(kFmtTone, i+1);
+        iProxy->SyncInsert(after, tone, Brx::Empty(), iTrackIds[i]);
+        after = iTrackIds[i];
+    }
     iTrackChanged.Clear();
     iTimeSem.Clear();
+    iStoppedSem.Wait(); // wait for initial Track to make it as far as the Stopper
 }
 
 void SuitePlaylist::TearDown()
@@ -394,8 +429,9 @@ void SuitePlaylist::TearDown()
     delete iProxy;
     iDevice->SetDisabled(MakeFunctor(*this, &SuitePlaylist::Disabled));
     iDeviceDisabled.Wait();
-    delete iMediaPlayer;
+    iMediaPlayer->Quit();
     delete iDriver;
+    delete iMediaPlayer;
     delete iConfigRamStore;
     delete iRamStore;
     delete iDevice;
@@ -424,12 +460,16 @@ void SuitePlaylist::NotifyPipelineState(EPipelineState aState)
     Log::Print("NotifyPipelineState - %s\n", state);*/
     iTransportState = aState;
     iTransportStateCount[aState]++;
+    if (aState == EPipelineStopped) {
+        iStoppedSem.Signal();
+    }
 }
 
 void SuitePlaylist::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
     //Log::Print("NotifyTrack: id=%u\n", aTrack.Id());
     iCurrentTrackId = aTrack.Id();
+    iTrackCount++;
 }
 
 void SuitePlaylist::NotifyMetaText(const Brx& /*aText*/)
@@ -444,8 +484,6 @@ void SuitePlaylist::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSeconds
 
 void SuitePlaylist::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
-    // update track counter here as a MsgTrack going down the pipeline doesn't guarantee that audio will follow
-    iTrackCount++;
 }
 
 void SuitePlaylist::TransportStateRemainsPlayingAcrossTracks()
@@ -453,15 +491,18 @@ void SuitePlaylist::TransportStateRemainsPlayingAcrossTracks()
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
     iProxy->SyncPlay();
     iTrackChanged.Wait();
+    TUint transportStateCount[EPipelineStateCount];
+    (void)memcpy(transportStateCount, iTransportStateCount, sizeof(transportStateCount));
     TEST(iCurrentTrackId == iTrackIds[0]);
+    TEST(iTransportState == EPipelinePlaying);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iTrackChanged.Wait();
     TEST(iCurrentTrackId == iTrackIds[1]);
     TEST(iTransportState == EPipelinePlaying);
-    TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
+    TEST(iTransportStateCount[EPipelinePlaying] == transportStateCount[EPipelinePlaying]);
+    TEST(iTransportStateCount[EPipelinePaused] == transportStateCount[EPipelinePaused]);
+    TEST(iTransportStateCount[EPipelineStopped] == transportStateCount[EPipelineStopped]);
+    TEST(iTransportStateCount[EPipelineBuffering] == transportStateCount[EPipelineBuffering]);
 }
 
 void SuitePlaylist::NextInterruptsCurrentTrack()
@@ -480,74 +521,53 @@ void SuitePlaylist::NextInterruptsCurrentTrack()
     //TEST(iDriver->Jiffies() < ...  // FIXME
     TEST(iCurrentTrackId == iTrackIds[1]);
     TEST(iTransportState == EPipelinePlaying);
-    TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::PlayCompleteList()
 {
     iProxy->SyncPlay();
-    for (TUint i=0; i<kNumTracks; i++) {
+    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
+    iTrackChanged.Wait();
+    TUint transportStateCount[EPipelineStateCount];
+    (void)memcpy(transportStateCount, iTransportStateCount, sizeof(transportStateCount));
+    TEST(iCurrentTrackId == iTrackIds[0]);
+    for (TUint i=1; i<kNumTracks; i++) {
         iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), i+1);
         iTrackChanged.Wait();
         TEST(iCurrentTrackId == iTrackIds[i]);
     }
     TEST(iTransportState == EPipelinePlaying);
-    TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
+    TEST(iTransportStateCount[EPipelinePlaying] == transportStateCount[EPipelinePlaying]);
+    TEST(iTransportStateCount[EPipelinePaused] == transportStateCount[EPipelinePaused]);
+    TEST(iTransportStateCount[EPipelineStopped] == transportStateCount[EPipelineStopped]);
+    TEST(iTransportStateCount[EPipelineBuffering] == transportStateCount[EPipelineBuffering]);
 }
 
-void SuitePlaylist::SeekIdPlay()
+void SuitePlaylist::SeekId()
 {
     iProxy->SyncSeekId(iTrackIds[1]);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
-    iProxy->SyncPlay();
     iTrackChanged.Wait();
     TEST(iCurrentTrackId == iTrackIds[1]);
-    TEST(iTrackCount == 1);
+    TEST(iTrackCount == 2);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
-void SuitePlaylist::SeekIdPrevPlay()
+void SuitePlaylist::SeekIdPrev()
 {
     iProxy->SyncSeekId(iTrackIds[1]);
+    while (iCurrentTrackId != iTrackIds[1]) {
+        Thread::Sleep(1); /* Lazy poll until SeekId takes effect
+                             Without this, we don't know whether we'll need to call SyncPlay() after SyncPrevious() */
+    }
     iProxy->SyncPrevious();
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
-    iProxy->SyncPlay();
     iTrackChanged.Wait();
     TEST(iCurrentTrackId == iTrackIds[0]);
-    TEST(iTrackCount >= 1); // SeekId may result in iTrackIds[1] being pre-fetched with Track & Stream being notified
+    TEST(iTrackCount == 3);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
-}
-
-void SuitePlaylist::SeekIdPlayPrev()
-{
-    iProxy->SyncSeekId(iTrackIds[1]);
-    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
-    iProxy->SyncPlay();
-    iTrackChanged.Wait();
-    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
-    iProxy->SyncPrevious();
-    iTrackChanged.Wait();
-    TEST(iCurrentTrackId == iTrackIds[0]);
-    TEST(iTrackCount >= 2); // can't guarantee that iTracks[2] doesn't start before we call SyncPrevious()
-    TEST(iTransportState == EPipelinePlaying);
-    TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::SeekIndexValid()
@@ -556,17 +576,18 @@ void SuitePlaylist::SeekIndexValid()
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 2);
     iTrackChanged.Wait();
     TEST(iCurrentTrackId == iTrackIds[1]);
-    TEST(iTrackCount == 1);
+    TEST(iTrackCount == 2);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::SeekIndexInvalid()
 {
-    iProxy->SyncSeekIndex(100);
+    try {
+        iProxy->SyncSeekIndex(100);
+        TEST(false);
+    }
+    catch (ProxyError&) {}
     TEST(true);
 }
 
@@ -588,9 +609,6 @@ void SuitePlaylist::DeletePlaying()
     TEST(iTrackCount == 2);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::PlayNextDelete()
@@ -607,9 +625,6 @@ void SuitePlaylist::PlayNextDelete()
     TEST(iCurrentTrackId == iTrackIds[2]);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::SeekIdPrevDelete()
@@ -627,9 +642,6 @@ void SuitePlaylist::SeekIdPrevDelete()
     TEST(iCurrentTrackId == iTrackIds[0]);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::PlayDeleteAll()
@@ -642,11 +654,8 @@ void SuitePlaylist::PlayDeleteAll()
         // lazy way of waiting for the playing track to ramp down and the pipeline to actually stop
         Thread::Sleep(50);
     }
-    TEST(iTransportState == EPipelineStopped);
+    //TEST(iTransportState == EPipelineStopped);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 1);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::PlayDeleteAllPlay()
@@ -656,13 +665,15 @@ void SuitePlaylist::PlayDeleteAllPlay()
     iTimeSem.Wait();
     iProxy->SyncDeleteAll();
     iProxy->SyncPlay();
-    iDriver->PullTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged));
-    iTrackChanged.Wait();
-    TEST(iTransportState == EPipelineStopped);
+    while (iTransportState != EPipelineStopped) {
+        // lazy way of waiting for the playing track to ramp down and the pipeline to actually stop
+        Thread::Sleep(50);
+    }
+    //TEST(iTransportState == EPipelineStopped);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
     TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 1);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
+    TEST(iTransportStateCount[EPipelineStopped] == 2);
+    TEST(iTransportStateCount[EPipelineBuffering] == 2);
 }
 
 void SuitePlaylist::AddTrackJustBeforeCompletingPlaylist()
@@ -679,18 +690,15 @@ void SuitePlaylist::AddTrackJustBeforeCompletingPlaylist()
     iTimeSem.Wait(); // 2-3s into final track in the playlist
 
     Bws<128> tone;
-    tone.AppendPrintf("tone://constant-%u.wav?bitdepth=16&samplerate=44100&pitch=50&channels=1&duration=5", kNumTracks+1);
+    tone.AppendPrintf(kFmtTone, kNumTracks+1);
     TUint trackId;
     iProxy->SyncInsert(iTrackIds[kNumTracks-1], tone, Brx::Empty(), trackId);
     iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), kNumTracks+1);
     iTrackChanged.Wait();
-    TEST(iCurrentTrackId == kNumTracks+1);
+    TEST(iCurrentTrackId == trackId);
     TEST(iTrackCount == kNumTracks+1);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 0);
-    TEST(iTransportStateCount[EPipelineBuffering] == 1);
 }
 
 void SuitePlaylist::TrackChanged()
@@ -706,7 +714,16 @@ void SuitePlaylist::Disabled()
 
 void TestPlaylist(CpStack& aCpStack, DvStack& aDvStack)
 {
+    DummyAsyncOutput errorSuppressor;
+    InitialisationParams* initParams = aDvStack.Env().InitParams();
+    FunctorAsync oldAsyncErrorHandler = initParams->AsyncErrorHandler();
+    initParams->SetAsyncErrorHandler(MakeFunctorAsync(errorSuppressor, &DummyAsyncOutput::LogError));
+    /* TestFramework handler is only required for TEST_THROWS(..., AssertionFailed).
+       We don't use that; the TF handler obfuscates all other assertion failures so is better disabled. */
+    //AssertHandler assertHandler = SetAssertHandler(AssertHandlerDefault);
     Runner runner("Playlist tests\n");
     runner.Add(new SuitePlaylist(aCpStack, aDvStack));
     runner.Run();
+    initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
+    //(void)SetAssertHandler(assertHandler);
 }

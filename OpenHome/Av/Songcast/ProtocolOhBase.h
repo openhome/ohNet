@@ -40,8 +40,12 @@ protected:
     void Send(TUint aType);
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
+protected: // from Media::Protocol
+    void Interrupt(TBool aInterrupt);
 private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri);
+private: // from IStreamHandler
+    Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
     void CurrentSubnetChanged();
     void RepairReset();

@@ -49,12 +49,14 @@ private: // from Media::IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
-    void DoPlay();
+    void EnsureActive();
+    void UriChanged(const Brx& aUri);
     void ConfigRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ConfigNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void UpdateSenderName();
 private:
     Mutex iLock;
+    Mutex iActivationLock;
     Media::PipelineManager& iPipeline;
     ZoneHandler* iZoneHandler;
     ProviderReceiver* iProviderReceiver;
@@ -65,7 +67,9 @@ private:
     Bws<ZoneHandler::kMaxZoneBytes> iZone;
     Media::BwsTrackUri iTrackUri;
     Media::BwsTrackMetaData iTrackMetadata;
+    TUint iTrackId;
     TBool iPlaying;
+    TBool iNoPipelinePrefetchOnActivation;
     Configuration::ConfigText* iConfigRoom;
     TUint iConfigRoomSubscriberId;
     Configuration::ConfigText* iConfigName;
@@ -98,9 +102,12 @@ const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
 SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
     : Source("Songcast", "Receiver")
-    , iLock("SRCV")
+    , iLock("SRX1")
+    , iActivationLock("SRX2")
     , iPipeline(aMediaPlayer.Pipeline())
+    , iTrackId(Track::kIdNone)
     , iPlaying(false)
+    , iNoPipelinePrefetchOnActivation(false)
 {
     Environment& env = aMediaPlayer.Env();
     DvDeviceStandard& device = aMediaPlayer.Device();
@@ -147,23 +154,30 @@ SourceReceiver::~SourceReceiver()
 void SourceReceiver::Activate()
 {
     iActive = true;
+    if (iNoPipelinePrefetchOnActivation) {
+        iPipeline.RemoveAll();
+    }
+    else {
+        iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+    }
 }
 
 void SourceReceiver::Deactivate()
 {
     iProviderReceiver->NotifyPipelineState(EPipelineStopped);
+    iZoneHandler->ClearCurrentSenderUri();
+    iPlaying = false;
     Source::Deactivate();
 }
 
 void SourceReceiver::Play()
 {
-    if (!IsActive()) {
-        DoActivate();
-    }
+    EnsureActive();
     AutoMutex a(iLock);
     iPlaying = true;
     if (iTrackUri.Bytes() > 0) {
-        DoPlay();
+        iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+        iPipeline.Play();
     }
 }
 
@@ -171,12 +185,13 @@ void SourceReceiver::Stop()
 {
     iLock.Wait();
     iPlaying = false;
-    iLock.Signal();
     iPipeline.Stop();
+    iLock.Signal();
 }
 
 void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
+    EnsureActive();
     AutoMutex a(iLock);
     iUri.Replace(aUri);
     // FIXME - may later want to handle a 'preset' scheme to allow presets to be selected from UI code
@@ -196,7 +211,7 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
     }
     else {
         iZone.Replace(Brx::Empty());
-        iTrackUri.Replace(aUri);
+        UriChanged(aUri);
     }
     iTrackMetadata.Replace(aMetadata);
 }
@@ -205,10 +220,7 @@ void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
 {
     AutoMutex a(iLock);
     if (aZone == iZone && aUri != iTrackUri) {
-        iTrackUri.Replace(aUri);
-        if (iPlaying) {
-            DoPlay();
-        }
+        UriChanged(aUri);
     }
 }
 
@@ -219,7 +231,7 @@ void SourceReceiver::NotifyPresetInfo(TUint /*aPreset*/, const Brx& /*aMetadata*
 
 void SourceReceiver::NotifyPipelineState(EPipelineState aState)
 {
-    if (iActive) {
+    if (IsActive()) {
         iProviderReceiver->NotifyPipelineState(aState);
     }
     iSender->NotifyPipelineState(aState);
@@ -241,13 +253,32 @@ void SourceReceiver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
 }
 
-void SourceReceiver::DoPlay()
+void SourceReceiver::EnsureActive()
 {
+    AutoMutex a(iActivationLock);
+    iNoPipelinePrefetchOnActivation = true;
+    if (!IsActive()) {
+        DoActivate();
+    }
+    iNoPipelinePrefetchOnActivation = false;
+}
+
+void SourceReceiver::UriChanged(const Brx& aUri)
+{
+    iTrackUri.Replace(aUri);
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata, true);
-    iPipeline.RemoveAll();
-    iPipeline.Begin(iUriProvider->Mode(), track->Id());
+    iTrackId = track->Id();
     track->RemoveRef();
-    iPipeline.Play();
+    if (IsActive()) {
+        if (iPlaying) {
+            iPipeline.RemoveAll();
+            iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+            iPipeline.Play();
+        }
+        else {
+            iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+        }
+    }
 }
 
 void SourceReceiver::ConfigRoomChanged(KeyValuePair<const Brx&>& aKvp)

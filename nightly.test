@@ -12,9 +12,12 @@ tests = '''
     TestSupply
     TestAudioReservoir
     TestVariableDelay
+    TestSeeker
+    TestSkipper
     TestStopper
     TestTrackInspector
     TestReporter
+    TestPruner
     TestStarvationMonitor
     TestPreDriver
     TestContentProcessor
@@ -34,6 +37,7 @@ tests = '''
     TestConfigManager
     TestPowerManager
     TestClockPuller
+    TestWaiter
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

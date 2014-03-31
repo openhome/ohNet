@@ -1,7 +1,6 @@
 #ifndef HEADER_PIPELINE_RAOP
 #define HEADER_PIPELINE_RAOP
 
-#include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/Protocol/Rtsp.h>
 #include <OpenHome/Net/Private/MdnsProvider.h>
 #include <OpenHome/Private/Env.h>
@@ -15,7 +14,16 @@ EXCEPTION(RaopNoActiveSession);
 
 namespace OpenHome {
     class IPowerManager;
-namespace Media {
+namespace Av {
+
+class IRaopObserver
+{
+public:
+    virtual void NotifySessionStart(TUint aControlPort, TUint aTimingPort) = 0;
+    virtual void NotifySessionEnd() = 0;
+    virtual void NotifySessionWait() = 0;
+    virtual ~IRaopObserver() {}
+};
 
 class HeaderCSeq : public IHttpHeader
 {
@@ -73,6 +81,7 @@ class RaopDevice
 public:
     // aMacAddr in hex of form 001122334455
     RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr);
+    void SetEndpoint(const Endpoint& aEndpoint);
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
@@ -82,13 +91,11 @@ private:
     Net::IMdnsProvider& iProvider;
     TUint iHandleRaop;
     Bws<kMaxNameBytes> iName;
-    TUint iPort;
     Endpoint iEndpoint;
     const Bws<kMacAddrBytes> iMacAddress;
     TBool iRegistered;
+    Mutex iLock;
 };
-
-class ProtocolRaop;
 
 class IRaopDiscovery
 {
@@ -102,6 +109,7 @@ public:
     virtual void KeepAlive() = 0;
     virtual void Close() = 0;
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
+    virtual void AddObserver(IRaopObserver& aObserver) = 0;
 };
 
 class RaopDiscovery;
@@ -126,10 +134,11 @@ public: // from IRaopDiscovery
     TUint AesSid();
     void Close();
     void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
+    void AddObserver(IRaopObserver& aObserver);
 private:
     void WriteSeq(TUint aCSeq);
     void WriteFply(Brn aData);
-    void ReadSdp(ISdpHandler& aSdpHandler);
+    void ReadSdp(Media::ISdpHandler& aSdpHandler);
     void GenerateAppleResponse(const Brx& aChallenge);
     void DecryptAeskey();
     void GetRsa();
@@ -140,14 +149,14 @@ private:
     Sws<kMaxWriteBufferBytes>* iWriterBuffer;
     WriterAscii* iWriterAscii;
     ReaderHttpRequest* iReaderRequest;
-    WriterRtspRequest* iWriterRequest;
+    Media::WriterRtspRequest* iWriterRequest;
     WriterHttpResponse* iWriterResponse;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderContentType iHeaderContentType;
     HeaderAppleChallenge iHeaderAppleChallenge;
     HeaderRtspTransport iHeaderRtspTransport;
     HeaderCSeq iHeaderCSeq;
-    SdpInfo iSdpInfo;
+    Media::SdpInfo iSdpInfo;
     Bws<sizeof(AES_KEY)> iAeskey;
     TBool iAeskeyPresent;
     TUint iAesSid;
@@ -170,7 +179,7 @@ private:
 class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
     virtual ~RaopDiscovery();
 public: // from IRaopDiscovery
     const Brx &Aeskey();
@@ -178,28 +187,37 @@ public: // from IRaopDiscovery
     const Brx &Fmtp();
     TBool Active();
     void Deactivate();
+    void Enable();
+    void Disable();
     void KeepAlive();
     TUint AesSid();
     void Close();
     void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
+    void AddObserver(IRaopObserver& aObserver);
 public: // from IRaopObserver
-    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd();
+    void NotifySessionWait();
 private:
     RaopDiscoverySession& ActiveSession();
+    void HandleInterfaceChange();
     void PowerDown();
 private:
     static const TUint kPriority = kPriorityNormal;
     static const TUint kSessionStackBytes = 10 * 1024;
-
-    Av::IRaopObserver& iRaopObserver;
+    Environment& iEnv;
+    std::vector<Av::IRaopObserver*> iObservers;
     RaopDevice* iRaopDevice;
     SocketTcpServer* iRaopDiscoveryServer;
     RaopDiscoverySession* iRaopDiscoverySession1;
     RaopDiscoverySession* iRaopDiscoverySession2;
+    TUint iCurrentAdapterChangeListenerId;
+    TUint iSubnetListChangeListenerId;
+    Mutex iObserversLock;
 };
 
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 

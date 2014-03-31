@@ -1,25 +1,14 @@
 <configuration>
 
     <computer name="PC887">
-        <network>192.168.1.3</network>
         <adapter>1</adapter>
-        <!-- <network>10.15.1.103</network> -->
-        <!-- <adapter>2</adapter> -->
-        <!-- <network>10.2.11.71</network> -->
-        <!-- <adapter>0</adapter> -->
         <itunes>
             <guid>0x328084CE247B12D3</guid>
             <library>Grahams Library</library>
         </itunes>
     </computer>
 
-    <computer name="PC941">
-        <network>10.2.9.182</network>
-        <!-- <network>10.2.9.178</network> -->
-    </computer>
-
     <computer name="pc707">
-        <network>10.15.1.102</network>
         <itunes>
             <guid>0x65F74C872DA2941D</guid>
             <library>Linns Library</library>

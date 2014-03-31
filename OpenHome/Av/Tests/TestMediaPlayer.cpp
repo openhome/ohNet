@@ -87,12 +87,14 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShellDebug = new ShellCommandDebug(*iShell);
 
     //iProduct->SetCurrentSource(0);
-    iConfigRamStore->Print();
 }
 
 TestMediaPlayer::~TestMediaPlayer()
 {
     ASSERT(!iDevice->Enabled());
+    delete iSourceUpnp;
+    delete iMediaPlayer;
+    delete iPipelineObserver;
     delete iShellDebug;
     delete iShell;
     delete iDevice;
@@ -101,7 +103,7 @@ TestMediaPlayer::~TestMediaPlayer()
     delete iConfigRamStore;
 }
 
-void TestMediaPlayer::DestroyPipeline()
+void TestMediaPlayer::StopPipeline()
 {
     TUint waitCount = 0;
     if (TryDisable(*iDevice)) {
@@ -114,9 +116,7 @@ void TestMediaPlayer::DestroyPipeline()
         iDisabled.Wait();
         waitCount--;
     }
-    delete iSourceUpnp;
-    delete iMediaPlayer;
-    delete iPipelineObserver;
+    iMediaPlayer->Quit();
 }
 
 void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
@@ -127,9 +127,11 @@ void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
 void TestMediaPlayer::Run()
 {
     RegisterPlugins(iMediaPlayer->Env());
+    iMediaPlayer->Start();
     iDevice->SetEnabled();
     iDeviceUpnpAv->SetEnabled();
-    iMediaPlayer->Start();
+
+    iConfigRamStore->Print();
 
     Log::Print("\nFull (software) media player\n");
     Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
@@ -213,11 +215,13 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
 
+#if 0 // see #1130
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
     const TChar* friendlyName;
     iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), friendlyName, macAddr));
+#endif
 
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }

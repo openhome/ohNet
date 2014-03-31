@@ -20,6 +20,7 @@ class ProtocolFile : public Protocol, private IProtocolReader
 public:
     ProtocolFile(Environment& aEnv);
 private: // from Protocol   
+    void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -64,6 +65,15 @@ ProtocolFile::ProtocolFile(Environment& aEnv)
     , iLock("PRTF")
     , iReaderBuf(iFileStream)
 {
+}
+
+void ProtocolFile::Interrupt(TBool aInterrupt)
+{
+    iLock.Wait();
+    if (aInterrupt) {
+        iFileStream.ReadInterrupt();
+    }
+    iLock.Signal();
 }
 
 ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)

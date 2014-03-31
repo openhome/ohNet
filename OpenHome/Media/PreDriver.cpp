@@ -126,9 +126,9 @@ Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
     return NULL;
 }
 
-Msg* PreDriver::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* PreDriver::ProcessMsg(MsgEncodedStream* /*aMsg*/)
 {
-    aMsg->RemoveRef();
+    ASSERTS();
     return NULL;
 }
 
@@ -138,9 +138,9 @@ Msg* PreDriver::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
     return NULL;
 }
 
-Msg* PreDriver::ProcessMsg(MsgMetaText* aMsg)
+Msg* PreDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
 {
-    aMsg->RemoveRef();
+    ASSERTS();
     return NULL;
 }
 
@@ -159,6 +159,12 @@ Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
 Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
 {
     ASSERTS(); // don't expect to encounter MsgFlush this far down the pipeline
+    return NULL;
+}
+
+Msg* PreDriver::ProcessMsg(MsgWait* /*aMsg*/)
+{
+    ASSERTS(); // don't expect to encounter MsgWait this far down the pipeline
     return NULL;
 }
 

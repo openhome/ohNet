@@ -82,7 +82,12 @@ void ProtocolOhBase::RequestResend(const Brx& aFrames)
         header.Externalise(writer);
         headerResend.Externalise(writer);
         writer.Write(aFrames);
-        iSocket.Send(buffer, iEndpoint);
+        try {
+            iSocket.Send(buffer, iEndpoint);
+        }
+        catch (NetworkError&) {
+            LOG2(kSongcast, kError, "NetworkError in ProtocolOhBase::RequestResend()\n");
+        }
     }
 }
 
@@ -111,6 +116,11 @@ void ProtocolOhBase::Send(TUint aType)
     }
 }
 
+void ProtocolOhBase::Interrupt(TBool aInterrupt)
+{
+    iSocket.Interrupt(aInterrupt);
+}
+
 ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
 {
     iUri.Replace(aUri);
@@ -126,9 +136,19 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         res = Play(addr, kTtl, ep);
     } while (res != EProtocolStreamStopped);
     if (iRepairing) {
+        iMutexTransport.Wait();
         RepairReset();
+        iMutexTransport.Signal();
     }
     return res;
+}
+
+EStreamPlay ProtocolOhBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    /* We need to play whatever the Sender gives us.  Its easier to do this by hard-coding 'yes'
+       to all tracks rather than fooling IdManager into recognising each track we announce.  (Any
+       later attempt to do this will need to start sending EncodedStream msgs for eacg received track.) */
+    return ePlayYes;
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()
@@ -154,7 +174,11 @@ TBool ProtocolOhBase::RepairBegin(OhmMsgAudioBlob& aMsg)
 void ProtocolOhBase::RepairReset()
 {
     LOG(kSongcast, "RESET\n");
+    /* TimerRepairExpired() claims iMutexTransport.  Release it briefly to avoid possible deadlock.
+       TimerManager guarantees that TimerRepairExpired() won't be called once Cancel() returns... */
+    iMutexTransport.Signal();
     iTimerRepair->Cancel();
+    iMutexTransport.Wait();
     if (iRepairFirst != NULL) {
         iRepairFirst->RemoveRef();
         iRepairFirst = NULL;

@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.1025",
+        "version": "1.0.1074",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -55,7 +55,7 @@
         "ignore":           "${platform-ignore[$platform]}"
     },
     {   "name":             "transmute",
-        "version":          "0.0.9",
+        "version":          "0.0.11",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "platform-ignore": {
@@ -95,7 +95,7 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.205",
+        "version": "0.0.220",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

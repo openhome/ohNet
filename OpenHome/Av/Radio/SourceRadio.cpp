@@ -10,6 +10,7 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <limits.h>
 
@@ -62,16 +63,14 @@ void SourceRadio::Activate()
 {
     iTrackPosSeconds = 0;
     iActive = true;
+    const TUint trackId = (iTrack==NULL? 0 : iTrack->Id());
+    iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
 }
 
 void SourceRadio::Deactivate()
 {
     iLock.Wait();
     iTransportState = Media::EPipelineStopped;
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
     iLock.Signal();
     Source::Deactivate();
 }
@@ -146,6 +145,9 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
 
 void SourceRadio::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
 {
+    if (!IsActive()) {
+        return;
+    }
     iLock.Wait();
     if (iTrack != NULL) {
         iTrack->RemoveRef();

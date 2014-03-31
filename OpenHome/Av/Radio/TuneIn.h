@@ -12,6 +12,9 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
+#include <vector>
+#include <algorithm>
+
 namespace OpenHome {
     class Environment;
     class Parser;
@@ -73,6 +76,9 @@ private:
     Bws<kMaxPresetTitleBytes> iPresetTitle;
     Configuration::ConfigText* iConfigUsername;
     TUint iListenerId;
+    std::vector<TUint> iAllocatedPresets;
+    Media::BwsTrackUri iDbUri; // only required in a single function but too large for the stack
+    Bws<2*1024> iDbMetaData;
 };
 
 } // namespace Av

@@ -11,13 +11,6 @@ using namespace Media;
 
 MsgUdp::MsgUdp(TUint aMaxSize)
     : iBuf(aMaxSize)
-    , iEndpoint()
-{
-}
-
-MsgUdp::MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint)
-    : iBuf(aMaxSize)
-    ,iEndpoint(aEndpoint)
 {
 }
 
@@ -25,42 +18,42 @@ MsgUdp::~MsgUdp()
 {
 }
 
-Bwx& MsgUdp::Buffer()
+void MsgUdp::Read(SocketUdp& aSocket)
+{
+    iEndpoint.Replace(aSocket.Receive(iBuf));
+}
+
+const Brx& MsgUdp::Buffer()
 {
     return iBuf;
 }
 
-Endpoint& MsgUdp::GetEndpoint()
+Endpoint& MsgUdp::Endpoint()
 {
     return iEndpoint;
 }
 
-void MsgUdp::Clear()
-{
-    Endpoint ep(0, 0);
-    iEndpoint.Replace(ep);
-    iBuf.SetBytes(0);
-}
-
 
 // SocketUdpServer
-
 SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort, TIpAddress aInterface)
-    : SocketUdp(aEnv, aPort, aInterface)
-    , iEnv(aEnv)
+    : iEnv(aEnv)
+    , iSocket(aEnv, aPort, aInterface)
     , iMaxSize(aMaxSize)
-    , iOpen(true)
-    , iFifoWaiting(aMaxPackets+1)
+    , iOpen(false)
+    , iFifoWaiting(aMaxPackets)
     , iFifoReady(aMaxPackets)
-    , iWaitingLock("UDPW")
+    , iLock("UDPL")
     , iReadyLock("UDPR")
+    , iSemaphore("UDPS", 0)
     , iQuit(false)
     , iAdapterListenerId(0)
 {
-    // populate iFifoWaiting with empty packets/bufs
+    // Populate iFifoWaiting with empty packets/bufs
     while (iFifoWaiting.SlotsFree() > 0) {
         iFifoWaiting.Write(new MsgUdp(iMaxSize));
     }
+
+    iDiscard = new MsgUdp(iMaxSize);
 
     Functor functor = MakeFunctor(*this, &SocketUdpServer::CurrentAdapterChanged);
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
@@ -68,128 +61,284 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
 
     iServerThread = new ThreadFunctor("UdpServer", MakeFunctor(*this, &SocketUdpServer::ServerThread));
     iServerThread->Start();
+    iSemaphore.Wait();
 }
 
 SocketUdpServer::~SocketUdpServer()
 {
+    iLock.Wait();
+
+    if (iQuit)
+    {
+        iLock.Signal();
+        ASSERTS();
+    }
+
     iQuit = true;
-    iOpen = false;
-    Interrupt(true);
+
+    iLock.Signal();
+
+    iSocket.Interrupt(true);
+    iFifoReady.ReadInterrupt(true);
+
     delete iServerThread;
 
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     nifList.RemoveCurrentChangeListener(iAdapterListenerId);
 
+    iReadyLock.Wait();
     while (iFifoReady.SlotsUsed() > 0) {
         MsgUdp* msg = iFifoReady.Read();
         delete msg;
     }
+    iReadyLock.Signal();
+
     while (iFifoWaiting.SlotsUsed() > 0) {
         MsgUdp* msg = iFifoWaiting.Read();
         delete msg;
     }
+
+    delete iDiscard;
 }
 
 void SocketUdpServer::Open()
 {
+    iLock.Wait();
+
+    if (iQuit || iOpen)
+    {
+        iLock.Signal();
+        ASSERTS();
+    }
+
     iOpen = true;
+    iSocket.Interrupt(true);
+
+    iLock.Signal();
+
+    iSemaphore.Wait();
 }
 
 void SocketUdpServer::Close()
 {
+    iLock.Wait();
+
+    if (iQuit || !iOpen)
+    {
+        iLock.Signal();
+        ASSERTS();
+    }
+
     iOpen = false;
 
-    // set an interrupt
+    iSocket.Interrupt(true);
     iFifoReady.ReadInterrupt(true);
-    iFifoWaiting.ReadInterrupt(true);
 
-    iReadyLock.Wait();
-    // clear the interrupt, so next read doesn't throw an exception
-    iFifoReady.ReadInterrupt(false);
-    iFifoWaiting.ReadInterrupt(false);
+    iLock.Signal();
 
-    // dispose of all msgs in ready queue
-    while (iFifoReady.SlotsUsed() > 0) {
-        MsgUdp* msg = iFifoReady.Read();
-        ClearAndRequeue(*msg);
-    }
-    iReadyLock.Signal();
+    iSemaphore.Wait();
+}
+
+TBool SocketUdpServer::IsOpen()
+{
+    AutoMutex a(iLock);
+    return iOpen;
+}
+
+void SocketUdpServer::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
+{
+    iSocket.Send(aBuffer, aEndpoint);
 }
 
 Endpoint SocketUdpServer::Receive(Bwx& aBuf)
 {
-    ASSERT(iOpen);
+    iLock.Wait();
 
-    // get data from msg
+    if (iQuit) {
+        iLock.Signal();
+        ASSERTS();
+    }
+
+    if (!iOpen) {
+        iLock.Signal();
+        THROW(UdpServerClosed);
+    }
+
+    iLock.Signal();
+
+    // Get data from msg
     try {
         iReadyLock.Wait();
         MsgUdp* msg = iFifoReady.Read(); // will block until msg available
         iReadyLock.Signal();
+
         Endpoint ep;
         CopyMsgToBuf(*msg, aBuf, ep);
 
-        // requeue msg
-        ClearAndRequeue(*msg);
+        // Requeue msg
+        iLock.Wait();
+
+        iFifoWaiting.Write(msg);
+
+        iLock.Signal();
 
         return ep;
     }
-    catch (FifoReadError) {
-        THROW(NetworkError);
+    catch (FifoReadError&) {
+        iReadyLock.Signal();
+        THROW(ReaderError);
     }
 }
 
-void SocketUdpServer::ClearAndRequeue(MsgUdp& aMsg)
+Endpoint SocketUdpServer::Sender() const
 {
-    // clear a msg and requeue it in the waiting fifo
-    aMsg.Clear();
-    iWaitingLock.Wait();
-    ASSERT(iFifoWaiting.SlotsFree() > 0);
-    iFifoWaiting.Write(&aMsg);
-    iWaitingLock.Signal();
+    AutoMutex a(iLock);
+    return iSender;
+}
+
+TUint SocketUdpServer::Port() const
+{
+    return iSocket.Port();
+}
+
+void SocketUdpServer::SetSendBufBytes(TUint aBytes)
+{
+    iSocket.SetSendBufBytes(aBytes);
+}
+
+void SocketUdpServer::SetRecvBufBytes(TUint aBytes)
+{
+    iSocket.SetRecvBufBytes(aBytes);
+}
+
+void SocketUdpServer::SetRecvTimeout(TUint aMs)
+{
+    iSocket.SetRecvTimeout(aMs);
+}
+
+void SocketUdpServer::SetTtl(TUint aTtl)
+{
+    iSocket.SetTtl(aTtl);
+}
+
+void SocketUdpServer::Read(Bwx& aBuffer)
+{
+    try {
+        Endpoint ep = Receive(aBuffer);
+        iLock.Wait();
+        iSender.Replace(ep);
+        iLock.Signal();
+    }
+    catch (UdpServerClosed&) {
+        THROW(ReaderError);
+    }
+}
+
+void SocketUdpServer::ReadFlush()
+{
+}
+
+void SocketUdpServer::ReadInterrupt()
+{
+    // Clients read from iFifoReady - never iSocket, so interrupt any waiting
+    // Read()s on the FIFO.
+
+    iFifoReady.ReadInterrupt(true);
+
+    iReadyLock.Wait();
+    iFifoReady.ReadInterrupt(false);
+    iReadyLock.Signal();
 }
 
 void SocketUdpServer::CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint)
 {
-    Bwx& buf = aMsg.Buffer();
+    const Brx& buf = aMsg.Buffer();
     ASSERT(aBuf.MaxBytes() >= buf.Bytes());
     aBuf.Replace(buf);
-    aEndpoint.Replace(aMsg.GetEndpoint());
+    aEndpoint.Replace(aMsg.Endpoint());
 }
 
 void SocketUdpServer::ServerThread()
 {
-    // continually read incoming packets
-    while (!iQuit) {
+    iSemaphore.Signal();
 
-        MsgUdp* msg = NULL;
-        // get next msg for reading data into
-        try {
-            msg = iFifoWaiting.Read();
-        }
-        catch (FifoReadError&) {
-            continue;
+    for (;;) {
+
+        // closed
+
+        for (;;) {
+            iLock.Wait();
+
+            if (iQuit) {
+                iLock.Signal();
+                return;
+            }
+
+            if (iOpen)
+            {
+                iLock.Signal();
+                break;
+            }
+
+            iLock.Signal();
+
+            try {
+                iDiscard->Read(iSocket);
+            }
+            catch (NetworkError&) {
+            }
         }
 
-        try {
-            Bwx& buf = msg->Buffer();
-            ASSERT(buf.Bytes() == 0);
-            Endpoint& ep = msg->GetEndpoint();
-            ep.Replace(SocketUdp::Receive(buf));
-        }
-        catch (NetworkError&) {
-            // nothing we can do to recover packet, or Interrupt has been
-            // called as server is quitting
-            ClearAndRequeue(*msg);
-            continue;
+        iSocket.Interrupt(false);
+        iSemaphore.Signal();
+
+        // opened
+
+        for (;;) {
+            iLock.Wait();
+
+            if (iQuit) {
+                iLock.Signal();
+                return;
+            }
+
+            if (!iOpen)
+            {
+                iLock.Signal();
+                break;
+            }
+
+            iLock.Signal();
+
+            try {
+                iDiscard->Read(iSocket);
+            }
+            catch (NetworkError&) {
+                continue;
+            }
+
+            if (iFifoWaiting.SlotsUsed() == 0) {
+                continue;
+            }
+
+            iFifoReady.Write(iDiscard);
+            iDiscard = iFifoWaiting.Read();
         }
 
-        // if server is open and iFifoReady has a free slot, queue packet
-        if (iOpen && (iFifoReady.SlotsFree() > 0)) {
-            iFifoReady.Write(msg);
+        iReadyLock.Wait();
+        iFifoReady.ReadInterrupt(false);
+        // Move all messages from ready queue back to waiting queue
+
+        while (iFifoReady.SlotsUsed() > 0) {
+            MsgUdp* msg = iFifoReady.Read();
+            iFifoWaiting.Write(msg);
         }
-        else {
-            ClearAndRequeue(*msg);
-        }
+
+        iFifoReady.ReadInterrupt(false);
+        iReadyLock.Signal();
+
+        iSocket.Interrupt(false);
+        iSemaphore.Signal();
     }
 }
 
@@ -199,7 +348,7 @@ void SocketUdpServer::CurrentAdapterChanged()
     AutoNetworkAdapterRef ref(iEnv, "UdpServer::UpdateAdapter");
     NetworkAdapter* current = ref.Adapter();
 
-    // get current subnet, otherwise choose first from a list
+    // Get current subnet, otherwise choose first from a list
     if (current == NULL) {
         std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
         if (subnetList->size() > 0) {
@@ -208,9 +357,9 @@ void SocketUdpServer::CurrentAdapterChanged()
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
 
-    // don't rebind if we have nothing to rebind to - should this ever be the case?
+    // Don't rebind if we have nothing to rebind to - should this ever be the case?
     if (current != NULL) {
-        ReBind(iPort, current->Address());
+        iSocket.ReBind(iSocket.Port(), current->Address());
     }
 }
 
@@ -250,6 +399,7 @@ SocketUdpServer& UdpServerManager::Find(TUint aId)
 
 void UdpServerManager::CloseAll()
 {
+    AutoMutex a(iLock);
     for (size_t i=0; i<iServers.size(); i++) {
         iServers[i]->Close();
     }
@@ -257,6 +407,7 @@ void UdpServerManager::CloseAll()
 
 void UdpServerManager::OpenAll()
 {
+    AutoMutex a(iLock);
     for (size_t i=0; i<iServers.size(); i++) {
         iServers[i]->Open();
     }

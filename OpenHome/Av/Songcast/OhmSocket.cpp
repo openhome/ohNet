@@ -51,10 +51,10 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
 
 void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    if (iTxSocket) {
+    if (iTxSocket != NULL) {
         iTxSocket->Send(aBuffer, aEndpoint);
     }
-    else {
+    else if (iRxSocket != NULL) {
         iRxSocket->Send(aBuffer, aEndpoint);
     }
 }
@@ -83,7 +83,18 @@ void OhmSocket::Close()
         iTxSocket = NULL;
     }
 }
-    
+
+void OhmSocket::Interrupt(TBool aInterrupt)
+{
+    // FIXME - thread-safety
+    if (iRxSocket != NULL) {
+        iRxSocket->Interrupt(aInterrupt);
+    }
+    if (iTxSocket != NULL) {
+        iTxSocket->Interrupt(aInterrupt);
+    }
+}
+
 void OhmSocket::Read(Bwx& aBuffer)
 {
     ASSERT(iReader);
@@ -98,8 +109,9 @@ void OhmSocket::ReadFlush()
 
 void OhmSocket::ReadInterrupt()
 {
-    ASSERT(iReader);
-    iReader->ReadInterrupt();
+    if (iReader != NULL) {
+        iReader->ReadInterrupt();
+    }
 }
 
 

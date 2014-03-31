@@ -102,16 +102,21 @@ void CodecRaop::StreamCompleted()
 void CodecRaop::Process() 
 {
     //LOG(kCodec, "CodecRaop::Process\n");
-
     iInBuf.SetBytes(0);
 
     try {
         // read in a packet worth of raop data
         Bws<sizeof(RaopDataHeader)> binheader;
         iController->Read(binheader, sizeof(RaopDataHeader));   // extract header
+        if (sizeof(RaopDataHeader) > binheader.Bytes()) {
+            THROW(CodecStreamEnded);
+        }
         Brn audio(binheader);
         RaopDataHeader header(audio);
         iController->Read(iInBuf, header.Bytes());
+        if (iInBuf.Bytes() < header.Bytes()) {
+            THROW(CodecStreamEnded);
+        }
         Decode();
     }
     catch (CodecStreamStart&) {

@@ -19,7 +19,6 @@ Logger::Logger(IPipelineElementUpstream& aUpstreamElement, const TChar* aId)
     , iEnabled(false)
     , iFilter(EMsgAll)
     , iShutdownSem("PDSD", 0)
-    , iPrevMsg(NULL)
 {
 }
 
@@ -30,7 +29,6 @@ Logger::Logger(const TChar* aId, IPipelineElementDownstream& aDownstreamElement)
     , iEnabled(false)
     , iFilter(EMsgAll)
     , iShutdownSem("PDSD", 0)
-    , iPrevMsg(NULL)
 {
 }
 
@@ -52,8 +50,6 @@ void Logger::SetFilter(TUint aMsgTypes)
 Msg* Logger::Pull()
 {
     Msg* msg = iUpstreamElement->Pull();
-    ASSERT_DEBUG(msg != iPrevMsg);
-    iPrevMsg = msg;
     ASSERT_DEBUG(msg->iRefCount > 0);
     (void)msg->Process(*this);
     return msg;
@@ -132,6 +128,14 @@ Msg* Logger::ProcessMsg(MsgFlush* aMsg)
 {
     if (IsEnabled(EMsgFlush)) {
         Log::Print("Pipeline (%s): flush { id: %u }\n", iId, aMsg->Id());
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgWait* aMsg)
+{
+    if (IsEnabled(EMsgWait)) {
+        Log::Print("Pipeline (%s): wait\n", iId);
     }
     return aMsg;
 }

@@ -1,30 +1,39 @@
 #include <OpenHome/Media/Protocol/RaopHeader.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Media/UdpServer.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
+#include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/Raop/Raop.h>
 
 EXCEPTION(ResendTimeout);
 EXCEPTION(ResendInvalid);
 EXCEPTION(InvalidHeader);
+EXCEPTION(RaopAudioServerClosed);
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint aTimingId)
+Protocol* ProtocolFactory::NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
 { // static
-    return new ProtocolRaop(aEnv, aDiscovery, aServerManager, aAudioId, aControlId, aTimingId);
+    return new ProtocolRaop(aEnv, aDiscovery, aServerManager, aAudioId, aControlId);
 }
 
-ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId, TUint /*aTimingId*/)
+
+// ProtocolRaop
+
+ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId)
     : ProtocolNetwork(aEnv)
     , iDiscovery(aDiscovery)
     , iServerManager(aServerManager)
     , iRaopAudio(iServerManager.Find(aAudioId))
     , iRaopControl(aEnv, iServerManager.Find(aControlId))
-//  , iRaopTiming(iServerManager.Find(aTimingId))
+    , iLockRaop("PRAL")
 {
 }
 
@@ -36,39 +45,44 @@ void ProtocolRaop::DoInterrupt()
 {
     LOG(kMedia, "ProtocolRaop::DoInterrupt\n");
 
-    iLock.Wait();
     iRaopAudio.DoInterrupt();
     iRaopControl.DoInterrupt();
-    iLock.Signal();
 }
 
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
+    iLockRaop.Wait();
     iNextFlushId = MsgFlush::kIdInvalid;
-    iStopped = false;
+    iWaiting = iStopped = false;
+    iActive = true;
+    iLockRaop.Signal();
+
     // raop doesn't actually stream from a URI, so just expect a dummy uri
-    Uri uri;
-    uri.Replace(aUri);
+    Uri uri(aUri);
     LOG(kMedia, "ProtocolRaop::Stream ");
     LOG(kMedia, uri.AbsoluteUri());
     LOG(kMedia, "\n");
 
     if (uri.Scheme() != Brn("raop")) {
         LOG(kMedia, "ProtocolRaop::Stream Scheme not recognised\n");
+        iLockRaop.Wait();
+        iActive = false;
+        iStopped = true;
+        iLockRaop.Signal();
         return EProtocolErrorNotSupported;
     }
 
-    // FIXME - parse uri to get ports for sending control/timing info to
-    // (could also get server ids for audio/control/timing and retrieve servers
-    // on behalf of them, and pass in servers while resetting)
+    // Parse URI to get client control/timing ports.
+    // (Timing channel isn't monitored, so don't bother parsing port.)
+    Parser p(aUri);
+    p.Forward(7);   // skip raop://
+    Brn ctrlPortBuf = p.Next('.');
+    TUint ctrlPort = Ascii::Uint(ctrlPortBuf);
 
     TBool start = true;
     TUint aesSid = 0;
-    // FIXME - should we pass an ID into Reset() methods here and update server
-    // each time, instead of doing it in constructor? - would require dynamic
-    // re-allocation of UdpReader
-    iRaopControl.Reset();
     iRaopAudio.Reset();
+    iRaopControl.Reset(ctrlPort);
     Brn audio;
     TUint16 expected = 0;
 
@@ -76,17 +90,31 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
     // Output audio stream
     for (;;) {
-        if (iStopped) {
+        iLockRaop.Wait();
+        if (iWaiting) {
             iSupply->OutputFlush(iNextFlushId);
+            iWaiting = false;
+            // Resume normal operation.
+        }
+        else if (iStopped) {
+            iSupply->OutputFlush(iNextFlushId);
+            iActive = false;
+            iStopped = true;
+            iLockRaop.Signal();
             return EProtocolStreamStopped;
         }
+        iLockRaop.Signal();
 
         try {
             TUint16 count = iRaopAudio.ReadPacket();
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
-                continue; // no active session so audio must be ignored
+                iLockRaop.Wait();
+                iActive = false;
+                iStopped = true;
+                iLockRaop.Signal();
+                return EProtocolStreamStopped;
             }
 
             iDiscovery.KeepAlive();
@@ -100,7 +128,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             }
             if(start) {
                 LOG(kMedia, "ProtocolRaop::Stream() new container\n");
-                start = false;        // create dummy container for Codec() recognition and initialisation
+                start = false;        // create dummy container for codec recognition and initialisation
                 OutputContainer(Brn(iDiscovery.Fmtp()));
                 expected = count;   // init expected count
             }
@@ -127,7 +155,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                             expected++;
                             iRaopControl.UnlockRx();
                         }
-                        catch(ResendTimeout) {
+                        catch(ResendTimeout&) {
                             LOG(kMedia, "ProtocolRaop NOT received resent data, padding %d\n", padding);
 
                             //just mute if resent packets not available
@@ -137,16 +165,16 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                                 OutputAudio(iRaopAudio.Audio());
                             }
                         }
-                        catch(ResendInvalid) {
+                        catch(ResendInvalid&) {
                             // may be corrupted or a redundant frame left from a previous timeout
                             LOG(kMedia, "ProtocolRaop unexpected data - ignore, padding %d\n", padding);
                         }
                     }
                 }
                 try {
-                iRaopAudio.DecodePacket(SenderSkew, latency); // send original
-                OutputAudio(iRaopAudio.Audio());
-                expected = count+1;
+                    iRaopAudio.DecodePacket(SenderSkew, latency); // send original
+                    OutputAudio(iRaopAudio.Audio());
+                    expected = count+1;
                 }
                 catch (InvalidHeader&)
                 {
@@ -156,29 +184,36 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         }
         catch (InvalidHeader&) {
             LOG(kMedia, "<ProtocolRaop::Stream Invalid Header\n");
-            break;
+            //break;
         }
         catch (NetworkError&) {
             LOG(kMedia, "<ProtocolRaop::Stream Network error\n");
-            break;
+            //break;
         }
         catch (ReaderError&) {
             LOG(kMedia, "<ProtocolRaop::Stream Reader error\n");
-            break;
+            // This can indicate an interrupt (caused by, e.g., a TryStop)
+            // Continue around loop and see if iStopped has been set.
         }
         catch (HttpError&) {
             LOG(kMedia, "<ProtocolRaop::Stream sdp not received\n");
             // ignore and continue - sender should stop on a closed connection! wait for sender to re-select device
         }
+        catch (RaopAudioServerClosed&) {
+            LOG(kMedia, "ProtocolRaop::Stream RaopAudioServerClosed\n");
+            iLockRaop.Wait();
+            iActive = false;
+            iStopped = true;
+            iLockRaop.Signal();
+            return EProtocolStreamStopped;
+        }
     }
-
-    Close(); // FIXME - is this the cause of reconnect problems?
-    return EProtocolStreamSuccess;
 }
 
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");
+    AutoMutex a(iLockRaop);
     iStreamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(Uri().AbsoluteUri(), 0, false, false, *this, iStreamId);
 }
@@ -202,14 +237,18 @@ void ProtocolRaop::OutputAudio(const Brn &aPacket)
 
 TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    iLock.Wait();
-    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
-    if (stop) {
-        iNextFlushId = iFlushIdProvider->NextFlushId();
-        iStopped = true;
-        iTcpClient.Interrupt(true);
+    LOG(kMedia, "ProtocolRaop::TryStop\n");
+    TBool stop = false;
+    iLockRaop.Wait();
+    if (!iStopped) {
+        stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+        if (stop) {
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+            iStopped = true;
+            DoInterrupt();
+        }
     }
-    iLock.Signal();
+    iLockRaop.Signal();
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
@@ -227,14 +266,29 @@ void ProtocolRaop::Close()
 void ProtocolRaop::Deactivate()
 {
     LOG(kMedia, "ProtocolRaop::Deactivate\n");
-
     iDiscovery.Deactivate();
 }
 
+TUint ProtocolRaop::SendFlush()
+{
+    LOG(kMedia, "ProtocolRaop::NotifySessionWait\n");
+    iLockRaop.Wait();
+    ASSERT(iActive);
+    TUint flushId = iFlushIdProvider->NextFlushId();
+    iNextFlushId = flushId;
+    iWaiting = true;
+    DoInterrupt();
+    iLockRaop.Signal();
+    return flushId;
+}
+
+
+// RaopControl
+
 RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
-    : iServer(aServer)
-    , iSocketReader(iServer)
-    , iReceive(iSocketReader)
+    : iClientPort(0)
+    , iServer(aServer)
+    , iReceive(iServer)
     , iMutex("raoc")
     , iMutexRx("raoR")
     , iSemaResend("raoc", 0)
@@ -257,7 +311,7 @@ RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
 RaopControl::~RaopControl()
 {
     iExit = true;
-    iSocketReader.ReadInterrupt();
+    iServer.ReadInterrupt();
     delete iThreadControl;
     delete iTimerExpiry;
 }
@@ -284,9 +338,11 @@ void RaopControl::DoInterrupt()
     iMutex.Signal();
 }
 
-void RaopControl::Reset()
+void RaopControl::Reset(TUint aClientPort)
 {
-    // FIXME - should take a TUint aPort as param and set up iEndpoint here
+    iMutex.Wait();
+    iClientPort = aClientPort;
+    iMutex.Signal();
 }
 
 void RaopControl::Run()
@@ -297,7 +353,7 @@ void RaopControl::Run()
     while (!iExit) {
         try {
             Brn id = iReceive.Read(2);
-            iEndpoint = iSocketReader.Sender(); // FIXME - will the sender (iTunes) always be using the same port for in/out?
+            iEndpoint = iServer.Sender();
             if(id.Bytes() < 2) {
                 LOG(kMedia, " RaopControl id bytes %d\n", id.Bytes());
                 continue;
@@ -307,7 +363,6 @@ void RaopControl::Run()
             if(type == 0x80D4) {
                 //read rest of header
                 Brn control = iReceive.Read(18);
-                iEndpoint = iSocketReader.Sender();
                 //extract timing info from control message and allow mutexed external access to data...
                 if(control.Bytes() < 18) {
                     THROW(ReaderError);
@@ -325,10 +380,9 @@ void RaopControl::Run()
             else if(type == 0x80D6) {
                 // resent packet
                 iReceive.Read(2);   //ignore next 2 bytes
-                iEndpoint = iSocketReader.Sender();
                 Bws<kMaxReadBufferBytes> data;
-                iSocketReader.Read(data);   // read a full udp packet
-                iEndpoint = iSocketReader.Sender();
+                iServer.Read(data);   // read a full udp packet
+                iEndpoint = iServer.Sender();
                 LOG(kMedia, "RaopControl read %d bytes, iResend %d\n", data.Bytes(), iResend);
                 iMutexRx.Wait();    // wait for processing of previous resend message
                 iMutex.Wait();
@@ -358,7 +412,7 @@ void RaopControl::Run()
                 iReceive.ReadFlush(); // unexpected so ignore
             }
         }
-        catch (ReaderError) {
+        catch (ReaderError&) {
             LOG(kMedia, "RaopControl Exception - iResend %d\n", iResend);
 
             // either no data or invalid header
@@ -407,6 +461,9 @@ void RaopControl::RequestResend(TUint aPacketId, TUint aPackets)
         request.Append((TByte)((aPackets) & 0xff));
 
         try {
+            iMutex.Wait();
+            iEndpoint.SetPort(iClientPort); // send to client listening port
+            iMutex.Signal();
             iServer.Send(request, iEndpoint);
         }
         catch(NetworkError) {
@@ -481,15 +538,11 @@ void RaopControl::TimerExpired()
 
 }
 
-//RaopTiming::RaopTiming(SocketUdpServer& aServer)
-//    : iServer(aServer)
-//{
-//}
 
+// RaopAudio
 
 RaopAudio::RaopAudio(SocketUdpServer& aServer)
     : iServer(aServer)
-    , iSocketReader(iServer)
 {
 }
 
@@ -499,9 +552,13 @@ RaopAudio::~RaopAudio()
 
 void RaopAudio::Reset()
 {
+    iDataBuffer.SetBytes(0);
+    iAudio.SetBytes(0);
+    iAeskey.SetBytes(0);
+    iAesiv.SetBytes(0);
     iInitId = true;
     iInterrupted = false;
-    iSocketReader.ReadFlush();  // set to read next udp packet
+    iServer.ReadFlush();  // set to read next udp packet
 }
 
 void RaopAudio::Initialise(const Brx &aAeskey, const Brx &aAesiv)
@@ -514,43 +571,52 @@ void RaopAudio::DoInterrupt()
 {
     LOG(kMedia, "RaopAudio::DoInterrupt()\n");
     iInterrupted = true;
-    iSocketReader.ReadInterrupt();
+    iServer.ReadInterrupt();
 }
 
 TUint16 RaopAudio::ReadPacket()
 {
-    //read a packet at a time, modify it and send it on to the protocol/codec
+    // Read a packet at a time and process it.
     LOG(kMedia, ">RaopAudio::ReadPacket()\n");
     TUint16 count = 0;
 
     for (;;) {
         try {
-            iSocketReader.Read(iDataBuffer);   // read all of the udp packet
+            iServer.Read(iDataBuffer);
         }
         catch (ReaderError&) {
-            // either no data, user abort or invalid header
-            if(iInterrupted) {
+            iServer.ReadFlush();
+
+            // Either no data, user abort or invalid header
+            if (iInterrupted) {
                 LOG(kMedia, "RaopAudio::ReadPacket() Exception, iInterrupted %d\n", iInterrupted);
-                throw;
+                THROW(ReaderError);
             }
-            if(iDataBuffer.Bytes() < 12) {  //may get here if kMaxReadBufferBytes not read
-                iSocketReader.ReadFlush();  // set to read next udp packet
+            if (!iServer.IsOpen()) {
+                LOG(kMedia, "RaopAudio::ReadPacket() RaopAudioServerClosed\n");
+                THROW(RaopAudioServerClosed);
+            }
+            if(iDataBuffer.Bytes() < 12) {  // may get here if kMaxReadBufferBytes not read
                 continue;   // keep trying if not interrupted
             }
+            return count;
         }
-        if(iDataBuffer.Bytes() < 12) {      //may get here if kMaxReadBufferBytes not read
+        iServer.ReadFlush();  // set to read next udp packet
+
+        if(iDataBuffer.Bytes() < 12) {  // may get here if kMaxReadBufferBytes not read
             continue;
         }
 
-        iSocketReader.ReadFlush();  // set to read next udp packet
-
-        if((iDataBuffer[0] != 0x80) || !((iDataBuffer[1] == 0x60) || (iDataBuffer[1] == 0xe0))) {
+        // Check header
+        if((iDataBuffer[0] != 0x80)
+                || !((iDataBuffer[1] == 0x60)
+                || (iDataBuffer[1] == 0xe0))) {
             LOG(kMedia, "RaopAudio::ReadPacket() invalid header %x\n", iDataBuffer[0]);
-            THROW(ReaderError); // invalid header
+            THROW(InvalidHeader); // invalid header
         }
 
-        TUint32 id;
-        id = Converter::BeUint32At(iDataBuffer, 8);
+        // Process ID
+        TUint32 id = Converter::BeUint32At(iDataBuffer, 8);
         LOG(kMedia, "RaopAudio::ReadPacket() %d, id %d\n", iDataBuffer.Bytes(), id);
 
         if(iInitId) {
@@ -562,7 +628,7 @@ TUint16 RaopAudio::ReadPacket()
         if(iId == id) {
             count = Converter::BeUint16At(iDataBuffer, 2);
             LOG(kMedia, "RaopAudio::ReadPacket() iId = %d, count = %d\n", iId, count);
-            break;      // packet with same id found
+            break;  // packet with same id found
         }
         LOG(kMedia, "RaopAudio::ReadPacket() no data so retry\n");
         // rogue id so ignore

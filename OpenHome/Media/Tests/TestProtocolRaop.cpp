@@ -79,7 +79,9 @@ private: // from IPipelineIdProvider
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private: // from IRaopObserver
-    void NotifyStreamStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd();
+    void NotifySessionWait();
 private:
     static const TUint kMaxUdpSize = 1472;
     static const TUint kMaxUdpPackets = 25;
@@ -87,7 +89,7 @@ private:
     static const TUint kPortControl = 60401;
     static const TUint kPortTiming = 60402;
     PowerManager iPowerManager;
-    RaopDiscovery* iRaopDiscovery;
+    Av::RaopDiscovery* iRaopDiscovery;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     UdpServerManager iServerManager;
@@ -125,6 +127,7 @@ private:
 } // namespace OpenHome
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
@@ -137,12 +140,14 @@ DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar*
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, iPowerManager, *this, aHostName, aFriendlyName, aMacAddr);
+    iRaopDiscovery = new RaopDiscovery(aEnv, aDvStack, iPowerManager, aHostName, aFriendlyName, aMacAddr);
+    iRaopDiscovery->AddObserver(*this);
+
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
     TUint audioId = iServerManager.CreateServer(kPortAudio);
     TUint controlId = iServerManager.CreateServer(kPortControl);
     TUint timingId = iServerManager.CreateServer(kPortTiming);
-    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId, timingId));
+    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 
     SocketUdpServer& audioServer = iServerManager.Find(audioId);
@@ -186,7 +191,15 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return ePlayYes;
 }
 
-void DummyFiller::NotifyStreamStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
+void DummyFiller::NotifySessionStart(TUint /*aControlPort*/, TUint /*aTimingPort*/)
+{
+}
+
+void DummyFiller::NotifySessionEnd()
+{
+}
+
+void DummyFiller::NotifySessionWait()
 {
 }
 

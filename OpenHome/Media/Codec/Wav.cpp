@@ -80,11 +80,16 @@ TBool CodecWav::Recognise()
     Bws<12> buf;
     iController->Read(buf, buf.MaxBytes());
     const TChar* ptr = reinterpret_cast<const TChar*>(buf.Ptr());
-    if(strncmp(ptr, "RIFF", 4) == 0) {
-        if(strncmp(ptr+8, "WAVE", 4) == 0) {
-            return true;
-        }
+    if (buf.Bytes() == 12 && strncmp(ptr, "RIFF", 4) == 0 && strncmp(ptr+8, "WAVE", 4) == 0) {
+        return true;
     }
+#if 0 // debug helper
+    Log::Print("CodecWav::Recognise() failed.  Was passed data \n  ");
+    for (TUint i=0; i<buf.Bytes(); i++) {
+        Log::Print(" %02x", buf[i]);
+    }
+    Log::Print("\n");
+#endif
     return false;
 }
 

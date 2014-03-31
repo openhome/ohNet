@@ -40,8 +40,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
 {
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
-    iPipeline = new PipelineManager(*iInfoLogger, aDriverMaxJiffies);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
+    iPipeline = new PipelineManager(*iInfoLogger, *iTrackFactory, aDriverMaxJiffies);
     iConfigManager = new ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
@@ -83,6 +83,11 @@ MediaPlayer::~MediaPlayer()
     delete iTrackFactory;
     delete iKvpStore;
     delete iInfoLogger;
+}
+
+void MediaPlayer::Quit()
+{
+    iPipeline->Quit();
 }
 
 void MediaPlayer::Add(Codec::CodecBase* aCodec)

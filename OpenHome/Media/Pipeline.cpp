@@ -15,6 +15,7 @@
 #include <OpenHome/Media/Stopper.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
+#include <OpenHome/Media/Pruner.h>
 #include <OpenHome/Media/Logger.h>
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/PreDriver.h>
@@ -40,7 +41,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
                                  kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
-                                 kMsgCountHalt, kMsgCountFlush, kMsgCountQuit);
+                                 kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountQuit);
 
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
@@ -73,13 +74,17 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
     iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, kSkipperRampDuration);
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
-    iStopper = new Stopper(*iMsgFactory, *iLoggerSkipper, *this, kStopperRampDuration);
+    iWaiter = new Waiter(*iMsgFactory, *iLoggerSkipper, *this, kWaiterRampDuration);
+    iLoggerWaiter = new Logger(*iWaiter, "Waiter");
+    iStopper = new Stopper(*iMsgFactory, *iLoggerWaiter, *this, kStopperRampDuration);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerSplitter, *this,
+    iPruner = new Pruner(*iLoggerSplitter);
+    iLoggerPruner = new Logger(*iPruner, "Pruner");
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorGorgeSize, kStarvationMonitorRampUpDuration,
                                                iClockPuller.StarvationMonitorHistory());
@@ -101,9 +106,11 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerVariableDelay->SetEnabled(true);
     //iLoggerTrackInspector->SetEnabled(true);
     //iLoggerSkipper->SetEnabled(true);
+    //iLoggerWaiter->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
+    //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
@@ -116,9 +123,11 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
     //iLoggerTrackInspector->SetFilter(Logger::EMsgAll);
     //iLoggerSkipper->SetFilter(Logger::EMsgAll);
+    //iLoggerWaiter->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
+    //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
 }
@@ -134,12 +143,16 @@ Pipeline::~Pipeline()
     delete iPreDriver;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
+    delete iLoggerPruner;
+    delete iPruner;
     delete iLoggerSplitter;
     delete iSplitter;
     delete iLoggerReporter;
     delete iReporter;
     delete iLoggerStopper;
     delete iStopper;
+    delete iLoggerWaiter;
+    delete iWaiter;
     delete iLoggerSkipper;
     delete iSkipper;
     delete iLoggerTrackInspector;
@@ -173,6 +186,9 @@ void Pipeline::Start()
 
 void Pipeline::Quit()
 {
+    if (iQuitting) {
+        return;
+    }
     iQuitting = true;
     OutputQuit();
     DoPlay(true);
@@ -196,6 +212,9 @@ void Pipeline::NotifyStatus()
         break;
     case EStopped:
         state = EPipelineStopped;
+        break;
+    case EWaiting:
+        state = EPipelineWaiting;
         break;
     default:
         ASSERTS();
@@ -239,6 +258,12 @@ void Pipeline::Pause()
     iStopper->BeginPause();
 }
 
+void Pipeline::Wait(TUint aFlushId)
+{
+    const TBool rampDown = (iState == EPlaying);
+    iWaiter->Wait(aFlushId, rampDown);
+}
+
 void Pipeline::Stop(TUint aHaltId)
 {
     iLock.Wait();
@@ -258,12 +283,14 @@ void Pipeline::Stop(TUint aHaltId)
 
 void Pipeline::RemoveCurrentStream()
 {
-    iSkipper->RemoveCurrentStream(!iBuffering);
+    const TBool rampDown = (iState == EPlaying);
+    iSkipper->RemoveCurrentStream(rampDown);
 }
 
 TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
-    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, !iBuffering);
+    const TBool rampDown = (iState == EPlaying);
+    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, rampDown);
 }
 
 void Pipeline::AddObserver(ITrackObserver& aObserver)
@@ -306,6 +333,11 @@ void Pipeline::OutputFlush(TUint aFlushId)
     iSupply->OutputFlush(aFlushId);
 }
 
+void Pipeline::OutputWait()
+{
+    iSupply->OutputWait();
+}
+
 void Pipeline::OutputHalt(TUint aHaltId)
 {
     iSupply->OutputHalt(aHaltId);
@@ -344,6 +376,19 @@ TUint Pipeline::NextFlushId()
        RemoveCurrentStream() in Stop() will need to move outside its lock. */
     TUint id = iNextFlushId++;
     return id;
+}
+
+void Pipeline::PipelineWaiting(TBool aWaiting)
+{
+    iLock.Wait();
+    if (aWaiting) {
+        iState = EWaiting;
+    }
+    else {
+        iState = EPlaying;
+    }
+    iLock.Signal();
+    NotifyStatus();
 }
 
 void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)

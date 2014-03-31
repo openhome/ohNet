@@ -110,6 +110,11 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
     return aMsg;
 }
 
+Msg* Seeker::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
     return aMsg;
@@ -152,13 +157,19 @@ void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
 
 void Seeker::DoSeek()
 {
-    iSeekHandle = iSeeker.StartSeek(iTrackId, iStreamId, iSeekSeconds, *this);
-    iState = EFlushing;
-    while (!iQueue.IsEmpty()) {
-        iQueue.Dequeue()->RemoveRef();
+    iState = EFlushing; /* set this before calling StartSeek as its possible NotifySeekComplete
+                           could be called from another thread before StartSeek returns. */
+    iSeeker.StartSeek(iTrackId, iStreamId, iSeekSeconds, *this, iSeekHandle);
+    if (iSeekHandle == ISeeker::kHandleError) {
+        iState = ERampingUp;
     }
-    iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
-                                                    that any subsequent break in audio is expected */
+    else {
+        while (!iQueue.IsEmpty()) {
+            iQueue.Dequeue()->RemoveRef();
+        }
+        iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
+                                                        that any subsequent break in audio is expected */
+    }
 }
 
 Msg* Seeker::ProcessFlushable(Msg* aMsg)

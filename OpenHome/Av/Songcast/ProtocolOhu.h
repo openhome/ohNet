@@ -27,6 +27,8 @@ public:
     ~ProtocolOhu();
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
+private: // from Media::Protocol
+    void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:

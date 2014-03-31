@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Network.h>
 
+EXCEPTION(UdpServerClosed);
+
 namespace OpenHome {
 namespace Media {
 
@@ -14,42 +16,56 @@ class MsgUdp
 {
 public:
     MsgUdp(TUint aMaxSize);
-    MsgUdp(TUint aMaxSize, const Endpoint& aEndpoint);
     ~MsgUdp();
-    Bwx& Buffer();
-    Endpoint& GetEndpoint();
-    void Clear();
+    void Read(SocketUdp& aSocket);
+    const Brx& Buffer();
+    OpenHome::Endpoint& Endpoint();
 private:
     Bwh iBuf;
-    Endpoint iEndpoint;
+    OpenHome::Endpoint iEndpoint;
 };
 
 /**
  * Class for a continuously running server which buffers packets while active
  * and discards packets when deactivated
  */
-class SocketUdpServer : public SocketUdp
+class SocketUdpServer : public IReaderSource
 {
 public:
     SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPackets, TUint aPort = 0, TIpAddress aInterface = 0);
     ~SocketUdpServer();
     void Open();
     void Close();
-public: // from SocketUdpBase
+    TBool IsOpen();
+    void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuf);
+    Endpoint Sender() const; // sender of last completed Read()
+    TUint Port() const;
+
+    void SetSendBufBytes(TUint aBytes);
+    void SetRecvBufBytes(TUint aBytes);
+    void SetRecvTimeout(TUint aMs);
+    void SetTtl(TUint aTtl);
+public: // from IReaderSource
+    void Read(Bwx& aBuffer);
+    void ReadFlush();
+    void ReadInterrupt();
 private:
-    void ClearAndRequeue(MsgUdp& aMsg);
-    void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
+    static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
     void ServerThread();
     void CurrentAdapterChanged();
 private:
     Environment& iEnv;
+    SocketUdp iSocket;
     TUint iMaxSize;
     TBool iOpen;
     Fifo<MsgUdp*> iFifoWaiting;
     Fifo<MsgUdp*> iFifoReady;
-    Mutex iWaitingLock;
+    MsgUdp* iDiscard;
+    Endpoint iSender;
+    mutable Mutex iLock;
     Mutex iReadyLock;
+    Semaphore iSemaphore;
     ThreadFunctor* iServerThread;
     TBool iQuit;
     TUint iAdapterListenerId;

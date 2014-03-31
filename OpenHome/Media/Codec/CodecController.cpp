@@ -92,20 +92,17 @@ void CodecController::Start()
     iDecoderThread->Start();
 }
 
-TUint CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver)
+void CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (iTrackId != aTrackId || aStreamId != iStreamId) {
-        return ISeeker::kHandleError;
+    if (iTrackId != aTrackId || aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
+        aHandle = ISeeker::kHandleError;
+        return;
     }
-    if (iActiveCodec == NULL || !iSeekable) {
-        return ISeeker::kHandleError;
-    }
+    aHandle = ++iSeekHandle;
     iSeekObserver = &aObserver;
     iSeek = true;
     iSeekSeconds = aSecondsAbsolute;
-
-    return ++iSeekHandle;
 }
 
 TBool CodecController::SupportsMimeType(const Brx& aMimeType)
@@ -218,14 +215,8 @@ void CodecController::CodecThread()
             catch (CodecStreamEnded&) {
                 iStreamEnded = true;
             }
-            catch (CodecStreamCorrupt&) {
-                // don't break here - might be waiting on a quit msg or similar
-                iStreamEnded = true;
-            }
-            catch (CodecStreamFeatureUnsupported&) {
-                // copy behaviour for Corrupt
-                iStreamEnded = true;
-            }
+            catch (CodecStreamCorrupt&) {}
+            catch (CodecStreamFeatureUnsupported&) {}
         }
         catch (CodecStreamStopped&) {}
         catch (CodecStreamFlush&) {}
@@ -326,6 +317,7 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
     while (!iStreamEnded && (iAudioEncoded == NULL || iAudioEncoded->Bytes() < aBytes)) {
         Msg* msg = PullMsg();
         if (msg != NULL) {
+            ASSERT(iPendingMsg == NULL);
             iPendingMsg = msg;
             break;
         }
@@ -440,6 +432,7 @@ void CodecController::OutputHalt()
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
+        iStreamStarted = iStreamEnded = true;
         aMsg->RemoveRef();
         return NULL;
     }
@@ -483,7 +476,7 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (!QueueTrackData()) {
+    if (iRecognising || !QueueTrackData()) {
         aMsg->RemoveRef();
     }
     else {
@@ -495,17 +488,17 @@ Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 Msg* CodecController::ProcessMsg(MsgHalt* aMsg)
 {
     iStreamEnded = true;
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
     return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
 {
     ReleaseAudioEncoded();
-    if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-        Queue(aMsg);
-        THROW(CodecStreamFlush);
-    }
-    if (iExpectedFlushId != aMsg->Id()) {
+    if (iExpectedFlushId == MsgFlush::kIdInvalid || iExpectedFlushId != aMsg->Id()) {
         Queue(aMsg);
     }
     else {
@@ -523,6 +516,11 @@ Msg* CodecController::ProcessMsg(MsgFlush* aMsg)
         }
     }
     return NULL;
+}
+
+Msg* CodecController::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
 }
 
 Msg* CodecController::ProcessMsg(MsgDecodedStream* /*aMsg*/)

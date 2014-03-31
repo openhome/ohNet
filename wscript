@@ -220,6 +220,7 @@ def build(bld):
                 'OpenHome/Media/Logger.cpp',
                 'OpenHome/Media/Msg.cpp',
                 'OpenHome/Media/PreDriver.cpp',
+                'OpenHome/Media/Pruner.cpp',
                 'OpenHome/Media/Reporter.cpp',
                 'OpenHome/Media/Rewinder.cpp',
                 'OpenHome/Media/Seeker.cpp',
@@ -231,11 +232,13 @@ def build(bld):
                 'OpenHome/Media/Supply.cpp',
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
+                'OpenHome/Media/Waiter.cpp',
                 'OpenHome/Media/UdpServer.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
                 'OpenHome/Media/ClockPuller.cpp',
+                'OpenHome/Media/DriverBasic.cpp',
                 'OpenHome/Media/DriverSongcastSender.cpp',
                 'OpenHome/Media/ProcessorPcmUtils.cpp',
                 'OpenHome/Media/Codec/Mpeg4.cpp',
@@ -481,12 +484,14 @@ def build(bld):
                 'OpenHome/Media/Tests/TestSeeker.cpp',
                 'OpenHome/Media/Tests/TestSkipper.cpp',
                 'OpenHome/Media/Tests/TestStopper.cpp',
+                'OpenHome/Media/Tests/TestWaiter.cpp',
                 'OpenHome/Media/Tests/TestSupply.cpp',
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
+                'OpenHome/Media/Tests/TestPruner.cpp',
                 'OpenHome/Media/Tests/TestContentProcessor.cpp',
                 'OpenHome/Media/Tests/TestPipeline.cpp',
                 'OpenHome/Media/Tests/TestProtocol.cpp',
@@ -551,6 +556,11 @@ def build(bld):
             target='TestStopper',
             install_path=None)
     bld.program(
+            source='OpenHome/Media/Tests/TestWaiterMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestWaiter',
+            install_path=None)
+    bld.program(
             source='OpenHome/Media/Tests/TestSupplyMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestSupply',
@@ -581,6 +591,11 @@ def build(bld):
             target='TestPreDriver',
             install_path=None)
     bld.program(
+            source='OpenHome/Media/Tests/TestPrunerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestPruner',
+            install_path=None)
+    bld.program(
             source='OpenHome/Media/Tests/TestContentProcessorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestContentProcessor',
@@ -596,9 +611,9 @@ def build(bld):
             target='TestProtocol',
             install_path=None)
     bld.program(
-           source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
-           use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-           target='TestProtocolRaop',
+            source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            target='TestProtocolRaop',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',

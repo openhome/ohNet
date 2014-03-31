@@ -4,7 +4,7 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Media/DriverBasic.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include "TestMediaPlayer.h"
 #include <OpenHome/Private/Printer.h>
@@ -73,9 +73,9 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     RandomiseUdn(env, udn);
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
     TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
-    DriverSongcastSender* driver = new DriverSongcastSender(tmp->Pipeline(), kMaxDriverJiffies, *dvStack, udn, optionChannel.Value());
+    DriverBasic* driver = new DriverBasic(tmp->Pipeline(), dvStack->Env());
     tmp->Run();
-    tmp->DestroyPipeline();
+    tmp->StopPipeline();
     delete driver;
     delete tmp;
     

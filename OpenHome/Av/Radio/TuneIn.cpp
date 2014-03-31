@@ -16,6 +16,8 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Media/PipelineManager.h>
 
+#include <limits.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
@@ -176,10 +178,18 @@ void RadioPresetsTuneIn::DoRefresh()
 
         iDbWriter.BeginSetPresets();
         startedUpdates = true;
-        TUint presetIndex = 0;
         const TUint maxPresets = iDbWriter.MaxNumPresets();
+        if (iAllocatedPresets.size() == 0) {
+            iAllocatedPresets.reserve(maxPresets);
+            for (TUint i=0; i<maxPresets; i++) {
+                iAllocatedPresets.push_back(0);
+            }
+        }
+        else {
+            std::fill(iAllocatedPresets.begin(), iAllocatedPresets.end(), 0);
+        }
         try {
-            for (;presetIndex<maxPresets;) {
+            for (;;) {
                 iReadBuffer.ReadUntil('<');
                 buf.Set(iReadBuffer.ReadUntil('>'));
                 if (!buf.BeginsWith(Brn("outline type=\"audio\"")) &&
@@ -203,22 +213,55 @@ void RadioPresetsTuneIn::DoRefresh()
                     byteRate *= 125; // convert from kbits/sec to bytes/sec
                     Ascii::AppendDec(byteRateBuf, byteRate);
                 }
-
                 const TChar* imageKey = "image";
                 Brn imageKeyBuf(imageKey);
+                const TChar* presetNumberKey = "preset_number";
+                Brn presetNumberBuf(presetNumberKey);
                 Brn key = parser.Next('=');
-                while (key.Bytes() > 0 && key != imageKeyBuf) {
-                    (void)parser.Next('\"');
-                    (void)parser.Next('\"');
+                TBool foundImage = false, foundPresetNumber= false;
+                TUint presetNumber = UINT_MAX;
+                while (key.Bytes() > 0 && !(foundImage && foundPresetNumber)) {
+                    if (key == imageKeyBuf) {
+                        foundImage = ReadValue(parser, imageKey, iPresetArtUrl);
+                    }
+                    else if (key == presetNumberBuf) {
+                        Bws<Ascii::kMaxUintStringBytes> buf;
+                        if (ReadValue(parser, presetNumberKey, buf)) {
+                            try {
+                                presetNumber = Ascii::Uint(buf);
+                                foundPresetNumber = true;
+                            }
+                            catch (AsciiError&) {}
+                        }
+                    }
+                    else {
+                        (void)parser.Next('\"');
+                        (void)parser.Next('\"');
+                    }
                     key.Set(parser.Next('='));
                 }
-                if (key.Bytes() > 0) {
-                    ReadValue(parser, imageKey, iPresetArtUrl);
+                if (!foundPresetNumber) {
+                    LOG2(kProducts, kError, "No preset_id for TuneIn preset ");
+                    LOG2(kProducts, kError, iPresetTitle);
+                    LOG2(kProducts, kError, "\n");
+                    continue;
                 }
-                else {
-                    LOG(kProducts, "No art for TuneIn preset ");
-                    LOG(kProducts, iPresetTitle);
-                    LOG(kProducts, "\n");
+                if (presetNumber > maxPresets) {
+                    LOG2(kProducts, kError, "Ignoring preset number %u (index too high)\n", presetNumber);
+                    continue;
+                }
+                const TUint presetIndex = presetNumber-1;
+                iAllocatedPresets[presetIndex] = 1;
+
+                /* Only report changes if url has changed.
+                   Changes in metadata only - e.g. . 'Station ABC (Genre 1)' -> 'Station ABC (Genre 2)' - are
+                   deliberately suppressed.  These result in the preset id changing, likely causing control
+                   points (certainly Kinsky/Kazoo) to reset their view.  The small benefit in having preset
+                   titles updated is therefore outweighed by the cost of control points not coping well when
+                   a station changes its preset id. */
+                iDbWriter.ReadPreset(presetIndex, iDbUri, iDbMetaData);
+                if (iDbUri == iPresetUrl) {
+                    continue;
                 }
 
                 iDidlLite.SetBytes(0);
@@ -241,14 +284,16 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDidlLite.Append("<upnp:class>object.item.audioItem</upnp:class>");
                 iDidlLite.Append("</item>");
                 iDidlLite.Append("</DIDL-Lite>");
+
                 iDbWriter.SetPreset(presetIndex, iPresetUrl, iDidlLite);
-                presetIndex++;
             }
         }
         catch (ReaderError&) {
         }
-        for (; presetIndex<maxPresets; presetIndex++) {
-            iDbWriter.ClearPreset(presetIndex);
+        for (TUint i=0; i<maxPresets; i++) {
+            if (iAllocatedPresets[i] == 0) {
+                iDbWriter.ClearPreset(i);
+            }
         }
 
 #else // OLD_DEBUGGING_CODE

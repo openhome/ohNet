@@ -28,6 +28,7 @@ SIMPLE_TEST_DECLARATION(TestReporter);
 SIMPLE_TEST_DECLARATION(TestRewinder);
 SIMPLE_TEST_DECLARATION(TestSeeker);
 SIMPLE_TEST_DECLARATION(TestSkipper);
+SIMPLE_TEST_DECLARATION(TestPruner);
 SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestStopper);
 SIMPLE_TEST_DECLARATION(TestStore);
@@ -35,6 +36,7 @@ SIMPLE_TEST_DECLARATION(TestSupply);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestVariableDelay);
+SIMPLE_TEST_DECLARATION(TestWaiter);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
 
@@ -76,6 +78,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestReporter", ShellTestReporter));
     shellTests.push_back(ShellTest("TestSeeker", ShellTestSeeker));
     shellTests.push_back(ShellTest("TestSkipper", ShellTestSkipper));
+    shellTests.push_back(ShellTest("TestPruner", ShellTestPruner));
     shellTests.push_back(ShellTest("TestStarvationMonitor", ShellTestStarvationMonitor));
     shellTests.push_back(ShellTest("TestStopper", ShellTestStopper));
     shellTests.push_back(ShellTest("TestStore", ShellTestStore));
@@ -83,6 +86,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestTrackDatabase", ShellTestTrackDatabase));
     shellTests.push_back(ShellTest("TestTrackInspector", ShellTestTrackInspector));
     shellTests.push_back(ShellTest("TestVariableDelay", ShellTestVariableDelay));
+    shellTests.push_back(ShellTest("TestWaiter", ShellTestWaiter));
     shellTests.push_back(ShellTest("TestRewinder", ShellTestRewinder));
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
     shellTests.push_back(ShellTest("TestUdpServer", ShellTestUdpServer));

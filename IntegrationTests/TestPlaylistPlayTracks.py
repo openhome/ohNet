@@ -53,7 +53,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
-        self.numTrack         = 0
+        self.numTrack         = 1
         self.startTime        = 0
         self.playTime         = None
         self.senderPlayTime   = 0
@@ -116,7 +116,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.time.AddSubscriber( self._SenderTimeCb )
         self.sender.info.AddSubscriber( self._SenderInfoCb )
                 
-        # Put sender onto random source before starting playback (catch #2968) 
+        # Put sender onto random source before starting playback (catch Volkano #2968, Network #894) 
         self.sender.product.sourceIndex = random.randint( 0, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
@@ -137,19 +137,23 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.playlist.repeat = self.repeat
         self.sender.playlist.shuffle = self.shuffle
         self.sender.playlist.AddPlaylist( self.tracks )
+        time.sleep( 2 )
         
         # check the playlist ReadList operation
         self._CheckReadList()
             
         # start playback
-        self.senderPlaying.clear()
-        self.sender.playlist.SeekIndex( 0 )
+        self.log.Info( self.senderDev, 'Starting on source %s' % self.sender.product.sourceIndex )
         self.sender.playlist.Play()
         self.playActioned = True
-        
-        # wait until playback stopped
-        self.senderStopped.clear()        
-        self.senderStopped.wait()
+        self.senderPlaying.wait( 10 )
+        self._CheckTrackInfo( self.sender.playlist.id )
+        if not self.senderPlaying.is_set():
+            self.log.Fail( self.senderDev, 'Playback never started' )
+        else:
+            # wait until playback stopped
+            self.senderStopped.clear()        
+            self.senderStopped.wait()
                 
     def Cleanup( self ):
         "Perform post-test cleanup" 
@@ -220,34 +224,50 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                         self.log.Fail( self.senderDev, 'FAILED to play track %s' % title )
                     else:
                         self.log.Fail( self.senderDev, 'FAILED to play track' )
+            self._CheckTrackInfo( aId )
+
+    def _CheckTrackInfo( self, aId ): 
+        "Update 'now playing' log and check reported track info" 
+        if self.playActioned:               
+            plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
+            self.log.Info( '' )
+            self.log.Info( '', '----------------------------------------' )
+            self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+            self.log.Info( '', '----------------------------------------' )
+            self.log.Info( '' )
                 
             if self.senderStarted.isSet():
                 dsTrack = self.sender.playlist.TrackInfo( aId )
-                (uri,self.meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
-                if dsTrack['Uri'] != uri:
-                    self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
-                                    % (dsTrack['aUri'], uri) )
-                else:
-                    self.log.Pass( self.senderDev, 'Sender URI as expected' )
-                
-                if os.name == 'posix':
-                    # clean up 'screwed up' unicode escaping in Linux
-                    dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
-                    self.meta = self.meta.replace( '\\', '' )
-                if dsTrack['Metadata'] != self.meta:
-                    self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
-                                    % (dsTrack['Metadata'], self.meta) )
-                else:
-                    self.log.Pass( self.senderDev, 'Sender metadata as expected' )
+                if dsTrack:
+                    (uri,self.meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
+                    if dsTrack['Uri'] != uri:
+                        self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
+                                        % (dsTrack['aUri'], uri) )
+                    else:
+                        self.log.Pass( self.senderDev, 'Sender URI as expected' )
                     
-                self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
-                    'Sender Audio flag is %s' % self.sender.sender.audio )
-                self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
-                    'Sender Status is %s' % self.sender.sender.status )                         
+                    if os.name == 'posix':
+                        # clean up 'screwed up' unicode escaping in Linux
+                        dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
+                        self.meta = self.meta.replace( '\\', '' )
+                    if dsTrack['Metadata'] != self.meta:
+                        self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
+                                        % (dsTrack['Metadata'], self.meta) )
+                    else:
+                        self.log.Pass( self.senderDev, 'Sender metadata as expected' )
+                        
+                    self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
+                        'Sender Audio flag is %s' % self.sender.sender.audio )
+                    self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
+                        'Sender Status is %s' % self.sender.sender.status )
+                else:                         
+                    self.log.Fail( self.senderDev, 'No track data returned' )
+                    self.senderStopped.set()     # force test exit
                     
             if not self.senderStopped.isSet():
                 self.numTrack += 1
-                if self.repeat=='off' and self.numTrack>len( self.tracks ): 
+                if self.repeat=='off' and self.numTrack>len( self.tracks )+1: 
                     self.senderStopped.wait( 3 )
                     if not self.senderStopped.isSet():
                         self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
@@ -289,13 +309,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 
     def _SetupPlayTimer( self ):
         "Setup timer to callback after specified play time"
-        plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
-        self.log.Info( '' )
-        self.log.Info( '', '----------------------------------------' )
-        self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
-            (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-        self.log.Info( '', '----------------------------------------' )
-        self.log.Info( '' )
         self.senderStarted.wait()
         self.senderPlaying.wait()
         self.startTime = time.time()
