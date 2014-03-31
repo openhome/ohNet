@@ -33,6 +33,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iRunning(false)
     , iRepairing(false)
     , iStreamMsgDue(true)
+    , iRepairFirst(NULL)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
@@ -93,6 +94,7 @@ void ProtocolOhBase::RequestResend(const Brx& aFrames)
 
 void ProtocolOhBase::SendJoin()
 {
+    LOG(kSongcast, "SendJoin\n");
     Send(OhmHeader::kMsgTypeJoin);
     iTimerJoin->FireIn(kTimerJoinTimeoutMs);
 }
@@ -135,11 +137,13 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
         iMutexTransport.Signal();
         res = Play(addr, kTtl, ep);
     } while (res != EProtocolStreamStopped);
-    if (iRepairing) {
-        iMutexTransport.Wait();
-        RepairReset();
-        iMutexTransport.Signal();
-    }
+
+    iMutexTransport.Wait();
+    RepairReset();
+    iFrame = 0;
+    iStreamMsgDue = true;
+    iMutexTransport.Signal();
+
     return res;
 }
 
