@@ -59,7 +59,9 @@ Msg* Waiter::Pull()
 
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iState != ERunning && iState != EFlushing && iState != ERampingUp) {
+    if (iState != ERunning && iState != ERampingUp) {
+        // Could ramp down, then receive expected flush, which puts this back
+        // into ramping up state, then receive a new MsgTrack during ramp up.
         aMsg->RemoveRef();
         ASSERTS();
     }
