@@ -818,9 +818,11 @@ void SuiteWaiter::TestMsgTrackDuringRampingUpAsserts()
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
-    // No MsgTrack is expected during ramp up, so should ASSERT()
+    // Pull MsgTrack and check audio comes through.
     iPendingMsgs.push_back(CreateTrack());
-    TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
 }
 
 void SuiteWaiter::TestWaitingStateOnMsgWait()
