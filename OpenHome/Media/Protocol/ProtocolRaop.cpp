@@ -1,10 +1,12 @@
 #include <OpenHome/Media/Protocol/RaopHeader.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Media/UdpServer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/Raop/Raop.h>
 
 EXCEPTION(ResendTimeout);
@@ -13,6 +15,7 @@ EXCEPTION(InvalidHeader);
 EXCEPTION(RaopAudioServerClosed);
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 
@@ -50,7 +53,8 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
     iLockRaop.Wait();
     iNextFlushId = MsgFlush::kIdInvalid;
-    iStopped = false;
+    iWaiting = iStopped = false;
+    iActive = true;
     iLockRaop.Signal();
 
     // raop doesn't actually stream from a URI, so just expect a dummy uri
@@ -62,6 +66,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     if (uri.Scheme() != Brn("raop")) {
         LOG(kMedia, "ProtocolRaop::Stream Scheme not recognised\n");
         iLockRaop.Wait();
+        iActive = false;
         iStopped = true;
         iLockRaop.Signal();
         return EProtocolErrorNotSupported;
@@ -86,8 +91,14 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     // Output audio stream
     for (;;) {
         iLockRaop.Wait();
-        if (iStopped) {
+        if (iWaiting) {
             iSupply->OutputFlush(iNextFlushId);
+            iWaiting = false;
+            // Resume normal operation.
+        }
+        else if (iStopped) {
+            iSupply->OutputFlush(iNextFlushId);
+            iActive = false;
             iStopped = true;
             iLockRaop.Signal();
             return EProtocolStreamStopped;
@@ -100,6 +111,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
                 iLockRaop.Wait();
+                iActive = false;
                 iStopped = true;
                 iLockRaop.Signal();
                 return EProtocolStreamStopped;
@@ -143,7 +155,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                             expected++;
                             iRaopControl.UnlockRx();
                         }
-                        catch(ResendTimeout) {
+                        catch(ResendTimeout&) {
                             LOG(kMedia, "ProtocolRaop NOT received resent data, padding %d\n", padding);
 
                             //just mute if resent packets not available
@@ -153,7 +165,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                                 OutputAudio(iRaopAudio.Audio());
                             }
                         }
-                        catch(ResendInvalid) {
+                        catch(ResendInvalid&) {
                             // may be corrupted or a redundant frame left from a previous timeout
                             LOG(kMedia, "ProtocolRaop unexpected data - ignore, padding %d\n", padding);
                         }
@@ -190,6 +202,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         catch (RaopAudioServerClosed&) {
             LOG(kMedia, "ProtocolRaop::Stream RaopAudioServerClosed\n");
             iLockRaop.Wait();
+            iActive = false;
             iStopped = true;
             iLockRaop.Signal();
             return EProtocolStreamStopped;
@@ -224,6 +237,7 @@ void ProtocolRaop::OutputAudio(const Brn &aPacket)
 
 TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "ProtocolRaop::TryStop\n");
     TBool stop = false;
     iLockRaop.Wait();
     if (!iStopped) {
@@ -253,6 +267,19 @@ void ProtocolRaop::Deactivate()
 {
     LOG(kMedia, "ProtocolRaop::Deactivate\n");
     iDiscovery.Deactivate();
+}
+
+TUint ProtocolRaop::SendFlush()
+{
+    LOG(kMedia, "ProtocolRaop::NotifySessionWait\n");
+    iLockRaop.Wait();
+    ASSERT(iActive);
+    TUint flushId = iFlushIdProvider->NextFlushId();
+    iNextFlushId = flushId;
+    iWaiting = true;
+    DoInterrupt();
+    iLockRaop.Signal();
+    return flushId;
 }
 
 

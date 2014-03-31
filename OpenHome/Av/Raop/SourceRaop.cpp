@@ -7,7 +7,7 @@
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
-#include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
@@ -57,11 +57,15 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 {
     GenerateMetadata();
 
-    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), *this, aHostName, aFriendlyName, aMacAddr);
+    iRaopDiscovery = new RaopDiscovery(aMediaPlayer.Env(), aMediaPlayer.DvStack(), aMediaPlayer.PowerManager(), aHostName, aFriendlyName, aMacAddr);
+    iRaopDiscovery->AddObserver(*this);
+
     iAudioId = iServerManager.CreateServer();
     iControlId = iServerManager.CreateServer();
     iTimingId = iServerManager.CreateServer();
-    iPipeline.Add(ProtocolFactory::NewRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId)); // bypassing MediaPlayer
+
+    iProtocol = new ProtocolRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
+    iPipeline.Add(iProtocol);   // takes ownership
     iPipeline.AddObserver(*this);
 
     iServerAudio = &iServerManager.Find(iAudioId);
@@ -186,6 +190,7 @@ void SourceRaop::StartNewTrack()
 void SourceRaop::StopTrack()
 {
     iPipeline.RemoveAll();
+    iPipeline.Stop();
     if (iTrack != NULL) {
         iTrack->RemoveRef();
         iTrack = NULL;
@@ -223,14 +228,27 @@ void SourceRaop::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 void SourceRaop::NotifySessionEnd()
 {
     AutoMutex a(iLock);
-    StopTrack();
     iNextTrackUri.SetBytes(0);
 
     if (IsActive() && iSessionActive) {
+        StopTrack();
         CloseServers();
     }
 
     iSessionActive = false;
+}
+
+void SourceRaop::NotifySessionWait()
+{
+    AutoMutex a(iLock);
+
+    if (IsActive() && iSessionActive) {
+        // Possible race condition here - MsgFlush could pass Waiter before
+        // iPipeline::Wait is called.
+        TUint flushId = iProtocol->SendFlush();
+        iPipeline.Wait(flushId);
+        iTransportState = Media::EPipelineWaiting;
+    }
 }
 
 void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)
