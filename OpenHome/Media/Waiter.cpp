@@ -59,7 +59,7 @@ Msg* Waiter::Pull()
 
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iState != ERunning) {
+    if (iState != ERunning && iState != EFlushing && iState != ERampingUp) {
         aMsg->RemoveRef();
         ASSERTS();
     }
@@ -97,6 +97,9 @@ Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
         ASSERT(iState == EFlushing); // haven't received enough audio for a full ramp down
+        // FIXME - the above ASSERT can be expected at the moment if we
+        // pause/unpause/seek too quickly as the VariableDelay pipeline element
+        // does not currently give us a 2s buffer.
         aMsg->RemoveRef();
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
