@@ -92,9 +92,16 @@ SourceRaop::~SourceRaop()
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     delete iRaopDiscovery;
+
+    iLock.Wait();
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
+    if (iSessionActive) {
+        CloseServers();
+    }
+    iLock.Signal();
+
     iConfigNetAux->Unsubscribe(iConfigSubId);
     delete iConfigNetAux;
 }
