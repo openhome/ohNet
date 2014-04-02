@@ -220,7 +220,6 @@ DummyUriStreamer::DummyUriStreamer(ISupply& aSupply, Semaphore& aTrackAddedSem, 
 
 DummyUriStreamer::~DummyUriStreamer()
 {
-    iSupply.OutputQuit();
 }
 
 TUint DummyUriStreamer::TrackId() const
@@ -350,6 +349,7 @@ SuiteFiller::SuiteFiller()
 
 SuiteFiller::~SuiteFiller()
 {
+    iFiller->Quit();
     delete iUriStreamer;
     delete iFiller;
     delete iUriProvider;
@@ -469,12 +469,10 @@ void SuiteFiller::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, 
 
 void SuiteFiller::NotifyTrackFailed(TUint /*aTrackId*/)
 {
-    ASSERTS();
 }
 
 void SuiteFiller::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
 {
-    ASSERTS();
 }
 
 
