@@ -208,6 +208,7 @@ void Supplier::Run()
         Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
     iSupply.OutputHalt(iHaltId);
+    iSupply.OutputQuit();
 }
 
 EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
