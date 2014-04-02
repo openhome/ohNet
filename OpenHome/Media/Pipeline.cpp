@@ -28,7 +28,7 @@ using namespace OpenHome::Media;
 
 // Pipeline
 
-Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, TUint aDriverMaxAudioBytes)
+Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes)
     : iObserver(aObserver)
     , iLock("PLMG")
     , iState(EStopped)
@@ -77,6 +77,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iWaiter = new Waiter(*iMsgFactory, *iLoggerSkipper, *this, kWaiterRampDuration);
     iLoggerWaiter = new Logger(*iWaiter, "Waiter");
     iStopper = new Stopper(*iMsgFactory, *iLoggerWaiter, *this, kStopperRampDuration);
+    iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iReporter = new Reporter(*iLoggerStopper, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");

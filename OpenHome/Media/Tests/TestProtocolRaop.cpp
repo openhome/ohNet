@@ -98,7 +98,7 @@ private:
     static const TUint kInvalidPipelineId = 0;
 };
 
-class TestProtocolRaop : private IPipelineObserver
+class TestProtocolRaop : private IPipelineObserver, private IStreamPlayObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
 public:
@@ -111,6 +111,9 @@ private: // from IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+private: // from IStreamPlayObserver
+    void NotifyTrackFailed(TUint aTrackId);
+    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
 private:
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
@@ -202,7 +205,7 @@ TestProtocolRaop::TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, co
     : iUrl(aUrl)
     , iStreamId(0)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, aDvStack, aHostName, aFriendlyName, aMacAddr, *iPipeline, *iPipeline, iInfoAggregator);
     iPipeline->AddCodec(Codec::CodecFactory::NewRaop());
     iPipeline->Start();
@@ -316,6 +319,14 @@ void TestProtocolRaop::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     Log::Print(aStreamInfo.CodecName());
     Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
+}
+
+void TestProtocolRaop::NotifyTrackFailed(TUint /*aTrackId*/)
+{
+}
+
+void TestProtocolRaop::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
+{
 }
 
 

@@ -118,8 +118,8 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 void MediaPlayer::Start()
 {
     iConfigManager->Close();
-    iProduct->SetCurrentSource(0); // FIXME - could be available (and left) to client code
     iPipeline->Start();
+    iProduct->SetCurrentSource(0); // FIXME - could be available (and left) to client code
     iProduct->Start();
 }
 

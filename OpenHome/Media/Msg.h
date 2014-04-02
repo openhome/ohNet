@@ -811,6 +811,14 @@ enum EStreamPlay
    ,ePlayLater
 };
 
+class IStreamPlayObserver
+{
+public:
+    virtual ~IStreamPlayObserver() {}
+    virtual void NotifyTrackFailed(TUint aTrackId) = 0;
+    virtual void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus) = 0;
+};
+
 class IPipelineIdProvider
 {
 public:

@@ -14,9 +14,11 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iObserver(aObserver)
     , iLock("STP1")
     , iSem("STP2", 0)
+    , iStreamPlayObserver(NULL)
     , iRampDuration(aRampDuration)
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iTrackId(0)
+    , iTrackIdPipeline(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
     , iQuit(false)
@@ -27,6 +29,11 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
 
 Stopper::~Stopper()
 {
+}
+
+void Stopper::SetStreamPlayObserver(IStreamPlayObserver& aObserver)
+{
+    iStreamPlayObserver = &aObserver;
 }
 
 void Stopper::Play()
@@ -162,12 +169,18 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
        This isn't the case if CodecController fails to recognise the format of a stream.
        Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
        play a stream. */
-    if (!iCheckedStreamPlayable && iStreamHandler != NULL) {
-        (void)iStreamHandler->OkToPlay(iTrackId, iStreamId);
+    if (!iCheckedStreamPlayable) {
+        if (iStreamHandler != NULL) {
+            (void)iStreamHandler->OkToPlay(iTrackIdPipeline, iStreamId);
+        }
+        else if (iStreamPlayObserver != NULL) {
+            iStreamPlayObserver->NotifyTrackFailed(iTrackId);
+        }
     }
 
     NewStream();
-    iTrackId = aMsg->IdPipeline();
+    iTrackId = aMsg->Track().Id();
+    iTrackIdPipeline = aMsg->IdPipeline();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
@@ -246,7 +259,7 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->TryStop(iTrackId, iStreamId);
+        iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
     }
     return aMsg;
 }
@@ -262,13 +275,13 @@ Msg* Stopper::ProcessFlushable(Msg* aMsg)
 
 void Stopper::OkToPlay()
 {
-    EStreamPlay canPlay = iStreamHandler->OkToPlay(iTrackId, iStreamId);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(iTrackIdPipeline, iStreamId);
     switch (canPlay)
     {
     case ePlayYes:
         break;
     case ePlayNo:
-        /*TUint flushId = */iStreamHandler->TryStop(iTrackId, iStreamId);
+        /*TUint flushId = */iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
         SetState(EFlushing);
         iFlushStream = true;
         iHaltPending = true;
@@ -279,6 +292,9 @@ void Stopper::OkToPlay()
         break;
     default:
         ASSERTS();
+    }
+    if (iStreamPlayObserver != NULL) {
+        iStreamPlayObserver->NotifyStreamPlayStatus(iTrackId, iStreamId, canPlay);
     }
     iCheckedStreamPlayable = true;
 }
@@ -307,7 +323,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
                     iObserver.PipelinePaused();
                 }
                 else {
-                    (void)iStreamHandler->TryStop(iTrackId, iStreamId);
+                    (void)iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
                     SetState(ERunning);
                     iFlushStream = true;
                 }

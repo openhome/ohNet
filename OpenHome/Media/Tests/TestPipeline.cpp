@@ -45,7 +45,7 @@ private:
     TUint iHaltId;
 };
 
-class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor
+class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -87,6 +87,9 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IStreamPlayObserver
+    void NotifyTrackFailed(TUint aTrackId);
+    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
 private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
@@ -240,7 +243,7 @@ SuitePipeline::SuitePipeline()
     , iSemQuit("TPSQ", 0)
     , iQuitReceived(false)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, kDriverMaxAudioJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, *this, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(*iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
@@ -632,6 +635,14 @@ Msg* SuitePipeline::ProcessMsg(MsgQuit* aMsg)
     iQuitReceived = true;
     aMsg->RemoveRef();
     return NULL;
+}
+
+void SuitePipeline::NotifyTrackFailed(TUint /*aTrackId*/)
+{
+}
+
+void SuitePipeline::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
+{
 }
 
 

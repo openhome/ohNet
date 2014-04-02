@@ -7,6 +7,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 
+#include <limits.h>
 #include <vector>
 
 EXCEPTION(FillerInvalidMode);
@@ -34,8 +35,9 @@ private:
 
 class Filler : private Thread, public ISupply
 {
+    static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory);
+    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -46,6 +48,7 @@ public:
     TBool Next(const Brx& aMode);
     TBool Prev(const Brx& aMode);
     TBool IsStopped() const;
+    TUint NullTrackId() const;
 private:
     void UpdateActiveUriProvider(const Brx& aMode);
 private: // from Thread
@@ -87,6 +90,8 @@ private:
     TUint iNextHaltId;
     Track* iNullTrack; // delivered when uri provider cannot return a Track
     NullTrackStreamHandler iNullTrackStreamHandler;
+    IStreamPlayObserver& iStreamPlayObserver;
+    TUint iPrefetchTrackId;
 };
 
 } // namespace Media

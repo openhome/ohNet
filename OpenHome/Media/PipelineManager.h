@@ -64,6 +64,25 @@ private: // from IPipelineObserver
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private:
+    class PrefetchObserver : public IStreamPlayObserver
+    {
+    public:
+        PrefetchObserver();
+        void Quit();
+        void SetTrack(TUint aTrackId);
+        void Wait();
+        //void Signal();
+    private: // from IStreamPlayObserver
+        void NotifyTrackFailed(TUint aTrackId);
+        void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
+    private:
+        void CheckTrack(TUint aTrackId);
+    private:
+        Mutex iLock;
+        Semaphore iSem;
+        TUint iTrackId;
+    };
+private:
     Mutex iLock;
     Pipeline* iPipeline;
     ProtocolManager* iProtocolManager;
@@ -75,6 +94,8 @@ private:
     Semaphore iPipelineStoppedSem;
     BwsMode iMode;
     TUint iTrackId;
+    PrefetchObserver iPrefetchObserver;
+    Mutex iPrefetchLock;
 };
 
 } // namespace Media

@@ -96,7 +96,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     : iUrl(aUrl)
     , iStreamId(0)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, kMaxDriverJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
     iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
@@ -265,6 +265,14 @@ void TestProtocol::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     Log::Print(aStreamInfo.CodecName());
     Log::Print("; trackLength=%llx, lossless=%u}\n", aStreamInfo.TrackLength(), aStreamInfo.Lossless());
 #endif
+}
+
+void TestProtocol::NotifyTrackFailed(TUint /*aTrackId*/)
+{
+}
+
+void TestProtocol::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
+{
 }
 
 

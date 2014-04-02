@@ -29,7 +29,7 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory)
+Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver)
     : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
@@ -41,6 +41,8 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& a
     , iSendHalt(false)
     , iQuit(false)
     , iNextHaltId(MsgHalt::kIdNone + 1)
+    , iStreamPlayObserver(aStreamPlayObserver)
+    , iPrefetchTrackId(kPrefetchTrackIdInvalid)
 {
     iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
 }
@@ -85,6 +87,7 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->BeginLater(aTrackId);
+    iPrefetchTrackId = aTrackId;
     iStopped = false;
     Signal();
 }
@@ -137,6 +140,11 @@ TBool Filler::IsStopped() const
     return stopped;
 }
 
+TUint Filler::NullTrackId() const
+{
+    return iNullTrack->Id();
+}
+
 void Filler::UpdateActiveUriProvider(const Brx& aMode)
 {
     iActiveUriProvider = NULL;
@@ -183,6 +191,13 @@ void Filler::Run()
                 iTrack = NULL;
             }
             iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
+            if ((iPrefetchTrackId == Track::kIdNone && iTrack != NULL) ||
+                (iPrefetchTrackId != Track::kIdNone && iTrack->Id() != iPrefetchTrackId)) {
+                iStreamPlayObserver.NotifyTrackFailed(iPrefetchTrackId);
+            }
+            /* assume that if the uri provider has returned a track then ProtocolManager
+                will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
+            iPrefetchTrackId = kPrefetchTrackIdInvalid;
             mode.Replace(iActiveUriProvider->Mode());
             if (iTrackPlayStatus == ePlayNo) {
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());

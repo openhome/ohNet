@@ -5,19 +5,22 @@
 #include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Private/Printer.h>
 
+#include <limits.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // PipelineManager
 
 PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, TUint aDriverMaxAudioBytes)
-    : iLock("PLMG")
+    : iLock("PLM1")
     , iPipelineState(EPipelineStopped)
-    , iPipelineStoppedSem("PLMG", 1)
+    , iPipelineStoppedSem("PLM2", 1)
+    , iPrefetchLock("PLM3")
 {
-    iPipeline = new Pipeline(aInfoAggregator, *this, aDriverMaxAudioBytes);
+    iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory);
+    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory, iPrefetchObserver);
     iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
@@ -135,11 +138,14 @@ void PipelineManager::Stop()
 
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
+    AutoMutex a(iPrefetchLock);
     /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
     iPipeline->RemoveCurrentStream();
     iIdManager->InvalidatePending();
+    iPrefetchObserver.SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
     iFiller->PlayLater(aMode, aTrackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
+    iPrefetchObserver.Wait();
 }
 
 void PipelineManager::RemoveAll()
@@ -261,4 +267,51 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyStreamInfo(aStreamInfo);
     }
+}
+
+
+// PipelineManager::PrefetchObserver
+
+PipelineManager::PrefetchObserver::PrefetchObserver()
+    : iLock("PFO1")
+    , iSem("PFO2", 0)
+    , iTrackId(UINT_MAX)
+{
+}
+
+void PipelineManager::PrefetchObserver::Quit()
+{
+    iSem.Signal();
+}
+
+void PipelineManager::PrefetchObserver::SetTrack(TUint aTrackId)
+{
+    iLock.Wait();
+    iTrackId = aTrackId;
+    iLock.Signal();
+}
+
+void PipelineManager::PrefetchObserver::Wait()
+{
+    iSem.Wait();
+}
+
+void PipelineManager::PrefetchObserver::NotifyTrackFailed(TUint aTrackId)
+{
+    CheckTrack(aTrackId);
+}
+
+void PipelineManager::PrefetchObserver::NotifyStreamPlayStatus(TUint aTrackId, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
+{
+    CheckTrack(aTrackId);
+}
+
+void PipelineManager::PrefetchObserver::CheckTrack(TUint aTrackId)
+{
+    iLock.Wait();
+    if (aTrackId == iTrackId) {
+        iSem.Signal();
+        iTrackId = UINT_MAX;
+    }
+    iLock.Signal();
 }

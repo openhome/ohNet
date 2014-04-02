@@ -36,6 +36,7 @@ class Stopper : public IPipelineElementUpstream, private IMsgProcessor
 public:
     Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
     virtual ~Stopper();
+    void SetStreamPlayObserver(IStreamPlayObserver& aObserver);
     void Play();
     void BeginPause();
     void BeginStop(TUint aHaltId);
@@ -80,6 +81,7 @@ private:
     IStopperObserver& iObserver;
     Mutex iLock;
     Semaphore iSem;
+    IStreamPlayObserver* iStreamPlayObserver;
     EState iState;
     const TUint iRampDuration;
     TUint iRemainingRampSize;
@@ -87,6 +89,7 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetHaltId;
     TUint iTrackId;
+    TUint iTrackIdPipeline;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TBool iCheckedStreamPlayable;
