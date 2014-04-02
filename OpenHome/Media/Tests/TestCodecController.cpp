@@ -85,6 +85,7 @@ private:
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
     static const TUint kExpectedFlushId = 5;
+    static const TUint kSemWaitMs = 5000;
 
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -173,7 +174,7 @@ Msg* SuiteCodecController::Pull()
     // This is called from CodecController's own thread, so block until msg
     // available.
 
-    iSemPending->Wait();
+    iSemPending->Wait(kSemWaitMs);
     AutoMutex a(*iLockPending);
     ASSERT(iPendingMsgs.size() > 0);
     Msg* msg = iPendingMsgs.front();
@@ -310,7 +311,7 @@ void SuiteCodecController::Queue(Msg* aMsg)
 
 void SuiteCodecController::PullNext(EMsgType aExpectedMsg)
 {
-    iSemReceived->Wait();
+    iSemReceived->Wait(kSemWaitMs);
     iLockReceived->Wait();
     ASSERT(iReceivedMsgs.size() > 0);
     Msg* msg = iReceivedMsgs.front();
