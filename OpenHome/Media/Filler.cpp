@@ -191,8 +191,14 @@ void Filler::Run()
                 iTrack = NULL;
             }
             iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
-            if ((iPrefetchTrackId == Track::kIdNone && iTrack != NULL) ||
-                (iPrefetchTrackId != Track::kIdNone && iTrack->Id() != iPrefetchTrackId)) {
+            TBool failed = false;
+            if (iPrefetchTrackId == Track::kIdNone) {
+                failed = (iTrack != NULL);
+            }
+            else if (iPrefetchTrackId != kPrefetchTrackIdInvalid) {
+                failed = (iTrack == NULL || iTrack->Id() != iPrefetchTrackId);
+            }
+            if (failed) {
                 iStreamPlayObserver.NotifyTrackFailed(iPrefetchTrackId);
             }
             /* assume that if the uri provider has returned a track then ProtocolManager
