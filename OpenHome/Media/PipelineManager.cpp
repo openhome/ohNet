@@ -287,6 +287,7 @@ void PipelineManager::PrefetchObserver::Quit()
 void PipelineManager::PrefetchObserver::SetTrack(TUint aTrackId)
 {
     iLock.Wait();
+    (void)iSem.Clear();
     iTrackId = aTrackId;
     iLock.Signal();
 }
