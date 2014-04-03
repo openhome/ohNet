@@ -37,8 +37,8 @@ private:
     void TrackNonLiveStreamAudioReportsPlay();
     void TrackLiveStreamAudioReportsPlay();
     void TrackFlushReportsNothing();
-    void TrackNonLiveStreamFlushReportsNothing();
-    void TrackFlushTrackReportsNothing();
+    void TrackNonLiveStreamFlushReportsPlay();
+    void TrackFlushTrackReportsFail();
     void TrackLiveStreamFlushReportsPlay();
     void TrackTrackReportsFail();
     void TrackHaltTrackReportsFail();
@@ -77,8 +77,8 @@ SuiteTrackInspector::SuiteTrackInspector()
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamAudioReportsPlay));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamAudioReportsPlay));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushReportsNothing));
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamFlushReportsNothing));
-    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushTrackReportsNothing));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackNonLiveStreamFlushReportsPlay));
+    AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackFlushTrackReportsFail));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackLiveStreamFlushReportsPlay));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackTrackReportsFail));
     AddTest(MakeFunctor(*this, &SuiteTrackInspector::TrackHaltTrackReportsFail));
@@ -125,7 +125,7 @@ void SuiteTrackInspector::TrackNonLiveStreamAudioReportsPlay()
     TEST(iPlayCount == 0);
     TEST(iFailCount == 0);
     Pull(EMsgDecodedStream);
-    TEST(iPlayCount == 0);
+    TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
     Pull(EMsgAudioPcm);
     TEST(iPlayCount == 1);
@@ -161,20 +161,20 @@ void SuiteTrackInspector::TrackFlushReportsNothing()
     TEST(iFailCount == 0);
 }
 
-void SuiteTrackInspector::TrackNonLiveStreamFlushReportsNothing()
+void SuiteTrackInspector::TrackNonLiveStreamFlushReportsPlay()
 {
     Pull(EMsgTrack);
     TEST(iPlayCount == 0);
     TEST(iFailCount == 0);
     Pull(EMsgDecodedStream);
-    TEST(iPlayCount == 0);
+    TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
     Pull(EMsgFlush);
-    TEST(iPlayCount == 0);
+    TEST(iPlayCount == 1);
     TEST(iFailCount == 0);
 }
 
-void SuiteTrackInspector::TrackFlushTrackReportsNothing()
+void SuiteTrackInspector::TrackFlushTrackReportsFail()
 {
     Pull(EMsgTrack);
     TEST(iPlayCount == 0);
@@ -184,7 +184,7 @@ void SuiteTrackInspector::TrackFlushTrackReportsNothing()
     TEST(iFailCount == 0);
     Pull(EMsgTrack);
     TEST(iPlayCount == 0);
-    TEST(iFailCount == 0);
+    TEST(iFailCount == 1);
 }
 
 void SuiteTrackInspector::TrackLiveStreamFlushReportsPlay()
@@ -237,9 +237,6 @@ void SuiteTrackInspector::TrackTrackReportsFailNonLiveStreamAudioReportsPlay()
     TEST(iFailCount == 1);
     TEST(iLastNotifiedTrack->Id() == iTrackIds[0]);
     Pull(EMsgDecodedStream);
-    TEST(iPlayCount == 0);
-    TEST(iFailCount == 1);
-    Pull(EMsgAudioPcm);
     TEST(iPlayCount == 1);
     TEST(iFailCount == 1);
     TEST(iLastNotifiedTrack->Id() == iTrackIds[1]);

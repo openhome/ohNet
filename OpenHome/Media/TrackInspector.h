@@ -21,8 +21,9 @@ public:
 
 /*
 Element which reports whether tracks have any associated content.
-The first chunk of decoded audio following a MsgTrack is taken to indicate a good track.
-Any track that doesn't result in some decoded audio and isn't interrupted by a Flush is assumed bad.
+The DecodedStream msg following a MsgTrack is taken to indicate a good track.
+Live streams that manage to generate a MsgEncodedStream are assumed good.
+Any track that isn't covered by the cases above is assumed bad.
 Is passive - it reports on Msgs but doesn't create/destroy/edit them.
 */
 

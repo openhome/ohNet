@@ -66,6 +66,13 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    if (iTrack != NULL && aMsg->Live()) {
+        /* Live streams wait for the stopper to tell them to start generating audio.
+           Its possible we'll see this msg but no audio for a perfectly good stream
+           ...so assume that generation of MsgEncodedStream implies the track is good
+           ...(more accurately, not utterly bad) */
+        NotifyTrackPlaying();
+    }
     return aMsg;
 }
 
@@ -87,10 +94,6 @@ Msg* TrackInspector::ProcessMsg(MsgHalt* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgFlush* aMsg)
 {
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
     return aMsg;
 }
 
@@ -101,11 +104,7 @@ Msg* TrackInspector::ProcessMsg(MsgWait* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    if (iTrack != NULL && aMsg->StreamInfo().Live()) {
-        /* Live streams wait for the stopper to tell them to start generating audio.
-           Its possible we'll see this msg but no audio for a perfectly good stream
-           ...so assume that generation of MsgDecodedStream implies the track is good
-           ...(more accurately, not utterly bad) */
+    if (iTrack != NULL) {
         NotifyTrackPlaying();
     }
     return aMsg;
@@ -113,9 +112,6 @@ Msg* TrackInspector::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* TrackInspector::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    if (iTrack != NULL) {
-        NotifyTrackPlaying();
-    }
     return aMsg;
 }
 
