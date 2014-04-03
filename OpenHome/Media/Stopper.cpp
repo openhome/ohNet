@@ -171,7 +171,7 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
        play a stream. */
     if (!iCheckedStreamPlayable) {
         if (iStreamHandler != NULL) {
-            (void)iStreamHandler->OkToPlay(iTrackIdPipeline, iStreamId);
+            OkToPlay();
         }
         else if (iStreamPlayObserver != NULL) {
             iStreamPlayObserver->NotifyTrackFailed(iTrackId);
