@@ -24,7 +24,7 @@ tests = '''
     TestPipeline
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t full
-#    TestCodecController
+    TestCodecController
     TestIdProvider
     TestFiller
     TestUpnpErrors
