@@ -85,7 +85,7 @@ private:
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
     static const TUint kExpectedFlushId = 5;
-    static const TUint kSemWaitMs = 5000;
+    static const TUint kSemWaitMs = 5000;   // only required in case tests fail
 
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -397,7 +397,7 @@ Msg* SuiteCodecController::CreateAudio(TBool aValidHeader)
     TUint dataBytesTotal = dataBytes;
     if (iTrackOffset == 0) {
         dataByteOffset += kWavHeaderBytes;
-        dataBytesTotal += kWavHeaderBytes;
+        dataBytesTotal += headerBytes;
     }
 
     (void)memset(encodedAudioData+dataByteOffset, 0x7f, dataBytes);
@@ -455,7 +455,7 @@ void SuiteCodecController::TestTruncatedStreamInRecognition()
     // CodecController then attempts to stop the unrecognised stream.
     //
     // WAV tries to read in 12 bytes for recognition, so give it fewer.
-    iTotalBytes = 12;
+    iTotalBytes = 10;
     Queue(CreateTrack());
     PullNext(EMsgTrack);
 
@@ -464,8 +464,14 @@ void SuiteCodecController::TestTruncatedStreamInRecognition()
 
     Queue(CreateAudio(true));
 
-    iSemStop->Wait();
+    // Flush remaining audio from stream out by sending a new MsgTrack.
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+
+    iSemStop->Wait(kSemWaitMs);
     TEST(iStopCount == 1);
+
+    TEST(iJiffies == iTrackOffset);
 }
 
 void SuiteCodecController::TestNoDataAfterRecognition()
