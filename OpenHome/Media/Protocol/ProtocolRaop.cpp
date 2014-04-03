@@ -54,6 +54,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     iLockRaop.Wait();
     iNextFlushId = MsgFlush::kIdInvalid;
     iWaiting = iStopped = false;
+    iResetControl = false;
     iActive = true;
     iLockRaop.Signal();
 
@@ -94,6 +95,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         if (iWaiting) {
             iSupply->OutputFlush(iNextFlushId);
             iWaiting = false;
+            iResetControl = true;
             // Resume normal operation.
         }
         else if (iStopped) {
@@ -107,6 +109,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
         try {
             TUint16 count = iRaopAudio.ReadPacket();
+            if (iResetControl) {
+                iRaopControl.Reset(ctrlPort);
+                iResetControl = false;
+            }
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -205,6 +211,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             iActive = false;
             iStopped = true;
             iLockRaop.Signal();
+            iRaopControl.DoInterrupt();
             return EProtocolStreamStopped;
         }
     }
@@ -286,13 +293,14 @@ TUint ProtocolRaop::SendFlush()
 // RaopControl
 
 RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
-    : iClientPort(0)
+    : iClientPort(kInvalidServerPort)
     , iServer(aServer)
     , iReceive(iServer)
-    , iMutex("raoc")
-    , iMutexRx("raoR")
-    , iSemaResend("raoc", 0)
+    , iMutex("RAOC")
+    , iMutexRx("RAOR")
+    , iSemaResend("RAOC", 0)
     , iResend(0)
+    , iSemSktOpen("RAOS", 0)
     , iExit(false)
 {
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired));
@@ -310,7 +318,10 @@ RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
 
 RaopControl::~RaopControl()
 {
+    iMutex.Wait();
     iExit = true;
+    iMutex.Signal();
+    iSemSktOpen.Signal();
     iServer.ReadInterrupt();
     delete iThreadControl;
     delete iTimerExpiry;
@@ -330,6 +341,7 @@ void RaopControl::DoInterrupt()
 {
     LOG(kMedia, "RaopControl::DoInterrupt()\n");
     iMutex.Wait();
+    iClientPort = kInvalidServerPort;
     if(iResend) {
         iResend = 0;
         iSemaResend.Signal();
@@ -343,6 +355,7 @@ void RaopControl::Reset(TUint aClientPort)
     iMutex.Wait();
     iClientPort = aClientPort;
     iMutex.Signal();
+    iSemSktOpen.Signal();
 }
 
 void RaopControl::Run()
@@ -350,7 +363,25 @@ void RaopControl::Run()
     LOG(kMedia, "RaopControl::Run\n");
     iResend = 0;
 
-    while (!iExit) {
+    for(;;) {
+
+        iMutex.Wait();
+        if (iClientPort == kInvalidServerPort) {
+            iMutex.Signal();
+            iSemSktOpen.Wait();
+            //ASSERT(iClientPort != kInvalidServerPort);
+        }
+        else {
+            iMutex.Signal();
+        }
+
+        iMutex.Wait();
+        if (iExit) {
+            iMutex.Signal();
+            return;
+        }
+        iMutex.Signal();
+
         try {
             Brn id = iReceive.Read(2);
             iEndpoint = iServer.Sender();
@@ -588,13 +619,13 @@ TUint16 RaopAudio::ReadPacket()
             iServer.ReadFlush();
 
             // Either no data, user abort or invalid header
-            if (iInterrupted) {
-                LOG(kMedia, "RaopAudio::ReadPacket() Exception, iInterrupted %d\n", iInterrupted);
-                THROW(ReaderError);
-            }
             if (!iServer.IsOpen()) {
                 LOG(kMedia, "RaopAudio::ReadPacket() RaopAudioServerClosed\n");
                 THROW(RaopAudioServerClosed);
+            }
+            if (iInterrupted) {
+                LOG(kMedia, "RaopAudio::ReadPacket() Exception, iInterrupted %d\n", iInterrupted);
+                THROW(ReaderError);
             }
             if(iDataBuffer.Bytes() < 12) {  // may get here if kMaxReadBufferBytes not read
                 continue;   // keep trying if not interrupted

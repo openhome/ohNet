@@ -51,6 +51,7 @@ private:
     static const TUint kMaxReadBufferBytes = 1500;
     static const TUint kPriority = kPriorityNormal-1;
     static const TUint kSessionStackBytes = 10 * 1024;
+    static const TUint kInvalidServerPort = 0;
 public:
     RaopControl(Environment& aEnv, SocketUdpServer& aServer);
     ~RaopControl();
@@ -78,6 +79,7 @@ private:
     Semaphore iSemaResend;
     TUint iResend;
     Timer* iTimerExpiry;
+    Semaphore iSemSktOpen;
     TBool iExit;
 };
 
@@ -126,6 +128,7 @@ private:
     TBool iActive;
     TBool iWaiting;
     TBool iStopped;
+    TBool iResetControl;
     Mutex iLockRaop;
 };
 
