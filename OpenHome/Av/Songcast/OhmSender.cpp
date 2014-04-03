@@ -735,6 +735,7 @@ void OhmSender::RunMulticast()
                     }
                 }
                 catch (OhmError&) {
+                    LOG2(kSongcast, kError, "OhmSender::RunMulticast OhmError\n");
                 }
                 
                 iRxBuffer.ReadFlush();
@@ -915,6 +916,7 @@ void OhmSender::RunUnicast()
                         }
                     }
                     catch (OhmError&) {
+                        LOG2(kSongcast, kError, "OhmSender::RunUnicast OhmError\n");
                     }
                     
                     iRxBuffer.ReadFlush();
