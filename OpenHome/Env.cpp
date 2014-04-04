@@ -75,7 +75,6 @@ Environment::Environment(InitialisationParams* aInitParams)
     , iDvStack(NULL)
 {
     Construct(aInitParams->LogOutput());
-    SetAssertHandler(AssertHandlerDefault);
 #ifdef PLATFORM_MACOSX_GNU
     /* Non-portable way of setting a better random seed than time(NULL)
        This is needed on Mac as CI for x86 and x64 tests use the same host

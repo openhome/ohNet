@@ -120,6 +120,11 @@ inline TUint OpenHome::Bwx::MaxBytes() const
     return iMaxBytes;
 }
 
+inline TUint Bwx::BytesRemaining() const
+{
+    return MaxBytes() - Bytes();
+}
+
 inline TByte& OpenHome::Bwx::operator[](TUint aByteIndex)
 {
     return At(aByteIndex);
