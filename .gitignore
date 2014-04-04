@@ -18,6 +18,14 @@ _ReSharper.*
 *.pyc
 *.class
 
+# Eclipse config
+.project
+.pydevproject
+
+# Python generated files
+.pyc
+.pyo
+
 # "tags" files are caches created by ctags for quick navigation in
 # various text editors.
 tags
