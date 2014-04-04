@@ -74,7 +74,7 @@ def configure(conf):
     mono = set_env(conf, 'MONO', [] if conf.options.dest_platform.startswith('Windows') else ["mono", "--debug", "--runtime=v4.0"])
 
     # Setup FLAC lib options 
-    conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL']
+    conf.env.DEFINES_FLAC = ['VERSION=\"1.2.1\"', 'FLAC__NO_DLL', 'FLAC__HAS_OGG']
     conf.env.INCLUDES_FLAC = [
         'flac-1.2.1/src/libFLAC/include',
         'flac-1.2.1/include',
@@ -351,7 +351,7 @@ def build(bld):
                 'flac-1.2.1/src/libFLAC/ogg_decoder_aspect.c',
                 'flac-1.2.1/src/libFLAC/ogg_mapping.c',
             ],
-            use=['FLAC', 'OHNET'],
+            use=['FLAC', 'OHNET', 'libOgg'],
             target='CodecFlac')
 
     # AlacBase
