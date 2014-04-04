@@ -87,7 +87,9 @@ private:
     void GenerateNextMsg(Bwx& aBuf);
     void SendNextMsg(Bwx& aBuf);
     void CheckMsgValue(Brx& aBuf, TByte aVal);
+    void WaitThread();
     void TestOpen();
+    void TestWaitForOpen();
     void TestOpenTwice();
     void TestClose();
     void TestCloseTwice();
@@ -111,6 +113,7 @@ private:
     static const TUint kMaxMsgCount = 50;
     static const TUint kPort = 0;
     static const TUint kSendWaitMs = 3;
+    static const TUint kSemWaitMs = 3;
     static const TUint kDisposedCount = 10;
     Environment& iEnv;
     TIpAddress iInterface;
@@ -121,6 +124,7 @@ private:
     Bws<kMaxMsgSize> iOutBuf;
     Bws<kMaxMsgSize> iInBuf;
     TByte iMsgCount;
+    Semaphore* iSem;
 };
 
 SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterface)
@@ -129,6 +133,7 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
     , iInterface(aInterface)
 {
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpen), "TestOpen");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestWaitForOpen), "TestWaitForOpen");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenTwice), "TestOpenTwice");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClose), "TestClose");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestCloseTwice), "TestCloseTwice");
@@ -163,11 +168,12 @@ void SuiteSocketUdpServer::Setup()
     iOutBuf.SetBytes(0);
     iInBuf.SetBytes(0);
     iMsgCount = 0;
-    iServer->Open();
+    iSem = new Semaphore("SSUS", 0);
 }
 
 void SuiteSocketUdpServer::TearDown()
 {
+    delete iSem;
     delete iSender;
     delete iServer;
 }
@@ -199,18 +205,47 @@ void SuiteSocketUdpServer::CheckMsgValue(Brx& aBuf, TByte aVal)
     TEST(aBuf[aBuf.Bytes()-1] == aVal);
 }
 
+void SuiteSocketUdpServer::WaitThread()
+{
+    iSem->Signal();
+    iServer->WaitForOpen();
+    iSem->Signal();
+}
+
 void SuiteSocketUdpServer::TestOpen()
 {
     // test calls to Receive are allowed immediately after call to Open()
+    iServer->Open();
     TEST(iServer->IsOpen() == true);
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
 }
 
+void SuiteSocketUdpServer::TestWaitForOpen()
+{
+    // test WaitForOpen() blocks until Open() is called
+
+    // should go as follows:
+    // - start wait thread
+    // - block until wait thread starts
+    // - wait thread calls WaitForOpen()
+    // - this thread calls Open()
+    // - block until wait thread signals semaphore again
+    ThreadFunctor* waitThread = new ThreadFunctor("SuiteUdpServer", MakeFunctor(*this, &SuiteSocketUdpServer::WaitThread));
+    waitThread->Start();
+    iSem->Wait(kSemWaitMs);
+    iServer->Open();
+    iSem->Wait(kSemWaitMs);
+    waitThread->Kill();
+    waitThread->Join();
+    delete waitThread;
+}
+
 void SuiteSocketUdpServer::TestOpenTwice()
 {
     // test Open() cannot be called when server already open
+    iServer->Open();
     TEST_THROWS(iServer->Open(), AssertionFailed);
 }
 
@@ -218,6 +253,7 @@ void SuiteSocketUdpServer::TestClose()
 {
     // test calls to Receive are not allowed when server is closed
     Bws<kMaxMsgSize> buf;
+    iServer->Open();
     iServer->Close();
     TEST(iServer->IsOpen() == false);
     TEST_THROWS(iServer->Receive(buf), UdpServerClosed);
@@ -227,12 +263,14 @@ void SuiteSocketUdpServer::TestClose()
 void SuiteSocketUdpServer::TestCloseTwice()
 {
     // test Close() cannot be called when server already closed
+    iServer->Open();
     iServer->Close();
     TEST_THROWS(iServer->Close(), AssertionFailed);
 }
 void SuiteSocketUdpServer::TestReopen()
 {
     // test server can be successfully closed and re-opened
+    iServer->Open();
     SendNextMsg(iOutBuf);
     iServer->Receive(iInBuf);
     CheckMsgValue(iInBuf, iMsgCount++);
@@ -251,6 +289,7 @@ void SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed()
     // disposed of when the server is closed and not retrievable when server is
     // re-opened
 
+    iServer->Open();
     // send some msgs with server open, but don't read them
     for (TUint i=0; i<kDisposedCount; i++) {
         SendNextMsg(iOutBuf);
@@ -277,6 +316,7 @@ void SuiteSocketUdpServer::TestMsgQueueClearedWhenClosed()
 void SuiteSocketUdpServer::TestMsgOrderingReceive()
 {
     // test msgs are received in correct order (when sent in a synchronised manner)
+    iServer->Open();
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
@@ -287,6 +327,7 @@ void SuiteSocketUdpServer::TestMsgOrderingReceive()
 void SuiteSocketUdpServer::TestMsgOrderingRead()
 {
     // test msgs are read in correct order (when sent in a synchronised manner)
+    iServer->Open();
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
         iServer->Read(iInBuf);
@@ -297,6 +338,7 @@ void SuiteSocketUdpServer::TestMsgOrderingRead()
 void SuiteSocketUdpServer::TestReadFlush()
 {
     // test that a read flush does nothing to the msg stream
+    iServer->Open();
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
         iServer->Read(iInBuf);
@@ -309,6 +351,7 @@ void SuiteSocketUdpServer::TestReadInterrupt()
 {
     // interrupt server while it should be waiting on reading udp packet and
     // try resume
+    iServer->Open();
     for (TUint i=0; i<kMaxMsgCount; i++) {
         SendNextMsg(iOutBuf);
         iServer->Read(iInBuf);
@@ -329,6 +372,7 @@ void SuiteSocketUdpServer::TestMsgsDisposedStart()
     // test msgs are disposed of when server is closed from start and re-opened
     TUint notDisposed = 0;
 
+    iServer->Open();
     iServer->Close();
 
     for (TUint i=0; i<kDisposedCount; i++) {
@@ -358,6 +402,7 @@ void SuiteSocketUdpServer::TestMsgsDisposed()
     // test msgs are disposed of when server is closed part-way through execution, then re-opened
     TUint notDisposed = 0;
 
+    iServer->Open();
     for (TUint i=0; i<10; i++) {
         SendNextMsg(iOutBuf);
         iServer->Receive(iInBuf);
@@ -390,6 +435,7 @@ void SuiteSocketUdpServer::TestMsgsDisposedCapacityExceeded()
     // test msgs are disposed of when server capacity exceeded
     TUint notDisposed = 0;
 
+    iServer->Open();
     for (TUint i=0; i<kMaxMsgCount+kDisposedCount; i++) {
         SendNextMsg(iOutBuf);
     }
@@ -418,6 +464,7 @@ void SuiteSocketUdpServer::TestSend()
 {
     // Switch roles of iSender and iServer only for this test.
 
+    iServer->Open();
     Endpoint senderEp(iSender->Port(), iInterface);
 
     // packet 1
@@ -443,6 +490,7 @@ void SuiteSocketUdpServer::TestPort()
 {
     // Send packet from iServer to iSender; verify port value against that.
 
+    iServer->Open();
     Endpoint senderEp(iSender->Port(), iInterface);
 
     GenerateNextMsg(iOutBuf);
@@ -455,6 +503,7 @@ void SuiteSocketUdpServer::TestPort()
 void SuiteSocketUdpServer::TestSender()
 {
     Endpoint empty;
+    iServer->Open();
     Endpoint ep = iServer->Sender(); // no call to Read() has been made
     TEST(ep.Address() == empty.Address());
     TEST(ep.Port() == empty.Port());
@@ -472,6 +521,7 @@ void SuiteSocketUdpServer::TestSender()
 //    // test that attempting to change the subnet adapter succeeds.
 //    // there is no way to verify the server has changed subnet, so this test
 //    // running to completion without crashing is the best that can be done
+//    iServer->Open();
 //    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
 //    TUint newSubnet = 0; // dummy subnet
 //    nifList.SetCurrentSubnet(newSubnet);
