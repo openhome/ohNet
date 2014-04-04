@@ -54,7 +54,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     iLockRaop.Wait();
     iNextFlushId = MsgFlush::kIdInvalid;
     iWaiting = iStopped = false;
-    iResetControl = false;
     iActive = true;
     iLockRaop.Signal();
 
@@ -95,7 +94,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         if (iWaiting) {
             iSupply->OutputFlush(iNextFlushId);
             iWaiting = false;
-            iResetControl = true;
             // Resume normal operation.
         }
         else if (iStopped) {
@@ -109,10 +107,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 
         try {
             TUint16 count = iRaopAudio.ReadPacket();
-            if (iResetControl) {
-                iRaopControl.Reset(ctrlPort);
-                iResetControl = false;
-            }
 
             if (!iDiscovery.Active()) {
                 LOG(kMedia, "ProtocolRaop::Stream() no active session\n");
@@ -211,7 +205,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
             iActive = false;
             iStopped = true;
             iLockRaop.Signal();
-            iRaopControl.DoInterrupt();
             return EProtocolStreamStopped;
         }
     }
@@ -300,7 +293,6 @@ RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
     , iMutexRx("RAOR")
     , iSemaResend("RAOC", 0)
     , iResend(0)
-    , iSemSktOpen("RAOS", 0)
     , iExit(false)
 {
     iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired));
@@ -321,7 +313,6 @@ RaopControl::~RaopControl()
     iMutex.Wait();
     iExit = true;
     iMutex.Signal();
-    iSemSktOpen.Signal();
     iServer.ReadInterrupt();
     delete iThreadControl;
     delete iTimerExpiry;
@@ -355,7 +346,6 @@ void RaopControl::Reset(TUint aClientPort)
     iMutex.Wait();
     iClientPort = aClientPort;
     iMutex.Signal();
-    iSemSktOpen.Signal();
 }
 
 void RaopControl::Run()
@@ -364,16 +354,6 @@ void RaopControl::Run()
     iResend = 0;
 
     for(;;) {
-
-        iMutex.Wait();
-        if (iClientPort == kInvalidServerPort) {
-            iMutex.Signal();
-            iSemSktOpen.Wait();
-            //ASSERT(iClientPort != kInvalidServerPort);
-        }
-        else {
-            iMutex.Signal();
-        }
 
         iMutex.Wait();
         if (iExit) {
@@ -448,6 +428,10 @@ void RaopControl::Run()
 
             // either no data or invalid header
             iReceive.ReadFlush();
+
+            if (!iServer.IsOpen()) {
+                iServer.WaitForOpen();
+            }
         }
     }
 }

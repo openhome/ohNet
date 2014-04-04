@@ -79,7 +79,6 @@ private:
     Semaphore iSemaResend;
     TUint iResend;
     Timer* iTimerExpiry;
-    Semaphore iSemSktOpen;
     TBool iExit;
 };
 
@@ -128,7 +127,6 @@ private:
     TBool iActive;
     TBool iWaiting;
     TBool iStopped;
-    TBool iResetControl;
     Mutex iLockRaop;
 };
 
