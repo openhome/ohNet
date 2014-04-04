@@ -37,6 +37,7 @@ public:
     void Open();
     void Close();
     TBool IsOpen();
+    void WaitForOpen();
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuf);
     Endpoint Sender() const; // sender of last completed Read()
@@ -66,6 +67,7 @@ private:
     mutable Mutex iLock;
     Mutex iReadyLock;
     Semaphore iSemaphore;
+    Semaphore iSemaphoreOpen;
     ThreadFunctor* iServerThread;
     TBool iQuit;
     TUint iAdapterListenerId;
