@@ -110,7 +110,9 @@ class InvocationResponse:
         str = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( str ), ctypes.byref( length ))
-        return str.value
+        string = str.value
+        self.lib.OhNetFree( str )
+        return string
     
     def OutputBinary( self, aIndex ):
         bin = []
@@ -118,6 +120,7 @@ class InvocationResponse:
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputBinary( self.handle, aIndex, pData, ctypes.byref( length ))
         data = pData.contents
+        self.lib.OhNetFree( pData )
         for i in range( length.value ):
             bin.append( data[i] )
         return bin
