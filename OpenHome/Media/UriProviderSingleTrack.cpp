@@ -31,8 +31,13 @@ Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData, T
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
-    iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, aPullable);
-    iTrack->AddRef();
+    if (aUri == Brx::Empty()) {
+        iTrack = NULL;
+    }
+    else {
+        iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, aPullable);
+        iTrack->AddRef();
+    }
     return iTrack;
 }
 

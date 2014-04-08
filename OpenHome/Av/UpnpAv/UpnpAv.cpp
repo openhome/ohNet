@@ -86,7 +86,12 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
             iTrack->RemoveRef();
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData, false);
-        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+        if (iTrack == NULL) {
+            iPipeline.Begin(iUriProvider.Mode(), Track::kIdNone);
+        }
+        else {
+            iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+        }
         if (iTransportState == Media::EPipelinePlaying) {
             iPipeline.Play();
         }
@@ -99,9 +104,21 @@ void SourceUpnpAv::Play()
     /*if (!IsActive()) {
         DoActivate();
     }*/
+    TBool notifyUriProvider = false;
     iLock.Wait();
+    if (iTransportState == Media::EPipelineStopped) {
+        notifyUriProvider = true;
+    }
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
+    if (notifyUriProvider) {
+        if (iTrack == NULL) {
+            iPipeline.Begin(iUriProvider.Mode(), Track::kIdNone);
+        }
+        else {
+            iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+        }
+    }
     iPipeline.Play();
 }
 
@@ -159,7 +176,9 @@ void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipelin
     iLock.Wait();
     iPipelineTrackId = aIdPipeline;
     iStreamId = UINT_MAX;
-    iActive = (iTrack != NULL && iTrack->Id() == aTrack.Id());
+    iActive = (iTrack == NULL || iTrack->Id() == aTrack.Id());  // could have invalid track from filler,
+                                                                // or a track that has been set via
+                                                                // SetTrack()
     iLock.Signal();
     if (IsActive()) {
         iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
