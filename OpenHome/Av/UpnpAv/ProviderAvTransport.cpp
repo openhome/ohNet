@@ -361,7 +361,12 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
         iTransportState.Set(kTransportStatePausedPlayback);
         break;
     case EPipelineStopped:
-        iTransportState.Set(kTransportStateStopped);
+        if (iCurrentTrackUri != Brx::Empty()) {
+            iTransportState.Set(kTransportStateStopped);
+        }
+        else {
+            iTransportState = kTransportStateNoMediaPresent; // no track to play
+        }
         break;
     case EPipelineBuffering:
         iTransportState.Set(kTransportStateTransitioning);
@@ -379,6 +384,17 @@ void ProviderAvTransport::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint
     iLock.Wait();
     iCurrentTrackUri.Replace(aTrack.Uri());
     iCurrentTrackMetaData.Replace(aTrack.MetaData());
+    if (aTrack.Uri() == Brx::Empty()) {
+        iAvTransportUri.Replace(iCurrentTrackUri);
+        iAvTransportUriMetaData.Replace(iCurrentTrackMetaData);
+        iCurrentMediaCategory.Set(kCurrentMediaCategoryNoMedia);
+        iPlaybackStorageMedium.Set(kPlaybackStorageMediumNone);
+        iNumberOfTracks = 0;
+        iCurrentTrack = 0;
+        iRelativeTimeSeconds = 0;
+        iTrackDuration.Replace(kTimeNone);
+        iTransportState = kTransportStateNoMediaPresent;
+    }
     QueueStateUpdate();
     iLock.Signal();
 }
