@@ -12,7 +12,7 @@ namespace Codec {
 class CodecAiffBase : public CodecBase
 {
 public:
-    CodecAiffBase(const Brx& aName, EMediaDataEndian aEndian);
+    CodecAiffBase(const Brx& aName);
     ~CodecAiffBase();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
@@ -35,6 +35,7 @@ private:
 protected:
     Bws<DecodedAudio::kMaxBytes> iReadBuf;
     TUint64 iTrackStart;
+    EMediaDataEndian iEndian;
 private:
     static const TUint kUnder65kHz = 0x4013;
     static const TUint k11127Hz = 11127; // Macintosh "close enough" sample rate
@@ -50,7 +51,6 @@ private:
     TUint iAudioBytesTotal;
     TUint iAudioBytesRemaining;
     TUint64 iTrackLengthJiffies;
-    EMediaDataEndian iEndian;
     TUint64 iTrackOffset;
 };
 

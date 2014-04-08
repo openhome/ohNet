@@ -9,9 +9,8 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
 
-CodecAiffBase::CodecAiffBase(const Brx& aName, EMediaDataEndian aEndian)
+CodecAiffBase::CodecAiffBase(const Brx& aName)
     : iName(aName)
-    , iEndian(aEndian)
 {
 }
 
@@ -55,6 +54,7 @@ void CodecAiffBase::StreamInitialise()
     iTrackStart = 0;
     iTrackOffset = 0;
     iTrackLengthJiffies = 0;
+    iEndian = EMediaDataBigEndian;
     iReadBuf.SetBytes(0);
 
     ProcessHeader();

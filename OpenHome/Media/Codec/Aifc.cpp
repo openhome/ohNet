@@ -37,7 +37,7 @@ CodecBase* CodecFactory::NewAifc()
 
 
 CodecAifc::CodecAifc()
-    : CodecAiffBase(Brn("AIFC"), EMediaDataLittleEndian)
+    : CodecAiffBase(Brn("AIFC"))
 {
 }
 
@@ -60,8 +60,11 @@ void CodecAifc::ProcessCommChunkExtra()
 {
     const TByte* commData = iReadBuf.Ptr();
     //Apple's proprietary aifc compression format where the 'compression' is Little endian
-    if ((strncmp((const TChar*)commData+18, "sowt", 4) != 0)
-        && (strncmp((const TChar*)commData+18, "SOWT", 4) != 0)) {
-            THROW(CodecStreamFeatureUnsupported);
+    if ((strncmp((const TChar*)commData+18, "sowt", 4) == 0)
+            || (strncmp((const TChar*)commData+18, "SOWT", 4) == 0)) {
+        iEndian = EMediaDataLittleEndian;
+    }
+    else if (strncmp((const TChar*)commData+18, "NONE", 4) != 0) {
+        THROW(CodecStreamFeatureUnsupported);   // unsupported compression
     }
 }
