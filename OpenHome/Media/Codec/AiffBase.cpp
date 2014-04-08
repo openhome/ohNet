@@ -63,7 +63,7 @@ void CodecAiffBase::StreamInitialise()
 
 void CodecAiffBase::Process()
 {
-    LOG(kMedia, "> CodecAiffBase::Process()\n");
+    LOG(kCodec, "> CodecAiffBase::Process()\n");
 
     if (iAudioBytesRemaining == 0) {
         THROW(CodecStreamEnded);
@@ -77,7 +77,7 @@ void CodecAiffBase::Process()
     iTrackOffset += iController->OutputAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
     iAudioBytesRemaining -= bytes;
 
-    LOG(kMedia, "< CodecAiffBase::Process()\n");
+    LOG(kCodec, "< CodecAiffBase::Process()\n");
 }
 
 TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
@@ -95,9 +95,9 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
 
 TUint CodecAiffBase::FindChunk(const Brx& aChunkId)
 {
-    LOG(kMedia, "CodecAiffBase::FindChunk: ");
-    LOG(kMedia, aChunkId);
-    LOG(kMedia, "\n");
+    LOG(kCodec, "CodecAiffBase::FindChunk: ");
+    LOG(kCodec, aChunkId);
+    LOG(kCodec, "\n");
 
     for (;;) {
         iReadBuf.SetBytes(0);
@@ -164,7 +164,7 @@ TUint CodecAiffBase::DetermineRate(TUint16 aExponent, TUint32 aMantissa)
 
 void CodecAiffBase::ProcessHeader()
 {
-    LOG(kMedia, "CodecAiff::ProcessHeader()\n");
+    LOG(kCodec, "CodecAiff::ProcessHeader()\n");
     ProcessFormChunk();
     // FIXME - these could appear be in any order, i.e. metadata could be after
     // audio; still need to parse them in this kind of order, but should be
