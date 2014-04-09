@@ -94,10 +94,13 @@ void ProtocolOhu::Broadcast(OhmMsg* aMsg)
 ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
     LOG(kSongcast, "OHU: Play(%08x, %u, %08x:%u\n", aInterface, aTtl, aEndpoint.Address(), aEndpoint.Port());
+    iLeaveLock.Wait();
     iLeaving = false;
     iStopped = false;
+    iActive = false;
     iSlaveCount = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
+    iLeaveLock.Signal();
     iEndpoint.Replace(aEndpoint);
     iSocket.OpenUnicast(aInterface, aTtl);
     do {
@@ -200,8 +203,10 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
         }
     } while (!iStopped);
     
+    Interrupt(false); // cancel any interrupt to allow SendLeave to succeed
     iReadBuffer.ReadFlush();
     iLeaveLock.Wait();
+    iActive = false;
     if (iLeaving) {
         iLeaving = false;
         SendLeave();
@@ -234,10 +239,12 @@ TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
     LOG(kSongcast, "OHU: TryStop()\n");
     // omit tests of aTrackId, aStreamId.  Any request to Stop() should probably result in us breaking the stream
     iLeaveLock.Wait();
-    iNextFlushId = iFlushIdProvider->NextFlushId();
-    iStopped = true;
-    iLeaving = true;
-    iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
+    if (iActive) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        iStopped = true;
+        iLeaving = true;
+        iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
+    }
     iLeaveLock.Signal();
     return iNextFlushId;
 }
