@@ -121,6 +121,12 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
         if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
             metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
         }
+        if (aCurrentURI == Brx::Empty()) {
+            iTransportState = kTransportStateNoMediaPresent;
+        }
+        else if (iTransportState == kTransportStateNoMediaPresent) {
+            iTransportState = kTransportStateStopped;
+        }
         iCurrentTrackUri.Replace(aCurrentURI);
         iCurrentTrackMetaData.Replace(metaData);
         iAvTransportUri.Replace(iCurrentTrackUri);
