@@ -8,6 +8,7 @@ kMaxInt32 = 2147483647
 kMinInt32 = -2147483648
 kMaxUint  = 4294967295
 
+gAsyncCbs = []
 
 class Action:
     "Define the controllable ACTION"
@@ -63,11 +64,13 @@ class Invocation:
     "Define and setup the invocation - called back on action completion/errors"
     
     def __init__( self, aService, aAction, aCb ):
+        global gAsyncCbs
         self.lib = PyOhNet.lib
         self.callersCb = aCb
         CB = PyOhNet.makeCb( None, ctypes.c_void_p, ctypes.c_void_p )
-        self.asyncCb = CB( self.AsyncComplete )     # must stay in scope until called or ohNet crashes
-        self.handle = self.lib.CpServiceInvocation( aService, aAction.handle, self.asyncCb, None )
+        asyncCb = CB( self.AsyncComplete )
+        self.handle = self.lib.CpServiceInvocation( aService, aAction.handle, asyncCb, None )
+        gAsyncCbs.append( {'handle':self.handle, 'cb':asyncCb} )    # keep CB in scope until called
         
     def AddInput( self, aArgument ):
         self.lib.CpInvocationAddInput( self.handle, aArgument.handle )
@@ -83,8 +86,12 @@ class InvocationResponse:
     "Extract response to an invocation on completion"
     
     def __init__( self, aHandle ):
+        global gAsyncCbs
         self.lib = PyOhNet.lib
         self.handle = aHandle
+        for cb in gAsyncCbs:
+            if cb['handle'] == self.handle:
+                gAsyncCbs.remove( cb )
                 
     def Error( self ):
         code = ctypes.c_int()
