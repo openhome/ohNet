@@ -76,10 +76,6 @@ class Invocation:
         self.lib.CpInvocationAddOutput( self.handle, aArgument.handle )
                 
     def AsyncComplete( self, aDummy, aHandle ):
-        response = InvocationResponse( aHandle ) 
-        err = response.Error()
-        if err['err'] is not False:
-            raise PyOhNet.OhNetError( 'Proxy error - %d: %s' % (err['code'],err['desc']) )
         self.callersCb( aHandle )
         
         

@@ -251,7 +251,7 @@ class GenProxy:
             msg += '\n    def Sync%s( self%s ):\n' % (action['name'], inArgStr1 )
             msg += '        self.response = None\n'
             msg += '        self.Begin%s( %sself._%sActionComplete )\n' % (action['name'], inArgStr2, action['name'])
-            msg += '        self.semaReady.acquire()\n'
+            msg += '        self.semaReady.acquire()    # wait for response\n'
             msg += '        return self.response\n'
             
             msg += '\n    def Begin%s( self%s, aCb ):\n' % (action['name'],  inArgStr1)
@@ -262,11 +262,14 @@ class GenProxy:
             
             msg += '\n    def End%s( self, aHandle ):\n' % action['name']
             msg += '        response = Control.InvocationResponse( aHandle )\n'
+            msg += '        err = response.Error()\n'
+            msg += "        if err['err'] is not False:\n"
+            msg += "            return( 'Proxy error - %d: %s' % (err['code'],err['desc']) )\n"
             msg += outRes
             
             msg += '\n    def _%sActionComplete( self, aHandle ):\n' % action['name']
             msg += '        self.response = self.End%s( aHandle )\n' % action['name']
-            msg += '        self.semaReady.release()\n\n'        
+            msg += '        self.semaReady.release()    # signal response available\n\n'        
         return msg
     
     def _BuildEventing( self, aProperties ):
