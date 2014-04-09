@@ -45,6 +45,7 @@ SocketUdpServer::SocketUdpServer(Environment& aEnv, TUint aMaxSize, TUint aMaxPa
     , iLock("UDPL")
     , iReadyLock("UDPR")
     , iSemaphore("UDPS", 0)
+    , iSemaphoreOpen("UDPO", 0)
     , iQuit(false)
     , iAdapterListenerId(0)
 {
@@ -117,6 +118,7 @@ void SocketUdpServer::Open()
     iLock.Signal();
 
     iSemaphore.Wait();
+    iSemaphoreOpen.Signal();
 }
 
 void SocketUdpServer::Close()
@@ -143,6 +145,11 @@ TBool SocketUdpServer::IsOpen()
 {
     AutoMutex a(iLock);
     return iOpen;
+}
+
+void SocketUdpServer::WaitForOpen()
+{
+    iSemaphoreOpen.Wait();
 }
 
 void SocketUdpServer::Send(const Brx& aBuffer, const Endpoint& aEndpoint)

@@ -6,13 +6,15 @@
 namespace OpenHome {
 class Environment;
 class Brx;
+namespace Av {
+class IRaopDiscovery;
+}
 namespace Net {
 class DvStack;
 }
 namespace Media {
 
 class Protocol;
-class IRaopDiscovery;
 class UdpServerManager;
 
 class ProtocolFactory
@@ -22,7 +24,7 @@ public:
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
-    static Protocol* NewRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
+    static Protocol* NewRaop(Environment& aEnv, Av::IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
 };
 
 class ContentProcessor;

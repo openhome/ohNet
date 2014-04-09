@@ -11,9 +11,13 @@
 
 namespace OpenHome {
     class Timer;
+namespace Av {
+    class MediaPlayer;
+}
 namespace Media {
 
 class SocketUdpServer;
+class UdpServerManager;
 
 class RaopAudio
 {
@@ -47,6 +51,7 @@ private:
     static const TUint kMaxReadBufferBytes = 1500;
     static const TUint kPriority = kPriorityNormal-1;
     static const TUint kSessionStackBytes = 10 * 1024;
+    static const TUint kInvalidServerPort = 0;
 public:
     RaopControl(Environment& aEnv, SocketUdpServer& aServer);
     ~RaopControl();
@@ -86,12 +91,16 @@ private:
 class ProtocolRaop : public ProtocolNetwork
 {
 public:
-    ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
+    ProtocolRaop(Environment& aEnv, Av::IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
     ~ProtocolRaop();
-public:
     TBool Active();
     void Deactivate();
     void Close();
+    TUint SendFlush();
+public:
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd();
+    void NotifySessionWait();
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
 private: // from IStreamHandler
@@ -104,7 +113,7 @@ private:
 private:
     static const TUint kMaxReadBufferBytes = 1500;
 
-    IRaopDiscovery& iDiscovery;
+    Av::IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
@@ -115,6 +124,8 @@ private:
     Bws<16> iAesiv;
     TUint iStreamId;
     TUint iNextFlushId;
+    TBool iActive;
+    TBool iWaiting;
     TBool iStopped;
     Mutex iLockRaop;
 };

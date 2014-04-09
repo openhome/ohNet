@@ -15,6 +15,7 @@
 
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 // RaopDevice
@@ -424,7 +425,7 @@ void RaopDiscoverySession::Run()
                 }
                 else if(method == RtspMethod::kRecord) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
-                    //iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));  // has no effect on iTunes 
+                    //iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));  // has no effect on iTunes
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
@@ -484,6 +485,7 @@ void RaopDiscoverySession::Run()
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
                     iWriterResponse->WriteFlush();
+                    iDiscovery.NotifySessionWait();
                 }
                 else if(method == RtspMethod::kTeardown) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
@@ -524,6 +526,10 @@ void RaopDiscoverySession::SetListeningPorts(TUint aAudio, TUint aControl, TUint
     iAudioPort = aAudio;
     iControlPort = aControl;
     iTimingPort = aTiming;
+}
+
+void RaopDiscoverySession::AddObserver(IRaopObserver& /*aObserver*/)
+{
 }
 
 void RaopDiscoverySession::KeepAlive()
@@ -686,9 +692,9 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 
 // RaopDiscovery
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, Av::IRaopObserver& aObserver, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : iEnv(aEnv)
-    , iRaopObserver(aObserver)
+    , iObserversLock("RDOL")
 {
     // NOTE: iRaopDevice is not registered by default
 
@@ -732,12 +738,32 @@ RaopDiscovery::~RaopDiscovery()
 
 void RaopDiscovery::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
 {
-    iRaopObserver.NotifySessionStart(aControlPort, aTimingPort);
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionStart(aControlPort, aTimingPort);
+        ++it;
+    }
 }
 
 void RaopDiscovery::NotifySessionEnd()
 {
-    iRaopObserver.NotifySessionEnd();
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionEnd();
+        ++it;
+    }
+}
+
+void RaopDiscovery::NotifySessionWait()
+{
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionWait();
+        ++it;
+    }
 }
 
 const Brx& RaopDiscovery::Aeskey()
@@ -806,6 +832,12 @@ void RaopDiscovery::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTimin
 {
     iRaopDiscoverySession1->SetListeningPorts(aAudio, aControl, aTiming);
     iRaopDiscoverySession2->SetListeningPorts(aAudio, aControl, aTiming);
+}
+
+void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
+{
+    AutoMutex a(iObserversLock);
+    iObservers.push_back(&aObserver);
 }
 
 RaopDiscoverySession& RaopDiscovery::ActiveSession()
