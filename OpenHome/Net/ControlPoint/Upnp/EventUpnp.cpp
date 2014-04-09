@@ -230,15 +230,24 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
                     break;
                 }
             }
-            if (i < bytes)
-            {
+            if (i < bytes) {
                 tagName.Set(tagNameFull.Split(0, i));
             }
-            Brn val = parser.Next('<');
-            Brn closingTag = parser.Next('/');
-            closingTag.Set(parser.Next('>'));
-            if (tagName != closingTag) {
-                THROW(XmlError);
+            Brn val;
+            if (bytes > 0 && tagNameFull[bytes-1] == '/') {
+                // empty element tag
+                val.Set(Brx::Empty());
+                if (i == bytes) { // no white space before '/'
+                    tagName.Set(tagName.Split(0, bytes-1));
+                }
+            }
+            else {
+                val.Set(parser.Next('<'));
+                Brn closingTag = parser.Next('/');
+                closingTag.Set(parser.Next('>'));
+                if (tagName != closingTag) {
+                    THROW(XmlError);
+                }
             }
 
             try {
