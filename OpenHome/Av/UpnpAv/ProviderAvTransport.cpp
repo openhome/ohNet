@@ -116,12 +116,11 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
     }
     aInvocation.StartResponse();
     {
-        AutoMutex a(iLock);
+        iLock.Wait();
         Brn metaData(aCurrentURIMetaData);
         if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
             metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
         }
-        iSourceUpnpAv.SetTrack(aCurrentURI, metaData);
         iCurrentTrackUri.Replace(aCurrentURI);
         iCurrentTrackMetaData.Replace(metaData);
         iAvTransportUri.Replace(iCurrentTrackUri);
@@ -134,6 +133,10 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
         iTrackDuration.Replace(kTimeNone);
 
         UpdateEventedState();
+        iLock.Signal();
+        iSourceUpnpAv.SetTrack(aCurrentURI, metaData);  // do outside lock; would cause attempted recursive
+                                                        // lock on mutex when IPipelineObserver calls came
+                                                        // back in.
     }
     aInvocation.EndResponse();
 }

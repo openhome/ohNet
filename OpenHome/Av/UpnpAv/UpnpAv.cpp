@@ -165,7 +165,9 @@ void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
 
 void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
 {
+    iLock.Wait();
     iPipelineTransportState = aState;
+    iLock.Signal();
     if (IsActive()) {
         iDownstreamObserver->NotifyPipelineState(aState);
     }
