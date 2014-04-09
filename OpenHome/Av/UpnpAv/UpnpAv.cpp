@@ -168,6 +168,9 @@ void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
 {
     iLock.Wait();
     iPipelineTransportState = aState;
+    if (aState == Media::EPipelineStopped) {
+        iTransportState = aState;
+    }
     iLock.Signal();
     if (IsActive()) {
         iDownstreamObserver->NotifyPipelineState(aState);
