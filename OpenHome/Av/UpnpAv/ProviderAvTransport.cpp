@@ -122,10 +122,10 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
             metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
         }
         if (aCurrentURI == Brx::Empty()) {
-            iTransportState = kTransportStateNoMediaPresent;
+            iTransportState.Set(kTransportStateNoMediaPresent);
         }
         else if (iTransportState == kTransportStateNoMediaPresent) {
-            iTransportState = kTransportStateStopped;
+            iTransportState.Set(kTransportStateStopped);
         }
         iCurrentTrackUri.Replace(aCurrentURI);
         iCurrentTrackMetaData.Replace(metaData);
@@ -374,7 +374,7 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
             iTransportState.Set(kTransportStateStopped);
         }
         else {
-            iTransportState = kTransportStateNoMediaPresent; // no track to play
+            iTransportState.Set(kTransportStateNoMediaPresent); // no track to play
         }
         break;
     case EPipelineBuffering:
@@ -402,7 +402,7 @@ void ProviderAvTransport::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint
         iCurrentTrack = 0;
         iRelativeTimeSeconds = 0;
         iTrackDuration.Replace(kTimeNone);
-        iTransportState = kTransportStateNoMediaPresent;
+        iTransportState.Set(kTransportStateNoMediaPresent);
     }
     QueueStateUpdate();
     iLock.Signal();
