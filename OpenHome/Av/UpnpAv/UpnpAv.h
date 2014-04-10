@@ -70,6 +70,7 @@ private:
     TUint iStreamId;
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
+    TBool iTrackStartedNotPlaying;
 };
 
 } // namespace Av

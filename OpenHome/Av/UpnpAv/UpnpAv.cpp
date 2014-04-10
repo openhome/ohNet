@@ -39,6 +39,7 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
+    , iTrackStartedNotPlaying(false)
 {
     iActive = true; /* FIXME - Kinsky doesn't cope with this source so we don't register it with the Product.
                        Fool IsActive() checks below by saying this is always active.  See #169 */
@@ -86,6 +87,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
             iTrack->RemoveRef();
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData, false);
+
         if (iTrack == NULL) {
             iTransportState = Media::EPipelineStopped;
             iPipeline.Begin(iUriProvider.Mode(), Track::kIdNone);
@@ -93,8 +95,12 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         else {
             iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
         }
+
         if (iTransportState == Media::EPipelinePlaying) {
             iPipeline.Play();
+        }
+        else {
+            iTrackStartedNotPlaying = true; // stop PipelineManager::Begin() from being called again in Play()
         }
     }
 }
@@ -107,18 +113,16 @@ void SourceUpnpAv::Play()
     }*/
     TBool notifyUriProvider = false;
     iLock.Wait();
-    if (iTransportState == Media::EPipelineStopped) {
+    if (iTrack != NULL
+            && iTransportState == Media::EPipelineStopped
+            && !iTrackStartedNotPlaying) {
         notifyUriProvider = true;
     }
+    iTrackStartedNotPlaying = false;
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
     if (notifyUriProvider) {
-        if (iTrack == NULL) {
-            iPipeline.Begin(iUriProvider.Mode(), Track::kIdNone);
-        }
-        else {
-            iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
-        }
+        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     }
     iPipeline.Play();
 }
