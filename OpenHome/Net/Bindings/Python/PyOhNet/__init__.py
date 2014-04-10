@@ -25,17 +25,24 @@ class OhNetError( exceptions.Exception ):
 import os
 import ctypes
 import platform
-__platform = platform.system() 
-__libPath = os.path.dirname( __file__ )
+__platform = platform.system()
+__libPath1 = os.path.dirname( __file__ )
+__libPath2 = os.path.split( __libPath1 )[0]
 
 if __platform in ['Windows', 'cli']:
-    __library = os.path.join( __libPath, 'ohNet.dll' )
+    __libName = 'ohNet.dll'
 elif __platform == 'Linux':
-    __library = os.path.join( __libPath, 'libohNet.so' )
+    __libName = 'libohNet.so'
 elif __platform == 'Darwin':
-    __library = os.path.join( __libPath, 'libohNet.dylib' )
+    __libName = 'libohNet.dylib'
 else:
     raise OhNetError( 'Unsupported platform - %s' % __platform )
+
+__library = os.path.join( __libPath1, __libName )
+if not os.path.isfile( __library ):
+    __library = os.path.join( __libPath2, __libName )
+if not os.path.isfile( __library ):
+    raise OhNetError( 'Cannot find  %s' % __library )
 
 try:    
     if __platform in ['Windows', 'cli']:
