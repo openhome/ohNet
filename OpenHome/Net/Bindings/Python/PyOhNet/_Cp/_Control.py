@@ -92,6 +92,7 @@ class InvocationResponse:
         for cb in gAsyncCbs:
             if cb['handle'] == self.handle:
                 gAsyncCbs.remove( cb )
+                break
                 
     def Error( self ):
         code = ctypes.c_int()
