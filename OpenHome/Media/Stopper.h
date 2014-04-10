@@ -36,6 +36,7 @@ class Stopper : public IPipelineElementUpstream, private IMsgProcessor
 public:
     Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStopperObserver& aObserver, TUint aRampDuration);
     virtual ~Stopper();
+    void SetStreamPlayObserver(IStreamPlayObserver& aObserver);
     void Play();
     void BeginPause();
     void BeginStop(TUint aHaltId);
@@ -56,12 +57,6 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    Msg* ProcessFlushable(Msg* aMsg);
-    void OkToPlay();
-    Msg* ProcessAudio(MsgAudio* aMsg);
-    void NewStream();
-    void HandleStopped();
-private:
     enum EState
     {
         ERunning
@@ -72,11 +67,21 @@ private:
        ,EFlushing
     };
 private:
+    Msg* ProcessFlushable(Msg* aMsg);
+    void OkToPlay();
+    Msg* ProcessAudio(MsgAudio* aMsg);
+    void NewStream();
+    void HandleStopped();
+    void SetState(EState aState);
+    const TChar* State() const;
+    static const TChar* State(EState aState);
+private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStopperObserver& iObserver;
     Mutex iLock;
     Semaphore iSem;
+    IStreamPlayObserver* iStreamPlayObserver;
     EState iState;
     const TUint iRampDuration;
     TUint iRemainingRampSize;
@@ -84,6 +89,7 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetHaltId;
     TUint iTrackId;
+    TUint iTrackIdPipeline;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TBool iCheckedStreamPlayable;

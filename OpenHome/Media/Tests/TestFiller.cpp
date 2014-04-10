@@ -84,7 +84,7 @@ private:
     TUint iLastStreamId;
 };
 
-class SuiteFiller : public Suite, private IPipelineIdTracker
+class SuiteFiller : public Suite, private IPipelineIdTracker, private IStreamPlayObserver
 {
 public:
     SuiteFiller();
@@ -93,6 +93,9 @@ private: // from Suite
     void Test();
 private: // from IPipelineIdTracker
     void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow);
+private: // from IStreamPlayObserver
+    void NotifyTrackFailed(TUint aTrackId);
+    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
 private:
     Semaphore iTrackAddedSem;
     Semaphore iTrackCompleteSem;
@@ -217,7 +220,6 @@ DummyUriStreamer::DummyUriStreamer(ISupply& aSupply, Semaphore& aTrackAddedSem, 
 
 DummyUriStreamer::~DummyUriStreamer()
 {
-    iSupply.OutputQuit();
 }
 
 TUint DummyUriStreamer::TrackId() const
@@ -338,7 +340,7 @@ SuiteFiller::SuiteFiller()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory);
+    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory, *this);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
@@ -347,6 +349,7 @@ SuiteFiller::SuiteFiller()
 
 SuiteFiller::~SuiteFiller()
 {
+    iFiller->Quit();
     delete iUriStreamer;
     delete iFiller;
     delete iUriProvider;
@@ -462,6 +465,14 @@ void SuiteFiller::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, 
     iPipelineTrackId = aPipelineTrackId;
     iStreamId = aStreamId;
     iPlayNow = aPlayNow;
+}
+
+void SuiteFiller::NotifyTrackFailed(TUint /*aTrackId*/)
+{
+}
+
+void SuiteFiller::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
+{
 }
 
 

@@ -29,7 +29,7 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory)
+Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver)
     : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
@@ -41,14 +41,15 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& a
     , iSendHalt(false)
     , iQuit(false)
     , iNextHaltId(MsgHalt::kIdNone + 1)
+    , iStreamPlayObserver(aStreamPlayObserver)
+    , iPrefetchTrackId(kPrefetchTrackIdInvalid)
 {
     iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
 }
 
 Filler::~Filler()
 {
-    Kill();
-    Join();
+    ASSERT(iQuit);
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
@@ -66,6 +67,12 @@ void Filler::Start(IUriStreamer& aUriStreamer)
     Thread::Start();
 }
 
+void Filler::Quit()
+{
+    Kill();
+    Join();
+}
+
 void Filler::Play(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex a(iLock);
@@ -80,6 +87,7 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
     AutoMutex a(iLock);
     UpdateActiveUriProvider(aMode);
     iActiveUriProvider->BeginLater(aTrackId);
+    iPrefetchTrackId = aTrackId;
     iStopped = false;
     Signal();
 }
@@ -132,6 +140,11 @@ TBool Filler::IsStopped() const
     return stopped;
 }
 
+TUint Filler::NullTrackId() const
+{
+    return iNullTrack->Id();
+}
+
 void Filler::UpdateActiveUriProvider(const Brx& aMode)
 {
     iActiveUriProvider = NULL;
@@ -150,53 +163,69 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
 
 void Filler::Run()
 {
-    BwsMode mode;
-    Wait();
-    while (!iQuit) {
+    try {
+        BwsMode mode;
+        Wait();
         for (;;) {
+            for (;;) {
+                iLock.Wait();
+                const TBool wait = iStopped;
+                const TBool sendHalt = iSendHalt;
+                iSendHalt = false;
+                iLock.Signal();
+                if (!wait) {
+                    break;
+                }
+                if (sendHalt) {
+                    iSupply.OutputHalt(iNextHaltId);
+                }
+                Wait();
+            }
             iLock.Wait();
-            const TBool wait = iStopped;
-            const TBool sendHalt = iSendHalt;
-            iSendHalt = false;
-            iLock.Signal();
-            if (!wait) {
-                break;
+            if (iActiveUriProvider == NULL) {
+                iLock.Signal();
+                continue;
             }
-            if (sendHalt) {
-                iSupply.OutputHalt(iNextHaltId);
+            if (iTrack != NULL) {
+                iTrack->RemoveRef();
+                iTrack = NULL;
             }
-            Wait();
-        }
-        iLock.Wait();
-        if (iActiveUriProvider == NULL) {
-            iLock.Signal();
-            continue;
-        }
-        if (iTrack != NULL) {
-            iTrack->RemoveRef();
-            iTrack = NULL;
-        }
-        iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
-        mode.Replace(iActiveUriProvider->Mode());
-        if (iTrackPlayStatus == ePlayNo) {
-            iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
-            iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
-            iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
-            if (iStopped) {
-                iSupply.OutputHalt(iNextHaltId);
+            iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
+            TBool failed = false;
+            if (iPrefetchTrackId == Track::kIdNone) {
+                failed = (iTrack != NULL);
             }
-            iSendHalt = false;
-            iStopped = true;
-            iLock.Signal();
-        }
-        else {
-            iUriStreamer->Interrupt(false); // FIXME - this could incorrectly over-ride a call to Interrupt() that was scheduled between Wait() and iLock being acquired
-            ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
-            iLock.Signal();
-            ASSERT(iTrack != NULL);
-            (void)iUriStreamer->DoStream(*iTrack, mode);
+            else if (iPrefetchTrackId != kPrefetchTrackIdInvalid) {
+                failed = (iTrack == NULL || iTrack->Id() != iPrefetchTrackId);
+            }
+            if (failed) {
+                iStreamPlayObserver.NotifyTrackFailed(iPrefetchTrackId);
+            }
+            /* assume that if the uri provider has returned a track then ProtocolManager
+                will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
+            iPrefetchTrackId = kPrefetchTrackIdInvalid;
+            mode.Replace(iActiveUriProvider->Mode());
+            if (iTrackPlayStatus == ePlayNo) {
+                iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
+                iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
+                iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
+                iSendHalt = false;
+                iStopped = true;
+                iLock.Signal();
+            }
+            else {
+                iUriStreamer->Interrupt(false); // FIXME - this could incorrectly over-ride a call to Interrupt() that was scheduled between Wait() and iLock being acquired
+                ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
+                iLock.Signal();
+                ASSERT(iTrack != NULL);
+                (void)iUriStreamer->DoStream(*iTrack, mode);
+            }
         }
     }
+    catch (ThreadKill&) {
+    }
+    iQuit = true;
+    iSupply.OutputQuit();
 }
 
 void Filler::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
@@ -252,11 +281,7 @@ void Filler::OutputHalt(TUint aHaltId)
 
 void Filler::OutputQuit()
 {
-    if (!iQuit) {
-        iQuit = true;
-        iSupply.OutputQuit();
-        Signal();
-    }
+    ASSERTS();
 }
 
 

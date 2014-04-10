@@ -193,7 +193,14 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
     EnsureActive();
     AutoMutex a(iLock);
-    iUri.Replace(aUri);
+    if (aUri.Bytes() > 0) {
+        iUri.Replace(aUri);
+    }
+    else {
+        iUri.Clear(); /* special case treatment for an empty uri.  iUri.Replace() would throw
+                         if passed a 0-byte buffer.  Passing a 0-byte buffer is the only way
+                         the provider has of clearing a sender though... */
+    }
     // FIXME - may later want to handle a 'preset' scheme to allow presets to be selected from UI code
     if (iUri.Scheme() == ZoneHandler::kProtocolZone) {
         Endpoint ep(iUri.Port(), iUri.Host());

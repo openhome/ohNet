@@ -735,6 +735,7 @@ void OhmSender::RunMulticast()
                     }
                 }
                 catch (OhmError&) {
+                    LOG2(kSongcast, kError, "OhmSender::RunMulticast OhmError\n");
                 }
                 
                 iRxBuffer.ReadFlush();
@@ -776,16 +777,17 @@ void OhmSender::RunUnicast()
                 // if we receive a listen, it's probably from a temporarily physically disconnected receiver
                 // so accept them as well
                 for (;;) {
+                    OhmHeader header;
                     try {
-                        OhmHeader header;
                         header.Internalise(iRxBuffer);
                         
                         if (header.MsgType() <= OhmHeader::kMsgTypeListen) {
-                            LOG(kSongcast, "OhmSender::RunUnicast ready/join or listen\n");
+                            LOG(kSongcast, "OhmSender::RunUnicast ready/join or listen (%u)\n", header.MsgType());
                             break;                        
                         }
                     }
                     catch (OhmError&) {
+                        LOG2(kSongcast, kError, "OhmSender: waiting for JOIN, caught OhmError, msgType=%u\n", header.MsgType());
                     }
                     iRxBuffer.ReadFlush();  
                 }
@@ -904,7 +906,7 @@ void OhmSender::RunUnicast()
                             }
                         }
                         else if (header.MsgType() == OhmHeader::kMsgTypeResend) {
-                            LOG(kSongcast, "OhmSender::RunMulticast resend received\n");
+                            LOG(kSongcast, "OhmSender::RunUnicast resend received\n");
                             OhmHeaderResend headerResend;
                             headerResend.Internalise(iRxBuffer, header);
                             TUint frames = headerResend.FramesCount();
@@ -914,6 +916,7 @@ void OhmSender::RunUnicast()
                         }
                     }
                     catch (OhmError&) {
+                        LOG2(kSongcast, kError, "OhmSender::RunUnicast OhmError\n");
                     }
                     
                     iRxBuffer.ReadFlush();

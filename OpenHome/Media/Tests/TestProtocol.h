@@ -41,7 +41,7 @@ private:
     static const TUint kInvalidPipelineId = 0;
 };
 
-class TestProtocol : private IPipelineObserver
+class TestProtocol : private IPipelineObserver, private IStreamPlayObserver
 {
     static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
     static const TUint kSeekStepSeconds = 10;
@@ -57,6 +57,9 @@ private: // from IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+private: // from IStreamPlayObserver
+    void NotifyTrackFailed(TUint aTrackId);
+    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
 protected:
     Pipeline* iPipeline;
 private:

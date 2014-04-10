@@ -103,8 +103,9 @@ void OhmSocket::Read(Bwx& aBuffer)
 
 void OhmSocket::ReadFlush()
 {
-    ASSERT(iReader);
-    iReader->ReadFlush();
+    if (iReader != NULL) {
+        iReader->ReadFlush();
+    }
 }
 
 void OhmSocket::ReadInterrupt()

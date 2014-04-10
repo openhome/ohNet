@@ -63,7 +63,7 @@ void SourceRadio::Activate()
 {
     iTrackPosSeconds = 0;
     iActive = true;
-    const TUint trackId = (iTrack==NULL? 0 : iTrack->Id());
+    const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
     iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
 }
 
@@ -143,17 +143,12 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceRadio::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
+void SourceRadio::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint aIdPipeline)
 {
     if (!IsActive()) {
         return;
     }
     iLock.Wait();
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-    }
-    iTrack = &aTrack;
-    iTrack->AddRef();
     iPipelineTrackId = aIdPipeline;
     iLock.Signal();
 }
