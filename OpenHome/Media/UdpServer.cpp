@@ -152,6 +152,11 @@ void SocketUdpServer::WaitForOpen()
     iSemaphoreOpen.Wait();
 }
 
+void SocketUdpServer::ClearWaitForOpen()
+{
+    iSemaphoreOpen.Signal();
+}
+
 void SocketUdpServer::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
     iSocket.Send(aBuffer, aEndpoint);

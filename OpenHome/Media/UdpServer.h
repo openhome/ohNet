@@ -37,7 +37,8 @@ public:
     void Open();
     void Close();
     TBool IsOpen();
-    void WaitForOpen();
+    void WaitForOpen();         // it is up to callers to provide sufficient locking so that
+    void ClearWaitForOpen();    // WaitForOpen() is not called again after ClearWaitForOpen()
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuf);
     Endpoint Sender() const; // sender of last completed Read()

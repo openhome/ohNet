@@ -314,6 +314,7 @@ RaopControl::~RaopControl()
     iExit = true;
     iMutex.Signal();
     iServer.ReadInterrupt();
+    iServer.ClearWaitForOpen();
     delete iThreadControl;
     delete iTimerExpiry;
 }

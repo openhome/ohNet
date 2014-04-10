@@ -90,6 +90,7 @@ private:
     void WaitThread();
     void TestOpen();
     void TestWaitForOpen();
+    void TestClearWaitForOpen();
     void TestOpenTwice();
     void TestClose();
     void TestCloseTwice();
@@ -113,7 +114,7 @@ private:
     static const TUint kMaxMsgCount = 50;
     static const TUint kPort = 0;
     static const TUint kSendWaitMs = 3;
-    static const TUint kSemWaitMs = 3;
+    static const TUint kSemWaitMs = 500;
     static const TUint kDisposedCount = 10;
     Environment& iEnv;
     TIpAddress iInterface;
@@ -134,6 +135,7 @@ SuiteSocketUdpServer::SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterf
 {
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpen), "TestOpen");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestWaitForOpen), "TestWaitForOpen");
+    AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClearWaitForOpen), "TestClearWaitForOpen");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestOpenTwice), "TestOpenTwice");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestClose), "TestClose");
     AddTest(MakeFunctor(*this, &SuiteSocketUdpServer::TestCloseTwice), "TestCloseTwice");
@@ -236,6 +238,19 @@ void SuiteSocketUdpServer::TestWaitForOpen()
     waitThread->Start();
     iSem->Wait(kSemWaitMs);
     iServer->Open();
+    iSem->Wait(kSemWaitMs);
+    waitThread->Kill();
+    waitThread->Join();
+    delete waitThread;
+}
+
+void SuiteSocketUdpServer::TestClearWaitForOpen()
+{
+    // test ClearWaitForOpen() causes WaitForOpen() to return
+    ThreadFunctor* waitThread = new ThreadFunctor("SuiteUdpServer", MakeFunctor(*this, &SuiteSocketUdpServer::WaitThread));
+    waitThread->Start();
+    iSem->Wait(kSemWaitMs);
+    iServer->ClearWaitForOpen();
     iSem->Wait(kSemWaitMs);
     waitThread->Kill();
     waitThread->Join();
