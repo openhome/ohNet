@@ -62,7 +62,7 @@ class PropertyBool( Property ):
         
     def Value( self ):
         val = ctypes.c_uint()
-        self.lib.ServicePropertyValueUint( self.handle, ctypes.byref( val ) )
+        self.lib.ServicePropertyValueBool( self.handle, ctypes.byref( val ) )
         return val.value != 0
 
     def SetValue( self, aValue ):
