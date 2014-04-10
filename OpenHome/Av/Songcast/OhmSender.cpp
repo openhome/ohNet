@@ -195,7 +195,7 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
     iCodecName.Replace(aCodecName);
 }
 
-void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
+void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
 {
     AutoMutex mutex(iMutex);
     
@@ -214,7 +214,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
     }
 
     OhmMsgAudio* msg = iFactory.CreateAudio(
-        false,  // halt
+        aHalt,
         iLossless,
         false,
         false,

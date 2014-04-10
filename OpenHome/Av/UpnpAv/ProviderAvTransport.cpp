@@ -367,6 +367,7 @@ void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
         iTransportState.Set(kTransportStatePlaying);
         break;
     case EPipelinePaused:
+    case EPipelineWaiting:
         iTransportState.Set(kTransportStatePausedPlayback);
         break;
     case EPipelineStopped:

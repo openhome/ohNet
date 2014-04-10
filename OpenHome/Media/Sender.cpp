@@ -121,8 +121,7 @@ Msg* Sender::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* Sender::ProcessMsg(MsgHalt* aMsg)
 {
-    SendPendingAudio();
-    // FIXME - no way to pass this through OhmSender
+    SendPendingAudio(true);
     return aMsg;
 }
 
@@ -134,8 +133,7 @@ Msg* Sender::ProcessMsg(MsgFlush* aMsg)
 
 Msg* Sender::ProcessMsg(MsgWait* aMsg)
 {
-    // FIXME - Songcast should signal the arrival of this msg to receivers
-    ASSERTS();
+    SendPendingAudio(true);
     return aMsg;
 }
 
@@ -177,7 +175,7 @@ Msg* Sender::ProcessMsg(MsgPlayable* aMsg)
 
 Msg* Sender::ProcessMsg(MsgQuit* aMsg)
 {
-    SendPendingAudio();
+    SendPendingAudio(true);
     return aMsg;
 }
 
@@ -206,7 +204,7 @@ void Sender::ProcessAudio(MsgAudio* aMsg)
     }
 }
 
-void Sender::SendPendingAudio()
+void Sender::SendPendingAudio(TBool aHalt)
 {
     iAudioBuf.SetBytes(0);
     PlayableCreator pc(iSampleRate, iBitDepth, iNumChannels);
@@ -216,7 +214,7 @@ void Sender::SendPendingAudio()
         playable->RemoveRef();
     }
     if (iAudioBuf.Bytes() != 0) {
-        iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes());
+        iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes(), aHalt);
     }
     iPendingAudio.clear();
 }
