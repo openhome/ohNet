@@ -37,6 +37,8 @@ class ProviderRenderingControl;
 class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipelineObserver
 {
 public:
+    static const TChar* kSourceName;
+public:
     SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aSupportedProtocols);
     ~SourceUpnpAv();
 private: // from Source

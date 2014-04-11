@@ -28,8 +28,10 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
 
 // UpnpAv
 
+const TChar* SourceUpnpAv::kSourceName("UPnP AV");
+
 SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aSupportedProtocols)
-    : Source("UpnpAv", "UpnpAv")
+    : Source(kSourceName, "UpnpAv")
     , iLock("UPAV")
     , iDevice(aDevice)
     , iPipeline(aPipeline)
