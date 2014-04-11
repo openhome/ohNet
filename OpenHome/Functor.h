@@ -48,6 +48,11 @@ public:
                 (!memcmp(iCallbackMember, aOther.iCallbackMember, sizeof(iCallbackMember))));
     }
 
+    bool operator!=(const Functor& aOther) const
+    {
+        return !(*this == aOther);
+    }
+
     union {
         OhNetFunctor iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
