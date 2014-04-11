@@ -35,8 +35,18 @@ public:
     operator TBool() const { return (iCallback || iObject); }
     typedef TAny (Functor::*MemberFunction)();
     typedef TAny (*Callback)();
-    Functor() : iCallback(0), iObject(0) {}
+    Functor() : iCallback(0), iObject(0)
+    {
+        memset(iCallbackMember, 0, sizeof(iCallbackMember));
+    }
     static const TUint kFudgeFactor = 2;
+
+    bool operator==(const Functor& aOther) const
+    {
+        return ((iObject == aOther.iObject) &&
+                (iCallback == aOther.iCallback) &&
+                (!memcmp(iCallbackMember, aOther.iCallbackMember, sizeof(iCallbackMember))));
+    }
 
     union {
         OhNetFunctor iCallback;
@@ -50,12 +60,14 @@ protected:
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
+        memset(iCallbackMember, 0, sizeof(iCallbackMember));
         memcpy(iCallbackMember, aCallback, aBytes);
     }
     Functor(Thunk aT, const TAny* aObject, OhNetFunctor aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
+        memset(iCallbackMember, 0, sizeof(iCallbackMember));
         iCallback = aCallback;
     }
 
