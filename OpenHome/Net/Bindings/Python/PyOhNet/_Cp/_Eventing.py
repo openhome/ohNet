@@ -2,6 +2,7 @@
 
 import PyOhNet
 import abc
+import copy
 import ctypes
 
 
@@ -61,7 +62,7 @@ class PropertyBool( Property ):
         
     def Value( self ):
         val = ctypes.c_uint()
-        self.lib.ServicePropertyValueUint( self.handle, ctypes.byref( val ) )
+        self.lib.ServicePropertyValueBool( self.handle, ctypes.byref( val ) )
         return val.value != 0
 
     def SetValue( self, aValue ):
@@ -84,7 +85,8 @@ class PropertyString( Property ):
         len = ctypes.c_int()
         self.lib.ServicePropertyGetValueString( self.handle, ctypes.byref( str ), ctypes.byref( len ))
         if str.value is not None:
-            ret = str.value[0:len.value]    
+            ret = str.value 
+            self.lib.OhNetFree( str )    
         return ret
 
     def SetValue( self, aValue ):
@@ -105,6 +107,7 @@ class PropertyBinary( Property ):
         length = ctypes.c_int()
         self.lib.ServicePropertyGetValueBinary( self.handle, pData, ctypes.byref( length ))
         data = pData.contents
+        self.lib.OhNetFree( pData )    
         for i in range( length.value ):
             bin.append( data[i] )
         return bin

@@ -8,6 +8,7 @@ kMaxInt32 = 2147483647
 kMinInt32 = -2147483648
 kMaxUint  = 4294967295
 
+gAsyncCbs = []
 
 class Action:
     "Define the controllable ACTION"
@@ -63,11 +64,13 @@ class Invocation:
     "Define and setup the invocation - called back on action completion/errors"
     
     def __init__( self, aService, aAction, aCb ):
+        global gAsyncCbs
         self.lib = PyOhNet.lib
         self.callersCb = aCb
         CB = PyOhNet.makeCb( None, ctypes.c_void_p, ctypes.c_void_p )
-        self.asyncCb = CB( self.AsyncComplete )     # must stay in scope until called or ohNet crashes
-        self.handle = self.lib.CpServiceInvocation( aService, aAction.handle, self.asyncCb, None )
+        asyncCb = CB( self.AsyncComplete )
+        self.handle = self.lib.CpServiceInvocation( aService, aAction.handle, asyncCb, None )
+        gAsyncCbs.append( {'handle':self.handle, 'cb':asyncCb} )    # keep CB in scope until called
         
     def AddInput( self, aArgument ):
         self.lib.CpInvocationAddInput( self.handle, aArgument.handle )
@@ -76,10 +79,6 @@ class Invocation:
         self.lib.CpInvocationAddOutput( self.handle, aArgument.handle )
                 
     def AsyncComplete( self, aDummy, aHandle ):
-        response = InvocationResponse( aHandle ) 
-        err = response.Error()
-        if err['err'] is not False:
-            raise PyOhNet.OhNetError( 'Proxy error - %d: %s' % (err['code'],err['desc']) )
         self.callersCb( aHandle )
         
         
@@ -87,8 +86,13 @@ class InvocationResponse:
     "Extract response to an invocation on completion"
     
     def __init__( self, aHandle ):
+        global gAsyncCbs
         self.lib = PyOhNet.lib
         self.handle = aHandle
+        for cb in gAsyncCbs:
+            if cb['handle'] == self.handle:
+                gAsyncCbs.remove( cb )
+                break
                 
     def Error( self ):
         code = ctypes.c_int()
@@ -110,7 +114,9 @@ class InvocationResponse:
         str = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( str ), ctypes.byref( length ))
-        return str.value
+        string = str.value
+        self.lib.OhNetFree( str )
+        return string
     
     def OutputBinary( self, aIndex ):
         bin = []
@@ -118,6 +124,7 @@ class InvocationResponse:
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputBinary( self.handle, aIndex, pData, ctypes.byref( length ))
         data = pData.contents
+        self.lib.OhNetFree( pData )
         for i in range( length.value ):
             bin.append( data[i] )
         return bin

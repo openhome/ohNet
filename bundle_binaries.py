@@ -119,6 +119,7 @@ def main():
     t4dir = "Build/Tools"
     templateDir = "OpenHome/Net/T4/Templates"
     uisdkDir = "OpenHome/Net/Bindings/Js/ControlPoint"
+    pyDir = "OpenHome/Net/Bindings/Python/PyOhNet"
 
     #if release_type == 'debug':
     #    builddir = os.path.join(builddir, 'Debug')
@@ -146,6 +147,7 @@ def main():
         recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
         recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
         recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
+        recursively_add_directory(tf, pyDir, bundle_fileprefix + "/lib/PyOhNet")
 
 if __name__ == "__main__":
     main()
