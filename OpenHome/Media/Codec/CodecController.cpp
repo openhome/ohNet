@@ -429,6 +429,12 @@ void CodecController::OutputWait()
     Queue(wait);
 }
 
+void CodecController::OutputHalt()
+{
+    MsgHalt* halt = iMsgFactory.CreateMsgHalt();
+    Queue(halt);
+}
+
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {

@@ -112,6 +112,7 @@ void CodecOhm::Process()
 
     if (msg->Halt()) {
         iController->OutputWait();
+        iController->OutputHalt();
     }
 
     msg->RemoveRef();
