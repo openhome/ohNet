@@ -289,10 +289,13 @@ namespace OpenHome.Net
                 string stderr = proc.StandardError.ReadToEnd();
                 string stdout = proc.StandardOutput.ReadToEnd();
                 proc.WaitForExit();
-                if (stderr.Length > 0)
-                    Console.WriteLine(stderr);
-                if (stdout.Length > 0)
-                    Console.WriteLine(stdout);
+                if (proc.ExitCode != 0)
+                {
+                    if (stderr.Length > 0)
+                        Console.WriteLine(stderr);
+                    if (stdout.Length > 0)
+                        Console.WriteLine(stdout);
+                }
             }
         }
 
