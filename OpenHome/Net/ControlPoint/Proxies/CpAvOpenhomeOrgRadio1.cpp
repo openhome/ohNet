@@ -1055,58 +1055,51 @@ void CpProxyAvOpenhomeOrgRadio1::SetPropertyProtocolInfoChanged(Functor& aFuncto
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyUri(Brhz& aUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aUri.Set(iUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyMetadata(Brhz& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetadata.Set(iMetadata->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyTransportState(Brhz& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransportState.Set(iTransportState->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyId(TUint& aId) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aId = iId->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyIdArray(Brh& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aIdArray.Set(iIdArray->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyChannelsMax(TUint& aChannelsMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aChannelsMax = iChannelsMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProtocolInfo.Set(iProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1::UriPropertyChanged()

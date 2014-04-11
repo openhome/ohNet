@@ -167,26 +167,23 @@ void CpProxyAvOpenhomeOrgTime1C::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyAvOpenhomeOrgTime1C::PropertyTrackCount(TUint& aTrackCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aTrackCount = iTrackCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgTime1C::PropertyDuration(TUint& aDuration) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aDuration = iDuration->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgTime1C::PropertySeconds(TUint& aSeconds) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aSeconds = iSeconds->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgTime1C::TrackCountPropertyChanged()

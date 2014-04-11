@@ -1411,54 +1411,48 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SetPropertyTracksMaxChanged(Functo
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyMetadata(std::string& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iMetadata->Value();
     aMetadata.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyImagesXml(std::string& aImagesXml) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iImagesXml->Value();
     aImagesXml.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyIdArray(std::string& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iIdArray->Value();
     aIdArray.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyTokenArray(std::string& aTokenArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTokenArray->Value();
     aTokenArray.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyPlaylistsMax(uint32_t& aPlaylistsMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPlaylistsMax = iPlaylistsMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyTracksMax(uint32_t& aTracksMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::MetadataPropertyChanged()

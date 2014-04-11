@@ -1512,8 +1512,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolume()
         {
             PropertyReadLock();
-            uint val = iVolume.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolume.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1527,8 +1534,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyMute()
         {
             PropertyReadLock();
-            bool val = iMute.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iMute.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1542,8 +1556,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public int PropertyBalance()
         {
             PropertyReadLock();
-            int val = iBalance.Value();
-            PropertyReadUnlock();
+            int val;
+            try
+            {
+                val = iBalance.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1557,8 +1578,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public int PropertyFade()
         {
             PropertyReadLock();
-            int val = iFade.Value();
-            PropertyReadUnlock();
+            int val;
+            try
+            {
+                val = iFade.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1572,8 +1600,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeLimit()
         {
             PropertyReadLock();
-            uint val = iVolumeLimit.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeLimit.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1587,8 +1622,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeMax()
         {
             PropertyReadLock();
-            uint val = iVolumeMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1602,8 +1644,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeUnity()
         {
             PropertyReadLock();
-            uint val = iVolumeUnity.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeUnity.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1617,8 +1666,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeSteps()
         {
             PropertyReadLock();
-            uint val = iVolumeSteps.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeSteps.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1632,8 +1688,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeMilliDbPerStep()
         {
             PropertyReadLock();
-            uint val = iVolumeMilliDbPerStep.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeMilliDbPerStep.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1647,8 +1710,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyBalanceMax()
         {
             PropertyReadLock();
-            uint val = iBalanceMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iBalanceMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1662,8 +1732,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyFadeMax()
         {
             PropertyReadLock();
-            uint val = iFadeMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iFadeMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

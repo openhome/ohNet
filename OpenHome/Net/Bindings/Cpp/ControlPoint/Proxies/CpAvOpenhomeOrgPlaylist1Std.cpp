@@ -1530,61 +1530,54 @@ void CpProxyAvOpenhomeOrgPlaylist1Cpp::SetPropertyProtocolInfoChanged(Functor& a
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyTransportState(std::string& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTransportState->Value();
     aTransportState.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyRepeat(bool& aRepeat) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRepeat = iRepeat->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyShuffle(bool& aShuffle) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aShuffle = iShuffle->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyId(uint32_t& aId) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aId = iId->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyIdArray(std::string& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iIdArray->Value();
     aIdArray.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyTracksMax(uint32_t& aTracksMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::PropertyProtocolInfo(std::string& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProtocolInfo->Value();
     aProtocolInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1Cpp::TransportStatePropertyChanged()

@@ -1415,42 +1415,37 @@ void CpProxyOpenhomeOrgTestBasic1::SetPropertyVarBinChanged(Functor& aFunctor)
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarUint(TUint& aVarUint) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarUint = iVarUint->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarInt(TInt& aVarInt) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarInt = iVarInt->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarBool(TBool& aVarBool) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarBool = iVarBool->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarStr(Brhz& aVarStr) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarStr.Set(iVarStr->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::PropertyVarBin(Brh& aVarBin) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarBin.Set(iVarBin->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1::VarUintPropertyChanged()

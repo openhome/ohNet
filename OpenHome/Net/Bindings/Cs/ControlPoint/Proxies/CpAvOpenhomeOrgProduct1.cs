@@ -1674,8 +1674,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyManufacturerName()
         {
             PropertyReadLock();
-            String val = iManufacturerName.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iManufacturerName.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1689,8 +1696,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyManufacturerInfo()
         {
             PropertyReadLock();
-            String val = iManufacturerInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iManufacturerInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1704,8 +1718,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyManufacturerUrl()
         {
             PropertyReadLock();
-            String val = iManufacturerUrl.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iManufacturerUrl.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1719,8 +1740,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyManufacturerImageUri()
         {
             PropertyReadLock();
-            String val = iManufacturerImageUri.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iManufacturerImageUri.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1734,8 +1762,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyModelName()
         {
             PropertyReadLock();
-            String val = iModelName.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iModelName.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1749,8 +1784,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyModelInfo()
         {
             PropertyReadLock();
-            String val = iModelInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iModelInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1764,8 +1806,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyModelUrl()
         {
             PropertyReadLock();
-            String val = iModelUrl.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iModelUrl.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1779,8 +1828,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyModelImageUri()
         {
             PropertyReadLock();
-            String val = iModelImageUri.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iModelImageUri.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1794,8 +1850,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProductRoom()
         {
             PropertyReadLock();
-            String val = iProductRoom.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProductRoom.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1809,8 +1872,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProductName()
         {
             PropertyReadLock();
-            String val = iProductName.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProductName.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1824,8 +1894,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProductInfo()
         {
             PropertyReadLock();
-            String val = iProductInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProductInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1839,8 +1916,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProductUrl()
         {
             PropertyReadLock();
-            String val = iProductUrl.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProductUrl.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1854,8 +1938,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProductImageUri()
         {
             PropertyReadLock();
-            String val = iProductImageUri.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProductImageUri.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1869,8 +1960,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyStandby()
         {
             PropertyReadLock();
-            bool val = iStandby.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iStandby.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1884,8 +1982,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertySourceIndex()
         {
             PropertyReadLock();
-            uint val = iSourceIndex.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iSourceIndex.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1899,8 +2004,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertySourceCount()
         {
             PropertyReadLock();
-            uint val = iSourceCount.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iSourceCount.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1914,8 +2026,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertySourceXml()
         {
             PropertyReadLock();
-            String val = iSourceXml.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iSourceXml.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1929,8 +2048,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyAttributes()
         {
             PropertyReadLock();
-            String val = iAttributes.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iAttributes.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

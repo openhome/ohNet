@@ -1189,58 +1189,51 @@ void CpProxyAvOpenhomeOrgRadio1C::SetPropertyProtocolInfoChanged(Functor& aFunct
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyUri(Brhz& aUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aUri.Set(iUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyTransportState(Brhz& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aTransportState.Set(iTransportState->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyId(TUint& aId) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aId = iId->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyIdArray(Brh& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aIdArray.Set(iIdArray->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyChannelsMax(TUint& aChannelsMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aChannelsMax = iChannelsMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aProtocolInfo.Set(iProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1C::UriPropertyChanged()

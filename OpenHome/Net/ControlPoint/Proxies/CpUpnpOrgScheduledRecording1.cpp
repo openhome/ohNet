@@ -1255,10 +1255,9 @@ void CpProxyUpnpOrgScheduledRecording1::SetPropertyLastChangeChanged(Functor& aF
 
 void CpProxyUpnpOrgScheduledRecording1::PropertyLastChange(Brhz& aLastChange) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgScheduledRecording1::LastChangePropertyChanged()

@@ -1921,8 +1921,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertySystemUpdateID()
         {
             PropertyReadLock();
-            uint val = iSystemUpdateID.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iSystemUpdateID.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1936,8 +1943,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyContainerUpdateIDs()
         {
             PropertyReadLock();
-            String val = iContainerUpdateIDs.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iContainerUpdateIDs.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1951,8 +1965,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyLastChange()
         {
             PropertyReadLock();
-            String val = iLastChange.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iLastChange.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1966,8 +1987,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyTransferIDs()
         {
             PropertyReadLock();
-            String val = iTransferIDs.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iTransferIDs.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

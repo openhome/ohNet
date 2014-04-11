@@ -1987,8 +1987,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyTransportState()
         {
             PropertyReadLock();
-            String val = iTransportState.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iTransportState.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -2002,8 +2009,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyRepeat()
         {
             PropertyReadLock();
-            bool val = iRepeat.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iRepeat.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -2017,8 +2031,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyShuffle()
         {
             PropertyReadLock();
-            bool val = iShuffle.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iShuffle.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -2032,8 +2053,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyId()
         {
             PropertyReadLock();
-            uint val = iId.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iId.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -2047,8 +2075,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public byte[] PropertyIdArray()
         {
             PropertyReadLock();
-            byte[] val = iIdArray.Value();
-            PropertyReadUnlock();
+            byte[] val;
+            try
+            {
+                val = iIdArray.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -2062,8 +2097,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyTracksMax()
         {
             PropertyReadLock();
-            uint val = iTracksMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iTracksMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -2077,8 +2119,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProtocolInfo()
         {
             PropertyReadLock();
-            String val = iProtocolInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProtocolInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

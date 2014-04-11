@@ -314,8 +314,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public <#=argtype[s.type]#> Property<#=s.name#>()
         {
             PropertyReadLock();
-            <#=argtype[s.type]#> val = i<#=s.name#>.Value();
-            PropertyReadUnlock();
+            <#=argtype[s.type]#> val;
+            try
+            {
+                val = i<#=s.name#>.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

@@ -1116,161 +1116,143 @@ void CpProxyAvOpenhomeOrgProduct1Cpp::SetPropertyAttributesChanged(Functor& aFun
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerName(std::string& aManufacturerName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerName->Value();
     aManufacturerName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerInfo(std::string& aManufacturerInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerInfo->Value();
     aManufacturerInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerUrl(std::string& aManufacturerUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerUrl->Value();
     aManufacturerUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyManufacturerImageUri(std::string& aManufacturerImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerImageUri->Value();
     aManufacturerImageUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelName(std::string& aModelName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelName->Value();
     aModelName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelInfo(std::string& aModelInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelInfo->Value();
     aModelInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelUrl(std::string& aModelUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelUrl->Value();
     aModelUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyModelImageUri(std::string& aModelImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelImageUri->Value();
     aModelImageUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductRoom(std::string& aProductRoom) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductRoom->Value();
     aProductRoom.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductName(std::string& aProductName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductName->Value();
     aProductName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductInfo(std::string& aProductInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductInfo->Value();
     aProductInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductUrl(std::string& aProductUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductUrl->Value();
     aProductUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyProductImageUri(std::string& aProductImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductImageUri->Value();
     aProductImageUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyStandby(bool& aStandby) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertySourceIndex(uint32_t& aSourceIndex) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceIndex = iSourceIndex->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertySourceCount(uint32_t& aSourceCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceCount = iSourceCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertySourceXml(std::string& aSourceXml) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iSourceXml->Value();
     aSourceXml.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::PropertyAttributes(std::string& aAttributes) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAttributes->Value();
     aAttributes.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1Cpp::ManufacturerNamePropertyChanged()

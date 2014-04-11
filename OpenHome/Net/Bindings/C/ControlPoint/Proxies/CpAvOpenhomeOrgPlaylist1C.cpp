@@ -1675,58 +1675,51 @@ void CpProxyAvOpenhomeOrgPlaylist1C::SetPropertyProtocolInfoChanged(Functor& aFu
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyTransportState(Brhz& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aTransportState.Set(iTransportState->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyRepeat(TBool& aRepeat) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aRepeat = iRepeat->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyShuffle(TBool& aShuffle) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aShuffle = iShuffle->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyId(TUint& aId) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aId = iId->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyIdArray(Brh& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aIdArray.Set(iIdArray->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyTracksMax(TUint& aTracksMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aTracksMax = iTracksMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aProtocolInfo.Set(iProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1C::TransportStatePropertyChanged()

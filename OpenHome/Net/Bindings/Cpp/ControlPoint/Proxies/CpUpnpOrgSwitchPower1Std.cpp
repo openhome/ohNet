@@ -214,10 +214,9 @@ void CpProxyUpnpOrgSwitchPower1Cpp::SetPropertyStatusChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgSwitchPower1Cpp::PropertyStatus(bool& aStatus) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStatus = iStatus->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged()

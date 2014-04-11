@@ -1329,28 +1329,25 @@ void CpProxyUpnpOrgContentDirectory2Cpp::SetPropertyTransferIDsChanged(Functor& 
 
 void CpProxyUpnpOrgContentDirectory2Cpp::PropertySystemUpdateID(uint32_t& aSystemUpdateID) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSystemUpdateID = iSystemUpdateID->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2Cpp::PropertyContainerUpdateIDs(std::string& aContainerUpdateIDs) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iContainerUpdateIDs->Value();
     aContainerUpdateIDs.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2Cpp::PropertyTransferIDs(std::string& aTransferIDs) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTransferIDs->Value();
     aTransferIDs.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2Cpp::SystemUpdateIDPropertyChanged()

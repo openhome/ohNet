@@ -228,8 +228,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyTrackCount()
         {
             PropertyReadLock();
-            uint val = iTrackCount.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iTrackCount.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -243,8 +250,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyDuration()
         {
             PropertyReadLock();
-            uint val = iDuration.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iDuration.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -258,8 +272,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertySeconds()
         {
             PropertyReadLock();
-            uint val = iSeconds.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iSeconds.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

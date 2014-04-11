@@ -1507,50 +1507,44 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::SetPropertyTracksMaxChanged(Functor&
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::PropertyImagesXml(Brhz& aImagesXml) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aImagesXml.Set(iImagesXml->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::PropertyIdArray(Brh& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aIdArray.Set(iIdArray->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::PropertyTokenArray(Brh& aTokenArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aTokenArray.Set(iTokenArray->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::PropertyPlaylistsMax(TUint& aPlaylistsMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aPlaylistsMax = iPlaylistsMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::PropertyTracksMax(TUint& aTracksMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(IsSubscribed());
     aTracksMax = iTracksMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1C::MetadataPropertyChanged()
