@@ -59,11 +59,12 @@ Msg* Waiter::Pull()
 
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iState != ERunning && iState != ERampingUp) {
-        // Could ramp down, then receive expected flush, which puts this back
-        // into ramping up state, then receive a new MsgTrack during ramp up.
+    if (iState == EFlushing || iState == ERampingDown) {
         aMsg->RemoveRef();
         ASSERTS();
+    }
+    if (iState == EWaiting) {
+        iObserver.PipelineWaiting(false);
     }
     NewStream();
     return aMsg;
