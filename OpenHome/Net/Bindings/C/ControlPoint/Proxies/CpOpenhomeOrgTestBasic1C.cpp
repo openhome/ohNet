@@ -1569,35 +1569,35 @@ void CpProxyOpenhomeOrgTestBasic1C::SetPropertyVarBinChanged(Functor& aFunctor)
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarUint(TUint& aVarUint) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aVarUint = iVarUint->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarInt(TInt& aVarInt) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aVarInt = iVarInt->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarBool(TBool& aVarBool) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aVarBool = iVarBool->Value();
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarStr(Brhz& aVarStr) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aVarStr.Set(iVarStr->Value());
 }
 
 void CpProxyOpenhomeOrgTestBasic1C::PropertyVarBin(Brh& aVarBin) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aVarBin.Set(iVarBin->Value());
 }

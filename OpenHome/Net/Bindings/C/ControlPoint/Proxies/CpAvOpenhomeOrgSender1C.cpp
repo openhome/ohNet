@@ -453,35 +453,35 @@ void CpProxyAvOpenhomeOrgSender1C::SetPropertyAttributesChanged(Functor& aFuncto
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyPresentationUrl(Brhz& aPresentationUrl) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aPresentationUrl.Set(iPresentationUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyAudio(TBool& aAudio) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aAudio = iAudio->Value();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyStatus(Brhz& aStatus) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aStatus.Set(iStatus->Value());
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyAttributes(Brhz& aAttributes) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aAttributes.Set(iAttributes->Value());
 }

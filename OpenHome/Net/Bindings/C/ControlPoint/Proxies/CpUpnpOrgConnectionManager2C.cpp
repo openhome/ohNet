@@ -504,21 +504,21 @@ void CpProxyUpnpOrgConnectionManager2C::SetPropertyCurrentConnectionIDsChanged(F
 
 void CpProxyUpnpOrgConnectionManager2C::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
 }
 
 void CpProxyUpnpOrgConnectionManager2C::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
 }
 
 void CpProxyUpnpOrgConnectionManager2C::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
 }

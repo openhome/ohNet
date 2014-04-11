@@ -1231,126 +1231,126 @@ void CpProxyAvOpenhomeOrgProduct1C::SetPropertyAttributesChanged(Functor& aFunct
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerName(Brhz& aManufacturerName) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerName.Set(iManufacturerName->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerInfo(Brhz& aManufacturerInfo) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerInfo.Set(iManufacturerInfo->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerUrl(Brhz& aManufacturerUrl) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerUrl.Set(iManufacturerUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyManufacturerImageUri(Brhz& aManufacturerImageUri) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerImageUri.Set(iManufacturerImageUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelName(Brhz& aModelName) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelName.Set(iModelName->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelInfo(Brhz& aModelInfo) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelInfo.Set(iModelInfo->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelUrl(Brhz& aModelUrl) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelUrl.Set(iModelUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyModelImageUri(Brhz& aModelImageUri) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelImageUri.Set(iModelImageUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductRoom(Brhz& aProductRoom) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductRoom.Set(iProductRoom->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductName(Brhz& aProductName) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductName.Set(iProductName->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductInfo(Brhz& aProductInfo) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductInfo.Set(iProductInfo->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductUrl(Brhz& aProductUrl) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductUrl.Set(iProductUrl->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyProductImageUri(Brhz& aProductImageUri) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductImageUri.Set(iProductImageUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyStandby(TBool& aStandby) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aStandby = iStandby->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertySourceIndex(TUint& aSourceIndex) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSourceIndex = iSourceIndex->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertySourceCount(TUint& aSourceCount) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSourceCount = iSourceCount->Value();
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertySourceXml(Brhz& aSourceXml) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSourceXml.Set(iSourceXml->Value());
 }
 
 void CpProxyAvOpenhomeOrgProduct1C::PropertyAttributes(Brhz& aAttributes) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aAttributes.Set(iAttributes->Value());
 }

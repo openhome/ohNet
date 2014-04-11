@@ -1728,14 +1728,14 @@ void CpProxyUpnpOrgAVTransport2C::SetPropertyDRMStateChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgAVTransport2C::PropertyLastChange(Brhz& aLastChange) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aLastChange.Set(iLastChange->Value());
 }
 
 void CpProxyUpnpOrgAVTransport2C::PropertyDRMState(Brhz& aDRMState) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aDRMState.Set(iDRMState->Value());
 }

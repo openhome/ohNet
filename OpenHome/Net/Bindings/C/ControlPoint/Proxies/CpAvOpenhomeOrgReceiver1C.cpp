@@ -491,28 +491,28 @@ void CpProxyAvOpenhomeOrgReceiver1C::SetPropertyProtocolInfoChanged(Functor& aFu
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyUri(Brhz& aUri) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aUri.Set(iUri->Value());
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyTransportState(Brhz& aTransportState) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aTransportState.Set(iTransportState->Value());
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProtocolInfo.Set(iProtocolInfo->Value());
 }

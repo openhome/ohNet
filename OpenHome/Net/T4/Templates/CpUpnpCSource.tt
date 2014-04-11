@@ -288,7 +288,7 @@ void <#=className#>C::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 
 void <#=className#>C::Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>

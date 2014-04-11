@@ -1421,35 +1421,35 @@ void CpProxyUpnpOrgDimming1C::SetPropertyRampPausedChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgDimming1C::PropertyLoadLevelStatus(TUint& aLoadLevelStatus) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aLoadLevelStatus = iLoadLevelStatus->Value();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyStepDelta(TUint& aStepDelta) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aStepDelta = iStepDelta->Value();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyRampRate(TUint& aRampRate) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aRampRate = iRampRate->Value();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyIsRamping(TBool& aIsRamping) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aIsRamping = iIsRamping->Value();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyRampPaused(TBool& aRampPaused) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aRampPaused = iRampPaused->Value();
 }

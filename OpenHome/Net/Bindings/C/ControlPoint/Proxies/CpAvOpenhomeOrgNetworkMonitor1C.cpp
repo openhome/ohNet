@@ -247,28 +247,28 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1C::SetPropertyResultsChanged(Functor& aF
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertyName(Brhz& aName) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aName.Set(iName->Value());
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertySender(TUint& aSender) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSender = iSender->Value();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertyReceiver(TUint& aReceiver) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aReceiver = iReceiver->Value();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertyResults(TUint& aResults) const
 {
-    AutoMutex a(PropertyReadLock());
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aResults = iResults->Value();
 }
