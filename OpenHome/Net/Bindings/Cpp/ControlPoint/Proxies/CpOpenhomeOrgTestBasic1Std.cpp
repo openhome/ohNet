@@ -1453,44 +1453,39 @@ void CpProxyOpenhomeOrgTestBasic1Cpp::SetPropertyVarBinChanged(Functor& aFunctor
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarUint(uint32_t& aVarUint) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarUint = iVarUint->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarInt(int32_t& aVarInt) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarInt = iVarInt->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarBool(bool& aVarBool) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarBool = iVarBool->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarStr(std::string& aVarStr) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iVarStr->Value();
     aVarStr.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::PropertyVarBin(std::string& aVarBin) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iVarBin->Value();
     aVarBin.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyOpenhomeOrgTestBasic1Cpp::VarUintPropertyChanged()

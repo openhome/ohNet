@@ -568,8 +568,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyPresentationUrl()
         {
             PropertyReadLock();
-            String val = iPresentationUrl.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iPresentationUrl.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -583,8 +590,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyMetadata()
         {
             PropertyReadLock();
-            String val = iMetadata.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iMetadata.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -598,8 +612,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyAudio()
         {
             PropertyReadLock();
-            bool val = iAudio.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iAudio.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -613,8 +634,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyStatus()
         {
             PropertyReadLock();
-            String val = iStatus.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iStatus.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -628,8 +656,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyAttributes()
         {
             PropertyReadLock();
-            String val = iAttributes.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iAttributes.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

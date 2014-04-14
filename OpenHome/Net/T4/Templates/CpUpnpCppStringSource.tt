@@ -253,7 +253,7 @@ void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 
 void <#=className#>::Property<#=s.name#>(<#=outargtype[s.type]#> a<#=s.name#>) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
@@ -264,7 +264,6 @@ void <#=className#>::Property<#=s.name#>(<#=outargtype[s.type]#> a<#=s.name#>) c
 <#      { #>
     a<#=s.name#> = i<#=s.name#>->Value();
 <#      } #>
-    PropertyReadUnlock();
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>

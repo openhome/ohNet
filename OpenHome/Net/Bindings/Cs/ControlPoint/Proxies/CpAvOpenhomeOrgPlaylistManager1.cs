@@ -1832,8 +1832,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyMetadata()
         {
             PropertyReadLock();
-            String val = iMetadata.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iMetadata.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1847,8 +1854,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyImagesXml()
         {
             PropertyReadLock();
-            String val = iImagesXml.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iImagesXml.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1862,8 +1876,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public byte[] PropertyIdArray()
         {
             PropertyReadLock();
-            byte[] val = iIdArray.Value();
-            PropertyReadUnlock();
+            byte[] val;
+            try
+            {
+                val = iIdArray.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1877,8 +1898,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public byte[] PropertyTokenArray()
         {
             PropertyReadLock();
-            byte[] val = iTokenArray.Value();
-            PropertyReadUnlock();
+            byte[] val;
+            try
+            {
+                val = iTokenArray.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1892,8 +1920,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyPlaylistsMax()
         {
             PropertyReadLock();
-            uint val = iPlaylistsMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iPlaylistsMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1907,8 +1942,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyTracksMax()
         {
             PropertyReadLock();
-            uint val = iTracksMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iTracksMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

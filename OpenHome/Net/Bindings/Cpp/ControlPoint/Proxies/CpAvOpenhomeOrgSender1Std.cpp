@@ -398,46 +398,41 @@ void CpProxyAvOpenhomeOrgSender1Cpp::SetPropertyAttributesChanged(Functor& aFunc
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyPresentationUrl(std::string& aPresentationUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iPresentationUrl->Value();
     aPresentationUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyMetadata(std::string& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iMetadata->Value();
     aMetadata.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyAudio(bool& aAudio) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAudio = iAudio->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyStatus(std::string& aStatus) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iStatus->Value();
     aStatus.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PropertyAttributes(std::string& aAttributes) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAttributes->Value();
     aAttributes.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1Cpp::PresentationUrlPropertyChanged()

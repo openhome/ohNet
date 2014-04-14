@@ -1858,8 +1858,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVarUint()
         {
             PropertyReadLock();
-            uint val = iVarUint.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVarUint.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1873,8 +1880,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public int PropertyVarInt()
         {
             PropertyReadLock();
-            int val = iVarInt.Value();
-            PropertyReadUnlock();
+            int val;
+            try
+            {
+                val = iVarInt.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1888,8 +1902,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyVarBool()
         {
             PropertyReadLock();
-            bool val = iVarBool.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iVarBool.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1903,8 +1924,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyVarStr()
         {
             PropertyReadLock();
-            String val = iVarStr.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iVarStr.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1918,8 +1946,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public byte[] PropertyVarBin()
         {
             PropertyReadLock();
-            byte[] val = iVarBin.Value();
-            PropertyReadUnlock();
+            byte[] val;
+            try
+            {
+                val = iVarBin.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

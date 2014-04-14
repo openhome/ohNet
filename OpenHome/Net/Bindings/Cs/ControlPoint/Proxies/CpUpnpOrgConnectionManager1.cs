@@ -647,8 +647,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertySourceProtocolInfo()
         {
             PropertyReadLock();
-            String val = iSourceProtocolInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iSourceProtocolInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -662,8 +669,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertySinkProtocolInfo()
         {
             PropertyReadLock();
-            String val = iSinkProtocolInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iSinkProtocolInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -677,8 +691,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyCurrentConnectionIDs()
         {
             PropertyReadLock();
-            String val = iCurrentConnectionIDs.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iCurrentConnectionIDs.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

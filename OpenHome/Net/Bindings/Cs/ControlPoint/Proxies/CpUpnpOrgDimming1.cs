@@ -1659,8 +1659,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyLoadLevelStatus()
         {
             PropertyReadLock();
-            uint val = iLoadLevelStatus.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iLoadLevelStatus.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1674,8 +1681,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyStepDelta()
         {
             PropertyReadLock();
-            uint val = iStepDelta.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iStepDelta.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1689,8 +1703,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyRampRate()
         {
             PropertyReadLock();
-            uint val = iRampRate.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iRampRate.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1704,8 +1725,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyIsRamping()
         {
             PropertyReadLock();
-            bool val = iIsRamping.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iIsRamping.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1719,8 +1747,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyRampPaused()
         {
             PropertyReadLock();
-            bool val = iRampPaused.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iRampPaused.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

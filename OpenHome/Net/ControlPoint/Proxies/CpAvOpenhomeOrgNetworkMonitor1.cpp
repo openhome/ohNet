@@ -198,34 +198,30 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1::SetPropertyResultsChanged(Functor& aFu
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertyName(Brhz& aName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aName.Set(iName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertySender(TUint& aSender) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSender = iSender->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertyReceiver(TUint& aReceiver) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReceiver = iReceiver->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertyResults(TUint& aResults) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aResults = iResults->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::NamePropertyChanged()

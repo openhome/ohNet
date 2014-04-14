@@ -90,14 +90,9 @@ protected:
     DllExport virtual ~CpProxy();
 
     /**
-     * Lock properties for reading.  Intended for use before reading a property's value.
+     * Lock for properties reading.  Intended for use around reads of a property's value.
      */
-    DllExport void PropertyReadLock() const;
-    /**
-     * Signal that reading of a property's value has completed.
-     * Must be called once for each call to PropertyReadLock().
-     */
-    DllExport void PropertyReadUnlock() const;
+    DllExport Mutex& PropertyReadLock() const;
     /**
      * Add a property (aka state variable) to the service
      * Passes ownership of aProperty

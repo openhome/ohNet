@@ -1058,90 +1058,79 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::SetPropertyFadeMaxChanged(Functor& aFunctor
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolume(uint32_t& aVolume) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolume = iVolume->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyMute(bool& aMute) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMute = iMute->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyBalance(int32_t& aBalance) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBalance = iBalance->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyFade(int32_t& aFade) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aFade = iFade->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeLimit(uint32_t& aVolumeLimit) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeLimit = iVolumeLimit->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeMax(uint32_t& aVolumeMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeMax = iVolumeMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeUnity(uint32_t& aVolumeUnity) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeUnity = iVolumeUnity->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeSteps(uint32_t& aVolumeSteps) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeSteps = iVolumeSteps->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeMilliDbPerStep(uint32_t& aVolumeMilliDbPerStep) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeMilliDbPerStep = iVolumeMilliDbPerStep->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyBalanceMax(uint32_t& aBalanceMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBalanceMax = iBalanceMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyFadeMax(uint32_t& aFadeMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aFadeMax = iFadeMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::VolumePropertyChanged()

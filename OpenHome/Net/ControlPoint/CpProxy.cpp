@@ -136,14 +136,9 @@ void CpProxy::SetPropertyInitialEvent(Functor& aFunctor)
     iLock->Signal();
 }
 
-void CpProxy::PropertyReadLock() const
+Mutex& CpProxy::PropertyReadLock() const
 {
-    iPropertyReadLock->Wait();
-}
-
-void CpProxy::PropertyReadUnlock() const
-{
-    iPropertyReadLock->Signal();
+    return *iPropertyReadLock;
 }
 
 void CpProxy::ReportEvent(Functor aFunctor)
@@ -161,7 +156,7 @@ void CpProxy::ReportEvent(Functor aFunctor)
 void CpProxy::EventUpdateStart()
 {
     iPropertyWriteLock->Wait();
-    PropertyReadLock();
+    iPropertyReadLock->Wait();
 }
 
 void CpProxy::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor)
@@ -177,7 +172,7 @@ void CpProxy::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor&
 
 void CpProxy::EventUpdateEnd()
 {
-    PropertyReadUnlock();
+    iPropertyReadLock->Signal();
     TBool changed = false;
     PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
@@ -206,7 +201,7 @@ void CpProxy::EventUpdateEnd()
 
 void CpProxy::EventUpdateError()
 {
-    PropertyReadUnlock();
+    iPropertyReadLock->Signal();
     iPropertyWriteLock->Signal();
 }
 

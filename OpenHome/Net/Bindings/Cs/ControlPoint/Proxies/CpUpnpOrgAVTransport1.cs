@@ -1627,8 +1627,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyLastChange()
         {
             PropertyReadLock();
-            String val = iLastChange.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iLastChange.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

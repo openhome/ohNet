@@ -448,102 +448,90 @@ void CpProxyAvOpenhomeOrgInfo1Cpp::SetPropertyMetatextChanged(Functor& aFunctor)
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyTrackCount(uint32_t& aTrackCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyDetailsCount(uint32_t& aDetailsCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDetailsCount = iDetailsCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyMetatextCount(uint32_t& aMetatextCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetatextCount = iMetatextCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyUri(std::string& aUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iUri->Value();
     aUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyMetadata(std::string& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iMetadata->Value();
     aMetadata.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyDuration(uint32_t& aDuration) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyBitRate(uint32_t& aBitRate) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBitRate = iBitRate->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyBitDepth(uint32_t& aBitDepth) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBitDepth = iBitDepth->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertySampleRate(uint32_t& aSampleRate) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSampleRate = iSampleRate->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyLossless(bool& aLossless) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLossless = iLossless->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyCodecName(std::string& aCodecName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iCodecName->Value();
     aCodecName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::PropertyMetatext(std::string& aMetatext) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iMetatext->Value();
     aMetatext.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1Cpp::TrackCountPropertyChanged()

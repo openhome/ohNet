@@ -2387,10 +2387,9 @@ void CpProxyUpnpOrgRenderingControl2::SetPropertyLastChangeChanged(Functor& aFun
 
 void CpProxyUpnpOrgRenderingControl2::PropertyLastChange(Brhz& aLastChange) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgRenderingControl2::LastChangePropertyChanged()

@@ -598,8 +598,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyUri()
         {
             PropertyReadLock();
-            String val = iUri.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iUri.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -613,8 +620,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyMetadata()
         {
             PropertyReadLock();
-            String val = iMetadata.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iMetadata.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -628,8 +642,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyTransportState()
         {
             PropertyReadLock();
-            String val = iTransportState.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iTransportState.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -643,8 +664,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProtocolInfo()
         {
             PropertyReadLock();
-            String val = iProtocolInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProtocolInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

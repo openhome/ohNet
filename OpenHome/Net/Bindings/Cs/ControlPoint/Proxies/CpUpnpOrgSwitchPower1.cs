@@ -292,8 +292,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyStatus()
         {
             PropertyReadLock();
-            bool val = iStatus.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iStatus.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
