@@ -1280,6 +1280,7 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, 
     iAudioData = aDecodedAudio;
     iTrackOffset = aTrackOffset;
     iSize = iAudioData->JiffiesFromBytes(iAudioData->Bytes());
+    ASSERT(iSize > 0);
     iOffset = 0;
 }
 
@@ -2237,7 +2238,13 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
 {
     DecodedAudio* decodedAudio = CreateDecodedAudio(aData, aChannels, aSampleRate, aBitDepth, aEndian);
     MsgAudioPcm* msg = iAllocatorMsgAudioPcm.Allocate();
-    msg->Initialise(decodedAudio, aTrackOffset, iAllocatorMsgPlayablePcm);
+    try {
+        msg->Initialise(decodedAudio, aTrackOffset, iAllocatorMsgPlayablePcm);
+    }
+    catch (AssertionFailed&) { // test code helper
+        msg->RemoveRef();
+        throw;
+    }
     return msg;
 }
 

@@ -104,11 +104,13 @@ void CodecOhm::Process()
         iStreamOutput = true;
     }
 
-    const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
-    const TUint rxTimestamp = (msg->RxTimestamped()? msg->RxTimestamp() : 0);
-    const TUint networkTimestamp = (msg->Timestamped()? msg->NetworkTimestamp() : 0);
-    const TUint mediaTimestamp = (msg->Timestamped()? msg->MediaTimestamp() : 0);
-    iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataBigEndian, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
+    if (msg->Samples() > 0) {
+        const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
+        const TUint rxTimestamp = (msg->RxTimestamped()? msg->RxTimestamp() : 0);
+        const TUint networkTimestamp = (msg->Timestamped()? msg->NetworkTimestamp() : 0);
+        const TUint mediaTimestamp = (msg->Timestamped()? msg->MediaTimestamp() : 0);
+        iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataBigEndian, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
+    }
 
     if (msg->Halt()) {
         iController->OutputWait();

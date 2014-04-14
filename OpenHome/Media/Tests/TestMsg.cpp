@@ -681,6 +681,9 @@ void SuiteMsgAudio::Test()
     remaining->RemoveRef();
     TEST(remaining->Jiffies() == 0);
 
+    // Check creating zero-length msg asserts
+    TEST_THROWS(iMsgFactory->CreateMsgAudioPcm(Brx::Empty(), 2, 44100, 8, EMediaDataLittleEndian, 0), AssertionFailed);
+
     // Create silence msg.  Check its length is as expected
     jiffies = Jiffies::kJiffiesPerMs;
     msg = iMsgFactory->CreateMsgSilence(jiffies);

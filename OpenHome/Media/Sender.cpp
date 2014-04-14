@@ -213,9 +213,7 @@ void Sender::SendPendingAudio(TBool aHalt)
         playable->Read(*this);
         playable->RemoveRef();
     }
-    if (iAudioBuf.Bytes() != 0) {
-        iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes(), aHalt);
-    }
+    iOhmSenderDriver->SendAudio(iAudioBuf.Ptr(), iAudioBuf.Bytes(), aHalt);
     iPendingAudio.clear();
 }
 
