@@ -114,7 +114,10 @@ class InvocationResponse:
         str = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( str ), ctypes.byref( length ))
-        string = str.value
+        if str.value:
+            string = str.value
+        else:
+            string = ''
         self.lib.OhNetFree( str )
         return string
     
