@@ -41,6 +41,8 @@ public:
 public:
     SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aSupportedProtocols);
     ~SourceUpnpAv();
+private:
+    void EnsureActive();
 private: // from Source
     void Activate();
     void Deactivate();
@@ -60,6 +62,7 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
 private:
     Mutex iLock;
+    Mutex iActivationLock;
     Net::DvDevice& iDevice;
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
@@ -72,6 +75,7 @@ private:
     TUint iStreamId;
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
+    TBool iNoPipelinePrefetchOnActivation;
     TBool iTrackStartedNotPlaying;
 };
 

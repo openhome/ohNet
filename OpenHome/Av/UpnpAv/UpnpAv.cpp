@@ -32,7 +32,8 @@ const TChar* SourceUpnpAv::kSourceName("UPnP AV");
 
 SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aSupportedProtocols)
     : Source(kSourceName, "UpnpAv")
-    , iLock("UPAV")
+    , iLock("UPA1")
+    , iActivationLock("UPA2")
     , iDevice(aDevice)
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
@@ -41,10 +42,9 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
+    , iNoPipelinePrefetchOnActivation(false)
     , iTrackStartedNotPlaying(false)
 {
-    iActive = true; /* FIXME - Kinsky doesn't cope with this source so we don't register it with the Product.
-                       Fool IsActive() checks below by saying this is always active.  See #169 */
     iProviderAvTransport = new ProviderAvTransport(iDevice, aEnv, *this);
     iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
     iProviderRenderingControl = new ProviderRenderingControl(iDevice);
@@ -63,9 +63,26 @@ SourceUpnpAv::~SourceUpnpAv()
     }
 }
 
+void SourceUpnpAv::EnsureActive()
+{
+    AutoMutex a(iActivationLock);
+    iNoPipelinePrefetchOnActivation = true;
+    if (!IsActive()) {
+        DoActivate();
+    }
+    iNoPipelinePrefetchOnActivation = false;
+}
+
 void SourceUpnpAv::Activate()
 {
     iActive = true;
+    iLock.Wait();
+    iTrackStartedNotPlaying = false;
+    iLock.Signal();
+    if (!iNoPipelinePrefetchOnActivation) {
+        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+        iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
+    }
 }
 
 void SourceUpnpAv::Deactivate()
@@ -78,10 +95,7 @@ void SourceUpnpAv::Deactivate()
 
 void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
-    iActive = true; // FIXME
-    /*if (!IsActive()) {
-        DoActivate();
-    }*/
+    EnsureActive();
     if (iTrack == NULL || iTrack->Uri() != aUri) {
         iPipeline.RemoveAll();
         if (iTrack != NULL) {
@@ -89,13 +103,11 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData, false);
 
+        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         if (iTrack == NULL) {
             iTransportState = Media::EPipelineStopped;
-            iPipeline.Begin(iUriProvider.Mode(), Track::kIdNone);
         }
-        else {
-            iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
-        }
+        iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
 
         if (iTransportState == Media::EPipelinePlaying) {
             iPipeline.Play();
@@ -108,10 +120,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 
 void SourceUpnpAv::Play()
 {
-    iActive = true; // FIXME
-    /*if (!IsActive()) {
-        DoActivate();
-    }*/
+    EnsureActive();
     TBool notifyUriProvider = false;
     iLock.Wait();
     if (iTrack != NULL
@@ -119,10 +128,15 @@ void SourceUpnpAv::Play()
             && !iTrackStartedNotPlaying) {
         notifyUriProvider = true;
     }
+    else if (iTrack != NULL
+            && iTransportState == Media::EPipelinePlaying) {
+        notifyUriProvider = true;
+    }
     iTrackStartedNotPlaying = false;
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
     if (notifyUriProvider) {
+        iPipeline.RemoveAll();
         iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     }
     iPipeline.Play();
@@ -187,9 +201,6 @@ void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipelin
     iLock.Wait();
     iPipelineTrackId = aIdPipeline;
     iStreamId = UINT_MAX;
-    iActive = (iTrack == NULL || iTrack->Id() == aTrack.Id());  // could have invalid track from filler,
-                                                                // or a track that has been set via
-                                                                // SetTrack()
     iLock.Signal();
     if (IsActive()) {
         iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);

@@ -150,7 +150,6 @@ void TestMediaPlayer::Run()
         ;
     //IPowerManager& powerManager = iMediaPlayer->PowerManager();
     //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
-    Log::Print("RamStore:\n");
     iConfigRamStore->Print();
 }
 
