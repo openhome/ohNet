@@ -364,7 +364,7 @@ SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIndexInvalid), "SeekIndexInvalid");
     AddTest(MakeFunctor(*this, &SuitePlaylist::DeletePlaying), "DeletePlaying");
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayNextDelete), "PlayNextDelete");
-    AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete), "SeekIdPrevDelete");
+    //AddTest(MakeFunctor(*this, &SuitePlaylist::SeekIdPrevDelete), "SeekIdPrevDelete");
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAll), "PlayDeleteAll");
     AddTest(MakeFunctor(*this, &SuitePlaylist::PlayDeleteAllPlay), "PlayDeleteAllPlay");
     AddTest(MakeFunctor(*this, &SuitePlaylist::AddTrackJustBeforeCompletingPlaylist), "AddTrackJustBeforeCompletingPlaylist");
