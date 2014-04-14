@@ -3,11 +3,14 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
+#include <OpenHome/Private/Printer.h>
 
 #include <climits>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+
+#undef ID_MANAGER_LOG_ENABLE
 
 // IdManager
 
@@ -28,6 +31,7 @@ void IdManager::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TB
     UpdateIndex(iIndexTail);
     ASSERT(iIndexHead != iIndexTail); // OkToPlay can't tell the difference between a full and empty list
                                       // ...so we assume the list contains at most kMaxActiveStreams-1 elements
+    Log("AddStream");
     iLock.Signal();
 }
 
@@ -49,6 +53,22 @@ TUint IdManager::UpdateId(TUint& aId)
     TUint id = aId++;
     iLock.Signal();
     return id;
+}
+
+void IdManager::Log(const TChar* aPrefix)
+{
+    aPrefix = aPrefix;
+#ifdef ID_MANAGER_LOG_ENABLE
+    Log::Print("IdManager: %s.  Pending items are:\n", aPrefix);
+    TUint index = iIndexHead;
+    while (index != iIndexTail) {
+        ActiveStream& as = iActiveStreams[index];
+        Log::Print("    trackId:%u idPipeline:%u streamId:%u, playNow=%u\n", as.Id(), as.PipelineTrackId(), as.StreamId(), as.PlayNow());
+        if (++index == kMaxActiveStreams) {
+            index = 0;
+        }
+    }
+#endif
 }
 
 TUint IdManager::NextTrackId()
@@ -73,6 +93,7 @@ EStreamPlay IdManager::OkToPlay(TUint aTrackId, TUint aStreamId)
     }
     iPlaying.Set(as);
     UpdateIndex(iIndexHead);
+    Log("OkToPlay");
     return iPlaying.PlayNow()? ePlayYes : ePlayLater;
 }
 
@@ -125,6 +146,7 @@ void IdManager::InvalidateAt(TUint aId)
             iIndexTail = prevIndex;
         }
     }
+    Log("InvalidateAt");
 }
 
 void IdManager::InvalidateAfter(TUint aId)
@@ -150,12 +172,14 @@ void IdManager::InvalidateAfter(TUint aId)
         }
         iIndexTail = index;
     }
+    Log("InvalidateAfter");
 }
 
 void IdManager::InvalidatePending()
 {
     iLock.Wait();
     iIndexTail = iIndexHead;
+    Log("InvalidatePending");
     iLock.Signal();
 }
 
@@ -167,6 +191,7 @@ void IdManager::InvalidateAll()
         iPlaying.Clear();
     }
     iIndexTail = iIndexHead;
+    Log("InvalidateAll");
 }
 
 

@@ -26,6 +26,7 @@ public: // from IPipelineIdManager
 private:
     static inline void UpdateIndex(TUint& aIndex);
     TUint UpdateId(TUint& aId);
+    void Log(const TChar* aPrefix);
 private: // from IIdManager
     TUint NextTrackId();
     TUint NextStreamId();
