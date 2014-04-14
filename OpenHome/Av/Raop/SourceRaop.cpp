@@ -138,29 +138,15 @@ void SourceRaop::Deactivate()
 {
     iLock.Wait();
     iTransportState = Media::EPipelineStopped;
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
     if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
         // Disable RAOP visibility if config val was updated while Net Aux was
         // selected source.
         iRaopDiscovery->Disable();
     }
-
-    iPipeline.RemoveAll();
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
-    iTransportState = Media::EPipelineStopped;
-
     if (iSessionActive) {
         CloseServers();
     }
-
     iLock.Signal();
-    iPipeline.Stop();
     Source::Deactivate();
 }
 
