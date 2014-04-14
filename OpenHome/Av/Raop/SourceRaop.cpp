@@ -127,6 +127,10 @@ void SourceRaop::Activate()
         iPipeline.Play();
     }
     else {
+        if (iTrack != NULL) {
+            iTrack->RemoveRef();
+            iTrack = NULL;
+        }
         iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
         const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         iLock.Signal();
