@@ -119,7 +119,6 @@ void MediaPlayer::Start()
 {
     iConfigManager->Close();
     iPipeline->Start();
-    iProduct->SetCurrentSource(0); // FIXME - could be available (and left) to client code
     iProduct->Start();
 }
 
