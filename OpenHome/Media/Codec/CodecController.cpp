@@ -598,3 +598,11 @@ TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
 
     return flushId;
 }
+
+void CodecController::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+{
+    AutoMutex a(iLock);
+    if (iStreamHandler != NULL) {
+        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+    }
+}

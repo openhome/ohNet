@@ -19,6 +19,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 };
 
 class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
@@ -101,6 +102,10 @@ TUint DummyStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
+}
+
+void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
 }
 
 

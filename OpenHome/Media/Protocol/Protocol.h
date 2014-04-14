@@ -63,6 +63,7 @@ protected:
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;
 protected:

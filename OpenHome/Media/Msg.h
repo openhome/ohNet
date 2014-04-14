@@ -855,6 +855,7 @@ public:
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
 };
 
 class ISeekObserver

@@ -280,3 +280,11 @@ TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
     AutoMutex a(iLock);
     return iStreamHandler->TryStop(aTrackId, aStreamId);
 }
+
+void Rewinder::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+{
+    AutoMutex a(iLock);
+    if (iStreamHandler != NULL) {
+        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+    }
+}

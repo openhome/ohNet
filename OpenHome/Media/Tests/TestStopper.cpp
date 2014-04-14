@@ -39,6 +39,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -206,6 +207,10 @@ TUint SuiteStopper::TryStop(TUint aTrackId, TUint aStreamId)
         return kExpectedFlushId;
     }
     return MsgFlush::kIdInvalid;
+}
+
+void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
 }
 
 Msg* SuiteStopper::ProcessMsg(MsgTrack* aMsg)

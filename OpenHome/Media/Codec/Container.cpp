@@ -170,6 +170,13 @@ TUint ContainerBase::TryStop(TUint aTrackId, TUint aStreamId)
     return iExpectedFlushId;
 }
 
+void ContainerBase::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+{
+    if (iStreamHandler != NULL) {
+        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+    }
+}
+
 Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iPendingMsg = aMsg;
@@ -476,6 +483,13 @@ TUint ContainerFront::TryStop(TUint aTrackId, TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
+void ContainerFront::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+{
+    if (iStreamHandler != NULL) {
+        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+    }
+}
+
 
 // Container
 
@@ -596,4 +610,11 @@ TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
 {
     LOG(kMedia, "Container::TryStop\n");
     return iContainerFront->iActiveContainer->TryStop(aTrackId, aStreamId);
+}
+
+void Container::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+{
+    if (iContainerFront != NULL) {
+        iContainerFront->NotifyStarving(aMode, aTrackId, aStreamId);
+    }
 }

@@ -54,6 +54,9 @@ TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffs
     return MsgFlush::kIdInvalid;
 }
 
+void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+}
 
 // Protocol::AutoStream
 

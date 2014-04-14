@@ -301,3 +301,7 @@ TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStrea
 {
     return MsgFlush::kIdInvalid;
 }
+
+void Filler::NullTrackStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+}

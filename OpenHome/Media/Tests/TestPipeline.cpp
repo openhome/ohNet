@@ -33,6 +33,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     ISupply& iSupply;
     TrackFactory& iTrackFactory;
@@ -225,6 +226,10 @@ TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffs
 TUint Supplier::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return MsgFlush::kIdInvalid;
+}
+
+void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
 }
 
 
