@@ -218,7 +218,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgSilence:
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     case EMsgDecodedStream:
-        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
+        return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);

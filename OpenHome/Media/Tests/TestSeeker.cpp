@@ -352,7 +352,7 @@ Msg* SuiteSeeker::CreateEncodedStream()
 
 Msg* SuiteSeeker::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, iSeekable, false);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, iSeekable, false, NULL);
 }
 
 Msg* SuiteSeeker::CreateAudio()

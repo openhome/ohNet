@@ -148,13 +148,18 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
-class SuiteDecodedStream : public Suite
+class SuiteDecodedStream : public Suite, private IStreamHandler
 {
     static const TUint kMsgDecodedStreamCount = 1;
 public:
     SuiteDecodedStream();
     ~SuiteDecodedStream();
     void Test();
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -1496,7 +1501,8 @@ void SuiteDecodedStream::Test()
     TBool lossless = true;
     TBool seekable = true;
     TBool live = true;
-    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live);
+    IStreamHandler* handler = this;
+    MsgDecodedStream* msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, handler);
     TEST(msg != NULL);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -1509,6 +1515,7 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() == lossless);
     TEST(msg->StreamInfo().Seekable() == seekable);
     TEST(msg->StreamInfo().Live() == live);
+    TEST(msg->StreamInfo().StreamHandler() == handler);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1524,9 +1531,9 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() != lossless);
     TEST(msg->StreamInfo().Seekable() != seekable);
     TEST(msg->StreamInfo().Live() != live);
+    TEST(msg->StreamInfo().StreamHandler() != handler);
 #endif
 
-    // create second MetaText msg, check its text can be retrieved
     streamId = 4;
     bitRate = 700;
     bitDepth = 24;
@@ -1538,7 +1545,7 @@ void SuiteDecodedStream::Test()
     lossless = false;
     seekable = false;
     live = false;
-    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live);
+    msg = iMsgFactory->CreateMsgDecodedStream(streamId, bitRate, bitDepth, sampleRate, numChannels, codecName, trackLength, startSample, lossless, seekable, live, handler);
     TEST(msg != NULL);
     TEST(msg->StreamInfo().StreamId() == streamId);
     TEST(msg->StreamInfo().BitRate() == bitRate);
@@ -1551,7 +1558,31 @@ void SuiteDecodedStream::Test()
     TEST(msg->StreamInfo().Lossless() == lossless);
     TEST(msg->StreamInfo().Seekable() == seekable);
     TEST(msg->StreamInfo().Live() == live);
-    msg->RemoveRef();
+    TEST(msg->StreamInfo().StreamHandler() == handler);
+        msg->RemoveRef();
+}
+
+EStreamPlay SuiteDecodedStream::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return ePlayNo;
+}
+
+TUint SuiteDecodedStream::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+TUint SuiteDecodedStream::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
+}
+
+void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS();
 }
 
 
@@ -1601,7 +1632,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false);
+    Msg* msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();

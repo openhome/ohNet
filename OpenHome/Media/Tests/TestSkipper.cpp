@@ -310,7 +310,7 @@ Msg* SuiteSkipper::CreateEncodedStream()
 
 Msg* SuiteSkipper::CreateDecodedStream()
 {
-    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false);
+    return iMsgFactory->CreateMsgDecodedStream(iNextStreamId, 100, 24, kSampleRate, kNumChannels, Brn("notARealCodec"), 1LL<<38, 0, true, true, false, NULL);
 }
 
 Msg* SuiteSkipper::CreateAudio()

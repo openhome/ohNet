@@ -284,7 +284,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgHalt();
     case EMsgDecodedStream:
     {
-        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive);
+        return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, NULL);
     }
     case EMsgAudioPcm:
     {

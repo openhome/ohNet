@@ -399,7 +399,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
         THROW(CodecStreamCorrupt);
     }
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive);
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler   );
     iLock.Wait();
     iSampleRate = aSampleRate;
     if (iExpectedFlushId == MsgFlush::kIdInvalid) {

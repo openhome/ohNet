@@ -5,6 +5,8 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/ClockPuller.h>
 
+#include <limits.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
@@ -29,6 +31,9 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iExit(false)
     , iTrackIsPullable(false)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
+    , iStreamHandler(NULL)
+    , iTrackId(UINT_MAX)
+    , iStreamId(UINT_MAX)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
     ASSERT(iNormalMax < iGorgeSize);
@@ -211,6 +216,9 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
     Log::Print("StarvationMonitor, updating status to %s\n", status);
 #endif
     if (aStatus == EBuffering) {
+        if (iStreamHandler != NULL) {
+            iStreamHandler->NotifyStarving(iMode, iTrackId, iStreamId);
+        }
         iObserver.NotifyStarvationMonitorBuffering(true);
     }
     else if (iStatus == EBuffering) {
@@ -249,7 +257,18 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
     if (iTrackIsPullable) {
         iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     }
+    iStreamHandler = NULL;
+    iMode.Replace(aMsg->Mode());
+    iTrackId = aMsg->IdPipeline();
+    iStreamId = UINT_MAX;
     iClockPuller.Stop();
+    return aMsg;
+}
+
+Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
+{
+    iStreamHandler = aMsg->StreamInfo().StreamHandler();
+    iStreamId = aMsg->StreamInfo().StreamId();
     return aMsg;
 }
 

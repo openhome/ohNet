@@ -56,6 +56,7 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgWait* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
@@ -86,6 +87,10 @@ private:
     TBool iExit;
     TBool iTrackIsPullable;
     TUint64 iJiffiesUntilNextHistoryPoint;
+    IStreamHandler* iStreamHandler;
+    BwsMode iMode;
+    TUint iTrackId;
+    TUint iStreamId;
 };
 
 } // namespace Media
