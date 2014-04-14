@@ -146,6 +146,7 @@ private:
     TUint64 iStreamLength;
     TUint64 iStreamPos;
     TUint iTrackId;
+    TUint iTrackIdPipeline;
 };
 
 } // namespace Codec

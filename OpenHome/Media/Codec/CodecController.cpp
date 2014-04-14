@@ -60,6 +60,8 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iSampleRate(0)
     , iStreamLength(0)
     , iStreamPos(0)
+    , iTrackId(UINT_MAX)
+    , iTrackIdPipeline(UINT_MAX)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread));
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
@@ -95,7 +97,7 @@ void CodecController::Start()
 void CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (iTrackId != aTrackId || aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
+    if (iTrackIdPipeline != aTrackId || aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
         aHandle = ISeeker::kHandleError;
         return;
     }
@@ -178,11 +180,12 @@ void CodecController::CodecThread()
                 break;
             }
             if (iActiveCodec == NULL) {
-                Log::Print("Failed to recognise audio format, flushing stream...\n");
-                // FIXME - send error indication down the pipeline?
+                if (iTrackIdPipeline != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
+                    Log::Print("Failed to recognise audio format, flushing stream...\n");
+                }
                 iLock.Wait();
                 if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-                    iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                    iExpectedFlushId = iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
                     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                         iConsumeExpectedFlush = true;
                     }
@@ -226,7 +229,7 @@ void CodecController::CodecThread()
         if (!iStreamStarted && !iStreamEnded) {
             iLock.Wait();
             if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-                iExpectedFlushId = iStreamHandler->TryStop(iTrackId, iStreamId);
+                iExpectedFlushId = iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
                 if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                     iConsumeExpectedFlush = true;
                 }
@@ -322,7 +325,12 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
             break;
         }
     }
-    (void)DoRead(aBuf, aBytes);
+     if (!DoRead(aBuf, aBytes)) {
+        if (iStreamStarted) {
+            THROW(CodecStreamStart);
+        }
+        THROW(CodecStreamEnded);
+     }
 }
 
 TBool CodecController::DoRead(Bwx& aBuf, TUint aBytes)
@@ -366,7 +374,7 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
 
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
-    TUint flushId = iStreamHandler->TrySeek(iTrackId, aStreamId, aBytePos);
+    TUint flushId = iStreamHandler->TrySeek(iTrackIdPipeline, aStreamId, aBytePos);
     if (flushId != MsgFlush::kIdInvalid) {
         ReleaseAudioEncoded();
         iExpectedFlushId = flushId;
@@ -443,7 +451,8 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
         return NULL;
     }
 
-    iTrackId = aMsg->IdPipeline();
+    iTrackId = aMsg->Track().Id();
+    iTrackIdPipeline = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -575,7 +584,7 @@ TUint CodecController::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 
 TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
-    if (iTrackId == aTrackId && iStreamId == aStreamId) {
+    if (iTrackIdPipeline == aTrackId && iStreamId == aStreamId) {
         iStreamStopped = true;
     }
     if (iStreamHandler == NULL) {
