@@ -423,6 +423,12 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     return jiffies;
 }
 
+void CodecController::OutputWait()
+{
+    MsgWait* wait = iMsgFactory.CreateMsgWait();
+    Queue(wait);
+}
+
 void CodecController::OutputHalt()
 {
     MsgHalt* halt = iMsgFactory.CreateMsgHalt();

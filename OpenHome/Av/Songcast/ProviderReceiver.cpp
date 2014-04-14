@@ -46,15 +46,16 @@ void ProviderReceiver::NotifyPipelineState(Media::EPipelineState aState)
     case Media::EPipelinePlaying:
         state = "Playing";
         break;
-    case Media::EPipelinePaused:
-        state = "Waiting";
-        break;
     case Media::EPipelineStopped:
         state = "Stopped";
         break;
     case Media::EPipelineBuffering:
         state = "Buffering";
         break;
+    case Media::EPipelineWaiting:
+        state = "Waiting";
+        break;
+    case Media::EPipelinePaused:
     default:
         ASSERTS();
     }

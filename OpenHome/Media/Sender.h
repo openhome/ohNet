@@ -56,7 +56,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     void ProcessAudio(MsgAudio* aMsg);
-    void SendPendingAudio();
+    void SendPendingAudio(TBool aHalt = false);
     void ConfigEnabledChanged(Configuration::KeyValuePair<TUint>& aStringId);
     void ConfigChannelChanged(Configuration::KeyValuePair<TInt>& aValue);
     void ConfigModeChanged(Configuration::KeyValuePair<TUint>& aStringId);

@@ -111,6 +111,7 @@ void CodecOhm::Process()
     iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataBigEndian, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
 
     if (msg->Halt()) {
+        iController->OutputWait();
         iController->OutputHalt();
     }
 

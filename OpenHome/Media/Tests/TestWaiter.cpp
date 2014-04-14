@@ -865,6 +865,19 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
     PullNext(EMsgAudioPcm);
     TEST(iWaitingCount == 2);
     TEST(iWaitingFalseCount == 1);
+
+    // Waiting state again
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
+    PullNext(EMsgWait);
+    TEST(iWaitingCount == 3);
+    TEST(iWaitingTrueCount == 2);
+
+    // Send track down.  Waiter should notify all IWaiterObservers that the
+    // pipeline is no longer in a waiting state
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    TEST(iWaitingCount == 4);
+    TEST(iWaitingFalseCount == 2);
 }
 
 
