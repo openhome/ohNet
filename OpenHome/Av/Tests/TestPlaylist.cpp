@@ -134,7 +134,8 @@ private:
     EPipelineState iTransportState;
     TUint iTransportStateCount[EPipelineStateCount];
     Semaphore iTimeSem;
-    Semaphore iStoppedSem;
+    Semaphore iSemPrefetched;
+    TBool iPrefetchCompleted;
 };
 
 } // namespace TestPlaylist
@@ -352,7 +353,7 @@ SuitePlaylist::SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack)
     , iCpStack(aCpStack)
     , iDvStack(aDvStack)
     , iTimeSem("TPL1", 0)
-    , iStoppedSem("TPL2", 0)
+    , iSemPrefetched("TPL2", 0)
 {
     AddTest(MakeFunctor(*this, &SuitePlaylist::TransportStateRemainsPlayingAcrossTracks), "TransportStateRemainsPlayingAcrossTracks");
     AddTest(MakeFunctor(*this, &SuitePlaylist::NextInterruptsCurrentTrack), "NextInterruptsCurrentTrack");
@@ -410,7 +411,8 @@ void SuitePlaylist::Setup()
         iTransportStateCount[i] = 0;
     }
 
-    iStoppedSem.Clear();
+    iPrefetchCompleted = false;
+    iSemPrefetched.Clear();
     TUint after = Track::kIdNone;
     Bws<128> tone;
     for (TUint i=0; i<kNumTracks; i++) {
@@ -421,7 +423,7 @@ void SuitePlaylist::Setup()
     }
     iTrackChanged.Clear();
     iTimeSem.Clear();
-    iStoppedSem.Wait(); // wait for initial Track to make it as far as the Stopper
+    iSemPrefetched.Wait(); // wait for initial Track to make it as far as the Stopper
 }
 
 void SuitePlaylist::TearDown()
@@ -439,7 +441,8 @@ void SuitePlaylist::TearDown()
 
 void SuitePlaylist::NotifyPipelineState(EPipelineState aState)
 {
-    /*const TChar* state = NULL;
+#if 0
+    const TChar* state = NULL;
     switch (aState)
     {
     case EPipelinePlaying:
@@ -457,12 +460,10 @@ void SuitePlaylist::NotifyPipelineState(EPipelineState aState)
     default:
         ASSERTS();
     }
-    Log::Print("NotifyPipelineState - %s\n", state);*/
+    Log::Print("NotifyPipelineState - %s\n", state);
+#endif
     iTransportState = aState;
     iTransportStateCount[aState]++;
-    if (aState == EPipelineStopped) {
-        iStoppedSem.Signal();
-    }
 }
 
 void SuitePlaylist::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
@@ -484,6 +485,10 @@ void SuitePlaylist::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSeconds
 
 void SuitePlaylist::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
 {
+    if (!iPrefetchCompleted) {
+        iPrefetchCompleted = true;
+        iSemPrefetched.Signal();
+    }
 }
 
 void SuitePlaylist::TransportStateRemainsPlayingAcrossTracks()
@@ -634,12 +639,12 @@ void SuitePlaylist::SeekIdPrevDelete()
     iProxy->SyncDeleteId(iTrackIds[1]);
     iProxy->SyncPlay();
     iDriver->Mark();
-    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 1);
+    iDriver->PullUntilNewTrack(MakeFunctor(*this, &SuitePlaylist::TrackChanged), 3); // exect content from iTrackIds[2] after queuing then deleting iTrackIds[1]
     iTrackChanged.Wait();
     const TUint ms = iDriver->MarkEnd();
     Print("Pulled %ums audio", ms);
     //TEST(iDriver->Jiffies() < ...  // FIXME
-    TEST(iCurrentTrackId == iTrackIds[0]);
+    TEST(iCurrentTrackId == iTrackIds[2]);
     TEST(iTransportState == EPipelinePlaying);
     TEST(iTransportStateCount[EPipelinePlaying] == 1);
 }
@@ -655,7 +660,8 @@ void SuitePlaylist::PlayDeleteAll()
         Thread::Sleep(50);
     }
     //TEST(iTransportState == EPipelineStopped);
-    TEST(iTransportStateCount[EPipelinePlaying] == 1);
+    TEST(iCurrentTrackId == 1); // FIXME - duplicating knowledge of Filler's NullTrack
+    TEST(iTransportStateCount[EPipelinePaused] == 0); // # transitions through other states is unpredictable
 }
 
 void SuitePlaylist::PlayDeleteAllPlay()
@@ -670,10 +676,8 @@ void SuitePlaylist::PlayDeleteAllPlay()
         Thread::Sleep(50);
     }
     //TEST(iTransportState == EPipelineStopped);
-    TEST(iTransportStateCount[EPipelinePlaying] == 1);
-    TEST(iTransportStateCount[EPipelinePaused] == 0);
-    TEST(iTransportStateCount[EPipelineStopped] == 2);
-    TEST(iTransportStateCount[EPipelineBuffering] == 2);
+    TEST(iCurrentTrackId == 1); // FIXME - duplicating knowledge of Filler's NullTrack
+    TEST(iTransportStateCount[EPipelinePaused] == 0); // # transitions through other states is unpredictable
 }
 
 void SuitePlaylist::AddTrackJustBeforeCompletingPlaylist()
