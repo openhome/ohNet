@@ -173,6 +173,7 @@ void DriverSongcastSender::Run()
     try {
         while(!iQuit) {
             if (iAudioSent) {
+                TBool noWait = false;
                 // skip the first packet, and any time the clock value wraps
                 if (iLastTimeUs == 0 || iLastTimeUs >= now) {
                     iTimer->FireIn(iTimerFrequencyMs);
@@ -184,15 +185,15 @@ void DriverSongcastSender::Run()
 
                     // determine new timer value based upon current offset from ideal
                     if (iTimeOffsetUs < -1000) { // we are late
-                        TInt32 timeOffsetMs = iTimeOffsetUs/1000;
-                        if (timeOffsetMs < 4 * (TInt32)iTimerFrequencyMs) {
+                        TUint32 timeOffsetMs = ((TUint32)(-iTimeOffsetUs))/1000;
+                        if (timeOffsetMs > 8 * iTimerFrequencyMs) {
                             // we're miles behind, probably as a result of drop-outs
                             // don't even try to catch up
                             iTimeOffsetUs = 0;
                         }
-                        else if (timeOffsetMs < 1-(TInt32)iTimerFrequencyMs) {
-                            // in case callback is pretty late, we can only catch up so much
-                            nextTimerMs = 1;
+                        else if (timeOffsetMs > iTimerFrequencyMs) {
+                            // callback is more than a full cycle late; try pulling more audio imediately
+                            noWait = true;
                         }
                         else {
                             nextTimerMs = iTimerFrequencyMs + timeOffsetMs;
@@ -206,8 +207,13 @@ void DriverSongcastSender::Run()
                     }
                     iTimer->FireIn(nextTimerMs);
                 }
-                iLastTimeUs = now;
-                Wait();
+                if (noWait) {
+                    iLastTimeUs += iMaxMsgSizeJiffies;
+                }
+                else {
+                    iLastTimeUs = now;
+                    Wait();
+                }
                 now = OsTimeInUs(iEnv.OsCtx());
                 iAudioSent = false;
                 iJiffiesToSend = iMaxMsgSizeJiffies;
