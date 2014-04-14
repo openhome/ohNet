@@ -127,7 +127,10 @@ void SourceRaop::Activate()
         iPipeline.Play();
     }
     else {
+        iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
+        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         iLock.Signal();
+        iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     }
 }
 
@@ -197,7 +200,8 @@ void SourceRaop::StartNewTrack()
     }
 
     iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
-    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+    const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+    iPipeline.Begin(iUriProvider.Mode(), trackId);
 
     iTransportState = Media::EPipelinePlaying;
 }
