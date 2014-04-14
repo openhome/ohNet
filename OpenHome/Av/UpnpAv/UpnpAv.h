@@ -76,7 +76,6 @@ private:
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;
     TBool iNoPipelinePrefetchOnActivation;
-    TBool iTrackStartedNotPlaying;
 };
 
 } // namespace Av

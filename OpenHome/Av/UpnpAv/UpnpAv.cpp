@@ -43,7 +43,6 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
     , iNoPipelinePrefetchOnActivation(false)
-    , iTrackStartedNotPlaying(false)
 {
     iProviderAvTransport = new ProviderAvTransport(iDevice, aEnv, *this);
     iProviderConnectionManager = new ProviderConnectionManager(iDevice, aSupportedProtocols);
@@ -76,9 +75,6 @@ void SourceUpnpAv::EnsureActive()
 void SourceUpnpAv::Activate()
 {
     iActive = true;
-    iLock.Wait();
-    iTrackStartedNotPlaying = false;
-    iLock.Signal();
     if (!iNoPipelinePrefetchOnActivation) {
         const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
@@ -112,9 +108,6 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         if (iTransportState == Media::EPipelinePlaying) {
             iPipeline.Play();
         }
-        else {
-            iTrackStartedNotPlaying = true; // stop PipelineManager::Begin() from being called again in Play()
-        }
     }
 }
 
@@ -123,16 +116,9 @@ void SourceUpnpAv::Play()
     EnsureActive();
     TBool notifyUriProvider = false;
     iLock.Wait();
-    if (iTrack != NULL
-            && iTransportState == Media::EPipelineStopped
-            && !iTrackStartedNotPlaying) {
+    if (iTrack != NULL && iTransportState == Media::EPipelinePlaying) {
         notifyUriProvider = true;
     }
-    else if (iTrack != NULL
-            && iTransportState == Media::EPipelinePlaying) {
-        notifyUriProvider = true;
-    }
-    iTrackStartedNotPlaying = false;
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
     if (notifyUriProvider) {
@@ -157,8 +143,9 @@ void SourceUpnpAv::Stop()
     if (IsActive()) {
         iLock.Wait();
         iTransportState = Media::EPipelineStopped;
+        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         iLock.Signal();
-        iPipeline.Stop();
+        iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     }
 }
 
