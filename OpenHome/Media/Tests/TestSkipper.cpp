@@ -72,7 +72,6 @@ private:
     void TestAllMsgsPassWhileNotSkipping();
     void TestRemoveStreamRampAudioRampsDown();
     void TestRemoveStreamRampHaltDeliveredOnRampDown();
-    void TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately();
     void TestRemoveStreamRampAllMsgsPassDuringRamp();
     void TestRemoveStreamRampFewMsgsPassAfterRamp();
     void TestRemoveStreamRampNewTrackResets();
@@ -109,7 +108,6 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestAllMsgsPassWhileNotSkipping), "TestAllMsgsPassWhileNotSkipping");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAudioRampsDown), "TestRemoveStreamRampAudioRampsDown");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown), "TestRemoveStreamRampHaltDeliveredOnRampDown");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately), "TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp), "TestRemoveStreamRampAllMsgsPassDuringRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp), "TestRemoveStreamRampFewMsgsPassAfterRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewTrackResets), "TestRemoveStreamRampNewTrackResets");
@@ -386,18 +384,6 @@ void SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown()
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
     }
-    PullNext(EMsgHalt);
-}
-
-void SuiteSkipper::TestRemoveStreamRampAtStartOfStreamSendsHaltImmediately()
-{
-    iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(CreateEncodedStream());
-    iPendingMsgs.push_back(CreateDecodedStream());
-    for (TUint i=0; i<3; i++) {
-        PullNext();
-    }
-    iSkipper->RemoveCurrentStream(true);
     PullNext(EMsgHalt);
 }
 

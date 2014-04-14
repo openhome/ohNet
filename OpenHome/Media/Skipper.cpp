@@ -138,7 +138,7 @@ TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
 {
     EState state = iState;
     if (!aRampDown || iState == eStarting) {
-        StartFlushing(iState==eStarting); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
+        StartFlushing(false); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
     }
     else if (iState == eRunning) {
         iState = eRamping;
