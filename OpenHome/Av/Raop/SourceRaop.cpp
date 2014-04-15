@@ -127,7 +127,14 @@ void SourceRaop::Activate()
         iPipeline.Play();
     }
     else {
+        if (iTrack != NULL) {
+            iTrack->RemoveRef();
+            iTrack = NULL;
+        }
+        iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
+        const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         iLock.Signal();
+        iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
     }
 }
 
@@ -135,29 +142,15 @@ void SourceRaop::Deactivate()
 {
     iLock.Wait();
     iTransportState = Media::EPipelineStopped;
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
     if (iAutoNetAux == kAutoNetAuxOffNotVisible) {
         // Disable RAOP visibility if config val was updated while Net Aux was
         // selected source.
         iRaopDiscovery->Disable();
     }
-
-    iPipeline.RemoveAll();
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-        iTrack = NULL;
-    }
-    iTransportState = Media::EPipelineStopped;
-
     if (iSessionActive) {
         CloseServers();
     }
-
     iLock.Signal();
-    iPipeline.Stop();
     Source::Deactivate();
 }
 
@@ -197,7 +190,8 @@ void SourceRaop::StartNewTrack()
     }
 
     iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
-    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+    const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
+    iPipeline.Begin(iUriProvider.Mode(), trackId);
 
     iTransportState = Media::EPipelinePlaying;
 }

@@ -37,7 +37,6 @@ namespace Configuration {
 }
 namespace Av {
     class RamStore;
-    class ISource;
 namespace Test {
 
 class TestMediaPlayer : private Net::IResourceManager
@@ -75,7 +74,6 @@ protected:
     Configuration::ConfigRamStore* iConfigRamStore;
 private:
     Semaphore iDisabled;
-    ISource* iSourceUpnp; // FIXME - see #169
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
     Net::Shell* iShell;
     Net::ShellCommandDebug* iShellDebug;

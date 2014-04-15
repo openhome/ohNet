@@ -10,7 +10,7 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
-#include <OpenHome/Av/Source.h> // FIXME - see #169
+#include <OpenHome/Av/UpnpAv/UpnpAv.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
@@ -52,12 +52,21 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // create separate UPnP device for standard MediaRenderer
     Bws<256> buf(aUdn);
     buf.Append("-MediaRenderer");
+    // The renderer name should be <room name>:<UPnP AV source name> to allow
+    // our control point to match the renderer device to the upnp av source.
+    //
+    // FIXME - will have to allow this to be dynamically changed at runtime if
+    // someone changes the name of the UPnP AV source.
+    // Disable device -> change name -> re-enable device.
+    Bws<256> rendererName(aRoom);
+    rendererName.Append(":");
+    rendererName.Append(SourceUpnpAv::kSourceName);
     iDeviceUpnpAv = new DvDeviceStandard(aDvStack, buf);
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
     iDeviceUpnpAv->SetAttribute("Upnp.Version", "1");
     friendlyName.Append(":MediaRenderer");
-    iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
+    iDeviceUpnpAv->SetAttribute("Upnp.FriendlyName", rendererName.PtrZ());
     iDeviceUpnpAv->SetAttribute("Upnp.Manufacturer", "OpenHome");
     iDeviceUpnpAv->SetAttribute("Upnp.ModelName", "TestMediaPlayer");
 
@@ -92,7 +101,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 TestMediaPlayer::~TestMediaPlayer()
 {
     ASSERT(!iDevice->Enabled());
-    delete iSourceUpnp;
     delete iMediaPlayer;
     delete iPipelineObserver;
     delete iShellDebug;
@@ -140,9 +148,8 @@ void TestMediaPlayer::Run()
     // while (mygetch() != 'q')
     while (getchar() != 'q')    // getchar catches stdin, getch does not.....
         ;
-    IPowerManager& powerManager = iMediaPlayer->PowerManager();
-    powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
-    Log::Print("RamStore at PowerDown:\n");
+    //IPowerManager& powerManager = iMediaPlayer->PowerManager();
+    //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
     iConfigRamStore->Print();
 }
 
@@ -211,10 +218,10 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
-    iSourceUpnp = SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols);
+    iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols));
+
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
     hostName.Replace(iDevice->Udn());
-
     Bws<12> macAddr;
     MacAddrFromUdn(aEnv, macAddr);
     const TChar* friendlyName;

@@ -50,6 +50,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
         TIpAddress addr = (*subnetList)[i]->Address();
         Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     }
+    TIpAddress address = (*subnetList)[adapterIndex]->Address();
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
@@ -60,13 +61,17 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
         Log::Print("ERROR: room must be set\n");
         ASSERTS();
     }
-    // Re-seed random number generator with hash of (unique) room name,
-    // to avoid UDN clashes.
+    // Re-seed random number generator with hash of (unique) room name + UPnP
+    // device server port to avoid UDN clashes.
+    DviServerUpnp& dvServerUpnp = dvStack->ServerUpnp();
+    TUint port = dvServerUpnp.Port(address);
+    Log::Print("UPnP DV server using port: %u\n", port);
     Environment& env = dvStack->Env();
     TUint hash = 0;
     for (TUint i=0; i<room.Bytes(); i++) {
         hash += room[i];
     }
+    hash += port;
     env.SetRandomSeed(hash);
 
     Bwh udn("TestMediaPlayer");
