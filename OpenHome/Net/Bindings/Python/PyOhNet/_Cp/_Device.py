@@ -42,10 +42,8 @@ class Device():
     def _GetServices( self ):
         "Returns list of services reported by device"
         result   = []
-        devXml   = self._GetAttribute( 'Upnp.DeviceXml' )
-        location = self._GetAttribute( 'Upnp.Location' )
-        baseUrl  = re.match('^(.+)(\/\/)([\w\.\:]+)', location ).group()
-        xml      = re.sub( ' xmlns="[^"]+"', '', devXml )    # remove namespace
+        baseUrl  = re.match('^(.+)(\/\/)([\w\.\:]+)', self.location ).group()
+        xml      = re.sub( ' xmlns="[^"]+"', '', self.deviceXml )    # remove namespace
         root     = ET.fromstring( xml )
         
         devices = root.findall( 'device' )
@@ -98,6 +96,12 @@ class Device():
     def _GetFriendlyName( self ):
         return self._GetAttribute( 'Upnp.FriendlyName' )
 
+    def _GetDeviceXml( self ):
+        return self._GetAttribute( 'Upnp.DeviceXml' )
+    
+    def _GetLocation( self ):
+        return self._GetAttribute( 'Upnp.Location' )
+    
     #
     # ==== Public interface ====
     #
@@ -116,3 +120,5 @@ class Device():
 
     friendlyName = property( _GetFriendlyName, None, None, '' )        
     udn          = property( _GetUdn, None, None, '' )
+    deviceXml    = property( _GetDeviceXml, None, None, '' )
+    location     = property( _GetLocation, None, None, '' )
