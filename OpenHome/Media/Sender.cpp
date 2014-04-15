@@ -193,10 +193,11 @@ void Sender::ProcessAudio(MsgAudio* aMsg)
     MsgAudio* msg = aMsg;
     MsgAudio* remaining;
     do {
-        remaining = (newJiffies == kSongcastPacketJiffies? NULL : msg->Split(newJiffies - kSongcastPacketJiffies));
+        remaining = (newJiffies == kSongcastPacketJiffies? NULL : msg->Split(kSongcastPacketJiffies - jiffies));
         iPendingAudio.push_back(msg);
         SendPendingAudio();
         msg = remaining;
+        jiffies = 0;
         newJiffies = (remaining==NULL? 0 : remaining->Jiffies());
     } while (remaining != NULL && newJiffies >= kSongcastPacketJiffies);
     if (remaining != NULL) {
