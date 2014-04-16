@@ -31,6 +31,7 @@ private: // from Media::Protocol
     void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     void HandleAudio(const OhmHeader& aHeader);
     void HandleTrack(const OhmHeader& aHeader);
@@ -46,6 +47,7 @@ private:
     TBool iLeaving;
     TBool iStopped;
     TBool iActive;
+    TBool iStarving;
     TUint iSlaveCount;
     Endpoint iSlaveList[kMaxSlaveCount];
     Bws<kMaxFrameBytes> iMessageBuffer;

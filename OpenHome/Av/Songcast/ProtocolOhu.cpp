@@ -95,15 +95,20 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
 {
     LOG(kSongcast, "OHU: Play(%08x, %u, %08x:%u\n", aInterface, aTtl, aEndpoint.Address(), aEndpoint.Port());
     iLeaveLock.Wait();
-    iLeaving = false;
-    iStopped = false;
-    iActive = false;
+    iLeaving = iStopped = iActive = iStarving = false;
     iSlaveCount = 0;
     iNextFlushId = MsgFlush::kIdInvalid;
     iLeaveLock.Signal();
     iEndpoint.Replace(aEndpoint);
     iSocket.OpenUnicast(aInterface, aTtl);
+    TBool firstJoin = true;
     do {
+        iLeaveLock.Wait();
+        if (iStarving && !iStopped) {
+            iStarving = false;
+            iSocket.Interrupt(false);
+        }
+        iLeaveLock.Signal();
         try {
             OhmHeader header;
             SendJoin();
@@ -157,6 +162,13 @@ ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const 
             
             iTimerJoin->Cancel();
             LOG(kSongcast, "OHU: Joined\n");
+            if (firstJoin) {
+                /* Put pipeline into Waiting state initially in case sender is currently paused.
+                   Subsequent loops will likely be prompted by network starvation.  We don't want
+                   to output a Wait in this case; its correct that the pipeline goes Buffering */
+                iSupply->OutputWait();
+                firstJoin = false;
+            }
 
             // Phase 2, periodically send listen if required
             iTimerListen->FireIn((kTimerListenTimeoutMs >> 2) - iEnv.Random(kTimerListenTimeoutMs >> 3)); // listen primary timeout
@@ -247,6 +259,14 @@ TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
     }
     iLeaveLock.Signal();
     return iNextFlushId;
+}
+
+void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    if (aMode == iMode) {
+        iStarving = true;
+        iSocket.Interrupt(true);
+    }
 }
 
 void ProtocolOhu::EmergencyStop()

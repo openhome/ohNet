@@ -87,7 +87,7 @@ private:
 
     void TestMsgTrackDuringWaitAsserts();
     void TestMsgTrackDuringRampingDownAsserts();
-    void TestMsgTrackDuringRampingUpAsserts();
+    void TestMsgEncodedStreamDuringRampingUpAsserts();
 
     void TestWaitingStateOnMsgWait();
 private:
@@ -129,7 +129,7 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUpAsserts), "TestWaitDuringRampingUpAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringWaitAsserts), "TestMsgTrackDuringWaitAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingDownAsserts), "TestMsgTrackDuringRampingDownAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingUpAsserts), "TestMsgTrackDuringRampingUpAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgEncodedStreamDuringRampingUpAsserts), "TestMsgEncodedStreamDuringRampingUpAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitingStateOnMsgWait), "TestWaitingStateOnMsgWait");
 }
 
@@ -790,7 +790,7 @@ void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
     TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
 }
 
-void SuiteWaiter::TestMsgTrackDuringRampingUpAsserts()
+void SuiteWaiter::TestMsgEncodedStreamDuringRampingUpAsserts()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -823,9 +823,9 @@ void SuiteWaiter::TestMsgTrackDuringRampingUpAsserts()
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
-    // Pull MsgTrack and check audio comes through.
-    iPendingMsgs.push_back(CreateTrack());
-    PullNext(EMsgTrack);
+    // Pull MsgEncodedStream and check audio comes through.
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 }
@@ -877,10 +877,16 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
     TEST(iWaitingCount == 3);
     TEST(iWaitingTrueCount == 2);
 
-    // Send track down.  Waiter should notify all IWaiterObservers that the
-    // pipeline is no longer in a waiting state
+    // Send track down.  Waiter should not change state
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
+    TEST(iWaitingCount == 3);
+    TEST(iWaitingTrueCount == 2);
+
+    // Send EncodedStream down.  Waiter should notify all IWaiterObservers that the
+    // pipeline is no longer in a waiting state
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
     TEST(iWaitingCount == 4);
     TEST(iWaitingFalseCount == 2);
 }

@@ -63,18 +63,17 @@ Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
         aMsg->RemoveRef();
         ASSERTS();
     }
-    if (iState == EWaiting) {
-        iObserver.PipelineWaiting(false);
-    }
-    NewStream();
     return aMsg;
 }
 
 Msg* Waiter::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    if (iState != ERunning) {
+    if (iState == EFlushing || iState == ERampingDown) {
         aMsg->RemoveRef();
         ASSERTS();
+    }
+    if (iState == EWaiting) {
+        iObserver.PipelineWaiting(false);
     }
     NewStream();
     return aMsg;
