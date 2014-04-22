@@ -69,12 +69,12 @@ protected:
     Endpoint iEndpoint;
     Timer* iTimerJoin;
     Timer* iTimerListen;
+    Media::BwsMode iMode;
 private:
     Mutex iMutexTransport;
     Media::TrackFactory& iTrackFactory;
     IOhmTimestamper& iTimestamper;
     Brn iSupportedScheme;
-    Media::BwsMode iMode;
     TUint iNacnId;
     Uri iUri; // only used inside Stream() but too large to put on the stack
     TUint iFrame;

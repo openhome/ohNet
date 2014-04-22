@@ -198,8 +198,14 @@ void OhmSenderDriver::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aC
 void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
 {
     AutoMutex mutex(iMutex);
-    
-    const TUint samples = aBytes * 8 / iChannels / iBitDepth;
+
+    TUint samples;
+    if (iChannels == 0 || iBitDepth == 0) {
+        samples = 0;
+    }
+    else {
+        samples = aBytes * 8 / iChannels / iBitDepth;
+    }
     if (!iSend) {
         iSampleStart += samples;
         return;
