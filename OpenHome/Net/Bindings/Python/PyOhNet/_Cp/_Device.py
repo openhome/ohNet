@@ -13,7 +13,7 @@ import _GenProxy as GenProxy
 
 
 class Device():
-    "UPnP Device (from perspective of a control point)"
+    """UPnP Device (from perspective of a control point)"""
     
     def __init__( self, aHandle ):
         self.lib = PyOhNet.lib
@@ -40,9 +40,9 @@ class Device():
         return response.value 
         
     def _GetServices( self ):
-        "Returns list of services reported by device"
+        """Returns list of services reported by device"""
         result   = []
-        baseUrl  = re.match('^(.+)(\/\/)([\w\.\:]+)', self.location ).group()
+        baseUrl  = re.match('^(.+)(//)([\w\.:]+)', self.location ).group()
         xml      = re.sub( ' xmlns="[^"]+"', '', self.deviceXml )    # remove namespace
         root     = ET.fromstring( xml )
         
@@ -51,20 +51,20 @@ class Device():
             serviceList = device.find( 'serviceList' )
             services = serviceList.findall( 'service' )
             for service in services:
-                type = service.find( 'serviceType' ).text
+                svType = service.find( 'serviceType' ).text
                 url  = urlparse.urljoin( baseUrl, service.find( 'SCPDURL' ).text )
-                m = re.match('urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', type )
+                m = re.match('urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', svType )
                 domain, name, version = m.groups()
                 domainName = ''
                 fields = domain.replace( '.', '-' ).split( '-' )
                 for field in fields:
                     domainName += field[0].upper()
                     domainName += field[1:]
-                result.append( {'type':type, 'url':url, 'domain':domainName, 'name':name, 'version':int( version )} )
+                result.append( {'type':svType, 'url':url, 'domain':domainName, 'name':name, 'version':int( version )} )
         return result
                 
     def _AddProxy( self, aService ):
-        "Generate and add proxy for specified service"
+        """Generate and add proxy for specified service"""
         # The proxy code is auto-generated (from the service XML) and then
         # imported and added as a class attribute to the device. Named the
         # same as the service, with lower-case first letter. All ohNet proxy
@@ -89,8 +89,8 @@ class Device():
     
     def _GetUdn( self ):
         udn = ctypes.c_char_p()
-        len = ctypes.c_int()
-        self.lib.CpDeviceCGetUdn( self.handle, ctypes.byref( udn ), ctypes.byref( len ))
+        length = ctypes.c_int()
+        self.lib.CpDeviceCGetUdn( self.handle, ctypes.byref( udn ), ctypes.byref( length ))
         return udn.value
     
     def _GetFriendlyName( self ):
@@ -106,8 +106,9 @@ class Device():
     # ==== Public interface ====
     #
     
-    def Start( self, aProxies=['all'] ):
-        "Start device - add proxies for all or specified services on device"
+    def Start( self, aProxies=None ):
+        """Start device - add proxies for all or specified services on device"""
+        if not aProxies: aProxies = ['all']
         services = self._GetServices()
         for service in services:
             if service['name'] in aProxies or 'all' in aProxies:

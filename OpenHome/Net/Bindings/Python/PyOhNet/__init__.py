@@ -15,8 +15,12 @@ initParams = None
 import exceptions
 class OhNetError( exceptions.Exception ):
     
-    def __init__( self, *aArgs ):
-        self.args = aArgs
+    def __init__( self, aMsg ):
+        self.msg = aMsg
+
+    def __str__( self ):
+        return repr( self.msg )
+
 
 #
 # ==== Load ohNet library and configure callback calling convention ====
@@ -81,28 +85,28 @@ cpProxies    = []
 #
 
 def Initialise( aInitParams=None ):
-    "Initialise ohNet library - must be first call to module"
+    """Initialise ohNet library - must be first call to module"""
     if not aInitParams:
-        initParams = lib.OhNetInitParamsCreate()
-        err = lib.OhNetLibraryInitialise( initParams )
+        defaultInitParams = lib.OhNetInitParamsCreate()
+        err = lib.OhNetLibraryInitialise( defaultInitParams )
     else:
         # create initParams temp object from passed in initParams
         # init library using handle for temp initParams just created
         # cleanup temp initParams
         # see C# bindings - line 814 of file OhNet.cs onwards
-        initParams = None
         raise OhNetError( 'initParams functionality not implemented' )
     if err:
         raise OhNetError( 'Failed to initialise Library')
 
 def SetDebugLevel( aDebugLevel=kDebugLevel['None'] ):
-    "Configure debug logging for underlying ohNet library"    
+    """Configure debug logging for underlying ohNet library"""
     lib.OhNetDebugSetLevel( aDebugLevel )
-    
+
+
 def Start( aMode='cp', aInterface=None ):
-    "Start ohNet (optionally specifying interface by adapter, IP or subnet)"
+    """Start ohNet (optionally specifying interface by adapter, IP or subnet)"""
     adapterList = AdapterList()
-    adapters    = adapterList.adapters
+    theAdapters = adapterList.adapters
     numAdapters = adapterList.size
     adapter     = None
          
@@ -111,14 +115,14 @@ def Start( aMode='cp', aInterface=None ):
         raise OhNetError( 'NO network adapter detected' )
     elif numAdapters == 1:
         # only one adapter - use it (ignoring aHost param if requested)
-        adapter = adapters[0]
+        adapter = theAdapters[0]
     else:
-        if aInterface==None:
+        if aInterface is None:
             # no host specified - use first adapter 
-            adapter = adapters[0]
+            adapter = theAdapters[0]
         else:
             # host specified - find matching adapter and use it
-            for item in adapters:
+            for item in theAdapters:
                 if aInterface == item            or \
                    aInterface == item.addressStr or \
                    aInterface == item.subnetStr:
@@ -128,12 +132,12 @@ def Start( aMode='cp', aInterface=None ):
                 raise OhNetError( 'NO network adapter matching %s found' % aInterface )
                 
     if aMode.lower() == 'cp':                
-        Cp._Start( adapter )
+        Cp.Start( adapter )
     else:
         raise OhNetError( 'Stack mode <%s> not supported' % aMode )
     
 def Shutdown():    
-    "Cleanly shut down ohNet"
+    """Cleanly shut down ohNet"""
     while len( adapters ):
         adapters[0].Shutdown()
     while len( adapterLists ):
