@@ -16,7 +16,7 @@ in the TestRadioPlayback test script)
 Relies on LinnEngRadio Icecast radio server at 10.2.8.201
 """ 
 
-# Uses the following TuneIn account fro sourciing radio information. The presets
+# Uses the following TuneIn account for sourciing radio information. The presets
 # contained have been selected to test all aspects of the radio functionality
 # whilst working on the basis of only free codec support (so ohMediaPlayer can
 # be tested 
@@ -89,13 +89,15 @@ kLocalChannels    = [ # Although these channels will actually serve, for the
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
 
 
+# noinspection PyUnusedLocal
 class TestRadioService( BASE.BaseTest ):
     
     def __init__( self ):
-        "Constructor - initalise base class"
+        """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
         self.dut            = None
         self.soft           = None
+        self.dutDev         = ''
         self.configUpdate   = threading.Event()
         self.presetsUpdate  = threading.Event()
         self.uriUpdated     = threading.Event()
@@ -103,7 +105,10 @@ class TestRadioService( BASE.BaseTest ):
         self.idArrayUpdated = threading.Event()
         
     def Test( self, aArgs ):
-        "Test functionality of Radio service"
+        """Test functionality of Radio service"""
+        radioName = ''
+        mode      = ''
+
         try:
             radioName = aArgs[1]
             mode      = aArgs[2].lower() 
@@ -129,7 +134,7 @@ class TestRadioService( BASE.BaseTest ):
             self.TestManual()
             
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.dut:
             self.dut.Shutdown()
         if self.soft:
@@ -137,7 +142,7 @@ class TestRadioService( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )
         
     def TestFixedParams( self ):
-        "Verify the 'fixed' parameter values are returned correctly"
+        """Verify the 'fixed' parameter values are returned correctly"""
         self.log.Info( '' )
         self.log.Info( self.dutDev, 'Testing fixed parameters' )
         self.log.Info( '' )
@@ -161,62 +166,64 @@ class TestRadioService( BASE.BaseTest ):
             (self.dut.radio.channelsMax,kChannelsMax) )
     
     def TestPresets( self ):
-        "Verify preset lists from TuneIn are handled correctly"
+        """Verify preset lists from TuneIn are handled correctly"""
         self.log.Info( '' )
         self.log.Info( self.dutDev, 'Testing handling of presets supplied by TuneIn' )
         self.log.Info( '' )
         
         dsPresets = self.dut.radio.AllChannels()
-        rtPresets = self._GetTuneInPresets( kTuneInUser )
-        
+        rtPresets = self._GetTuneInPresets()
+
         for i in range( len( dsPresets )):
             if i >= len( rtPresets ):
                 self.log.Fail( self.dutDev, '[%d] No TuneIn preset' % i )
             else:
                 if dsPresets[i][0]:
                     dsUri = Common.GetUriFromDidl( dsPresets[i][1] )
-                    dsTitle = Common.GetTitleFromDidl( dsPresets[i][1] )
+                    dsTitle = Common.GetTitleFromDidl( dsPresets[i][1] ).decode( 'utf8 ' )
                     rtTitle = rtPresets[i][1]
                     
                     if 'notcompatible' not in rtPresets[i][0]:
                         # check URI only, not CGI params
-                        self.log.FailUnless( self.dutDev, dsUri.split('&')[0]==rtPresets[i][0].split('&')[0],  
+                        self.log.FailUnless( self.dutDev, dsUri.split('&')[0]==rtPresets[i][0].split('&')[0],
                             '[%d] DS/TuneIn URI: %s %s' % (i,dsUri,rtPresets[i][0]) ) 
                         # titles can vary in genre, as stations with multiple genres seem to
                         # return one of the available genres, randomly selected, so subsequent
                         # identical queries MAY contain different genres in the station title.
                         # Hence ignore title string after '(' to ignore genre
                         self.log.FailUnless( self.dutDev, dsTitle.split('(')[0]==rtTitle.split('(')[0],
-                            '[%d] DS/TuneIn Title: %s/%s' % (i,dsTitle,rtTitle) ) 
+                            '[%d] DS/TuneIn Title:%s/%s' % (i,dsTitle,rtTitle) )
                 else:
                     self.log.FailUnless( self.dutDev, rtPresets[i][0]=='',
                         '[%d] TuneIn URI for empty entry: %s' % (i,rtPresets[i][0]) ) 
                     self.log.FailUnless( self.dutDev, rtPresets[i][1]=='',
                         '[%d] TuneIn Title for empty entry: %s' % (i,rtPresets[i][1]) ) 
             
-    def _GetTuneInPresets( self, aUser ):
-        "Read preset channel info directly from TuneIn"
+    def _GetTuneInPresets( self ):
+        """Read preset channel info directly from TuneIn"""
         if self.soft:
             browse = kTuneInBrowseFree
         else:
             browse = kTuneInBrowseAll
-        id   = '&username=%s&partnerId=%s' % (kTuneInUser, kTuneInPartner)
-        resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + id )
+        tiId   = '&username=%s&partnerId=%s' % (kTuneInUser, kTuneInPartner)
+        resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + tiId )
         dflt = self._GetFromOpmlDefault( resp )
-        resp = self._UrlQuery( kTuneInUrl + browse + id )
+        resp = self._UrlQuery( kTuneInUrl + browse + tiId )
         uri  = self._GetFromOpmlUri( resp, dflt )
         if uri:
             resp = self._UrlQuery( uri )
         return self._GetPresetsFromOpml( resp )
         
-    def _UrlQuery( self, aUrl ):
-        "Perform query on specified URL, return response"
+    @staticmethod
+    def _UrlQuery( aUrl ):
+        """Perform query on specified URL, return response"""
         handle = urllib.urlopen( aUrl )
         resp = handle.read( 65535 )
         handle.close()
         return resp
     
-    def _GetFromOpmlDefault( self, aOpml ):
+    @staticmethod
+    def _GetFromOpmlDefault( aOpml ):
         default = ''
         opml = ET.fromstring( aOpml )
         outlines = opml.getiterator( 'outline' )
@@ -226,7 +233,8 @@ class TestRadioService( BASE.BaseTest ):
                 break
         return default
     
-    def _GetFromOpmlUri( self, aOpml, aUri ):
+    @staticmethod
+    def _GetFromOpmlUri( aOpml, aUri ):
         uri = ''
         opml = ET.fromstring( aOpml )
         outlines = opml.getiterator( 'outline' )
@@ -237,7 +245,7 @@ class TestRadioService( BASE.BaseTest ):
         return uri
     
     def _GetPresetsFromOpml( self, aOpml ):
-        "Extract presets from RT OPML response to Browse"
+        """Extract presets from RT OPML response to Browse"""
         preset  = []
         entries = self.dut.radio.channelsMax
         for i in range( entries ):
@@ -254,7 +262,7 @@ class TestRadioService( BASE.BaseTest ):
         return preset
     
     def TestManual( self ):
-        "Verify manually inserted radio channels"
+        """Verify manually inserted radio channels"""
         
         def _RadioEvtCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'Uri':
