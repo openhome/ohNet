@@ -1,13 +1,10 @@
             ReadMe for ohMediaPlayer integration tests
             ------------------------------------------
 
-These tests only run on Windows (due to IronPython dependency)
-
-
 Required Dependencies
 ---------------------
 
-    Iron Python V2.7 - install from http://ironpython.net/
+    Python V2.x - recommend 2.7
 
     iTunes (for Airplay tests) - running on local machine, session key setup in
          Config.xml
