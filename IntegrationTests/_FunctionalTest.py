@@ -1,19 +1,42 @@
 """_FunctionalTest - add pathing to access FunctionalTest code
 """
 import os
+import platform
 import sys
-root = '../dependencies/AnyPlatform/FunctionalTest'
-sys.path.append( os.path.normpath( os.path.join( os.path.dirname( __file__ ), root, 'Framework' )))
-sys.path.append( os.path.normpath( os.path.join( os.path.dirname( __file__ ), root, 'Components' )))
 
-# Path to ohNet DLLs (depends on execution environment)
-if os.path.isfile( os.path.join( os.getcwd(), '_FunctionalTest.py' )):
-    if os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Release' ):
-        sys.path.append( os.path.abspath( '../dependencies/Windows-x86/ohNet-Windows-x86-Release/lib' ))
-    elif os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Debug' ):
-        sys.path.append( os.path.abspath( '../dependencies/Windows-x86/ohNet-Windows-x86-Debug/lib' ))
-elif os.path.isfile( os.path.join( os.getcwd(), 'go.bat' )):  
-    if os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Release' ):
-        sys.path.append( os.path.abspath( 'dependencies/Windows-x86/ohNet-Windows-x86-Release/lib' ))
-    elif os.path.isdir( '../dependencies/Windows-x86/ohNet-Windows-x86-Debug' ):
-        sys.path.append( os.path.abspath( 'dependencies/Windows-x86/ohNet-Windows-x86-Debug/lib' ))
+# Find MediaPlayer root
+head, tail = os.path.split( os.path.dirname( __file__ ))
+while tail != 'ohMediaPlayer' and tail != '':
+    head, tail = os.path.split( head )
+
+# Get pathing for for FunctionalTest
+root  = os.path.abspath( os.path.join( head, tail ))
+deps  = os.path.join( root, 'dependencies' )
+test  = os.path.abspath( os.path.join( deps, 'AnyPlatform/FunctionalTest' ))
+
+# Get pathing for PyOhNet (platform dependent)
+ohnetRls = ''
+ohnetDbg = ''
+_platform = platform.system()
+if _platform in ['Windows', 'cli']:
+    ohnetRls = os.path.abspath( os.path.join( deps, 'Windows-x86/ohNet-Windows-x86-Release' ))
+    ohnetDbg = os.path.abspath( os.path.join( deps, 'Windows-x86/ohNet-Windows-x86-Debug' ))
+elif _platform == 'Linux':
+    ohnetRls = os.path.abspath( os.path.join( deps, 'Linux-x64/ohNet-Linux-x64-Release' ))
+    ohnetDbg = os.path.abspath( os.path.join( deps, 'Linux-x64/ohNet-Linux-x64-Debug' ))
+elif _platform == 'Darwin':
+    ohnetRls = os.path.abspath( os.path.join( deps, 'Mac-x64/ohNet-Mac-x64-Release' ))
+    ohnetDbg = os.path.abspath( os.path.join( deps, 'Mac-x64/ohNet-Mac-x64-Debug' ))
+
+ohnet = ''
+if os.path.exists( ohnetRls ):
+    ohnet = ohnetRls
+elif os.path.exists( ohnetDbg ):
+    ohnet = ohnetDbg
+else:
+    ohnet = deps    # should never happen
+
+# configure the Python module search path
+sys.path.insert( 0, os.path.normpath( os.path.join( ohnet, 'lib' )))
+sys.path.insert( 0, os.path.normpath( os.path.join( test, 'Components' )))
+sys.path.insert( 0, os.path.normpath( os.path.join( test, 'Framework' )))
