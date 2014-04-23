@@ -17,7 +17,7 @@ kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer.exe' )
 
 
 class SoftPlayer( BASE.Component ):
-    "Class to wrap SoftPlayer executable (TestMediaPlayer.exe)" 
+    """Class to wrap SoftPlayer executable (TestMediaPlayer.exe)"""
     
     def __init__( self, 
                   aRoom         = None,     # defaults to 'SoftPlayer'
@@ -31,7 +31,7 @@ class SoftPlayer( BASE.Component ):
         self.shutdown = False
         self.room     = None
         
-        if aRoom == None:
+        if aRoom is None:
             self.dev = '[SoftPlayer]'
         else:
             self.dev = '[' + aRoom + ']'
@@ -74,7 +74,7 @@ class SoftPlayer( BASE.Component ):
         time.sleep( 1 )             # Let it shut down 
         
     def __Log( self ):
-        "Log data received from stdout on SoftPlayer"
+        """Log data received from stdout on SoftPlayer"""
         exception = False
         
         # running - handle log messages until shutdown called
@@ -99,8 +99,9 @@ class SoftPlayer( BASE.Component ):
             msg = self.proc.stdout.readline()
         self.log.Info( self.dev, 'SoftPlayer logger shut down' )
 
-    def __GetHost( self ):
-        "Retrieve host adapter to use for player"
+    @staticmethod
+    def __GetHost( ):
+        """Retrieve host adapter to use for player"""
         configFile = os.path.abspath( 'Config.xml') 
         host = 0
         if os.path.exists( configFile ):
@@ -124,7 +125,7 @@ if __name__ == '__main__':
     import msvcrt
     import time
         
-    s = SoftPlayer( aRoom='TestDev', aHost=1)
+    s = SoftPlayer( aRoom='TestDev' )
     msvcrt.getch()
     s.Shutdown()
     s.log.Cleanup()
