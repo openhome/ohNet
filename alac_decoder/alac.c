@@ -289,8 +289,7 @@ static int count_leading_zeros(int input)
 #elif defined(__GNUC__)
 static int count_leading_zeros(int input)
 {
-    if (!input) return 32;
-    return __builtin_clz(input);
+    return (input ? __builtin_clz(input) : sizeof(int)*8);
 }
 #elif defined(_MSC_VER) && defined(_M_IX86)
 static int count_leading_zeros(int input)
