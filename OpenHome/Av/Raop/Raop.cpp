@@ -21,7 +21,7 @@ using namespace OpenHome::Media;
 // RaopDevice
 RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr)
     : iProvider(*aDvStack.MdnsProvider())
-    , iName(aFriendlyName)
+    , iHandleRaop(iProvider.MdnsCreateService())
     , iEndpoint(aDiscoveryPort, aIpAddr)
     , iMacAddress(aMacAddr)
     , iRegistered(false)
@@ -33,20 +33,11 @@ RaopDevice::RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar
     iName.Append("@");
     iName.Append(aFriendlyName);
 
-    Log::Print("RAOP device is ");
+    Log::Print("RAOP device created: ");
     Log::Print(iName);
     Log::Print("\n");
 
-    iHandleRaop = iProvider.MdnsCreateService();
-
-    aDvStack.MdnsProvider()->MdnsSetHostName(aHost);
-}
-
-void RaopDevice::SetEndpoint(const Endpoint& aEndpoint)
-{
-    iLock.Wait();
-    iEndpoint.Replace(aEndpoint); // need to re-register after updating this - responsibility of clients
-    iLock.Signal();
+    aDvStack.MdnsProvider()->MdnsSetHostName(aHost); // FIXME - required?
 }
 
 void RaopDevice::Register()
@@ -129,7 +120,7 @@ void RaopDevice::MacAddressOctets(TByte (&aOctets)[6]) const
 }
 
 
-RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance)
+RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance)
     : iAeskeyPresent(false)
     , iAesSid(0)
     //, iRaopObserver(aObserver)
@@ -528,10 +519,6 @@ void RaopDiscoverySession::SetListeningPorts(TUint aAudio, TUint aControl, TUint
     iTimingPort = aTiming;
 }
 
-void RaopDiscoverySession::AddObserver(IRaopObserver& /*aObserver*/)
-{
-}
-
 void RaopDiscoverySession::KeepAlive()
 {
     if(iActive) {
@@ -690,135 +677,145 @@ void RaopDiscoverySession::ReadSdp(ISdpHandler& aSdpHandler)
 }
 
 
-// RaopDiscovery
+// RaopDiscoveryServer
 
-RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
+
+RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : iEnv(aEnv)
     , iObserversLock("RDOL")
+    , iAdapter(aNif)
 {
     // NOTE: iRaopDevice is not registered by default
+    iAdapter.AddRef(kAdapterCookie);
 
-    NetworkAdapterList& adapterList = iEnv.NetworkAdapterList();
-    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
-    iCurrentAdapterChangeListenerId = adapterList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
+    iRaopDiscoveryServer = new SocketTcpServer(iEnv, "MDNS", 0, iAdapter.Address(), kPriority, kSessionStackBytes);
+    iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aFriendlyName, iAdapter.Address(), aMacAddr);
 
-    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
-    const NetworkAdapter* current = ref.Adapter();
-    if (current != NULL) {
-        TIpAddress ipAddr = current->Address();
-        Endpoint::AddressBuf addrBuf;
-        Endpoint ep(0, ipAddr);
-        ep.AppendAddress(addrBuf);
-        LOG(kMedia, "RaopDiscovery::RaopDiscovery using network adapter %s\n", addrBuf.Ptr());
+    // Require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging.
+    iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 1);
+    iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
 
-        iRaopDiscoveryServer = new SocketTcpServer(iEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
-        iRaopDevice = new RaopDevice(aDvStack, iRaopDiscoveryServer->Port(), aHostName, aFriendlyName, ipAddr, aMacAddr);
+    iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 2);
+    iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
 
-        // require 2 discovery sessions to run to allow a second to attempt to connect and be rejected rather than hanging
-        iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 1);
-        iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
-
-        iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 2);
-        iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
-    }
-    else {
-        LOG(kMedia, "RaopDiscovery::RaopDiscovery no network adapter available on current subnet - not initialising TCP server\n");
-    }
-    aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
+    TIpAddress ipAddr = iAdapter.Address();
+    Endpoint::AddressBuf addrBuf;
+    Endpoint ep(iRaopDiscoveryServer->Port(), ipAddr);
+    ep.AppendAddress(addrBuf);
+    LOG(kMedia, "RaopDiscoveryServer::RaopDiscoveryServer using network adapter %s\n", addrBuf.Ptr());
 }
 
-RaopDiscovery::~RaopDiscovery()
+RaopDiscoveryServer::~RaopDiscoveryServer()
 {
-    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
-    iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iRaopDevice->Deregister();
     delete iRaopDiscoveryServer;
     delete iRaopDevice;
+    iAdapter.RemoveRef(kAdapterCookie);
 }
 
-void RaopDiscovery::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
+const NetworkAdapter& RaopDiscoveryServer::Adapter() const
+{
+    return iAdapter;
+}
+
+void RaopDiscoveryServer::AddObserver(IRaopServerObserver& aObserver)
 {
     AutoMutex a(iObserversLock);
-    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    iObservers.push_back(&aObserver);
+}
+
+void RaopDiscoveryServer::PowerDown()
+{
+    // called on power failure
+    iRaopDevice->Deregister();
+    //iRaopDiscoverySession1->Close();
+    //iRaopDiscoverySession2->Close();
+}
+
+void RaopDiscoveryServer::NotifySessionStart(TUint aControlPort, TUint aTimingPort)
+{
+    AutoMutex a(iObserversLock);
+    std::vector<IRaopServerObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
-        (*it)->NotifySessionStart(aControlPort, aTimingPort);
+        (*it)->NotifySessionStart(iAdapter, aControlPort, aTimingPort);
         ++it;
     }
 }
 
-void RaopDiscovery::NotifySessionEnd()
+void RaopDiscoveryServer::NotifySessionEnd()
 {
     AutoMutex a(iObserversLock);
-    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    std::vector<IRaopServerObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
-        (*it)->NotifySessionEnd();
+        (*it)->NotifySessionEnd(iAdapter);
         ++it;
     }
 }
 
-void RaopDiscovery::NotifySessionWait()
+void RaopDiscoveryServer::NotifySessionWait()
 {
     AutoMutex a(iObserversLock);
-    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    std::vector<IRaopServerObserver*>::iterator it = iObservers.begin();
     while (it != iObservers.end()) {
-        (*it)->NotifySessionWait();
+        (*it)->NotifySessionWait(iAdapter);
         ++it;
     }
 }
 
-const Brx& RaopDiscovery::Aeskey()
+const Brx& RaopDiscoveryServer::Aeskey()
 {
     return ActiveSession().Aeskey();
 }
 
-const Brx& RaopDiscovery::Aesiv()
+const Brx& RaopDiscoveryServer::Aesiv()
 {
     return ActiveSession().Aesiv();
 }
 
-const Brx& RaopDiscovery::Fmtp()
+const Brx& RaopDiscoveryServer::Fmtp()
 {
     return ActiveSession().Fmtp();
 }
 
-TBool RaopDiscovery::Active()
+TBool RaopDiscoveryServer::Active()
 {
     return (iRaopDiscoverySession1->Active() || iRaopDiscoverySession2->Active());
 }
 
-void RaopDiscovery::Deactivate()
+void RaopDiscoveryServer::Deactivate()
 {
-    LOG(kMedia, "RaopDiscovery::Deactivate\n");
+    LOG(kMedia, "RaopDiscoveryServer::Deactivate\n");
 
     // deactivate RAOP source
     iRaopDiscoverySession1->Deactivate();
     iRaopDiscoverySession2->Deactivate();
 }
 
-void RaopDiscovery::Enable()
+void RaopDiscoveryServer::Enable()
 {
     iRaopDevice->Register();
 }
 
-void RaopDiscovery::Disable()
+void RaopDiscoveryServer::Disable()
 {
     iRaopDevice->Deregister();
     Deactivate();
 }
 
-void RaopDiscovery::KeepAlive()
+void RaopDiscoveryServer::KeepAlive()
 {
     ActiveSession().KeepAlive();
 }
 
-TUint RaopDiscovery::AesSid()
+TUint RaopDiscoveryServer::AesSid()
 {
     return ActiveSession().AesSid();
 }
 
-void RaopDiscovery::Close()
+void RaopDiscoveryServer::Close()
 {
-    LOG(kMedia, "RaopDiscovery::Close\n");
+    LOG(kMedia, "RaopDiscoveryServer::Close\n");
     // deregister/re-register to kick off any existing controllers - confuses controllers - may need to wait a while before re-reg
     iRaopDevice->Deregister();
     //Thread::Sleep(100);
@@ -828,19 +825,13 @@ void RaopDiscovery::Close()
     iRaopDiscoverySession2->Close();
 }
 
-void RaopDiscovery::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming)
+void RaopDiscoveryServer::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming)
 {
     iRaopDiscoverySession1->SetListeningPorts(aAudio, aControl, aTiming);
     iRaopDiscoverySession2->SetListeningPorts(aAudio, aControl, aTiming);
 }
 
-void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
-{
-    AutoMutex a(iObserversLock);
-    iObservers.push_back(&aObserver);
-}
-
-RaopDiscoverySession& RaopDiscovery::ActiveSession()
+RaopDiscoverySession& RaopDiscoveryServer::ActiveSession()
 {
     if (iRaopDiscoverySession1->Active()) {
         return *iRaopDiscoverySession1;
@@ -853,62 +844,344 @@ RaopDiscoverySession& RaopDiscovery::ActiveSession()
     }
 }
 
+
+// RaopDiscovery
+RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
+    : iEnv(aEnv)
+    , iDvStack(aDvStack)
+    , iHostName(aHostName)
+    , iFriendlyName(aFriendlyName)
+    , iMacAddr(aMacAddr)
+    , iCurrent(NULL)
+    , iServersLock("RDSL")
+    , iObserversLock("RDOL")
+{
+    // NOTE: iRaopDevice is not registered by default
+
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
+
+    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
+    NetworkAdapter* current = ref.Adapter();
+
+    iServersLock.Wait();
+    if (current != NULL) {
+        // Single interface selected. Register only on this interface.
+        AddAdapter(*current);
+    }
+    else {
+        // No interface selected. Advertise on all interfaces.
+        for (TUint i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            AddAdapter(*subnet);
+        }
+    }
+    iServersLock.Signal();
+    NetworkAdapterList::DestroySubnetList(subnetList);
+    aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
+}
+
+RaopDiscovery::~RaopDiscovery()
+{
+    AutoMutex a(iServersLock);
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
+    iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->Disable();
+        delete (*it);
+        ++it;
+    }
+}
+
+void RaopDiscovery::Enable()
+{
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->Enable();
+        ++it;
+    }
+}
+
+void RaopDiscovery::Disable()
+{
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->Disable();
+        ++it;
+    }
+}
+
+void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
+{
+    AutoMutex a(iObserversLock);
+    iObservers.push_back(&aObserver);
+}
+
+TBool RaopDiscovery::Active()
+{
+    ASSERT(iCurrent != NULL);
+    //if (iCurrent != NULL) {
+        return iCurrent->Active();
+    //}
+}
+
+void RaopDiscovery::Deactivate()
+{
+    // Deactivate all servers, rather than just currently selected.
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->Enable();
+        ++it;
+    }
+}
+
+TUint RaopDiscovery::AesSid()
+{
+    ASSERT(iCurrent != NULL);
+    return iCurrent->AesSid();
+}
+
+const Brx& RaopDiscovery::Aeskey()
+{
+    ASSERT(iCurrent != NULL);
+    return iCurrent->Aeskey();
+}
+
+const Brx& RaopDiscovery::Aesiv()
+{
+    ASSERT(iCurrent != NULL);
+    return iCurrent->Aesiv();
+}
+
+const Brx& RaopDiscovery::Fmtp()
+{
+    ASSERT(iCurrent != NULL);
+    return iCurrent->Fmtp();
+}
+
+void RaopDiscovery::KeepAlive()
+{
+    ASSERT(iCurrent != NULL);
+    return iCurrent->KeepAlive();
+}
+
+void RaopDiscovery::Close()
+{
+    // Deactivate all servers, rather than just currently selected.
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->Close();
+        ++it;
+    }
+}
+
+void RaopDiscovery::SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming)
+{
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->SetListeningPorts(aAudio, aControl, aTiming);
+        ++it;
+    }
+}
+
+void RaopDiscovery::NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort)
+{
+    AutoMutex mutexServers(iServersLock);
+    AutoMutex mutexObservers(iObserversLock);
+    if (iCurrent == NULL || !NifsMatch(aNif, iCurrent->Adapter())) {
+        // No server previously selected, or previously connected on different interface.
+        // Find selected server and set it as iCurrent.
+        std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+        while (it != iServers.end()) {
+            const NetworkAdapter& nif = (*it)->Adapter();
+            if (NifsMatch(nif, aNif)) {
+                iCurrent = (*it);
+                break;
+            }
+            ++it;
+        }
+
+        // FIXME - should we also disable all other servers when one is
+        // selected, and only re-enable on a subnet list/adapter change?
+
+        ASSERT(it != iServers.end()); // NotifySessionStart should only come from an active server
+    }
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionStart(aControlPort, aTimingPort);
+        ++it;
+    }
+}
+
+void RaopDiscovery::NotifySessionEnd(const NetworkAdapter& aNif)
+{
+    AutoMutex mutexServers(iServersLock);
+    AutoMutex mutexObservers(iObserversLock);
+    ASSERT((iCurrent == NULL) || NifsMatch(aNif, iCurrent->Adapter()));
+    iCurrent = NULL;
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionEnd();
+        ++it;
+    }
+}
+
+void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif)
+{
+    AutoMutex mutexServers(iServersLock);
+    AutoMutex mutexObservers(iObserversLock);
+    ASSERT((iCurrent == NULL) || NifsMatch(aNif, iCurrent->Adapter()));
+    std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+    while (it != iObservers.end()) {
+        (*it)->NotifySessionWait();
+        ++it;
+    }
+}
+
 void RaopDiscovery::HandleInterfaceChange()
 {
+    TBool currentRemoved = false;   // identify whether current active server
+                                    // has been removed by interface change.
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery::HandleInterfaceChange");
     NetworkAdapter* current = ref.Adapter();
 
-    // Get current subnet, otherwise choose first from a list
-    if (current == NULL) {
-        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-        if (subnetList->size() > 0) {
-            current = (*subnetList)[0];
-        }
-        else {
-            LOG(kMedia, "RaopDiscovery::HandleInterfaceChange no available subnets\n");
-        }
-        NetworkAdapterList::DestroySubnetList(subnetList);
-    }
+    // When we detect an interface change:
+    // - determine if a single interface is selected; if so:
+    // -- remove all subnets not matching the current interface
+    // -- if no subnets remain that match the current interface, add the current interface
+    // - otherwise (there is no single interface selected, so):
+    // -- remove all subnets that no longer exist
+    // -- add new subnets
 
-    // Recreate server only if we have an adapter to rebind to.
+    iServersLock.Wait();
     if (current != NULL) {
-        AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery::HandleInterfaceChange");
-        const NetworkAdapter* current = ref.Adapter();
-        if (current != NULL) {
-            Deactivate();
-            delete iRaopDiscoveryServer; // iRaopDiscoveryServer owns its sessions
+        // Single interface selected. Register only on this interface.
 
-            TIpAddress ipAddr = current->Address();
+        // First, remove any other interfaces.
+        TUint i = 0;
+        while (i<iServers.size()) {
+            const NetworkAdapter& adapter = iServers[i]->Adapter();
+            if (!NifsMatch(adapter, *current)) {
+                if ((iCurrent != NULL) && NifsMatch(adapter, iCurrent->Adapter())) {
+                    // Clear current server if its interface has been removed.
+                    currentRemoved = true;
+                    iCurrent = NULL;
+                }
+                iServers[i]->Disable();
+                delete iServers[i];
+                iServers.erase(iServers.begin()+i);
+            }
+            else {
+                i++;
+            }
+        }
 
-            // Print the current adapter
-            Endpoint::AddressBuf addrBuf;
-            Endpoint ep(0, ipAddr);
-            ep.AppendAddress(addrBuf);
-            LOG(kMedia, "RaopDiscovery::RaopDiscovery using address %s\n", addrBuf.Ptr());
-
-            // Recreate Discovery server and update Bonjour device.
-            iRaopDiscoveryServer = new SocketTcpServer(iEnv, "MDNS", 0, ipAddr, kPriority, kSessionStackBytes);
-            iRaopDiscoverySession1 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 1);
-            iRaopDiscoveryServer->Add("RaopDiscovery1", iRaopDiscoverySession1);
-
-            iRaopDiscoverySession2 = new RaopDiscoverySession(iEnv, *this, *iRaopDevice, 2);
-            iRaopDiscoveryServer->Add("RaopDiscovery2", iRaopDiscoverySession2);
-
-            ep.SetPort(iRaopDiscoveryServer->Port());
-            iRaopDevice->Deregister();
-            iRaopDevice->SetEndpoint(ep);
-            iRaopDevice->Register();
+        // If this interface isn't registered, add it.
+        if (iServers.size() == 0) {
+            AddAdapter(*current);
         }
     }
+    else {
+        // No interface selected. Advertise on all interfaces.
+
+        // First, remove any subnets that have disappeared from the new subnet list.
+        TUint i = 0;
+        while (i<iServers.size()) {
+            const NetworkAdapter& adapter = iServers[i]->Adapter();
+            if (InterfaceIndex(adapter, *subnetList) == -1) {
+                if ((iCurrent != NULL) && NifsMatch(adapter, iCurrent->Adapter())) {
+                    // Clear current server if its interface has been removed.
+                    currentRemoved = true;
+                    iCurrent = NULL;
+                }
+                iServers[i]->Disable();
+                delete iServers[i];
+                iServers.erase(iServers.begin()+i);
+            }
+            else {
+                i++;
+            }
+        }
+
+        // Then, add any new interfaces.
+        for (TUint j=0; j<subnetList->size(); j++) {
+            NetworkAdapter* subnet = (*subnetList)[j];
+            if (InterfaceIndex(*subnet) == -1) {
+                AddAdapter(*subnet);
+           }
+        }
+    }
+    iServersLock.Signal();
+    NetworkAdapterList::DestroySubnetList(subnetList);
+
+    if (currentRemoved) {
+         // If current active server has been removed, notify observers.
+        iObserversLock.Wait();
+        std::vector<IRaopObserver*>::iterator it = iObservers.begin();
+        while (it != iObservers.end()) {
+            (*it)->NotifySessionEnd();
+            ++it;
+        }
+        iObserversLock.Signal();
+    }
+}
+
+void RaopDiscovery::AddAdapter(NetworkAdapter& aNif)
+{
+    RaopDiscoveryServer* server = new RaopDiscoveryServer(iEnv, iDvStack, aNif, iHostName.PtrZ(), iFriendlyName.PtrZ(), iMacAddr);
+    iServers.push_back(server);
+    server->Enable();
+    server->AddObserver(*this);
+}
+
+TInt RaopDiscovery::InterfaceIndex(const NetworkAdapter& aNif)
+{
+    for (TUint i=0; i<(TUint)iServers.size(); i++) {
+        if (NifsMatch(iServers[i]->Adapter(), aNif)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+TInt RaopDiscovery::InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList)
+{
+    for (TUint i=0; i<(TUint)aList.size(); i++) {
+        if (NifsMatch(*(aList[i]), aNif)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+TBool RaopDiscovery::NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2)
+{
+    if (aNif1.Address() == aNif2.Address() && aNif1.Subnet() == aNif2.Subnet() && strcmp(aNif1.Name(), aNif2.Name()) == 0) {
+        return true;
+    }
+    return false;
 }
 
 void RaopDiscovery::PowerDown()
 {
-    // called on power failure
-    iRaopDevice->Deregister();
-    //iRaopDiscoverySession1->Close();
-    //iRaopDiscoverySession2->Close();
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->PowerDown();
+        ++it;
+    }
 }
 
 

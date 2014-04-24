@@ -16,6 +16,15 @@ namespace OpenHome {
     class IPowerManager;
 namespace Av {
 
+class IRaopServerObserver
+{
+public:
+    virtual void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort) = 0;
+    virtual void NotifySessionEnd(const NetworkAdapter& aNif) = 0;
+    virtual void NotifySessionWait(const NetworkAdapter& aNif) = 0;
+    virtual ~IRaopServerObserver() {}
+};
+
 class IRaopObserver
 {
 public:
@@ -76,12 +85,12 @@ private:
 
 class RaopDevice
 {
+public:
     static const TUint kMaxNameBytes = 100;
     static const TUint kMacAddrBytes = 12;
 public:
     // aMacAddr in hex of form 001122334455
     RaopDevice(Net::DvStack& aDvStack, TUint aDiscoveryPort, const TChar* aHost, const TChar* aFriendlyName, TIpAddress aIpAddr, const Brx& aMacAddr);
-    void SetEndpoint(const Endpoint& aEndpoint);
     void Register();
     void Deregister();
     const Endpoint& GetEndpoint() const;
@@ -89,9 +98,9 @@ public:
     void MacAddressOctets(TByte (&aOctets)[6]) const;
 private:
     Net::IMdnsProvider& iProvider;
-    TUint iHandleRaop;
+    const TUint iHandleRaop;
     Bws<kMaxNameBytes> iName;
-    Endpoint iEndpoint;
+    const Endpoint iEndpoint;
     const Bws<kMacAddrBytes> iMacAddress;
     TBool iRegistered;
     Mutex iLock;
@@ -109,10 +118,9 @@ public:
     virtual void KeepAlive() = 0;
     virtual void Close() = 0;
     virtual void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) = 0;
-    virtual void AddObserver(IRaopObserver& aObserver) = 0;
 };
 
-class RaopDiscovery;
+class RaopDiscoveryServer;
 
 class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
 {
@@ -120,7 +128,7 @@ class RaopDiscoverySession : public SocketTcpSession, public IRaopDiscovery
     static const TUint kMaxWriteBufferBytes = 4000;
 
 public:
-    RaopDiscoverySession(Environment& aEnv, RaopDiscovery& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance);
+    RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance);
     ~RaopDiscoverySession();
 private: // from SocketTcpSession
     void Run();
@@ -134,7 +142,6 @@ public: // from IRaopDiscovery
     TUint AesSid();
     void Close();
     void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
-    void AddObserver(IRaopObserver& aObserver);
 private:
     void WriteSeq(TUint aCSeq);
     void WriteFply(Brn aData);
@@ -162,7 +169,7 @@ private:
     TUint iAesSid;
     RSA *iRsa;
     Bws<1024> iResponse;
-    RaopDiscovery& iDiscovery;
+    RaopDiscoveryServer& iDiscovery;
     //Volume& iVolume;
     RaopDevice& iRaopDevice;
     TUint iInstance;
@@ -176,11 +183,14 @@ private:
     TUint iClientTimingPort;
 };
 
-class RaopDiscovery : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
+class RaopDiscoveryServer : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
 {
 public:
-    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
-    virtual ~RaopDiscovery();
+    RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    virtual ~RaopDiscoveryServer();
+    const NetworkAdapter& Adapter() const;
+    void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
+    void PowerDown();
 public: // from IRaopDiscovery
     const Brx &Aeskey();
     const Brx &Aesiv();
@@ -201,18 +211,64 @@ public: // from IRaopObserver
 private:
     RaopDiscoverySession& ActiveSession();
     void HandleInterfaceChange();
-    void PowerDown();
+    TInt InterfaceIndex(const NetworkAdapter& aNif);
+    TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
+    static TBool NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2);
 private:
     static const TUint kPriority = kPriorityNormal;
     static const TUint kSessionStackBytes = 10 * 1024;
+    static const TChar* kAdapterCookie;
     Environment& iEnv;
-    std::vector<Av::IRaopObserver*> iObservers;
+    NetworkAdapter& iAdapter;
+    std::vector<Av::IRaopServerObserver*> iObservers;
     RaopDevice* iRaopDevice;
     SocketTcpServer* iRaopDiscoveryServer;
     RaopDiscoverySession* iRaopDiscoverySession1;
     RaopDiscoverySession* iRaopDiscoverySession2;
+    Mutex iObserversLock;
+};
+
+class RaopDiscovery : public IRaopDiscovery, private Av::IRaopServerObserver, private INonCopyable
+{
+public:
+    RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    virtual ~RaopDiscovery();
+    void Enable();
+    void Disable();
+    void AddObserver(IRaopObserver& aObserver);
+public: // from IRaopDiscovery
+    TBool Active();
+    void Deactivate();
+    TUint AesSid();
+    const Brx& Aeskey();
+    const Brx& Aesiv();
+    const Brx& Fmtp();
+    void KeepAlive();
+    void Close();
+    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
+public: // from IRaopObserver
+    void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort);
+    void NotifySessionEnd(const NetworkAdapter& aNif);
+    void NotifySessionWait(const NetworkAdapter& aNif);
+private:
+    void HandleInterfaceChange();
+    void AddAdapter(NetworkAdapter& aNif);
+    TInt InterfaceIndex(const NetworkAdapter& aNif);
+    TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
+    static TBool NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2);
+    void PowerDown();
+private:
+    Environment& iEnv;
+    Net::DvStack& iDvStack;
+    const Bws<RaopDevice::kMaxNameBytes> iHostName;
+    const Bws<RaopDevice::kMaxNameBytes> iFriendlyName;
+    const Bws<RaopDevice::kMacAddrBytes> iMacAddr;
+    std::vector<RaopDiscoveryServer*> iServers;
+    std::vector<Av::IRaopObserver*> iObservers;
     TUint iCurrentAdapterChangeListenerId;
     TUint iSubnetListChangeListenerId;
+    RaopDiscoveryServer* iCurrent; // protected by iServersLock
+    Mutex iServersLock;
     Mutex iObserversLock;
 };
 
