@@ -124,6 +124,9 @@ TUint MdnsPlatform::MdnsService::RenameAndReregister()
 
 
 // MdnsPlatform
+
+const TChar* MdnsPlatform::kNifCookie = "Bonjour";
+
 MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     : iEnv(aEnv)
     , iHost(aHost)
@@ -166,6 +169,7 @@ MdnsPlatform::~MdnsPlatform()
 {
     iReaderController.ReadInterrupt();
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iTimerLock.Wait();
     iTimerDisabled = true;
     iTimerLock.Signal();
@@ -202,19 +206,77 @@ void MdnsPlatform::TimerExpired()
 void MdnsPlatform::SubnetListChanged()
 {
     iInterfacesLock.Wait();
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
     std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
-        if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
+        // Remove adapters with subnets no longer available and which don't
+        // match the currently selected adapter (if there is one).
+        if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
+                || (current != NULL && current->Address() != iInterfaces[i]->Adapter().Address())) {
             mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
             delete iInterfaces[i];
             iInterfaces.erase(iInterfaces.begin()+i);
         }
     }
-    for (TUint i=0; i<(TUint)subnetList->size(); i++) {
-        NetworkAdapter* nif = (*subnetList)[i];
-        if (InterfaceIndex(*nif) == -1) {
-            AddInterface(nif);
+    if (current == NULL) { // no adapter selected; add new subnets
+        for (TUint i=0; i<(TUint)subnetList->size(); i++) {
+            NetworkAdapter* nif = (*subnetList)[i];
+            if (InterfaceIndex(*nif) == -1) {
+                AddInterface(nif);
+            }
+        }
+    }
+    if (current != NULL) {
+        if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
+            AddInterface(current);
+        }
+        current->RemoveRef(kNifCookie);
+    }
+    iInterfacesLock.Signal();
+    nifList.DestroySubnetList(subnetList);
+}
+
+void MdnsPlatform::CurrentAdapterChanged()
+{
+    iInterfacesLock.Wait();
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+
+    if (current != NULL) {
+        // Remove existing interface(s) if not belonging to current adapter,
+        // then add current adapter if it didn't exist before.
+        for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
+            if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1
+                || (current != NULL && current->Address() != iInterfaces[i]->Adapter().Address())) {
+                    mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
+                    delete iInterfaces[i];
+                    iInterfaces.erase(iInterfaces.begin()+i);
+            }
+        }
+        if (iInterfaces.size() == 0) { // current adapter is on a newly added subnet
+            AddInterface(current);
+        }
+        current->RemoveRef(kNifCookie);
+    }
+    else {
+        // No adapter selected.
+        // First, check if selected interface should be removed.
+        for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
+            if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
+                mDNS_DeregisterInterface(iMdns, &iInterfaces[i]->Info(), false);
+                delete iInterfaces[i];
+                iInterfaces.erase(iInterfaces.begin()+i);
+            }
+        }
+
+        // Then, re-add all subnets that aren't already added.
+        for (TUint i=0; i<(TUint)subnetList->size(); i++) {
+            NetworkAdapter* nif = (*subnetList)[i];
+            if (InterfaceIndex(*nif) == -1) {
+                AddInterface(nif);
+            }
         }
     }
     iInterfacesLock.Signal();
@@ -436,7 +498,6 @@ void MdnsPlatform::DeregisterService(TUint aHandle)
 void MdnsPlatform::RegisterService(TUint aHandle, const TChar* aName, const TChar* aType, TIpAddress aInterface, TUint aPort, const TChar* aInfo)
 {
     LOG(kBonjour, "Bonjour             RegisterService\n");
-
     iServicesLock.Wait();
     Map::iterator it = iServices.find(aHandle);
     ASSERT(it != iServices.end());
@@ -520,14 +581,26 @@ MdnsPlatform::Status MdnsPlatform::Init()
     iInterfacesLock.Wait();
     Status status = mStatus_NoError;
     NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    Functor functor = MakeFunctor(*this, &MdnsPlatform::SubnetListChanged);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-    for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {
-        status = AddInterface((*subnetList)[i]);
+    Functor functorSubnet = MakeFunctor(*this, &MdnsPlatform::SubnetListChanged);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functorSubnet);
+    Functor functorAdapter = MakeFunctor(*this, &MdnsPlatform::CurrentAdapterChanged);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functorAdapter);
+
+    static const TChar* kNifCookie = "Bonjour";
+    NetworkAdapter* current = iEnv.NetworkAdapterList().CurrentAdapter(kNifCookie);
+    if (current == NULL) { // Listening on all adapters.
+        std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+        for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {
+            status = AddInterface((*subnetList)[i]);
+        }
+        nifList.DestroySubnetList(subnetList);
     }
+    else { // Using a single adapter.
+        status = AddInterface(current);
+        current->RemoveRef(kNifCookie);
+    }
+
     iInterfacesLock.Signal();
-    nifList.DestroySubnetList(subnetList);
     if (status == mStatus_NoError) {
         mDNSCoreInitComplete(iMdns, status);
     }
@@ -543,10 +616,12 @@ MdnsPlatform::Status MdnsPlatform::GetPrimaryInterface(TIpAddress& aInterface)
         status = mStatus_NotInitializedErr;
         aInterface = 0;
     }
-    aInterface = iInterfaces[0]->Address();
-    if (aInterface == 0) {
-        status = mStatus_NotInitializedErr;
-        aInterface = 0;
+    if (status != mStatus_NotInitializedErr) {
+        aInterface = iInterfaces[0]->Address();
+        if (aInterface == 0) {
+            status = mStatus_NotInitializedErr;
+            aInterface = 0;
+        }
     }
     iInterfacesLock.Signal();
 

@@ -29,6 +29,7 @@ class MdnsPlatform
     static const TUint kMaxHostBytes = 16;
     static const TUint kMaxMessageBytes = 4096;
     static const TUint kMaxQueueLength = 25;
+    static const TChar* kNifCookie;
 public: 
     MdnsPlatform(Environment& aStack, const TChar* aHost);
     ~MdnsPlatform();
@@ -49,6 +50,7 @@ private:
     void Listen();
     void TimerExpired();
     void SubnetListChanged();
+    void CurrentAdapterChanged();
     Status AddInterface(NetworkAdapter* aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
@@ -137,7 +139,8 @@ private:
     mDNS* iMdns;
     Mutex iInterfacesLock;
     std::vector<MdnsPlatform::Nif*> iInterfaces;
-    TInt iSubnetListChangeListenerId;
+    TUint iSubnetListChangeListenerId;
+    TUint iCurrentAdapterChangeListenerId;
     Bws<kMaxMessageBytes> iMessage;
     typedef std::map<TUint, ServiceRecordSet*> Map;
     Mutex iServicesLock;
