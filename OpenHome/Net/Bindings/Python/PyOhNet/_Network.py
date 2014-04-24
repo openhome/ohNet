@@ -6,7 +6,7 @@ import uuid
 
 
 class Adapter():
-    "ohNet representation of a network adapter"
+    """ohNet representation of a network adapter"""
         
     def __init__( self, aHandle ):
         self.lib = PyOhNet.lib
@@ -50,14 +50,15 @@ class Adapter():
     def _GetStrMask( self ):    
         return self._Num2DottedQuad( self.mask )
         
-    def _Num2DottedQuad( self, n ):
-        "Convert long int to dotted quad string"
+    @staticmethod
+    def _Num2DottedQuad( n ):
+        """Convert long int to dotted quad string"""
         d = 256 * 256 * 256
         q = []
         while d > 0:
             m,n = divmod( n, d )
             q.append( str( m ))
-            d = d/256
+            d /= 256
         q.reverse()
         return '.' . join( q )        
 
@@ -76,7 +77,7 @@ class Adapter():
     
 
 class AdapterList():
-    "List of available network adapters"
+    """List of available network adapters"""
      
     def __init__( self ):
         self.lib = PyOhNet.lib

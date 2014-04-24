@@ -9,10 +9,12 @@ class TestAdapters:
     def __init__( self ):
         ohNet.Initialise()
         
-    def Shutdown( self ):        
+    @staticmethod
+    def Shutdown( ):
         ohNet.Shutdown()
         
-    def ShowAdapters( self ):
+    @staticmethod
+    def ShowAdapters( ):
         adapterList = ohNet.AdapterList()
         print '\n %d network adapters detected' % adapterList.size
         for adapter in adapterList.adapters:

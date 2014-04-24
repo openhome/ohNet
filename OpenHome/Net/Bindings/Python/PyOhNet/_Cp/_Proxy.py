@@ -6,8 +6,9 @@ import ctypes
 import threading
 
 
+# noinspection PyUnusedLocal
 class Proxy():
-    "Control Point proxy (service) abstract base class"
+    """Control Point proxy (service) abstract base class"""
     __metaclass__ = abc.ABCMeta
     
     @abc.abstractmethod
@@ -20,8 +21,12 @@ class Proxy():
         self.actions         = []
         self.properties      = []
         self.semaReady       = threading.Semaphore( 0 )   # Sema rather than Event as can be multiple
-        PyOhNet.cpProxies.append( self )                  # actions ongoing at any time  
-                                                          
+        CB = PyOhNet.makeCb( None, ctypes.c_void_p )      # actions ongoing at any time
+        self._AnyEvent = CB( self._AnyEventCb )
+        CB = PyOhNet.makeCb( None, ctypes.c_void_p )
+        self._InitEvent = CB( self._InitEventCb )
+        PyOhNet.cpProxies.append( self )
+
     def Shutdown( self ):
         PyOhNet.cpProxies.remove( self )
         if self.handle:
@@ -59,8 +64,8 @@ class Proxy():
         for action in self.actions:
             msg += '\n' + action.__str__()
         msg += '\n    Properties:'
-        for property in self.properties:
-            msg += '\n' + property.__str__()
+        for prop in self.properties:
+            msg += '\n' + prop.__str__()
         return msg
 
     #            
@@ -75,12 +80,8 @@ class Proxy():
         
     def SetPropertyChanged( self, aCb ):
         self._propertyAnyCb = aCb
-        CB = PyOhNet.makeCb( None, ctypes.c_void_p )
-        self._AnyEvent = CB( self._AnyEventCb )
         self.lib.CpProxySetPropertyChanged( self.handle, self._AnyEvent, None )
         
     def SetPropertyInitialEvent( self, aCb ):
         self._propertyInitCb = aCb
-        CB = PyOhNet.makeCb( None, ctypes.c_void_p )
-        self._InitEvent = CB( self._InitEventCb )
         self.lib.CpProxySetPropertyInitialEvent( self.handle, self._InitEvent, None )

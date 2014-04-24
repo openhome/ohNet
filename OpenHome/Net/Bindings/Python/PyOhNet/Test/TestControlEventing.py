@@ -17,8 +17,7 @@ import time
 class TestControlEventing:
 
     def __init__( self, aDevName, aDevDomain, aDevType, aDevVersion, aTimeout=10, aInterface=None ):
-        "Initialise class data, start ohNet and UPnP discovery"    
-        dev                = None
+        """Initialise class data, start ohNet and UPnP discovery"""
         self.nameToFind    = None
         self.failed        = False
         self.evVarUint     = 0
@@ -52,16 +51,16 @@ class TestControlEventing:
         else:
             print '\n*** PASSED ***'
         ohNet.Shutdown()
+        # noinspection PyProtectedMember
         os._exit( 0 )
 
     def _DevAdded( self, aDev ):
-        "Callback on devicelist added event"
+        """Callback on devicelist added event"""
         if self.nameToFind == aDev.friendlyName:
             self.nameFound.set()
 
     def FindDev( self, aName, aDomain, aType, aVersion, aTimeout ):
-        "Find device within specified time, returns None on failure"
-        dev     = None
+        """Find device within specified time, returns None on failure"""
         devList = ohNet.Cp.DeviceListUpnpDeviceType( aDomain, aType, aVersion )
         if aName not in devList.friendlyNames:
             self.nameToFind = aName 
@@ -71,7 +70,7 @@ class TestControlEventing:
         return devList.DevByName( aName )
     
     def _CheckSetGet( self, aVar, aSet, aGet, aEvented=None ):
-        "Check set/get/evented variables all match"
+        """Check set/get/evented variables all match"""
         time.sleep( 0.5 )   # let ANY event printout clear
         msg = 'Set %s to %s, Get returned %s' % (aVar, str(aSet), str(aGet))
         if aSet == aGet:
@@ -80,7 +79,7 @@ class TestControlEventing:
             print '--FAIL-- ', msg
             self.failed = True
             
-        if aEvented != None:
+        if aEvented is not None:
             msg = 'Set %s to %s, Event returned %s' % (aVar, str(aSet), str(aEvented))
             if aSet == aEvented:
                 print '++PASS++ ', msg
@@ -89,7 +88,7 @@ class TestControlEventing:
                 self.failed = True
                 
     def _CheckCombo( self, aAction, aSet, aGet, aExpected ):
-        "Check combo (set/<alter>/get) actions"
+        """Check combo (set/<alter>/get) actions"""
         msg = '%s set to %s returned %s' % (aAction, str(aSet), str(aGet))
         if aGet == aExpected:
             print '++PASS++ ', msg
@@ -99,7 +98,7 @@ class TestControlEventing:
                 
             
     def TestBasicProxy( self ):
-        "Test the proxy to the TestBasic service"
+        """Test the proxy to the TestBasic service"""
         
         # ==== Set up event handlers and start event monitoring ====
                 
@@ -159,14 +158,14 @@ class TestControlEventing:
         self._CheckSetGet( 'VarString', string, res, self.evVarStr )
         
         self.binChanged.clear()
-        bin = ''
+        binary = ''
         binArray = [random.randint( 0, 255 ),0,random.randint( 0, 255 ),0,3,0]
         for item in binArray:
-            bin += chr( item )
-        res = self.testBasic.SyncSetBinary( bin )
+            binary += chr( item )
+        res = self.testBasic.SyncSetBinary( binary )
         print '\nSyncSetBinary (%s) returned --> %s' % (binArray, res)
         res = self.testBasic.SyncGetBinary()
-        print 'SyncGetBinary returned --> %s' % (res)
+        print 'SyncGetBinary returned --> %s' % res
         print 'Waiting for Binary event'
         self.binChanged.wait()
         self._CheckSetGet( 'VarBin', binArray, res, self.evVarBin )
@@ -206,11 +205,11 @@ class TestControlEventing:
         print '\nSyncEchoString (Echo..) returned -->', res
         self._CheckCombo( 'SyncEchoString', 'Echo..', res, 'Echo..' )
 
-        bin = ''
+        binary = ''
         binArray = [0,1,2,3,4,0,1,2,3,4,0]
         for item in binArray:
-            bin += chr( item )
-        res = self.testBasic.SyncEchoBinary( bin )
+            binary += chr( item )
+        res = self.testBasic.SyncEchoBinary( binary )
         print '\nSyncEchoBinary (%s) returned --> %s' % (binArray, res)
         self._CheckCombo( 'SyncEchoBinary', binArray, res, binArray )
 

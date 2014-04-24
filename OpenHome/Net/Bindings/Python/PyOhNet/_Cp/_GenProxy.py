@@ -34,7 +34,7 @@ kArgType = {
 class GenProxy:
     
     def __init__( self, aType, aXml ):
-        "Create python proxy service code for ohNet"
+        """Create python proxy service code for ohNet"""
         m = re.match('urn:([\w\-\.]+):service:([\w\-\.]+):(\d+)', aType )
         domain, service, version = m.groups()
         actions, properties, svs = self._ParseXml( aXml )
@@ -44,8 +44,9 @@ class GenProxy:
     # ==== Internal methods ====
     #
            
-    def _ParseXml( self, aXml ):
-        "Extract service info form XML into Python friendly dicts/lists"
+    @staticmethod
+    def _ParseXml( aXml ):
+        """Extract service info form XML into Python friendly dicts/lists"""
         svs        = []
         actions    = []
         properties = []
@@ -56,11 +57,11 @@ class GenProxy:
         stateVariables = serviceStateTable.findall( 'stateVariable' )
         for stateVariable in stateVariables:
             allowed = []
-            min     = None
-            max     = None
+            mini    = None
+            maxi    = None
             step    = None
             name    = stateVariable.find( 'name' ).text
-            type    = stateVariable.find( 'dataType' ).text
+            dType   = stateVariable.find( 'dataType' ).text
             
             avList = stateVariable.find( 'allowedValueList' )           
             if avList is not None:
@@ -70,20 +71,20 @@ class GenProxy:
                     
             avRange = stateVariable.find( 'allowedValueRange' )           
             if avRange is not None:
-                min = avRange.find( 'minimum' ).text
-                max = avRange.find( 'maximum' ).text
+                mini = avRange.find( 'minimum' ).text
+                maxi = avRange.find( 'maximum' ).text
                 stp = avRange.find( 'step' )
                 if stp is not None:
                     step = stp.text
             
-            if name is not None and type is not None:
-                sv = {'name':name, 'type':type}
+            if name is not None and dType is not None:
+                sv = {'name':name, 'type':dType}
                 if len( allowed ):
                     sv['allowed'] = allowed
-                if min is not None: 
-                    sv['min'] = min
-                if max is not None: 
-                    sv['max'] = max
+                if mini is not None:
+                    sv['min'] = mini
+                if maxi is not None:
+                    sv['max'] = maxi
                 if step is not None: 
                     sv['step'] = step
                 svs.append( sv )
@@ -110,18 +111,19 @@ class GenProxy:
                         args.append( {'name':argName, 'direction':direction, 'sv':sv} )
             actions.append( {'name':name, 'args':args} )
         
-        return (actions, properties, svs)
+        return actions, properties, svs
     
     def _BuildProxy( self, aService, aDomain, aVersion, aActions, aProperties, aSvs ):
-        "Construct the proxy python code"
+        """Construct the proxy python code"""
         code =  self._BuildHeader( aService, aDomain, aVersion )
         code += self._BuildInit( aService, aDomain, aVersion, aActions, aProperties, aSvs )
         code += self._BuildControl( aActions, aSvs )
         code += self._BuildEventing( aProperties )
         return code 
                                 
-    def _BuildHeader( self, aService, aDomain, aVersion ):
-        "Build the proxy code header block"
+    @staticmethod
+    def _BuildHeader( aService, aDomain, aVersion ):
+        """Build the proxy code header block"""
         domain = ''
         fields = aDomain.replace( '.', '-' ).split( '-' )
         for field in fields:
@@ -139,13 +141,14 @@ class GenProxy:
         msg += 'class CpProxy%s%s%d( Proxy.Proxy ):\n\n' % (domain, aService, aVersion)
         return msg
     
-    def _BuildInit( self, aService, aDomain, aVersion, aActions, aProperties, aSvs ):
-        "Build the proxy code __init__ constructor block"
+    @staticmethod
+    def _BuildInit( aService, aDomain, aVersion, aActions, aProperties, aSvs ):
+        """Build the proxy code __init__ constructor block"""
         msg  = '    def __init__( self, aDev ):\n'
         msg += "        Proxy.Proxy.__init__( self, '%s', '%s', 1, aDev )\n" % (aDomain, aService)
         
-        for property in aProperties:
-            msg += '        self._property%sCb = None\n' % property['name']
+        for prop in aProperties:
+            msg += '        self._property%sCb = None\n' % prop['name']
             
         msg += '\n'
         msg += '        #\n'
@@ -156,27 +159,28 @@ class GenProxy:
             msg += "\n        self.action%s = Control.Action( '%s' )\n" % (action['name'], action['name']) 
             for arg in action['args']:
                 allowed = None
-                min     = None
-                max     = None
+                mini    = None
+                maxi    = None
                 step    = None
+                argType = None
                 for sv in aSvs:
                     if sv['name'] == arg['sv']:
-                        type = kArgType[sv['type']]
+                        argType = kArgType[sv['type']]
                         if sv.has_key( 'allowed' ):
                             allowed = sv['allowed']
                         if sv.has_key( 'min' ):
-                            min = sv['min']
+                            mini = sv['min']
                         if sv.has_key( 'max' ):
-                            max = sv['max']
+                            maxi = sv['max']
                         if sv.has_key( 'step' ):
                             step = sv['step']
                         break
                 msg += "        self.action%s.Add%sputParameter( Control.Parameter%s( '%s'" % \
-                    (action['name'], arg['direction'].title(), type, arg['name'])
+                    (action['name'], arg['direction'].title(), argType, arg['name'])
                 if allowed is not None:
                     msg += ', %s' % allowed
-                if min is not None and max is not None:
-                    msg += ', %s, %s' % (min, max)
+                if mini is not None and maxi is not None:
+                    msg += ', %s, %s' % (mini, maxi)
                     if step is not None:
                         msg += ', %s' % step
                 msg += ' ))\n'
@@ -187,10 +191,10 @@ class GenProxy:
         msg += '        # ==== Define properties ====\n'
         msg += '        #\n\n'
 
-        for property in aProperties:
-            var = 'self.%s%s' % (property['name'][0].lower(), property['name'][1:])
+        for prop in aProperties:
+            var = 'self.%s%s' % (prop['name'][0].lower(), prop['name'][1:])
             msg += "        %s = Eventing.Property%s( '%s', self._%sPropertyChanged )\n" % \
-                (var, kArgType[property['type']], property['name'], property['name'])
+                (var, kArgType[prop['type']], prop['name'], prop['name'])
             msg += '        self._AddProperty( %s )\n' % var
             
         domain = aDomain.title().replace( '.', '' )
@@ -198,8 +202,9 @@ class GenProxy:
         msg += "        return self._Str( 'Proxy%s%s%d' )" % (domain.replace( '-', '' ), aService, aVersion) 
         return msg
 
-    def _BuildControl( self, aActions, aSvs ):
-        "Buid the proxy code for action invocation"
+    @staticmethod
+    def _BuildControl( aActions, aSvs ):
+        """Buid the proxy code for action invocation"""
         msg  = '\n\n'
         msg += '    #\n'
         msg += '    # ==== Control (action invocation) interface ====\n'
@@ -216,25 +221,26 @@ class GenProxy:
             returns    = []
             inCount    = 0
             outCount   = 0
+            var        = ''
             
             for arg in action['args']:
                 for sv in aSvs:
                     if sv['name'] == arg['sv']:
-                        type = kArgType[sv['type']]
+                        argType = kArgType[sv['type']]
                         break
                 if arg['direction'] == 'in':
                     inArgs.append( arg['name'] )
                     inInvokes += '        invocation.AddInput( Control.Argument%s( self.action%s.InputParameter( %d ), a%s ))\n' % \
-                        (type, action['name'], inCount, arg['name'])
+                        (argType, action['name'], inCount, arg['name'])
                     inCount += 1
                 else:
                     outInvokes += '        invocation.AddOutput( Control.Argument%s( self.action%s.OutputParameter( %d )))\n' % \
-                        (type, action['name'], outCount)
+                        (argType, action['name'], outCount)
                     var = '%s%s' % (arg['name'][0].lower(), arg['name'][1:])
-                    outResults.append( '        %s = response.Output%s( %d )\n' % (var, type, outCount ))
+                    outResults.append( '        %s = response.Output%s( %d )\n' % (var, argType, outCount ))
                     returns.append( "'%s':%s%s" % (arg['name'],arg['name'][0].lower(), arg['name'][1:] ))
                     outCount += 1
-            if inArgs != []:
+            if inArgs:
                 inArgStr1 = ', a' + ', a'.join( inArgs )
                 inArgStr2 = 'a' + ', a'.join( inArgs ) + ', ' 
                     
@@ -272,31 +278,32 @@ class GenProxy:
             msg += '        self.semaReady.release()    # signal response available\n\n'        
         return msg
     
-    def _BuildEventing( self, aProperties ):
-        "Build the proxy code for handling eventing"
+    @staticmethod
+    def _BuildEventing( aProperties ):
+        """Build the proxy code for handling eventing"""
         msg  = '    #\n'
         msg += '    # ==== Properties (eventing) interface ===\n'
         msg += '    #\n'
         
-        for property in aProperties:
-            msg += '\n    def SetProperty%sChanged( self, aCb ):\n' % property['name']
-            msg += '        self._property%sCb = aCb\n' % property['name']
+        for prop in aProperties:
+            msg += '\n    def SetProperty%sChanged( self, aCb ):\n' % prop['name']
+            msg += '        self._property%sCb = aCb\n' % prop['name']
 
         msg += '\n'            
-        for property in aProperties:
-            msg += '\n    def Property%s( self ):\n' % property['name']
-            msg += '        return self._PropertyValue( self.%s%s )\n' % (property['name'][0].lower(), property['name'][1:])
+        for prop in aProperties:
+            msg += '\n    def Property%s( self ):\n' % prop['name']
+            msg += '        return self._PropertyValue( self.%s%s )\n' % (prop['name'][0].lower(), prop['name'][1:])
             
         msg += '\n'
-        for property in aProperties:
-            msg += '\n    def _%sPropertyChanged( self, aDummy ):\n' % property['name']
-            msg += '        if self._property%sCb is not None:\n' % property['name']
-            msg += '            self._property%sCb()\n' % property['name']
+        for prop in aProperties:
+            msg += '\n    def _%sPropertyChanged( self, aDummy ):\n' % prop['name']
+            msg += '        if self._property%sCb is not None:\n' % prop['name']
+            msg += '            self._property%sCb()\n' % prop['name']
         msg += '\n' 
         return msg
     
     def _GetText( self ):
-        "Return proxy code as text"
+        """Return proxy code as text"""
         return self.proxy
     
     #
@@ -304,7 +311,7 @@ class GenProxy:
     #
         
     def Write( self, aFilePath ):
-        "Write out proxy code to specified file"
+        """Write out proxy code to specified file"""
         try:
             f = open( aFilePath, 'wt+' )
             f.write( self.proxy )

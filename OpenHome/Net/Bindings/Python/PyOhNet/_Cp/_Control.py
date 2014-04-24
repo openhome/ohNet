@@ -11,7 +11,7 @@ kMaxUint  = 4294967295
 gAsyncCbs = []
 
 class Action:
-    "Define the controllable ACTION"
+    """Define the controllable ACTION"""
     
     def __init__( self, aName ):
         self.lib = PyOhNet.lib
@@ -41,10 +41,10 @@ class Action:
         return self.outputParams[aIndex]
     
     def Name( self ):
-        str = ctypes.c_char_p()
+        strn = ctypes.c_char_p()
         length = ctypes.c_int()
-        self.lib.ServiceActionGetName( self.handle, ctypes.byref( str ), ctypes.byref( length ))
-        return str.value
+        self.lib.ServiceActionGetName( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
+        return strn.value
 
     def __str__( self ):
         msg = '      %s:' % self.Name()
@@ -60,8 +60,9 @@ class Action:
 # ==== Invocation / Response handling ====
 #
 
+# noinspection PyUnusedLocal
 class Invocation:
-    "Define and setup the invocation - called back on action completion/errors"
+    """Define and setup the invocation - called back on action completion/errors"""
     
     def __init__( self, aService, aAction, aCb ):
         global gAsyncCbs
@@ -83,7 +84,7 @@ class Invocation:
         
         
 class InvocationResponse:
-    "Extract response to an invocation on completion"
+    """Extract response to an invocation on completion"""
     
     def __init__( self, aHandle ):
         global gAsyncCbs
@@ -98,7 +99,7 @@ class InvocationResponse:
         code = ctypes.c_int()
         desc = ctypes.c_char_p()
         err = self.lib.CpInvocationError( self.handle, ctypes.byref( code ), ctypes.byref( desc ))
-        return( {'err':err!=0, 'code':code.value, 'desc':desc.value} )
+        return {'err':err!=0, 'code':code.value, 'desc':desc.value}
 
     def OutputInt( self, aIndex ):
         return self.lib.CpInvocationOutputInt( self.handle, aIndex )
@@ -111,26 +112,26 @@ class InvocationResponse:
         return val != 0
     
     def OutputString( self, aIndex ):
-        str = ctypes.c_char_p()
+        strn = ctypes.c_char_p()
         length = ctypes.c_int()
-        self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( str ), ctypes.byref( length ))
-        if str.value:
-            string = str.value
+        self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( strn ), ctypes.byref( length ))
+        if strn.value:
+            string = strn.value
         else:
             string = ''
-        self.lib.OhNetFree( str )
+        self.lib.OhNetFree( strn )
         return string
     
     def OutputBinary( self, aIndex ):
-        bin = []
+        binary = []
         pData = ctypes.pointer( ctypes.pointer( ctypes.c_ubyte() ))        
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputBinary( self.handle, aIndex, pData, ctypes.byref( length ))
         data = pData.contents
         self.lib.OhNetFree( pData )
         for i in range( length.value ):
-            bin.append( data[i] )
-        return bin
+            binary.append( data[i] )
+        return binary
     
 #
 # ==== Parameters ====
@@ -174,10 +175,12 @@ class ParameterBool( Parameter ):
 
 class ParameterString( Parameter ):
     
-    def __init__( self, aName, aAllowedValues=[] ):
+    # noinspection PyCallingNonCallable
+    def __init__( self, aName, aAllowedValues=None ):
+        if not aAllowedValues: aAllowedValues = []
         Parameter.__init__( self, aName, 'String' )
         numAllowedValues = len( aAllowedValues )
-        allowed = ((ctypes.c_char_p) * numAllowedValues)()
+        allowed = (ctypes.c_char_p * numAllowedValues)()
         for i in range( numAllowedValues ):
             allowed[i] = aAllowedValues[i] 
         self.handle = self.lib.ServiceParameterCreateString( aName, allowed, numAllowedValues )
@@ -240,7 +243,7 @@ class ArgumentBool( Argument ):
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
-            if aValue==False:
+            if not aValue:
                 val = 0
             else:
                 val = 1
@@ -264,9 +267,9 @@ class ArgumentString( Argument ):
             self.handle = self.lib.ActionArgumentCreateStringOutput( aParameter.handle )
         
     def Value( self ):
-        str = ctypes.c_char_p()
+        strn = ctypes.c_char_p()
         length = ctypes.c_int()
-        val = self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( str ), ctypes.byref( length ))
+        val = self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
         return val.value
 
 
@@ -282,7 +285,7 @@ class ArgumentBinary( Argument ):
             self.handle = self.lib.ActionArgumentCreateBinaryOutput( aParameter.handle )
         
     def Value( self ):
-        str = ctypes.c_char_p()
+        strn = ctypes.c_char_p()
         length = ctypes.c_int()
-        val = self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( str ), ctypes.byref( length ))
+        val = self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
         return val.value

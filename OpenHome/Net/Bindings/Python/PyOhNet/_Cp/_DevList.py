@@ -6,8 +6,9 @@ import ctypes
 import _Device as Device
 
 
+# noinspection PyUnusedLocal
 class DeviceList():
-    "Abstract base class for device list handlers"
+    """Abstract base class for device list handlers"""
     __metaclass__ = abc.ABCMeta
     
     @abc.abstractmethod
@@ -31,7 +32,7 @@ class DeviceList():
     #
     # ==== Internal methods ====
     #
-        
+
     def _Added( self, aDummy, aDev ):
         dev = Device.Device( aDev )
         self.devices.append( dev )
@@ -40,9 +41,8 @@ class DeviceList():
         
     def _Removed( self, aDummy, aDev ):
         udn = ctypes.c_char_p()
-        len = ctypes.c_int()
-        self.lib.CpDeviceCGetUdn( aDev, ctypes.byref( udn ), ctypes.byref( len ))
-        udn.value
+        length = ctypes.c_int()
+        self.lib.CpDeviceCGetUdn( aDev, ctypes.byref( udn ), ctypes.byref( length ))
         for dev in self.devices:
             if dev.udn == udn.value:
                 for cb in self.removedCbs:
@@ -120,7 +120,7 @@ class DeviceList():
 # - These callbacks require a Device object as their only parameter. 
             
 class DeviceListUpnpRoot( DeviceList ):
-    "Device list handler for UPnP Root devices"
+    """Device list handler for UPnP Root devices"""
         
     def __init__( self, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
@@ -129,7 +129,7 @@ class DeviceListUpnpRoot( DeviceList ):
 
         
 class DeviceListUpnpAll( DeviceList ):
-    "Device list handler for ALL UPnP devices"
+    """Device list handler for ALL UPnP devices"""
 
     def __init__( self, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
@@ -138,7 +138,7 @@ class DeviceListUpnpAll( DeviceList ):
 
 
 class DeviceListUpnpDeviceType( DeviceList ):
-    "Device list handler for UPnP devices of specified device type"
+    """Device list handler for UPnP devices of specified device type"""
     
     def __init__( self, aDomain, aType, aVersion, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
@@ -148,7 +148,7 @@ class DeviceListUpnpDeviceType( DeviceList ):
 
 
 class DeviceListUpnpServiceType( DeviceList ):
-    "Device list handler for UPnP devices containing specified service type"
+    """Device list handler for UPnP devices containing specified service type"""
 
     def __init__( self, aDomain, aType, aVersion, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
@@ -158,7 +158,7 @@ class DeviceListUpnpServiceType( DeviceList ):
 
 
 class DeviceListUpnpUuid( DeviceList ):
-    "Device list handler for UPnP devices with specified UUID"
+    """Device list handler for UPnP devices with specified UUID"""
 
     def __init__( self, aUuid, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
