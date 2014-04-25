@@ -40,13 +40,13 @@ kDelay2    = 8
 
 
 class Config:
-    "Test configuration for Media service testing"
+    """Test configuration for Media service testing"""
     
     class Precon:
-        "Configuration subclass for precondition info and setup"
+        """Configuration subclass for precondition info and setup"""
         
         def __init__( self, aId, aState, aPlLen, aTrack, aSecs, aRepeat, aTracks, aLog, aDev ):
-            "Initialise class data"
+            """Initialise class data"""
             self.id            = aId
             self.state         = aState
             self.plLen         = None
@@ -71,12 +71,12 @@ class Config:
                 self.playlist.append( aTracks[random.randint( 0, len( aTracks )-1)])
         
         def Setup( self, aDut ):
-            "Setup preconditions on the renderer" 
+            """Setup preconditions on the renderer"""
             aDut.playlist.DeleteAllTracks()
             self.log.Info( self.dev, 'Adding playlist of %d tracks' % self.plLen )
             aDut.playlist.AddSubscriber( self._PlaylistEventCb )
             aDut.playlist.AddPlaylist( self.playlist )
-            self.idArrayEvent.wait( 5 );
+            self.idArrayEvent.wait( 5 )
             self.log.Info( self.dev, 'Added playlist of %d tracks' % self.plLen )
             aDut.playlist.repeat = self.repeat
             aDut.info.AddSubscriber( self._InfoEventCb )
@@ -145,20 +145,23 @@ class Config:
             except:
                 subst = aArg
             return subst
-        
+
+        # noinspection PyUnusedLocal
         def _InfoEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            "Callback from Info service events"
+            """Callback from Info service events"""
             if aSvName == 'Duration' and aSvVal not in [0,'0']:
                 self.durationEvent.set()
-                
+
+        # noinspection PyUnusedLocal
         def _TimeEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            "Callback from Time service events"
+            """Callback from Time service events"""
             if aSvName == 'Seconds':
                 self.evtTime = int( aSvVal )
                 self.timeEvent.set()
-                
+
+        # noinspection PyUnusedLocal
         def _PlaylistEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            "Callback from Playlist service events"
+            """Callback from Playlist service events"""
             if aSvName == 'TransportState':
                 if aSvVal == 'Stopped':
                     self.stoppedEvent.set()        
@@ -171,10 +174,10 @@ class Config:
                 
                 
     class Stimulus:
-        "Configuration subclass for stimulus info and invokation"
+        """Configuration subclass for stimulus info and invokation"""
         
         def __init__( self, aAction, aMinVal, aMaxVal, aPrecon, aTimer1, aTimer2 ):
-            "Initialise class data"
+            """Initialise class data"""
             self.action = aAction
             self.precon = aPrecon
             self.minVal = aMinVal
@@ -185,23 +188,23 @@ class Config:
             self.timeEvent= threading.Event()
         
         def Invoke( self, aDut ):
-            "Invoke stimulus on specified renderer"
+            """Invoke stimulus on specified renderer"""
             aDut.time.AddSubscriber( self._timeEventCb )
             if self.action in ['Play','Pause','Stop','Next','Previous']:
                 getattr( aDut.playlist, self.action )()
             else:
-                min = self._SubstMacros( self.minVal, aDut )
-                max = self._SubstMacros( self.maxVal, aDut )
-                self.precon.log.Info( self.precon.dev, 'MIN %s  MAX %s' % (str(min), str(max)))
+                mini = self._SubstMacros( self.minVal )
+                maxi = self._SubstMacros( self.maxVal )
+                self.precon.log.Info( self.precon.dev, 'MIN %s  MAX %s' % (str(mini), str(maxi)))
 
-                if min == '':
-                    self.val = random.randint( max-100, max )
-                elif max == '':
-                    self.val = random.randint( min, min+100 )
-                elif min == max:
-                    self.val = min
+                if mini == '':
+                    self.val = random.randint( maxi-100, maxi )
+                elif maxi == '':
+                    self.val = random.randint( mini, mini+100 )
+                elif mini == maxi:
+                    self.val = mini
                 else:
-                    self.val = random.randint( min, max )
+                    self.val = random.randint( mini, maxi )
                 getattr( aDut.playlist, self.action )( self.val )
             self.timer1.start()
             self.timer2.start()
@@ -212,8 +215,9 @@ class Config:
             self.timeEvent.clear()
             self.timeEvent.wait( 5 )            
             aDut.time.RemoveSubscriber( self._timeEventCb )
-        
-        def _SubstMacros( self, aArg, aDut ):
+
+        # noinspection PyMethodMayBeStatic
+        def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values. Some of these are
                NOT KNOWN at __init__ time, so call the substs at Invoke() time
                Valid macros are:
@@ -231,17 +235,18 @@ class Config:
             except:
                 subst = aArg
             return subst
-        
+
+        # noinspection PyUnusedLocal
         def _timeEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            "Callback from Time service events"
+            """Callback from Time service events"""
             self.timeEvent.set()        
 
         
     class Outcome:
-        "Configuration subclass for outcome checking"
+        """Configuration subclass for outcome checking"""
         
         def __init__( self, aId, aState, aTrack, aSecs, aPrecon, aStim, aDelay1, aDelay2 ):
-            "Initialise class data"
+            """Initialise class data"""
             self.id     = aId
             self.state  = aState
             self.track  = aTrack
@@ -252,17 +257,17 @@ class Config:
             self.delay2 = aDelay2
 
         def Check( self, aLog, aDut, aDev ):
-            "Check outcome on specified renderer"
+            """Check outcome on specified renderer"""
             expState = self.state
             expTrack = int( self._SubstMacros( self.track ))
-            expSecs  = int( self._SubstMacros( self.secs, aDut ))
+            expSecs  = int( self._SubstMacros( self.secs ))
 
             # wait a few secs (from time event/timeout) and check values
             self.delay1.wait()
             if expState == 'Playing': 
                 expSecs += kDelay1
                 (expState, expTrack, expSecs) = \
-                    self._RecalcExpected( aDut, expState, expTrack, expSecs )
+                    self._RecalcExpected( expState, expTrack, expSecs )
             self._CheckValues( aLog, aDut, aDev, expState, expTrack, expSecs, kDelay1 )
 
             # wait a few more secs and check that values are changing correctly
@@ -271,12 +276,12 @@ class Config:
             if expState == 'Playing':
                 expSecs += kDelay2-kDelay1
                 (expState, expTrack, expSecs) = \
-                    self._RecalcExpected( aDut, expState, expTrack, expSecs )
+                    self._RecalcExpected( expState, expTrack, expSecs )
             self._CheckValues( 
                 aLog, aDut, aDev, expState, expTrack, expSecs, kDelay2 )
 
         def _CheckValues( self, aLog, aDut, aDev, aState, aTrack, aSecs, aAfter ):
-            "Check values from DS are as expected"
+            """Check values from DS are as expected"""
             
             aLog.Info( '' )
             evtTrack = aDut.playlist.PlaylistIndex( aDut.playlist.id )     
@@ -375,8 +380,8 @@ class Config:
                 (self.id, pollUri, evtUri, aAfter) )
             aLog.Info( '' )     
             
-        def _RecalcExpected( self, aDut, aState, aTrack, aSecs ):
-            "Recalculate expected values after playback over time"
+        def _RecalcExpected( self, aState, aTrack, aSecs ):
+            """Recalculate expected values after playback over time"""
             expState = aState
             expTrack = aTrack
             expSecs  = aSecs
@@ -388,9 +393,10 @@ class Config:
                         expTrack = 0
                         if self.precon.repeat == 'off':
                             expState = 'Stopped'
-            return (expState, expTrack, expSecs)
-        
-        def _SubstMacros( self, aArg, aDut=None ):
+            return expState, expTrack, expSecs
+
+        # noinspection PyMethodMayBeStatic
+        def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values. Some of these are
                NOT KNOWN at __init__ time, so call the substs at Check() time
                Valid macros are:
@@ -415,7 +421,7 @@ class Config:
                         
 
     def __init__( self, aLog, aDev, aDut, aConf, aTracks ):
-        "Initialise class (and sub-class) data"
+        """Initialise class (and sub-class) data"""
         self.log    = aLog
         self.id     = aConf[0]
         self.dut    = aDut
@@ -449,22 +455,27 @@ class Config:
 
 
 class TestPlaylistPlayback( BASE.BaseTest ):
-    "Test playback control operation (using UPnP is control method)"
+    """Test playback control operation (using UPnP is control method)"""
 
     def __init__( self ):
-        "Constructor - initalise base class"
+        """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
         self.dut    = None
+        self.dutDev = None
         self.server = None
         self.soft   = None
                 
     def Test( self, aArgs ):
-        "DS Service state/transition test"
+        """DS Service state/transition test"""
+        dutName = ''
+        mode    = ''
+        seed    = 0
+
         # parse command line arguments
         try:
-            dutName    = aArgs[1]
-            mode       = aArgs[2]
-            seed       = int( aArgs[3] )
+            dutName = aArgs[1]
+            mode    = aArgs[2]
+            seed    = int( aArgs[3] )
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
@@ -472,7 +483,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         # seed the random number generator
         if not seed:
             seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % (seed) )
+        self.log.Info( '', 'Seeding random number generator with %d' % seed )
         random.seed( seed )
                 
         # create renderer CP and subscribe for DS events
@@ -507,7 +518,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         self.dut.playlist.Stop() 
             
     def Cleanup( self ):
-        "Perform post-test cleanup" 
+        """Perform post-test cleanup"""
         if self.dut:
             self.dut.Shutdown()
         if self.server:
@@ -517,7 +528,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )               
 
     def _GetConfigs( self, aMode ):
-        "Create and return list of test configurations (as filtered by aMode)"       
+        """Create and return list of test configurations (as filtered by aMode)"""
         tracks  = Common.GetTracks( kTrackList, self.server )
         configs = []
         for entry in configTable:
@@ -539,9 +550,9 @@ class TestPlaylistPlayback( BASE.BaseTest ):
                 if len( vals ) == 2:
                     # range of numbered configs in format [nn:mm]
                     try:
-                        min = int( vals[0] )
-                        max = int( vals[1].strip( ']' ))
-                        if min <= entry[0] and max >= entry[0]:
+                        mini = int( vals[0] )
+                        maxi = int( vals[1].strip( ']' ))
+                        if mini <= entry[0] <= maxi:
                             selected = True
                     except:
                         pass

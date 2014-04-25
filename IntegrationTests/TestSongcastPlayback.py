@@ -49,10 +49,10 @@ kTrackList = os.path.join( kAudioRoot, 'TrackListSpdif.xml' )
 
 
 class Config:
-    "Test configuration for Songcast testing"
+    """Test configuration for Songcast testing"""
 
     def __init__( self, aLog, aDut1Dev, aConf ):
-        "Initialise class data"
+        """Initialise class data"""
         self.log     = aLog
         self.dut1Dev = aDut1Dev
         self.conf    = aConf
@@ -60,7 +60,7 @@ class Config:
         self.duts    = None
         
     def Setup( self, aDuts ):
-        "Configure the DUTs. Order of configuration is randomly generated"
+        """Configure the DUTs. Order of configuration is randomly generated"""
         self.duts = aDuts
         order = [1, 2, 3]
         order.sort( lambda x,y: random.choice( [-1,1] ))
@@ -69,7 +69,7 @@ class Config:
         self.__SetupDut( order[2] )
             
     def __SetupDut( self, aNum ):
-        "Setup specifed DUT as determined by configuration parameters" 
+        """Setup specifed DUT as determined by configuration parameters"""
         source = self.conf[9-2*aNum]
         state  = self.conf[10-2*aNum]
         dut    = self.duts[aNum-1]
@@ -90,11 +90,13 @@ class Config:
         if 'DS' in source:
             self.__SetupReceiver( dut, source, state, self.duts )
 
-    def __SetupStandby( self, aDut, aState ):
-        "Set dut to Standby if specified, else ensure DUT out-of-standby"
+    @staticmethod
+    def __SetupStandby( aDut, aState ):
+        """Set dut to Standby if specified, else ensure DUT out-of-standby"""
         standbyTrue  = threading.Event()
         standbyFalse = threading.Event()
-        
+
+        # noinspection PyUnusedLocal
         def _ProductCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'Standby':
                 if aSvVal == 'true':
@@ -117,12 +119,14 @@ class Config:
                 standbyFalse.wait( 5 )
                 aDut.product.RemoveSubscriber( _ProductCb )
 
-    def __SetupPlaylist( self, aDut, aState ):
-        "Select random track in playlist and set specified transport state"
+    @staticmethod
+    def __SetupPlaylist( aDut, aState ):
+        """Select random track in playlist and set specified transport state"""
         transportPlaying = threading.Event()
         transportPaused = threading.Event()
         transportStopped = threading.Event()
 
+        # noinspection PyUnusedLocal
         def _PlaylistCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'TransportState':
                 if aSvVal == 'Playing':
@@ -146,17 +150,20 @@ class Config:
             transportStopped.wait( 3 )
         aDut.playlist.RemoveSubscriber( _PlaylistCb )
         
-    def __SetupReceiver( self, aDut, aSource, aState, aDuts ):
-        "Select receiver source, connect to sender and set transport state"
+    @staticmethod
+    def __SetupReceiver( aDut, aSource, aState, aDuts ):
+        """Select receiver source, connect to sender and set transport state"""
         sourceChanged    = threading.Event()
         uriChanged       = threading.Event()
         transportPlaying = threading.Event() 
-        transportStopped = threading.Event() 
-        
+        transportStopped = threading.Event()
+
+        # noinspection PyUnusedLocal
         def _ProductCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'SourceIndex':
                 sourceChanged.set()
-                
+
+        # noinspection PyUnusedLocal
         def _ReceiverCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'TransportState':
                 if aSvVal == 'Playing':
@@ -195,7 +202,7 @@ class Config:
         aDut.receiver.RemoveSubscriber( _ReceiverCb )
         
     def CheckSenders( self, aDuts ):
-        "Verify status of senders"
+        """Verify status of senders"""
         self.log.Info( '' )
         self.log.Info( '', '[%d] Checking senders status' % self.id )
         self.log.Info( '' )
@@ -217,7 +224,7 @@ class Config:
             self.__CheckSenderVars( dut, expStatus, expAudio, 'DUT3' )
             
     def __CheckSenderVars( self, aDut, aExpStatus, aExpAudio, aName ):
-        "Check sender service state vars as expected"
+        """Check sender service state vars as expected"""
         dutDev = aDut.product.productRoom
         self.log.FailUnless( dutDev, aDut.sender.status == aExpStatus, 
             '[%d] %s/%s actual/expected sender status for %s' % 
@@ -227,10 +234,13 @@ class Config:
             (self.id, aDut.sender.audio, aExpAudio, aName) )
     
     def CheckReceivers( self, aDuts ):
-        "Verify status of receivers"
+        """Verify status of receivers"""
         self.log.Info( '' )
         self.log.Info( '', '[%d] Checking receivers status' % self.id )
         self.log.Info( '' )
+        expUri  = ''
+        expMeta = ''
+
         if self.conf[13]:
             dut = aDuts[1]
             expState = self.conf[13]
@@ -250,7 +260,7 @@ class Config:
             self.__CheckRxVars( dut, expState, expUri, expMeta, 'DUT1' )
                 
     def __CheckRxVars( self, aDut, aExpState, aExpUri, aExpMeta, aName ):
-        "Check receiver service state vars as expected"
+        """Check receiver service state vars as expected"""
         dutDev = aDut.product.productRoom
         self.log.FailUnless( dutDev, aDut.receiver.transportState == aExpState, 
             '[%d] %s/%s actual/expected receiver transport state for %s' % 
@@ -265,21 +275,28 @@ class Config:
 
 
 class TestSongcastPlayback( BASE.BaseTest ):
-    "Test Songcast operations"
+    """Test Songcast operations"""
 
     def __init__( self ):
-        "Constructor - initalise base class"
+        """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
-        self.dut1   = None
-        self.dut2   = None
-        self.dut3   = None
-        self.soft1  = None
-        self.soft2  = None
-        self.soft3  = None   
-        self.server = None
+        self.dut1    = None
+        self.dut2    = None
+        self.dut3    = None
+        self.soft1   = None
+        self.soft2   = None
+        self.soft3   = None
+        self.dut1Dev = None
+        self.server  = None
                 
     def Test( self, aArgs ):
-        "Songcast test"
+        """Songcast Playback test"""
+        dut1Name = None
+        dut2Name = None
+        dut3Name = None
+        testMode = None
+        seed     = None
+
         try:
             dut1Name   = aArgs[1]
             dut2Name   = aArgs[2]
@@ -293,7 +310,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
         # seed the random number generator
         if not seed:
             seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % (seed) )
+        self.log.Info( '', 'Seeding random number generator with %d' % seed )
         random.seed( seed )
                 
         # create DUTs
@@ -367,7 +384,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
         self.dut1.playlist.Stop()
 
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         self.log.Info( '' )
         self.log.Info( '' )
         self.log.Info( '', 'Shutting Down' )
@@ -389,7 +406,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )                
 
     def _GetConfigs( self, aMode ):
-        "Create and return list of test configurations (as filtered by aMode)"       
+        """Create and return list of test configurations (as filtered by aMode)"""
         configs = []
         for entry in configTable:
             selected = False
@@ -400,9 +417,9 @@ class TestSongcastPlayback( BASE.BaseTest ):
                 vals = aMode[1:].split( ':' )
                 if len( vals ) == 2:
                     try:
-                        min = int( vals[0] )
-                        max = int( vals[1].strip( ']' ))
-                        if min <= entry[0] and max >= entry[0]:
+                        mini = int( vals[0] )
+                        maxi = int( vals[1].strip( ']' ))
+                        if mini <= entry[0] <= maxi:
                             selected = True
                     except:
                         pass

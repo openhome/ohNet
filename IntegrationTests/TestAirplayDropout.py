@@ -27,20 +27,25 @@ class TestAirplayDropout( BASE.BaseTest ):
     """Class to check for dropout in audio output using Airplay input"""
     
     def __init__( self, aSongcaster=None ):
-        "Constructor for Airplay Dropout test"
+        """Constructor for Airplay Dropout test"""
         BASE.BaseTest.__init__( self )
         self.dacp         = None
         self.dut          = None
+        self.dutDev       = None
         self.soft         = None        
         self.shuttingDown = False
         self.tick         = None
+        self.timer        = None
         self.songcaster   = aSongcaster
         self.finished     = threading.Event()
 
     def Test( self, args ):
-        "Net Aux Audio Dropout test"
-        scopeId = 'scope1'
-                
+        """Net Aux Audio Dropout test"""
+        dutName      = ''
+        iTunesServer = ''
+        track        = ''
+        duration     = '0'
+
         try:
             dutName      = args[1]
             iTunesServer = args[2]
@@ -102,7 +107,7 @@ class TestAirplayDropout( BASE.BaseTest ):
         self.finished.wait()
                             
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         self.shuttingDown = True
         if self.tick: self.tick.cancel()
         if self.dut:  self.dut.Shutdown()
@@ -117,7 +122,7 @@ class TestAirplayDropout( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )
         
     def __TickCb( self ):
-        "Tick timer CB - monitor playback, detect boundary conditions"
+        """Tick timer CB - monitor playback, detect boundary conditions"""
         try:
             info = self.dacp.nowPlaying
             self.log.Info( self.dacp.dev, info )        
@@ -129,7 +134,7 @@ class TestAirplayDropout( BASE.BaseTest ):
             self.tick.start()
         
     def __DurationCb( self ):
-        "Duration timer CB - called to end test after specified time"
+        """Duration timer CB - called to end test after specified time"""
         self.finished.set()
             
 if __name__ == '__main__':

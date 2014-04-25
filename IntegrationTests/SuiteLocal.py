@@ -17,13 +17,13 @@ import BaseSuite as Suite
 import os
 import sys
  
+ms         = None
 logDir     = None
 dacpServer = os.environ['COMPUTERNAME']
 avtList    = 'Playlists  ~Encodings-FreeCodecs'
 medList    = 'Playlists  ~5TrackAlbumsFreeCodecs'
 adList     = 'Playlists  ~Mixed-FreeCodecs'
 apTrack    = 'Stereo1kHz-441-16-0dB-72m' 
-
 
 try:
     ms = sys.argv[1]
@@ -32,6 +32,7 @@ try:
 except:
     print '\n', __doc__, '\n'
     print '\n\nInvalid arguments %s' % (str( sys.argv ))
+    # noinspection PyProtectedMember
     os._exit( -1 )
 
     

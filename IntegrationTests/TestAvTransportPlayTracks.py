@@ -38,17 +38,16 @@ kAvtNs = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
 
 
 class TestAvTransportPlayTracks( BASE.BaseTest ):
-    "Test playing of tracks"
+    """Test playing of tracks"""
 
     def __init__( self ):
-        " Constructor - initalise base class"
+        """Constructor - initialise base class"""
         BASE.BaseTest.__init__( self )
-
-    def Test( self, args ):
-        "UPnP device eventing test, with network stressing"
         self.mr               = None
         self.sender           = None
+        self.senderDev        = None
         self.receiver         = None
+        self.rcvrDev          = None
         self.soft1            = None
         self.soft2            = None
         self.playlist         = []
@@ -59,6 +58,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.tickTimer        = None
         self.trackPlayTime    = 0
         self.expectedPlayTime = 0
+        self.avt              = None
         self.avtState         = None
         self.avtUri           = None
         self.testLoop         = 0
@@ -67,14 +67,24 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.stuckRelTime     = 0
         self.prevRelTime      = '0:00:00'
         self.abortMsg         = ''
+        self.currentPlayTime  = 0
+        self.currentTrackDuration = 0
+        self.infoCheckTimer   = None
         self.eop              = threading.Event()
         self.playing          = threading.Event()
         self.trackDuration    = threading.Event()
         self.newUri           = threading.Event()
         self.mutex            = threading.Lock()
 
+    def Test( self, args ):
+        """UPnP device eventing test, with network stressing"""
+        senderName   = ''
+        receiverName = ''
+        serverName   = ''
+        playlistName = ''
+
         try:
-            dutName      = args[1]
+            senderName   = args[1]
             receiverName = args[2]
             serverName   = args[3]
             playlistName = args[4]
@@ -89,15 +99,11 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if receiverName.lower() == 'none':
            receiverName = None
 
-        if dutName.lower() == 'local':
+        mpName = senderName
+        if senderName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
-            dutName = 'TestSender:SoftPlayer'
-                   
-        if 'MediaRenderer' in dutName:
-            senderName = dutName.replace( ':MediaRenderer', '' )
-        else:
-            senderName = dutName
-            dutName += ':MediaRenderer'        
+            senderName = 'TestSender:UPnP AV'
+            mpName = 'TestSender:SoftPlayer'
 
         # get playlist from server
         server = Server.MediaServer( serverName )
@@ -109,7 +115,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
 
         # create sender
         self.senderDev = senderName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
+        self.sender = Volkano.VolkanoDevice( mpName, aIsDut=True )
         
         # create receiver and connect to sender
         if receiverName:
@@ -123,7 +129,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             self.receiver.receiver.Play()
                 
         # create AVT renderer CP
-        self.mr = Renderer.MediaRendererDevice( dutName )
+        self.mr = Renderer.MediaRendererDevice( senderName )
         self.avt = self.mr.avt
         self.avt.Stop()
         self.avt.uri = ''
@@ -152,16 +158,17 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 self.log.Abort( self.senderDev, self.abortMsg )
                 
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.mr: self.mr.Shutdown()
         if self.sender: self.sender.Shutdown()
         if self.receiver: self.receiver.Shutdown()
         if self.soft1:  self.soft1.Shutdown()
         if self.soft2:  self.soft2.Shutdown()
         BASE.BaseTest.Cleanup( self )
-        
+
+    # noinspection PyUnusedLocal
     def _AvtEventCb( self, service, svName, svVal, svSeq ):
-        "Callback from AVTransport Service UPnP events whilst test is running"
+        """Callback from AVTransport Service UPnP events whilst test is running"""
         xml           = ET.fromstring( svVal.encode( 'utf-8' ))[0]  
         evAvtState    = xml.find( kAvtNs+'TransportState' ).attrib['val']
         evTrkDuration = xml.find( kAvtNs+'CurrentTrackDuration' ).attrib['val']
@@ -193,7 +200,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             t.start()
                                         
     def _PlayTimerCb( self ):
-        "Callback from playtime timer - skips to next track"
+        """Callback from playtime timer - skips to next track"""
         if self.tickTimer:
             self.tickTimer.cancel()
             self.tickTimer = None
@@ -202,7 +209,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.mutex.release()
         
     def _StartNextTrack( self ):
-        "Start playback of next track - call on a seperate thread"
+        """Start playback of next track - call on a seperate thread"""
         self.trackIndex += 1
         if self.trackIndex >= self.numTracks:
             self.eop.set()
@@ -244,7 +251,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.trackPlayTime = 0
         self.expectedPlayTime = self.currentTrackDuration     
             
-        if self.playTime != None and self.playTime < self.expectedPlayTime:
+        if self.playTime is not None and self.playTime < self.expectedPlayTime:
             self.expectedPlayTime = self.playTime
             #.... wait for playing (with timeout)
             self.playTimer = LogThread.Timer( self.playTime-0.1, self._PlayTimerCb )
@@ -261,7 +268,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.mutex.release()
         
     def _CheckPlayTime( self ):
-        "Verify track played for expected duration (see Trac #1527)"
+        """Verify track played for expected duration (see Trac #1527)"""
         if self.expectedPlayTime:
             loLim = self.expectedPlayTime-2 # widened as IPY timer can be 1s short
             hiLim = self.expectedPlayTime+1
@@ -269,7 +276,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 'track play time as expected')
                     
     def _TickCb( self ):
-        "One-second tick callback - updates current track elapsed time"
+        """One-second tick callback - updates current track elapsed time"""
         self.mutex.acquire()
         self.noRelTime += 1
         self.stuckRelTime += 1
@@ -309,7 +316,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.tickTimer.start()
                 
     def _InfoCheckCb( self ):
-        "Called 7s into playback to check Info on Sender and Receiver"
+        """Called 7s into playback to check Info on Sender and Receiver"""
         avtDuration = self.avt.currentMediaDuration
         avtUri      = self.avt.avTransportURI
         avtMetadata = self.avt.avTransportURIMetaData
@@ -329,8 +336,9 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             self.log.FailUnless( self.rcvrDev, avtMetadata==self.receiver.info.metadata, 
                 '(%s/%s) AVT/Receiver metadata' % (avtMetadata, self.receiver.info.metadata) )
         
-    def _ToSecs( self, aTime ):
-        "Convert string time passed in (hh:mm:ss) to integer seconds"
+    @staticmethod
+    def _ToSecs( aTime ):
+        """Convert string time passed in (hh:mm:ss) to integer seconds"""
         fields = aTime.split( ':' )
         return 3600*int( fields[0] ) + 60*int( fields[1] ) + int( fields[2] )
     

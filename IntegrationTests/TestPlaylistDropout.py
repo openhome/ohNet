@@ -37,15 +37,19 @@ class TestPlaylistDropout( BASE.BaseTest ):
     """Class to check for dropout in audio output"""
     
     def __init__( self ):
-        "Constructor for AudioDropout test"
+        """Constructor for AudioDropout test"""
         self.sender          = None
+        self.senderDev       = None
         self.receiver        = None
+        self.rcvrDev         = None
         self.slave           = None
+        self.slaveDev        = None
         self.server          = None
         self.soft1           = None
         self.soft2           = None
         self.soft3           = None
         self.monitor         = False
+        self.exitTimer       = None
         self.senderPlaying   = threading.Event()
         self.receiverPlaying = threading.Event()
         self.slavePlaying    = threading.Event()
@@ -55,7 +59,12 @@ class TestPlaylistDropout( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
 
     def Test( self, args ):
-        "Audio Dropout test"    
+        """Audio Dropout test"""
+        senderName   = ''
+        receiverName = ''
+        slaveName    = ''
+        duration     = 0
+
         # parse command line arguments
         try:
             senderName   = args[1]
@@ -89,8 +98,8 @@ class TestPlaylistDropout( BASE.BaseTest ):
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
                 
         # load sender's playlist and start playback
-        self.sender.playlist.repeat = 'on';
-        self.sender.playlist.shuffle = 'on';
+        self.sender.playlist.repeat = 'on'
+        self.sender.playlist.shuffle = 'on'
         self.sender.playlist.DeleteAllTracks()
         self.sender.playlist.AddPlaylist( tracks )
         self.sender.playlist.SeekIndex( 0 )
@@ -147,7 +156,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.slave.receiver.RemoveSubscriber( self._SlaveReceiverCb )        
 
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.sender:    
             self.sender.Shutdown()
         if self.receiver:
@@ -162,10 +171,11 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.soft2.Shutdown()
         if self.soft3:
             self.soft3.Shutdown()
-        BASE.BaseTest.Cleanup( self )                
-        
+        BASE.BaseTest.Cleanup( self )
+
+    # noinspection PyUnusedLocal
     def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):
-        "Callback from Sender's Playlist service"
+        """Callback from Sender's Playlist service"""
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.senderPlaying.set()
@@ -173,8 +183,9 @@ class TestPlaylistDropout( BASE.BaseTest ):
                 if self.monitor:
                     self.log.Fail( self.senderDev, "Sender dropout detected -> state is %s" % svVal )
                 
+    # noinspection PyUnusedLocal
     def _ReceiverReceiverCb( self, service, svName, svVal, svSeq ):
-        "Callback from Receiver's Receiver service"
+        """Callback from Receiver's Receiver service"""
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.receiverPlaying.set()
@@ -184,8 +195,9 @@ class TestPlaylistDropout( BASE.BaseTest ):
         elif svName == 'Uri':
             self.receiverUri.set()
             
+    # noinspection PyUnusedLocal
     def _SlaveReceiverCb( self, service, svName, svVal, svSeq ):
-        "Callback from Slave's Receiver's service"
+        """Callback from Slave's Receiver's service"""
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.slavePlaying.set()
@@ -196,7 +208,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.slaveUri.set()
             
     def _DurationCb( self ):
-        "Callback from duration timer"
+        """Callback from duration timer"""
         self.durationDone.set()
 
             

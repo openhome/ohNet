@@ -21,11 +21,12 @@ kRcsNs  = '{urn:schemas-upnp-org:metadata-1-0/RCS/}'
 
 
 class TestRenderingControlService( BASE.BaseTest ):
-    "Test DS implementation of UPnP AV RenderingControl Service"
+    """Test DS implementation of UPnP AV RenderingControl Service"""
 
     def __init__( self ):
         BASE.BaseTest.__init__( self )
         self.mr           = None
+        self.mrDev        = None
         self.rc           = None
         self.soft         = None
         self.currVolume   = None
@@ -34,19 +35,17 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.rcEvent      = threading.Event()
         
     def Test( self, args ):
+        dutName = ''
         try:
             dutName    = args[1]
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
-            
+
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = 'TestDev:UPnP AV'
             
-        if 'MediaRenderer' not in dutName:
-            dutName += ':MediaRenderer'        
-
         self.mrDev = dutName.split( ':' )[0]
         self.mr = MR.MediaRendererDevice( dutName )
         self.rc = self.mr.rc        
@@ -68,7 +67,7 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.Mute( 15 )
 
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.mr:
             self.mr.Shutdown()
         if self.soft:
@@ -76,8 +75,8 @@ class TestRenderingControlService( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )                
                     
     def VolStepping( self, aTarget ):
-        "Step volume to aTarget (or range limit)"
-        self.log.Info( self.mrDev, 'Stepping volume to %d' % (aTarget) )
+        """Step volume to aTarget (or range limit)"""
+        self.log.Info( self.mrDev, 'Stepping volume to %d' % aTarget )
         polledVolume = -1
         done = False        
         while not done:
@@ -113,8 +112,8 @@ class TestRenderingControlService( BASE.BaseTest ):
             'Final POLLED volume was %d, expected %d' % (polledVolume, aTarget) )
                     
     def VolDbStepping( self, aTarget ):
-        "Step volume to aTarget (or range limit)"
-        self.log.Info( self.mrDev, 'Stepping volume DB to %d' % (aTarget) )
+        """Step volume to aTarget (or range limit)"""
+        self.log.Info( self.mrDev, 'Stepping volume DB to %d' % aTarget )
         step = (self.rc.volumeDbRange['MaxValue']-self.rc.volumeDbRange['MinValue']) / 100
         done = False        
         while not done:
@@ -130,13 +129,13 @@ class TestRenderingControlService( BASE.BaseTest ):
                 '%d/%d (actual/expected) EVENTED volume DB' % (self.currVolumeDb, newVol) )    
             self.log.FailUnless( self.mrDev, polledVolumeDb==newVol, 
                 '%d/%d (actual/expected) POLLED volume DB' % (polledVolumeDb, newVol) )
-            if self.currVolumeDb > (aTarget-step) and self.currVolumeDb <= aTarget:
+            if (aTarget-step) < self.currVolumeDb <= aTarget:
                 done=True
         self.log.CheckLimits( self.mrDev, 'GTLE', self.currVolumeDb, aTarget-step, aTarget, 'Final EVENTED volume DB' )
         self.log.CheckLimits( self.mrDev, 'GTLE', self.rc.polledVolumeDb, aTarget-step, aTarget, 'Final EVENTED volume DB' )
 
     def Mute( self, aLoops ):        
-        "Check mute operates correctly"
+        """Check mute operates correctly"""
         if aLoops/2.0 == aLoops/2:
             expMute = self.currMute
         else:
@@ -144,7 +143,8 @@ class TestRenderingControlService( BASE.BaseTest ):
                 expMute = 1
             else:
                 expMute = 0
-                
+
+        nextMute = 0
         currMute = self.rc.mute
         for i in range( aLoops ):
             self.rcEvent.clear()
@@ -170,9 +170,10 @@ class TestRenderingControlService( BASE.BaseTest ):
         if type( polledMute ) == int:
             self.log.FailUnless( self.mrDev, polledMute == nextMute, 
                 'Final POLLED mute state after %d presses was %s' % (aLoops, polledMute))
-        
+
+    # noinspection PyUnusedLocal
     def _RcEventCb( self, service, svName, svVal, svSeq ):
-        "Callback from UPnP RenderingControl events"
+        """Callback from UPnP RenderingControl events"""
         tree = ET.XML( svVal.encode( 'utf-8' ))
         self.currVolume = int( tree.getiterator( kRcsNs+'Volume')[0].attrib['val'] )
         self.currVolumeDb = int( tree.getiterator( kRcsNs+'VolumeDB')[0].attrib['val'] )

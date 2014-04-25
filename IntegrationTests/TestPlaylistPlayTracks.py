@@ -34,21 +34,22 @@ import time
 
 
 class TestPlaylistPlayTracks( BASE.BaseTest ):
-    "Test playing of tracks"
+    """Test playing of tracks"""
 
     def __init__( self ):
-        " Constructor - initalise base class"
+        """Constructor - initialise base class"""
         BASE.BaseTest.__init__( self )
         self.sender           = None
+        self.senderDev        = None
         self.receiver         = None
+        self.rcvrDev          = None
         self.server           = None
+        self.soft1            = None
+        self.soft2            = None
         self.playTimer        = None
         self.nextTimer        = None
-
-    def Test( self, args ):
-        "Play tracks, using Media services for control"
-        self.soft1            = None 
-        self.soft2            = None 
+        self.stateTimer       = None
+        self.checkInfoTimer   = None
         self.meta             = ''
         self.tracks           = []
         self.repeat           = 'off'
@@ -59,15 +60,20 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.senderPlayTime   = 0
         self.receiverPlayTime = 0
         self.expectedPlayTime = 0
-        self.playTimer        = None
         self.playActioned     = False
         self.senderPlayed     = False
-        self.stateTimer       = None
         self.senderPlaying    = threading.Event()
         self.senderStarted    = threading.Event()
         self.senderStopped    = threading.Event()
         self.senderDuration   = threading.Event()
         self.playTimerMutex   = threading.Lock()
+
+    def Test( self, args ):
+        """Play tracks, using Media services for control"""
+        senderName   = ''
+        receiverName = ''
+        serverName   = ''
+        playlistName = ''
 
         try:
             senderName   = args[1]
@@ -156,7 +162,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.senderStopped.wait()
                 
     def Cleanup( self ):
-        "Perform post-test cleanup" 
+        """Perform post-test cleanup"""
         if self.playTimer:
              self.playTimer.cancel()
         if self.server:
@@ -169,25 +175,28 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.soft1.Shutdown()
         if self.soft2:
             self.soft2.Shutdown()
-        BASE.BaseTest.Cleanup( self )               
-        
+        BASE.BaseTest.Cleanup( self )
+
+    # noinspection PyUnusedLocal
     def _SenderTimeCb( self, service, svName, svVal, svSeq ):
-        "Callback from Time Service UPnP events on sender device"
+        """Callback from Time Service UPnP events on sender device"""
         if svName == 'Seconds':
             if svVal not in [0,'0']:
                 # Ignore 0 reading to work around race at track change giving
                 # false (=0) results for play time as this event for next track
                 # has already occurred
                 self.senderPlayTime = int( svVal )
-                                
+
+    # noinspection PyUnusedLocal
     def _SenderInfoCb( self, service, svName, svVal, svSeq ):
-        "Callback from Time Service UPnP events on sender device"
+        """Callback from Time Service UPnP events on sender device"""
         if svName == 'Duration':
             if svVal != 0:
                 self.senderDuration.set()
-                
+
+    # noinspection PyUnusedLocal
     def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):
-        "Callback from Playlist Service UPnP events on sender device"
+        """Callback from Playlist Service UPnP events on sender device"""
         if svName == 'TransportState':
             self.senderPlaying.clear()
             if self.stateTimer:   # add hysteresis to transport state comparison
@@ -213,7 +222,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             thread.start()                
             
     def _TrackChanged( self, aId ):
-        "Track changed - check results and setup timer for next track"            
+        """Track changed - check results and setup timer for next track"""
         if aId>0:
             if self.senderPlayed:
                 self._CheckPlayTime()
@@ -227,7 +236,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self._CheckTrackInfo( aId )
 
     def _CheckTrackInfo( self, aId ): 
-        "Update 'now playing' log and check reported track info" 
+        """Update 'now playing' log and check reported track info"""
         if self.playActioned:               
             plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
             self.log.Info( '' )
@@ -236,7 +245,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
             self.log.Info( '', '----------------------------------------' )
             self.log.Info( '' )
-                
+
             if self.senderStarted.isSet():
                 dsTrack = self.sender.playlist.TrackInfo( aId )
                 if dsTrack:
@@ -275,19 +284,21 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 else:
                     if self.sender.playlist.transportState != 'Playing':
                         self.senderPlayed = False
-                    self._SetupPlayTimer()                
+                    self._SetupPlayTimer()
 
+    # noinspection PyUnusedLocal
     def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
-        "Callback from Time Service UPnP events on receiver device"
+        """Callback from Time Service UPnP events on receiver device"""
         if svName == 'Seconds':
             if svVal not in [0,'0']:
                 # Ignore 0 reading to work around race at track change giving
                 # false (=0) results for play time as this event for next track
                 # has already occurred
                 self.receiverPlayTime = int( svVal )
-                
+
+    # noinspection PyUnusedLocal
     def _ReceiverReceiverCb( self, service, svName, svVal, svSeq ):
-        "Callback from Receiver Service UPnP events on receiver device"
+        """Callback from Receiver Service UPnP events on receiver device"""
         if self.playActioned:
             if svName == 'TransportState':
                 # add hysteresis to transport state comparison
@@ -297,7 +308,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.stateTimer.start()
             
     def _ReceiverStateCb( self ):
-        "Timer callback from receiver transport state event"
+        """Timer callback from receiver transport state event"""
         senderState = self.sender.playlist.transportState
         receiverState = self.receiver.receiver.transportState
         if receiverState == 'Playing':
@@ -308,7 +319,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
                 
     def _SetupPlayTimer( self ):
-        "Setup timer to callback after specified play time"
+        """Setup timer to callback after specified play time"""
         self.senderStarted.wait()
         self.senderPlaying.wait()
         self.startTime = time.time()
@@ -320,7 +331,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.expectedPlayTime = self.sender.info.duration
             else:
                 self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
-        if self.playTime != None and self.playTime < self.expectedPlayTime:
+        if self.playTime is not None and self.playTime < self.expectedPlayTime:
             self.expectedPlayTime = self.playTime
             if self.playTime == 0:
                 self._PlayTimerCb()
@@ -347,7 +358,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                self.nextTimer.start()
         
     def _PlayTimerCb( self ):
-        "Callback from playtime timer - skips to next track"
+        """Callback from playtime timer - skips to next track"""
         self.sender.playlist.Next()
         # The 'next' timer is needed to stimulate track change code when there
         # has been no track change (same track played twice in a row). It will
@@ -358,7 +369,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.nextTimer.start()
         
     def _NextTimerCb( self ):
-        "Next Timer CB - called on expiry of th e 'NextTimer'"
+        """Next Timer CB - called on expiry of the 'NextTimer'"""
         # Next timer will call into this 1s after a track change has been
         # forced by the 'Next' action (unless the timer has been cancelled due
         # to receipt of an Id event from the Playlist service). This is to 
@@ -368,7 +379,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self._TrackChanged( self.sender.playlist.id )
 
     def _CheckPlayTime( self ):
-        "Verify track played for expected duration (see Trac #1527)"
+        """Verify track played for expected duration (see Trac #1527)"""
         if self.expectedPlayTime:
             loLim = self.expectedPlayTime-1
             hiLim = self.expectedPlayTime+1
@@ -381,7 +392,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 loLim, hiLim, 'measured (by test) play time')
             
     def _CheckReadList( self ):
-        "Check operation of the (Cara) Playlist ReadList action"
+        """Check operation of the (Cara) Playlist ReadList action"""
         # Test ReadList using a random population sample from the entire current
         # IDArray, and randomly append a (probably) invalid ID to this test list
         fail        = False
@@ -397,11 +408,11 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             (numTracks, totalTracks) )
         
         readTracks = self.sender.playlist.TracksInfo( ids )
-        for id in readTracks.keys():
-            readUri  = readTracks[id][0]
-            readMeta = readTracks[id][1]
+        for tId in readTracks.keys():
+            readUri  = readTracks[tId][0]
+            readMeta = readTracks[tId][1]
             try:
-                (expUri, expMeta)  = self.tracks[self.sender.playlist.idArray.index( id )]
+                (expUri, expMeta)  = self.tracks[self.sender.playlist.idArray.index( tId )]
             except:
                 (expUri, expMeta)  = ('', '')
             if os.name == 'posix':
@@ -409,11 +420,11 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 readMeta = readMeta.replace( '\\', '' )
                 expMeta  = expMeta.replace( '\\', '' )
                 
-            if( readUri != expUri ):
+            if readUri != expUri:
                 fail = True
                 self.log.Fail( self.senderDev, 'Actual/Expected URI read from DS %s | %s' % 
                                (readUri, expUri) )
-            if( readMeta != expMeta ):
+            if readMeta != expMeta:
                 fail = True
                 self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % 
                                (readMeta, expMeta) )
@@ -421,7 +432,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
 
     def _CheckReceiverInfo( self ):
-        "Check receiver Info matches sender"
+        """Check receiver Info matches sender"""
         # called 3s after track change to allow events from both sides to be
         # updated to current values - test skipped if track play time < 10s
         for item in ['bitDepth', 'bitRate', 'codecName', 'duration', 'lossless',

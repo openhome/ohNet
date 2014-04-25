@@ -138,16 +138,21 @@ kAvtNs     = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
 kDidlNs    = '{urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/}'
 
 
+# noinspection PyUnusedLocal
 class TestAvTransportService( BASE.BaseTest ):
-    "Test DS AvTransport Service"
+    """Test DS AvTransport Service"""
 
     def __init__( self ):
         BASE.BaseTest.__init__( self )
+        self.mrName    = None
+        self.mrDev     = None
         self.soft      = None
         self.server    = None
         self.volkano   = None
         self.upnpMr    = None
         self.avt       = None
+        self.trans     = None
+        self.startState= None
         self.prevSv    = {}
         self.currSv    = {}
         self.trackLen  = {}        
@@ -155,8 +160,9 @@ class TestAvTransportService( BASE.BaseTest ):
         self.playTime  = kPlayTime 
         
     def Test( self, args ):
-        "AVTransport state-transition test"
+        """AVTransport state-transition test"""
         # parse command line arguments
+        stateToTest = 'ALL'
         try:
             self.mrName = args[1]
             stateToTest = args[2].upper()
@@ -166,24 +172,22 @@ class TestAvTransportService( BASE.BaseTest ):
             
         # setup states to test
         allStates = ['STOPPED','PLAYING','PAUSED_PLAYBACK','PAUSED_UNKNOWN']
+        statesToTest = None
         if stateToTest == 'ALL':
             statesToTest = allStates
         elif stateToTest in allStates:
             statesToTest = [stateToTest]
         else:
-            self.log.Abort( '', 'Invalid state-to-test %s' % (stateToTest) )
+            self.log.Abort( '', 'Invalid state-to-test %s' % stateToTest )
 
-        if 'MediaRenderer' not in self.mrName:
-            self.mrName += ':MediaRenderer'
-            
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
         
         # start local softplayer if required
-        if self.mrName.lower() == 'local:mediarenderer':
+        if self.mrName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr' )
-            self.mrName = 'TestMr:SoftPlayer:MediaRenderer'
+            self.mrName = 'TestMr:UPnP AV'
         
         # create UPnP CPs for renderer and server, and subscribe to AVT events
         self.mrDev = self.mrName.split( ':' )[0]
@@ -198,9 +202,11 @@ class TestAvTransportService( BASE.BaseTest ):
             self.log.FailIf( self.mrDev, gStaticSvs[sv]!=self.currSv[sv], msg )
         
         # load test track info from media server into transition parameters
+        uri = ''
+        meta = ''
         xmlFile = os.path.join( kAudioRoot, 'TrackList.xml' )
         xml = ET.parse( xmlFile )
-        trackList = xml.findall( 'Track' );
+        trackList = xml.findall( 'Track' )
         for track in trackList:
             if len( gParams['SetAVTransportURI'] ) < 4:
                 uri = self.server.Listener() + track.find( 'Uri' ).text
@@ -291,7 +297,7 @@ class TestAvTransportService( BASE.BaseTest ):
         self.avt.Stop()
 
     def Cleanup( self ):
-        "Perform post-test cleanup" 
+        """Perform post-test cleanup"""
         if self.upnpMr:          
             self.upnpMr.Shutdown()
         if self.volkano:
@@ -303,7 +309,7 @@ class TestAvTransportService( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )
 
     def _RefreshCurrentSvs( self ):
-        "Refresh SV dict with current values"
+        """Refresh SV dict with current values"""
         self.currSv = {'AbsoluteCounterPosition':      self.avt.absoluteCounterPosition,        
                        'AbsoluteTimePosition':         self.avt.absoluteTimePosition,
                        'AVTransportURI':               self.avt.avTransportURI,
@@ -338,7 +344,7 @@ class TestAvTransportService( BASE.BaseTest ):
         self.currSv['AbsoluteCounterPosition'] = posnInfo['AbsCount']
                 
     def _SetState( self, state ):
-        "Force DUT into specified state (only actions if necessary)"
+        """Force DUT into specified state (only actions if necessary)"""
         self.avt.Stop()
         if state == 'PAUSED_PLAYBACK':            
             if int( self.currSv['NumberOfTracks'] ) < 1:
@@ -366,8 +372,9 @@ class TestAvTransportService( BASE.BaseTest ):
             self.avt.Play()
             time.sleep( self.playTime )
 
-    def _SeekParams( self ):
-        "Build seek parameters"
+    @staticmethod
+    def _SeekParams( ):
+        """Build seek parameters"""
         seek = [{'InstanceID':0, 'Unit':'REL_TIME',  'Target': '0:01:45'},
                 {'InstanceID':0, 'Unit':'REL_TIME',  'Target': '0:00:10'}]
         return seek
@@ -383,13 +390,13 @@ class TestAvTransportService( BASE.BaseTest ):
         else:
             expected = self.prevSv['AVTransportURI']
         msg = 'AVTransportURI was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )
+        return actual==expected, msg
     
     def _AVTransportURIMetaDataCheck( self, **kw ):
         actual   = self.currSv['AVTransportURIMetaData']
         expected = self.trackMeta[self.currSv['AVTransportURI']]
         msg = 'AVTransportURIMetaData was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )        
+        return actual==expected, msg
     
     def _CurrentMediaDurationCheck( self, **kw ):
         d = self.currSv['CurrentMediaDuration']
@@ -404,7 +411,7 @@ class TestAvTransportService( BASE.BaseTest ):
         else:    
             expected = '0:00:00'
         msg = 'CurrentMediaDuration was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )
+        return actual==expected, msg
                 
     def _CurrentTrackCheck( self, **kw ):
         actual   = int( self.currSv['CurrentTrack'] )
@@ -412,7 +419,7 @@ class TestAvTransportService( BASE.BaseTest ):
         if self.currSv['AVTransportURI']:
             expected = 1
         msg = 'CurrentTrack was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )
+        return actual==expected, msg
 
     def _CurrentTrackDurationCheck( self, **kw ):
         # CurrentTrackDuration will either be zero or the actual duration.
@@ -432,19 +439,19 @@ class TestAvTransportService( BASE.BaseTest ):
         else:    
             expected = '0:00:00'
         msg = 'CurrentTrackDuration was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )
+        return actual==expected, msg
     
     def _CurrentTrackMetaDataCheck( self, **kw ):
         actual   = self.currSv['CurrentTrackMetaData']
         expected = self.trackMeta[self.currSv['CurrentTrackURI']]
         msg = 'CurrentTrackMetaData was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )        
+        return actual==expected, msg
     
     def _CurrentTrackURICheck( self, **kw ):
         actual   = self.currSv['CurrentTrackURI']        
         expected = self.currSv['AVTransportURI']
         msg = 'CurrentTrack was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )
+        return actual==expected, msg
     
     def _NumberOfTracksCheck( self, **kw ):
         actual   = int( self.currSv['NumberOfTracks'] )
@@ -452,7 +459,7 @@ class TestAvTransportService( BASE.BaseTest ):
         if self.currSv['AVTransportURI']:
             expected = 1
         msg = 'NumberOfTracks was %s expected %s' % (actual, expected)
-        return( actual==expected, msg )
+        return actual==expected, msg
      
     def _PlaybackStorageMediumCheck( self, **kw ):
         actual   = self.currSv['PlaybackStorageMedium']
@@ -460,38 +467,38 @@ class TestAvTransportService( BASE.BaseTest ):
         if self.currSv['AVTransportURI'] == '':
             expected = 'NONE'
         msg = 'PlaybackStorageMedium was %s expected %s' % (actual, expected)
-        return (actual==expected, msg)    
+        return actual==expected, msg
     
     def _RelativeCounterPositionCheck( self, **kw ):
         actual     = self.currSv['RelativeCounterPosition']
         expected   = self._ExpectedRelativePosition( mode='count', **kw )
         msg        = 'RelativeCounterPosition was %d expected %d -> %d' \
                        % (actual, expected[0], expected[1])        
-        return( expected[0] <= actual <= expected[1], msg )    
+        return expected[0] <= actual <= expected[1], msg
     
     def _RelativeTimePositionCheck( self, **kw ):
         actual   = self.currSv['RelativeTimePosition']
         expected = self._ExpectedRelativePosition( mode='time', **kw )
         msg      = 'RelativeTimePosition was %s expected one of %s' \
                        % (actual, expected)        
-        return( actual in expected, msg )
+        return actual in expected, msg
     
     #
     # helper methods for SV 'checks'
     #  
 
     def _ExpectedRelativePosition( self, mode, **kw ):
-        "Calculate the expected value for relative position SVs"
+        """Calculate the expected value for relative position SVs"""
         expected = []
         
         if self.startState == 'PAUSED_UNKNOWN':
             if self.trans in ['Play']:
-                expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % (kDelay),'0:00:0%d' % (kDelay+1)]
+                expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % kDelay,'0:00:0%d' % (kDelay+1)]
             elif self.trans in ['Seek']:
                 expected = self._SeekPosition( playing=True, mode=mode, **kw )
             else:
                 if self.currSv['TransportState']=='PLAYING':
-                    expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % (kDelay),'0:00:0%d' % (kDelay+1)]
+                    expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % kDelay,'0:00:0%d' % (kDelay+1)]
                 else:
                     expected = ['0:00:00']
         
@@ -502,7 +509,7 @@ class TestAvTransportService( BASE.BaseTest ):
                 #if self.currSv['TransportState'] == 'PLAYING':
                 #    expected = ['0:00:0%d' % (kDelay*2-1), '0:00:0%d' % (kDelay*2),'0:00:0%d' % (kDelay*2+1)]
                 if self.currSv['TransportState'] in ['PLAYING','PAUSED_PLAYBACK']:
-                    expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % (kDelay),'0:00:0%d' % (kDelay+1)]
+                    expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % kDelay,'0:00:0%d' % (kDelay+1)]
                 else:
                     expected = ['0:00:00']
                 
@@ -511,7 +518,7 @@ class TestAvTransportService( BASE.BaseTest ):
                 expected = self._SeekPosition( playing=True, mode=mode, **kw )
             else:
                 if self.currSv['TransportState']=='PLAYING':
-                    expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % (kDelay),'0:00:0%d' % (kDelay+1)]
+                    expected = ['0:00:0%d' % (kDelay-1), '0:00:0%d' % kDelay,'0:00:0%d' % (kDelay+1)]
                 else:
                     expected = ['0:00:00']
 
@@ -527,7 +534,8 @@ class TestAvTransportService( BASE.BaseTest ):
                 
         return expected            
 
-    def _StartOfTrack( self, playing, mode, **kw ):
+    @staticmethod
+    def _StartOfTrack( playing, mode, **kw ):
         expected = {'time' : [['0:00:00'], ['0:00:0%d' % (kDelay*2-1),
                                             '0:00:0%d' % (kDelay*2),
                                             '0:00:0%d' % (kDelay*2+1)]],
@@ -539,7 +547,7 @@ class TestAvTransportService( BASE.BaseTest ):
         return expected[mode][index]
 
     def _SeekPosition( self, playing, mode, **kw ):
-        "Calculate the position SV values after a Seek() action"
+        """Calculate the position SV values after a Seek() action"""
         target = kw.get( 'Target', None )
         unit   = kw.get( 'Unit',   None )
         
@@ -572,7 +580,7 @@ class TestAvTransportService( BASE.BaseTest ):
         return expected
     
     def _PrevPosition( self, playing, mode, **kw ):
-        "Calculate the expected 'no-change' position SV values"
+        """Calculate the expected 'no-change' position SV values"""
         if mode == 'time':
             prev = self.prevSv['RelativeTimePosition']
             if not playing:
@@ -592,8 +600,9 @@ class TestAvTransportService( BASE.BaseTest ):
                 expected = [prev,prev+100000]
         return expected
 
-    def _GetPositions( self, pos ):
-        "Return passed in position, and same incremented by 1 sec"
+    @staticmethod
+    def _GetPositions( pos ):
+        """Return passed in position, and same incremented by 1 sec"""
         s = pos.split( ':' )
         exp  = int(s[0])*3600 + int(s[1])*60 + int(s[2])
         exp1 = exp + 1
