@@ -926,6 +926,11 @@ void RaopDiscovery::AddObserver(IRaopObserver& aObserver)
 
 TBool RaopDiscovery::Active()
 {
+    // FIXME - this assertion is true if we switch adapters while playing a
+    // track. So need to either:
+    // - allow iCurrent to be NULL when ProtocolRaop calls these functions, OR
+    // - ensure ProtocolRaop is stopped before it can call any of these
+    // functions
     ASSERT(iCurrent != NULL);
     //if (iCurrent != NULL) {
         return iCurrent->Active();
