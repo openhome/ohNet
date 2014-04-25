@@ -683,8 +683,8 @@ const TChar* RaopDiscoveryServer::kAdapterCookie = "RaopDiscoveryServer";
 
 RaopDiscoveryServer::RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
     : iEnv(aEnv)
-    , iObserversLock("RDOL")
     , iAdapter(aNif)
+    , iObserversLock("RDOL")
 {
     // NOTE: iRaopDevice is not registered by default
     iAdapter.AddRef(kAdapterCookie);
