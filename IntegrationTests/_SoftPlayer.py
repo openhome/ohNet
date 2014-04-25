@@ -123,9 +123,9 @@ class SoftPlayer( BASE.Component ):
 if __name__ == '__main__':
 
     import msvcrt
-    import time
+    import random
         
-    s = SoftPlayer( aRoom='TestDev' )
+    s = SoftPlayer( aRoom='TestDev%d' % random.randint( 1000, 9000 ))
     msvcrt.getch()
     s.Shutdown()
     s.log.Cleanup()
