@@ -48,7 +48,8 @@ tests = [
     [ 'TestPlaylistPlayback',        'local', 'all',      12345                                     ],
     [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,   100                             ],
     [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       medList, 12,    'off',     'on' ],       
-    [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                          ],       
+    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       medList, 12,    'off',     'off'],
+    [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                          ],
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                 ],
