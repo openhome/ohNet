@@ -334,7 +334,7 @@ void SourceRaop::DeactivateIfActive()
 
 void SourceRaop::HandleInterfaceChange()
 {
-    iRaopDiscovery->Disable();
-    iRaopDiscovery->Enable();
+    //iRaopDiscovery->Disable();
+    //iRaopDiscovery->Enable();
     iRaopDiscovery->SetListeningPorts(iServerAudio->Port(), iServerControl->Port(), iServerTiming->Port());
 }
