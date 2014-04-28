@@ -7,11 +7,11 @@
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
+#include <OpenHome/Av/UpnpAv/UriProviderRepeater.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Media/PipelineManager.h>
-#include <OpenHome/Media/UriProviderSingleTrack.h>
 
 #include <limits.h>
 
@@ -21,7 +21,7 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDevice, const Brx& aSupportedProtocols)
 { // static
-    UriProviderSingleTrack* uriProvider = new UriProviderSingleTrack("UpnpAv", aMediaPlayer.TrackFactory());
+    UriProviderRepeater* uriProvider = new UriProviderRepeater("UpnpAv", aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(uriProvider);
     return new SourceUpnpAv(aMediaPlayer.Env(), aDevice, aMediaPlayer.Pipeline(), *uriProvider, aSupportedProtocols);
 }
@@ -30,7 +30,7 @@ ISource* SourceFactory::NewUpnpAv(IMediaPlayer& aMediaPlayer, Net::DvDevice& aDe
 
 const TChar* SourceUpnpAv::kSourceName("UPnP AV");
 
-SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aSupportedProtocols)
+SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineManager& aPipeline, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols)
     : Source(kSourceName, "UpnpAv")
     , iLock("UPA1")
     , iActivationLock("UPA2")
@@ -151,16 +151,12 @@ void SourceUpnpAv::Stop()
 
 void SourceUpnpAv::Next()
 {
-    if (IsActive()) {
-        iPipeline.Stop(); // we only store a single track so have nothing to move forward to
-    }
+    Stop(); // we only store a single track so have nothing to move forward to
 }
 
 void SourceUpnpAv::Prev()
 {
-    if (IsActive()) {
-        iPipeline.Stop(); // we only store a single track so have nothing to move back to
-    }
+    Stop(); // we only store a single track so have nothing to move back to
 }
 
 void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
