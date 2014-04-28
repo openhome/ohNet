@@ -55,11 +55,12 @@ kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
 class TestAudioConx( BASE.BaseTest ):
-    "Class to check operation in response to audio server functionality"
+    """Class to check operation in response to audio server functionality"""
     
     def __init__( self ):
-        "Constructor for AudioConx test"
+        """Constructor for AudioConx test"""
         self.dut       = None
+        self.dutDev    = None
         self.audioSrv  = None
         self.soft      = None
         self.state     = None
@@ -71,11 +72,14 @@ class TestAudioConx( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
 
     def Test( self, args ):
-        "Audio Conection test"        
+        """Audio Conection test"""
+        dutName = None
+        test    = None
+
         # parse command line arguments
         try:
-            dutName    = args[1]
-            test       = args[2].lower()
+            dutName = args[1]
+            test    = args[2].lower()
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -129,7 +133,7 @@ class TestAudioConx( BASE.BaseTest ):
         self.dut.playlist.Stop()
             
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.dut:                     
             self.dut.Shutdown()
         if self.audioSrv:
@@ -360,13 +364,14 @@ class TestAudioConx( BASE.BaseTest ):
                 'Buffering when server closed TCP conx' )
 
     def _LogHeader( self, aMsg ):
-        "Log a header message"
+        """Log a header message"""
         self.log.Info( '' )
         self.log.Info( '', '---- ' + aMsg + ' ----' )
         self.log.Info( '' )
-        
+
+    # noinspection PyUnusedLocal
     def _PlaylistEventCb( self, service, svName, svVal, svSeq ):
-        "Callback from Playlist service UPnP events"
+        """Callback from Playlist service UPnP events"""
         if svName == 'TransportState':
             self.state = svVal
             if svVal == 'Playing':

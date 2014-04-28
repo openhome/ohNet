@@ -27,7 +27,7 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.25",
+        "version":          "0.1.24",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
@@ -95,7 +95,7 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.220",
+        "version": "0.0.269",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

@@ -33,22 +33,23 @@ kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
 class Config:
-    "Test configuration for Playlist service testing"
+    """Test configuration for Playlist service testing"""
     
     class Precon:
-        "Configuration subclass for precondition info and setup"
+        """Configuration subclass for precondition info and setup"""
         
         def __init__( self, aSetup, aTrack, aRepeat, aShuffle, aTracks, aLog, aDev ):
-            "Initialise class data"
-            self.setup         = aSetup
-            self.plLen         = random.randint( 8, 30 )
-            self.track         = self._SubstMacros( aTrack )
-            self.repeat        = aRepeat
-            self.shuffle       = aShuffle
-            self.log           = aLog            
-            self.playlist      = []
-            self.dev           = aDev
-            
+            """Initialise class data"""
+            self.setup     = aSetup
+            self.plLen     = random.randint( 8, 30 )
+            self.track     = self._SubstMacros( aTrack )
+            self.repeat    = aRepeat
+            self.shuffle   = aShuffle
+            self.log       = aLog
+            self.playlist  = []
+            self.dev       = aDev
+            self.listorder = None
+
             # create random playlist
             self.playlist = []
             numTracks     = len( aTracks )
@@ -56,10 +57,11 @@ class Config:
                 self.playlist.append( aTracks[random.randint( 0, numTracks-1)] )
                                 
         def Setup( self, aDut ):
-            "Setup preconditions on the renderer" 
+            """Setup preconditions on the renderer"""
             playingEvent = threading.Event()
             idEvent      = threading.Event()
-            
+
+            # noinspection PyUnusedLocal
             def _EventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'Id':
                     idEvent.set()
@@ -88,9 +90,10 @@ class Config:
             self.listorder = aDut.playlist.idArray
             
         def _SetupPlaylist( self, aDut ):
-            "Setup playlist on DUT"
+            """Setup playlist on DUT"""
             idArrayEvt = threading.Event()
-            
+
+            # noinspection PyUnusedLocal
             def _EventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'IdArray':
                     idArrayEvt.set()
@@ -105,10 +108,11 @@ class Config:
             aDut.playlist.RemoveSubscriber( _EventCb )
             
         def _SetupModes( self, aDut ):
-            "Setup shuffle and repeat modes"
+            """Setup shuffle and repeat modes"""
             aDut.playlist.repeat = self.repeat
             aDut.playlist.shuffle = self.shuffle
-            
+
+        # noinspection PyMethodMayBeStatic
         def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values.
                Valid macros are:
@@ -124,23 +128,24 @@ class Config:
             return subst
 
     class Stimulus:
-        "Configuration subclass for stimulus info and invokation"
+        """Configuration subclass for stimulus info and invokation"""
         
         def __init__( self, aSeek, aPrecon ):
-            "Initialise class data"
+            """Initialise class data"""
             self.timer     = None
             self.seek      = aSeek
             self.precon    = aPrecon
             self.playorder = []
             
         def Invoke( self, aDut ):
-            "Skip thru all tracks recording order until Stopped or listlen+2"
+            """Skip thru all tracks recording order until Stopped or listlen+2"""
             orderEvt    = threading.Event()
             durationEvt = threading.Event()
             playing     = threading.Event()
             stim        = 'aDut.playlist.%s()' % self.seek.title()
             self.playorder.append( aDut.playlist.id )
-            
+
+            # noinspection PyUnusedLocal
             def _PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'TransportState':
                     if aSvVal == 'Playing':
@@ -150,7 +155,8 @@ class Config:
                 if aSvName == 'Id':
                     th = LogThread.Thread( target=_UpdatePlayorder, args=[aSvVal] )
                     th.start()
-                    
+
+            # noinspection PyUnusedLocal
             def _InfoEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'Duration':
                     if aSvVal > 0:
@@ -181,27 +187,27 @@ class Config:
 
         
     class Outcome:
-        "Configuration subclass for outcome checking"
+        """Configuration subclass for outcome checking"""
         
         def __init__( self, aPrecon, aStim, aLog, aDev ):
-            "Initialise class data"
+            """Initialise class data"""
             self.precon  = aPrecon
             self.stim    = aStim
             self.log     = aLog
             self.dev     = aDev
 
         def Check( self, aDut ):
-            "Check outcome on specified renderer"
+            """Check outcome on specified renderer"""
             plLen   = self.precon.plLen
             track   = self.precon.track
             repeat  = self.precon.repeat
             shuffle = self.precon.shuffle
             seek    = self.stim.seek
             meas    = []
-            exp     = []
+#            exp     = []
             
-            for id in self.stim.playorder:
-                meas.append( aDut.playlist.PlaylistIndex( id ))
+            for tId in self.stim.playorder:
+                meas.append( aDut.playlist.PlaylistIndex( tId ))
 
             if track == '-':
                 start = 0       # started by Play() - use 0 as calculation index
@@ -266,7 +272,7 @@ class Config:
                         
 
     def __init__( self, aLog, aDev, aDut, aConf, aTracks ):
-        "Initialise class (and sub-class) data"
+        """Initialise class (and sub-class) data"""
         self.log  = aLog
         self.id   = aConf[0]
         self.dut  = aDut
@@ -286,22 +292,27 @@ class Config:
 
 
 class TestPlaylistModes( BASE.BaseTest ):
-    "Test playback modes operation (using UPnP as control method)"
+    """Test playback modes operation (using UPnP as control method)"""
 
     def __init__( self ):
-        "Constructor - initalise base class"
+        """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
         self.dut    = None
+        self.dutDev = None
         self.server = None
         self.soft   = None
                 
     def Test( self, aArgs ):
-        "Playlist Service state/transition test"
+        """Playlist Service state/transition test"""
+        dutName = ''
+        mode    = ''
+        seed    = 0
+
         # parse command line arguments
         try:
-            dutName    = aArgs[1]
-            mode       = aArgs[2]
-            seed       = int( aArgs[3] )
+            dutName = aArgs[1]
+            mode    = aArgs[2]
+            seed    = int( aArgs[3] )
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
@@ -309,7 +320,7 @@ class TestPlaylistModes( BASE.BaseTest ):
         # seed the random number generator
         if not seed:
             seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % (seed) )
+        self.log.Info( '', 'Seeding random number generator with %d' % seed )
         random.seed( seed )
                 
         # create DUT
@@ -343,7 +354,7 @@ class TestPlaylistModes( BASE.BaseTest ):
         self.dut.playlist.Stop()
 
     def Cleanup( self ):
-        "Perform post-test cleanup" 
+        """Perform post-test cleanup"""
         if self.server:
             self.server.Shutdown()
         if self.dut: 
@@ -353,7 +364,7 @@ class TestPlaylistModes( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )               
 
     def _GetConfigs( self, aMode ):
-        "Create and return list of test configurations (as filtered by aMode)"               
+        """Create and return list of test configurations (as filtered by aMode)"""
         tracks  = Common.GetTracks( kTrackList, self.server )
         configs = []
         for entry in configTable:
@@ -366,9 +377,9 @@ class TestPlaylistModes( BASE.BaseTest ):
                 vals = aMode[1:].split( ':' )
                 if len( vals ) == 2:
                     try:
-                        min = int( vals[0] )
-                        max = int( vals[1].strip( ']' ))
-                        if min <= entry[0] and max >= entry[0]:
+                        mini = int( vals[0] )
+                        maxi = int( vals[1].strip( ']' ))
+                        if mini <= entry[0] <= maxi:
                             selected = True
                     except:
                         pass
@@ -422,7 +433,7 @@ configTable = \
     ( 34, 'before', '@N',  'on', 'off', 'next' ), 
     ( 35, 'before', '@N',  'on', 'off', 'previous' ), 
     ( 36, 'before', '@N',  'on',  'on', 'next' ), 
-    ( 37, 'before', '@N',  'on',  'on', 'previous' ), 
+    ( 37, 'before', '@N',  'on',  'on', 'previous' ),
     
     ( 40, 'before', '-',  'off', 'off', 'next' ), 
     ( 41, 'before', '-',  'off', 'off', 'previous' ), 

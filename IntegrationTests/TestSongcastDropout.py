@@ -35,9 +35,10 @@ class TestSongcastDropout( BASE.BaseTest ):
     """Class to check for dropout in audio output using Songcaster as input"""
     
     def __init__( self ):
-        "Constructor for Songcaster Dropout test"
+        """Constructor for Songcaster Dropout test"""
         BASE.BaseTest.__init__( self )
         self.sender        = None
+        self.senderDev     = None
         self.server        = None
         self.rcvrs         = []
         self.softs         = []
@@ -49,7 +50,11 @@ class TestSongcastDropout( BASE.BaseTest ):
         self.durationEvt   = threading.Event()
 
     def Test( self, args ):
-        "Songcast Dropout test"
+        """Songcast Dropout test"""
+        senderName = None
+        rcvrNames  = None
+        duration   = None
+
         try:
             senderName = args[1]
             rcvrNames  = args[2]
@@ -80,6 +85,7 @@ class TestSongcastDropout( BASE.BaseTest ):
 
         # get test tone track
         tracks = Common.GetTracks( kTrackList, self.server )
+        testTone = None
         for track in tracks:            
             if '-0dB' in track[0]:
                 testTone = [track]
@@ -126,7 +132,7 @@ class TestSongcastDropout( BASE.BaseTest ):
                 (self.sender.sender.uri, rcvr.receiver.uri) )
             self.log.FailUnless( rcvrDev, rcvr.receiver.transportState == 'Playing',
                 'Expected/Actual receiver playback state - Playing/%s' %
-                (rcvr.receiver.transportState) )
+                rcvr.receiver.transportState )
             
         # Add transport state monitors
         self.sender.playlist.AddSubscriber( self._SenderPlaylistMonitor )
@@ -147,7 +153,7 @@ class TestSongcastDropout( BASE.BaseTest ):
         self.sender.playlist.Stop()
 
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.sender:
             self.sender.Shutdown()
         for rcvr in self.rcvrs:
@@ -156,38 +162,42 @@ class TestSongcastDropout( BASE.BaseTest ):
             soft.Shutdown()
         if self.server:
             self.server.Shutdown()
-        BASE.BaseTest.Cleanup( self )                
+        BASE.BaseTest.Cleanup( self )
 
+    # noinspection PyUnusedLocal
     def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):
-        "Callback from Playlist Service UPnP events on sender device"
+        """Callback from Playlist Service UPnP events on sender device"""
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.senderPlaying.set()
             elif svVal == 'Stopped':
                 self.senderStopped.set()
                 
+    # noinspection PyUnusedLocal
     def _RcvrReceiverCb( self, service, svName, svVal, svSeq ):
-        "Callback from Receiver Service UPnP events on receiver device"
+        """Callback from Receiver Service UPnP events on receiver device"""
         if svName == 'TransportState':
             if svVal == 'Playing':
                 self.rcvrPlaying.set()
         if svName == 'Uri':
             self.rcvrUriSet.set()
             
+    # noinspection PyUnusedLocal
     def _SenderPlaylistMonitor( self, service, svName, svVal, svSeq ):
-        "Callback from Sender's Playlist service"
+        """Callback from Sender's Playlist service"""
         if svName == 'TransportState':
             if svVal != 'Playing':
                 self.log.Fail( self.senderDev, "Sender dropout detected -> state is %s" % svVal )
                 
+    # noinspection PyUnusedLocal
     def _RcvrReceiverMonitor( self, service, svName, svVal, svSeq ):
-        "Callback from Receiver's Receiver service"
+        """Callback from Receiver's Receiver service"""
         if svName == 'TransportState':
             if svVal != 'Playing':
                 self.log.Fail( '', "Receiver dropout detected -> state is %s" % svVal )
 
     def _DurationCb( self ):
-        "Callback from duration timer expiry"
+        """Callback from duration timer expiry"""
         self.durationEvt.set()
 
         

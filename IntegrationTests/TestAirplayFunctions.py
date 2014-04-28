@@ -35,10 +35,12 @@ class TestAirplayFunctions( BASE.BaseTest ):
     """Class to verify Net Aux source (Airplay input) functionality"""
     
     def __init__( self ):
-        "Constructor for Net Aux test"
+        """Constructor for Net Aux test"""
         BASE.BaseTest.__init__( self )
         self.dacp       = None
         self.dut        = None
+        self.dutName    = None
+        self.dutDev     = None
         self.soft       = None
         self.tracks     = None
         self.timedOut   = False
@@ -46,7 +48,9 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.srcChanged = threading.Event()
 
     def Test( self, args ):
-        "Net Aux test"
+        """Net Aux test"""
+        itunesServer = None
+
         # parse command line arguments
         try:
             self.dutName = args[1]
@@ -90,7 +94,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self._CheckVolume()
 
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.dacp:
             try:
                 self.dacp.Pause()  
@@ -102,7 +106,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )
 
     def _CheckSelect( self ):
-        "Check auto-selection of Net Aux source"        
+        """Check auto-selection of Net Aux source"""
         self.dacp.speaker = 'My Computer'
         self.dacp.PlayTrack( kVolTrack )
         time.sleep( 5 )
@@ -157,7 +161,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.srcChanged.clear()
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
-        self.srcChanged.clear
+        self.srcChanged.clear()
         self.dacp.PlayTrack( kVolTrack )
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
@@ -175,7 +179,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             '%s/Net Aux - actual/expected source after AirPlay speakers re-selected' % name )
         
     def _CheckAudioFreq( self ):
-        "Check audio frequency of Net Aux tracks"
+        """Check audio frequency of Net Aux tracks"""
         if self.dut.volume is not None:
             self.dut.volume.volume = 80
         self.srcChanged.clear()
@@ -201,7 +205,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self._MonitorPlayback( 10 )
             
     def _CheckVolume( self ):
-        "Check volume control on server is reflected in DS output"
+        """Check volume control on server is reflected in DS output"""
         if self.dut.volume is not None:
             self.dut.volume.volume = 80
         self.srcChanged.clear()
@@ -223,7 +227,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self._MonitorPlayback( 10 )
             
     def _MonitorPlayback( self, aSecs ):
-        "Monitor AirPlay playback"
+        """Monitor AirPlay playback"""
         self.dut.time.AddSubscriber( self.__TimeEvtCb )
         self.timedOut = False
         t = LogThread.Timer( aSecs, self.__TimerCb )
@@ -238,25 +242,28 @@ class TestAirplayFunctions( BASE.BaseTest ):
                 self.log.Info( self.dacp.dev, info )        
         self.dut.time.RemoveSubscriber( self.__TimeEvtCb )
 
-    def _ToDb( self, aVmeas, aVzero ):
-        "Convert amplitude from Vrms to dB"
+    @staticmethod
+    def _ToDb( aVmeas, aVzero ):
+        """Convert amplitude from Vrms to dB"""
         try:
             db = round( 20 * math.log10( aVmeas/aVzero ), 3 )
         except:
             db = -999
         return db
-        
+
+    # noinspection PyUnusedLocal
     def __ProductEvtCb( self, service, svName, svVal, svSeq ):
-        "Callback on events from product service"
+        """Callback on events from product service"""
         if svName == 'SourceIndex':
             self.srcChanged.set()
             
+    # noinspection PyUnusedLocal
     def __TimeEvtCb( self, service, svName, svVal, svSeq ):
-        "Callback on events from Time service"
+        """Callback on events from Time service"""
         self.timeEvent.set()
 
     def __TimerCb( self ):
-        "Timer CB - set flag on expiry"
+        """Timer CB - set flag on expiry"""
         self.timedOut = True
         
 if __name__ == '__main__':

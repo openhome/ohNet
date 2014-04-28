@@ -28,13 +28,16 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
     """Repeatedly cycle standby on device, check that it comes up OK"""
     
     def __init__( self ):
-        "Constructor"
+        """Constructor"""
         BASE.BaseTest.__init__( self )
         self.dut  = None
         self.soft = None
 
     def Test( self, args ):
-        "Repeated reboots test"
+        """Repeated reboots test"""
+        dutName = ''
+        loops   = 1
+
         try:
             dutName = args[1]
             loops   = int( args[2] )
@@ -55,7 +58,7 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
             time.sleep( 15 )
                     
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.dut:
             self.dut.Shutdown()
         if self.soft:

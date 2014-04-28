@@ -36,14 +36,14 @@ kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
 class Config:
-    "Test configuration for Playlist service testing"
+    """Test configuration for Playlist service testing"""
     
     class Precon:
-        "Configuration subclass for precondition info and setup"
+        """Configuration subclass for precondition info and setup"""
         
         def __init__( self, aId, aState, aPlLen, aTrack, aSecs,
                       aRepeat, aShuffle, aTracks, aLog, aDev ):
-            "Initialise class data"
+            """Initialise class data"""
             self.id       = aId
             self.state    = aState
             self.plLen    = None
@@ -63,12 +63,13 @@ class Config:
                 self.playlist.append( aTracks[random.randint( 0, len( aTracks )-1)])
                                 
         def Setup( self, aDut ):
-            "Setup preconditions on the dut" 
+            """Setup preconditions on the dut"""
             idArrayEvt   = threading.Event()
             durationEvt  = threading.Event()
             pausedEvent  = threading.Event()
             playingEvent = threading.Event()
-            
+
+            # noinspection PyUnusedLocal
             def _PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'IdArray':
                     idArrayEvt.set()
@@ -76,8 +77,9 @@ class Config:
                     if aSvVal == 'Playing':
                         playingEvent.set()
                     elif aSvVal == 'Paused':
-                        pausedEvent.set()        
-            
+                        pausedEvent.set()
+
+            # noinspection PyUnusedLocal
             def _InfoEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'Duration' and aSvVal not in [0,'0']:
                     durationEvt.set()
@@ -146,68 +148,71 @@ class Config:
             except:
                 subst = aArg
             return subst
-                
+
+        # noinspection PyUnusedLocal
         def _PlaylistEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            "Callback from Playlist service events"
+            """Callback from Playlist service events"""
             if aSvName == 'TransportState':
                 if aSvVal == 'Playing':
                     self.playingEvent.set()
                 elif aSvVal == 'Paused':
-                    self.pausedEvent.set()        
-        
-        
+                    self.pausedEvent.set()
+
+
     class Stimulus:
-        "Configuration subclass for stimulus info and invokation"
+        """Configuration subclass for stimulus info and invokation"""
         
         def __init__( self, aAction, aMinVal, aMaxVal, aTracks, aPrecon ):
-            "Initialise class data"
+            """Initialise class data"""
             self.action = aAction
             self.precon = aPrecon
             self.minVal = aMinVal
             self.maxVal = aMaxVal
             self.val    = 0
+            self.insId  = 0
             
             # get a random track (for use in insert)
             self.track = aTracks[random.randint( 0, len( aTracks )-1)]
             
         def Invoke( self, aDut ):
-            "Invoke stimulus on specified dut"
+            """Invoke stimulus on specified dut"""
             if self.action in ['DeleteAllTracks']:
                 getattr( aDut.playlist, self.action )()
                 
             elif self.action in ['repeat','shuffle']:
                 exec( 'aDut.playlist.%s="%s"' % (self.action, self.minVal) )
             else:
-                min = self._SubstMacros( self.minVal )
-                max = self._SubstMacros( self.maxVal )
+                mini = self._SubstMacros( self.minVal )
+                maxi = self._SubstMacros( self.maxVal )
 
-                if min == '':
-                    self.val = random.randint( max-100, max )
-                elif max == '':
-                    self.val = random.randint( min, min+100 )
-                elif min == max:
-                    self.val = min
+                if mini == '':
+                    self.val = random.randint( maxi-100, maxi )
+                elif maxi == '':
+                    self.val = random.randint( mini, mini+100 )
+                elif mini == maxi:
+                    self.val = mini
                 else:
-                    self.val = random.randint( min, max )
+                    self.val = random.randint( mini, maxi )
                 if self.action in ['Delete']:
+                    tId = 0
                     try:
-                        id = self.precon.idArray[self.val]
+                        tId = self.precon.idArray[self.val]
                     except:
                         self.precon.log.Warn( self.dev, '[D] self.precon.idArray: %s' % self.precon.idArray )
                         self.precon.log.Warn( self.dev, '[D] self.val:            %s' % self.val )
-                    getattr( aDut.playlist, self.action )( id )
+                    getattr( aDut.playlist, self.action )( tId )
                     
                 else: # Insert
-                    if self.val == -1:
-                        id = 0    # before all entries
-                    else:
+                    tId = 0
+                    if self.val != -1:
                         try:
-                            id = self.precon.idArray[self.val]
+                            tId = self.precon.idArray[self.val]
                         except:
                             self.precon.log.Warn( self.dev, '[I] self.precon.idArray: %s' % self.precon.idArray )
                             self.precon.log.Warn( self.dev, '[I] self.val:            %s' % self.val )
-                    self.insId = aDut.playlist.AddTrack( self.track, id )
-        
+                    self.insId = aDut.playlist.AddTrack( self.track, tId )
+
+        # noinspection PyMethodMayBeStatic
         def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values. Some of these are
                NOT KNOWN at __init__ time, so call the substs at Invoke() time
@@ -225,11 +230,11 @@ class Config:
 
         
     class Outcome:
-        "Configuration subclass for outcome checking"
+        """Configuration subclass for outcome checking"""
         
         def __init__( self, aId, aState, aPlLen, aRepeat, aShuffle, aTrack,
                       aSecs, aPrecon, aStim, aLog, aDev ):
-            "Initialise class data"
+            """Initialise class data"""
             self.id      = aId
             self.state   = aState
             self.plLen   = aPlLen
@@ -243,7 +248,7 @@ class Config:
             self.dev     = aDev
 
         def Check( self, aDut ):
-            "Check outcome on specified dut"
+            """Check outcome on specified dut"""
             delay1       = 2
             delay2       = 5
             expOrder     = self._CalcOrder()
@@ -298,7 +303,7 @@ class Config:
 
         def _CheckValues( self, aDut, aOrder, aState, aPlLen, aTrack, aSecs,
                           aRepeat, aShuffle, aAfter ):
-            "Check values from DS are as expected"
+            """Check values from DS are as expected"""
             actualOrder   = aDut.playlist.idArray
             actualPlLen   = len( actualOrder )
             actualState   = aDut.playlist.transportState
@@ -327,7 +332,7 @@ class Config:
             self.log.Info( '' )     
         
         def _DoCheck( self, aActual, aExpected, aTest, aAfter ):
-            "Perform comparison, output log message"
+            """Perform comparison, output log message"""
             if aExpected == 'true': aExpected = True
             if aExpected == 'false': aExpected = False
             self.log.FailUnless( self.dev, aActual == aExpected,
@@ -335,7 +340,7 @@ class Config:
                 (self.id, aActual, aExpected, aTest, aAfter) )
             
         def _RecalcExpected( self, aDut, aState, aTrack, aSecs ):
-            "Recalculate expected values after playback over time"
+            """Recalculate expected values after playback over time"""
             expState = aState
             expTrack = aTrack
             expSecs  = aSecs
@@ -346,9 +351,10 @@ class Config:
                     expTrack = 0
                     if self.precon.repeat == 'false':
                         expState = 'Stopped'
-            return (expState, expTrack, expSecs)
+            return expState, expTrack, expSecs
         
         def _CalcOrder( self ):
+            order = None
             preOrder = self.precon.idArray
             if self.stim.action in ('repeat', 'shuffle'):
                 order = preOrder
@@ -361,7 +367,8 @@ class Config:
                 order = preOrder
                 order.pop( self.stim.val )
             return order
-        
+
+        # noinspection PyMethodMayBeStatic
         def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values. Some of these are
                NOT KNOWN at __init__ time, so call the substs at Check() time
@@ -380,7 +387,7 @@ class Config:
             return subst                        
 
     def __init__( self, aLog, aDut, aDev, aConf, aTracks ):
-        "Initialise class (and sub-class) data"
+        """Initialise class (and sub-class) data"""
         self.log  = aLog
         self.id   = aConf[0]
         self.dut  = aDut
@@ -401,22 +408,27 @@ class Config:
 
 
 class TestPlaylistHandling( BASE.BaseTest ):
-    "Test Playlist Service operation (using UPnP as control method)"
+    """Test Playlist Service operation (using UPnP as control method)"""
 
     def __init__( self ):
-        "Constructor - initalise base class"
+        """Constructor - initalise base class"""
         BASE.BaseTest.__init__( self )
         self.dut    = None
+        self.dutDev = None
         self.server = None
         self.soft   = None
                 
     def Test( self, aArgs ):
-        "Playlist Service state/transition test"
+        """Playlist Service state/transition test"""
+        dutName = ''
+        mode    = ''
+        seed    = 0
+
         # parse command line arguments
         try:
-            dutName    = aArgs[1]
-            mode       = aArgs[2]
-            seed       = int( aArgs[3] )
+            dutName = aArgs[1]
+            mode    = aArgs[2]
+            seed    = int( aArgs[3] )
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
@@ -424,7 +436,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
         # seed the random number generator
         if not seed:
             seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % (seed) )
+        self.log.Info( '', 'Seeding random number generator with %d' % seed )
         random.seed( seed )
                 
         # create DUT
@@ -458,7 +470,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
         self.dut.playlist.Stop() 
 
     def Cleanup( self ):
-        "Perform post-test cleanup" 
+        """Perform post-test cleanup"""
         if self.dut:
             self.dut.Shutdown()
         if self.server:
@@ -468,7 +480,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
         BASE.BaseTest.Cleanup( self )               
 
     def _GetConfigs( self, aMode ):
-        "Create and return list of test configurations (as filtered by aMode)"       
+        """Create and return list of test configurations (as filtered by aMode)"""
         tracks  = Common.GetTracks( kTrackList, self.server )
         configs = []
         for entry in configTable:
@@ -489,9 +501,9 @@ class TestPlaylistHandling( BASE.BaseTest ):
                 vals = aMode[1:].split( ':' )
                 if len( vals ) == 2:
                     try:
-                        min = int( vals[0] )
-                        max = int( vals[1].strip( ']' ))
-                        if min <= entry[0] and max >= entry[0]:
+                        mini = int( vals[0] )
+                        maxi = int( vals[1].strip( ']' ))
+                        if mini <= entry[0] <= maxi:
                             selected = True
                     except:
                         pass

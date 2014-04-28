@@ -112,22 +112,34 @@ class TestSongcastConnect( BASE.BaseTest ):
     """Class to check connect/disconnect of mcast devices"""
     
     def __init__( self ):
-        "Constructor"
+        """Constructor"""
         BASE.BaseTest.__init__( self )
-        self.dut1   = None
-        self.dut2   = None
-        self.dut3   = None
-        self.dut4   = None
-        self.soft1  = None
-        self.soft2  = None
-        self.soft3  = None
-        self.soft4  = None
-        self.track1 = None
-        self.track2 = None
-        self.server = None
+        self.dut1    = None
+        self.dut2    = None
+        self.dut3    = None
+        self.dut4    = None
+        self.dut1Dev = None
+        self.dut2Dev = None
+        self.dut3Dev = None
+        self.dut4Dev = None
+        self.soft1   = None
+        self.soft2   = None
+        self.soft3   = None
+        self.soft4   = None
+        self.track1  = None
+        self.track2  = None
+        self.server  = None
+        self.msg     = ''
 
     def Test( self, args ):
-        "Songcast connect/disconnect test"
+        """Songcast connect/disconnect test"""
+        dut1Name   = None
+        dut2Name   = None
+        dut3Name   = None
+        dut4Name   = None
+        scenario   = None
+        disconnect = None
+
         # parse command line arguments
         try:
             dut1Name   = args[1]
@@ -141,10 +153,10 @@ class TestSongcastConnect( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         if scenario not in ['1','2','3','4','5', 'all']:
-            self.log.Abort( '', 'Invalid scenario %s' % (scenario) )
+            self.log.Abort( '', 'Invalid scenario %s' % scenario )
             
         if disconnect not in ['stop','source','sender','standby', 'all']:
-            self.log.Abort( '', 'Invalid disconnect method %s' % (disconnect) )
+            self.log.Abort( '', 'Invalid disconnect method %s' % disconnect )
                             
         if disconnect == 'all':
             disconnect = ['stop','source','sender','standby']
@@ -181,7 +193,7 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True )
         self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True )
         self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True )
-        if self.dut1.volume != None: 
+        if self.dut1.volume is not None:
             self.dut1.volume.volume = 75
             
         # Handle 'hub' products
@@ -209,7 +221,7 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.dut1.playlist.Stop()
                     
     def Cleanup( self ):
-        "Perform cleanup on test exit"
+        """Perform cleanup on test exit"""
         if self.dut4:
             self.dut4.Shutdown()
         if self.dut3:
@@ -246,13 +258,13 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__LogHeader()
         self.__ClearSources()
         self.__StartPlayback( self.dut1 )
-        self.__Follows( self.dut2, self.dut1, False )
-        self.__Follows( self.dut3, self.dut1, False )
-        self.__Follows( self.dut4, self.dut2, False )
-        self.__Disconnect( self.dut2, False )
-        self.__Disconnect( self.dut3, False )
-        self.__Disconnect( self.dut4, False )
-        self.__StopPlayback( self.dut1, True )
+        self.__Follows( self.dut2, self.dut1 )
+        self.__Follows( self.dut3, self.dut1 )
+        self.__Follows( self.dut4, self.dut2 )
+        self.__Disconnect( self.dut2 )
+        self.__Disconnect( self.dut3 )
+        self.__Disconnect( self.dut4 )
+        self.__StopPlayback( self.dut1 )
         
     def __TestScenario2( self ):
         """Test scenario (2) checking audio on repeater
@@ -269,12 +281,12 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__LogHeader()
         self.__ClearSources()
         self.__StartPlayback( self.dut2 )
-        self.__Follows( self.dut1, self.dut2, True )
-        self.__Follows( self.dut3, self.dut2, False )
-        self.__Follows( self.dut4, self.dut1, False )
-        self.__Disconnect( self.dut3, False )
-        self.__Disconnect( self.dut4, False )
-        self.__StopPlayback( self.dut2, True )
+        self.__Follows( self.dut1, self.dut2 )
+        self.__Follows( self.dut3, self.dut2 )
+        self.__Follows( self.dut4, self.dut1 )
+        self.__Disconnect( self.dut3 )
+        self.__Disconnect( self.dut4 )
+        self.__StopPlayback( self.dut2 )
 
     def __TestScenario3( self ):
         """Test scenario (3) checking audio on slave on sender
@@ -291,12 +303,12 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__LogHeader()
         self.__ClearSources()
         self.__StartPlayback( self.dut2 )
-        self.__Follows( self.dut3, self.dut2, True )
-        self.__Follows( self.dut1, self.dut2, True )
-        self.__Follows( self.dut4, self.dut3, False )
-        self.__Disconnect( self.dut3, False )
-        self.__Disconnect( self.dut4, False )
-        self.__StopPlayback( self.dut2, True )
+        self.__Follows( self.dut3, self.dut2 )
+        self.__Follows( self.dut1, self.dut2 )
+        self.__Follows( self.dut4, self.dut3 )
+        self.__Disconnect( self.dut3 )
+        self.__Disconnect( self.dut4 )
+        self.__StopPlayback( self.dut2 )
             
     def __TestScenario4( self ):
         """Test scenario (4) checking audio on slave on repeater
@@ -312,11 +324,11 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__LogHeader()
         self.__ClearSources()
         self.__StartPlayback( self.dut2 )
-        self.__Follows( self.dut3, self.dut2, True )
-        self.__Follows( self.dut1, self.dut3, True )
-        self.__Follows( self.dut4, self.dut2, False )
-        self.__Disconnect( self.dut4, False )
-        self.__Disconnect( self.dut3, True )
+        self.__Follows( self.dut3, self.dut2 )
+        self.__Follows( self.dut1, self.dut3 )
+        self.__Follows( self.dut4, self.dut2 )
+        self.__Disconnect( self.dut4 )
+        self.__Disconnect( self.dut3 )
         self.log.FailUnless( self.dut1Dev, self.dut1.receiver.transportState=='Waiting',
             '(4) Actual/Expected receiver state (%s/Waiting) on %s' %
             (self.dut1.receiver.transportState, self.dut1.friendlyName.split( ':' )[0]) )
@@ -335,12 +347,12 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.__ClearSources()
         self.__StartPlayback( self.dut2, aTrack=1 )
         self.__StartPlayback( self.dut4, aTrack=2 )
-        self.__Follows( self.dut3, self.dut2, True )
-        self.__Follows( self.dut1, self.dut3, True )
-        self.__Follows( self.dut3, self.dut4, True )
+        self.__Follows( self.dut3, self.dut2 )
+        self.__Follows( self.dut1, self.dut3 )
+        self.__Follows( self.dut3, self.dut4 )
 
     def __LogHeader( self ):
-        "Log header block for test scenario"
+        """Log header block for test scenario"""
         self.log.Info( '' )
         self.log.Info( '', '-----------------------------------------------------' )
         self.log.Info( ''  'Test Scenario %s, disconnect method: %s' % (self.msg, self.disconx) )
@@ -348,7 +360,7 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.log.Info( '' )
         
     def __ClearSources( self ):
-        "Clear senders and set source to playlist on all DUTs"
+        """Clear senders and set source to playlist on all DUTs"""
         # setting all senders to '' was giving obscure lock-ups in the DS. No
         # idea what's going on, but leaving them alone (a more natural use) seems
         # to cure the issues
@@ -357,27 +369,24 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.log.Info( '' )
         self.dut1.product.sourceIndex = 0
         self.dut1.playlist.DeleteAllTracks()
-#        self.dut1.receiver.SetSender( '', '' )
         self.dut2.product.sourceIndex = 0
         self.dut2.playlist.DeleteAllTracks()
-#        self.dut2.receiver.SetSender( '', '' )
         self.dut3.product.sourceIndex = 0
         self.dut3.playlist.DeleteAllTracks()
-#        self.dut3.receiver.SetSender( '', '' )
         self.dut4.product.sourceIndex = 0
         self.dut4.playlist.DeleteAllTracks()
-#        self.dut4.receiver.SetSender( '', '' )
         time.sleep( 5 )
         
     def __StartPlayback( self, aDut, aTrack=1 ):
-        "Start playback on specified DS"
+        """Start playback on specified DS"""
         if aTrack == 1:
             track = self.track1
         else:
             track = self.track2
         dutName = aDut.friendlyName.split( ':' )[0]
         event = threading.Event()
-            
+
+        # noinspection PyUnusedLocal
         def __EventCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'TransportState':
                 if aSvVal == 'Playing':
@@ -398,12 +407,13 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.log.FailUnless( dutName, aDut.playlist.transportState == 'Playing',
             '%s%s STARTED playback' % (self.msg, dutName) )
             
-    def __Follows( self, aReceiver, aSender, aDropout ):
-        "Set receiver to follow sender, check for dropout"
+    def __Follows( self, aReceiver, aSender ):
+        """Set receiver to follow sender, check for dropout"""
         receiverName = aReceiver.friendlyName.split( ':' )[0]
         senderName = aSender.friendlyName.split( ':' )[0]
         event = threading.Event()
-                    
+
+        # noinspection PyUnusedLocal
         def __EventCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'TransportState':
                 if aSvVal == 'Playing':
@@ -425,8 +435,8 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.log.FailUnless( receiverName, aReceiver.receiver.transportState == 'Playing', 
             '%s%s PLAYING from %s' % (self.msg, receiverName, senderName) )
         
-    def __Disconnect( self, aDut, aDropout ):
-        "Disconnect device from the setup, check for dropout"
+    def __Disconnect( self, aDut ):
+        """Disconnect device from the setup, check for dropout"""
         name = aDut.friendlyName
         dutName = name.split( ':' )[0]       
         self.log.Info( '' )
@@ -443,11 +453,12 @@ class TestSongcastConnect( BASE.BaseTest ):
             aDut.product.CycleStandby()
         time.sleep( 1 ) 
         
-    def __StopPlayback( self, aDut, aDropout ):
-        "Stop playback on specified DS, check for audio dropout"
+    def __StopPlayback( self, aDut ):
+        """Stop playback on specified DS, check for audio dropout"""
         dutName = aDut.friendlyName.split( ':' )[0]
         event = threading.Event()
-            
+
+        # noinspection PyUnusedLocal
         def __EventCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'TransportState':
                 if aSvVal == 'Stopped':

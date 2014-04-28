@@ -20,19 +20,23 @@ import time
 
 
 class TestPlaylistAddDelSoak( BASE.BaseTest ):
-    "Test playlist add/delete"
+    """Test playlist add/delete"""
 
     def __init__( self ):
-        " Constructor - initalise base class"
+        """ Constructor - initialise base class"""
         BASE.BaseTest.__init__( self )
-        self.dut = None
-        self.server = None
-
-    def Test( self, args ):
+        self.dut            = None
+        self.server         = None
+        self.soft           = None
         self.codecEvt       = threading.Event()
         self.idArrayClear   = threading.Event()
         self.idArrayContent = threading.Event()
-        self.soft           = None
+
+    def Test( self, args ):
+        dutName      = None
+        serverName   = None
+        playlistName = None
+        loops        = 0
 
         try:
             dutName      = args[1]
@@ -83,7 +87,7 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
                 self.codecEvt.wait( 3 )
 
     def Cleanup( self ):
-        "Perform post-test cleanup"
+        """Perform post-test cleanup"""
         if self.server:
             self.server.Shutdown()
         if self.dut: 
@@ -91,17 +95,19 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         if self.soft:
             self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
-            
+
+    # noinspection PyUnusedLocal
     def _PlaylistEventCb( self, service, svName, svVal, svSeq ):
-        "Callback from Playlist Service UPnP events"
+        """Callback from Playlist Service UPnP events"""
         if svName == 'IdArray':
             if svVal == '':
                 self.idArrayClear.set()
             else:
                 self.idArrayContent.set()
-        
+
+    # noinspection PyUnusedLocal
     def _InfoEventCb( self, service, svName, svVal, svSeq ):
-        "Callback from Info Service UPnP events"
+        """Callback from Info Service UPnP events"""
         if svName == 'CodecName':
             self.codecEvt.set()
                 
