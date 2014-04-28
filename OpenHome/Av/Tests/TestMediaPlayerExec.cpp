@@ -8,6 +8,8 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include "TestMediaPlayer.h"
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -22,6 +24,8 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     parser.AddOption(&optionRoom);
     OptionString optionName("-n", "--name", Brn("SoftPlayer"), "Product name");
     parser.AddOption(&optionName);
+    OptionString optionUdn("-u", "--udn", Brn(""), "Udn (optional - one will be generated if this is left blank)");
+    parser.AddOption(&optionUdn);
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -36,7 +40,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     InitialisationParams* initParams = InitialisationParams::Create();
     initParams->SetDvEnableBonjour();
 //    initParams->SetUseLoopbackNetworkAdapter();
-    //Debug::SetLevel(Debug::kDvEvent);
+//    Debug::SetLevel(Debug::kSongcast | Debug::kPipeline);
     Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
@@ -75,7 +79,16 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     env.SetRandomSeed(hash);
 
     Bwh udn("TestMediaPlayer");
-    RandomiseUdn(env, udn);
+    const Brx& userSpecifiedUdn = optionUdn.Value();
+    if (userSpecifiedUdn.Bytes() == 0) {
+        RandomiseUdn(env, udn);
+    }
+    else {
+        if (userSpecifiedUdn.Bytes() > udn.Bytes()) {
+            udn.Grow(userSpecifiedUdn.Bytes());
+        }
+        udn.Replace(optionUdn.Value());
+    }
     static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
     TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
     DriverBasic* driver = new DriverBasic(tmp->Pipeline(), dvStack->Env());
