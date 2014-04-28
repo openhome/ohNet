@@ -16,7 +16,7 @@ public:
     ~UriProviderRepeater();
     Media::Track* SetTrack(const Brx& aUri, const Brx& aMetaData, TBool aPullable);
     void SetTrack(Media::Track* aTrack);
-public: // from UriProvider // FIXME - should these be private?
+private: // from UriProvider
     void Begin(TUint aTrackId);
     void BeginLater(TUint aTrackId);
     Media::EStreamPlay GetNext(Media::Track*& aTrack);
