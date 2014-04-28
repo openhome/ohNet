@@ -520,6 +520,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
+                'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
                 'OpenHome/Configuration/Tests/TestFunctorGeneric.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
@@ -706,6 +707,11 @@ def build(bld):
             source='OpenHome/Av/Tests/TestRadioMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestRadio',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestUriProviderRepeater',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
