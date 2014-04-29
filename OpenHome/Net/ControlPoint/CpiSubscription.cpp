@@ -685,6 +685,7 @@ void CpiSubscriptionManager::SubnetListChanged()
 
 void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
+    LOG(kEvent, "> CpiSubscriptionManager::HandleInterfaceChange(%d)\n", aNewSubnet);
     iLock.Wait();
     AutoNetworkAdapterRef ref(iCpStack.Env(), "CpiSubscriptionManager::HandleInterfaceChange");
     const NetworkAdapter* currentInterface = ref.Adapter();
@@ -700,15 +701,8 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
             subscription->NotifySubnetChanged();
         }
     }
-    else {
-        /* device lists map not signal that devices have been removed
-           ...so we need to try to migrate existing subscriptions */
-        std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
-        while (it != iMap.end()) {
-            it->second->HandleResumed();
-            it++;
-        }
-    }
+    /* Don't try to migrate subscriptions here if !aNewSubnet - this causes a race between
+       recreating the event server below and the resubscribes being scheduled in another thread */
     EventServerUpnp* server = iEventServer;
     iEventServer = NULL;
     iLock.Signal();
@@ -722,6 +716,17 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
         iInterface = currentInterface->Address();
         iEventServer = new EventServerUpnp(iCpStack, iInterface);
     }
+    if (!aNewSubnet) {
+        /* device lists may not signal that devices have been removed
+           ...so we need to try to migrate existing subscriptions */
+        AutoMutex a(iLock);
+        std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
+        while (it != iMap.end()) {
+            it->second->HandleResumed();
+            it++;
+        }
+    }
+    LOG(kEvent, "< CpiSubscriptionManager::HandleInterfaceChange(%d)\n", aNewSubnet);
 }
 
 TBool CpiSubscriptionManager::ReadyForShutdown() const
