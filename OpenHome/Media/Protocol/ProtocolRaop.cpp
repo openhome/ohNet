@@ -202,10 +202,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         catch (RaopAudioServerClosed&) {
             LOG(kMedia, "ProtocolRaop::Stream RaopAudioServerClosed\n");
             iLockRaop.Wait();
-            iActive = false;
             iStopped = true;
             iLockRaop.Signal();
-            return EProtocolStreamStopped;
+            // Let this fall through and have the flush handling code at the
+            // start of the loop handle iStopped.
         }
     }
 }
