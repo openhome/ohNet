@@ -231,7 +231,7 @@ void Environment::RemoveResumeObserver(IResumeObserver& aObserver)
 
 void Environment::NotifyResumed()
 {
-    LOG(kTrace, "NotifyResumed");
+    LOG(kTrace, "NotifyResumed\n");
     iResumeObserverLock->Wait();
     for (TUint i=0; i<iResumeObservers.size(); i++) {
         iResumeObservers[i]->NotifyResumed();
