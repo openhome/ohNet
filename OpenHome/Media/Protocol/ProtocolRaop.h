@@ -128,6 +128,7 @@ private:
     TBool iWaiting;
     TBool iStopped;
     Mutex iLockRaop;
+    Semaphore iSem;
 };
 
 };  // namespace Media
