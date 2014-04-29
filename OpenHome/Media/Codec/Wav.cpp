@@ -115,6 +115,7 @@ void CodecWav::Process()
         }
         ProcessHeader(iReadBuf);
         SendMsgDecodedStream(0);
+        iReadBuf.SetBytes(0);
     }
     else {
         if (iAudioBytesRemaining == 0) {
@@ -134,9 +135,6 @@ void CodecWav::Process()
         iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
         iAudioBytesRemaining -= iReadBuf.Bytes();
 
-        if (remainder > 0) {
-            iReadBuf.Replace(split);
-        }
         if (iReadBuf.Bytes() < bytes) { // stream ended unexpectedly
             THROW(CodecStreamEnded);
         }
