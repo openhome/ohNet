@@ -278,9 +278,16 @@ void CodecAac::ProcessMpeg4()
 
         try {
             //LOG(kCodec, "CodecAac::Process  sample = %u, size = %u, inBuf max size %u\n", iCurrentSample, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample), iInBuf.MaxBytes());
-            iController->Read(iInBuf, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample));
+            TUint sampleSize = iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample);
+            iController->Read(iInBuf, sampleSize);
             //LOG(kCodec, "CodecAac::Process  read iInBuf.Bytes() = %u\n", iInBuf.Bytes());
+            if (iInBuf.Bytes() < sampleSize) {
+                THROW(CodecStreamEnded);
+            }
             iCurrentSample++;
+
+            // now decode and output
+            DecodeFrame(false);
         }
         catch (CodecStreamStart&) {
             iNewStreamStarted = true;
@@ -290,9 +297,6 @@ void CodecAac::ProcessMpeg4()
             iStreamEnded = true;
             //LOG(kCodec, "CodecAac::ProcessMpeg4 caught CodecStreamEnded\n");
         }
-
-        // now decode and output
-        DecodeFrame(false);
     }
     else {
         iStreamEnded = true;

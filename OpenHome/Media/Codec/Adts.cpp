@@ -249,6 +249,9 @@ void CodecAdts::StreamInitialise()
 
     iInBuf.SetBytes(0);
     iController->Read(iInBuf, iAdts.StartOffset());  // skip to first frame header
+    if (iInBuf.Bytes() < iAdts.StartOffset()) {
+        THROW(CodecStreamEnded);
+    }
 
     ProcessAdts(true);  //process first 2 frames to get iOutputSampleRate from the decoder
 
@@ -286,9 +289,9 @@ void CodecAdts::ProcessAdts(TBool aParseOnly)
         total = 2-iFrameCounter;
     }
 
-    while (count < total) {
-        // read in a single aac frame at a time
-        try {
+    try {
+        while (count < total) {
+            // read in a single aac frame at a time
             TUint headerBytes = 7;
             iInBuf.SetBytes(0);
             iController->Read(iInBuf, headerBytes);
@@ -299,25 +302,32 @@ void CodecAdts::ProcessAdts(TBool aParseOnly)
                 THROW(CodecStreamCorrupt);
             }
             if(adts.HeaderBytes() > 7) {
+                TUint readBytes = adts.HeaderBytes()-7;
                 iInBuf.SetBytes(0);
-                iController->Read(iInBuf, adts.HeaderBytes()-7);   // skip any extra header info (i.e. CRC)
+                iController->Read(iInBuf, readBytes);   // skip any extra header info (i.e. CRC)
+                if (iInBuf.Bytes() < readBytes) {
+                    THROW(CodecStreamEnded);
+                }
             }
             iInBuf.SetBytes(0);
             //LOG(kCodec, "Aac::Process Adts  size = %u, inBuf max size %u\n", adts.PayloadBytes(), iInBuf.MaxBytes());
             iController->Read(iInBuf, adts.PayloadBytes());
+            if (iInBuf.Bytes() < adts.PayloadBytes()) {
+                THROW(CodecStreamEnded);
+            }
             //LOG(kCodec, "Aac::Process  read iInBuf.Bytes() = %u\n", iInBuf.Bytes());
-        }
-        catch (CodecStreamStart&) {
-            iNewStreamStarted = true;
-            //LOG(kCodec, "CodecAlac::ProcessAdts caught CodecStreamStart\n");
-        }
-        catch (CodecStreamEnded&) {
-            iStreamEnded = true;
-            //LOG(kCodec, "CodecAlac::ProcessAdts caught CodecStreamEnded\n");
-        }
 
-        DecodeFrame(aParseOnly);
-        count++;
+            DecodeFrame(aParseOnly);
+            count++;
+        }
+    }
+    catch (CodecStreamStart&) {
+        iNewStreamStarted = true;
+        //LOG(kCodec, "CodecAlac::ProcessAdts caught CodecStreamStart\n");
+    }
+    catch (CodecStreamEnded&) {
+        iStreamEnded = true;
+        //LOG(kCodec, "CodecAlac::ProcessAdts caught CodecStreamEnded\n");
     }
 
     if(!aParseOnly) {

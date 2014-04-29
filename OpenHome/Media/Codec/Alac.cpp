@@ -143,7 +143,11 @@ void CodecAlac::Process()
 
         try {
             //LOG(kCodec, "CodecAlac::Process  sample = %u, size = %u, inBuf max size %u\n", iCurrentSample, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample), iInBuf.MaxBytes());
-            iController->Read(iInBuf, iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample));
+            TUint sampleSize = iMp4->GetSampleSizeTable().SampleSize((TUint)iCurrentSample);
+            iController->Read(iInBuf, sampleSize);
+            if (iInBuf.Bytes() < sampleSize) {
+                THROW(CodecStreamEnded);
+            }
             iCurrentSample++;
             Decode();
         }
