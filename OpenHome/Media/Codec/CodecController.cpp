@@ -125,6 +125,11 @@ void CodecController::CodecThread()
     iExpectedFlushId = MsgFlush::kIdInvalid;
     iConsumeExpectedFlush = false;
     while (!iQuit) {
+        // push out any pending msg (from previous run of loop)
+        if (iPendingMsg != NULL) {
+            Queue(iPendingMsg);
+            iPendingMsg = NULL;
+        }
         try {
             iLock.Wait();
             iQueueTrackData = iStreamEnded = iStreamStopped = iSeekable = iLive = iSeek = iRecognising = false;
@@ -191,11 +196,6 @@ void CodecController::CodecThread()
                     }
                 }
                 iLock.Signal();
-                // push out any pending msg
-                if (iPendingMsg != NULL) {
-                    Queue(iPendingMsg);
-                    iPendingMsg = NULL;
-                }
                 continue;
             }
 
@@ -240,11 +240,6 @@ void CodecController::CodecThread()
                 }
             }
             iLock.Signal();
-        }
-        // push out any pending msgs, such as a quit
-        if (iPendingMsg != NULL) {
-            Queue(iPendingMsg);
-            iPendingMsg = NULL;
         }
     }
     if (iPendingMsg != NULL) {
