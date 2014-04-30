@@ -297,3 +297,21 @@ TUint16 Converter::BeUint16At(const Brx& aBuf, TUint aIndex)
     }
     return (TUint16)((b[0] << 8) | b[1]);
 }
+
+TUint32 Converter::LeUint32At(const Brx& aBuf, TUint aIndex)
+{
+    TUint b[4];
+    for (TUint i=0; i<4; i++) {
+        b[i] = aBuf[aIndex++];
+    }
+    return (b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24));
+}
+
+TUint16 Converter::LeUint16At(const Brx& aBuf, TUint aIndex)
+{
+    TUint b[2];
+    for (TUint i=0; i<2; i++) {
+        b[i] = aBuf[aIndex++];
+    }
+    return (TUint16)(b[0] | (b[1] << 8));
+}
