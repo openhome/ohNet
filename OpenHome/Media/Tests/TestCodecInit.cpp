@@ -33,8 +33,8 @@ AudioFileCollection* TestCodecFiles()
 
     // additional valid testing files
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k.wav"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecWav));
-    //extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-24bit.wav"), 44100, 441000, 24, 1, AudioFileDescriptor::kCodecWav));
-    //extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit.wav"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecWav));
+    extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-24bit.wav"), 44100, 441000, 24, 1, AudioFileDescriptor::kCodecWav));
+    extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit.wav"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecWav));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-meta-aiff.aiff"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecAiff));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aiff.aiff"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecAiff));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aifc.aifc"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecAifc));
