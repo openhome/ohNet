@@ -268,6 +268,7 @@ void CodecAiffBase::ProcessSsndChunk()
     iAudioBytesTotal = ssndChunkBytes - 8;
     iAudioBytesRemaining = iAudioBytesTotal;
 
+    iReadBuf.SetBytes(0);
     iController->Read(iReadBuf, 8); // read in offset and blocksize
     if (iReadBuf.Bytes() < 8) {
         THROW(CodecStreamEnded);
