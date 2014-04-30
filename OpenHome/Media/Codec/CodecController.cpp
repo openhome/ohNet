@@ -191,6 +191,11 @@ void CodecController::CodecThread()
                     }
                 }
                 iLock.Signal();
+                // push out any pending msg
+                if (iPendingMsg != NULL) {
+                    Queue(iPendingMsg);
+                    iPendingMsg = NULL;
+                }
                 continue;
             }
 
@@ -301,8 +306,6 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
         if (DoRead(aBuf, aBytes)) {
             return;
         }
-        Queue(iPendingMsg);
-        iPendingMsg = NULL;
         THROW(CodecStreamEnded);
     }
     if (iStreamEnded || iStreamStopped) {
