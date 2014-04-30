@@ -22,7 +22,7 @@ AudioFileCollection* TestCodecFiles()
     minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aiff.aiff"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecAiff));
     minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-aifc.aifc"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecAifc));
     minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecFlac));
-    //minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit-ogg.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecFlac));
+    minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-16bit-ogg.flac"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecFlac));
     minFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-alac.m4a"), 44100, 441000, 16, 2, AudioFileDescriptor::kCodecAlac));
     // AAC encoders can add/drop samples from start of files.
     // Need to account for discarded samples from start of AAC files - decoder drops first frame, which is usually 1024 samples.
@@ -39,11 +39,11 @@ AudioFileCollection* TestCodecFiles()
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aiff.aiff"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecAiff));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aifc.aifc"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecAifc));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecFlac));
-    //extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit-ogg.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecFlac));
+    extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-16bit-ogg.flac"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecFlac));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::kCodecFlac));
-    //extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit-ogg.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::kCodecFlac));
+    extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-l5-24bit-ogg.flac"), 44100, 441000, 24, 1, AudioFileDescriptor::kCodecFlac));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecFlac));
-    //extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit-ogg.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecFlac));
+    extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-l5-24bit-ogg.flac"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecFlac));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-alac.m4a"), 44100, 441000, 16, 1, AudioFileDescriptor::kCodecAlac));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-stereo-44k-24bit-alac.m4a"), 44100, 441000, 24, 2, AudioFileDescriptor::kCodecAlac));
     extraFiles.push_back(AudioFileDescriptor(Brn("10s-mono-44k-aac.m4a"), 44100, 443392-1024, 16, 1, AudioFileDescriptor::kCodecAac));
