@@ -14,6 +14,7 @@
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <list>
 #include <map>
@@ -27,7 +28,7 @@ using namespace OpenHome::Net;
 
 const Brx& CpiSubscription::Sid() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex a(iSidLock);
     return iSid;
 }
 
@@ -107,10 +108,9 @@ void CpiSubscription::SetInterruptHandler(IInterruptHandler* aHandler)
 
 void CpiSubscription::SetSid(Brh& aSid)
 {
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    iSidLock.Wait();
     aSid.TransferTo(iSid);
-    lock.Signal();
+    iSidLock.Signal();
 }
 
 const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
@@ -135,9 +135,11 @@ void CpiSubscription::RunInSubscriber()
             DoSubscribe();
         }
         catch(...) {
+            lock.Wait();
             LOG2(kError, kTrace, "Subscribe (%p) for device ", this);
             LOG2(kError, kTrace, iDevice.Udn());
             LOG2(kError, kTrace, " failed\n");
+            lock.Signal();
             throw;
         }
         break;
@@ -157,6 +159,7 @@ void CpiSubscription::RunInSubscriber()
 CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType, TUint aId)
     : iLock("SUBM")
     , iSubscriberLock("SBM2")
+    , iSidLock("SBM3")
     , iDevice(aDevice)
     , iCpStack(aDevice.GetCpStack())
     , iEnv(iCpStack.Env())
@@ -226,11 +229,14 @@ void CpiSubscription::DoSubscribe()
     uri.Append('/');
     Uri subscriber(uri);
 
+    const Brx& serviceFullName = iServiceType.FullName();
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Subscribing - service = ");
-    LOG(kEvent, iServiceType.FullName());
+    LOG(kEvent, serviceFullName);
     LOG(kEvent, "\n    subscription = %p\n    subscriber = ", this);
     LOG(kEvent, subscriber.AbsoluteUri());
     LOG(kEvent, "\n");
+    iEnv.Mutex().Signal();
 
     iNextSequenceNumber = 0;
     TUint renewSecs;
@@ -244,10 +250,9 @@ void CpiSubscription::DoSubscribe()
             deviceXml.Set("[missing]");
         }
         const Brx& udn = iDevice.Udn();
-        const Brx& serviceType = iServiceType.FullName();
         iEnv.Mutex().Wait();
         Log::Print("XmlError attempting to subscribe to ");
-        Log::Print(serviceType);
+        Log::Print(serviceFullName);
         Log::Print(" service on device ");
         Log::Print(udn);
         Log::Print(", with xml\n\n");
@@ -257,11 +262,13 @@ void CpiSubscription::DoSubscribe()
         throw;
     }
 
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Subscription (%p) for ", this);
-    LOG(kEvent, iServiceType.FullName());
+    LOG(kEvent, serviceFullName);
     LOG(kEvent, " completed\n    Sid is ");
     LOG(kEvent, iSid);
     LOG(kEvent, "\n    Renew in %u secs\n", renewSecs);
+    iEnv.Mutex().Signal();
 
     SetRenewTimer(renewSecs);
 }
@@ -310,24 +317,27 @@ void CpiSubscription::DoRenew()
 
 void CpiSubscription::DoUnsubscribe()
 {
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Unsubscribing (%p) sid ", this);
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
+    iEnv.Mutex().Signal();
 
     iTimer->Cancel();
     if (iSid.Bytes() == 0) {
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
         return;
     }
-    iCpStack.SubscriptionManager().Remove(*this);
     Brh sid;
     iEnv.Mutex().Wait();
     iSid.TransferTo(sid);
     iEnv.Mutex().Signal();
     iDevice.Unsubscribe(*this, sid);
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Unsubscribed (%p) sid ", this);
     LOG(kEvent, sid);
     LOG(kEvent, "\n");
+    iEnv.Mutex().Signal();
 }
 
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
@@ -441,6 +451,7 @@ void Subscriber::Error(const TChar* aErr)
 void Subscriber::Error(const TChar* /*aErr*/)
 #endif
 {
+    gEnv->Mutex().Wait();
     LOG2(kEvent, kError, "Error - %s - from (%p) SID ", aErr, iSubscription);
     if (iSubscription->Sid().Bytes() > 0) {
         LOG2(kEvent, kError, iSubscription->Sid());
@@ -449,6 +460,7 @@ void Subscriber::Error(const TChar* /*aErr*/)
         LOG2(kEvent, kError, "(null)");
     }
     LOG2(kEvent, kError, "\n");
+    gEnv->Mutex().Signal();
     // don't try to resubscribe as we may get stuck in an endless cycle of errors
 }
 
