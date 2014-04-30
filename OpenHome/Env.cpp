@@ -8,6 +8,7 @@
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/Debug.h>
 
 #ifdef PLATFORM_MACOSX_GNU
 # include <sys/time.h>
@@ -230,6 +231,7 @@ void Environment::RemoveResumeObserver(IResumeObserver& aObserver)
 
 void Environment::NotifyResumed()
 {
+    LOG(kTrace, "NotifyResumed");
     iResumeObserverLock->Wait();
     for (TUint i=0; i<iResumeObservers.size(); i++) {
         iResumeObservers[i]->NotifyResumed();
