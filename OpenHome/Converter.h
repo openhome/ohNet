@@ -19,6 +19,8 @@ public:
     static void FromXmlEscaped(Bwx& aValue); // Converts in place
     static TUint32 BeUint32At(const Brx& aBuf, TUint aIndex);
     static TUint16 BeUint16At(const Brx& aBuf, TUint aIndex);
+    static TUint32 LeUint32At(const Brx& aBuf, TUint aIndex);
+    static TUint16 LeUint16At(const Brx& aBuf, TUint aIndex);
 private:
     static void ToXmlEscaped(IWriter& aWriter, TByte aValue);
     static TBool IsMultiByteChar(TByte aChar, TUint& aBytes);
