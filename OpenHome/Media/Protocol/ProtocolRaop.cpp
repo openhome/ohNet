@@ -101,7 +101,6 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         else if (iStopped) {
             iSupply->OutputFlush(iNextFlushId);
             iActive = false;
-            iStopped = true;
             iLockRaop.Signal();
             return EProtocolStreamStopped;
         }
