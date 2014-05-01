@@ -34,6 +34,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpSer
     , iRaopAudio(iServerManager.Find(aAudioId))
     , iRaopControl(aEnv, iServerManager.Find(aControlId))
     , iLockRaop("PRAL")
+    , iSem("PRAS", 0)
 {
 }
 
@@ -85,6 +86,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     iRaopControl.Reset(ctrlPort);
     Brn audio;
     TUint16 expected = 0;
+    iSem.Clear();
 
     StartStream();
 
@@ -201,11 +203,10 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         }
         catch (RaopAudioServerClosed&) {
             LOG(kMedia, "ProtocolRaop::Stream RaopAudioServerClosed\n");
-            iLockRaop.Wait();
-            iActive = false;
-            iStopped = true;
-            iLockRaop.Signal();
-            return EProtocolStreamStopped;
+            // If this happens, it means an RAOP session should have ended.
+            // Wait for TryStop() to be called so that iNextFlushId is
+            // incremented, then return to start of loop for flush handling.
+            iSem.Wait();
         }
     }
 }
@@ -246,6 +247,7 @@ TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
             iNextFlushId = iFlushIdProvider->NextFlushId();
             iStopped = true;
             DoInterrupt();
+            iSem.Signal();
         }
     }
     iLockRaop.Signal();

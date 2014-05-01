@@ -57,8 +57,9 @@ void CodecAiffBase::StreamInitialise()
     iEndian = EMediaDataBigEndian;
     iReadBuf.SetBytes(0);
 
-    ProcessHeader();
+    ProcessHeader(); // Could throw CodecStreamEnded/CodecStreamCorrupt.
     SendMsgDecodedStream(0);
+    iReadBuf.SetBytes(0);
 }
 
 void CodecAiffBase::Process()
@@ -73,9 +74,18 @@ void CodecAiffBase::Process()
     iReadBuf.SetBytes(0);
     const TUint bytes = (chunkSize < iAudioBytesRemaining? chunkSize : iAudioBytesRemaining);
     iController->Read(iReadBuf, bytes);
-    Brn encodedAudioBuf(iReadBuf.Ptr(), bytes);
-    iTrackOffset += iController->OutputAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
+
+    // Truncate to a sensible sample boundary.
+    TUint remainder = iReadBuf.Bytes() % (iNumChannels * (iBitDepth/8));
+    Brn split = iReadBuf.Split(iReadBuf.Bytes()-remainder);
+    iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
+
+    iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
     iAudioBytesRemaining -= bytes;
+
+    if (iReadBuf.Bytes() < bytes) { // stream ended unexpectedly
+        THROW(CodecStreamEnded);
+    }
 
     LOG(kCodec, "< CodecAiffBase::Process()\n");
 }
@@ -102,6 +112,9 @@ TUint CodecAiffBase::FindChunk(const Brx& aChunkId)
     for (;;) {
         iReadBuf.SetBytes(0);
         iController->Read(iReadBuf, 8); //Read chunk id and chunk size
+        if (iReadBuf.Bytes() < 8) {
+            THROW(CodecStreamEnded);
+        }
         TUint bytes = Converter::BeUint32At(iReadBuf, 4);
         bytes += (bytes % 2); // aiff pads by one byte if chunk size is odd
 
@@ -118,6 +131,9 @@ TUint CodecAiffBase::FindChunk(const Brx& aChunkId)
                 THROW(CodecStreamFeatureUnsupported);
             }
             iController->Read(iReadBuf, bytes);
+            if (iReadBuf.Bytes() < bytes) {
+                THROW(CodecStreamEnded);
+            }
             iTrackStart += 8 + bytes;
         }
     }
@@ -165,6 +181,7 @@ TUint CodecAiffBase::DetermineRate(TUint16 aExponent, TUint32 aMantissa)
 void CodecAiffBase::ProcessHeader()
 {
     LOG(kCodec, "CodecAiff::ProcessHeader()\n");
+    // Any of these methods could throw a CodecStreamEnded/CodecStreamCorrupt.
     ProcessFormChunk();
     // FIXME - these could appear be in any order, i.e. metadata could be after
     // audio; still need to parse them in this kind of order, but should be
@@ -177,6 +194,9 @@ void CodecAiffBase::ProcessFormChunk()
 {
     //Should be FORM,<FileBytes>,AIFF/AIFC,<audio data>
     iController->Read(iReadBuf, 12); //Read the first 12 bytes of the IFF file, the FORM header
+    if (iReadBuf.Bytes() < 12) {
+        THROW(CodecStreamEnded);
+    }
     const TByte* header = iReadBuf.Ptr();
 
     //We shouldn't be in the aiff codec unless this says 'AIFF/AIFC'
@@ -198,6 +218,9 @@ void CodecAiffBase::ParseCommChunk(TUint aChunkSize)
 {
     iReadBuf.SetBytes(0);
     iController->Read(iReadBuf, aChunkSize);
+    if (iReadBuf.Bytes() < aChunkSize) {
+        THROW(CodecStreamEnded);
+    }
     iNumChannels = Converter::BeUint16At(iReadBuf, 0);
     iSamplesTotal = Converter::BeUint32At(iReadBuf, 2);
     iBitDepth = Converter::BeUint16At(iReadBuf, 6);
@@ -245,7 +268,11 @@ void CodecAiffBase::ProcessSsndChunk()
     iAudioBytesTotal = ssndChunkBytes - 8;
     iAudioBytesRemaining = iAudioBytesTotal;
 
+    iReadBuf.SetBytes(0);
     iController->Read(iReadBuf, 8); // read in offset and blocksize
+    if (iReadBuf.Bytes() < 8) {
+        THROW(CodecStreamEnded);
+    }
 
     iTrackStart += 16;
 

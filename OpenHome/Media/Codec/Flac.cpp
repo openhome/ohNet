@@ -180,7 +180,7 @@ void CodecFlac::StreamInitialise()
     iTrackOffset = 0;
     iSampleRate = 0;
     iTrackLengthJiffies = 0;
-    
+
     FLAC__StreamDecoderState state;
     state = FLAC__stream_decoder_get_state(iDecoder);
     // Ensure that any previous runs of the decoder were reset (via FLAC__stream_decoder_finish)
@@ -306,9 +306,15 @@ FLAC__StreamDecoderReadStatus CodecFlac::CallbackRead(const FLAC__StreamDecoder*
                                                       TUint8 aBuffer[], TUint *aBytes)
 {
     Bwn buf(aBuffer, *aBytes);
-    iController->Read(buf, *aBytes);
-    *aBytes = buf.Bytes();
-    return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+    try {
+        iController->Read(buf, *aBytes);
+        *aBytes = buf.Bytes();
+        return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+    }
+    catch (CodecStreamEnded&) {
+        *aBytes = 0;
+        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+    }
 }
 
 FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder* /*aDecoder*/, TUint64 aOffsetBytes)
@@ -399,7 +405,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
         samplesToWrite -= samples;
         startI = endI;
     }
-    
+
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 

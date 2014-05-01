@@ -60,8 +60,12 @@ TBool ContentPls::Recognise(const Brx& /*aUri*/, const Brx& aMimeType, const Brx
     if (Ascii::CaseInsensitiveEquals(aMimeType, Brn("audio/x-scpls"))) {
         return true;
     }
-    if (Ascii::Contains(aData, Brn("[playlist]"))) {
-        return true;
+    Brn plsId("[playlist]");
+    if (aData.Bytes() >= plsId.Bytes()) {
+        Brn plsLine(aData.Ptr(), plsId.Bytes());
+        if (Ascii::CaseInsensitiveEquals(plsLine, plsId)) {
+            return true;
+        }
     }
     return false;
 }
@@ -77,7 +81,7 @@ ProtocolStreamResult ContentPls::Stream(IProtocolReader& aReader, TUint64 aTotal
         // Find [playlist]
         while (!iIsPlaylist) {
             Brn line = ReadLine(aReader, bytesRemaining);
-            if (line == Brn("[playlist]")) {
+            if (Ascii::CaseInsensitiveEquals(line, Brn("[playlist]"))) {
                 iIsPlaylist = true;
             }
         }
