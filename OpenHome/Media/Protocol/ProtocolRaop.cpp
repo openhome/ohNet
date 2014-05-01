@@ -241,7 +241,7 @@ TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
     LOG(kMedia, "ProtocolRaop::TryStop\n");
     TBool stop = false;
     iLockRaop.Wait();
-    if (!iStopped) {
+    if (!iStopped && iActive) {
         stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
         if (stop) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
