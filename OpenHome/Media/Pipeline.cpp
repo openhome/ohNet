@@ -41,7 +41,8 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
                                  kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
-                                 kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountQuit);
+                                 kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
+                                 kMsgCountMode, kMsgCountDelay, kMsgCountQuit);
 
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element

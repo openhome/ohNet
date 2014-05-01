@@ -31,6 +31,8 @@ public:
        ,EMsgFlush         = 1<<10
        ,EMsgQuit          = 1<<11
        ,EMsgWait          = 1<<12
+       ,EMsgMode          = 1<<13
+       ,EMsgDelay         = 1<<14
        ,EMsgAll           = 0x7fffffff
     };
 public:
@@ -44,7 +46,9 @@ public: // from IPipelineElementUpstream
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);

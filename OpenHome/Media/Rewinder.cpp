@@ -17,7 +17,9 @@ public:
 private:
     MsgCloner();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -49,7 +51,19 @@ MsgCloner::MsgCloner()
 {
 }
 
+Msg* MsgCloner::ProcessMsg(MsgMode* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
 Msg* MsgCloner::ProcessMsg(MsgTrack* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
+Msg* MsgCloner::ProcessMsg(MsgDelay* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
@@ -170,7 +184,19 @@ Msg* Rewinder::Pull()
     return msg;
 }
 
+Msg* Rewinder::ProcessMsg(MsgMode* aMsg)
+{
+    TryBuffer(aMsg);
+    return aMsg;
+}
+
 Msg* Rewinder::ProcessMsg(MsgTrack* aMsg)
+{
+    TryBuffer(aMsg);
+    return aMsg;
+}
+
+Msg* Rewinder::ProcessMsg(MsgDelay* aMsg)
 {
     TryBuffer(aMsg);
     return aMsg;

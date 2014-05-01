@@ -163,6 +163,11 @@ Msg* Stopper::Pull()
     return msg;
 }
 
+Msg* Stopper::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
     /* IdManager expects OkToPlay to be called for every stream that is added to it.
@@ -182,6 +187,11 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
     iTrackId = aMsg->Track().Id();
     iTrackIdPipeline = aMsg->IdPipeline();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    return aMsg;
+}
+
+Msg* Stopper::ProcessMsg(MsgDelay* aMsg)
+{
     return aMsg;
 }
 

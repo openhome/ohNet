@@ -35,7 +35,19 @@ Msg* Splitter::Pull()
     return msg;
 }
 
+Msg* Splitter::ProcessMsg(MsgMode* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
 Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
+Msg* Splitter::ProcessMsg(MsgDelay* aMsg)
 {
     aMsg->AddRef();
     return aMsg;

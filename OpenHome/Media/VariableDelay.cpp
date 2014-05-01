@@ -143,7 +143,17 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     }
 }
 
+Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
 }

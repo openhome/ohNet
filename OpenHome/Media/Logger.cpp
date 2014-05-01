@@ -61,6 +61,16 @@ void Logger::Push(Msg* aMsg)
     iDownstreamElement->Push(aMsg);
 }
 
+Msg* Logger::ProcessMsg(MsgMode* aMsg)
+{
+    if (IsEnabled(EMsgMode)) {
+        Log::Print("Pipeline (%s): mode {mode:", iId);
+        Log::Print(aMsg->Mode());
+        Log::Print(", supportsLatency: %u, realTime: %u\n", aMsg->SupportsLatency(), aMsg->IsRealTime());
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 {
     if (IsEnabled(EMsgTrack)) {
@@ -75,6 +85,15 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
         Log::Print(", id: %u, mode: ", aMsg->Track().Id());
         Log::Print(aMsg->Mode());
         Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());
+    }
+    return aMsg;
+}
+
+Msg* Logger::ProcessMsg(MsgDelay* aMsg)
+{
+    if (IsEnabled(EMsgDelay)) {
+        const TUint jiffies = aMsg->DelayJiffies();
+        Log::Print("Pipeline (%s): delay {jiffies: %x, ms: %u}\n", iId, jiffies, jiffies/Jiffies::kJiffiesPerMs);
     }
     return aMsg;
 }

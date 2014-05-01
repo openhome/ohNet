@@ -28,7 +28,9 @@ public:
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -83,7 +85,7 @@ SuitePreDriver::SuitePreDriver()
     , iLastMsg(ENone)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     MsgAudioPcm* audio = CreateAudio();
     iAudioMsgSizeJiffies = audio->Jiffies();
@@ -231,7 +233,19 @@ MsgAudioPcm* SuitePreDriver::CreateAudio()
     return audio;
 }
 
+Msg* SuitePreDriver::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* SuitePreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePreDriver::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

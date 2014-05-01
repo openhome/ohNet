@@ -720,6 +720,47 @@ void Track::Clear()
 }
 
     
+// MsgMode
+
+MsgMode::MsgMode(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+const Brx& MsgMode::Mode() const
+{
+    return iMode;
+}
+
+TBool MsgMode::SupportsLatency() const
+{
+    return iSupportsLatency;
+}
+
+TBool MsgMode::IsRealTime() const
+{
+    return iIsRealTime;
+}
+
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime)
+{
+    iMode.Replace(aMode);
+    iSupportsLatency = aSupportsLatency;
+    iIsRealTime = aIsRealTime;
+}
+
+void MsgMode::Clear()
+{
+    iMode.Replace(Brx::Empty());
+    iSupportsLatency = iIsRealTime = false;
+}
+
+Msg* MsgMode::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
 // MsgTrack
 
 MsgTrack::MsgTrack(AllocatorBase& aAllocator)
@@ -760,6 +801,34 @@ void MsgTrack::Clear()
 }
 
 Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgDelay
+
+MsgDelay::MsgDelay(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+TUint MsgDelay::DelayJiffies() const
+{
+    return iDelayJiffies;
+}
+
+void MsgDelay::Initialise(TUint aDelayJiffies)
+{
+    iDelayJiffies = aDelayJiffies;
+}
+
+void MsgDelay::Clear()
+{
+    iDelayJiffies = UINT_MAX;
+}
+
+Msg* MsgDelay::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
 }
@@ -1866,7 +1935,15 @@ void MsgReservoir::Remove(TUint& aValue, TUint aRemoved)
     iLock.Signal();
 }
 
+void MsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)
+{
+}
+
 void MsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
+{
+}
+
+void MsgReservoir::ProcessMsgIn(MsgDelay* /*aMsg*/)
 {
 }
 
@@ -1910,7 +1987,17 @@ void MsgReservoir::ProcessMsgIn(MsgQuit* /*aMsg*/)
 {
 }
 
+Msg* MsgReservoir::ProcessMsgOut(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgDelay* aMsg)
 {
     return aMsg;
 }
@@ -1973,7 +2060,19 @@ MsgReservoir::ProcessorQueueIn::ProcessorQueueIn(MsgReservoir& aQueue)
 {
 }
 
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMode* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgTrack* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDelay* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -2056,7 +2155,17 @@ MsgReservoir::ProcessorQueueOut::ProcessorQueueOut(MsgReservoir& aQueue)
 {
 }
 
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMode* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgTrack* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDelay* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
@@ -2161,7 +2270,8 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
                        TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
-                       TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount, TUint aMsgQuitCount)
+                       TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
+                       TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount)
     : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aMsgAudioEncodedCount, aInfoAggregator)
     , iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
@@ -2176,15 +2286,31 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgHalt("MsgHalt", aMsgHaltCount, aInfoAggregator)
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
     , iAllocatorMsgWait("MsgWait", aMsgWaitCount, aInfoAggregator)
+    , iAllocatorMsgMode("MsgMode", aMsgModeCount, aInfoAggregator)
+    , iAllocatorMsgDelay("MsgDelay", aMsgDelayCount, aInfoAggregator)
     , iAllocatorMsgQuit("MsgQuit", aMsgQuitCount, aInfoAggregator)
 {
     iNextFlushId = MsgFlush::kIdInvalid + 1;
+}
+
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    MsgMode* msg = iAllocatorMsgMode.Allocate();
+    msg->Initialise(aMode, aSupportsLatency, aRealTime);
+    return msg;
 }
 
 MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
     msg->Initialise(aTrack, aIdPipeline, aMode);
+    return msg;
+}
+
+MsgDelay* MsgFactory::CreateMsgDelay(TUint aDelayJiffies)
+{
+    MsgDelay* msg = iAllocatorMsgDelay.Allocate();
+    msg->Initialise(aDelayJiffies);
     return msg;
 }
 

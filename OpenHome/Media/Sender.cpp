@@ -88,6 +88,12 @@ void Sender::Push(Msg* aMsg)
     }
 }
 
+Msg* Sender::ProcessMsg(MsgMode* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != NULL) {
@@ -96,6 +102,14 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
     iTrack = &aMsg->Track();
     iTrack->AddRef();
     return aMsg;
+}
+
+Msg* Sender::ProcessMsg(MsgDelay* aMsg)
+{
+    SendPendingAudio();
+    iOhmSender->SetLatency(aMsg->DelayJiffies()); // FIXME - is songcast delay specified in jiffies?
+    aMsg->RemoveRef();
+    return NULL;
 }
 
 Msg* Sender::ProcessMsg(MsgEncodedStream* aMsg)
@@ -301,7 +315,19 @@ MsgPlayable* Sender::PlayableCreator::Process(MsgAudio* aMsg)
     return iPlayable;
 }
 
+Msg* Sender::PlayableCreator::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* Sender::PlayableCreator::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

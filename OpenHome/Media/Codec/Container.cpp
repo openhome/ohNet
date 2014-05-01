@@ -177,10 +177,20 @@ void ContainerBase::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStre
     }
 }
 
+Msg* ContainerBase::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iPendingMsg = aMsg;
     return NULL;
+}
+
+Msg* ContainerBase::ProcessMsg(MsgDelay* aMsg)
+{
+    return aMsg;
 }
 
 Msg* ContainerBase::ProcessMsg(MsgEncodedStream* aMsg)
@@ -323,7 +333,17 @@ Msg* ContainerFront::Pull()
     return msg;
 }
 
+Msg* ContainerFront::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* ContainerFront::ProcessMsg(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
 }
@@ -529,7 +549,17 @@ Msg* Container::Pull()
     }
 }
 
+Msg* Container::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Container::ProcessMsg(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Container::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
 }

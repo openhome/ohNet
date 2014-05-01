@@ -42,7 +42,9 @@ public:
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -77,7 +79,9 @@ private:
         PlayableCreator(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels);
         MsgPlayable* Process(MsgAudio* aMsg);
     private: // from IMsgProcessor
+        Msg* ProcessMsg(MsgMode* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgDelay* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);

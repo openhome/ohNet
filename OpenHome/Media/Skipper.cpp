@@ -54,10 +54,20 @@ Msg* Skipper::Pull()
     return msg;
 }
 
+Msg* Skipper::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
     iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* Skipper::ProcessMsg(MsgDelay* aMsg)
+{
     return aMsg;
 }
 

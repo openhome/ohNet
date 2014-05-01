@@ -274,6 +274,25 @@ private:
     TBool iPullable;
 };
 
+class MsgMode : public Msg
+{
+    friend class MsgFactory;
+public:
+    MsgMode(AllocatorBase& aAllocator);
+    const Brx& Mode() const;
+    TBool SupportsLatency() const;
+    TBool IsRealTime() const;
+private:
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    BwsMode iMode;
+    TBool iSupportsLatency;
+    TBool iIsRealTime;
+};
+
 class MsgTrack : public Msg
 {
     friend class MsgFactory;
@@ -293,6 +312,21 @@ private:
     Media::Track* iTrack;
     TUint iIdPipeline;
     BwsMode iMode;
+};
+
+class MsgDelay : public Msg
+{
+    friend class MsgFactory;
+public:
+    MsgDelay(AllocatorBase& aAllocator);
+    TUint DelayJiffies() const;
+private:
+    void Initialise(TUint aDelayJiffies);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    TUint iDelayJiffies;
 };
 
 class IStreamHandler;
@@ -609,7 +643,9 @@ class IMsgProcessor
 {
 public:
     virtual ~IMsgProcessor() {}
+    virtual Msg* ProcessMsg(MsgMode* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgDelay* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgEncodedStream* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgAudioEncoded* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgMetaText* aMsg) = 0;
@@ -705,7 +741,9 @@ private:
     void Add(TUint& aValue, TUint aAdded);
     void Remove(TUint& aValue, TUint aRemoved);
 private:
+    virtual void ProcessMsgIn(MsgMode* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
+    virtual void ProcessMsgIn(MsgDelay* aMsg);
     virtual void ProcessMsgIn(MsgEncodedStream* aMsg);
     virtual void ProcessMsgIn(MsgAudioEncoded* aMsg);
     virtual void ProcessMsgIn(MsgMetaText* aMsg);
@@ -716,7 +754,9 @@ private:
     virtual void ProcessMsgIn(MsgAudioPcm* aMsg);
     virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgQuit* aMsg);
+    virtual Msg* ProcessMsgOut(MsgMode* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
+    virtual Msg* ProcessMsgOut(MsgDelay* aMsg);
     virtual Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
     virtual Msg* ProcessMsgOut(MsgAudioEncoded* aMsg);
     virtual Msg* ProcessMsgOut(MsgMetaText* aMsg);
@@ -733,7 +773,9 @@ private:
     public:
         ProcessorQueueIn(MsgReservoir& aQueue);
     private:
+        Msg* ProcessMsg(MsgMode* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgDelay* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -753,7 +795,9 @@ private:
     public:
         ProcessorQueueOut(MsgReservoir& aQueue);
     private:
+        Msg* ProcessMsg(MsgMode* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
+        Msg* ProcessMsg(MsgDelay* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
         Msg* ProcessMsg(MsgAudioEncoded* aMsg);
         Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -914,9 +958,12 @@ public:
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
                TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
-               TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount, TUint aMsgQuitCount);
+               TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
+               TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
     //
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
+    MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
@@ -946,6 +993,8 @@ private:
     Allocator<MsgHalt> iAllocatorMsgHalt;
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgWait> iAllocatorMsgWait;
+    Allocator<MsgMode> iAllocatorMsgMode;
+    Allocator<MsgDelay> iAllocatorMsgDelay;
     Allocator<MsgQuit> iAllocatorMsgQuit;
     TUint iNextFlushId;
 };

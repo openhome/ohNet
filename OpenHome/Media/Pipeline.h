@@ -39,12 +39,14 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountPlayablePcm     = 1024;
     static const TUint kMsgCountPlayableSilence = 1024;
     static const TUint kMsgCountEncodedStream   = 20;
-    static const TUint kMsgCountTrack           = 1001;
+    static const TUint kMsgCountTrack           = 20;
     static const TUint kMsgCountDecodedStream   = 20;
     static const TUint kMsgCountMetaText        = 20;
     static const TUint kMsgCountHalt            = 20;
     static const TUint kMsgCountFlush           = 16;
     static const TUint kMsgCountWait            = 16;
+    static const TUint kMsgCountMode            = 20;
+    static const TUint kMsgCountDelay           = 20;
     static const TUint kMsgCountQuit            = 1;
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;

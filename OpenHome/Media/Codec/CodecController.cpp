@@ -441,6 +441,16 @@ void CodecController::OutputHalt()
     Queue(halt);
 }
 
+Msg* CodecController::ProcessMsg(MsgMode* aMsg)
+{
+    if (iRecognising) {
+        iStreamStarted = iStreamEnded = true;
+        aMsg->RemoveRef();
+        return NULL;
+    }
+    return aMsg;
+}
+
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
@@ -451,6 +461,15 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
     iTrackId = aMsg->Track().Id();
     iTrackIdPipeline = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
+{
+    if (iRecognising) {
+        aMsg->RemoveRef();
+        return NULL;
+    }
     return aMsg;
 }
 

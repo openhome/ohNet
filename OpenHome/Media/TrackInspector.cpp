@@ -54,6 +54,11 @@ void TrackInspector::NotifyTrackFailed()
     iTrack = NULL;
 }
 
+Msg* TrackInspector::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != NULL) {
@@ -61,6 +66,11 @@ Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
     }
     iTrack = &aMsg->Track();
     iTrack->AddRef();
+    return aMsg;
+}
+
+Msg* TrackInspector::ProcessMsg(MsgDelay* aMsg)
+{
     return aMsg;
 }
 

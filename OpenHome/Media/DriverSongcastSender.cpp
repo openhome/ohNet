@@ -275,7 +275,19 @@ void DriverSongcastSender::DeviceDisabled()
     iDeviceDisabled.Signal();
 }
 
+Msg* DriverSongcastSender::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverSongcastSender::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

@@ -34,7 +34,9 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -54,7 +56,9 @@ private:
        ,EMsgSilence
        ,EMsgPlayable
        ,EMsgDecodedStream
+       ,EMsgMode
        ,EMsgTrack
+       ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -91,7 +95,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     , iAudioMsgSizeJiffies(0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kRampDuration);
 }
@@ -161,7 +165,7 @@ void SuiteVariableDelay::Test()
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 
     // Check that Silence, Track, AudioStream, MetaText, Halt, Flush, Wait & Quit msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgWait, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgHalt, EMsgFlush, EMsgWait, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         iNextGeneratedMsg = types[i];
         msg = iVariableDelay->Pull();
@@ -219,6 +223,9 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
     case EMsgDecodedStream:
         return iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
+    case EMsgMode:
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+        break;
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
@@ -226,6 +233,9 @@ Msg* SuiteVariableDelay::Pull()
         track->RemoveRef();
         return msg;
     }
+    case EMsgDelay:
+        return iMsgFactory->CreateMsgDelay(0);
+        break;
     case EMsgEncodedStream:
         return iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
     case EMsgMetaText:
@@ -256,9 +266,21 @@ MsgAudio* SuiteVariableDelay::CreateAudio()
     return audio;
 }
 
+Msg* SuiteVariableDelay::ProcessMsg(MsgMode* aMsg)
+{
+    iLastMsg = EMsgMode;
+    return aMsg;
+}
+
 Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgDelay* aMsg)
+{
+    iLastMsg = EMsgDelay;
     return aMsg;
 }
 

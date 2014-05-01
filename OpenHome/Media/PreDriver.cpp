@@ -120,9 +120,21 @@ void PreDriver::CalculateMaxPlayable()
     iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iStreamInfo->StreamInfo().NumChannels(), iStreamInfo->StreamInfo().BitDepth() / 8);
 }
 
+Msg* PreDriver::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
 {
     aMsg->RemoveRef();
+    return NULL;
+}
+
+Msg* PreDriver::ProcessMsg(MsgDelay* /*aMsg*/)
+{
+    ASSERTS();
     return NULL;
 }
 

@@ -103,7 +103,19 @@ void DriverBasic::ProcessAudio(MsgPlayable* aMsg)
     aMsg->RemoveRef();
 }
 
+Msg* DriverBasic::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverBasic::ProcessMsg(MsgTrack* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* DriverBasic::ProcessMsg(MsgDelay* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

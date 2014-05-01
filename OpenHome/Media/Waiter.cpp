@@ -57,12 +57,22 @@ Msg* Waiter::Pull()
     return msg;
 }
 
+Msg* Waiter::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
     if (iState == EFlushing || iState == ERampingDown) {
         aMsg->RemoveRef();
         ASSERTS();
     }
+    return aMsg;
+}
+
+Msg* Waiter::ProcessMsg(MsgDelay* aMsg)
+{
     return aMsg;
 }
 

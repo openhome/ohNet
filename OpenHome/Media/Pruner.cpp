@@ -50,6 +50,12 @@ Msg* Pruner::TryQueueCancelWaiting(Msg* aMsg)
     return msg;
 }
 
+Msg* Pruner::ProcessMsg(MsgMode* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
 {
     if (iWaitingForAudio) {
@@ -61,6 +67,12 @@ Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
     }
     iWaitingForAudio = true;
     return TryQueue(aMsg);
+}
+
+Msg* Pruner::ProcessMsg(MsgDelay* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
 }
 
 Msg* Pruner::ProcessMsg(MsgEncodedStream* aMsg)

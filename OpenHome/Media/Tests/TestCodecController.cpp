@@ -40,7 +40,9 @@ private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -56,7 +58,9 @@ private:
     enum EMsgType
     {
         ENone
+       ,EMsgMode
        ,EMsgTrack
+       ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgDecodedStream
@@ -130,7 +134,7 @@ SuiteCodecController::SuiteCodecController()
 void SuiteCodecController::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 20, 20, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 20, 20, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1);
     iController = new CodecController(*iMsgFactory, *this, *this);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
@@ -218,10 +222,22 @@ void SuiteCodecController::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId
 {
 }
 
+Msg* SuiteCodecController::ProcessMsg(MsgMode* aMsg)
+{
+    iLastReceivedMsg = EMsgMode;
+    return aMsg;
+}
+
 Msg* SuiteCodecController::ProcessMsg(MsgTrack* aMsg)
 {
     iLastReceivedMsg = EMsgTrack;
     iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* SuiteCodecController::ProcessMsg(MsgDelay* aMsg)
+{
+    iLastReceivedMsg = EMsgDelay;
     return aMsg;
 }
 

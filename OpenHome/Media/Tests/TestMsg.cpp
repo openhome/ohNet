@@ -148,6 +148,30 @@ private:
     AllocatorInfoLogger iInfoAggregator;
 };
 
+class SuiteMode : public Suite
+{
+    static const TUint kMsgModeCount = 1;
+public:
+    SuiteMode();
+    ~SuiteMode();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
+class SuiteDelay : public Suite
+{
+    static const TUint kMsgDelayCount = 1;
+public:
+    SuiteDelay();
+    ~SuiteDelay();
+    void Test();
+private:
+    MsgFactory* iMsgFactory;
+    AllocatorInfoLogger iInfoAggregator;
+};
+
 class SuiteDecodedStream : public Suite, private IStreamHandler
 {
     static const TUint kMsgDecodedStreamCount = 1;
@@ -183,24 +207,28 @@ public:
     enum EMsgType
     {
         ENone
-       ,EMsgAudioEncoded
-       ,EMsgAudioPcm
-       ,EMsgSilence
-       ,EMsgPlayable
-       ,EMsgDecodedStream
+       ,EMsgMode
        ,EMsgTrack
+       ,EMsgDelay
        ,EMsgEncodedStream
+       ,EMsgAudioEncoded
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
+       ,EMsgDecodedStream
+       ,EMsgAudioPcm
+       ,EMsgSilence
+       ,EMsgPlayable
        ,EMsgQuit
     };
 public:
     ProcessorMsgType();
     EMsgType LastMsgType() const;
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -249,7 +277,9 @@ public:
         ENone
        ,EMsgAudioPcm
        ,EMsgSilence
+       ,EMsgMode
        ,EMsgTrack
+       ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -271,7 +301,9 @@ private:
 private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgAudioPcm* aMsg);
     void ProcessMsgIn(MsgSilence* aMsg);
+    void ProcessMsgIn(MsgMode* aMsg);
     void ProcessMsgIn(MsgTrack* aMsg);
+    void ProcessMsgIn(MsgDelay* aMsg);
     void ProcessMsgIn(MsgEncodedStream* aMsg);
     void ProcessMsgIn(MsgMetaText* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
@@ -280,7 +312,9 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgQuit* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
+    Msg* ProcessMsgOut(MsgMode* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
+    Msg* ProcessMsgOut(MsgDelay* aMsg);
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
     Msg* ProcessMsgOut(MsgMetaText* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
@@ -389,7 +423,7 @@ void SuiteAllocator::Test()
 SuiteMsgAudioEncoded::SuiteMsgAudioEncoded()
     : Suite("MsgAudioEncoded tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgAudioEncoded::~SuiteMsgAudioEncoded()
@@ -594,7 +628,7 @@ void SuiteMsgAudioEncoded::Test()
 SuiteMsgAudio::SuiteMsgAudio()
     : Suite("Basic MsgAudio tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgAudio::~SuiteMsgAudio()
@@ -722,7 +756,7 @@ void SuiteMsgAudio::Test()
 SuiteMsgPlayable::SuiteMsgPlayable()
     : Suite("Basic MsgPlayable tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMsgPlayable::~SuiteMsgPlayable()
@@ -944,7 +978,7 @@ void SuiteMsgPlayable::ValidateSilence(MsgPlayable* aMsg)
 SuiteRamp::SuiteRamp()
     : Suite("Ramp tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kMsgCount, kMsgCount, kMsgCount, kMsgCount, kMsgCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteRamp::~SuiteRamp()
@@ -1235,7 +1269,7 @@ void SuiteRamp::Test()
 SuiteAudioStream::SuiteAudioStream()
     : Suite("MsgEncodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgEncodedStreamCount, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgEncodedStreamCount, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteAudioStream::~SuiteAudioStream()
@@ -1299,7 +1333,7 @@ void SuiteAudioStream::Test()
 SuiteMetaText::SuiteMetaText()
     : Suite("MsgMetaText tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgMetaTextCount, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgMetaTextCount, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteMetaText::~SuiteMetaText()
@@ -1335,7 +1369,7 @@ void SuiteMetaText::Test()
 SuiteTrack::SuiteTrack()
     : Suite("MsgTrack tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgTrackCount, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgTrackCount, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1411,7 +1445,7 @@ void SuiteTrack::Test()
 SuiteFlush::SuiteFlush()
     : Suite("MsgFlush tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgFlushCount, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgFlushCount, 1, 1, 1, 1);
 }
 
 SuiteFlush::~SuiteFlush()
@@ -1442,7 +1476,7 @@ void SuiteFlush::Test()
 SuiteHalt::SuiteHalt()
     : Suite("MsgHalt tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgHaltCount, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgHaltCount, 1, 1, 1, 1, 1);
 }
 
 SuiteHalt::~SuiteHalt()
@@ -1474,12 +1508,73 @@ void SuiteHalt::Test()
 }
 
 
+// SuiteMode
+
+SuiteMode::SuiteMode()
+    : Suite("MsgMode tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgModeCount, 1, 1);
+}
+
+SuiteMode::~SuiteMode()
+{
+    delete iMsgFactory;
+}
+
+void SuiteMode::Test()
+{
+    Brn mode("First");
+    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true);
+    TEST(msg->Mode() == mode);
+    TEST(msg->SupportsLatency());
+    TEST(msg->IsRealTime());
+    msg->RemoveRef();
+    TEST(msg->Mode() != mode);
+
+    Brn mode2("Second");
+    msg = iMsgFactory->CreateMsgMode(mode2, false, false);
+    TEST(msg->Mode() == mode2);
+    TEST(!msg->SupportsLatency());
+    TEST(!msg->IsRealTime());
+    msg->RemoveRef();
+    TEST(msg->Mode() != mode2);
+}
+
+    
+// SuiteDelay
+
+SuiteDelay::SuiteDelay()
+    : Suite("MsgDelay tests")
+{
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDelayCount, 1);
+}
+
+SuiteDelay::~SuiteDelay()
+{
+    delete iMsgFactory;
+}
+
+void SuiteDelay::Test()
+{
+    const TUint kDelayJiffies = Jiffies::kJiffiesPerMs * 100;
+    MsgDelay* msg = iMsgFactory->CreateMsgDelay(kDelayJiffies);
+    TEST(msg->DelayJiffies() == kDelayJiffies);
+    msg->RemoveRef();
+    TEST(msg->DelayJiffies() != kDelayJiffies);
+
+    msg = iMsgFactory->CreateMsgDelay(0);
+    TEST(msg->DelayJiffies() == 0);
+    msg->RemoveRef();
+    TEST(msg->DelayJiffies() != 0);
+}
+
+
 // SuiteDecodedStream
 
 SuiteDecodedStream::SuiteDecodedStream()
     : Suite("MsgDecodedStream tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDecodedStreamCount, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, kMsgDecodedStreamCount, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
 SuiteDecodedStream::~SuiteDecodedStream()
@@ -1591,7 +1686,7 @@ void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/
 SuiteMsgProcessor::SuiteMsgProcessor()
     : Suite("IMsgProcessor tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1637,11 +1732,21 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
+    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
+    msg->RemoveRef();
+
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
     msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
     track->RemoveRef();
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
+    msg->RemoveRef();
+
+    msg = iMsgFactory->CreateMsgDelay(0);
+    TEST(msg == msg->Process(processor));
+    TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDelay);
     msg->RemoveRef();
 
     msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("Test metatext"), 0, 0, false, false, NULL);
@@ -1688,9 +1793,21 @@ ProcessorMsgType::EMsgType ProcessorMsgType::LastMsgType() const
     return iLastMsgType;
 }
 
+Msg* ProcessorMsgType::ProcessMsg(MsgMode* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgMode;
+    return aMsg;
+}
+
 Msg* ProcessorMsgType::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsgType = ProcessorMsgType::EMsgTrack;
+    return aMsg;
+}
+
+Msg* ProcessorMsgType::ProcessMsg(MsgDelay* aMsg)
+{
+    iLastMsgType = ProcessorMsgType::EMsgDelay;
     return aMsg;
 }
 
@@ -1766,7 +1883,7 @@ Msg* ProcessorMsgType::ProcessMsg(MsgQuit* aMsg)
 SuiteMsgQueue::SuiteMsgQueue()
     : Suite("MsgQueue tests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1954,7 +2071,7 @@ void SuiteMsgQueue::Test()
 SuiteMsgReservoir::SuiteMsgReservoir()
     : Suite("MsgReservoirtests")
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
 }
 
@@ -1975,13 +2092,27 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::ENone);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
+    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+    queue->Enqueue(msg);
+    jiffies = queue->Jiffies();
+    TEST(jiffies == 0);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgMode);
+    TEST(queue->LastOut() == TestMsgReservoir::ENone);
+
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
+    msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
     track->RemoveRef();
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
     TEST(queue->LastIn() == TestMsgReservoir::EMsgTrack);
+    TEST(queue->LastOut() == TestMsgReservoir::ENone);
+
+    msg = iMsgFactory->CreateMsgDelay(0);
+    queue->Enqueue(msg);
+    jiffies = queue->Jiffies();
+    TEST(jiffies == 0);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgDelay);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
     msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
@@ -2041,7 +2172,19 @@ void SuiteMsgReservoir::Test()
 
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgReservoir::EMsgMode);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgTrack);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgReservoir::EMsgDelay);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -2134,9 +2277,19 @@ void TestMsgReservoir::ProcessMsgIn(MsgSilence* /*aMsg*/)
     iLastMsgIn = EMsgSilence;
 }
 
+void TestMsgReservoir::ProcessMsgIn(MsgMode* /*aMode*/)
+{
+    iLastMsgIn = EMsgMode;
+}
+
 void TestMsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
     iLastMsgIn = EMsgTrack;
+}
+
+void TestMsgReservoir::ProcessMsgIn(MsgDelay* /*aMsg*/)
+{
+    iLastMsgIn = EMsgDelay;
 }
 
 void TestMsgReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
@@ -2181,9 +2334,21 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgSilence* aMsg)
     return ProcessMsgAudioOut(aMsg);
 }
 
+Msg* TestMsgReservoir::ProcessMsgOut(MsgMode* aMsg)
+{
+    iLastMsgOut = EMsgMode;
+    return aMsg;
+}
+
 Msg* TestMsgReservoir::ProcessMsgOut(MsgTrack* aMsg)
 {
     iLastMsgOut = EMsgTrack;
+    return aMsg;
+}
+
+Msg* TestMsgReservoir::ProcessMsgOut(MsgDelay* aMsg)
+{
+    iLastMsgOut = EMsgDelay;
     return aMsg;
 }
 
@@ -2238,6 +2403,8 @@ void TestMsg()
     runner.Add(new SuiteTrack());
     runner.Add(new SuiteFlush());
     runner.Add(new SuiteHalt());
+    runner.Add(new SuiteMode());
+    runner.Add(new SuiteDelay());
     runner.Add(new SuiteDecodedStream());
     runner.Add(new SuiteMsgProcessor());
     runner.Add(new SuiteMsgQueue());

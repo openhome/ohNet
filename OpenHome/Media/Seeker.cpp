@@ -64,10 +64,20 @@ Msg* Seeker::Pull()
     return msg;
 }
 
+Msg* Seeker::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
     iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* Seeker::ProcessMsg(MsgDelay* aMsg)
+{
     return aMsg;
 }
 

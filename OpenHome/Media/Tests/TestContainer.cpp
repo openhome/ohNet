@@ -40,7 +40,9 @@ public:
         ,EMsgSilence
         ,EMsgPlayable
         ,EMsgDecodedStream
+        ,EMsgMode
         ,EMsgTrack
+        ,EMsgDelay
         ,EMsgEncodedStream
         ,EMsgMetaText
         ,EMsgHalt
@@ -106,7 +108,9 @@ private:
 class TestContainerMsgProcessor : public IMsgProcessor
 {
 public: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -130,7 +134,9 @@ protected: // from SuiteUnitTest
     void TearDown();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
@@ -275,8 +281,14 @@ Msg* TestContainerMsgGenerator::NextMsg()
     case ENull:
         msg = NULL;
         break;
+    case EMsgMode:
+        msg = GenerateMsg(EMsgMode);
+        break;
     case EMsgTrack:
         msg = GenerateMsg(EMsgTrack);
+        break;
+    case EMsgDelay:
+        msg = GenerateMsg(EMsgDelay);
         break;
     case EMsgEncodedStream:
         msg = GenerateMsg(EMsgEncodedStream);
@@ -342,6 +354,10 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         break;
     case ENull:
         return NULL;
+    case EMsgMode:
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true);
+        iLastMsgType = EMsgMode;
+        break;
     case EMsgTrack:
         {
         Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
@@ -349,6 +365,10 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         track->RemoveRef();
         }
         iLastMsgType = EMsgTrack;
+        break;
+    case EMsgDelay:
+        msg = iMsgFactory.CreateMsgDelay(Jiffies::kJiffiesPerMs * 20);
+        iLastMsgType = EMsgDelay;
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory.CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iPipelineIdProvider.NextStreamId(), false, false, &iStreamHandler);
@@ -474,7 +494,15 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgDecodedStream* /*aMsg*/)
     ASSERTS(); /* only expect to deal with encoded audio at this stage of the pipeline */
     return NULL;
 }
+Msg* TestContainerMsgProcessor::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
 Msg* TestContainerMsgProcessor::ProcessMsg(MsgTrack* aMsg)
+{
+    return aMsg;
+}
+Msg* TestContainerMsgProcessor::ProcessMsg(MsgDelay* aMsg)
 {
     return aMsg;
 }
@@ -518,7 +546,7 @@ SuiteContainerBase::~SuiteContainerBase()
 void SuiteContainerBase::Setup()
 {
     iProvider = new TestContainerProvider();
-    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, kEncodedAudioCount, kMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
@@ -588,10 +616,22 @@ Msg* SuiteContainerBase::ProcessMsg(MsgAudioEncoded* aMsg)
     return aMsg;
 }
 
+Msg* SuiteContainerBase::ProcessMsg(MsgMode* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgMode);
+    return aMsg;
+}
+
 Msg* SuiteContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgTrack);
     iTrackId = aMsg->IdPipeline();
+    return aMsg;
+}
+
+Msg* SuiteContainerBase::ProcessMsg(MsgDelay* aMsg)
+{
+    TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgDelay);
     return aMsg;
 }
 
@@ -636,7 +676,9 @@ void SuiteContainerBase::TestNormalOperation()
 {
     // Populate vector with normal type/order of stream msgs
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgMode);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgDelay);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
     msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);

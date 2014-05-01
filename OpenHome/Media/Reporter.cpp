@@ -32,11 +32,21 @@ Msg* Reporter::Pull()
     return msg;
 }
 
+Msg* Reporter::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 {
     iSeconds = 0;
     iJiffies = 0;
     iObserver.NotifyTrack(aMsg->Track(), aMsg->Mode(), aMsg->IdPipeline());
+    return aMsg;
+}
+
+Msg* Reporter::ProcessMsg(MsgDelay* aMsg)
+{
     return aMsg;
 }
 

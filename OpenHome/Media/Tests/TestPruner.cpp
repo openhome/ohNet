@@ -25,7 +25,9 @@ private:
     enum EMsgType
     {
         ENone
+       ,EMsgMode
        ,EMsgTrack
+       ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgAudioEncoded
        ,EMsgMetaText
@@ -49,7 +51,9 @@ private:
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -90,7 +94,7 @@ SuitePruner::SuitePruner()
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iNextTrackId = 0;
@@ -118,7 +122,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgEncodedStream, EMsgMetaText, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgTrack);
     TEST(DoPull() == EMsgAudioPcm);
@@ -174,10 +178,22 @@ void SuitePruner::SilenceUnblocksTrackMsgs()
     TEST(iPendingMsgs.size() == 0);
 }
 
+Msg* SuitePruner::ProcessMsg(MsgMode* aMsg)
+{
+    iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
 Msg* SuitePruner::ProcessMsg(MsgTrack* aMsg)
 {
     iPulledTrackId = aMsg->Track().Id();
     iLastPulledMsg = EMsgTrack;
+    return aMsg;
+}
+
+Msg* SuitePruner::ProcessMsg(MsgDelay* aMsg)
+{
+    iLastPulledMsg = EMsgDelay;
     return aMsg;
 }
 
@@ -264,6 +280,8 @@ Msg* SuitePruner::Pull()
     iPendingMsgs.erase(iPendingMsgs.begin());
     switch (msgType)
     {
+    case EMsgMode:
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
@@ -272,6 +290,8 @@ Msg* SuitePruner::Pull()
         iNextTrackId++;
         return msg;
     }
+    case EMsgDelay:
+        return iMsgFactory->CreateMsgDelay(0);
     case EMsgEncodedStream:
     {
         return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), UINT_MAX/4, kStreamId, kSeekable, kLive, NULL);

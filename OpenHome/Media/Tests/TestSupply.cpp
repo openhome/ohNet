@@ -32,6 +32,10 @@ class SuiteSupply : public Suite, private IPipelineElementDownstream, private IM
     static const TUint kStreamId   = 3;
     #define kTestData "0123456789012345678901234567890123456789"
     #define kMetaData "Wee bit of meta data"
+    #define kMode "TestMode"
+    static const TBool kSupportsLatency = true;
+    static const TBool kIsRealTime = true;
+    static const TUint kDelayJiffies = 12345;
 public:
     SuiteSupply();
     ~SuiteSupply();
@@ -39,7 +43,9 @@ public:
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
+    Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
@@ -60,7 +66,9 @@ private:
        ,EMsgSilence
        ,EMsgPlayable
        ,EMsgDecodedStream
+       ,EMsgMode
        ,EMsgTrack
+       ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
        ,EMsgHalt
@@ -116,7 +124,7 @@ SuiteSupply::SuiteSupply()
     , iLastMsg(ENone)
     , iMsgPushCount(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new Supply(*iMsgFactory, *this);
 }
@@ -157,11 +165,27 @@ void SuiteSupply::Push(Msg* aMsg)
     iMsgPushCount++;
 }
 
+Msg* SuiteSupply::ProcessMsg(MsgMode* aMsg)
+{
+    iLastMsg = EMsgMode;
+    TEST(aMsg->Mode() == Brn(kMode));
+    TEST(aMsg->SupportsLatency() == kSupportsLatency);
+    TEST(aMsg->IsRealTime() == kIsRealTime);
+    return aMsg;
+}
+
 Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     TEST(aMsg->Track().Uri() == Brn(kUri));
     TEST(aMsg->IdPipeline() == kTrackId);
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgDelay* aMsg)
+{
+    iLastMsg = EMsgDelay;
+    TEST(aMsg->DelayJiffies() == kDelayJiffies);
     return aMsg;
 }
 
