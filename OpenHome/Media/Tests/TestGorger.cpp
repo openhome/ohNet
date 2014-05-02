@@ -4,10 +4,8 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
-#include <OpenHome/Media/ProcessorPcmUtils.h>
 
 #include <list>
-#include <limits.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
