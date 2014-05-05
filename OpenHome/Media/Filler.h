@@ -21,6 +21,8 @@ class UriProvider
 public:
     virtual ~UriProvider();
     const Brx& Mode() const;
+    TBool SupportsLatency() const;
+    TBool IsRealTime() const;
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -28,9 +30,11 @@ public:
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
-    UriProvider(const TChar* aMode);
+    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime);
 private:
     BwsMode iMode;
+    TBool iSupportsLatency;
+    TBool iRealTime;
 };
 
 class Filler : private Thread, public ISupply
@@ -54,7 +58,9 @@ private:
 private: // from Thread
     void Run();
 private: // from ISupply
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
+    void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -87,6 +93,7 @@ private:
     TBool iSendHalt;
     TBool iGetPrevious;
     TBool iQuit;
+    TBool iChangedMode;
     EStreamPlay iTrackPlayStatus;
     TUint iNextHaltId;
     Track* iNullTrack; // delivered when uri provider cannot return a Track

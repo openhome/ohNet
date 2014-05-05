@@ -20,9 +20,21 @@ Supply::~Supply()
 {
 }
 
+void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    MsgMode* msg = iMsgFactory.CreateMsgMode(aMode, aSupportsLatency, aRealTime);
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
     MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId, aMode);
+    iDownStreamElement.Push(msg);
+}
+
+void Supply::OutputDelay(TUint aJiffies)
+{
+    MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
     iDownStreamElement.Push(msg);
 }
 

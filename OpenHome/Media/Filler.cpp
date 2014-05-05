@@ -17,8 +17,20 @@ const Brx& UriProvider::Mode() const
     return iMode;
 }
 
-UriProvider::UriProvider(const TChar* aMode)
+TBool UriProvider::SupportsLatency() const
+{
+    return iSupportsLatency;
+}
+
+TBool UriProvider::IsRealTime() const
+{
+    return iRealTime;
+}
+
+UriProvider::UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime)
     : iMode(aMode)
+    , iSupportsLatency(aSupportsLatency)
+    , iRealTime(aRealTime)
 {
 }
 
@@ -40,6 +52,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& a
     , iStopped(true)
     , iSendHalt(false)
     , iQuit(false)
+    , iChangedMode(true)
     , iNextHaltId(MsgHalt::kIdNone + 1)
     , iStreamPlayObserver(aStreamPlayObserver)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
@@ -147,6 +160,7 @@ TUint Filler::NullTrackId() const
 
 void Filler::UpdateActiveUriProvider(const Brx& aMode)
 {
+    UriProvider* prevUriProvider = iActiveUriProvider;
     iActiveUriProvider = NULL;
     for (TUint i=0; i<iUriProviders.size(); i++) {
         UriProvider* uriProvider = iUriProviders[i];
@@ -155,6 +169,7 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
             break;
         }
     }
+    iChangedMode = iChangedMode || (prevUriProvider != iActiveUriProvider);
     if (iActiveUriProvider == NULL) {
         iStopped = true;
         THROW(FillerInvalidMode);
@@ -206,9 +221,11 @@ void Filler::Run()
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             mode.Replace(iActiveUriProvider->Mode());
             if (iTrackPlayStatus == ePlayNo) {
+                OutputMode(Brn("null"), false, true);
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
+                OutputDelay(0);
                 iSendHalt = false;
                 iStopped = true;
                 iLock.Signal();
@@ -216,6 +233,14 @@ void Filler::Run()
             else {
                 iUriStreamer->Interrupt(false); // FIXME - this could incorrectly over-ride a call to Interrupt() that was scheduled between Wait() and iLock being acquired
                 ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
+                if (iChangedMode) {
+                    const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
+                    OutputMode(iActiveUriProvider->Mode(), supportsLatency, iActiveUriProvider->IsRealTime());
+                    if (!supportsLatency) {
+                        OutputDelay(0);
+                    }
+                    iChangedMode = false;
+                }
                 iLock.Signal();
                 ASSERT(iTrack != NULL);
                 (void)iUriStreamer->DoStream(*iTrack, mode);
@@ -228,11 +253,25 @@ void Filler::Run()
     iSupply.OutputQuit();
 }
 
+void Filler::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    if (!iQuit) {
+        iSupply.OutputMode(aMode, aSupportsLatency, aRealTime);
+    }
+}
+
 void Filler::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
     if (!iQuit) {
         iTrackId = aTrackId;
         iSupply.OutputTrack(aTrack, aTrackId, aMode);
+    }
+}
+
+void Filler::OutputDelay(TUint aJiffies)
+{
+    if (!iQuit) {
+        iSupply.OutputDelay(aJiffies);
     }
 }
 

@@ -139,9 +139,13 @@ SuiteSupply::~SuiteSupply()
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
+    iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies);
+    TEST(++expectedMsgCount == iMsgPushCount);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), NULL, false);
     iSupply->OutputTrack(*track, kTrackId, Brx::Empty());
     track->RemoveRef();
+    TEST(++expectedMsgCount == iMsgPushCount);
+    iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);

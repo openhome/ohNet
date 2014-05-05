@@ -309,9 +309,19 @@ IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSen
     return iSplitter->SetPipelineBranch(aSender);
 }
 
+void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    iSupply->OutputMode(aMode, aSupportsLatency, aRealTime);
+}
+
 void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
 {
     iSupply->OutputTrack(aTrack, aTrackId, aMode);
+}
+
+void Pipeline::OutputDelay(TUint aJiffies)
+{
+    iSupply->OutputDelay(aJiffies);
 }
 
 void Pipeline::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)

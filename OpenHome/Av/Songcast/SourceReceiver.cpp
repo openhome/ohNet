@@ -118,7 +118,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     static const TChar * kMode = "Receiver";
     const Brn kModeBuf(kMode);
-    iUriProvider = new UriProviderSingleTrack(kMode, trackFactory);
+    iUriProvider = new UriProviderSingleTrack(kMode, true, true, trackFactory);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iPipeline.Add(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));

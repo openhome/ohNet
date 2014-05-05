@@ -212,7 +212,9 @@ public:
     TUint StreamCount();
     TUint DataTotal();
 public: // from ISupply
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
+    void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -794,11 +796,19 @@ TUint TestHttpSupplier::DataTotal()
     return iDataTotal;
 }
 
+void TestHttpSupplier::OutputMode(const Brx& /*aMode*/, TBool /*aSupportsLatency*/, TBool /*aRealTime*/)
+{
+}
+
 void TestHttpSupplier::OutputTrack(Track& /*aTrack*/, TUint aTrackId, const Brx& /*aMode*/)
 {
     //Log::Print("TestHttpSupplier::OutputTrack %u\n", aTrackId);
     iTrackId = aTrackId;
     iTrackCount++;
+}
+
+void TestHttpSupplier::OutputDelay(TUint /*aJiffies*/)
+{
 }
 
 void TestHttpSupplier::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
