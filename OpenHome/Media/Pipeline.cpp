@@ -80,7 +80,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iStopper = new Stopper(*iMsgFactory, *iLoggerWaiter, *this, kStopperRampDuration);
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iReporter = new Reporter(*iLoggerStopper, *this);
+    iGorger = new Gorger(*iMsgFactory, *iLoggerStopper, kGorgerDuration);
+    iLoggerGorger = new Logger(*iGorger, "Gorger");
+    iReporter = new Reporter(*iLoggerGorger, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
@@ -110,6 +112,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerSkipper->SetEnabled(true);
     //iLoggerWaiter->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
+    //iLoggerGorger->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
@@ -127,6 +130,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerSkipper->SetFilter(Logger::EMsgAll);
     //iLoggerWaiter->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
+    //iLoggerGorger->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
@@ -151,6 +155,8 @@ Pipeline::~Pipeline()
     delete iSplitter;
     delete iLoggerReporter;
     delete iReporter;
+    delete iLoggerGorger;
+    delete iGorger;
     delete iLoggerStopper;
     delete iStopper;
     delete iLoggerWaiter;

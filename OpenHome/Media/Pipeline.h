@@ -16,6 +16,7 @@
 #include <OpenHome/Media/Skipper.h>
 #include <OpenHome/Media/Waiter.h>
 #include <OpenHome/Media/Stopper.h>
+#include <OpenHome/Media/Gorger.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
 #include <OpenHome/Media/Pruner.h>
@@ -56,6 +57,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kSkipperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kWaiterRampDuration                   = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
+    static const TUint kGorgerDuration                       = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 100;
     static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 50;
     static const TUint kStarvationMonitorGorgeSize           = Jiffies::kJiffiesPerMs * 1000;
@@ -143,6 +145,8 @@ private:
     Logger* iLoggerWaiter;
     Stopper* iStopper;
     Logger* iLoggerStopper;
+    Gorger* iGorger;
+    Logger* iLoggerGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
     Splitter* iSplitter;
