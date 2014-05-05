@@ -60,7 +60,6 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kGorgerDuration                       = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 100;
     static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 50;
-    static const TUint kStarvationMonitorGorgeSize           = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
 public:
     Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes);

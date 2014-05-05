@@ -25,7 +25,6 @@ class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, p
 
     static const TUint kRegularSize         = Jiffies::kJiffiesPerMs * 100;
     static const TUint kStarvationThreshold = Jiffies::kJiffiesPerMs * 40;
-    static const TUint kGorgeSize           = Jiffies::kJiffiesPerMs * 500;
     static const TUint kRampUpSize          = Jiffies::kJiffiesPerMs * 50;
 
     static const TUint kSampleRate  = 44100;
@@ -114,7 +113,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iBuffering(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kGorgeSize, kRampUpSize, *this);
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize, *this);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()
@@ -128,7 +127,7 @@ void SuiteStarvationMonitor::Test()
     /*
     Test goes something like
         Create SM.  Check pull would block.
-        Add 0x7f filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
+        Add 0x7f filled audio.  Repeat until would block.  Check size is >= kRegularSize.
         Pull all audio.  Check the last bit ramps down.
         Check halt message is sent and pull would then block
         Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
@@ -144,10 +143,10 @@ void SuiteStarvationMonitor::Test()
     TEST(iSm->iStatus == StarvationMonitor::EBuffering);
     TEST(iBuffering);
 
-    // Add 0x7f filled audio.  Repeat until would block.  Check size is >= kGorgeSize.
+    // Add 0x7f filled audio.  Repeat until would block.  Check size is >= kRegularSize.
     Print("\nAdd audio until would block\n");
     GenerateUpstreamMsgs(EStateAudioFillInitial);
-    while (iSm->Jiffies() < kGorgeSize) {
+    while (iSm->Jiffies() < kRegularSize) {
         Thread::Sleep(10); // last msg may not quite have been enqueued when we switched threads
     }
     TEST(iSm->EnqueueWouldBlock());
@@ -195,7 +194,7 @@ void SuiteStarvationMonitor::Test()
 
     // Start filling with 0x7f filled audio again.  Check pull would still block as we grow beyond regular limit
     // Continue adding audio until we reach gorge size.  Check enqueue would now block.
-    Print("\nRe-fill until gorge size\n");
+    Print("\nRe-fill until normal size\n");
     GenerateUpstreamMsgs(EStateAudioFillPostStarvation);
     WaitForEnqueueToBlock();
     Thread::Sleep(20); // WaitForEnqueueToBlock can return very shortly before NotifyStarvationMonitorBuffering is called
@@ -209,7 +208,6 @@ void SuiteStarvationMonitor::Test()
         msg = iSm->Pull();
         (void)msg->Process(*this);
         TEST(iLastMsg == EMsgAudioPcm);
-        TEST(iSm->EnqueueWouldBlock());
     } while (iSm->iStatus == StarvationMonitor::ERampingUp);
     TEST(jiffies - iSm->Jiffies() == kRampUpSize);
     TEST(iSm->iStatus == StarvationMonitor::ERunning);
@@ -217,13 +215,13 @@ void SuiteStarvationMonitor::Test()
 
     // Check enqueues would block until size drops below normal max
     Print("\nPull until below normal max\n");
-    do {
+    while (iSm->Jiffies() > kRegularSize) {
         TEST(!iSm->PullWouldBlock());
         TEST(iSm->EnqueueWouldBlock());
         msg = iSm->Pull();
         (void)msg->Process(*this);
         TEST(iLastMsg == EMsgAudioPcm);
-    } while (iSm->Jiffies() > kRegularSize);
+    }
     TEST(!iBuffering);
 
     // Add Halt.  Check queue can be drained without ramping down
@@ -289,7 +287,7 @@ Msg* SuiteStarvationMonitor::Pull()
     case EStateAudioFillInitial:
     {
         MsgAudio* msg = CreateAudio();
-        if (iSm->Jiffies() + msg->Jiffies() >= kGorgeSize) {
+        if (iSm->Jiffies() + msg->Jiffies() >= kRegularSize) {
             iMsgGenerationState = EStateWait;
             iSemUpstreamCompleted.Signal();
         }
@@ -298,7 +296,7 @@ Msg* SuiteStarvationMonitor::Pull()
     case EStateAudioFillPostStarvation:
     {
         MsgAudio* msg = CreateAudio();
-        if (iSm->Jiffies() + msg->Jiffies() >= kGorgeSize) {
+        if (iSm->Jiffies() + msg->Jiffies() >= kRegularSize) {
             iMsgGenerationState = EStateWait;
             iSemUpstreamCompleted.Signal();
         }
