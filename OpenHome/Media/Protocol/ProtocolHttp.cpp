@@ -34,10 +34,12 @@ public:
     ProtocolHttp(Environment& aEnv);
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
 private: // from IProtocolReader
     Brn Read(TUint aBytes);
     Brn ReadUntil(TByte aSeparator);
@@ -45,6 +47,7 @@ private: // from IProtocolReader
     void ReadInterrupt();
     Brn ReadRemaining();
 private:
+    void Reinitialise(const Brx& aUri);
     ProtocolStreamResult DoStream();
     ProtocolStreamResult DoSeek(TUint64 aOffset);
     ProtocolStreamResult DoLiveStream();
@@ -156,16 +159,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
 
 ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
-    iTotalBytes = iSeekPos = iOffset = 0;
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
-    iDataChunkSize = iDataChunkRemaining = 0;
-    iContentProcessor = NULL;
-    iNextFlushId = MsgFlush::kIdInvalid;
-    (void)iSem.Clear();
-    iUri.Replace(aUri);
-    iIcyMetadata.SetBytes(0);
-    iNewIcyMetadata.SetBytes(0);
+    Reinitialise(aUri);
 
     LOG(kMedia, "ProtocolHttp::Stream ");
     LOG(kMedia, iUri.AbsoluteUri());
@@ -235,6 +229,91 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     return res;
 }
 
+ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes)
+{
+    Reinitialise(aUri);
+
+    if (iUri.Scheme() != Brn("http")) {
+        LOG(kMedia, "ProtocolHttp::Stream Scheme not recognised\n");
+        Close();
+        return EProtocolGetErrorNotSupported;
+    }
+
+    Close();
+    if (!Connect(iUri, 80)) {
+        LOG(kMedia, "ProtocolHttp::Get Connection failure\n");
+        return EProtocolGetErrorUnrecoverable;
+    }
+
+    try {
+        LOG(kMedia, "ProtocolHttp::Get send request\n");
+        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
+        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
+        Http::WriteHeaderConnectionClose(iWriterRequest);
+        TUint64 last = aOffset+aBytes;
+        if (last > 0) {
+            last -= 1;  // need to adjust for last byte position as request
+                        // requires absolute positions, rather than range
+        }
+        Http::WriteHeaderRange(iWriterRequest, aOffset, last);
+        iWriterRequest.WriteFlush();
+    }
+    catch(WriterError&) {
+        LOG(kMedia, "ProtocolHttp::Get WriterError\n");
+        return EProtocolGetErrorUnrecoverable;
+    }
+
+    try {
+        LOG(kMedia, "ProtocolHttp::Get read response\n");
+        iReaderResponse.Read();
+
+        const TUint code = iReaderResponse.Status().Code();
+        iTotalBytes = iHeaderContentLength.ContentLength();
+        // FIXME - should parse the Content-Range response to ensure we're
+        // getting the bytes requested - the server may (validly) opt not to
+        // honour our request.
+        LOG(kMedia, "ProtocolHttp::Get response code %d\n", code);
+        if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
+            LOG(kMedia, "ProtocolHttp::Get failed\n");
+            return EProtocolGetErrorUnrecoverable;
+        }
+        if (code == HttpStatus::kPartialContent.Code()) {
+            LOG(kMedia, "ProtocolHttp::Get 'Partial Content' (%lld bytes)\n", iTotalBytes);
+            if (iTotalBytes >= aBytes) {
+                TUint64 count = 0;
+                TUint bytes = 1024; // FIXME - choose better value or justify this
+                while (count < iTotalBytes) {
+                    const TUint remaining = static_cast<TUint>(iTotalBytes-count);
+                    if (remaining < bytes) {
+                        bytes = remaining;
+                    }
+                    Brn buf = Read(bytes);
+                    aWriter.Write(buf);
+                    count += buf.Bytes();
+                    // If we start pushing some bytes to IWriter then get an
+                    // error, will fall through and return
+                    // EProtocolGetErrorUnrecoverable below, so IWriter won't
+                    // receive duplicate data and TryGet() will return false,
+                    // so IWriter knows to invalidate any data it's received.
+                }
+                return EProtocolGetSuccess;
+            }
+        }
+        else { // code == HttpStatus::kOk.Code()
+            LOG(kMedia, "ProtocolHttp::Get 'OK' (%lld bytes)\n", iTotalBytes);
+        }
+
+    }
+    catch(HttpError&) {
+        LOG(kMedia, "ProtocolHttp::Get HttpError\n");
+    }
+    catch(ReaderError&) {
+        LOG(kMedia, "ProtocolHttp::Get ReaderError\n");
+    }
+    return EProtocolGetErrorUnrecoverable;
+}
+
 EStreamPlay ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     const EStreamPlay canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
@@ -279,6 +358,18 @@ TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
+TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+{
+    iLock.Wait();
+    const TBool isCurrent = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    TBool success = false;
+    if (isCurrent) {
+        success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
+    }
+    iLock.Signal();
+    return success;
+}
+
 Brn ProtocolHttp::Read(TUint aBytes)
 {
     TUint bytes = aBytes;
@@ -321,6 +412,20 @@ Brn ProtocolHttp::ReadRemaining()
     Brn buf = iDechunker.ReadRemaining();
     iOffset += buf.Bytes();
     return buf;
+}
+
+void ProtocolHttp::Reinitialise(const Brx& aUri)
+{
+    iTotalBytes = iSeekPos = iOffset = 0;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iSeekable = iSeek = iLive = iStarted = iStopped = iStreamIncludesMetaData = false;
+    iDataChunkSize = iDataChunkRemaining = 0;
+    iContentProcessor = NULL;
+    iNextFlushId = MsgFlush::kIdInvalid;
+    (void)iSem.Clear();
+    iUri.Replace(aUri);
+    iIcyMetadata.SetBytes(0);
+    iNewIcyMetadata.SetBytes(0);
 }
 
 ProtocolStreamResult ProtocolHttp::DoStream()

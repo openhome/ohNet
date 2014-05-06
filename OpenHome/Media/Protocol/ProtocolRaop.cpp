@@ -210,6 +210,11 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     }
 }
 
+ProtocolGetResult ProtocolRaop::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return EProtocolGetErrorNotSupported;
+}
+
 void ProtocolRaop::StartStream()
 {
     LOG(kMedia, "ProtocolRaop::StartStream\n");

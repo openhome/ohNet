@@ -2,6 +2,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
@@ -21,7 +22,7 @@ namespace OpenHome {
 namespace Media {
 namespace Codec {
 
-class CodecVorbis : public CodecBase
+class CodecVorbis : public CodecBase, public IWriter
 {
 public:
     static const Brn kCodecVorbis;
@@ -35,6 +36,10 @@ private: // from CodecBase
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
+private: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
 public:
     size_t ReadCallback(void *ptr, size_t size, size_t nmemb);
     int SeekCallback(ogg_int64_t offset, int whence);
@@ -42,8 +47,13 @@ public:
     long TellCallback();
     void PrintCallback(char *message);
 private:
+    TBool FindSync();
+    TUint64 GetTotalSamples();
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
+private:
+    static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
+    static const TUint kSearchChunkSize = 1024;
 
     ov_callbacks iCallbacks;
 
@@ -53,6 +63,7 @@ private:
 
     Bws<DecodedAudio::kMaxBytes> iInBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
+    Bws<2*kSearchChunkSize> iSeekBuf;   // can store 2 read chunks, to check for sync word across read boundaries
     TUint32 iAudioBytes;
  
     TUint32 iSampleRate;
@@ -237,8 +248,29 @@ void CodecVorbis::StreamInitialise()
     iTrackLengthJiffies = 0;
     iTrackOffset = 0;
 
-    if (iController->StreamLength()) {
-        iSamplesTotal = iSampleRate * iController->StreamLength() / iBytesPerSec; // estimate from average bitrate and file size
+    if (iController->StreamLength() > 0) {
+        // Try do an out-of-band read and parse the final Ogg page ourselves to
+        // get the granule pos field. When Vorbis is contained within an Ogg,
+        // the granule pos field contains the sample pos, and the final Ogg
+        // page tells us the total number of samples in that stream (for
+        // non-chained streams).
+
+        // If trying to read and parse the final Ogg page fails, fall back to
+        // estimating the track length via a calculation.
+
+        if (FindSync()) {
+            try {
+                iSamplesTotal = GetTotalSamples();
+            }
+            catch (CodecStreamCorrupt&)
+            {}
+        }
+
+
+        if (iSamplesTotal == 0) { // didn't manage to parse last Ogg page; fall back to estimation
+            iSamplesTotal = iSampleRate * iController->StreamLength() / iBytesPerSec; // estimate from average bitrate and file size
+        }
+
         iTrackLengthJiffies = (iSamplesTotal * Jiffies::kJiffiesPerSecond) / iSampleRate;
     }
 
@@ -252,6 +284,19 @@ void CodecVorbis::StreamCompleted()
     ov_clear(&iVf);
 }
 
+void CodecVorbis::Write(TByte aValue)
+{
+    iSeekBuf.Append(aValue);
+}
+
+void CodecVorbis::Write(const Brx& aBuffer)
+{
+    iSeekBuf.Append(aBuffer);
+}
+
+void CodecVorbis::WriteFlush()
+{
+}
 
 TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
 {
@@ -271,6 +316,97 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
         iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
+}
+
+TBool CodecVorbis::FindSync()
+{
+    // If this method finds the Ogg sync word ("OggS"), it will return true and
+    // iSeekBuf will be the data from the last sync word found onwards.
+    // It will return false otherwise and the state of iSeekBuf will be
+    // undefined.
+
+    // Vorbis codec reads backwards in 1024-byte chunks, so we do the same.
+
+    TBool keepLooking = true;
+    TUint searchSize = kSearchChunkSize;
+    TUint64 offset = iController->StreamLength();
+    TBool syncFound = false;
+    Bws<kSearchChunkSize> stashBuf;
+
+    if (iController->StreamLength() < searchSize) {
+        offset = 0;
+        searchSize = static_cast<TUint>(iController->StreamLength());
+    }
+    else {
+        offset = iController->StreamLength()-searchSize;
+    }
+
+    while (keepLooking) {
+        iSeekBuf.SetBytes(0);
+
+        // This will cause callbacks via the IWriter interface.
+        // iSeekBuf will only be modified by IWriter callbacks during the
+        // Read() below.
+        TBool res = iController->Read(*this, offset, searchSize);
+
+        // Try to find the "OggS" sync word.
+        TUint idx = 0;
+        if (res) {
+            iSeekBuf.Append(stashBuf); // sync word may occur across read boundary
+            Brn sync("OggS");
+            TInt bytes = iSeekBuf.Bytes() - sync.Bytes(); // will go -ve if incompatible sizes
+            TInt i = 0;
+            for (i=0; i<=bytes; i++) {
+                if ((strncmp((char*)&iSeekBuf[i], (char*)&sync[0], sync.Bytes()) == 0)
+                        && (iSeekBuf.Bytes()-i >= kHeaderBytesReq)) {
+                    // Don't break here - there may still be more Ogg pages
+                    // in the buffer. We want the last one, so process
+                    // whole buf in case there are more.
+                    syncFound = true;
+                    idx = i;
+                    keepLooking = false;
+                }
+            }
+        }
+
+        if (syncFound) {
+            // Shift last Ogg page to front of buffer.
+            iSeekBuf.Replace(iSeekBuf.Split(idx));
+            break;
+        }
+
+        if (!res || offset == 0) {
+            // Problem reading stream, or exhausted entire stream without
+            // finding required data.
+            keepLooking = false;
+        }
+        else {
+            stashBuf.Replace(iSeekBuf.Ptr(), searchSize);   // stash prev read in case Ogg page
+                                                            // is split on read boundary.
+            TUint64 stepBack = kSearchChunkSize;
+            if (offset < kSearchChunkSize) {
+                stepBack = offset;
+                searchSize = static_cast<TUint>(offset);
+            }
+            offset -= stepBack;
+        }
+    }
+
+    return syncFound;
+}
+
+TUint64 CodecVorbis::GetTotalSamples()
+{
+    if (iSeekBuf.Bytes() >= kHeaderBytesReq) {
+        TUint64 granulePos1 = Converter::LeUint32At(iSeekBuf, 6);
+        TUint64 granulePos2 = Converter::LeUint32At(iSeekBuf, 10);
+        TUint64 granulePos = (granulePos1 | (granulePos2 << 32));
+        return granulePos;
+    }
+
+    // We shouldn't have a truncated Ogg page, as we check there are enough
+    // header bytes during the sync word search.
+    THROW(CodecStreamCorrupt);
 }
 
 // copy audio data to output buffer, converting to big endian if required.
