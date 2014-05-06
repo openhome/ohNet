@@ -52,6 +52,7 @@ private:
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
 private:
+    static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
     static const TUint kSearchChunkSize = 1024;
 
     ov_callbacks iCallbacks;
@@ -356,7 +357,8 @@ TBool CodecVorbis::FindSync()
             TInt bytes = iSeekBuf.Bytes() - sync.Bytes(); // will go -ve if incompatible sizes
             TInt i = 0;
             for (i=0; i<=bytes; i++) {
-                if (strncmp((char*)&iSeekBuf[i], (char*)&sync[0], sync.Bytes()) == 0) {
+                if ((strncmp((char*)&iSeekBuf[i], (char*)&sync[0], sync.Bytes()) == 0)
+                        && (iSeekBuf.Bytes()-i >= kHeaderBytesReq)) {
                     // Don't break here - there may still be more Ogg pages
                     // in the buffer. We want the last one, so process
                     // whole buf in case there are more.
@@ -395,8 +397,6 @@ TBool CodecVorbis::FindSync()
 
 TUint64 CodecVorbis::GetTotalSamples()
 {
-    static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
-
     if (iSeekBuf.Bytes() >= kHeaderBytesReq) {
         TUint64 granulePos1 = Converter::LeUint32At(iSeekBuf, 6);
         TUint64 granulePos2 = Converter::LeUint32At(iSeekBuf, 10);
@@ -404,9 +404,8 @@ TUint64 CodecVorbis::GetTotalSamples()
         return granulePos;
     }
 
-    // Stream is truncated at last ogg; could check this before
-    // we finish requesting data and get lastOgg-1.
-    // FIXME - Just give up here for now.
+    // We shouldn't have a truncated Ogg page, as we check there are enough
+    // header bytes during the sync word search.
     THROW(CodecStreamCorrupt);
 }
 
