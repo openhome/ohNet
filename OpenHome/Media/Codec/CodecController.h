@@ -35,6 +35,7 @@ class ICodecController
 public:
     virtual void Read(Bwx& aBuf, TUint aBytes) = 0;
     virtual void ReadNextMsg(Bwx& aBuf) = 0;
+    virtual TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes) = 0;
     virtual TBool TrySeek(TUint aStreamId, TUint64 aBytePos) = 0;
     virtual TUint64 StreamLength() const = 0;
     virtual TUint64 StreamPos() const = 0;
@@ -86,6 +87,7 @@ private: // ISeeker
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
     void ReadNextMsg(Bwx& aBuf);
+    TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes); // Read an arbitrary amount of data from current stream, out-of-band from pipeline
     TBool TrySeek(TUint aStreamId, TUint64 aBytePos);
     TUint64 StreamLength() const;
     TUint64 StreamPos() const;
@@ -111,6 +113,7 @@ private: // IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;

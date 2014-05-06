@@ -150,6 +150,7 @@ private:
 private: // from Protocol
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:

@@ -22,6 +22,13 @@ enum ProtocolStreamResult
    ,EProtocolStreamErrorUnrecoverable
 };
 
+enum ProtocolGetResult
+{
+    EProtocolGetSuccess
+   ,EProtocolGetErrorNotSupported
+   ,EProtocolGetErrorUnrecoverable
+};
+
 class IUriStreamer
 {
 public:
@@ -41,6 +48,7 @@ class IProtocolManager : public IProtocolSet
 public:
     virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const = 0;
     virtual ContentProcessor* GetAudioProcessor() const = 0;
+    virtual TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) = 0;
     virtual TBool IsCurrentTrack(TUint aTrackId) const = 0;
 };
 
@@ -54,6 +62,7 @@ class Protocol : protected IStreamHandler, protected INonCopyable
 {
 public:
     virtual ~Protocol();
+    ProtocolGetResult DoGet(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
     ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
     TBool Active() const;
@@ -63,9 +72,11 @@ protected:
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;
+    virtual ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) = 0;
 protected:
     Environment& iEnv;
     IProtocolManager* iProtocolManager;
@@ -150,6 +161,7 @@ private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;
     ContentProcessor* GetAudioProcessor() const;
+    TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
     TBool IsCurrentTrack(TUint aTrackId) const;
 private:
     IPipelineIdProvider& iIdProvider;
