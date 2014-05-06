@@ -33,6 +33,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     enum EMsgType
@@ -163,6 +164,12 @@ TUint SuiteGorger::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
+}
+
+TBool SuiteGorger::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    ASSERTS();
+    return false;
 }
 
 void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)

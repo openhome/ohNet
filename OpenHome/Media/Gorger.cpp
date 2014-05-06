@@ -135,6 +135,13 @@ TUint Gorger::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
+TBool Gorger::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    // Not expected to be called.  Content at this stage of the pipeline is guaranteed to be played.
+    ASSERTS();
+    return false;
+}
+
 void Gorger::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
 {
     iLock.Wait();
