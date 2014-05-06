@@ -53,7 +53,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
     static const TUint kDecodedReservoirSize                 = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kSeekerRampDuration                   = Jiffies::kJiffiesPerMs * 20;
-    static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 200;
+    static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 20;
     static const TUint kSkipperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kWaiterRampDuration                   = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;

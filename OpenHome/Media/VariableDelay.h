@@ -18,14 +18,13 @@ After a delay is actioned, audio spends RampDuration ramping up.
 FIXME - no handling of pause-resumes
 */
     
-class VariableDelay : public IPipelineElementUpstream, private IMsgProcessor
+class VariableDelay : private MsgReservoir, public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler
 {
     static const TUint kMaxMsgSilenceDuration = Jiffies::kJiffiesPerMs * 5;
     friend class SuiteVariableDelay;
 public:
-    VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration);
+    VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);
     virtual ~VariableDelay();
-    void AdjustDelay(TUint aJiffies);
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private:
@@ -46,10 +45,17 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IStreamHandler
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     enum EStatus
     {
-        ERunning
+        EStarting
+       ,ERunning
        ,ERampingDown
        ,ERampedDown
        ,ERampingUp
@@ -62,10 +68,13 @@ private:
     TInt iDelayAdjustment;
     EStatus iStatus;
     Ramp::EDirection iRampDirection;
+    const TUint iDownstreamDelay;
     const TUint iRampDuration;
+    TBool iEnabled;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
-    MsgQueue iQueue; // empty unless we have to split a msg during a ramp
+    BwsMode iMode;
+    IStreamHandler* iStreamHandler;
 };
 
 } // namespace Media

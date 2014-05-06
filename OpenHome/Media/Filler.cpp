@@ -235,7 +235,11 @@ void Filler::Run()
                 ASSERT(!iStopped); // measure whether the above FIXME occurs in normal use
                 if (iChangedMode) {
                     const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
-                    OutputMode(iActiveUriProvider->Mode(), supportsLatency, iActiveUriProvider->IsRealTime());
+                    const TBool realTime = iActiveUriProvider->IsRealTime();
+                    ASSERT(!(supportsLatency && realTime)); /* VariableDelay handling of NotifyStarving would be
+                                                               hard/impossible if the Gorger was allowed to buffer
+                                                               content between the two VariableDelays */
+                    OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime);
                     if (!supportsLatency) {
                         OutputDelay(0);
                     }

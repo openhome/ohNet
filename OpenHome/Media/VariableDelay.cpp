@@ -9,17 +9,20 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
-VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration)
+VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iDelayJiffies(0)
     , iLock("VDLY")
     , iDelayAdjustment(0)
-    , iStatus(ERunning)
+    , iStatus(EStarting)
     , iRampDirection(Ramp::ENone)
+    , iDownstreamDelay(aDownstreamDelay)
     , iRampDuration(aRampDuration)
+    , iEnabled(false)
     , iCurrentRampValue(Ramp::kRampMax)
     , iRemainingRampSize(0)
+    , iStreamHandler(NULL)
 {
 }
 
@@ -27,30 +30,16 @@ VariableDelay::~VariableDelay()
 {
 }
 
-void VariableDelay::AdjustDelay(TUint aJiffies)
-{
-    AutoMutex a(iLock);
-    if (aJiffies == iDelayJiffies) {
-        return;
-    }
-    iDelayAdjustment += (aJiffies - iDelayJiffies);
-    iDelayJiffies = aJiffies;
-    iStatus = ERampingDown;
-    iRampDirection = Ramp::EDown;
-    iCurrentRampValue = Ramp::kRampMax;
-    iRemainingRampSize = iRampDuration;
-}
-
 Msg* VariableDelay::Pull()
 {
     Msg* msg;
     iLock.Wait();
-    if (iStatus == ERampedDown && iDelayAdjustment > 0) {
+    if (iStatus != ERampingDown && iDelayAdjustment > 0) {
         const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         msg = iMsgFactory.CreateMsgSilence(size);
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
-            iStatus = ERampingUp;
+            iStatus = (iStatus==ERampedDown? ERampingUp : ERunning);
             iRampDirection = Ramp::EUp;
             iCurrentRampValue = Ramp::kRampMin;
             iRemainingRampSize = iRampDuration;
@@ -58,14 +47,14 @@ Msg* VariableDelay::Pull()
     }
     else {
         do {
-            iLock.Signal();
-            if (!iQueue.IsEmpty()) {
-                msg = iQueue.Dequeue();
+            if (!IsEmpty()) {
+                msg = DoDequeue();
             }
             else {
+                iLock.Signal();
                 msg = iUpstreamElement.Pull();
+                iLock.Wait();
             }
-            iLock.Wait();
             msg = msg->Process(*this);
         } while (msg == NULL);
     }
@@ -78,6 +67,9 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
     MsgAudio* msg = aMsg;
     switch (iStatus)
     {
+    case EStarting:
+        iStatus = ERunning;
+        break;
     case ERunning:
         // nothing to do, allow the message to be passed out unchanged
         break;
@@ -103,7 +95,7 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
         if (jiffies > (TUint)(-iDelayAdjustment)) {
             MsgAudio* remaining = msg->Split((TUint)(-iDelayAdjustment));
             jiffies = msg->Jiffies();
-            iQueue.EnqueueAtHead(remaining);
+            EnqueueAtHead(remaining);
         }
         iDelayAdjustment += jiffies;
         msg->RemoveRef();
@@ -134,17 +126,19 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
 {
     if (aMsg->Jiffies() > iRemainingRampSize) {
         MsgAudio* remaining = aMsg->Split(iRemainingRampSize);
-        iQueue.Enqueue(remaining);
+        DoEnqueue(remaining);
     }
     MsgAudio* split;
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
     if (split != NULL) {
-        iQueue.Enqueue(split);
+        DoEnqueue(split);
     }
 }
 
 Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 {
+    iEnabled = aMsg->SupportsLatency();
+    iMode.Replace(aMsg->Mode());
     return aMsg;
 }
 
@@ -155,6 +149,50 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
+    TUint delayJiffies = aMsg->DelayJiffies();
+    ASSERT(iEnabled || delayJiffies == 0);
+    if (iDownstreamDelay >= delayJiffies) {
+        return aMsg;
+    }
+    delayJiffies -= iDownstreamDelay;
+    if (delayJiffies == iDelayJiffies) {
+        return aMsg;
+    }
+
+    iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
+    iDelayJiffies = delayJiffies;
+    //Log::Print("VariableDelay: delay=%u, adjustment=%d\n", iDelayJiffies/Jiffies::kJiffiesPerMs, iDelayAdjustment/(TInt)Jiffies::kJiffiesPerMs);
+    switch (iStatus)
+    {
+    case EStarting:
+        iRampDirection = Ramp::ENone;
+        iCurrentRampValue = Ramp::kRampMax;
+        iRemainingRampSize = iRampDuration;
+        break;
+    case ERunning:
+        iStatus = ERampingDown;
+        iRampDirection = Ramp::EDown;
+        iCurrentRampValue = Ramp::kRampMax;
+        iRemainingRampSize = iRampDuration;
+        break;
+    case ERampingDown:
+        if (iDelayAdjustment == 0) {
+            iStatus = ERampingUp;
+            iRampDirection = Ramp::EUp;
+            // retain current value of iCurrentRampValue
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        }
+        break;
+    case ERampedDown:
+        break;
+    case ERampingUp:
+        iStatus = ERampingDown;
+        iRampDirection = Ramp::EDown;
+        // retain current value of iCurrentRampValue
+        iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        break;
+    }
+
     return aMsg;
 }
 
@@ -191,7 +229,18 @@ Msg* VariableDelay::ProcessMsg(MsgWait* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    return aMsg;
+    const DecodedStreamInfo& stream = aMsg->StreamInfo();
+    iStreamHandler = stream.StreamHandler();
+    iStatus = EStarting;
+    iRampDirection = Ramp::ENone;
+    iCurrentRampValue = Ramp::kRampMax;
+    iRemainingRampSize = iRampDuration;
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
+                                                               stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
+                                                               stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 
+                                                               stream.Seekable(), stream.Live(), this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
@@ -214,4 +263,72 @@ Msg* VariableDelay::ProcessMsg(MsgPlayable* /*aMsg*/)
 Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)
 {
     return aMsg;
+}
+
+EStreamPlay VariableDelay::OkToPlay(TUint aTrackId, TUint aStreamId)
+{
+    if (iStreamHandler != NULL) {
+        iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    }
+    return ePlayNo;
+}
+
+TUint VariableDelay::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+{
+    if (iStreamHandler != NULL) {
+        iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+    }
+    return MsgFlush::kIdInvalid;
+}
+
+TUint VariableDelay::TryStop(TUint aTrackId, TUint aStreamId)
+{
+    if (iStreamHandler != NULL) {
+        iStreamHandler->TryStop(aTrackId, aStreamId);
+    }
+    return MsgFlush::kIdInvalid;
+}
+
+TBool VariableDelay::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+{
+    if (iStreamHandler != NULL) {
+        return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+    }
+    return false;
+}
+
+void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+{
+    iLock.Wait();
+    if (iEnabled && iMode == aMode) {
+        iDelayAdjustment = iDelayJiffies;
+        switch (iStatus)
+        {
+        case EStarting:
+            break;
+        case ERunning:
+            iStatus = ERampingDown;
+            iRampDirection = Ramp::EDown;
+            iCurrentRampValue = Ramp::kRampMax;
+            iRemainingRampSize = iRampDuration;
+            break;
+        case ERampingDown:
+            break;
+        case ERampedDown:
+            break;
+        case ERampingUp:
+            iStatus = ERampingDown;
+            iRampDirection = Ramp::EDown;
+            // retain current value of iCurrentRampValue
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            break;
+        default:
+            ASSERTS();
+        }
+    }
+    iLock.Signal();
+
+    if (iStreamHandler != NULL) {
+        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+    }
 }

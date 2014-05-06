@@ -69,7 +69,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerSeeker = NULL;
     iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, kSeekerRampDuration);
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
-    iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerSeeker, kVariableDelayRampDuration);
+    iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerSeeker, 0/*FIXME*/, kVariableDelayRampDuration);
     iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
     iTrackInspector = new TrackInspector(*iLoggerVariableDelay);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
