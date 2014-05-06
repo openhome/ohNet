@@ -47,8 +47,8 @@ public:
     long TellCallback();
     void PrintCallback(char *message);
 private:
-    TBool FindSync(TUint& aIndex, Bwx& aStashBuf);
-    TUint64 GetTotalSamples(TUint aIndex, const Brx& aStashBuf);
+    TBool FindSync();
+    TUint64 GetTotalSamples();
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
 private:
@@ -62,7 +62,7 @@ private:
 
     Bws<DecodedAudio::kMaxBytes> iInBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
-    Bws<kSearchChunkSize> iSeekBuf;
+    Bws<2*kSearchChunkSize> iSeekBuf;   // can store 2 read chunks, to check for sync word across read boundaries
     TUint32 iAudioBytes;
  
     TUint32 iSampleRate;
@@ -257,15 +257,9 @@ void CodecVorbis::StreamInitialise()
         // If trying to read and parse the final Ogg page fails, fall back to
         // estimating the track length via a calculation.
 
-        TUint idx = 0;
-        Bws<kSearchChunkSize> stashBuf;
-        TBool syncFound = FindSync(idx, stashBuf);
-
-        // If we've found sync, may not have enough data in iSeekBuf
-        // - might have to concatenate it with stashBuf.
-        if (syncFound) {
+        if (FindSync()) {
             try {
-                iSamplesTotal = GetTotalSamples(idx, stashBuf);
+                iSamplesTotal = GetTotalSamples();
             }
             catch (CodecStreamCorrupt&)
             {}
@@ -323,14 +317,20 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
     return canSeek;
 }
 
-TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
+TBool CodecVorbis::FindSync()
 {
+    // If this method finds the Ogg sync word ("OggS"), it will return true and
+    // iSeekBuf will be the data from the last sync word found onwards.
+    // It will return false otherwise and the state of iSeekBuf will be
+    // undefined.
+
     // Vorbis codec reads backwards in 1024-byte chunks, so we do the same.
 
     TBool keepLooking = true;
     TUint searchSize = kSearchChunkSize;
     TUint64 offset = iController->StreamLength();
     TBool syncFound = false;
+    Bws<kSearchChunkSize> stashBuf;
 
     if (iController->StreamLength() < searchSize) {
         offset = 0;
@@ -340,7 +340,6 @@ TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
         offset = iController->StreamLength()-searchSize;
     }
 
-    // FIXME - what if sync word occurs across one of our read boundaries?
     while (keepLooking) {
         iSeekBuf.SetBytes(0);
 
@@ -350,10 +349,11 @@ TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
         TBool res = iController->Read(*this, offset, searchSize);
 
         // Try to find the "OggS" sync word.
+        TUint idx = 0;
         if (res) {
+            iSeekBuf.Append(stashBuf); // sync word may occur across read boundary
             Brn sync("OggS");
             TInt bytes = iSeekBuf.Bytes() - sync.Bytes(); // will go -ve if incompatible sizes
-
             TInt i = 0;
             for (i=0; i<=bytes; i++) {
                 if (strncmp((char*)&iSeekBuf[i], (char*)&sync[0], sync.Bytes()) == 0) {
@@ -361,13 +361,15 @@ TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
                     // in the buffer. We want the last one, so process
                     // whole buf in case there are more.
                     syncFound = true;
-                    aIndex = i;
+                    idx = i;
                     keepLooking = false;
                 }
             }
         }
 
         if (syncFound) {
+            // Shift last Ogg page to front of buffer.
+            iSeekBuf.Replace(iSeekBuf.Split(idx));
             break;
         }
 
@@ -377,8 +379,8 @@ TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
             keepLooking = false;
         }
         else {
-            aStashBuf.Replace(iSeekBuf);    // stash prev read in case Ogg page
-                                            // is split on read boundary.
+            stashBuf.Replace(iSeekBuf.Ptr(), searchSize);   // stash prev read in case Ogg page
+                                                            // is split on read boundary.
             TUint64 stepBack = kSearchChunkSize;
             if (offset < kSearchChunkSize) {
                 stepBack = offset;
@@ -391,38 +393,20 @@ TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
     return syncFound;
 }
 
-TUint64 CodecVorbis::GetTotalSamples(TUint aIndex, const Brx& aStashBuf)
+TUint64 CodecVorbis::GetTotalSamples()
 {
-    // If we've found sync, may not have enough data in iSeekBuf
-    // - might have to concatenate it with aStashBuf.
     static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
-    Bws<kHeaderBytesReq> pageBuf;
-    // We require 14 bytes from start of Ogg page for granule pos.
-    // If we don't have that, split data in iSeekBuf and stashBuf
-    // and combine them so we have what we need.
-    if (iSeekBuf.Bytes()-aIndex >= kHeaderBytesReq) {
-        pageBuf.Replace(iSeekBuf.Split(aIndex, kHeaderBytesReq));
-    }
-    else {
-        const TUint remainder = kHeaderBytesReq-pageBuf.Bytes();
-        if (aStashBuf.Bytes() >= remainder) {
-            pageBuf.Replace(iSeekBuf.Split(aIndex));
-            pageBuf.Append(aStashBuf.Split(0, remainder));
-        }
-        else {
-            // Stream is truncated at last ogg; could check this before
-            // we finish requesting data and get lastOgg-1.
-            // FIXME - Just give up here for now.
-            pageBuf.SetBytes(0);
-        }
-    }
 
-    if (pageBuf.Bytes() > 0) {
-        TUint64 granulePos1 = Converter::LeUint32At(pageBuf, 6);
-        TUint64 granulePos2 = Converter::LeUint32At(pageBuf, 10);
+    if (iSeekBuf.Bytes() >= kHeaderBytesReq) {
+        TUint64 granulePos1 = Converter::LeUint32At(iSeekBuf, 6);
+        TUint64 granulePos2 = Converter::LeUint32At(iSeekBuf, 10);
         TUint64 granulePos = (granulePos1 | (granulePos2 << 32));
         return granulePos;
     }
+
+    // Stream is truncated at last ogg; could check this before
+    // we finish requesting data and get lastOgg-1.
+    // FIXME - Just give up here for now.
     THROW(CodecStreamCorrupt);
 }
 
