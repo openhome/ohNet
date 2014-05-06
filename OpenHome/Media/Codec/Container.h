@@ -42,6 +42,7 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
     TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0;
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
 };
 
@@ -84,6 +85,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 protected:
     MsgAudioEncoded* iAudioEncoded;
@@ -138,6 +140,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
@@ -182,6 +185,7 @@ public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     ContainerFront* iContainerFront;

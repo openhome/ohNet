@@ -903,6 +903,7 @@ public:
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    virtual TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
     virtual void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
 };
 

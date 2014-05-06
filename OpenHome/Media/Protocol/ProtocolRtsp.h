@@ -17,6 +17,7 @@ public:
     ProtocolRtsp(Environment& aEnv, const Brx& aGuid);
 private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
     ProtocolStreamResult DoStream();
     void OutputStream();
 private: // from IStreamHandler

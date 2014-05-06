@@ -44,6 +44,7 @@ protected: // from Media::Protocol
     void Interrupt(TBool aInterrupt);
 private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri);
+    Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private: // from IStreamHandler
     Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private:

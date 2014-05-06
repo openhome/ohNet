@@ -22,9 +22,11 @@ public:
 private: // from Protocol   
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private: // from IStreamHandler
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
 private: // from IProtocolReader
     Brn Read(TUint aBytes);
     Brn ReadUntil(TByte aSeparator);
@@ -157,6 +159,11 @@ ProtocolStreamResult ProtocolFile::Stream(const Brx& aUri)
     return res;
 }
 
+ProtocolGetResult ProtocolFile::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return EProtocolGetErrorNotSupported;
+}
+
 TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     iLock.Wait();
@@ -188,6 +195,11 @@ TUint ProtocolFile::TryStop(TUint aTrackId, TUint aStreamId)
         return MsgFlush::kIdInvalid;
     }
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
+}
+
+TBool ProtocolFile::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
 }
 
 Brn ProtocolFile::Read(TUint aBytes)

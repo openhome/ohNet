@@ -32,6 +32,12 @@ void Protocol::Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvide
     iFlushIdProvider = &aFlushIdProvider;
 }
 
+ProtocolGetResult Protocol::DoGet(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes)
+{
+    AutoStream a(*this);
+    return Get(aWriter, aUri, aOffset, aBytes);
+}
+
 ProtocolStreamResult Protocol::TryStream(const Brx& aUri)
 {
     AutoStream a(*this);
@@ -52,6 +58,11 @@ TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffs
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
+}
+
+TBool Protocol::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return false;
 }
 
 void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -348,6 +359,22 @@ ContentProcessor* ProtocolManager::GetContentProcessor(const Brx& aUri, const Br
 ContentProcessor* ProtocolManager::GetAudioProcessor() const
 {
     return iAudioProcessor;
+}
+
+TBool ProtocolManager::Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes)
+{
+    ProtocolGetResult res = EProtocolGetErrorNotSupported;
+    const TUint count = iProtocols.size();
+    for (TUint i=0; i<count && res==EProtocolGetErrorNotSupported; i++) {
+        Protocol* protocol = iProtocols[i];
+        if (!protocol->Active()) {
+            try {
+                res = protocol->DoGet(aWriter, aUri, aOffset, aBytes);
+            }
+            catch (UriError&) {}
+        }
+    }
+    return (res == EProtocolGetSuccess);
 }
 
 TBool ProtocolManager::IsCurrentTrack(TUint aTrackId) const

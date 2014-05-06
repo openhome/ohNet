@@ -307,6 +307,12 @@ TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
     return iStreamHandler->TryStop(aTrackId, aStreamId);
 }
 
+TBool Rewinder::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+{
+    AutoMutex a(iLock);
+    return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+}
+
 void Rewinder::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);

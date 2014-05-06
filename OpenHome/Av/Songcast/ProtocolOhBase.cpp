@@ -147,11 +147,16 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     return res;
 }
 
+ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return EProtocolGetErrorNotSupported;
+}
+
 EStreamPlay ProtocolOhBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     /* We need to play whatever the Sender gives us.  Its easier to do this by hard-coding 'yes'
        to all tracks rather than fooling IdManager into recognising each track we announce.  (Any
-       later attempt to do this will need to start sending EncodedStream msgs for eacg received track.) */
+       later attempt to do this will need to start sending EncodedStream msgs for each received track.) */
     return ePlayYes;
 }
 
