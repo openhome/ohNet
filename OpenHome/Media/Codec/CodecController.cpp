@@ -420,6 +420,14 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     iLock.Signal();
 }
 
+void CodecController::OutputDelay(TUint aJiffies)
+{
+    iLock.Wait();
+    MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
+    Queue(msg);
+    iLock.Signal();
+}
+
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
     MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);

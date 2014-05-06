@@ -32,10 +32,14 @@ private: // from IReader
     void ReadFlush();
     void ReadInterrupt();
 private:
+    void OutputDelay();
+private:
     Av::OhmMsgFactory& iMsgFactory;
     Bws<Av::OhmMsgAudioBlob::kMaxBytes> iBuf;
     TUint iOffset;
     TBool iStreamOutput;
+    TUint iSampleRate;
+    TUint iLatency;
 };
 
 } // namespace Codec
@@ -86,6 +90,8 @@ void CodecOhm::StreamInitialise()
     iBuf.SetBytes(0);
     iOffset = 0;
     iStreamOutput = false;
+    iSampleRate = 0;
+    iLatency = 0;
 }
 
 void CodecOhm::Process()
@@ -97,11 +103,18 @@ void CodecOhm::Process()
 
     const TUint sampleRate = msg->SampleRate();
     const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(sampleRate);
+    const TUint latency = msg->MediaLatency();
 
     if (!iStreamOutput) {
         const TUint64 trackLengthJiffies = jiffiesPerSample * msg->SamplesTotal();
         iController->OutputDecodedStream(msg->BitRate(), msg->BitDepth(), sampleRate, msg->Channels(), msg->Codec(), trackLengthJiffies, msg->SampleStart(), msg->Lossless());
         iStreamOutput = true;
+    }
+
+    if (sampleRate != iSampleRate || latency != iLatency) {
+        iSampleRate = sampleRate;
+        iLatency = latency;
+        OutputDelay();
     }
 
     if (msg->Samples() > 0) {
@@ -157,4 +170,14 @@ void CodecOhm::ReadFlush()
 
 void CodecOhm::ReadInterrupt()
 {
+}
+
+void CodecOhm::OutputDelay()
+{
+    static const TUint kDelayDivisor48k = (48000 * 256) / 1000;
+    static const TUint kDelayDivisor44k = (44100 * 256) / 1000;
+    const TUint delayMs = iLatency / ((iSampleRate % 441) == 0 ? kDelayDivisor44k : kDelayDivisor48k);
+    Log::Print("-- CodecOhm - delayMs=%u\n", delayMs);
+    const TUint delayJiffies = delayMs * Jiffies::kJiffiesPerMs;
+    iController->OutputDelay(delayJiffies);
 }
