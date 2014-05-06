@@ -82,9 +82,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 #else
         Log::Print("(omitted)");
 #endif
-        Log::Print(", id: %u, mode: ", aMsg->Track().Id());
-        Log::Print(aMsg->Mode());
-        Log::Print(", pipelineId: %u}\n: ", aMsg->IdPipeline());
+        Log::Print(", id: %u, pipelineId: %u}\n", aMsg->Track().Id(), aMsg->IdPipeline());
     }
     return aMsg;
 }

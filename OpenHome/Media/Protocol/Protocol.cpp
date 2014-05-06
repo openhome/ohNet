@@ -315,12 +315,12 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
     }
 }
 
-TBool ProtocolManager::DoStream(Track& aTrack, const Brx& aMode)
+TBool ProtocolManager::DoStream(Track& aTrack)
 {
     iLock.Wait();
     iTrackId = iIdProvider.NextTrackId();
     iLock.Signal();
-    iSupply.OutputTrack(aTrack, iTrackId, aMode);
+    iSupply.OutputTrack(aTrack, iTrackId);
     ProtocolStreamResult res = Stream(aTrack.Uri());
     return (res != EProtocolStreamStopped);
 }

@@ -248,6 +248,14 @@ void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
     iLock.Signal();
 }
 
+Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
+{
+    iMode.Replace(aMsg->Mode());
+    iTrackId = UINT_MAX;
+    iStreamId = UINT_MAX;
+    return aMsg;
+}
+
 Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
 {
     iTrackIsPullable = aMsg->Track().Pullable();
@@ -255,7 +263,6 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
         iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     }
     iStreamHandler = NULL;
-    iMode.Replace(aMsg->Mode());
     iTrackId = aMsg->IdPipeline();
     iStreamId = UINT_MAX;
     iClockPuller.Stop();

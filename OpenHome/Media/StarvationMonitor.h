@@ -55,6 +55,7 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgFlush* aMsg);
     void ProcessMsgIn(MsgWait* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
+    Msg* ProcessMsgOut(MsgMode* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);

@@ -290,7 +290,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-        msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
+        msg = iMsgFactory->CreateMsgTrack(*track, 0);
         track->RemoveRef();
     }
         break;
@@ -468,7 +468,7 @@ void SuiteReservoirHistory::Test()
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, true);
-    MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
+    MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0);
     track->RemoveRef();
     iReservoir->Push(msgTrack);
     TUint pcmMsgs = kPcmMsgCount;

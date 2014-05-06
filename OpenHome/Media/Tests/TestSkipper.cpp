@@ -321,7 +321,7 @@ void SuiteSkipper::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteSkipper::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++, Brn("testmode"));
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
     track->RemoveRef();
     return msg;
 }

@@ -422,7 +422,7 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
     iTrackUri.Replace(aMsg.Uri());
     iStreamMsgDue = true;
     Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata(), NULL, true);
-    iSupply->OutputTrack(*track, iIdProvider->NextTrackId(), iMode);
+    iSupply->OutputTrack(*track, iIdProvider->NextTrackId());
     track->RemoveRef();
     aMsg.RemoveRef();
     // FIXME - also need OutputStream (which is complicated by repair vector)

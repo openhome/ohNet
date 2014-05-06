@@ -149,7 +149,7 @@ void SuiteSupply::Test()
     iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), NULL, false);
-    iSupply->OutputTrack(*track, kTrackId, Brx::Empty());
+    iSupply->OutputTrack(*track, kTrackId);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputDelay(kDelayJiffies);

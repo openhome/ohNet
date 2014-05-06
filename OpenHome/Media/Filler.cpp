@@ -179,7 +179,6 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
 void Filler::Run()
 {
     try {
-        BwsMode mode;
         Wait();
         for (;;) {
             for (;;) {
@@ -219,10 +218,9 @@ void Filler::Run()
             /* assume that if the uri provider has returned a track then ProtocolManager
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
-            mode.Replace(iActiveUriProvider->Mode());
             if (iTrackPlayStatus == ePlayNo) {
                 OutputMode(Brn("null"), false, true);
-                iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId, Brx::Empty());
+                iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
                 OutputDelay(0);
@@ -247,7 +245,7 @@ void Filler::Run()
                 }
                 iLock.Signal();
                 ASSERT(iTrack != NULL);
-                (void)iUriStreamer->DoStream(*iTrack, mode);
+                (void)iUriStreamer->DoStream(*iTrack);
             }
         }
     }
@@ -264,11 +262,11 @@ void Filler::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTim
     }
 }
 
-void Filler::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
+void Filler::OutputTrack(Track& aTrack, TUint aTrackId)
 {
     if (!iQuit) {
         iTrackId = aTrackId;
-        iSupply.OutputTrack(aTrack, aTrackId, aMode);
+        iSupply.OutputTrack(aTrack, aTrackId);
     }
 }
 

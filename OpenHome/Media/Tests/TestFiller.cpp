@@ -47,7 +47,7 @@ public:
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer
-    TBool DoStream(Track& aTrack, const Brx& aMode);
+    TBool DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -77,7 +77,7 @@ public:
     TUint LastDelayJiffies() const;
 private: // from ISupply
     void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
-    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
@@ -244,11 +244,11 @@ TUint DummyUriStreamer::StreamId() const
     return iStreamId;
 }
 
-TBool DummyUriStreamer::DoStream(Track& aTrack, const Brx& aMode)
+TBool DummyUriStreamer::DoStream(Track& aTrack)
 {
     iPipelineTrackId++;
     iStreamId++;
-    iSupply.OutputTrack(aTrack, iPipelineTrackId, aMode);
+    iSupply.OutputTrack(aTrack, iPipelineTrackId);
     iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
@@ -340,7 +340,7 @@ void DummySupply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRe
     iLastRealTime = aRealTime;
 }
 
-void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& /*aMode*/)
+void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId)
 {
     iLastTrackUri.Replace(aTrack.Uri());
     iLastTrackId = aTrackId;

@@ -201,7 +201,7 @@ Msg* SuitePreDriver::Pull()
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
                                           // Ensure we have something different to deliver to avoid an infinite loop.
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0, Brx::Empty());
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
         track->RemoveRef();
         return msg;
     }

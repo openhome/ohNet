@@ -34,6 +34,7 @@ Msg* Reporter::Pull()
 
 Msg* Reporter::ProcessMsg(MsgMode* aMsg)
 {
+    iMode.Replace(aMsg->Mode());
     return aMsg;
 }
 
@@ -41,7 +42,7 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 {
     iSeconds = 0;
     iJiffies = 0;
-    iObserver.NotifyTrack(aMsg->Track(), aMsg->Mode(), aMsg->IdPipeline());
+    iObserver.NotifyTrack(aMsg->Track(), iMode, aMsg->IdPipeline());
     return aMsg;
 }
 

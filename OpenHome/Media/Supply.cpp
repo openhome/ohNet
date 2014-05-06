@@ -26,9 +26,9 @@ void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTim
     iDownStreamElement.Push(msg);
 }
 
-void Supply::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode)
+void Supply::OutputTrack(Track& aTrack, TUint aTrackId)
 {
-    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId, aMode);
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);
     iDownStreamElement.Push(msg);
 }
 

@@ -175,7 +175,7 @@ void DummyFiller::Start(const Brx& aUrl)
 void DummyFiller::Run()
 {
     Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), NULL, false);
-    iProtocolManager->DoStream(*track, Brx::Empty());
+    iProtocolManager->DoStream(*track);
     track->RemoveRef();
 }
 
