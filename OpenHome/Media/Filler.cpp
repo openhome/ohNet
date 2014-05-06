@@ -236,9 +236,9 @@ void Filler::Run()
                 if (iChangedMode) {
                     const TBool supportsLatency = iActiveUriProvider->SupportsLatency();
                     const TBool realTime = iActiveUriProvider->IsRealTime();
-                    ASSERT(!(supportsLatency && realTime)); /* VariableDelay handling of NotifyStarving would be
-                                                               hard/impossible if the Gorger was allowed to buffer
-                                                               content between the two VariableDelays */
+                    ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
+                                                             hard/impossible if the Gorger was allowed to buffer
+                                                             content between the two VariableDelays */
                     OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime);
                     if (!supportsLatency) {
                         OutputDelay(0);
