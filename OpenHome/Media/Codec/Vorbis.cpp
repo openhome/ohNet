@@ -47,6 +47,7 @@ public:
     long TellCallback();
     void PrintCallback(char *message);
 private:
+    TBool FindSync(TUint& aIndex, Bwx& aStashBuf);
     TUint64 GetTotalSamples(TUint aIndex, const Brx& aStashBuf);
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
@@ -256,70 +257,9 @@ void CodecVorbis::StreamInitialise()
         // If trying to read and parse the final Ogg page fails, fall back to
         // estimating the track length via a calculation.
 
-        // Vorbis codec reads backwards in 1024-byte chunks, so we do the same.
-
-        TBool keepLooking = true;
-        TUint searchSize = kSearchChunkSize;
-        TUint64 offset = iController->StreamLength();
-        Bws<kSearchChunkSize> stashBuf; // stash prev read in case Ogg page is
-                                        // split on read boundary.
-        TBool syncFound = false;
-        TInt idx = 0;
-
-        if (iController->StreamLength() < searchSize) {
-            offset = 0;
-            searchSize = static_cast<TUint>(iController->StreamLength());
-        }
-        else {
-            offset = iController->StreamLength()-searchSize;
-        }
-
-        while (keepLooking) {
-            iSeekBuf.SetBytes(0);
-
-            // This will cause callbacks via the IWriter interface.
-            // iSeekBuf will only be modified by IWriter callbacks during the
-            // Read() below.
-            TBool res = iController->Read(*this, offset, searchSize);
-
-            // Try to find the "OggS" sync word.
-            if (res) {
-                Brn sync("OggS");
-                TInt bytes = iSeekBuf.Bytes() - sync.Bytes(); // will go -ve if incompatible sizes
-
-                TInt i = 0;
-                for (i=0; i<=bytes; i++) {
-                    if (strncmp((char*)&iSeekBuf[i], (char*)&sync[0], sync.Bytes()) == 0) {
-                        // Don't break here - there may still be more Ogg pages
-                        // in the buffer. We want the last one, so process
-                        // whole buf in case there are more.
-                        syncFound = true;
-                        idx = i;
-                        keepLooking = false;
-                    }
-                }
-            }
-
-            if (syncFound) {
-                break;
-            }
-
-            if (!res || offset == 0) {
-                // Problem reading stream, or exhausted entire stream without
-                // finding required data.
-                keepLooking = false;
-            }
-            else {
-                stashBuf.Replace(iSeekBuf); // don't want to get here if syncFound == true - reason for break block above
-                TUint64 stepBack = kSearchChunkSize;
-                if (offset < kSearchChunkSize) {
-                    stepBack = offset;
-                    searchSize = static_cast<TUint>(offset);
-                }
-                offset -= stepBack;
-            }
-        }
-
+        TUint idx = 0;
+        Bws<kSearchChunkSize> stashBuf;
+        TBool syncFound = FindSync(idx, stashBuf);
 
         // If we've found sync, may not have enough data in iSeekBuf
         // - might have to concatenate it with stashBuf.
@@ -381,6 +321,74 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
         iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
+}
+
+TBool CodecVorbis::FindSync(TUint& aIndex, Bwx& aStashBuf)
+{
+    // Vorbis codec reads backwards in 1024-byte chunks, so we do the same.
+
+    TBool keepLooking = true;
+    TUint searchSize = kSearchChunkSize;
+    TUint64 offset = iController->StreamLength();
+    TBool syncFound = false;
+
+    if (iController->StreamLength() < searchSize) {
+        offset = 0;
+        searchSize = static_cast<TUint>(iController->StreamLength());
+    }
+    else {
+        offset = iController->StreamLength()-searchSize;
+    }
+
+    // FIXME - what if sync word occurs across one of our read boundaries?
+    while (keepLooking) {
+        iSeekBuf.SetBytes(0);
+
+        // This will cause callbacks via the IWriter interface.
+        // iSeekBuf will only be modified by IWriter callbacks during the
+        // Read() below.
+        TBool res = iController->Read(*this, offset, searchSize);
+
+        // Try to find the "OggS" sync word.
+        if (res) {
+            Brn sync("OggS");
+            TInt bytes = iSeekBuf.Bytes() - sync.Bytes(); // will go -ve if incompatible sizes
+
+            TInt i = 0;
+            for (i=0; i<=bytes; i++) {
+                if (strncmp((char*)&iSeekBuf[i], (char*)&sync[0], sync.Bytes()) == 0) {
+                    // Don't break here - there may still be more Ogg pages
+                    // in the buffer. We want the last one, so process
+                    // whole buf in case there are more.
+                    syncFound = true;
+                    aIndex = i;
+                    keepLooking = false;
+                }
+            }
+        }
+
+        if (syncFound) {
+            break;
+        }
+
+        if (!res || offset == 0) {
+            // Problem reading stream, or exhausted entire stream without
+            // finding required data.
+            keepLooking = false;
+        }
+        else {
+            aStashBuf.Replace(iSeekBuf);    // stash prev read in case Ogg page
+                                            // is split on read boundary.
+            TUint64 stepBack = kSearchChunkSize;
+            if (offset < kSearchChunkSize) {
+                stepBack = offset;
+                searchSize = static_cast<TUint>(offset);
+            }
+            offset -= stepBack;
+        }
+    }
+
+    return syncFound;
 }
 
 TUint64 CodecVorbis::GetTotalSamples(TUint aIndex, const Brx& aStashBuf)
