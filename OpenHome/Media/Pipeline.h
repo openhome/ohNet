@@ -58,9 +58,10 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kWaiterRampDuration                   = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kGorgerDuration                       = Jiffies::kJiffiesPerMs * 1000;
-    static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 100;
-    static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 50;
+    static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 30;
+    static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 20;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
+    static const TUint kSenderMinLatency                     = Jiffies::kJiffiesPerMs * 150;
 public:
     Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes);
     virtual ~Pipeline();
@@ -77,6 +78,7 @@ public:
     void AddObserver(ITrackObserver& aObserver);
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
+    TUint SenderMinLatency() const;
 public: // from ISupply
     void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
@@ -134,8 +136,8 @@ private:
     Logger* iLoggerDecodedAudioReservoir;
     Seeker* iSeeker;
     Logger* iLoggerSeeker;
-    VariableDelay* iVariableDelay;
-    Logger* iLoggerVariableDelay;
+    VariableDelay* iVariableDelay1;
+    Logger* iLoggerVariableDelay1;
     TrackInspector* iTrackInspector;
     Logger* iLoggerTrackInspector;
     Skipper* iSkipper;
@@ -150,6 +152,8 @@ private:
     Logger* iLoggerReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;
+    VariableDelay* iVariableDelay2;
+    Logger* iLoggerVariableDelay2;
     Pruner* iPruner;
     Logger* iLoggerPruner;
     StarvationMonitor* iStarvationMonitor;

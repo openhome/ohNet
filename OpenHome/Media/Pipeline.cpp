@@ -69,9 +69,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerSeeker = NULL;
     iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, kSeekerRampDuration);
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
-    iVariableDelay = new VariableDelay(*iMsgFactory, *iLoggerSeeker, 0/*FIXME*/, kVariableDelayRampDuration);
-    iLoggerVariableDelay = new Logger(*iVariableDelay, "Variable Delay");
-    iTrackInspector = new TrackInspector(*iLoggerVariableDelay);
+    iVariableDelay1 = new VariableDelay(*iMsgFactory, *iLoggerSeeker, kSenderMinLatency, kVariableDelayRampDuration);
+    iLoggerVariableDelay1 = new Logger(*iVariableDelay1, "VariableDelay1");
+    iTrackInspector = new TrackInspector(*iLoggerVariableDelay1);
     iLoggerTrackInspector = new Logger(*iTrackInspector, "TrackInspector");
     iSkipper = new Skipper(*iMsgFactory, *iLoggerTrackInspector, kSkipperRampDuration);
     iLoggerSkipper = new Logger(*iSkipper, "Skipper");
@@ -86,7 +86,9 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
-    iPruner = new Pruner(*iLoggerSplitter);
+    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerSplitter, kStarvationMonitorNormalSize, kVariableDelayRampDuration);
+    iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
+    iPruner = new Pruner(*iLoggerVariableDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
@@ -106,7 +108,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerCodecController->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerSeeker->SetEnabled(true);
-    //iLoggerVariableDelay->SetEnabled(true);
+    //iLoggerVariableDelay1->SetEnabled(true);
     //iLoggerTrackInspector->SetEnabled(true);
     //iLoggerSkipper->SetEnabled(true);
     //iLoggerWaiter->SetEnabled(true);
@@ -114,6 +116,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerGorger->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
+    //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
@@ -124,7 +127,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerSeeker->SetFilter(Logger::EMsgAll);
-    //iLoggerVariableDelay->SetFilter(Logger::EMsgAll);
+    //iLoggerVariableDelay1->SetFilter(Logger::EMsgAll);
     //iLoggerTrackInspector->SetFilter(Logger::EMsgAll);
     //iLoggerSkipper->SetFilter(Logger::EMsgAll);
     //iLoggerWaiter->SetFilter(Logger::EMsgAll);
@@ -132,6 +135,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     //iLoggerGorger->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
+    //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
     //iLoggerPreDriver->SetFilter(Logger::EMsgAll);
@@ -148,6 +152,8 @@ Pipeline::~Pipeline()
     delete iPreDriver;
     delete iLoggerStarvationMonitor;
     delete iStarvationMonitor;
+    delete iLoggerVariableDelay2;
+    delete iVariableDelay2;
     delete iLoggerPruner;
     delete iPruner;
     delete iLoggerSplitter;
@@ -164,8 +170,8 @@ Pipeline::~Pipeline()
     delete iSkipper;
     delete iLoggerTrackInspector;
     delete iTrackInspector;
-    delete iLoggerVariableDelay;
-    delete iVariableDelay;
+    delete iLoggerVariableDelay1;
+    delete iVariableDelay1;
     delete iLoggerSeeker;
     delete iSeeker;
     delete iLoggerDecodedAudioReservoir;
@@ -312,6 +318,11 @@ TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
 IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSender)
 {
     return iSplitter->SetPipelineBranch(aSender);
+}
+
+TUint Pipeline::SenderMinLatency() const
+{
+    return kSenderMinLatency;
 }
 
 void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
