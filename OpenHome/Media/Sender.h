@@ -35,7 +35,7 @@ class Sender : public IPipelineElementDownstream, private IMsgProcessor, private
     static const TUint kSongcastPacketJiffies = Jiffies::kJiffiesPerMs * kSongcastPacketMs;
     static const TUint kSongcastPacketMaxBytes = 3 * DecodedAudio::kMaxNumChannels * 192 * kSongcastPacketMs;
 public:
-    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName);
+    Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName);
     ~Sender();
     void SetName(const Brx& aName);
     void NotifyPipelineState(EPipelineState aState);
@@ -116,6 +116,7 @@ private:
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
+    const TUint iMinLatencyMs;
 };
 
 } // namespace Media
