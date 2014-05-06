@@ -36,7 +36,7 @@ private: // from CodecBase
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
     void StreamCompleted();
-private:
+private: // from IWriter
     void Write(TByte aValue);
     void Write(const Brx& aBuffer);
     void WriteFlush();
