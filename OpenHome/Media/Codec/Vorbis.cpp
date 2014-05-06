@@ -47,6 +47,7 @@ public:
     long TellCallback();
     void PrintCallback(char *message);
 private:
+    TUint64 GetTotalSamples(TUint aIndex, const Brx& aStashBuf);
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
 private:
@@ -323,34 +324,11 @@ void CodecVorbis::StreamInitialise()
         // If we've found sync, may not have enough data in iSeekBuf
         // - might have to concatenate it with stashBuf.
         if (syncFound) {
-            static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
-            Bws<kHeaderBytesReq> pageBuf;
-            // We require 14 bytes from start of Ogg page for granule pos.
-            // If we don't have that, split data in iSeekBuf and stashBuf
-            // and combine them so we have what we need.
-            if (iSeekBuf.Bytes()-idx >= kHeaderBytesReq) {
-                pageBuf.Replace(iSeekBuf.Split(idx, kHeaderBytesReq));
+            try {
+                iSamplesTotal = GetTotalSamples(idx, stashBuf);
             }
-            else {
-                const TUint remainder = kHeaderBytesReq-pageBuf.Bytes();
-                if (stashBuf.Bytes() >= remainder) {
-                    pageBuf.Replace(iSeekBuf.Split(idx));
-                    pageBuf.Append(stashBuf.Split(0, remainder));
-                }
-                else {
-                    // Stream is truncated at last ogg; could check this before
-                    // we finish requesting data and get lastOgg-1.
-                    // FIXME - Just give up here for now.
-                    pageBuf.SetBytes(0);
-                }
-            }
-
-            if (pageBuf.Bytes() > 0) {
-                TUint64 granulePos1 = Converter::LeUint32At(pageBuf, 6);
-                TUint64 granulePos2 = Converter::LeUint32At(pageBuf, 10);
-                TUint64 granulePos = (granulePos1 | (granulePos2 << 32));
-                iSamplesTotal = granulePos;
-            }
+            catch (CodecStreamCorrupt&)
+            {}
         }
 
 
@@ -403,6 +381,41 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
         iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;
+}
+
+TUint64 CodecVorbis::GetTotalSamples(TUint aIndex, const Brx& aStashBuf)
+{
+    // If we've found sync, may not have enough data in iSeekBuf
+    // - might have to concatenate it with aStashBuf.
+    static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
+    Bws<kHeaderBytesReq> pageBuf;
+    // We require 14 bytes from start of Ogg page for granule pos.
+    // If we don't have that, split data in iSeekBuf and stashBuf
+    // and combine them so we have what we need.
+    if (iSeekBuf.Bytes()-aIndex >= kHeaderBytesReq) {
+        pageBuf.Replace(iSeekBuf.Split(aIndex, kHeaderBytesReq));
+    }
+    else {
+        const TUint remainder = kHeaderBytesReq-pageBuf.Bytes();
+        if (aStashBuf.Bytes() >= remainder) {
+            pageBuf.Replace(iSeekBuf.Split(aIndex));
+            pageBuf.Append(aStashBuf.Split(0, remainder));
+        }
+        else {
+            // Stream is truncated at last ogg; could check this before
+            // we finish requesting data and get lastOgg-1.
+            // FIXME - Just give up here for now.
+            pageBuf.SetBytes(0);
+        }
+    }
+
+    if (pageBuf.Bytes() > 0) {
+        TUint64 granulePos1 = Converter::LeUint32At(pageBuf, 6);
+        TUint64 granulePos2 = Converter::LeUint32At(pageBuf, 10);
+        TUint64 granulePos = (granulePos1 | (granulePos2 << 32));
+        return granulePos;
+    }
+    THROW(CodecStreamCorrupt);
 }
 
 // copy audio data to output buffer, converting to big endian if required.
