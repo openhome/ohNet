@@ -320,9 +320,9 @@ IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSen
     return iSplitter->SetPipelineBranch(aSender);
 }
 
-TUint Pipeline::SenderMinLatency() const
+TUint Pipeline::SenderMinLatencyMs() const
 {
-    return kSenderMinLatency;
+    return kSenderMinLatency / Jiffies::kJiffiesPerMs;
 }
 
 void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)

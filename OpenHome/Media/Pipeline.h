@@ -78,7 +78,7 @@ public:
     void AddObserver(ITrackObserver& aObserver);
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
-    TUint SenderMinLatency() const;
+    TUint SenderMinLatencyMs() const;
 public: // from ISupply
     void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
     void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);

@@ -196,6 +196,11 @@ IPipelineElementDownstream* PipelineManager::SetSender(IPipelineElementDownstrea
     return iPipeline->SetSender(aSender);
 }
 
+TUint PipelineManager::SenderMinLatencyMs() const
+{
+    return iPipeline->SenderMinLatencyMs();
+}
+
 Msg* PipelineManager::Pull()
 {
     return iPipeline->Pull();

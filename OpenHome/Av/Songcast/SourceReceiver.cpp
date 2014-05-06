@@ -28,7 +28,6 @@ namespace Av {
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
 {
     static const TChar* kProtocolInfo;
-    static const TUint kSenderLatencyMs = 100; // FIXME - should get this from Pipeline
 public:
     SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
@@ -130,7 +129,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     // Sender
     IConfigManagerWriter& configManagerWriter = aMediaPlayer.ConfigManagerWriter();
     IConfigManagerReader& configManagerReader = aMediaPlayer.ConfigManagerReader();
-    iSender = new Sender(env, device, *iZoneHandler, configManagerWriter, Brx::Empty(), kSenderLatencyMs, aSenderIconFileName);
+    iSender = new Sender(env, device, *iZoneHandler, configManagerWriter, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManagerReader.GetText(Product::kConfigIdRoomBase);

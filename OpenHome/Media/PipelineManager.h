@@ -50,6 +50,7 @@ public:
     TBool Prev(); // returns true if a new track should be immediately played
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
+    TUint SenderMinLatencyMs() const;
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IPipelineIdManager
