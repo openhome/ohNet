@@ -342,6 +342,9 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
             TEST(firstSubsample == lastSubsample);
         }
         break;
+    case VariableDelay::EStarting:
+        TEST(firstSubsample == lastSubsample);
+        break;
     }
     iJiffies += jiffies;
     return NULL;
