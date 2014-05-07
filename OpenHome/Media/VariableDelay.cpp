@@ -150,7 +150,6 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
-    ASSERT(iEnabled || delayJiffies == 0);
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
     }
