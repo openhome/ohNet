@@ -90,10 +90,8 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 Msg* Logger::ProcessMsg(MsgDelay* aMsg)
 {
     if (IsEnabled(EMsgDelay)) {
-        const TUint total = aMsg->TotalJiffies();
-        const TUint remaining = aMsg->RemainingJiffies();
-        Log::Print("Pipeline (%s): delay {total: %x (%ums), remaining: %x (%ums)}\n", iId, total, total/Jiffies::kJiffiesPerMs,
-                                                                                      remaining, remaining/Jiffies::kJiffiesPerMs);
+        const TUint jiffies = aMsg->DelayJiffies();
+        Log::Print("Pipeline (%s): delay {jiffies: %x, ms: %u}\n", iId, jiffies, jiffies/Jiffies::kJiffiesPerMs);
     }
     return aMsg;
 }

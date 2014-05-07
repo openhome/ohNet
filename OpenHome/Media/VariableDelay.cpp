@@ -149,7 +149,7 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
-    TUint delayJiffies = aMsg->RemainingJiffies();
+    TUint delayJiffies = aMsg->DelayJiffies();
     ASSERT(iEnabled || delayJiffies == 0);
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
@@ -159,7 +159,6 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         return aMsg;
     }
 
-    aMsg->Consume(delayJiffies);
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
     iDelayJiffies = delayJiffies;
     //Log::Print("VariableDelay: delay=%u, adjustment=%d\n", iDelayJiffies/Jiffies::kJiffiesPerMs, iDelayAdjustment/(TInt)Jiffies::kJiffiesPerMs);

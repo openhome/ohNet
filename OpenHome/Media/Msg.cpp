@@ -805,40 +805,19 @@ MsgDelay::MsgDelay(AllocatorBase& aAllocator)
 {
 }
 
-TUint MsgDelay::TotalJiffies() const
+TUint MsgDelay::DelayJiffies() const
 {
-    return iTotalJiffies;
+    return iDelayJiffies;
 }
 
-TUint MsgDelay::RemainingJiffies() const
+void MsgDelay::Initialise(TUint aDelayJiffies)
 {
-    return iRemainingJiffies;
-}
-
-void MsgDelay::Consume(TUint aJiffies)
-{
-    ASSERT(aJiffies <= iRemainingJiffies);
-    iRemainingJiffies -= aJiffies;
-}
-
-MsgDelay* MsgDelay::Clone()
-{
-    MsgDelay* clone = static_cast<Allocator<MsgDelay>&>(iAllocator).Allocate();
-    clone->iTotalJiffies = iTotalJiffies;
-    clone->iRemainingJiffies = iRemainingJiffies;
-    return clone;
-}
-
-void MsgDelay::Initialise(TUint aTotalJiffies)
-{
-    iTotalJiffies = aTotalJiffies;
-    iRemainingJiffies = aTotalJiffies;
+    iDelayJiffies = aDelayJiffies;
 }
 
 void MsgDelay::Clear()
 {
-    iTotalJiffies = UINT_MAX;
-    iRemainingJiffies = UINT_MAX;
+    iDelayJiffies = UINT_MAX;
 }
 
 Msg* MsgDelay::Process(IMsgProcessor& aProcessor)

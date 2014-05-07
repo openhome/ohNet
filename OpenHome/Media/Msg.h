@@ -317,18 +317,14 @@ class MsgDelay : public Msg
     friend class MsgFactory;
 public:
     MsgDelay(AllocatorBase& aAllocator);
-    TUint TotalJiffies() const;
-    TUint RemainingJiffies() const;
-    void Consume(TUint aJiffies);
-    MsgDelay* Clone();
+    TUint DelayJiffies() const;
 private:
-    void Initialise(TUint aTotalJiffies);
+    void Initialise(TUint aDelayJiffies);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
-    TUint iTotalJiffies;
-    TUint iRemainingJiffies;
+    TUint iDelayJiffies;
 };
 
 class IStreamHandler;

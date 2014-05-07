@@ -162,7 +162,7 @@ private:
 
 class SuiteDelay : public Suite
 {
-    static const TUint kMsgDelayCount = 2;
+    static const TUint kMsgDelayCount = 1;
 public:
     SuiteDelay();
     ~SuiteDelay();
@@ -1554,26 +1554,14 @@ void SuiteDelay::Test()
 {
     const TUint kDelayJiffies = Jiffies::kJiffiesPerMs * 100;
     MsgDelay* msg = iMsgFactory->CreateMsgDelay(kDelayJiffies);
-    TEST(msg->TotalJiffies() == kDelayJiffies);
-    const TUint kConsumedJiffies = Jiffies::kJiffiesPerMs * 20;
-    msg->Consume(kConsumedJiffies);
-    TEST_THROWS(msg->Consume(100 * kConsumedJiffies), AssertionFailed);
-    TEST(msg->TotalJiffies() == kDelayJiffies);
-    TEST(msg->RemainingJiffies() == kDelayJiffies - kConsumedJiffies);
-    MsgDelay* clone = msg->Clone();
-    TEST(msg->TotalJiffies() == clone->TotalJiffies());
-    TEST(msg->RemainingJiffies() == clone->RemainingJiffies());
+    TEST(msg->DelayJiffies() == kDelayJiffies);
     msg->RemoveRef();
-    TEST(msg->TotalJiffies() != kDelayJiffies);
-    TEST(msg->RemainingJiffies() != kDelayJiffies - kConsumedJiffies);
-    TEST(clone->TotalJiffies() == kDelayJiffies);
-    TEST(clone->RemainingJiffies() == kDelayJiffies - kConsumedJiffies);
-    clone->RemoveRef();
+    TEST(msg->DelayJiffies() != kDelayJiffies);
 
     msg = iMsgFactory->CreateMsgDelay(0);
-    TEST(msg->TotalJiffies() == 0);
+    TEST(msg->DelayJiffies() == 0);
     msg->RemoveRef();
-    TEST(msg->TotalJiffies() != 0);
+    TEST(msg->DelayJiffies() != 0);
 }
 
 

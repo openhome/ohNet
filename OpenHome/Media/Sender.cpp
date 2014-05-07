@@ -108,7 +108,7 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 Msg* Sender::ProcessMsg(MsgDelay* aMsg)
 {
     SendPendingAudio();
-    const TUint latencyMs = aMsg->TotalJiffies() / Jiffies::kJiffiesPerMs;
+    const TUint latencyMs = aMsg->DelayJiffies() / Jiffies::kJiffiesPerMs;
     if (latencyMs > iMinLatencyMs) {
         iOhmSender->SetLatency(latencyMs);
     }
