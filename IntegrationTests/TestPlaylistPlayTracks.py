@@ -41,11 +41,11 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         BASE.BaseTest.__init__( self )
         self.sender           = None
         self.senderDev        = None
+        self.softSender       = None
         self.receiver         = None
         self.rcvrDev          = None
+        self.softRcvr         = None
         self.server           = None
-        self.soft1            = None
-        self.soft2            = None
         self.playTimer        = None
         self.nextTimer        = None
         self.stateTimer       = None
@@ -60,12 +60,12 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.senderPlayTime   = 0
         self.receiverPlayTime = 0
         self.expectedPlayTime = 0
-        self.senderPlayed     = False
+#        self.senderPlayed     = False
         self.senderPlaying    = threading.Event()
         self.senderStarted    = threading.Event()
         self.senderStopped    = threading.Event()
         self.senderDuration   = threading.Event()
-        self.playTimerMutex   = threading.Lock()
+        self.trackChangeMutex = threading.Lock()
 
     def Test( self, args ):
         """Play tracks, using Media services for control"""
@@ -108,10 +108,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
 
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            self.softSender = SoftPlayer.SoftPlayer( aRoom='TestSender' )
             senderName = 'TestSender:SoftPlayer'
         if receiverName is not None and receiverName.lower() == 'local':
-            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+            self.softRcvr = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
             receiverName = 'TestRcvr:SoftPlayer'
 
         # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
@@ -170,10 +170,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.sender.Shutdown()
         if self.receiver: 
             self.receiver.Shutdown() 
-        if self.soft1:
-            self.soft1.Shutdown()
-        if self.soft2:
-            self.soft2.Shutdown()
+        if self.softSender:
+            self.softSender.Shutdown()
+        if self.softRcvr:
+            self.softRcvr.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     # noinspection PyUnusedLocal
@@ -207,7 +207,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             elif svVal == 'Playing':
                 self.senderPlaying.set()
                 self.senderStarted.set()
-                self.senderPlayed = True
+#                self.senderPlayed = True
         elif svName == 'Id':
             if self.nextTimer:
                 # cancel timer which is required to trigger the TrackChanged
@@ -221,16 +221,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
     def _TrackChanged( self, aId ):
         """Track changed - check results and setup timer for next track"""
         if aId>0:
-            if self.senderPlayed:
-                self._CheckPlayTime()
-            else:
-                if self.senderStarted.isSet():
-                    if self.meta:
-                        title = Common.GetTitleFromDidl( self.meta )
-                        self.log.Fail( self.senderDev, 'FAILED to play track %s' % title )
-                    else:
-                        self.log.Fail( self.senderDev, 'FAILED to play track' )
+            self.trackChangeMutex.acquire()
+            self._CheckPlayTime()
             self._CheckTrackInfo( aId )
+            self.trackChangeMutex.release()
 
     def _CheckTrackInfo( self, aId ): 
         """Update 'now playing' log and check reported track info"""
@@ -330,13 +324,11 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             if self.playTime == 0:
                 self._PlayTimerCb()
             else:
-                self.playTimerMutex.acquire()
                 if self.playTimer:
                     self.playTimer.cancel()
                 self.playTimer = LogThread.Timer(
                     self.playTime-(time.time()-self.startTime), self._PlayTimerCb )
                 self.playTimer.start()
-                self.playTimerMutex.release()
         if self.receiver:
             if self.expectedPlayTime > 9:
                 self.checkInfoTimer = LogThread.Timer( 3, self._CheckReceiverInfo )
