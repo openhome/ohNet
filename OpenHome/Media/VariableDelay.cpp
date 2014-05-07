@@ -193,7 +193,8 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         break;
     }
 
-    return aMsg;
+    aMsg->RemoveRef();
+    return iMsgFactory.CreateMsgDelay(iDownstreamDelay);
 }
 
 Msg* VariableDelay::ProcessMsg(MsgEncodedStream* aMsg)
