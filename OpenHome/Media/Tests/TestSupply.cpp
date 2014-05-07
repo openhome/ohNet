@@ -196,7 +196,7 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 Msg* SuiteSupply::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
-    TEST(aMsg->DelayJiffies() == kDelayJiffies);
+    TEST(aMsg->TotalJiffies() == kDelayJiffies);
     return aMsg;
 }
 

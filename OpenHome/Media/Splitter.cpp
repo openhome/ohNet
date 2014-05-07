@@ -49,8 +49,7 @@ Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
 
 Msg* Splitter::ProcessMsg(MsgDelay* aMsg)
 {
-    aMsg->AddRef();
-    return aMsg;
+    return aMsg->Clone();
 }
 
 Msg* Splitter::ProcessMsg(MsgEncodedStream* aMsg)
