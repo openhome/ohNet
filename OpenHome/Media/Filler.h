@@ -41,7 +41,7 @@ class Filler : private Thread, public ISupply
 {
     static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver);
+    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -100,6 +100,7 @@ private:
     Track* iNullTrack; // delivered when uri provider cannot return a Track
     NullTrackStreamHandler iNullTrackStreamHandler;
     IStreamPlayObserver& iStreamPlayObserver;
+    const TUint iDefaultDelay;
     TUint iPrefetchTrackId;
 };
 

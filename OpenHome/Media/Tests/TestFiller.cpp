@@ -98,6 +98,7 @@ private:
 
 class SuiteFiller : public Suite, private IPipelineIdTracker, private IStreamPlayObserver
 {
+    static const TUint kDefaultLatency = Jiffies::kJiffiesPerMs * 150;
 public:
     SuiteFiller();
     ~SuiteFiller();
@@ -394,7 +395,7 @@ SuiteFiller::SuiteFiller()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory, *this);
+    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory, *this, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
@@ -429,7 +430,7 @@ void SuiteFiller::Test()
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(0));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iDummySupply->LastDelayJiffies() == 0);
+    TEST(iDummySupply->LastDelayJiffies() == kDefaultLatency);
     TEST(iTrackId == iUriProvider->IdByIndex(0));
     TEST(iPipelineTrackId == iDummySupply->LastTrackId());
     TEST(iStreamId == iDummySupply->LastStreamId());

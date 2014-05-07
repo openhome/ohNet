@@ -41,7 +41,7 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver)
+Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
     : Thread("Filler")
     , iLock("FILL")
     , iSupply(aSupply)
@@ -55,6 +55,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& a
     , iChangedMode(true)
     , iNextHaltId(MsgHalt::kIdNone + 1)
     , iStreamPlayObserver(aStreamPlayObserver)
+    , iDefaultDelay(aDefaultDelay)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
 {
     iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
@@ -223,7 +224,7 @@ void Filler::Run()
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
-                OutputDelay(0);
+                OutputDelay(iDefaultDelay);
                 iSendHalt = false;
                 iStopped = true;
                 iLock.Signal();
@@ -239,7 +240,7 @@ void Filler::Run()
                                                              content between the two VariableDelays */
                     OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime);
                     if (!supportsLatency) {
-                        OutputDelay(0);
+                        OutputDelay(iDefaultDelay);
                     }
                     iChangedMode = false;
                 }
