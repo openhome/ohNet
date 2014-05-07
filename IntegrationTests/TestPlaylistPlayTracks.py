@@ -54,13 +54,12 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
-        self.numTrack         = 1
+        self.numTrack         = 0
         self.startTime        = 0
         self.playTime         = None
         self.senderPlayTime   = 0
         self.receiverPlayTime = 0
         self.expectedPlayTime = 0
-        self.playActioned     = False
         self.senderPlayed     = False
         self.senderPlaying    = threading.Event()
         self.senderStarted    = threading.Event()
@@ -115,14 +114,9 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
             receiverName = 'TestRcvr:SoftPlayer'
 
-        # create Sender device add subscribe to events
+        # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
-        self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
-        self.sender.time.AddSubscriber( self._SenderTimeCb )
-        self.sender.info.AddSubscriber( self._SenderInfoCb )
-                
-        # Put sender onto random source before starting playback (catch Volkano #2968, Network #894) 
         self.sender.product.sourceIndex = random.randint( 0, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
@@ -130,8 +124,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if receiverName:
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
-            self.receiver.time.AddSubscriber( self._ReceiverTimeCb )
-            self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
             self.receiver.product.sourceIndex = random.randint( 0, self.receiver.product.sourceCount-1 )
             time.sleep( 3 )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
@@ -147,18 +139,25 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         
         # check the playlist ReadList operation
         self._CheckReadList()
-            
+
+        # subscribe to sender and receiver events
+        self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
+        self.sender.time.AddSubscriber( self._SenderTimeCb )
+        self.sender.info.AddSubscriber( self._SenderInfoCb )
+        if receiverName:
+            self.receiver.time.AddSubscriber( self._ReceiverTimeCb )
+            self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
+
         # start playback
         self.log.Info( self.senderDev, 'Starting on source %s' % self.sender.product.sourceIndex )
+        self.sender.playlist.SeekIndex( 0 )
         self.sender.playlist.Play()
-        self.playActioned = True
         self.senderPlaying.wait( 10 )
-        self._CheckTrackInfo( self.sender.playlist.id )
         if not self.senderPlaying.is_set():
             self.log.Fail( self.senderDev, 'Playback never started' )
         else:
-            # wait until playback stopped
-            self.senderStopped.clear()        
+            self._CheckTrackInfo( self.sender.playlist.id )
+            self.senderStopped.clear()
             self.senderStopped.wait()
                 
     def Cleanup( self ):
@@ -204,13 +203,11 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
                 self.stateTimer.start()
             if svVal == 'Stopped':
-                if self.playActioned:
-                    self.senderStopped.set()
+                self.senderStopped.set()
             elif svVal == 'Playing':
                 self.senderPlaying.set()
-                if self.playActioned:
-                    self.senderStarted.set()
-                    self.senderPlayed = True
+                self.senderStarted.set()
+                self.senderPlayed = True
         elif svName == 'Id':
             if self.nextTimer:
                 # cancel timer which is required to trigger the TrackChanged
@@ -237,7 +234,15 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
 
     def _CheckTrackInfo( self, aId ): 
         """Update 'now playing' log and check reported track info"""
-        if self.playActioned:               
+        if not self.senderStopped.isSet():
+            self.numTrack += 1
+            if self.repeat=='off' and self.numTrack>len( self.tracks ):
+                self.senderStopped.wait( 3 )
+                if not self.senderStopped.isSet():
+                    self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
+                    self.senderStopped.set()    # force test exit
+
+        if not self.senderStopped.isSet():
             plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
             self.log.Info( '' )
             self.log.Info( '', '----------------------------------------' )
@@ -273,18 +278,8 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 else:                         
                     self.log.Fail( self.senderDev, 'No track data returned' )
                     self.senderStopped.set()     # force test exit
-                    
-            if not self.senderStopped.isSet():
-                self.numTrack += 1
-                if self.repeat=='off' and self.numTrack>len( self.tracks )+1: 
-                    self.senderStopped.wait( 3 )
-                    if not self.senderStopped.isSet():
-                        self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
-                        self.senderStopped.set()    # force test exit
-                else:
-                    if self.sender.playlist.transportState != 'Playing':
-                        self.senderPlayed = False
-                    self._SetupPlayTimer()
+
+            self._SetupPlayTimer()
 
     # noinspection PyUnusedLocal
     def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
@@ -299,13 +294,12 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
     # noinspection PyUnusedLocal
     def _ReceiverReceiverCb( self, service, svName, svVal, svSeq ):
         """Callback from Receiver Service UPnP events on receiver device"""
-        if self.playActioned:
-            if svName == 'TransportState':
-                # add hysteresis to transport state comparison
-                if self.stateTimer:
-                    self.stateTimer.cancel()
-                self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
-                self.stateTimer.start()
+        if svName == 'TransportState':
+            # add hysteresis to transport state comparison
+            if self.stateTimer:
+                self.stateTimer.cancel()
+            self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
+            self.stateTimer.start()
             
     def _ReceiverStateCb( self ):
         """Timer callback from receiver transport state event"""
@@ -392,7 +386,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 loLim, hiLim, 'measured (by test) play time')
             
     def _CheckReadList( self ):
-        """Check operation of the (Cara) Playlist ReadList action"""
+        """Check operation of the Playlist ReadList action"""
         # Test ReadList using a random population sample from the entire current
         # IDArray, and randomly append a (probably) invalid ID to this test list
         fail        = False
@@ -415,11 +409,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 (expUri, expMeta)  = self.tracks[self.sender.playlist.idArray.index( tId )]
             except:
                 (expUri, expMeta)  = ('', '')
-            if os.name == 'posix':
-                # clean up 'screwed up' unicode escaping in Linux
-                readMeta = readMeta.replace( '\\', '' )
-                expMeta  = expMeta.replace( '\\', '' )
-                
+
             if readUri != expUri:
                 fail = True
                 self.log.Fail( self.senderDev, 'Actual/Expected URI read from DS %s | %s' % 
@@ -449,7 +439,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.log.FailUnless( self.rcvrDev, senderVal==receiverVal, 
                 '(%s/%s) EVENTED Sender/Receiver value for %s' % 
                 (str( senderVal ), str( receiverVal ), itemTitle) )
-        
             
             
 if __name__ == '__main__':
