@@ -122,7 +122,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgTrack);
     TEST(DoPull() == EMsgAudioPcm);
@@ -302,6 +302,8 @@ Msg* SuitePruner::Pull()
     }
     case EMsgHalt:
         return iMsgFactory->CreateMsgHalt();
+    case EMsgWait:
+        return iMsgFactory->CreateMsgWait();
     case EMsgDecodedStream:
     {
         return iMsgFactory->CreateMsgDecodedStream(kStreamId, kBitRate, kBitDepth, kSampleRate, kNumChannels, Brn("Dummy codec"), kTrackLength, 0, kLossless, kSeekable, kLive, NULL);
