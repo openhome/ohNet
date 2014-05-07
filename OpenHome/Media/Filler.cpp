@@ -224,7 +224,7 @@ void Filler::Run()
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
-                OutputDelay(iDefaultDelay);
+                OutputDelay(0/*iDefaultDelay*/); // FIXME - see #1808
                 iSendHalt = false;
                 iStopped = true;
                 iLock.Signal();
@@ -240,7 +240,7 @@ void Filler::Run()
                                                              content between the two VariableDelays */
                     OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime);
                     if (!supportsLatency) {
-                        OutputDelay(iDefaultDelay);
+                        OutputDelay(0/*iDefaultDelay*/); // FIXME - see #1808
                     }
                     iChangedMode = false;
                 }
