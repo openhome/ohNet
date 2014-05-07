@@ -26,9 +26,9 @@ public:
     ~Gorger();
 public: // from IPipelineElementUpstream
     Msg* Pull();
+private:
     void PullerThread();
     void Enqueue(Msg* aMsg);
-private:
     void SetGorging(TBool aGorging);
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg);

@@ -68,10 +68,11 @@ void Gorger::Enqueue(Msg* aMsg)
 
 void Gorger::SetGorging(TBool aGorging)
 {
-    if (iGorging && !aGorging) {
+    const TBool unblockPuller = (iGorging && !aGorging);
+    iGorging = aGorging;
+    if (unblockPuller) {
         iSemOut.Signal();
     }
-    iGorging = aGorging;
 }
 
 void Gorger::ProcessMsgIn(MsgMode* aMsg)
