@@ -273,16 +273,22 @@ void SourceReceiver::UriChanged(const Brx& aUri)
 {
     iTrackUri.Replace(aUri);
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata, true);
-    iTrackId = track->Id();
-    track->RemoveRef();
-    if (IsActive()) {
-        if (iPlaying) {
-            iPipeline.RemoveAll();
-            iPipeline.Begin(iUriProvider->Mode(), iTrackId);
-            iPipeline.Play();
-        }
-        else {
-            iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+    if (track == NULL) {
+        iTrackId = Track::kIdNone;
+        iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+    }
+    else {
+        iTrackId = track->Id();
+        track->RemoveRef();
+        if (IsActive()) {
+            if (iPlaying) {
+                iPipeline.RemoveAll();
+                iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+                iPipeline.Play();
+            }
+            else {
+                iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+            }
         }
     }
 }
