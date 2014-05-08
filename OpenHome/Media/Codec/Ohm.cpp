@@ -101,28 +101,30 @@ void CodecOhm::Process()
     ASSERT(header.MsgType() == OhmHeader::kMsgTypeAudioBlob);
     OhmMsgAudio* msg = iMsgFactory.CreateAudioFromBlob(*this, header);
 
-    const TUint sampleRate = msg->SampleRate();
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(sampleRate);
-    const TUint latency = msg->MediaLatency();
-
-    if (!iStreamOutput) {
-        const TUint64 trackLengthJiffies = jiffiesPerSample * msg->SamplesTotal();
-        iController->OutputDecodedStream(msg->BitRate(), msg->BitDepth(), sampleRate, msg->Channels(), msg->Codec(), trackLengthJiffies, msg->SampleStart(), msg->Lossless());
-        iStreamOutput = true;
-    }
-
-    if (sampleRate != iSampleRate || latency != iLatency) {
-        iSampleRate = sampleRate;
-        iLatency = latency;
-        OutputDelay();
-    }
-
     if (msg->Samples() > 0) {
-        const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
-        const TUint rxTimestamp = (msg->RxTimestamped()? msg->RxTimestamp() : 0);
-        const TUint networkTimestamp = (msg->Timestamped()? msg->NetworkTimestamp() : 0);
-        const TUint mediaTimestamp = (msg->Timestamped()? msg->MediaTimestamp() : 0);
-        iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataBigEndian, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
+        const TUint sampleRate = msg->SampleRate();
+        const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(sampleRate);
+        const TUint latency = msg->MediaLatency();
+
+        if (!iStreamOutput) {
+            const TUint64 trackLengthJiffies = jiffiesPerSample * msg->SamplesTotal();
+            iController->OutputDecodedStream(msg->BitRate(), msg->BitDepth(), sampleRate, msg->Channels(), msg->Codec(), trackLengthJiffies, msg->SampleStart(), msg->Lossless());
+            iStreamOutput = true;
+        }
+
+        if (sampleRate != iSampleRate || latency != iLatency) {
+            iSampleRate = sampleRate;
+            iLatency = latency;
+            OutputDelay();
+        }
+
+        if (msg->Samples() > 0) {
+            const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
+            const TUint rxTimestamp = (msg->RxTimestamped()? msg->RxTimestamp() : 0);
+            const TUint networkTimestamp = (msg->Timestamped()? msg->NetworkTimestamp() : 0);
+            const TUint mediaTimestamp = (msg->Timestamped()? msg->MediaTimestamp() : 0);
+            iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataBigEndian, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
+        }
     }
 
     if (msg->Halt()) {
