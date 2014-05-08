@@ -430,7 +430,7 @@ void SuiteFiller::Test()
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(0));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
-    TEST(iDummySupply->LastDelayJiffies() == 0/*kDefaultLatency*/); // FIXME - see #1808
+    TEST(iDummySupply->LastDelayJiffies() == kDefaultLatency);
     TEST(iTrackId == iUriProvider->IdByIndex(0));
     TEST(iPipelineTrackId == iDummySupply->LastTrackId());
     TEST(iStreamId == iDummySupply->LastStreamId());
