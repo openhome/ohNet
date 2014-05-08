@@ -689,9 +689,7 @@ void SuiteMsgAudio::Test()
     TEST(static_cast<MsgAudioPcm*>(msg)->TrackOffset() == Jiffies::kJiffiesPerSecond);
     TEST(static_cast<MsgAudioPcm*>(remaining)->TrackOffset() == static_cast<MsgAudioPcm*>(msg)->TrackOffset() + msg->Jiffies());
 
-    // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
-    TEST_THROWS(remaining = msg->Split(0), AssertionFailed);
-    TEST_THROWS(remaining = msg->Split(msg->Jiffies()), AssertionFailed);
+    // Split pcm msg at invalid position.  Check it asserts.
     TEST_THROWS(remaining = msg->Split(msg->Jiffies()+1), AssertionFailed);
 
     // Clone pcm msg.  Check lengths of clone & parent match
@@ -736,9 +734,7 @@ void SuiteMsgAudio::Test()
     TEST(remaining->Jiffies() == (3*jiffies)/4);
     remaining->RemoveRef();
 
-    // Split silence msg at invalid positions (0, > Jiffies()).  Check these assert.
-    TEST_THROWS(remaining = msg->Split(0), AssertionFailed);
-    TEST_THROWS(remaining = msg->Split(msg->Jiffies()), AssertionFailed);
+    // Split silence msg at invalid position.  Check it asserts.
     TEST_THROWS(remaining = msg->Split(msg->Jiffies()+1), AssertionFailed);
 
     // Clone silence msg.  Check lengths of clone & parent match

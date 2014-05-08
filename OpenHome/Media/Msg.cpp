@@ -1185,8 +1185,7 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
 
 MsgAudio* MsgAudio::DoSplit(TUint aJiffies)
 {
-    ASSERT(aJiffies > 0);
-    ASSERT(aJiffies < iSize);
+    ASSERT(aJiffies <= iSize);
     MsgAudio* remaining = Allocate();
     remaining->iNextAudio = iNextAudio;
     remaining->iOffset = iOffset + aJiffies;
