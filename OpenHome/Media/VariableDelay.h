@@ -71,6 +71,7 @@ private:
     const TUint iDownstreamDelay;
     const TUint iRampDuration;
     TBool iEnabled;
+    TBool iInStream;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
     BwsMode iMode;

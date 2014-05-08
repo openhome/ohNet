@@ -20,6 +20,7 @@ VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& 
     , iDownstreamDelay(aDownstreamDelay)
     , iRampDuration(aRampDuration)
     , iEnabled(false)
+    , iInStream(false)
     , iCurrentRampValue(Ramp::kRampMax)
     , iRemainingRampSize(0)
     , iStreamHandler(NULL)
@@ -34,7 +35,7 @@ Msg* VariableDelay::Pull()
 {
     Msg* msg;
     iLock.Wait();
-    if (iStatus != ERampingDown && iDelayAdjustment > 0) {
+    if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
         const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         msg = iMsgFactory.CreateMsgSilence(size);
         iDelayAdjustment -= size;
@@ -64,6 +65,7 @@ Msg* VariableDelay::Pull()
 
 MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
 {
+    ASSERT(iInStream);
     MsgAudio* msg = aMsg;
     switch (iStatus)
     {
@@ -138,12 +140,14 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 {
     iEnabled = aMsg->SupportsLatency();
+    iInStream = false;
     iMode.Replace(aMsg->Mode());
     return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
+    iInStream = false;
     return aMsg;
 }
 
@@ -229,6 +233,7 @@ Msg* VariableDelay::ProcessMsg(MsgWait* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    iInStream = true;
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iStreamHandler = stream.StreamHandler();
     iStatus = EStarting;

@@ -96,6 +96,7 @@ private:
     void TestNotifyStarvingFromRampingDown();
     void TestNotifyStarvingFromRampingUp();
     void TestNotifyStarvingIgnoredForOtherMode();
+    void TestNoSilenceInjectedBeforeDecodedStream();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -141,6 +142,7 @@ SuiteVariableDelay::SuiteVariableDelay()
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRampingDown), "TestNotifyStarvingFromRampingDown");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingFromRampingUp), "TestNotifyStarvingFromRampingUp");
     AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode), "TestNotifyStarvingIgnoredForOtherMode");
+    AddTest(MakeFunctor(*this, &SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream), "TestNoSilenceInjectedBeforeDecodedStream");
 }
 
 SuiteVariableDelay::~SuiteVariableDelay()
@@ -726,6 +728,16 @@ void SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode()
 
     PullNext(EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
+}
+
+void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
+{
+    PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    static const TUint kDelay = 150 * Jiffies::kJiffiesPerMs;
+    iNextDelayAbsoluteJiffies = kDelay;
+    PullNext(EMsgDelay);
+    PullNext(EMsgTrack);
 }
 
 
