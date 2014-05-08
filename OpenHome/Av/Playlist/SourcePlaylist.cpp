@@ -282,11 +282,14 @@ void SourcePlaylist::SetShuffle(TBool aShuffle)
 
 void SourcePlaylist::NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter)
 {
-    if (   IsActive()
-        && iTransportState != Media::EPipelinePlaying
-        && aIdBefore == ITrackDatabase::kTrackIdNone
-        && aIdAfter == ITrackDatabase::kTrackIdNone) {
-        iPipeline.StopPrefetch(iUriProvider->Mode(), aTrack.Id());
+    if (aIdBefore == ITrackDatabase::kTrackIdNone && aIdAfter == ITrackDatabase::kTrackIdNone) {
+        if (IsActive()) {
+            iPipeline.StopPrefetch(iUriProvider->Mode(), aTrack.Id());
+        }
+        else {
+            iProviderPlaylist->NotifyTrack(aTrack.Id()); /* Playlist's Id property is expected to show the track
+                                                            that'll be fetched when the source is next activated - see #1807 */
+        }
     }
 }
 
