@@ -97,7 +97,6 @@ void ProviderPlaylist::NotifyPipelineState(Media::EPipelineState aState)
 
 void ProviderPlaylist::NotifyTrack(TUint aId)
 {
-    iIdCurrentTrack = aId;
     (void)SetPropertyId(aId);
 }
 

@@ -89,7 +89,6 @@ private:
     TUint iDbSeq;
     std::array<TUint, ITrackDatabase::kMaxTracks> iIdArray;
     Bws<ITrackDatabase::kMaxTracks * sizeof(TUint32)> iIdArrayBuf;
-    TUint iIdCurrentTrack;
     Timer* iTimer;
     Mutex iTimerLock;
     TBool iTimerActive;
