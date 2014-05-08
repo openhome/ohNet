@@ -50,7 +50,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.nextTimer        = None
         self.stateTimer       = None
         self.checkInfoTimer   = None
-        self.meta             = ''
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
@@ -60,7 +59,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.senderPlayTime   = 0
         self.receiverPlayTime = 0
         self.expectedPlayTime = 0
-#        self.senderPlayed     = False
         self.senderPlaying    = threading.Event()
         self.senderStarted    = threading.Event()
         self.senderStopped    = threading.Event()
@@ -117,7 +115,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
-        self.sender.product.sourceIndex = random.randint( 0, self.sender.product.sourceCount-1 )
+        self.sender.product.sourceIndex = random.randint( 1, 1 ) #self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
         # create Receiver Device, put onto random source and connect to sender
@@ -156,7 +154,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if not self.senderPlaying.is_set():
             self.log.Fail( self.senderDev, 'Playback never started' )
         else:
-            self._CheckTrackInfo( self.sender.playlist.id )
+            self._CheckTrackInfo( self.sender.playlist.id, self.sender.playlist.id )
             self.senderStopped.clear()
             self.senderStopped.wait()
                 
@@ -207,7 +205,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             elif svVal == 'Playing':
                 self.senderPlaying.set()
                 self.senderStarted.set()
-#                self.senderPlayed = True
         elif svName == 'Id':
             if self.nextTimer:
                 # cancel timer which is required to trigger the TrackChanged
@@ -215,18 +212,18 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.nextTimer.cancel()
                 self.nextTimer = None
             # Run on seperate thread so Playback events not blocked
-            thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal)] )
+            thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal),self.sender.playlist.id] )
             thread.start()                
             
-    def _TrackChanged( self, aId ):
+    def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""
         if aId>0:
             self.trackChangeMutex.acquire()
             self._CheckPlayTime()
-            self._CheckTrackInfo( aId )
+            self._CheckTrackInfo( aId, aPlId )
             self.trackChangeMutex.release()
 
-    def _CheckTrackInfo( self, aId ): 
+    def _CheckTrackInfo( self, aId, aPlId ):
         """Update 'now playing' log and check reported track info"""
         if not self.senderStopped.isSet():
             self.numTrack += 1
@@ -237,7 +234,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                     self.senderStopped.set()    # force test exit
 
         if not self.senderStopped.isSet():
-            plIndex = self.sender.playlist.PlaylistIndex( self.sender.playlist.id )
+            plIndex = self.sender.playlist.PlaylistIndex( aPlId )
             self.log.Info( '' )
             self.log.Info( '', '----------------------------------------' )
             self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
@@ -248,7 +245,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             if self.senderStarted.isSet():
                 dsTrack = self.sender.playlist.TrackInfo( aId )
                 if dsTrack:
-                    (uri,self.meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
+                    (uri,meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
                     if dsTrack['Uri'] != uri:
                         self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
                                         % (dsTrack['aUri'], uri) )
@@ -258,10 +255,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                     if os.name == 'posix':
                         # clean up 'screwed up' unicode escaping in Linux
                         dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
-                        self.meta = self.meta.replace( '\\', '' )
-                    if dsTrack['Metadata'] != self.meta:
+                        meta = meta.replace( '\\', '' )
+                    if dsTrack['Metadata'] != meta:
                         self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
-                                        % (dsTrack['Metadata'], self.meta) )
+                                        % (dsTrack['Metadata'], meta) )
                     else:
                         self.log.Pass( self.senderDev, 'Sender metadata as expected' )
                         
@@ -362,7 +359,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # handle cases where the same track is played twice in a row, which
         # causes NO id event to be sent.
         self.log.Info( self.senderDev, 'Next track timer triggered track change as no Id event Rx' ) 
-        self._TrackChanged( self.sender.playlist.id )
+        self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
 
     def _CheckPlayTime( self ):
         """Verify track played for expected duration (see Trac #1527)"""
