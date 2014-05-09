@@ -304,6 +304,7 @@ void SourcePlaylist::NotifyTrackDeleted(TUint aId, Media::Track* /*aBefore*/, Me
     iLock.Wait();
     if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
         iNewPlaylist = true;
+        iTrackId = ITrackDatabase::kTrackIdNone;
     }
     iLock.Signal();
 }
@@ -312,8 +313,9 @@ void SourcePlaylist::NotifyAllDeleted()
 {
     iLock.Wait();
     iNewPlaylist = true;
+    iTrackId = ITrackDatabase::kTrackIdNone;
     iLock.Signal();
-    if (IsActive() && iTransportState != Media::EPipelinePlaying) {
+    if (IsActive()) {
         iPipeline.StopPrefetch(iUriProvider->Mode(), ITrackDatabase::kTrackIdNone);
     }
 }
