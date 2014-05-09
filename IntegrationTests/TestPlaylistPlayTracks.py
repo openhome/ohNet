@@ -151,7 +151,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.sender.playlist.SeekIndex( 0 )
         self.sender.playlist.Play()
         self.senderPlaying.wait( 10 )
-        if not self.senderPlaying.is_set():
+        if not self.senderStarted.is_set():
             self.log.Fail( self.senderDev, 'Playback never started' )
         else:
             self._CheckTrackInfo( self.sender.playlist.id, self.sender.playlist.id )
@@ -327,7 +327,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                     self.playTime-(time.time()-self.startTime), self._PlayTimerCb )
                 self.playTimer.start()
         if self.receiver:
-            if self.expectedPlayTime > 9:
+            if self.expectedPlayTime > 4:
                 self.checkInfoTimer = LogThread.Timer( 3, self._CheckReceiverInfo )
                 self.checkInfoTimer.start()
         else:
