@@ -147,11 +147,16 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     return res;
 }
 
+ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return EProtocolGetErrorNotSupported;
+}
+
 EStreamPlay ProtocolOhBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     /* We need to play whatever the Sender gives us.  Its easier to do this by hard-coding 'yes'
        to all tracks rather than fooling IdManager into recognising each track we announce.  (Any
-       later attempt to do this will need to start sending EncodedStream msgs for eacg received track.) */
+       later attempt to do this will need to start sending EncodedStream msgs for each received track.) */
     return ePlayYes;
 }
 
@@ -417,7 +422,7 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
     iTrackUri.Replace(aMsg.Uri());
     iStreamMsgDue = true;
     Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata(), NULL, true);
-    iSupply->OutputTrack(*track, iIdProvider->NextTrackId(), iMode);
+    iSupply->OutputTrack(*track, iIdProvider->NextTrackId());
     track->RemoveRef();
     aMsg.RemoveRef();
     // FIXME - also need OutputStream (which is complicated by repair vector)

@@ -28,7 +28,6 @@ namespace Av {
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
 {
     static const TChar* kProtocolInfo;
-    static const TUint kSenderLatencyMs = 100; // FIXME - should get this from Pipeline
 public:
     SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
@@ -118,7 +117,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     static const TChar * kMode = "Receiver";
     const Brn kModeBuf(kMode);
-    iUriProvider = new UriProviderSingleTrack(kMode, trackFactory);
+    iUriProvider = new UriProviderSingleTrack(kMode, true, true, trackFactory);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iPipeline.Add(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
@@ -130,7 +129,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     // Sender
     IConfigManagerWriter& configManagerWriter = aMediaPlayer.ConfigManagerWriter();
     IConfigManagerReader& configManagerReader = aMediaPlayer.ConfigManagerReader();
-    iSender = new Sender(env, device, *iZoneHandler, configManagerWriter, Brx::Empty(), kSenderLatencyMs, aSenderIconFileName);
+    iSender = new Sender(env, device, *iZoneHandler, configManagerWriter, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManagerReader.GetText(Product::kConfigIdRoomBase);
@@ -274,16 +273,22 @@ void SourceReceiver::UriChanged(const Brx& aUri)
 {
     iTrackUri.Replace(aUri);
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata, true);
-    iTrackId = track->Id();
-    track->RemoveRef();
-    if (IsActive()) {
-        if (iPlaying) {
-            iPipeline.RemoveAll();
-            iPipeline.Begin(iUriProvider->Mode(), iTrackId);
-            iPipeline.Play();
-        }
-        else {
-            iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+    if (track == NULL) {
+        iTrackId = Track::kIdNone;
+        iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+    }
+    else {
+        iTrackId = track->Id();
+        track->RemoveRef();
+        if (IsActive()) {
+            if (iPlaying) {
+                iPipeline.RemoveAll();
+                iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+                iPipeline.Play();
+            }
+            else {
+                iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+            }
         }
     }
 }

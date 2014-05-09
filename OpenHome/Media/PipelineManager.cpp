@@ -20,7 +20,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFact
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory, iPrefetchObserver);
+    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kJiffiesPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
@@ -194,6 +194,11 @@ TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
 IPipelineElementDownstream* PipelineManager::SetSender(IPipelineElementDownstream& aSender)
 {
     return iPipeline->SetSender(aSender);
+}
+
+TUint PipelineManager::SenderMinLatencyMs() const
+{
+    return iPipeline->SenderMinLatencyMs();
 }
 
 Msg* PipelineManager::Pull()

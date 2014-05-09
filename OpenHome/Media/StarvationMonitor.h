@@ -19,10 +19,10 @@ Fixed buffer which implements a delay (poss ~100ms) to allow time for songcast s
 
 - Pulls audio, stopping pulling whenever it grows above a 'normal use' threshold (NormalSize).
 - After emptying (seeing a halt msg or starting to ramp down), enters 'buffering' mode and 
-  pulls until it reaches GorgeSize.  Doesn't deliver any audio to rhs while in buffering mode.
+  pulls until it reaches NormalSize.  Doesn't deliver any audio to rhs while in buffering mode.
 - If halt msg encountered, allows buffer to be exhausted without ramping down.
 - If no halt msg, starts ramping down once less that StarvationThreshold of data remains.
-- On exit from buffering mode, ramps up iff ramped down before buffering.
+- On exit from buffering mode, ramps up iff ramped down before buffering and still playing the same stream.
 */
     
 class IClockPuller;
@@ -32,7 +32,7 @@ class StarvationMonitor : private MsgReservoir, public IPipelineElementUpstream
     friend class SuiteStarvationMonitor;
 public:
     StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                      TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize, IClockPuller& aClockPuller);
+                      TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, IClockPuller& aClockPuller);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -55,6 +55,7 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgFlush* aMsg);
     void ProcessMsgIn(MsgWait* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
+    Msg* ProcessMsgOut(MsgMode* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
@@ -73,7 +74,6 @@ private:
     ThreadFunctor* iThread;
     TUint iNormalMax;
     TUint iStarvationThreshold;
-    TUint iGorgeSize;
     TUint iRampUpSize;
     mutable Mutex iLock;
     Semaphore iSemIn;

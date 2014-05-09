@@ -47,12 +47,13 @@ public:
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer
-    TBool DoStream(Track& aTrack, const Brx& aMode);
+    TBool DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     ISupply& iSupply;
@@ -70,8 +71,14 @@ public:
     const Brx& LastTrackUri() const;
     TUint LastTrackId() const;
     TUint LastStreamId() const;
+    const Brx& LastMode() const;
+    TBool LastSupportsLatency() const;
+    TBool LastIsRealTime() const;
+    TUint LastDelayJiffies() const;
 private: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -80,13 +87,18 @@ private: // from ISupply
     void OutputHalt(TUint aHaltId);
     void OutputQuit();
 private:
+    BwsMode iLastMode;
+    TBool iLastSupportsLatency;
+    TBool iLastRealTime;
     BwsTrackUri iLastTrackUri;
     TUint iLastTrackId;
     TUint iLastStreamId;
+    TUint iLastDelayJiffies;
 };
 
 class SuiteFiller : public Suite, private IPipelineIdTracker, private IStreamPlayObserver
 {
+    static const TUint kDefaultLatency = Jiffies::kJiffiesPerMs * 150;
 public:
     SuiteFiller();
     ~SuiteFiller();
@@ -121,7 +133,7 @@ using namespace OpenHome::Media::TestFiller;
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
-    : UriProvider("Dummy")
+    : UriProvider("Dummy", false, false)
     , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
@@ -233,11 +245,11 @@ TUint DummyUriStreamer::StreamId() const
     return iStreamId;
 }
 
-TBool DummyUriStreamer::DoStream(Track& aTrack, const Brx& aMode)
+TBool DummyUriStreamer::DoStream(Track& aTrack)
 {
     iPipelineTrackId++;
     iStreamId++;
-    iSupply.OutputTrack(aTrack, iPipelineTrackId, aMode);
+    iSupply.OutputTrack(aTrack, iPipelineTrackId);
     iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
@@ -264,6 +276,12 @@ TUint DummyUriStreamer::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
+}
+
+TBool DummyUriStreamer::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    ASSERTS();
+    return false;
 }
 
 void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -296,10 +314,42 @@ TUint DummySupply::LastStreamId() const
     return iLastStreamId;
 }
 
-void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId, const Brx& /*aMode*/)
+const Brx& DummySupply::LastMode() const
+{
+    return iLastMode;
+}
+
+TBool DummySupply::LastSupportsLatency() const
+{
+    return iLastSupportsLatency;
+}
+
+TBool DummySupply::LastIsRealTime() const
+{
+    return iLastRealTime;
+}
+
+TUint DummySupply::LastDelayJiffies() const
+{
+    return iLastDelayJiffies;
+}
+
+void DummySupply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+{
+    iLastMode.Replace(aMode);
+    iLastSupportsLatency = aSupportsLatency;
+    iLastRealTime = aRealTime;
+}
+
+void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId)
 {
     iLastTrackUri.Replace(aTrack.Uri());
     iLastTrackId = aTrackId;
+}
+
+void DummySupply::OutputDelay(TUint aJiffies)
+{
+    iLastDelayJiffies = aJiffies;
 }
 
 void DummySupply::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool /*aLive*/, IStreamHandler& /*aStreamHandler*/, TUint aStreamId)
@@ -345,7 +395,7 @@ SuiteFiller::SuiteFiller()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory, *this);
+    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory, *this, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
@@ -374,9 +424,13 @@ void SuiteFiller::Test()
     // IUriStreamer should be passed uri for first track
     iFiller->Play(iUriProvider->Mode(), iUriProvider->IdByIndex(0));
     iTrackAddedSem.Wait();
+    TEST(iDummySupply->LastMode() == iUriProvider->Mode());
+    TEST(iDummySupply->LastSupportsLatency() == iUriProvider->SupportsLatency());
+    TEST(iDummySupply->LastIsRealTime() == iUriProvider->IsRealTime());
     TEST(iDummySupply->LastTrackUri() == iUriProvider->TrackUriByIndex(0));
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
+    TEST(iDummySupply->LastDelayJiffies() == kDefaultLatency);
     TEST(iTrackId == iUriProvider->IdByIndex(0));
     TEST(iPipelineTrackId == iDummySupply->LastTrackId());
     TEST(iStreamId == iDummySupply->LastStreamId());

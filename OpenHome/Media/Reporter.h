@@ -53,6 +53,7 @@ private:
     TUint iSeconds;
     TUint iJiffies; // Fraction of a second
     TUint iTrackDurationSeconds;
+    BwsMode iMode;
 };
 
 } // namespace Media

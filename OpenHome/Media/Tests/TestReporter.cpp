@@ -246,7 +246,7 @@ Msg* SuiteReporter::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty(), NULL, false);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId, Brx::Empty());
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
         track->RemoveRef();
         return msg;
     }

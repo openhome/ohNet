@@ -21,16 +21,17 @@ const Brn Sender::kConfigIdChannel("Sender.Channel");
 const Brn Sender::kConfigIdMode("Sender.Mode");
 const Brn Sender::kConfigIdPreset("Sender.Preset");
 
-Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aLatencyMs, const Brx& aIconFileName)
+Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
     : iTrack(NULL)
     , iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
+    , iMinLatencyMs(aMinLatencyMs)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
     iOhmSenderDriver = new Av::OhmSenderDriver(aEnv);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
-    iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aLatencyMs, false/*unicast*/, aIconFileName);
+    iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
 
     iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
     iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigChannelChanged));
@@ -107,7 +108,10 @@ Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 Msg* Sender::ProcessMsg(MsgDelay* aMsg)
 {
     SendPendingAudio();
-    iOhmSender->SetLatency(aMsg->DelayJiffies()); // FIXME - is songcast delay specified in jiffies?
+    const TUint latencyMs = aMsg->DelayJiffies() / Jiffies::kJiffiesPerMs;
+    if (latencyMs > iMinLatencyMs) {
+        iOhmSender->SetLatency(latencyMs);
+    }
     aMsg->RemoveRef();
     return NULL;
 }

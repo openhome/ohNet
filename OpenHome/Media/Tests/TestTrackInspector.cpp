@@ -361,7 +361,7 @@ Msg* SuiteTrackInspector::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId, Brx::Empty());
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
         iTrackIds.push_back(track->Id());
         track->RemoveRef();
         iNextTrackId++;

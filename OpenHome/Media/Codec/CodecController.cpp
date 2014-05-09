@@ -370,6 +370,14 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
     DoRead(aBuf, iAudioEncoded->Bytes());
 }
 
+TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
+{
+    if (!iStreamEnded && !iQuit) {
+        return iStreamHandler->TryGet(aWriter, iTrackIdPipeline, iStreamId, aOffset, aBytes);
+    }
+    return false;
+}
+
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
     TUint flushId = iStreamHandler->TrySeek(iTrackIdPipeline, aStreamId, aBytePos);
@@ -409,6 +417,14 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
         }
         iPostSeekStreamInfo = msg;
     }
+    iLock.Signal();
+}
+
+void CodecController::OutputDelay(TUint aJiffies)
+{
+    iLock.Wait();
+    MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
+    Queue(msg);
     iLock.Signal();
 }
 
@@ -614,6 +630,13 @@ TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
     }
 
     return flushId;
+}
+
+TBool CodecController::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    ASSERTS();  // expect Get requests to come to this class' public API, not from downstream
+                // i.e., nothing downstream of the codec should be requesting arbitrary data
+    return false;
 }
 
 void CodecController::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)

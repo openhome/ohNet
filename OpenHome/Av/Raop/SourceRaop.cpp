@@ -24,7 +24,7 @@ using namespace OpenHome::Net;
 // SourceFactory
 ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", aMediaPlayer.TrackFactory());
+    UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
 }

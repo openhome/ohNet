@@ -95,6 +95,11 @@ ProtocolStreamResult ProtocolRtsp::Stream(const Brx& aUri)
     return res;
 }
 
+ProtocolGetResult ProtocolRtsp::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return EProtocolGetErrorNotSupported;
+}
+
 ProtocolStreamResult ProtocolRtsp::DoStream()
 {
     if (!Connect(iUri, kRtspPort))

@@ -18,6 +18,7 @@ tests = '''
     TestTrackInspector
     TestReporter
     TestPruner
+    TestGorger
     TestStarvationMonitor
     TestPreDriver
     TestContentProcessor

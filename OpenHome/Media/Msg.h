@@ -302,16 +302,14 @@ public:
     MsgTrack(AllocatorBase& aAllocator);
     Media::Track& Track() const;
     TUint IdPipeline() const;
-    const Brx& Mode() const;
 private:
-    void Initialise(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
+    void Initialise(Media::Track& aTrack, TUint aIdPipeline);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Media::Track* iTrack;
     TUint iIdPipeline;
-    BwsMode iMode;
 };
 
 class MsgDelay : public Msg
@@ -833,7 +831,9 @@ class ISupply
 {
 public:
     virtual ~ISupply() {}
-    virtual void OutputTrack(Track& Track, TUint aTrackId, const Brx& aMode) = 0;
+    virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime) = 0;
+    virtual void OutputTrack(Track& Track, TUint aTrackId) = 0;
+    virtual void OutputDelay(TUint aJiffies) = 0;
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     virtual void OutputData(const Brx& aData) = 0;
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
@@ -901,6 +901,7 @@ public:
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
     virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    virtual TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
     virtual void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
 };
 
@@ -962,7 +963,7 @@ public:
                TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
-    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline, const Brx& aMode);
+    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);

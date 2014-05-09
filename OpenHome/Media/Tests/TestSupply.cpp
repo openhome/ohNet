@@ -19,6 +19,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 };
 
@@ -112,6 +113,12 @@ TUint DummyStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
     return MsgFlush::kIdInvalid;
 }
 
+TBool DummyStreamHandler::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    ASSERTS();
+    return false;
+}
+
 void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
 }
@@ -139,9 +146,13 @@ SuiteSupply::~SuiteSupply()
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
+    iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies);
+    TEST(++expectedMsgCount == iMsgPushCount);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), NULL, false);
-    iSupply->OutputTrack(*track, kTrackId, Brx::Empty());
+    iSupply->OutputTrack(*track, kTrackId);
     track->RemoveRef();
+    TEST(++expectedMsgCount == iMsgPushCount);
+    iSupply->OutputDelay(kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
     TEST(++expectedMsgCount == iMsgPushCount);

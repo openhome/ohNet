@@ -1038,7 +1038,7 @@ void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& a
     Bws<128> toneUrl;
     toneUrl.AppendPrintf("tone://%s.wav?bitdepth=%u&samplerate=%u&pitch=%u&channels=%u&duration=%u", aWaveform, aToneParams.BitsPerSample(), aToneParams.SampleRate(), aToneParams.Pitch(), aToneParams.NumChannels(), aToneParams.DurationSeconds());
     Track& trk = *iTrackFactory->CreateTrack(toneUrl, Brx::Empty(), NULL, false);
-    iProtocolManager->DoStream(trk, Brx::Empty());
+    iProtocolManager->DoStream(trk);
     trk.RemoveRef();
     iSupply->OutputQuit();  // ensure no audio remains in pipeline
     iSemaphore.Wait();

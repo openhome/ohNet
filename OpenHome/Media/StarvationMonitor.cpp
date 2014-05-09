@@ -13,14 +13,13 @@ using namespace OpenHome::Media;
 // StarvationMonitor
 
 StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aGorgeSize, TUint aRampUpSize, IClockPuller& aClockPuller)
+                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, IClockPuller& aClockPuller)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
     , iClockPuller(aClockPuller)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
-    , iGorgeSize(aGorgeSize)
     , iRampUpSize(aRampUpSize)
     , iLock("STRV")
     , iSemIn("STR1", 0)
@@ -36,8 +35,6 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iStreamId(UINT_MAX)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
-    ASSERT(iNormalMax < iGorgeSize);
-    ASSERT(iRampUpSize < iGorgeSize);
     UpdateStatus(EBuffering);
     iThread = new ThreadFunctor("StarvationMonitor", MakeFunctor(*this, &StarvationMonitor::PullerThread), kPriorityVeryHigh); // FIXME - review thread priorities
     iThread->Start();
@@ -66,7 +63,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
     DoEnqueue(aMsg);
     iLock.Wait();
     TBool isFull = (iStatus != EBuffering && Jiffies() >= iNormalMax);
-    if (iStatus == EBuffering && Jiffies() >= iGorgeSize) {
+    if (iStatus == EBuffering && Jiffies() >= iNormalMax) {
         iHaltDelivered = false;
         if (iPlannedHalt) {
             UpdateStatus(ERunning);
@@ -251,6 +248,14 @@ void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
     iLock.Signal();
 }
 
+Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
+{
+    iMode.Replace(aMsg->Mode());
+    iTrackId = UINT_MAX;
+    iStreamId = UINT_MAX;
+    return aMsg;
+}
+
 Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
 {
     iTrackIsPullable = aMsg->Track().Pullable();
@@ -258,7 +263,6 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
         iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     }
     iStreamHandler = NULL;
-    iMode.Replace(aMsg->Mode());
     iTrackId = aMsg->IdPipeline();
     iStreamId = UINT_MAX;
     iClockPuller.Stop();
@@ -293,22 +297,13 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgHalt* aMsg)
 TBool StarvationMonitor::EnqueueWouldBlock() const
 {
     AutoMutex a(iLock);
-    const TUint jiffies = Jiffies();
-    if (iStatus == EBuffering) {
-        if (jiffies >= iGorgeSize) {
-           return true;
-        }
-    }
-    else if (jiffies >= iNormalMax) {
-        return true;
-    }
-    return false;
+    return (Jiffies() >= iNormalMax);
 }
 
 TBool StarvationMonitor::PullWouldBlock() const
 {
     AutoMutex a(iLock);
-    if (IsEmpty() || (iStatus == EBuffering && Jiffies() < iGorgeSize)) {
+    if (IsEmpty() || (iStatus == EBuffering && Jiffies() < iNormalMax)) {
         return true;
     }
     return false;

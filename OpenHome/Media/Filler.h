@@ -21,6 +21,8 @@ class UriProvider
 public:
     virtual ~UriProvider();
     const Brx& Mode() const;
+    TBool SupportsLatency() const;
+    TBool IsRealTime() const;
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -28,16 +30,18 @@ public:
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
-    UriProvider(const TChar* aMode);
+    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime);
 private:
     BwsMode iMode;
+    TBool iSupportsLatency;
+    TBool iRealTime;
 };
 
 class Filler : private Thread, public ISupply
 {
     static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver);
+    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -54,7 +58,9 @@ private:
 private: // from Thread
     void Run();
 private: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -72,6 +78,7 @@ private:
         EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
         TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
         TUint TryStop(TUint aTrackId, TUint aStreamId);
+        TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
         void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
     };
 private:
@@ -87,11 +94,13 @@ private:
     TBool iSendHalt;
     TBool iGetPrevious;
     TBool iQuit;
+    TBool iChangedMode;
     EStreamPlay iTrackPlayStatus;
     TUint iNextHaltId;
     Track* iNullTrack; // delivered when uri provider cannot return a Track
     NullTrackStreamHandler iNullTrackStreamHandler;
     IStreamPlayObserver& iStreamPlayObserver;
+    const TUint iDefaultDelay;
     TUint iPrefetchTrackId;
 };
 

@@ -38,6 +38,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
@@ -218,6 +219,12 @@ TUint SuiteCodecController::TryStop(TUint aTrackId, TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
+TBool SuiteCodecController::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    ASSERTS();
+    return false;
+}
+
 void SuiteCodecController::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
 }
@@ -347,7 +354,7 @@ void SuiteCodecController::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteCodecController::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++, Brn("testmode"));
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
     track->RemoveRef();
     return msg;
 }

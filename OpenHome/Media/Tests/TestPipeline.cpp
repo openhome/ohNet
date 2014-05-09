@@ -33,6 +33,7 @@ private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
     TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     ISupply& iSupply;
@@ -193,7 +194,7 @@ void Supplier::Run()
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
-    iSupply.OutputTrack(*track, 1, Brx::Empty());
+    iSupply.OutputTrack(*track, 1);
     track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
     while (!iQuit) {
@@ -228,6 +229,12 @@ TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffs
 TUint Supplier::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     return MsgFlush::kIdInvalid;
+}
+
+TBool Supplier::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    ASSERTS();
+    return false;
 }
 
 void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)

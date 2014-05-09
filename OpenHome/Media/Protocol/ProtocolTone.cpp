@@ -683,6 +683,11 @@ ProtocolStreamResult ProtocolTone::Stream(const Brx& aUri)
     return EProtocolStreamSuccess;
 }
 
+ProtocolGetResult ProtocolTone::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+{
+    return EProtocolGetErrorNotSupported;
+}
+
 #ifdef DEFINE_DEBUG
 void ProtocolTone::HexDump(const TByte *aBase, TUint aSize) const
 {

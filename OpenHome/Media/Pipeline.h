@@ -16,6 +16,7 @@
 #include <OpenHome/Media/Skipper.h>
 #include <OpenHome/Media/Waiter.h>
 #include <OpenHome/Media/Stopper.h>
+#include <OpenHome/Media/Gorger.h>
 #include <OpenHome/Media/Reporter.h>
 #include <OpenHome/Media/Splitter.h>
 #include <OpenHome/Media/Pruner.h>
@@ -52,14 +53,15 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
     static const TUint kDecodedReservoirSize                 = Jiffies::kJiffiesPerMs * 1000;
     static const TUint kSeekerRampDuration                   = Jiffies::kJiffiesPerMs * 20;
-    static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 200;
+    static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 20;
     static const TUint kSkipperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
     static const TUint kWaiterRampDuration                   = Jiffies::kJiffiesPerMs * 500;
     static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
-    static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 100;
-    static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 50;
-    static const TUint kStarvationMonitorGorgeSize           = Jiffies::kJiffiesPerMs * 1000;
+    static const TUint kGorgerDuration                       = Jiffies::kJiffiesPerMs * 1000;
+    static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 30;
+    static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 20;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
+    static const TUint kSenderMinLatency                     = Jiffies::kJiffiesPerMs * 150;
 public:
     Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes);
     virtual ~Pipeline();
@@ -76,8 +78,11 @@ public:
     void AddObserver(ITrackObserver& aObserver);
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
+    TUint SenderMinLatencyMs() const;
 public: // from ISupply
-    void OutputTrack(Track& aTrack, TUint aTrackId, const Brx& aMode);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputTrack(Track& aTrack, TUint aTrackId);
+    void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
     void OutputData(const Brx& aData);
     void OutputMetadata(const Brx& aMetadata);
@@ -131,8 +136,8 @@ private:
     Logger* iLoggerDecodedAudioReservoir;
     Seeker* iSeeker;
     Logger* iLoggerSeeker;
-    VariableDelay* iVariableDelay;
-    Logger* iLoggerVariableDelay;
+    VariableDelay* iVariableDelay1;
+    Logger* iLoggerVariableDelay1;
     TrackInspector* iTrackInspector;
     Logger* iLoggerTrackInspector;
     Skipper* iSkipper;
@@ -141,10 +146,14 @@ private:
     Logger* iLoggerWaiter;
     Stopper* iStopper;
     Logger* iLoggerStopper;
+    Gorger* iGorger;
+    Logger* iLoggerGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;
+    VariableDelay* iVariableDelay2;
+    Logger* iLoggerVariableDelay2;
     Pruner* iPruner;
     Logger* iLoggerPruner;
     StarvationMonitor* iStarvationMonitor;
