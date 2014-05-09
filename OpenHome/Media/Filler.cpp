@@ -221,6 +221,7 @@ void Filler::Run()
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
                 OutputMode(Brn("null"), false, true);
+                iChangedMode = true;
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
