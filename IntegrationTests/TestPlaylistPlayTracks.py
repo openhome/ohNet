@@ -4,8 +4,8 @@
 Parameters:
     arg#1 - Sender DUT ['local' for internal SoftPlayer]
     arg#2 - Receiver DUT ['local' for internal SoftPlayer] (None->not present)
-    arg#3 - Media server to source media from
-    arg#4 - Playlist name
+    arg#3 - Media server to source media from (None->test served audio)
+    arg#4 - Playlist name (None->test served audio)
     arg#5 - Time to play before skipping to next (None = play all)
     arg#6 - Repeat mode [on/off] (optional - default off)
     arg#7 - Shuffle mode [on/off] - (optional - default off)
@@ -24,13 +24,18 @@ import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano
 import Upnp.ControlPoints.MediaServer as Server
 import Utils.Common                   as Common
+import Utils.Network.HttpServer       as HttpServer
 import _SoftPlayer                    as SoftPlayer
 import LogThread
+import Path
 import os
 import random
 import sys
 import threading
 import time
+
+kAudioRoot = os.path.join( Path.AudioDir(), 'LRTones/' )
+kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
 class TestPlaylistPlayTracks( BASE.BaseTest ):
@@ -90,6 +95,9 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if receiverName.lower() == 'none':
            receiverName = None 
             
+        if serverName.lower() == 'none':
+           serverName = None
+
         if self.repeat.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid repeat mode %s' % self.repeat )
             
@@ -97,12 +105,17 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
             
         # get playlist from server
-        self.server = Server.MediaServer( serverName )
-        if not self.server.device:
-            self.log.Abort( serverName, 'Not available' )
-        self.tracks = self.server.GetPlaylist( playlistName )
-        self.server.Shutdown()
-        self.server = None
+        if serverName:
+            self.server = Server.MediaServer( serverName )
+            if not self.server.device:
+                self.log.Abort( serverName, 'Not available' )
+            self.tracks = self.server.GetPlaylist( playlistName )
+            self.server.Shutdown()
+            self.server = None
+        else:
+            self.server = HttpServer.HttpServer( kAudioRoot )
+            self.server.Start()
+            self.tracks = Common.GetTracks( kTrackList, self.server )
 
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
@@ -172,6 +185,8 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.softSender.Shutdown()
         if self.softRcvr:
             self.softRcvr.Shutdown()
+        if self.server:
+            self.server.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     # noinspection PyUnusedLocal

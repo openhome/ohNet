@@ -32,10 +32,10 @@ tests = [
     # [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList, 12,    1               ],
 
     # OH Playlist Service
-    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       medList, 12,    'off',     'on' ],
+    [ 'TestPlaylistPlayTracks', 'local', 'local', 'None', 'None', 5, 'off', 'on' ],
 
     # # OH Radio Service
     # [ 'TestRadioPlayChannels',       'local', 'local',    'klueso', 12,      'on'                   ],
 ]
 
-Suite.Suite( tests, logDir, ['config','status','info'] )
+Suite.Suite( tests, logDir )
