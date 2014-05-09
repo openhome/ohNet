@@ -39,7 +39,7 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     }
     Bws<32> key(iConfigPrefix);
     key.Append(kStartupSourceBase);
-    iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, key, Brn("Playlist"), ISource::kMaxSourceTypeBytes);
+    iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, key, Brx::Empty(), ISource::kMaxSourceTypeBytes);
     key.Replace(iConfigPrefix);
     key.Append(kConfigIdRoomBase);
     iConfigProductRoom = &aConfigReader.GetText(key);
@@ -72,7 +72,13 @@ void Product::Start()
 {
     Bws<ISource::kMaxSystemNameBytes> startupSource;
     iStartupSource->Get(startupSource);
-    SetCurrentSource(startupSource);
+    if (startupSource == Brx::Empty()) {
+        // If there is no stored startup source, select the first added source.
+        SetCurrentSource(0);
+    }
+    else {
+        SetCurrentSource(startupSource);
+    }
     iStarted = true;
     iSourceXmlChangeCount++;
     for (TUint i=0; i<iObservers.size(); i++) {
