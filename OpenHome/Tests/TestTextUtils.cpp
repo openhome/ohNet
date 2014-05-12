@@ -17,7 +17,7 @@ public:
 void SuiteAscii::Test()
 {
     // Hex
-    
+
     TEST(Ascii::IsHex('0'));
     TEST(Ascii::IsHex('1'));
     TEST(Ascii::IsHex('2'));
@@ -1499,7 +1499,7 @@ void SuiteUri::Test()
     uri->Replace(uriString);
     TEST(1==1);
     uriString.Append("0");  // + 1 = 1025
-    
+
     TEST_THROWS(uri->Replace(uriString), UriError);
     }
 
@@ -1541,9 +1541,9 @@ void SuiteSwap::Test()
 void TestTextUtils()
 {
     Runner runner("Ascii System");
-    runner.Add(new SuiteAscii()); 
-    runner.Add(new SuiteParser()); 
-    runner.Add(new SuiteUri()); 
+    runner.Add(new SuiteAscii());
+    runner.Add(new SuiteParser());
+    runner.Add(new SuiteUri());
     runner.Add(new SuiteSwap());
     runner.Run();
 }
