@@ -167,12 +167,14 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if not self.senderStarted.is_set():
             self.log.Fail( self.senderDev, 'Playback never started' )
         else:
-            self._CheckTrackInfo( self.sender.playlist.id, self.sender.playlist.id )
+            self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
             self.senderStopped.clear()
             self.senderStopped.wait()
                 
     def Cleanup( self ):
         """Perform post-test cleanup"""
+        if self.checkInfoTimer:
+            self.checkInfoTimer.cancel()
         if self.playTimer:
              self.playTimer.cancel()
         if self.server:
@@ -232,60 +234,84 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             
     def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""
+        if self.checkInfoTimer:
+            self.checkInfoTimer.cancel()
+
         if aId>0:
             self.trackChangeMutex.acquire()
             self._CheckPlayTime()
-            self._CheckTrackInfo( aId, aPlId )
+            if not self.senderStopped.isSet():
+                self.numTrack += 1
+                if self.repeat=='off' and self.numTrack>len( self.tracks ):
+                    self.senderStopped.wait( 3 )
+                    if not self.senderStopped.isSet():
+                        self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
+                        self.senderStopped.set()    # force test exit
+
+            if not self.senderStopped.isSet():
+                plIndex = self.sender.playlist.PlaylistIndex( aPlId )
+                self.log.Info( '' )
+                self.log.Info( '', '----------------------------------------' )
+                self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+                self.log.Info( '', '----------------------------------------' )
+                self.log.Info( '' )
+                self._SetupPlayTimer()
+                self.checkInfoTimer = LogThread.Timer( 3, self._CheckInfo, args=[aId] )
+                self.checkInfoTimer.start()
             self.trackChangeMutex.release()
 
-    def _CheckTrackInfo( self, aId, aPlId ):
-        """Update 'now playing' log and check reported track info"""
-        if not self.senderStopped.isSet():
-            self.numTrack += 1
-            if self.repeat=='off' and self.numTrack>len( self.tracks ):
-                self.senderStopped.wait( 3 )
-                if not self.senderStopped.isSet():
-                    self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
-                    self.senderStopped.set()    # force test exit
+    def _CheckInfo( self, aId ):
+        """Check sender and receiver info is as expected"""
+        self.checkInfoTimer = None
+        self._CheckSenderInfo( aId )
+        if self.receiver:
+            self._CheckReceiverInfo()
 
-        if not self.senderStopped.isSet():
-            plIndex = self.sender.playlist.PlaylistIndex( aPlId )
-            self.log.Info( '' )
-            self.log.Info( '', '----------------------------------------' )
-            self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
-                (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-            self.log.Info( '', '----------------------------------------' )
-            self.log.Info( '' )
+    def _CheckSenderInfo( self, aId ):
+        """Check sender info is as expected"""
+        if self.senderStarted.isSet():
+            dsTrack = self.sender.playlist.TrackInfo( aId )
+            if dsTrack:
+                (uri,meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
+                if dsTrack['Uri'] != uri:
+                    self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
+                                    % (dsTrack['aUri'], uri) )
+                else:
+                    self.log.Pass( self.senderDev, 'Sender URI as expected' )
 
-            if self.senderStarted.isSet():
-                dsTrack = self.sender.playlist.TrackInfo( aId )
-                if dsTrack:
-                    (uri,meta) = self.tracks[self.sender.playlist.idArray.index( aId )]
-                    if dsTrack['Uri'] != uri:
-                        self.log.Fail( self.senderDev, 'Sender URI mismatch %s / %s'
-                                        % (dsTrack['aUri'], uri) )
-                    else:
-                        self.log.Pass( self.senderDev, 'Sender URI as expected' )
-                    
-                    if os.name == 'posix':
-                        # clean up 'screwed up' unicode escaping in Linux
-                        dsTrack['Metadata'] = dsTrack['Metadata'].replace( '\\', '' )
-                        meta = meta.replace( '\\', '' )
-                    if dsTrack['Metadata'] != meta:
-                        self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
-                                        % (dsTrack['Metadata'], meta) )
-                    else:
-                        self.log.Pass( self.senderDev, 'Sender metadata as expected' )
-                        
-                    self.log.FailUnless( self.senderDev, self.sender.sender.audio, 
-                        'Sender Audio flag is %s' % self.sender.sender.audio )
-                    self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled', 
-                        'Sender Status is %s' % self.sender.sender.status )
-                else:                         
-                    self.log.Fail( self.senderDev, 'No track data returned' )
-                    self.senderStopped.set()     # force test exit
+                if dsTrack['Metadata'] != meta:
+                    self.log.Fail( self.senderDev, 'Sender metadata mismatch %s / %s'
+                                    % (dsTrack['Metadata'], meta) )
+                else:
+                    self.log.Pass( self.senderDev, 'Sender metadata as expected' )
 
-            self._SetupPlayTimer()
+                self.log.FailUnless( self.senderDev, self.sender.sender.audio,
+                    'Sender Audio flag is %s' % self.sender.sender.audio )
+                self.log.FailUnless( self.senderDev, self.sender.sender.status == 'Enabled',
+                    'Sender Status is %s' % self.sender.sender.status )
+            else:
+                self.log.Fail( self.senderDev, 'No track data returned' )
+                self.senderStopped.set()     # force test exit
+
+    def _CheckReceiverInfo( self ):
+        """Check receiver Info matches sender"""
+        # called 3s after track change to allow events from both sides to be
+        # updated to current values - test skipped if track play time < 10s
+        for item in ['bitDepth', 'bitRate', 'codecName', 'duration', 'lossless',
+                     'metadata', 'metatext', 'sampleRate', 'uri']:
+            itemTitle = item[0].upper()+item[1:]
+            senderVal = eval( 'self.sender.info.polled%s' % itemTitle )
+            receiverVal = eval( 'self.receiver.info.polled%s' % itemTitle )
+            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal,
+                '(%s/%s) POLLED Sender/Receiver value for %s' %
+                (str( senderVal ), str( receiverVal ), item[0].upper()+item[1:] ))
+
+            senderVal = eval( 'self.sender.info.%s' % item )
+            receiverVal = eval( 'self.receiver.info.%s' % item )
+            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal,
+                '(%s/%s) EVENTED Sender/Receiver value for %s' %
+                (str( senderVal ), str( receiverVal ), itemTitle) )
 
     # noinspection PyUnusedLocal
     def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
@@ -341,20 +367,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.playTimer = LogThread.Timer(
                     self.playTime-(time.time()-self.startTime), self._PlayTimerCb )
                 self.playTimer.start()
-        if self.receiver:
-            if self.expectedPlayTime > 4:
-                self.checkInfoTimer = LogThread.Timer( 3, self._CheckReceiverInfo )
-                self.checkInfoTimer.start()
-        else:
-            # The 'next' timer is needed to stimulate track change code when there
-            # has been no track change (same track played twice in a row). This
-            # be cancelled before expiry if an Id event (new track) is received
-            # from the Playlist service. This case is where same track played 
-            # twice in a row, and no PlayTimer set 
-            if not self.nextTimer:
-               self.nextTimer = LogThread.Timer( self.sender.info.duration+1, self._NextTimerCb )
-               self.nextTimer.start()
-        
+
     def _PlayTimerCb( self ):
         """Callback from playtime timer - skips to next track"""
         self.sender.playlist.Next()
@@ -425,25 +438,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if not fail:
             self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
 
-    def _CheckReceiverInfo( self ):
-        """Check receiver Info matches sender"""
-        # called 3s after track change to allow events from both sides to be
-        # updated to current values - test skipped if track play time < 10s
-        for item in ['bitDepth', 'bitRate', 'codecName', 'duration', 'lossless',
-                     'metadata', 'metatext', 'sampleRate', 'uri']:
-            itemTitle = item[0].upper()+item[1:]
-            senderVal = eval( 'self.sender.info.polled%s' % itemTitle )
-            receiverVal = eval( 'self.receiver.info.polled%s' % itemTitle )
-            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal, 
-                '(%s/%s) POLLED Sender/Receiver value for %s' % 
-                (str( senderVal ), str( receiverVal ), item[0].upper()+item[1:] ))
-            
-            senderVal = eval( 'self.sender.info.%s' % item )
-            receiverVal = eval( 'self.receiver.info.%s' % item )
-            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal, 
-                '(%s/%s) EVENTED Sender/Receiver value for %s' % 
-                (str( senderVal ), str( receiverVal ), itemTitle) )
-            
             
 if __name__ == '__main__':
     
