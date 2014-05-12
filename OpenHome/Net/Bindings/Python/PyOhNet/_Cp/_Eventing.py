@@ -85,7 +85,6 @@ class PropertyString( Property ):
         self.lib.ServicePropertyGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
         if strn.value is not None:
             ret = strn.value
-            self.lib.OhNetFree( strn )
         return ret
 
     def SetValue( self, aValue ):
@@ -106,9 +105,9 @@ class PropertyBinary( Property ):
         length = ctypes.c_int()
         self.lib.ServicePropertyGetValueBinary( self.handle, pData, ctypes.byref( length ))
         data = pData.contents
-        self.lib.OhNetFree( pData )    
         for i in range( length.value ):
             binary.append( data[i] )
+        self.lib.OhNetFree( pData )
         return binary
 
     def SetValue( self, aValue ):
