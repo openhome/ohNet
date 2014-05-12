@@ -19,7 +19,7 @@
 /**
  * Big endian representation of a 16-bit integer for little endian builds and vice-versa
  */
-#define SwapEndian16(x) ((uint16_t)((((x)&0xff00)>>8) | (((x)&0xff)<<8)))
+#define SwapEndian16(x) ((uint16_t)((((x)&0xFF00)>>8) | (((x)&0xFF)<<8)))
 
 /**
  * Big endian representation of a 32-bit integer for little endian builds and vice-versa
