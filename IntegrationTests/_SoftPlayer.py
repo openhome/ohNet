@@ -8,6 +8,7 @@ import _FunctionalTest
 import Component as BASE
 import os
 import platform
+import random
 import subprocess
 import threading
 import time
@@ -21,7 +22,7 @@ class SoftPlayer( BASE.Component ):
     
     def __init__( self, 
                   aRoom         = None,     # defaults to 'SoftPlayer'
-                  aName         = None,     # defaults to 'SoftPlayer'
+                  aModel        = None,     # defaults to 'SoftPlayer'
                   aTuneIn       = None,     # defaults to 'linnproducts'
                   aSenderChannel= None ):   # defaults to a random value
         """Start the SoftPlayer - all parameters are optional and will default
@@ -30,11 +31,19 @@ class SoftPlayer( BASE.Component ):
         BASE.Component.__init__( self )
         self.shutdown = False
         self.room     = None
-        
+        self.model    = None
+        uniqueId      = '%06d' % random.randint( 0, 999999 )
+
         if aRoom is None:
-            self.dev = '[SoftPlayer]'
+            self.room = 'SoftPlayer-' + uniqueId
         else:
-            self.dev = '[' + aRoom + ']'
+            self.room = aRoom + '-' + uniqueId
+        self.dev = '[' + self.room + ']'
+
+        if aModel is None:
+            self.model = 'SoftPlayer'
+        else:
+            self.model = aModel
 
         exePath = ''        
         path1 = os.path.abspath( os.path.join( '.', kExe ))
@@ -47,11 +56,9 @@ class SoftPlayer( BASE.Component ):
             self.log.Abort( '', 'No SoftPlayer executable found' )
         self.log.Info( '', 'Using SoftPlayer executable at %s' % exePath )
         
-        cmd = exePath
-        if aRoom:
-            cmd += ' -r %s' % aRoom
-        if aName:
-            cmd += ' -n %s' % aName
+        cmd  = exePath
+        cmd += ' -r %s' % self.room
+        cmd += ' -n %s' % self.model
         cmd += ' -a %d' % self.__GetHost()
         if aTuneIn:
             cmd += ' -t %s' % aTuneIn
@@ -100,7 +107,7 @@ class SoftPlayer( BASE.Component ):
         self.log.Info( self.dev, 'SoftPlayer logger shut down' )
 
     @staticmethod
-    def __GetHost( ):
+    def __GetHost():
         """Retrieve host adapter to use for player"""
         configFile = os.path.abspath( 'Config.xml') 
         host = 0
@@ -118,14 +125,17 @@ class SoftPlayer( BASE.Component ):
                 if adapter is not None:
                     host = int( adapter.text )
         return host
-    
+
+    def __GetName( self ):
+        return self.room + ':' + self.model
+
+    name = property( __GetName, None, None, 'name' )
     
 if __name__ == '__main__':
 
     import msvcrt
-    import random
-        
-    s = SoftPlayer( aRoom='TestDev%d' % random.randint( 1000, 9000 ))
+
+    s = SoftPlayer( aRoom='TestDev' )
     msvcrt.getch()
     s.Shutdown()
     s.log.Cleanup()

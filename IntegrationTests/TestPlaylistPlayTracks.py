@@ -120,10 +120,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
             self.softSender = SoftPlayer.SoftPlayer( aRoom='TestSender' )
-            senderName = 'TestSender:SoftPlayer'
+            senderName = self.softSender.name
         if receiverName is not None and receiverName.lower() == 'local':
             self.softRcvr = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
-            receiverName = 'TestRcvr:SoftPlayer'
+            receiverName = self.softRcvr.name
 
         # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
         self.senderDev = senderName.split( ':' )[0]

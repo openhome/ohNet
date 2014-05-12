@@ -92,7 +92,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         # create and configure sender
         if senderName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
-            senderName = 'TestSender:SoftPlayer'
+            senderName = self.soft1.name
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
@@ -111,7 +111,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         if receiverName:
             if receiverName.lower() == 'local':
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
-                receiverName = 'TestRcvr:SoftPlayer'
+                receiverName = self.soft2.name
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
@@ -127,7 +127,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         if slaveName:
             if slaveName.lower() == 'local':
                 self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestSlave' )
-                slaveName = 'TestSlave:SoftPlayer'
+                slaveName = self.soft3.name
             self.slaveDev = slaveName.split( ':' )[0]
             self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True )
             self.slave.receiver.AddSubscriber( self._SlaveReceiverCb )

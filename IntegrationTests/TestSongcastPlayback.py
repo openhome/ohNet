@@ -319,7 +319,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
         self.log.Info( '' )
         if dut1Name.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1' )
-            dut1Name = 'TestDev1:SoftPlayer'
+            dut1Name = self.soft1.name
         self.dut1Dev = dut1Name.split( ':' )[0]
         self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True )
         if self.dut1.exakt is not None:
@@ -330,14 +330,14 @@ class TestSongcastPlayback( BASE.BaseTest ):
         self.log.Info( '' )
         if dut2Name.lower() == 'local':
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2' )
-            dut2Name = 'TestDev2:SoftPlayer'
+            dut2Name = self.soft2.name
         self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True )
         self.log.Info( '' )
         self.log.Info( '    ------ Creating DUT #3 (%s) ------' % dut3Name )
         self.log.Info( '' )
         if dut3Name.lower() == 'local':
             self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3' )
-            dut3Name = 'TestDev3:SoftPlayer'
+            dut3Name = self.soft3.name
         self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True )
         duts = [self.dut1, self.dut2, self.dut3]
         

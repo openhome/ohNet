@@ -61,7 +61,7 @@ class TestAirplayDropout( BASE.BaseTest ):
         # setup DUT
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
         if self.dut.volume is not None:

@@ -61,7 +61,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
 
         if self.dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            self.dutName = 'TestDev:SoftPlayer'
+            self.dutName = self.soft.name
             time.sleep( 5 )     # allow time for iTunes to discover device
 
         # setup self.dacp (iTunes) control

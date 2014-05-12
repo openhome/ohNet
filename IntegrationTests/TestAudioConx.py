@@ -100,7 +100,7 @@ class TestAudioConx( BASE.BaseTest ):
         # create media renderer and subscribe to events
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
         self.dut.playlist.AddSubscriber( self._PlaylistEventCb )

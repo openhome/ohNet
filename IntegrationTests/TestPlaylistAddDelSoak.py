@@ -58,7 +58,7 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         # start local softplayer(s) as required
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = self.soft.name
         
         # create renderer add subscribe to events
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )

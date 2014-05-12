@@ -47,7 +47,7 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
 
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = self.soft.name
             
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
         for loop in range( loops ):

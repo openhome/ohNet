@@ -121,7 +121,7 @@ class TestRadioService( BASE.BaseTest ):
 
         if radioName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=kTuneInUser )
-            radioName = 'TestDev:SoftPlayer'
+            radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True ) 
         time.sleep( 3 )

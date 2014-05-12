@@ -187,7 +187,7 @@ class TestAvTransportService( BASE.BaseTest ):
         # start local softplayer if required
         if self.mrName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr' )
-            self.mrName = 'TestMr:UPnP AV'
+            self.mrName = self.soft.name.split( ':' )[0] + ':UPnP AV'
         
         # create UPnP CPs for renderer and server, and subscribe to AVT events
         self.mrDev = self.mrName.split( ':' )[0]

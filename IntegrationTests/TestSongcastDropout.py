@@ -65,8 +65,9 @@ class TestSongcastDropout( BASE.BaseTest ):
             
         # create sender
         if senderName.lower() == 'local':
-            self.softs.append( SoftPlayer.SoftPlayer( aRoom='TestSender' ))
-            senderName = 'TestSender:SoftPlayer'
+            soft = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            self.softs.append( soft )
+            senderName = soft.name
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
@@ -75,8 +76,9 @@ class TestSongcastDropout( BASE.BaseTest ):
         for name in rcvrNames.split( ',' ):
             self.rxCount += 1
             if name.lower() == 'local':
-                self.softs.append( SoftPlayer.SoftPlayer( aRoom='TestRcvr%d' % self.rxCount ))
-                name = 'TestRcvr%d:SoftPlayer' % self.rxCount
+                soft = SoftPlayer.SoftPlayer( aRoom='TestRcvr%d' % self.rxCount )
+                self.softs.append( soft )
+                name = soft.name
             self.rcvrs.append( Volkano.VolkanoDevice( name, aIsDut=True ))
             
         # start audio server

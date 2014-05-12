@@ -44,7 +44,7 @@ class TestRenderingControlService( BASE.BaseTest ):
 
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:UPnP AV'
+            dutName = self.soft.name.split( ':' )[0] + ':UPnP AV'
             
         self.mrDev = dutName.split( ':' )[0]
         self.mr = MR.MediaRendererDevice( dutName )

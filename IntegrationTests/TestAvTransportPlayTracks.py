@@ -33,6 +33,7 @@ import sys
 import threading
 import time
 import xml.etree.ElementTree as ET
+from dependencies.AnyPlatform.testharness.cherrypy.lib.reprconf import _Builder2
 
 kAvtNs = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
 
@@ -102,8 +103,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         mpName = senderName
         if senderName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
-            senderName = 'TestSender:UPnP AV'
-            mpName = 'TestSender:SoftPlayer'
+            senderName = self.soft1.name.split( ':' )[0] + ':UPnP AV'
+            mpName = self.soft1.name
 
         # get playlist from server
         server = Server.MediaServer( serverName )
@@ -121,7 +122,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if receiverName:
             if receiverName.lower() == 'local':
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
-                receiverName = 'TestRcvr:SoftPlayer'
+                receiverName = self.soft2.name
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             #time.sleep( 3 )

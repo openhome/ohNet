@@ -92,7 +92,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         # configure radio and load the presets for test
         if senderName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneIn=channelList )
-            senderName = 'TestSender:SoftPlayer'
+            senderName = self.soft1.name
         self.senderDev = senderName.split( ':' )[0]
         self._initRadio( senderName  )
         
@@ -100,7 +100,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         if receiverName:
             if receiverName.lower() == 'local':
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
-                receiverName = 'TestRcvr:SoftPlayer'
+                receiverName = self.soft2.name
             self.rcvrDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
             self.receiver.receiver.AddSubscriber( self._receiverEventCb )

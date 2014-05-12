@@ -442,7 +442,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
         # create DUT
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
                 

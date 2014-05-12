@@ -175,16 +175,16 @@ class TestSongcastConnect( BASE.BaseTest ):
         # init duts
         if dut1Name.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1' )
-            dut1Name = 'TestDev1:SoftPlayer'
+            dut1Name = self.soft1.name
         if dut2Name.lower() == 'local':
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2' )
-            dut2Name = 'TestDev2:SoftPlayer'
+            dut2Name = self.soft2.name
         if dut3Name.lower() == 'local':
             self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3' )
-            dut3Name = 'TestDev3:SoftPlayer'
+            dut3Name = self.soft3.name
         if dut4Name.lower() == 'local':
             self.soft4 = SoftPlayer.SoftPlayer( aRoom='TestDev4' )
-            dut4Name = 'TestDev4:SoftPlayer'
+            dut4Name = self.soft4.name
         self.dut1Dev = dut1Name.split( ':' )[0]
         self.dut2Dev = dut2Name.split( ':' )[0]
         self.dut3Dev = dut3Name.split( ':' )[0]

@@ -489,7 +489,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         # create renderer CP and subscribe for DS events
         if dutName.lower() == 'local':
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
-            dutName = 'TestDev:SoftPlayer'
+            dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
         self.dut.playlist.shuffle = False
