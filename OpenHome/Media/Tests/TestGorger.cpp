@@ -325,13 +325,26 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
 
     TBool realTime = false;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, realTime));
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
+    // iCanGorge changes immediately; iGorging only changes when a DecodedStream passes through
+    TEST(iGorger->iCanGorge);
+    TEST(!iGorger->iGorging);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
 
     realTime = true;
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, realTime));
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
+    TEST(!iGorger->iCanGorge);
+    TEST(!iGorger->iGorging);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
     TEST(!iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
 }
@@ -339,7 +352,11 @@ void SuiteGorger::TestNewModeUpdatesGorgeStatus()
 void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false));
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
 
@@ -363,7 +380,11 @@ void SuiteGorger::TestGorgingEndsWithSufficientAudio()
 void SuiteGorger::TestGorgingEndsWithNewMode()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false));
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
 
@@ -384,7 +405,11 @@ void SuiteGorger::TestGorgingEndsWithNewMode()
 void SuiteGorger::TestHaltEnablesGorging()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeGorgable, false, false));
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
     TUint numAudioMsgs = 0;
@@ -425,14 +450,14 @@ void SuiteGorger::TestStarvationEnablesGorging()
     iPendingMsgs.push_back(CreateDecodedStream());
     PullNext(EMsgMode);
     TEST(iGorger->iCanGorge);
+    PullNext(EMsgTrack);
+    PullNext(EMsgDecodedStream);
     TEST(iGorger->iGorging);
     TUint numAudioMsgs = 0;
     while (iTrackOffset < kGorgeSize) {
         iPendingMsgs.push_back(CreateAudio());
         numAudioMsgs++;
     }
-    PullNext(EMsgTrack);
-    PullNext(EMsgDecodedStream);
     do {
         PullNext(EMsgAudioPcm);
     } while (--numAudioMsgs > 0);

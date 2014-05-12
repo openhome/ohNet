@@ -32,8 +32,11 @@ private:
     void SetGorging(TBool aGorging);
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg);
+    void ProcessMsgIn(MsgTrack* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
+    void ProcessMsgIn(MsgDecodedStream* aMsg);
+    Msg* ProcessMsgOut(MsgHalt* aMsg);
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -51,6 +54,7 @@ private:
     IStreamHandler* iStreamHandler;
     TBool iCanGorge;
     TBool iGorging;
+    TBool iGorgeOnHaltOut;
     TBool iQuit;
     BwsMode iMode;
 };

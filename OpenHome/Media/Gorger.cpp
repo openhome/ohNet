@@ -18,6 +18,7 @@ Gorger::Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iStreamHandler(NULL)
     , iCanGorge(false)
     , iGorging(false)
+    , iGorgeOnHaltOut(false)
     , iQuit(false)
 {
     iThread = new ThreadFunctor("Gorger", MakeFunctor(*this, &Gorger::PullerThread), kPriorityVeryHigh-1); // FIXME - review thread priorities
@@ -68,10 +69,14 @@ void Gorger::Enqueue(Msg* aMsg)
 
 void Gorger::SetGorging(TBool aGorging)
 {
-    const TBool unblockPuller = (iGorging && !aGorging);
+    const TBool unblockRight = (iGorging && !aGorging);
+    const TBool unblockLeft = (!iGorging && aGorging);
     iGorging = aGorging;
-    if (unblockPuller) {
+    if (unblockRight) {
         iSemOut.Signal();
+    }
+    if (unblockLeft) {
+        iThread->Signal();
     }
 }
 
@@ -80,16 +85,25 @@ void Gorger::ProcessMsgIn(MsgMode* aMsg)
     iLock.Wait();
     iMode.Replace(aMsg->Mode());
     iCanGorge = !aMsg->IsRealTime();
-    SetGorging(iCanGorge);
+    if (!iCanGorge) {
+        SetGorging(false);
+    }
+    iGorgeOnHaltOut = false;
+    iLock.Signal();
+}
+
+void Gorger::ProcessMsgIn(MsgTrack* /*aMsg*/)
+{
+    iLock.Wait();
+    SetGorging(false);
+    iGorgeOnHaltOut = false;
     iLock.Signal();
 }
 
 void Gorger::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
     iLock.Wait();
-    if (iCanGorge) {
-        SetGorging(true);
-    }
+    iGorgeOnHaltOut = iCanGorge;
     iLock.Signal();
 }
 
@@ -101,10 +115,19 @@ void Gorger::ProcessMsgIn(MsgQuit* /*aMsg*/)
     iLock.Signal();
 }
 
+void Gorger::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
+{
+    iLock.Wait();
+    SetGorging(false);
+    iGorgeOnHaltOut = false;
+    iLock.Signal();
+}
+
 Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iLock.Wait();
+    SetGorging(iCanGorge);
     iStreamHandler = stream.StreamHandler();
     iLock.Signal();
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
@@ -113,6 +136,17 @@ Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
                                                                stream.Seekable(), stream.Live(), this);
     aMsg->RemoveRef();
     return msg;
+}
+
+Msg* Gorger::ProcessMsgOut(MsgHalt* aMsg)
+{
+    iLock.Wait();
+    if (iGorgeOnHaltOut) {
+        ASSERT(iCanGorge);
+        SetGorging(true);
+    }
+    iLock.Signal();
+    return aMsg;
 }
 
 EStreamPlay Gorger::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -146,9 +180,8 @@ TBool Gorger::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId
 void Gorger::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
 {
     iLock.Wait();
-    if (aMode == iMode && !iGorging && iCanGorge) {
-        iGorging = true;
-        iThread->Signal();
+    if (aMode == iMode && iCanGorge) {
+        SetGorging(true);
     }
     iLock.Signal();
     if (iStreamHandler != NULL) {

@@ -1249,14 +1249,23 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     TUint rampEnd;
     aSplit = NULL;
     if (iRamp.Set(aStart, iSize, aRemainingDuration, aDirection, split, splitPos)) {
-        Media::Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
-        aSplit = DoSplit(splitPos);
-        iRamp = ramp;
-        aSplit->iRamp = split;
-        rampEnd = split.End();
-        ASSERT_DEBUG(iRamp.End() == split.Start());
-        //Log::Print("\nSplit msg at %u jiffies.  First ramp=[%08x...%08x], second ramp=[%08x...%08x]\n",
-        //            splitPos, iRamp.Start(), iRamp.End(), split.Start(), split.End());
+        if (splitPos == 0) {
+            iRamp = split;
+            rampEnd = iRamp.End();
+        }
+        else if (splitPos == iSize) {
+            rampEnd = iRamp.End();
+        }
+        else {
+            Media::Ramp ramp = iRamp; // Split() will muck about with ramps.  Allow this to happen then reset the correct values
+            aSplit = DoSplit(splitPos);
+            iRamp = ramp;
+            aSplit->iRamp = split;
+            rampEnd = split.End();
+            ASSERT_DEBUG(iRamp.End() == split.Start());
+            //Log::Print("\nSplit msg at %u jiffies.  First ramp=[%08x...%08x], second ramp=[%08x...%08x]\n",
+            //            splitPos, iRamp.Start(), iRamp.End(), split.Start(), split.End());
+        }
     }
     else {
         rampEnd = iRamp.End();
