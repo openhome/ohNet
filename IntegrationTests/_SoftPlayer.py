@@ -32,7 +32,9 @@ class SoftPlayer( BASE.Component ):
         self.shutdown = False
         self.room     = None
         self.model    = None
-        uniqueId      = '%06d' % random.randint( 0, 999999 )
+
+        random.seed()
+        uniqueId = '%06d' % random.randint( 0, 999999 )
 
         if aRoom is None:
             self.room = 'SoftPlayer-' + uniqueId
