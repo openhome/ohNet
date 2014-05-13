@@ -1,6 +1,7 @@
 """CpControl - python ohNet bindings to support Eventing of devices to CPs"""
 
 import abc
+import copy
 import ctypes
 import PyOhNet
 
@@ -77,15 +78,16 @@ class PropertyString( Property ):
     def __init__( self, aName, aCb ):
         Property.__init__( self, aName, aCb )        
         self.handle = self.lib.ServicePropertyCreateStringCp( ctypes.c_char_p( aName ), self.callback, None )
-        
+
     def Value( self ):
-        ret = ''
+        string = ''
         strn = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.ServicePropertyGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
-        if strn.value is not None:
-            ret = strn.value
-        return ret
+        if strn.value:
+            string = copy.deepcopy( strn.value )
+        self.lib.OhNetFree( strn )
+        return string
 
     def SetValue( self, aValue ):
         val = ctypes.c_char_p( aValue )
@@ -101,13 +103,14 @@ class PropertyBinary( Property ):
         
     def Value( self ):
         binary = []
-        pData = ctypes.pointer( ctypes.pointer( ctypes.c_ubyte() ))        
+        pBytes = ctypes.pointer( ctypes.c_ubyte() )
+        ppBytes = ctypes.pointer( pBytes )
         length = ctypes.c_int()
-        self.lib.ServicePropertyGetValueBinary( self.handle, pData, ctypes.byref( length ))
-        data = pData.contents
+        self.lib.ServicePropertyGetValueBinary( self.handle, ppBytes, ctypes.byref( length ))
+        data = ppBytes.contents
         for i in range( length.value ):
             binary.append( data[i] )
-        self.lib.OhNetFree( pData )
+        self.lib.OhNetFree( pBytes )
         return binary
 
     def SetValue( self, aValue ):
