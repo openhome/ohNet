@@ -444,6 +444,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
     , iWriter(iWriteBuffer)
     , iReadBuffer(iSocketReader)
     , iReaderResponse(aEnv, iReadBuffer)
+    , iWriterLock("SSLU")
     , iExiting(false)
     , iRecreateSocket(false)
 {
@@ -552,6 +553,7 @@ void SsdpListenerUnicast::Run()
             }
             if (iRecreateSocket) {
                 try {
+                    AutoMutex a(iWriterLock);
                     iSocket.Interrupt(false);
                     iSocket.ReBind(iSocket.Port(), iInterface);
                     iRecreateSocket = false;
@@ -569,26 +571,31 @@ void SsdpListenerUnicast::Run()
 
 void SsdpListenerUnicast::MsearchRoot()
 {
+    AutoMutex a(iWriterLock);
     iWriter.MsearchRoot(MsearchDurationSeconds());
 }
 
 void SsdpListenerUnicast::MsearchUuid(const Brx& aUuid)
 {
+    AutoMutex a(iWriterLock);
     iWriter.MsearchUuid(aUuid, MsearchDurationSeconds());
 }
 
 void SsdpListenerUnicast::MsearchDeviceType(const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
+    AutoMutex a(iWriterLock);
     iWriter.MsearchDeviceType(aDomain, aType, aVersion, MsearchDurationSeconds());
 }
 
 void SsdpListenerUnicast::MsearchServiceType(const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
+    AutoMutex a(iWriterLock);
     iWriter.MsearchServiceType(aDomain, aType, aVersion, MsearchDurationSeconds());
 }
 
 void SsdpListenerUnicast::MsearchAll()
 {
+    AutoMutex a(iWriterLock);
     iWriter.MsearchAll(MsearchDurationSeconds());
 }
 

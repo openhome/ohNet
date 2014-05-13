@@ -178,6 +178,7 @@ private:
     SsdpWriterMsearchRequest iWriter;
     Srs<kMaxBufferBytes> iReadBuffer;
     ReaderHttpResponse iReaderResponse;
+    Mutex iWriterLock;
     SsdpHeaderExt iHeaderExt;
     TBool iExiting;
     TBool iRecreateSocket;

@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Os.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -16,7 +17,7 @@ public:
 void SuiteAscii::Test()
 {
     // Hex
-    
+
     TEST(Ascii::IsHex('0'));
     TEST(Ascii::IsHex('1'));
     TEST(Ascii::IsHex('2'));
@@ -1498,19 +1499,51 @@ void SuiteUri::Test()
     uri->Replace(uriString);
     TEST(1==1);
     uriString.Append("0");  // + 1 = 1025
-    
+
     TEST_THROWS(uri->Replace(uriString), UriError);
     }
 
     delete uri;
 }
 
+class SuiteSwap : public Suite
+{
+public:
+    SuiteSwap() : Suite("Test endian swapping") {}
+    void Test();
+};
+
+void SuiteSwap::Test()
+{
+    // Ensure endianness swapping macros narrow/widen
+    // the operand before swapping, and return an
+    // operand of the correct width.
+
+    TUint64 num64 = 0x123456789ABCDEF0ull;
+    TEST(SwapEndian32(num64) == 0xF0DEBC9A);
+    TEST(SwapEndian16(num64) == 0xF0DE);
+    TEST(sizeof(SwapEndian32(num64)) == 4);
+    TEST(sizeof(SwapEndian16(num64)) == 2);
+
+    TUint32 num32 = 0x12345678ul;
+    TEST(SwapEndian32(num32) == 0x78563412);
+    TEST(SwapEndian16(num32) == 0x7856);
+    TEST(sizeof(SwapEndian32(num32)) == 4);
+    TEST(sizeof(SwapEndian16(num32)) == 2);
+
+    TUint16 num16 = 0x1234;
+    TEST(SwapEndian32(num16) == 0x34120000);
+    TEST(SwapEndian16(num16) == 0x3412);
+    TEST(sizeof(SwapEndian32(num16)) == 4);
+    TEST(sizeof(SwapEndian16(num16)) == 2);
+}
 
 void TestTextUtils()
 {
     Runner runner("Ascii System");
-    runner.Add(new SuiteAscii()); 
-    runner.Add(new SuiteParser()); 
-    runner.Add(new SuiteUri()); 
+    runner.Add(new SuiteAscii());
+    runner.Add(new SuiteParser());
+    runner.Add(new SuiteUri());
+    runner.Add(new SuiteSwap());
     runner.Run();
 }
