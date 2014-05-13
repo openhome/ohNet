@@ -520,11 +520,11 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
                 aSplitPos = intersectX;
                 aSplit.iStart = intersectY;
                 aSplit.iEnd = std::min(iEnd, rampEnd);
-                aSplit.iDirection = EDown;
+                aSplit.iDirection = (aSplit.iStart == aSplit.iEnd? ENone : EDown);
                 aSplit.iEnabled = true;
-                iDirection = EUp;
                 iStart = std::min(iStart, aStart);
                 iEnd = intersectY;
+                iDirection = (iStart == iEnd? ENone : EUp);
             }
         }
     }
@@ -551,11 +551,19 @@ void Ramp::Validate()
 {
     ASSERT(iStart <= kRampMax);
     ASSERT(iEnd <= kRampMax);
-    if (iDirection == EUp) {
+    switch (iDirection)
+    {
+    case ENone:
+        ASSERT(iStart == iEnd);
+        break;
+    case EUp:
         ASSERT(iStart < iEnd);
-    }
-    else {
+        break;
+    case EDown:
         ASSERT(iStart > iEnd);
+        break;
+    default:
+        ASSERTS();
     }
 }
 
