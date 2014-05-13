@@ -156,7 +156,10 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     }
     else if (iStatus == ERampingUp) {
         Ramp(aMsg, Ramp::EUp);
-        if (iCurrentRampValue == Ramp::kRampMax) {
+        /* don't check iCurrentRampValue here.  If our ramp up intersects with a ramp down
+           from further up the pipeline, our ramp will end at a value less than Ramp::kRampMax */
+        if (iRemainingRampSize == 0) {
+            iCurrentRampValue = Ramp::kRampMax;
             UpdateStatus(ERunning);
         }
     }
