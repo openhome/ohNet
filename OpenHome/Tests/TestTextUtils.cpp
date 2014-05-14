@@ -1511,6 +1511,7 @@ class SuiteSwap : public Suite
 public:
     SuiteSwap() : Suite("Test endian swapping") {}
     void Test();
+private:
     TUint16 Get16(TUint16 aValue) { iCalls++; return aValue; }
     TUint32 Get32(TUint32 aValue) { iCalls++; return aValue; }
     TBool CheckCalls() { auto calls = iCalls; iCalls = 0 ; return calls == 1; }
