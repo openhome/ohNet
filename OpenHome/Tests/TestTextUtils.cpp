@@ -1509,7 +1509,7 @@ void SuiteUri::Test()
 class SuiteSwap : public Suite
 {
 public:
-    SuiteSwap() : Suite("Test endian swapping") {}
+    SuiteSwap() : Suite("Test endian swapping"), iCalls(0) {}
     void Test();
 private:
     TUint16 Get16(TUint16 aValue) { iCalls++; return aValue; }
