@@ -115,6 +115,7 @@ objects_core = \
 	$(objdir)OhNetCDv.$(objext) \
 	$(objdir)OhNetCCombined.$(objext) \
 	$(objdir)OsWrapper.$(objext) \
+	$(objdir)SwapEndian.$(objext) \
 	$(objdir)Os.$(objext) \
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
@@ -414,6 +415,8 @@ $(objdir)OhNetCCombined.$(objext) : OpenHome/Net/Bindings/C/OhNetCCombined.cpp $
 	$(compiler)OhNetCCombined.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Bindings/C/OhNetCCombined.cpp
 $(objdir)OsWrapper.$(objext) : Os/OsWrapper.cpp $(headers)
 	$(compiler)OsWrapper.$(objext) -c $(cppflags) $(includes) Os/OsWrapper.cpp
+$(objdir)SwapEndian.$(objext) : Os/SwapEndian.c $(headers)
+	$(compiler)SwapEndian.$(objext) -c $(cflags) $(includes) Os/SwapEndian.c
 $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
 	$(compiler)Os.$(objext) -c $(cflags) $(includes) Os/$(osdir)/Os.c
 $(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)

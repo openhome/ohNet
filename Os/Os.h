@@ -16,20 +16,19 @@
  */
 #define kHandleNull  (0)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Big endian representation of a 16-bit integer for little endian builds and vice-versa
  */
-#define SwapEndian16(x) ((uint16_t)((((x)&0xFF00)>>8) | (((x)&0xFF)<<8)))
+uint16_t SwapEndian16(uint16_t aValue);
 
 /**
  * Big endian representation of a 32-bit integer for little endian builds and vice-versa
  */
-#define SwapEndian32(x) ((uint32_t)((((x)&0xFFul)<<24)    | (((x)&0xFF00ul)<<8)     | \
-                                    (((x)&0xFF0000ul)>>8) | (((x)&0xFF000000ul)>>24)))
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+uint32_t SwapEndian32(uint32_t aValue);
 
 /**
  * Called when the UPnP library is initialised.
