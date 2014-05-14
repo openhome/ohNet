@@ -86,6 +86,15 @@ void Product::Start()
     }
 }
 
+void Product::Stop()
+{
+    std::vector<ISource*>::iterator it = iSources.begin();
+    while (it != iSources.end()) {
+        (*it)->PipelineStopped();
+        it++;
+    }
+}
+
 void Product::AddSource(ISource* aSource)
 {
     ASSERT(!iStarted);

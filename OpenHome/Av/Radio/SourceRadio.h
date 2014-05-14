@@ -42,6 +42,7 @@ public:
 private: // from ISource
     void Activate();
     void Deactivate();
+        void PipelineStopped();
 private: // from ISourceRadio
     void Fetch(const Brx& aUri, const Brx& aMetaData);
     void Play();

@@ -37,6 +37,7 @@ public:
 private: // from ISource
     void Activate();
     void Deactivate();
+    void PipelineStopped();
 private: // from IRaopObserver
     void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
     void NotifySessionEnd();

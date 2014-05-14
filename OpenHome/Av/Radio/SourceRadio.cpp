@@ -75,6 +75,11 @@ void SourceRadio::Deactivate()
     Source::Deactivate();
 }
 
+void SourceRadio::PipelineStopped()
+{
+    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+}
+
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
 {
     if (!IsActive()) {

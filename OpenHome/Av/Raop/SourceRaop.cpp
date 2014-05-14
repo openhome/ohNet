@@ -154,6 +154,11 @@ void SourceRaop::Deactivate()
     Source::Deactivate();
 }
 
+void SourceRaop::PipelineStopped()
+{
+    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+}
+
 void SourceRaop::GenerateMetadata()
 /**
  * Helper method - should only be called during construction.

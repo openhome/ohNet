@@ -34,6 +34,7 @@ public:
 private: // from ISource
     void Activate();
     void Deactivate();
+    void PipelineStopped();
 private: // from ISourceReceiver
     void Play();
     void Stop();
@@ -58,6 +59,7 @@ private:
     Mutex iLock;
     Mutex iActivationLock;
     Media::PipelineManager& iPipeline;
+    Mutex iUriLock;
     Mutex iZoneLock;
     ThreadFunctor* iZoneChangeThread;
     ZoneHandler* iZoneHandler;
@@ -108,7 +110,8 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     , iLock("SRX1")
     , iActivationLock("SRX2")
     , iPipeline(aMediaPlayer.Pipeline())
-    , iZoneLock("SRX3")
+    , iUriLock("SRX3")
+    , iZoneLock("SRX4")
     , iTrackId(Track::kIdNone)
     , iPlaying(false)
     , iNoPipelinePrefetchOnActivation(false)
@@ -152,7 +155,6 @@ SourceReceiver::~SourceReceiver()
     iConfigName->Unsubscribe(iConfigNameSubscriberId);
     delete iSender;
     delete iOhmMsgFactory;
-    delete iZoneChangeThread;
     iZoneHandler->RemoveListener(*this);
     delete iProviderReceiver;
     delete iZoneHandler;
@@ -177,11 +179,20 @@ void SourceReceiver::Deactivate()
     Source::Deactivate();
 }
 
+void SourceReceiver::PipelineStopped()
+{
+    iZoneLock.Wait();
+    delete iZoneChangeThread;
+    iZoneChangeThread = NULL;
+    iZoneLock.Signal();
+}
+
 void SourceReceiver::Play()
 {
     EnsureActive();
     AutoMutex a(iLock);
     iPlaying = true;
+    AutoMutex b(iUriLock);
     if (iTrackUri.Bytes() > 0) {
         iPipeline.Begin(iUriProvider->Mode(), iTrackId);
         iPipeline.Play();
@@ -221,11 +232,15 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
         }
         iZone.Replace(path.Split(1)); // remove leading /
         iZoneHandler->StartMonitoring(iZone);
+        iUriLock.Wait();
         iTrackUri.Replace(Brx::Empty());
+        iUriLock.Signal();
     }
     else {
         iZone.Replace(Brx::Empty());
+        iUriLock.Wait();
         iTrackUri.Replace(aUri);
+        iUriLock.Signal();
         UriChanged();
     }
     iTrackMetadata.Replace(aMetadata);
@@ -233,13 +248,18 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 
 void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
 {
-    AutoMutex a(iZoneLock);
+    iUriLock.Wait();
     if (aZone == iZone && aUri != iTrackUri) {
         iPendingTrackUri.Replace(aUri);
+        iUriLock.Signal();
+        iZoneLock.Wait();
         if (iZoneChangeThread != NULL) {
             iZoneChangeThread->Signal();
         }
+        iZoneLock.Signal();
+        return;
     }
+    iUriLock.Signal();
 }
 
 void SourceReceiver::NotifyPresetInfo(TUint /*aPreset*/, const Brx& /*aMetadata*/)
@@ -283,7 +303,9 @@ void SourceReceiver::EnsureActive()
 
 void SourceReceiver::UriChanged()
 {
+    iUriLock.Wait();
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata, true);
+    iUriLock.Signal();
     if (track == NULL) {
         iTrackId = Track::kIdNone;
         iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
@@ -333,9 +355,9 @@ void SourceReceiver::ZoneChangeThread()
 {
     for (;;) {
         iZoneChangeThread->Wait();
-        iZoneLock.Wait();
+        iUriLock.Wait();
         iTrackUri.Replace(iPendingTrackUri);
-        iZoneLock.Signal();
+        iUriLock.Signal();
         UriChanged();
     }
 }

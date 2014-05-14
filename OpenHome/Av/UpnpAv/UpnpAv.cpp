@@ -89,6 +89,11 @@ void SourceUpnpAv::Deactivate()
     Source::Deactivate();
 }
 
+void SourceUpnpAv::PipelineStopped()
+{
+    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
+}
+
 void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     EnsureActive();

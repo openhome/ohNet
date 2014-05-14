@@ -61,6 +61,7 @@ public:
     ~Product();
     void AddObserver(IProductObserver& aObserver);
     void Start();
+    void Stop();
     void AddSource(ISource* aSource);
     void AddAttribute(const TChar* aAttribute);
     void AddAttribute(const Brx& aAttribute);
