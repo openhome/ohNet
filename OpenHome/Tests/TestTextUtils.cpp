@@ -1511,6 +1511,11 @@ class SuiteSwap : public Suite
 public:
     SuiteSwap() : Suite("Test endian swapping") {}
     void Test();
+    TUint16 Get16(TUint16 aValue) { iCalls++; return aValue; }
+    TUint32 Get32(TUint32 aValue) { iCalls++; return aValue; }
+    TBool CheckCalls() { auto calls = iCalls; iCalls = 0 ; return calls == 1; }
+private:
+    TUint iCalls;
 };
 
 void SuiteSwap::Test()
@@ -1536,6 +1541,18 @@ void SuiteSwap::Test()
     TEST(SwapEndian16(num16) == 0x3412);
     TEST(sizeof(SwapEndian32(num16)) == 4);
     TEST(sizeof(SwapEndian16(num16)) == 2);
+
+    // Previous implementations of Swap* were evaluating the
+    // argument multiple times, which can be unexpected.
+    // We test that they've been fixed.
+
+    TUint32 n0 = 0x12345678ul;
+    TEST(SwapEndian32(Get32(n0)) == 0x78563412);
+    TEST(CheckCalls());
+
+    TUint16 n1 = 0x1234;
+    TEST(SwapEndian16(Get16(n1)) == 0x3412);
+    TEST(CheckCalls());
 }
 
 void TestTextUtils()
