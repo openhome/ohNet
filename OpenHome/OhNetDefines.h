@@ -18,7 +18,7 @@
 #  define DllExportClass __attribute__ ((visibility("default")))
 # endif
 # define STDCALL
-# define inline
+# define INLINE inline
 #endif
 
 #endif /* HEADER_OHNET_DEFINES */
