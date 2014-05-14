@@ -10,6 +10,7 @@
 #define HEADER_OS_C
 
 #include <OpenHome/OsTypes.h>
+#include <OpenHome/OhNetDefines.h>
 
 /**
  * 'Null' handle implying no underlying OS object exists
@@ -23,7 +24,7 @@ extern "C" {
 /**
  * Big endian representation of a 16-bit integer for little endian builds and vice-versa
  */
-INLINE uint16_t SwapEndian16(uint16_t aValue);
+INLINE uint16_t SwapEndian16(uint16_t aValue)
 {
     return ((aValue & 0xff00) >> 8)
         |  ((aValue & 0x00ff) << 8);
