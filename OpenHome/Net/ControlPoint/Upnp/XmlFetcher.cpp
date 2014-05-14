@@ -16,7 +16,6 @@ using namespace OpenHome::Net;
 
 void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
 {
-    ASSERT(aUri->Port()!=Uri::kPortNotSpecified);
     iUri = aUri;
     iFunctor = aFunctor;
     iSequenceNumber = iCpStack.Env().SequenceNumber();
