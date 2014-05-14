@@ -2,6 +2,7 @@
 
 import PyOhNet
 import abc
+import copy
 import ctypes
 
 kMaxInt32 = 2147483647
@@ -112,21 +113,22 @@ class InvocationResponse:
         return val != 0
     
     def OutputString( self, aIndex ):
-        strn = ctypes.c_char_p()
+        string = ''
+        strn   = ctypes.c_char_p()
         length = ctypes.c_int()
         self.lib.CpInvocationGetOutputString( self.handle, aIndex, ctypes.byref( strn ), ctypes.byref( length ))
         if strn.value:
-            string = strn.value
-        else:
-            string = ''
+            string = copy.deepcopy( strn.value )
+        self.lib.OhNetFree( strn )
         return string
     
     def OutputBinary( self, aIndex ):
         binary = []
-        pData = ctypes.pointer( ctypes.pointer( ctypes.c_ubyte() ))        
+        pData  = ctypes.pointer( ctypes.c_ubyte() )
+        ppData = ctypes.pointer( pData )
         length = ctypes.c_int()
-        self.lib.CpInvocationGetOutputBinary( self.handle, aIndex, pData, ctypes.byref( length ))
-        data = pData.contents
+        self.lib.CpInvocationGetOutputBinary( self.handle, aIndex, ppData, ctypes.byref( length ))
+        data = ppData.contents
         for i in range( length.value ):
             binary.append( data[i] )
         self.lib.OhNetFree( pData )
