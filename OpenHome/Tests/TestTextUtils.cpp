@@ -1521,37 +1521,29 @@ private:
 
 void SuiteSwap::Test()
 {
-    // Ensure endianness swapping macros narrow/widen
-    // the operand before swapping, and return an
-    // operand of the correct width.
+    // Test endianness swapping functions
 
-    TUint64 num64 = 0x123456789ABCDEF0ull;
-    TEST(SwapEndian32(num64) == 0xF0DEBC9A);
-    TEST(SwapEndian16(num64) == 0xF0DE);
-    TEST(sizeof(SwapEndian32(num64)) == 4);
-    TEST(sizeof(SwapEndian16(num64)) == 2);
+    volatile TUint64 num64 = 0x123456789ABCDEF0ull;
+    TEST(SwapEndian32((TUint32)num64) == 0xF0DEBC9A);
+    TEST(SwapEndian16((TUint16)num64) == 0xF0DE);
 
-    TUint32 num32 = 0x12345678ul;
+    volatile TUint32 num32 = 0x12345678ul;
     TEST(SwapEndian32(num32) == 0x78563412);
-    TEST(SwapEndian16(num32) == 0x7856);
-    TEST(sizeof(SwapEndian32(num32)) == 4);
-    TEST(sizeof(SwapEndian16(num32)) == 2);
+    TEST(SwapEndian16((TUint16)num32) == 0x7856);
 
-    TUint16 num16 = 0x1234;
+    volatile TUint16 num16 = 0x1234;
     TEST(SwapEndian32(num16) == 0x34120000);
     TEST(SwapEndian16(num16) == 0x3412);
-    TEST(sizeof(SwapEndian32(num16)) == 4);
-    TEST(sizeof(SwapEndian16(num16)) == 2);
 
     // Previous implementations of Swap* were evaluating the
-    // argument multiple times, which can be unexpected.
-    // We test that they've been fixed.
+    // argument multiple times, which might be unexected.
+    // Check that it's fixed.
 
-    TUint32 n0 = 0x12345678ul;
+    volatile TUint32 n0 = 0x12345678ul;
     TEST(SwapEndian32(Get32(n0)) == 0x78563412);
     TEST(CheckCalls());
 
-    TUint16 n1 = 0x1234;
+    volatile TUint16 n1 = 0x1234;
     TEST(SwapEndian16(Get16(n1)) == 0x3412);
     TEST(CheckCalls());
 }
