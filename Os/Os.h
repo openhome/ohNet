@@ -24,7 +24,7 @@ extern "C" {
 /**
  * Big endian representation of a 16-bit integer for little endian builds and vice-versa
  */
-INLINE uint16_t SwapEndian16(uint16_t aValue)
+static INLINE uint16_t SwapEndian16(uint16_t aValue)
 {
     return ((aValue & 0xff00) >> 8)
         |  ((aValue & 0x00ff) << 8);
@@ -33,7 +33,7 @@ INLINE uint16_t SwapEndian16(uint16_t aValue)
 /**
  * Big endian representation of a 32-bit integer for little endian builds and vice-versa
  */
-INLINE uint32_t SwapEndian32(uint32_t aValue)
+static INLINE uint32_t SwapEndian32(uint32_t aValue)
 {
     return ((aValue & 0xff000000) >> 24)
         |  ((aValue & 0x00ff0000) >> 8 )
