@@ -279,6 +279,12 @@ void SuiteElements::Test()
     TEST(buf[1] == 0x99);
 
     TEST_THROWS(buf[13] = 0x90, AssertionFailed);
+
+    //3) access elements of a const Bwx
+
+    const Bws<16> b("something");
+    TEST(b.At(0) == 's');
+    TEST(b[0] == 's');
 }
 
 class SuiteHeap : public Suite

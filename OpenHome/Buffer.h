@@ -122,7 +122,9 @@ public:
     inline TUint BytesRemaining() const;
     void SetBytes(TUint aBytes);
     inline TByte& operator[](TUint aByteIndex);
+    using Brx::operator[];
     TByte& At(TUint aByteIndex);
+    using Brx::At;
 protected:
     explicit Bwx(TUint aBytes, TUint aMaxBytes);
     TUint iMaxBytes;
