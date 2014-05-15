@@ -94,6 +94,10 @@ void ProtocolOhu::Broadcast(OhmMsg* aMsg)
 ProtocolStreamResult ProtocolOhu::Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
     LOG(kSongcast, "OHU: Play(%08x, %u, %08x:%u\n", aInterface, aTtl, aEndpoint.Address(), aEndpoint.Port());
+    if (aEndpoint.Address() == 0) {
+        // ohu null address, return immediately
+        return EProtocolStreamStopped;
+    }
     iLeaveLock.Wait();
     iLeaving = iStopped = iActive = iStarving = false;
     iSlaveCount = 0;
