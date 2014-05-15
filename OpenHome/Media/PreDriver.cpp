@@ -47,6 +47,7 @@ Msg* PreDriver::Pull()
         msg = NextStoredMsg();
         if (msg == NULL) {
             msg = iUpstreamElement.Pull();
+            ASSERT(msg != NULL);
             msg = msg->Process(*this);
         }
     } while (msg == NULL);

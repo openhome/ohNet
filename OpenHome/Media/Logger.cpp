@@ -50,6 +50,7 @@ void Logger::SetFilter(TUint aMsgTypes)
 Msg* Logger::Pull()
 {
     Msg* msg = iUpstreamElement->Pull();
+    ASSERT(msg != NULL);
     ASSERT_DEBUG(msg->iRefCount > 0);
     (void)msg->Process(*this);
     return msg;
