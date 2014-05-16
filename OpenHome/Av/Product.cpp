@@ -242,6 +242,9 @@ void Product::SetCurrentSource(const Brx& aName)
     // volkano treats [name] as a system name and anything else as a user-defined name.  Do we need to do the same?
     for (TUint i=0; i<(TUint)iSources.size(); i++) {
         if (iSources[i]->Name() == aName) {
+            if (iCurrentSource != UINT_MAX) {
+                iSources[iCurrentSource]->Deactivate();
+            }
             iCurrentSource = i;
             iStartupSource->Set(iSources[iCurrentSource]->SystemName());
             iSources[iCurrentSource]->Activate();
