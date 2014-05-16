@@ -104,9 +104,13 @@ void SourceRadio::Play()
     if (!IsActive()) {
         DoActivate();
     }
+    if (iTrack == NULL) {
+        return;
+    }
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
+    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     iPipeline.Play();
 }
 
