@@ -87,6 +87,7 @@ MediaPlayer::~MediaPlayer()
 
 void MediaPlayer::Quit()
 {
+    iProduct->Stop();
     iPipeline->Quit();
 }
 

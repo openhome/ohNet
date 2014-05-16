@@ -70,9 +70,15 @@ void SourceRadio::Activate()
 void SourceRadio::Deactivate()
 {
     iLock.Wait();
-    iTransportState = Media::EPipelineStopped;
+    iTransportState = EPipelineStopped;
+    iProviderRadio->SetTransportState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
+}
+
+void SourceRadio::PipelineStopped()
+{
+    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
 }
 
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
@@ -98,9 +104,13 @@ void SourceRadio::Play()
     if (!IsActive()) {
         DoActivate();
     }
+    if (iTrack == NULL) {
+        return;
+    }
     iLock.Wait();
     iTransportState = Media::EPipelinePlaying;
     iLock.Signal();
+    iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     iPipeline.Play();
 }
 

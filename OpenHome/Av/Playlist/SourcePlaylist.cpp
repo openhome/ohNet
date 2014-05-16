@@ -37,6 +37,7 @@ private:
 private: // from ISource
     void Activate();
     void Deactivate();
+    void PipelineStopped();
 private: // from ISourcePlaylist
     void Play();
     void Pause();
@@ -163,9 +164,15 @@ void SourcePlaylist::Activate()
 void SourcePlaylist::Deactivate()
 {
     iLock.Wait();
-    iTransportState = Media::EPipelineStopped;
+    iTransportState = EPipelineStopped;
+    iProviderPlaylist->NotifyPipelineState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
+}
+
+void SourcePlaylist::PipelineStopped()
+{
+    // FIXME - could NULL iPipeline (if we also changed it to be a pointer)
 }
 
 void SourcePlaylist::Play()

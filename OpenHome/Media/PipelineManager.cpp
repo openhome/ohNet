@@ -14,9 +14,9 @@ using namespace OpenHome::Media;
 
 PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, TUint aDriverMaxAudioBytes)
     : iLock("PLM1")
+    , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
-    , iPipelineStoppedSem("PLM2", 1)
-    , iPrefetchLock("PLM3")
+    , iPipelineStoppedSem("PLM3", 1)
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
@@ -38,6 +38,7 @@ PipelineManager::~PipelineManager()
 
 void PipelineManager::Quit()
 {
+    AutoMutex _(iPublicLock);
     iLock.Wait();
     const TBool waitStop = (iPipelineState != EPipelineStopped);
     const TUint haltId = iFiller->Stop();
@@ -104,6 +105,7 @@ void PipelineManager::AddObserver(ITrackObserver& aObserver)
 
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
+    AutoMutex _(iPublicLock);
     iLock.Wait();
     iMode.Replace(aMode);
     iTrackId = aTrackId;
@@ -113,21 +115,25 @@ void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 
 void PipelineManager::Play()
 {
+    AutoMutex _(iPublicLock);
     iPipeline->Play();
 }
 
 void PipelineManager::Pause()
 {
+    AutoMutex _(iPublicLock);
     iPipeline->Pause();
 }
 
 void PipelineManager::Wait(TUint aFlushId)
 {
+    AutoMutex _(iPublicLock);
     iPipeline->Wait(aFlushId);
 }
 
 void PipelineManager::Stop()
 {
+    AutoMutex _(iPublicLock);
     const TUint haltId = iFiller->Stop();
     iPipeline->Stop(haltId);
     iIdManager->InvalidatePending(); /* don't use InvalidateAll - iPipeline->Stop() will
@@ -138,18 +144,29 @@ void PipelineManager::Stop()
 
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
-    AutoMutex a(iPrefetchLock);
+    AutoMutex _(iPublicLock);
     /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
     iPipeline->RemoveCurrentStream();
     iIdManager->InvalidatePending();
     iPrefetchObserver.SetTrack(aTrackId==Track::kIdNone? iFiller->NullTrackId() : aTrackId);
     iFiller->PlayLater(aMode, aTrackId);
     iPipeline->Play(); // in case pipeline is paused/stopped, force it to pull until a new track
-    iPrefetchObserver.Wait();
+    try {
+        iPrefetchObserver.Wait(5000); /* It's possible that a protocol module will block without
+                                         ever delivering content.  Other pipeline operations which
+                                         might interrupt it are blocked by iPublicLock so we
+                                         timeout after 5s as a workaround */
+    }
+    catch (Timeout&) {
+        Log::Print("WARNING: Timeout from PipelineManager::StopPrefetch.  trackId=%u, mode=");
+        Log::Print(aMode);
+        Log::Print("\n");
+    }
 }
 
 void PipelineManager::RemoveAll()
 {
+    AutoMutex _(iPublicLock);
     /*TUint haltId = */iFiller->Stop();
     iLock.Wait();
     iPipeline->RemoveCurrentStream();
@@ -159,11 +176,13 @@ void PipelineManager::RemoveAll()
 
 TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
+    AutoMutex _(iPublicLock);
     return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
 TBool PipelineManager::Next()
 {
+    AutoMutex _(iPublicLock);
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
@@ -178,6 +197,7 @@ TBool PipelineManager::Next()
 
 TBool PipelineManager::Prev()
 {
+    AutoMutex _(iPublicLock);
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
@@ -284,8 +304,14 @@ PipelineManager::PrefetchObserver::PrefetchObserver()
 {
 }
 
+PipelineManager::PrefetchObserver::~PrefetchObserver()
+{
+    ASSERT(iTrackId == UINT_MAX);
+}
+
 void PipelineManager::PrefetchObserver::Quit()
 {
+    iTrackId = UINT_MAX;
     iSem.Signal();
 }
 
@@ -297,9 +323,9 @@ void PipelineManager::PrefetchObserver::SetTrack(TUint aTrackId)
     iLock.Signal();
 }
 
-void PipelineManager::PrefetchObserver::Wait()
+void PipelineManager::PrefetchObserver::Wait(TUint aTimeoutMs)
 {
-    iSem.Wait();
+    iSem.Wait(aTimeoutMs);
 }
 
 void PipelineManager::PrefetchObserver::NotifyTrackFailed(TUint aTrackId)

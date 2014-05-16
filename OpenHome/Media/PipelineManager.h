@@ -69,10 +69,10 @@ private:
     {
     public:
         PrefetchObserver();
+        ~PrefetchObserver();
         void Quit();
         void SetTrack(TUint aTrackId);
-        void Wait();
-        //void Signal();
+        void Wait(TUint aTimeoutMs);
     private: // from IStreamPlayObserver
         void NotifyTrackFailed(TUint aTrackId);
         void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
@@ -85,6 +85,7 @@ private:
     };
 private:
     Mutex iLock;
+    Mutex iPublicLock;
     Pipeline* iPipeline;
     ProtocolManager* iProtocolManager;
     Filler* iFiller;
@@ -96,7 +97,6 @@ private:
     BwsMode iMode;
     TUint iTrackId;
     PrefetchObserver iPrefetchObserver;
-    Mutex iPrefetchLock;
 };
 
 } // namespace Media

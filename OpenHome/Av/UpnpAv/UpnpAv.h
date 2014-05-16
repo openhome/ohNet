@@ -46,6 +46,7 @@ private:
 private: // from Source
     void Activate();
     void Deactivate();
+    void PipelineStopped();
 private: // from ISourceUpnpAv
     void SetTrack(const Brx& aUri, const Brx& aMetaData);
     void Play();

@@ -152,12 +152,9 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolOhBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay ProtocolOhBase::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    /* We need to play whatever the Sender gives us.  Its easier to do this by hard-coding 'yes'
-       to all tracks rather than fooling IdManager into recognising each track we announce.  (Any
-       later attempt to do this will need to start sending EncodedStream msgs for each received track.) */
-    return ePlayYes;
+    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()

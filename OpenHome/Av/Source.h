@@ -28,6 +28,7 @@ public:
     virtual void Activate() = 0;
     virtual void Deactivate() = 0;
     virtual void SetVisible(TBool aVisible) = 0;
+    virtual void PipelineStopped() = 0;
 private:
     virtual void Initialise(IProduct& aProduct, Configuration::IConfigManagerWriter& aConfigManagerWriter, Configuration::IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix) = 0;
 };

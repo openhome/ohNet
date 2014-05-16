@@ -32,6 +32,7 @@ void DriverBasic::Run()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
     Msg* msg = iPipeline.Pull();
+    ASSERT(msg != NULL);
     (void)msg->Process(*this);
 
     TUint64 now = OsTimeInUs(iOsCtx);
