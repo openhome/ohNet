@@ -38,6 +38,8 @@ def buildArgs():
         buildArgs += ' iOs-x86=1'
     if gAndroid == 1:
         buildArgs += ' Android-anycpu=1'
+    if gQnap == 1:
+        buildArgs += ' Qnap-anycpu=1'
     if gCore == 1:
         buildArgs += ' platform=' + gPlatform
     return buildArgs
@@ -197,6 +199,7 @@ gMac64 = 0
 giOsArmv7 = 0
 giOsx86 = 0
 gAndroid = 0
+gQnap = 0
 try:
     gPlatform = os.environ['PLATFORM']
 except KeyError:
@@ -253,6 +256,8 @@ for arg in sys.argv[1:]:
         gCore = 1
     elif arg == '--Android-anycpu':
         gAndroid = 1
+    elif arg == '--Qnap-anycpu':
+        gQnap = 1;
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
