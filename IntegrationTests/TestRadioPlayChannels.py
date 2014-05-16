@@ -8,11 +8,12 @@ Parameters:
     arg#4 - Time to play before skipping to next channel (None = indefinite)
     arg#5 - Shuffle mode [on/off] (optional - default off)
     arg#6 - Test loops (optional - default 1)
-
-Play radio channels sequentially. Channel list provided by Radiotime login or
-local ChannelList (CHL) file - see same directory as this test for example.
-Repeat/shuffle for radio is controlled by this test, NOT DS.
 """
+
+# This will play any radio channel list by passing the appropriate TuneIn username as parameter
+# However, the following predefined lists are available specifically aimed at testing
+#   - ohmp  -> 5 channel (of which 4 should play using base ohmp codecs)
+
 import _FunctionalTest
 import BaseTest                   as BASE
 import Upnp.ControlPoints.Volkano as Volkano
@@ -26,11 +27,6 @@ import sys
 import threading
 import time
 
-# Predefined TuneIn preset lists (password klueso)
-gMixedPresets   = 'linn-test-presets-1'
-gNoPresets      = 'linn-test-presets-2'
-gMaxPlusPresets = 'linn-test-presets-3'
-
 
 class TestRadioPlayChannels( BASE.BaseTest ):
     """Test playback of radio channels"""
@@ -38,27 +34,26 @@ class TestRadioPlayChannels( BASE.BaseTest ):
     def __init__( self ):
         """Constructor - initialise base class"""
         BASE.BaseTest.__init__( self )
-        self.senderDev        = None
-        self.rcvrDev          = None
         self.sender           = None
+        self.senderDev        = None
         self.receiver         = None
+        self.rcvrDev          = None
         self.soft1            = None
         self.soft2            = None
         self.playTimer        = None
         self.stateTimer       = None
         self.checkTimer       = None
+        self.startTime        = 0
         self.channels         = []
         self.title            = ""
-        self.stateTimer       = None
+        self.metatextUpdated  = False
         self.receiverStarted  = False
         self.idUpdated        = threading.Event()
         self.uriUpdated       = threading.Event()
         self.metaUpdated      = threading.Event()
         self.idArrayUpdated   = threading.Event()
-        self.metatextUpdated  = threading.Event()
         self.isPlaying        = threading.Event()
         self.isStopped        = threading.Event()
-        self.newState         = threading.Event()
         self.playTimerExpired = threading.Event()
         self.lock             = threading.Lock()
 
@@ -66,7 +61,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         """Play radio channels, using Radio service for control"""
         senderName   = None
         receiverName = None
-        channelList  = None
+        tuneInUser   = None
         playTime     = None
         loops        = 1
         shuffle      = False
@@ -74,7 +69,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         try:
             senderName   = aArgs[1]
             receiverName = aArgs[2]
-            channelList  = aArgs[3]
+            tuneInUser   = aArgs[3]
             if aArgs[4] != 'None':
                 playTime = int( aArgs[4] )
             if len( aArgs ) > 5:
@@ -85,35 +80,18 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
-            
-        if receiverName.lower() == 'none':
-           receiverName = None 
 
-        # configure radio and load the presets for test
-        if senderName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneIn=channelList )
-            senderName = self.soft1.name
-        self.senderDev = senderName.split( ':' )[0]
-        self._initRadio( senderName  )
-        
-        # create receiver and connect to sender
-        if receiverName:
-            if receiverName.lower() == 'local':
-                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
-                receiverName = self.soft2.name
-            self.rcvrDev = receiverName.split( ':' )[0]
-            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
-            self.receiver.receiver.AddSubscriber( self._receiverEventCb )
-            time.sleep( 3 )
-            self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
-            self.receiver.receiver.Play()
+        # configure sender and receiver
+        self._SetupSender( senderName, tuneInUser )
+        if receiverName.lower() != 'none':
+            self._SetupReceiver( receiverName )
 
         # repeat test for requested number of loops
         for loop in range( loops ):
             loopMsg      = 'Loop %d of %d' % (loop+1, loops)
-            testChannels = self._getTestChannels( shuffle )          
+            testChannels = self._GetTestChannels( shuffle )
             numChannels  = len( testChannels )
-            testNum      = 0
+            chanNum      = 0
             self.idArrayUpdated.clear()            
             
             # clear existing channel info
@@ -123,22 +101,21 @@ class TestRadioPlayChannels( BASE.BaseTest ):
 
             # loop thru all the test channels (already randomised if requested)
             for channel in testChannels:
+                chanNum += 1
+                testMsg = 'Channel %d of %d' % (chanNum, numChannels)
+
                 if self.idArrayUpdated.isSet():
                     self.log.Warn( self.senderDev, 'Presets updated - exiting test loop' )
                     break
-                
-                testNum += 1
-                testMsg = 'Channel %d of %d' % (testNum, numChannels)
-                self.log.Info( '' )
-                
+
                 if not channel[1]:
                     self.log.Warn( self.senderDev, '%s: No Channel Data -> skipping' % testMsg )
                     continue
-                
+
                 # extract channel info and log test header
                 title = Common.GetTitleFromDidl( channel[1] )
                 uri = Common.GetUriFromDidl( channel[1] )
-
+                self.log.Info( '' )
                 self.log.Info( '', '---------------------------------------------' )
                 self.log.Info( '', '%s: %s' % (loopMsg, testMsg) )
                 self.log.Info( '', '%s' % title )
@@ -146,38 +123,40 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                 self.log.Info( '' )
             
                 # select the channel, check selected correctly
-                if not self._selectChannel( uri, channel ):
+                if not self._SelectChannel( uri, channel ):
                     self.log.Warn( self.senderDev, 'Channel select error - skip playback' )
                     continue
                     
                 # start playback
-                if self.sender.radio.transportState != 'Playing':
-                    self._startPlayback( title )
+                self.startTime = time.time()
+                self._StartPlayback( title )
             
                 # log 'now playing' info, set and wait for playback timer
                 if self.sender.radio.transportState == 'Playing':
-                    self.checkTimer = LogThread.Timer( 7, self._checkTimerCb )
+                    self.checkTimer = LogThread.Timer( 3, self._CheckTimerCb )
                     self.checkTimer.start()
                     if playTime:
                         self.playTimerExpired.clear()
-                        self.playTimer = LogThread.Timer( playTime, self._playTimerCb )
+                        self.playTimer = LogThread.Timer( playTime, self._PlayTimerCb )
                         self.playTimer.start()
                         self.playTimerExpired.wait()
                         self.log.Pass( self.senderDev,  
                             'Completed %ds playback of %s' % (playTime,title) )
+
+                        measTime = int( time.time()-self.startTime )
+                        evtTime = self.sender.time.seconds
+                        self.log.CheckLimits( self.senderDev, 'GELE', evtTime, measTime-1, measTime+1, 'Evented/Measured playback time' )
+
+                        if self.sender.radio.transportState != 'Stopped':
+                            self.isStopped.clear()
+                            self.sender.radio.Stop()
+                            self.isStopped.wait( 5 )
                     else:
+                        # wait until radio channel itself disconnects
                         self.isStopped.wait()
                         
                     if self.checkTimer:
                         self.checkTimer.cancel()
-
-        # stop playback, check successful
-        if self.sender.radio.transportState != 'Stopped':
-            self.isStopped.clear()
-            self.sender.radio.Stop()
-            self.isStopped.wait( 5 )
-            if not self.isStopped.isSet():
-                self.log.Fail( self.senderDev, 'Playback failed to STOP' )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
@@ -196,25 +175,39 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             self.soft2.Shutdown()
         if self.soft1:
             self.soft1.Shutdown()
-        BASE.BaseTest.Cleanup( self )               
+        BASE.BaseTest.Cleanup( self )
 
-    def _initRadio( self, aName ):
-        """Switch to radio source and clear ony existing presets"""
+    def _SetupSender( self, aName, aTuneInUser ):
+        """Create sender, select radio, setup TuneIn account, subscribe to events"""
+        if aName.lower() == 'local':
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneIn=aTuneInUser )
+            aName = self.soft1.name
+        self.senderDev = aName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( aName, aIsDut=True )
         self.sender.product.sourceIndexByName = 'Radio'
         
         self.idArrayUpdated.clear()
-        self.sender.radio.AddSubscriber( self._radioEventCb )
-        self.sender.info.AddSubscriber( self._infoEventCb )
+        self.sender.radio.AddSubscriber( self._RadioEventCb )
+        self.sender.info.AddSubscriber( self._InfoEventCb )
         self.idArrayUpdated.wait( 5 )
         self.channels = self.sender.radio.ChannelsInfo( self.sender.radio.idArray )
-        
-        
-    def _getTestChannels( self, aShuffle ):
+
+    def _SetupReceiver( self, aName ):
+        """Create receiver, set as songcast receiver on the sender, subscribe to events"""
+        if aName.lower() == 'local':
+            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+            aName = self.soft2.name
+        self.rcvrDev = aName.split( ':' )[0]
+        self.receiver = Volkano.VolkanoDevice( aName, aIsDut=True )
+        self.receiver.receiver.AddSubscriber( self._ReceiverEventCb )
+        time.sleep( 3 )
+        self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
+        self.receiver.receiver.Play()
+
+    def _GetTestChannels( self, aShuffle ):
         """Return ordered channel list for use in test loop"""
         channels = copy.deepcopy( self.channels )
         testChannels = []
-        
         while len( channels ):
             if aShuffle:
                 rand = random.randint( 0, len( channels )-1 )
@@ -225,7 +218,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                 testChannels.append( channel )
         return testChannels
 
-    def _selectChannel( self, aUri, aChannel ):
+    def _SelectChannel( self, aUri, aChannel ):
         """Select radio channel, check it selects and updates status"""
         self.idUpdated.clear()
         self.uriUpdated.clear()
@@ -276,44 +269,33 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             
         return not failed
     
-    def _startPlayback( self, aTitle ):
+    def _StartPlayback( self, aTitle ):
         """Start playback, wait for playing state (or error)"""
         self.title = aTitle
-        self.isPlaying.clear()
-        self.newState.clear()
-        startPlay = time.time()
-        self.sender.radio.Play()
-        self.newState.wait( 30 )
-        self.metatextUpdated.clear()
-        actionTime = time.time()-startPlay
-        
-        if actionTime > 3:
-            self.log.Fail( self.senderDev, 'State change after Play took %ds' % actionTime )
-            self.sender.radio.Stop()
-             
-        self.isPlaying.wait( 10 )
+        self.metatextUpdated = False
+        if self.sender.radio.transportState != 'Playing':
+            self.isPlaying.clear()
+            self.sender.radio.Play()
+            self.isPlaying.wait( 10 )
+
         if not self.isPlaying.isSet():
             self.log.Warn( self.senderDev, 'FAILED playback of %s' % aTitle )
-        else:    
+        else:
             self.log.Pass( self.senderDev, 'Started playback of %s' % aTitle )
 
     # noinspection PyUnusedLocal
-    def _radioEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
+    def _RadioEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
         """Callback from Radio Service UPnP events"""
         if aSvName == 'IdArray':
             self.channels = self.sender.radio.ChannelsInfo( self.sender.radio.idArray )
             self.idArrayUpdated.set()
         elif aSvName == 'TransportState':
-            self.newState.set()
-            if self.stateTimer:   # add hysteresis to transport state comparison
-                self.lock.acquire()
-                self.stateTimer.cancel()
-                self.stateTimer = LogThread.Timer( 5, self._ReceiverStateCb )
-                self.stateTimer.start()
-                self.lock.release()
+            if self.stateTimer:
+                self._RestartStateTimer()   # Add 2s 'hysteresis' to TransportState check
             if aSvVal == 'Playing':
                 self.isStopped.clear()
                 self.isPlaying.set()
+                self.startTime = time.time()
             elif aSvVal == 'Stopped':
                 if self.playTimer:
                     self.playTimer.cancel()
@@ -330,19 +312,19 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             self.metaUpdated.set()
             
     # noinspection PyUnusedLocal
-    def _infoEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
+    def _InfoEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
         """Callback from Info service UPnP events"""
         if aSvName == 'Metatext':
-            self.metatextUpdated.set()
+            self.metatextUpdated = True
                 
-    def _playTimerCb( self ):
+    def _PlayTimerCb( self ):
         """Callback from timer"""
         self.playTimerExpired.set()
         self.playTimer = None
         
-    def _checkTimerCb( self ):
+    def _CheckTimerCb( self ):
         """Callback from timer - perform checks during radio playback"""
-        if self.metatextUpdated.isSet():
+        if self.metatextUpdated:
             self.log.Pass( self.senderDev, 'Metatext present:- %s' % self.sender.info.metatext )
         else:
             self.log.Warn( self.senderDev, 'No metatext' )
@@ -368,17 +350,11 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                     (senderVal, receiverVal, itemTitle) )
 
     # noinspection PyUnusedLocal
-    def _receiverEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
+    def _ReceiverEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
         """Callback from Receiver Service UPnP events"""
         if aSvName == 'TransportState':
             if self.receiverStarted:
-                # add hysteresis to transport state comparison
-                self.lock.acquire()
-                if self.stateTimer:
-                    self.stateTimer.cancel()
-                self.stateTimer = LogThread.Timer( 5, self._ReceiverStateCb )
-                self.stateTimer.start()
-                self.lock.release()
+                self._RestartStateTimer()   # Add 2s 'hysteresis' to TransportState check
             self.receiverStarted = True
             
     def _ReceiverStateCb( self ):
@@ -391,8 +367,17 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         elif receiverState == 'Waiting':  
             self.log .FailIf( self.rcvrDev, senderState=='Playing',
                 '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
-                
-        
+
+    def _RestartStateTimer( self ):
+        """Restart timer for checking transport state - ensures that both sender and
+           receiver have had stable TransportState for 2s before check is done"""
+        self.lock.acquire()
+        if self.stateTimer:
+            self.stateTimer.cancel()
+        self.stateTimer = LogThread.Timer( 2, self._ReceiverStateCb )
+        self.stateTimer.start()
+        self.lock.release()
+
 if __name__ == '__main__':
     
     BASE.Run( sys.argv )
