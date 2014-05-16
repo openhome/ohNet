@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
     import msvcrt
 
-    s = SoftPlayer( aRoom='TestDev' )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp' )
     msvcrt.getch()
     s.Shutdown()
     s.log.Cleanup()
