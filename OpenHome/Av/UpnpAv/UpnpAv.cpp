@@ -84,7 +84,8 @@ void SourceUpnpAv::Activate()
 void SourceUpnpAv::Deactivate()
 {
     iLock.Wait();
-    iTransportState = Media::EPipelineStopped;
+    iTransportState = EPipelineStopped;
+    iDownstreamObserver->NotifyPipelineState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
 }

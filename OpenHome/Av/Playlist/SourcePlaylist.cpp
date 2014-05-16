@@ -164,7 +164,8 @@ void SourcePlaylist::Activate()
 void SourcePlaylist::Deactivate()
 {
     iLock.Wait();
-    iTransportState = Media::EPipelineStopped;
+    iTransportState = EPipelineStopped;
+    iProviderPlaylist->NotifyPipelineState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
 }

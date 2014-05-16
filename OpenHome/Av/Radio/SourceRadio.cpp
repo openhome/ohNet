@@ -70,7 +70,8 @@ void SourceRadio::Activate()
 void SourceRadio::Deactivate()
 {
     iLock.Wait();
-    iTransportState = Media::EPipelineStopped;
+    iTransportState = EPipelineStopped;
+    iProviderRadio->SetTransportState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
 }
