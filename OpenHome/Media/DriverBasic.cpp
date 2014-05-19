@@ -11,7 +11,7 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 DriverBasic::DriverBasic(IPipelineElementUpstream& aPipeline, Environment& aEnv)
-    : Thread("PipelineAnimator")
+    : Thread("PipelineAnimator", kPrioritySystemHighest)
     , iPipeline(aPipeline)
     , iOsCtx(aEnv.OsCtx())
     , iPlayable(NULL)

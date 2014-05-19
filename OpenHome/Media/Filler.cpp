@@ -42,7 +42,7 @@ UriProvider::~UriProvider()
 // Filler
 
 Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
-    : Thread("Filler")
+    : Thread("Filler", kPriorityVeryHigh-3)
     , iLock("FILL")
     , iSupply(aSupply)
     , iPipelineIdTracker(aIdTracker)

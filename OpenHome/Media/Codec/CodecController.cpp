@@ -63,7 +63,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iTrackId(UINT_MAX)
     , iTrackIdPipeline(UINT_MAX)
 {
-    iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread));
+    iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), kPriorityVeryHigh-2);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
     //iLoggerRewinder->SetEnabled(true);
     //iLoggerRewinder->SetFilter(Logger::EMsgAll);
