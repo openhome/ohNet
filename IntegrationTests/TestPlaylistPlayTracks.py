@@ -69,6 +69,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.senderStopped    = threading.Event()
         self.senderDuration   = threading.Event()
         self.trackChangeMutex = threading.Lock()
+        random.seed()
 
     def Test( self, args ):
         """Play tracks, using Media services for control"""
@@ -128,7 +129,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
-        self.sender.product.sourceIndex = random.randint( 1, 1 ) #self.sender.product.sourceCount-1 )
+        self.sender.product.sourceIndex = random.randint( 1, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
         # create Receiver Device, put onto random source and connect to sender
@@ -162,7 +163,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         # start playback
         self.log.Info( self.senderDev, 'Starting on source %s' % self.sender.product.sourceIndex )
         self.sender.playlist.SeekIndex( 0 )
-        self.sender.playlist.Play()
         self.senderPlaying.wait( 10 )
         if not self.senderStarted.is_set():
             self.log.Fail( self.senderDev, 'Playback never started' )
