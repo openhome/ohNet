@@ -69,7 +69,7 @@ class JenkinsBuild():
 
         parser = OptionParser()
         parser.add_option("-p", "--platform", dest="platform",
-            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-x86")
+            help="Linux-x86, Linux-x64, Windows-x86, Windows-x64, Linux-ARM, Linux-ppc32, Mac-x64, Core-ppc32, Core-armv5, Core-armv6, iOs-armv7, iOs-x86, Qnap-x86")
         parser.add_option("-n", "--nightly",
                   action="store_true", dest="nightly", default=False,
                   help="Perform a nightly build")
@@ -119,6 +119,7 @@ class JenkinsBuild():
                 'Core-armv5': { 'os': 'Core', 'arch':'armv5', 'publish':True, 'system':'Core'},
                 'Core-armv6': { 'os': 'Core', 'arch':'armv6', 'publish':True, 'system':'Core'},
                 'Android-anycpu': { 'os': 'Android', 'arch':'anycpu', 'publish':True, 'system':'Android'},
+                'Qnap-x86': { 'os':'Qnap', 'arch':'x86', 'publish':True, 'system':'Qnap'}
         }
         current_platform = self.options.platform
         self.platform = platforms[current_platform]
@@ -181,6 +182,9 @@ class JenkinsBuild():
         if os_platform == 'Android':
             args.append('--Android-anycpu')
             self.platform_make_args.append('Android-anycpu=1')
+        if os_platform == 'Qnap':
+            args.append('--Qnap-anycpu')
+            self.platform_make_args.append('Qnap-anycpu=1')
         if os_platform == 'Core':
             args.append('--core')
         if nightly == '1':
