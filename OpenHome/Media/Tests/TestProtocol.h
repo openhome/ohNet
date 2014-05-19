@@ -31,6 +31,7 @@ private: // from IPipelineIdProvider
     TUint NextStreamId();
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private:
+    Pipeline& iPipeline;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     Av::OhmMsgFactory* iOhmMsgFactory;
