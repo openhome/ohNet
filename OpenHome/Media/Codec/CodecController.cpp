@@ -460,7 +460,7 @@ void CodecController::OutputHalt()
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 {
     if (iRecognising) {
-        iStreamStarted = iStreamEnded = true;
+        iStreamEnded = true;
         aMsg->RemoveRef();
         return NULL;
     }
@@ -470,7 +470,7 @@ Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
-        iStreamStarted = iStreamEnded = true;
+        iStreamEnded = true;
         aMsg->RemoveRef();
         return NULL;
     }
@@ -491,12 +491,13 @@ Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iStreamStarted = iStreamEnded = true;
+    iStreamEnded = true;
     if (iRecognising) {
         aMsg->RemoveRef();
         return NULL;
     }
 
+    iStreamStarted = true;
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
     iStreamLength = aMsg->TotalBytes();
