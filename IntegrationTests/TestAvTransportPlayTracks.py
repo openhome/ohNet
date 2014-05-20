@@ -2,7 +2,7 @@
 """TestAvTransporttPlayTracks - test Playing of playlists of tracks using AVTransport.
 
 Parameters:
-    arg#1 - AVT Renderer/Sender ['local' for internal SoftPlayer]
+    arg#1 - AVT Renderer/Sender (UPnP AV Name) ['local' for internal SoftPlayer]
     arg#2 - Receiver ['local' for internal SoftPlayer] - optional (None = not present)
     arg#3 - UPnP MediaServer
     arg#4 - Playlist name
@@ -25,7 +25,6 @@ import BaseTest                         as BASE
 import Upnp.ControlPoints.MediaRenderer as Renderer
 import Upnp.ControlPoints.MediaServer   as Server
 import Upnp.ControlPoints.Volkano       as Volkano
-import Utils.Network.HttpMediaServer    as HttpServer
 import Utils.Common                     as Common
 import _SoftPlayer                      as SoftPlayer
 import LogThread
@@ -33,7 +32,6 @@ import sys
 import threading
 import time
 import xml.etree.ElementTree as ET
-from dependencies.AnyPlatform.testharness.cherrypy.lib.reprconf import _Builder2
 
 kAvtNs = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
 
@@ -79,13 +77,13 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
 
     def Test( self, args ):
         """UPnP device eventing test, with network stressing"""
-        senderName   = ''
+        mrName       = ''
         receiverName = ''
         serverName   = ''
         playlistName = ''
 
         try:
-            senderName   = args[1]
+            mrName       = args[1]
             receiverName = args[2]
             serverName   = args[3]
             playlistName = args[4]
@@ -100,11 +98,12 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if receiverName.lower() == 'none':
            receiverName = None
 
-        mpName = senderName
-        if senderName.lower() == 'local':
+        if mrName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
-            senderName = self.soft1.name.split( ':' )[0] + ':UPnP AV'
+            mrName = self.soft1.name.split( ':' )[0] + ':UPnP AV'
             mpName = self.soft1.name
+        else:
+            mpName = mrName.split( ':' )[0] + ':SoftPlayer'
 
         # get playlist from server
         server = Server.MediaServer( serverName )
@@ -115,7 +114,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.numTracks = len( self.playlist )
 
         # create sender
-        self.senderDev = senderName.split( ':' )[0]
+        self.senderDev = mpName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( mpName, aIsDut=True )
         
         # create receiver and connect to sender
@@ -130,7 +129,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             self.receiver.receiver.Play()
                 
         # create AVT renderer CP
-        self.mr = Renderer.MediaRendererDevice( senderName )
+        self.mr = Renderer.MediaRendererDevice( mrName )
         self.avt = self.mr.avt
         self.avt.Stop()
         self.avt.uri = ''
@@ -160,11 +159,16 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 
     def Cleanup( self ):
         """Perform cleanup on test exit"""
-        if self.mr: self.mr.Shutdown()
-        if self.sender: self.sender.Shutdown()
-        if self.receiver: self.receiver.Shutdown()
-        if self.soft1:  self.soft1.Shutdown()
-        if self.soft2:  self.soft2.Shutdown()
+        if self.mr:
+            self.mr.Shutdown()
+        if self.sender:
+            self.sender.Shutdown()
+        if self.receiver:
+            self.receiver.Shutdown()
+        if self.soft1:
+            self.soft1.Shutdown()
+        if self.soft2:
+            self.soft2.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     # noinspection PyUnusedLocal
