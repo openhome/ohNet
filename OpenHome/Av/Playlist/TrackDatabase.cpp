@@ -306,6 +306,19 @@ void Shuffler::Reshuffle()
     iLock.Signal();
 }
 
+void Shuffler::MoveToStart(TUint aId)
+{
+    AutoMutex a(iLock);
+    if (iShuffle) {
+        try {
+            const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
+            Track* track = iShuffleList[index];
+            MoveToStartOfUnplayed(track, "MoveToStart");
+        }
+        catch (TrackDbIdNotFound&) {}
+    }
+}
+
 void Shuffler::SetObserver(ITrackDatabaseObserver& aObserver)
 {
     iLock.Wait();
@@ -402,26 +415,9 @@ Track* Shuffler::TrackRefByIndex(TUint aIndex)
 {
     Track* track = NULL;
     AutoMutex a(iLock);
-    // FIXME - an option to index into a (secret) randomised array probably isn't what anyone would expect
-    //if (!iShuffle) {
-        track = iReader.TrackRefByIndex(aIndex);
-    /*}
-    else {
-        track = iShuffleList[aIndex];
-        track->AddRef();
-    }*/
-
+    track = iReader.TrackRefByIndex(aIndex);
     if (iShuffle && track != NULL) {
-        // Treat a request for a given track as the start of a new shuffle, inserting track at the start of iShuffleList
-        const TUint index = TrackListUtils::IndexFromId(iShuffleList, track->Id());
-        const TUint cursorIndex = (iPrevTrackId == ITrackDatabase::kTrackIdNone? 
-                0 : TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId));
-        if (index > cursorIndex+1) {
-            iShuffleList.erase(iShuffleList.begin() + index);
-            iShuffleList.insert(iShuffleList.begin() + cursorIndex, track);
-        }
-        iPrevTrackId = track->Id();
-        LogIds("TrackRefByIndex");
+        MoveToStartOfUnplayed(track, "TrackRefByIndex");
     }
         
     return track;
@@ -523,6 +519,19 @@ void Shuffler::DoReshuffle(const TChar* aLogPrefix)
         LogIds(aLogPrefix);
         iPrevTrackId = ITrackDatabase::kTrackIdNone;
     }
+}
+
+void Shuffler::MoveToStartOfUnplayed(Track* aTrack, const TChar* aLogPrefix)
+{
+    const TUint index = TrackListUtils::IndexFromId(iShuffleList, aTrack->Id());
+    const TUint cursorIndex = (iPrevTrackId == ITrackDatabase::kTrackIdNone?
+            0 : TrackListUtils::IndexFromId(iShuffleList, iPrevTrackId));
+    if (index > cursorIndex+1) {
+        iShuffleList.erase(iShuffleList.begin() + index);
+        iShuffleList.insert(iShuffleList.begin() + cursorIndex, aTrack);
+    }
+    iPrevTrackId = aTrack->Id();
+    LogIds(aLogPrefix);
 }
 
 #undef LOG_SHUFFLE

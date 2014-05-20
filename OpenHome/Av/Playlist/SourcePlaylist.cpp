@@ -256,6 +256,12 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
 {
     EnsureActive();
 
+    iLock.Wait();
+    if (iShuffler->Enabled()) {
+        iShuffler->MoveToStart(aId);
+    }
+    iLock.Signal();
+
     iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider->Mode(), aId);
     iPipeline.Play();
@@ -270,6 +276,7 @@ TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
     if (track != NULL) {
+        iNewPlaylist = false;
         AutoAllocatedRef r(track);
         iPipeline.RemoveAll();
         iPipeline.Begin(iUriProvider->Mode(), track->Id());

@@ -107,6 +107,7 @@ public:
     TBool Enabled() const;
     void SetShuffle(TBool aShuffle);
     void Reshuffle();
+    void MoveToStart(TUint aId); // moves aId to follow iPrevTrackId iff Enabled()
 private: // from ITrackDatabaseReader
     void SetObserver(ITrackDatabaseObserver& aObserver);
     Media::Track* TrackRef(TUint aId);
@@ -120,6 +121,7 @@ private: // from ITrackDatabaseObserver
     void NotifyAllDeleted();
 private:
     void DoReshuffle(const TChar* aLogPrefix);
+    void MoveToStartOfUnplayed(Media::Track* aTrack, const TChar* aLogPrefix);
     void LogIds(const TChar* aPrefix);
 private:
     mutable Mutex iLock;
