@@ -111,8 +111,8 @@ class SoftPlayer( BASE.Component ):
     @staticmethod
     def __GetHost():
         """Retrieve host adapter to use for player"""
-        configFile = os.path.abspath( 'Config.xml') 
         host = 0
+        configFile = os.path.join( os.path.dirname( __file__ ), 'Config.xml' )
         if os.path.exists( configFile ):
             config = None
             computerName = platform.node().split( '.' )[0]

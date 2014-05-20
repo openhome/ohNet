@@ -15,7 +15,7 @@ import BaseSuite as Suite
 import os
 import sys
  
-logDir     = None
+logDir = None
 
 try:
     if len( sys.argv ) > 1:
@@ -28,14 +28,14 @@ except:
 
     
 tests = [
-    # # UPnP AV
-    # [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList, 12,    1               ],
+    # UPnP AV
+    [ 'TestAvTransportPlayTracks', 'local', 'local', 'None', 'None', 5,   1           ],
 
     # OH Playlist Service
-    [ 'TestPlaylistPlayTracks', 'local', 'local', 'None', 'None', 5,   'off', 'on' ],
+    [ 'TestPlaylistPlayTracks',    'local', 'local', 'None', 'None', 5,   'off', 'on' ],
 
     # # OH Radio Service
-    [ 'TestRadioPlayChannels',  'local', 'local', 'ohmp', 7,      'on'             ],
+    [ 'TestRadioPlayChannels',     'local', 'local', 'ohmp', 7,      'on'             ]
 ]
 
 Suite.Suite( tests, logDir )
