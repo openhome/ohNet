@@ -107,7 +107,7 @@ public:
     TBool Enabled() const;
     void SetShuffle(TBool aShuffle);
     void Reshuffle();
-    void MoveToStart(TUint aId); // moves aId to follow iPrevTrackId iff Enabled()
+    TBool TryMoveToStart(TUint aId); // moves aId to follow iPrevTrackId iff Enabled()
 private: // from ITrackDatabaseReader
     void SetObserver(ITrackDatabaseObserver& aObserver);
     Media::Track* TrackRef(TUint aId);

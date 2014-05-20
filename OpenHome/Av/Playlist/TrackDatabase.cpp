@@ -306,7 +306,7 @@ void Shuffler::Reshuffle()
     iLock.Signal();
 }
 
-void Shuffler::MoveToStart(TUint aId)
+TBool Shuffler::TryMoveToStart(TUint aId)
 {
     AutoMutex a(iLock);
     if (iShuffle) {
@@ -314,9 +314,11 @@ void Shuffler::MoveToStart(TUint aId)
             const TUint index = TrackListUtils::IndexFromId(iShuffleList, aId);
             Track* track = iShuffleList[index];
             MoveToStartOfUnplayed(track, "MoveToStart");
+            return true;
         }
         catch (TrackDbIdNotFound&) {}
     }
+    return false;
 }
 
 void Shuffler::SetObserver(ITrackDatabaseObserver& aObserver)

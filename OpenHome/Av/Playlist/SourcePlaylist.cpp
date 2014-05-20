@@ -257,8 +257,8 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
     EnsureActive();
 
     iLock.Wait();
-    if (iShuffler->Enabled()) {
-        iShuffler->MoveToStart(aId);
+    if (iShuffler->TryMoveToStart(aId)) {
+        iNewPlaylist = false;
     }
     iLock.Signal();
 
