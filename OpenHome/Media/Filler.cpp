@@ -283,6 +283,8 @@ void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable,
 {
     if (!iQuit) {
         iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
+        iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
+                                        subsequent streams should be played immediately */
         iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
     }
 }
