@@ -33,6 +33,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     , iLock("PLMG")
     , iState(EStopped)
     , iBuffering(false)
+    , iWaiting(false)
     , iQuitting(false)
     , iNextFlushId(MsgFlush::kIdInvalid + 1)
 {
@@ -215,16 +216,13 @@ void Pipeline::NotifyStatus()
     switch (iState)
     {
     case EPlaying:
-        state = (iBuffering? EPipelineBuffering : EPipelinePlaying);
+        state = (iWaiting? EPipelineWaiting : (iBuffering? EPipelineBuffering : EPipelinePlaying));
         break;
     case EPaused:
         state = EPipelinePaused;
         break;
     case EStopped:
         state = EPipelineStopped;
-        break;
-    case EWaiting:
-        state = EPipelineWaiting;
         break;
     default:
         ASSERTS();
@@ -406,12 +404,7 @@ TUint Pipeline::NextFlushId()
 void Pipeline::PipelineWaiting(TBool aWaiting)
 {
     iLock.Wait();
-    if (aWaiting) {
-        iState = EWaiting;
-    }
-    else {
-        iState = EPlaying;
-    }
+    iWaiting = aWaiting;
     iLock.Signal();
     NotifyStatus();
 }

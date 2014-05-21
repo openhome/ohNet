@@ -164,6 +164,7 @@ private:
     ClockPuller iClockPuller;
     EStatus iState;
     TBool iBuffering;
+    TBool iWaiting;
     TBool iQuitting;
     TUint iNextFlushId;
 };
