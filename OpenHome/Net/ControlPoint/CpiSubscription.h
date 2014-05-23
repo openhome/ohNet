@@ -136,7 +136,7 @@ private:
     void DoRenew();
     void DoUnsubscribe();
     void SetRenewTimer(TUint aMaxSeconds);
-    void HandleResumed();
+    void Resubscribe();
     void NotifySubnetChanged();
 private: // IEventProcessor
     void EventUpdateStart();
@@ -215,6 +215,7 @@ public:
     void Schedule(CpiSubscription& aSubscription);
     void ScheduleLocked(CpiSubscription& aSubscription);
     TUint EventServerPort();
+    void RenewAll();
 private: // from IResumeObserver
     void NotifyResumed();
 private:

@@ -6,6 +6,8 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/Net/Private/CpiSubscription.h>
 
 #include <stdlib.h>
 
@@ -50,6 +52,12 @@ void STDCALL OhNetLibraryClose()
 void STDCALL OhNetLibraryNotifyResumed(void)
 {
     UpnpLibrary::NotifyResumed();
+}
+
+void STDCALL OhNetLibraryRenewSubscriptions(void)
+{
+    ASSERT(gCpStack != NULL);
+    gCpStack->SubscriptionManager().RenewAll();
 }
 
 void STDCALL OhNetFree(void* aPtr)

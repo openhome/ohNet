@@ -352,7 +352,7 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
     iTimer->FireIn(renewMs);
 }
 
-void CpiSubscription::HandleResumed()
+void CpiSubscription::Resubscribe()
 {
     if (StartSchedule(eResubscribe, false)) {
         iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
@@ -678,6 +678,16 @@ TUint CpiSubscriptionManager::EventServerPort()
     return server->Port();
 }
 
+void CpiSubscriptionManager::RenewAll()
+{
+    AutoMutex a(iLock);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        it->second->Resubscribe();
+        it++;
+    }
+}
+
 void CpiSubscriptionManager::NotifyResumed()
 {
     /* sockets are unusable on iOS when we resume so we need to perform as same actions
@@ -731,12 +741,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     if (!aNewSubnet) {
         /* device lists may not signal that devices have been removed
            ...so we need to try to migrate existing subscriptions */
-        AutoMutex a(iLock);
-        std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
-        while (it != iMap.end()) {
-            it->second->HandleResumed();
-            it++;
-        }
+        RenewAll();
     }
     LOG(kEvent, "< CpiSubscriptionManager::HandleInterfaceChange(%d)\n", aNewSubnet);
 }

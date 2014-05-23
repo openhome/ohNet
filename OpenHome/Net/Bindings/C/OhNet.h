@@ -124,6 +124,15 @@ DllExport void STDCALL OhNetLibraryClose();
  */
 DllExport void STDCALL OhNetLibraryNotifyResumed(void);
 
+/**
+ * Force any subscriptions to be renewed.
+ *
+ * Only relevant to control point stack clients.
+ * Probably only useful on devices with poor quality wifi.
+ * Users of this should also consider calling OhNetInitParamsSetSubscriptionDuration().
+ */
+DllExport void STDCALL OhNetLibraryRenewSubscriptions(void);
+
 /* @} */
 /**
  * @addtogroup InitParams
