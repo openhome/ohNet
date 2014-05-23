@@ -4,21 +4,15 @@
 Parameters:
     arg#1 - AVT Renderer/Sender (UPnP AV Name) ['local' for internal SoftPlayer]
     arg#2 - Receiver ['local' for internal SoftPlayer] - optional (None = not present)
-    arg#3 - UPnP MediaServer
-    arg#4 - Playlist name
+    arg#3 - Media server to source media from (None->test served audio)
+    arg#4 - Playlist name (None->test served audio)
     arg#5 - Time to play before skipping to next (None = play all)
-    arg#6 - Test loops (optional - default 1)    
-            
+    arg#6 - Test loops (optional - default 1)
+
 Test test which plays tracks from an M3U playlist sequentially under AVTransport
 control (test is acting like an AVT control point). The tracks may be played for
 their entirety or any specified length of time
 """
-
-# Differences from DS test:
-#    - removed songcast sender mode param - set in softplayer at startup
-#    - removed abort threshold param (usage obsolete)
-#    - removed ability to use Kinsky as media server
-#    - remove .NET XML handling
 
 import _FunctionalTest
 import BaseTest                         as BASE
@@ -26,65 +20,64 @@ import Upnp.ControlPoints.MediaRenderer as Renderer
 import Upnp.ControlPoints.MediaServer   as Server
 import Upnp.ControlPoints.Volkano       as Volkano
 import Utils.Common                     as Common
+import Utils.Network.HttpServer         as HttpServer
 import _SoftPlayer                      as SoftPlayer
 import LogThread
+import Path
+import os
 import sys
 import threading
 import time
 import xml.etree.ElementTree as ET
 
-kAvtNs = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
+kAvtNs     = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
+kAudioRoot = os.path.join( Path.AudioDir(), 'LRTones/' )
+kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 
 class TestAvTransportPlayTracks( BASE.BaseTest ):
-    """Test playing of tracks"""
+    """Test playing of tracks using UPnP AV source"""
 
     def __init__( self ):
         """Constructor - initialise base class"""
         BASE.BaseTest.__init__( self )
-        self.mr               = None
-        self.sender           = None
-        self.senderDev        = None
-        self.receiver         = None
-        self.rcvrDev          = None
-        self.soft1            = None
-        self.soft2            = None
-        self.playlist         = []
-        self.trackIndex       = -1
-        self.numTracks        = 0
-        self.playTime         = None
-        self.playTimer        = None
-        self.tickTimer        = None
-        self.trackPlayTime    = 0
-        self.expectedPlayTime = 0
-        self.avt              = None
-        self.avtState         = None
-        self.avtUri           = None
-        self.testLoop         = 0
-        self.testLoops        = 1
-        self.noRelTime        = 0
-        self.stuckRelTime     = 0
-        self.prevRelTime      = '0:00:00'
-        self.abortMsg         = ''
-        self.currentPlayTime  = 0
-        self.currentTrackDuration = 0
-        self.infoCheckTimer   = None
-        self.eop              = threading.Event()
-        self.playing          = threading.Event()
-        self.trackDuration    = threading.Event()
-        self.newUri           = threading.Event()
-        self.mutex            = threading.Lock()
+        self.mr           = None
+        self.mrDev        = None
+        self.sender       = None
+        self.senderDev    = None
+        self.rcvr         = None
+        self.rcvrDev      = None
+        self.server       = None
+        self.soft1        = None
+        self.soft2        = None
+        self.playlist     = []
+        self.trackIndex   = -1
+        self.numTracks    = 0
+        self.playTime     = None
+        self.playTimer    = None
+        self.checkTimer   = None
+        self.tickTimer    = None
+        self.avtState     = None
+        self.testLoop     = 0
+        self.testLoops    = 1
+        self.startTime    = 0
+        self.stopTime     = 0
+        self.prevAvtSecs  = 0
+        self.stuck        = 0
+        self.started      = False
+        self.eop          = threading.Event()
+        self.mutex        = threading.Lock()
 
     def Test( self, args ):
         """UPnP device eventing test, with network stressing"""
         mrName       = ''
-        receiverName = ''
+        rcvrName     = ''
         serverName   = ''
         playlistName = ''
 
         try:
             mrName       = args[1]
-            receiverName = args[2]
+            rcvrName     = args[2]
             serverName   = args[3]
             playlistName = args[4]
             if args[5] != 'None':
@@ -94,9 +87,6 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
-            
-        if receiverName.lower() == 'none':
-           receiverName = None
 
         if mrName.lower() == 'local':
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
@@ -106,65 +96,65 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             mpName = mrName.split( ':' )[0] + ':SoftPlayer'
 
         # get playlist from server
-        server = Server.MediaServer( serverName )
-        if not server.device:
-            self.log.Abort( serverName, 'Not available' )
-        self.playlist = server.GetPlaylist( playlistName )
-        server.Shutdown()
+        if serverName.lower() != 'none':
+            self.server = Server.MediaServer( serverName )
+            if not self.server.device:
+                self.log.Abort( serverName, 'Not available' )
+            self.playlist = self.server.GetPlaylist( playlistName )
+            self.server.Shutdown()
+            self.server = None
+        else:
+            self.server = HttpServer.HttpServer( kAudioRoot )
+            self.server.Start()
+            self.playlist = Common.GetTracks( kTrackList, self.server )
         self.numTracks = len( self.playlist )
 
         # create sender
-        self.senderDev = mpName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( mpName, aIsDut=True )
-        
-        # create receiver and connect to sender
-        if receiverName:
-            if receiverName.lower() == 'local':
+        self.senderDev = mpName.split( ':' )[0]
+
+        # create receiver and connect to renderer
+        if rcvrName.lower() != 'none':
+            if rcvrName.lower() == 'local':
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
-                receiverName = self.soft2.name
-            self.rcvrDev = receiverName.split( ':' )[0]
-            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
-            #time.sleep( 3 )
-            self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
-            self.receiver.receiver.Play()
-                
-        # create AVT renderer CP
+                rcvrName = self.soft2.name
+            self.rcvrDev = rcvrName.split( ':' )[0]
+            self.rcvr = Volkano.VolkanoDevice( rcvrName, aIsDut=True )
+            self.rcvr.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
+            self.rcvr.receiver.Play()
+
+        # create AVT renderer
         self.mr = Renderer.MediaRendererDevice( mrName )
-        self.avt = self.mr.avt
-        self.avt.Stop()
-        self.avt.uri = ''
-        self.avt.SetUri( '', '' )
-        time.sleep( 5 )
-        self.avtState = self.avt.transportState
-        
+        self.mrDev = mrName.split( ':' )[0]
+        self.mr.avt.AddSubscriber( self._AvtEventCb )
+        self.avtState = self.mr.avt.transportState
+
+        # Execute the test loops
         for self.testLoop in range( self.testLoops ):
-            self.eop.clear()        
-            # subscribe to AVT renderer events
-            self.avt.AddSubscriber( self._AvtEventCb )
-            self._StartNextTrack()
-            
-            # wait until playback stopped, cleanup and exit
+            self.trackIndex = -1
+            self.mr.avt.SetUri( '', '' )
+            self._HandleStop()
+            self.started = True
+            self.eop.clear()
             self.eop.wait()
-            self.avt.RemoveSubscriber( self._AvtEventCb )
-            if self.tickTimer:
-                self.tickTimer.cancel()
-                self.tickTimer = None
-            if self.playTimer: self.playTimer.cancel()  
-            self.trackIndex       = -1
-            self.currentPlayTime  = 0
-            self.trackPlayTime    = 0
-            self.expectedPlayTime = 0
-            if self.abortMsg:
-                self.log.Abort( self.senderDev, self.abortMsg )
-                
+            self.started = False
+
     def Cleanup( self ):
         """Perform cleanup on test exit"""
+        if self.playTimer:
+            self.playTimer.cancel()
+        if self.tickTimer:
+            self.tickTimer.cancel()
+        if self.checkTimer:
+            self.checkTimer.cancel()
         if self.mr:
             self.mr.Shutdown()
         if self.sender:
             self.sender.Shutdown()
-        if self.receiver:
-            self.receiver.Shutdown()
+        if self.rcvr:
+            self.rcvr.Shutdown()
+        if self.server:
+            self.server.Shutdown()
         if self.soft1:
             self.soft1.Shutdown()
         if self.soft2:
@@ -174,181 +164,115 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
     # noinspection PyUnusedLocal
     def _AvtEventCb( self, service, svName, svVal, svSeq ):
         """Callback from AVTransport Service UPnP events whilst test is running"""
-        xml           = ET.fromstring( svVal.encode( 'utf-8' ))[0]  
-        evAvtState    = xml.find( kAvtNs+'TransportState' ).attrib['val']
-        evTrkDuration = xml.find( kAvtNs+'CurrentTrackDuration' ).attrib['val']
-        evAvtUri      = xml.find( kAvtNs+'AVTransportURI' ).attrib['val']
-        
-        if evAvtState=='PLAYING' and self.avtState != 'PLAYING':
-            self.playing.set()
-            
-        startNext = False
-        if evAvtState == 'STOPPED' and self.avtState != 'STOPPED':
-            if self.playTimer: self.playTimer.cancel()  
-            self._CheckPlayTime()
-            startNext = True
-            
-        self.currentTrackDuration = self.avt.currentMediaDuration
-        if self.currentTrackDuration:
-            self.trackDuration.set()
-            
-                    
-        if evAvtUri != self.avtUri:
-            self.newUri.set()
-                
-        self.avtUri   = evAvtUri
-        self.avtState = evAvtState
+        xml        = ET.fromstring( svVal.encode( 'utf-8' ))[0]
+        evAvtState = xml.find( kAvtNs+'TransportState' ).attrib['val']
+        toDo       = None
 
-        if startNext:
-            # chuck onto its own thread to release event handler thread
-            t = LogThread.Thread( target=self._StartNextTrack )
-            t.start()
-                                        
-    def _PlayTimerCb( self ):
-        """Callback from playtime timer - skips to next track"""
+        if evAvtState == 'PLAYING' and self.avtState != 'PLAYING':
+            toDo = self._HandlePlay
+            self.startTime = time.time()
+        elif evAvtState in ['STOPPED', 'NO_MEDIA_PRESENT'] and self.avtState not in ['STOPPED', 'NO_MEDIA_PRESENT']:
+            toDo = self._HandleStop
+            self.stopTime = time.time()
+        self.avtState = evAvtState
+        t = LogThread.Thread( target=toDo )
+        t.start()
+
+    def _HandleStop( self ):
+        """Handles state transition to STOPPED - clear timers, perform checks, start next track"""
+        self.mutex.acquire()
+        if self.playTimer:
+            self.playTimer.cancel()
         if self.tickTimer:
             self.tickTimer.cancel()
-            self.tickTimer = None
-        self.mutex.acquire()
-        self.avt.Stop()
-        self.mutex.release()
-        
-    def _StartNextTrack( self ):
-        """Start playback of next track - call on a seperate thread"""
+        if self.checkTimer:
+            self.checkTimer.cancel()
+
+        self._CheckPlayTime()
+
         self.trackIndex += 1
         if self.trackIndex >= self.numTracks:
             self.eop.set()
-            return
-        
+        else:
+            self.mr.avt.SetUri( self.playlist[self.trackIndex][0], self.playlist[self.trackIndex][1] )
+            self.mr.avt.Play()
+        self.mutex.release()
+
+    def _HandlePlay( self ):
+        """Handles state transition to PLAYING - sets up all timers"""
         self.log.Info( '' )
-        self.log.Info( '', 'Loop %d of %d: Track %d of %d' % 
+        self.log.Info( '', 'Loop %d of %d: Track %d of %d' %
             (self.testLoop+1, self.testLoops, self.trackIndex+1, self.numTracks))
         self.log.Info( '' )
-        self.noRelTime = 0
-        self.mutex.acquire()
-        
-        self.newUri.clear()        
-        self.avt.SetUri( self.playlist[self.trackIndex][0], self.playlist[self.trackIndex][1] )
-        self.newUri.wait( 3 )
-        if not self.newUri.isSet():
-            self.mutex.release()
-            self._StartNextTrack()
-            return
-        
-        self.trackDuration.clear()
-        self.playing.clear()     
-        self.avt.Play()
-        self.playing.wait( 5 )
-        if not self.playing.isSet():
-            try:
-                title = Common.GetTitleFromDidl( self.playlist[self.trackIndex][1] )
-            except:
-                title = 'UNKNOWN'
-            self.log.Warn( self.senderDev, 'FAILED to Play: %s within 5s' % title ) 
-            self.playing.wait( 5 )
-            if not self.playing.isSet():
-                self.log.Fail( self.senderDev, 'FAILED to Play: %s within 10s' % title ) 
-                self.mutex.release()
-                self._StartNextTrack()
-                return
-                
-        self.trackDuration.wait( 3 )  # timeout as internet radio has 0 duration
-        self.trackPlayTime = 0
-        self.expectedPlayTime = self.currentTrackDuration     
-            
-        if self.playTime is not None and self.playTime < self.expectedPlayTime:
-            self.expectedPlayTime = self.playTime
-            #.... wait for playing (with timeout)
-            self.playTimer = LogThread.Timer( self.playTime-0.1, self._PlayTimerCb )
-            self.playTimer.start()
-            
-        self.infoCheckTimer = LogThread.Timer( 7, self._InfoCheckCb )
-        self.infoCheckTimer.start()        
-                
-        if not self.tickTimer:
-            # start regular status update (first time thru...)
-            self.tickTimer = LogThread.Timer( 0.8, self._TickCb )
-            self.tickTimer.start()
-            
-        self.mutex.release()
-        
-    def _CheckPlayTime( self ):
-        """Verify track played for expected duration (see Trac #1527)"""
-        if self.expectedPlayTime:
-            loLim = self.expectedPlayTime-2 # widened as IPY timer can be 1s short
-            hiLim = self.expectedPlayTime+1
-            self.log.CheckLimits( self.senderDev, 'GELE', self.trackPlayTime, loLim, hiLim,
-                'track play time as expected')
-                    
-    def _TickCb( self ):
-        """One-second tick callback - updates current track elapsed time"""
-        self.mutex.acquire()
-        self.noRelTime += 1
-        self.stuckRelTime += 1
-        posnInfo = self.avt.avt.GetPositionInfo( InstanceID=0 )
-        avtSecs = self._ToSecs( posnInfo['RelTime'] )
-        if avtSecs != 0:
-            self.noRelTime = 0
-            self.log.CheckLimits( self.senderDev, 'GELE', avtSecs,
-                 self.sender.time.seconds-1, self.sender.time.seconds+1, 
-                '(%d/%d) AVT/Sender seconds' % (avtSecs, self.sender.time.seconds) )
-            if self.receiver:
-                self.log.CheckLimits( self.senderDev, 'GELE', avtSecs,
-                    self.receiver.time.seconds-1, self.receiver.time.seconds+1, 
-                    '(%d/%d) AVT/Receiver seconds' % (avtSecs, self.receiver.time.seconds) )
-        if avtSecs != self.prevRelTime:
-            self.stuckRelTime = 0
-                
-        if self.noRelTime > 10:
-            self.abortMsg = 'No RelTime repeatedly - DUT has died'
-        if self.stuckRelTime > 10:
-            self.abortMsg = 'RelTime not changing - DUT has died'
-        if self.abortMsg:
-            # Force exit on main thread (Logger abort problematic on other threads)
-            self.mutex.release()
-            self.eop.set()
-            return
-            
-        try:
-            if avtSecs > self.trackPlayTime:
-                self.trackPlayTime = avtSecs
-        except:
-            pass
 
-        self.prevRelTime = avtSecs
-        self.mutex.release()
-        self.tickTimer = LogThread.Timer( 0.8, self._TickCb )
+        self.mutex.acquire()
+        self.playTimer = LogThread.Timer( self.playTime, self._PlayTimerCb )
+        self.checkTimer = LogThread.Timer( 5, self._CheckTimerCb )
+        self.tickTimer = LogThread.Timer( 1, self._TickTimerCb )
+        self.playTimer.start()
+        self.checkTimer.start()
         self.tickTimer.start()
-                
-    def _InfoCheckCb( self ):
-        """Called 7s into playback to check Info on Sender and Receiver"""
-        avtDuration = self.avt.currentMediaDuration
-        avtUri      = self.avt.avTransportURI
-        avtMetadata = self.avt.avTransportURIMetaData
-        
-        self.log.FailUnless( self.senderDev, avtDuration==self.sender.info.duration, 
-            '(%s/%s) AVT/Sender duration' % (avtDuration, self.sender.info.duration) )
-        self.log.FailUnless( self.senderDev, avtUri==self.sender.info.uri, 
-            '(%s/%s) AVT/Sender URI' % (avtUri, self.sender.info.uri) )
-        self.log.FailUnless( self.senderDev, avtMetadata==self.sender.info.metadata, 
-            '(%s/%s) AVT/Sender metadata' % (avtUri, self.sender.info.metadata) )
-        
-        if self.receiver:
-            self.log.FailUnless( self.rcvrDev, avtDuration==self.receiver.info.duration, 
-                '(%s/%s) AVT/Receiver duration' % (avtDuration, self.receiver.info.duration) )
-            self.log.FailUnless( self.rcvrDev, avtUri==self.receiver.info.uri, 
-                '(%s/%s) AVT/Receiver URI' % (avtUri, self.receiver.info.uri) )
-            self.log.FailUnless( self.rcvrDev, avtMetadata==self.receiver.info.metadata, 
-                '(%s/%s) AVT/Receiver metadata' % (avtMetadata, self.receiver.info.metadata) )
-        
+        self.mutex.release()
+
+    def _PlayTimerCb( self ):
+        """Callback from playtime timer - skips to next track"""
+        self.mr.avt.Stop()
+
+    def _CheckTimerCb( self ):
+        """Called a few secs into playback to check Info on Sender (and Receiver)"""
+        avtDuration = self.mr.avt.currentMediaDuration
+        avtUri      = self.mr.avt.avTransportURI
+        avtMetadata = self.mr.avt.avTransportURIMetaData
+
+        self.log.FailUnless( self.senderDev, avtDuration==self.sender.info.duration,
+            'AVT/Sender duration (%s/%s)' % (avtDuration, self.sender.info.duration) )
+        self.log.FailUnless( self.senderDev, avtUri==self.sender.info.uri,
+            'AVT/Sender URI (%s/%s)' % (avtUri, self.sender.info.uri) )
+        self.log.FailUnless( self.senderDev, avtMetadata==self.sender.info.metadata,
+            'AVT/Sender metadata (%s/%s)' % (avtUri, self.sender.info.metadata) )
+
+        if self.rcvr:
+            self.log.FailUnless( self.rcvrDev, avtDuration==self.rcvr.info.duration,
+                'AVT/Receiver duration (%s/%s)' % (avtDuration, self.rcvr.info.duration) )
+            self.log.FailUnless( self.rcvrDev, avtUri==self.rcvr.info.uri,
+                'AVT/Receiver URI (%s/%s)' % (avtUri, self.rcvr.info.uri) )
+            self.log.FailUnless( self.rcvrDev, avtMetadata==self.rcvr.info.metadata,
+                'AVT/Receiver metadata (%s/%s)' % (avtMetadata, self.rcvr.info.metadata) )
+
+    def _TickTimerCb( self ):
+        """Called every second during playback to check still playing, time incrementing"""
+        avtSecs = 0
+        posn = self.mr.avt.avt.GetPositionInfo( InstanceID=0 )
+        if posn.has_key( 'RelTime' ):
+            avtSecs = self._ToSecs( posn['RelTime'] )
+        if avtSecs==self.prevAvtSecs:
+            self.stuck += 1
+        else:
+            self.stuck = 0
+        if self.stuck > 5:
+            self.log.Fail( self.mrDev, 'Playback time not incrementing' )
+            self.eop.set()
+
+        self.tickTimer = LogThread.Timer( 1, self._TickTimerCb )
+        self.tickTimer.start()
+
+    def _CheckPlayTime( self ):
+        """Check playback time as expected"""
+        if self.started:
+            meas = int( self.stopTime-self.startTime )
+            if self.playTime and self.playTime < self.mr.avt.currentTrackDuration:
+                exp = self.playTime
+            else:
+                exp = self.mr.avt.currentTrackDuration
+            self.log.CheckLimits( self.mrDev, 'GELE', meas, exp-1, exp+1, 'Measured vs expected playback time' )
+
     @staticmethod
     def _ToSecs( aTime ):
         """Convert string time passed in (hh:mm:ss) to integer seconds"""
         fields = aTime.split( ':' )
         return 3600*int( fields[0] ) + 60*int( fields[1] ) + int( fields[2] )
-    
-            
+
+
 if __name__ == '__main__':
-    
+
     BASE.Run( sys.argv )
-    
