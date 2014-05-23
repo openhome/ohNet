@@ -832,6 +832,11 @@ void OhmSender::RunUnicast()
                                         iSlaveList[slave].Replace(sender);
                                         iSlaveExpiry[slave] = Time::Now(iEnv) + kTimerExpiryTimeoutMs;
                                         iSlaveCount++;
+
+                                        Endpoint::EndpointBuf buf;
+                                        sender.AppendEndpoint(buf);
+                                        LOG(kSongcast, "OhmSender::RunUnicast new slave: %s (#%u)\n", buf.Ptr(), iSlaveCount);
+
                                         AutoMutex mutex(iMutexActive);
                                         SendListen(sender);
                                     }
@@ -847,8 +852,12 @@ void OhmSender::RunUnicast()
                             SendMetatext();
                         }
                         else if (header.MsgType() == OhmHeader::kMsgTypeListen) {
-                            LOG(kSongcast, "OhmSender::RunUnicast sending/listen\n");
                             Endpoint sender(iSocketOhm.Sender());
+
+                            Endpoint::EndpointBuf endptBuf;
+                            sender.AppendEndpoint(endptBuf);
+                            LOG(kSongcast, "OhmSender::RunUnicast sending/listen from %s\n", endptBuf.Ptr());
+
                             if (sender.Equals(iTargetEndpoint)) {
                                 iTimerExpiry->FireIn(kTimerExpiryTimeoutMs);
                                 if (CheckSlaveExpiry()) {
@@ -868,6 +877,8 @@ void OhmSender::RunUnicast()
                                         iSlaveExpiry[slave] = Time::Now(iEnv) + kTimerExpiryTimeoutMs;
                                         iSlaveCount++;
 
+                                        LOG(kSongcast, "OhmSender::RunUnicast new slave: %s (#%u)\n", endptBuf.Ptr(), iSlaveCount);
+
                                         AutoMutex mutex(iMutexActive);
                                         SendListen(sender);
                                         SendSlaveList();
@@ -878,20 +889,17 @@ void OhmSender::RunUnicast()
                             }
                         }
                         else if (header.MsgType() == OhmHeader::kMsgTypeLeave) {
-                            LOG(kSongcast, "OhmSender::RunUnicast sending/leave\n");
                             Endpoint sender(iSocketOhm.Sender());
+                            Endpoint::EndpointBuf endptBuf;
+                            sender.AppendEndpoint(endptBuf);
+                            LOG(kSongcast, "OhmSender::RunUnicast LEAVE from %s\n", endptBuf.Ptr());
                             if (sender.Equals(iTargetEndpoint) || sender.Equals(iSocketOhm.This())) {
                                 iTimerExpiry->Cancel();
                                 if (iSlaveCount == 0) {
-                                    if (sender.Equals(iTargetEndpoint)) {
-                                        AutoMutex mutex(iMutexActive);
-                                        SendLeave(sender);
-                                    }
                                     break;
                                 }
                                 else {
                                     AutoMutex mutex(iMutexActive);
-                                    SendLeave(sender);
                                     iTargetEndpoint.Replace(iSlaveList[--iSlaveCount]);
                                     iTimerExpiry->FireAt(iSlaveExpiry[iSlaveCount]);
                                     if (iSlaveCount > 0) {
@@ -961,6 +969,7 @@ void OhmSender::RunUnicast()
 
 void OhmSender::TimerAliveJoinExpired()
 {
+    LOG(kSongcast, "AliveJoin timer expired\n");
     AutoMutex mutex(iMutexActive);
     iActive = false;
     iAliveJoined = false;
@@ -1148,6 +1157,10 @@ void OhmSender::SendListen(const Endpoint& aEndpoint)
 void OhmSender::SendLeave(const Endpoint& aEndpoint)
 {
     // Leave message is sent to acknowledge a Leave sent from a receiver or slave
+    Endpoint::EndpointBuf buf;
+    aEndpoint.AppendEndpoint(buf);
+    LOG(kSongcast, "OhmSender::SendLeave to %s\n", buf.Ptr());
+
     OhmHeader header(OhmHeader::kMsgTypeLeave, 0);
     WriterBuffer writer(iTxBuffer);
     writer.Flush();
