@@ -247,7 +247,7 @@ protected:
      */
     CpiDevice* RefDeviceLocked(const Brx& aUdn);
     TBool StartRefresh();
-    void RefreshComplete();
+    void RefreshComplete(TBool aReportRemoved);
     void CancelRefresh();
 
     /**

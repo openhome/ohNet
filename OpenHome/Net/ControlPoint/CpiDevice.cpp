@@ -287,11 +287,16 @@ TBool CpiDeviceList::StartRefresh()
     return refreshAlreadyInProgress;
 }
 
-void CpiDeviceList::RefreshComplete()
+void CpiDeviceList::RefreshComplete(TBool aReportRemoved)
 {
     iRefreshLock.Wait();
-    iCpStack.DeviceListUpdater().QueueRefreshed(*this, iRefreshMap);
-    iRefreshMap.clear();
+    if (aReportRemoved) {
+        iCpStack.DeviceListUpdater().QueueRefreshed(*this, iRefreshMap);
+        iRefreshMap.clear();
+    }
+    else {
+        ClearMap(iRefreshMap);
+    }
     iRefreshing = false;
     iRefreshLock.Signal();
 }

@@ -372,6 +372,11 @@ void InitialisationParams::SetDvLpecServerPort(uint32_t aPort)
     iDvLpecServerPort = aPort;
 }
 
+void InitialisationParams::SetHostUdpIsLowQuality(TBool aLow)
+{
+    iHostUdpLowQuality = aLow;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -536,6 +541,20 @@ uint32_t InitialisationParams::DvLpecServerPort()
     return iDvLpecServerPort;
 }
 
+bool InitialisationParams::IsHostUdpLowQuality()
+{
+    return iHostUdpLowQuality;
+}
+
+#if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)
+/* Assume that all Apple products have poor quality networking.
+   This won't be the case for a wired Mac desktop but we'd need a way of signalling which
+   adapters are wired from OsNetworkListAdapters to do this... */
+# define HOST_UDP_LOW_QUALITY_DEFAULT true
+#else
+# define HOST_UDP_LOW_QUALITY_DEFAULT false
+#endif
+
 InitialisationParams::InitialisationParams()
     : iTcpConnectTimeoutMs(3000)
     , iMsearchTimeSecs(3)
@@ -559,6 +578,7 @@ InitialisationParams::InitialisationParams()
     , iEnableBonjour(false)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
+    , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);

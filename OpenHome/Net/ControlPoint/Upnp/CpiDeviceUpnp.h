@@ -90,6 +90,7 @@ private:
     Invocable* iInvocable;
     Semaphore iSemReady;
     TBool iRemoved;
+    TBool iHostUdpIsLowQuality;
     CpiDeviceUpnp* iNewLocation;
     XmlFetch* iXmlCheck;
     friend class Invocable;
@@ -153,12 +154,14 @@ private:
     static const TUint kMaxMsearchRetryForNewAdapterSecs = 60;
     static const TUint kResumeDelayMs = 2 * 1000;
     static const TUint kRefreshRetries = 4;
+    Environment& iEnv;
     TIpAddress iInterface;
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
     TUint iInterfaceChangeListenerId;
     TUint iSubnetListChangeListenerId;
     TBool iStarted;
+    TBool iNoRemovalsFromRefresh;
     Timer* iRefreshTimer;
     Timer* iResumedTimer;
     TUint iRefreshRepeatCount;

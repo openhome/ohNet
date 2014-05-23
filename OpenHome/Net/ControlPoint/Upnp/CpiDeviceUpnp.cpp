@@ -42,8 +42,10 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     , iNewLocation(NULL)
     , iXmlCheck(NULL)
 {
+    Environment& env = aCpStack.Env();
+    iHostUdpIsLowQuality = env.InitParams()->IsHostUdpLowQuality();
     iDevice = new CpiDevice(aCpStack, aUdn, *this, *this, this);
-    iTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
+    iTimer = new Timer(env, MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
     UpdateMaxAge(aMaxAgeSecs);
     iInvocable = new Invocable(*this);
 }
@@ -234,8 +236,15 @@ CpiDeviceUpnp::~CpiDeviceUpnp()
 
 void CpiDeviceUpnp::TimerExpired()
 {
-    iDevice->SetExpired(true);
-    iDeviceList.Remove(Udn());
+    if (iHostUdpIsLowQuality) {
+        LOG(kDevice, "TimerExpired ignored for device ");
+        LOG(kDevice, Udn());
+        LOG(kDevice, "\n");
+    }
+    else {
+        iDevice->SetExpired(true);
+        iDeviceList.Remove(Udn());
+    }
 }
 
 void CpiDeviceUpnp::GetServiceUri(Uri& aUri, const TChar* aType, const ServiceType& aServiceType)
@@ -396,13 +405,15 @@ void CpiDeviceUpnp::Invocable::InvokeAction(Invocation& aInvocation)
 CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
     : CpiDeviceList(aCpStack, aAdded, aRemoved)
     , iSsdpLock("DLSM")
+    , iEnv(aCpStack.Env())
     , iStarted(false)
+    , iNoRemovalsFromRefresh(false)
 {
     NetworkAdapterList& ifList = aCpStack.Env().NetworkAdapterList();
-    AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiDeviceListUpnp ctor");
+    AutoNetworkAdapterRef ref(iEnv, "CpiDeviceListUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
-    iRefreshTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
-    iResumedTimer = new Timer(aCpStack.Env(), MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete));
+    iRefreshTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
+    iResumedTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete));
     iRefreshRepeatCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
@@ -520,8 +531,7 @@ void CpiDeviceListUpnp::Refresh()
     Mutex& lock = iCpStack.Env().Mutex();
     lock.Wait();
     /* Always attempt multiple refreshes.
-        Poor quality wifi (particularly on iOS) means that we risk MSEARCHes not being
-        sent otherwise, resulting in all devices being removed. */
+        Poor quality wifi (particularly on iOS) means that we risk MSEARCHes not being sent otherwise. */
     iRefreshRepeatCount = kRefreshRetries;
     lock.Signal();
     DoRefresh();
@@ -584,7 +594,8 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
 void CpiDeviceListUpnp::RefreshTimerComplete()
 {
     if (--iRefreshRepeatCount == 0) {
-        RefreshComplete();
+        RefreshComplete(!iNoRemovalsFromRefresh);
+        iNoRemovalsFromRefresh = false;
     }
     else {
         DoRefresh();
@@ -593,6 +604,7 @@ void CpiDeviceListUpnp::RefreshTimerComplete()
 
 void CpiDeviceListUpnp::ResumedTimerComplete()
 {
+    iNoRemovalsFromRefresh = iEnv.InitParams()->IsHostUdpLowQuality();
     Refresh();
 }
 
