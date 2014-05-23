@@ -576,9 +576,9 @@ InitialisationParams::InitialisationParams()
     , iDvUpnpWebServerPort(0)
     , iDvWebSocketPort(0)
     , iEnableBonjour(false)
+    , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
-    , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);
