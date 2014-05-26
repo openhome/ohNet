@@ -281,7 +281,7 @@ Msg* SuitePruner::Pull()
     switch (msgType)
     {
     case EMsgMode:
-        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+        return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);

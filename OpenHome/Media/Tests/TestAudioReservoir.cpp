@@ -285,7 +285,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
         break;
     case EMsgTrack:
     {

@@ -274,6 +274,8 @@ private:
     TBool iPullable;
 };
 
+class IClockPuller;
+
 class MsgMode : public Msg
 {
     friend class MsgFactory;
@@ -282,8 +284,9 @@ public:
     const Brx& Mode() const;
     TBool SupportsLatency() const;
     TBool IsRealTime() const;
+    IClockPuller* ClockPuller() const;
 private:
-    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime);
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -291,6 +294,7 @@ private:
     BwsMode iMode;
     TBool iSupportsLatency;
     TBool iIsRealTime;
+    IClockPuller* iClockPuller;
 };
 
 class MsgTrack : public Msg
@@ -962,7 +966,7 @@ public:
                TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
                TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
     //
-    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);

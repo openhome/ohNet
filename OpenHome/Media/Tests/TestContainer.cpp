@@ -356,7 +356,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case ENull:
         return NULL;
     case EMsgMode:
-        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true);
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, NULL);
         iLastMsgType = EMsgMode;
         break;
     case EMsgTrack:

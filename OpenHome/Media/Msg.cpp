@@ -750,17 +750,24 @@ TBool MsgMode::IsRealTime() const
     return iIsRealTime;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime)
+IClockPuller* MsgMode::ClockPuller() const
+{
+    return iClockPuller;
+}
+
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller)
 {
     iMode.Replace(aMode);
     iSupportsLatency = aSupportsLatency;
     iIsRealTime = aIsRealTime;
+    iClockPuller = aClockPuller;
 }
 
 void MsgMode::Clear()
 {
     iMode.Replace(Brx::Empty());
     iSupportsLatency = iIsRealTime = false;
+    iClockPuller = NULL;
 }
 
 Msg* MsgMode::Process(IMsgProcessor& aProcessor)
@@ -2302,10 +2309,10 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     iNextFlushId = MsgFlush::kIdInvalid + 1;
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime);
+    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPuller);
     return msg;
 }
 

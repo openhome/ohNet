@@ -22,7 +22,7 @@ Supply::~Supply()
 
 void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
 {
-    MsgMode* msg = iMsgFactory.CreateMsgMode(aMode, aSupportsLatency, aRealTime);
+    MsgMode* msg = iMsgFactory.CreateMsgMode(aMode, aSupportsLatency, aRealTime, NULL);
     iDownStreamElement.Push(msg);
 }
 
