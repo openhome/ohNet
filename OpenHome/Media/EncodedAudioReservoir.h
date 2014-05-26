@@ -11,6 +11,7 @@ class EncodedAudioReservoir : public AudioReservoir
 {
 public:
     EncodedAudioReservoir(TUint aMaxSize);
+    TUint SizeInBytes() const;
 private: // from AudioReservoir
     TUint Size() const;
 private: // from MsgReservoir

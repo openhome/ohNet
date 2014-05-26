@@ -442,5 +442,13 @@ void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
     iLock.Signal();
     if (notify) {
         NotifyStatus();
+#if 1
+        if (aBuffering && !iWaiting) {
+            const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
+            const TUint decodedMs = iDecodedAudioReservoir->SizeInJiffies() / Jiffies::kJiffiesPerMs;
+            const TUint gorgedMs = iGorger->SizeInJiffies() / Jiffies::kJiffiesPerMs;
+            Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, gorgedMs=%u\n", encodedBytes, decodedMs, gorgedMs);
+        }
+#endif
     }
 }

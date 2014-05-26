@@ -18,6 +18,11 @@ DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aCloc
 {
 }
 
+TUint DecodedAudioReservoir::SizeInJiffies() const
+{
+    return Jiffies();
+}
+
 TUint DecodedAudioReservoir::Size() const
 {
     return Jiffies();
