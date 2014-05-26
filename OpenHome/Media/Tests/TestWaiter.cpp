@@ -20,7 +20,7 @@ class SuiteWaiter : public SuiteUnitTest, private IPipelineElementUpstream
                   , private IWaiterObserver, private IStreamHandler
                   , private IMsgProcessor
 {
-    static const TUint kRampDuration = Jiffies::kJiffiesPerMs * 20;
+    static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
 public:
@@ -499,7 +499,7 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
     PullNext(EMsgAudioPcm);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);

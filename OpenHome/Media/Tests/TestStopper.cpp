@@ -19,7 +19,7 @@ namespace Media {
 
 class SuiteStopper : public SuiteUnitTest, private IPipelineElementUpstream, private IStopperObserver, private IStreamHandler, private IMsgProcessor
 {
-    static const TUint kRampDuration = Jiffies::kJiffiesPerMs * 20;
+    static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kExpectedFlushId = 5;
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
@@ -432,7 +432,7 @@ void SuiteStopper::TestMsgsPassWhilePlaying()
     PullNext(EMsgDecodedStream);
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     PullNext(EMsgSilence);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
@@ -618,7 +618,7 @@ void SuiteStopper::TestStopFromPlay()
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     PullNext(EMsgWait);
@@ -679,7 +679,7 @@ void SuiteStopper::TestPlayNoFlushes()
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));

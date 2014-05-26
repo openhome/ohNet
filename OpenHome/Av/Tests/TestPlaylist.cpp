@@ -88,7 +88,7 @@ private:
 class SuitePlaylist : public SuiteUnitTest, private IPipelineObserver
 {
     static const TUint kNumTracks = 4;
-    static const TUint kDriverMaxJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kDriverMaxJiffies = Jiffies::kPerMs * 5;
     static const TChar* kFmtTone;
 public:
     SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack);
@@ -224,7 +224,7 @@ TUint DummyDriver::MarkEnd()
     iLock.Wait();
     ASSERT(iCountJiffies);
     iCountJiffies = false;
-    TUint milliSecs = (TUint)(iJiffies / Jiffies::kJiffiesPerMs);
+    TUint milliSecs = (TUint)(iJiffies / Jiffies::kPerMs);
     iJiffies = 0;
     iLock.Signal();
     return milliSecs;

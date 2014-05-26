@@ -16,7 +16,7 @@ namespace Media {
 
 class SuiteGorger : public SuiteUnitTest, private IPipelineElementUpstream, private IStreamHandler, private IMsgProcessor
 {
-    static const TUint kGorgeSize = Jiffies::kJiffiesPerMs * 100; // production code will likely use a much larger size
+    static const TUint kGorgeSize = Jiffies::kPerMs * 100; // production code will likely use a much larger size
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
     static const Brn kModeRealTime;
@@ -301,7 +301,7 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     iPendingMsgs.push_back(CreateDecodedStream());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     iPendingMsgs.push_back(CreateAudio());
-    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 3));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 3));
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgWait());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());

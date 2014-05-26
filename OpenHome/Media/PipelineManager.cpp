@@ -20,7 +20,7 @@ PipelineManager::PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFact
 {
     iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver, aDriverMaxAudioBytes);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kJiffiesPerMs);
+    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }

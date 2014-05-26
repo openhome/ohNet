@@ -98,7 +98,7 @@ private:
 
 class SuiteFiller : public Suite, private IPipelineIdTracker, private IStreamPlayObserver
 {
-    static const TUint kDefaultLatency = Jiffies::kJiffiesPerMs * 150;
+    static const TUint kDefaultLatency = Jiffies::kPerMs * 150;
 public:
     SuiteFiller();
     ~SuiteFiller();

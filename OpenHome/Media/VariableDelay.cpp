@@ -164,7 +164,7 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 
     iDelayAdjustment += (TInt)(delayJiffies - iDelayJiffies);
     iDelayJiffies = delayJiffies;
-    //Log::Print("VariableDelay: delay=%u, adjustment=%d\n", iDelayJiffies/Jiffies::kJiffiesPerMs, iDelayAdjustment/(TInt)Jiffies::kJiffiesPerMs);
+    //Log::Print("VariableDelay: delay=%u, adjustment=%d\n", iDelayJiffies/Jiffies::kPerMs, iDelayAdjustment/(TInt)Jiffies::kJiffiesPerMs);
     switch (iStatus)
     {
     case EStarting:

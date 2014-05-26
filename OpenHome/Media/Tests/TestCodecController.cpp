@@ -433,7 +433,7 @@ Msg* SuiteCodecController::CreateAudio(TBool aValidHeader)
     MsgAudioEncoded* audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
 
     TUint samples = dataBytes / (kNumChannels*kBytesPerSample);
-    TUint jiffiesPerSample = Jiffies::kJiffiesPerSecond / kSampleRate;
+    TUint jiffiesPerSample = Jiffies::kPerSecond / kSampleRate;
     iTrackOffset += samples * jiffiesPerSample;
     iTrackOffsetBytes += dataBytes;
     return audio;

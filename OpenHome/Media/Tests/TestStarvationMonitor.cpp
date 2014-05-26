@@ -23,9 +23,9 @@ class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, p
     static const TUint kMsgAudioPcmCount  = 2048;
     static const TUint kMsgSilenceCount   = 128;
 
-    static const TUint kRegularSize         = Jiffies::kJiffiesPerMs * 100;
-    static const TUint kStarvationThreshold = Jiffies::kJiffiesPerMs * 40;
-    static const TUint kRampUpSize          = Jiffies::kJiffiesPerMs * 50;
+    static const TUint kRegularSize         = Jiffies::kPerMs * 100;
+    static const TUint kStarvationThreshold = Jiffies::kPerMs * 40;
+    static const TUint kRampUpSize          = Jiffies::kPerMs * 50;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;

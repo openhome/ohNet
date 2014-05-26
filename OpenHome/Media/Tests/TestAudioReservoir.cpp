@@ -23,7 +23,7 @@ class SuiteAudioReservoir : public Suite, private IMsgProcessor, private IClockP
     static const TUint kMsgAudioPcmCount  = 512;
     static const TUint kMsgSilenceCount   = 1;
 
-    static const TUint kReservoirSize = Jiffies::kJiffiesPerMs * 500;
+    static const TUint kReservoirSize = Jiffies::kPerMs * 500;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
@@ -100,7 +100,7 @@ class SuiteReservoirHistory : public Suite, private IMsgProcessor
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
     static const TUint kBitDepth = 16;
-    static const TUint kReservoirSize = Jiffies::kJiffiesPerMs * 1000;
+    static const TUint kReservoirSize = Jiffies::kPerMs * 1000;
     static const TUint kMaxHistorySamples = 10;
     static const TUint kTotalHistoryUpdates = kMaxHistorySamples * 2;
 public:
@@ -276,7 +276,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
     case EMsgSilence:
     {
-        MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+        MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
         shouldBlock = (iReservoir->Size() + audio->Jiffies() >= kReservoirSize);
         msg = audio;
         break;
@@ -295,7 +295,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
         break;
     case EMsgDelay:
-        msg = iMsgFactory->CreateMsgDelay(Jiffies::kJiffiesPerMs * 5);
+        msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, NULL);
@@ -477,7 +477,7 @@ void SuiteReservoirHistory::Test()
     while (!iStopAudioGeneration) {
         MsgAudio* audio;
         if (pcmMsgs == 0) {
-            audio = iMsgFactory->CreateMsgSilence(400 * Jiffies::kJiffiesPerMs);
+            audio = iMsgFactory->CreateMsgSilence(400 * Jiffies::kPerMs);
             pcmMsgs = kPcmMsgCount;
         }
         else {

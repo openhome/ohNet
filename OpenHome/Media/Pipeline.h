@@ -51,17 +51,17 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountQuit            = 1;
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
-    static const TUint kDecodedReservoirSize                 = Jiffies::kJiffiesPerMs * 1000;
-    static const TUint kSeekerRampDuration                   = Jiffies::kJiffiesPerMs * 20;
-    static const TUint kVariableDelayRampDuration            = Jiffies::kJiffiesPerMs * 20;
-    static const TUint kSkipperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
-    static const TUint kWaiterRampDuration                   = Jiffies::kJiffiesPerMs * 500;
-    static const TUint kStopperRampDuration                  = Jiffies::kJiffiesPerMs * 500;
-    static const TUint kGorgerDuration                       = Jiffies::kJiffiesPerMs * 1000;
-    static const TUint kStarvationMonitorNormalSize          = Jiffies::kJiffiesPerMs * 30;
-    static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kJiffiesPerMs * 20;
-    static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kJiffiesPerMs * 100;
-    static const TUint kSenderMinLatency                     = Jiffies::kJiffiesPerMs * 150;
+    static const TUint kDecodedReservoirSize                 = Jiffies::kPerMs * 1000;
+    static const TUint kSeekerRampDuration                   = Jiffies::kPerMs * 20;
+    static const TUint kVariableDelayRampDuration            = Jiffies::kPerMs * 20;
+    static const TUint kSkipperRampDuration                  = Jiffies::kPerMs * 500;
+    static const TUint kWaiterRampDuration                   = Jiffies::kPerMs * 500;
+    static const TUint kStopperRampDuration                  = Jiffies::kPerMs * 500;
+    static const TUint kGorgerDuration                       = Jiffies::kPerMs * 1000;
+    static const TUint kStarvationMonitorNormalSize          = Jiffies::kPerMs * 30;
+    static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kPerMs * 20;
+    static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kPerMs * 100;
+    static const TUint kSenderMinLatency                     = Jiffies::kPerMs * 150;
 public:
     Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes);
     virtual ~Pipeline();

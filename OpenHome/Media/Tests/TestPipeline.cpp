@@ -52,7 +52,7 @@ class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProce
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
     static const TUint kNumChannels = 2;
-    static const TUint kDriverMaxAudioJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kDriverMaxAudioJiffies = Jiffies::kPerMs * 5;
 public:
     SuitePipeline();
 private: // from Suite
@@ -414,7 +414,7 @@ void SuitePipeline::PullUntilEnd(EState aState)
         }
         // Introduce a delay to avoid the risk of this thread pulling data faster than the supplier can push it
         // ...which would cause the starvation monitor to kick in at unpredictable times.
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kJiffiesPerMs);
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
         switch (aState)
         {
         case ERampDownDeferred:

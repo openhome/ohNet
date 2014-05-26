@@ -43,7 +43,7 @@ private:
 
 class TestProtocol : private IPipelineObserver
 {
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
     static const TUint kSeekStepSeconds = 10;
 public:
     TestProtocol(Environment& aEnv, const Brx& aUrl);

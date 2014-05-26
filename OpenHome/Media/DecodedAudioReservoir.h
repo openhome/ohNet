@@ -29,7 +29,7 @@ private:
     void DoProcessMsgIn();
     Msg* DoProcessMsgOut(MsgAudio* aMsg);
 private:
-    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kJiffiesPerSecond;
+    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond;
     IClockPuller& iClockPuller;
     Mutex iLock;
     TUint64 iJiffiesUntilNextUsageReport;

@@ -112,14 +112,14 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iSampleRate(0)
     , iNumChannels(0)
     , iJiffiesToSend(aMaxMsgSizeJiffies)
-    , iTimerFrequencyMs(aMaxMsgSizeJiffies / Jiffies::kJiffiesPerMs)
+    , iTimerFrequencyMs(aMaxMsgSizeJiffies / Jiffies::kPerMs)
     , iLastTimeUs(0)
     , iTimeOffsetUs(0)
     , iPlayable(NULL)
     , iAudioSent(false)
     , iQuit(false)
 {
-    ASSERT(aMaxMsgSizeJiffies % Jiffies::kJiffiesPerMs == 0);
+    ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
     iOhmSenderDriver = new Av::OhmSenderDriver(iEnv);
 
     Bws<64> udn("Driver-");

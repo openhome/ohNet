@@ -101,7 +101,7 @@ private:
 
 class TestProtocolRaop : private IPipelineObserver, private IStreamPlayObserver
 {
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
 public:
     TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
     virtual ~TestProtocolRaop();

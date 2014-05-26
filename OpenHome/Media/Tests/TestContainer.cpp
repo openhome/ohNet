@@ -368,7 +368,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgTrack;
         break;
     case EMsgDelay:
-        msg = iMsgFactory.CreateMsgDelay(Jiffies::kJiffiesPerMs * 20);
+        msg = iMsgFactory.CreateMsgDelay(Jiffies::kPerMs * 20);
         iLastMsgType = EMsgDelay;
         break;
     case EMsgEncodedStream:

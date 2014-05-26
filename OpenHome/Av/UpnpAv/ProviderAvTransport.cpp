@@ -427,7 +427,7 @@ void ProviderAvTransport::NotifyTime(TUint aSeconds, TUint /*aTrackDurationSecon
 
 void ProviderAvTransport::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
-    const TUint trackDurationSeconds = (TUint)(aStreamInfo.TrackLength() / Jiffies::kJiffiesPerSecond);
+    const TUint trackDurationSeconds = (TUint)(aStreamInfo.TrackLength() / Jiffies::kPerSecond);
     iLock.Wait();
     SecondsToTimeString(trackDurationSeconds, iTrackDuration);
     QueueStateUpdate();

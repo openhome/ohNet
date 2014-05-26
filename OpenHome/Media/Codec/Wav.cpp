@@ -151,7 +151,7 @@ TBool CodecWav::TrySeek(TUint aStreamId, TUint64 aSample)
     if (!iController->TrySeek(aStreamId, iTrackStart + bytePos)) {
         return false;
     }
-    iTrackOffset = ((TUint64)aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
     iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
     SendMsgDecodedStream(aSample);
     return true;
@@ -274,7 +274,7 @@ void CodecWav::ProcessDataChunk()
         THROW(CodecStreamCorrupt);
     }
     const TUint numSamples = iAudioBytesTotal / (iNumChannels * (iBitDepth/8));
-    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kPerSecond) / iSampleRate;
 }
 
 TUint CodecWav::FindChunk(const Brx& aChunkId)

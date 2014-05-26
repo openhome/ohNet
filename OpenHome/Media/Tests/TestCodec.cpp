@@ -56,7 +56,7 @@ TUint AudioFileDescriptor::Samples() const
 
 TUint64 AudioFileDescriptor::Jiffies() const
 {
-    const TUint jiffiesPerSecond = Jiffies::kJiffiesPerSecond;
+    const TUint jiffiesPerSecond = Jiffies::kPerSecond;
     TUint64 jiffies = 0;
     TUint wholeSecs = (iSamples && iSampleRate) ? iSamples/iSampleRate : 0;
     TUint remainingSamples = iSamples - iSampleRate*wholeSecs;
@@ -572,7 +572,7 @@ void SuiteCodecSeek::Setup()
 TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos)
 {
     TUint durationInSecs = aSeekInit + (aDuration-aSeekPos);
-    TUint64 jiffies = durationInSecs * Jiffies::kJiffiesPerSecond;
+    TUint64 jiffies = durationInSecs * Jiffies::kPerSecond;
     return jiffies;
 }
 
@@ -590,8 +590,8 @@ void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec)
         // Vorbis seeking is isn't particularly accurate
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
-        TEST(iJiffies >= expectedJiffies - Jiffies::kJiffiesPerSecond);   // Lower bound.
-        TEST(iJiffies <= expectedJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
+        TEST(iJiffies >= expectedJiffies - Jiffies::kPerSecond);   // Lower bound.
+        TEST(iJiffies <= expectedJiffies + Jiffies::kPerSecond);   // Upper bound.
     }
 }
 
@@ -686,7 +686,7 @@ void SuiteCodecSeekFromStart::TestSeekingFromStart(TUint aDuration, TUint aSeekP
 
         // Seeking isn't entirely accurate, so check within a bounded range of +/- 1 second.
         TEST(iJiffies >= 0);   // Lower bound.
-        TEST(iJiffies <= expectedJiffies + Jiffies::kJiffiesPerSecond);   // Upper bound.
+        TEST(iJiffies <= expectedJiffies + Jiffies::kPerSecond);   // Upper bound.
     }
 }
 
@@ -849,7 +849,7 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
     iCodec = iFiles[iFileNum].Codec();
     iFileNum++;
 
-    const TUint jiffiesPerSine = Jiffies::kJiffiesPerSecond / SuiteCodecStream::kFrequencyHz;
+    const TUint jiffiesPerSine = Jiffies::kPerSecond / SuiteCodecStream::kFrequencyHz;
     const TUint sineWaves = (TUint)jiffies/jiffiesPerSine;
     const TUint expectedZeroCrossings = sineWaves*2 - 1;
 

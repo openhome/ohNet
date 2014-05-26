@@ -269,7 +269,7 @@ Msg* SuitePruner::Pull()
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
     static const TUint kBitRate       = kBitDepth * kSampleRate;
-    static const TUint64 kTrackLength = Jiffies::kJiffiesPerSecond * 60;
+    static const TUint64 kTrackLength = Jiffies::kPerSecond * 60;
     static const TBool kLossless      = true;
     static const TBool kSeekable      = false;
     static const TBool kLive          = false;
@@ -320,7 +320,7 @@ Msg* SuitePruner::Pull()
     }
     case EMsgSilence:
     {
-        return iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 5);
+        return iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 5);
     }
     case EMsgQuit:
         return iMsgFactory->CreateMsgQuit();

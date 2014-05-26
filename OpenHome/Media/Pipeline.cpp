@@ -318,7 +318,7 @@ IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSen
 
 TUint Pipeline::SenderMinLatencyMs() const
 {
-    return kSenderMinLatency / Jiffies::kJiffiesPerMs;
+    return kSenderMinLatency / Jiffies::kPerMs;
 }
 
 void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
@@ -445,8 +445,8 @@ void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
 #if 1
         if (aBuffering && !iWaiting) {
             const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
-            const TUint decodedMs = iDecodedAudioReservoir->SizeInJiffies() / Jiffies::kJiffiesPerMs;
-            const TUint gorgedMs = iGorger->SizeInJiffies() / Jiffies::kJiffiesPerMs;
+            const TUint decodedMs = iDecodedAudioReservoir->SizeInJiffies() / Jiffies::kPerMs;
+            const TUint gorgedMs = iGorger->SizeInJiffies() / Jiffies::kPerMs;
             Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, gorgedMs=%u\n", encodedBytes, decodedMs, gorgedMs);
         }
 #endif
