@@ -54,7 +54,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize, iClockPuller.DecodedReservoirHistory());
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
@@ -91,7 +91,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
-                                               kStarvationMonitorRampUpDuration, iClockPuller.StarvationMonitorHistory());
+                                               kStarvationMonitorRampUpDuration);
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iMsgFactory, *iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");

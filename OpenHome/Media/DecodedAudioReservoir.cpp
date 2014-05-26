@@ -3,18 +3,22 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/ClockPuller.h>
 
+#include <limits.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
 // DecodedAudioReservoir
 
-DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aClockPuller)
+DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize)
     : AudioReservoir(aMaxSize)
-    , iClockPuller(aClockPuller)
+    , iClockPuller(NULL)
     , iLock("DCAR")
+    , iMaxJiffies(aMaxSize)
     , iJiffiesUntilNextUsageReport(kUtilisationSamplePeriodJiffies)
     , iThreadExcludeBlock(NULL)
-    , iTrackIsPullable(false)
+    , iTrackId(Track::kIdNone)
+    , iStreamId(UINT_MAX)
 {
 }
 
@@ -48,13 +52,34 @@ void DecodedAudioReservoir::DoProcessMsgIn()
     }
 }
 
+Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
+{
+    if (iClockPuller != NULL) {
+        iClockPuller->StopDecodedReservoir();
+    }
+    iClockPuller = aMsg->ClockPuller();
+    if (iClockPuller != NULL) {
+        iClockPuller->StartDecodedReservoir(iMaxJiffies);
+    }
+    iTrackId = Track::kIdNone;
+    iStreamId = UINT_MAX;
+    return aMsg;
+}
+
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgTrack* aMsg)
 {
-    iTrackIsPullable = aMsg->Track().Pullable();
-    if (iTrackIsPullable) {
-        iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
+    iTrackId = aMsg->IdPipeline();
+    iStreamId = UINT_MAX;
+    return aMsg;
+}
+
+Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
+{
+    iStreamId = aMsg->StreamInfo().StreamId();
+    if (iClockPuller != NULL) {
+        iClockPuller->NewStreamDecodedReservoir(iTrackId, iStreamId);
     }
-    iClockPuller.Stop();
+    iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     return aMsg;
 }
 
@@ -70,10 +95,9 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgSilence* aMsg)
 
 Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
 {
-    if (!iTrackIsPullable) {
+    if (iClockPuller == NULL) {
         return aMsg;
     }
-    // FIXME - should maybe take different action if we're flushing (currently held as private state in parent)
     if (iJiffiesUntilNextUsageReport < aMsg->Jiffies()) {
         MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextUsageReport));
         /* calling EnqueueAtHead risks blocking the pulling thread (if the pushing thread
@@ -89,7 +113,7 @@ Msg* DecodedAudioReservoir::DoProcessMsgOut(MsgAudio* aMsg)
     }
     iJiffiesUntilNextUsageReport -= aMsg->Jiffies();
     if (iJiffiesUntilNextUsageReport == 0) {
-        iClockPuller.NotifySize(Jiffies());
+        iClockPuller->NotifySizeDecodedReservoir(Jiffies());
         iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     }
 

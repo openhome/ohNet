@@ -32,7 +32,7 @@ class StarvationMonitor : private MsgReservoir, public IPipelineElementUpstream
     friend class SuiteStarvationMonitor;
 public:
     StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                      TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, IClockPuller& aClockPuller);
+                      TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -70,7 +70,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
-    IClockPuller& iClockPuller;
+    IClockPuller* iClockPuller;
     ThreadFunctor* iThread;
     TUint iNormalMax;
     TUint iStarvationThreshold;

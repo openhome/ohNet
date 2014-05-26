@@ -161,7 +161,6 @@ private:
     PreDriver* iPreDriver;
     Logger* iLoggerPreDriver;
     IPipelineElementUpstream* iPipelineEnd;
-    ClockPuller iClockPuller;
     EStatus iState;
     TBool iBuffering;
     TBool iWaiting;

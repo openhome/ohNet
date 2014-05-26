@@ -15,12 +15,14 @@ class DecodedAudioReservoir : public AudioReservoir
 {
     friend class SuiteReservoirHistory;
 public:
-    DecodedAudioReservoir(TUint aMaxSize, IClockPuller& aClockPuller);
+    DecodedAudioReservoir(TUint aMaxSize);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
     void ProcessMsgIn(MsgAudioPcm* aMsg);
     void ProcessMsgIn(MsgSilence* aMsg);
+    Msg* ProcessMsgOut(MsgMode* aMsg);
     Msg* ProcessMsgOut(MsgTrack* aMsg);
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
     Msg* ProcessMsgOut(MsgSilence* aMsg);
 private: // from AudioReservoir
@@ -30,11 +32,13 @@ private:
     Msg* DoProcessMsgOut(MsgAudio* aMsg);
 private:
     static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond;
-    IClockPuller& iClockPuller;
+    IClockPuller* iClockPuller;
     Mutex iLock;
+    TUint iMaxJiffies;
     TUint64 iJiffiesUntilNextUsageReport;
     Thread* iThreadExcludeBlock;
-    TBool iTrackIsPullable;
+    TUint iTrackId;
+    TUint iStreamId;
 };
 
 } // namespace Media
