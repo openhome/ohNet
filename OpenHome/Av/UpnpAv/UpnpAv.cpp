@@ -103,7 +103,7 @@ void SourceUpnpAv::SetTrack(const Brx& aUri, const Brx& aMetaData)
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }
-        iTrack = iUriProvider.SetTrack(aUri, aMetaData, false);
+        iTrack = iUriProvider.SetTrack(aUri, aMetaData);
 
         const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         if (iTrack == NULL) {

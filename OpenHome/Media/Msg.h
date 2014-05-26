@@ -260,18 +260,14 @@ public:
     const Brx& Uri() const;
     const Brx& MetaData() const;
     TUint Id() const;
-    TAny* UserData() const;
-    TBool Pullable() const;
 private:
-    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable);
+    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId);
 private: // from Allocated
     void Clear();
 private:
     BwsTrackUri iUri;
     BwsTrackMetaData iMetaData;
     TUint iId;
-    TAny* iUserData;
-    TBool iPullable;
 };
 
 class IClockPuller;
@@ -948,7 +944,7 @@ class TrackFactory
 {
 public:
     TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount);
-    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData, TBool aPullable);
+    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData);
 private:
     Allocator<Track> iAllocatorTrack;
     Mutex iLock;

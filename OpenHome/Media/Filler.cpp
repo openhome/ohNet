@@ -58,7 +58,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& a
     , iDefaultDelay(aDefaultDelay)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
 {
-    iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    iNullTrack = aTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
 }
 
 Filler::~Filler()

@@ -187,7 +187,7 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, NULL);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
         Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
         track->RemoveRef();
         return msg;

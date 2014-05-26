@@ -138,9 +138,9 @@ DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
 {
-    iTracks[0] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty(), NULL, false);
-    iTracks[1] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty(), NULL, false);
-    iTracks[2] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty(), NULL, false);
+    iTracks[0] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file1"), Brx::Empty());
+    iTracks[1] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file2"), Brx::Empty());
+    iTracks[2] = iTrackFactory.CreateTrack(Brn("http://addr:port/path/file3"), Brx::Empty());
 }
 
 DummyUriProvider::~DummyUriProvider()

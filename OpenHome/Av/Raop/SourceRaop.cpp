@@ -131,7 +131,7 @@ void SourceRaop::Activate()
             iTrack->RemoveRef();
             iTrack = NULL;
         }
-        iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
+        iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
         const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
         iLock.Signal();
         iPipeline.StopPrefetch(iUriProvider.Mode(), trackId);
@@ -194,7 +194,7 @@ void SourceRaop::StartNewTrack()
         iTrack = NULL;
     }
 
-    iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite, true);
+    iTrack = iUriProvider.SetTrack(iNextTrackUri, iDidlLite);
     const TUint trackId = (iTrack==NULL? Track::kIdNone : iTrack->Id());
     iPipeline.Begin(iUriProvider.Mode(), trackId);
 

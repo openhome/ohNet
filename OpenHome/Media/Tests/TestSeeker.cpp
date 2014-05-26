@@ -362,7 +362,7 @@ void SuiteSeeker::PullNext(EMsgType aExpectedMsg)
 
 Msg* SuiteSeeker::CreateTrack()
 {
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
     track->RemoveRef();
     return msg;

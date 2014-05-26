@@ -26,7 +26,7 @@ UriProviderSingleTrack::~UriProviderSingleTrack()
     }
 }
 
-Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData, TBool aPullable)
+Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
     if (iTrack != NULL) {
         iTrack->RemoveRef();
@@ -35,7 +35,7 @@ Track* UriProviderSingleTrack::SetTrack(const Brx& aUri, const Brx& aMetaData, T
         iTrack = NULL;
     }
     else {
-        iTrack = iTrackFactory.CreateTrack(aUri, aMetaData, NULL, aPullable);
+        iTrack = iTrackFactory.CreateTrack(aUri, aMetaData);
         iTrack->AddRef();
     }
     return iTrack;

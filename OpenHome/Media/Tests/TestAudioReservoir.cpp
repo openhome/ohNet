@@ -298,7 +298,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         break;
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
         msg = iMsgFactory->CreateMsgTrack(*track, 0);
         track->RemoveRef();
     }
@@ -470,7 +470,7 @@ void SuiteReservoirHistory::Test()
     iThread->Start();
     iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
     iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this));
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, true);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0);
     iTrackId = msgTrack->IdPipeline();
     track->RemoveRef();

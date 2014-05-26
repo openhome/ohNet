@@ -284,7 +284,7 @@ Msg* SuitePruner::Pull()
         return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
         Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
         track->RemoveRef();
         iNextTrackId++;

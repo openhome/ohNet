@@ -72,7 +72,7 @@ void TestRadio::Run(PresetDatabase& aDb)
             TUint ignore;
             aDb.GetPreset(index, ignore, uri);
             iPipeline->Stop();
-            Track* track = iUriProvider->SetTrack(uri, Brx::Empty(), true);
+            Track* track = iUriProvider->SetTrack(uri, Brx::Empty());
             iPipeline->Begin(iUriProvider->Mode(), track->Id());
             iPipeline->Play();
         }

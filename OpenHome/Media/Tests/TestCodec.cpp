@@ -211,7 +211,7 @@ TUint TestCodecFiller::StreamId()
 
 void TestCodecFiller::Run()
 {
-    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty());
     TBool success = iProtocolManager->DoStream(*track);
     track->RemoveRef();
     // send a msgquit here in case of trying to stream an invalid url during tests

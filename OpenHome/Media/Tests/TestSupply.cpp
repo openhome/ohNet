@@ -148,7 +148,7 @@ void SuiteSupply::Test()
     TUint expectedMsgCount = 0;
     iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies);
     TEST(++expectedMsgCount == iMsgPushCount);
-    Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
     iSupply->OutputTrack(*track, kTrackId);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
