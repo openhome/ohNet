@@ -146,7 +146,7 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     OhmMsgTimestamped::Create();
 
     iHalt = aHalt;
-    aLossless = aLossless;
+    iLossless = aLossless;
     iTimestamped = aTimestamped;
     iResent = aResent;
     iSamples = aSamples;
