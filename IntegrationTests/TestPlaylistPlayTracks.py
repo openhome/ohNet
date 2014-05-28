@@ -250,12 +250,8 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
 
             if not self.senderStopped.isSet():
                 plIndex = self.sender.playlist.PlaylistIndex( aPlId )
-                self.log.Info( '' )
-                self.log.Info( '', '----------------------------------------' )
-                self.log.Info( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
                     (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-                self.log.Info( '', '----------------------------------------' )
-                self.log.Info( '' )
                 self._SetupPlayTimer()
                 self.checkInfoTimer = LogThread.Timer( 3, self._CheckInfo, args=[aId] )
                 self.checkInfoTimer.start()

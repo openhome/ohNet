@@ -200,11 +200,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
 
     def _HandlePlay( self ):
         """Handles state transition to PLAYING - sets up all timers"""
-        self.log.Info( '' )
-        self.log.Info( '', 'Loop %d of %d: Track %d of %d' %
+        self.log.Header2( '', 'Loop %d of %d: Track %d of %d' %
             (self.testLoop+1, self.testLoops, self.trackIndex+1, self.numTracks))
-        self.log.Info( '' )
-
         self.mutex.acquire()
         self.playTimer = LogThread.Timer( self.playTime, self._PlayTimerCb )
         self.checkTimer = LogThread.Timer( 5, self._CheckTimerCb )
