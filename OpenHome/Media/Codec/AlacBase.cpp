@@ -71,7 +71,7 @@ void CodecAlacBase::Initialise()
     iCurrentSample = 0;
     iSamplesWrittenTotal = 0;
 
-    iTrackLengthJiffies = (iContainer->Duration() * Jiffies::kJiffiesPerSecond) / iContainer->Timescale();
+    iTrackLengthJiffies = (iContainer->Duration() * Jiffies::kPerSecond) / iContainer->Timescale();
     iTrackOffset = 0;
 
     LOG(kCodec, "CodecAlacBase::StreamInitialise  iBitDepth %u, iTimeScale: %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iContainer->BitDepth(), iContainer->Timescale(), iContainer->SampleRate(), iContainer->Duration(), iContainer->Channels(), iTrackLengthJiffies);

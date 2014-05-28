@@ -20,7 +20,7 @@ FIXME - no handling of pause-resumes
     
 class VariableDelay : private MsgReservoir, public IPipelineElementUpstream, private IMsgProcessor, private IStreamHandler
 {
-    static const TUint kMaxMsgSilenceDuration = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kMaxMsgSilenceDuration = Jiffies::kPerMs * 5;
     friend class SuiteVariableDelay;
 public:
     VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration);

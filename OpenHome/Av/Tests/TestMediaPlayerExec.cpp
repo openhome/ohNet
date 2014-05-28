@@ -40,7 +40,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     InitialisationParams* initParams = InitialisationParams::Create();
     initParams->SetDvEnableBonjour();
 //    initParams->SetUseLoopbackNetworkAdapter();
-//    Debug::SetLevel(Debug::kSongcast | Debug::kPipeline);
+//    Debug::SetLevel(Debug::kSongcast);
     Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
@@ -89,7 +89,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
         }
         udn.Replace(optionUdn.Value());
     }
-    static const TUint kMaxDriverJiffies = Media::Jiffies::kJiffiesPerMs * 5;
+    static const TUint kMaxDriverJiffies = Media::Jiffies::kPerMs * 5;
     TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
     DriverBasic* driver = new DriverBasic(tmp->Pipeline(), dvStack->Env());
     tmp->Run();

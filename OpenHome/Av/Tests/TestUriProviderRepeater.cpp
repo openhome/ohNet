@@ -78,7 +78,7 @@ void SuiteUriProviderRepeater::TearDown()
 void SuiteUriProviderRepeater::TestPlayNow()
 {
     Track* trackOut = NULL;
-    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData, false);
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
     EStreamPlay play = iUriProvider->GetNext(trackOut);
     TEST(play == ePlayYes);
@@ -91,7 +91,7 @@ void SuiteUriProviderRepeater::TestPlayNow()
 void SuiteUriProviderRepeater::TestPlayLater()
 {
     Track* trackOut = NULL;
-    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData, false);
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->BeginLater(track->Id());
     EStreamPlay play = iUriProvider->GetNext(trackOut);
     TEST(play == ePlayLater);
@@ -104,7 +104,7 @@ void SuiteUriProviderRepeater::TestPlayLater()
 void SuiteUriProviderRepeater::TestGetNextTwiceAfterBegin()
 {
     Track* trackOut = NULL;
-    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData, false);
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
 
     // Calling GetNext() first time should return ePlayYes
@@ -127,7 +127,7 @@ void SuiteUriProviderRepeater::TestGetNextTwiceAfterBegin()
 void SuiteUriProviderRepeater::TestGetNextTwiceAfterBeginLater()
 {
     Track* trackOut = NULL;
-    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData, false);
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->BeginLater(track->Id());
 
     // Calling GetNext() first time should return ePlayYes
@@ -151,7 +151,7 @@ void SuiteUriProviderRepeater::TestGetNextThenBegin()
 {
     // This should reset the state returned by GetNext()
     Track* trackOut = NULL;
-    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData, false);
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
 
     // Calling GetNext() first time should return ePlayYes
@@ -182,7 +182,7 @@ void SuiteUriProviderRepeater::TestGetNextThenBegin()
 
 void SuiteUriProviderRepeater::TestCurrentTrackId()
 {
-    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData, false);
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
     iUriProvider->Begin(track->Id());
     TUint id = iUriProvider->CurrentTrackId();
     TEST(id == track->Id());

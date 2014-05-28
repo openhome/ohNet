@@ -692,17 +692,7 @@ TUint Track::Id() const
     return iId;
 }
 
-TAny* Track::UserData() const
-{
-    return iUserData;
-}
-
-TBool Track::Pullable() const
-{
-    return iPullable;
-}
-
-void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable)
+void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId)
 {
     iUri.ReplaceThrow(aUri);
     if (aMetaData.Bytes() > iMetaData.MaxBytes()) {
@@ -712,8 +702,6 @@ void Track::Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* a
         iMetaData.Replace(aMetaData);
     }
     iId = aId;
-    iUserData = aUserData;
-    iPullable = aPullable;
 }
 
 void Track::Clear()
@@ -722,8 +710,6 @@ void Track::Clear()
     iUri.SetBytes(0);
     iMetaData.SetBytes(0);
     iId = UINT_MAX;
-    iUserData = NULL;
-    iPullable = false;
 #endif // DEFINE_DEBUG
 }
 
@@ -750,17 +736,24 @@ TBool MsgMode::IsRealTime() const
     return iIsRealTime;
 }
 
-void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime)
+IClockPuller* MsgMode::ClockPuller() const
+{
+    return iClockPuller;
+}
+
+void MsgMode::Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller)
 {
     iMode.Replace(aMode);
     iSupportsLatency = aSupportsLatency;
     iIsRealTime = aIsRealTime;
+    iClockPuller = aClockPuller;
 }
 
 void MsgMode::Clear()
 {
     iMode.Replace(Brx::Empty());
     iSupportsLatency = iIsRealTime = false;
+    iClockPuller = NULL;
 }
 
 Msg* MsgMode::Process(IMsgProcessor& aProcessor)
@@ -2261,13 +2254,13 @@ TrackFactory::TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCou
 {
 }
 
-Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData, TBool aPullable)
+Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData)
 {
     Track* track = iAllocatorTrack.Allocate();
     iLock.Wait();
     TUint id = iNextId++;
     iLock.Signal();
-    track->Initialise(aUri, aMetaData, id, aUserData, aPullable);
+    track->Initialise(aUri, aMetaData, id);
     return track;
 }
 
@@ -2302,10 +2295,10 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     iNextFlushId = MsgFlush::kIdInvalid + 1;
 }
 
-MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
 {
     MsgMode* msg = iAllocatorMsgMode.Allocate();
-    msg->Initialise(aMode, aSupportsLatency, aRealTime);
+    msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPuller);
     return msg;
 }
 

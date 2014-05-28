@@ -24,6 +24,7 @@ class Gorger : private MsgReservoir, public IPipelineElementUpstream, private IS
 public:
     Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aGorgeSize);
     ~Gorger();
+    TUint SizeInJiffies() const;
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private:

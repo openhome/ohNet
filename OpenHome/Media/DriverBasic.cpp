@@ -37,7 +37,7 @@ void DriverBasic::Run()
 
     TUint64 now = OsTimeInUs(iOsCtx);
     iLastTimeUs = now;
-    iPendingJiffies = kTimerFrequencyMs * Jiffies::kJiffiesPerMs;
+    iPendingJiffies = kTimerFrequencyMs * Jiffies::kPerMs;
     try {
         for (;;) {
             while (iPendingJiffies > 0) {
@@ -60,10 +60,10 @@ void DriverBasic::Run()
             now = OsTimeInUs(iOsCtx);
             const TUint diffMs = ((TUint)(now - iLastTimeUs + 500)) / 1000;
             if (diffMs > 100) { // assume delay caused by drop-out.  process regular amount of audio
-                iPendingJiffies = kTimerFrequencyMs * Jiffies::kJiffiesPerMs;
+                iPendingJiffies = kTimerFrequencyMs * Jiffies::kPerMs;
             }
             else {
-                iPendingJiffies = diffMs * Jiffies::kJiffiesPerMs;
+                iPendingJiffies = diffMs * Jiffies::kPerMs;
             }
         }
     }

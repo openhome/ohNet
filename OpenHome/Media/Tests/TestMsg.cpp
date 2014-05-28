@@ -673,7 +673,7 @@ void SuiteMsgAudio::Test()
     }
 
     // Split pcm msg.  Check lengths of both parts are as expected.
-    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kJiffiesPerSecond);
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kPerSecond);
     static const TUint kSplitPos = 800;
     jiffies = msg->Jiffies();
     MsgAudio* remaining = msg->Split(kSplitPos);
@@ -686,7 +686,7 @@ void SuiteMsgAudio::Test()
     TEST(newJiffies < jiffies);
     TEST(remainingJiffies < jiffies);
     TEST(newJiffies + remainingJiffies == jiffies);
-    TEST(static_cast<MsgAudioPcm*>(msg)->TrackOffset() == Jiffies::kJiffiesPerSecond);
+    TEST(static_cast<MsgAudioPcm*>(msg)->TrackOffset() == Jiffies::kPerSecond);
     TEST(static_cast<MsgAudioPcm*>(remaining)->TrackOffset() == static_cast<MsgAudioPcm*>(msg)->TrackOffset() + msg->Jiffies());
 
     // Split pcm msg at invalid positions (0, > Jiffies()).  Check these assert.
@@ -705,7 +705,7 @@ void SuiteMsgAudio::Test()
     clone->RemoveRef();
 
     // Add 2 msgs.  Check their combined lengths are reported
-    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kJiffiesPerSecond);
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kPerSecond);
     clone = msg->Clone();
     jiffies = msg->Jiffies();
     TUint combinedJiffies = msg->Jiffies() + clone->Jiffies();
@@ -725,7 +725,7 @@ void SuiteMsgAudio::Test()
     TEST_THROWS(iMsgFactory->CreateMsgAudioPcm(Brx::Empty(), 2, 44100, 8, EMediaDataLittleEndian, 0), AssertionFailed);
 
     // Create silence msg.  Check its length is as expected
-    jiffies = Jiffies::kJiffiesPerMs;
+    jiffies = Jiffies::kPerMs;
     msg = iMsgFactory->CreateMsgSilence(jiffies);
     TEST(jiffies == msg->Jiffies());
 
@@ -915,7 +915,7 @@ void SuiteMsgPlayable::Test()
     prevBytes = 0;
     MsgSilence* silence;
     for (TUint i=0; i<numRates; i++) {
-        silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 5);
+        silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 5);
         playable = silence->CreatePlayable(sampleRates[i], 8, 2);
         bytes = playable->Bytes();
         playable->RemoveRef();
@@ -926,13 +926,13 @@ void SuiteMsgPlayable::Test()
     }
 
     // Create silence msg.  Read/validate its content
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     playable = silence->CreatePlayable(44100, 8, 1);
     bytes = playable->Bytes();
     ValidateSilence(playable);
 
     // Create silence msg, convert to playable then split.  Check sizes/contents of each
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     playable = silence->CreatePlayable(44100, 8, 1);
     remainingPlayable = playable->Split(playable->Bytes() / 4);
     TEST(3 * playable->Bytes() == remainingPlayable->Bytes());
@@ -941,7 +941,7 @@ void SuiteMsgPlayable::Test()
     ValidateSilence(remainingPlayable);
 
     // Create silence msg, split at non-sample boundary.  Check that fragments have the correct total length
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     playable = silence->CreatePlayable(44100, 8, 1);
     remainingPlayable = playable->Split((playable->Bytes() / 4) - 1);
     TEST(playable->Bytes() + remainingPlayable->Bytes() == bytes);
@@ -949,7 +949,7 @@ void SuiteMsgPlayable::Test()
     remainingPlayable->RemoveRef();
 
     // Create silence msg, split at 1 jiffy (non-sample boundary).  Check initial msg has 0 Bytes() but can Write() its content
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     MsgSilence* remainingSilence = (MsgSilence*)silence->Split(1);
     playable = silence->CreatePlayable(44100, 8, 1);
     remainingPlayable = remainingSilence->CreatePlayable(44100, 8, 1);
@@ -989,7 +989,7 @@ SuiteRamp::~SuiteRamp()
 
 void SuiteRamp::Test()
 {
-    TUint jiffies = Jiffies::kJiffiesPerMs;
+    TUint jiffies = Jiffies::kPerMs;
 
     // start=Ramp::kMax, direction=down, duration=fragmentSize.  Apply, check end is Ramp::kMin
     Ramp ramp;
@@ -1252,8 +1252,8 @@ void SuiteRamp::Test()
 
     // Create 2 MsgSilences with different durations.
     // Check can ramp down over them (i.e. there is no rounding error at msg boundary)
-    silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 17);
-    MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs * 23);
+    silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 17);
+    MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 23);
     const TUint duration = silence->Jiffies() + silence2->Jiffies();
     remainingDuration = duration;
     TUint currentRamp = Ramp::kRampMax;
@@ -1385,9 +1385,7 @@ void SuiteTrack::Test()
     // create Track msg, check its uri/id can be retrieved
     Brn uri("http://host:port/folder/file.ext");
     Brn metadata("metadata#1");
-    TAny* userData = &uri;
-    TBool pullable = true;
-    Track* track = iTrackFactory->CreateTrack(uri, metadata, userData, pullable);
+    Track* track = iTrackFactory->CreateTrack(uri, metadata);
     TUint id = 3;
     MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, id);
     track->RemoveRef();
@@ -1395,8 +1393,6 @@ void SuiteTrack::Test()
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TUint trackId = msg->Track().Id();
-    TEST(msg->Track().UserData() == userData);
-    TEST(msg->Track().Pullable() == pullable);
     TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
 
@@ -1406,17 +1402,13 @@ void SuiteTrack::Test()
     TEST(track->Uri() != uri);
     TEST(track->MetaData() != metadata);
     TEST(track->Id() != trackId);
-    TEST(track->UserData() != userData);
-    TEST(track->Pullable() != pullable);
     TEST(msg->IdPipeline() != id);
 #endif
 
     // create second Track msg, check its uri/id can be retrieved
     uri.Set("http://newhost:newport/newfolder/newfile.newext");
     metadata.Set("metadata#2");
-    userData = &trackId;
-    pullable = false;
-    track = iTrackFactory->CreateTrack(uri, metadata, userData, pullable);
+    track = iTrackFactory->CreateTrack(uri, metadata);
     id = 6209;
     msg = iMsgFactory->CreateMsgTrack(*track, id);
     TEST(msg != NULL);
@@ -1424,14 +1416,11 @@ void SuiteTrack::Test()
     TEST(msg->Track().MetaData() == metadata);
     TEST(msg->Track().Id() != trackId);
     trackId = msg->Track().Id();
-    TEST(msg->Track().UserData() == userData);
-    TEST(msg->Track().Pullable() == pullable);
     TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
     TEST(track->Uri() == uri);
     TEST(track->MetaData() == metadata);
     TEST(track->Id() == trackId);
-    TEST(track->UserData() == userData);
     track->RemoveRef();
 }
 
@@ -1520,7 +1509,7 @@ SuiteMode::~SuiteMode()
 void SuiteMode::Test()
 {
     Brn mode("First");
-    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true);
+    MsgMode* msg = iMsgFactory->CreateMsgMode(mode, true, true, NULL);
     TEST(msg->Mode() == mode);
     TEST(msg->SupportsLatency());
     TEST(msg->IsRealTime());
@@ -1528,7 +1517,7 @@ void SuiteMode::Test()
     TEST(msg->Mode() != mode);
 
     Brn mode2("Second");
-    msg = iMsgFactory->CreateMsgMode(mode2, false, false);
+    msg = iMsgFactory->CreateMsgMode(mode2, false, false, NULL);
     TEST(msg->Mode() == mode2);
     TEST(!msg->SupportsLatency());
     TEST(!msg->IsRealTime());
@@ -1552,7 +1541,7 @@ SuiteDelay::~SuiteDelay()
 
 void SuiteDelay::Test()
 {
-    const TUint kDelayJiffies = Jiffies::kJiffiesPerMs * 100;
+    const TUint kDelayJiffies = Jiffies::kPerMs * 100;
     MsgDelay* msg = iMsgFactory->CreateMsgDelay(kDelayJiffies);
     TEST(msg->DelayJiffies() == kDelayJiffies);
     msg->RemoveRef();
@@ -1721,7 +1710,7 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgPlayable);
     playable->RemoveRef();
 
-    MsgSilence* silence = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    MsgSilence* silence = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     TEST(silence == static_cast<Msg*>(silence)->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgSilence);
     playable = silence->CreatePlayable(44100, 8, 2);
@@ -1734,12 +1723,12 @@ void SuiteMsgProcessor::Test()
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgDecodedStream);
     msg->RemoveRef();
 
-    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+    msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgMode);
     msg->RemoveRef();
 
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track, 0);
     track->RemoveRef();
     TEST(msg == msg->Process(processor));
@@ -1901,7 +1890,7 @@ void SuiteMsgQueue::Test()
     
     // queue can be populated and read from
     TEST(queue->IsEmpty());
-    Msg* msg = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    Msg* msg = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
     Msg* dequeued = queue->Dequeue();
@@ -1910,7 +1899,7 @@ void SuiteMsgQueue::Test()
     dequeued->RemoveRef();
 
     // queue can be emptied then reused
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track, 0);
     track->RemoveRef();
     queue->Enqueue(msg);
@@ -2094,14 +2083,14 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::ENone);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+    Msg* msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();
     TEST(jiffies == 0);
     TEST(queue->LastIn() == TestMsgReservoir::EMsgMode);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     msg = iMsgFactory->CreateMsgTrack(*track, 0);
     track->RemoveRef();
     queue->Enqueue(msg);
@@ -2123,7 +2112,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastIn() == TestMsgReservoir::EMsgEncodedStream);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
-    MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+    MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
     queue->Enqueue(audio);
     TEST(queue->Jiffies() == jiffies + audio->Jiffies());
     jiffies = queue->Jiffies();
@@ -2199,7 +2188,7 @@ void SuiteMsgReservoir::Test()
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgSilence);
-    TEST(queue->Jiffies() == jiffies - Jiffies::kJiffiesPerMs);
+    TEST(queue->Jiffies() == jiffies - Jiffies::kPerMs);
     jiffies = queue->Jiffies();
     msg->RemoveRef();
 

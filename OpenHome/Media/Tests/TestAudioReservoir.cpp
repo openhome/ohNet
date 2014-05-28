@@ -17,13 +17,13 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteAudioReservoir : public Suite, private IMsgProcessor, private IClockPuller
+class SuiteAudioReservoir : public Suite, private IMsgProcessor
 {
     static const TUint kDecodedAudioCount = 512;
     static const TUint kMsgAudioPcmCount  = 512;
     static const TUint kMsgSilenceCount   = 1;
 
-    static const TUint kReservoirSize = Jiffies::kJiffiesPerMs * 500;
+    static const TUint kReservoirSize = Jiffies::kPerMs * 500;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
@@ -46,9 +46,6 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
-private: // from IClockPuller
-    void NotifySize(TUint aJiffies);
-    void Stop();
 private:
     enum EMsgType
     {
@@ -95,12 +92,12 @@ private:
     TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
-class SuiteReservoirHistory : public Suite, private IMsgProcessor
+class SuiteReservoirHistory : public Suite, private IMsgProcessor, private IClockPuller
 {
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
     static const TUint kBitDepth = 16;
-    static const TUint kReservoirSize = Jiffies::kJiffiesPerMs * 1000;
+    static const TUint kReservoirSize = Jiffies::kPerMs * 1000;
     static const TUint kMaxHistorySamples = 10;
     static const TUint kTotalHistoryUpdates = kMaxHistorySamples * 2;
 public:
@@ -110,7 +107,6 @@ private: // from Suite
     void Test();
 private:
     void PullerThread();
-    void HistoryPointAdded();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
@@ -126,6 +122,15 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IClockPuller
+    void StartDecodedReservoir(TUint aCapacityJiffies);
+    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
+    void NotifySizeDecodedReservoir(TUint aJiffies);
+    void StopDecodedReservoir();
+    void StartStarvationMonitor(TUint aCapacityJiffies);
+    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
+    void NotifySizeStarvationMonitor(TUint aJiffies);
+    void StopStarvationMonitor();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -133,10 +138,14 @@ private:
     DecodedAudioReservoir* iReservoir;
     ThreadFunctor* iThread;
     TUint64 iDequeuedJiffies;
-    UtilisationHistory* iHistory;
     TUint iHistoryPointCount;
     TBool iStopAudioGeneration;
     TByte iBuf[DecodedAudio::kMaxBytes];
+    TUint iTrackId;
+    TUint iStreamId;
+    TBool iStartCalled;
+    TBool iNewStreamCalled;
+    TBool iNotifySizeCalled;
 };
 
 } // namespace Media
@@ -154,7 +163,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize, *this    );
+    iReservoir = new DecodedAudioReservoir(kReservoirSize);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
@@ -276,7 +285,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     }
     case EMsgSilence:
     {
-        MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kJiffiesPerMs);
+        MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
         shouldBlock = (iReservoir->Size() + audio->Jiffies() >= kReservoirSize);
         msg = audio;
         break;
@@ -285,17 +294,17 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgDecodedStream(0, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
         break;
     case EMsgMode:
-        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true);
+        msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
         break;
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
         msg = iMsgFactory->CreateMsgTrack(*track, 0);
         track->RemoveRef();
     }
         break;
     case EMsgDelay:
-        msg = iMsgFactory->CreateMsgDelay(Jiffies::kJiffiesPerMs * 5);
+        msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerMs * 5);
         break;
     case EMsgEncodedStream:
         msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, NULL);
@@ -430,14 +439,6 @@ Msg* SuiteAudioReservoir::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-void SuiteAudioReservoir::NotifySize(TUint /*aJiffies*/)
-{
-}
-
-void SuiteAudioReservoir::Stop()
-{
-}
-
 
 // SuiteReservoirHistory
 
@@ -446,18 +447,18 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iDequeuedJiffies(0)
     , iHistoryPointCount(0)
     , iStopAudioGeneration(false)
+    , iTrackId(UINT_MAX)
+    , iStreamId(UINT_MAX)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iHistory = new UtilisationHistory(kMaxHistorySamples, MakeFunctor(*this, &SuiteReservoirHistory::HistoryPointAdded));
-    iReservoir = new DecodedAudioReservoir(kReservoirSize, *iHistory);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize);
     memset(iBuf, 0xff, sizeof(iBuf));
 }
 
 SuiteReservoirHistory::~SuiteReservoirHistory()
 {
     delete iReservoir;
-    delete iHistory;
     delete iMsgFactory;
     delete iTrackFactory;
 }
@@ -467,17 +468,23 @@ void SuiteReservoirHistory::Test()
     static const TUint kPcmMsgCount = 15;
     iThread = new ThreadFunctor("RHPT", MakeFunctor(*this, &SuiteReservoirHistory::PullerThread));
     iThread->Start();
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, true);
+    iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
+    iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this));
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0);
+    iTrackId = msgTrack->IdPipeline();
     track->RemoveRef();
     iReservoir->Push(msgTrack);
+    MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, NULL);
+    iStreamId = msgStream->StreamInfo().StreamId();
+    iReservoir->Push(msgStream);
     TUint pcmMsgs = kPcmMsgCount;
     TUint64 trackOffset = 0;
     Brn audioBuf(iBuf, sizeof(iBuf));
     while (!iStopAudioGeneration) {
         MsgAudio* audio;
         if (pcmMsgs == 0) {
-            audio = iMsgFactory->CreateMsgSilence(400 * Jiffies::kJiffiesPerMs);
+            audio = iMsgFactory->CreateMsgSilence(400 * Jiffies::kPerMs);
             pcmMsgs = kPcmMsgCount;
         }
         else {
@@ -488,6 +495,9 @@ void SuiteReservoirHistory::Test()
         iReservoir->Push(audio);
     }
     delete iThread;
+    TEST(iStartCalled);
+    TEST(iNewStreamCalled);
+    TEST(iNotifySizeCalled);
 }
 
 void SuiteReservoirHistory::PullerThread()
@@ -505,23 +515,6 @@ void SuiteReservoirHistory::PullerThread()
     // consume any remaining msgs in case pushing thread is blocked
     while (!iReservoir->IsEmpty()) {
         iReservoir->Pull()->RemoveRef();
-    }
-}
-
-void SuiteReservoirHistory::HistoryPointAdded()
-{
-    iHistoryPointCount++;
-    const std::vector<TUint64>& history = iHistory->History();
-    TEST(history.capacity() == kMaxHistorySamples);
-    if (iHistoryPointCount > kMaxHistorySamples) {
-        TEST(iHistory->StartIndex() == iHistoryPointCount % kMaxHistorySamples);
-    }
-    for (TUint i=0; i<history.size(); i++) {
-        TEST(history[i] != 0);
-        TEST(history[i] < 0xffffffffu); // arbitrarily chosen value.  2^32 or ~70s of audio
-    }
-    if (iHistoryPointCount == kTotalHistoryUpdates) {
-        iStopAudioGeneration = true;
     }
 }
 
@@ -549,10 +542,9 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgPlayable* /*aMsg*/)
     return NULL;
 }
 
-Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* /*aMsg*/)
+Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
-    return NULL;
+    return aMsg;
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgMode* aMsg)
@@ -605,6 +597,57 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
     return NULL;
 }
+
+void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies)
+{
+    TEST(aCapacityJiffies == kReservoirSize);
+    iStartCalled = true;
+}
+
+void SuiteReservoirHistory::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+{
+    TEST(aTrackId == iTrackId);
+    TEST(aStreamId == iStreamId);
+    iNewStreamCalled = true;
+}
+
+void SuiteReservoirHistory::NotifySizeDecodedReservoir(TUint aJiffies)
+{
+    iHistoryPointCount++;
+    TEST(aJiffies != 0);
+    TEST(aJiffies < 0x40000000); // arbitrarily chosen value.  2^30 or ~17s of audio
+
+    if (iHistoryPointCount == kTotalHistoryUpdates) {
+        iStopAudioGeneration = true;
+    }
+    iNotifySizeCalled = true;
+}
+
+void SuiteReservoirHistory::StopDecodedReservoir()
+{
+    ASSERTS(); // test only generates a single MsgMode so this shouldn't be called
+}
+
+void SuiteReservoirHistory::StartStarvationMonitor(TUint /*aCapacityJiffies*/)
+{
+    ASSERTS();
+}
+
+void SuiteReservoirHistory::NewStreamStarvationMonitor(TUint /*aTrackId*/, TUint /*aStreamId*/)
+{
+    ASSERTS();
+}
+
+void SuiteReservoirHistory::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
+{
+    ASSERTS();
+}
+
+void SuiteReservoirHistory::StopStarvationMonitor()
+{
+    ASSERTS();
+}
+
 
 
 void TestAudioReservoir()

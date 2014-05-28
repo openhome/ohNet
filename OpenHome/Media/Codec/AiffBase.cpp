@@ -97,7 +97,7 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
     if (!iController->TrySeek(aStreamId, iTrackStart + bytePos)) {
         return false;
     }
-    iTrackOffset = ((TUint64)aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
     iAudioBytesRemaining = iAudioBytesTotal - (TUint)(aSample * iNumChannels * byteDepth);
     SendMsgDecodedStream(aSample);
     return true;
@@ -285,7 +285,7 @@ void CodecAiffBase::ProcessSsndChunk()
     if (numSamples != iSamplesTotal) {
         THROW(CodecStreamCorrupt);
     }
-    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackLengthJiffies = ((TUint64)numSamples * Jiffies::kPerSecond) / iSampleRate;
 }
 
 void CodecAiffBase::SendMsgDecodedStream(TUint64 aStartSample)

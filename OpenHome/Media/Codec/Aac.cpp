@@ -226,7 +226,7 @@ void CodecAac::StreamInitialise()
     iBytesPerSample = iChannels*iBitDepth/8;
     ProcessHeader();
 
-    iTrackLengthJiffies = (iSamplesTotal * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackLengthJiffies = (iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
     iTrackOffset = 0;
 
     LOG(kCodec, "CodecAac::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate: %u, iSamplesTotal %llu, iChannels %u, iTrackLengthJiffies %u\n", iBitrateAverage, iBitDepth, iOutputSampleRate, iSamplesTotal, iChannels, iTrackLengthJiffies);
@@ -250,7 +250,7 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
     if (canSeek) {
         iTotalSamplesOutput = aSample;
         iCurrentSample = startSample;
-        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iMp4->Timescale();
+        iTrackOffset = (aSample * Jiffies::kPerSecond) / iMp4->Timescale();
         iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iMp4->Timescale(), iChannels, kCodecAac, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;

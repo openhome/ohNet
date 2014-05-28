@@ -1,7 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/StarvationMonitor.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
 #include <OpenHome/Media/ProcessorPcmUtils.h>
@@ -17,15 +16,15 @@ namespace OpenHome {
 namespace Media {
 
 class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, private IMsgProcessor,
-                                             private IStarvationMonitorObserver, private IClockPuller
+                                             private IStarvationMonitorObserver
 {
     static const TUint kDecodedAudioCount = 1536;
     static const TUint kMsgAudioPcmCount  = 2048;
     static const TUint kMsgSilenceCount   = 128;
 
-    static const TUint kRegularSize         = Jiffies::kJiffiesPerMs * 100;
-    static const TUint kStarvationThreshold = Jiffies::kJiffiesPerMs * 40;
-    static const TUint kRampUpSize          = Jiffies::kJiffiesPerMs * 50;
+    static const TUint kRegularSize         = Jiffies::kPerMs * 100;
+    static const TUint kStarvationThreshold = Jiffies::kPerMs * 40;
+    static const TUint kRampUpSize          = Jiffies::kPerMs * 50;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
@@ -113,7 +112,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iBuffering(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize, *this);
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()
@@ -441,14 +440,6 @@ Msg* SuiteStarvationMonitor::ProcessMsg(MsgQuit* aMsg)
 void SuiteStarvationMonitor::NotifyStarvationMonitorBuffering(TBool aBuffering)
 {
     iBuffering = aBuffering;
-}
-
-void SuiteStarvationMonitor::NotifySize(TUint /*aJiffies*/)
-{
-}
-
-void SuiteStarvationMonitor::Stop()
-{
 }
 
 

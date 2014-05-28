@@ -89,10 +89,10 @@ Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
     iTimeInvalid = true;
-    iTrackDurationSeconds = (TUint)(streamInfo.TrackLength() / Jiffies::kJiffiesPerSecond);
-    TUint64 jiffies = (streamInfo.SampleStart() * Jiffies::kJiffiesPerSecond) / streamInfo.SampleRate();
-    iSeconds = (TUint)(jiffies / Jiffies::kJiffiesPerSecond);
-    iJiffies = jiffies % Jiffies::kJiffiesPerSecond;
+    iTrackDurationSeconds = (TUint)(streamInfo.TrackLength() / Jiffies::kPerSecond);
+    TUint64 jiffies = (streamInfo.SampleStart() * Jiffies::kPerSecond) / streamInfo.SampleRate();
+    iSeconds = (TUint)(jiffies / Jiffies::kPerSecond);
+    iJiffies = jiffies % Jiffies::kPerSecond;
     iObserver.NotifyStreamInfo(streamInfo);
     return aMsg;
 }
@@ -102,17 +102,17 @@ Msg* Reporter::ProcessMsg(MsgAudioPcm* aMsg)
     TBool reportChange = false;
     if (iTimeInvalid) {
         const TUint64 offset = aMsg->TrackOffset() + aMsg->Jiffies();
-        iSeconds = (TUint)(offset / Jiffies::kJiffiesPerSecond);
-        iJiffies = offset % Jiffies::kJiffiesPerSecond;
+        iSeconds = (TUint)(offset / Jiffies::kPerSecond);
+        iJiffies = offset % Jiffies::kPerSecond;
         iTimeInvalid = false;
         reportChange = true;
     }
     else {
         iJiffies += aMsg->Jiffies();
-        while (iJiffies > Jiffies::kJiffiesPerSecond) {
+        while (iJiffies > Jiffies::kPerSecond) {
             reportChange = true;
             iSeconds++;
-            iJiffies -= Jiffies::kJiffiesPerSecond;
+            iJiffies -= Jiffies::kPerSecond;
         }
     }
     if (reportChange) {

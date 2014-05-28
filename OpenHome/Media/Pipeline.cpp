@@ -54,7 +54,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize, iClockPuller.DecodedReservoirHistory());
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
@@ -91,7 +91,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
-                                               kStarvationMonitorRampUpDuration, iClockPuller.StarvationMonitorHistory());
+                                               kStarvationMonitorRampUpDuration);
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iMsgFactory, *iLoggerStarvationMonitor, aDriverMaxAudioBytes);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
@@ -318,7 +318,7 @@ IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSen
 
 TUint Pipeline::SenderMinLatencyMs() const
 {
-    return kSenderMinLatency / Jiffies::kJiffiesPerMs;
+    return kSenderMinLatency / Jiffies::kPerMs;
 }
 
 void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
@@ -442,5 +442,13 @@ void Pipeline::NotifyStarvationMonitorBuffering(TBool aBuffering)
     iLock.Signal();
     if (notify) {
         NotifyStatus();
+#if 1
+        if (aBuffering && !iWaiting) {
+            const TUint encodedBytes = iEncodedAudioReservoir->SizeInBytes();
+            const TUint decodedMs = iDecodedAudioReservoir->SizeInJiffies() / Jiffies::kPerMs;
+            const TUint gorgedMs = iGorger->SizeInJiffies() / Jiffies::kPerMs;
+            Log::Print("Pipeline utilisation: encodedBytes=%u, decodedMs=%u, gorgedMs=%u\n", encodedBytes, decodedMs, gorgedMs);
+        }
+#endif
     }
 }

@@ -13,11 +13,11 @@ using namespace OpenHome::Media;
 // StarvationMonitor
 
 StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, IClockPuller& aClockPuller)
+                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
-    , iClockPuller(aClockPuller)
+    , iClockPuller(NULL)
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iRampUpSize(aRampUpSize)
@@ -28,7 +28,6 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
-    , iTrackIsPullable(false)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
     , iStreamHandler(NULL)
     , iTrackId(UINT_MAX)
@@ -122,14 +121,14 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
         MsgAudio* remaining = aMsg->Split(kMaxAudioPullSize);
         EnqueueAtHead(remaining);
     }
-    if (iTrackIsPullable) {
+    if (iClockPuller != NULL) {
         if (iJiffiesUntilNextHistoryPoint < aMsg->Jiffies()) {
             MsgAudio* remaining = aMsg->Split(static_cast<TUint>(iJiffiesUntilNextHistoryPoint));
             EnqueueAtHead(remaining);
         }
         iJiffiesUntilNextHistoryPoint -= aMsg->Jiffies();
         if (iJiffiesUntilNextHistoryPoint == 0) {
-            iClockPuller.NotifySize(Jiffies());
+            iClockPuller->NotifySizeStarvationMonitor(Jiffies());
             iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
         }
     }
@@ -256,19 +255,18 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     iMode.Replace(aMsg->Mode());
     iTrackId = UINT_MAX;
     iStreamId = UINT_MAX;
+    if (iClockPuller != NULL) {
+        iClockPuller->StopStarvationMonitor();
+    }
+    iClockPuller = aMsg->ClockPuller();
     return aMsg;
 }
 
 Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
 {
-    iTrackIsPullable = aMsg->Track().Pullable();
-    if (iTrackIsPullable) {
-        iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
-    }
     iStreamHandler = NULL;
     iTrackId = aMsg->IdPipeline();
     iStreamId = UINT_MAX;
-    iClockPuller.Stop();
     return aMsg;
 }
 
@@ -276,6 +274,10 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamInfo().StreamHandler();
     iStreamId = aMsg->StreamInfo().StreamId();
+    if (iClockPuller != NULL) {
+        iClockPuller->NewStreamStarvationMonitor(iTrackId, iStreamId);
+    }
+    iJiffiesUntilNextHistoryPoint = kUtilisationSamplePeriodJiffies;
     return aMsg;
 }
 

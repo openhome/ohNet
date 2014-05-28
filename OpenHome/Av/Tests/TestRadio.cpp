@@ -34,7 +34,7 @@ using namespace OpenHome::Net;
 
 TestRadio::TestRadio(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory, kMaxDriverJiffies);
     iPipeline->AddObserver(*this);
@@ -72,7 +72,7 @@ void TestRadio::Run(PresetDatabase& aDb)
             TUint ignore;
             aDb.GetPreset(index, ignore, uri);
             iPipeline->Stop();
-            Track* track = iUriProvider->SetTrack(uri, Brx::Empty(), true);
+            Track* track = iUriProvider->SetTrack(uri, Brx::Empty());
             iPipeline->Begin(iUriProvider->Mode(), track->Id());
             iPipeline->Play();
         }

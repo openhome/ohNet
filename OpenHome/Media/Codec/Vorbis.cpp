@@ -271,7 +271,7 @@ void CodecVorbis::StreamInitialise()
             iSamplesTotal = iSampleRate * iController->StreamLength() / iBytesPerSec; // estimate from average bitrate and file size
         }
 
-        iTrackLengthJiffies = (iSamplesTotal * Jiffies::kJiffiesPerSecond) / iSampleRate;
+        iTrackLengthJiffies = (iSamplesTotal * Jiffies::kPerSecond) / iSampleRate;
     }
 
     LOG(kCodec, "CodecVorbis::StreamInitialise iBitrateAverage %u, iBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
@@ -312,7 +312,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
     TBool canSeek = iController->TrySeek(aStreamId, bytes);
     if (canSeek) {
         iTotalSamplesOutput = aSample;
-        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
+        iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
         iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, aSample, false);
     }
     return canSeek;

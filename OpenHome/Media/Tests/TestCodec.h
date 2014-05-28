@@ -215,7 +215,7 @@ private:
 protected:
     static const TUint kMaxFilenameLen = 100;    // max filename length
     static const TUint kDuration = 10;          // Test file duration (in seconds).
-    static const TUint kTotalJiffies = kDuration * Jiffies::kJiffiesPerSecond;
+    static const TUint kTotalJiffies = kDuration * Jiffies::kPerSecond;
     static const TUint kFrequencyHz = 1000;
 };
 

@@ -32,7 +32,7 @@ class Sender : public IPipelineElementDownstream, private IMsgProcessor, private
     static const TInt kPresetMax = 0x7fffffff;
     static const TInt kPresetNone = 0;
     static const TUint kSongcastPacketMs = 5;
-    static const TUint kSongcastPacketJiffies = Jiffies::kJiffiesPerMs * kSongcastPacketMs;
+    static const TUint kSongcastPacketJiffies = Jiffies::kPerMs * kSongcastPacketMs;
     static const TUint kSongcastPacketMaxBytes = 3 * DecodedAudio::kMaxNumChannels * 192 * kSongcastPacketMs;
 public:
     Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, Configuration::IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName);

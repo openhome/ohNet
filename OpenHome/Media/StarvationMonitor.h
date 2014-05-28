@@ -32,7 +32,7 @@ class StarvationMonitor : private MsgReservoir, public IPipelineElementUpstream
     friend class SuiteStarvationMonitor;
 public:
     StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                      TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, IClockPuller& aClockPuller);
+                      TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -65,12 +65,12 @@ private: // test helpers
     TBool EnqueueWouldBlock() const;
     TBool PullWouldBlock() const;
 private:
-    static const TUint kMaxAudioPullSize = Jiffies::kJiffiesPerMs * 5;
-    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kJiffiesPerSecond;
+    static const TUint kMaxAudioPullSize = Jiffies::kPerMs * 5;
+    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;
-    IClockPuller& iClockPuller;
+    IClockPuller* iClockPuller;
     ThreadFunctor* iThread;
     TUint iNormalMax;
     TUint iStarvationThreshold;

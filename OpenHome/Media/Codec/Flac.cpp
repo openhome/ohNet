@@ -284,7 +284,7 @@ TBool CodecFlac::TrySeek(TUint aStreamId, TUint64 aSample)
     iStreamId = aStreamId;
     iSampleStart = aSample;
     if (iSampleRate > 0) {
-        iTrackOffset = (aSample * Jiffies::kJiffiesPerSecond) / iSampleRate;
+        iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;
     }
     FLAC__bool ret = FLAC__stream_decoder_seek_absolute(iDecoder, aSample);
     if (ret == 0) {
@@ -424,7 +424,7 @@ void CodecFlac::CallbackMetadata(const FLAC__StreamDecoder * /*aDecoder*/,
 
     iSampleRate = streamInfo->sample_rate;
     const TUint bitRate = iSampleRate * streamInfo->bits_per_sample * streamInfo->channels;
-    iTrackLengthJiffies = (streamInfo->total_samples * Jiffies::kJiffiesPerSecond) / iSampleRate;
+    iTrackLengthJiffies = (streamInfo->total_samples * Jiffies::kPerSecond) / iSampleRate;
 
     iController->OutputDecodedStream(bitRate, streamInfo->bits_per_sample, iSampleRate, streamInfo->channels, iName, iTrackLengthJiffies, iSampleStart, true);
     iMsgFormatRequired = true;

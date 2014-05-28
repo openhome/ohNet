@@ -336,7 +336,7 @@ Msg* SuiteTrackInspector::Pull()
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
     static const TUint kBitRate       = kBitDepth * kSampleRate;
-    static const TUint64 kTrackLength = Jiffies::kJiffiesPerSecond * 60;
+    static const TUint64 kTrackLength = Jiffies::kPerSecond * 60;
     static const TBool kLossless      = true;
     static const TBool kSeekable      = false;
     static const TUint kNumChannels   = 2;
@@ -360,7 +360,7 @@ Msg* SuiteTrackInspector::Pull()
     }
     case EMsgTrack:
     {
-        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+        Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
         Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
         iTrackIds.push_back(track->Id());
         track->RemoveRef();

@@ -11,6 +11,11 @@ EncodedAudioReservoir::EncodedAudioReservoir(TUint aMaxSize)
 {
 }
 
+TUint EncodedAudioReservoir::SizeInBytes() const
+{
+    return EncodedBytes();
+}
+
 TUint EncodedAudioReservoir::Size() const
 {
     return EncodedBytes();

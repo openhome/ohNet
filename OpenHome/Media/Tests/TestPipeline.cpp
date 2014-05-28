@@ -52,7 +52,7 @@ class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProce
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
     static const TUint kNumChannels = 2;
-    static const TUint kDriverMaxAudioJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kDriverMaxAudioJiffies = Jiffies::kPerMs * 5;
 public:
     SuitePipeline();
 private: // from Suite
@@ -193,7 +193,7 @@ void Supplier::Run()
     (void)memset(encodedAudioData, 0x7f, sizeof(encodedAudioData));
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
-    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
     iSupply.OutputTrack(*track, 1);
     track->RemoveRef();
     iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
@@ -414,7 +414,7 @@ void SuitePipeline::PullUntilEnd(EState aState)
         }
         // Introduce a delay to avoid the risk of this thread pulling data faster than the supplier can push it
         // ...which would cause the starvation monitor to kick in at unpredictable times.
-        Thread::Sleep(iLastMsgJiffies / Jiffies::kJiffiesPerMs);
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
         switch (aState)
         {
         case ERampDownDeferred:

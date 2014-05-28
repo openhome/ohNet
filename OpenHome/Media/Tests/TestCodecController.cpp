@@ -353,7 +353,7 @@ void SuiteCodecController::PullNext(EMsgType aExpectedMsg)
 
 Msg* SuiteCodecController::CreateTrack()
 {
-    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+    Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
     track->RemoveRef();
     return msg;
@@ -433,7 +433,7 @@ Msg* SuiteCodecController::CreateAudio(TBool aValidHeader)
     MsgAudioEncoded* audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
 
     TUint samples = dataBytes / (kNumChannels*kBytesPerSample);
-    TUint jiffiesPerSample = Jiffies::kJiffiesPerSecond / kSampleRate;
+    TUint jiffiesPerSample = Jiffies::kPerSecond / kSampleRate;
     iTrackOffset += samples * jiffiesPerSample;
     iTrackOffsetBytes += dataBytes;
     return audio;

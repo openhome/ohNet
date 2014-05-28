@@ -356,19 +356,19 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case ENull:
         return NULL;
     case EMsgMode:
-        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true);
+        msg = iMsgFactory.CreateMsgMode(Brx::Empty(), true, true, NULL);
         iLastMsgType = EMsgMode;
         break;
     case EMsgTrack:
         {
-        Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty(), NULL, false);
+        Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
         msg = iMsgFactory.CreateMsgTrack(*track, iPipelineIdProvider.NextTrackId());
         track->RemoveRef();
         }
         iLastMsgType = EMsgTrack;
         break;
     case EMsgDelay:
-        msg = iMsgFactory.CreateMsgDelay(Jiffies::kJiffiesPerMs * 20);
+        msg = iMsgFactory.CreateMsgDelay(Jiffies::kPerMs * 20);
         iLastMsgType = EMsgDelay;
         break;
     case EMsgEncodedStream:

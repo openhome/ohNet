@@ -14,7 +14,7 @@ class UriProviderRepeater : public Media::UriProvider
 public:
     UriProviderRepeater(const TChar* aMode, Media::TrackFactory& aTrackFactory);
     ~UriProviderRepeater();
-    Media::Track* SetTrack(const Brx& aUri, const Brx& aMetaData, TBool aPullable);
+    Media::Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
     void SetTrack(Media::Track* aTrack);
 private: // from UriProvider
     void Begin(TUint aTrackId);

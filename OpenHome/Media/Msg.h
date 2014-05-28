@@ -123,30 +123,30 @@ enum EMediaDataEndian
 class Jiffies
 {
 public:
-    static const TUint kJiffiesPerSecond = 56448000; // lcm(384000, 352800)
-    static const TUint kJiffiesPerMs = kJiffiesPerSecond / 1000;
+    static const TUint kPerSecond = 56448000; // lcm(384000, 352800)
+    static const TUint kPerMs = kPerSecond / 1000;
 public:
     static TBool IsValidSampleRate(TUint aSampleRate);
     static TUint JiffiesPerSample(TUint aSampleRate);
     static TUint BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
 private:
     //Number of jiffies per sample
-    static const TUint kJiffies7350   = kJiffiesPerSecond / 7350;
-    static const TUint kJiffies8000   = kJiffiesPerSecond / 8000;
-    static const TUint kJiffies11025  = kJiffiesPerSecond / 11025;
-    static const TUint kJiffies12000  = kJiffiesPerSecond / 12000;
-    static const TUint kJiffies14700  = kJiffiesPerSecond / 14700;
-    static const TUint kJiffies16000  = kJiffiesPerSecond / 16000;
-    static const TUint kJiffies22050  = kJiffiesPerSecond / 22050;
-    static const TUint kJiffies24000  = kJiffiesPerSecond / 24000;
-    static const TUint kJiffies29400  = kJiffiesPerSecond / 29400;
-    static const TUint kJiffies32000  = kJiffiesPerSecond / 32000;
-    static const TUint kJiffies44100  = kJiffiesPerSecond / 44100;
-    static const TUint kJiffies48000  = kJiffiesPerSecond / 48000;
-    static const TUint kJiffies88200  = kJiffiesPerSecond / 88200;
-    static const TUint kJiffies96000  = kJiffiesPerSecond / 96000;
-    static const TUint kJiffies176400 = kJiffiesPerSecond / 176400;
-    static const TUint kJiffies192000 = kJiffiesPerSecond / 192000;
+    static const TUint kJiffies7350   = kPerSecond / 7350;
+    static const TUint kJiffies8000   = kPerSecond / 8000;
+    static const TUint kJiffies11025  = kPerSecond / 11025;
+    static const TUint kJiffies12000  = kPerSecond / 12000;
+    static const TUint kJiffies14700  = kPerSecond / 14700;
+    static const TUint kJiffies16000  = kPerSecond / 16000;
+    static const TUint kJiffies22050  = kPerSecond / 22050;
+    static const TUint kJiffies24000  = kPerSecond / 24000;
+    static const TUint kJiffies29400  = kPerSecond / 29400;
+    static const TUint kJiffies32000  = kPerSecond / 32000;
+    static const TUint kJiffies44100  = kPerSecond / 44100;
+    static const TUint kJiffies48000  = kPerSecond / 48000;
+    static const TUint kJiffies88200  = kPerSecond / 88200;
+    static const TUint kJiffies96000  = kPerSecond / 96000;
+    static const TUint kJiffies176400 = kPerSecond / 176400;
+    static const TUint kJiffies192000 = kPerSecond / 192000;
 };
 
 class DecodedAudio : public Allocated
@@ -260,19 +260,17 @@ public:
     const Brx& Uri() const;
     const Brx& MetaData() const;
     TUint Id() const;
-    TAny* UserData() const;
-    TBool Pullable() const;
 private:
-    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId, TAny* aUserData, TBool aPullable);
+    void Initialise(const Brx& aUri, const Brx& aMetaData, TUint aId);
 private: // from Allocated
     void Clear();
 private:
     BwsTrackUri iUri;
     BwsTrackMetaData iMetaData;
     TUint iId;
-    TAny* iUserData;
-    TBool iPullable;
 };
+
+class IClockPuller;
 
 class MsgMode : public Msg
 {
@@ -282,8 +280,9 @@ public:
     const Brx& Mode() const;
     TBool SupportsLatency() const;
     TBool IsRealTime() const;
+    IClockPuller* ClockPuller() const;
 private:
-    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime);
+    void Initialise(const Brx& aMode, TBool aSupportsLatency, TBool aIsRealTime, IClockPuller* aClockPuller);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -291,6 +290,7 @@ private:
     BwsMode iMode;
     TBool iSupportsLatency;
     TBool iIsRealTime;
+    IClockPuller* iClockPuller;
 };
 
 class MsgTrack : public Msg
@@ -944,7 +944,7 @@ class TrackFactory
 {
 public:
     TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount);
-    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData, TAny* aUserData, TBool aPullable);
+    Track* CreateTrack(const Brx& aUri, const Brx& aMetaData);
 private:
     Allocator<Track> iAllocatorTrack;
     Mutex iLock;
@@ -962,7 +962,7 @@ public:
                TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
                TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
     //
-    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);

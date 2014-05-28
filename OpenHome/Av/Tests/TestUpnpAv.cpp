@@ -251,7 +251,7 @@ void DummySourceUpnpAv::Seek(TUint aSecondsAbsolute)
 
 TestUpnpAv::TestUpnpAv(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChannel)
 {
-    static const TUint kMaxDriverJiffies = Jiffies::kJiffiesPerMs * 5;
+    static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
     iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory, kMaxDriverJiffies);
     iPipeline->Add(Codec::CodecFactory::NewAac());

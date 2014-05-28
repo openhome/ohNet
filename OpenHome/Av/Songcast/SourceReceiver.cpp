@@ -292,7 +292,7 @@ void SourceReceiver::EnsureActive()
 
 void SourceReceiver::UriChanged()
 {
-    Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata, true);
+    Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
     if (track == NULL) {
         iTrackId = Track::kIdNone;
         iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);

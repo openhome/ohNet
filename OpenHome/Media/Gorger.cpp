@@ -30,6 +30,11 @@ Gorger::~Gorger()
     delete iThread;
 }
 
+TUint Gorger::SizeInJiffies() const
+{
+    return Jiffies();
+}
+
 Msg* Gorger::Pull()
 {
     iLock.Wait();
