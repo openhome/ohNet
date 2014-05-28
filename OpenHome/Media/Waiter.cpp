@@ -78,14 +78,6 @@ Msg* Waiter::ProcessMsg(MsgDelay* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    if (iState == EFlushing || iState == ERampingDown) {
-        aMsg->RemoveRef();
-        ASSERTS();
-    }
-    if (iState == EWaiting) {
-        iObserver.PipelineWaiting(false);
-    }
-    NewStream();
     return aMsg;
 }
 
@@ -137,6 +129,15 @@ Msg* Waiter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    if (iState == EFlushing || iState == ERampingDown) {
+        aMsg->RemoveRef();
+        ASSERTS();
+    }
+    // iState may be ERampingUp if a MsgFlush was pulled
+    if (iState == EWaiting || iState == ERampingUp) {
+        iObserver.PipelineWaiting(false);
+    }
+    NewStream();
     return aMsg;
 }
 

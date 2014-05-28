@@ -92,7 +92,7 @@ private:
 
     void TestMsgTrackDuringWaitAsserts();
     void TestMsgTrackDuringRampingDownAsserts();
-    void TestMsgEncodedStreamDuringRampingUpAsserts();
+    void TestMsgDecodedStreamCancelsWaiting();
 
     void TestWaitingStateOnMsgWait();
 private:
@@ -134,7 +134,7 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUpAsserts), "TestWaitDuringRampingUpAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringWaitAsserts), "TestMsgTrackDuringWaitAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingDownAsserts), "TestMsgTrackDuringRampingDownAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgEncodedStreamDuringRampingUpAsserts), "TestMsgEncodedStreamDuringRampingUpAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgEncodedStreamDuringRampingUpAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitingStateOnMsgWait), "TestWaitingStateOnMsgWait");
 }
 
@@ -529,13 +529,14 @@ void SuiteWaiter::TestMsgsPassWhileWaitPending()
     TEST(iWaitingTrueCount == 0);
     iWaiter->Wait(kWaitFlushId, kRampDown);
 
-    // Push some msgs down pipeline (except for MsgTrack and MsgStream as they
-    // cancel the waiting, MsgAudioPcm and MsgSilence as they are ramped down,
-    // and MsgWait as it shouldn't occur here) before the expected MsgFlush.
+    // Push some msgs down pipeline (except for MsgTrack and MsgDecodedStream
+    // as they cancel the waiting, MsgAudioPcm and MsgSilence as they are
+    // ramped down, and MsgWait as it shouldn't occur here) before the expected
+    // MsgFlush.
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(CreateDecodedStream());
-    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kFlushId));
@@ -598,13 +599,14 @@ void SuiteWaiter::TestMsgsPassWhileWaiting()
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
-    // Push some msgs down pipeline (except for MsgTrack and MsgStream as they
-    // cancel the waiting, MsgAudioPcm and MsgSilence as they are ramped down,
-    // and MsgWait as it shouldn't occur here) before the expected MsgFlush.
+    // Push some msgs down pipeline (except for MsgTrack and MsgDecodedStream
+    // as they cancel the waiting, MsgAudioPcm and MsgSilence as they are
+    // ramped down, and MsgWait as it shouldn't occur here) before the expected
+    // MsgFlush.
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(CreateDecodedStream());
-    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kFlushId));
@@ -817,7 +819,7 @@ void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
     TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
 }
 
-void SuiteWaiter::TestMsgEncodedStreamDuringRampingUpAsserts()
+void SuiteWaiter::TestMsgDecodedStreamCancelsWaiting()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -850,9 +852,14 @@ void SuiteWaiter::TestMsgEncodedStreamDuringRampingUpAsserts()
     // Expected MsgFlush should be consumed
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(kWaitFlushId));
 
-    // Pull MsgEncodedStream and check audio comes through.
+    // Pull MsgDecodedStream and check audio comes through.
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
+    TEST(iWaitingCount == 1);   // pre-test state
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+    TEST(iWaitingCount == 2);
+    TEST(iWaitingFalseCount == 1);
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 }
@@ -882,8 +889,8 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
     // Some msgs should pass through while in a Songcast waiting state.
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
     PullNext(EMsgMetaText);
-    iPendingMsgs.push_back(CreateDecodedStream());
-    PullNext(EMsgDecodedStream);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt());
     PullNext(EMsgHalt);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgFlush(2));
@@ -893,6 +900,8 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
 
     // Send audio down. Waiter should notify all IWaiterObservers that the
     // pipeline is no longer in a waiting state (and audio should pass through).
+    TEST(iWaitingCount == 1);   // check pre-test state is as expected (i.e.,
+                                // that none of the msgs above changed the state)
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
     TEST(iWaitingCount == 2);
@@ -910,10 +919,12 @@ void SuiteWaiter::TestWaitingStateOnMsgWait()
     TEST(iWaitingCount == 3);
     TEST(iWaitingTrueCount == 2);
 
-    // Send EncodedStream down.  Waiter should notify all IWaiterObservers that the
+    // Send MsgDecodedStream down.  Waiter should notify all IWaiterObservers that the
     // pipeline is no longer in a waiting state
     iPendingMsgs.push_back(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
     TEST(iWaitingCount == 4);
     TEST(iWaitingFalseCount == 2);
 }
