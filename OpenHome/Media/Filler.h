@@ -92,7 +92,6 @@ private:
     TUint iTrackId;
     TBool iStopped;
     TBool iSendHalt;
-    TBool iGetPrevious;
     TBool iQuit;
     TBool iChangedMode;
     EStreamPlay iTrackPlayStatus;

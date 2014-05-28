@@ -64,7 +64,6 @@ private:
     Bws<DecodedAudio::kMaxBytes> iInBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
     Bws<2*kSearchChunkSize> iSeekBuf;   // can store 2 read chunks, to check for sync word across read boundaries
-    TUint32 iAudioBytes;
  
     TUint32 iSampleRate;
     TUint32 iBytesPerSec;

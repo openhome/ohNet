@@ -57,7 +57,6 @@ private:
     Media::BwsTrackMetaData iMetaData;
     std::array<TUint, IPresetDatabaseReader::kMaxPresets> iIdArray;
     Bws<IPresetDatabaseReader::kMaxPresets * sizeof(TUint32)> iIdArrayBuf;
-    Media::EPipelineState iTransportState;
 };
 
 } // namespace Av

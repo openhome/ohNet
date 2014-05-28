@@ -145,7 +145,7 @@ private:
     TUint iSeekHandle;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
-    TByte iReadBuf[kMaxRecogniseBytes];
+
     TBool iSeekable;
     TBool iLive;
     IStreamHandler* iStreamHandler;

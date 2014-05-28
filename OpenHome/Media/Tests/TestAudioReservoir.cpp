@@ -89,7 +89,6 @@ private:
     Semaphore iSemUpstream;
     Semaphore iSemUpstreamComplete;
     TUint64 iTrackOffset;
-    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
 class SuiteReservoirHistory : public Suite, private IMsgProcessor, private IClockPuller

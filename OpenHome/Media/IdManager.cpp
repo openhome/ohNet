@@ -55,9 +55,14 @@ TUint IdManager::UpdateId(TUint& aId)
     return id;
 }
 
-void IdManager::Log(const TChar* aPrefix)
+void IdManager::Log(
+#ifdef ID_MANAGER_LOG_ENABLE
+                    const TChar* aPrefix
+#else
+                    const TChar* /*aPrefix*/
+#endif
+                    )
 {
-    aPrefix = aPrefix;
 #ifdef ID_MANAGER_LOG_ENABLE
     Log::Print("IdManager: %s.  Pending items are:\n", aPrefix);
     TUint index = iIndexHead;

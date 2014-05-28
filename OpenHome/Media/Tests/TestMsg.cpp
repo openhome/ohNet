@@ -71,7 +71,6 @@ private:
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
-    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
 class SuiteRamp : public Suite
@@ -84,7 +83,6 @@ public:
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
-    TByte iBuf[DecodedAudio::kMaxBytes];
 };
 
 class SuiteAudioStream : public Suite

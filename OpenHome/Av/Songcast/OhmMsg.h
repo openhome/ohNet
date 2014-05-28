@@ -37,11 +37,10 @@ public:
     virtual void Process(IOhmMsgProcessor& aProcessor) = 0;
     virtual void Externalise(IWriter& aWriter) = 0;
 protected:
-    OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType);
+    OhmMsg(OhmMsgFactory& aFactory);
     void Create();
 private:
     OhmMsgFactory* iFactory;
-    TUint iMsgType;
     TUint iRefCount;
 };
 
@@ -54,7 +53,7 @@ public:
     void SetRxTimestamp(TUint aValue);
 
 protected:
-    OhmMsgTimestamped(OhmMsgFactory& aFactory, TUint aMsgType);
+    OhmMsgTimestamped(OhmMsgFactory& aFactory);
     void Create();
 
 private:

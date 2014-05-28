@@ -7,9 +7,8 @@ using namespace OpenHome::Av;
 
 // OhmMsg
 
-OhmMsg::OhmMsg(OhmMsgFactory& aFactory, TUint aMsgType)
+OhmMsg::OhmMsg(OhmMsgFactory& aFactory)
     : iFactory(&aFactory)
-    , iMsgType(aMsgType)
     , iRefCount(0)
 {
 }
@@ -45,8 +44,8 @@ void OhmMsg::Create()
 
 // OhmMsgTimestamped
 
-OhmMsgTimestamped::OhmMsgTimestamped(OhmMsgFactory& aFactory, TUint aMsgType)
-    : OhmMsg(aFactory, aMsgType)
+OhmMsgTimestamped::OhmMsgTimestamped(OhmMsgFactory& aFactory)
+    : OhmMsg(aFactory)
     , iRxTimestamped(false)
     , iRxTimestamp(0)
 {
@@ -82,7 +81,7 @@ void OhmMsgTimestamped::Create()
 // OhmMsgAudio
 
 OhmMsgAudio::OhmMsgAudio(OhmMsgFactory& aFactory)
-    : OhmMsgTimestamped(aFactory, OhmHeader::kMsgTypeAudio)
+    : OhmMsgTimestamped(aFactory)
 {
 }
 
@@ -146,7 +145,7 @@ void OhmMsgAudio::Create(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool
     OhmMsgTimestamped::Create();
 
     iHalt = aHalt;
-    aLossless = aLossless;
+    iLossless = aLossless;
     iTimestamped = aTimestamped;
     iResent = aResent;
     iSamples = aSamples;
@@ -338,7 +337,7 @@ void OhmMsgAudioBlob::Externalise(IWriter& aWriter)
 }
 
 OhmMsgAudioBlob::OhmMsgAudioBlob(OhmMsgFactory& aFactory)
-    : OhmMsgTimestamped(aFactory, OhmHeader::kMsgTypeAudioBlob)
+    : OhmMsgTimestamped(aFactory)
     , iFrame(0)
 {
 }
@@ -364,7 +363,7 @@ void OhmMsgAudioBlob::Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeade
 // OhmMsgTrack
 
 OhmMsgTrack::OhmMsgTrack(OhmMsgFactory& aFactory)
-    : OhmMsg(aFactory, OhmHeader::kMsgTypeTrack)
+    : OhmMsg(aFactory)
 {
 }
 
@@ -431,7 +430,7 @@ void OhmMsgTrack::Externalise(IWriter& aWriter)
 // OhmMsgMetatext
 
 OhmMsgMetatext::OhmMsgMetatext(OhmMsgFactory& aFactory)
-    : OhmMsg(aFactory, OhmHeader::kMsgTypeMetatext)
+    : OhmMsg(aFactory)
 {
 }
 
