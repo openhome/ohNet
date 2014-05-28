@@ -92,7 +92,7 @@ private:
 
     void TestMsgTrackDuringWaitAsserts();
     void TestMsgTrackDuringRampingDownAsserts();
-    void TestMsgDecodedStreamDuringRampingUpAsserts();
+    void TestMsgDecodedStreamCancelsWaiting();
 
     void TestWaitingStateOnMsgWait();
 private:
@@ -134,7 +134,7 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUpAsserts), "TestWaitDuringRampingUpAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringWaitAsserts), "TestMsgTrackDuringWaitAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingDownAsserts), "TestMsgTrackDuringRampingDownAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamDuringRampingUpAsserts), "TestMsgEncodedStreamDuringRampingUpAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgEncodedStreamDuringRampingUpAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitingStateOnMsgWait), "TestWaitingStateOnMsgWait");
 }
 
@@ -818,7 +818,7 @@ void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
     TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
 }
 
-void SuiteWaiter::TestMsgDecodedStreamDuringRampingUpAsserts()
+void SuiteWaiter::TestMsgDecodedStreamCancelsWaiting()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
