@@ -133,7 +133,8 @@ Msg* Waiter::ProcessMsg(MsgDecodedStream* aMsg)
         aMsg->RemoveRef();
         ASSERTS();
     }
-    if (iState == EWaiting) {
+    // iState may be ERampingUp if a MsgFlush was pulled
+    if (iState == EWaiting || iState == ERampingUp) {
         iObserver.PipelineWaiting(false);
     }
     NewStream();
