@@ -53,16 +53,19 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.playlist     = []
         self.trackIndex   = -1
         self.numTracks    = 0
+        self.title        = ''
         self.playTime     = None
-        self.playTimer    = None
-        self.checkTimer   = None
-        self.tickTimer    = None
+        self.playTimer    = None    # expiry -> move to next track
+        self.checkTimer   = None    # expiry -> info check
+        self.tickTimer    = None    # expiry -> checks PositionInfo incrementing
+        self.startTimer   = None    # expiry -> failed to start (log and continue)
         self.avtState     = None
         self.testLoop     = 0
         self.testLoops    = 1
         self.startTime    = 0
         self.stopTime     = 0
         self.prevAvtSecs  = 0
+        self.reportedSecs = 0
         self.stuck        = 0
         self.started      = False
         self.eop          = threading.Event()
@@ -169,6 +172,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         toDo       = None
 
         if evAvtState == 'PLAYING' and self.avtState != 'PLAYING':
+            if self.startTimer:
+                self.startTimer.cancel()
             toDo = self._HandlePlay
             self.startTime = time.time()
         elif evAvtState in ['STOPPED', 'NO_MEDIA_PRESENT'] and self.avtState not in ['STOPPED', 'NO_MEDIA_PRESENT']:
@@ -181,6 +186,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
     def _HandleStop( self ):
         """Handles state transition to STOPPED - clear timers, perform checks, start next track"""
         self.mutex.acquire()
+        if self.startTimer:
+            self.startTimer.cancel()
         if self.playTimer:
             self.playTimer.cancel()
         if self.tickTimer:
@@ -194,14 +201,19 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         if self.trackIndex >= self.numTracks:
             self.eop.set()
         else:
+            self.title = Common.GetTitleFromDidl( self.playlist[self.trackIndex][1] )
+            self.log.Header1( '', 'Loop %d of %d: Track %d of %d  (%s)' %
+                (self.testLoop+1, self.testLoops, self.trackIndex+1, self.numTracks, self.title))
+
+            self.reportedSecs = 0
+            self.startTimer = LogThread.Timer( 5, self._StartTimerCb )
+            self.startTimer.start()
             self.mr.avt.SetUri( self.playlist[self.trackIndex][0], self.playlist[self.trackIndex][1] )
             self.mr.avt.Play()
         self.mutex.release()
 
     def _HandlePlay( self ):
         """Handles state transition to PLAYING - sets up all timers"""
-        self.log.Header2( '', 'Loop %d of %d: Track %d of %d' %
-            (self.testLoop+1, self.testLoops, self.trackIndex+1, self.numTracks))
         self.mutex.acquire()
         self.playTimer = LogThread.Timer( self.playTime, self._PlayTimerCb )
         self.checkTimer = LogThread.Timer( 5, self._CheckTimerCb )
@@ -213,10 +225,20 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
 
     def _PlayTimerCb( self ):
         """Callback from playtime timer - skips to next track"""
+        self.mutex.acquire()
         self.mr.avt.Stop()
+        self.mutex.release()
+
+    def _StartTimerCb( self ):
+        """Called on start timer expiry - implies PLAYING state has not been reached"""
+        if self.mr.avt.transportState != 'PLAYING':
+            self.log.Fail( self.mrDev, 'Track failed to start playback (%s)' % self.title )
+            self.mutex.release()    # can reach here whilst _HandleStop() holds mutex
+            self._HandleStop()
 
     def _CheckTimerCb( self ):
         """Called a few secs into playback to check Info on Sender (and Receiver)"""
+        self.mutex.acquire()
         avtDuration = self.mr.avt.currentMediaDuration
         avtUri      = self.mr.avt.avTransportURI
         avtMetadata = self.mr.avt.avTransportURIMetaData
@@ -235,23 +257,32 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 'AVT/Receiver URI (%s/%s)' % (avtUri, self.rcvr.info.uri) )
             self.log.FailUnless( self.rcvrDev, avtMetadata==self.rcvr.info.metadata,
                 'AVT/Receiver metadata (%s/%s)' % (avtMetadata, self.rcvr.info.metadata) )
+        self.mutex.release()
 
     def _TickTimerCb( self ):
         """Called every second during playback to check still playing, time incrementing"""
+        self.mutex.acquire()
         avtSecs = 0
         posn = self.mr.avt.avt.GetPositionInfo( InstanceID=0 )
         if posn.has_key( 'RelTime' ):
+            self.log.Info( self.senderDev, 'Reported play time: %s' % posn['RelTime'] )
             avtSecs = self._ToSecs( posn['RelTime'] )
         if avtSecs==self.prevAvtSecs:
             self.stuck += 1
         else:
             self.stuck = 0
-        if self.stuck > 5:
-            self.log.Fail( self.mrDev, 'Playback time not incrementing' )
-            self.eop.set()
 
-        self.tickTimer = LogThread.Timer( 1, self._TickTimerCb )
-        self.tickTimer.start()
+        if self.stuck > 5:
+            self.log.Fail( self.mrDev, 'Playback time not incrementing  (%s)' % self.title )
+            self.mutex.release()
+            self._HandleStop()
+        else:
+            if avtSecs > self.reportedSecs:
+                self.reportedSecs = avtSecs
+            self.prevAvtSecs = avtSecs
+            self.tickTimer = LogThread.Timer( 1, self._TickTimerCb )
+            self.tickTimer.start()
+            self.mutex.release()
 
     def _CheckPlayTime( self ):
         """Check playback time as expected"""
@@ -261,7 +292,10 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 exp = self.playTime
             else:
                 exp = self.mr.avt.currentTrackDuration
-            self.log.CheckLimits( self.mrDev, 'GELE', meas, exp-1, exp+1, 'Measured vs expected playback time' )
+            self.log.CheckLimits( self.mrDev, 'GELE', meas, exp-1, exp+1,
+                                  'Measured vs expected playback time  (%s)' % self.title )
+            self.log.CheckLimits( self.mrDev, 'GELE', self.reportedSecs, exp-1, exp+1,
+                                  'Reported vs expected playback time  (%s)' % self.title )
 
     @staticmethod
     def _ToSecs( aTime ):
