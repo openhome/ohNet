@@ -94,7 +94,7 @@ def configure_toolchain(conf):
         conf.load('compiler_c')
         conf.env.append_value('CFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', '-g')
-        conf.env.append_value('LINKFLAGS', ['-g', '-Wl,--fatal-warnings'])
+        conf.env.append_value('LINKFLAGS', '-g')
         conf.env.append_value('CXXFLAGS', [
                 '-pipe', '-D_GNU_SOURCE', '-D_REENTRANT', '-DDEFINE_TRACE',
                 '-DDEFINE_'+platform_info['endian']+'_ENDIAN', '-fvisibility=hidden',])
@@ -109,6 +109,7 @@ def configure_toolchain(conf):
             conf.env.append_value('CXXFLAGS', ['-std=c++11', '-D_POSIX_C_SOURCE=199309', '-stdlib=libc++'])
         else:
             conf.env.append_value('CXXFLAGS', ['-std=c++0x', '-D__STDC_VERSION__=199901L'])
+            conf.env.append_value('LINKFLAGS', '-Wl,--fatal-warnings')
         # Don't enable warnings for C code as its typically third party and written to different standards
         conf.env.append_value('CXXFLAGS', [
                 '-fexceptions', '-Wall', '-Werror'])
@@ -119,7 +120,6 @@ def configure_toolchain(conf):
             conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
         elif conf.options.dest_platform in ['Mac-x86', 'Mac-x64']:
-            conf.env.append_value('LINKFLAGS', ['-pthread'])
             if conf.options.dest_platform == 'Mac-x86':
                 conf.env.append_value('CXXFLAGS', ['-arch', 'i386', '-m32'])
                 conf.env.append_value('CFLAGS', ['-arch', 'i386', '-m32'])
