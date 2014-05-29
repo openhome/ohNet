@@ -40,7 +40,6 @@ private:
     TrackFactory& iTrackFactory;
     Mutex iLock;
     Semaphore iBlocker;
-    Msg* iPendingMsg;
     TBool iBlock;
     TBool iQuit;
     TUint iFlushId;
@@ -112,7 +111,6 @@ private:
     Semaphore iSemFlushed;
     Semaphore iSemQuit;
     TBool iQuitReceived;
-    TByte iBuf[32 * 1024]; // far too large a buffer to save recalculating sizes if/when sample rates change
 };
 
 // Trivial codec which accepts all content and does a 1-1 translation between encoded and decoded audio

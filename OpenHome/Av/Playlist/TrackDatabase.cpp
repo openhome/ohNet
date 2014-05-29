@@ -537,9 +537,14 @@ void Shuffler::MoveToStartOfUnplayed(Track* aTrack, const TChar* aLogPrefix)
 }
 
 #undef LOG_SHUFFLE
-void Shuffler::LogIds(const TChar* aPrefix)
+void Shuffler::LogIds(
+#ifdef LOG_SHUFFLE
+                      const TChar* aPrefix
+#else
+                      const TChar* /*aPrefix*/
+#endif
+                      )
 {
-    aPrefix = aPrefix;
 #ifdef LOG_SHUFFLE
     Log::Print("%s.  New track order is:\n\t{ ", aPrefix);
     if (iShuffleList.size() > 0) {
