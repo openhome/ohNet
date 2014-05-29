@@ -44,7 +44,7 @@ private: // from DvProviderAvOpenhomeOrgVolume1 (and only ever invoked from base
 
     void VolumeLimit(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
 private:
-    IMuteManager& iMuteManager;
+    //IMuteManager& iMuteManager;
     IVolumeManagerLimits& iVolumeManager;
     Mutex iLock;
 };

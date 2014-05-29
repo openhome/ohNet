@@ -22,8 +22,6 @@ using namespace OpenHome::Av;
 
 static const TUint kIdNotFoundCode = 800;
 static const Brn kIdNotFoundMsg("Id not found");
-static const TUint kInvalidRequestCode = 802;
-static const Brn kInvalidRequestMsg("Comma separated id request list invalid");
 static const TUint kInvalidChannelCode = 803;
 static const Brn kInvalidChannelMsg("Selected channel is invalid");
 

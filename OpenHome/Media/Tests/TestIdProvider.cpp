@@ -71,8 +71,6 @@ public:
     void Test();
 private: // from IStopper
     void RemoveStream(TUint aTrackId, TUint aStreamId);
-private:
-    IdManager* iIdManager;
 };
 
 class SuiteMultiStreams : public SuiteUnitTest, private IStopper

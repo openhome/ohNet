@@ -108,7 +108,6 @@ private:
     TUint iNumMsgsGenerated;
     TUint iAudioMsgSizeJiffies;
     TUint64 iTrackOffset;
-    TByte iBuf[DecodedAudio::kMaxBytes];
     TBool iNextModeSupportsLatency;
     TUint iNextDelayAbsoluteJiffies;
     TUint iTrackId;

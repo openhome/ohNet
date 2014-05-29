@@ -72,8 +72,6 @@ private:
     Av::ZoneHandler* iZoneHandler;
     Semaphore iDeviceDisabled;
     Timer* iTimer;
-    TByte* iBuf;
-    TByte* iBufPacked;
     TUint iSampleRate;
     TUint iJiffiesPerSample;
     TUint iNumChannels;

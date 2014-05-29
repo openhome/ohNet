@@ -95,7 +95,6 @@ protected:
 private:
     MsgFactory* iMsgFactory;
     IPipelineElementUpstream* iUpstreamElement;
-    TByte iReadBuf[EncodedAudio::kMaxBytes];
     Msg* iPendingMsg;
 
 protected:

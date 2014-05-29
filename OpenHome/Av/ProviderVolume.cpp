@@ -28,14 +28,19 @@ using namespace OpenHome::Media;
 //
 
 // from older .../Preamp/ServiceVolume.cpp
+#if 0 // FIXME - are these codes still needed?
 const TInt kInvalidSourceIndexCode = 800;
 const Brn  kInvalidSourceIndexMsg("Source index invalid");
 
-const TInt kActionNotSupportedCode = 801;
-const Brn  kActionNotSupportedMsg("Action not supported");
-
 const TInt kInvalidStringCode = 810;
 const Brn  kInvalidStringMsg("String too long");
+
+const TInt kInvalidFadeCode = 813;
+const Brn  kInvalidFadeMsg("Fade invalid");
+#endif
+
+const TInt kActionNotSupportedCode = 801;
+const Brn  kActionNotSupportedMsg("Action not supported");
 
 const TInt kInvalidVolumeCode = 811;
 const Brn  kInvalidVolumeMsg("Volume invalid");
@@ -43,12 +48,9 @@ const Brn  kInvalidVolumeMsg("Volume invalid");
 const TInt kInvalidBalanceCode = 812;
 const Brn  kInvalidBalanceMsg("Balance invalid");
 
-const TInt kInvalidFadeCode = 813;
-const Brn  kInvalidFadeMsg("Fade invalid");
-
-ProviderVolume::ProviderVolume(DvDevice& aDevice, IMuteManager& aMuteManager, IVolumeManagerLimits& aVolumeManager)
+ProviderVolume::ProviderVolume(DvDevice& aDevice, IMuteManager& /*aMuteManager*/, IVolumeManagerLimits& aVolumeManager)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
-    , iMuteManager(aMuteManager)
+    //, iMuteManager(aMuteManager)
     , iVolumeManager(aVolumeManager)
     , iLock("PrVm")
 {

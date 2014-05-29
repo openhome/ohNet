@@ -44,7 +44,7 @@ void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void NullPipelineObserver::NotifyTrack(const Brx& /*aUri*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void NullPipelineObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
 }
 

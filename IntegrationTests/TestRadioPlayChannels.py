@@ -115,13 +115,8 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                 # extract channel info and log test header
                 title = Common.GetTitleFromDidl( channel[1] )
                 uri = Common.GetUriFromDidl( channel[1] )
-                self.log.Info( '' )
-                self.log.Info( '', '---------------------------------------------' )
-                self.log.Info( '', '%s: %s' % (loopMsg, testMsg) )
-                self.log.Info( '', '%s' % title )
-                self.log.Info( '', '---------------------------------------------' )
-                self.log.Info( '' )
-            
+                self.log.Header1( '', '%s: %s - %s' % (loopMsg, testMsg, title) )
+
                 # select the channel, check selected correctly
                 if not self._SelectChannel( uri, channel ):
                     self.log.Warn( self.senderDev, 'Channel select error - skip playback' )
