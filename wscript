@@ -47,6 +47,9 @@ def configure(conf):
         except KeyError:
             conf.fatal('Specify --dest-platform')
 
+    if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
+        guess_libplatform_location(conf)
+
     configure_toolchain(conf)
     guess_ohnet_location(conf)
 
@@ -58,7 +61,6 @@ def configure(conf):
     conf.env.STLIB_OHNET=['TestFramework', 'ohNetCore']
 
     if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
-        guess_libplatform_location(conf)
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
 
     conf.env.INCLUDES_OHNETMON = [os.path.join('dependencies', conf.options.dest_platform, 'ohNetmon', 'include')]

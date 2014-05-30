@@ -186,10 +186,11 @@ Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
     const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
     if (iStreamInfo != NULL &&
         aMsg->StreamInfo().SampleRate() == stream.SampleRate() &&
-        aMsg->StreamInfo().BitDepth() == stream.BitDepth()) {
-        // no change in format.  Discard this msg
-        aMsg->RemoveRef();
-        return NULL;
+        aMsg->StreamInfo().BitDepth() == stream.BitDepth() &&
+        aMsg->StreamInfo().NumChannels() == stream.NumChannels()) {
+            // no change in format.  Discard this msg
+            aMsg->RemoveRef();
+            return NULL;
     }
     if (iStreamInfo != NULL) {
         iStreamInfo->RemoveRef();

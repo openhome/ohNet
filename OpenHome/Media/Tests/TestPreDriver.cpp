@@ -20,7 +20,6 @@ class SuitePreDriver : public Suite, private IPipelineElementUpstream, private I
     static const TUint kMsgFormatCount = 2;
 
     static const TUint kSampleRate  = 44100;
-    static const TUint kNumChannels = 2;
 public:
     SuitePreDriver();
     ~SuitePreDriver();
@@ -70,6 +69,7 @@ private:
     TUint64 iTrackOffset;
     TUint iSampleRate;
     TUint iBitDepth;
+    TUint iNumChannels;
     TUint iAudioMsgSizeJiffies;
     TUint iNextMsgSilenceSize;
 };
@@ -84,6 +84,7 @@ SuitePreDriver::SuitePreDriver()
     : Suite("Pre-Driver tests")
     , iLastMsg(ENone)
     , iTrackOffset(0)
+    , iNumChannels(2)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 10, 10, 10, 10, 10, kMsgFormatCount, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
@@ -146,7 +147,7 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
 
-    // Send Format with same sample rate + bit depth.  Check it isn't passed on (we move on to Silence instead).
+    // Send Format with same sample rate + bit depth + no. channels.  Check it isn't passed on (we move on to Silence instead).
     iNextGeneratedMsg = EMsgDecodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
@@ -178,6 +179,26 @@ void SuitePreDriver::Test()
     } while (iLastMsg != EMsgHalt);
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
+
+    // Send Format with same sample rate + bit depth but different no. channels.
+    iNumChannels = 1;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgDecodedStream);
+
+    // Send Audio then Format with same sample rate + bit depth but different no. channels.
+    // Check Halt is delivered before Format.
+    iNextGeneratedMsg = EMsgAudioPcm;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgPlayable);
+    iNumChannels = 2;
+    iNextGeneratedMsg = EMsgDecodedStream;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgPlayable);
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgHalt);
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgDecodedStream);
 }
 
 Msg* SuitePreDriver::Pull()
@@ -195,7 +216,7 @@ Msg* SuitePreDriver::Pull()
         return iMsgFactory->CreateMsgSilence(iNextMsgSilenceSize);
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
-        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, kNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
+        return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
     case EMsgTrack:
     {
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
@@ -228,7 +249,7 @@ MsgAudioPcm* SuitePreDriver::CreateAudio()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xff, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -291,6 +312,7 @@ Msg* SuitePreDriver::ProcessMsg(MsgDecodedStream* aMsg)
 {
     TEST(aMsg->StreamInfo().BitDepth() == iBitDepth);
     TEST(aMsg->StreamInfo().SampleRate() == iSampleRate);
+    TEST(aMsg->StreamInfo().NumChannels() == iNumChannels);
     iLastMsg = EMsgDecodedStream;
     return aMsg;
 }
