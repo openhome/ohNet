@@ -158,12 +158,16 @@ def configure_toolchain(conf):
             try:
                 linkflags = os.environ['CROSS_LINKFLAGS'].split()
             except KeyError:
-                linkflags = [   '-B', conf.env.STLIBPATH_PLATFORM,
-                                os.path.join(conf.env.STLIBPATH_PLATFORM, 'FileOpen.o'),
-                                '-lplatform',
-                                # libosa path is hardcoded here :(
-                                '-B', '../dependencies/' + platform + '/libosa/lib/',
-                                '-specs', 'bsp_specs']
+                if len(conf.env.STLIBPATH_PLATFORM) == 0:
+                    print 'STLIBPATH_PLATFORM not set, assuming libplatform not required'
+                    linkflags = ''
+                else:
+                    linkflags = [   '-B', conf.env.STLIBPATH_PLATFORM,
+                                    os.path.join(conf.env.STLIBPATH_PLATFORM, 'FileOpen.o'),
+                                    '-lplatform',
+                                    # libosa path is hardcoded here :(
+                                    '-B', '../dependencies/' + platform + '/libosa/lib/',
+                                    '-specs', 'bsp_specs']
 
             conf.env.append_value('LINKFLAGS', linkflags)
             conf.env.append_value('LINKFLAGS',  ['-mcpu=' + cpu])
