@@ -12,7 +12,8 @@ Parameters:
 
 # This will play any radio channel list by passing the appropriate TuneIn username as parameter
 # However, the following predefined lists are available specifically aimed at testing
-#   - ohmp  -> 5 channel (of which 4 should play using base ohmp codecs)
+#   - ohmp   -> 5 channel (of which 4 should play using base ohmp codecs)
+#   - ohmp2  -> more channels, of which most should play using base ohmp codecs
 
 import _FunctionalTest
 import BaseTest                   as BASE
