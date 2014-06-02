@@ -162,15 +162,15 @@ def test(context):
 def test_full(context):
     python("waf", "test_full")
 
-@build_step("integration_test", optional=True, default=False)
+@build_step("install", optional=True, default=True)
+def install(context):
+    python("waf", "install")
+
+@build_step("integration_test", optional=True)
 @build_condition(OH_PLATFORM="Windows-x86")
 @build_condition(OH_PLATFORM="Windows-x64")
 def integration_test(context):
     python("IntegrationTests/SuitePostBuild.py")
-
-@build_step("install", optional=True, default=True)
-def install(context):
-    python("waf", "install")
 
 @build_step("publish", optional=True, default=False)
 def publish(context):

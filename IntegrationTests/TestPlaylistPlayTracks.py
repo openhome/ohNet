@@ -422,6 +422,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 (expUri, expMeta)  = self.tracks[self.sender.playlist.idArray.index( tId )]
             except:
                 (expUri, expMeta)  = ('', '')
+            expMeta = expMeta.decode( 'utf-8' )
 
             if readUri != expUri:
                 fail = True
@@ -429,8 +430,9 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                                (readUri, expUri) )
             if readMeta != expMeta:
                 fail = True
-                self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % 
-                               (readMeta, expMeta) )
+                self.log.Pass( self.senderDev, 'Actual/Expected META read from DS %s' % (readMeta) )
+                self.log.Warn( self.senderDev, 'Actual/Expected META read from DS %s' % (expMeta) )
+                self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % (readMeta, expMeta) )
         if not fail:
             self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
 

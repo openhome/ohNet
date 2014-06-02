@@ -14,8 +14,11 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 
-kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer.exe' )
-
+_platform = platform.system()
+if _platform in ['Windows', 'cli']:
+    kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer.exe' )
+elif _platform in ['Linux', 'Darwin']:
+    kExe = os.path.join( 'install', 'bin', 'TestMediaPlayer' )
 
 class SoftPlayer( BASE.Component ):
     """Class to wrap SoftPlayer executable (TestMediaPlayer.exe)"""
@@ -58,14 +61,11 @@ class SoftPlayer( BASE.Component ):
             self.log.Abort( '', 'No SoftPlayer executable found' )
         self.log.Info( '', 'Using SoftPlayer executable at %s' % exePath )
         
-        cmd  = exePath
-        cmd += ' -r %s' % self.room
-        cmd += ' -n %s' % self.model
-        cmd += ' -a %d' % self.__GetHost()
+        cmd  = [exePath, '-r', self.room, '-n', self.model, '-a', '%d' % self.__GetHost( )]
         if aTuneIn:
-            cmd += ' -t %s' % aTuneIn
+            cmd.extend( ['-t', aTuneIn] )
         if aSenderChannel:
-            cmd += ' -c %d' % aSenderChannel
+            cmd.extend( ['-c', '%d' % aSenderChannel] )
         self.log.Info( '', 'SoftPlayer command: %s' % cmd )
             
         self.proc = subprocess.Popen( cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -135,9 +135,14 @@ class SoftPlayer( BASE.Component ):
     
 if __name__ == '__main__':
 
-    import msvcrt
-
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp' )
-    msvcrt.getch()
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2' )
+    if _platform in ['Windows', 'cli']:
+        import msvcrt
+        print '\nPress ANY KEY to EXIT'
+        msvcrt.getch()
+    else:
+        import sys
+        print '\nPress ENTER to EXIT'
+        sys.stdin.readline()
     s.Shutdown()
     s.log.Cleanup()
