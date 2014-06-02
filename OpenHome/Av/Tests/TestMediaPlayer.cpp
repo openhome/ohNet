@@ -43,7 +43,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // create UPnP device
     iDevice = new DvDeviceStandard(aDvStack, aUdn, *this);
     iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
-    iDevice->SetAttribute("Upnp.Type", "MediaPlayer");
+    iDevice->SetAttribute("Upnp.Type", "Source");
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", friendlyName.PtrZ());
     iDevice->SetAttribute("Upnp.Manufacturer", "OpenHome");
@@ -95,8 +95,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iShell = new Shell(aDvStack.Env(), 0);
     Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
-
-    //iProduct->SetCurrentSource(0);
 }
 
 TestMediaPlayer::~TestMediaPlayer()
