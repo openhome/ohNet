@@ -792,7 +792,6 @@ void SuiteRewinderMsgOrdering::TestMultipleMsgEncodedStreamRewindStop()
     iMsgOrder.push_back(EMsgEncodedStream);
     iMsgOrder.push_back(EMsgEncodedStream);
 
-    //PullAndProcess(); // MsgTrack
     Msg* msg = iRewinder->Pull();
     msg = msg->Process(*this);
     TEST(iRcvdMsgType == EMsgTrack);

@@ -63,7 +63,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStreamHandler* iStreamHandler;
-    TUint iBuffering;
+    TBool iBuffering;
     Mutex iLock;
     MsgQueue* iQueueCurrent;    // new Msgs still to be passed on
     MsgQueue* iQueueNext;       // Msgs passed on but buffered in case of rewind
