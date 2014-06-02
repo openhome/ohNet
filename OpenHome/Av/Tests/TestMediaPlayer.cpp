@@ -92,7 +92,8 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     powerManager.RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
 
     // create a shell
-    iShell = new Shell(aDvStack.Env());
+    iShell = new Shell(aDvStack.Env(), 0);
+    Log::Print("Shell running on port %u\n", iShell->Port());
     iShellDebug = new ShellCommandDebug(*iShell);
 
     //iProduct->SetCurrentSource(0);
