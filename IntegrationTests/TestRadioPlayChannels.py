@@ -116,17 +116,17 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                 # extract channel info and log test header
                 title = Common.GetTitleFromDidl( channel[1] )
                 uri = Common.GetUriFromDidl( channel[1] )
-                self.log.Header1( '', '%s: %s - %s' % (loopMsg, testMsg, title) )
+                self.log.Header1( '', '%s: %s - %s' % (loopMsg, testMsg, title.decode( 'utf8' )) )
 
                 # select the channel, check selected correctly
                 if not self._SelectChannel( uri, channel ):
                     self.log.Warn( self.senderDev, 'Channel select error - skip playback' )
                     continue
-                    
+
                 # start playback
                 self.startTime = time.time()
                 self._StartPlayback( title )
-            
+
                 # log 'now playing' info, set and wait for playback timer
                 if self.sender.radio.transportState == 'Playing':
                     self.checkTimer = LogThread.Timer( 3, self._CheckTimerCb )
@@ -136,7 +136,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                         self.playTimer = LogThread.Timer( playTime, self._PlayTimerCb )
                         self.playTimer.start()
                         self.playTimerExpired.wait()
-                        self.log.Pass( self.senderDev,  
+                        self.log.Pass( self.senderDev,
                             'Completed %ds playback of %s' % (playTime,title) )
 
                         measTime = int( time.time()-self.startTime )
@@ -150,7 +150,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                     else:
                         # wait until radio channel itself disconnects
                         self.isStopped.wait()
-                        
+
                     if self.checkTimer:
                         self.checkTimer.cancel()
 
