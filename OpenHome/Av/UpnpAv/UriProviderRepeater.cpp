@@ -17,6 +17,7 @@ UriProviderRepeater::UriProviderRepeater(const TChar* aMode, TrackFactory& aTrac
     , iTrack(NULL)
     , iRetrieved(true)
     , iPlayLater(false)
+    , iFailed(false)
 {
 }
 
@@ -29,6 +30,7 @@ UriProviderRepeater::~UriProviderRepeater()
 
 Track* UriProviderRepeater::SetTrack(const Brx& aUri, const Brx& aMetaData)
 {
+    AutoMutex a(iLock);
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
@@ -39,15 +41,18 @@ Track* UriProviderRepeater::SetTrack(const Brx& aUri, const Brx& aMetaData)
         iTrack = iTrackFactory.CreateTrack(aUri, aMetaData);
         iTrack->AddRef();
     }
+    iFailed = false;
     return iTrack;
 }
 
 void UriProviderRepeater::SetTrack(Track* aTrack)
 {
+    AutoMutex a(iLock);
     if (iTrack != NULL) {
         iTrack->RemoveRef();
     }
     iTrack = aTrack;
+    iFailed = false;
 }
 
 void UriProviderRepeater::Begin(TUint aTrackId)
@@ -63,7 +68,7 @@ void UriProviderRepeater::BeginLater(TUint aTrackId)
 EStreamPlay UriProviderRepeater::GetNext(Track*& aTrack)
 {
     AutoMutex a(iLock);
-    if (iTrack == NULL) {
+    if (iTrack == NULL || iFailed) {
         aTrack = NULL;
         return ePlayNo;
     }
@@ -97,11 +102,28 @@ TBool UriProviderRepeater::MovePrevious()
     return MoveCursor();
 }
 
+void UriProviderRepeater::NotifyTrackPlay(Media::Track& aTrack)
+{
+    AutoMutex a(iLock);
+    if (iTrack != NULL && iTrack->Id() == aTrack.Id()) {
+        iFailed = false;
+    }
+}
+
+void UriProviderRepeater::NotifyTrackFail(Media::Track& aTrack)
+{
+    AutoMutex a(iLock);
+    if (iTrack != NULL && iTrack->Id() == aTrack.Id()) {
+        iFailed = true;
+    }
+}
+
 void UriProviderRepeater::DoBegin(TUint aTrackId, TBool aLater)
 {
     iLock.Wait();
     iRetrieved = (iTrack == NULL || iTrack->Id() != aTrackId);
     iPlayLater = aLater;
+    iFailed = false;
     iLock.Signal();
 }
 

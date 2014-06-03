@@ -103,6 +103,7 @@ protected:
     TUint iTryStopCount;
     TUint iTrackId;
     TUint iStreamId;
+    TUint iNextStreamId;
 };
 
 class SuiteRewinderNullMsgs : public SuiteRewinder
@@ -150,6 +151,8 @@ private: // from SuiteRewinder
     void InitMsgOrder();
 private:
     void TestMsgOrdering();
+    void TestMultipleMsgEncodedStreamRewindStop();
+    TBool PullAndCompare(EMsgType aMsgType, TUint aStreamId);
 };
 
 } // namespace Media
@@ -184,7 +187,7 @@ void SuiteRewinder::InitMsgOrder()
 
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;
@@ -201,6 +204,7 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
     iTryStopCount = 0;
     iTrackId = 0;
     iStreamId = 0;
+    iNextStreamId = IPipelineIdProvider::kStreamIdInvalid+1;
     InitMsgOrder();
 }
 
@@ -402,7 +406,7 @@ Msg* SuiteRewinder::GenerateMsg(EMsgType aType)
         iLastMsgType = EMsgTrack;
         break;
     case EMsgEncodedStream:
-        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, 0, false, false, this);
+        msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://127.0.0.1:65535"), Brn("metatext"), 0, iNextStreamId++, false, false, this);
         iLastMsgType = EMsgEncodedStream;
         break;
     case EMsgAudioEncoded:
@@ -742,7 +746,8 @@ void SuiteRewinderSeekToStartMultipleStreams::InitMsgOrder()
 SuiteRewinderMsgOrdering::SuiteRewinderMsgOrdering()
     : SuiteRewinder("RewinderMsgOrdering tests")
 {
-    AddTest(MakeFunctor(*this, &SuiteRewinderMsgOrdering::TestMsgOrdering));
+    AddTest(MakeFunctor(*this, &SuiteRewinderMsgOrdering::TestMsgOrdering), "TestMsgOrdering");
+    AddTest(MakeFunctor(*this, &SuiteRewinderMsgOrdering::TestMultipleMsgEncodedStreamRewindStop), "TestMultipleMsgEncodedStreamRewindStop");
 }
 
 void SuiteRewinderMsgOrdering::InitMsgOrder()
@@ -776,6 +781,57 @@ void SuiteRewinderMsgOrdering::TestMsgOrdering()
         msg->RemoveRef();
     }
 }
+
+void SuiteRewinderMsgOrdering::TestMultipleMsgEncodedStreamRewindStop()
+{
+    iMsgOrder.clear();
+
+    // generate 1 track -> 3 stream to test buffering
+    iMsgOrder.push_back(EMsgTrack);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    iMsgOrder.push_back(EMsgEncodedStream);
+    iMsgOrder.push_back(EMsgEncodedStream);
+
+    Msg* msg = iRewinder->Pull();
+    msg = msg->Process(*this);
+    TEST(iRcvdMsgType == EMsgTrack);
+    msg->RemoveRef();
+
+    TEST(PullAndCompare(EMsgEncodedStream, 1) == true);
+    TEST(PullAndCompare(EMsgEncodedStream, 2) == true);
+    iRewinder->Rewind();
+
+    // Check that when we pull on the Rewinder again after rewinding, we still
+    // get the buffered MsgEncodedStream (i.e., ensure it hasn't been discarded).
+    TEST(PullAndCompare(EMsgEncodedStream, 2) == true);
+    iRewinder->Rewind();
+    iRewinder->Stop();
+
+    TEST(PullAndCompare(EMsgEncodedStream, 2) == true);
+    TEST(PullAndCompare(EMsgEncodedStream, 3) == true);
+    iRewinder->Rewind();
+    iRewinder->Stop();
+
+    TEST(PullAndCompare(EMsgEncodedStream, 3) == true);
+    iRewinder->Rewind();
+    iRewinder->Stop();
+}
+
+TBool SuiteRewinderMsgOrdering::PullAndCompare(EMsgType aMsgType, TUint aStreamId)
+{
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    Msg* msg = iRewinder->Pull();
+    msg = msg->Process(*this);
+    msg->RemoveRef();
+    if (iRcvdMsgType != aMsgType) {
+        return false;
+    }
+    if (iStreamId != aStreamId) {
+        return false;
+    }
+    return true;
+}
+
 
 void TestRewinder()
 {
