@@ -26,7 +26,7 @@ AllocatorBase::~AllocatorBase()
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);
-        Allocated* ptr = iFree.Read();
+        Allocated* ptr = Read();
         //Log::Print("(%p)", ptr);
         delete ptr;
     }
@@ -100,7 +100,7 @@ AllocatorBase::AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellByt
 Allocated* AllocatorBase::DoAllocate()
 {
     iLock.Wait();
-    Allocated* cell = iFree.Read();
+    Allocated* cell = Read();
     ASSERT_DEBUG(cell->iRefCount == 0);
     cell->iRefCount = 1;
     iCellsUsed++;
@@ -109,6 +109,19 @@ Allocated* AllocatorBase::DoAllocate()
     }
     iLock.Signal();
     return cell;
+}
+
+Allocated* AllocatorBase::Read()
+{
+    Allocated* p = NULL;
+    try {
+        p = iFree.Read();
+    }
+    catch (FifoReadError&) {
+        Log::Print("Allocator error for %s\n", iName);
+        ASSERTS();
+    }
+    return p;
 }
 
 void AllocatorBase::QueryInfo(const Brx& aQuery, IWriter& aWriter)
