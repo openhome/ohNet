@@ -242,7 +242,8 @@ TUint RamLogger::Chunk::Append(const char* aMsg)
     const TUint len = (TUint)strlen(aMsg);
     const TUint remaining = kDataBytes - iUsed;
     (void)strncat(&iData[iUsed], aMsg, remaining);
-    iUsed = std::min(kDataBytes, iUsed+len);
+    const TUint max = kDataBytes; // GCC can't resolve a reference to kDataBytes placed into the call to std::max below
+    iUsed = std::min(max, iUsed+len);
     const TUint consumed = std::min(len, remaining);
     return consumed;
 }
