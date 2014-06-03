@@ -700,7 +700,7 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     int len = sizeof(addr);
     WSAEVENT event;
     HANDLE handles[2];
-    DWORD ret;
+    DWORD ret = 0;
 
     if (SocketInterrupted(handle)) {
         return -1;
@@ -712,19 +712,25 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     if (NULL == event) {
         return -1;
     }
-    if (0 != WSAEventSelect(handle->iSocket, event, FD_READ|FD_CLOSE)) {
+    if (0 != WSAEventSelect(handle->iSocket, event, FD_READ)) {
         WSACloseEvent(event);
         return -1;
     }
 
     received = recvfrom(handle->iSocket, (char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, &len);
-    if (SOCKET_ERROR==received && WSAEWOULDBLOCK==WSAGetLastError()) {
+    while (SOCKET_ERROR == received) {
+        int err = WSAGetLastError();
+        if (WSAECONNRESET != err && WSAEWOULDBLOCK != err) {
+            break;
+        }
         handles[0] = event;
         handles[1] = handle->iEvent;
         ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, INFINITE, FALSE);
-        if (WAIT_OBJECT_0 == ret) {
-            received = recvfrom(handle->iSocket, (char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, &len);
+        if (SocketInterrupted(handle)) {
+            break;
         }
+        (void)WSAResetEvent(event);
+        received = recvfrom(handle->iSocket, (char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, &len);
     }
 
     SetSocketBlocking(handle->iSocket);

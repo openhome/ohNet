@@ -99,6 +99,7 @@ public:
 class DllExportClass Bwx : public Brx, public INonCopyable
 {
 public:
+    virtual ~Bwx() {};
     void Replace(const Brx& aBuf);
     void ReplaceThrow(const Brx& aBuf);
     void Replace(const TByte* aPtr, TUint aBytes);
@@ -127,9 +128,12 @@ public:
     void Fill(TByte aFillByte);
     inline void FillZ();
     inline TUint MaxBytes() const;
+    inline TUint BytesRemaining() const;
     void SetBytes(TUint aBytes);
     inline TByte& operator[](TUint aByteIndex);
+    using Brx::operator[];
     TByte& At(TUint aByteIndex);
+    using Brx::At;
 protected:
     explicit Bwx(TUint aBytes, TUint aMaxBytes);
     TUint iMaxBytes;

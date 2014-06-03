@@ -516,9 +516,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndManufacturer(IAsync& aAsync, Brh& aName, B
     ASSERT(invocation.Action().Name() == Brn("Manufacturer"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -554,9 +554,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndModel(IAsync& aAsync, Brh& aName, Brh& aIn
     ASSERT(invocation.Action().Name() == Brn("Model"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -593,9 +593,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndProduct(IAsync& aAsync, Brh& aRoom, Brh& a
     ASSERT(invocation.Action().Name() == Brn("Product"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -629,9 +629,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndStandby(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Standby"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -661,9 +661,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSetStandby(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetStandby"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -691,9 +691,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceCount(IAsync& aAsync, TUint& aValue)
     ASSERT(invocation.Action().Name() == Brn("SourceCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -723,9 +723,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceXml(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("SourceXml"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -755,9 +755,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceIndex(IAsync& aAsync, TUint& aValue)
     ASSERT(invocation.Action().Name() == Brn("SourceIndex"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -787,9 +787,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSetSourceIndex(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetSourceIndex"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -817,9 +817,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSetSourceIndexByName(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetSourceIndexByName"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -853,9 +853,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSource(IAsync& aAsync, Brh& aSystemName, B
     ASSERT(invocation.Action().Name() == Brn("Source"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -888,9 +888,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndAttributes(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Attributes"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -920,9 +920,9 @@ void CpProxyAvOpenhomeOrgProduct1::EndSourceXmlChangeCount(IAsync& aAsync, TUint
     ASSERT(invocation.Action().Name() == Brn("SourceXmlChangeCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1057,146 +1057,128 @@ void CpProxyAvOpenhomeOrgProduct1::SetPropertyAttributesChanged(Functor& aFuncto
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyManufacturerName(Brhz& aManufacturerName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aManufacturerName.Set(iManufacturerName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyManufacturerInfo(Brhz& aManufacturerInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aManufacturerInfo.Set(iManufacturerInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyManufacturerUrl(Brhz& aManufacturerUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aManufacturerUrl.Set(iManufacturerUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyManufacturerImageUri(Brhz& aManufacturerImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aManufacturerImageUri.Set(iManufacturerImageUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyModelName(Brhz& aModelName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aModelName.Set(iModelName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyModelInfo(Brhz& aModelInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aModelInfo.Set(iModelInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyModelUrl(Brhz& aModelUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aModelUrl.Set(iModelUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyModelImageUri(Brhz& aModelImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aModelImageUri.Set(iModelImageUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyProductRoom(Brhz& aProductRoom) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductRoom.Set(iProductRoom->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyProductName(Brhz& aProductName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductName.Set(iProductName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyProductInfo(Brhz& aProductInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductInfo.Set(iProductInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyProductUrl(Brhz& aProductUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductUrl.Set(iProductUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyProductImageUri(Brhz& aProductImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductImageUri.Set(iProductImageUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyStandby(TBool& aStandby) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertySourceIndex(TUint& aSourceIndex) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceIndex = iSourceIndex->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertySourceCount(TUint& aSourceCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceCount = iSourceCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertySourceXml(Brhz& aSourceXml) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceXml.Set(iSourceXml->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::PropertyAttributes(Brhz& aAttributes) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAttributes.Set(iAttributes->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgProduct1::ManufacturerNamePropertyChanged()

@@ -718,7 +718,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public Characteristics endCharacteristics(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -781,7 +781,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetVolume(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -826,7 +826,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endVolumeInc(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -871,7 +871,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endVolumeDec(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -923,7 +923,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public long endVolume(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -974,7 +974,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetBalance(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1019,7 +1019,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endBalanceInc(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1064,7 +1064,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endBalanceDec(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1116,7 +1116,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public int endBalance(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1167,7 +1167,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetFade(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1212,7 +1212,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endFadeInc(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1257,7 +1257,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endFadeDec(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1309,7 +1309,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public int endFade(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1360,7 +1360,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public void endSetMute(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1412,7 +1412,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public boolean endMute(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1467,7 +1467,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
      */
     public long endVolumeLimit(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

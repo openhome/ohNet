@@ -16,9 +16,11 @@ public:
     ProviderTestBasic(DvDevice& aDevice);
 private:
     void Increment(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
+    void EchoAllowedRangeUint(IDvInvocation& aInvocation, TUint aValue, IDvInvocationResponseUint& aResult);
     void Decrement(IDvInvocation& aInvocation, TInt aValue, IDvInvocationResponseInt& aResult);
     void Toggle(IDvInvocation& aInvocation, TBool aValue, IDvInvocationResponseBool& aResult);
     void EchoString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
+    void EchoAllowedValueString(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseString& aResult);
     void EchoBinary(IDvInvocation& aInvocation, const Brx& aValue, IDvInvocationResponseBinary& aResult);
     void SetUint(IDvInvocation& aInvocation, TUint aValueUint);
     void GetUint(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint);
@@ -27,6 +29,7 @@ private:
     void SetBool(IDvInvocation& aInvocation, TBool aValueBool);
     void GetBool(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValueBool);
     void SetMultiple(IDvInvocation& aInvocation, TUint aValueUint, TInt aValueInt, TBool aValueBool);
+    void GetMultiple(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValueUint, IDvInvocationResponseInt& aValueInt, IDvInvocationResponseBool& aValueBool);
     void SetString(IDvInvocation& aInvocation, const Brx& aValueStr);
     void GetString(IDvInvocation& aInvocation, IDvInvocationResponseString& aValueStr);
     void SetBinary(IDvInvocation& aInvocation, const Brx& aValueBin);

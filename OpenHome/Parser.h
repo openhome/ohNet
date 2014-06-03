@@ -20,6 +20,7 @@ public:
     Brn Next(TByte aDelimiter);
     Brn NextNoTrim(TByte aDelimiter);
     Brn NextNth(TUint aNth, TByte aDelimiter); //get the Nth token in a delimited string
+    Brn NextWhiteSpace(); // delimiter = any white space character
     void Restart(); // start from beginning of buffer
     TChar At(TInt aOffset); // relative to current position
     void  Back(TUint aOffset); // relative to current position

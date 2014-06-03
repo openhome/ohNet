@@ -523,9 +523,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndCharacteristics(IAsync& aAsync, uint32_t
     ASSERT(invocation.Action().Name() == Brn("Characteristics"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -560,9 +560,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndSetVolume(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetVolume"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -587,9 +587,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndVolumeInc(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("VolumeInc"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -614,9 +614,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndVolumeDec(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("VolumeDec"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -644,9 +644,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndVolume(IAsync& aAsync, uint32_t& aValue)
     ASSERT(invocation.Action().Name() == Brn("Volume"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -676,9 +676,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndSetBalance(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetBalance"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -703,9 +703,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndBalanceInc(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("BalanceInc"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -730,9 +730,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndBalanceDec(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("BalanceDec"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -760,9 +760,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndBalance(IAsync& aAsync, int32_t& aValue)
     ASSERT(invocation.Action().Name() == Brn("Balance"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -792,9 +792,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndSetFade(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetFade"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -819,9 +819,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndFadeInc(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("FadeInc"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -846,9 +846,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndFadeDec(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("FadeDec"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -876,9 +876,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndFade(IAsync& aAsync, int32_t& aValue)
     ASSERT(invocation.Action().Name() == Brn("Fade"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -908,9 +908,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndSetMute(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetMute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -938,9 +938,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndMute(IAsync& aAsync, bool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Mute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -970,9 +970,9 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::EndVolumeLimit(IAsync& aAsync, uint32_t& aV
     ASSERT(invocation.Action().Name() == Brn("VolumeLimit"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1058,90 +1058,79 @@ void CpProxyAvOpenhomeOrgVolume1Cpp::SetPropertyFadeMaxChanged(Functor& aFunctor
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolume(uint32_t& aVolume) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolume = iVolume->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyMute(bool& aMute) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMute = iMute->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyBalance(int32_t& aBalance) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBalance = iBalance->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyFade(int32_t& aFade) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aFade = iFade->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeLimit(uint32_t& aVolumeLimit) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeLimit = iVolumeLimit->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeMax(uint32_t& aVolumeMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeMax = iVolumeMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeUnity(uint32_t& aVolumeUnity) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeUnity = iVolumeUnity->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeSteps(uint32_t& aVolumeSteps) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeSteps = iVolumeSteps->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyVolumeMilliDbPerStep(uint32_t& aVolumeMilliDbPerStep) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeMilliDbPerStep = iVolumeMilliDbPerStep->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyBalanceMax(uint32_t& aBalanceMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBalanceMax = iBalanceMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::PropertyFadeMax(uint32_t& aFadeMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aFadeMax = iFadeMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgVolume1Cpp::VolumePropertyChanged()

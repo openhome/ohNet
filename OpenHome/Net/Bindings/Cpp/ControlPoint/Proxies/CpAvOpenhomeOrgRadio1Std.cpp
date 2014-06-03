@@ -522,9 +522,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndPlay(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Play"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -549,9 +549,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndPause(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Pause"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -576,9 +576,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndStop(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Stop"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -606,9 +606,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSeekSecondAbsolute(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SeekSecondAbsolute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -636,9 +636,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSeekSecondRelative(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SeekSecondRelative"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -667,9 +667,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndChannel(IAsync& aAsync, std::string& aUri
     ASSERT(invocation.Action().Name() == Brn("Channel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -713,9 +713,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSetChannel(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetChannel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -743,9 +743,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndTransportState(IAsync& aAsync, std::strin
     ASSERT(invocation.Action().Name() == Brn("TransportState"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -778,9 +778,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndId(IAsync& aAsync, uint32_t& aValue)
     ASSERT(invocation.Action().Name() == Brn("Id"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -814,9 +814,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndSetId(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -847,9 +847,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndRead(IAsync& aAsync, std::string& aMetada
     ASSERT(invocation.Action().Name() == Brn("Read"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -888,9 +888,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndReadList(IAsync& aAsync, std::string& aCh
     ASSERT(invocation.Action().Name() == Brn("ReadList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -924,9 +924,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndIdArray(IAsync& aAsync, uint32_t& aToken,
     ASSERT(invocation.Action().Name() == Brn("IdArray"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -963,9 +963,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndIdArrayChanged(IAsync& aAsync, bool& aVal
     ASSERT(invocation.Action().Name() == Brn("IdArrayChanged"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -995,9 +995,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndChannelsMax(IAsync& aAsync, uint32_t& aVa
     ASSERT(invocation.Action().Name() == Brn("ChannelsMax"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1027,9 +1027,9 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::EndProtocolInfo(IAsync& aAsync, std::string&
     ASSERT(invocation.Action().Name() == Brn("ProtocolInfo"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1090,63 +1090,56 @@ void CpProxyAvOpenhomeOrgRadio1Cpp::SetPropertyProtocolInfoChanged(Functor& aFun
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyUri(std::string& aUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iUri->Value();
     aUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyMetadata(std::string& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iMetadata->Value();
     aMetadata.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyTransportState(std::string& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTransportState->Value();
     aTransportState.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyId(uint32_t& aId) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aId = iId->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyIdArray(std::string& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iIdArray->Value();
     aIdArray.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyChannelsMax(uint32_t& aChannelsMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aChannelsMax = iChannelsMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::PropertyProtocolInfo(std::string& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProtocolInfo->Value();
     aProtocolInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgRadio1Cpp::UriPropertyChanged()

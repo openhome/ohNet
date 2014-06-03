@@ -79,6 +79,34 @@ public:
      * @param[in]  aValue
      * @param[out] aResult
      */
+    void SyncEchoAllowedRangeUint(TUint aValue, TUint& aResult);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndEchoAllowedRangeUint().
+     *
+     * @param[in] aValue
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginEchoAllowedRangeUint(TUint aValue, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aResult
+     */
+    void EndEchoAllowedRangeUint(IAsync& aAsync, TUint& aResult);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aValue
+     * @param[out] aResult
+     */
     void SyncDecrement(TInt aValue, TInt& aResult);
     /**
      * Invoke the action asynchronously.
@@ -155,6 +183,34 @@ public:
      * @param[out] aResult
      */
     void EndEchoString(IAsync& aAsync, Brh& aResult);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aValue
+     * @param[out] aResult
+     */
+    void SyncEchoAllowedValueString(const Brx& aValue, Brh& aResult);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndEchoAllowedValueString().
+     *
+     * @param[in] aValue
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginEchoAllowedValueString(const Brx& aValue, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aResult
+     */
+    void EndEchoAllowedValueString(IAsync& aAsync, Brh& aResult);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -369,6 +425,36 @@ public:
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
      */
     void EndSetMultiple(IAsync& aAsync);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[out] aValueUint
+     * @param[out] aValueInt
+     * @param[out] aValueBool
+     */
+    void SyncGetMultiple(TUint& aValueUint, TInt& aValueInt, TBool& aValueBool);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndGetMultiple().
+     *
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginGetMultiple(FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aValueUint
+     * @param[out] aValueInt
+     * @param[out] aValueBool
+     */
+    void EndGetMultiple(IAsync& aAsync, TUint& aValueUint, TInt& aValueInt, TBool& aValueBool);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -652,9 +738,11 @@ private:
     void VarBinPropertyChanged();
 private:
     Action* iActionIncrement;
+    Action* iActionEchoAllowedRangeUint;
     Action* iActionDecrement;
     Action* iActionToggle;
     Action* iActionEchoString;
+    Action* iActionEchoAllowedValueString;
     Action* iActionEchoBinary;
     Action* iActionSetUint;
     Action* iActionGetUint;
@@ -663,6 +751,7 @@ private:
     Action* iActionSetBool;
     Action* iActionGetBool;
     Action* iActionSetMultiple;
+    Action* iActionGetMultiple;
     Action* iActionSetString;
     Action* iActionGetString;
     Action* iActionSetBinary;

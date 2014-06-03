@@ -129,7 +129,7 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
         }
 
         parser.Set(item.Split(start, len));
-        aName.Set(parser.Next(' '));
+        aName.Set(parser.NextWhiteSpace());
         aAttributes.Set(parser.Remaining());
         
         if (Ascii::Contains(aName, ':')) { // collect the namespace

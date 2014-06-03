@@ -1200,7 +1200,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public String endListPresets(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1253,7 +1253,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSelectPreset(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1308,7 +1308,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetBrightness(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1361,7 +1361,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetBrightness(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1416,7 +1416,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetContrast(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1469,7 +1469,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetContrast(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1524,7 +1524,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetSharpness(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1577,7 +1577,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetSharpness(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1632,7 +1632,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetRedVideoGain(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1685,7 +1685,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetRedVideoGain(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1740,7 +1740,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetGreenVideoGain(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1793,7 +1793,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetGreenVideoGain(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1848,7 +1848,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetBlueVideoGain(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1901,7 +1901,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetBlueVideoGain(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1956,7 +1956,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetRedVideoBlackLevel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2009,7 +2009,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetRedVideoBlackLevel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2064,7 +2064,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetGreenVideoBlackLevel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2117,7 +2117,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetGreenVideoBlackLevel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2172,7 +2172,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetBlueVideoBlackLevel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2225,7 +2225,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetBlueVideoBlackLevel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2280,7 +2280,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetColorTemperature(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2333,7 +2333,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetColorTemperature(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2388,7 +2388,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public int endGetHorizontalKeystone(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2441,7 +2441,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetHorizontalKeystone(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2496,7 +2496,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public int endGetVerticalKeystone(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2549,7 +2549,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetVerticalKeystone(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2606,7 +2606,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public boolean endGetMute(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2661,7 +2661,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetMute(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2718,7 +2718,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public long endGetVolume(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2773,7 +2773,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetVolume(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2830,7 +2830,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public int endGetVolumeDB(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2885,7 +2885,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetVolumeDB(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2946,7 +2946,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public GetVolumeDBRange endGetVolumeDBRange(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -3010,7 +3010,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public boolean endGetLoudness(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -3065,7 +3065,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public void endSetLoudness(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -3122,7 +3122,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public String endGetStateVariables(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -3188,7 +3188,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
      */
     public String endSetStateVariables(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

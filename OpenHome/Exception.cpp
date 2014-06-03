@@ -17,22 +17,19 @@
 
 using namespace OpenHome;
 
-AssertHandler gAssertHandler = 0;
+static IExitHandler* gExitHandler = 0;
 
-AssertHandler OpenHome::SetAssertHandler(AssertHandler aHandler)
+void OpenHome::SetExitHandler(IExitHandler& aExitHandler)
 {
-    AssertHandler temp = gAssertHandler;
-    gAssertHandler = aHandler;
-    return temp;
-}
-
-void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
-{
-    gAssertHandler(aFile, aLine);
+    gExitHandler = &aExitHandler;
 }
 
 static void CallFatalErrorHandler(const char* aMsg)
 {
+    if ( gExitHandler ) {
+        gExitHandler->FatalErrorHandler(aMsg);
+    }
+
     if (gEnv == NULL || gEnv->InitParams() == NULL) {
         Os::ConsoleWrite(aMsg);
     }
@@ -42,7 +39,14 @@ static void CallFatalErrorHandler(const char* aMsg)
     }
 }
 
-void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
+static TBool gAssertThrows = false;
+
+void OpenHome::SetAssertThrows(TBool aAssertThrows)
+{
+    gAssertThrows = aAssertThrows;
+}
+
+static void AssertHandlerDefault(const TChar* aFile, TUint aLine)
 {
     THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
 #if 0 // previous ASSERT implementation
@@ -51,6 +55,19 @@ void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
     CallFatalErrorHandler(buf);
     Os::Quit(OpenHome::gEnv->OsCtx());
 #endif
+}
+
+void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
+{
+    if ( gAssertThrows ) {
+        THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
+    }
+
+    if ( gExitHandler ) {
+        gExitHandler->AssertionFailure(aFile, aLine);
+    }
+
+    AssertHandlerDefault(aFile, aLine);
 }
 
 static void GetThreadName(Bwx& aThName)
@@ -62,6 +79,10 @@ static void GetThreadName(Bwx& aThName)
 
 void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)
 {
+    if ( gExitHandler ) {
+        gExitHandler->UnhandledExceptionHandler(aExceptionMessage, aFile, aLine);
+    }
+
     Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[1024];
@@ -71,6 +92,10 @@ void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const T
 
 void OpenHome::UnhandledExceptionHandler(Exception& aException)
 {
+    if ( gExitHandler ) {
+        gExitHandler->UnhandledExceptionHandler(aException);
+    }
+
     Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[512];
@@ -105,6 +130,10 @@ void OpenHome::UnhandledExceptionHandler(Exception& aException)
 
 void OpenHome::UnhandledExceptionHandler(std::exception& aException)
 {
+    if ( gExitHandler ) {
+        gExitHandler->UnhandledExceptionHandler(aException);
+    }
+
     Bws<Thread::kMaxNameBytes> thName;
     GetThreadName(thName);
     char buf[1024];
@@ -162,6 +191,7 @@ Exception& Exception::operator= (const Exception& aException)
         iMsg = aException.iMsg;
         iFile = aException.iFile;
         iLine = aException.iLine;
+        Os::StackTraceFinalise(iStackTrace);
         iStackTrace = Os::StackTraceCopy(aException.iStackTrace);
     }
     return *this;

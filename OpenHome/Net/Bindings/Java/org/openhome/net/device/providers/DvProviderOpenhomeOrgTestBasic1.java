@@ -97,10 +97,42 @@ interface IDvProviderOpenhomeOrgTestBasic1
 public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvProviderOpenhomeOrgTestBasic1
 {
 
+    public class GetMultiple
+    {
+        private long iValueUint;
+        private int iValueInt;
+        private boolean iValueBool;
+
+        public GetMultiple(
+            long aValueUint,
+            int aValueInt,
+            boolean aValueBool
+        )
+        {
+            iValueUint = aValueUint;
+            iValueInt = aValueInt;
+            iValueBool = aValueBool;
+        }
+        public long getValueUint()
+        {
+            return iValueUint;
+        }
+        public int getValueInt()
+        {
+            return iValueInt;
+        }
+        public boolean getValueBool()
+        {
+            return iValueBool;
+        }
+    }
+
     private IDvInvocationListener iDelegateIncrement;
+    private IDvInvocationListener iDelegateEchoAllowedRangeUint;
     private IDvInvocationListener iDelegateDecrement;
     private IDvInvocationListener iDelegateToggle;
     private IDvInvocationListener iDelegateEchoString;
+    private IDvInvocationListener iDelegateEchoAllowedValueString;
     private IDvInvocationListener iDelegateEchoBinary;
     private IDvInvocationListener iDelegateSetUint;
     private IDvInvocationListener iDelegateGetUint;
@@ -109,6 +141,7 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     private IDvInvocationListener iDelegateSetBool;
     private IDvInvocationListener iDelegateGetBool;
     private IDvInvocationListener iDelegateSetMultiple;
+    private IDvInvocationListener iDelegateGetMultiple;
     private IDvInvocationListener iDelegateSetString;
     private IDvInvocationListener iDelegateGetString;
     private IDvInvocationListener iDelegateSetBinary;
@@ -304,6 +337,21 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     }
 
     /**
+     * Signal that the action EchoAllowedRangeUint is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * EchoAllowedRangeUint must be overridden if this is called.
+     */      
+    protected void enableActionEchoAllowedRangeUint()
+    {
+        Action action = new Action("EchoAllowedRangeUint");
+        action.addInputParameter(new ParameterUint("Value", 10, 20));
+        action.addOutputParameter(new ParameterUint("Result"));
+        iDelegateEchoAllowedRangeUint = new DoEchoAllowedRangeUint();
+        enableAction(action, iDelegateEchoAllowedRangeUint);
+    }
+
+    /**
      * Signal that the action Decrement is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
@@ -346,6 +394,26 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
         action.addOutputParameter(new ParameterString("Result", allowedValues));
         iDelegateEchoString = new DoEchoString();
         enableAction(action, iDelegateEchoString);
+    }
+
+    /**
+     * Signal that the action EchoAllowedValueString is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * EchoAllowedValueString must be overridden if this is called.
+     */      
+    protected void enableActionEchoAllowedValueString()
+    {
+        Action action = new Action("EchoAllowedValueString");        List<String> allowedValues = new LinkedList<String>();
+        allowedValues.add("One");
+        allowedValues.add("Two");
+        allowedValues.add("Three");
+        allowedValues.add("Four");
+        action.addInputParameter(new ParameterString("Value", allowedValues));
+        allowedValues.clear();
+        action.addOutputParameter(new ParameterString("Result", allowedValues));
+        iDelegateEchoAllowedValueString = new DoEchoAllowedValueString();
+        enableAction(action, iDelegateEchoAllowedValueString);
     }
 
     /**
@@ -464,6 +532,22 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     }
 
     /**
+     * Signal that the action GetMultiple is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * GetMultiple must be overridden if this is called.
+     */      
+    protected void enableActionGetMultiple()
+    {
+        Action action = new Action("GetMultiple");
+        action.addOutputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
+        action.addOutputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
+        action.addOutputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
+        iDelegateGetMultiple = new DoGetMultiple();
+        enableAction(action, iDelegateGetMultiple);
+    }
+
+    /**
      * Signal that the action SetString is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
@@ -577,6 +661,22 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
     }
 
     /**
+     * EchoAllowedRangeUint action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * EchoAllowedRangeUint action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionEchoAllowedRangeUint} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aValue
+     */
+    protected long echoAllowedRangeUint(IDvInvocation aInvocation, long aValue)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
      * Decrement action.
      *
      * <p>Will be called when the device stack receives an invocation of the
@@ -620,6 +720,22 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * @param aValue
      */
     protected String echoString(IDvInvocation aInvocation, String aValue)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * EchoAllowedValueString action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * EchoAllowedValueString action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionEchoAllowedValueString} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     * @param aValue
+     */
+    protected String echoAllowedValueString(IDvInvocation aInvocation, String aValue)
     {
         throw (new ActionDisabledError());
     }
@@ -747,6 +863,21 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * @param aValueBool
      */
     protected void setMultiple(IDvInvocation aInvocation, long aValueUint, int aValueInt, boolean aValueBool)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * GetMultiple action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * GetMultiple action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionGetMultiple} was called.</remarks>
+     *
+     * @param aInvocation   Interface allowing querying of aspects of this particular action invocation.</param>
+     */
+    protected GetMultiple getMultiple(IDvInvocation aInvocation)
     {
         throw (new ActionDisabledError());
     }
@@ -927,6 +1058,56 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
         }
     }
 
+    private class DoEchoAllowedRangeUint implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long value;
+            long result;
+            try
+            {
+                invocation.readStart();
+                value = invocation.readUint("Value");
+                invocation.readEnd();
+                 result = echoAllowedRangeUint(invocation, value);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportActionError(ae, "EchoAllowedRangeUint");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("Result", result);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class DoDecrement implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation)
@@ -1044,6 +1225,56 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             catch (ActionError ae)
             {
                 invocation.reportActionError(ae, "EchoString");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeString("Result", result);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DoEchoAllowedValueString implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            String value;
+            String result;
+            try
+            {
+                invocation.readStart();
+                value = invocation.readString("Value");
+                invocation.readEnd();
+                 result = echoAllowedValueString(invocation, value);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportActionError(ae, "EchoAllowedValueString");
                 return;
             }
             catch (PropertyUpdateError pue)
@@ -1452,6 +1683,62 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
             try
             {
                 invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class DoGetMultiple implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long valueUint;
+            int valueInt;
+            boolean valueBool;
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+
+            GetMultiple outArgs = getMultiple(invocation);
+            valueUint = outArgs.getValueUint();
+            valueInt = outArgs.getValueInt();
+            valueBool = outArgs.getValueBool();
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportActionError(ae, "GetMultiple");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("ValueUint", valueUint);
+                invocation.writeInt("ValueInt", valueInt);
+                invocation.writeBool("ValueBool", valueBool);
                 invocation.writeEnd();
             }
             catch (ActionError ae)

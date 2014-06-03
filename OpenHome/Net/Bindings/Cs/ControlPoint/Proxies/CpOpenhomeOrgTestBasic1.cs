@@ -13,6 +13,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncIncrement(uint aValue, out uint aResult);
         void BeginIncrement(uint aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndIncrement(IntPtr aAsyncHandle, out uint aResult);
+        void SyncEchoAllowedRangeUint(uint aValue, out uint aResult);
+        void BeginEchoAllowedRangeUint(uint aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoAllowedRangeUint(IntPtr aAsyncHandle, out uint aResult);
         void SyncDecrement(int aValue, out int aResult);
         void BeginDecrement(int aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndDecrement(IntPtr aAsyncHandle, out int aResult);
@@ -22,6 +25,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncEchoString(String aValue, out String aResult);
         void BeginEchoString(String aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndEchoString(IntPtr aAsyncHandle, out String aResult);
+        void SyncEchoAllowedValueString(String aValue, out String aResult);
+        void BeginEchoAllowedValueString(String aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoAllowedValueString(IntPtr aAsyncHandle, out String aResult);
         void SyncEchoBinary(byte[] aValue, out byte[] aResult);
         void BeginEchoBinary(byte[] aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndEchoBinary(IntPtr aAsyncHandle, out byte[] aResult);
@@ -46,6 +52,9 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool);
         void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetMultiple(IntPtr aAsyncHandle);
+        void SyncGetMultiple(out uint aValueUint, out int aValueInt, out bool aValueBool);
+        void BeginGetMultiple(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetMultiple(IntPtr aAsyncHandle, out uint aValueUint, out int aValueInt, out bool aValueBool);
         void SyncSetString(String aValueStr);
         void BeginSetString(String aValueStr, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetString(IntPtr aAsyncHandle);
@@ -95,6 +104,25 @@ namespace OpenHome.Net.ControlPoint.Proxies
         protected override void CompleteRequest(IntPtr aAsyncHandle)
         {
             iService.EndIncrement(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyOpenhomeOrgTestBasic1 iService;
+        private uint iResult;
+
+        public SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEchoAllowedRangeUint(aAsyncHandle, out iResult);
         }
     };
 
@@ -152,6 +180,25 @@ namespace OpenHome.Net.ControlPoint.Proxies
         protected override void CompleteRequest(IntPtr aAsyncHandle)
         {
             iService.EndEchoString(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncEchoAllowedValueStringOpenhomeOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyOpenhomeOrgTestBasic1 iService;
+        private String iResult;
+
+        public SyncEchoAllowedValueStringOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEchoAllowedValueString(aAsyncHandle, out iResult);
         }
     };
 
@@ -287,6 +334,35 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
     };
 
+    internal class SyncGetMultipleOpenhomeOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyOpenhomeOrgTestBasic1 iService;
+        private uint iValueUint;
+        private int iValueInt;
+        private bool iValueBool;
+
+        public SyncGetMultipleOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint ValueUint()
+        {
+            return iValueUint;
+        }
+        public int ValueInt()
+        {
+            return iValueInt;
+        }
+        public bool ValueBool()
+        {
+            return iValueBool;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetMultiple(aAsyncHandle, out iValueUint, out iValueInt, out iValueBool);
+        }
+    };
+
     internal class SyncSetStringOpenhomeOrgTestBasic1 : SyncProxyAction
     {
         private CpProxyOpenhomeOrgTestBasic1 iService;
@@ -401,9 +477,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
     public class CpProxyOpenhomeOrgTestBasic1 : CpProxy, IDisposable, ICpProxyOpenhomeOrgTestBasic1
     {
         private OpenHome.Net.Core.Action iActionIncrement;
+        private OpenHome.Net.Core.Action iActionEchoAllowedRangeUint;
         private OpenHome.Net.Core.Action iActionDecrement;
         private OpenHome.Net.Core.Action iActionToggle;
         private OpenHome.Net.Core.Action iActionEchoString;
+        private OpenHome.Net.Core.Action iActionEchoAllowedValueString;
         private OpenHome.Net.Core.Action iActionEchoBinary;
         private OpenHome.Net.Core.Action iActionSetUint;
         private OpenHome.Net.Core.Action iActionGetUint;
@@ -412,6 +490,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private OpenHome.Net.Core.Action iActionSetBool;
         private OpenHome.Net.Core.Action iActionGetBool;
         private OpenHome.Net.Core.Action iActionSetMultiple;
+        private OpenHome.Net.Core.Action iActionGetMultiple;
         private OpenHome.Net.Core.Action iActionSetString;
         private OpenHome.Net.Core.Action iActionGetString;
         private OpenHome.Net.Core.Action iActionSetBinary;
@@ -448,6 +527,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterUint("Result");
             iActionIncrement.AddOutputParameter(param);
 
+            iActionEchoAllowedRangeUint = new OpenHome.Net.Core.Action("EchoAllowedRangeUint");
+            param = new ParameterUint("Value", 10, 20);
+            iActionEchoAllowedRangeUint.AddInputParameter(param);
+            param = new ParameterUint("Result");
+            iActionEchoAllowedRangeUint.AddOutputParameter(param);
+
             iActionDecrement = new OpenHome.Net.Core.Action("Decrement");
             param = new ParameterInt("Value");
             iActionDecrement.AddInputParameter(param);
@@ -465,6 +550,17 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionEchoString.AddInputParameter(param);
             param = new ParameterString("Result", allowedValues);
             iActionEchoString.AddOutputParameter(param);
+
+            iActionEchoAllowedValueString = new OpenHome.Net.Core.Action("EchoAllowedValueString");
+            allowedValues.Add("One");
+            allowedValues.Add("Two");
+            allowedValues.Add("Three");
+            allowedValues.Add("Four");
+            param = new ParameterString("Value", allowedValues);
+            iActionEchoAllowedValueString.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterString("Result", allowedValues);
+            iActionEchoAllowedValueString.AddOutputParameter(param);
 
             iActionEchoBinary = new OpenHome.Net.Core.Action("EchoBinary");
             param = new ParameterBinary("Value");
@@ -503,6 +599,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionSetMultiple.AddInputParameter(param);
             param = new ParameterBool("ValueBool");
             iActionSetMultiple.AddInputParameter(param);
+
+            iActionGetMultiple = new OpenHome.Net.Core.Action("GetMultiple");
+            param = new ParameterUint("ValueUint");
+            iActionGetMultiple.AddOutputParameter(param);
+            param = new ParameterInt("ValueInt");
+            iActionGetMultiple.AddOutputParameter(param);
+            param = new ParameterBool("ValueBool");
+            iActionGetMultiple.AddOutputParameter(param);
 
             iActionSetString = new OpenHome.Net.Core.Action("SetString");
             param = new ParameterString("ValueStr", allowedValues);
@@ -587,8 +691,61 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndIncrement(IntPtr aAsyncHandle, out uint aResult)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
+            {
+                throw new ProxyError(code, desc);
+            }
+            uint index = 0;
+            aResult = Invocation.OutputUint(aAsyncHandle, index++);
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
+        public void SyncEchoAllowedRangeUint(uint aValue, out uint aResult)
+        {
+            SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1 sync = new SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1(this);
+            BeginEchoAllowedRangeUint(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEchoAllowedRangeUint().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginEchoAllowedRangeUint(uint aValue, CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionEchoAllowedRangeUint, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionEchoAllowedRangeUint.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionEchoAllowedRangeUint.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
+        public void EndEchoAllowedRangeUint(IntPtr aAsyncHandle, out uint aResult)
+        {
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -640,8 +797,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndDecrement(IntPtr aAsyncHandle, out int aResult)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -693,8 +850,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndToggle(IntPtr aAsyncHandle, out bool aResult)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -746,8 +903,61 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndEchoString(IntPtr aAsyncHandle, out String aResult)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
+            {
+                throw new ProxyError(code, desc);
+            }
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
+        public void SyncEchoAllowedValueString(String aValue, out String aResult)
+        {
+            SyncEchoAllowedValueStringOpenhomeOrgTestBasic1 sync = new SyncEchoAllowedValueStringOpenhomeOrgTestBasic1(this);
+            BeginEchoAllowedValueString(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEchoAllowedValueString().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginEchoAllowedValueString(String aValue, CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionEchoAllowedValueString, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionEchoAllowedValueString.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionEchoAllowedValueString.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
+        public void EndEchoAllowedValueString(IntPtr aAsyncHandle, out String aResult)
+        {
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -799,8 +1009,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndEchoBinary(IntPtr aAsyncHandle, out byte[] aResult)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -847,8 +1057,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetUint(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -894,8 +1104,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValueUint"></param>
         public void EndGetUint(IntPtr aAsyncHandle, out uint aValueUint)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -942,8 +1152,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetInt(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -989,8 +1199,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValueInt"></param>
         public void EndGetInt(IntPtr aAsyncHandle, out int aValueInt)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1037,8 +1247,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBool(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1084,8 +1294,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValueBool"></param>
         public void EndGetBool(IntPtr aAsyncHandle, out bool aValueBool)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1138,12 +1348,71 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetMultiple(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
             }
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueUint"></param>
+        /// <param name="aValueInt"></param>
+        /// <param name="aValueBool"></param>
+        public void SyncGetMultiple(out uint aValueUint, out int aValueInt, out bool aValueBool)
+        {
+            SyncGetMultipleOpenhomeOrgTestBasic1 sync = new SyncGetMultipleOpenhomeOrgTestBasic1(this);
+            BeginGetMultiple(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValueUint = sync.ValueUint();
+            aValueInt = sync.ValueInt();
+            aValueBool = sync.ValueBool();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetMultiple().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginGetMultiple(CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionGetMultiple, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetMultiple.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetMultiple.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionGetMultiple.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValueUint"></param>
+        /// <param name="aValueInt"></param>
+        /// <param name="aValueBool"></param>
+        public void EndGetMultiple(IntPtr aAsyncHandle, out uint aValueUint, out int aValueInt, out bool aValueBool)
+        {
+            uint code;
+            string desc;
+            if (Invocation.Error(aAsyncHandle, out code, out desc))
+            {
+                throw new ProxyError(code, desc);
+            }
+            uint index = 0;
+            aValueUint = Invocation.OutputUint(aAsyncHandle, index++);
+            aValueInt = Invocation.OutputInt(aAsyncHandle, index++);
+            aValueBool = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1184,8 +1453,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetString(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1231,8 +1500,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValueStr"></param>
         public void EndGetString(IntPtr aAsyncHandle, out String aValueStr)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1279,8 +1548,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBinary(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1326,8 +1595,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValueBin"></param>
         public void EndGetBinary(IntPtr aAsyncHandle, out byte[] aValueBin)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1370,8 +1639,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndToggleBool(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1419,8 +1688,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndWriteFile(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1461,8 +1730,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndShutdown(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1589,8 +1858,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVarUint()
         {
             PropertyReadLock();
-            uint val = iVarUint.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVarUint.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1604,8 +1880,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public int PropertyVarInt()
         {
             PropertyReadLock();
-            int val = iVarInt.Value();
-            PropertyReadUnlock();
+            int val;
+            try
+            {
+                val = iVarInt.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1619,8 +1902,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyVarBool()
         {
             PropertyReadLock();
-            bool val = iVarBool.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iVarBool.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1634,8 +1924,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyVarStr()
         {
             PropertyReadLock();
-            String val = iVarStr.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iVarStr.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1649,8 +1946,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public byte[] PropertyVarBin()
         {
             PropertyReadLock();
-            byte[] val = iVarBin.Value();
-            PropertyReadUnlock();
+            byte[] val;
+            try
+            {
+                val = iVarBin.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1667,9 +1971,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
                 iHandle = IntPtr.Zero;
             }
             iActionIncrement.Dispose();
+            iActionEchoAllowedRangeUint.Dispose();
             iActionDecrement.Dispose();
             iActionToggle.Dispose();
             iActionEchoString.Dispose();
+            iActionEchoAllowedValueString.Dispose();
             iActionEchoBinary.Dispose();
             iActionSetUint.Dispose();
             iActionGetUint.Dispose();
@@ -1678,6 +1984,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionSetBool.Dispose();
             iActionGetBool.Dispose();
             iActionSetMultiple.Dispose();
+            iActionGetMultiple.Dispose();
             iActionSetString.Dispose();
             iActionGetString.Dispose();
             iActionSetBinary.Dispose();

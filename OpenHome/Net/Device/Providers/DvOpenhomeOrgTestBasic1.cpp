@@ -128,6 +128,15 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionIncrement()
     iService->AddAction(action, functor);
 }
 
+void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoAllowedRangeUint()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoAllowedRangeUint");
+    action->AddInputParameter(new ParameterUint("Value", 10, 20));
+    action->AddOutputParameter(new ParameterUint("Result"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoEchoAllowedRangeUint);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderOpenhomeOrgTestBasic1::EnableActionDecrement()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Decrement");
@@ -152,6 +161,24 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoString()
     action->AddInputParameter(new ParameterString("Value"));
     action->AddOutputParameter(new ParameterString("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoEchoString);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoAllowedValueString()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoAllowedValueString");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[4];
+    allowedValues[index++] = (TChar*)"One";
+    allowedValues[index++] = (TChar*)"Two";
+    allowedValues[index++] = (TChar*)"Three";
+    allowedValues[index++] = (TChar*)"Four";
+    action->AddInputParameter(new ParameterString("Value", allowedValues, 4));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterString("Result"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoEchoAllowedValueString);
     iService->AddAction(action, functor);
 }
 
@@ -222,6 +249,16 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetMultiple()
     iService->AddAction(action, functor);
 }
 
+void DvProviderOpenhomeOrgTestBasic1::EnableActionGetMultiple()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMultiple");
+    action->AddOutputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
+    action->AddOutputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
+    action->AddOutputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoGetMultiple);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetString()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("SetString");
@@ -287,6 +324,16 @@ void DvProviderOpenhomeOrgTestBasic1::DoIncrement(IDviInvocation& aInvocation)
     Increment(invocation, Value, respResult);
 }
 
+void DvProviderOpenhomeOrgTestBasic1::DoEchoAllowedRangeUint(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    TUint Value = aInvocation.InvocationReadUint("Value");
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respResult(aInvocation, "Result");
+    EchoAllowedRangeUint(invocation, Value, respResult);
+}
+
 void DvProviderOpenhomeOrgTestBasic1::DoDecrement(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -316,6 +363,17 @@ void DvProviderOpenhomeOrgTestBasic1::DoEchoString(IDviInvocation& aInvocation)
     DviInvocation invocation(aInvocation);
     DviInvocationResponseString respResult(aInvocation, "Result");
     EchoString(invocation, Value, respResult);
+}
+
+void DvProviderOpenhomeOrgTestBasic1::DoEchoAllowedValueString(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    Brhz Value;
+    aInvocation.InvocationReadString("Value", Value);
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    EchoAllowedValueString(invocation, Value, respResult);
 }
 
 void DvProviderOpenhomeOrgTestBasic1::DoEchoBinary(IDviInvocation& aInvocation)
@@ -394,6 +452,17 @@ void DvProviderOpenhomeOrgTestBasic1::DoSetMultiple(IDviInvocation& aInvocation)
     SetMultiple(invocation, ValueUint, ValueInt, ValueBool);
 }
 
+void DvProviderOpenhomeOrgTestBasic1::DoGetMultiple(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    DviInvocationResponseUint respValueUint(aInvocation, "ValueUint");
+    DviInvocationResponseInt respValueInt(aInvocation, "ValueInt");
+    DviInvocationResponseBool respValueBool(aInvocation, "ValueBool");
+    GetMultiple(invocation, respValueUint, respValueInt, respValueBool);
+}
+
 void DvProviderOpenhomeOrgTestBasic1::DoSetString(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -465,6 +534,11 @@ void DvProviderOpenhomeOrgTestBasic1::Increment(IDvInvocation& /*aResponse*/, TU
     ASSERTS();
 }
 
+void DvProviderOpenhomeOrgTestBasic1::EchoAllowedRangeUint(IDvInvocation& /*aResponse*/, TUint /*aValue*/, IDvInvocationResponseUint& /*aResult*/)
+{
+    ASSERTS();
+}
+
 void DvProviderOpenhomeOrgTestBasic1::Decrement(IDvInvocation& /*aResponse*/, TInt /*aValue*/, IDvInvocationResponseInt& /*aResult*/)
 {
     ASSERTS();
@@ -476,6 +550,11 @@ void DvProviderOpenhomeOrgTestBasic1::Toggle(IDvInvocation& /*aResponse*/, TBool
 }
 
 void DvProviderOpenhomeOrgTestBasic1::EchoString(IDvInvocation& /*aResponse*/, const Brx& /*aValue*/, IDvInvocationResponseString& /*aResult*/)
+{
+    ASSERTS();
+}
+
+void DvProviderOpenhomeOrgTestBasic1::EchoAllowedValueString(IDvInvocation& /*aResponse*/, const Brx& /*aValue*/, IDvInvocationResponseString& /*aResult*/)
 {
     ASSERTS();
 }
@@ -516,6 +595,11 @@ void DvProviderOpenhomeOrgTestBasic1::GetBool(IDvInvocation& /*aResponse*/, IDvI
 }
 
 void DvProviderOpenhomeOrgTestBasic1::SetMultiple(IDvInvocation& /*aResponse*/, TUint /*aValueUint*/, TInt /*aValueInt*/, TBool /*aValueBool*/)
+{
+    ASSERTS();
+}
+
+void DvProviderOpenhomeOrgTestBasic1::GetMultiple(IDvInvocation& /*aResponse*/, IDvInvocationResponseUint& /*aValueUint*/, IDvInvocationResponseInt& /*aValueInt*/, IDvInvocationResponseBool& /*aValueBool*/)
 {
     ASSERTS();
 }

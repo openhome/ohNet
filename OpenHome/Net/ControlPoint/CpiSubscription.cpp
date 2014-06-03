@@ -14,6 +14,7 @@
 #include <OpenHome/Net/Private/CpiStack.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 #include <list>
 #include <map>
@@ -27,8 +28,13 @@ using namespace OpenHome::Net;
 
 const Brx& CpiSubscription::Sid() const
 {
-    AutoMutex a(iEnv.Mutex());
+    AutoMutex a(iSidLock);
     return iSid;
+}
+
+TUint CpiSubscription::Id() const
+{
+    return iId;
 }
 
 void CpiSubscription::AddRef()
@@ -79,15 +85,16 @@ void CpiSubscription::SetNotificationError()
 void CpiSubscription::Unsubscribe()
 {
     AddRef();
-    iLock.Wait();
-    if (iEventProcessor != NULL) {
-        iEventProcessor->EventUpdatePrepareForDelete();
-        iEventProcessor = NULL;
+    {
+        AutoMutex a(iLock);
+        if (iEventProcessor != NULL) {
+            iEventProcessor->EventUpdatePrepareForDelete();
+            iEventProcessor = NULL;
+        }
+        if (iInterruptHandler != NULL) {
+            iInterruptHandler->Interrupt();
+        }
     }
-    if (iInterruptHandler != NULL) {
-        iInterruptHandler->Interrupt();
-    }
-    iLock.Signal();
     Schedule(eUnsubscribe, true);
     RemoveRef();
 }
@@ -101,10 +108,9 @@ void CpiSubscription::SetInterruptHandler(IInterruptHandler* aHandler)
 
 void CpiSubscription::SetSid(Brh& aSid)
 {
-    Mutex& lock = iEnv.Mutex();
-    lock.Wait();
+    iSidLock.Wait();
     aSid.TransferTo(iSid);
-    lock.Signal();
+    iSidLock.Signal();
 }
 
 const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
@@ -129,9 +135,11 @@ void CpiSubscription::RunInSubscriber()
             DoSubscribe();
         }
         catch(...) {
+            lock.Wait();
             LOG2(kError, kTrace, "Subscribe (%p) for device ", this);
             LOG2(kError, kTrace, iDevice.Udn());
             LOG2(kError, kTrace, " failed\n");
+            lock.Signal();
             throw;
         }
         break;
@@ -148,14 +156,16 @@ void CpiSubscription::RunInSubscriber()
     }
 }
 
-CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
+CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType, TUint aId)
     : iLock("SUBM")
     , iSubscriberLock("SBM2")
+    , iSidLock("SBM3")
     , iDevice(aDevice)
     , iCpStack(aDevice.GetCpStack())
     , iEnv(iCpStack.Env())
     , iEventProcessor(&aEventProcessor)
     , iServiceType(aServiceType)
+    , iId(aId)
     , iPendingOperation(eNone)
     , iRefCount(1)
     , iInterruptHandler(NULL)
@@ -163,7 +173,6 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
     iRejectFutureOperations = false;
-    Schedule(eSubscribe);
     iEnv.AddObject(this);
 }
 
@@ -171,6 +180,7 @@ CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     ASSERT(iSid.Bytes() == 0);
+    iCpStack.SubscriptionManager().Remove(*this); // in case we never subscribed, so never need to unsubscribe
     iDevice.RemoveRef();
     delete iTimer;
     iEnv.RemoveObject(this);
@@ -215,13 +225,18 @@ void CpiSubscription::DoSubscribe()
     endpt.AppendEndpoint(buf);
     uri.Append(buf);
     uri.Append('/');
+    Ascii::AppendDec(uri, iId);
+    uri.Append('/');
     Uri subscriber(uri);
 
+    const Brx& serviceFullName = iServiceType.FullName();
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Subscribing - service = ");
-    LOG(kEvent, iServiceType.FullName());
+    LOG(kEvent, serviceFullName);
     LOG(kEvent, "\n    subscription = %p\n    subscriber = ", this);
     LOG(kEvent, subscriber.AbsoluteUri());
     LOG(kEvent, "\n");
+    iEnv.Mutex().Signal();
 
     iNextSequenceNumber = 0;
     TUint renewSecs;
@@ -236,22 +251,24 @@ void CpiSubscription::DoSubscribe()
         }
         const Brx& udn = iDevice.Udn();
         iEnv.Mutex().Wait();
-        Log::Print("XmlError attempting to subscribe to device ");
+        Log::Print("XmlError attempting to subscribe to ");
+        Log::Print(serviceFullName);
+        Log::Print(" service on device ");
         Log::Print(udn);
         Log::Print(", with xml\n\n");
         Log::Print(deviceXml);
         Log::Print("\n\n");
         iEnv.Mutex().Signal();
-        THROW(XmlError);
+        throw;
     }
 
-    iCpStack.SubscriptionManager().Add(*this);
-
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Subscription (%p) for ", this);
-    LOG(kEvent, iServiceType.FullName());
+    LOG(kEvent, serviceFullName);
     LOG(kEvent, " completed\n    Sid is ");
     LOG(kEvent, iSid);
     LOG(kEvent, "\n    Renew in %u secs\n", renewSecs);
+    iEnv.Mutex().Signal();
 
     SetRenewTimer(renewSecs);
 }
@@ -300,24 +317,27 @@ void CpiSubscription::DoRenew()
 
 void CpiSubscription::DoUnsubscribe()
 {
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Unsubscribing (%p) sid ", this);
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
+    iEnv.Mutex().Signal();
 
     iTimer->Cancel();
     if (iSid.Bytes() == 0) {
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
         return;
     }
-    iCpStack.SubscriptionManager().Remove(*this);
     Brh sid;
     iEnv.Mutex().Wait();
     iSid.TransferTo(sid);
     iEnv.Mutex().Signal();
     iDevice.Unsubscribe(*this, sid);
+    iEnv.Mutex().Wait();
     LOG(kEvent, "Unsubscribed (%p) sid ", this);
     LOG(kEvent, sid);
     LOG(kEvent, "\n");
+    iEnv.Mutex().Signal();
 }
 
 void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
@@ -332,7 +352,7 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
     iTimer->FireIn(renewMs);
 }
 
-void CpiSubscription::HandleResumed()
+void CpiSubscription::Resubscribe()
 {
     if (StartSchedule(eResubscribe, false)) {
         iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
@@ -431,6 +451,7 @@ void Subscriber::Error(const TChar* aErr)
 void Subscriber::Error(const TChar* /*aErr*/)
 #endif
 {
+    gEnv->Mutex().Wait();
     LOG2(kEvent, kError, "Error - %s - from (%p) SID ", aErr, iSubscription);
     if (iSubscription->Sid().Bytes() > 0) {
         LOG2(kEvent, kError, iSubscription->Sid());
@@ -439,6 +460,7 @@ void Subscriber::Error(const TChar* /*aErr*/)
         LOG2(kEvent, kError, "(null)");
     }
     LOG2(kEvent, kError, "\n");
+    gEnv->Mutex().Signal();
     // don't try to resubscribe as we may get stuck in an endless cycle of errors
 }
 
@@ -495,6 +517,8 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     , iFree(aCpStack.Env().InitParams()->NumSubscriberThreads())
     , iWaiter("SBSS", 0)
     , iShutdownSem("SBMS", 0)
+    , iInterface(0)
+    , iNextSubscriptionId(1)
 {
     NetworkAdapterList& ifList = iCpStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(aCpStack.Env(), "CpiSubscriptionManager ctor");
@@ -509,7 +533,8 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     }
     else {
         iLock.Wait();
-        iEventServer = new EventServerUpnp(iCpStack, currentInterface->Address());
+        iInterface = currentInterface->Address();
+        iEventServer = new EventServerUpnp(iCpStack, iInterface);
         iLock.Signal();
     }
 
@@ -574,46 +599,38 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 
 CpiSubscription* CpiSubscriptionManager::NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
 {
-    return new CpiSubscription(aDevice, aEventProcessor, aServiceType);
-}
-
-void CpiSubscriptionManager::WaitForPendingAdd(const Brx& aSid)
-{
     iLock.Wait();
-    PendingSubscription* pending = new PendingSubscription(aSid);
-    iPendingSubscriptions.push_back(pending);
+    const TUint id = iNextSubscriptionId++;
+    CpiSubscription* subscription = new CpiSubscription(aDevice, aEventProcessor, aServiceType, id);
+    iMap.insert(std::pair<TUint,CpiSubscription*>(id, subscription));
     iLock.Signal();
-    try {
-        pending->iSem.Wait(iCpStack.Env().InitParams()->PendingSubscriptionTimeoutMs());
-    }
-    catch(Timeout&) {
-        iLock.Wait();
-        RemovePendingAdd(pending);
-        iLock.Signal();
-    }
-    delete pending;
+    subscription->Schedule(CpiSubscription::eSubscribe);
+    return subscription;
 }
 
-void CpiSubscriptionManager::Add(CpiSubscription& aSubscription)
-{
-    iLock.Wait();
-    Brn sid(aSubscription.Sid());
-    ASSERT(sid.Bytes() > 0);
-    iMap.insert(std::pair<Brn,CpiSubscription*>(sid, &aSubscription));
-    RemovePendingAdds(sid);
-    iLock.Signal();
-}
-
-CpiSubscription* CpiSubscriptionManager::FindSubscription(const Brx& aSid)
+CpiSubscription* CpiSubscriptionManager::FindSubscription(TUint aId)
 {
     AutoMutex a(iLock);
-    Brn sid(aSid);
-    Map::iterator it = iMap.find(sid);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.find(aId);
     if (it == iMap.end()) {
         return NULL;
     }
     CpiSubscription* subscription = it->second;
     subscription->AddRef();
+    return subscription;
+}
+
+CpiSubscription* CpiSubscriptionManager::FindSubscription(const Brx& aSid)
+{
+    AutoMutex a(iLock);
+    CpiSubscription* subscription = NULL;
+    for (std::map<TUint,CpiSubscription*>::iterator it=iMap.begin(); it!=iMap.end(); ++it) {
+        if (it->second->Sid() == aSid) {
+            subscription = it->second;
+            subscription->AddRef();
+            break;
+        }
+    }
     return subscription;
 }
 
@@ -630,8 +647,7 @@ void CpiSubscriptionManager::Remove(CpiSubscription& aSubscription)
 
 void CpiSubscriptionManager::RemoveLocked(CpiSubscription& aSubscription)
 {
-    Brn sid(aSubscription.Sid());
-    Map::iterator it = iMap.find(sid);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.find(aSubscription.Id());
     if (it != iMap.end()) {
         it->second = NULL;
         iMap.erase(it);
@@ -662,35 +678,21 @@ TUint CpiSubscriptionManager::EventServerPort()
     return server->Port();
 }
 
+void CpiSubscriptionManager::RenewAll()
+{
+    AutoMutex a(iLock);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        it->second->Resubscribe();
+        it++;
+    }
+}
+
 void CpiSubscriptionManager::NotifyResumed()
 {
     /* sockets are unusable on iOS when we resume so we need to perform as same actions
        as when we change address within the current subnet */
     HandleInterfaceChange(false);
-}
-
-void CpiSubscriptionManager::RemovePendingAdd(PendingSubscription* aPending)
-{
-    for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
-        PendingSubscription* pending = iPendingSubscriptions[i];
-        if (pending == aPending) {
-            pending->iSem.Signal();
-            iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
-            break;
-        }
-    }
-}
-
-void CpiSubscriptionManager::RemovePendingAdds(const Brx& aSid)
-{
-    for (TUint i=0; i<iPendingSubscriptions.size(); i++) {
-        PendingSubscription* pending = iPendingSubscriptions[i];
-        if (pending->iSid == aSid) {
-            pending->iSem.Signal();
-            iPendingSubscriptions.erase(iPendingSubscriptions.begin() + i);
-            i--;
-        }
-    }
 }
 
 void CpiSubscriptionManager::CurrentNetworkAdapterChanged()
@@ -705,12 +707,15 @@ void CpiSubscriptionManager::SubnetListChanged()
 
 void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
+    LOG(kEvent, "> CpiSubscriptionManager::HandleInterfaceChange(%d)\n", aNewSubnet);
     iLock.Wait();
-    // trigger CpiSubscriptionManager::WaitForPendingAdd
-    while (iPendingSubscriptions.size() > 0) {
-        RemovePendingAdds(iPendingSubscriptions[0]->iSid);
-    }
+    AutoNetworkAdapterRef ref(iCpStack.Env(), "CpiSubscriptionManager::HandleInterfaceChange");
+    const NetworkAdapter* currentInterface = ref.Adapter();
     if (aNewSubnet) {
+        if (currentInterface != NULL && currentInterface->Address() == iInterface) {
+            iLock.Signal();
+            return;
+        }
         size_t count = iMap.size();
         while (count-- > 0) {
             CpiSubscription* subscription = iMap.begin()->second;
@@ -718,30 +723,27 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
             subscription->NotifySubnetChanged();
         }
     }
-    else {
-        /* device lists map not signal that devices have been removed
-           ...so we need to try to migrate existing subscriptions */
-        Map::iterator it = iMap.begin();
-        while (it != iMap.end()) {
-            it->second->HandleResumed();
-            it++;
-        }
-    }
+    /* Don't try to migrate subscriptions here if !aNewSubnet - this causes a race between
+       recreating the event server below and the resubscribes being scheduled in another thread */
     EventServerUpnp* server = iEventServer;
     iEventServer = NULL;
-    // releasing the lock here leaves a tiny window in which an event session thread can
-    // block at CpiSubscriptionManager::WaitForPendingAdds.  This will add a very rare delay
-    // of a few seconds so it's acceptable to risk this rather than add complicated, hard
-    // to test, code.
     iLock.Signal();
 
     // recreate the event server on the new interface
     delete server;
-    AutoNetworkAdapterRef ref(iCpStack.Env(), "CpiSubscriptionManager::HandleInterfaceChange");
-    const NetworkAdapter* currentInterface = ref.Adapter();
-    if (currentInterface != NULL) {
-        iEventServer = new EventServerUpnp(iCpStack, currentInterface->Address());
+    if (currentInterface == NULL) {
+        iInterface = 0;
     }
+    else {
+        iInterface = currentInterface->Address();
+        iEventServer = new EventServerUpnp(iCpStack, iInterface);
+    }
+    if (!aNewSubnet) {
+        /* device lists may not signal that devices have been removed
+           ...so we need to try to migrate existing subscriptions */
+        RenewAll();
+    }
+    LOG(kEvent, "< CpiSubscriptionManager::HandleInterfaceChange(%d)\n", aNewSubnet);
 }
 
 TBool CpiSubscriptionManager::ReadyForShutdown() const

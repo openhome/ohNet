@@ -13,6 +13,9 @@ interface ICpProxyOpenhomeOrgTestBasic1 extends ICpProxy
     public long syncIncrement(long aValue);
     public void beginIncrement(long aValue, ICpProxyListener aCallback);
     public long endIncrement(long aAsyncHandle);
+    public long syncEchoAllowedRangeUint(long aValue);
+    public void beginEchoAllowedRangeUint(long aValue, ICpProxyListener aCallback);
+    public long endEchoAllowedRangeUint(long aAsyncHandle);
     public int syncDecrement(int aValue);
     public void beginDecrement(int aValue, ICpProxyListener aCallback);
     public int endDecrement(long aAsyncHandle);
@@ -22,6 +25,9 @@ interface ICpProxyOpenhomeOrgTestBasic1 extends ICpProxy
     public String syncEchoString(String aValue);
     public void beginEchoString(String aValue, ICpProxyListener aCallback);
     public String endEchoString(long aAsyncHandle);
+    public String syncEchoAllowedValueString(String aValue);
+    public void beginEchoAllowedValueString(String aValue, ICpProxyListener aCallback);
+    public String endEchoAllowedValueString(long aAsyncHandle);
     public byte[] syncEchoBinary(byte[] aValue);
     public void beginEchoBinary(byte[] aValue, ICpProxyListener aCallback);
     public byte[] endEchoBinary(long aAsyncHandle);
@@ -46,6 +52,9 @@ interface ICpProxyOpenhomeOrgTestBasic1 extends ICpProxy
     public void syncSetMultiple(long aValueUint, int aValueInt, boolean aValueBool);
     public void beginSetMultiple(long aValueUint, int aValueInt, boolean aValueBool, ICpProxyListener aCallback);
     public void endSetMultiple(long aAsyncHandle);
+    public GetMultiple syncGetMultiple();
+    public void beginGetMultiple(ICpProxyListener aCallback);
+    public GetMultiple endGetMultiple(long aAsyncHandle);
     public void syncSetString(String aValueStr);
     public void beginSetString(String aValueStr, ICpProxyListener aCallback);
     public void endSetString(long aAsyncHandle);
@@ -95,6 +104,27 @@ class SyncIncrementOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         long result = iService.endIncrement(aAsyncHandle);
+        
+        iResult = result;
+    }
+}
+
+class SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1 extends SyncProxyAction
+{
+    private CpProxyOpenhomeOrgTestBasic1 iService;
+    private long iResult;
+
+    public SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+    {
+        iService = aProxy;
+    }
+    public long getResult()
+    {
+        return iResult;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        long result = iService.endEchoAllowedRangeUint(aAsyncHandle);
         
         iResult = result;
     }
@@ -158,6 +188,27 @@ class SyncEchoStringOpenhomeOrgTestBasic1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         String result = iService.endEchoString(aAsyncHandle);
+        
+        iResult = result;
+    }
+}
+
+class SyncEchoAllowedValueStringOpenhomeOrgTestBasic1 extends SyncProxyAction
+{
+    private CpProxyOpenhomeOrgTestBasic1 iService;
+    private String iResult;
+
+    public SyncEchoAllowedValueStringOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+    {
+        iService = aProxy;
+    }
+    public String getResult()
+    {
+        return iResult;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        String result = iService.endEchoAllowedValueString(aAsyncHandle);
         
         iResult = result;
     }
@@ -307,6 +358,39 @@ class SyncSetMultipleOpenhomeOrgTestBasic1 extends SyncProxyAction
     }
 }
 
+class SyncGetMultipleOpenhomeOrgTestBasic1 extends SyncProxyAction
+{
+    private CpProxyOpenhomeOrgTestBasic1 iService;
+    private long iValueUint;
+    private int iValueInt;
+    private boolean iValueBool;
+
+    public SyncGetMultipleOpenhomeOrgTestBasic1(CpProxyOpenhomeOrgTestBasic1 aProxy)
+    {
+        iService = aProxy;
+    }
+    public long getValueUint()
+    {
+        return iValueUint;
+    }
+    public int getValueInt()
+    {
+        return iValueInt;
+    }
+    public boolean getValueBool()
+    {
+        return iValueBool;
+    }
+    protected void completeRequest(long aAsyncHandle)
+    {
+        GetMultiple result = iService.endGetMultiple(aAsyncHandle);
+        
+        iValueUint = result.getValueUint();
+        iValueInt = result.getValueInt();
+        iValueBool = result.getValueBool();
+    }
+}
+
 class SyncSetStringOpenhomeOrgTestBasic1 extends SyncProxyAction
 {
     private CpProxyOpenhomeOrgTestBasic1 iService;
@@ -430,10 +514,42 @@ class SyncShutdownOpenhomeOrgTestBasic1 extends SyncProxyAction
 public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpenhomeOrgTestBasic1
 {
 
+    public class GetMultiple
+    {
+        private long iValueUint;
+        private int iValueInt;
+        private boolean iValueBool;
+
+        public GetMultiple(
+            long aValueUint,
+            int aValueInt,
+            boolean aValueBool
+        )
+        {
+            iValueUint = aValueUint;
+            iValueInt = aValueInt;
+            iValueBool = aValueBool;
+        }
+        public long getValueUint()
+        {
+            return iValueUint;
+        }
+        public int getValueInt()
+        {
+            return iValueInt;
+        }
+        public boolean getValueBool()
+        {
+            return iValueBool;
+        }
+    }
+
     private Action iActionIncrement;
+    private Action iActionEchoAllowedRangeUint;
     private Action iActionDecrement;
     private Action iActionToggle;
     private Action iActionEchoString;
+    private Action iActionEchoAllowedValueString;
     private Action iActionEchoBinary;
     private Action iActionSetUint;
     private Action iActionGetUint;
@@ -442,6 +558,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
     private Action iActionSetBool;
     private Action iActionGetBool;
     private Action iActionSetMultiple;
+    private Action iActionGetMultiple;
     private Action iActionSetString;
     private Action iActionGetString;
     private Action iActionSetBinary;
@@ -480,6 +597,12 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         param = new ParameterUint("Result");
         iActionIncrement.addOutputParameter(param);
 
+        iActionEchoAllowedRangeUint = new Action("EchoAllowedRangeUint");
+        param = new ParameterUint("Value", 10, 20);
+        iActionEchoAllowedRangeUint.addInputParameter(param);
+        param = new ParameterUint("Result");
+        iActionEchoAllowedRangeUint.addOutputParameter(param);
+
         iActionDecrement = new Action("Decrement");
         param = new ParameterInt("Value");
         iActionDecrement.addInputParameter(param);
@@ -497,6 +620,17 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iActionEchoString.addInputParameter(param);
         param = new ParameterString("Result", allowedValues);
         iActionEchoString.addOutputParameter(param);
+
+        iActionEchoAllowedValueString = new Action("EchoAllowedValueString");
+        allowedValues.add("One");
+        allowedValues.add("Two");
+        allowedValues.add("Three");
+        allowedValues.add("Four");
+        param = new ParameterString("Value", allowedValues);
+        iActionEchoAllowedValueString.addInputParameter(param);
+        allowedValues.clear();
+        param = new ParameterString("Result", allowedValues);
+        iActionEchoAllowedValueString.addOutputParameter(param);
 
         iActionEchoBinary = new Action("EchoBinary");
         param = new ParameterBinary("Value");
@@ -535,6 +669,14 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
         iActionSetMultiple.addInputParameter(param);
         param = new ParameterBool("ValueBool");
         iActionSetMultiple.addInputParameter(param);
+
+        iActionGetMultiple = new Action("GetMultiple");
+        param = new ParameterUint("ValueUint");
+        iActionGetMultiple.addOutputParameter(param);
+        param = new ParameterInt("ValueInt");
+        iActionGetMultiple.addOutputParameter(param);
+        param = new ParameterBool("ValueBool");
+        iActionGetMultiple.addOutputParameter(param);
 
         iActionSetString = new Action("SetString");
         param = new ParameterString("ValueStr", allowedValues);
@@ -657,7 +799,65 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public long endIncrement(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
+        {
+            throw errObj;
+        }
+        int index = 0;
+        long result = Invocation.getOutputUint(aAsyncHandle, index++);
+        return result;
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     *
+     * @return the result of the invoked action.
+     */
+    public long syncEchoAllowedRangeUint(long aValue)
+    {
+        SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1 sync = new SyncEchoAllowedRangeUintOpenhomeOrgTestBasic1(this);
+        beginEchoAllowedRangeUint(aValue, sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+
+        return sync.getResult();
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endEchoAllowedRangeUint}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginEchoAllowedRangeUint(long aValue, ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionEchoAllowedRangeUint, aCallback);
+        int inIndex = 0;
+        invocation.addInput(new ArgumentUint((ParameterUint)iActionEchoAllowedRangeUint.getInputParameter(inIndex++), aValue));
+        int outIndex = 0;
+        invocation.addOutput(new ArgumentUint((ParameterUint)iActionEchoAllowedRangeUint.getOutputParameter(outIndex++)));
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginEchoAllowedRangeUint} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginEchoAllowedRangeUint} method.
+     * @return the result of the previously invoked action.
+     */
+    public long endEchoAllowedRangeUint(long aAsyncHandle)
+    {
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -715,7 +915,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public int endDecrement(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -773,7 +973,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public boolean endToggle(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -831,7 +1031,65 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public String endEchoString(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
+        {
+            throw errObj;
+        }
+        int index = 0;
+        String result = Invocation.getOutputString(aAsyncHandle, index++);
+        return result;
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     *
+     * @return the result of the invoked action.
+     */
+    public String syncEchoAllowedValueString(String aValue)
+    {
+        SyncEchoAllowedValueStringOpenhomeOrgTestBasic1 sync = new SyncEchoAllowedValueStringOpenhomeOrgTestBasic1(this);
+        beginEchoAllowedValueString(aValue, sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+
+        return sync.getResult();
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endEchoAllowedValueString}.
+     * 
+     * @param aValue
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginEchoAllowedValueString(String aValue, ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionEchoAllowedValueString, aCallback);
+        int inIndex = 0;
+        invocation.addInput(new ArgumentString((ParameterString)iActionEchoAllowedValueString.getInputParameter(inIndex++), aValue));
+        int outIndex = 0;
+        invocation.addOutput(new ArgumentString((ParameterString)iActionEchoAllowedValueString.getOutputParameter(outIndex++)));
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginEchoAllowedValueString} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginEchoAllowedValueString} method.
+     * @return the result of the previously invoked action.
+     */
+    public String endEchoAllowedValueString(long aAsyncHandle)
+    {
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -889,7 +1147,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public byte[] endEchoBinary(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -940,7 +1198,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endSetUint(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -992,7 +1250,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public long endGetUint(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1043,7 +1301,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endSetInt(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1095,7 +1353,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public int endGetInt(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1146,7 +1404,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endSetBool(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1198,7 +1456,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public boolean endGetBool(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1253,11 +1511,78 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endSetMultiple(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
         }
+    }
+        
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+     *
+     * @return the result of the invoked action.
+     */
+    public GetMultiple syncGetMultiple()
+    {
+        SyncGetMultipleOpenhomeOrgTestBasic1 sync = new SyncGetMultipleOpenhomeOrgTestBasic1(this);
+        beginGetMultiple(sync.getListener());
+        sync.waitToComplete();
+        sync.reportError();
+
+        return new GetMultiple(
+            sync.getValueUint(),
+            sync.getValueInt(),
+            sync.getValueBool()
+        );
+    }
+    
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the
+     * action later completes.  Any output arguments can then be retrieved by
+     * calling {@link #endGetMultiple}.
+     * 
+     * @param aCallback listener to call back when action completes.
+     *                  This is guaranteed to be run but may indicate an error.
+     */
+    public void beginGetMultiple(ICpProxyListener aCallback)
+    {
+        Invocation invocation = iService.getInvocation(iActionGetMultiple, aCallback);
+        int outIndex = 0;
+        invocation.addOutput(new ArgumentUint((ParameterUint)iActionGetMultiple.getOutputParameter(outIndex++)));
+        invocation.addOutput(new ArgumentInt((ParameterInt)iActionGetMultiple.getOutputParameter(outIndex++)));
+        invocation.addOutput(new ArgumentBool((ParameterBool)iActionGetMultiple.getOutputParameter(outIndex++)));
+        iService.invokeAction(invocation);
+    }
+
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #beginGetMultiple} method.
+     *
+     * @param aAsyncHandle  argument passed to the delegate set in the
+     *          {@link #beginGetMultiple} method.
+     * @return the result of the previously invoked action.
+     */
+    public GetMultiple endGetMultiple(long aAsyncHandle)
+    {
+        ProxyError errObj = Invocation.error(aAsyncHandle);
+        if (errObj != null)
+        {
+            throw errObj;
+        }
+        int index = 0;
+        long valueUint = Invocation.getOutputUint(aAsyncHandle, index++);
+        int valueInt = Invocation.getOutputInt(aAsyncHandle, index++);
+        boolean valueBool = Invocation.getOutputBool(aAsyncHandle, index++);
+        return new GetMultiple(
+            valueUint,
+            valueInt,
+            valueBool
+        );
     }
         
     /**
@@ -1301,7 +1626,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endSetString(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1353,7 +1678,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public String endGetString(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1404,7 +1729,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endSetBinary(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1456,7 +1781,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public byte[] endGetBinary(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1504,7 +1829,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endToggleBool(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1554,7 +1879,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endWriteFile(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1599,7 +1924,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
      */
     public void endShutdown(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1818,9 +2143,11 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
             disposeProxy();
             iHandle = 0;
             iActionIncrement.destroy();
+            iActionEchoAllowedRangeUint.destroy();
             iActionDecrement.destroy();
             iActionToggle.destroy();
             iActionEchoString.destroy();
+            iActionEchoAllowedValueString.destroy();
             iActionEchoBinary.destroy();
             iActionSetUint.destroy();
             iActionGetUint.destroy();
@@ -1829,6 +2156,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
             iActionSetBool.destroy();
             iActionGetBool.destroy();
             iActionSetMultiple.destroy();
+            iActionGetMultiple.destroy();
             iActionSetString.destroy();
             iActionGetString.destroy();
             iActionSetBinary.destroy();

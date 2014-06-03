@@ -165,8 +165,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aName"></param>
         public void EndName(IntPtr aAsyncHandle, out String aName)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -222,8 +222,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResults"></param>
         public void EndPorts(IntPtr aAsyncHandle, out uint aSender, out uint aReceiver, out uint aResults)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -332,8 +332,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyName()
         {
             PropertyReadLock();
-            String val = iName.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iName.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -347,8 +354,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertySender()
         {
             PropertyReadLock();
-            uint val = iSender.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iSender.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -362,8 +376,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyReceiver()
         {
             PropertyReadLock();
-            uint val = iReceiver.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iReceiver.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -377,8 +398,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyResults()
         {
             PropertyReadLock();
-            uint val = iResults.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iResults.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

@@ -71,6 +71,36 @@
             <dataType>string</dataType>
         </stateVariable>
         <stateVariable>
+            <name>A_ARG_AllowedStr_Value</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>One</allowedValue>
+                <allowedValue>Two</allowedValue>
+                <allowedValue>Three</allowedValue>
+                <allowedValue>Four</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+        <stateVariable>
+            <name>A_ARG_AllowedStr_Result</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable>
+            <name>A_ARG_AllowedUint_Value</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>ui4</dataType>
+            <allowedValueRange>
+                <minimum>10</minimum>
+                <maximum>20</maximum>
+            </allowedValueRange>
+        </stateVariable>
+        <stateVariable>
+            <name>A_ARG_AllowedUint_Result</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable>
             <name>VarBin</name>
             <sendEventsAttribute>yes</sendEventsAttribute>
             <dataType>bin.base64</dataType>
@@ -94,6 +124,21 @@
                     <name>Result</name>
                     <direction>out</direction>
                     <relatedStateVariable>A_ARG_Increment_Result</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>EchoAllowedRangeUint</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_AllowedUint_Value</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>Result</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_AllowedUint_Result</relatedStateVariable>
                 </argument>
             </argumentList>
         </action>
@@ -139,6 +184,21 @@
                     <name>Result</name>
                     <direction>out</direction>
                     <relatedStateVariable>A_ARG_EchoString_Result</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>EchoAllowedValueString</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_AllowedStr_Value</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>Result</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_AllowedStr_Result</relatedStateVariable>
                 </argument>
             </argumentList>
         </action>
@@ -233,6 +293,26 @@
                 <argument>
                     <name>ValueBool</name>
                     <direction>in</direction>
+                    <relatedStateVariable>VarBool</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>GetMultiple</name>
+            <argumentList>
+                <argument>
+                    <name>ValueUint</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>VarUint</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>ValueInt</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>VarInt</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>ValueBool</name>
+                    <direction>out</direction>
                     <relatedStateVariable>VarBool</relatedStateVariable>
                 </argument>
             </argumentList>

@@ -279,9 +279,9 @@ void CpProxyAvOpenhomeOrgSender1C::EndPresentationUrl(IAsync& aAsync, Brh& aValu
     ASSERT(invocation.Action().Name() == Brn("PresentationUrl"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -311,9 +311,9 @@ void CpProxyAvOpenhomeOrgSender1C::EndMetadata(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Metadata"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -343,9 +343,9 @@ void CpProxyAvOpenhomeOrgSender1C::EndAudio(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Audio"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -375,9 +375,9 @@ void CpProxyAvOpenhomeOrgSender1C::EndStatus(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Status"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -407,9 +407,9 @@ void CpProxyAvOpenhomeOrgSender1C::EndAttributes(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Attributes"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -453,42 +453,37 @@ void CpProxyAvOpenhomeOrgSender1C::SetPropertyAttributesChanged(Functor& aFuncto
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyPresentationUrl(Brhz& aPresentationUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aPresentationUrl.Set(iPresentationUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyAudio(TBool& aAudio) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aAudio = iAudio->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyStatus(Brhz& aStatus) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aStatus.Set(iStatus->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PropertyAttributes(Brhz& aAttributes) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aAttributes.Set(iAttributes->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgSender1C::PresentationUrlPropertyChanged()

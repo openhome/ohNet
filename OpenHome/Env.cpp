@@ -8,6 +8,7 @@
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/Private/Debug.h>
 
 #ifdef PLATFORM_MACOSX_GNU
 # include <sys/time.h>
@@ -75,7 +76,6 @@ Environment::Environment(InitialisationParams* aInitParams)
     , iDvStack(NULL)
 {
     Construct(aInitParams->LogOutput());
-    SetAssertHandler(AssertHandlerDefault);
 #ifdef PLATFORM_MACOSX_GNU
     /* Non-portable way of setting a better random seed than time(NULL)
        This is needed on Mac as CI for x86 and x64 tests use the same host
@@ -231,6 +231,7 @@ void Environment::RemoveResumeObserver(IResumeObserver& aObserver)
 
 void Environment::NotifyResumed()
 {
+    LOG(kTrace, "NotifyResumed\n");
     iResumeObserverLock->Wait();
     for (TUint i=0; i<iResumeObservers.size(); i++) {
         iResumeObservers[i]->NotifyResumed();

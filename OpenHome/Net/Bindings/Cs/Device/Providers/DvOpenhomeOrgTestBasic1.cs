@@ -82,9 +82,11 @@ namespace OpenHome.Net.Device.Providers
     {
         private GCHandle iGch;
         private ActionDelegate iDelegateIncrement;
+        private ActionDelegate iDelegateEchoAllowedRangeUint;
         private ActionDelegate iDelegateDecrement;
         private ActionDelegate iDelegateToggle;
         private ActionDelegate iDelegateEchoString;
+        private ActionDelegate iDelegateEchoAllowedValueString;
         private ActionDelegate iDelegateEchoBinary;
         private ActionDelegate iDelegateSetUint;
         private ActionDelegate iDelegateGetUint;
@@ -93,6 +95,7 @@ namespace OpenHome.Net.Device.Providers
         private ActionDelegate iDelegateSetBool;
         private ActionDelegate iDelegateGetBool;
         private ActionDelegate iDelegateSetMultiple;
+        private ActionDelegate iDelegateGetMultiple;
         private ActionDelegate iDelegateSetString;
         private ActionDelegate iDelegateGetString;
         private ActionDelegate iDelegateSetBinary;
@@ -302,6 +305,20 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
+        /// Signal that the action EchoAllowedRangeUint is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// EchoAllowedRangeUint must be overridden if this is called.</remarks>
+        protected void EnableActionEchoAllowedRangeUint()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("EchoAllowedRangeUint");
+            action.AddInputParameter(new ParameterUint("Value", 10, 20));
+            action.AddOutputParameter(new ParameterUint("Result"));
+            iDelegateEchoAllowedRangeUint = new ActionDelegate(DoEchoAllowedRangeUint);
+            EnableAction(action, iDelegateEchoAllowedRangeUint, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
         /// Signal that the action Decrement is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
@@ -342,6 +359,26 @@ namespace OpenHome.Net.Device.Providers
             action.AddOutputParameter(new ParameterString("Result", allowedValues));
             iDelegateEchoString = new ActionDelegate(DoEchoString);
             EnableAction(action, iDelegateEchoString, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action EchoAllowedValueString is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// EchoAllowedValueString must be overridden if this is called.</remarks>
+        protected void EnableActionEchoAllowedValueString()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("EchoAllowedValueString");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("One");
+            allowedValues.Add("Two");
+            allowedValues.Add("Three");
+            allowedValues.Add("Four");
+            action.AddInputParameter(new ParameterString("Value", allowedValues));
+            allowedValues.Clear();
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            iDelegateEchoAllowedValueString = new ActionDelegate(DoEchoAllowedValueString);
+            EnableAction(action, iDelegateEchoAllowedValueString, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -452,6 +489,21 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
+        /// Signal that the action GetMultiple is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// GetMultiple must be overridden if this is called.</remarks>
+        protected void EnableActionGetMultiple()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetMultiple");
+            action.AddOutputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
+            action.AddOutputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
+            action.AddOutputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
+            iDelegateGetMultiple = new ActionDelegate(DoGetMultiple);
+            EnableAction(action, iDelegateGetMultiple, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
         /// Signal that the action SetString is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
@@ -558,6 +610,21 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
+        /// EchoAllowedRangeUint action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EchoAllowedRangeUint action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEchoAllowedRangeUint was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
+        protected virtual void EchoAllowedRangeUint(IDvInvocation aInvocation, uint aValue, out uint aResult)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
         /// Decrement action.
         /// </summary>
         /// <remarks>Will be called when the device stack receives an invocation of the
@@ -598,6 +665,21 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
         protected virtual void EchoString(IDvInvocation aInvocation, string aValue, out string aResult)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// EchoAllowedValueString action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EchoAllowedValueString action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEchoAllowedValueString was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
+        protected virtual void EchoAllowedValueString(IDvInvocation aInvocation, string aValue, out string aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -713,6 +795,22 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aValueInt"></param>
         /// <param name="aValueBool"></param>
         protected virtual void SetMultiple(IDvInvocation aInvocation, uint aValueUint, int aValueInt, bool aValueBool)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// GetMultiple action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetMultiple action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetMultiple was called.</remarks>
+        /// <param name="aInvocation">Interface allowing querying of aspects of this particular action invocation.</param>
+        /// <param name="aValueUint"></param>
+        /// <param name="aValueInt"></param>
+        /// <param name="aValueBool"></param>
+        protected virtual void GetMultiple(IDvInvocation aInvocation, out uint aValueUint, out int aValueInt, out bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
@@ -862,6 +960,54 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
+        private static int DoEchoAllowedRangeUint(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint value;
+            uint result;
+            try
+            {
+                invocation.ReadStart();
+                value = invocation.ReadUint("Value");
+                invocation.ReadEnd();
+                self.EchoAllowedRangeUint(invocation, value, out result);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, "EchoAllowedRangeUint");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "EchoAllowedRangeUint"));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "EchoAllowedRangeUint", e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("Result", result);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "EchoAllowedRangeUint", e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
         private static int DoDecrement(IntPtr aPtr, IntPtr aInvocation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
@@ -1001,6 +1147,54 @@ namespace OpenHome.Net.Device.Providers
             catch (System.Exception e)
             {
                 Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "EchoString", e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
+        private static int DoEchoAllowedValueString(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string value;
+            string result;
+            try
+            {
+                invocation.ReadStart();
+                value = invocation.ReadString("Value");
+                invocation.ReadEnd();
+                self.EchoAllowedValueString(invocation, value, out result);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, "EchoAllowedValueString");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "EchoAllowedValueString"));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "EchoAllowedValueString", e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("Result", result);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "EchoAllowedValueString", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
             }
             return 0;
@@ -1375,6 +1569,56 @@ namespace OpenHome.Net.Device.Providers
             catch (System.Exception e)
             {
                 Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "SetMultiple", e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+            }
+            return 0;
+        }
+
+        private static int DoGetMultiple(IntPtr aPtr, IntPtr aInvocation)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderOpenhomeOrgTestBasic1 self = (DvProviderOpenhomeOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint valueUint;
+            int valueInt;
+            bool valueBool;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetMultiple(invocation, out valueUint, out valueInt, out valueBool);
+            }
+            catch (ActionError e)
+            {
+                invocation.ReportActionError(e, "GetMultiple");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, String.Format("Invalid value for property {0}", "GetMultiple"));
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetMultiple", e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError should be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("ValueUint", valueUint);
+                invocation.WriteInt("ValueInt", valueInt);
+                invocation.WriteBool("ValueBool", valueBool);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2} in {3}", e.GetType(), e.Message, "GetMultiple", e.TargetSite.Name);
                 Console.WriteLine("       Only ActionError can be thrown by action response writer");
             }
             return 0;

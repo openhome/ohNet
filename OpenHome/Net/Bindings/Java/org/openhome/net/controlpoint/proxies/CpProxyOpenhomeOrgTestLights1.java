@@ -393,7 +393,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public long endGetCount(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -451,7 +451,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public String endGetRoom(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -509,7 +509,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public String endGetName(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -573,7 +573,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public GetPosition endGetPosition(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -632,7 +632,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public void endSetColor(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -687,7 +687,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public long endGetColor(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -753,7 +753,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
      */
     public GetColorComponents endGetColorComponents(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

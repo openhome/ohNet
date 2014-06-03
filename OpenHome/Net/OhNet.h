@@ -327,6 +327,13 @@ public:
      * requirements) running on a device.
      */
     void SetDvLpecServerPort(uint32_t aPort);
+    /**
+     * Inform ohNet that UDP will be measurably unreliable on even a local network.
+     * (e.g. for an Apple device using wifi)
+     * Some control point behaviours will change in this case (e.g. device lists may
+     * signal that devices have been removed in fewer circumstances).
+     */
+    void SetHostUdpIsLowQuality(TBool aLow);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -360,6 +367,7 @@ public:
     bool DvIsBonjourEnabled() const;
     uint32_t DvNumLpecThreads();
     uint32_t DvLpecServerPort();
+    bool IsHostUdpLowQuality();
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -396,6 +404,7 @@ private:
     uint32_t iDvUpnpWebServerPort;
     uint32_t iDvWebSocketPort;
     bool iEnableBonjour;
+    bool iHostUdpLowQuality;
     uint32_t iDvNumLpecThreads;
     uint32_t iDvLpecServerPort;
 };

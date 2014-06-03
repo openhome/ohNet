@@ -242,34 +242,52 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocation
 JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationReadString
   (JNIEnv *aEnv, jclass aObject, jlong aInvocation, jstring aName)
 {
-	jclass statusClass;
-	jmethodID cid;
-	jobject status;
-	char* value;
-	jobject valueJava;
-	int result;
-	DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
-	const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
-	aEnv = aEnv;
+    jclass stringClass;
+    jclass statusClass;
+    jmethodID cidString;
+    jmethodID cidStatus;
+    jobject status;
+    char* value;
+    uint32_t len;
+    jbyteArray byteArray;
+    jstring utf8;
+    jobject valueJava;
+    int result;
+    DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+    const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
 
-	statusClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/device/DvInvocation$InvocationStatusString");
-	if (statusClass == NULL)
-	{
-		printf("Unable to find class org/openhome/net/device/DvInvocation$InvocationStatusString\n");
-		return NULL;
-	}
-	cid = (*aEnv)->GetMethodID(aEnv, statusClass, "<init>", "(Lorg/openhome/net/device/DvInvocation;Ljava/lang/String;I)V");
-	if (cid == NULL) {
-		printf("Unable to find constructor for class org/openhome/net/device/DvInvocation$InvocationStatusString\n");
+    stringClass = (*aEnv)->FindClass(aEnv, "java/lang/String");
+    if (stringClass == NULL)
+    {
+        printf("Unable to find class java/lang/String\n");
+         return NULL;
+    }
+    cidString = (*aEnv)->GetMethodID(aEnv, stringClass, "<init>", "([BLjava/lang/String;)V");
+    if (cidString == NULL) {
+        printf("Unable to find constructor for class java/lang/String\n");
         return NULL;
-	}
-	result = DvInvocationReadString(invocation, name, &value);
-	valueJava = (*aEnv)->NewStringUTF(aEnv, value);
-	status = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, valueJava, result);
-	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
-	(*aEnv)->DeleteLocalRef(aEnv, statusClass);
-	
-	return status;
+    }
+    statusClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/device/DvInvocation$InvocationStatusString");
+    if (statusClass == NULL)
+    {
+        printf("Unable to find class org/openhome/net/device/DvInvocation$InvocationStatusString\n");
+        return NULL;
+    }
+    cidStatus = (*aEnv)->GetMethodID(aEnv, statusClass, "<init>", "(Lorg/openhome/net/device/DvInvocation;Ljava/lang/String;I)V");
+    if (cidStatus == NULL) {
+        printf("Unable to find constructor for class org/openhome/net/device/DvInvocation$InvocationStatusString\n");
+        return NULL;
+    }
+    result = DvInvocationReadStringAsBuffer(invocation, name, &value, &len);
+    byteArray = (*aEnv)->NewByteArray(aEnv, len);
+    (*aEnv)->SetByteArrayRegion(aEnv, byteArray, 0, len, (jbyte *) value);
+    utf8 = (*aEnv)->NewStringUTF(aEnv, "UTF-8");
+    valueJava = (*aEnv)->NewObject(aEnv, stringClass, cidString, byteArray, utf8);
+    status = (*aEnv)->NewObject(aEnv, statusClass, cidStatus, aObject, valueJava, result);
+    // local refs for stringClass and statusClass will be deleted when method returns
+    (*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
+    
+    return status;
 }
 
 /*
@@ -447,15 +465,30 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationWri
 JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocationWriteString
   (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jstring aValue)
 {
-	DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
-	const char* value = (*aEnv)->GetStringUTFChars(aEnv, aValue, NULL);
-	int32_t result;
-	aClass = aClass;
-	
-	result = DvInvocationWriteString(invocation, value);
-	(*aEnv)->ReleaseStringUTFChars(aEnv, aValue, value);
-	
-	return result;
+    DvInvocationC invocation = (DvInvocationC) (size_t)aInvocation;
+    jclass cls = (*aEnv)->GetObjectClass(aEnv, aValue); // local ref will be deleted when method returns
+    jmethodID mid;
+    jstring utf8;
+    jbyteArray byteArray;
+    jbyte *data;
+    jsize len;
+    int32_t result;
+    aClass = aClass;
+
+    mid = (*aEnv)->GetMethodID(aEnv, cls, "getBytes", "(Ljava/lang/String;)[B");
+    if (mid == 0) {
+        printf("DvInvocationJNI: Method ID \"getBytes()\" not found.\n");
+        fflush(stdout);
+        return 1; // error
+    }
+    utf8 = (*aEnv)->NewStringUTF(aEnv, "UTF-8");
+    byteArray = (*aEnv)->CallObjectMethod(aEnv, aValue, mid, utf8);
+    len = (*aEnv)->GetArrayLength(aEnv, byteArray);
+    data = (*aEnv)->GetByteArrayElements(aEnv, byteArray, NULL);
+    result = DvInvocationWriteStringAsBuffer(invocation, (char *)data, len);
+    (*aEnv)->ReleaseByteArrayElements(aEnv, byteArray, data, JNI_ABORT);
+    
+    return result;
 }
 
 /*

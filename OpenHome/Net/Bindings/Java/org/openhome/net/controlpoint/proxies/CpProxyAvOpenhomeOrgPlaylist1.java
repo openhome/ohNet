@@ -849,7 +849,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endPlay(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -894,7 +894,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endPause(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -939,7 +939,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endStop(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -984,7 +984,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endNext(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1029,7 +1029,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endPrevious(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1077,7 +1077,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endSetRepeat(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1129,7 +1129,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public boolean endRepeat(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1180,7 +1180,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endSetShuffle(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1232,7 +1232,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public boolean endShuffle(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1283,7 +1283,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endSeekSecondAbsolute(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1331,7 +1331,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endSeekSecondRelative(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1379,7 +1379,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endSeekId(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1427,7 +1427,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endSeekIndex(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1479,7 +1479,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public String endTransportState(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1534,7 +1534,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public long endId(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1596,7 +1596,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public Read endRead(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1658,7 +1658,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public String endReadList(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1720,7 +1720,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public long endInsert(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1771,7 +1771,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endDeleteId(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1816,7 +1816,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public void endDeleteAll(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1868,7 +1868,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public long endTracksMax(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1927,7 +1927,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public IdArray endIdArray(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1989,7 +1989,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public boolean endIdArrayChanged(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -2044,7 +2044,7 @@ public class CpProxyAvOpenhomeOrgPlaylist1 extends CpProxy implements ICpProxyAv
      */
     public String endProtocolInfo(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

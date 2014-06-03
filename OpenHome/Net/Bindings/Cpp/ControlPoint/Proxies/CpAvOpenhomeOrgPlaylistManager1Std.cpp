@@ -669,9 +669,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndMetadata(IAsync& aAsync, std::s
     ASSERT(invocation.Action().Name() == Brn("Metadata"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -704,9 +704,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndImagesXml(IAsync& aAsync, std::
     ASSERT(invocation.Action().Name() == Brn("ImagesXml"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -742,9 +742,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistReadArray(IAsync& aAsyn
     ASSERT(invocation.Action().Name() == Brn("PlaylistReadArray"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -783,9 +783,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistReadList(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("PlaylistReadList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -823,9 +823,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistRead(IAsync& aAsync, st
     ASSERT(invocation.Action().Name() == Brn("PlaylistRead"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -867,9 +867,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistSetName(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("PlaylistSetName"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -901,9 +901,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistSetDescription(IAsync& 
     ASSERT(invocation.Action().Name() == Brn("PlaylistSetDescription"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -932,9 +932,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistSetImageId(IAsync& aAsy
     ASSERT(invocation.Action().Name() == Brn("PlaylistSetImageId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -974,9 +974,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistInsert(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("PlaylistInsert"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1006,9 +1006,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistDeleteId(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("PlaylistDeleteId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1037,9 +1037,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistMove(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("PlaylistMove"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1067,9 +1067,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistsMax(IAsync& aAsync, ui
     ASSERT(invocation.Action().Name() == Brn("PlaylistsMax"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1099,9 +1099,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndTracksMax(IAsync& aAsync, uint3
     ASSERT(invocation.Action().Name() == Brn("TracksMax"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1133,9 +1133,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistArrays(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("PlaylistArrays"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1176,9 +1176,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistArraysChanged(IAsync& a
     ASSERT(invocation.Action().Name() == Brn("PlaylistArraysChanged"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1212,9 +1212,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndRead(IAsync& aAsync, std::strin
     ASSERT(invocation.Action().Name() == Brn("Read"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1254,9 +1254,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndReadList(IAsync& aAsync, std::s
     ASSERT(invocation.Action().Name() == Brn("ReadList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1297,9 +1297,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndInsert(IAsync& aAsync, uint32_t
     ASSERT(invocation.Action().Name() == Brn("Insert"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1330,9 +1330,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndDeleteId(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1360,9 +1360,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndDeleteAll(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteAll"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1411,54 +1411,48 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SetPropertyTracksMaxChanged(Functo
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyMetadata(std::string& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iMetadata->Value();
     aMetadata.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyImagesXml(std::string& aImagesXml) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iImagesXml->Value();
     aImagesXml.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyIdArray(std::string& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iIdArray->Value();
     aIdArray.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyTokenArray(std::string& aTokenArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTokenArray->Value();
     aTokenArray.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyPlaylistsMax(uint32_t& aPlaylistsMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPlaylistsMax = iPlaylistsMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::PropertyTracksMax(uint32_t& aTracksMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::MetadataPropertyChanged()

@@ -94,9 +94,9 @@ void CpProxyAvOpenhomeOrgTime1::EndTime(IAsync& aAsync, TUint& aTrackCount, TUin
     ASSERT(invocation.Action().Name() == Brn("Time"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -128,26 +128,23 @@ void CpProxyAvOpenhomeOrgTime1::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyAvOpenhomeOrgTime1::PropertyTrackCount(TUint& aTrackCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgTime1::PropertyDuration(TUint& aDuration) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgTime1::PropertySeconds(TUint& aSeconds) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSeconds = iSeconds->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgTime1::TrackCountPropertyChanged()

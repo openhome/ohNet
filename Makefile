@@ -63,8 +63,9 @@ else ifeq ($(Android-anycpu), 1)
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
-
-    ifneq (,$(findstring linux,$(gcc_machine)))
+    ifeq ($(Qnap-anycpu), 1)
+        detected_openhome_system = Qnap
+    else ifneq (,$(findstring linux,$(gcc_machine)))
       detected_openhome_system = Linux
     endif
     ifeq ($(gcc_machine),arm-none-linux-gnueabi)
@@ -136,7 +137,7 @@ ifeq ($(platform),iOS)
 	endif
 	devroot=/Applications/Xcode.app/Contents/Developer
 	toolroot=$(devroot)/Toolchains/XcodeDefault.xctoolchain/usr/bin
-	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix)7.0.sdk
+	sdkroot=$(devroot)/Platforms/$(platform_prefix).platform/Developer/SDKs/$(platform_prefix)7.1.sdk
 	platform_cflags = -I$(sdkroot)/usr/lib/gcc/$(platform_compiler)/4.2.1/include/ -I$(sdkroot)/usr/include/ -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -DPLATFORM_IOS
 	# TODO: Support armv6 for old devices
 	osbuilddir = $(platform)-$(detected_openhome_architecture)
@@ -225,15 +226,15 @@ ifeq ($(platform), Core-armv6)
     ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
-$(info Building for system ${openhome_system} and architecture ${openhome_architecture})
-
 ifneq (,$(findstring $(platform),Vanilla Linux-ppc32))
   ifeq ($(gcc4_1), yes)
     version_specific_cflags = ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party = -Wno-non-virtual-dtor
     version_specific_java_cflags = -Wstrict-aliasing=0
   else
-    version_specific_cflags = -Wno-psabi ${CROSS_COMPILE_CFLAGS}
+    gcc_min_ver = $(shell ${CROSS_COMPILE}gcc -dumpversion | cut -f2 -d'.')
+    version_specific_cflags = $(shell if [ $(gcc_min_ver) -ge 6 ]; then echo '-Wno-psabi'; fi)
+    version_specific_cflags += ${CROSS_COMPILE_CFLAGS}
     version_specific_cflags_third_party =
     version_specific_java_cflags =
   endif
@@ -267,8 +268,14 @@ ifeq ($(platform), Vanilla)
 	osbuilddir = Posix
 	osdir = Posix
 	endian ?= LITTLE
-	openhome_system = Linux
+	ifeq ($(Qnap-anycpu), 1)
+	    openhome_system = Qnap
+	else
+	    openhome_system = Linux
+	endif
 endif
+
+$(info Building for system ${openhome_system} and architecture ${openhome_architecture})
 
 # Macros used by Common.mak
 native_only ?= no

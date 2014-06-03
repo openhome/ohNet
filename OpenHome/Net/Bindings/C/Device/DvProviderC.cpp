@@ -393,6 +393,22 @@ int32_t STDCALL DvInvocationWriteString(DvInvocationC aInvocation, const char* a
     return 0;
 }
 
+int32_t STDCALL DvInvocationWriteStringAsBuffer(DvInvocationC aInvocation, const char* aValue, uint32_t aLen)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    try {
+        Brn value((TByte*)aValue, aLen);
+        invocation->InvocationWriteString(value);
+    }
+    catch (WriterError&) {
+        return -1;
+    }
+    catch (ParameterValidationError&) {
+        return -1;
+    }
+    return 0;
+}
+
 int32_t STDCALL DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);

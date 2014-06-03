@@ -90,7 +90,7 @@ void DviServer::SubnetListChanged()
         // remove servers whose interface is no longer available
         for (i = (TInt)iServers.size() - 1; i >= 0; i--) {
             DviServer::Server* server = iServers[i];
-            if (server->Interface() != current->Address()) {
+            if (current == NULL || server->Interface() != current->Address()) {
                 delete server;
                 iServers.erase(iServers.begin() + i);
             }

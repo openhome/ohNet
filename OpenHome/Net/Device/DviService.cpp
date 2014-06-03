@@ -159,6 +159,16 @@ const std::vector<DvAction>& DviService::DvActions() const
 void DviService::Invoke(IDviInvocation& aInvocation, const Brx& aActionName)
 {
     iLock.Wait();
+#if 0 // debug logging
+    {
+        Bws<512> debugBuf("Service: ");
+        debugBuf.Append(iServiceType.Name());
+        debugBuf.Append(", Action: ");
+        debugBuf.Append(aActionName);
+        debugBuf.Append("\n");
+        Log::Print(debugBuf);
+    }
+#endif
     TBool disabled = iDisabled;
     if (disabled) {
         iLock.Signal();

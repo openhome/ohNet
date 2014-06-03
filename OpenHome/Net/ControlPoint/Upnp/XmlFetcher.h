@@ -28,11 +28,13 @@ class XmlFetch : public Async
 {
 public:
     void Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor);
+    void CheckContactable(OpenHome::Uri* aUri, FunctorAsync& aFunctor);
     ~XmlFetch();
     const OpenHome::Uri& Uri() const;
     void SignalCompleted();
     void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription);
     static Bwh& Xml(IAsync& aAsync);
+    static TBool WasContactable(IAsync& aAsync);
     void Fetch();
     void Interrupt();
     TBool Interrupted() const;
@@ -54,6 +56,8 @@ private:
     OpenHome::Net::Error iError;
     mutable OpenHome::Mutex iLock;
     TBool iInterrupted;
+    TBool iCheckContactable;
+    TBool iContactable;
     OpenHome::SocketTcpClient* iSocket;
 
     friend class XmlFetchManager;

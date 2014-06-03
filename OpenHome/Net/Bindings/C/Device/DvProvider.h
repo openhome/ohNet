@@ -411,6 +411,19 @@ DllExport int32_t STDCALL DvInvocationWriteStringStart(DvInvocationC aInvocation
 DllExport int32_t STDCALL DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue);
 
 /**
+ * Write a chunk of content for a string output argument.
+ *
+ * DvInvocationWriteStringStart must be called first.  This function can be called one or more times.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
+ * @param[in]  aValue       String (or string fragment) to be output
+ * @param[in]  aLen         Length (in bytes) of aValue
+ *
+ * @return  0 on success; non-zero on error
+ */
+DllExport int32_t STDCALL DvInvocationWriteStringAsBuffer(DvInvocationC aInvocation, const char* aValue, uint32_t aLen);
+
+/**
  * Complete writing of a string output argument for an invocation.
  *
  * Must be called once for every call to DvInvocationWriteStringStart (and any subsequent

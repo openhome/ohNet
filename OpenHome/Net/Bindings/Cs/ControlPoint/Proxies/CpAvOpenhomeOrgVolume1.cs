@@ -564,8 +564,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aFadeMax"></param>
         public void EndCharacteristics(IntPtr aAsyncHandle, out uint aVolumeMax, out uint aVolumeUnity, out uint aVolumeSteps, out uint aVolumeMilliDbPerStep, out uint aBalanceMax, out uint aFadeMax)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -617,8 +617,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVolume(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -659,8 +659,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndVolumeInc(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -701,8 +701,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndVolumeDec(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -748,8 +748,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndVolume(IntPtr aAsyncHandle, out uint aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -796,8 +796,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBalance(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -838,8 +838,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndBalanceInc(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -880,8 +880,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndBalanceDec(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -927,8 +927,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndBalance(IntPtr aAsyncHandle, out int aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -975,8 +975,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetFade(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1017,8 +1017,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndFadeInc(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1059,8 +1059,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndFadeDec(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1106,8 +1106,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndFade(IntPtr aAsyncHandle, out int aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1154,8 +1154,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetMute(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1201,8 +1201,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndMute(IntPtr aAsyncHandle, out bool aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1250,8 +1250,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndVolumeLimit(IntPtr aAsyncHandle, out uint aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1512,8 +1512,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolume()
         {
             PropertyReadLock();
-            uint val = iVolume.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolume.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1527,8 +1534,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public bool PropertyMute()
         {
             PropertyReadLock();
-            bool val = iMute.Value();
-            PropertyReadUnlock();
+            bool val;
+            try
+            {
+                val = iMute.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1542,8 +1556,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public int PropertyBalance()
         {
             PropertyReadLock();
-            int val = iBalance.Value();
-            PropertyReadUnlock();
+            int val;
+            try
+            {
+                val = iBalance.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1557,8 +1578,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public int PropertyFade()
         {
             PropertyReadLock();
-            int val = iFade.Value();
-            PropertyReadUnlock();
+            int val;
+            try
+            {
+                val = iFade.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1572,8 +1600,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeLimit()
         {
             PropertyReadLock();
-            uint val = iVolumeLimit.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeLimit.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1587,8 +1622,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeMax()
         {
             PropertyReadLock();
-            uint val = iVolumeMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1602,8 +1644,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeUnity()
         {
             PropertyReadLock();
-            uint val = iVolumeUnity.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeUnity.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1617,8 +1666,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeSteps()
         {
             PropertyReadLock();
-            uint val = iVolumeSteps.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeSteps.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1632,8 +1688,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyVolumeMilliDbPerStep()
         {
             PropertyReadLock();
-            uint val = iVolumeMilliDbPerStep.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iVolumeMilliDbPerStep.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1647,8 +1710,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyBalanceMax()
         {
             PropertyReadLock();
-            uint val = iBalanceMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iBalanceMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1662,8 +1732,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyFadeMax()
         {
             PropertyReadLock();
-            uint val = iFadeMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iFadeMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

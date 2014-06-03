@@ -942,7 +942,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Manufacturer endManufacturer(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1013,7 +1013,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Model endModel(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1086,7 +1086,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Product endProduct(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1151,7 +1151,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public boolean endStandby(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1202,7 +1202,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public void endSetStandby(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1254,7 +1254,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public long endSourceCount(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1309,7 +1309,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public String endSourceXml(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1364,7 +1364,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public long endSourceIndex(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1415,7 +1415,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public void endSetSourceIndex(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1463,7 +1463,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public void endSetSourceIndexByName(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1526,7 +1526,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public Source endSource(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1589,7 +1589,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public String endAttributes(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -1644,7 +1644,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
      */
     public long endSourceXmlChangeCount(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

@@ -31,6 +31,7 @@ class CpiSubscription;
 class Property;
 class IPropertyProcessor;
 typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
+typedef std::map<Brn,CpiDevice*,BufferCmp> CpDeviceMap;
 
 class IInvocable
 {
@@ -180,7 +181,7 @@ public:
     virtual void RemoveRef() = 0;
     virtual void NotifyAdded(CpiDevice& aDevice) = 0;
     virtual void NotifyRemoved(CpiDevice& aDevice) = 0;
-    virtual void NotifyRefreshed() = 0;
+    virtual void NotifyRefreshed(CpDeviceMap& aRefreshMap) = 0;
 };
 
 /**
@@ -246,7 +247,7 @@ protected:
      */
     CpiDevice* RefDeviceLocked(const Brx& aUdn);
     TBool StartRefresh();
-    void RefreshComplete();
+    void RefreshComplete(TBool aReportRemoved);
     void CancelRefresh();
 
     /**
@@ -254,25 +255,25 @@ protected:
      */
     void SetDeviceReady(CpiDevice& aDevice);
 
-    typedef std::map<Brn,CpiDevice*,BufferCmp> Map;
-    static void ClearMap(Map& aMap);
+    static void ClearMap(CpDeviceMap& aMap);
 private:
     void AddRef();
     void RemoveRef();
     void NotifyAdded(CpiDevice& aDevice);
     void NotifyRemoved(CpiDevice& aDevice);
     TBool DoRemove(CpiDevice& aDevice);
-    void NotifyRefreshed();
+    void NotifyRefreshed(CpDeviceMap& aRefreshMap);
 private: // from IStackObject
     void ListObjectDetails() const;
 protected:
     CpStack& iCpStack;
     TBool iActive; // true if Start() has been called
     TBool iRefreshing;
-    Map iMap;
-    Map iRefreshMap;
+    CpDeviceMap iMap;
+    CpDeviceMap iRefreshMap;
     std::vector<CpiDevice*> iPendingRemove;
     mutable OpenHome::Mutex iLock;
+    OpenHome::Mutex iRefreshLock;
 private:
     FunctorCpiDevice iAdded;
     FunctorCpiDevice iRemoved;
@@ -287,7 +288,7 @@ public:
     ~CpiDeviceListUpdater();
     void QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
     void QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
-    void QueueRefreshed(IDeviceListUpdater& aUpdater);
+    void QueueRefreshed(IDeviceListUpdater& aUpdater, CpDeviceMap& aRefreshMap);
 private:
     class UpdateBase : private INonCopyable
     {
@@ -322,9 +323,11 @@ private:
     class UpdateRefresh : public UpdateBase
     {
     public:
-        UpdateRefresh(IDeviceListUpdater& aUpdater);
+        UpdateRefresh(IDeviceListUpdater& aUpdater, CpDeviceMap& aRefreshMap);
     private:
         void Update();
+    private:
+        CpDeviceMap iRefreshMap;
     };
 private:
     void Queue(UpdateBase* aUpdate);

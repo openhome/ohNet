@@ -90,31 +90,29 @@ void EventSessionUpnp::Run()
             Error(HttpStatus::kPreconditionFailed);
         }
 
-        const Brx& sid = iHeaderSid.Sid();
-        subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
-        if (subscription == NULL) {
-            /* the UPnP spec contains a potential race condition where the first NOTIFY
-               message can be processed ahead of the SUBSCRIBE reply which provides
-               the sid.  Wait until any in-progress subscriptions complete and try
-               again in case that's what has happened here */
-            iCpStack.SubscriptionManager().WaitForPendingAdd(sid);
-            subscription = iCpStack.SubscriptionManager().FindSubscription(sid);
-            if (subscription == NULL) {
-                LOG2(kEvent, kError, "notification for unexpected device - ")
-                LOG2(kEvent, kError, iHeaderSid.Sid());
-                LOG2(kEvent, kError, "\n");
-                Error(HttpStatus::kPreconditionFailed);
-            }
+        Parser parser(iReaderRequest->Uri());
+        (void)parser.Next('/');
+        Brn idBuf = parser.Next('/');
+        TUint id = 0;
+        try {
+            id = Ascii::Uint(idBuf);
         }
-
-        if (!subscription->UpdateSequenceNumber(iHeaderSeq.Seq())) {
-            subscription->SetNotificationError();
-            subscription->RemoveRef();
-            subscription = NULL;
+        catch (AsciiError&) {
+            LOG2(kEvent, kError, "notification for ");
+            LOG2(kEvent, kError, iHeaderSid.Sid());
+            LOG2(kEvent, kError, " failed to include id in path\n");
+            Error(HttpStatus::kPreconditionFailed);
+        }
+        subscription = iCpStack.SubscriptionManager().FindSubscription(id);
+        if (subscription == NULL) {
+            LOG2(kEvent, kError, "notification for unexpected device - ")
+            LOG2(kEvent, kError, iHeaderSid.Sid());
+            LOG2(kEvent, kError, "\n");
+            Error(HttpStatus::kPreconditionFailed);
         }
     }
-    catch(HttpError) {}
-    catch(ReaderError) {}
+    catch(HttpError&) {}
+    catch(ReaderError&) {}
 
     try {
         // write response
@@ -144,7 +142,7 @@ void EventSessionUpnp::Run()
                         try {
                             Read(buffer);
                         }
-                        catch (ReaderError) {
+                        catch (ReaderError&) {
                             // thrown for remote socket closed or network error 
                             break;
                         }
@@ -163,26 +161,40 @@ void EventSessionUpnp::Run()
             LOG(kEvent, "EventSessionUpnp::Run, sid - ");
             LOG(kEvent, iHeaderSid.Sid());
             LOG(kEvent, " seq - %u\n", iHeaderSeq.Seq());
-            ProcessNotification(*subscription, entity);
+
+            /* defer validating the seq number till now to avoid holding subscription's lock during
+               potentially long-running network reads */
+            if (subscription->UpdateSequenceNumber(iHeaderSeq.Seq())) {
+                try {
+                    ProcessNotification(*subscription, entity);
+                }
+                catch (Exception& ex) {
+                    Log::Print("EventSessionUpnp::Run() unexpected exception %s from %s:%u\n", ex.Message(), ex.File(), ex.Line());
+                    ASSERTS(); // ProcessNotification isn't expected to throw
+                }
+                subscription->Unlock();
+            }
+            else {
+                subscription->SetNotificationError();
+            }
         }
     }
-    catch(HttpError) {
+    catch(HttpError&) {
         LogError(subscription, "HttpError");
     }
-    catch(ReaderError) {
+    catch(ReaderError&) {
         LogError(subscription, "ReaderError");
     }
-    catch(WriterError) {
+    catch(WriterError&) {
         LogError(subscription, "WriterError");
     }
-    catch(NetworkError) {
+    catch(NetworkError&) {
         LogError(subscription, "NetworkError");
     }
-    catch(XmlError) {
+    catch(XmlError&) {
         LogError(subscription, "XmlError");
     }
     if (subscription != NULL) {
-        subscription->Unlock();
         subscription->RemoveRef();
     }    
 }
@@ -218,15 +230,24 @@ void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, con
                     break;
                 }
             }
-            if (i < bytes)
-            {
+            if (i < bytes) {
                 tagName.Set(tagNameFull.Split(0, i));
             }
-            Brn val = parser.Next('<');
-            Brn closingTag = parser.Next('/');
-            closingTag.Set(parser.Next('>'));
-            if (tagName != closingTag) {
-                THROW(XmlError);
+            Brn val;
+            if (bytes > 0 && tagNameFull[bytes-1] == '/') {
+                // empty element tag
+                val.Set(Brx::Empty());
+                if (i == bytes) { // no white space before '/'
+                    tagName.Set(tagName.Split(0, bytes-1));
+                }
+            }
+            else {
+                val.Set(parser.Next('<'));
+                Brn closingTag = parser.Next('/');
+                closingTag.Set(parser.Next('>'));
+                if (tagName != closingTag) {
+                    THROW(XmlError);
+                }
             }
 
             try {

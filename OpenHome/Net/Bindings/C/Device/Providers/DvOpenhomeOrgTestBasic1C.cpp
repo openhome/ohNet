@@ -35,9 +35,11 @@ public:
     void EnablePropertyVarStr();
     void EnablePropertyVarBin();
     void EnableActionIncrement(CallbackTestBasic1Increment aCallback, void* aPtr);
+    void EnableActionEchoAllowedRangeUint(CallbackTestBasic1EchoAllowedRangeUint aCallback, void* aPtr);
     void EnableActionDecrement(CallbackTestBasic1Decrement aCallback, void* aPtr);
     void EnableActionToggle(CallbackTestBasic1Toggle aCallback, void* aPtr);
     void EnableActionEchoString(CallbackTestBasic1EchoString aCallback, void* aPtr);
+    void EnableActionEchoAllowedValueString(CallbackTestBasic1EchoAllowedValueString aCallback, void* aPtr);
     void EnableActionEchoBinary(CallbackTestBasic1EchoBinary aCallback, void* aPtr);
     void EnableActionSetUint(CallbackTestBasic1SetUint aCallback, void* aPtr);
     void EnableActionGetUint(CallbackTestBasic1GetUint aCallback, void* aPtr);
@@ -46,6 +48,7 @@ public:
     void EnableActionSetBool(CallbackTestBasic1SetBool aCallback, void* aPtr);
     void EnableActionGetBool(CallbackTestBasic1GetBool aCallback, void* aPtr);
     void EnableActionSetMultiple(CallbackTestBasic1SetMultiple aCallback, void* aPtr);
+    void EnableActionGetMultiple(CallbackTestBasic1GetMultiple aCallback, void* aPtr);
     void EnableActionSetString(CallbackTestBasic1SetString aCallback, void* aPtr);
     void EnableActionGetString(CallbackTestBasic1GetString aCallback, void* aPtr);
     void EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr);
@@ -55,9 +58,11 @@ public:
     void EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr);
 private:
     void DoIncrement(IDviInvocation& aInvocation);
+    void DoEchoAllowedRangeUint(IDviInvocation& aInvocation);
     void DoDecrement(IDviInvocation& aInvocation);
     void DoToggle(IDviInvocation& aInvocation);
     void DoEchoString(IDviInvocation& aInvocation);
+    void DoEchoAllowedValueString(IDviInvocation& aInvocation);
     void DoEchoBinary(IDviInvocation& aInvocation);
     void DoSetUint(IDviInvocation& aInvocation);
     void DoGetUint(IDviInvocation& aInvocation);
@@ -66,6 +71,7 @@ private:
     void DoSetBool(IDviInvocation& aInvocation);
     void DoGetBool(IDviInvocation& aInvocation);
     void DoSetMultiple(IDviInvocation& aInvocation);
+    void DoGetMultiple(IDviInvocation& aInvocation);
     void DoSetString(IDviInvocation& aInvocation);
     void DoGetString(IDviInvocation& aInvocation);
     void DoSetBinary(IDviInvocation& aInvocation);
@@ -76,12 +82,16 @@ private:
 private:
     CallbackTestBasic1Increment iCallbackIncrement;
     void* iPtrIncrement;
+    CallbackTestBasic1EchoAllowedRangeUint iCallbackEchoAllowedRangeUint;
+    void* iPtrEchoAllowedRangeUint;
     CallbackTestBasic1Decrement iCallbackDecrement;
     void* iPtrDecrement;
     CallbackTestBasic1Toggle iCallbackToggle;
     void* iPtrToggle;
     CallbackTestBasic1EchoString iCallbackEchoString;
     void* iPtrEchoString;
+    CallbackTestBasic1EchoAllowedValueString iCallbackEchoAllowedValueString;
+    void* iPtrEchoAllowedValueString;
     CallbackTestBasic1EchoBinary iCallbackEchoBinary;
     void* iPtrEchoBinary;
     CallbackTestBasic1SetUint iCallbackSetUint;
@@ -98,6 +108,8 @@ private:
     void* iPtrGetBool;
     CallbackTestBasic1SetMultiple iCallbackSetMultiple;
     void* iPtrSetMultiple;
+    CallbackTestBasic1GetMultiple iCallbackGetMultiple;
+    void* iPtrGetMultiple;
     CallbackTestBasic1SetString iCallbackSetString;
     void* iPtrSetString;
     CallbackTestBasic1GetString iCallbackGetString;
@@ -230,6 +242,17 @@ void DvProviderOpenhomeOrgTestBasic1C::EnableActionIncrement(CallbackTestBasic1I
     iService->AddAction(action, functor);
 }
 
+void DvProviderOpenhomeOrgTestBasic1C::EnableActionEchoAllowedRangeUint(CallbackTestBasic1EchoAllowedRangeUint aCallback, void* aPtr)
+{
+    iCallbackEchoAllowedRangeUint = aCallback;
+    iPtrEchoAllowedRangeUint = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoAllowedRangeUint");
+    action->AddInputParameter(new ParameterUint("Value", 10, 20));
+    action->AddOutputParameter(new ParameterUint("Result"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoEchoAllowedRangeUint);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderOpenhomeOrgTestBasic1C::EnableActionDecrement(CallbackTestBasic1Decrement aCallback, void* aPtr)
 {
     iCallbackDecrement = aCallback;
@@ -260,6 +283,26 @@ void DvProviderOpenhomeOrgTestBasic1C::EnableActionEchoString(CallbackTestBasic1
     action->AddInputParameter(new ParameterString("Value"));
     action->AddOutputParameter(new ParameterString("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoEchoString);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnableActionEchoAllowedValueString(CallbackTestBasic1EchoAllowedValueString aCallback, void* aPtr)
+{
+    iCallbackEchoAllowedValueString = aCallback;
+    iPtrEchoAllowedValueString = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoAllowedValueString");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[4];
+    allowedValues[index++] = (TChar*)"One";
+    allowedValues[index++] = (TChar*)"Two";
+    allowedValues[index++] = (TChar*)"Three";
+    allowedValues[index++] = (TChar*)"Four";
+    action->AddInputParameter(new ParameterString("Value", allowedValues, 4));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterString("Result"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoEchoAllowedValueString);
     iService->AddAction(action, functor);
 }
 
@@ -343,6 +386,18 @@ void DvProviderOpenhomeOrgTestBasic1C::EnableActionSetMultiple(CallbackTestBasic
     action->AddInputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
     action->AddInputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::EnableActionGetMultiple(CallbackTestBasic1GetMultiple aCallback, void* aPtr)
+{
+    iCallbackGetMultiple = aCallback;
+    iPtrGetMultiple = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMultiple");
+    action->AddOutputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
+    action->AddOutputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
+    action->AddOutputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1C::DoGetMultiple);
     iService->AddAction(action, functor);
 }
 
@@ -437,6 +492,28 @@ void DvProviderOpenhomeOrgTestBasic1C::DoIncrement(IDviInvocation& aInvocation)
     invocation.EndResponse();
 }
 
+void DvProviderOpenhomeOrgTestBasic1C::DoEchoAllowedRangeUint(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    TUint Value = aInvocation.InvocationReadUint("Value");
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    uint32_t Result;
+    ASSERT(iCallbackEchoAllowedRangeUint != NULL);
+    if (0 != iCallbackEchoAllowedRangeUint(iPtrEchoAllowedRangeUint, invocationC, invocationCPtr, Value, &Result)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    DviInvocationResponseUint respResult(aInvocation, "Result");
+    invocation.StartResponse();
+    respResult.Write(Result);
+    invocation.EndResponse();
+}
+
 void DvProviderOpenhomeOrgTestBasic1C::DoDecrement(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
@@ -495,6 +572,32 @@ void DvProviderOpenhomeOrgTestBasic1C::DoEchoString(IDviInvocation& aInvocation)
     char* Result;
     ASSERT(iCallbackEchoString != NULL);
     if (0 != iCallbackEchoString(iPtrEchoString, invocationC, invocationCPtr, (const char*)Value.Ptr(), &Result)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    invocation.StartResponse();
+    Brhz bufResult((const TChar*)Result);
+    OhNetFreeExternal(Result);
+    respResult.Write(bufResult);
+    respResult.WriteFlush();
+    invocation.EndResponse();
+}
+
+void DvProviderOpenhomeOrgTestBasic1C::DoEchoAllowedValueString(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    Brhz Value;
+    aInvocation.InvocationReadString("Value", Value);
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    char* Result;
+    ASSERT(iCallbackEchoAllowedValueString != NULL);
+    if (0 != iCallbackEchoAllowedValueString(iPtrEchoAllowedValueString, invocationC, invocationCPtr, (const char*)Value.Ptr(), &Result)) {
         invocation.Error(502, Brn("Action failed"));
         return;
     }
@@ -676,6 +779,33 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple(IDviInvocation& aInvocation
     invocation.EndResponse();
 }
 
+void DvProviderOpenhomeOrgTestBasic1C::DoGetMultiple(IDviInvocation& aInvocation)
+{
+    DvInvocationCPrivate invocationWrapper(aInvocation);
+    IDvInvocationC* invocationC;
+    void* invocationCPtr;
+    invocationWrapper.GetInvocationC(&invocationC, &invocationCPtr);
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    DviInvocation invocation(aInvocation);
+    uint32_t ValueUint;
+    int32_t ValueInt;
+    uint32_t ValueBool;
+    ASSERT(iCallbackGetMultiple != NULL);
+    if (0 != iCallbackGetMultiple(iPtrGetMultiple, invocationC, invocationCPtr, &ValueUint, &ValueInt, &ValueBool)) {
+        invocation.Error(502, Brn("Action failed"));
+        return;
+    }
+    DviInvocationResponseUint respValueUint(aInvocation, "ValueUint");
+    DviInvocationResponseInt respValueInt(aInvocation, "ValueInt");
+    DviInvocationResponseBool respValueBool(aInvocation, "ValueBool");
+    invocation.StartResponse();
+    respValueUint.Write(ValueUint);
+    respValueInt.Write(ValueInt);
+    respValueBool.Write((ValueBool!=0));
+    invocation.EndResponse();
+}
+
 void DvProviderOpenhomeOrgTestBasic1C::DoSetString(IDviInvocation& aInvocation)
 {
     DvInvocationCPrivate invocationWrapper(aInvocation);
@@ -841,6 +971,11 @@ void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aProvi
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionIncrement(aCallback, aPtr);
 }
 
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoAllowedRangeUint(THandle aProvider, CallbackTestBasic1EchoAllowedRangeUint aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionEchoAllowedRangeUint(aCallback, aPtr);
+}
+
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionDecrement(aCallback, aPtr);
@@ -854,6 +989,11 @@ void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle aProvider
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionEchoString(aCallback, aPtr);
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoAllowedValueString(THandle aProvider, CallbackTestBasic1EchoAllowedValueString aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionEchoAllowedValueString(aCallback, aPtr);
 }
 
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
@@ -894,6 +1034,11 @@ void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandle aProvide
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetMultiple(aCallback, aPtr);
+}
+
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetMultiple(THandle aProvider, CallbackTestBasic1GetMultiple aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionGetMultiple(aCallback, aPtr);
 }
 
 void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr)

@@ -229,9 +229,9 @@ void CpProxyAvOpenhomeOrgInfo1::EndCounters(IAsync& aAsync, TUint& aTrackCount, 
     ASSERT(invocation.Action().Name() == Brn("Counters"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -264,9 +264,9 @@ void CpProxyAvOpenhomeOrgInfo1::EndTrack(IAsync& aAsync, Brh& aUri, Brh& aMetada
     ASSERT(invocation.Action().Name() == Brn("Track"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -302,9 +302,9 @@ void CpProxyAvOpenhomeOrgInfo1::EndDetails(IAsync& aAsync, TUint& aDuration, TUi
     ASSERT(invocation.Action().Name() == Brn("Details"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -339,9 +339,9 @@ void CpProxyAvOpenhomeOrgInfo1::EndMetatext(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("Metatext"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -434,98 +434,86 @@ void CpProxyAvOpenhomeOrgInfo1::SetPropertyMetatextChanged(Functor& aFunctor)
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyTrackCount(TUint& aTrackCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyDetailsCount(TUint& aDetailsCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDetailsCount = iDetailsCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyMetatextCount(TUint& aMetatextCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetatextCount = iMetatextCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyUri(Brhz& aUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aUri.Set(iUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyMetadata(Brhz& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetadata.Set(iMetadata->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyDuration(TUint& aDuration) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyBitRate(TUint& aBitRate) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBitRate = iBitRate->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyBitDepth(TUint& aBitDepth) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBitDepth = iBitDepth->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertySampleRate(TUint& aSampleRate) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSampleRate = iSampleRate->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyLossless(TBool& aLossless) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLossless = iLossless->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyCodecName(Brhz& aCodecName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCodecName.Set(iCodecName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::PropertyMetatext(Brhz& aMetatext) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetatext.Set(iMetatext->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgInfo1::TrackCountPropertyChanged()

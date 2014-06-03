@@ -566,8 +566,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aSearchCaps"></param>
         public void EndGetSearchCapabilities(IntPtr aAsyncHandle, out String aSearchCaps)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -615,8 +615,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aSortCaps"></param>
         public void EndGetSortCapabilities(IntPtr aAsyncHandle, out String aSortCaps)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -664,8 +664,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aId"></param>
         public void EndGetSystemUpdateID(IntPtr aAsyncHandle, out uint aId)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -744,8 +744,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndBrowse(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -827,8 +827,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public void EndSearch(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -890,8 +890,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public void EndCreateObject(IntPtr aAsyncHandle, out String aObjectID, out String aResult)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -939,8 +939,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDestroyObject(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -991,8 +991,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndUpdateObject(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1045,8 +1045,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public void EndImportResource(IntPtr aAsyncHandle, out uint aTransferID)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1101,8 +1101,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public void EndExportResource(IntPtr aAsyncHandle, out uint aTransferID)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1149,8 +1149,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStopTransferResource(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1208,8 +1208,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aTransferTotal"></param>
         public void EndGetTransferProgress(IntPtr aAsyncHandle, out String aTransferStatus, out String aTransferLength, out String aTransferTotal)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1258,8 +1258,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDeleteResource(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1312,8 +1312,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aNewID"></param>
         public void EndCreateReference(IntPtr aAsyncHandle, out String aNewID)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1398,8 +1398,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyTransferIDs()
         {
             PropertyReadLock();
-            String val = iTransferIDs.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iTransferIDs.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1413,8 +1420,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertySystemUpdateID()
         {
             PropertyReadLock();
-            uint val = iSystemUpdateID.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iSystemUpdateID.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1428,8 +1442,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyContainerUpdateIDs()
         {
             PropertyReadLock();
-            String val = iContainerUpdateIDs.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iContainerUpdateIDs.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

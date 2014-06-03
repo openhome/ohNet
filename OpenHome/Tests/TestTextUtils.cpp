@@ -2,6 +2,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Os.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -16,7 +17,7 @@ public:
 void SuiteAscii::Test()
 {
     // Hex
-    
+
     TEST(Ascii::IsHex('0'));
     TEST(Ascii::IsHex('1'));
     TEST(Ascii::IsHex('2'));
@@ -1498,19 +1499,61 @@ void SuiteUri::Test()
     uri->Replace(uriString);
     TEST(1==1);
     uriString.Append("0");  // + 1 = 1025
-    
+
     TEST_THROWS(uri->Replace(uriString), UriError);
     }
 
     delete uri;
 }
 
+class SuiteSwap : public Suite
+{
+public:
+    SuiteSwap() : Suite("Test endian swapping"), iCalls(0) {}
+    void Test();
+private:
+    TUint16 Get16(TUint16 aValue) { iCalls++; return aValue; }
+    TUint32 Get32(TUint32 aValue) { iCalls++; return aValue; }
+    TBool CheckCalls() { TUint calls = iCalls; iCalls = 0 ; return calls == 1; }
+private:
+    TUint iCalls;
+};
+
+void SuiteSwap::Test()
+{
+    // Test endianness swapping functions
+
+    volatile TUint64 num64 = 0x123456789ABCDEF0ull;
+    TEST(SwapEndian32((TUint32)num64) == 0xF0DEBC9A);
+    TEST(SwapEndian16((TUint16)num64) == 0xF0DE);
+
+    volatile TUint32 num32 = 0x12345678ul;
+    TEST(SwapEndian32(num32) == 0x78563412);
+    TEST(SwapEndian16((TUint16)num32) == 0x7856);
+
+    volatile TUint16 num16 = 0x1234;
+    TEST(SwapEndian32(num16) == 0x34120000);
+    TEST(SwapEndian16(num16) == 0x3412);
+
+    // Previous implementations of Swap* were evaluating the
+    // argument multiple times, which might be unexected.
+    // Check that it's fixed.
+
+    volatile TUint32 n0 = 0x12345678ul;
+    TEST(SwapEndian32(Get32(n0)) == 0x78563412);
+    TEST(CheckCalls());
+
+    volatile TUint16 n1 = 0x1234;
+    TEST(SwapEndian16(Get16(n1)) == 0x3412);
+    TEST(CheckCalls());
+}
 
 void TestTextUtils()
 {
     Runner runner("Ascii System");
-    runner.Add(new SuiteAscii()); 
-    runner.Add(new SuiteParser()); 
-    runner.Add(new SuiteUri()); 
+    runner.Add(new SuiteAscii());
+    runner.Add(new SuiteParser());
+    runner.Add(new SuiteUri());
+    runner.Add(new SuiteSwap());
     runner.Run();
 }

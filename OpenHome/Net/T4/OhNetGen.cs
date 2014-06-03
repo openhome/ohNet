@@ -275,16 +275,27 @@ namespace OpenHome.Net
             ttPath = Path.GetDirectoryName(ttPath);
             for (int i = 0; i < templates.Count; i++)
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.FileName = Path.Combine(ttPath, "TextTransform.exe");
+                Process proc = new Process();
+                proc.StartInfo.FileName = Path.Combine(ttPath, "TextTransform.exe");
                 String ttArgs = String.Format("-o {0}{1}{2}{3} OpenHome/Net/T4/Templates/{4} -a \"xml:{5}\" -a domain:{6} -a type:{7} -a version:{8} {9}",
                                                 outputDir, outputFileName, templates[i].OutputNameAdornment, templates[i].Ext, templates[i].Template, xmlInput, domain, type, version, templates[i].Args);
-                startInfo.Arguments = ttArgs;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.UseShellExecute = false;
-                startInfo.CreateNoWindow = true;
-                Process proc = Process.Start(startInfo);
+                proc.StartInfo.Arguments = ttArgs;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.RedirectStandardOutput = true;
+                proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.RedirectStandardError = true;
+                proc.Start();
+                string stderr = proc.StandardError.ReadToEnd();
+                string stdout = proc.StandardOutput.ReadToEnd();
                 proc.WaitForExit();
+                if (proc.ExitCode != 0)
+                {
+                    if (stderr.Length > 0)
+                        Console.WriteLine(stderr);
+                    if (stdout.Length > 0)
+                        Console.WriteLine(stdout);
+                }
             }
         }
 

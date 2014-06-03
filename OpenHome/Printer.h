@@ -8,7 +8,39 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include <vector>
+
 namespace OpenHome {
+
+// class that logs to RAM, discarding old data if it fills up
+// output is only passed on if Output() is called.
+class RamLogger
+{
+public:
+    ~RamLogger();
+    void Enable(TUint aCapacityBytes);
+    void Disable();
+    void Output();
+private:
+    class Chunk
+    {
+        static const TUint kDataBytes = 1024;
+    public:
+        Chunk();
+        TUint Append(const char* aMsg);
+        const char* Data() const;
+        TUint BytesRemaining() const;
+    private:
+        char iData[kDataBytes+1];
+        TUint iUsed;
+    };
+private:
+    void Log(const char* aMsg);
+    Chunk* NewChunk();
+private:
+    FunctorMsg iLogOutput;
+    std::vector<Chunk*> iChunks;
+};
 
 class Log
 {
@@ -25,6 +57,9 @@ public:
     static TInt PrintHex(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const Brx& aMessage);
     static TInt Print(FunctorMsg& aOutput, const TChar* aFormat, va_list aArgs);
+
+    static void ToRam(TUint aCapacityBytes); // log to RAM, discarding content on overflow.  Flush() outputs.
+    static void Flush(); // output any buffered content
 private:
     static TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
     Log(FunctorMsg& aLogOutput);
@@ -33,6 +68,7 @@ private:
     FunctorMsg iLogOutput;
     Mutex iLockStdio;
     Mutex iLockFunctor;
+    RamLogger iRamLog;
 };
 
 } // namespace OpenHome

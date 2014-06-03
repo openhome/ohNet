@@ -123,9 +123,9 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1::EndName(IAsync& aAsync, Brh& aName)
     ASSERT(invocation.Action().Name() == Brn("Name"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -157,9 +157,9 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1::EndPorts(IAsync& aAsync, TUint& aSende
     ASSERT(invocation.Action().Name() == Brn("Ports"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -198,34 +198,30 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1::SetPropertyResultsChanged(Functor& aFu
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertyName(Brhz& aName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aName.Set(iName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertySender(TUint& aSender) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSender = iSender->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertyReceiver(TUint& aReceiver) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReceiver = iReceiver->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::PropertyResults(TUint& aResults) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aResults = iResults->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1::NamePropertyChanged()

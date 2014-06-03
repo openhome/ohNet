@@ -298,9 +298,9 @@ void CpProxyAvOpenhomeOrgReceiver1C::EndPlay(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Play"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -325,9 +325,9 @@ void CpProxyAvOpenhomeOrgReceiver1C::EndStop(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Stop"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -356,9 +356,9 @@ void CpProxyAvOpenhomeOrgReceiver1C::EndSetSender(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetSender"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -387,9 +387,9 @@ void CpProxyAvOpenhomeOrgReceiver1C::EndSender(IAsync& aAsync, Brh& aUri, Brh& a
     ASSERT(invocation.Action().Name() == Brn("Sender"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -420,9 +420,9 @@ void CpProxyAvOpenhomeOrgReceiver1C::EndProtocolInfo(IAsync& aAsync, Brh& aValue
     ASSERT(invocation.Action().Name() == Brn("ProtocolInfo"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -452,9 +452,9 @@ void CpProxyAvOpenhomeOrgReceiver1C::EndTransportState(IAsync& aAsync, Brh& aVal
     ASSERT(invocation.Action().Name() == Brn("TransportState"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -491,34 +491,30 @@ void CpProxyAvOpenhomeOrgReceiver1C::SetPropertyProtocolInfoChanged(Functor& aFu
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyUri(Brhz& aUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aUri.Set(iUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyTransportState(Brhz& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aTransportState.Set(iTransportState->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProtocolInfo.Set(iProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgReceiver1C::UriPropertyChanged()

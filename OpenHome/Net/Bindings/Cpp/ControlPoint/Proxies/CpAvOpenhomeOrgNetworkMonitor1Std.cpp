@@ -125,9 +125,9 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::EndName(IAsync& aAsync, std::string
     ASSERT(invocation.Action().Name() == Brn("Name"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -162,9 +162,9 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::EndPorts(IAsync& aAsync, uint32_t& 
     ASSERT(invocation.Action().Name() == Brn("Ports"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -203,35 +203,31 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::SetPropertyResultsChanged(Functor& 
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::PropertyName(std::string& aName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iName->Value();
     aName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::PropertySender(uint32_t& aSender) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSender = iSender->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::PropertyReceiver(uint32_t& aReceiver) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReceiver = iReceiver->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::PropertyResults(uint32_t& aResults) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aResults = iResults->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1Cpp::NamePropertyChanged()

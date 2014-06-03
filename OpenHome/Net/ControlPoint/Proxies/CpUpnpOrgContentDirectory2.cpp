@@ -624,9 +624,9 @@ void CpProxyUpnpOrgContentDirectory2::EndGetSearchCapabilities(IAsync& aAsync, B
     ASSERT(invocation.Action().Name() == Brn("GetSearchCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -656,9 +656,9 @@ void CpProxyUpnpOrgContentDirectory2::EndGetSortCapabilities(IAsync& aAsync, Brh
     ASSERT(invocation.Action().Name() == Brn("GetSortCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -688,9 +688,9 @@ void CpProxyUpnpOrgContentDirectory2::EndGetSortExtensionCapabilities(IAsync& aA
     ASSERT(invocation.Action().Name() == Brn("GetSortExtensionCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -720,9 +720,9 @@ void CpProxyUpnpOrgContentDirectory2::EndGetFeatureList(IAsync& aAsync, Brh& aFe
     ASSERT(invocation.Action().Name() == Brn("GetFeatureList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -752,9 +752,9 @@ void CpProxyUpnpOrgContentDirectory2::EndGetSystemUpdateID(IAsync& aAsync, TUint
     ASSERT(invocation.Action().Name() == Brn("GetSystemUpdateID"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -795,9 +795,9 @@ void CpProxyUpnpOrgContentDirectory2::EndBrowse(IAsync& aAsync, Brh& aResult, TU
     ASSERT(invocation.Action().Name() == Brn("Browse"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -841,9 +841,9 @@ void CpProxyUpnpOrgContentDirectory2::EndSearch(IAsync& aAsync, Brh& aResult, TU
     ASSERT(invocation.Action().Name() == Brn("Search"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -881,9 +881,9 @@ void CpProxyUpnpOrgContentDirectory2::EndCreateObject(IAsync& aAsync, Brh& aObje
     ASSERT(invocation.Action().Name() == Brn("CreateObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -914,9 +914,9 @@ void CpProxyUpnpOrgContentDirectory2::EndDestroyObject(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DestroyObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -946,9 +946,9 @@ void CpProxyUpnpOrgContentDirectory2::EndUpdateObject(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("UpdateObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -980,9 +980,9 @@ void CpProxyUpnpOrgContentDirectory2::EndMoveObject(IAsync& aAsync, Brh& aNewObj
     ASSERT(invocation.Action().Name() == Brn("MoveObject"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1016,9 +1016,9 @@ void CpProxyUpnpOrgContentDirectory2::EndImportResource(IAsync& aAsync, TUint& a
     ASSERT(invocation.Action().Name() == Brn("ImportResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1052,9 +1052,9 @@ void CpProxyUpnpOrgContentDirectory2::EndExportResource(IAsync& aAsync, TUint& a
     ASSERT(invocation.Action().Name() == Brn("ExportResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1084,9 +1084,9 @@ void CpProxyUpnpOrgContentDirectory2::EndDeleteResource(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1114,9 +1114,9 @@ void CpProxyUpnpOrgContentDirectory2::EndStopTransferResource(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("StopTransferResource"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1149,9 +1149,9 @@ void CpProxyUpnpOrgContentDirectory2::EndGetTransferProgress(IAsync& aAsync, Brh
     ASSERT(invocation.Action().Name() == Brn("GetTransferProgress"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1187,9 +1187,9 @@ void CpProxyUpnpOrgContentDirectory2::EndCreateReference(IAsync& aAsync, Brh& aN
     ASSERT(invocation.Action().Name() == Brn("CreateReference"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1219,26 +1219,23 @@ void CpProxyUpnpOrgContentDirectory2::SetPropertyTransferIDsChanged(Functor& aFu
 
 void CpProxyUpnpOrgContentDirectory2::PropertySystemUpdateID(TUint& aSystemUpdateID) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSystemUpdateID = iSystemUpdateID->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2::PropertyContainerUpdateIDs(Brhz& aContainerUpdateIDs) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aContainerUpdateIDs.Set(iContainerUpdateIDs->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2::PropertyTransferIDs(Brhz& aTransferIDs) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransferIDs.Set(iTransferIDs->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2::SystemUpdateIDPropertyChanged()

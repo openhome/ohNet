@@ -464,9 +464,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndManufacturer(IAsync& aAsync, Brh& aNa
     ASSERT(invocation.Action().Name() == Brn("Manufacturer"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -502,9 +502,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndModel(IAsync& aAsync, Brh& aName, Brh
     ASSERT(invocation.Action().Name() == Brn("Model"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -540,9 +540,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndProduct(IAsync& aAsync, Brh& aName, B
     ASSERT(invocation.Action().Name() == Brn("Product"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -575,9 +575,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndAttributes(IAsync& aAsync, Brh& aValu
     ASSERT(invocation.Action().Name() == Brn("Attributes"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -607,9 +607,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndQueryPort(IAsync& aAsync, TUint& aVal
     ASSERT(invocation.Action().Name() == Brn("QueryPort"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -639,9 +639,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndBrowsePort(IAsync& aAsync, TUint& aVa
     ASSERT(invocation.Action().Name() == Brn("BrowsePort"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -671,9 +671,9 @@ void CpProxyAvOpenhomeOrgMediaServer1C::EndUpdateCount(IAsync& aAsync, TUint& aV
     ASSERT(invocation.Action().Name() == Brn("UpdateCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -794,130 +794,114 @@ void CpProxyAvOpenhomeOrgMediaServer1C::SetPropertyUpdateCountChanged(Functor& a
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyManufacturerName(Brhz& aManufacturerName) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerName.Set(iManufacturerName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyManufacturerInfo(Brhz& aManufacturerInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerInfo.Set(iManufacturerInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyManufacturerUrl(Brhz& aManufacturerUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerUrl.Set(iManufacturerUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyManufacturerImageUri(Brhz& aManufacturerImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aManufacturerImageUri.Set(iManufacturerImageUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyModelName(Brhz& aModelName) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelName.Set(iModelName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyModelInfo(Brhz& aModelInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelInfo.Set(iModelInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyModelUrl(Brhz& aModelUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelUrl.Set(iModelUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyModelImageUri(Brhz& aModelImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aModelImageUri.Set(iModelImageUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyProductName(Brhz& aProductName) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductName.Set(iProductName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyProductInfo(Brhz& aProductInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductInfo.Set(iProductInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyProductUrl(Brhz& aProductUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductUrl.Set(iProductUrl->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyProductImageUri(Brhz& aProductImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aProductImageUri.Set(iProductImageUri->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyAttributes(Brhz& aAttributes) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aAttributes.Set(iAttributes->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyQueryPort(TUint& aQueryPort) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aQueryPort = iQueryPort->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyBrowsePort(TUint& aBrowsePort) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aBrowsePort = iBrowsePort->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::PropertyUpdateCount(TUint& aUpdateCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aUpdateCount = iUpdateCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1C::ManufacturerNamePropertyChanged()

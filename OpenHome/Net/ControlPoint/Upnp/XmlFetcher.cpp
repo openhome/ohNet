@@ -16,10 +16,15 @@ using namespace OpenHome::Net;
 
 void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
 {
-    ASSERT(aUri->Port()!=Uri::kPortNotSpecified);
     iUri = aUri;
     iFunctor = aFunctor;
     iSequenceNumber = iCpStack.Env().SequenceNumber();
+}
+
+void XmlFetch::CheckContactable(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
+{
+    Set(aUri, aFunctor);
+    iCheckContactable = true;
 }
 
 XmlFetch::~XmlFetch()
@@ -82,7 +87,8 @@ void XmlFetch::Fetch()
     iSocket = &socket;
     iLock.Signal();
     try {
-        Endpoint endpoint(iUri->Port(), iUri->Host());
+        const TUint port = (iUri->Port()==Uri::kPortNotSpecified? 80 : iUri->Port());
+        Endpoint endpoint(port, iUri->Host());
         TUint timeout = iCpStack.Env().InitParams()->TcpConnectTimeoutMs();
         socket.Connect(endpoint, timeout);
         WriteRequest(socket);
@@ -129,7 +135,7 @@ TBool XmlFetch::Interrupted() const
 }
 
 Bwh& XmlFetch::Xml(IAsync& aAsync)
-{
+{ // static
     ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
     XmlFetch& self = (XmlFetch&)aAsync;
     if (self.Error()) {
@@ -138,12 +144,24 @@ Bwh& XmlFetch::Xml(IAsync& aAsync)
     return self.iXml;
 }
 
+TBool XmlFetch::WasContactable(IAsync& aAsync)
+{ // static
+    ASSERT(((Async&)aAsync).Type() == Async::eXmlFetch);
+    XmlFetch& self = (XmlFetch&)aAsync;
+    if (self.Error()) {
+        THROW(XmlFetchError);
+    }
+    return self.iContactable;
+}
+
 XmlFetch::XmlFetch(CpStack& aCpStack)
     : iCpStack(aCpStack)
     , iUri(NULL)
     , iSequenceNumber(0)
     , iLock("XMLM")
     , iInterrupted(false)
+    , iCheckContactable(false)
+    , iContactable(false)
     , iSocket(NULL)
 {
 }
@@ -153,8 +171,9 @@ void XmlFetch::WriteRequest(SocketTcpClient& aSocket)
     Sws<kRwBufferLength> writeBuffer(aSocket);
     WriterHttpRequest writerRequest(writeBuffer);
 
-    writerRequest.WriteMethod(Http::kMethodGet, iUri->PathAndQuery(), Http::eHttp11);
-    Http::WriteHeaderHostAndPort(writerRequest, iUri->Host(), iUri->Port());
+    writerRequest.WriteMethod((iCheckContactable? Http::kMethodHead : Http::kMethodGet), iUri->PathAndQuery(), Http::eHttp11);
+    const TUint port = (iUri->Port()==Uri::kPortNotSpecified? 80 : iUri->Port());
+    Http::WriteHeaderHostAndPort(writerRequest, iUri->Host(), port);
     Http::WriteHeaderContentLength(writerRequest, 0);
     Http::WriteHeaderConnectionClose(writerRequest);
     writerRequest.WriteFlush();
@@ -177,6 +196,10 @@ void XmlFetch::Read(SocketTcpClient& aSocket)
         LOG2(kXmlFetch, kError, "\n");
         SetError(Error::eHttp, status.Code(), status.Reason());
         THROW(HttpError);
+    }
+    if (iCheckContactable) {
+        iContactable = true;
+        return;
     }
 
     if (headerTransferEncoding.IsChunked()) {
@@ -316,9 +339,6 @@ XmlFetchManager::XmlFetchManager(CpStack& aCpStack)
 {
     const TUint numThreads = iCpStack.Env().InitParams()->NumXmlFetcherThreads();
     iFetchers = (XmlFetcher**)malloc(sizeof(*iFetchers) * numThreads);
-#ifndef _WIN32
-    ASSERT(numThreads <= 9);
-#endif
     for (TUint i=0; i<numThreads; i++) {
         Bws<Thread::kMaxNameBytes+1> thName;
         thName.AppendPrintf("XmlFetcher %d", i);

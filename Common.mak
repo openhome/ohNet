@@ -176,6 +176,8 @@ headers = \
 	$(inc_build)/OpenHome/Net/Private/EventUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/FunctorCpiDevice.h \
 	$(inc_build)/OpenHome/Net/Private/FunctorDviInvocation.h \
+	$(inc_build)/OpenHome/Net/Private/MdnsPlatform.h \
+	$(inc_build)/OpenHome/Net/Private/MdnsProvider.h \
 	$(inc_build)/OpenHome/Net/Private/ProtocolUpnp.h \
 	$(inc_build)/OpenHome/Net/Private/Service.h \
 	$(inc_build)/OpenHome/Net/Private/Ssdp.h \

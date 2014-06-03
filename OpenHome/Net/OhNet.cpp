@@ -265,19 +265,19 @@ void InitialisationParams::SetMsearchTtl(uint32_t aTtl)
 
 void InitialisationParams::SetNumEventSessionThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 10);
+    ASSERT(aNumThreads > 0);
     iNumEventSessionThreads = aNumThreads;
 }
 
 void InitialisationParams::SetNumXmlFetcherThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 10);
+    ASSERT(aNumThreads > 0);
     iNumXmlFetcherThreads = aNumThreads;
 }
 
 void InitialisationParams::SetNumActionInvokerThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 100);
+    ASSERT(aNumThreads > 0);
     iNumActionInvokerThreads = aNumThreads;
 }
 
@@ -289,7 +289,7 @@ void InitialisationParams::SetNumInvocations(uint32_t aNumInvocations)
 
 void InitialisationParams::SetNumSubscriberThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 10);
+    ASSERT(aNumThreads > 0);
     iNumSubscriberThreads = aNumThreads;
 }
 
@@ -327,19 +327,18 @@ void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
 
 void InitialisationParams::SetDvNumServerThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 100);
+    ASSERT(aNumThreads > 0);
     iDvNumServerThreads = aNumThreads;
 }
 
 void InitialisationParams::SetDvNumPublisherThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 100);
+    ASSERT(aNumThreads > 0);
     iDvNumPublisherThreads = aNumThreads;
 }
 
 void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads < 100);
     iDvNumWebSocketThreads = aNumThreads;
 }
 
@@ -371,6 +370,11 @@ void InitialisationParams::SetDvNumLpecThreads(uint32_t aNumThreads)
 void InitialisationParams::SetDvLpecServerPort(uint32_t aPort)
 {
     iDvLpecServerPort = aPort;
+}
+
+void InitialisationParams::SetHostUdpIsLowQuality(TBool aLow)
+{
+    iHostUdpLowQuality = aLow;
 }
 
 FunctorMsg& InitialisationParams::LogOutput()
@@ -537,6 +541,20 @@ uint32_t InitialisationParams::DvLpecServerPort()
     return iDvLpecServerPort;
 }
 
+bool InitialisationParams::IsHostUdpLowQuality()
+{
+    return iHostUdpLowQuality;
+}
+
+#if defined(PLATFORM_MACOSX_GNU) || defined (PLATFORM_IOS)
+/* Assume that all Apple products have poor quality networking.
+   This won't be the case for a wired Mac desktop but we'd need a way of signalling which
+   adapters are wired from OsNetworkListAdapters to do this... */
+# define HOST_UDP_LOW_QUALITY_DEFAULT true
+#else
+# define HOST_UDP_LOW_QUALITY_DEFAULT false
+#endif
+
 InitialisationParams::InitialisationParams()
     : iTcpConnectTimeoutMs(3000)
     , iMsearchTimeSecs(3)
@@ -558,6 +576,7 @@ InitialisationParams::InitialisationParams()
     , iDvUpnpWebServerPort(0)
     , iDvWebSocketPort(0)
     , iEnableBonjour(false)
+    , iHostUdpLowQuality(HOST_UDP_LOW_QUALITY_DEFAULT)
     , iDvNumLpecThreads(0)
     , iDvLpecServerPort(0)
 {

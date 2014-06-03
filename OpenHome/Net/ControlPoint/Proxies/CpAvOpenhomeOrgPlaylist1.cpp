@@ -728,9 +728,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndPlay(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Play"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -755,9 +755,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndPause(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Pause"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -782,9 +782,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndStop(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Stop"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -809,9 +809,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndNext(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Next"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -836,9 +836,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndPrevious(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("Previous"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -866,9 +866,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSetRepeat(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetRepeat"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -896,9 +896,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndRepeat(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Repeat"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -928,9 +928,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSetShuffle(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetShuffle"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -958,9 +958,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndShuffle(IAsync& aAsync, TBool& aValue)
     ASSERT(invocation.Action().Name() == Brn("Shuffle"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -990,9 +990,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekSecondAbsolute(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SeekSecondAbsolute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1020,9 +1020,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekSecondRelative(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SeekSecondRelative"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1050,9 +1050,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekId(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SeekId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1080,9 +1080,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndSeekIndex(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SeekIndex"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1110,9 +1110,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndTransportState(IAsync& aAsync, Brh& aValu
     ASSERT(invocation.Action().Name() == Brn("TransportState"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1142,9 +1142,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndId(IAsync& aAsync, TUint& aValue)
     ASSERT(invocation.Action().Name() == Brn("Id"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1178,9 +1178,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndRead(IAsync& aAsync, Brh& aUri, Brh& aMet
     ASSERT(invocation.Action().Name() == Brn("Read"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1214,9 +1214,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndReadList(IAsync& aAsync, Brh& aTrackList)
     ASSERT(invocation.Action().Name() == Brn("ReadList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1251,9 +1251,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndInsert(IAsync& aAsync, TUint& aNewId)
     ASSERT(invocation.Action().Name() == Brn("Insert"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1283,9 +1283,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndDeleteId(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteId"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1310,9 +1310,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndDeleteAll(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteAll"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1340,9 +1340,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndTracksMax(IAsync& aAsync, TUint& aValue)
     ASSERT(invocation.Action().Name() == Brn("TracksMax"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1373,9 +1373,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndIdArray(IAsync& aAsync, TUint& aToken, Br
     ASSERT(invocation.Action().Name() == Brn("IdArray"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1409,9 +1409,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndIdArrayChanged(IAsync& aAsync, TBool& aVa
     ASSERT(invocation.Action().Name() == Brn("IdArrayChanged"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1441,9 +1441,9 @@ void CpProxyAvOpenhomeOrgPlaylist1::EndProtocolInfo(IAsync& aAsync, Brh& aValue)
     ASSERT(invocation.Action().Name() == Brn("ProtocolInfo"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1501,58 +1501,51 @@ void CpProxyAvOpenhomeOrgPlaylist1::SetPropertyProtocolInfoChanged(Functor& aFun
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyTransportState(Brhz& aTransportState) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransportState.Set(iTransportState->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyRepeat(TBool& aRepeat) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRepeat = iRepeat->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyShuffle(TBool& aShuffle) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aShuffle = iShuffle->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyId(TUint& aId) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aId = iId->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyIdArray(Brh& aIdArray) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aIdArray.Set(iIdArray->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyTracksMax(TUint& aTracksMax) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProtocolInfo.Set(iProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgPlaylist1::TransportStatePropertyChanged()

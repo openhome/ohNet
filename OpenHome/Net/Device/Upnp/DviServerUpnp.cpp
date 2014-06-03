@@ -341,6 +341,11 @@ PropertyWriterUpnp::PropertyWriterUpnp(DvStack& aDvStack)
 
 void PropertyWriterUpnp::Connect(const Endpoint& aSubscriber)
 {
+#if 0
+    Endpoint::AddressBuf buf;
+    aSubscriber.AppendAddress(buf);
+    Log::Print("PropertyWriterUpnp connecting to %s\n", buf.Ptr());
+#endif
     iSocket.Open(iDvStack.Env());
     iSocket.Connect(aSubscriber, iDvStack.Env().InitParams()->TcpConnectTimeoutMs());
 }

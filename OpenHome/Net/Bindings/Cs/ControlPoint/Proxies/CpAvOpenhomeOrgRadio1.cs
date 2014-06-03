@@ -530,8 +530,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlay(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -572,8 +572,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPause(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -614,8 +614,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStop(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -660,8 +660,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -706,8 +706,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -757,8 +757,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMetadata"></param>
         public void EndChannel(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -809,8 +809,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetChannel(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -856,8 +856,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndTransportState(IntPtr aAsyncHandle, out String aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -905,8 +905,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndId(IntPtr aAsyncHandle, out uint aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -956,8 +956,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetId(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1007,8 +1007,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aMetadata"></param>
         public void EndRead(IntPtr aAsyncHandle, out String aMetadata)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1060,8 +1060,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aChannelList"></param>
         public void EndReadList(IntPtr aAsyncHandle, out String aChannelList)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1113,8 +1113,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aArray"></param>
         public void EndIdArray(IntPtr aAsyncHandle, out uint aToken, out byte[] aArray)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1167,8 +1167,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1216,8 +1216,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndChannelsMax(IntPtr aAsyncHandle, out uint aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1265,8 +1265,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aValue"></param>
         public void EndProtocolInfo(IntPtr aAsyncHandle, out String aValue)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -1439,8 +1439,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyUri()
         {
             PropertyReadLock();
-            String val = iUri.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iUri.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1454,8 +1461,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyMetadata()
         {
             PropertyReadLock();
-            String val = iMetadata.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iMetadata.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1469,8 +1483,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyTransportState()
         {
             PropertyReadLock();
-            String val = iTransportState.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iTransportState.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1484,8 +1505,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyId()
         {
             PropertyReadLock();
-            uint val = iId.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iId.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1499,8 +1527,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public byte[] PropertyIdArray()
         {
             PropertyReadLock();
-            byte[] val = iIdArray.Value();
-            PropertyReadUnlock();
+            byte[] val;
+            try
+            {
+                val = iIdArray.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1514,8 +1549,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public uint PropertyChannelsMax()
         {
             PropertyReadLock();
-            uint val = iChannelsMax.Value();
-            PropertyReadUnlock();
+            uint val;
+            try
+            {
+                val = iChannelsMax.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 
@@ -1529,8 +1571,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         public String PropertyProtocolInfo()
         {
             PropertyReadLock();
-            String val = iProtocolInfo.Value();
-            PropertyReadUnlock();
+            String val;
+            try
+            {
+                val = iProtocolInfo.Value();
+            }
+            finally
+            {
+                PropertyReadUnlock();
+            }
             return val;
         }
 

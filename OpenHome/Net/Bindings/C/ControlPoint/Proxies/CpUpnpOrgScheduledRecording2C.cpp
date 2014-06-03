@@ -759,9 +759,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetSortCapabilities(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("GetSortCapabilities"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -795,9 +795,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetPropertyList(IAsync& aAsync, Brh&
     ASSERT(invocation.Action().Name() == Brn("GetPropertyList"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -831,9 +831,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetAllowedValues(IAsync& aAsync, Brh
     ASSERT(invocation.Action().Name() == Brn("GetAllowedValues"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -863,9 +863,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetStateUpdateID(IAsync& aAsync, TUi
     ASSERT(invocation.Action().Name() == Brn("GetStateUpdateID"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -904,9 +904,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndBrowseRecordSchedules(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("BrowseRecordSchedules"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -949,9 +949,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndBrowseRecordTasks(IAsync& aAsync, Br
     ASSERT(invocation.Action().Name() == Brn("BrowseRecordTasks"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -989,9 +989,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndCreateRecordSchedule(IAsync& aAsync,
     ASSERT(invocation.Action().Name() == Brn("CreateRecordSchedule"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1023,9 +1023,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndDeleteRecordSchedule(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteRecordSchedule"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1058,9 +1058,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetRecordSchedule(IAsync& aAsync, Br
     ASSERT(invocation.Action().Name() == Brn("GetRecordSchedule"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1091,9 +1091,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndEnableRecordSchedule(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("EnableRecordSchedule"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1121,9 +1121,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndDisableRecordSchedule(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("DisableRecordSchedule"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1151,9 +1151,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndDeleteRecordTask(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DeleteRecordTask"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1186,9 +1186,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetRecordTask(IAsync& aAsync, Brh& a
     ASSERT(invocation.Action().Name() == Brn("GetRecordTask"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1219,9 +1219,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndEnableRecordTask(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("EnableRecordTask"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1249,9 +1249,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndDisableRecordTask(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("DisableRecordTask"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1279,9 +1279,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndResetRecordTask(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("ResetRecordTask"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1313,9 +1313,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetRecordScheduleConflicts(IAsync& a
     ASSERT(invocation.Action().Name() == Brn("GetRecordScheduleConflicts"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1350,9 +1350,9 @@ void CpProxyUpnpOrgScheduledRecording2C::EndGetRecordTaskConflicts(IAsync& aAsyn
     ASSERT(invocation.Action().Name() == Brn("GetRecordTaskConflicts"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1369,10 +1369,9 @@ void CpProxyUpnpOrgScheduledRecording2C::SetPropertyLastChangeChanged(Functor& a
 
 void CpProxyUpnpOrgScheduledRecording2C::PropertyLastChange(Brhz& aLastChange) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aLastChange.Set(iLastChange->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgScheduledRecording2C::LastChangePropertyChanged()

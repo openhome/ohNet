@@ -489,7 +489,6 @@ void SuiteEndpoint::Test()
     TEST((ip[0] == 127) && (ip[1] == 0) && (ip[2] == 0) && (ip[3] == 1));
 }
 
-const TUint kMulticastPort = 2000;
 const Brn kMulticastAddress("239.252.0.0");
 
 static void AppendUint32(Bwx& aBuf, TUint aNum)

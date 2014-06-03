@@ -27,7 +27,7 @@ using namespace OpenHome::TestFramework;
 class DeviceList
 {
 public:
-    DeviceList(Semaphore& aAddedSem);
+    DeviceList(const char* aTargetUdn, Semaphore& aAddedSem);
     ~DeviceList();
     void Stop();
     void TestActions();
@@ -37,6 +37,7 @@ public:
 private:
     Mutex iLock;
     std::vector<CpDeviceC> iList;
+    const char* iTargetUdn;
     Semaphore& iAddedSem;
 };
 
@@ -57,8 +58,9 @@ static void STDCALL removed(void* /*aPtr*/, CpDeviceC /*aDevice*/)
 }
 
 
-DeviceList::DeviceList(Semaphore& aAddedSem)
+DeviceList::DeviceList(const char* aTargetUdn, Semaphore& aAddedSem)
     : iLock("DLMX")
+    , iTargetUdn(aTargetUdn)
     , iAddedSem(aAddedSem)
 {
 }
@@ -96,6 +98,9 @@ void DeviceList::TestSubscriptions()
 void DeviceList::Added(CpDeviceC aDevice)
 {
     AutoMutex a(iLock);
+    if (strcmp(CpDeviceCUdn(aDevice), iTargetUdn) != 0) {
+        return;
+    }
     if (iList.size() == 0) {
         iList.push_back(aDevice);
         CpDeviceCAddRef(aDevice);
@@ -136,7 +141,10 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 
     Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasicC* device = new DeviceBasicC(DeviceBasicC::eProtocolUpnp);
-    DeviceList* deviceList = new DeviceList(*sem);
+    const char* udn;
+    uint32_t ignore;
+    DvDeviceGetUdn(device->Device(), &udn, &ignore);
+    DeviceList* deviceList = new DeviceList(udn, *sem);
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("openhome.org", "TestBasic", 1,
                                                                added, deviceList, removed, deviceList);
     sem->Wait(30*1000); // allow up to 30 seconds to find our one device

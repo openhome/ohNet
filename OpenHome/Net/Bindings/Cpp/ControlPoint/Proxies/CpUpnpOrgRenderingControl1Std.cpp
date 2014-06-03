@@ -1093,9 +1093,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndListPresets(IAsync& aAsync, std::str
     ASSERT(invocation.Action().Name() == Brn("ListPresets"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1132,9 +1132,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSelectPreset(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SelectPreset"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1165,9 +1165,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetBrightness(IAsync& aAsync, uint32
     ASSERT(invocation.Action().Name() == Brn("GetBrightness"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1198,9 +1198,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetBrightness(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetBrightness"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1231,9 +1231,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetContrast(IAsync& aAsync, uint32_t
     ASSERT(invocation.Action().Name() == Brn("GetContrast"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1264,9 +1264,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetContrast(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetContrast"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1297,9 +1297,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetSharpness(IAsync& aAsync, uint32_
     ASSERT(invocation.Action().Name() == Brn("GetSharpness"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1330,9 +1330,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetSharpness(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetSharpness"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1363,9 +1363,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetRedVideoGain(IAsync& aAsync, uint
     ASSERT(invocation.Action().Name() == Brn("GetRedVideoGain"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1396,9 +1396,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetRedVideoGain(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetRedVideoGain"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1429,9 +1429,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetGreenVideoGain(IAsync& aAsync, ui
     ASSERT(invocation.Action().Name() == Brn("GetGreenVideoGain"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1462,9 +1462,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetGreenVideoGain(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetGreenVideoGain"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1495,9 +1495,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetBlueVideoGain(IAsync& aAsync, uin
     ASSERT(invocation.Action().Name() == Brn("GetBlueVideoGain"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1528,9 +1528,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetBlueVideoGain(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetBlueVideoGain"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1561,9 +1561,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetRedVideoBlackLevel(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("GetRedVideoBlackLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1594,9 +1594,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetRedVideoBlackLevel(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("SetRedVideoBlackLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1627,9 +1627,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetGreenVideoBlackLevel(IAsync& aAsy
     ASSERT(invocation.Action().Name() == Brn("GetGreenVideoBlackLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1660,9 +1660,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetGreenVideoBlackLevel(IAsync& aAsy
     ASSERT(invocation.Action().Name() == Brn("SetGreenVideoBlackLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1693,9 +1693,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetBlueVideoBlackLevel(IAsync& aAsyn
     ASSERT(invocation.Action().Name() == Brn("GetBlueVideoBlackLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1726,9 +1726,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetBlueVideoBlackLevel(IAsync& aAsyn
     ASSERT(invocation.Action().Name() == Brn("SetBlueVideoBlackLevel"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1759,9 +1759,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetColorTemperature(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("GetColorTemperature"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1792,9 +1792,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetColorTemperature(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetColorTemperature"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1825,9 +1825,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetHorizontalKeystone(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("GetHorizontalKeystone"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1858,9 +1858,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetHorizontalKeystone(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("SetHorizontalKeystone"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1891,9 +1891,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetVerticalKeystone(IAsync& aAsync, 
     ASSERT(invocation.Action().Name() == Brn("GetVerticalKeystone"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1924,9 +1924,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetVerticalKeystone(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetVerticalKeystone"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -1961,9 +1961,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetMute(IAsync& aAsync, bool& aCurre
     ASSERT(invocation.Action().Name() == Brn("GetMute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -1998,9 +1998,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetMute(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetMute"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -2035,9 +2035,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetVolume(IAsync& aAsync, uint32_t& 
     ASSERT(invocation.Action().Name() == Brn("GetVolume"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -2072,9 +2072,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetVolume(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetVolume"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -2109,9 +2109,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetVolumeDB(IAsync& aAsync, int32_t&
     ASSERT(invocation.Action().Name() == Brn("GetVolumeDB"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -2146,9 +2146,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetVolumeDB(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetVolumeDB"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -2184,9 +2184,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetVolumeDBRange(IAsync& aAsync, int
     ASSERT(invocation.Action().Name() == Brn("GetVolumeDBRange"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -2224,9 +2224,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndGetLoudness(IAsync& aAsync, bool& aC
     ASSERT(invocation.Action().Name() == Brn("GetLoudness"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -2261,9 +2261,9 @@ void CpProxyUpnpOrgRenderingControl1Cpp::EndSetLoudness(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("SetLoudness"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -2277,11 +2277,10 @@ void CpProxyUpnpOrgRenderingControl1Cpp::SetPropertyLastChangeChanged(Functor& a
 
 void CpProxyUpnpOrgRenderingControl1Cpp::PropertyLastChange(std::string& aLastChange) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgRenderingControl1Cpp::LastChangePropertyChanged()

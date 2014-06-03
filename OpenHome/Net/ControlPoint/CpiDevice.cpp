@@ -4,6 +4,8 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/CpiStack.h>
+#include <OpenHome/OsWrapper.h>
+#include <OpenHome/Net/Private/Globals.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -166,7 +168,7 @@ CpiDevice* CpiDeviceList::RefDevice(const Brx& aUdn)
 CpiDevice* CpiDeviceList::RefDeviceLocked(const Brx& aUdn)
 {
     Brn udn(aUdn);
-    Map::iterator it = iMap.find(udn);
+    CpDeviceMap::iterator it = iMap.find(udn);
     if (it == iMap.end()) {
         return NULL;
     }
@@ -179,7 +181,8 @@ CpiDeviceList::CpiDeviceList(CpStack& aCpStack, FunctorCpiDevice aAdded, Functor
     : iCpStack(aCpStack)
     , iActive(false)
     , iRefreshing(false)
-    , iLock("CDLM")
+    , iLock("CDL1")
+    , iRefreshLock("CDL2")
     , iAdded(aAdded)
     , iRemoved(aRemoved)
     , iRefCount(0)
@@ -220,14 +223,16 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
         iLock.Signal();
         return;
     }
+    iRefreshLock.Wait();
     if (iRefreshing) {
         Brn udn(aDevice->Udn());
-        Map::iterator it = iRefreshMap.find(udn);
+        CpDeviceMap::iterator it = iRefreshMap.find(udn);
         if (it == iRefreshMap.end()) {
             iRefreshMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
             aDevice->AddRef(); // for refresh list
         }
     }
+    iRefreshLock.Signal();
     CpiDevice* tmp = RefDeviceLocked(aDevice->Udn());
     if (tmp != NULL) {
         // device is already in the list, ignore this call to Add()
@@ -253,7 +258,7 @@ void CpiDeviceList::Remove(const Brx& aUdn)
 {
     iLock.Wait();
     Brn udn(aUdn);
-    Map::iterator it = iMap.find(udn);
+    CpDeviceMap::iterator it = iMap.find(udn);
     if (it == iMap.end()) {
         // device isn't in this list
         iLock.Signal();
@@ -275,22 +280,33 @@ TBool CpiDeviceList::IsDeviceReady(CpiDevice& /*aDevice*/)
 TBool CpiDeviceList::StartRefresh()
 {
     TBool refreshAlreadyInProgress;
-    iLock.Wait();
+    iRefreshLock.Wait();
     refreshAlreadyInProgress = iRefreshing;
     iRefreshing = true;
-    iLock.Signal();
+    iRefreshLock.Signal();
     return refreshAlreadyInProgress;
 }
 
-void CpiDeviceList::RefreshComplete()
+void CpiDeviceList::RefreshComplete(TBool aReportRemoved)
 {
-    iCpStack.DeviceListUpdater().QueueRefreshed(*this);
+    iRefreshLock.Wait();
+    if (aReportRemoved) {
+        iCpStack.DeviceListUpdater().QueueRefreshed(*this, iRefreshMap);
+        iRefreshMap.clear();
+    }
+    else {
+        ClearMap(iRefreshMap);
+    }
+    iRefreshing = false;
+    iRefreshLock.Signal();
 }
 
 void CpiDeviceList::CancelRefresh()
 {
+    iRefreshLock.Wait();
     iRefreshing = false;
     ClearMap(iRefreshMap);
+    iRefreshLock.Signal();
 }
 
 void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
@@ -299,9 +315,9 @@ void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
     iCpStack.DeviceListUpdater().QueueAdded(*this, aDevice);
 }
 
-void CpiDeviceList::ClearMap(Map& aMap)
+void CpiDeviceList::ClearMap(CpDeviceMap& aMap)
 {
-    Map::iterator it = aMap.begin();
+    CpDeviceMap::iterator it = aMap.begin();
     while (it != aMap.end()) {
         it->second->RemoveRef();
         it->second = NULL;
@@ -400,18 +416,17 @@ TBool CpiDeviceList::DoRemove(CpiDevice& aDevice)
     return true;
 }
 
-void CpiDeviceList::NotifyRefreshed()
+void CpiDeviceList::NotifyRefreshed(CpDeviceMap& aRefreshMap)
 {
     iLock.Wait();
-    iRefreshing = false;
     if (iActive) {
         /* map iterator is invalidated by removing an item so we'll need to iterate once per removal
            assume that the 0.5 * O(n^2) ish cost is bearable as refresh is a rare operation which
            can only feasibly run once ever few seconds in the worst possible case */
-        Map::iterator it = iMap.begin();
+        CpDeviceMap::iterator it = iMap.begin();
         while (it != iMap.end()) {
-            Map::iterator found = iRefreshMap.find(it->first);
-            if (found != iRefreshMap.end()) {
+            CpDeviceMap::iterator found = aRefreshMap.find(it->first);
+            if (found != aRefreshMap.end()) {
                 // device still exists
                 it++;
             }
@@ -436,8 +451,8 @@ void CpiDeviceList::NotifyRefreshed()
             }
         }
     }
-    ClearMap(iRefreshMap);
     iLock.Signal();
+    ClearMap(aRefreshMap);
 }
 
 void CpiDeviceList::ListObjectDetails() const
@@ -478,9 +493,9 @@ void CpiDeviceListUpdater::QueueRemoved(IDeviceListUpdater& aUpdater, CpiDevice&
     CpiDeviceListUpdater::Queue(new UpdateRemoved(aUpdater, aDevice));
 }
 
-void CpiDeviceListUpdater::QueueRefreshed(IDeviceListUpdater& aUpdater)
+void CpiDeviceListUpdater::QueueRefreshed(IDeviceListUpdater& aUpdater, CpDeviceMap& aRefreshMap)
 {
-    Queue(new UpdateRefresh(aUpdater));
+    Queue(new UpdateRefresh(aUpdater, aRefreshMap));
 }
 
 void CpiDeviceListUpdater::Queue(UpdateBase* aUpdate)
@@ -561,12 +576,13 @@ void CpiDeviceListUpdater::UpdateRemoved::Update()
 
 // CpiDeviceListUpdater::UpdateRefresh
 
-CpiDeviceListUpdater::UpdateRefresh::UpdateRefresh(IDeviceListUpdater& aUpdater)
+CpiDeviceListUpdater::UpdateRefresh::UpdateRefresh(IDeviceListUpdater& aUpdater, CpDeviceMap& aRefreshMap)
     : CpiDeviceListUpdater::UpdateBase(aUpdater)
+    , iRefreshMap(aRefreshMap)
 {
 }
 
 void CpiDeviceListUpdater::UpdateRefresh::Update()
 {
-    iUpdater.NotifyRefreshed();
+    iUpdater.NotifyRefreshed(iRefreshMap);
 }

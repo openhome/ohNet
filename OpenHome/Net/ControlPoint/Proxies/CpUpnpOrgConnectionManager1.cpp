@@ -261,9 +261,9 @@ void CpProxyUpnpOrgConnectionManager1::EndGetProtocolInfo(IAsync& aAsync, Brh& a
     ASSERT(invocation.Action().Name() == Brn("GetProtocolInfo"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -302,9 +302,9 @@ void CpProxyUpnpOrgConnectionManager1::EndPrepareForConnection(IAsync& aAsync, T
     ASSERT(invocation.Action().Name() == Brn("PrepareForConnection"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -336,9 +336,9 @@ void CpProxyUpnpOrgConnectionManager1::EndConnectionComplete(IAsync& aAsync)
     ASSERT(invocation.Action().Name() == Brn("ConnectionComplete"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
 }
@@ -366,9 +366,9 @@ void CpProxyUpnpOrgConnectionManager1::EndGetCurrentConnectionIDs(IAsync& aAsync
     ASSERT(invocation.Action().Name() == Brn("GetCurrentConnectionIDs"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -407,9 +407,9 @@ void CpProxyUpnpOrgConnectionManager1::EndGetCurrentConnectionInfo(IAsync& aAsyn
     ASSERT(invocation.Action().Name() == Brn("GetCurrentConnectionInfo"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -445,26 +445,23 @@ void CpProxyUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDsChanged(Fu
 
 void CpProxyUpnpOrgConnectionManager1::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager1::SourceProtocolInfoPropertyChanged()

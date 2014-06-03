@@ -73,6 +73,14 @@ void SuiteConstruction::Test()
     TEST_THROWS(buf5.SetBytes(5), AssertionFailed);
     buf5.SetBytes(0);
     TEST(buf5.Bytes() == 0);
+
+    //8> BytesRemaining()
+    Bws<8> buf6;
+    TEST(buf6.BytesRemaining() == 8);
+    buf6.SetBytes(3);
+    TEST(buf6.BytesRemaining() == 5);
+    buf6.SetBytes(8);
+    TEST(buf6.BytesRemaining() == 0);
 }
 
 class SuiteModification : public Suite
@@ -309,6 +317,12 @@ void SuiteElements::Test()
     TEST(buf[1] == 0x99);
 
     TEST_THROWS(buf[13] = 0x90, AssertionFailed);
+
+    //3) access elements of a const Bwx
+
+    const Bws<16> b("something");
+    TEST(b.At(0) == 's');
+    TEST(b[0] == 's');
 }
 
 class SuiteHeap : public Suite

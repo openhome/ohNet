@@ -172,9 +172,9 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1C::EndName(IAsync& aAsync, Brh& aName)
     ASSERT(invocation.Action().Name() == Brn("Name"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -206,9 +206,9 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1C::EndPorts(IAsync& aAsync, TUint& aSend
     ASSERT(invocation.Action().Name() == Brn("Ports"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -247,34 +247,30 @@ void CpProxyAvOpenhomeOrgNetworkMonitor1C::SetPropertyResultsChanged(Functor& aF
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertyName(Brhz& aName) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aName.Set(iName->Value());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertySender(TUint& aSender) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aSender = iSender->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertyReceiver(TUint& aReceiver) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aReceiver = iReceiver->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::PropertyResults(TUint& aResults) const
 {
-    PropertyReadLock();
+    AutoMutex a(GetPropertyReadLock());
     ASSERT(IsSubscribed());
     aResults = iResults->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgNetworkMonitor1C::NamePropertyChanged()

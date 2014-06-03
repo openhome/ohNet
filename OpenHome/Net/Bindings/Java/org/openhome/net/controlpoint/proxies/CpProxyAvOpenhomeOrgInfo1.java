@@ -526,7 +526,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      */
     public Counters endCounters(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -591,7 +591,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      */
     public Track endTrack(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -662,7 +662,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      */
     public Details endDetails(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;
@@ -729,7 +729,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
      */
     public String endMetatext(long aAsyncHandle)
     {
-		ProxyError errObj = Invocation.error(aAsyncHandle);
+        ProxyError errObj = Invocation.error(aAsyncHandle);
         if (errObj != null)
         {
             throw errObj;

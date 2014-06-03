@@ -122,6 +122,15 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionIncrement()
     iService->AddAction(action, functor);
 }
 
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionEchoAllowedRangeUint()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoAllowedRangeUint");
+    action->AddInputParameter(new ParameterUint("Value", 10, 20));
+    action->AddOutputParameter(new ParameterUint("Result"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoAllowedRangeUint);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionDecrement()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Decrement");
@@ -146,6 +155,24 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionEchoString()
     action->AddInputParameter(new ParameterString("Value"));
     action->AddOutputParameter(new ParameterString("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionEchoAllowedValueString()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoAllowedValueString");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[4];
+    allowedValues[index++] = (TChar*)"One";
+    allowedValues[index++] = (TChar*)"Two";
+    allowedValues[index++] = (TChar*)"Three";
+    allowedValues[index++] = (TChar*)"Four";
+    action->AddInputParameter(new ParameterString("Value", allowedValues, 4));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterString("Result"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoAllowedValueString);
     iService->AddAction(action, functor);
 }
 
@@ -213,6 +240,16 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionSetMultiple()
     action->AddInputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
     action->AddInputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionGetMultiple()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMultiple");
+    action->AddOutputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
+    action->AddOutputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
+    action->AddOutputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1Cpp::DoGetMultiple);
     iService->AddAction(action, functor);
 }
 
@@ -285,6 +322,20 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation
     aInvocation.InvocationWriteEnd();
 }
 
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoAllowedRangeUint(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    uint32_t Value = aInvocation.InvocationReadUint("Value");
+    aInvocation.InvocationReadEnd();
+    uint32_t respResult;
+    DvInvocationStd invocation(aInvocation);
+    EchoAllowedRangeUint(invocation, Value, respResult);
+    aInvocation.InvocationWriteStart();
+    DviInvocationResponseUint respWriterResult(aInvocation, "Result");
+    respWriterResult.Write(respResult);
+    aInvocation.InvocationWriteEnd();
+}
+
 void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -323,6 +374,24 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocatio
     std::string respResult;
     DvInvocationStd invocation(aInvocation);
     EchoString(invocation, Value, respResult);
+    aInvocation.InvocationWriteStart();
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
+    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
+    respWriterResult.Write(buf_Result);
+    aInvocation.InvocationWriteStringEnd("Result");
+    aInvocation.InvocationWriteEnd();
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoAllowedValueString(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    Brhz buf_Value;
+    aInvocation.InvocationReadString("Value", buf_Value);
+    std::string Value((const char*)buf_Value.Ptr(), buf_Value.Bytes());
+    aInvocation.InvocationReadEnd();
+    std::string respResult;
+    DvInvocationStd invocation(aInvocation);
+    EchoAllowedValueString(invocation, Value, respResult);
     aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
@@ -434,6 +503,25 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple(IDviInvocation& aInvocati
     aInvocation.InvocationWriteEnd();
 }
 
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetMultiple(IDviInvocation& aInvocation)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    uint32_t respValueUint;
+    int32_t respValueInt;
+    bool respValueBool;
+    DvInvocationStd invocation(aInvocation);
+    GetMultiple(invocation, respValueUint, respValueInt, respValueBool);
+    aInvocation.InvocationWriteStart();
+    DviInvocationResponseUint respWriterValueUint(aInvocation, "ValueUint");
+    respWriterValueUint.Write(respValueUint);
+    DviInvocationResponseInt respWriterValueInt(aInvocation, "ValueInt");
+    respWriterValueInt.Write(respValueInt);
+    DviInvocationResponseBool respWriterValueBool(aInvocation, "ValueBool");
+    respWriterValueBool.Write(respValueBool);
+    aInvocation.InvocationWriteEnd();
+}
+
 void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetString(IDviInvocation& aInvocation)
 {
     aInvocation.InvocationReadStart();
@@ -531,6 +619,11 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::Increment(IDvInvocationStd& /*aInvocati
     ASSERTS();
 }
 
+void DvProviderOpenhomeOrgTestBasic1Cpp::EchoAllowedRangeUint(IDvInvocationStd& /*aInvocation*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
+{
+    ASSERTS();
+}
+
 void DvProviderOpenhomeOrgTestBasic1Cpp::Decrement(IDvInvocationStd& /*aInvocation*/, int32_t /*aValue*/, int32_t& /*aResult*/)
 {
     ASSERTS();
@@ -542,6 +635,11 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::Toggle(IDvInvocationStd& /*aInvocation*
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::EchoString(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValue*/, std::string& /*aResult*/)
+{
+    ASSERTS();
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::EchoAllowedValueString(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValue*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }
@@ -582,6 +680,11 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::GetBool(IDvInvocationStd& /*aInvocation
 }
 
 void DvProviderOpenhomeOrgTestBasic1Cpp::SetMultiple(IDvInvocationStd& /*aInvocation*/, uint32_t /*aValueUint*/, int32_t /*aValueInt*/, bool /*aValueBool*/)
+{
+    ASSERTS();
+}
+
+void DvProviderOpenhomeOrgTestBasic1Cpp::GetMultiple(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValueUint*/, int32_t& /*aValueInt*/, bool& /*aValueBool*/)
 {
     ASSERTS();
 }

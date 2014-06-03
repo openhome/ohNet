@@ -260,7 +260,8 @@ void Socket::Receive(Bwx& aBuffer)
     aBuffer.SetBytes(0);
     TInt received = OpenHome::Os::NetworkReceive(iHandle, aBuffer);
     if(received < 0) {
-        LOG2F(kNetwork, kError, "Socket::Receive H = %d, RETURN VALUE = %d\n", iHandle, received);
+        Bws<Thread::kMaxNameBytes+1> thName(Thread::CurrentThreadName());
+        LOG2F(kNetwork, kError, "Socket::Receive H = %d, thread=%s\n", iHandle, thName.PtrZ());
         THROW(NetworkError);
     }
     aBuffer.SetBytes(received);

@@ -246,3 +246,48 @@ Brn Parser::NextToEnd()
 
     return(iBuffer.Split(start, end - start));
 }
+
+Brn Parser::NextWhiteSpace()
+{
+    //TUint start = iIndex;
+
+    TUint bytes = iBuffer.Bytes();
+
+    const TByte *pBufferStart = iBuffer.Ptr();
+    const TByte *pStart = pBufferStart + iIndex;
+    const TByte *pBufferEnd = pBufferStart + bytes;
+
+    while (pStart < pBufferEnd) {
+        if (!Ascii::IsWhitespace(*pStart)) {
+            break;
+        }
+        pStart++;
+    }
+
+    if (pStart == pBufferEnd) {
+        iIndex = static_cast<TUint>(pStart - pBufferStart);
+        return (Brn::Empty());
+    }
+
+    TUint extra = 1;
+
+    //TUint delimiter = start;
+    const TByte *pDelimiter = pStart;
+
+    while (pDelimiter < pBufferEnd) {
+        if (Ascii::IsWhitespace(*pDelimiter)) {
+            break;
+        }
+        pDelimiter++;
+    }
+
+    if (pDelimiter == pBufferEnd) {
+        extra = 0;
+    }
+
+    const TByte *pEnd = pDelimiter;
+
+    iIndex = static_cast<TUint>(pDelimiter - pBufferStart) + extra; // go one past delimiter if not end of buffer
+
+    return(iBuffer.Split(static_cast<TUint>(pStart - pBufferStart), static_cast<TUint>(pEnd - pStart)));
+}

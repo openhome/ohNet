@@ -332,9 +332,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndManufacturer(IAsync& aAsync, std::s
     ASSERT(invocation.Action().Name() == Brn("Manufacturer"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -382,9 +382,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndModel(IAsync& aAsync, std::string& 
     ASSERT(invocation.Action().Name() == Brn("Model"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -432,9 +432,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndProduct(IAsync& aAsync, std::string
     ASSERT(invocation.Action().Name() == Brn("Product"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -479,9 +479,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndAttributes(IAsync& aAsync, std::str
     ASSERT(invocation.Action().Name() == Brn("Attributes"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -514,9 +514,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndQueryPort(IAsync& aAsync, uint32_t&
     ASSERT(invocation.Action().Name() == Brn("QueryPort"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -546,9 +546,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndBrowsePort(IAsync& aAsync, uint32_t
     ASSERT(invocation.Action().Name() == Brn("BrowsePort"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -578,9 +578,9 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::EndUpdateCount(IAsync& aAsync, uint32_
     ASSERT(invocation.Action().Name() == Brn("UpdateCount"));
 
     Error::ELevel level;
-	TUint code;
-	const TChar* ignore;
-	if (invocation.Error(level, code, ignore)) {
+    TUint code;
+    const TChar* ignore;
+    if (invocation.Error(level, code, ignore)) {
         THROW_PROXYERROR(level, code);
     }
     TUint index = 0;
@@ -701,143 +701,127 @@ void CpProxyAvOpenhomeOrgMediaServer1Cpp::SetPropertyUpdateCountChanged(Functor&
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyManufacturerName(std::string& aManufacturerName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerName->Value();
     aManufacturerName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyManufacturerInfo(std::string& aManufacturerInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerInfo->Value();
     aManufacturerInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyManufacturerUrl(std::string& aManufacturerUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerUrl->Value();
     aManufacturerUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyManufacturerImageUri(std::string& aManufacturerImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iManufacturerImageUri->Value();
     aManufacturerImageUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyModelName(std::string& aModelName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelName->Value();
     aModelName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyModelInfo(std::string& aModelInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelInfo->Value();
     aModelInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyModelUrl(std::string& aModelUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelUrl->Value();
     aModelUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyModelImageUri(std::string& aModelImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iModelImageUri->Value();
     aModelImageUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyProductName(std::string& aProductName) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductName->Value();
     aProductName.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyProductInfo(std::string& aProductInfo) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductInfo->Value();
     aProductInfo.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyProductUrl(std::string& aProductUrl) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductUrl->Value();
     aProductUrl.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyProductImageUri(std::string& aProductImageUri) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductImageUri->Value();
     aProductImageUri.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyAttributes(std::string& aAttributes) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAttributes->Value();
     aAttributes.assign((const char*)val.Ptr(), val.Bytes());
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyQueryPort(uint32_t& aQueryPort) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aQueryPort = iQueryPort->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyBrowsePort(uint32_t& aBrowsePort) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBrowsePort = iBrowsePort->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::PropertyUpdateCount(uint32_t& aUpdateCount) const
 {
-    PropertyReadLock();
+    AutoMutex a(PropertyReadLock());
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aUpdateCount = iUpdateCount->Value();
-    PropertyReadUnlock();
 }
 
 void CpProxyAvOpenhomeOrgMediaServer1Cpp::ManufacturerNamePropertyChanged()

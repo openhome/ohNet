@@ -210,8 +210,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aDuration"></param>
         public void EndSubscribe(IntPtr aAsyncHandle, out String aSid, out uint aDuration)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -259,8 +259,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndUnsubscribe(IntPtr aAsyncHandle)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -313,8 +313,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aDuration"></param>
         public void EndRenew(IntPtr aAsyncHandle, out uint aDuration)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);
@@ -366,8 +366,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <param name="aUpdates"></param>
         public void EndGetPropertyUpdates(IntPtr aAsyncHandle, out String aUpdates)
         {
-			uint code;
-			string desc;
+            uint code;
+            string desc;
             if (Invocation.Error(aAsyncHandle, out code, out desc))
             {
                 throw new ProxyError(code, desc);

@@ -298,9 +298,6 @@ TUint16 Converter::BeUint16At(const Brx& aBuf, TUint aIndex)
     return (TUint16)((b[0] << 8) | b[1]);
 }
 
-
-
-
 TUint32 Converter::LeUint32At(const Brx& aBuf, TUint aIndex)
 {
     TUint b[4];

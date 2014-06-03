@@ -42,6 +42,8 @@ public:
     DllExport ProxyError(const TChar* aFile, TUint aLine, uint32_t aLevel, uint32_t aCode);
     TUint Level() const;
     DllExport uint32_t Code() const;
+    DllExport ProxyError(const ProxyError& aProxyError);
+    DllExport ProxyError& operator=(const ProxyError&);
 private:
     TUint iLevel;
     TUint iCode;
@@ -88,14 +90,9 @@ protected:
     DllExport virtual ~CpProxy();
 
     /**
-     * Lock properties for reading.  Intended for use before reading a property's value.
+     * Lock for properties reading.  Intended for use around reads of a property's value.
      */
-    DllExport void PropertyReadLock() const;
-    /**
-     * Signal that reading of a property's value has completed.
-     * Must be called once for each call to PropertyReadLock().
-     */
-    DllExport void PropertyReadUnlock() const;
+    DllExport Mutex& PropertyReadLock() const;
     /**
      * Add a property (aka state variable) to the service
      * Passes ownership of aProperty

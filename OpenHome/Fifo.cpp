@@ -144,7 +144,9 @@ TUint FifoLiteBase::Write()
 
 TUint FifoLiteBase::Read()
 {
-    ASSERT(iSlotsUsed > 0);
+    if (iSlotsUsed == 0) {
+        THROW(FifoReadError);
+    }
     TUint index = iReadIndex++;
     if(iReadIndex == iSlots) {
         iReadIndex = 0;
