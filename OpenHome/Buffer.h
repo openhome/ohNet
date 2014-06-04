@@ -113,6 +113,15 @@ public:
     void Append(TInt16 aValue);
     void Append(TUint32 aValue);
     void Append(TInt32 aValue);
+    TBool TryAppend(TChar aChar);
+    TBool TryAppend(TByte aByte);
+    TBool TryAppend(const Brx& aB);
+    TBool TryAppend(const TChar* aStr);
+    TBool TryAppend(const TByte* aPtr, TUint aBytes);
+    TBool TryAppend(TUint16 aValue);
+    TBool TryAppend(TInt16 aValue);
+    TBool TryAppend(TUint32 aValue);
+    TBool TryAppend(TInt32 aValue);
     void AppendPrintf(const TChar* aFormatString, ...);
     void AppendPrintf(const TChar* aFormatString, va_list aArgs);
     const TChar* PtrZ() const;
@@ -122,7 +131,9 @@ public:
     inline TUint BytesRemaining() const;
     void SetBytes(TUint aBytes);
     inline TByte& operator[](TUint aByteIndex);
+    using Brx::operator[];
     TByte& At(TUint aByteIndex);
+    using Brx::At;
 protected:
     explicit Bwx(TUint aBytes, TUint aMaxBytes);
     TUint iMaxBytes;

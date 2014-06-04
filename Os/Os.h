@@ -10,26 +10,36 @@
 #define HEADER_OS_C
 
 #include <OpenHome/OsTypes.h>
+#include <OpenHome/OhNetDefines.h>
 
 /**
  * 'Null' handle implying no underlying OS object exists
  */
 #define kHandleNull  (0)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Big endian representation of a 16-bit integer for little endian builds and vice-versa
  */
-#define SwapEndian16(x) ((uint16_t)((((x)&0xFF00)>>8) | (((x)&0xFF)<<8)))
+static INLINE uint16_t SwapEndian16(uint16_t aValue)
+{
+    return ((aValue & 0xff00) >> 8)
+        |  ((aValue & 0x00ff) << 8);
+}
 
 /**
  * Big endian representation of a 32-bit integer for little endian builds and vice-versa
  */
-#define SwapEndian32(x) ((uint32_t)((((x)&0xFFul)<<24)    | (((x)&0xFF00ul)<<8)     | \
-                                    (((x)&0xFF0000ul)>>8) | (((x)&0xFF000000ul)>>24)))
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+static INLINE uint32_t SwapEndian32(uint32_t aValue)
+{
+    return ((aValue & 0xff000000) >> 24)
+        |  ((aValue & 0x00ff0000) >> 8 )
+        |  ((aValue & 0x0000ff00) << 8 )
+        |  ((aValue & 0x000000ff) << 24);
+}
 
 /**
  * Called when the UPnP library is initialised.

@@ -102,26 +102,26 @@ void Converter::ToBase64(IWriter& aWriter, const Brx& aValue)
 {
     TUint b = 0;
     TByte block[3];
-    
+
     for(TUint i = 0; i < aValue.Bytes(); ++i) {
-        
+
         block[b++] = aValue[i];
-        
+
         if (b >= 3) {
             TByte index0 = block[0] >> 2;
             TByte index1 = (block[0] & 0x03) << 4 | block[1] >> 4;
             TByte index2 = (block[1] & 0x0f) << 2 | block[2] >> 6;
             TByte index3 = (block[2] & 0x3f);
-            
+
             aWriter.Write(kBase64[index0]);
             aWriter.Write(kBase64[index1]);
             aWriter.Write(kBase64[index2]);
             aWriter.Write(kBase64[index3]);
-            
+
             b = 0;
         }
     }
-    
+
     if (b == 1) {
         TByte index0 = block[0] >> 2;
         TByte index1 = (block[0] & 0x03) << 4;
@@ -150,7 +150,7 @@ void Converter::FromBase64(Bwx& aValue)
     TByte block[4];
 
     for (TUint i = 0; i < bytes; i++) {
-        
+
         TByte d = kDecode64[aValue[i]];
         if (d > 64) {
             continue;
@@ -163,14 +163,14 @@ void Converter::FromBase64(Bwx& aValue)
             b = 0;
         }
     }
-    
+
     if (b > 1) {
         aValue[j++] = block[0] << 2 | block[1] >> 4;
     }
     if (b > 2) {
         aValue[j++] = block[1] << 4 | block[2] >> 2;
     }
-    
+
     aValue.SetBytes(j);
 }
 
@@ -304,7 +304,7 @@ TUint32 Converter::LeUint32At(const Brx& aBuf, TUint aIndex)
     for (TUint i=0; i<4; i++) {
         b[i] = aBuf[aIndex++];
     }
-    return (b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24));
+    return ((b[3] << 24) | (b[2] << 16) | (b[1] << 8) | b[0]);
 }
 
 TUint16 Converter::LeUint16At(const Brx& aBuf, TUint aIndex)
@@ -313,5 +313,5 @@ TUint16 Converter::LeUint16At(const Brx& aBuf, TUint aIndex)
     for (TUint i=0; i<2; i++) {
         b[i] = aBuf[aIndex++];
     }
-    return (TUint16)(b[0] | (b[1] << 8));
+    return (TUint16)((b[1] << 8) | b[0]);
 }

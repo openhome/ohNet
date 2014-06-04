@@ -726,9 +726,10 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
         handles[0] = event;
         handles[1] = handle->iEvent;
         ret = WSAWaitForMultipleEvents(2, &handles[0], FALSE, INFINITE, FALSE);
-        if (WAIT_OBJECT_0 != ret) {
+        if (SocketInterrupted(handle)) {
             break;
         }
+        (void)WSAResetEvent(event);
         received = recvfrom(handle->iSocket, (char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, &len);
     }
 
