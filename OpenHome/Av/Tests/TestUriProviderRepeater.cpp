@@ -30,6 +30,8 @@ private:
     void TestGetNextThenBegin();
     void TestCurrentTrackId();
     void TestNullTrack();
+    void TestPlayLaterAfterNotifyPlayed();
+    void TestPlayNoAfterNotifyFailed();
 private:
     static const TUint kTrackCount = 2;
     static const Brn kUri;
@@ -60,6 +62,8 @@ SuiteUriProviderRepeater::SuiteUriProviderRepeater()
     AddTest(MakeFunctor(*this, &SuiteUriProviderRepeater::TestGetNextThenBegin), "TestGetNextThenBegin");
     AddTest(MakeFunctor(*this, &SuiteUriProviderRepeater::TestCurrentTrackId), "TestCurrentTrackId");
     AddTest(MakeFunctor(*this, &SuiteUriProviderRepeater::TestNullTrack), "TestNullTrack");
+    AddTest(MakeFunctor(*this, &SuiteUriProviderRepeater::TestPlayLaterAfterNotifyPlayed), "TestPlayLaterAfterNotifyPlayed");
+    AddTest(MakeFunctor(*this, &SuiteUriProviderRepeater::TestPlayNoAfterNotifyFailed), "TestPlayNoAfterNotifyFailed");
 }
 
 void SuiteUriProviderRepeater::Setup()
@@ -198,6 +202,43 @@ void SuiteUriProviderRepeater::TestNullTrack()
     EStreamPlay play = iUriProvider->GetNext(trackOut);
     TEST(trackOut == NULL);
     TEST(play == ePlayNo);
+}
+
+void SuiteUriProviderRepeater::TestPlayLaterAfterNotifyPlayed()
+{
+    Track* trackOut = NULL;
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
+    iUriProvider->Begin(track->Id());
+    EStreamPlay play = iUriProvider->GetNext(trackOut);
+    TEST(trackOut != NULL);
+    TEST(play == ePlayYes);
+    trackOut->RemoveRef();
+
+    static_cast<ITrackObserver*>(iUriProviderRepeater)->NotifyTrackPlay(*track);
+    play = iUriProvider->GetNext(trackOut);
+    TEST(trackOut != NULL);
+    TEST(play == ePlayLater);
+    trackOut->RemoveRef();
+
+    track->RemoveRef();
+}
+
+void SuiteUriProviderRepeater::TestPlayNoAfterNotifyFailed()
+{
+    Track* trackOut = NULL;
+    Track* track = iUriProviderRepeater->SetTrack(kUri, kMetaData);
+    iUriProvider->Begin(track->Id());
+    EStreamPlay play = iUriProvider->GetNext(trackOut);
+    TEST(trackOut != NULL);
+    TEST(play == ePlayYes);
+    trackOut->RemoveRef();
+
+    static_cast<ITrackObserver*>(iUriProviderRepeater)->NotifyTrackFail(*track);
+    play = iUriProvider->GetNext(trackOut);
+    TEST(trackOut == NULL);
+    TEST(play == ePlayNo);
+
+    track->RemoveRef();
 }
 
 

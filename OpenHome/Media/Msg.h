@@ -33,6 +33,8 @@ public:
 protected:
     AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator);
     Allocated* DoAllocate();
+private:
+    Allocated* Read();
 private: // from Av::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 protected:

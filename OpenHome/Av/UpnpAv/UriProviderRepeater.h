@@ -5,11 +5,12 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Filler.h>
+#include <OpenHome/Media/TrackInspector.h>
 
 namespace OpenHome {
 namespace Av {
 
-class UriProviderRepeater : public Media::UriProvider
+class UriProviderRepeater : public Media::UriProvider, public Media::ITrackObserver
 {
 public:
     UriProviderRepeater(const TChar* aMode, Media::TrackFactory& aTrackFactory);
@@ -23,6 +24,9 @@ private: // from UriProvider
     TUint CurrentTrackId() const;
     TBool MoveNext();
     TBool MovePrevious();
+private: // from Media::ITrackObserver
+    void NotifyTrackPlay(Media::Track& aTrack);
+    void NotifyTrackFail(Media::Track& aTrack);
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
     TBool MoveCursor();
@@ -32,6 +36,7 @@ private:
     Media::Track* iTrack;
     TBool iRetrieved;
     TBool iPlayLater;
+    TBool iFailed;
 };
 
 } // namespace Media
