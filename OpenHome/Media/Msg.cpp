@@ -1258,11 +1258,13 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
 {
     AutoMutex a(iLock);
     ASSERT(iNextAudio == NULL);
+    const TUint remainingDuration = aRemainingDuration;
     Media::Ramp split;
     TUint splitPos;
     TUint rampEnd;
+    aRemainingDuration -= iSize;
     aSplit = NULL;
-    if (iRamp.Set(aStart, iSize, aRemainingDuration, aDirection, split, splitPos)) {
+    if (iRamp.Set(aStart, iSize, remainingDuration, aDirection, split, splitPos)) {
         if (splitPos == 0) {
             iRamp = split;
             rampEnd = iRamp.End();
@@ -1284,7 +1286,6 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     else {
         rampEnd = iRamp.End();
     }
-    aRemainingDuration -= iSize;
     return rampEnd;
 }
 
