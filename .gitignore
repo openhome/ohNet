@@ -41,6 +41,7 @@ Build/
 /hgout/
 /xout/
 /ohSongcast/Build/
+/OpenHome/Net/Bindings/python/PyOhNet/.GeneratedProxies
 
 # android ndk builds to source tree
 OpenHome/Net/Bindings/Android/obj/
