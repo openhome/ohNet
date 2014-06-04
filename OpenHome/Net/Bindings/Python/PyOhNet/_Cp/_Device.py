@@ -4,12 +4,13 @@ import PyOhNet
 import ctypes
 import os
 import re
+import stat
 import sys
-import tempfile
 import urllib2
 import urlparse
 import xml.etree.ElementTree as ET
 import _GenProxy as GenProxy
+import _GlobalLock as GlobalLock
 
 
 class Device():
@@ -72,18 +73,32 @@ class Device():
         #
         # TestBasic service   -> device.testBasic
         # AVTransport service -> device.aVTRansport
-        tempDir   = tempfile.gettempdir()
         attrName  = aService['name'][0].lower() + aService['name'][1:]
         proxyName = 'CpProxy%s%s%s' % \
             (aService['domain'], aService['name'][0].upper() + aService['name'][1:], aService['version'])
-            
-        if tempDir not in sys.path:
-            sys.path.append( tempDir )
+
+        # configure (and create if necessary) directory for generated proxies
+        head, tail = os.path.split( os.path.dirname( __file__ ))
+        proxyDir = os.path.join( head, '.GeneratedProxies' )
+        if not os.path.exists( proxyDir ):
+            os.mkdir( proxyDir )
+        if proxyDir not in sys.path:
+            sys.path.append( proxyDir )
+
+        # generate the proxy from the service XML
         serviceXml = urllib2.urlopen( aService['url'] ).read()
         proxy = GenProxy.GenProxy( aService['type'], serviceXml )
-        proxyPath = os.path.join( tempDir, proxyName+'.py' ) 
+
+        # write out and import the proxy (protected by system-wide mutex)
+        mutex = GlobalLock.GlobalLock( 'proxyWriteMutex' )
+        mutex.Acquire()
+        proxyPath = os.path.join( proxyDir, proxyName+'.py' )
         proxy.Write( proxyPath )
         exec( 'import %s as proxyModule' % proxyName )
+        os.chmod( proxyPath, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO )     # R/W by all (enables overwrite)
+        mutex.Release()
+
+        # add to list of available proxies
         setattr( self, attrName, eval( 'proxyModule.%s( self )' % proxyName ))
         self.proxies.append( attrName )
     
