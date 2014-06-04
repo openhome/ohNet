@@ -524,7 +524,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
             TUint intersectY = (((TUint64)y2-y1)*(y3-y1))/((y2-y1)-(y4-y3)) + y1;
             // calculation of intersectY may overflow a TUint.
             // intersectX will tell us we have no useful intersection in these cases and we'll ignore the Y value.
-            if (intersectX < 0 || (TUint)intersectX > aFragmentSize) {
+            if (intersectX <= 0 || (TUint)intersectX >= aFragmentSize) {
                 // ramp lines don't intersect inside this Msg
                 SelectLowerRampPoints(aStart, rampEnd);
             }
