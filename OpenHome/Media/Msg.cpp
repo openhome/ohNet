@@ -1286,6 +1286,12 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     else {
         rampEnd = iRamp.End();
     }
+
+    // It may be possible to terminate ramps down early if the msg had previously been ramped
+    if (aDirection == Ramp::EDown && rampEnd == Ramp::kRampMin) {
+        aRemainingDuration = 0;
+    }
+
     return rampEnd;
 }
 
