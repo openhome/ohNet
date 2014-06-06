@@ -226,6 +226,8 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
     def _PlayTimerCb( self ):
         """Callback from playtime timer - skips to next track"""
         self.mutex.acquire()
+        posn = self.mr.avt.avt.GetPositionInfo( InstanceID=0 )
+        self.reportedSecs = self._ToSecs( posn['RelTime'] )
         self.mr.avt.Stop()
         self.mutex.release()
 
@@ -289,8 +291,10 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             meas = int( self.stopTime-self.startTime )
             if self.playTime and self.playTime < self.mr.avt.currentTrackDuration:
                 exp = self.playTime
-            else:
+            elif self.mr.avt.currentTrackDuration > 0:
                 exp = self.mr.avt.currentTrackDuration
+            else:
+                exp = self.playTime
             self.log.CheckLimits( self.mrDev, 'GELE', meas, exp-1, exp+1,
                                   'Measured vs expected playback time  (%s)' % self.title )
             self.log.CheckLimits( self.mrDev, 'GELE', self.reportedSecs, exp-1, exp+1,
