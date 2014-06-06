@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#!/usr/bin/env python
 """Test PlaylistModes - test different playback mades (repeat/shuffle) combos
                        on playlists, checking playback order etc.
 Parameters:
@@ -48,6 +49,7 @@ class Config:
             self.log       = aLog
             self.playlist  = []
             self.dev       = aDev
+            self.startIdx  = 0
             self.listorder = None
 
             # create random playlist
@@ -80,13 +82,20 @@ class Config:
                 self._SetupPlaylist( aDut )
             
             aDut.playlist.AddSubscriber( _EventCb )
-            playingEvent.clear()
             if self.track != '-':
+                playingEvent.clear()
                 aDut.playlist.SeekIndex( self.track )
+                playingEvent.wait( 3 )
+                trackId = aDut.playlist.idArray[self.track]
             else:
+                playingEvent.clear()
                 aDut.playlist.Play()
-            playingEvent.wait( 5 )
+                playingEvent.wait( 3 )
+                trackId = aDut.playlist.id
+                self.startIdx = aDut.playlist.PlaylistIndex( trackId )
             aDut.playlist.RemoveSubscriber( _EventCb )
+            self.log.FailUnless( self.dev, aDut.playlist.id==trackId,
+                'Selected track %s (got ID %s)' % ( self.track,aDut.playlist.id) )
             self.listorder = aDut.playlist.idArray
             
         def _SetupPlaylist( self, aDut ):
@@ -102,11 +111,17 @@ class Config:
             aDut.playlist.AddSubscriber( _EventCb )
             idArrayEvt.clear()
             aDut.playlist.AddPlaylist( self.playlist )
-            self.log.Info( self.dev, 'Added playlist of %d tracks' % self.plLen )
             if self.plLen > 0:
-                idArrayEvt.wait( 5 )
+                idArrayEvt.wait( 3 )
+                measPlLen = len( aDut.playlist.idArray )
+                if self.plLen != measPlLen:     # allow for later evented playlist
+                    idArrayEvt.clear()
+                    idArrayEvt.wait( 3 )
+                    measPlLen = len( aDut.playlist.idArray )
             aDut.playlist.RemoveSubscriber( _EventCb )
-            
+            self.log.FailUnless( self.dev, self.plLen==measPlLen,
+                'Added %d tracks (requested %d)' % ( measPlLen, self.plLen) )
+
         def _SetupModes( self, aDut ):
             """Setup shuffle and repeat modes"""
             aDut.playlist.repeat = self.repeat
@@ -126,6 +141,7 @@ class Config:
             except:
                 subst = aArg
             return subst
+
 
     class Stimulus:
         """Configuration subclass for stimulus info and invokation"""
@@ -176,16 +192,20 @@ class Config:
             aDut.info.AddSubscriber( _InfoEventCb )
             if aDut.playlist.transportState == 'Playing':
                 playing.set()
+
             for i in range( self.precon.plLen+2 ):
                 orderEvt.clear()
                 eval( stim )
                 orderEvt.wait( 5 )
                 if aDut.playlist.polledTransportState == 'Stopped':
+                    self.precon.log.Pass( self.precon.dev, 'Playlist exhausted after <%s> action' % self.seek )
                     break
+                self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action' % self.seek )
+
             aDut.info.RemoveSubscriber( _InfoEventCb )
             aDut.playlist.RemoveSubscriber( _PlaylistEventCb )
 
-        
+
     class Outcome:
         """Configuration subclass for outcome checking"""
         
@@ -204,13 +224,12 @@ class Config:
             shuffle = self.precon.shuffle
             seek    = self.stim.seek
             meas    = []
-#            exp     = []
-            
+
             for tId in self.stim.playorder:
                 meas.append( aDut.playlist.PlaylistIndex( tId ))
 
             if track == '-':
-                start = 0       # started by Play() - use 0 as calculation index
+                start = self.precon.startIdx
             else:
                 start = track
                 
@@ -236,15 +255,16 @@ class Config:
                         elif entry >= plLen:
                             entry = entry-plLen
                         exp.append( entry )
-                self.log.Info( self.dev, 'Expected: %s' % exp )
-                self.log.FailUnless( self.dev, meas==exp, 'Playback order')
+                self.log.FailUnless( self.dev, meas==exp, 'Playback order meas/expected %s/%s' % (meas, exp) )
                 
             else:
                 # check playlist contains expected tracks (any order)
-                missing = range( 0, plLen )
+                if repeat=='off' and seek=='previous':
+                    missing = [start]
+                else:
+                    missing = range( 0, plLen )
                 invalid = []
                 extra   = []
-                
                 for entry in meas[:plLen]:
                     try:
                         missing.remove( entry )
@@ -342,10 +362,8 @@ class TestPlaylistModes( BASE.BaseTest ):
         numConfigs = len( testConfigs )
         for config in testConfigs:
             numConfig += 1
-            self.log.Info( '' )
-            self.log.Info( '', 'Testing config ID# %d (%d of %d)' % \
+            self.log.Header2( '', 'Testing config ID# %d (%d of %d)' % \
                            (config.id, numConfig, numConfigs) )
-            self.log.Info( '' )
             config.Setup()
             config.InvokeStimulus()
             config.CheckOutcome()
