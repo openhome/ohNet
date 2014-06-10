@@ -32,6 +32,8 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     parser.AddOption(&optionAdapter);
     OptionString optionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name");
     parser.AddOption(&optionTuneIn);
+    OptionBool optionLoopback("-l", "--loopback", "Use loopback adapter");
+    parser.AddOption(&optionLoopback);
 
     if (!parser.Parse(aArgc, aArgv)) {
         return 1;
@@ -39,7 +41,9 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
 
     InitialisationParams* initParams = InitialisationParams::Create();
     initParams->SetDvEnableBonjour();
-//    initParams->SetUseLoopbackNetworkAdapter();
+    if (optionLoopback.Value() == true) {
+        initParams->SetUseLoopbackNetworkAdapter();
+    }
 //    Debug::SetLevel(Debug::kSongcast);
     Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
