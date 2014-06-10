@@ -90,11 +90,15 @@ def Initialise( aInitParams=None ):
         defaultInitParams = lib.OhNetInitParamsCreate()
         err = lib.OhNetLibraryInitialise( defaultInitParams )
     else:
-        # create initParams temp object from passed in initParams
-        # init library using handle for temp initParams just created
-        # cleanup temp initParams
-        # see C# bindings - line 814 of file OhNet.cs onwards
         raise OhNetError( 'initParams functionality not implemented' )
+        #
+        # just modify the init params
+        # see ohNetC.cpp (eg. line 68 for loopback)
+        #
+        # initParams = lib.OhNetInitParamsCreate()
+        # if 'loopback' in aInitParams:
+        #   lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( initParams )
+        # err = lib.OhNetLibraryInitialise( initParams )
     if err:
         raise OhNetError( 'Failed to initialise Library')
 
