@@ -86,20 +86,14 @@ cpProxies    = []
 
 def Initialise( aInitParams=None ):
     """Initialise ohNet library - must be first call to module"""
-    if not aInitParams:
-        defaultInitParams = lib.OhNetInitParamsCreate()
-        err = lib.OhNetLibraryInitialise( defaultInitParams )
-    else:
-        raise OhNetError( 'initParams functionality not implemented' )
-        #
-        # just modify the init params
-        # see ohNetC.cpp (eg. line 68 for loopback)
-        #
-        # initParams = lib.OhNetInitParamsCreate()
-        # if 'loopback' in aInitParams:
-        #   lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( initParams )
-        # err = lib.OhNetLibraryInitialise( initParams )
-    if err:
+    # aInitParams is a dict, which can contain the following key/value pairs
+    #   - loopack:  True or False
+    params = lib.OhNetInitParamsCreate()
+    if aInitParams:
+        if aInitParams.has_key( 'loopback' ):
+            if aInitParams['loopback'] is not False:
+                lib.OhNetInitParamsSetUseLoopbackNetworkAdapter( params )
+    if lib.OhNetLibraryInitialise( params ):
         raise OhNetError( 'Failed to initialise Library')
 
 def SetDebugLevel( aDebugLevel=kDebugLevel['None'] ):
