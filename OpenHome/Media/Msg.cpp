@@ -630,35 +630,35 @@ void RampApplicator::GetNextSample(TByte* aDest)
     const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
     //Log::Print(" %08x ", ramp);
     const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
-    TInt subsample = 0;
-    switch (iBitDepth)
-    {
-    case 8:
-        subsample = *iPtr << 24;
-        iPtr++;
-        break;
-    case 16:
-        subsample = *iPtr << 24;
-        iPtr++;
-        subsample += *iPtr << 16;
-        iPtr++;
-        break;
-    case 24:
-        subsample = *iPtr << 24;
-        iPtr++;
-        subsample += *iPtr << 16;
-        iPtr++;
-        subsample += *iPtr << 8;
-        iPtr++;
-        break;
-    default:
-        ASSERTS();
-    }
-    //Log::Print(" %03u ", rampIndex);
-    TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
-    //Log::Print("Original=%08x, ramped=%08x, rampIndex=%u\n", subsample, rampedSubsample, rampIndex);
+    for (TUint i=0; i<iNumChannels; i++) {
+        TInt subsample = 0;
+        switch (iBitDepth)
+        {
+        case 8:
+            subsample = *iPtr << 24;
+            iPtr++;
+            break;
+        case 16:
+            subsample = *iPtr << 24;
+            iPtr++;
+            subsample += *iPtr << 16;
+            iPtr++;
+            break;
+        case 24:
+            subsample = *iPtr << 24;
+            iPtr++;
+            subsample += *iPtr << 16;
+            iPtr++;
+            subsample += *iPtr << 8;
+            iPtr++;
+            break;
+        default:
+            ASSERTS();
+        }
+        //Log::Print(" %03u ", rampIndex);
+        TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
+        //Log::Print("Original=%08x (%d), ramped=%08x (%d), rampIndex=%u\n", subsample, subsample, rampedSubsample, rampedSubsample, rampIndex);
 
-    for (TUint i=0; i<iNumChannels; i++) { // apply ramp to each subsample
         switch (iBitDepth)
         {
         case 8:
