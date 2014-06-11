@@ -17,17 +17,6 @@
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 
-#ifdef _WIN32
-#include <io.h>
-#define ISATTY(fd)  _isatty(fd)
-#define FILENO(str) _fileno(str)
-#else
-#include <unistd.h>
-#define ISATTY(fd)  isatty(fd)
-#define FILENO(str) fileno(str)
-#endif
-
-
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
@@ -151,16 +140,10 @@ void TestMediaPlayer::Run()
     Log::Print("\nFull (software) media player\n");
     Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
 
-    if (ISATTY(FILENO(stdin))) {
-        Log::Print("Press <q> followed by <enter> to quit:\n");
-        Log::Print("\n");
-        while (getchar() != 'q')    // getchar catches stdin, getch does not.....
-            ;
-    }
-    else {
-        Semaphore sem("WAIT", 0);
-        sem.Wait();
-    }
+    Log::Print("Press <q> followed by <enter> to quit:\n");
+    Log::Print("\n");
+    while (getchar() != 'q')    // getchar catches stdin, getch does not.....
+        ;
 
     //IPowerManager& powerManager = iMediaPlayer->PowerManager();
     //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
