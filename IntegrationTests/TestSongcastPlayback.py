@@ -2,9 +2,9 @@
 """SongcastPlayback - test Songcast functionality (Sender/Receiver/Zpus)
 
 Parameters:
-    arg#1 - DUT #1 ['local' for internal SoftPlayer]
-    arg#1 - DUT #2 ['local' for internal SoftPlayer]
-    arg#1 - DUT #3 ['local' for internal SoftPlayer]
+    arg#1 - DUT #1 ['local' for internal SoftPlayer on loopback]
+    arg#1 - DUT #2 ['local' for internal SoftPlayer on loopback]
+    arg#1 - DUT #3 ['local' for internal SoftPlayer on loopback]
     arg#4 - test mode 
               - all          for all configs sequentially
               - random       for all configs randomly
@@ -296,6 +296,7 @@ class TestSongcastPlayback( BASE.BaseTest ):
         dut3Name = None
         testMode = None
         seed     = None
+        loopback = False
 
         try:
             dut1Name   = aArgs[1]
@@ -306,7 +307,11 @@ class TestSongcastPlayback( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
-                
+
+        if dut1Name.lower()=='local' or dut2Name.lower()=='local' or dut3Name.lower()=='local':
+            if dut1Name.lower()!='local' or dut2Name.lower()!='local' or dut3Name.lower()!='local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+
         # seed the random number generator
         if not seed:
             seed = int( time.time() ) % 1000000
@@ -314,31 +319,26 @@ class TestSongcastPlayback( BASE.BaseTest ):
         random.seed( seed )
                 
         # create DUTs
-        self.log.Info( '' )
-        self.log.Info( '    ------ Creating DUT #1 (%s) ------' % dut1Name )
-        self.log.Info( '' )
+        self.log.Header2( '', '    ------ Creating DUT #1 (%s) ------' % dut1Name )
         if dut1Name.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1' )
+            loopback = True
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1', aLoopback=loopback )
             dut1Name = self.soft1.name
         self.dut1Dev = dut1Name.split( ':' )[0]
-        self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True )
+        self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True, aLoopback=loopback )
         if self.dut1.exakt is not None:
             import Utils.Audio.DigitalCrossover as DigitalCrossover
             DigitalCrossover.SetAllFlat( self.dut1 )
-        self.log.Info( '' )
-        self.log.Info( '    ------ Creating DUT #2 (%s) ------' % dut2Name )
-        self.log.Info( '' )
+        self.log.Header2( '', '    ------ Creating DUT #2 (%s) ------' % dut2Name )
         if dut2Name.lower() == 'local':
-            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2' )
+            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2', aLoopback=loopback )
             dut2Name = self.soft2.name
-        self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True )
-        self.log.Info( '' )
-        self.log.Info( '    ------ Creating DUT #3 (%s) ------' % dut3Name )
-        self.log.Info( '' )
+        self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True, aLoopback=loopback )
+        self.log.Header2( '', '    ------ Creating DUT #3 (%s) ------' % dut3Name )
         if dut3Name.lower() == 'local':
-            self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3' )
+            self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3', aLoopback=loopback )
             dut3Name = self.soft3.name
-        self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True )
+        self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
         duts = [self.dut1, self.dut2, self.dut3]
         
         self.log.Info( '' )

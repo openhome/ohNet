@@ -2,8 +2,8 @@
 """TestAvTransporttPlayTracks - test Playing of playlists of tracks using AVTransport.
 
 Parameters:
-    arg#1 - AVT Renderer/Sender (UPnP AV Name) ['local' for internal SoftPlayer]
-    arg#2 - Receiver ['local' for internal SoftPlayer] - optional (None = not present)
+    arg#1 - AVT Renderer/Sender (UPnP AV Name) ['local' for internal SoftPlayer on loopback]
+    arg#2 - Receiver ['local' for internal SoftPlayer on loopback] - optional (None = not present)
     arg#3 - Media server to source media from (None->test served audio)
     arg#4 - Playlist name (None->test served audio)
     arg#5 - Time to play before skipping to next (None = play all)
@@ -77,6 +77,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         rcvrName     = ''
         serverName   = ''
         playlistName = ''
+        loopback     = False
 
         try:
             mrName       = args[1]
@@ -91,8 +92,14 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
+        if rcvrName.lower() is not 'none':
+            if rcvrName.lower() == 'local' and mrName.lower() != 'local' or \
+               mrName.lower() == 'local' and rcvrName.lower() != 'local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+
         if mrName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            loopback = True
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
             mrName = self.soft1.name.split( ':' )[0] + ':UPnP AV'
             mpName = self.soft1.name
         else:
@@ -113,21 +120,21 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         self.numTracks = len( self.playlist )
 
         # create sender
-        self.sender = Volkano.VolkanoDevice( mpName, aIsDut=True )
+        self.sender = Volkano.VolkanoDevice( mpName, aIsDut=True, aLoopback=loopback )
         self.senderDev = mpName.split( ':' )[0]
 
         # create receiver and connect to renderer
         if rcvrName.lower() != 'none':
             if rcvrName.lower() == 'local':
-                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
                 rcvrName = self.soft2.name
             self.rcvrDev = rcvrName.split( ':' )[0]
-            self.rcvr = Volkano.VolkanoDevice( rcvrName, aIsDut=True )
+            self.rcvr = Volkano.VolkanoDevice( rcvrName, aIsDut=True, aLoopback=loopback )
             self.rcvr.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
             self.rcvr.receiver.Play()
 
         # create AVT renderer
-        self.mr = Renderer.MediaRendererDevice( mrName )
+        self.mr = Renderer.MediaRendererDevice( mrName, aLoopback=loopback )
         self.mrDev = mrName.split( ':' )[0]
         self.mr.avt.AddSubscriber( self._AvtEventCb )
         self.avtState = self.mr.avt.transportState

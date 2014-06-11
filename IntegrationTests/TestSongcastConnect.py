@@ -2,10 +2,10 @@
 """SongcastConnect - test connect/disconnect/following works correctly
 
 Parameters:
-    arg#1 - DUT #1 ['local' for internal SoftPlayer]
-    arg#2 - DUT #2 ['local' for internal SoftPlayer]
-    arg#3 - DUT #3 ['local' for internal SoftPlayer]
-    arg#4 - DUT #4 ['local' for internal SoftPlayer]
+    arg#1 - DUT #1 ['local' for internal SoftPlayer on loopback]
+    arg#2 - DUT #2 ['local' for internal SoftPlayer on loopback]
+    arg#3 - DUT #3 ['local' for internal SoftPlayer on loopback]
+    arg#4 - DUT #4 ['local' for internal SoftPlayer on loopback]
     arg#5 - test scenarios [1,2,3,4,5,all]
     arg#6 - disconnect method [stop,source,sender,standby,all]
     
@@ -139,6 +139,7 @@ class TestSongcastConnect( BASE.BaseTest ):
         dut4Name   = None
         scenario   = None
         disconnect = None
+        loopback   = False
 
         # parse command line arguments
         try:
@@ -162,7 +163,11 @@ class TestSongcastConnect( BASE.BaseTest ):
             disconnect = ['stop','source','sender','standby']
         else:
             disconnect = [disconnect]
-            
+
+        if dut1Name.lower()=='local' or dut2Name.lower()=='local' or dut3Name.lower()=='local' or dut4Name.lower()=='local':
+            if dut1Name.lower()!='local' or dut2Name.lower()!='local' or dut3Name.lower()!='local' or dut4Name.lower()!='local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()
@@ -174,25 +179,26 @@ class TestSongcastConnect( BASE.BaseTest ):
         
         # init duts
         if dut1Name.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1' )
+            loopback = True
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestDev1', aLoopback=loopback )
             dut1Name = self.soft1.name
         if dut2Name.lower() == 'local':
-            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2' )
+            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2', aLoopback=loopback )
             dut2Name = self.soft2.name
         if dut3Name.lower() == 'local':
-            self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3' )
+            self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestDev3', aLoopback=loopback )
             dut3Name = self.soft3.name
         if dut4Name.lower() == 'local':
-            self.soft4 = SoftPlayer.SoftPlayer( aRoom='TestDev4' )
+            self.soft4 = SoftPlayer.SoftPlayer( aRoom='TestDev4', aLoopback=loopback )
             dut4Name = self.soft4.name
         self.dut1Dev = dut1Name.split( ':' )[0]
         self.dut2Dev = dut2Name.split( ':' )[0]
         self.dut3Dev = dut3Name.split( ':' )[0]
         self.dut4Dev = dut4Name.split( ':' )[0]
-        self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True )
-        self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True )
-        self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True )
-        self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True )
+        self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True, aLoopback=loopback )
+        self.dut2 = Volkano.VolkanoDevice( dut2Name, aIsDut=True, aLoopback=loopback )
+        self.dut3 = Volkano.VolkanoDevice( dut3Name, aIsDut=True, aLoopback=loopback )
+        self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True, aLoopback=loopback )
         if self.dut1.volume is not None:
             self.dut1.volume.volume = 75
             
