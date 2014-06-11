@@ -2,7 +2,7 @@
 """TestAvTransportService - test AvTransport service
 
 Parameters:
-    arg#1 - MediaRenderer DUT ['local' for internal SoftPlayer]
+    arg#1 - MediaRenderer DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - before state to test from (use ALL for all states)
             
 This performs the state-transition tests on a DUT as controlled by the UPnP
@@ -163,6 +163,8 @@ class TestAvTransportService( BASE.BaseTest ):
         """AVTransport state-transition test"""
         # parse command line arguments
         stateToTest = 'ALL'
+        loopback    = False
+
         try:
             self.mrName = args[1]
             stateToTest = args[2].upper()
@@ -186,12 +188,13 @@ class TestAvTransportService( BASE.BaseTest ):
         
         # start local softplayer if required
         if self.mrName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr', aLoopback=loopback )
             self.mrName = self.soft.name.split( ':' )[0] + ':UPnP AV'
         
         # create UPnP CPs for renderer and server, and subscribe to AVT events
         self.mrDev = self.mrName.split( ':' )[0]
-        self.upnpMr = MR.MediaRendererDevice( self.mrName )
+        self.upnpMr = MR.MediaRendererDevice( self.mrName, aLoopback=loopback )
         self.avt = self.upnpMr.avt
         
         # check value of 'static' SVs (rechecked for unchanged hereafter)

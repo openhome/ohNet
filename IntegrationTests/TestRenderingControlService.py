@@ -2,7 +2,7 @@
 """TestRenderingControlService - test UPnP AV RenderingControl service
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
             
 Check UPnP AV RenderingControl (Volume) service
 """ 
@@ -35,7 +35,9 @@ class TestRenderingControlService( BASE.BaseTest ):
         self.rcEvent      = threading.Event()
         
     def Test( self, args ):
-        dutName = ''
+        dutName  = ''
+        loopback = False
+
         try:
             dutName    = args[1]
         except:
@@ -43,11 +45,12 @@ class TestRenderingControlService( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name.split( ':' )[0] + ':UPnP AV'
             
         self.mrDev = dutName.split( ':' )[0]
-        self.mr = MR.MediaRendererDevice( dutName )
+        self.mr = MR.MediaRendererDevice( dutName, aLoopback=loopback )
         self.rc = self.mr.rc        
         self.rc.AddSubscriber( self._RcEventCb )
         self.currVolume = self.rc.volume

@@ -2,8 +2,8 @@
 """TestSongcastDropout - test for dropout between Songcast receivers
 
 Parameters:
-    arg#1 - DUT sender ['local' for internal SoftPlayer]
-    arg#2 - List of DUT receivers ['local' for internal SoftPlayer] (comma seperated)
+    arg#1 - DUT sender ['local' for internal SoftPlayer on loopback]
+    arg#2 - List of DUT receivers ['local' for internal SoftPlayer on loopback] (comma seperated)
     arg#3 - Test duration (secs) or 'forever'
     
 This verifies Songcaster audio output by the DUT does not suffer from dropout. 
@@ -54,6 +54,7 @@ class TestSongcastDropout( BASE.BaseTest ):
         senderName = None
         rcvrNames  = None
         duration   = None
+        loopback   = False
 
         try:
             senderName = args[1]
@@ -62,24 +63,39 @@ class TestSongcastDropout( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
-            
+
+        useLocal = False
+        if senderName.lower() == 'local':
+            useLocal = True
+        for name in rcvrNames.split( ',' ):
+            if name.lower() == 'local':
+                useLocal = True
+
+        if useLocal:
+            if senderName.lower() != 'local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices (1)' )
+            for name in rcvrNames.split( ',' ):
+                if name.lower() != 'local':
+                    self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices (2)' )
+
         # create sender
         if senderName.lower() == 'local':
-            soft = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            loopback = True
+            soft = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
             self.softs.append( soft )
             senderName = soft.name
         self.senderDev = senderName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
+        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
 
         # create receivers
         for name in rcvrNames.split( ',' ):
             self.rxCount += 1
             if name.lower() == 'local':
-                soft = SoftPlayer.SoftPlayer( aRoom='TestRcvr%d' % self.rxCount )
+                soft = SoftPlayer.SoftPlayer( aRoom='TestRcvr%d' % self.rxCount, aLoopback=loopback )
                 self.softs.append( soft )
                 name = soft.name
-            self.rcvrs.append( Volkano.VolkanoDevice( name, aIsDut=True ))
+            self.rcvrs.append( Volkano.VolkanoDevice( name, aIsDut=True, aLoopback=loopback ))
             
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )

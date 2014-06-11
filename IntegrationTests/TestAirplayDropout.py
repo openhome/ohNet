@@ -2,7 +2,7 @@
 """TestAirplayDropout - test for audio dropout on Net Aux source using AirPlay
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - iTunes server to source media (PC name)
     arg#3 - iTunes track for playback
     arg#4 - Test duration (secs) or 'forever'
@@ -45,6 +45,7 @@ class TestAirplayDropout( BASE.BaseTest ):
         iTunesServer = ''
         track        = ''
         duration     = '0'
+        loopback     = False
 
         try:
             dutName      = args[1]
@@ -60,10 +61,11 @@ class TestAirplayDropout( BASE.BaseTest ):
             
         # setup DUT
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         if self.dut.volume is not None:
             self.dut.volume.volume = 65
                 

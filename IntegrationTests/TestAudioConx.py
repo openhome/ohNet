@@ -3,7 +3,7 @@
                audio server. Uses a 'test' server to force responses.
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - Tests to execute
                 - all         -> all tests
                 - get         -> standard (non-partial) get response
@@ -73,8 +73,9 @@ class TestAudioConx( BASE.BaseTest ):
 
     def Test( self, args ):
         """Audio Conection test"""
-        dutName = None
-        test    = None
+        dutName  = None
+        test     = None
+        loopback = False
 
         # parse command line arguments
         try:
@@ -99,10 +100,11 @@ class TestAudioConx( BASE.BaseTest ):
                         
         # create media renderer and subscribe to events
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.AddSubscriber( self._PlaylistEventCb )
         
         # start audio server and load playlist into DS

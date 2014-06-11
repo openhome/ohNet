@@ -27,6 +27,7 @@ class SoftPlayer( BASE.Component ):
                   aRoom         = None,     # defaults to 'SoftPlayer'
                   aModel        = None,     # defaults to 'SoftPlayer'
                   aTuneIn       = None,     # defaults to 'linnproducts'
+                  aLoopback     = False,    # defaults to False
                   aSenderChannel= None ):   # defaults to a random value
         """Start the SoftPlayer - all parameters are optional and will default
         as described above. These 'configuration' options cannot be changed on
@@ -60,8 +61,12 @@ class SoftPlayer( BASE.Component ):
         else:
             self.log.Abort( '', 'No SoftPlayer executable found' )
         self.log.Info( '', 'Using SoftPlayer executable at %s' % exePath )
-        
-        cmd  = [exePath, '-r', self.room, '-n', self.model, '-a', '%d' % self.__GetHost( )]
+
+        cmd  = [exePath, '-r', self.room, '-n', self.model]
+        if aLoopback:
+            cmd.extend( ['-l'] )
+        else:
+            cmd.extend( ['-a', '%d' % self.__GetHost( )] )
         if aTuneIn:
             cmd.extend( ['-t', aTuneIn] )
         if aSenderChannel:
