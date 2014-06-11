@@ -19,7 +19,7 @@ import sys
  
 ms         = None
 logDir     = None
-dacpServer = os.environ['COMPUTERNAME']
+dacpServer = 'PC718'
 avtList    = 'Playlists  ~Encodings-FreeCodecs'
 mpList     = 'Playlists  ~Mixed-FreeCodecs'
 apTrack    = 'Stereo1kHz-441-16-0dB-72m' 
@@ -39,38 +39,38 @@ tests = [
     # UPnP AV          
 #    [ 'TestAvTransportService',      'local', 'ALL'                                                             ],
 #    [ 'TestRenderingControlService', 'local'                                                                    ],
-   [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList,  8,    1,         'false'          ],
+    [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList,  8,    1,         'false'          ],
 
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',      12345                                                ],
     [ 'TestPlaylistModes',           'local', 'all',      54321                                                ],
     [ 'TestPlaylistPlayback',        'local', 'all',      12345                                                ],
-#    [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,   100                                         ],
+#   [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,   100                                         ],
     [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       mpList,   8,    'off',     'on',    'false' ],
-#    [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                          ],
+#    [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                                      ],
 
     # OH Radio Service
-#    [ 'TestRadioService',            'local', 'all'                                                 ],
-    [ 'TestRadioPlayChannels',       'local', 'local',    'ohmp2',  20,       'on', 1               ],
+    [ 'TestRadioService',            'local', 'all'                                                            ],
+    [ 'TestRadioPlayChannels',       'local', 'local',    'ohmp2',  20,       'on', 1                          ],
     
     # Airplay
-#    [ 'TestAirplayFunctions',        'local', dacpServer                                            ],
-#    [ 'TestAirplayDropout',          'local', dacpServer, apTrack,  '3600'                          ],
+    [ 'TestAirplayFunctions',        'local', dacpServer                                                        ],
+#    [ 'TestAirplayDropout',          'local', dacpServer, apTrack,  '3600'                                      ],
 
     # Songcast
-#    [ 'TestSongcastPlayback',        'local', 'local',    'local',  'all',   12345                  ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'stop'          ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'source'        ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'sender'        ],
-#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'standby'       ],
-#    [ 'TestSongcastDropout',         'local', 'local',    600,                                      ],
+#    [ 'TestSongcastPlayback',        'local', 'local',    'local',  'all',   12345                              ],
+#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'stop'                      ],
+#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'source'                    ],
+#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'sender'                    ],
+#    [ 'TestSongcastConnect',         'local', 'local',    'local',  'local', 'all', 'standby'                   ],
+#    [ 'TestSongcastDropout',         'local', 'local',    600,                                                  ],
 
     # Volume
-#    [ 'TestVolumeControl',           'local'                                                        ],
+#    [ 'TestVolumeControl',           'local'                                                                    ],
     
     # Misc
-#    [ 'TestAudioConx',               'local', 'all'                                                 ],
-#    [ 'TestStandbyCycleSoak',        'local',  100                                                  ]
+#    [ 'TestAudioConx',               'local', 'all'                                                             ],
+#    [ 'TestStandbyCycleSoak',        'local',  100                                                              ]
     
     # N/A to SoftPlayer(s)
     #    - AutoPlay

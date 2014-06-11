@@ -61,7 +61,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         if self.dutName.lower() == 'local':
-            loopback = Treu
+            loopback = True
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             self.dutName = self.soft.name
             time.sleep( 5 )     # allow time for iTunes to discover device
