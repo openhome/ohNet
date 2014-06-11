@@ -2,9 +2,9 @@
 """TestPlaylistDropout - test for audio dropout in playlists
 
 Parameters:
-    arg#1 - Sender ['local' for internal SoftPlayer]
-    arg#2 - Receiver/Repeater ['local' for internal SoftPlayer] - optional (None = not present)
-    arg#3 - Receiver/Slave ['local' for internal SoftPlayer] - optional (None = not present)
+    arg#1 - Sender ['local' for internal SoftPlayer on loopback]
+    arg#2 - Receiver/Repeater ['local' for internal SoftPlayer on loopback] - optional (None = not present)
+    arg#3 - Receiver/Slave ['local' for internal SoftPlayer on loopback] - optional (None = not present)
     arg#4 - Test duration (secs) or 'forever'
     
 This verifies playlist audio output by the DUT does not suffer from audio dropout.
@@ -64,6 +64,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         receiverName = ''
         slaveName    = ''
         duration     = 0
+        loopback     = False
 
         # parse command line arguments
         try:
@@ -74,7 +75,18 @@ class TestPlaylistDropout( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
-            
+
+        if senderName.lower() == 'local':
+            loopback = True
+            if receiverName.lower() not in ['local','none'] or slaveName.lower() not in ['local','none']:
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+        if receiverName.lower() == 'local':
+            if senderName.lower() != 'local' or slaveName.lower() not in ['local','none']:
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+        if slaveName.lower() == 'local':
+            if senderName.lower() != 'local' or receiverName.lower() != 'local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+
         if receiverName.lower() == 'none':
            receiverName = None
             
@@ -83,7 +95,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
             
         if duration != 'forever':
             duration = int( duration )
-            
+
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
@@ -91,10 +103,10 @@ class TestPlaylistDropout( BASE.BaseTest ):
 
         # create and configure sender
         if senderName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
             senderName = self.soft1.name
         self.senderDev = senderName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
+        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
                 
         # load sender's playlist and start playback
@@ -110,10 +122,10 @@ class TestPlaylistDropout( BASE.BaseTest ):
         # create and connect receiver (if specified)
         if receiverName:
             if receiverName.lower() == 'local':
-                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+                self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
                 receiverName = self.soft2.name
             self.rcvrDev = receiverName.split( ':' )[0]
-            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
+            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True, aLoopback=loopback )
             self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
             self.receiverUri.wait( 5 )
@@ -126,10 +138,10 @@ class TestPlaylistDropout( BASE.BaseTest ):
         # create and connect slave (if specified)
         if slaveName:
             if slaveName.lower() == 'local':
-                self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestSlave' )
+                self.soft3 = SoftPlayer.SoftPlayer( aRoom='TestSlave', aLoopback=loopback )
                 slaveName = self.soft3.name
             self.slaveDev = slaveName.split( ':' )[0]
-            self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True )
+            self.slave = Volkano.VolkanoDevice( slaveName, aIsDut=True, aLoopback=loopback )
             self.slave.receiver.AddSubscriber( self._SlaveReceiverCb )
             self.slave.receiver.SetSender( self.receiver.sender.uri, self.receiver.sender.metadata )
             self.slaveUri.wait( 5 )

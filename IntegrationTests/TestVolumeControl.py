@@ -1,7 +1,7 @@
 """TestVolumeControl - test volume control functionality
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
 
 Check operations of Volume control functions
 """
@@ -30,7 +30,9 @@ class TestVolumeControl( BASE.BaseTest ):
         
     def Test( self, args ):
         """Tests for volume functionality"""
-        dutName = ''
+        dutName  = ''
+        loopback = False
+
         try:
             dutName   = args[1]
         except:
@@ -39,10 +41,11 @@ class TestVolumeControl( BASE.BaseTest ):
             
         # Create and initialise DUT
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.volume.AddSubscriber( self._VolEventCb )
 
         # Execute the actual tests

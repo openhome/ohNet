@@ -2,7 +2,7 @@
 """TestPlaylistAddDel - test Add/Del of playlist.
 
 Parameters:
-    arg#1 - UPnP DUT ['local' for internal SoftPlayer]
+    arg#1 - UPnP DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - UPnP media server to source media from
     arg#3 - Playlist name
     arg#4 - Loops of add/del
@@ -37,6 +37,7 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         serverName   = None
         playlistName = None
         loops        = 0
+        loopback     = False
 
         try:
             dutName      = args[1]
@@ -57,11 +58,12 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         
         # start local softplayer(s) as required
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         
         # create renderer add subscribe to events
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.AddSubscriber( self._PlaylistEventCb )
         self.dut.info.AddSubscriber( self._InfoEventCb )
 

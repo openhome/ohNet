@@ -2,7 +2,7 @@
 """TestAirplayFunctions - test Net Aux source functionality.
  
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - iTunes server (PC name)
     
 NOTES
@@ -50,6 +50,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
     def Test( self, args ):
         """Net Aux test"""
         itunesServer = None
+        loopback     = False
 
         # parse command line arguments
         try:
@@ -60,7 +61,8 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         if self.dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = Treu
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             self.dutName = self.soft.name
             time.sleep( 5 )     # allow time for iTunes to discover device
 
@@ -74,7 +76,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
                     
         # setup DUT
         self.dutDev = self.dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( self.dutName, aIsDut=False )
+        self.dut = Volkano.VolkanoDevice( self.dutName, aIsDut=False, aLoopback=loopback )
         self.dut.product.AddSubscriber( self.__ProductEvtCb )
                         
         # get list of available tracks from iTunes

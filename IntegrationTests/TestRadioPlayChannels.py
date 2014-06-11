@@ -2,8 +2,8 @@
 """TestRadioPlayChannels - test playback of Radio (using Radio service)
 
 Parameters:
-    arg#1 - DUT Sender ['local' for internal SoftPlayer]
-    arg#2 - DUT Receiver ['local' for internal SoftPlayer] - optional (None = not present)
+    arg#1 - DUT Sender ['local' for internal SoftPlayer on loopback]
+    arg#2 - DUT Receiver ['local' for internal SoftPlayer on loopback] - optional (None = not present)
     arg#3 - Radiotime username
     arg#4 - Time to play before skipping to next channel (None = indefinite)
     arg#5 - Shuffle mode [on/off] (optional - default off)
@@ -66,6 +66,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         playTime     = None
         loops        = 1
         shuffle      = False
+        loopback     = False
 
         try:
             senderName   = aArgs[1]
@@ -82,10 +83,17 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
-        # configure sender and receiver
-        self._SetupSender( senderName, tuneInUser )
         if receiverName.lower() != 'none':
-            self._SetupReceiver( receiverName )
+            if receiverName.lower() == 'local' and senderName.lower() != 'local' or \
+               senderName.lower() == 'local' and receiverName.lower() != 'local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+        if senderName.lower() == 'local':
+            loopback = True
+
+        # configure sender and receiver
+        self._SetupSender( senderName, tuneInUser, loopback )
+        if receiverName.lower() != 'none':
+            self._SetupReceiver( receiverName, loopback )
 
         # repeat test for requested number of loops
         for loop in range( loops ):
@@ -173,13 +181,13 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             self.soft1.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
-    def _SetupSender( self, aName, aTuneInUser ):
+    def _SetupSender( self, aName, aTuneInUser, aLoopback ):
         """Create sender, select radio, setup TuneIn account, subscribe to events"""
         if aName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneIn=aTuneInUser )
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneIn=aTuneInUser, aLoopback=aLoopback )
             aName = self.soft1.name
         self.senderDev = aName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( aName, aIsDut=True )
+        self.sender = Volkano.VolkanoDevice( aName, aIsDut=True, aLoopback=aLoopback )
         self.sender.product.sourceIndexByName = 'Radio'
         
         self.idArrayUpdated.clear()
@@ -188,13 +196,13 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         self.idArrayUpdated.wait( 5 )
         self.channels = self.sender.radio.ChannelsInfo( self.sender.radio.idArray )
 
-    def _SetupReceiver( self, aName ):
+    def _SetupReceiver( self, aName, aLoopback ):
         """Create receiver, set as songcast receiver on the sender, subscribe to events"""
         if aName.lower() == 'local':
-            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+            self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=aLoopback )
             aName = self.soft2.name
         self.rcvrDev = aName.split( ':' )[0]
-        self.receiver = Volkano.VolkanoDevice( aName, aIsDut=True )
+        self.receiver = Volkano.VolkanoDevice( aName, aIsDut=True, aLoopback=aLoopback )
         self.receiver.receiver.AddSubscriber( self._ReceiverEventCb )
         time.sleep( 3 )
         self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )

@@ -2,7 +2,7 @@
 """TestPlaylistPlayback - test Playlist service state/transition basic operation
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - test mode 
               - all             for all configs sequentially
               - <num>           for config number <num> 
@@ -467,9 +467,10 @@ class TestPlaylistPlayback( BASE.BaseTest ):
                 
     def Test( self, aArgs ):
         """DS Service state/transition test"""
-        dutName = ''
-        mode    = ''
-        seed    = 0
+        dutName  = ''
+        mode     = ''
+        seed     = 0
+        loopback = None
 
         # parse command line arguments
         try:
@@ -488,10 +489,11 @@ class TestPlaylistPlayback( BASE.BaseTest ):
                 
         # create renderer CP and subscribe for DS events
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.shuffle = False
         
         # start audio 
