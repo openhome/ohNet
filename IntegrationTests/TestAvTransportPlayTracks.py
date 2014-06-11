@@ -8,6 +8,7 @@ Parameters:
     arg#4 - Playlist name (None->test served audio)
     arg#5 - Time to play before skipping to next (None = play all)
     arg#6 - Test loops (optional - default 1)
+    arg#7 - Set False to prevent use of loopback adapter for local SoftPlayers (optional - default True)
 
 Test test which plays tracks from an M3U playlist sequentially under AVTransport
 control (test is acting like an AVT control point). The tracks may be played for
@@ -78,6 +79,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
         serverName   = ''
         playlistName = ''
         loopback     = False
+        useLoopback  = 'True'
 
         try:
             mrName       = args[1]
@@ -88,6 +90,9 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                 self.playTime = int( args[5] )
             if len( args ) > 6:
                 self.testLoops = int( args[6] )
+            if len( args ) > 7:
+                if args[7].lower() == 'false':
+                    useLoopback = False
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -97,8 +102,12 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
                mrName.lower() == 'local' and rcvrName.lower() != 'local':
                 self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
 
+        if useLoopback and serverName.lower() != 'none':
+            self.log.Abort( '', 'Cannot use external Media Server with local loopback' )
+
         if mrName.lower() == 'local':
-            loopback = True
+            if useLoopback:
+                loopback = True
             self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
             mrName = self.soft1.name.split( ':' )[0] + ':UPnP AV'
             mpName = self.soft1.name

@@ -37,16 +37,16 @@ except:
     
 tests = [
     # UPnP AV          
-#    [ 'TestAvTransportService',      'local', 'ALL'                                                 ],
-#    [ 'TestRenderingControlService', 'local'                                                        ],
-    [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList,  8,    1               ],
+#    [ 'TestAvTransportService',      'local', 'ALL'                                                             ],
+#    [ 'TestRenderingControlService', 'local'                                                                    ],
+   [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList,  8,    1,         'false'          ],
 
     # OH Playlist Service
-    [ 'TestPlaylistHandling',        'local', 'all',      12345                                     ],
-    [ 'TestPlaylistModes',           'local', 'all',      54321                                     ],
-#    [ 'TestPlaylistPlayback',        'local', 'all',      12345                                     ],
-#    [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,   100                             ],
-    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       mpList,   8,    'off',     'on' ],
+    [ 'TestPlaylistHandling',        'local', 'all',      12345                                                ],
+    [ 'TestPlaylistModes',           'local', 'all',      54321                                                ],
+    [ 'TestPlaylistPlayback',        'local', 'all',      12345                                                ],
+#    [ 'TestPlaylistAddDelSoak',      'local', ms,         adList,   100                                         ],
+    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       mpList,   8,    'off',     'on',    'false' ],
 #    [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                          ],
 
     # OH Radio Service
