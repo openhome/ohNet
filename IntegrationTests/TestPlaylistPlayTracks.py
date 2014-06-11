@@ -2,14 +2,15 @@
 """TestPlaylistPlayTracks - test Playing of playlists of tracks.
 
 Parameters:
-    arg#1 - Sender DUT ['local' for internal SoftPlayer]
-    arg#2 - Receiver DUT ['local' for internal SoftPlayer] (None->not present)
+    arg#1 - Sender DUT ['local' for internal SoftPlayer on loopback]
+    arg#2 - Receiver DUT ['local' for internal SoftPlayer on loopback] (None->not present)
     arg#3 - Media server to source media from (None->test served audio)
     arg#4 - Playlist name (None->test served audio)
     arg#5 - Time to play before skipping to next (None = play all)
     arg#6 - Repeat mode [on/off] (optional - default off)
     arg#7 - Shuffle mode [on/off] - (optional - default off)
-            
+    arg#7 - Set False to prevent use of loopback adapter for local SoftPlayers (optional - default True)
+
 Test test which plays tracks from a playlist sequentially. The tracks may be
 played for their entirety or any specified length of time. Repeat and shuffle
 modes may be selected
@@ -77,6 +78,8 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         receiverName = ''
         serverName   = ''
         playlistName = ''
+        loopback     = False
+        useLoopback  = 'True'
 
         try:
             senderName   = args[1]
@@ -89,15 +92,28 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.repeat = args[6]
             if len( args ) > 7:
                 self.shuffle = args[7]
+            if len( args ) > 8:
+                if args[8].lower() == 'false':
+                    useLoopback = False
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
             
         if receiverName.lower() == 'none':
-           receiverName = None 
+            receiverName = None
             
         if serverName.lower() == 'none':
-           serverName = None
+            serverName = None
+        else:
+            if useLoopback:
+                self.log.Abort( '', 'Cannot use external Media Server with local loopback' )
+
+        if receiverName is not None:
+            if receiverName.lower() == 'local' and senderName.lower() != 'local' or \
+               senderName.lower() == 'local' and receiverName.lower() != 'local':
+                self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
+        if senderName.lower() == 'local' and useLoopback:
+            loopback = True
 
         if self.repeat.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid repeat mode %s' % self.repeat )
@@ -120,22 +136,22 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
 
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
-            self.softSender = SoftPlayer.SoftPlayer( aRoom='TestSender' )
+            self.softSender = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
             senderName = self.softSender.name
         if receiverName is not None and receiverName.lower() == 'local':
-            self.softRcvr = SoftPlayer.SoftPlayer( aRoom='TestRcvr' )
+            self.softRcvr = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
             receiverName = self.softRcvr.name
 
         # create Sender device an put on random source (catch Volkano #2968, Network #894, #1807)
         self.senderDev = senderName.split( ':' )[0]
-        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True )
+        self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.product.sourceIndex = random.randint( 1, self.sender.product.sourceCount-1 )
         time.sleep( 3 )
         
         # create Receiver Device, put onto random source and connect to sender
         if receiverName:
             self.rcvrDev = receiverName.split( ':' )[0]
-            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True )
+            self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True, aLoopback=loopback )
             self.receiver.product.sourceIndex = random.randint( 0, self.receiver.product.sourceCount-1 )
             time.sleep( 3 )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )

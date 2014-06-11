@@ -3,7 +3,7 @@
    as expected
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - Number of test loops
     
 """
@@ -35,8 +35,9 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
 
     def Test( self, args ):
         """Repeated reboots test"""
-        dutName = ''
-        loops   = 1
+        dutName  = ''
+        loops    = 1
+        loopback = False
 
         try:
             dutName = args[1]
@@ -46,10 +47,11 @@ class TestStandbyCycleSoak( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         if dutName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
             dutName = self.soft.name
             
-        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True )
+        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         for loop in range( loops ):
             self.log.Info( '' )
             self.log.Info( '', 'Loop %d of %d' % (loop+1, loops) )

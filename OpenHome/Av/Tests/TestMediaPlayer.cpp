@@ -17,9 +17,6 @@
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 
-int mygetch();
-
-
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
@@ -142,11 +139,12 @@ void TestMediaPlayer::Run()
 
     Log::Print("\nFull (software) media player\n");
     Log::Print("Intended to be controlled via a separate, standard CP (Kinsky etc.)\n");
+
     Log::Print("Press <q> followed by <enter> to quit:\n");
     Log::Print("\n");
-    // while (mygetch() != 'q')
     while (getchar() != 'q')    // getchar catches stdin, getch does not.....
         ;
+
     //IPowerManager& powerManager = iMediaPlayer->PowerManager();
     //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
     iConfigRamStore->Print();

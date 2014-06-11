@@ -2,7 +2,7 @@
 """TestRadioService - test Radio service operations
 
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer]
+    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
     arg#2 - test mode 
               - all       execute all tests
               - fixed     check reporting of fixed data
@@ -108,6 +108,7 @@ class TestRadioService( BASE.BaseTest ):
         """Test functionality of Radio service"""
         radioName = ''
         mode      = ''
+        loopback  = False
 
         try:
             radioName = aArgs[1]
@@ -120,12 +121,13 @@ class TestRadioService( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid test mode:- %s' % mode )
 
         if radioName.lower() == 'local':
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=kTuneInUser )
+            loopback = True
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=kTuneInUser, aLoopback=loopback )
             radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True ) 
+        self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True, aLoopback=loopback )
         time.sleep( 3 )
-        
+
         if mode in ['all','fixed']:
             self.TestFixedParams()
         if mode in ['all','presets']:
