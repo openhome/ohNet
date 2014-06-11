@@ -184,9 +184,9 @@ TBool CodecAdts::Recognise()
     // attempt Adts recognition
     for(TUint i = 0; i < iRecogBuf.Bytes(); i++) {
         iAdts.SetStartOffset(i);                // save potential start position for first frame
-        
+
         Adts adts;
-        TUint matched = 0;        
+        TUint matched = 0;
         TUint j = i;
         TUint payloadBytes = 0;
         while((j+9) < iRecogBuf.Bytes()) {           // ensure there are enough bytes for the maximum header size
