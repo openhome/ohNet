@@ -113,6 +113,9 @@ private:
     void DoInterrupt();
 private:
     static const TUint kMaxReadBufferBytes = 1500;
+    // FIXME - start latency can be retrieved from rtptime field of RTSP RECORD
+    // packet (although it is always 2 seconds for Airplay streams)
+    static const TUint kDelayJiffies = Jiffies::kPerSecond*2; // expect 2s of buffering
 
     Av::IRaopDiscovery& iDiscovery;
     UdpServerManager& iServerManager;

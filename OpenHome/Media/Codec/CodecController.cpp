@@ -482,11 +482,12 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 {
-    if (iRecognising) {
+    if (iRecognising) { // FIXME - why discard during recognition?
         aMsg->RemoveRef();
         return NULL;
     }
-    return aMsg;
+    Queue(aMsg);
+    return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)

@@ -88,6 +88,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     TUint16 expected = 0;
     iSem.Clear();
 
+    // Output the delay before MsgEncodedStream - otherwise, the MsgDelay may
+    // be pulled while the CodecController is attempting to Read(), causing a
+    // CodecStreamEnded.
+    //
+    // FIXME - what about when a stream is paused and resumed, or skipped (as a
+    // new MsgTrack is not currently sent out, so the new MsgDelay appears in
+    // the middle of a stream, causing the condition above.)
+    iSupply->OutputDelay(kDelayJiffies);
+
     StartStream();
 
     // Output audio stream
