@@ -743,8 +743,13 @@ void SuiteMsgAudio::Test()
     clone = msg->Clone();
     jiffies = clone->Jiffies();
     TEST(jiffies == msg->Jiffies());
+
+    // MsgSilence needs to take a pointer to its iAllocatorPlayable when cloning.
+    // As we don't have access to iAllocatorPlayable, try calling CreatePlayable(),
+    // which should fail if iAllocatorPlayable hasn't been assigned.
+    MsgPlayable* playable = static_cast<MsgSilence*>(clone)->CreatePlayable(44100, 16, 2); // removes ref from clone
     msg->RemoveRef();
-    clone->RemoveRef();
+    playable->RemoveRef();
 
     // clean destruction of class implies no leaked msgs
 }

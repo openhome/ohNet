@@ -1437,6 +1437,13 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
     return playable;
 }
 
+MsgAudio* MsgSilence::Clone()
+{
+    MsgAudio* clone = MsgAudio::Clone();
+    static_cast<MsgSilence*>(clone)->iAllocatorPlayable = iAllocatorPlayable;
+    return clone;
+}
+
 MsgAudio* MsgSilence::Allocate()
 {
     return static_cast<Allocator<MsgSilence>&>(iAllocator).Allocate();

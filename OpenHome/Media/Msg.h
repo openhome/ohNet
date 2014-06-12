@@ -559,6 +559,8 @@ class MsgSilence : public MsgAudio
 public:
     MsgSilence(AllocatorBase& aAllocator);
     MsgPlayable* CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUint aNumChannels); // removes ref
+public: // from MsgAudio
+    MsgAudio* Clone();
 private:
     void Initialise(TUint aJiffies, Allocator<MsgPlayableSilence>& aAllocatorPlayable);
 private: // from MsgAudio
