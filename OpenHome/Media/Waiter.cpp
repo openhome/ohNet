@@ -32,7 +32,15 @@ void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 
     if (iState == ERampingUp) {
         iState = ERampingDown;
-        iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        if (iRampDuration == iRemainingRampSize) {
+            // Already reached end of (previous) ramp down (and now ready to
+            // start ramp up); go straight to flushing state.
+            iState = EFlushing;
+            DoWait();
+        }
+        else {
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        }
         // leave iCurrentRampValue unchanged
     }
     else if (!aRampDown || iState == EFlushing) {
