@@ -72,6 +72,14 @@ Msg* Logger::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* Logger::ProcessMsg(MsgSession* aMsg)
+{
+    if (IsEnabled(EMsgSession)) {
+        Log::Print("Pipeline (%s): session\n", iId);
+    }
+    return aMsg;
+}
+
 Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 {
     if (IsEnabled(EMsgTrack)) {

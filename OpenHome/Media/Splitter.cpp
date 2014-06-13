@@ -41,6 +41,12 @@ Msg* Splitter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* Splitter::ProcessMsg(MsgSession* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
 Msg* Splitter::ProcessMsg(MsgTrack* aMsg)
 {
     aMsg->AddRef();

@@ -145,6 +145,11 @@ Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* VariableDelay::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     iInStream = false;

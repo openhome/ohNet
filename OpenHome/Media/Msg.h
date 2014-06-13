@@ -295,6 +295,14 @@ private:
     IClockPuller* iClockPuller;
 };
 
+class MsgSession : public Msg
+{
+public:
+    MsgSession(AllocatorBase& aAllocator);
+private: // from Msg
+    Msg* Process(IMsgProcessor& aProcessor);
+};
+
 class MsgTrack : public Msg
 {
     friend class MsgFactory;
@@ -646,6 +654,7 @@ class IMsgProcessor
 public:
     virtual ~IMsgProcessor() {}
     virtual Msg* ProcessMsg(MsgMode* aMsg) = 0;
+    virtual Msg* ProcessMsg(MsgSession* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgTrack* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgDelay* aMsg) = 0;
     virtual Msg* ProcessMsg(MsgEncodedStream* aMsg) = 0;
@@ -744,6 +753,7 @@ private:
     void Remove(TUint& aValue, TUint aRemoved);
 private:
     virtual void ProcessMsgIn(MsgMode* aMsg);
+    virtual void ProcessMsgIn(MsgSession* aMsg);
     virtual void ProcessMsgIn(MsgTrack* aMsg);
     virtual void ProcessMsgIn(MsgDelay* aMsg);
     virtual void ProcessMsgIn(MsgEncodedStream* aMsg);
@@ -757,6 +767,7 @@ private:
     virtual void ProcessMsgIn(MsgSilence* aMsg);
     virtual void ProcessMsgIn(MsgQuit* aMsg);
     virtual Msg* ProcessMsgOut(MsgMode* aMsg);
+    virtual Msg* ProcessMsgOut(MsgSession* aMsg);
     virtual Msg* ProcessMsgOut(MsgTrack* aMsg);
     virtual Msg* ProcessMsgOut(MsgDelay* aMsg);
     virtual Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
@@ -776,6 +787,7 @@ private:
         ProcessorQueueIn(MsgReservoir& aQueue);
     private:
         Msg* ProcessMsg(MsgMode* aMsg);
+        Msg* ProcessMsg(MsgSession* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgDelay* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -798,6 +810,7 @@ private:
         ProcessorQueueOut(MsgReservoir& aQueue);
     private:
         Msg* ProcessMsg(MsgMode* aMsg);
+        Msg* ProcessMsg(MsgSession* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgDelay* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -964,9 +977,10 @@ public:
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
                TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
                TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
-               TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
+               TUint aMsgModeCount, TUint aMsgSessionCount, TUint aMsgDelayCount, TUint aMsgQuitCount);
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
+    MsgSession* CreateMsgSession();
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
@@ -999,6 +1013,7 @@ private:
     Allocator<MsgFlush> iAllocatorMsgFlush;
     Allocator<MsgWait> iAllocatorMsgWait;
     Allocator<MsgMode> iAllocatorMsgMode;
+    Allocator<MsgSession> iAllocatorMsgSession;
     Allocator<MsgDelay> iAllocatorMsgDelay;
     Allocator<MsgQuit> iAllocatorMsgQuit;
     TUint iNextFlushId;

@@ -47,6 +47,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountFlush           = 16;
     static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountMode            = 20;
+    static const TUint kMsgCountSession         = 20;
     static const TUint kMsgCountDelay           = 20;
     static const TUint kMsgCountQuit            = 1;
 

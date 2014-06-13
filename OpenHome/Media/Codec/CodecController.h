@@ -100,6 +100,7 @@ private: // ICodecController
     void OutputHalt();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);

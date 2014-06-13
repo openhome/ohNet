@@ -33,6 +33,7 @@ public:
        ,EMsgWait          = 1<<12
        ,EMsgMode          = 1<<13
        ,EMsgDelay         = 1<<14
+       ,EMsgSession       = 1<<15
        ,EMsgAll           = 0x7fffffff
     };
 public:
@@ -47,6 +48,7 @@ public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);

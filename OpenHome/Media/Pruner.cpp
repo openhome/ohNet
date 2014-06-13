@@ -56,6 +56,12 @@ Msg* Pruner::ProcessMsg(MsgMode* aMsg)
     return NULL;
 }
 
+Msg* Pruner::ProcessMsg(MsgSession* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
 {
     if (iWaitingForAudio) {

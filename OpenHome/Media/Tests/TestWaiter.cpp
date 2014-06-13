@@ -40,6 +40,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -58,6 +59,7 @@ private:
     {
         ENone
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -141,7 +143,7 @@ SuiteWaiter::SuiteWaiter()
 void SuiteWaiter::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iWaiter = new Waiter(*iMsgFactory, *this, *this, kRampDuration);
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
@@ -214,6 +216,12 @@ void SuiteWaiter::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint
 Msg* SuiteWaiter::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteWaiter::ProcessMsg(MsgSession* aMsg)
+{
+    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -487,6 +495,8 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, NULL));
     PullNext(EMsgMode);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
+    PullNext(EMsgSession);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));

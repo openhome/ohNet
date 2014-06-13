@@ -110,6 +110,12 @@ Msg* DriverBasic::ProcessMsg(MsgMode* /*aMsg*/)
     return NULL;
 }
 
+Msg* DriverBasic::ProcessMsg(MsgSession* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverBasic::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();

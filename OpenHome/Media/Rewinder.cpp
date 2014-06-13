@@ -18,6 +18,7 @@ private:
     MsgCloner();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -62,6 +63,7 @@ private:
     RewinderBufferProcessor();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -96,6 +98,12 @@ MsgCloner::MsgCloner()
 }
 
 Msg* MsgCloner::ProcessMsg(MsgMode* aMsg)
+{
+    aMsg->AddRef();
+    return aMsg;
+}
+
+Msg* MsgCloner::ProcessMsg(MsgSession* aMsg)
 {
     aMsg->AddRef();
     return aMsg;
@@ -196,6 +204,11 @@ RewinderBufferProcessor::RewinderBufferProcessor()
 }
 
 Msg* RewinderBufferProcessor::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    return NULL;
+}
+
+Msg* RewinderBufferProcessor::ProcessMsg(MsgSession* /*aMsg*/)
 {
     return NULL;
 }
@@ -335,6 +348,12 @@ Msg* Rewinder::Pull()
 }
 
 Msg* Rewinder::ProcessMsg(MsgMode* aMsg)
+{
+    TryBuffer(aMsg);
+    return aMsg;
+}
+
+Msg* Rewinder::ProcessMsg(MsgSession* aMsg)
 {
     TryBuffer(aMsg);
     return aMsg;

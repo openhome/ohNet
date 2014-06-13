@@ -188,6 +188,11 @@ Msg* ContainerBase::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* ContainerBase::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
 Msg* ContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iPendingMsg = aMsg;
@@ -340,6 +345,11 @@ Msg* ContainerFront::Pull()
 }
 
 Msg* ContainerFront::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ContainerFront::ProcessMsg(MsgSession* aMsg)
 {
     return aMsg;
 }
@@ -565,6 +575,11 @@ Msg* Container::Pull()
 }
 
 Msg* Container::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Container::ProcessMsg(MsgSession* aMsg)
 {
     return aMsg;
 }

@@ -62,6 +62,11 @@ Msg* Waiter::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* Waiter::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
     if (iState == EFlushing || iState == ERampingDown) {

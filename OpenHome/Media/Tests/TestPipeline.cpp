@@ -77,6 +77,7 @@ private: // from IPipelineObserver
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -544,6 +545,12 @@ void SuitePipeline::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 }
 
 Msg* SuitePipeline::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* SuitePipeline::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
     return NULL;

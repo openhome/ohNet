@@ -59,6 +59,11 @@ Msg* Skipper::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* Skipper::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();

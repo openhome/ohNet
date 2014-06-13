@@ -43,6 +43,7 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -80,6 +81,7 @@ private:
         MsgPlayable* Process(MsgAudio* aMsg);
     private: // from IMsgProcessor
         Msg* ProcessMsg(MsgMode* aMsg);
+        Msg* ProcessMsg(MsgSession* aMsg);
         Msg* ProcessMsg(MsgTrack* aMsg);
         Msg* ProcessMsg(MsgDelay* aMsg);
         Msg* ProcessMsg(MsgEncodedStream* aMsg);

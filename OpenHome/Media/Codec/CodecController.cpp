@@ -467,6 +467,16 @@ Msg* CodecController::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* CodecController::ProcessMsg(MsgSession* aMsg)
+{
+    if (iRecognising) {
+        iStreamEnded = true;
+        aMsg->RemoveRef();
+        return NULL;
+    }
+    return aMsg;
+}
+
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {

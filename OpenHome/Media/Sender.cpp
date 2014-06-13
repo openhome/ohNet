@@ -95,6 +95,12 @@ Msg* Sender::ProcessMsg(MsgMode* aMsg)
     return NULL;
 }
 
+Msg* Sender::ProcessMsg(MsgSession* aMsg)
+{
+    aMsg->RemoveRef();
+    return NULL;
+}
+
 Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != NULL) {
@@ -320,6 +326,12 @@ MsgPlayable* Sender::PlayableCreator::Process(MsgAudio* aMsg)
 }
 
 Msg* Sender::PlayableCreator::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
+Msg* Sender::PlayableCreator::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
