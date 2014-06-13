@@ -457,6 +457,12 @@ void CodecController::OutputHalt()
     Queue(halt);
 }
 
+void CodecController::OutputSession()
+{
+    MsgSession* session = iMsgFactory.CreateMsgSession();
+    Queue(session);
+}
+
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 {
     if (iRecognising) {

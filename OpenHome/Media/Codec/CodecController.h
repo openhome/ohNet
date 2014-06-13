@@ -45,6 +45,7 @@ public:
     virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp) = 0; // returns jiffy size of data
     virtual void OutputWait() = 0;
     virtual void OutputHalt() = 0;
+    virtual void OutputSession() = 0;
 };
     
 class CodecBase
@@ -98,6 +99,7 @@ private: // ICodecController
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp);
     void OutputWait();
     void OutputHalt();
+    void OutputSession();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgSession* aMsg);
