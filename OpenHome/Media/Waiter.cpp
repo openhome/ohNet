@@ -27,7 +27,7 @@ Waiter::~Waiter()
 void Waiter::Wait(TUint aFlushId, TBool aRampDown)
 {
     AutoMutex a(iLock);
-    ASSERT(iState == ERunning); // Already in process of waiting.
+    //ASSERT(iState == ERunning); // Already in process of waiting.
     iTargetFlushId = aFlushId;
 
     if (iState == ERampingUp) {
@@ -105,7 +105,7 @@ Msg* Waiter::ProcessMsg(MsgHalt* aMsg)
 Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
 {
     if (iTargetFlushId != MsgFlush::kIdInvalid && iTargetFlushId == aMsg->Id()) {
-        ASSERT(iState == EFlushing); // haven't received enough audio for a full ramp down
+        //ASSERT(iState == EFlushing); // haven't received enough audio for a full ramp down
         // FIXME - the above ASSERT can be expected at the moment if we
         // pause/unpause/seek too quickly as the VariableDelay pipeline element
         // does not currently give us a 2s buffer.

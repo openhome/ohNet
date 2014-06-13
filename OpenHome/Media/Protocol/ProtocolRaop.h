@@ -33,11 +33,13 @@ public:
     void DoInterrupt();
     void Reset();
     Brn Audio();
+    TBool First() const;
     void SetMute();
 private:
     SocketUdpServer& iServer;
     Bws<kMaxReadBufferBytes> iDataBuffer;
     Bws<kMaxReadBufferBytes> iAudio;
+    TBool iFirst;
     Bws<sizeof(AES_KEY)> iAeskey;
     Bws<16> iAesiv;
     TBool iInitId;
@@ -108,7 +110,7 @@ private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     void StartStream();
-    void OutputAudio(const Brn &aPacket);
+    void OutputAudio(const Brn &aPacket, TBool aFirst);
     void OutputContainer(const Brn &aFmtp);
     void DoInterrupt();
 private:
@@ -130,6 +132,7 @@ private:
     TUint iNextFlushId;
     TBool iActive;
     TBool iWaiting;
+    TBool iResumePending;
     TBool iStopped;
     Mutex iLockRaop;
     Semaphore iSem;
