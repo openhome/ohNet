@@ -849,6 +849,7 @@ class ISupply
 public:
     virtual ~ISupply() {}
     virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime) = 0;
+    virtual void OutputSession() = 0;
     virtual void OutputTrack(Track& Track, TUint aTrackId) = 0;
     virtual void OutputDelay(TUint aJiffies) = 0;
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;

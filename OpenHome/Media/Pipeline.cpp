@@ -326,6 +326,11 @@ void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealT
     iSupply->OutputMode(aMode, aSupportsLatency, aRealTime);
 }
 
+void Pipeline::OutputSession()
+{
+    iSupply->OutputSession();
+}
+
 void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId)
 {
     iSupply->OutputTrack(aTrack, aTrackId);

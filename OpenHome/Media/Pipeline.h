@@ -82,6 +82,7 @@ public:
     TUint SenderMinLatencyMs() const;
 public: // from ISupply
     void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
