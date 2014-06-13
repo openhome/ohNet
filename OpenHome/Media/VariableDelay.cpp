@@ -142,11 +142,14 @@ Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
     iEnabled = aMsg->SupportsLatency();
     iInStream = false;
     iMode.Replace(aMsg->Mode());
+    iDelayJiffies = 0;
+    iDelayAdjustment = 0;
     return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgSession* aMsg)
 {
+    iDelayAdjustment = iDelayJiffies; // FIXME - should be (iDelayJiffies - downstreamAudio)
     return aMsg;
 }
 
