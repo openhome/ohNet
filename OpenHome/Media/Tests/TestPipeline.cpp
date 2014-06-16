@@ -379,8 +379,8 @@ void SuitePipeline::Test()
     iJiffies = 0;
     static const TUint kHaltId = 10; // randomly chosen value
     iPipeline->Stop(kHaltId);
-    iSupplier->Exit(kHaltId);
     PullUntilEnd(ERampDownDeferred);
+    iSupplier->Exit(kHaltId);
     iSemFlushed.Wait();
     TEST(iPipelineState == EPipelineStopped);
     TestJiffies(Pipeline::kStopperRampDuration);
