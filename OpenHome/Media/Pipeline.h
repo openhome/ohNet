@@ -56,7 +56,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kSeekerRampDuration                   = Jiffies::kPerMs * 20;
     static const TUint kVariableDelayRampDuration            = Jiffies::kPerMs * 20;
     static const TUint kSkipperRampDuration                  = Jiffies::kPerMs * 500;
-    static const TUint kWaiterRampDuration                   = Jiffies::kPerMs * 500;
+    static const TUint kWaiterRampDuration                   = Jiffies::kPerMs * 50;
     static const TUint kStopperRampDuration                  = Jiffies::kPerMs * 500;
     static const TUint kGorgerDuration                       = Jiffies::kPerMs * 1000;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kPerMs * 50;
