@@ -230,13 +230,19 @@ void ProviderVolume::Volume(IDvInvocation& aInvocation, IDvInvocationResponseUin
 
 void ProviderVolume::SetBalance(IDvInvocation& aInvocation, TInt aValue)
 {
-    // FIXME - we should update iConfigBalance for consistency.
-    // When we do that, its callback will be made; we should let that be the
-    // sole setter of balance, as it automatically does bounds checking for us
-    // (and only notifies if the value has actually been changed).
-    TInt balCurrent = 0;
-    GetPropertyBalance(balCurrent);
-    HelperSetBalance(aInvocation, balCurrent, aValue);
+    // Need to keep iConfigBalance in sync with PropertyBalance.
+    // iConfigBalance does bounds checking for us and only calls callback when
+    // value has actually changed - so try set iConfigBalance and let it (and
+    // the callback) do the work.
+
+    try {
+        iConfigBalance->Set(aValue);
+    }
+    catch (ConfigValueOutOfRange&) {
+        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
@@ -244,7 +250,14 @@ void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
     TInt balCurrent = 0;
     GetPropertyBalance(balCurrent);
     TUint balNew = balCurrent+1;
-    HelperSetBalance(aInvocation, balCurrent, balNew);
+    try {
+        iConfigBalance->Set(balNew);
+    }
+    catch (ConfigValueOutOfRange&) {
+        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
@@ -252,7 +265,14 @@ void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
     TInt balCurrent = 0;
     GetPropertyBalance(balCurrent);
     TInt balNew = balCurrent-1;
-    HelperSetBalance(aInvocation, balCurrent, balNew);
+    try {
+        iConfigBalance->Set(balNew);
+    }
+    catch (ConfigValueOutOfRange&) {
+        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderVolume::Balance(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
@@ -334,31 +354,6 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolumeCu
         }
         SetPropertyVolume(aVolumeNew);
         iVolumeSetter.SetVolume(aVolumeNew);
-    }
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
-}
-
-void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalanceCurrent, TInt aBalanceNew)
-{
-    TUint balLimit = 0;
-    GetPropertyBalanceMax(balLimit);
-
-    // Get absolute value of balance.
-    TUint balAbs = 0;
-    if (aBalanceNew < 0) {
-        balAbs = aBalanceNew * -1;
-    }
-    else {
-        balAbs = aBalanceNew;
-    }
-
-    if (aBalanceNew != aBalanceCurrent) {
-        if (balAbs > balLimit) {
-            aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-        }
-        SetPropertyBalance(aBalanceNew);
-        iBalanceSetter.SetBalance(aBalanceNew);
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
