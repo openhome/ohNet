@@ -15,7 +15,7 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-DvProvider* NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
+DvProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
     return new ProviderVolume(aDevice, aConfigManager, aVolumeProfile, aVolume, aBalance, aMute);;
@@ -208,7 +208,7 @@ void ProviderVolume::VolumeInc(IDvInvocation& aInvocation)
 {
     TUint volCurrent = 0;
     GetPropertyVolume(volCurrent);
-    TUint volNew = volCurrent++;
+    TUint volNew = volCurrent+1;
     HelperSetVolume(aInvocation, volCurrent, volNew);
 }
 
@@ -216,7 +216,7 @@ void ProviderVolume::VolumeDec(IDvInvocation& aInvocation)
 {
     TUint volCurrent = 0;
     GetPropertyVolume(volCurrent);
-    TUint volNew = volCurrent--;
+    TUint volNew = volCurrent-1;
     HelperSetVolume(aInvocation, volCurrent, volNew);
 }
 
@@ -244,7 +244,7 @@ void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
 {
     TInt balCurrent = 0;
     GetPropertyBalance(balCurrent);
-    TUint balNew = balCurrent++;
+    TUint balNew = balCurrent+1;
     HelperSetBalance(aInvocation, balCurrent, balNew);
 }
 
@@ -252,7 +252,7 @@ void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
 {
     TInt balCurrent = 0;
     GetPropertyBalance(balCurrent);
-    TUint balNew = balCurrent--;
+    TInt balNew = balCurrent-1;
     HelperSetBalance(aInvocation, balCurrent, balNew);
 }
 
@@ -292,8 +292,6 @@ void ProviderVolume::SetMute(IDvInvocation& aInvocation, TBool aValue)
 
     if (aValue != mute) {
         SetPropertyMute(aValue);
-        aInvocation.StartResponse();
-        aInvocation.EndResponse();
 
         if (aValue) {
             iMuteSetter.Mute();
@@ -302,6 +300,9 @@ void ProviderVolume::SetMute(IDvInvocation& aInvocation, TBool aValue)
             iMuteSetter.Unmute();
         }
     }
+
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
 }
 
 void ProviderVolume::Mute(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue)
@@ -339,7 +340,7 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolumeCu
     aInvocation.EndResponse();
 }
 
-void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TUint aBalanceCurrent, TUint aBalanceNew)
+void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalanceCurrent, TInt aBalanceNew)
 {
     TUint balLimit = 0;
     GetPropertyBalanceMax(balLimit);

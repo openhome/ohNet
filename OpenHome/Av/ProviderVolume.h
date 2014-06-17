@@ -54,7 +54,7 @@ private: // from DvProviderAvOpenhomeOrgVolume1 (and only ever invoked from base
     void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
 private:
     void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolumeCurrent, TUint aVolumeNew);
-    void HelperSetBalance(Net::IDvInvocation& aInvocation, TUint aBalanceCurrent, TUint aBalanceNew);
+    void HelperSetBalance(Net::IDvInvocation& aInvocation, TInt aBalanceCurrent, TInt aBalanceNew);
     void ConfigBalanceChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void ConfigVolumeLimitChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void ConfigVolumeStartupChanged(Configuration::ConfigNum::KvpNum& aKvp);
