@@ -230,19 +230,7 @@ void ProviderVolume::Volume(IDvInvocation& aInvocation, IDvInvocationResponseUin
 
 void ProviderVolume::SetBalance(IDvInvocation& aInvocation, TInt aValue)
 {
-    // Need to keep iConfigBalance in sync with PropertyBalance.
-    // iConfigBalance does bounds checking for us and only calls callback when
-    // value has actually changed - so try set iConfigBalance and let it (and
-    // the callback) do the work.
-
-    try {
-        iConfigBalance->Set(aValue);
-    }
-    catch (ConfigValueOutOfRange&) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-    }
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    HelperSetBalance(aInvocation, aValue);
 }
 
 void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
@@ -250,14 +238,7 @@ void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
     TInt balCurrent = 0;
     GetPropertyBalance(balCurrent);
     TUint balNew = balCurrent+1;
-    try {
-        iConfigBalance->Set(balNew);
-    }
-    catch (ConfigValueOutOfRange&) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-    }
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    HelperSetBalance(aInvocation, balNew);
 }
 
 void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
@@ -265,14 +246,7 @@ void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
     TInt balCurrent = 0;
     GetPropertyBalance(balCurrent);
     TInt balNew = balCurrent-1;
-    try {
-        iConfigBalance->Set(balNew);
-    }
-    catch (ConfigValueOutOfRange&) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-    }
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    HelperSetBalance(aInvocation, balNew);
 }
 
 void ProviderVolume::Balance(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
@@ -354,6 +328,22 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolumeCu
         }
         SetPropertyVolume(aVolumeNew);
         iVolumeSetter.SetVolume(aVolumeNew);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
+void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance)
+{
+    // Need to keep iConfigBalance in sync with PropertyBalance.
+    // iConfigBalance does bounds checking for us and only calls callback when
+    // value has actually changed - so try set iConfigBalance and let it (and
+    // the callback) do the work.
+    try {
+        iConfigBalance->Set(aBalance);
+    }
+    catch (ConfigValueOutOfRange&) {
+        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
     }
     aInvocation.StartResponse();
     aInvocation.EndResponse();
