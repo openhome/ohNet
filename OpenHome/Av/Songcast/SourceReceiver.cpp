@@ -168,7 +168,7 @@ void SourceReceiver::Activate()
         iPipeline.RemoveAll();
     }
     else {
-        iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
+        iPipeline.StopPrefetch(iUriProvider->Mode(), Track::kIdNone);
     }
 }
 
@@ -300,15 +300,10 @@ void SourceReceiver::UriChanged()
     else {
         iTrackId = track->Id();
         track->RemoveRef();
-        if (IsActive()) {
-            if (iPlaying) {
-                iPipeline.RemoveAll();
-                iPipeline.Begin(iUriProvider->Mode(), iTrackId);
-                iPipeline.Play();
-            }
-            else {
-                iPipeline.StopPrefetch(iUriProvider->Mode(), iTrackId);
-            }
+        if (IsActive() && iPlaying) {
+            iPipeline.RemoveAll();
+            iPipeline.Begin(iUriProvider->Mode(), iTrackId);
+            iPipeline.Play();
         }
     }
 }
