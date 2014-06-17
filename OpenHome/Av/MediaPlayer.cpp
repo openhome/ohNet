@@ -47,16 +47,17 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager, Brx::Empty());
-    iMuteManager = new MuteManager();
+    //iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
-    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, *iPowerManager);
+    //iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, *iPowerManager);
     iTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
-    iVolume = new ProviderVolume(aDevice, *iMuteManager, *iVolumeManager);
-    iProduct->AddAttribute("Volume");
+    // FIXME - use ProviderFactory::NewVolume() to create a volume service
+    //iVolume = new ProviderVolume(aDevice, *iMuteManager, *iVolumeManager);
+    //iProduct->AddAttribute("Volume");
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
@@ -71,9 +72,9 @@ MediaPlayer::~MediaPlayer()
     delete iProviderConfig;
     delete iTime;
     delete iInfo;
-    delete iVolume;
-    delete iMuteManager;
-    delete iVolumeManager;
+    //delete iVolume;
+    //delete iMuteManager;
+    //delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iConfigProductRoom;

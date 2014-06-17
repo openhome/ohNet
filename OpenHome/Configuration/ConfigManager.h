@@ -354,8 +354,9 @@ public:
 
 /*
  * Interface for adding values to a configuration manager.
- * Should only ever be used by ConfigVal items and a class that decides when
- * all values have been added to the config manager.
+ * Should only ever be used by owners of ConfigVal items and the class
+ * responsible for Close()ing the config manager once all values have been
+ * added.
  */
 class IConfigManagerWriter
 {

@@ -34,6 +34,26 @@ namespace Configuration {
 }
 namespace Media {
 
+class IVolumeProfile
+{
+public:
+    virtual TUint MaxVolume() const = 0;
+    virtual TUint VolumeUnity() const = 0;
+    virtual TUint VolumeSteps() const = 0;
+    virtual TUint VolumeMilliDbPerStep() const = 0;
+    virtual TInt MaxBalance() const = 0;
+    virtual ~IVolumeProfile() {}
+};
+
+class IBalance
+{
+public:
+    virtual void SetBalance(TInt aValue) = 0; // -ve, 0, +ve
+    virtual ~IBalance() {}
+};
+
+
+
 //
 // generic class declarations
 //
