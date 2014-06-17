@@ -28,9 +28,9 @@ public:
 class IMute
 {
 public:
-    virtual ~IMute();
     virtual void Mute() = 0;
     virtual void Unmute() = 0;
+    virtual ~IMute() {}
 };
 
 // reference-counting base class (does not own wrapped IMute element)
@@ -86,8 +86,8 @@ private:
 class IMuteManager
 {
 public:
-    virtual ~IMuteManager();
     virtual IMute& Find(const TChar* aName) const = 0;
+    virtual ~IMuteManager() {}
 };
 
 // concrete manager (for loose coupling in generic code)

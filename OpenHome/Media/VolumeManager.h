@@ -45,6 +45,13 @@ public:
     virtual ~IVolumeProfile() {}
 };
 
+class IVolume
+{
+public:
+    virtual void SetVolume(TUint aValue) = 0;
+    virtual ~IVolume() {}
+};
+
 class IBalance
 {
 public:
@@ -75,12 +82,6 @@ public:
 };
 
 // fundamental interfaces
-class IVolume
-{
-public:
-    virtual ~IVolume();
-    virtual void SetVolume(TUint aValue) = 0;
-};
 
 class IVolumeUser
 {
@@ -91,30 +92,30 @@ public:
 class IBalanceUser
 {
 public:
-    virtual ~IBalanceUser();
     virtual TInt UserBalance() const = 0;
     virtual void SetUserBalance(TInt aValue) = 0;  // -ve, 0, +ve
+    virtual ~IBalanceUser() {}
 };
 
 class IVolumeLimitUser
 {
 public:
-    virtual ~IVolumeLimitUser();
     virtual TUint UserVolumeLimit() const = 0;
     virtual void SetUserVolumeLimit(TUint aValue) = 0;
+    virtual ~IVolumeLimitUser() {}
 };
 
 // XXX notifications: can volume, balance, etc. change other than through UPnP?
 class IVolumeManager
 {
 public:
-    virtual ~IVolumeManager();
     virtual TUint UserVolume() const = 0;
     virtual TInt UserBalance() const = 0;
     virtual TUint UserVolumeLimit() const = 0;
     virtual void SetUserVolume(TUint aValue) = 0;
     virtual void SetUserBalance(TInt aValue) = 0;
     virtual void SetUserVolumeLimit(TUint aValue) = 0;
+    virtual ~IVolumeManager() {}
 };
 
 // need to extend interface, since UPnP provider holds reference to single type
@@ -122,12 +123,12 @@ public:
 class IVolumeManagerLimits : public IVolumeManager
 {
 public:
-    virtual ~IVolumeManagerLimits();
     virtual TUint MaxUserVolume() const = 0;
     virtual TUint VolumeUnity() const = 0;
     virtual TUint VolumeSteps() const = 0;
     virtual TUint VolumeMilliDbPerStep() const = 0;
     virtual TInt MaxUserBalance() const = 0;
+    virtual ~IVolumeManagerLimits() {}
 };
 
 // limiter (of user volume)

@@ -8,21 +8,6 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 //
-// interface
-//
-
-IMute::~IMute()
-{
-    // NOP default implementation (for convenience)
-}
-
-IMuteManager::~IMuteManager()
-{
-    // NOP default implementation (for convenience)
-}
-
-
-//
 // reference-counting base class
 //
 
