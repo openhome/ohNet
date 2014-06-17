@@ -3,7 +3,6 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/StringIds.h>
 #include <OpenHome/Av/Product.h>
-#include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/VolumeManager.h>
 
@@ -15,7 +14,7 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-DvProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
+IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
     return new ProviderVolume(aDevice, aConfigManager, aVolumeProfile, aVolume, aBalance, aMute);;

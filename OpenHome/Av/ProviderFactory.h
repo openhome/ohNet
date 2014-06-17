@@ -20,10 +20,25 @@ namespace Net {
 namespace Av {
     class Product;
 
+/**
+ * DvProvider (the base class of all providers) does not have a publicly
+ * accessible destructor, so the ProviderFactory cannot return pointers to that
+ * type, as they cannot be deleted.
+ *
+ * This interface provides a virtual destructor for provider classes, allowing
+ * this anonymous IProvider type to be returned from the ProviderFactory but,
+ * crucially, also provides a public (virtual) destructor.
+ */
+class IProvider
+{
+public:
+    virtual ~IProvider() {}
+};
+
 class ProviderFactory
 {
 public:
-    static Net::DvProvider* NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IBalance& aBalance, Media::IMute& aMute);
+    static IProvider* NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IBalance& aBalance, Media::IMute& aMute);
 };
 
 } // namespace Av

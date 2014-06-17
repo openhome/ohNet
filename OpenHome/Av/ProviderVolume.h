@@ -2,6 +2,7 @@
 #define HEADER_PROVIDER_VOLUME_1
 
 #include <Generated/DvAvOpenhomeOrgVolume1.h>
+#include <OpenHome/Av/ProviderFactory.h>
 
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Thread.h>
@@ -20,7 +21,7 @@ namespace Net {
 
 namespace Av {
 
-class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1
+class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider
 {
 public:
     static const Brn kBalance;
