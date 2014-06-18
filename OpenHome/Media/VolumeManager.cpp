@@ -8,35 +8,6 @@ using namespace OpenHome;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 
-//
-// generic classes
-//
-
-IVolume::~IVolume()
-{
-    // NOP default implementation (for convenience)
-}
-
-IBalanceUser::~IBalanceUser()
-{
-    // NOP default implementation (for convenience)
-}
-
-IVolumeLimitUser::~IVolumeLimitUser()
-{
-    // NOP default implementation (for convenience)
-}
-
-IVolumeManagerLimits::~IVolumeManagerLimits()
-{
-    // NOP default implementation (for convenience)
-}
-
-IVolumeManager::~IVolumeManager()
-{
-    // NOP default implementation (for convenience)
-}
-
 // VolumeLimiterUser
 VolumeLimiterUser::VolumeLimiterUser(IVolume& aVolume, TUint aLimit)
     : iVolume(aVolume)

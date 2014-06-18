@@ -221,6 +221,7 @@ void Filler::Run()
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
                 OutputMode(Brn("null"), false, true);
+                OutputSession();
                 iChangedMode = true;
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
@@ -247,6 +248,7 @@ void Filler::Run()
                 }
                 iLock.Signal();
                 ASSERT(iTrack != NULL);
+                OutputSession();
                 (void)iUriStreamer->DoStream(*iTrack);
             }
         }
@@ -261,6 +263,13 @@ void Filler::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTim
 {
     if (!iQuit) {
         iSupply.OutputMode(aMode, aSupportsLatency, aRealTime);
+    }
+}
+
+void Filler::OutputSession()
+{
+    if (!iQuit) {
+        iSupply.OutputSession();
     }
 }
 

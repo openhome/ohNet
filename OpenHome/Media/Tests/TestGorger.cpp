@@ -40,6 +40,7 @@ private:
     {
         ENone
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -56,6 +57,7 @@ private:
     };
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -118,7 +120,7 @@ SuiteGorger::~SuiteGorger()
 void SuiteGorger::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 1, 0, 0, 2, 2, 2, 2, 2, 2, 1, 3, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 1, 0, 0, 2, 2, 2, 2, 2, 2, 1, 3, 1, 1, 1);
     iGorger = new Gorger(*iMsgFactory, *this, kGorgeSize);
     iLastPulledMsg = ENone;
     iTrackOffset = 0;
@@ -180,6 +182,12 @@ void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint
 Msg* SuiteGorger::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteGorger::ProcessMsg(MsgSession* aMsg)
+{
+    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -296,6 +304,7 @@ Msg* SuiteGorger::CreateAudio()
 void SuiteGorger::TestAllMsgsPassWhileNotGorging()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(kModeRealTime, false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateDecodedStream());
@@ -307,6 +316,7 @@ void SuiteGorger::TestAllMsgsPassWhileNotGorging()
     iPendingMsgs.push_back(iMsgFactory->CreateMsgQuit());
 
     PullNext(EMsgMode);
+    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     PullNext(EMsgDelay);
     PullNext(EMsgDecodedStream);

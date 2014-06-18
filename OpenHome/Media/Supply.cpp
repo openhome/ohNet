@@ -26,6 +26,12 @@ void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTim
     iDownStreamElement.Push(msg);
 }
 
+void Supply::OutputSession()
+{
+    MsgSession* msg = iMsgFactory.CreateMsgSession();
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputTrack(Track& aTrack, TUint aTrackId)
 {
     MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);

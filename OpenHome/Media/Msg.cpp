@@ -630,35 +630,35 @@ void RampApplicator::GetNextSample(TByte* aDest)
     const TUint ramp = (iNumSamples==1? iRamp.Start() : (TUint)(iRamp.Start() - ((iLoopCount * (TInt64)iTotalRamp)/(iNumSamples-1))));
     //Log::Print(" %08x ", ramp);
     const TUint rampIndex = (iFullRampSpan - ramp + (1<<20)) >> 21; // assumes fullRampSpan==2^31 and kRampArray has 512 items. (1<<20 allows rounding up)
-    TInt subsample = 0;
-    switch (iBitDepth)
-    {
-    case 8:
-        subsample = *iPtr << 24;
-        iPtr++;
-        break;
-    case 16:
-        subsample = *iPtr << 24;
-        iPtr++;
-        subsample += *iPtr << 16;
-        iPtr++;
-        break;
-    case 24:
-        subsample = *iPtr << 24;
-        iPtr++;
-        subsample += *iPtr << 16;
-        iPtr++;
-        subsample += *iPtr << 8;
-        iPtr++;
-        break;
-    default:
-        ASSERTS();
-    }
-    //Log::Print(" %03u ", rampIndex);
-    TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
-    //Log::Print("Original=%08x, ramped=%08x, rampIndex=%u\n", subsample, rampedSubsample, rampIndex);
+    for (TUint i=0; i<iNumChannels; i++) {
+        TInt subsample = 0;
+        switch (iBitDepth)
+        {
+        case 8:
+            subsample = *iPtr << 24;
+            iPtr++;
+            break;
+        case 16:
+            subsample = *iPtr << 24;
+            iPtr++;
+            subsample += *iPtr << 16;
+            iPtr++;
+            break;
+        case 24:
+            subsample = *iPtr << 24;
+            iPtr++;
+            subsample += *iPtr << 16;
+            iPtr++;
+            subsample += *iPtr << 8;
+            iPtr++;
+            break;
+        default:
+            ASSERTS();
+        }
+        //Log::Print(" %03u ", rampIndex);
+        TInt rampedSubsample = (rampIndex==512? 0 : ((TInt64)subsample * kRampArray[rampIndex]) >> 31); // >>31 assumes kRampArray values are 32-bit, signed & positive
+        //Log::Print("Original=%08x (%d), ramped=%08x (%d), rampIndex=%u\n", subsample, subsample, rampedSubsample, rampedSubsample, rampIndex);
 
-    for (TUint i=0; i<iNumChannels; i++) { // apply ramp to each subsample
         switch (iBitDepth)
         {
         case 8:
@@ -770,6 +770,19 @@ void MsgMode::Clear()
 }
 
 Msg* MsgMode::Process(IMsgProcessor& aProcessor)
+{
+    return aProcessor.ProcessMsg(this);
+}
+
+
+// MsgSession
+
+MsgSession::MsgSession(AllocatorBase& aAllocator)
+    : Msg(aAllocator)
+{
+}
+
+Msg* MsgSession::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
 }
@@ -1437,6 +1450,13 @@ MsgPlayable* MsgSilence::CreatePlayable(TUint aSampleRate, TUint aBitDepth, TUin
     return playable;
 }
 
+MsgAudio* MsgSilence::Clone()
+{
+    MsgAudio* clone = MsgAudio::Clone();
+    static_cast<MsgSilence*>(clone)->iAllocatorPlayable = iAllocatorPlayable;
+    return clone;
+}
+
 MsgAudio* MsgSilence::Allocate()
 {
     return static_cast<Allocator<MsgSilence>&>(iAllocator).Allocate();
@@ -1961,6 +1981,10 @@ void MsgReservoir::ProcessMsgIn(MsgMode* /*aMsg*/)
 {
 }
 
+void MsgReservoir::ProcessMsgIn(MsgSession* /*aMsg*/)
+{
+}
+
 void MsgReservoir::ProcessMsgIn(MsgTrack* /*aMsg*/)
 {
 }
@@ -2010,6 +2034,11 @@ void MsgReservoir::ProcessMsgIn(MsgQuit* /*aMsg*/)
 }
 
 Msg* MsgReservoir::ProcessMsgOut(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessMsgOut(MsgSession* aMsg)
 {
     return aMsg;
 }
@@ -2083,6 +2112,12 @@ MsgReservoir::ProcessorQueueIn::ProcessorQueueIn(MsgReservoir& aQueue)
 }
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMode* aMsg)
+{
+    iQueue.ProcessMsgIn(aMsg);
+    return aMsg;
+}
+
+Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgSession* aMsg)
 {
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -2178,6 +2213,11 @@ MsgReservoir::ProcessorQueueOut::ProcessorQueueOut(MsgReservoir& aQueue)
 }
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMode* aMsg)
+{
+    return iQueue.ProcessMsgOut(aMsg);
+}
+
+Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSession* aMsg)
 {
     return iQueue.ProcessMsgOut(aMsg);
 }
@@ -2293,7 +2333,7 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,
                        TUint aMsgTrackCount, TUint aMsgEncodedStreamCount, TUint aMsgMetaTextCount,
                        TUint aMsgHaltCount, TUint aMsgFlushCount, TUint aMsgWaitCount,
-                       TUint aMsgModeCount, TUint aMsgDelayCount, TUint aMsgQuitCount)
+                       TUint aMsgModeCount, TUint aMsgSessionCount, TUint aMsgDelayCount, TUint aMsgQuitCount)
     : iAllocatorEncodedAudio("EncodedAudio", aEncodedAudioCount, aInfoAggregator)
     , iAllocatorMsgAudioEncoded("MsgAudioEncoded", aMsgAudioEncodedCount, aInfoAggregator)
     , iAllocatorDecodedAudio("DecodedAudio", aDecodedAudioCount, aInfoAggregator)
@@ -2309,6 +2349,7 @@ MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
     , iAllocatorMsgFlush("MsgFlush", aMsgFlushCount, aInfoAggregator)
     , iAllocatorMsgWait("MsgWait", aMsgWaitCount, aInfoAggregator)
     , iAllocatorMsgMode("MsgMode", aMsgModeCount, aInfoAggregator)
+    , iAllocatorMsgSession("MsgSession", aMsgSessionCount, aInfoAggregator)
     , iAllocatorMsgDelay("MsgDelay", aMsgDelayCount, aInfoAggregator)
     , iAllocatorMsgQuit("MsgQuit", aMsgQuitCount, aInfoAggregator)
 {
@@ -2320,6 +2361,11 @@ MsgMode* MsgFactory::CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBo
     MsgMode* msg = iAllocatorMsgMode.Allocate();
     msg->Initialise(aMode, aSupportsLatency, aRealTime, aClockPuller);
     return msg;
+}
+
+MsgSession* MsgFactory::CreateMsgSession()
+{
+    return iAllocatorMsgSession.Allocate();
 }
 
 MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline)

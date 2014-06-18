@@ -14,7 +14,7 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
-#include <OpenHome/Av/ProviderVolume.h>
+#include <OpenHome/Av/ProviderFactory.h>
 #include <OpenHome/NetworkMonitor.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -47,16 +47,15 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager, Brx::Empty());
-    iMuteManager = new MuteManager();
+    //iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
-    iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, *iPowerManager);
-    iTime = new ProviderTime(aDevice, *iPipeline);
+    //iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, *iPowerManager);
+    iProviderTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
-    iInfo = new ProviderInfo(aDevice, *iPipeline);
+    iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
-    iVolume = new ProviderVolume(aDevice, *iMuteManager, *iVolumeManager);
-    iProduct->AddAttribute("Volume");
+    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, iVolumeProfile, iVolume, iBalance, iMute);
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
@@ -69,11 +68,11 @@ MediaPlayer::~MediaPlayer()
     delete iProduct;
     delete iNetworkMonitor;
     delete iProviderConfig;
-    delete iTime;
-    delete iInfo;
-    delete iVolume;
-    delete iMuteManager;
-    delete iVolumeManager;
+    delete iProviderTime;
+    delete iProviderInfo;
+    delete iProviderVolume;
+    //delete iMuteManager;
+    //delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
     delete iRightVolumeHardware;  // XXX volume hardware
     delete iConfigProductRoom;
@@ -176,4 +175,49 @@ IPowerManager& MediaPlayer::PowerManager()
 void MediaPlayer::Add(UriProvider* aUriProvider)
 {
     iPipeline->Add(aUriProvider);
+}
+
+TUint MediaPlayer::VolumeProfile::MaxVolume() const
+{
+    return 100;
+}
+
+TUint MediaPlayer::VolumeProfile::VolumeUnity() const
+{
+    return 80;
+}
+
+TUint MediaPlayer::VolumeProfile::VolumeSteps() const
+{
+    return MaxVolume();  // [0..100] in steps of 1
+}
+
+TUint MediaPlayer::VolumeProfile::VolumeMilliDbPerStep() const
+{
+    return 1024;
+}
+
+TInt MediaPlayer::VolumeProfile::MaxBalance() const
+{
+    return 15;
+}
+
+void MediaPlayer::VolumePrinter::SetVolume(TUint aVolume)
+{
+    Log::Print("Volume: %u\n", aVolume);
+}
+
+void MediaPlayer::BalancePrinter::SetBalance(TInt aBalance)
+{
+    Log::Print("Balance: %d\n", aBalance);
+}
+
+void MediaPlayer::MutePrinter::Mute()
+{
+    Log::Print("Volume: muted\n");
+}
+
+void MediaPlayer::MutePrinter::Unmute()
+{
+    Log::Print("Volume: unmuted\n");
 }

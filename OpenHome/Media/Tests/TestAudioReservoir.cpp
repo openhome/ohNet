@@ -33,6 +33,7 @@ public:
     void Test();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -55,6 +56,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -108,6 +110,7 @@ private:
     void PullerThread();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -160,7 +163,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
     , iSemUpstreamComplete("TRSV", 0)
     , iTrackOffset(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
@@ -198,7 +201,7 @@ void SuiteAudioReservoir::Test()
     ASSERT(msg == NULL);
 
     // Check that uninteresting msgs are passed through.
-    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgWait, EMsgHalt, EMsgQuit };
+    EMsgType types[] = { EMsgSilence, EMsgDecodedStream, EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgFlush, EMsgWait, EMsgHalt, EMsgQuit };
     for (TUint i=0; i<sizeof(types)/sizeof(types[0]); i++) {
         EMsgType msgType = types[i];
         GenerateMsg(msgType);
@@ -295,6 +298,9 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgMode:
         msg = iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
         break;
+    case EMsgSession:
+        msg = iMsgFactory->CreateMsgSession();
+        break;
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -342,6 +348,12 @@ MsgAudio* SuiteAudioReservoir::CreateAudio()
 Msg* SuiteAudioReservoir::ProcessMsg(MsgMode* aMsg)
 {
     iLastMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteAudioReservoir::ProcessMsg(MsgSession* aMsg)
+{
+    iLastMsg = EMsgSession;
     return aMsg;
 }
 
@@ -449,7 +461,7 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iReservoir = new DecodedAudioReservoir(kReservoirSize);
     memset(iBuf, 0xff, sizeof(iBuf));
@@ -547,6 +559,11 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgDecodedStream* aMsg)
 }
 
 Msg* SuiteReservoirHistory::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* SuiteReservoirHistory::ProcessMsg(MsgSession* aMsg)
 {
     return aMsg;
 }

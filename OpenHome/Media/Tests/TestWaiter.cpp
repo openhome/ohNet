@@ -40,6 +40,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -58,6 +59,7 @@ private:
     {
         ENone
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -86,9 +88,9 @@ private:
     void TestMsgsPassWhileWaiting();
     void TestAudioFlushedWhileWaiting();
 
-    void TestWaitDuringWaitAsserts();
-    void TestWaitDuringRampingDownAsserts();
-    void TestWaitDuringRampingUpAsserts();
+    void TestWaitDuringWait();
+    void TestWaitDuringRampingDown();
+    void TestWaitDuringRampingUp();
 
     void TestMsgTrackDuringWaitAsserts();
     void TestMsgTrackDuringRampingDownAsserts();
@@ -129,9 +131,9 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgsPassWhileWaitPending), "TestMsgsPassWhileWaitPending");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgsPassWhileWaiting), "TestMsgsPassWhileWaiting");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestAudioFlushedWhileWaiting), "TestAudioFlushedWhileWaiting");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringWaitAsserts), "TestWaitDuringWaitAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingDownAsserts), "TestWaitDuringRampingDownAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUpAsserts), "TestWaitDuringRampingUpAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringWait), "TestWaitDuringWait");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingDown), "TestWaitDuringRampingDown");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUp), "TestWaitDuringRampingUp");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringWaitAsserts), "TestMsgTrackDuringWaitAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingDownAsserts), "TestMsgTrackDuringRampingDownAsserts");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgEncodedStreamDuringRampingUpAsserts");
@@ -141,7 +143,7 @@ SuiteWaiter::SuiteWaiter()
 void SuiteWaiter::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iWaiter = new Waiter(*iMsgFactory, *this, *this, kRampDuration);
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
@@ -214,6 +216,12 @@ void SuiteWaiter::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint
 Msg* SuiteWaiter::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteWaiter::ProcessMsg(MsgSession* aMsg)
+{
+    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -487,6 +495,8 @@ void SuiteWaiter::TestMsgsPassWhilePlaying()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), true, false, NULL));
     PullNext(EMsgMode);
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
+    PullNext(EMsgSession);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
@@ -660,7 +670,7 @@ void SuiteWaiter::TestAudioFlushedWhileWaiting()
     PullNext(EMsgQuit);
 }
 
-void SuiteWaiter::TestWaitDuringWaitAsserts()
+void SuiteWaiter::TestWaitDuringWait()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -691,11 +701,18 @@ void SuiteWaiter::TestWaitDuringWaitAsserts()
     PullNext(EMsgHalt);
     PullNext(EMsgWait);
 
-    // Calling Wait() while in a waiting mode should cause an assertion.
-    TEST_THROWS(iWaiter->Wait(kWaitFlushId, kRampDown), AssertionFailed);
+    // Calling Wait() after ramp down should not have any ill effects.
+    iWaiter->Wait(kWaitFlushId, kRampDown);
+    TEST(iWaitingCount == 2);
+    TEST(iWaitingTrueCount == 2);
+
+    // Already ramped down, so should expect a MsgHalt and MsgWait, rather than
+    // more audio.
+    PullNext(EMsgHalt);
+    PullNext(EMsgWait);
 }
 
-void SuiteWaiter::TestWaitDuringRampingDownAsserts()
+void SuiteWaiter::TestWaitDuringRampingDown()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -712,12 +729,27 @@ void SuiteWaiter::TestWaitDuringRampingDownAsserts()
     TEST(iWaitingTrueCount == 0);
     iWaiter->Wait(kWaitFlushId, kRampDown);
 
-    // Calling Wait() while entering/in/leaving a waiting mode should cause an
-    // assertion.
-    TEST_THROWS(iWaiter->Wait(kWaitFlushId, kRampDown), AssertionFailed);
+    // Calling Wait() while already waiting and ramping down.
+    iWaiter->Wait(kWaitFlushId, kRampDown);
+    iJiffies = 0;
+    iRampingDown = true;
+    while (iRampingDown) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iJiffies == kRampDuration);
+    // Should still have been in ramp down state in first Wait() and not yet
+    // switched to waiting state, so should only reach waiting state after
+    // second Wait().
+    TEST(iWaitingCount == 1);
+    TEST(iWaitingTrueCount == 1);
+
+    // MsgHalt and MsgWait are created and passed on after ramping down.
+    PullNext(EMsgHalt);
+    PullNext(EMsgWait);
 }
 
-void SuiteWaiter::TestWaitDuringRampingUpAsserts()
+void SuiteWaiter::TestWaitDuringRampingUp()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -756,9 +788,27 @@ void SuiteWaiter::TestWaitDuringRampingUpAsserts()
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm); // pull the MsgFlush through; should be in ERampingUp state
 
-    // Calling Wait() while entering/in/leaving a waiting mode should cause an
-    // assertion.
-    TEST_THROWS(iWaiter->Wait(kWaitFlushId, kRampDown), AssertionFailed);
+
+    // Calling Wait() after starting to ramp back up should cause a ramp back down.
+    iWaiter->Wait(kWaitFlushId, kRampDown);
+
+
+    iJiffies = 0;
+    iRampingUp = false;
+    iRampingDown = true;
+    while (iRampingDown) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    //TEST(iJiffies == kRampDuration);
+    // Test Waiter came out of waiting and went back into it.
+    TEST(iWaitingCount == 3);
+    TEST(iWaitingTrueCount == 2);
+    TEST(iWaitingFalseCount == 1);
+
+    // MsgHalt and MsgWait are created and passed on after ramping down.
+    PullNext(EMsgHalt);
+    PullNext(EMsgWait);
 }
 
 void SuiteWaiter::TestMsgTrackDuringWaitAsserts()

@@ -36,6 +36,7 @@ private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -111,7 +112,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iTrackOffset(0)
     , iBuffering(false)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize);
 }
 
@@ -331,6 +332,12 @@ MsgAudio* SuiteStarvationMonitor::CreateAudio()
 }
 
 Msg* SuiteStarvationMonitor::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS(); // MsgMode not used in this test
+    return NULL;
+}
+
+Msg* SuiteStarvationMonitor::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS(); // MsgMode not used in this test
     return NULL;

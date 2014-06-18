@@ -46,6 +46,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -68,6 +69,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -150,7 +152,7 @@ SuiteVariableDelay::~SuiteVariableDelay()
 
 void SuiteVariableDelay::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iVariableDelay = new VariableDelay(*iMsgFactory, *this, kDownstreamDelay, kRampDuration);
     iLastMsg = ENone;
@@ -184,6 +186,8 @@ Msg* SuiteVariableDelay::Pull()
         return iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, 0, 0, 0, 0, Brx::Empty(), 0, 0, false, false, false, NULL);
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(kMode, iNextModeSupportsLatency, true, NULL);
+    case EMsgSession:
+        return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
@@ -254,6 +258,12 @@ void SuiteVariableDelay::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/
 Msg* SuiteVariableDelay::ProcessMsg(MsgMode* aMsg)
 {
     iLastMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteVariableDelay::ProcessMsg(MsgSession* aMsg)
+{
+    iLastMsg = EMsgSession;
     return aMsg;
 }
 
@@ -390,9 +400,9 @@ void SuiteVariableDelay::TestAllMsgsPass()
 {
     /* 'AllMsgs' excludes encoded & playable audio - VariableDelay is assumed only
        useful to the portion of the pipeline that deals in decoded audio */
-    static const EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText,
-                                     EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt, EMsgFlush,
-                                     EMsgWait, EMsgQuit };
+    static const EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgEncodedStream,
+                                     EMsgMetaText, EMsgDecodedStream, EMsgAudioPcm, EMsgSilence, EMsgHalt,
+                                     EMsgFlush, EMsgWait, EMsgQuit };
     for (TUint i=0; i<sizeof(msgs)/sizeof(msgs[0]); i++) {
         PullNext(msgs[i]);
     }

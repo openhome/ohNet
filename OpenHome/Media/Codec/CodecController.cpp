@@ -457,6 +457,12 @@ void CodecController::OutputHalt()
     Queue(halt);
 }
 
+void CodecController::OutputSession()
+{
+    MsgSession* session = iMsgFactory.CreateMsgSession();
+    Queue(session);
+}
+
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 {
     if (iRecognising) {
@@ -465,6 +471,17 @@ Msg* CodecController::ProcessMsg(MsgMode* aMsg)
         return NULL;
     }
     return aMsg;
+}
+
+Msg* CodecController::ProcessMsg(MsgSession* aMsg)
+{
+    if (iRecognising) {
+        iStreamEnded = true;
+        aMsg->RemoveRef();
+        return NULL;
+    }
+    Queue(aMsg);
+    return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
@@ -482,11 +499,12 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgDelay* aMsg)
 {
-    if (iRecognising) {
+    if (iRecognising) { // FIXME - why discard during recognition?
         aMsg->RemoveRef();
         return NULL;
     }
-    return aMsg;
+    Queue(aMsg);
+    return NULL;
 }
 
 Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)

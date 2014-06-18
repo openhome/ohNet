@@ -75,8 +75,10 @@ public:
     TBool LastSupportsLatency() const;
     TBool LastIsRealTime() const;
     TUint LastDelayJiffies() const;
+    TUint SessionCount() const;
 private: // from ISupply
     void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
@@ -94,6 +96,7 @@ private:
     TUint iLastTrackId;
     TUint iLastStreamId;
     TUint iLastDelayJiffies;
+    TUint iSessionCount;
 };
 
 class SuiteFiller : public Suite, private IPipelineIdTracker, private IStreamPlayObserver
@@ -292,6 +295,7 @@ void DummyUriStreamer::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, 
 // DummySupply
 
 DummySupply::DummySupply()
+    : iSessionCount(0)
 {
 }
 
@@ -334,11 +338,21 @@ TUint DummySupply::LastDelayJiffies() const
     return iLastDelayJiffies;
 }
 
+TUint DummySupply::SessionCount() const
+{
+    return iSessionCount;
+}
+
 void DummySupply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
 {
     iLastMode.Replace(aMode);
     iLastSupportsLatency = aSupportsLatency;
     iLastRealTime = aRealTime;
+}
+
+void DummySupply::OutputSession()
+{
+    iSessionCount++;
 }
 
 void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId)
@@ -416,9 +430,12 @@ void SuiteFiller::Test()
 {
     // Play for invalid mode should throw
     TEST_THROWS(iFiller->Play(Brn("NotARealMode"), 1), FillerInvalidMode);
+    TUint sessionCount = 0;
+    TEST(iDummySupply->SessionCount() == sessionCount);
 
     // Play for valid mode but invalid trackId should throw
     TEST_THROWS(iFiller->Play(iUriProvider->Mode(), UINT_MAX), UriProviderInvalidId);
+    TEST(iDummySupply->SessionCount() == sessionCount);
 
     // Play for valid mode/trackId should succeed and Begin should be called
     // IUriStreamer should be passed uri for first track
@@ -431,6 +448,7 @@ void SuiteFiller::Test()
     TEST(iDummySupply->LastTrackId() == iUriStreamer->TrackId());
     TEST(iDummySupply->LastStreamId() == iUriStreamer->StreamId());
     TEST(iDummySupply->LastDelayJiffies() == kDefaultLatency);
+    TEST(iDummySupply->SessionCount() == ++sessionCount);
     TEST(iTrackId == iUriProvider->IdByIndex(0));
     TEST(iPipelineTrackId == iDummySupply->LastTrackId());
     TEST(iStreamId == iDummySupply->LastStreamId());
@@ -450,6 +468,7 @@ void SuiteFiller::Test()
     TEST(iPipelineTrackId != pipelineTrackId);
     TEST(iStreamId == iDummySupply->LastStreamId());
     TEST(iPlayNow);
+    TEST(iDummySupply->SessionCount() == ++sessionCount);
     pipelineTrackId = iPipelineTrackId;
     trackId = iTrackId;
 

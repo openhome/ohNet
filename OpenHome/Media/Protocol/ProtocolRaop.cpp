@@ -54,7 +54,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
 {
     iLockRaop.Wait();
     iNextFlushId = MsgFlush::kIdInvalid;
-    iWaiting = iStopped = false;
+    iWaiting = iResumePending = iStopped = false;
     iActive = true;
     iLockRaop.Signal();
 
@@ -88,6 +88,15 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
     TUint16 expected = 0;
     iSem.Clear();
 
+    // Output the delay before MsgEncodedStream - otherwise, the MsgDelay may
+    // be pulled while the CodecController is attempting to Read(), causing a
+    // CodecStreamEnded.
+    //
+    // FIXME - what about when a stream is paused and resumed, or skipped (as a
+    // new MsgTrack is not currently sent out, so the new MsgDelay appears in
+    // the middle of a stream, causing the condition above.)
+    iSupply->OutputDelay(kDelayJiffies);
+
     StartStream();
 
     // Output audio stream
@@ -96,6 +105,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
         if (iWaiting) {
             iSupply->OutputFlush(iNextFlushId);
             iWaiting = false;
+            iResumePending = true;
             // Resume normal operation.
         }
         else if (iStopped) {
@@ -151,7 +161,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                             LOG(kMedia, "ProtocolRaop received resent data, %d bytes\n", iResentData.Bytes());
                             Brn data(iResentData);
                             iRaopAudio.DecodePacket(SenderSkew, latency, data);
-                            OutputAudio(iRaopAudio.Audio());
+                            OutputAudio(iRaopAudio.Audio(), iRaopAudio.First());
                             padding--;
                             expected++;
                             iRaopControl.UnlockRx();
@@ -163,7 +173,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                             //this assumes that iRaopAudio has already been set
                             iRaopAudio.SetMute();
                             while(padding--) {
-                                OutputAudio(iRaopAudio.Audio());
+                                OutputAudio(iRaopAudio.Audio(), iRaopAudio.First());
                             }
                         }
                         catch(ResendInvalid&) {
@@ -174,7 +184,7 @@ ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)
                 }
                 try {
                     iRaopAudio.DecodePacket(SenderSkew, latency); // send original
-                    OutputAudio(iRaopAudio.Audio());
+                    OutputAudio(iRaopAudio.Audio(), iRaopAudio.First());
                     expected = count+1;
                 }
                 catch (InvalidHeader&)
@@ -235,9 +245,28 @@ void ProtocolRaop::OutputContainer(const Brn &aFmtp)
     iSupply->OutputData(container);
 }
 
-void ProtocolRaop::OutputAudio(const Brn &aPacket)
+void ProtocolRaop::OutputAudio(const Brn &aPacket, TBool aFirst)
 {
-    iSupply->OutputData(aPacket);
+    TBool sendSession = false;
+    TBool sendAudio = false;
+    iLockRaop.Wait();
+    if (iResumePending && aFirst) {
+        sendSession = true;
+        sendAudio = true;
+        iResumePending = false;
+    }
+    else if (!iResumePending) {
+        sendAudio = true;
+    }
+    // else iResumePending && !aFirst, so don't send
+    iLockRaop.Signal();
+
+    if (sendSession) {
+        iSupply->OutputSession();
+    }
+    if (sendAudio) {
+        iSupply->OutputData(aPacket);
+    }
 }
 
 TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
@@ -565,6 +594,7 @@ void RaopControl::TimerExpired()
 
 RaopAudio::RaopAudio(SocketUdpServer& aServer)
     : iServer(aServer)
+    , iFirst(false)
 {
 }
 
@@ -576,6 +606,7 @@ void RaopAudio::Reset()
 {
     iDataBuffer.SetBytes(0);
     iAudio.SetBytes(0);
+    iFirst = false;
     iAeskey.SetBytes(0);
     iAesiv.SetBytes(0);
     iInitId = true;
@@ -637,6 +668,13 @@ TUint16 RaopAudio::ReadPacket()
             THROW(InvalidHeader); // invalid header
         }
 
+        if (iDataBuffer[1] == 0xe0) {
+            iFirst = true;
+        }
+        else {
+            iFirst = false;
+        }
+
         // Process ID
         TUint32 id = Converter::BeUint32At(iDataBuffer, 8);
         LOG(kMedia, "RaopAudio::ReadPacket() %d, id %d\n", iDataBuffer.Bytes(), id);
@@ -695,6 +733,11 @@ void RaopAudio::DecodePacket(TUint aSenderSkew, TUint aLatency, Brx& aData)
 Brn RaopAudio::Audio()
 {
     return(Brn(iAudio));
+}
+
+TBool RaopAudio::First() const
+{
+    return iFirst;
 }
 
 void RaopAudio::SetMute()

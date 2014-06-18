@@ -26,6 +26,7 @@ private:
     {
         ENone
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -52,6 +53,7 @@ private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -94,7 +96,7 @@ SuitePruner::SuitePruner()
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iNextTrackId = 0;
@@ -122,7 +124,7 @@ SuitePruner::EMsgType SuitePruner::DoPull()
 
 void SuitePruner::MsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
     TEST(DoPull() == EMsgTrack);
     TEST(DoPull() == EMsgAudioPcm);
@@ -181,6 +183,12 @@ void SuitePruner::SilenceUnblocksTrackMsgs()
 Msg* SuitePruner::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuitePruner::ProcessMsg(MsgSession* aMsg)
+{
+    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -282,6 +290,8 @@ Msg* SuitePruner::Pull()
     {
     case EMsgMode:
         return iMsgFactory->CreateMsgMode(Brx::Empty(), true, true, NULL);
+    case EMsgSession:
+        return iMsgFactory->CreateMsgSession();
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());

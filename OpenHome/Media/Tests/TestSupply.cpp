@@ -45,6 +45,7 @@ private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -68,6 +69,7 @@ private:
        ,EMsgPlayable
        ,EMsgDecodedStream
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -131,7 +133,7 @@ SuiteSupply::SuiteSupply()
     , iLastMsg(ENone)
     , iMsgPushCount(0)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupply = new Supply(*iMsgFactory, *this);
 }
@@ -147,6 +149,8 @@ void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
     iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies);
+    TEST(++expectedMsgCount == iMsgPushCount);
+    iSupply->OutputSession();
     TEST(++expectedMsgCount == iMsgPushCount);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
     iSupply->OutputTrack(*track, kTrackId);
@@ -182,6 +186,12 @@ Msg* SuiteSupply::ProcessMsg(MsgMode* aMsg)
     TEST(aMsg->Mode() == Brn(kMode));
     TEST(aMsg->SupportsLatency() == kSupportsLatency);
     TEST(aMsg->IsRealTime() == kIsRealTime);
+    return aMsg;
+}
+
+Msg* SuiteSupply::ProcessMsg(MsgSession* aMsg)
+{
+    iLastMsg = EMsgSession;
     return aMsg;
 }
 

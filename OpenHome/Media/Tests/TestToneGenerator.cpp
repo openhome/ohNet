@@ -121,6 +121,7 @@ protected:  // from IMsgProcessor
 
 private:  // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -150,6 +151,7 @@ private:
     static const TUint kMsgCountFlush           = 1;
     static const TUint kMsgCountWait            = 1;
     static const TUint kMsgCountMode            = 1;
+    static const TUint kMsgCountSession         = 1;
     static const TUint kMsgCountDelay           = 1;
     static const TUint kMsgCountQuit            = 1;
     static const TUint kEncodedReservoirSizeBytes = 20 * 1024;
@@ -498,7 +500,8 @@ void SuiteGeneratorAny::Setup()
                              kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
                              kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
                              kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
-                             kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode, kMsgCountDelay, kMsgCountQuit);
+                             kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
+                             kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
     iSupply = new Supply(*iMsgFactory, *iEncodedAudioReservoir);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
@@ -563,6 +566,11 @@ void SuiteGeneratorAny::Push(Msg* aMsg)
 }
 
 Msg* SuiteGeneratorAny::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* SuiteGeneratorAny::ProcessMsg(MsgSession* aMsg)
 {
     return aMsg;
 }

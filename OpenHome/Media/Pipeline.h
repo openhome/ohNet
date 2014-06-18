@@ -47,6 +47,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountFlush           = 16;
     static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountMode            = 20;
+    static const TUint kMsgCountSession         = 20;
     static const TUint kMsgCountDelay           = 20;
     static const TUint kMsgCountQuit            = 1;
 
@@ -55,7 +56,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kSeekerRampDuration                   = Jiffies::kPerMs * 20;
     static const TUint kVariableDelayRampDuration            = Jiffies::kPerMs * 20;
     static const TUint kSkipperRampDuration                  = Jiffies::kPerMs * 500;
-    static const TUint kWaiterRampDuration                   = Jiffies::kPerMs * 500;
+    static const TUint kWaiterRampDuration                   = Jiffies::kPerMs * 50;
     static const TUint kStopperRampDuration                  = Jiffies::kPerMs * 500;
     static const TUint kGorgerDuration                       = Jiffies::kPerMs * 1000;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kPerMs * 50;
@@ -81,6 +82,7 @@ public:
     TUint SenderMinLatencyMs() const;
 public: // from ISupply
     void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);
     void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);

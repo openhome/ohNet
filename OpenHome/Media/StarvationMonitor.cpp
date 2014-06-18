@@ -111,6 +111,7 @@ Msg* StarvationMonitor::Pull()
     if (wait) {
         iSemOut.Wait();
     }
+    iHaltDelivered = false;
     msg = DoDequeue();
     return msg;
 }

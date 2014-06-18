@@ -59,6 +59,11 @@ Msg* TrackInspector::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* TrackInspector::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
 Msg* TrackInspector::ProcessMsg(MsgTrack* aMsg)
 {
     if (iTrack != NULL) {

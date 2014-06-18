@@ -3,6 +3,8 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/VolumeManager.h>
 
 namespace OpenHome {
     class Environment;
@@ -36,6 +38,7 @@ namespace Configuration {
     class ProviderConfig;
 }
 namespace Net {
+    class DvProvider;
     class NetworkMonitor;
 }
 namespace Av {
@@ -44,6 +47,7 @@ class IReadStore;
 class ISource;
 class IStaticDataSource;
 class IPersister;
+class IProvider;
 class Product;
 class ProviderTime;
 class ProviderInfo;
@@ -96,6 +100,33 @@ public: // from IMediaPlayer
     void Add(Media::UriProvider* aUriProvider);
     void AddAttribute(const TChar* aAttribute);
 private:
+    // FIXME - dummy implementations until Volume* classes are finalised
+    class VolumeProfile : public Media::IVolumeProfile
+    {
+    public: // from IVolumeProfile
+        TUint MaxVolume() const;
+        TUint VolumeUnity() const;
+        TUint VolumeSteps() const;
+        TUint VolumeMilliDbPerStep() const;
+        TInt MaxBalance() const;
+    };
+    class VolumePrinter : public Media::IVolume
+    {
+    public: // from IVolume
+        void SetVolume(TUint aVolume);
+    };
+    class BalancePrinter : public Media::IBalance
+    {
+    public: // from IBalance
+        void SetBalance(TInt aBalance);
+    };
+    class MutePrinter : public Media::IMute
+    {
+    public: // from IMute
+        void Mute();
+        void Unmute();
+    };
+private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
     Media::AllocatorInfoLogger* iInfoLogger;
@@ -112,9 +143,13 @@ private:
     Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
     Media::IVolume* iRightVolumeHardware;  // XXX volume hardware
     Media::IVolumeManagerLimits* iVolumeManager;
-    ProviderTime* iTime;
-    ProviderInfo* iInfo;
-    ProviderVolume* iVolume;
+    VolumeProfile iVolumeProfile;
+    VolumePrinter iVolume; // FIXME - replace with real implementations
+    BalancePrinter iBalance;
+    MutePrinter iMute;
+    ProviderTime* iProviderTime;
+    ProviderInfo* iProviderInfo;
+    IProvider* iProviderVolume;
     Configuration::ProviderConfig* iProviderConfig;
     Net::NetworkMonitor* iNetworkMonitor;
 };

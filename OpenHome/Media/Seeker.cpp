@@ -69,6 +69,11 @@ Msg* Seeker::ProcessMsg(MsgMode* aMsg)
     return aMsg;
 }
 
+Msg* Seeker::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
 Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();

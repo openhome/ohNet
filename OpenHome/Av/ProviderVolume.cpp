@@ -1,44 +1,27 @@
 #include <OpenHome/Av/ProviderVolume.h>
 
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Av/StringIds.h>
+#include <OpenHome/Av/Product.h>
+#include <OpenHome/Media/MuteManager.h>
+#include <OpenHome/Media/VolumeManager.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Net;
 using namespace OpenHome::Av;
+using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
+using namespace OpenHome::Net;
 
-//
-// design notes:
-// volume and mute manager backends are single sources of truth,
-// respectively, and UPnP state variables merely track their state,
-// resyncing whenever backend manipulated;
-// absolute bounds checking on value ranges is done at UPnP level
-// in order to generate error response (if necessary), but dynamic
-// volume limiting is under control of volume manager
-//
-// known limitations:
-// volume and mute manager do not (yet?) have API to notify changes,
-// so current assumption is that settings are manipulated only via UPnP;
-// MuteManager not yet populated with actual mute elements,
-// so operating on dummy MuteNull element;
-// IMuteManager does not yet support querying of mute state,
-// so currently only manipulating UPnP state variable, not system backend
-// currently assuming two-channel audio,
-// so "fade" property not applicable;
-//
+// ProviderFactory
+
+IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
+{ // static
+    aProduct.AddAttribute("Volume");
+    return new ProviderVolume(aDevice, aConfigManager, aVolumeProfile, aVolume, aBalance, aMute);;
+}
+
 
 // from older .../Preamp/ServiceVolume.cpp
-#if 0 // FIXME - are these codes still needed?
-const TInt kInvalidSourceIndexCode = 800;
-const Brn  kInvalidSourceIndexMsg("Source index invalid");
-
-const TInt kInvalidStringCode = 810;
-const Brn  kInvalidStringMsg("String too long");
-
-const TInt kInvalidFadeCode = 813;
-const Brn  kInvalidFadeMsg("Fade invalid");
-#endif
-
 const TInt kActionNotSupportedCode = 801;
 const Brn  kActionNotSupportedMsg("Action not supported");
 
@@ -48,12 +31,36 @@ const Brn  kInvalidVolumeMsg("Volume invalid");
 const TInt kInvalidBalanceCode = 812;
 const Brn  kInvalidBalanceMsg("Balance invalid");
 
-ProviderVolume::ProviderVolume(DvDevice& aDevice, IMuteManager& /*aMuteManager*/, IVolumeManagerLimits& aVolumeManager)
+
+/**
+ * This class is an implementer of the Linn-specific UPnP volume service. It is
+ * the sole manipulator of volume and related values (e.g., balance and mute).
+ *
+ * All attempts to set the volume must come via this provider (i.e., over UPnP).
+ * This class is also responsible for enforcing volume limits.
+ *
+ * The fade property is not currently applicable, so all fade-specific actions
+ * will report that the action is not supported, and the values of
+ * fade-specific evented variables have no meaning.
+ */
+
+const Brn ProviderVolume::kBalance("Volume.Balance");
+const Brn ProviderVolume::kVolumeLimit("Volume.Limit");
+const Brn ProviderVolume::kVolumeStartup("Volume.Startup");
+const Brn ProviderVolume::kVolumeStartupEnabled("Volume.Startup.Enabled");
+
+ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
-    //, iMuteManager(aMuteManager)
-    , iVolumeManager(aVolumeManager)
-    , iLock("PrVm")
+    , iConfigManager(aConfigManager)
+    , iVolumeProfile(aVolumeProfile)
+    , iVolumeSetter(aVolume)
+    , iBalanceSetter(aBalance)
+    , iMuteSetter(aMute)
+    , iLock("PVOL")
 {
+    // Linn services are optional, but their actions are not.
+    // i.e., they must be implemented all or nothing (so enable all actions,
+    // but they can return errors if they are unused).
     EnablePropertyVolume();
     EnablePropertyMute();
     EnablePropertyBalance();
@@ -66,119 +73,156 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IMuteManager& /*aMuteManager*/
     EnablePropertyBalanceMax();
     EnablePropertyFadeMax();  // N/A to two-channel audio, but required by ohNet
 
-    SetPropertyVolume(iVolumeManager.UserVolume());
-    SetPropertyMute(false);  // XXX enhance IMuteManager to allow query of actual setting
-    SetPropertyBalance(iVolumeManager.UserBalance());
-    SetPropertyFade(0);
-    SetPropertyVolumeLimit(iVolumeManager.UserVolumeLimit());
-    SetPropertyVolumeMax(iVolumeManager.MaxUserVolume());
-    SetPropertyVolumeUnity(iVolumeManager.VolumeUnity());
-    SetPropertyVolumeSteps(iVolumeManager.VolumeSteps());
-    SetPropertyVolumeMilliDbPerStep(iVolumeManager.VolumeMilliDbPerStep());
-    SetPropertyBalanceMax(iVolumeManager.MaxUserBalance());
-    SetPropertyFadeMax(0);
-
     EnableActionCharacteristics();
-
     EnableActionSetVolume();
     EnableActionVolumeInc();
     EnableActionVolumeDec();
     EnableActionVolume();
-
     EnableActionSetBalance();
     EnableActionBalanceInc();
     EnableActionBalanceDec();
     EnableActionBalance();
-
     EnableActionSetFade();
     EnableActionFadeInc();
     EnableActionFadeDec();
     EnableActionFade();
-
     EnableActionSetMute();
     EnableActionMute();
-
     EnableActionVolumeLimit();
+
+    TInt maxBalance = iVolumeProfile.MaxBalance();
+    TUint maxVolume = iVolumeProfile.MaxVolume();
+    iConfigBalance = new ConfigNum(iConfigManager, kBalance, -(maxBalance), maxBalance, 0);
+    iListenerIdBalance = iConfigBalance->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigBalanceChanged));
+    iConfigVolumeLimit = new ConfigNum(iConfigManager, kVolumeLimit, 0, maxVolume, maxVolume);
+    iListenerIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigVolumeLimitChanged));
+
+    // Only care about startup volume and whether it is enabled when
+    // creating this provider; it has no influence at any other time.
+    iConfigVolumeStartup = new ConfigNum(iConfigManager, kVolumeStartup, 0, maxVolume, kVolumeStartupDefault);
+    std::vector<TUint> choices;
+    choices.push_back(eStringIdYes);
+    choices.push_back(eStringIdNo);
+    iConfigVolumeStartupEnabled = new ConfigChoice(iConfigManager, kVolumeStartupEnabled, choices, eStringIdYes);
+
+    // When we subscribe to a ConfigVal, the initial callback is made from the
+    // same thread that made the subscription.
+    // - So, we know that the callbacks must have been called (at least) once
+    // by the time the Subscribe() method returns.
+    TUint iListenerIdVolumeStartup = iConfigVolumeStartup->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigVolumeStartupChanged));
+    TUint iListenerIdVolumeStartupEnabled = iConfigVolumeStartupEnabled->Subscribe(MakeFunctorConfigChoice(*this, &ProviderVolume::ConfigVolumeStartupEnabledChanged));
+
+    // We don't care about any further changes to iConfigVolumeStartup or
+    // iConfigVolumeStartupEnabled after we've made use of the initial value,
+    // so we can unsubscribe. (But don't delete in case other elements wish to
+    // make use of them.)
+    iConfigVolumeStartup->Unsubscribe(iListenerIdVolumeStartup);
+    iConfigVolumeStartupEnabled->Unsubscribe(iListenerIdVolumeStartupEnabled);
+
+    // FIXME - Now, check if we should use a startup volume, or use a
+    // previously stored volume (or a default volume).
+    TUint volume = kVolumeStartupDefault;
+    TBool mute = false;
+    TUint volLimit = 0;
+    GetPropertyVolumeLimit(volLimit);
+    iLock.Wait();
+    if (iVolumeStartupEnabled == eStringIdYes) {
+        volume = iVolumeStartup;
+    }
+    iLock.Signal();
+
+    // Adjust volume in case initial val is above limit.
+    if (volume > volLimit) {
+        volume = volLimit;
+    }
+    SetPropertyVolume(volume);
+    SetPropertyMute(mute);
+
+    iVolumeSetter.SetVolume(volume);
+    if (mute) {
+        iMuteSetter.Mute();
+    }
+    else {
+        iMuteSetter.Unmute();
+    }
+    // iBalanceSetter is set via *BalanceChanged() callback
+
+    //SetPropertyVolume(0);     // set above
+    //SetPropertyMute(false);   // set above
+    //SetPropertyBalance();     // set via BalanceChanged callback
+    //SetPropertyVolumeLimit(); // set via VolumeLimitChanged callback
+    SetPropertyVolumeMax(iVolumeProfile.MaxVolume());
+    SetPropertyVolumeUnity(iVolumeProfile.VolumeUnity());
+    SetPropertyVolumeSteps(iVolumeProfile.VolumeSteps());
+    SetPropertyVolumeMilliDbPerStep(iVolumeProfile.VolumeMilliDbPerStep());
+    SetPropertyBalanceMax(iVolumeProfile.MaxBalance());
+    SetPropertyFade(0);       // unused
+    SetPropertyFadeMax(0);    // unused
 }
 
 ProviderVolume::~ProviderVolume()
 {
+    iConfigBalance->Unsubscribe(iListenerIdBalance);
+    iConfigVolumeLimit->Unsubscribe(iListenerIdVolumeLimit);
+    delete iConfigVolumeStartupEnabled;
+    delete iConfigVolumeStartup;
+    delete iConfigVolumeLimit;
+    delete iConfigBalance;
 }
 
 void ProviderVolume::Characteristics(IDvInvocation& aInvocation, IDvInvocationResponseUint& aVolumeMax, IDvInvocationResponseUint& aVolumeUnity, IDvInvocationResponseUint& aVolumeSteps, IDvInvocationResponseUint& aVolumeMilliDbPerStep, IDvInvocationResponseUint& aBalanceMax, IDvInvocationResponseUint& aFadeMax)
 {
-    TUint propMaxUserVol = 0;
-    TUint propUnityVol = 0;
-    TUint propVolSteps = 0;
-    TUint propMilliDbPerVolStep = 0;
-    TUint propMaxUserBalance = 0;
-    TUint propMaxFade = 0;
+    TUint maxVol = 0;
+    TUint unityVol = 0;
+    TUint volSteps = 0;
+    TUint milliDbPerVolStep = 0;
+    TUint maxBalance = 0;
+    TUint maxFade = 0;
 
-    // assuming all these properties fixed at start-up,
-    // so locking unnecessary
-
-    GetPropertyVolumeMax(propMaxUserVol);
-    GetPropertyVolumeUnity(propUnityVol);
-    GetPropertyVolumeSteps(propVolSteps);
-    GetPropertyVolumeMilliDbPerStep(propMilliDbPerVolStep);
-    GetPropertyBalanceMax(propMaxUserBalance);
-    GetPropertyFadeMax(propMaxFade);
+    GetPropertyVolumeMax(maxVol);
+    GetPropertyVolumeUnity(unityVol);
+    GetPropertyVolumeSteps(volSteps);
+    GetPropertyVolumeMilliDbPerStep(milliDbPerVolStep);
+    GetPropertyBalanceMax(maxBalance);
+    GetPropertyFadeMax(maxFade);
 
     aInvocation.StartResponse();
-    aVolumeMax.Write(propMaxUserVol);
-    aVolumeUnity.Write(propUnityVol);
-    aVolumeSteps.Write(propVolSteps);
-    aVolumeMilliDbPerStep.Write(propMilliDbPerVolStep);
-    aBalanceMax.Write(propMaxUserBalance);
-    aFadeMax.Write(propMaxFade);
+    aVolumeMax.Write(maxVol);
+    aVolumeUnity.Write(unityVol);
+    aVolumeSteps.Write(volSteps);
+    aVolumeMilliDbPerStep.Write(milliDbPerVolStep);
+    aBalanceMax.Write(maxBalance);
+    aFadeMax.Write(maxFade);
     aInvocation.EndResponse();
 }
 
 void ProviderVolume::SetVolume(IDvInvocation& aInvocation, TUint aValue)
 {
-    AutoMutex mutex(iLock);
-    if (aValue > iVolumeManager.MaxUserVolume()) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
-    }
-    iVolumeManager.SetUserVolume(aValue);
-    SetPropertyVolume(iVolumeManager.UserVolume());
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    TUint volCurrent = 0;
+    GetPropertyVolume(volCurrent);
+    HelperSetVolume(aInvocation, volCurrent, aValue);
 }
 
 void ProviderVolume::VolumeInc(IDvInvocation& aInvocation)
 {
-    AutoMutex mutex(iLock);
-    TUint vol = iVolumeManager.UserVolume();
-    if (!(vol < iVolumeManager.MaxUserVolume())) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
-    }
-    ++vol;
-    iVolumeManager.SetUserVolume(vol);
-    SetPropertyVolume(iVolumeManager.UserVolume());
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    TUint volCurrent = 0;
+    GetPropertyVolume(volCurrent);
+    TUint volNew = volCurrent+1;
+    HelperSetVolume(aInvocation, volCurrent, volNew);
 }
 
 void ProviderVolume::VolumeDec(IDvInvocation& aInvocation)
 {
-    AutoMutex mutex(iLock);
-    TUint vol = iVolumeManager.UserVolume();
-    if (0 == vol) {
-        aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
-    }
-    --vol;
-    iVolumeManager.SetUserVolume(vol);
-    SetPropertyVolume(iVolumeManager.UserVolume());
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    TUint volCurrent = 0;
+    GetPropertyVolume(volCurrent);
+    TUint volNew = volCurrent-1;
+    HelperSetVolume(aInvocation, volCurrent, volNew);
 }
 
 void ProviderVolume::Volume(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
 {
-    AutoMutex mutex(iLock);
-    TUint vol = iVolumeManager.UserVolume();
-    SetPropertyVolume(vol);
+    TUint vol = 0;
+    GetPropertyVolume(vol);
     aInvocation.StartResponse();
     aValue.Write(vol);
     aInvocation.EndResponse();
@@ -186,50 +230,29 @@ void ProviderVolume::Volume(IDvInvocation& aInvocation, IDvInvocationResponseUin
 
 void ProviderVolume::SetBalance(IDvInvocation& aInvocation, TInt aValue)
 {
-    AutoMutex mutex(iLock);
-    TInt maxUserBal = iVolumeManager.MaxUserBalance();
-    if (!((-maxUserBal <= aValue) && (aValue <= maxUserBal))) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-    }
-    iVolumeManager.SetUserBalance(aValue);
-    SetPropertyBalance(aValue);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    HelperSetBalance(aInvocation, aValue);
 }
 
 void ProviderVolume::BalanceInc(IDvInvocation& aInvocation)
 {
-    AutoMutex mutex(iLock);
-    TInt maxUserBal = iVolumeManager.MaxUserBalance();
-    TInt bal = iVolumeManager.UserBalance() + 1;
-    if (!((-maxUserBal <= bal) && (bal <= maxUserBal))) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-    }
-    iVolumeManager.SetUserBalance(bal);
-    SetPropertyBalance(bal);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    TInt balCurrent = 0;
+    GetPropertyBalance(balCurrent);
+    TUint balNew = balCurrent+1;
+    HelperSetBalance(aInvocation, balNew);
 }
 
 void ProviderVolume::BalanceDec(IDvInvocation& aInvocation)
 {
-    AutoMutex mutex(iLock);
-    TInt maxUserBal = iVolumeManager.MaxUserBalance();
-    TInt bal = iVolumeManager.UserBalance() - 1;
-    if (!((-maxUserBal <= bal) && (bal <= maxUserBal))) {
-        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
-    }
-    iVolumeManager.SetUserBalance(bal);
-    SetPropertyBalance(bal);
-    aInvocation.StartResponse();
-    aInvocation.EndResponse();
+    TInt balCurrent = 0;
+    GetPropertyBalance(balCurrent);
+    TInt balNew = balCurrent-1;
+    HelperSetBalance(aInvocation, balNew);
 }
 
 void ProviderVolume::Balance(IDvInvocation& aInvocation, IDvInvocationResponseInt& aValue)
 {
-    AutoMutex mutex(iLock);
-    TInt bal = iVolumeManager.UserBalance();
-    SetPropertyBalance(bal);
+    TInt bal = 0;
+    GetPropertyBalance(bal);
     aInvocation.StartResponse();
     aValue.Write(bal);
     aInvocation.EndResponse();
@@ -257,38 +280,102 @@ void ProviderVolume::Fade(IDvInvocation& aInvocation, IDvInvocationResponseInt& 
 
 void ProviderVolume::SetMute(IDvInvocation& aInvocation, TBool aValue)
 {
-    AutoMutex mutex(iLock);
-#if 0
-    IMute& userMute = iMuteManager.Find("USERMUTE");  // XXX
-#else
-    MuteNull userMute;
-#endif
-    if (aValue) {
-        userMute.Mute();
-    } else {
-        userMute.Unmute();
+    TBool mute = false;
+    GetPropertyMute(mute);
+
+    if (aValue != mute) {
+        SetPropertyMute(aValue);
+
+        if (aValue) {
+            iMuteSetter.Mute();
+        }
+        else {
+            iMuteSetter.Unmute();
+        }
     }
-    SetPropertyMute(aValue);
+
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderVolume::Mute(IDvInvocation& aInvocation, IDvInvocationResponseBool& aValue)
 {
-    TBool propMuted = false;  // XXX enhance IMuteManager to allow query of setting
-    AutoMutex mutex(iLock);
-    GetPropertyMute(propMuted);
+    TBool muted = false;
+    GetPropertyMute(muted);
     aInvocation.StartResponse();
-    aValue.Write(propMuted);
+    aValue.Write(muted);
     aInvocation.EndResponse();
 }
 
 void ProviderVolume::VolumeLimit(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
 {
-    AutoMutex mutex(iLock);
-    TUint volLimit = iVolumeManager.UserVolumeLimit();
-    SetPropertyVolumeLimit(volLimit);
+    TUint volLimit = 0;
+    GetPropertyVolumeLimit(volLimit);
     aInvocation.StartResponse();
     aValue.Write(volLimit);
     aInvocation.EndResponse();
+}
+
+void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolumeCurrent, TUint aVolumeNew)
+{
+    TUint volLimit = 0;
+    GetPropertyVolumeLimit(volLimit);
+
+    if (aVolumeNew != aVolumeCurrent) {
+        if (aVolumeNew > volLimit) {
+            // IDvInvocation::Error() throws an exception, so this method returns immediately.
+            aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
+        }
+        SetPropertyVolume(aVolumeNew);
+        iVolumeSetter.SetVolume(aVolumeNew);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
+void ProviderVolume::HelperSetBalance(IDvInvocation& aInvocation, TInt aBalance)
+{
+    // Need to keep iConfigBalance in sync with PropertyBalance.
+    // iConfigBalance does bounds checking for us and only calls callback when
+    // value has actually changed - so try set iConfigBalance and let it (and
+    // the callback) do the work.
+    try {
+        iConfigBalance->Set(aBalance);
+    }
+    catch (ConfigValueOutOfRange&) {
+        aInvocation.Error(kInvalidBalanceCode, kInvalidBalanceMsg);
+    }
+    aInvocation.StartResponse();
+    aInvocation.EndResponse();
+}
+
+void ProviderVolume::ConfigBalanceChanged(ConfigNum::KvpNum& aKvp)
+{
+    // Balance limits are enforced by iConfigBalance, and this callback is only
+    // made when the value has changed.
+    TInt balance = aKvp.Value();
+    SetPropertyBalance(balance);
+    iBalanceSetter.SetBalance(balance);
+}
+
+void ProviderVolume::ConfigVolumeLimitChanged(ConfigNum::KvpNum& aKvp)
+{
+    // Volume limit is enforced by limits in iConfigVolumeLimit.
+    TUint volumeLimit = aKvp.Value();
+    SetPropertyVolumeLimit(volumeLimit);
+    // FIXME - legacy devices can receive volume limit cmds (and send them
+    // back) so, although we enforce volume limit here, still send it to
+    // device?
+}
+
+void ProviderVolume::ConfigVolumeStartupChanged(ConfigNum::KvpNum& aKvp)
+{
+    AutoMutex a(iLock);
+    iVolumeStartup = aKvp.Value();  // shouldn't be set outwith c'tor
+}
+
+void ProviderVolume::ConfigVolumeStartupEnabledChanged(ConfigChoice::KvpChoice& aKvp)
+{
+    AutoMutex a(iLock);
+    iVolumeStartupEnabled = aKvp.Value();  // shouldn't be set outwith c'tor
 }

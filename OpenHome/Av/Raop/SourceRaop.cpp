@@ -254,14 +254,17 @@ void SourceRaop::NotifySessionEnd()
 
 void SourceRaop::NotifySessionWait()
 {
-    AutoMutex a(iLock);
-
+    iLock.Wait();
     if (IsActive() && iSessionActive) {
         // Possible race condition here - MsgFlush could pass Waiter before
         // iPipeline::Wait is called.
         TUint flushId = iProtocol->SendFlush();
-        iPipeline.Wait(flushId);
         iTransportState = Media::EPipelineWaiting;
+        iLock.Signal();
+        iPipeline.Wait(flushId);
+    }
+    else {
+        iLock.Signal();
     }
 }
 

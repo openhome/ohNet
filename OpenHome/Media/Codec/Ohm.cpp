@@ -38,6 +38,7 @@ private:
     Bws<Av::OhmMsgAudioBlob::kMaxBytes> iBuf;
     TUint iOffset;
     TBool iStreamOutput;
+    TBool iSendSession;
     TUint iSampleRate;
     TUint iLatency;
 };
@@ -90,6 +91,7 @@ void CodecOhm::StreamInitialise()
     iBuf.SetBytes(0);
     iOffset = 0;
     iStreamOutput = false;
+    iSendSession = false;
     iSampleRate = 0;
     iLatency = 0;
 }
@@ -119,6 +121,10 @@ void CodecOhm::Process()
         }
 
         if (msg->Samples() > 0) {
+            if (iSendSession) {
+                iController->OutputSession();
+                iSendSession = false;
+            }
             const TUint64 jiffiesStart = jiffiesPerSample * msg->SampleStart();
             const TUint rxTimestamp = (msg->RxTimestamped()? msg->RxTimestamp() : 0);
             const TUint networkTimestamp = (msg->Timestamped()? msg->NetworkTimestamp() : 0);
@@ -130,6 +136,7 @@ void CodecOhm::Process()
     if (msg->Halt()) {
         iController->OutputWait();
         iController->OutputHalt();
+        iSendSession = true;
     }
 
     msg->RemoveRef();

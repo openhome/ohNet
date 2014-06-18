@@ -58,6 +58,7 @@ private:
     void TrackCompleted();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -254,6 +255,12 @@ void DummyDriver::TrackCompleted()
 }
 
 Msg* DummyDriver::ProcessMsg(MsgMode* /*aMsg*/)
+{
+    ASSERTS(); // msg type not expected at the far right of the pipeline
+    return NULL;
+}
+
+Msg* DummyDriver::ProcessMsg(MsgSession* /*aMsg*/)
 {
     ASSERTS(); // msg type not expected at the far right of the pipeline
     return NULL;

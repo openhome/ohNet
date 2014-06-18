@@ -281,6 +281,12 @@ Msg* DriverSongcastSender::ProcessMsg(MsgMode* /*aMsg*/)
     return NULL;
 }
 
+Msg* DriverSongcastSender::ProcessMsg(MsgSession* /*aMsg*/)
+{
+    ASSERTS();
+    return NULL;
+}
+
 Msg* DriverSongcastSender::ProcessMsg(MsgTrack* /*aMsg*/)
 {
     ASSERTS();

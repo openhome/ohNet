@@ -38,6 +38,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -56,6 +57,7 @@ private:
     {
         ENone
        ,EMsgMode
+       ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
@@ -132,7 +134,7 @@ SuiteSkipper::~SuiteSkipper()
 void SuiteSkipper::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
     iTrackId = iStreamId = UINT_MAX;
     iTrackOffset = 0;
@@ -195,6 +197,12 @@ void SuiteSkipper::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUin
 Msg* SuiteSkipper::ProcessMsg(MsgMode* aMsg)
 {
     iLastPulledMsg = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteSkipper::ProcessMsg(MsgSession* aMsg)
+{
+    iLastPulledMsg = EMsgSession;
     return aMsg;
 }
 
@@ -350,6 +358,7 @@ Msg* SuiteSkipper::CreateAudio()
 void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
 {
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMode(Brx::Empty(), false, true, NULL));
+    iPendingMsgs.push_back(iMsgFactory->CreateMsgSession());
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(iMsgFactory->CreateMsgDelay(0));
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -364,6 +373,7 @@ void SuiteSkipper::TestAllMsgsPassWhileNotSkipping()
     iPendingMsgs.push_back(CreateTrack());
 
     PullNext(EMsgMode);
+    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     PullNext(EMsgDelay);
     PullNext(EMsgEncodedStream);

@@ -30,6 +30,7 @@ enum EMsgType
         ,EMsgPlayable
         ,EMsgDecodedStream
         ,EMsgMode
+        ,EMsgSession
         ,EMsgTrack
         ,EMsgDelay
         ,EMsgEncodedStream
@@ -70,6 +71,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
+    Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
     Msg* ProcessMsg(MsgEncodedStream* aMsg);
@@ -187,7 +189,7 @@ void SuiteRewinder::InitMsgOrder()
 
 void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, aEncodedAudioCount, aMsgAudioEncodedCount, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iRewinder = new Rewinder(*iMsgFactory, *this);
     iStreamHandler = NULL;
@@ -259,6 +261,13 @@ Msg* SuiteRewinder::ProcessMsg(MsgMode* aMsg)
 {
     TEST(iLastMsgType == EMsgMode);
     iRcvdMsgType = EMsgMode;
+    return aMsg;
+}
+
+Msg* SuiteRewinder::ProcessMsg(MsgSession* aMsg)
+{
+    TEST(iLastMsgType == EMsgSession);
+    iRcvdMsgType = EMsgSession;
     return aMsg;
 }
 

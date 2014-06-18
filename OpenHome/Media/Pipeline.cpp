@@ -43,7 +43,7 @@ Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObs
                                  kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
                                  kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
-                                 kMsgCountMode, kMsgCountDelay, kMsgCountQuit);
+                                 kMsgCountMode, kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
 
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
@@ -324,6 +324,11 @@ TUint Pipeline::SenderMinLatencyMs() const
 void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
 {
     iSupply->OutputMode(aMode, aSupportsLatency, aRealTime);
+}
+
+void Pipeline::OutputSession()
+{
+    iSupply->OutputSession();
 }
 
 void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId)
