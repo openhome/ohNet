@@ -145,6 +145,7 @@ private:
     Media::IVolumeManagerLimits* iVolumeManager;
     VolumeProfile iVolumeProfile;
     VolumePrinter iVolume; // FIXME - replace with real implementations
+    Media::VolumeLimitNull iVolumeLimit;
     BalancePrinter iBalance;
     MutePrinter iMute;
     ProviderTime* iProviderTime;

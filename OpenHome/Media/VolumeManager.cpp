@@ -8,6 +8,15 @@ using namespace OpenHome;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 
+
+// VolumeLimitNull
+
+void VolumeLimitNull::SetVolumeLimit(TUint /*aValue*/)
+{
+    // Consumes volume limit.
+}
+
+
 // VolumeLimiterUser
 VolumeLimiterUser::VolumeLimiterUser(IVolume& aVolume, TUint aLimit)
     : iVolume(aVolume)

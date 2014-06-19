@@ -14,10 +14,10 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
+IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IVolumeLimit& aVolumeLimit, IBalance& aBalance, IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigManager, aVolumeProfile, aVolume, aBalance, aMute);;
+    return new ProviderVolume(aDevice, aConfigManager, aVolumeProfile, aVolume, aVolumeLimit, aBalance, aMute);;
 }
 
 
@@ -49,11 +49,12 @@ const Brn ProviderVolume::kVolumeLimit("Volume.Limit");
 const Brn ProviderVolume::kVolumeStartup("Volume.Startup");
 const Brn ProviderVolume::kVolumeStartupEnabled("Volume.Startup.Enabled");
 
-ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IBalance& aBalance, IMute& aMute)
+ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IVolumeLimit& aVolumeLimit, IBalance& aBalance, IMute& aMute)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
     , iConfigManager(aConfigManager)
     , iVolumeProfile(aVolumeProfile)
     , iVolumeSetter(aVolume)
+    , iVolumeLimitSetter(aVolumeLimit)
     , iBalanceSetter(aBalance)
     , iMuteSetter(aMute)
     , iLock("PVOL")
@@ -168,6 +169,16 @@ ProviderVolume::~ProviderVolume()
     delete iConfigVolumeStartup;
     delete iConfigVolumeLimit;
     delete iConfigBalance;
+}
+
+void ProviderVolume::SetVolumeLimit(TUint aVolumeLimit)
+{
+    try {
+        iConfigVolumeLimit->Set(aVolumeLimit);
+    }
+    catch (ConfigValueOutOfRange) {
+        THROW(InvalidVolumeLimit); // aVolumeLimit > hardwareVolLimit
+    }
 }
 
 void ProviderVolume::Characteristics(IDvInvocation& aInvocation, IDvInvocationResponseUint& aVolumeMax, IDvInvocationResponseUint& aVolumeUnity, IDvInvocationResponseUint& aVolumeSteps, IDvInvocationResponseUint& aVolumeMilliDbPerStep, IDvInvocationResponseUint& aBalanceMax, IDvInvocationResponseUint& aFadeMax)
@@ -363,9 +374,7 @@ void ProviderVolume::ConfigVolumeLimitChanged(ConfigNum::KvpNum& aKvp)
     // Volume limit is enforced by limits in iConfigVolumeLimit.
     TUint volumeLimit = aKvp.Value();
     SetPropertyVolumeLimit(volumeLimit);
-    // FIXME - legacy devices can receive volume limit cmds (and send them
-    // back) so, although we enforce volume limit here, still send it to
-    // device?
+    iVolumeLimitSetter.SetVolumeLimit(volumeLimit);
 }
 
 void ProviderVolume::ConfigVolumeStartupChanged(ConfigNum::KvpNum& aKvp)

@@ -10,6 +10,7 @@ namespace Configuration {
 namespace Media {
     class IVolumeProfile;
     class IVolume;
+    class IVolumeLimit;
     class IBalance;
     class IMute;
 }
@@ -38,7 +39,7 @@ public:
 class ProviderFactory
 {
 public:
-    static IProvider* NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IBalance& aBalance, Media::IMute& aMute);
+    static IProvider* NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit, Media::IBalance& aBalance, Media::IMute& aMute);
 };
 
 } // namespace Av

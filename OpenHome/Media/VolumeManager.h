@@ -48,15 +48,30 @@ public:
 class IVolume
 {
 public:
-    virtual void SetVolume(TUint aValue) = 0;
+    virtual void SetVolume(TUint aVolume) = 0;
     virtual ~IVolume() {}
+};
+
+class IVolumeLimit
+{
+public:
+    virtual void SetVolumeLimit(TUint aVolumeLimit) = 0;
 };
 
 class IBalance
 {
 public:
-    virtual void SetBalance(TInt aValue) = 0; // -ve, 0, +ve
+    virtual void SetBalance(TInt aBalance) = 0; // -ve, 0, +ve
     virtual ~IBalance() {}
+};
+
+/**
+ * Class that consumes volume limits and does nothing with them.
+ */
+class VolumeLimitNull : public IVolumeLimit
+{
+public: // from IVolumeLimit
+    void SetVolumeLimit(TUint aValue);
 };
 
 

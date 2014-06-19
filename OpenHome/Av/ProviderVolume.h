@@ -7,11 +7,14 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Thread.h>
 
+EXCEPTION(InvalidVolumeLimit);
+
 namespace OpenHome {
 
 namespace Media {
     class IVolumeProfile;
     class IVolume;
+    class IVolumeLimit;
     class IBalance;
     class IMute;
 }
@@ -29,8 +32,9 @@ public:
     static const Brn kVolumeStartup;
     static const Brn kVolumeStartupEnabled;
 public:
-    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IBalance& aBalance, Media::IMute& aMute);
+    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit, Media::IBalance& aBalance, Media::IMute& aMute);
     ~ProviderVolume();
+    void SetVolumeLimit(TUint aVolumeLimit);  // alternative method of setting volume limit, instead of directly via ConfigVal
 private: // from DvProviderAvOpenhomeOrgVolume1 (and only ever invoked from base class)
     virtual void Characteristics(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aVolumeMax, Net::IDvInvocationResponseUint& aVolumeUnity, Net::IDvInvocationResponseUint& aVolumeSteps, Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep, Net::IDvInvocationResponseUint& aBalanceMax, Net::IDvInvocationResponseUint& aFadeMax);
 
@@ -66,6 +70,7 @@ private:
     Configuration::IConfigManagerWriter& iConfigManager;
     Media::IVolumeProfile& iVolumeProfile;
     Media::IVolume& iVolumeSetter;
+    Media::IVolumeLimit& iVolumeLimitSetter;
     Media::IBalance& iBalanceSetter; // balance set via volume and configuration services
     Media::IMute& iMuteSetter;
 
