@@ -5,6 +5,7 @@
 #include <OpenHome/Av/ProviderFactory.h>
 
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/PowerManager.h>
 #include <OpenHome/Private/Thread.h>
 
 EXCEPTION(InvalidVolumeLimit);
@@ -31,12 +32,29 @@ public:
     static const Brn kVolumeLimit;
     static const Brn kVolumeStartup;
     static const Brn kVolumeStartupEnabled;
+private:
+    static const Brn kPowerDownVolume;
+    static const Brn kPowerDownMute;
+private:
+    static const TUint kVolumeStartupDefault = 0;
+    static const TBool kMuteStartupDefault = false;
 public:
-    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit, Media::IBalance& aBalance, Media::IMute& aMute);
+    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager,
+                   Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager,
+                   Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume,
+                   Media::IVolumeLimit& aVolumeLimit, Media::IBalance& aBalance,
+                   Media::IMute& aMute);
     ~ProviderVolume();
     void SetVolumeLimit(TUint aVolumeLimit);  // alternative method of setting volume limit, instead of directly via ConfigVal
 private: // from DvProviderAvOpenhomeOrgVolume1 (and only ever invoked from base class)
-    virtual void Characteristics(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aVolumeMax, Net::IDvInvocationResponseUint& aVolumeUnity, Net::IDvInvocationResponseUint& aVolumeSteps, Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep, Net::IDvInvocationResponseUint& aBalanceMax, Net::IDvInvocationResponseUint& aFadeMax);
+    virtual void Characteristics(Net::IDvInvocation& aInvocation
+                               , Net::IDvInvocationResponseUint& aVolumeMax
+                               , Net::IDvInvocationResponseUint& aVolumeUnity
+                               , Net::IDvInvocationResponseUint& aVolumeSteps
+                               , Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep
+                               , Net::IDvInvocationResponseUint& aBalanceMax
+                               , Net::IDvInvocationResponseUint& aFadeMax
+    );
 
     void SetVolume(Net::IDvInvocation& aInvocation, TUint aValue);
     void VolumeInc(Net::IDvInvocation& aInvocation);
@@ -65,8 +83,6 @@ private:
     void ConfigVolumeStartupChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void ConfigVolumeStartupEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
-    static const TUint kVolumeStartupDefault = 10;
-
     Configuration::IConfigManagerWriter& iConfigManager;
     Media::IVolumeProfile& iVolumeProfile;
     Media::IVolume& iVolumeSetter;
@@ -84,6 +100,10 @@ private:
 
     TUint iVolumeStartup;
     TUint iVolumeStartupEnabled;
+
+    StoreInt iPowerDownVolume;
+    StoreInt iPowerDownMute;    // 0 = false; 1 = true
+
     Mutex iLock;
 };
 

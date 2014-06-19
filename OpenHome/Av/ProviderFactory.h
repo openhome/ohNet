@@ -4,8 +4,10 @@
 #include <OpenHome/OhNetTypes.h>
 
 namespace OpenHome {
+    class IPowerManager;
 namespace Configuration {
     class IConfigManagerWriter;
+    class IStoreReadWrite;
 }
 namespace Media {
     class IVolumeProfile;
@@ -39,7 +41,16 @@ public:
 class ProviderFactory
 {
 public:
-    static IProvider* NewVolume(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager, Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit, Media::IBalance& aBalance, Media::IMute& aMute);
+    static IProvider* NewVolume(Product& aProduct,
+                                Net::DvDevice& aDevice,
+                                Configuration::IConfigManagerWriter& aConfigManager,
+                                Configuration::IStoreReadWrite& aStore,
+                                IPowerManager& aPowerManager,
+                                Media::IVolumeProfile& aVolumeProfile,
+                                Media::IVolume& aVolume,
+                                Media::IVolumeLimit& aVolumeLimit,
+                                Media::IBalance& aBalance,
+                                Media::IMute& aMute);
 };
 
 } // namespace Av

@@ -14,10 +14,16 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IVolumeLimit& aVolumeLimit, IBalance& aBalance, IMute& aMute)
+IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice,
+                                      IConfigManagerWriter& aConfigManager, IStoreReadWrite& aStore,
+                                      IPowerManager& aPowerManager, IVolumeProfile& aVolumeProfile,
+                                      IVolume& aVolume, IVolumeLimit& aVolumeLimit,
+                                      IBalance& aBalance, IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigManager, aVolumeProfile, aVolume, aVolumeLimit, aBalance, aMute);;
+    return new ProviderVolume(aDevice, aConfigManager, aStore, aPowerManager,
+                              aVolumeProfile, aVolume, aVolumeLimit, aBalance,
+                              aMute);
 }
 
 
@@ -49,7 +55,17 @@ const Brn ProviderVolume::kVolumeLimit("Volume.Limit");
 const Brn ProviderVolume::kVolumeStartup("Volume.Startup");
 const Brn ProviderVolume::kVolumeStartupEnabled("Volume.Startup.Enabled");
 
-ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManagerWriter& aConfigManager, IVolumeProfile& aVolumeProfile, IVolume& aVolume, IVolumeLimit& aVolumeLimit, IBalance& aBalance, IMute& aMute)
+const Brn ProviderVolume::kPowerDownVolume("PowerDown.Volume");
+const Brn ProviderVolume::kPowerDownMute("PowerDown.Mute");
+
+ProviderVolume::ProviderVolume(DvDevice& aDevice,
+                               IConfigManagerWriter& aConfigManager,
+                               IStoreReadWrite& aStore,
+                               IPowerManager& aPowerManager,
+                               IVolumeProfile& aVolumeProfile,
+                               IVolume& aVolume, IVolumeLimit& aVolumeLimit,
+                               IBalance& aBalance,
+                               IMute& aMute)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
     , iConfigManager(aConfigManager)
     , iVolumeProfile(aVolumeProfile)
@@ -57,6 +73,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManagerWriter& aConfigM
     , iVolumeLimitSetter(aVolumeLimit)
     , iBalanceSetter(aBalance)
     , iMuteSetter(aMute)
+    , iPowerDownVolume(aStore, aPowerManager, kPowerPriorityHighest, kPowerDownVolume, kVolumeStartupDefault)
+    , iPowerDownMute(aStore, aPowerManager, kPowerPriorityHighest, kPowerDownMute, kMuteStartupDefault)
     , iLock("PVOL")
 {
     // Linn services are optional, but their actions are not.
@@ -120,19 +138,24 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice, IConfigManagerWriter& aConfigM
     iConfigVolumeStartup->Unsubscribe(iListenerIdVolumeStartup);
     iConfigVolumeStartupEnabled->Unsubscribe(iListenerIdVolumeStartupEnabled);
 
-    // FIXME - Now, check if we should use a startup volume, or use a
-    // previously stored volume (or a default volume).
-    TUint volume = kVolumeStartupDefault;
+    // Now, check if we should use a startup volume, or use a previously stored
+    // volume (or a default volume).
+    TUint volume = iPowerDownVolume.Get();
     TBool mute = false;
     TUint volLimit = 0;
     GetPropertyVolumeLimit(volLimit);
     iLock.Wait();
-    if (iVolumeStartupEnabled == eStringIdYes) {
+    if (iVolumeStartupEnabled == eStringIdYes) { // override powerdown vol
         volume = iVolumeStartup;
     }
     iLock.Signal();
 
-    // Adjust volume in case initial val is above limit.
+    if (iPowerDownMute.Get() == 1) {
+        mute = true;
+    }
+
+    // Adjust volume in case initial val is above limit. Should never be the case.
+    // Could ASSERT, but what use is that to the user if we can do something sensible here?
     if (volume > volLimit) {
         volume = volLimit;
     }
@@ -296,6 +319,7 @@ void ProviderVolume::SetMute(IDvInvocation& aInvocation, TBool aValue)
 
     if (aValue != mute) {
         SetPropertyMute(aValue);
+        iPowerDownMute.Set(aValue);
 
         if (aValue) {
             iMuteSetter.Mute();
@@ -338,6 +362,7 @@ void ProviderVolume::HelperSetVolume(IDvInvocation& aInvocation, TUint aVolumeCu
             aInvocation.Error(kInvalidVolumeCode, kInvalidVolumeMsg);
         }
         SetPropertyVolume(aVolumeNew);
+        iPowerDownVolume.Set(aVolumeNew);
         iVolumeSetter.SetVolume(aVolumeNew);
     }
     aInvocation.StartResponse();
