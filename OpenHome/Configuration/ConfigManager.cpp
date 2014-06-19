@@ -315,6 +315,11 @@ ISerialisable& ConfigManager::Get(const Brx& aKey) const
     }
 }
 
+IStoreReadWrite& ConfigManager::Store()
+{
+    return iStore;
+}
+
 void ConfigManager::Close()
 {
     iClosed = true;

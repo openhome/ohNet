@@ -15,13 +15,13 @@ using namespace OpenHome::Net;
 // ProviderFactory
 
 IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice,
-                                      IConfigManagerWriter& aConfigManager, IStoreReadWrite& aStore,
-                                      IPowerManager& aPowerManager, IVolumeProfile& aVolumeProfile,
-                                      IVolume& aVolume, IVolumeLimit& aVolumeLimit,
-                                      IBalance& aBalance, IMute& aMute)
+                                      IConfigManagerWriter& aConfigManager, IPowerManager& aPowerManager,
+                                      IVolumeProfile& aVolumeProfile, IVolume& aVolume,
+                                      IVolumeLimit& aVolumeLimit, IBalance& aBalance,
+                                      IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigManager, aStore, aPowerManager,
+    return new ProviderVolume(aDevice, aConfigManager, aPowerManager,
                               aVolumeProfile, aVolume, aVolumeLimit, aBalance,
                               aMute);
 }
@@ -60,7 +60,6 @@ const Brn ProviderVolume::kPowerDownMute("PowerDown.Mute");
 
 ProviderVolume::ProviderVolume(DvDevice& aDevice,
                                IConfigManagerWriter& aConfigManager,
-                               IStoreReadWrite& aStore,
                                IPowerManager& aPowerManager,
                                IVolumeProfile& aVolumeProfile,
                                IVolume& aVolume, IVolumeLimit& aVolumeLimit,
@@ -73,8 +72,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
     , iVolumeLimitSetter(aVolumeLimit)
     , iBalanceSetter(aBalance)
     , iMuteSetter(aMute)
-    , iPowerDownVolume(aStore, aPowerManager, kPowerPriorityHighest, kPowerDownVolume, kVolumeStartupDefault)
-    , iPowerDownMute(aStore, aPowerManager, kPowerPriorityHighest, kPowerDownMute, kMuteStartupDefault)
+    , iPowerDownVolume(iConfigManager.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownVolume, kVolumeStartupDefault)
+    , iPowerDownMute(iConfigManager.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownMute, kMuteStartupDefault)
     , iLock("PVOL")
 {
     // Linn services are optional, but their actions are not.

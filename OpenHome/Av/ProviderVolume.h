@@ -40,10 +40,9 @@ private:
     static const TBool kMuteStartupDefault = false;
 public:
     ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager,
-                   Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager,
-                   Media::IVolumeProfile& aVolumeProfile, Media::IVolume& aVolume,
-                   Media::IVolumeLimit& aVolumeLimit, Media::IBalance& aBalance,
-                   Media::IMute& aMute);
+                   IPowerManager& aPowerManager, Media::IVolumeProfile& aVolumeProfile,
+                   Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit,
+                   Media::IBalance& aBalance, Media::IMute& aMute);
     ~ProviderVolume();
     void SetVolumeLimit(TUint aVolumeLimit);  // alternative method of setting volume limit, instead of directly via ConfigVal
 private: // from DvProviderAvOpenhomeOrgVolume1 (and only ever invoked from base class)

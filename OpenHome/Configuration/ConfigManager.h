@@ -361,6 +361,7 @@ public:
 class IConfigManagerWriter
 {
 public:
+    virtual IStoreReadWrite& Store() = 0;
     virtual void Close() = 0;
     virtual void Add(ConfigNum& aNum) = 0;
     virtual void Add(ConfigChoice& aChoice) = 0;
@@ -449,6 +450,7 @@ public: // from IConfigManagerReader
     TBool Has(const Brx& aKey) const;
     ISerialisable& Get(const Brx& aKey) const;
 public: // from IConfigManagerWriter
+    IStoreReadWrite& Store();
     void Close();
     void Add(ConfigNum& aNum);
     void Add(ConfigChoice& aChoice);

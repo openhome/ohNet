@@ -55,7 +55,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Time");
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
-    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, iReadWriteStore, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
+    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
