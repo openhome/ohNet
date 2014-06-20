@@ -26,10 +26,10 @@ void PowerManager::PowerDown()
     // FIXME - the caller of power down should provide some kind of interrupt
     // for stopping any non-essential store tasks in progress
     AutoMutex a(iLock);
-    while (!iQueue.empty()) {
-        const PriorityFunctor& functor = iQueue.top();
+    while (!iList.empty()) {
+        const PriorityFunctor& functor = iList.front();
         functor.Callback();
-        iQueue.pop(); // deletes PriorityFunctor
+        iList.pop_front(); // deletes PriorityFunctor
     }
 }
 
@@ -39,7 +39,15 @@ void PowerManager::RegisterObserver(Functor aFunctor, TUint aPriority)
     ASSERT(aPriority >= kPowerPriorityLowest); // shouldn't matter as lowest is 0, and parameter type is TUint
     const PriorityFunctor functor(aFunctor, aPriority);
     AutoMutex a(iLock);
-    iQueue.push(functor); // PriorityFunctor copied into queue
+    PriorityList::const_iterator it;
+    for (it = iList.cbegin(); it != iList.cend(); ++it) {
+        if ((*it).Priority() < functor.Priority()) {
+            iList.insert(it, functor);  // new functors with same priority as existing functors will be called before the existing functors
+            return;
+        }
+    }
+    // Callback is lower priority than anything in list.
+    iList.push_back(functor); // PriorityFunctor copied into queue
 }
 
 
@@ -59,14 +67,6 @@ void PowerManager::PriorityFunctor::Callback() const
 TUint PowerManager::PriorityFunctor::Priority() const
 {
     return iPriority;
-}
-
-
-// PowerManager::PriorityFunctorCmp
-
-TBool PowerManager::PriorityFunctorCmp::operator()(const PriorityFunctor& aFunc1, const PriorityFunctor& aFunc2) const
-{
-    return aFunc1.Priority() < aFunc2.Priority();
 }
 
 

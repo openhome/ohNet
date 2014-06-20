@@ -5,8 +5,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
 
-#include <queue>
-#include <vector>
+#include <list>
 
 namespace OpenHome {
 namespace Configuration {
@@ -46,14 +45,9 @@ private:
         Functor iFunctor;
         TUint iPriority;
     };
-    class PriorityFunctorCmp
-    {
-    public:
-        TBool operator()(const PriorityFunctor& aFunc1, const PriorityFunctor& aFunc2) const;
-    };
 private:
-    typedef std::priority_queue<const PriorityFunctor, std::vector<PriorityFunctor>, PriorityFunctorCmp> PriorityQueue;
-    PriorityQueue iQueue;
+    typedef std::list<const PriorityFunctor> PriorityList;  // efficient insertion and removal
+    PriorityList iList;
     Mutex iLock;
 };
 
