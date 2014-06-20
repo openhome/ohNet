@@ -42,7 +42,7 @@ void PowerManager::RegisterObserver(Functor aFunctor, TUint aPriority)
     PriorityList::const_iterator it;
     for (it = iList.cbegin(); it != iList.cend(); ++it) {
         if ((*it).Priority() < functor.Priority()) {
-            iList.insert(it, functor);  // new functors with same priority as existing functors will be called before the existing functors
+            iList.insert(it, functor);
             return;
         }
     }
