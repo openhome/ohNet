@@ -55,8 +55,8 @@ IPowerManagerObserver* PowerManager::Register(IPowerHandler& aHandler, TUint aPr
 
     PowerManagerObserver* observer = new PowerManagerObserver(*this, aHandler, iNextHandlerId++, aPriority);
 
-    PriorityList::const_iterator it;
-    for (it = iList.cbegin(); it != iList.cend(); ++it) {
+    PriorityList::iterator it;
+    for (it = iList.begin(); it != iList.end(); ++it) {
         if ((*it)->Priority() < observer->Priority()) {
             iList.insert(it, observer);
             break;
@@ -76,8 +76,8 @@ IPowerManagerObserver* PowerManager::Register(IPowerHandler& aHandler, TUint aPr
 void PowerManager::Deregister(TUint aId)
 {
     AutoMutex a(iLock);
-    PriorityList::const_iterator it;
-    for (it = iList.cbegin(); it != iList.cend(); ++it) {
+    PriorityList::iterator it;
+    for (it = iList.begin(); it != iList.end(); ++it) {
         if ((*it)->Id() == aId) {
             // Call PowerDown() on handler under normal shutdown circumstances.
             // PowerDown() may have been invoked on the PowerManager itself,
