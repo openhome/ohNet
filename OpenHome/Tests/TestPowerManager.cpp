@@ -133,6 +133,7 @@ private:
     void TestGet();
     void TestSet();
     void TestWrite();
+    void TestNormalShutdown();
 private:
     static const TInt kDefault = 1;
     StoreInt* iStoreInt;
@@ -165,6 +166,7 @@ private:
     void TestGet();
     void TestSet();
     void TestWrite();
+    void TestNormalShutdown();
 private:
     static const TUint kMaxLength = 30;
     static const Brn kDefault;
@@ -574,6 +576,7 @@ SuiteStoreInt::SuiteStoreInt()
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestGet));
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestSet));
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestWrite));
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestNormalShutdown), "TestNormalShutdown");
 }
 
 TInt SuiteStoreInt::IntFromStore(IStoreReadOnly& aStore, const Brx& aKey)
@@ -652,6 +655,24 @@ void SuiteStoreInt::TestWrite()
     TEST(iStoreInt->Get() == newVal);
 }
 
+void SuiteStoreInt::TestNormalShutdown()
+{
+    // Test that current value is written out during normal shutdown (i.e.,
+    // when PowerDown() is not called).
+    Brn key("normal.shutdown.key");
+    StoreInt* storeInt = new StoreInt(*iStore, *iPowerManager, kPowerPriority, key, kDefault);
+
+    // give the StoreInt a new value
+    static const TInt newVal = kDefault*2;
+    storeInt->Set(newVal);
+
+    // delete StoreInt, which should write out new value, and check store has
+    // been updated
+    delete storeInt;
+    storeInt = NULL;
+    TEST(IntFromStore(*iStore, key) == newVal);
+}
+
 
 // SuiteStoreIntOrdering
 
@@ -689,6 +710,7 @@ SuiteStoreText::SuiteStoreText()
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestGet));
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestSet));
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestWrite));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestNormalShutdown), "TestNormalShutdown");
 }
 
 void SuiteStoreText::Setup()
@@ -773,6 +795,26 @@ void SuiteStoreText::TestWrite()
     TEST(val == newVal);
 }
 
+void SuiteStoreText::TestNormalShutdown()
+{
+    // Test that current value is written out during normal shutdown (i.e.,
+    // when PowerDown() is not called).
+    Brn key("normal.shutdown.key");
+    StoreText* storeText = new StoreText(*iStore, *iPowerManager, kPowerPriority, key, kDefault, kMaxLength);
+
+    // give the StoreText a new value
+    Brn newVal("zyxwvutsrqponmlkjihgfedcba");
+    storeText->Set(newVal);
+
+    // delete StoreText, which should write out new value, and check store has
+    // been updated
+    delete storeText;
+    storeText = NULL;
+    Bws<kMaxLength> buf;
+    iStore->Read(key, buf);
+    TEST(buf == newVal);
+}
+
 
 // SuiteStoreTextOrdering
 
@@ -808,9 +850,9 @@ void TestPowerManager(Environment& aEnv)
     Runner runner("PowerManager tests\n");
     runner.Add(new SuitePowerManager(aEnv));
     runner.Add(new SuitePowerManagerDestruction(aEnv));
-    //runner.Add(new SuiteStoreInt());
-    //runner.Add(new SuiteStoreIntOrdering(aEnv));
-    //runner.Add(new SuiteStoreText());
-    //runner.Add(new SuiteStoreTextOrdering(aEnv));
+    runner.Add(new SuiteStoreInt());
+    runner.Add(new SuiteStoreIntOrdering(aEnv));
+    runner.Add(new SuiteStoreText());
+    runner.Add(new SuiteStoreTextOrdering(aEnv));
     runner.Run();
 }

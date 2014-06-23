@@ -135,21 +135,45 @@ TUint PowerManagerObserver::Priority() const
 
 // StoreVal
 
-StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& /*aPowerManager*/, TUint /*aPriority*/, const Brx& aKey)
-    : iStore(aStore)
+StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey)
+    : iObserver(NULL)
+    , iStore(aStore)
     , iKey(aKey)
     , iLock("STVM")
 {
-    // register with IPowerManager
-    //aPowerManager.RegisterObserver(MakeFunctor(*this, &StoreVal::Write), aPriority);
 }
 
 
 // StoreInt
 
 StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault)
-    : StoreVal(aStore, aPowerManager, aPriority, aKey)
+    : StoreVal(aStore, aKey)
     , iVal(aDefault)
+{
+    // Cannot allow StoreVal to register, as IPowerManager will call PowerUp()
+    // after successful registration, and can't successfully call an overridden
+    // virtual function from constructor (or destructor).
+    iObserver = aPowerManager.Register(*this, aPriority);
+}
+
+StoreInt::~StoreInt()
+{
+    delete iObserver;
+}
+
+TInt StoreInt::Get() const
+{
+    AutoMutex a(iLock);
+    return iVal;
+}
+
+void StoreInt::Set(TInt aValue)
+{
+    AutoMutex a(iLock);
+    iVal = aValue;
+}
+
+void StoreInt::PowerUp()
 {
     // read value from store (if it exists; otherwise write default)
     Bws<sizeof(TInt)> buf;
@@ -165,18 +189,9 @@ StoreInt::StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPower
     }
 }
 
-StoreInt::~StoreInt() {}
-
-TInt StoreInt::Get() const
+void StoreInt::PowerDown()
 {
-    AutoMutex a(iLock);
-    return iVal;
-}
-
-void StoreInt::Set(TInt aValue)
-{
-    AutoMutex a(iLock);
-    iVal = aValue;
+    Write();
 }
 
 void StoreInt::Write()
@@ -191,22 +206,17 @@ void StoreInt::Write()
 // StoreText
 
 StoreText::StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength)
-    : StoreVal(aStore, aPowerManager, aPriority, aKey)
+    : StoreVal(aStore, aKey)
     , iVal(aMaxLength)
 {
-    iLock.Wait();
-    try {
-        iStore.Read(iKey, iVal);
-        iLock.Signal();
-    }
-    catch (StoreKeyNotFound&) {
-        iVal.Replace(aDefault);
-        iLock.Signal();
-        Write();
-    }
+    iVal.Replace(aDefault);
+    iObserver = aPowerManager.Register(*this, aPriority);
 }
 
-StoreText::~StoreText() {}
+StoreText::~StoreText()
+{
+    delete iObserver;
+}
 
 void StoreText::Get(Bwx& aBuf) const
 {
@@ -218,6 +228,25 @@ void StoreText::Set(const Brx& aValue)
 {
     AutoMutex a(iLock);
     iVal.Replace(aValue);
+}
+
+void StoreText::PowerUp()
+{
+    iLock.Wait();
+    try {
+        iStore.Read(iKey, iVal);
+        iLock.Signal();
+    }
+    catch (StoreKeyNotFound&) {
+        //iVal.Replace(aDefault);
+        iLock.Signal();
+        Write();
+    }
+}
+
+void StoreText::PowerDown()
+{
+    Write();
 }
 
 void StoreText::Write()

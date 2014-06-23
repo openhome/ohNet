@@ -99,14 +99,17 @@ private:
 /*
  * Abstract class that only writes its value out to store at power down.
  */
-class StoreVal : private INonCopyable
+class StoreVal : public IPowerHandler
 {
 public:
     static const TUint kMaxIdLength = 32;
 protected:
-    StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey);
-    virtual void Write() = 0;
+    StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey);
+protected: // from IPowerHandler
+    virtual void PowerUp() = 0;
+    virtual void PowerDown() = 0;
 protected:
+    IPowerManagerObserver* iObserver;
     Configuration::IStoreReadWrite& iStore;
     const Bws<kMaxIdLength> iKey;
     mutable Mutex iLock;
@@ -119,10 +122,13 @@ class StoreInt : public StoreVal
 {
 public:
     StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault);
-    virtual ~StoreInt();
+    ~StoreInt();
     TInt Get() const;
     void Set(TInt aValue); // owning class knows limits
 private: // from StoreVal
+    void PowerUp();
+    void PowerDown();
+private:
     void Write();
 private:
     TInt iVal;
@@ -135,10 +141,13 @@ class StoreText : public StoreVal
 {
 public:
     StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength);
-    virtual ~StoreText();
+    ~StoreText();
     void Get(Bwx& aVal) const;
     void Set(const Brx& aValue);
 private: // from StoreVal
+    void PowerUp();
+    void PowerDown();
+private:
     void Write();
 private:
     Bwh iVal;
