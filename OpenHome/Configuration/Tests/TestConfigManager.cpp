@@ -1564,6 +1564,16 @@ void SuiteRamStore::TestWrite()
     TEST(val1 == val1New);
     iStore->Read(kKey2, val2);
     TEST(val2 == val2New);
+
+    // create a key, write it and a value to the store, then delete the key and
+    // check the ram store has persisted the expected key
+    Brh* tmpKey = new Brh("temp.key");
+    Bwh tmpKeyCopy(*tmpKey);
+    iStore->Write(*tmpKey, kVal1);
+    delete tmpKey;
+    Bwh valOut(kVal1.Bytes());
+    iStore->Read(tmpKeyCopy, valOut);
+    TEST(valOut == kVal1);
 }
 
 void SuiteRamStore::TestDelete()

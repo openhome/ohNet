@@ -467,6 +467,17 @@ private:
     TBool iClosed;
 };
 
+
+/**
+ * Custom comparison function for stl map keyed on Brx*
+ */
+class BufferPtrCmp : public BufferCmp
+{
+public:
+    TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
+};
+
+
 /*
  * Class providing a basic implementation of a read/write store for storing
  * configuration in memory (no file writing, so no persistence between runs).
@@ -484,7 +495,7 @@ public: // from IStoreReadWrite
 private:
     void Clear();
 private:
-    typedef std::map<Brn, Brh*, BufferCmp> Map;
+    typedef std::map<Brh*, Brh*, BufferPtrCmp> Map;
     Map iMap;
     Mutex iLock;
 };
