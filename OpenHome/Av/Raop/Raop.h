@@ -84,6 +84,25 @@ private:
     TUint iTimingPort;
 };
 
+class HeaderRtpInfo : public HttpHeader
+{
+public:
+    static const Brn kSeqStr;
+    static const Brn kRtpTimeStr;
+public:
+    TUint Seq() const;
+    TUint RtpTime() const;
+    virtual void Reset();
+private:
+    virtual TBool Recognise(const Brx& aHeader);
+    virtual void Process(const Brx& aValue);
+private:
+    static Brn ParameterValue(Brx& aData);
+private:
+    TUint iSeq;
+    TUint iRtpTime;
+};
+
 class RaopDevice
 {
 public:
@@ -164,6 +183,7 @@ private:
     HeaderAppleChallenge iHeaderAppleChallenge;
     HeaderRtspTransport iHeaderRtspTransport;
     HeaderCSeq iHeaderCSeq;
+    HeaderRtpInfo iHeaderRtpInfo;
     Media::SdpInfo iSdpInfo;
     Bws<sizeof(AES_KEY)> iAeskey;
     TBool iAeskeyPresent;
