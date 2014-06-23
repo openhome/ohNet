@@ -9,7 +9,6 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/PowerManager.h>
 
 #include <openssl/evp.h>
 
@@ -857,35 +856,13 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iObserversLock("RDOL")
 {
     // NOTE: iRaopDevice is not registered by default
-
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
-    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-
-    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
-    NetworkAdapter* current = ref.Adapter();
-
-    iServersLock.Wait();
-    if (current != NULL) {
-        // Single interface selected. Register only on this interface.
-        AddAdapter(*current);
-    }
-    else {
-        // No interface selected. Advertise on all interfaces.
-        for (TUint i=0; i<subnetList->size(); i++) {
-            NetworkAdapter* subnet = (*subnetList)[i];
-            AddAdapter(*subnet);
-        }
-    }
-    iServersLock.Signal();
-    NetworkAdapterList::DestroySubnetList(subnetList);
-    aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
+    iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest);
 }
 
 RaopDiscovery::~RaopDiscovery()
 {
+    delete iPowerObserver;
+
     AutoMutex a(iServersLock);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
@@ -1053,6 +1030,43 @@ void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif)
     }
 }
 
+void RaopDiscovery::PowerUp()
+{
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
+
+    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
+    NetworkAdapter* current = ref.Adapter();
+
+    iServersLock.Wait();
+    if (current != NULL) {
+        // Single interface selected. Register only on this interface.
+        AddAdapter(*current);
+    }
+    else {
+        // No interface selected. Advertise on all interfaces.
+        for (TUint i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            AddAdapter(*subnet);
+        }
+    }
+    iServersLock.Signal();
+    NetworkAdapterList::DestroySubnetList(subnetList);
+}
+
+void RaopDiscovery::PowerDown()
+{
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->PowerDown();
+        ++it;
+    }
+}
+
 void RaopDiscovery::HandleInterfaceChange()
 {
     TBool currentRemoved = false;   // identify whether current active server
@@ -1177,16 +1191,6 @@ TBool RaopDiscovery::NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter
         return true;
     }
     return false;
-}
-
-void RaopDiscovery::PowerDown()
-{
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->PowerDown();
-        ++it;
-    }
 }
 
 

@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/ProtocolOhBase.h>
 #include <OpenHome/Private/Network.h>
+#include <OpenHome/PowerManager.h>
 
 namespace OpenHome {
     class Environment;
@@ -18,7 +19,7 @@ namespace Av {
 class IOhmMsgFactory;
 class IOhmTimestamper;
 
-class ProtocolOhu : public ProtocolOhBase
+class ProtocolOhu : public ProtocolOhBase, public IPowerHandler
 {
     static const TUint kTimerLeaveTimeoutMs = 50;
     static const TUint kMaxSlaveCount = 4;
@@ -32,17 +33,20 @@ private: // from Media::Protocol
 private: // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+private: // from IPowerHandler
+    void PowerUp();
+    void PowerDown();
 private:
     void HandleAudio(const OhmHeader& aHeader);
     void HandleTrack(const OhmHeader& aHeader);
     void HandleMetatext(const OhmHeader& aHeader);
     void HandleSlave(const OhmHeader& aHeader);
     void Broadcast(OhmMsg* aMsg);
-    void EmergencyStop();
     void SendLeave();
     void TimerLeaveExpired();
 private:
     Mutex iLeaveLock;
+    IPowerManagerObserver* iPowerObserver;
     Timer* iTimerLeave;
     TBool iLeaving;
     TBool iStopped;

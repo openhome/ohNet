@@ -12,7 +12,6 @@
 #include "RamStore.h"
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
 #include <OpenHome/Configuration/ConfigManager.h>
-#include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
@@ -86,7 +85,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // register our PowerDownUpnp function with the PowerManager
     IPowerManager& powerManager = iMediaPlayer->PowerManager();
-    powerManager.RegisterObserver(MakeFunctor(*this, &TestMediaPlayer::PowerDownUpnp), kPowerPriorityLowest);
+    iPowerObserver = powerManager.Register(*this, kPowerPriorityLowest);
 
     // create a shell
     iShell = new Shell(aDvStack.Env(), 0);
@@ -96,6 +95,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
 TestMediaPlayer::~TestMediaPlayer()
 {
+    delete iPowerObserver;
     ASSERT(!iDevice->Enabled());
     delete iMediaPlayer;
     delete iPipelineObserver;
@@ -228,6 +228,34 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }
 
+
+
+void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
+{
+    if (aUriTail == kSongcastSenderIconFileName) {
+        aResourceWriter.WriteResourceBegin(sizeof(kIconDriverSongcastSender), kIconDriverSongcastSenderMimeType);
+        aResourceWriter.WriteResource(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender));
+        aResourceWriter.WriteResourceEnd();
+    }
+}
+
+void TestMediaPlayer::PowerUp()
+{
+    // FIXME - enable UPnP devices here?
+    // - would need to account for two-stage create->run process either by
+    //  - setting a flag here which is checked in Run() OR
+    //  - registering with IPowerManager in Run() call
+    //iDevice->SetEnabled();
+    //iDeviceUpnpAv->SetEnabled();
+}
+
+void TestMediaPlayer::PowerDown()
+{
+    Log::Print("TestMediaPlayer::PowerDown\n");
+    PowerDownDisable(*iDevice);
+    PowerDownDisable(*iDeviceUpnpAv);
+}
+
 TUint TestMediaPlayer::Hash(const Brx& aBuf)
 {
     TUint hash = 0;
@@ -265,13 +293,6 @@ void TestMediaPlayer::MacAddrFromUdn(Environment& aEnv, Bwx& aMacAddr)
     GenerateMacAddr(aEnv, hash, aMacAddr);
 }
 
-void TestMediaPlayer::PowerDownUpnp()
-{
-    Log::Print("TestMediaPlayer::PowerDownUpnp\n");
-    PowerDownDisable(*iDevice);
-    PowerDownDisable(*iDeviceUpnpAv);
-}
-
 void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
 {
     if (aDevice.Enabled()) {
@@ -282,15 +303,6 @@ void TestMediaPlayer::PowerDownDisable(DvDevice& aDevice)
 void TestMediaPlayer::PowerDownUpnpCallback()
 {
     // do nothing; only exists to avoid lengthy Upnp shutdown waits during power fail
-}
-
-void TestMediaPlayer::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
-{
-    if (aUriTail == kSongcastSenderIconFileName) {
-        aResourceWriter.WriteResourceBegin(sizeof(kIconDriverSongcastSender), kIconDriverSongcastSenderMimeType);
-        aResourceWriter.WriteResource(kIconDriverSongcastSender, sizeof(kIconDriverSongcastSender));
-        aResourceWriter.WriteResourceEnd();
-    }
 }
 
 TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
