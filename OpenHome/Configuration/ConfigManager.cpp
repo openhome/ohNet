@@ -389,7 +389,7 @@ void ConfigRamStore::Print()
         Log::Print("   {");
         Log::Print(*it->first);
         Log::Print(", ");
-        Brh& valBuf = *it->second;
+        const Brx& valBuf = *it->second;
         if (valBuf.Bytes() == sizeof(TUint32)) {
             TUint32 val = Converter::BeUint32At(valBuf, 0);
             Log::Print("%u/", val);
@@ -406,7 +406,7 @@ void ConfigRamStore::Print()
 
 void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
 {
-    Brh key(aKey);
+    Brn key(aKey);
     AutoMutex a(iLock);
     Map::iterator it = iMap.find(&key);
     if (it == iMap.end()) {
@@ -444,12 +444,12 @@ void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
         }
     }
 
-    iMap.insert(std::pair<Brh*,Brh*>(key, val));
+    iMap.insert(std::pair<const Brx*, const Brx*>(key, val));
 }
 
 void ConfigRamStore::Delete(const Brx& aKey)
 {
-    Brh key(aKey);
+    Brn key(aKey);
     AutoMutex a(iLock);
     Map::iterator it = iMap.find(&key);
     if (it == iMap.end()) {

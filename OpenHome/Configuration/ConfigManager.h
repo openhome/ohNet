@@ -495,7 +495,7 @@ public: // from IStoreReadWrite
 private:
     void Clear();
 private:
-    typedef std::map<Brh*, Brh*, BufferPtrCmp> Map;
+    typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
     Map iMap;
     Mutex iLock;
 };
