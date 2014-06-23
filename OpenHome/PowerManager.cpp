@@ -9,62 +9,125 @@ using namespace OpenHome;
 // PowerManager
 
 PowerManager::PowerManager()
-    : iLock("PMLO")
+    : iNextHandlerId(0)
+    , iPowerDown(false)
+    , iLock("PMLO")
 {
 }
 
-PowerManager::~PowerManager() {}
+PowerManager::~PowerManager()
+{
+    iLock.Wait();
+    if (!iList.empty()) {
+        iLock.Signal();
+        ASSERTS(); // ensure all registered observers have deregistered
+    }
+    iLock.Signal();
+}
 
 void PowerManager::PowerDown()
 {
-    // This call can only be made ONCE as PriorityFunctors are deleted as they
-    // are called and removed. Subsequent calls will call no functors.
-    // If it must be possible to reuse the PriorityFunctors, two pointers to
-    // priority_queues can be stored, with values copied into second queue
-    // before being popped, and then swapping queue pointers.
-
     // FIXME - the caller of power down should provide some kind of interrupt
     // for stopping any non-essential store tasks in progress
-    AutoMutex a(iLock);
-    while (!iList.empty()) {
-        const PriorityFunctor& functor = iList.front();
-        functor.Callback();
-        iList.pop_front(); // deletes PriorityFunctor
+    iLock.Wait();
+    if (iPowerDown) {
+        iLock.Signal();
+        ASSERTS();  // PowerDown() should never be called more than once
     }
+    iPowerDown = true;
+    PriorityList::const_iterator it;
+    for (it = iList.cbegin(); it != iList.cend(); ++it) {
+        IPowerHandler& handler = (*it)->PowerHandler();
+        handler.PowerDown();
+    }
+    iLock.Signal();
 }
 
-void PowerManager::RegisterObserver(Functor aFunctor, TUint aPriority)
+IPowerManagerObserver* PowerManager::Register(IPowerHandler& aHandler, TUint aPriority)
 {
     ASSERT(aPriority <= kPowerPriorityHighest)
     ASSERT(aPriority >= kPowerPriorityLowest); // shouldn't matter as lowest is 0, and parameter type is TUint
-    const PriorityFunctor functor(aFunctor, aPriority);
+
+    AutoMutex a(iLock);
+    if (iPowerDown) {
+        return new PowerManagerObserverNull();
+    }
+
+    PowerManagerObserver* observer = new PowerManagerObserver(*this, aHandler, iNextHandlerId++, aPriority);
+
+    PriorityList::const_iterator it;
+    for (it = iList.cbegin(); it != iList.cend(); ++it) {
+        if ((*it)->Priority() < observer->Priority()) {
+            iList.insert(it, observer);
+            break;
+        }
+    }
+
+    if (it == iList.cend()) {
+        // Callback is lower priority than anything in list.
+        iList.push_back(observer);
+    }
+
+    aHandler.PowerUp();
+    return observer;
+}
+
+// Called from destructor of PowerManagerObserver.
+void PowerManager::Deregister(TUint aId)
+{
     AutoMutex a(iLock);
     PriorityList::const_iterator it;
     for (it = iList.cbegin(); it != iList.cend(); ++it) {
-        if ((*it).Priority() < functor.Priority()) {
-            iList.insert(it, functor);
+        if ((*it)->Id() == aId) {
+            // Call PowerDown() on handler under normal shutdown circumstances.
+            // PowerDown() may have been invoked on the PowerManager itself,
+            // and object destruction started before power failure. Don't want
+            // to call PowerDown() on the handler again in that case.
+            if (!iPowerDown) {
+                IPowerHandler& handler = (*it)->PowerHandler();
+                handler.PowerDown();
+            }
+            iList.erase(it);
             return;
         }
     }
-    // Callback is lower priority than anything in list.
-    iList.push_back(functor); // PriorityFunctor copied into queue
 }
 
 
-// PowerManager::PriorityFunctor
+// PowerManagerObserverNull
 
-PowerManager::PriorityFunctor::PriorityFunctor(Functor aFunctor, TUint aPriority)
-    : iFunctor(aFunctor)
+PowerManagerObserverNull::~PowerManagerObserverNull()
+{
+    // Not actually registered in PowerManager, so do nothing.
+}
+
+
+// PowerManagerObserver
+
+PowerManagerObserver::PowerManagerObserver(PowerManager& aPowerManager, IPowerHandler& aHandler, TUint aId, TUint aPriority)
+    : iPowerManager(aPowerManager)
+    , iHandler(aHandler)
+    , iId(aId)
     , iPriority(aPriority)
 {
 }
 
-void PowerManager::PriorityFunctor::Callback() const
+PowerManagerObserver::~PowerManagerObserver()
 {
-    iFunctor();
+    iPowerManager.Deregister(iId);
 }
 
-TUint PowerManager::PriorityFunctor::Priority() const
+IPowerHandler& PowerManagerObserver::PowerHandler() const
+{
+    return iHandler;
+}
+
+TUint PowerManagerObserver::Id() const
+{
+    return iId;
+}
+
+TUint PowerManagerObserver::Priority() const
 {
     return iPriority;
 }
@@ -72,13 +135,13 @@ TUint PowerManager::PriorityFunctor::Priority() const
 
 // StoreVal
 
-StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey)
+StoreVal::StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& /*aPowerManager*/, TUint /*aPriority*/, const Brx& aKey)
     : iStore(aStore)
     , iKey(aKey)
     , iLock("STVM")
 {
     // register with IPowerManager
-    aPowerManager.RegisterObserver(MakeFunctor(*this, &StoreVal::Write), aPriority);
+    //aPowerManager.RegisterObserver(MakeFunctor(*this, &StoreVal::Write), aPriority);
 }
 
 

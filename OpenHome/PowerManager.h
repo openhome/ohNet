@@ -18,37 +18,82 @@ enum PowerDownPriority {
    ,kPowerPriorityHighest = 100
 };
 
+class IPowerHandler
+{
+public:
+    virtual void PowerUp() = 0;
+    virtual void PowerDown() = 0;
+    virtual ~IPowerHandler() {}
+};
+
+/**
+ * Interface that IPowerHandlers will be returned when they register with an
+ * IPowerManager.
+ *
+ * Deleting an instance of a class implementing this interface causes the class
+ * to be deregistered from the IPowerManager.
+ */
+class IPowerManagerObserver
+{
+public:
+    virtual ~IPowerManagerObserver() {}
+};
+
 class IPowerManager
 {
 public:
-    virtual void PowerDown() = 0;
-    virtual void RegisterObserver(Functor aFunctor, TUint aPriority) = 0;
+    virtual IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority) = 0;
     virtual ~IPowerManager() {}
 };
 
+class PowerManagerObserver;
+
 class PowerManager : public IPowerManager
 {
+    friend class PowerManagerObserver;
 public:
     PowerManager();
-    virtual ~PowerManager();
-public: // from IPowerManager
+    ~PowerManager();
     void PowerDown();
-    void RegisterObserver(Functor aFunctor, TUint aPriority);
+public: // from IPowerManager
+    IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority);
 private:
-    class PriorityFunctor
-    {
-    public:
-        PriorityFunctor(Functor aFunctor, TUint aPriority);
-        void Callback() const;
-        TUint Priority() const;
-    private:
-        Functor iFunctor;
-        TUint iPriority;
-    };
+    void Deregister(TUint aId);
 private:
-    typedef std::list<const PriorityFunctor> PriorityList;  // efficient insertion and removal
+    typedef std::list<PowerManagerObserver*> PriorityList;  // efficient insertion and removal
     PriorityList iList;
+    TUint iNextHandlerId;
+    TBool iPowerDown;
     Mutex iLock;
+};
+
+/**
+ * Class that is returned by IPowerManager::Register if registration of an
+ * IPowerHandler fails.
+ */
+class PowerManagerObserverNull : public IPowerManagerObserver
+{
+public:
+    ~PowerManagerObserverNull();
+};
+
+/**
+ * Class that is returned by IPowerManager::Register if registration of an
+ * IPowerHandler succeeds.
+ */
+class PowerManagerObserver : public IPowerManagerObserver, public INonCopyable
+{
+public:
+    PowerManagerObserver(PowerManager& aPowerManager, IPowerHandler& aHandler, TUint aId, TUint aPriority);
+    ~PowerManagerObserver();
+    IPowerHandler& PowerHandler() const;
+    TUint Id() const;
+    TUint Priority() const;
+private:
+    PowerManager& iPowerManager;
+    IPowerHandler& iHandler;
+    const TUint iId;
+    const TUint iPriority;
 };
 
 /*
