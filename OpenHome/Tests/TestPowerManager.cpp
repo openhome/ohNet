@@ -61,20 +61,6 @@ private:
     HelperPowerHandler* iHandler3;
 };
 
-class SuitePowerManagerDestruction : public SuiteUnitTest, public INonCopyable
-{
-public:
-    SuitePowerManagerDestruction(Environment& aEnv);
-private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
-private:
-    void TestNoDeregistration();
-private:
-    Environment& iEnv;
-    HelperPowerHandler* iHandler;
-};
-
 class SuiteStoreVal : public SuiteUnitTest
 {
 protected:
@@ -452,38 +438,6 @@ void SuitePowerManager::TestNoPowerDown()
 }
 
 
-// SuitePowerManagerDestruction
-
-SuitePowerManagerDestruction::SuitePowerManagerDestruction(Environment& aEnv)
-    : SuiteUnitTest("SuitePowerManagerDestruction")
-    , iEnv(aEnv)
-    , iHandler(NULL)
-{
-    AddTest(MakeFunctor(*this, &SuitePowerManagerDestruction::TestNoDeregistration), "TestNoDeregistration");
-}
-
-void SuitePowerManagerDestruction::Setup()
-{
-    iHandler = new HelperPowerHandler(iEnv);
-}
-
-void SuitePowerManagerDestruction::TearDown()
-{
-    delete iHandler;
-}
-
-void SuitePowerManagerDestruction::TestNoDeregistration()
-{
-    // Test that if attempt is made to destroy PowerManager before all its
-    // observers have deregistered then it causes an assertion.
-    PowerManager* mgr = new PowerManager();
-    IPowerManagerObserver* observer = mgr->Register(*iHandler, kPowerPriorityNormal);
-    TEST_THROWS(delete mgr, AssertionFailed);
-    //observer;
-    delete observer;
-}
-
-
 // SuiteStoreVal
 
 const Brn SuiteStoreVal::kKey("store.val.key");
@@ -849,7 +803,6 @@ void TestPowerManager(Environment& aEnv)
 {
     Runner runner("PowerManager tests\n");
     runner.Add(new SuitePowerManager(aEnv));
-//    runner.Add(new SuitePowerManagerDestruction(aEnv));
     runner.Add(new SuiteStoreInt());
     runner.Add(new SuiteStoreIntOrdering(aEnv));
     runner.Add(new SuiteStoreText());
