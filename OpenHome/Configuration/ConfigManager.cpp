@@ -253,6 +253,14 @@ void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
 }
 
 
+// BufferPtrCmp
+
+TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
+{
+    return BufferCmp()(*aStr1, *aStr2);
+}
+
+
 // ConfigManager
 
 ConfigManager::ConfigManager(IStoreReadWrite& aStore)
@@ -260,8 +268,6 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
     , iClosed(false)
 {
 }
-
-ConfigManager::~ConfigManager() {}
 
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
@@ -327,17 +333,17 @@ void ConfigManager::Close()
 
 void ConfigManager::Add(ConfigNum& aNum)
 {
-    Add(iMapNum, aNum.Key(), aNum);
+    AddNum(aNum.Key(), aNum);
 }
 
 void ConfigManager::Add(ConfigChoice& aChoice)
 {
-    Add(iMapChoice, aChoice.Key(), aChoice);
+    AddChoice(aChoice.Key(), aChoice);
 }
 
 void ConfigManager::Add(ConfigText& aText)
 {
-    Add(iMapText, aText.Key(), aText);
+    AddText(aText.Key(), aText);
 }
 
 void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
@@ -355,6 +361,21 @@ void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
 void ConfigManager::ToStore(const Brx& aKey, const Brx& aValue)
 {
     iStore.Write(aKey, aValue);
+}
+
+void ConfigManager::AddNum(const Brx& aKey, ConfigNum& aNum)
+{
+    Add(iMapNum, aKey, aNum);
+}
+
+void ConfigManager::AddChoice(const Brx& aKey, ConfigChoice& aChoice)
+{
+    Add(iMapChoice, aKey, aChoice);
+}
+
+void ConfigManager::AddText(const Brx& aKey, ConfigText& aText)
+{
+    Add(iMapText, aKey, aText);
 }
 
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
@@ -472,12 +493,4 @@ void ConfigRamStore::Clear()
         it++;
     }
     iMap.clear();
-}
-
-
-// BufferPtrCmp
-
-TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
-{
-    return BufferCmp()(*aStr1, *aStr2);
 }

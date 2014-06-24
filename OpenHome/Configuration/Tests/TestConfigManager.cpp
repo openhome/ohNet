@@ -195,6 +195,7 @@ private:
     void TestReadStoreValExists();
     void TestReadNoStoreValExists();
     void TestWrite();
+    void TestMapKeyPersists();
 private:
     static const TUint kMaxNumBytes = 10;
     static const TInt kMinNum = 0;
@@ -1208,6 +1209,7 @@ SuiteConfigManager::SuiteConfigManager()
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists), "TestReadStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists), "TestReadNoStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite), "TestWrite");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestMapKeyPersists), "TestMapKeyPersists");
 }
 
 void SuiteConfigManager::Setup()
@@ -1485,6 +1487,28 @@ void SuiteConfigManager::TestWrite()
     iConfigManager->ToStore(kKeyText1, kText2);
     iStore->Read(kKeyText1, buf);
     TEST(buf == kText2);
+}
+
+void SuiteConfigManager::TestMapKeyPersists()
+{
+    // test that a key written into the internal map of ConfigManager persists
+    // even when the original key is changed.
+    Brn testPrefix("Test.Prefix.");
+    Bwh keyModifiable(testPrefix.Bytes() + kKeyNum1.Bytes());
+    keyModifiable.Replace(testPrefix);
+    keyModifiable.Append(kKeyNum2);
+
+    Brh key(keyModifiable);
+
+    ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum);
+    iConfigManager->AddNum(keyModifiable, num); // force addition of new entry into ConfigManager
+    TEST(iConfigManager->HasNum(key) == true);
+
+    // now modify the key for new entry and check the ConfigManager hasn't
+    // actually taken a copy of it.
+    keyModifiable.Replace(testPrefix);
+    keyModifiable.Append("New.Key");
+    TEST(iConfigManager->HasNum(key) == true);
 }
 
 
