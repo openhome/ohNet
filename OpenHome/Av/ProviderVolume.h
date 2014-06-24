@@ -32,12 +32,12 @@ public:
     static const Brn kVolumeLimit;
     static const Brn kVolumeStartup;
     static const Brn kVolumeStartupEnabled;
+public:
+    static const TUint kVolumeStartupDefault = 0;
+    static const TBool kMuteStartupDefault = false;
 private:
     static const Brn kPowerDownVolume;
     static const Brn kPowerDownMute;
-private:
-    static const TUint kVolumeStartupDefault = 0;
-    static const TBool kMuteStartupDefault = false;
 public:
     ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager,
                    IPowerManager& aPowerManager, Media::IVolumeProfile& aVolumeProfile,
