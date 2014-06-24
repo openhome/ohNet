@@ -154,7 +154,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
     }
 
     // Adjust volume in case initial val is above limit. Should never be the case.
-    // Could ASSERT, but what use is that to the user if we can do something sensible here?
+    // Could ASSERT if corrupt store vals are encountered, but why do that when
+    // something sensible can be done here?
     if (volume > volLimit) {
         volume = volLimit;
     }
