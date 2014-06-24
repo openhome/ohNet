@@ -170,6 +170,19 @@ private:
     Bws<kMaxLength> iLastChangeVal;
 };
 
+class SuiteSerialisedMap : public SuiteUnitTest
+{
+public:
+    SuiteSerialisedMap();
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    void TestMapKeyPersists();
+private:
+    SerialisedMap<TUint>* iMapUint;
+};
+
 class SuiteConfigManager : public SuiteUnitTest
 {
 public:
@@ -195,7 +208,6 @@ private:
     void TestReadStoreValExists();
     void TestReadNoStoreValExists();
     void TestWrite();
-    void TestMapKeyPersists();
 private:
     static const TUint kMaxNumBytes = 10;
     static const TInt kMinNum = 0;
@@ -1166,6 +1178,42 @@ void SuiteConfigText::TestDeserialiseValueTooLong()
 }
 
 
+// SuiteSerialisedMap
+SuiteSerialisedMap::SuiteSerialisedMap()
+    : SuiteUnitTest("SuiteSerialisedMap")
+    , iMapUint(NULL)
+{
+    AddTest(MakeFunctor(*this, &SuiteSerialisedMap::TestMapKeyPersists), "TestMapKeyPersists");
+}
+
+void SuiteSerialisedMap::Setup()
+{
+    iMapUint = new SerialisedMap<TUint>();
+}
+
+void SuiteSerialisedMap::TearDown()
+{
+    delete iMapUint;
+}
+
+void SuiteSerialisedMap::TestMapKeyPersists()
+{
+    // test that a key written into the internal map of ConfigManager persists
+    // even when the original key is changed.
+    Brh key("Test.Map.Key.Original");
+    Bwh keyModifiable(key);
+    TUint val = 0;
+
+    iMapUint->Add(keyModifiable, val);
+    TEST(iMapUint->Has(key) == true);
+
+    // now modify the key for new entry and check it is not a reference that
+    // has been stored in the map.
+    keyModifiable.Replace("Test.Map.Key.New");
+    TEST(iMapUint->Has(key) == true);
+}
+
+
 // SuiteConfigManager
 
 /*
@@ -1209,7 +1257,6 @@ SuiteConfigManager::SuiteConfigManager()
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists), "TestReadStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists), "TestReadNoStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite), "TestWrite");
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestMapKeyPersists), "TestMapKeyPersists");
 }
 
 void SuiteConfigManager::Setup()
@@ -1489,28 +1536,6 @@ void SuiteConfigManager::TestWrite()
     TEST(buf == kText2);
 }
 
-void SuiteConfigManager::TestMapKeyPersists()
-{
-    // test that a key written into the internal map of ConfigManager persists
-    // even when the original key is changed.
-    Brn testPrefix("Test.Prefix.");
-    Bwh keyModifiable(testPrefix.Bytes() + kKeyNum1.Bytes());
-    keyModifiable.Replace(testPrefix);
-    keyModifiable.Append(kKeyNum2);
-
-    Brh key(keyModifiable);
-
-    ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum);
-    iConfigManager->AddNum(keyModifiable, num); // force addition of new entry into ConfigManager
-    TEST(iConfigManager->HasNum(key) == true);
-
-    // now modify the key for new entry and check the ConfigManager hasn't
-    // actually taken a copy of it.
-    keyModifiable.Replace(testPrefix);
-    keyModifiable.Append("New.Key");
-    TEST(iConfigManager->HasNum(key) == true);
-}
-
 
 // SuiteRamStore
 
@@ -1635,6 +1660,7 @@ void TestConfigManager()
     runner.Add(new SuiteConfigNum());
     runner.Add(new SuiteConfigChoice());
     runner.Add(new SuiteConfigText());
+    runner.Add(new SuiteSerialisedMap());
     runner.Add(new SuiteConfigManager());
     runner.Add(new SuiteRamStore());
     runner.Run();

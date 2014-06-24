@@ -456,7 +456,6 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
  */
 class ConfigManager : public IConfigManagerReader, public IConfigManagerWriter
 {
-    friend class SuiteConfigManager;
 public:
     ConfigManager(IStoreReadWrite& aStore);
 public: // from IConfigManagerReader // FIXME - make these private
