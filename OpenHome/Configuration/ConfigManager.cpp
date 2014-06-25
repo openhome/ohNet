@@ -353,7 +353,13 @@ void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
         iStore.Read(aKey, aDest);
     }
     catch (StoreKeyNotFound&) {
-        ToStore(aKey, aDefault);
+        // Don't use ToStore() here. Classes may derive from ConfigManager and
+        // override the public ToStore() method.
+        // e.g. if a deriving class had overridden all public methods to add a
+        // prefix to the key and then called the ConfigManager versions of the
+        // methods, this would cause a problem. The overridden version of
+        // ToStore() would be called here, which would prepend a second prefix.
+        iStore.Write(aKey, aDefault);
         aDest.Replace(aDefault);
     }
 }

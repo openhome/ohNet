@@ -481,9 +481,8 @@ protected:
     void AddText(const Brx& aKey, ConfigText& aText);
 private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
-protected:
-    IStoreReadWrite& iStore;
 private:
+    IStoreReadWrite& iStore;
     SerialisedMap<ConfigNum> iMapNum;
     SerialisedMap<ConfigChoice> iMapChoice;
     SerialisedMap<ConfigText> iMapText;
