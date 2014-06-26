@@ -473,7 +473,7 @@ class ConfigManager : public IConfigManagerReader, public IConfigManagerWriter
 {
 public:
     ConfigManager(IStoreReadWrite& aStore);
-public: // from IConfigManagerReader // FIXME - make these private
+public: // from IConfigManagerReader
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
     TBool HasChoice(const Brx& aKey) const;
@@ -490,7 +490,7 @@ public: // from IConfigManagerWriter
     void Add(ConfigText& aText);
     void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void ToStore(const Brx& aKey, const Brx& aValue);
-protected:
+private:
     void AddNum(const Brx& aKey, ConfigNum& aNum);
     void AddChoice(const Brx& aKey, ConfigChoice& aChoice);
     void AddText(const Brx& aKey, ConfigText& aText);
