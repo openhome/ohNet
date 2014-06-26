@@ -49,7 +49,6 @@ private:
     static const Brn kStartupSourceBase;
     static const TUint kMaxAttributeBytes = 1024;
 public:
-    static const TUint kConfigPrefixMaxBytes = 12;
     static const Brn kConfigIdRoomBase;
     static const Brn kConfigIdNameBase;
     static const TUint kMaxNameBytes = 20;
@@ -58,7 +57,7 @@ public:
 public:
     Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore,
             Configuration::IConfigManagerReader& aConfigReader, Configuration::IConfigManagerInitialiser& aConfigInit,
-            IPowerManager& aPowerManager, const Brx& aConfigPrefix);
+            IPowerManager& aPowerManager);
     ~Product();
     void AddObserver(IProductObserver& aObserver);
     void Start();
@@ -105,7 +104,6 @@ private:
     StoreText* iStartupSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
-    Bws<kConfigPrefixMaxBytes> iConfigPrefix;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Bws<kMaxRoomBytes> iProductRoom;

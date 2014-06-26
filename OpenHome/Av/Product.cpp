@@ -20,8 +20,8 @@ const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
 Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore,
-                 IConfigManagerReader& aConfigReader, Configuration::IConfigManagerInitialiser& aConfigInit,
-                 IPowerManager& aPowerManager, const Brx& aConfigPrefix)
+                 IConfigManagerReader& aConfigReader, IConfigManagerInitialiser& aConfigInit,
+                 IPowerManager& aPowerManager)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigReader(aConfigReader)
@@ -32,21 +32,11 @@ Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite
     , iStandby(false)
     , iCurrentSource(UINT_MAX)
     , iSourceXmlChangeCount(0)
-    , iConfigPrefix(aConfigPrefix)
 {
-    if (iConfigPrefix.Bytes() > 0) {
-        iConfigPrefix.Append('.');
-    }
-    Bws<32> key(iConfigPrefix);
-    key.Append(kStartupSourceBase);
-    iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, key, Brx::Empty(), ISource::kMaxSourceTypeBytes);
-    key.Replace(iConfigPrefix);
-    key.Append(kConfigIdRoomBase);
-    iConfigProductRoom = &aConfigReader.GetText(key);
+    iStartupSource = new StoreText(aReadWriteStore, aPowerManager, kPowerPriorityHighest, kStartupSourceBase, Brx::Empty(), ISource::kMaxSourceTypeBytes);
+    iConfigProductRoom = &aConfigReader.GetText(kConfigIdRoomBase);
     iListenerIdProductRoom = iConfigProductRoom->Subscribe(MakeFunctorConfigText(*this, &Product::ProductRoomChanged));
-    key.Replace(iConfigPrefix);
-    key.Append(kConfigIdNameBase);
-    iConfigProductName = &aConfigReader.GetText(key);
+    iConfigProductName = &aConfigReader.GetText(kConfigIdNameBase);
     iListenerIdProductName = iConfigProductName->Subscribe(MakeFunctorConfigText(*this, &Product::ProductNameChanged));
     iProviderProduct = new ProviderProduct(aDevice, *this);
 }
@@ -99,7 +89,7 @@ void Product::AddSource(ISource* aSource)
 {
     ASSERT(!iStarted);
     iSources.push_back(aSource);
-    aSource->Initialise(*this, iConfigInit, iConfigReader, iConfigPrefix);
+    aSource->Initialise(*this, iConfigInit, iConfigReader);
 }
 
 void Product::AddAttribute(const TChar* aAttribute)
