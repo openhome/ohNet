@@ -24,12 +24,13 @@ ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohu", aMode)
     , iLeaveLock("POHU")
 {
-    aPowerManager.RegisterObserver(MakeFunctor(*this, &ProtocolOhu::EmergencyStop), kPowerPriorityLowest+1);
+    iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest+1);
     iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired));
 }
 
 ProtocolOhu::~ProtocolOhu()
 {
+    delete iPowerObserver;
     delete iTimerLeave;
 }
 
@@ -273,7 +274,12 @@ void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint /*aTrackId*/, TUint /*a
     }
 }
 
-void ProtocolOhu::EmergencyStop()
+void ProtocolOhu::PowerUp()
+{
+    // FIXME - initialise iTimerLeave here?
+}
+
+void ProtocolOhu::PowerDown()
 {
     //iLeaveLock.Wait();
     //// FIXME - use of Send from TimerLeaveExpired isn't obviously threadsafe

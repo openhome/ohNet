@@ -5,8 +5,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
 
-#include <queue>
-#include <vector>
+#include <list>
 
 namespace OpenHome {
 namespace Configuration {
@@ -19,55 +18,98 @@ enum PowerDownPriority {
    ,kPowerPriorityHighest = 100
 };
 
+class IPowerHandler
+{
+public:
+    virtual void PowerUp() = 0;
+    virtual void PowerDown() = 0;
+    virtual ~IPowerHandler() {}
+};
+
+/**
+ * Interface that IPowerHandlers will be returned when they register with an
+ * IPowerManager.
+ *
+ * Deleting an instance of a class implementing this interface causes the class
+ * to be deregistered from the IPowerManager.
+ */
+class IPowerManagerObserver
+{
+public:
+    virtual ~IPowerManagerObserver() {}
+};
+
 class IPowerManager
 {
 public:
-    virtual void PowerDown() = 0;
-    virtual void RegisterObserver(Functor aFunctor, TUint aPriority) = 0;
+    virtual IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority) = 0;
     virtual ~IPowerManager() {}
 };
 
+class PowerManagerObserver;
+
 class PowerManager : public IPowerManager
 {
+    friend class PowerManagerObserver;
 public:
     PowerManager();
-    virtual ~PowerManager();
-public: // from IPowerManager
+    ~PowerManager();
     void PowerDown();
-    void RegisterObserver(Functor aFunctor, TUint aPriority);
+public: // from IPowerManager
+    IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority);
 private:
-    class PriorityFunctor
-    {
-    public:
-        PriorityFunctor(Functor aFunctor, TUint aPriority);
-        void Callback() const;
-        TUint Priority() const;
-    private:
-        Functor iFunctor;
-        TUint iPriority;
-    };
-    class PriorityFunctorCmp
-    {
-    public:
-        TBool operator()(const PriorityFunctor& aFunc1, const PriorityFunctor& aFunc2) const;
-    };
+    void Deregister(TUint aId);
 private:
-    typedef std::priority_queue<const PriorityFunctor, std::vector<PriorityFunctor>, PriorityFunctorCmp> PriorityQueue;
-    PriorityQueue iQueue;
+    typedef std::list<PowerManagerObserver*> PriorityList;  // efficient insertion and removal
+    PriorityList iList;
+    TUint iNextHandlerId;
+    TBool iPowerDown;
     Mutex iLock;
+};
+
+/**
+ * Class that is returned by IPowerManager::Register if registration of an
+ * IPowerHandler fails.
+ */
+class PowerManagerObserverNull : public IPowerManagerObserver
+{
+public:
+    ~PowerManagerObserverNull();
+};
+
+/**
+ * Class that is returned by IPowerManager::Register if registration of an
+ * IPowerHandler succeeds.
+ */
+class PowerManagerObserver : public IPowerManagerObserver, public INonCopyable
+{
+public:
+    PowerManagerObserver(PowerManager& aPowerManager, IPowerHandler& aHandler, TUint aId, TUint aPriority);
+    ~PowerManagerObserver();
+    IPowerHandler& PowerHandler() const;
+    TUint Id() const;
+    TUint Priority() const;
+private:
+    PowerManager& iPowerManager;
+    IPowerHandler& iHandler;
+    const TUint iId;
+    const TUint iPriority;
 };
 
 /*
  * Abstract class that only writes its value out to store at power down.
  */
-class StoreVal : private INonCopyable
+class StoreVal : public IPowerHandler
 {
 public:
     static const TUint kMaxIdLength = 32;
 protected:
-    StoreVal(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey);
-    virtual void Write() = 0;
+    StoreVal(Configuration::IStoreReadWrite& aStore, const Brx& aKey);
+protected: // from IPowerHandler
+    virtual void PowerUp() = 0;
+    virtual void PowerDown() = 0;
 protected:
+    IPowerManagerObserver* iObserver;
     Configuration::IStoreReadWrite& iStore;
     const Bws<kMaxIdLength> iKey;
     mutable Mutex iLock;
@@ -80,10 +122,13 @@ class StoreInt : public StoreVal
 {
 public:
     StoreInt(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, TInt aDefault);
-    virtual ~StoreInt();
+    ~StoreInt();
     TInt Get() const;
     void Set(TInt aValue); // owning class knows limits
 private: // from StoreVal
+    void PowerUp();
+    void PowerDown();
+private:
     void Write();
 private:
     TInt iVal;
@@ -96,10 +141,13 @@ class StoreText : public StoreVal
 {
 public:
     StoreText(Configuration::IStoreReadWrite& aStore, IPowerManager& aPowerManager, TUint aPriority, const Brx& aKey, const Brx& aDefault, TUint aMaxLength);
-    virtual ~StoreText();
+    ~StoreText();
     void Get(Bwx& aVal) const;
     void Set(const Brx& aValue);
 private: // from StoreVal
+    void PowerUp();
+    void PowerDown();
+private:
     void Write();
 private:
     Bwh iVal;

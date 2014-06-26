@@ -361,6 +361,7 @@ public:
 class IConfigManagerWriter
 {
 public:
+    virtual IStoreReadWrite& Store() = 0;
     virtual void Close() = 0;
     virtual void Add(ConfigNum& aNum) = 0;
     virtual void Add(ConfigChoice& aChoice) = 0;
@@ -368,6 +369,15 @@ public:
     virtual void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
     virtual void ToStore(const Brx& aKey, const Brx& aValue) = 0;
     virtual ~IConfigManagerWriter() {}
+};
+
+/**
+ * Custom comparison function for stl map keyed on Brx*
+ */
+class BufferPtrCmp : public BufferCmp
+{
+public:
+    TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
 };
 
 /*
@@ -378,11 +388,12 @@ class SerialisedMap
 {
 public:
     SerialisedMap();
+    ~SerialisedMap();
     void Add(const Brx& aKey, T& aVal);
     TBool Has(const Brx& aKey) const;
     T& Get(const Brx& aKey) const;
 private:
-    typedef std::map<Brn, T*, BufferCmp> Map;
+    typedef std::map<const Brx*, T*, BufferPtrCmp> Map;
     Map iMap;
     mutable Mutex iLock;
 };
@@ -393,15 +404,24 @@ template <class T> SerialisedMap<T>::SerialisedMap()
 {
 }
 
+template <class T> SerialisedMap<T>::~SerialisedMap()
+{
+    // Delete all keys.
+    typename Map::iterator it;
+    for (it = iMap.begin(); it != iMap.end(); ++it) {
+        delete (*it).first;
+    }
+}
+
 template <class T> void SerialisedMap<T>::Add(const Brx& aKey, T& aVal)
 {
-    Brn key(aKey);
+    Brh* key = new Brh(aKey);
     AutoMutex a(iLock);
     typename Map::iterator it = iMap.find(key);
     if (it != iMap.end()) {
         THROW(ConfigKeyExists);
     }
-    iMap.insert(std::pair<Brn, T*>(key, &aVal));
+    iMap.insert(std::pair<const Brx*, T*>(key, &aVal));
 }
 
 template <class T> TBool SerialisedMap<T>::Has(const Brx& aKey) const
@@ -409,7 +429,7 @@ template <class T> TBool SerialisedMap<T>::Has(const Brx& aKey) const
     TBool found = false;
     Brn key(aKey);
     AutoMutex a(iLock);
-    typename Map::const_iterator it = iMap.find(key);
+    typename Map::const_iterator it = iMap.find(&key);
     if (it != iMap.end()) {
         found = true;
     }
@@ -421,7 +441,7 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
 {
     Brn key(aKey);
     AutoMutex a(iLock);
-    typename Map::const_iterator it = iMap.find(key);
+    typename Map::const_iterator it = iMap.find(&key);
     ASSERT(it != iMap.end()); // assert value with ID of aKey exists
 
     return *(it->second);
@@ -438,8 +458,7 @@ class ConfigManager : public IConfigManagerReader, public IConfigManagerWriter
 {
 public:
     ConfigManager(IStoreReadWrite& aStore);
-    virtual ~ConfigManager();
-public: // from IConfigManagerReader
+public: // from IConfigManagerReader // FIXME - make these private
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
     TBool HasChoice(const Brx& aKey) const;
@@ -449,12 +468,17 @@ public: // from IConfigManagerReader
     TBool Has(const Brx& aKey) const;
     ISerialisable& Get(const Brx& aKey) const;
 public: // from IConfigManagerWriter
+    IStoreReadWrite& Store();
     void Close();
     void Add(ConfigNum& aNum);
     void Add(ConfigChoice& aChoice);
     void Add(ConfigText& aText);
     void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void ToStore(const Brx& aKey, const Brx& aValue);
+protected:
+    void AddNum(const Brx& aKey, ConfigNum& aNum);
+    void AddChoice(const Brx& aKey, ConfigChoice& aChoice);
+    void AddText(const Brx& aKey, ConfigText& aText);
 private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
 private:
@@ -464,6 +488,7 @@ private:
     SerialisedMap<ConfigText> iMapText;
     TBool iClosed;
 };
+
 
 /*
  * Class providing a basic implementation of a read/write store for storing
@@ -482,7 +507,7 @@ public: // from IStoreReadWrite
 private:
     void Clear();
 private:
-    typedef std::map<Brn, Brh*, BufferCmp> Map;
+    typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
     Map iMap;
     Mutex iLock;
 };

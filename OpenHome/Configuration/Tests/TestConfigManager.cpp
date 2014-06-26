@@ -170,6 +170,19 @@ private:
     Bws<kMaxLength> iLastChangeVal;
 };
 
+class SuiteSerialisedMap : public SuiteUnitTest
+{
+public:
+    SuiteSerialisedMap();
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    void TestMapKeyPersists();
+private:
+    SerialisedMap<TUint>* iMapUint;
+};
+
 class SuiteConfigManager : public SuiteUnitTest
 {
 public:
@@ -1165,6 +1178,42 @@ void SuiteConfigText::TestDeserialiseValueTooLong()
 }
 
 
+// SuiteSerialisedMap
+SuiteSerialisedMap::SuiteSerialisedMap()
+    : SuiteUnitTest("SuiteSerialisedMap")
+    , iMapUint(NULL)
+{
+    AddTest(MakeFunctor(*this, &SuiteSerialisedMap::TestMapKeyPersists), "TestMapKeyPersists");
+}
+
+void SuiteSerialisedMap::Setup()
+{
+    iMapUint = new SerialisedMap<TUint>();
+}
+
+void SuiteSerialisedMap::TearDown()
+{
+    delete iMapUint;
+}
+
+void SuiteSerialisedMap::TestMapKeyPersists()
+{
+    // test that a key written into the internal map of ConfigManager persists
+    // even when the original key is changed.
+    Brh key("Test.Map.Key.Original");
+    Bwh keyModifiable(key);
+    TUint val = 0;
+
+    iMapUint->Add(keyModifiable, val);
+    TEST(iMapUint->Has(key) == true);
+
+    // now modify the key for new entry and check it is not a reference that
+    // has been stored in the map.
+    keyModifiable.Replace("Test.Map.Key.New");
+    TEST(iMapUint->Has(key) == true);
+}
+
+
 // SuiteConfigManager
 
 /*
@@ -1564,6 +1613,16 @@ void SuiteRamStore::TestWrite()
     TEST(val1 == val1New);
     iStore->Read(kKey2, val2);
     TEST(val2 == val2New);
+
+    // create a key, write it and a value to the store, then delete the key and
+    // check the ram store has persisted the expected key
+    Brh* tmpKey = new Brh("temp.key");
+    Bwh tmpKeyCopy(*tmpKey);
+    iStore->Write(*tmpKey, kVal1);
+    delete tmpKey;
+    Bwh valOut(kVal1.Bytes());
+    iStore->Read(tmpKeyCopy, valOut);
+    TEST(valOut == kVal1);
 }
 
 void SuiteRamStore::TestDelete()
@@ -1601,6 +1660,7 @@ void TestConfigManager()
     runner.Add(new SuiteConfigNum());
     runner.Add(new SuiteConfigChoice());
     runner.Add(new SuiteConfigText());
+    runner.Add(new SuiteSerialisedMap());
     runner.Add(new SuiteConfigManager());
     runner.Add(new SuiteRamStore());
     runner.Run();

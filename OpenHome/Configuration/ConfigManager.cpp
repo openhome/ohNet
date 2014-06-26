@@ -253,6 +253,14 @@ void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
 }
 
 
+// BufferPtrCmp
+
+TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
+{
+    return BufferCmp()(*aStr1, *aStr2);
+}
+
+
 // ConfigManager
 
 ConfigManager::ConfigManager(IStoreReadWrite& aStore)
@@ -260,8 +268,6 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
     , iClosed(false)
 {
 }
-
-ConfigManager::~ConfigManager() {}
 
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
@@ -315,6 +321,11 @@ ISerialisable& ConfigManager::Get(const Brx& aKey) const
     }
 }
 
+IStoreReadWrite& ConfigManager::Store()
+{
+    return iStore;
+}
+
 void ConfigManager::Close()
 {
     iClosed = true;
@@ -322,17 +333,17 @@ void ConfigManager::Close()
 
 void ConfigManager::Add(ConfigNum& aNum)
 {
-    Add(iMapNum, aNum.Key(), aNum);
+    AddNum(aNum.Key(), aNum);
 }
 
 void ConfigManager::Add(ConfigChoice& aChoice)
 {
-    Add(iMapChoice, aChoice.Key(), aChoice);
+    AddChoice(aChoice.Key(), aChoice);
 }
 
 void ConfigManager::Add(ConfigText& aText)
 {
-    Add(iMapText, aText.Key(), aText);
+    AddText(aText.Key(), aText);
 }
 
 void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
@@ -342,7 +353,13 @@ void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
         iStore.Read(aKey, aDest);
     }
     catch (StoreKeyNotFound&) {
-        ToStore(aKey, aDefault);
+        // Don't use ToStore() here. Classes may derive from ConfigManager and
+        // override the public ToStore() method.
+        // e.g. if a deriving class had overridden all public methods to add a
+        // prefix to the key and then called the ConfigManager versions of the
+        // methods, this would cause a problem. The overridden version of
+        // ToStore() would be called here, which would prepend a second prefix.
+        iStore.Write(aKey, aDefault);
         aDest.Replace(aDefault);
     }
 }
@@ -350,6 +367,21 @@ void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
 void ConfigManager::ToStore(const Brx& aKey, const Brx& aValue)
 {
     iStore.Write(aKey, aValue);
+}
+
+void ConfigManager::AddNum(const Brx& aKey, ConfigNum& aNum)
+{
+    Add(iMapNum, aKey, aNum);
+}
+
+void ConfigManager::AddChoice(const Brx& aKey, ConfigChoice& aChoice)
+{
+    Add(iMapChoice, aKey, aChoice);
+}
+
+void ConfigManager::AddText(const Brx& aKey, ConfigText& aText)
+{
+    Add(iMapText, aKey, aText);
 }
 
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
@@ -382,9 +414,9 @@ void ConfigRamStore::Print()
     Map::iterator it = iMap.begin();
     while (it!= iMap.end()) {
         Log::Print("   {");
-        Log::Print(it->first);
+        Log::Print(*it->first);
         Log::Print(", ");
-        Brh& valBuf = *it->second;
+        const Brx& valBuf = *it->second;
         if (valBuf.Bytes() == sizeof(TUint32)) {
             TUint32 val = Converter::BeUint32At(valBuf, 0);
             Log::Print("%u/", val);
@@ -403,7 +435,7 @@ void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
 {
     Brn key(aKey);
     AutoMutex a(iLock);
-    Map::iterator it = iMap.find(key);
+    Map::iterator it = iMap.find(&key);
     if (it == iMap.end()) {
         THROW(StoreKeyNotFound);
     }
@@ -417,9 +449,10 @@ void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
 
 void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
 {
-    Brn key(aKey);
-    AutoMutex a(iLock);
+    Brh* key = new Brh(aKey);
     Brh* val = new Brh(aSource);
+
+    AutoMutex a(iLock);
 
     // std::map doesn't insert a value if key exists, so first remove existing
     // key-value pair, if new value is different
@@ -427,28 +460,31 @@ void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
     if (it != iMap.end()) {
         if (*(it->second) == aSource) {
             // new value is the same; free memory
+            delete key;
             delete val;
             return;
         }
         else {
             // new value is different; remove old value
+            delete it->first;
             delete it->second;
             iMap.erase(it);
         }
     }
 
-    iMap.insert(std::pair<Brn,Brh*>(key, val));
+    iMap.insert(std::pair<const Brx*, const Brx*>(key, val));
 }
 
 void ConfigRamStore::Delete(const Brx& aKey)
 {
     Brn key(aKey);
     AutoMutex a(iLock);
-    Map::iterator it = iMap.find(key);
+    Map::iterator it = iMap.find(&key);
     if (it == iMap.end()) {
         THROW(StoreKeyNotFound);
     }
 
+    delete it->first;
     delete it->second;
     iMap.erase(it);
 }
@@ -458,6 +494,7 @@ void ConfigRamStore::Clear()
     AutoMutex a(iLock);
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
+        delete it->first;
         delete it->second;
         it++;
     }

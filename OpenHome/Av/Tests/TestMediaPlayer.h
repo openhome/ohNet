@@ -18,6 +18,7 @@
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
+#include <OpenHome/PowerManager.h>
 
 namespace OpenHome {
     class PowerManager;
@@ -39,7 +40,7 @@ namespace Av {
     class RamStore;
 namespace Test {
 
-class TestMediaPlayer : private Net::IResourceManager
+class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
 {
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
@@ -56,6 +57,9 @@ protected:
     void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter);
+private: // from IPowerHandler
+    void PowerUp();
+    void PowerDown();
 private:
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
@@ -75,6 +79,7 @@ protected:
 private:
     Semaphore iDisabled;
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
+    IPowerManagerObserver* iPowerObserver;
     Net::Shell* iShell;
     Net::ShellCommandDebug* iShellDebug;
 };

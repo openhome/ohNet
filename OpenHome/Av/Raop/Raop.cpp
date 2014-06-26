@@ -9,7 +9,6 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/PowerManager.h>
 
 #include <openssl/evp.h>
 
@@ -148,6 +147,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServe
     iReaderRequest->AddHeader(iHeaderCSeq);
     iReaderRequest->AddHeader(iHeaderAppleChallenge);
     iReaderRequest->AddHeader(iHeaderRtspTransport);
+    iReaderRequest->AddHeader(iHeaderRtpInfo);
     iReaderRequest->AddMethod(RtspMethod::kOptions);
     iReaderRequest->AddMethod(RtspMethod::kAnnounce);
     iReaderRequest->AddMethod(RtspMethod::kSetup);
@@ -416,6 +416,7 @@ void RaopDiscoverySession::Run()
                 }
                 else if(method == RtspMethod::kRecord) {
                     iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eRtsp10);
+                    //Log::Print("RtspMethod::kRecord seq: %u, rtptime: %u\n", iHeaderRtpInfo.Seq(), iHeaderRtpInfo.RtpTime());
                     //iWriterResponse.WriteHeader(Brn("Audio-Latency"), Brn("15409"));  // has no effect on iTunes
                     iWriterResponse->WriteHeader(Brn("Audio-Jack-Status"), Brn("connected; type=analog"));
                     WriteSeq(iHeaderCSeq.CSeq());
@@ -857,35 +858,13 @@ RaopDiscovery::RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerMa
     , iObserversLock("RDOL")
 {
     // NOTE: iRaopDevice is not registered by default
-
-    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
-    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
-    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-
-    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
-    NetworkAdapter* current = ref.Adapter();
-
-    iServersLock.Wait();
-    if (current != NULL) {
-        // Single interface selected. Register only on this interface.
-        AddAdapter(*current);
-    }
-    else {
-        // No interface selected. Advertise on all interfaces.
-        for (TUint i=0; i<subnetList->size(); i++) {
-            NetworkAdapter* subnet = (*subnetList)[i];
-            AddAdapter(*subnet);
-        }
-    }
-    iServersLock.Signal();
-    NetworkAdapterList::DestroySubnetList(subnetList);
-    aPowerManager.RegisterObserver(MakeFunctor(*this, &RaopDiscovery::PowerDown), kPowerPriorityLowest);
+    iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest);
 }
 
 RaopDiscovery::~RaopDiscovery()
 {
+    delete iPowerObserver;
+
     AutoMutex a(iServersLock);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iCurrentAdapterChangeListenerId);
     iEnv.NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
@@ -1053,6 +1032,43 @@ void RaopDiscovery::NotifySessionWait(const NetworkAdapter& aNif)
     }
 }
 
+void RaopDiscovery::PowerUp()
+{
+    NetworkAdapterList& nifList = iEnv.NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+    Functor functor = MakeFunctor(*this, &RaopDiscovery::HandleInterfaceChange);
+    iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
+
+    AutoNetworkAdapterRef ref(iEnv, "RaopDiscovery ctor");
+    NetworkAdapter* current = ref.Adapter();
+
+    iServersLock.Wait();
+    if (current != NULL) {
+        // Single interface selected. Register only on this interface.
+        AddAdapter(*current);
+    }
+    else {
+        // No interface selected. Advertise on all interfaces.
+        for (TUint i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            AddAdapter(*subnet);
+        }
+    }
+    iServersLock.Signal();
+    NetworkAdapterList::DestroySubnetList(subnetList);
+}
+
+void RaopDiscovery::PowerDown()
+{
+    AutoMutex a(iServersLock);
+    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
+    while (it != iServers.end()) {
+        (*it)->PowerDown();
+        ++it;
+    }
+}
+
 void RaopDiscovery::HandleInterfaceChange()
 {
     TBool currentRemoved = false;   // identify whether current active server
@@ -1177,16 +1193,6 @@ TBool RaopDiscovery::NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter
         return true;
     }
     return false;
-}
-
-void RaopDiscovery::PowerDown()
-{
-    AutoMutex a(iServersLock);
-    std::vector<RaopDiscoveryServer*>::iterator it = iServers.begin();
-    while (it != iServers.end()) {
-        (*it)->PowerDown();
-        ++it;
-    }
 }
 
 
@@ -1317,4 +1323,57 @@ void HeaderRtspTransport::Process(const Brx& aValue)
             iTimingPort = ParsePort(entry);
         }
     }
+}
+
+
+// HeaderRtpInfo
+
+const Brn HeaderRtpInfo::kSeqStr("seq");
+const Brn HeaderRtpInfo::kRtpTimeStr("rtptime");
+
+TUint HeaderRtpInfo::Seq() const
+{
+    return iSeq;
+}
+
+TUint HeaderRtpInfo::RtpTime() const
+{
+    return iRtpTime;
+}
+
+void HeaderRtpInfo::Reset()
+{
+    HttpHeader::Reset();
+    iSeq = 0;
+    iRtpTime = 0;
+}
+
+TBool HeaderRtpInfo::Recognise(const Brx& aHeader)
+{
+    return Ascii::CaseInsensitiveEquals(aHeader, Brn("RTP-Info"));
+}
+
+void HeaderRtpInfo::Process(const Brx& aValue)
+{
+    Parser parser(aValue);
+    Brn entry;
+    do {
+        entry = parser.Next(';');
+        if (Ascii::Contains(entry, kSeqStr)) {
+            Brn val = ParameterValue(entry);
+            iSeq = Ascii::Uint(val);
+        }
+        else if (Ascii::Contains(entry, kRtpTimeStr)) {
+            Brn val = ParameterValue(entry);
+            iRtpTime = Ascii::Uint(val); // FIXME - is this in network order?
+        }
+    } while (entry != Brx::Empty());
+}
+
+Brn HeaderRtpInfo::ParameterValue(Brx& aData)
+{
+    Parser parser(aData);
+    parser.Next('=');
+    Brn val = parser.Next();
+    return val;
 }

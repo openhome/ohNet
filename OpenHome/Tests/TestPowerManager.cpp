@@ -13,6 +13,23 @@ using namespace OpenHome::Configuration;
 
 namespace OpenHome {
 
+class HelperPowerHandler : public IPowerHandler, public INonCopyable
+{
+public:
+    HelperPowerHandler(Environment& aEnv);
+public:
+    TUint64 Time() const;
+    TUint PowerUpCount() const;
+public: // from IPowerHandler
+    void PowerUp();
+    void PowerDown();
+private:
+    static const TUint kSleepTime = 1; // sleep time during callbacks to artificially increase env time
+    Environment& iEnv;
+    TUint64 iTime;
+    TUint iPowerUpCount;
+};
+
 class SuitePowerManager : public SuiteUnitTest, public INonCopyable
 {
 public:
@@ -21,9 +38,6 @@ private: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private:
-    void NotifyPowerDown1();
-    void NotifyPowerDown2();
-    void NotifyPowerDown3();
     void TestPowerDownNothingRegistered();
     void TestPriorityLowest();
     void TestPriorityHighest();
@@ -34,13 +48,17 @@ private:
     void TestMultipleFunctorsAddedOutOfOrder();
     void TestMultipleFunctorsSamePriority();
     void TestPowerDownTwice();
+    void TestPowerUpCalled();
+    void TestPowerDownNotCalledTwice();
+    void TestPowerDownNotCalledAfterDeregistering();
+    void TestRegisterAfterPowerDown();
+    void TestNoPowerDown();
 private:
-    static const TUint kSleepTime = 1; // sleep time during callbacks to artificially increase env time
     Environment& iEnv;
     PowerManager* iPowerManager;
-    TUint64 iTime1;
-    TUint64 iTime2;
-    TUint64 iTime3;
+    HelperPowerHandler* iHandler1;
+    HelperPowerHandler* iHandler2;
+    HelperPowerHandler* iHandler3;
 };
 
 class SuiteStoreVal : public SuiteUnitTest
@@ -101,6 +119,7 @@ private:
     void TestGet();
     void TestSet();
     void TestWrite();
+    void TestNormalShutdown();
 private:
     static const TInt kDefault = 1;
     StoreInt* iStoreInt;
@@ -133,6 +152,7 @@ private:
     void TestGet();
     void TestSet();
     void TestWrite();
+    void TestNormalShutdown();
 private:
     static const TUint kMaxLength = 30;
     static const Brn kDefault;
@@ -160,53 +180,74 @@ private:
 
 
 
+// HelperPowerHandler
+
+HelperPowerHandler::HelperPowerHandler(Environment& aEnv)
+    : iEnv(aEnv)
+    , iTime(0)
+    , iPowerUpCount(0)
+{
+}
+
+TUint64 HelperPowerHandler::Time() const
+{
+    return iTime;
+}
+
+TUint HelperPowerHandler::PowerUpCount() const
+{
+    return iPowerUpCount;
+}
+
+void HelperPowerHandler::PowerUp()
+{
+    iPowerUpCount++;
+}
+
+void HelperPowerHandler::PowerDown()
+{
+    iTime = Os::TimeInUs(iEnv.OsCtx());
+    Thread::Sleep(kSleepTime);
+}
+
+
 // SuitePowerManager
 
 SuitePowerManager::SuitePowerManager(Environment& aEnv)
     : SuiteUnitTest("SuitePowerManager")
     , iEnv(aEnv)
 {
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownNothingRegistered));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityLowest));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityHighest));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityTooHigh));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityNormal));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsAddedInOrder));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsAddedInReverseOrder));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsAddedOutOfOrder));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsSamePriority));
-    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownTwice));
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownNothingRegistered), "TestPowerDownNothingRegistered");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityLowest), "TestPriorityLowest");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityHighest), "TestPriorityHighest");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityTooHigh), "TestPriorityTooHigh");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPriorityNormal), "TestPriorityNormal");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsAddedInOrder), "TestMultipleFunctorsAddedInOrder");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsAddedInReverseOrder), "TestMultipleFunctorsAddedInReverseOrder");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsAddedOutOfOrder), "TestMultipleFunctorsAddedOutOfOrder");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestMultipleFunctorsSamePriority), "TestMultipleFunctorsSamePriority");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownTwice), "TestPowerDownTwice");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerUpCalled), "TestPowerUpCalled");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownNotCalledTwice), "TestPowerDownNotCalledTwice");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestPowerDownNotCalledAfterDeregistering), "TestPowerDownNotCalledAfterDeregistering");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestRegisterAfterPowerDown), "TestRegisterAfterPowerDown");
+    AddTest(MakeFunctor(*this, &SuitePowerManager::TestNoPowerDown), "TestNoPowerDown");
 }
 
 void SuitePowerManager::Setup()
 {
     iPowerManager = new PowerManager();
-    iTime1 = 0;
-    iTime2 = 0;
-    iTime3 = 0;
+    iHandler1 = new HelperPowerHandler(iEnv);
+    iHandler2 = new HelperPowerHandler(iEnv);
+    iHandler3 = new HelperPowerHandler(iEnv);
 }
 
 void SuitePowerManager::TearDown()
 {
+    delete iHandler3;
+    delete iHandler2;
+    delete iHandler1;
     delete iPowerManager;
-}
-
-void SuitePowerManager::NotifyPowerDown1()
-{
-    iTime1 = Os::TimeInUs(iEnv.OsCtx());
-    Thread::Sleep(kSleepTime);
-}
-
-void SuitePowerManager::NotifyPowerDown2()
-{
-    iTime2 = Os::TimeInUs(iEnv.OsCtx());
-    Thread::Sleep(kSleepTime);
-}
-
-void SuitePowerManager::NotifyPowerDown3()
-{
-    iTime3 = Os::TimeInUs(iEnv.OsCtx());
-    Thread::Sleep(kSleepTime);
 }
 
 void SuitePowerManager::TestPowerDownNothingRegistered()
@@ -219,74 +260,88 @@ void SuitePowerManager::TestPowerDownNothingRegistered()
 void SuitePowerManager::TestPriorityLowest()
 {
     // Test that a functor with the lowest priority can be registered and called.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityLowest);
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityLowest);
     iPowerManager->PowerDown();
-    TEST(iTime1 != 0);
+    TEST(iHandler1->Time() != 0);
+    delete observer;
 }
 
 void SuitePowerManager::TestPriorityHighest()
 {
     // Test that a functor with the highest priority can be registered and called.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityHighest);
     iPowerManager->PowerDown();
-    TEST(iTime1 != 0);
-}
-
-void SuitePowerManager::TestPriorityNormal()
-{
-    // Test that a functor with a normal priority can be registered and called.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityNormal);
-    iPowerManager->PowerDown();
-    TEST(iTime1 != 0);
+    TEST(iHandler1->Time() != 0);
+    delete observer;
 }
 
 void SuitePowerManager::TestPriorityTooHigh()
 {
     // Test that PowerManager asserts when a functor with too high a priority
     // is registered.
-    TEST_THROWS(iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest+1), AssertionFailed);
+    TEST_THROWS(iPowerManager->Register(*iHandler1, kPowerPriorityHighest+1), AssertionFailed);
+}
+
+void SuitePowerManager::TestPriorityNormal()
+{
+    // Test that a functor with a normal priority can be registered and called.
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
+    iPowerManager->PowerDown();
+    TEST(iHandler1->Time() != 0);
+    delete observer;
 }
 
 void SuitePowerManager::TestMultipleFunctorsAddedInOrder()
 {
     // Add multiple functors, in order of calling priority, and check they are
     // called in order.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityLowest);
+    IPowerManagerObserver* observer1 = iPowerManager->Register(*iHandler1, kPowerPriorityHighest);
+    IPowerManagerObserver* observer2 = iPowerManager->Register(*iHandler2, kPowerPriorityNormal);
+    IPowerManagerObserver* observer3 = iPowerManager->Register(*iHandler3, kPowerPriorityLowest);
     iPowerManager->PowerDown();
-    Log::Print("TestMultipleFunctorsAddedInOrder iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
-    TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
-    TEST(iTime1 < iTime2);
-    TEST(iTime2 < iTime3);
+    Log::Print("TestMultipleFunctorsAddedInOrder iTimes (us): %llu | %llu | %llu\n", iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
+    TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
+    TEST(iHandler1->Time() < iHandler2->Time());
+    TEST(iHandler2->Time() < iHandler3->Time());
+    delete observer1;
+    delete observer2;
+    delete observer3;
 }
 
 void SuitePowerManager::TestMultipleFunctorsAddedInReverseOrder()
 {
     // Add multiple functors, in reverse order of calling priority, and check
     // they are called in order.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityLowest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
+    IPowerManagerObserver* observer1 = iPowerManager->Register(*iHandler3, kPowerPriorityLowest);
+    IPowerManagerObserver* observer2 = iPowerManager->Register(*iHandler2, kPowerPriorityNormal);
+    IPowerManagerObserver* observer3 = iPowerManager->Register(*iHandler1, kPowerPriorityHighest);
     iPowerManager->PowerDown();
-    Log::Print("TestMultipleFunctorsAddedInReverseOrder iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
-    TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
-    TEST(iTime1 < iTime2);
-    TEST(iTime2 < iTime3);
+    Log::Print("TestMultipleFunctorsAddedInReverseOrder iTimes (us): %llu | %llu | %llu\n",
+               iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
+    TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
+    TEST(iHandler1->Time() < iHandler2->Time());
+    TEST(iHandler2->Time() < iHandler3->Time());
+    delete observer1;
+    delete observer2;
+    delete observer3;
 }
 
 void SuitePowerManager::TestMultipleFunctorsAddedOutOfOrder()
 {
     // Add multiple functors, in a non-linear order of calling, and check they
     // are called in order.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityLowest);
+    IPowerManagerObserver* observer1 = iPowerManager->Register(*iHandler2, kPowerPriorityNormal);
+    IPowerManagerObserver* observer2 = iPowerManager->Register(*iHandler1, kPowerPriorityHighest);
+    IPowerManagerObserver* observer3 = iPowerManager->Register(*iHandler3, kPowerPriorityLowest);
     iPowerManager->PowerDown();
-    Log::Print("TestMultipleFunctorsAddedOutOfOrder iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
-    TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
-    TEST(iTime1 < iTime2);
-    TEST(iTime2 < iTime3);
+    Log::Print("TestMultipleFunctorsAddedOutOfOrder iTimes (us): %llu | %llu | %llu\n",
+               iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
+    TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
+    TEST(iHandler1->Time() < iHandler2->Time());
+    TEST(iHandler2->Time() < iHandler3->Time());
+    delete observer1;
+    delete observer2;
+    delete observer3;
 }
 
 void SuitePowerManager::TestMultipleFunctorsSamePriority()
@@ -294,28 +349,92 @@ void SuitePowerManager::TestMultipleFunctorsSamePriority()
     // Add multiple functors, with some having the same priority, and check
     // that functors with the same priority are called in the order they were
     // added.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityHighest);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown2), kPowerPriorityNormal);
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown3), kPowerPriorityNormal);
+    IPowerManagerObserver* observer1 = iPowerManager->Register(*iHandler1, kPowerPriorityHighest);
+    IPowerManagerObserver* observer2 = iPowerManager->Register(*iHandler2, kPowerPriorityNormal);
+    IPowerManagerObserver* observer3 = iPowerManager->Register(*iHandler3, kPowerPriorityNormal);
     iPowerManager->PowerDown();
-    Log::Print("TestMultipleFunctorsSamePriority iTimes (us): %llu | %llu | %llu\n", iTime1, iTime2, iTime3);
-    TEST((iTime1 > 0) && (iTime2 > 0) && (iTime3 > 0));
-    TEST(iTime1 < iTime2);
-    TEST(iTime2 < iTime3);
+    Log::Print("TestMultipleFunctorsSamePriority iTimes (us): %llu | %llu | %llu\n",
+               iHandler1->Time(), iHandler2->Time(), iHandler3->Time());
+    TEST((iHandler1->Time() > 0) && (iHandler2->Time() > 0) && (iHandler3->Time() > 0));
+    TEST(iHandler1->Time() < iHandler2->Time());
+    TEST(iHandler2->Time() < iHandler3->Time());
+    delete observer1;
+    delete observer2;
+    delete observer3;
 }
 
 void SuitePowerManager::TestPowerDownTwice()
 {
     // As PowerDown() should only be called once, test that subsequent calls to
     // it do nothing.
-    iPowerManager->RegisterObserver(MakeFunctor(*this, &SuitePowerManager::NotifyPowerDown1), kPowerPriorityNormal);
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
     iPowerManager->PowerDown();
-    TEST(iTime1 > 0);
+    TEST(iHandler1->Time() > 0);
 
-    // Call PowerDown() again. Should have no effect this time.
-    iTime1 = 0;
+    // Call PowerDown() again. Should ASSERT this time.
+    TEST_THROWS(iPowerManager->PowerDown(), AssertionFailed);
+    delete observer;
+}
+
+void SuitePowerManager::TestPowerUpCalled()
+{
+    // Check that PowerUp() is called before a successful registration completes.
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
+    TEST(iHandler1->PowerUpCount() == 1);
     iPowerManager->PowerDown();
-    TEST(iTime1 == 0);
+    TEST(iHandler1->PowerUpCount() == 1);
+    delete observer;
+    TEST(iHandler1->PowerUpCount() == 1);
+}
+
+void SuitePowerManager::TestPowerDownNotCalledTwice()
+{
+    // Test that if PowerDown() is called on the PowerManager and shutdown then
+    // proceeds as normal, that PowerDown() isn't called on the IPowerHandler
+    // again when its observer is destroyed.
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
+    iPowerManager->PowerDown();
+    TUint64 time = iHandler1->Time();
+    TEST(time != 0);
+    delete observer;
+    TEST(iHandler1->Time() == time);
+}
+
+void SuitePowerManager::TestPowerDownNotCalledAfterDeregistering()
+{
+    // Test that if an IPowerHandler deregisters its observer and PowerDown()
+    // is subsequently called on the PowerManager, then PowerDown() is not
+    // called on the IPowerHandler again.
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
+    delete observer;
+    TUint64 time = iHandler1->Time();
+    TEST(time != 0);
+    iPowerManager->PowerDown();
+    TEST(iHandler1->Time() == time);
+}
+
+void SuitePowerManager::TestRegisterAfterPowerDown()
+{
+    // Test that attempting to register after a PowerDown() has no ill effects,
+    // as that is a perfectly valid situation (i.e., PowerDown() could have been
+    // called during startup).
+    iPowerManager->PowerDown();
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
+    TEST(iHandler1->PowerUpCount() == 0);
+    delete observer;
+    TEST(iHandler1->Time() == 0);
+    TEST(iHandler1->PowerUpCount() == 0);
+}
+
+void SuitePowerManager::TestNoPowerDown()
+{
+    // Test that if PowerDown() is not called on the PowerManager, then
+    // PowerDown() is called on the IPowerHandler when its observer is
+    // destroyed.
+    IPowerManagerObserver* observer = iPowerManager->Register(*iHandler1, kPowerPriorityNormal);
+    TEST(iHandler1->Time() == 0);
+    delete observer;
+    TEST(iHandler1->Time() != 0);
 }
 
 
@@ -411,6 +530,7 @@ SuiteStoreInt::SuiteStoreInt()
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestGet));
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestSet));
     AddTest(MakeFunctor(*this, &SuiteStoreInt::TestWrite));
+    AddTest(MakeFunctor(*this, &SuiteStoreInt::TestNormalShutdown), "TestNormalShutdown");
 }
 
 TInt SuiteStoreInt::IntFromStore(IStoreReadOnly& aStore, const Brx& aKey)
@@ -489,6 +609,24 @@ void SuiteStoreInt::TestWrite()
     TEST(iStoreInt->Get() == newVal);
 }
 
+void SuiteStoreInt::TestNormalShutdown()
+{
+    // Test that current value is written out during normal shutdown (i.e.,
+    // when PowerDown() is not called).
+    Brn key("normal.shutdown.key");
+    StoreInt* storeInt = new StoreInt(*iStore, *iPowerManager, kPowerPriority, key, kDefault);
+
+    // give the StoreInt a new value
+    static const TInt newVal = kDefault*2;
+    storeInt->Set(newVal);
+
+    // delete StoreInt, which should write out new value, and check store has
+    // been updated
+    delete storeInt;
+    storeInt = NULL;
+    TEST(IntFromStore(*iStore, key) == newVal);
+}
+
 
 // SuiteStoreIntOrdering
 
@@ -526,6 +664,7 @@ SuiteStoreText::SuiteStoreText()
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestGet));
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestSet));
     AddTest(MakeFunctor(*this, &SuiteStoreText::TestWrite));
+    AddTest(MakeFunctor(*this, &SuiteStoreText::TestNormalShutdown), "TestNormalShutdown");
 }
 
 void SuiteStoreText::Setup()
@@ -608,6 +747,26 @@ void SuiteStoreText::TestWrite()
     Bws<kMaxLength> val;
     iStoreText->Get(val);
     TEST(val == newVal);
+}
+
+void SuiteStoreText::TestNormalShutdown()
+{
+    // Test that current value is written out during normal shutdown (i.e.,
+    // when PowerDown() is not called).
+    Brn key("normal.shutdown.key");
+    StoreText* storeText = new StoreText(*iStore, *iPowerManager, kPowerPriority, key, kDefault, kMaxLength);
+
+    // give the StoreText a new value
+    Brn newVal("zyxwvutsrqponmlkjihgfedcba");
+    storeText->Set(newVal);
+
+    // delete StoreText, which should write out new value, and check store has
+    // been updated
+    delete storeText;
+    storeText = NULL;
+    Bws<kMaxLength> buf;
+    iStore->Read(key, buf);
+    TEST(buf == newVal);
 }
 
 

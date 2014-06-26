@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Network.h>
+#include <OpenHome/PowerManager.h>
 
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
@@ -81,6 +82,25 @@ private:
 private:
     TUint iControlPort;
     TUint iTimingPort;
+};
+
+class HeaderRtpInfo : public HttpHeader
+{
+public:
+    static const Brn kSeqStr;
+    static const Brn kRtpTimeStr;
+public:
+    TUint Seq() const;
+    TUint RtpTime() const;
+    virtual void Reset();
+private:
+    virtual TBool Recognise(const Brx& aHeader);
+    virtual void Process(const Brx& aValue);
+private:
+    static Brn ParameterValue(Brx& aData);
+private:
+    TUint iSeq;
+    TUint iRtpTime;
 };
 
 class RaopDevice
@@ -163,6 +183,7 @@ private:
     HeaderAppleChallenge iHeaderAppleChallenge;
     HeaderRtspTransport iHeaderRtspTransport;
     HeaderCSeq iHeaderCSeq;
+    HeaderRtpInfo iHeaderRtpInfo;
     Media::SdpInfo iSdpInfo;
     Bws<sizeof(AES_KEY)> iAeskey;
     TBool iAeskeyPresent;
@@ -228,7 +249,7 @@ private:
     Mutex iObserversLock;
 };
 
-class RaopDiscovery : public IRaopDiscovery, private Av::IRaopServerObserver, private INonCopyable
+class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private Av::IRaopServerObserver, private INonCopyable
 {
 public:
     RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
@@ -250,13 +271,15 @@ public: // from IRaopObserver
     void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort);
     void NotifySessionEnd(const NetworkAdapter& aNif);
     void NotifySessionWait(const NetworkAdapter& aNif);
+private: // from IPowerHandler
+    void PowerUp();
+    void PowerDown();
 private:
     void HandleInterfaceChange();
     void AddAdapter(NetworkAdapter& aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif);
     TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
     static TBool NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2);
-    void PowerDown();
 private:
     Environment& iEnv;
     Net::DvStack& iDvStack;
@@ -268,6 +291,7 @@ private:
     TUint iCurrentAdapterChangeListenerId;
     TUint iSubnetListChangeListenerId;
     RaopDiscoveryServer* iCurrent; // protected by iServersLock
+    IPowerManagerObserver* iPowerObserver;
     Mutex iServersLock;
     Mutex iObserversLock;
 };
