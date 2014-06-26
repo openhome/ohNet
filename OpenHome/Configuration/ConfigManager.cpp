@@ -266,6 +266,7 @@ TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
 ConfigManager::ConfigManager(IStoreReadWrite& aStore)
     : iStore(aStore)
     , iClosed(false)
+    , iLock("CFML")
 {
 }
 
@@ -328,6 +329,7 @@ IStoreReadWrite& ConfigManager::Store()
 
 void ConfigManager::Close()
 {
+    AutoMutex a(iLock);
     iClosed = true;
 }
 
@@ -353,13 +355,8 @@ void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
         iStore.Read(aKey, aDest);
     }
     catch (StoreKeyNotFound&) {
-        // Don't use ToStore() here. Classes may derive from ConfigManager and
-        // override the public ToStore() method.
-        // e.g. if a deriving class had overridden all public methods to add a
-        // prefix to the key and then called the ConfigManager versions of the
-        // methods, this would cause a problem. The overridden version of
-        // ToStore() would be called here, which would prepend a second prefix.
-        iStore.Write(aKey, aDefault);
+        // Don't attempt to write default value out to store here. It will be
+        // written if/when the value is changed.
         aDest.Replace(aDefault);
     }
 }
@@ -386,7 +383,12 @@ void ConfigManager::AddText(const Brx& aKey, ConfigText& aText)
 
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
 {
-    ASSERT(!iClosed);
+    iLock.Wait();
+    if (iClosed) {
+        iLock.Signal();
+        ASSERTS();
+    }
+    iLock.Signal();
     if (HasNum(aKey) || HasChoice(aKey) || HasText(aKey)) {
         THROW(ConfigKeyExists);
     }

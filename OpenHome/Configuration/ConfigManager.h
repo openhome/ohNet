@@ -106,6 +106,8 @@ protected:
     void NotifySubscribers(T aVal);
     void AddInitialSubscribers();
     virtual void Write(KeyValuePair<T>& aKvp) = 0;
+private:
+    TUint SubscribeNoCallback(FunctorObserver aFunctor);
 protected:
     IConfigManagerWriter& iConfigManager;
     Bwh iKey;
@@ -125,12 +127,6 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const
     , iWriteObserverId(0)
     , iNextObserverId(1)
 {
-}
-
-template <class T> void ConfigVal<T>::AddInitialSubscribers()
-{
-    ASSERT(iWriteObserverId == 0);
-    iWriteObserverId = Subscribe(MakeFunctorObserver<T>(*this, &ConfigVal::Write));
 }
 
 template <class T> ConfigVal<T>::~ConfigVal()
@@ -154,14 +150,20 @@ template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
     iObserverLock.Signal();
 }
 
-template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVal)
+template <class T> TUint ConfigVal<T>::SubscribeNoCallback(FunctorObserver aFunctor)
 {
-    KeyValuePair<T> kvp(iKey, aVal);
     iObserverLock.Wait();
     TUint id = iNextObserverId;
     iObservers.insert(std::pair<TUint,FunctorObserver>(id, aFunctor));
     iNextObserverId++;
     iObserverLock.Signal();
+    return id;
+}
+
+template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVal)
+{
+    KeyValuePair<T> kvp(iKey, aVal);
+    TUint id = SubscribeNoCallback(aFunctor);
     aFunctor(kvp);
     return id;
 }
@@ -176,6 +178,18 @@ template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
         it->second(kvp);
     }
 }
+
+template <class T> void ConfigVal<T>::AddInitialSubscribers()
+{
+    // Don't write initial val out at startup.
+    // - If it already exists in store, no need to write it out.
+    // - If it doesn't exist in store, it will be the default val regardless of
+    //   whether it is ever written to store - only write to store on
+    //   subsequent changes.
+    ASSERT(iWriteObserverId == 0);
+    iWriteObserverId = SubscribeNoCallback(MakeFunctorObserver<T>(*this, &ConfigVal::Write));
+}
+
 
 /*
  * Class representing a numerical value, which can be positive or negative,
@@ -362,7 +376,8 @@ class IConfigManagerWriter
 {
 public:
     virtual IStoreReadWrite& Store() = 0;
-    virtual void Close() = 0;
+    virtual void Close() = 0;   // Called after all keys are added. Ensures uniqueness of keys. If no unique keys, player will crash at startup.
+                                // FIXME - rename to Open()
     virtual void Add(ConfigNum& aNum) = 0;
     virtual void Add(ConfigChoice& aChoice) = 0;
     virtual void Add(ConfigText& aText) = 0;
@@ -487,6 +502,7 @@ private:
     SerialisedMap<ConfigChoice> iMapChoice;
     SerialisedMap<ConfigText> iMapText;
     TBool iClosed;
+    Mutex iLock;
 };
 
 
