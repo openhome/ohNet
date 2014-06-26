@@ -194,7 +194,7 @@ private:
     void NotifyChangedNum(TInt aVal);
     void NotifyChangedChoice(TUint aVal);
     void NotifyChangedText(const Brx& aVal);
-    void TestClose();
+    void TestOpen();
     void TestAdd();
     void TestAddDuplicate();
     void TestHasNoVals();
@@ -1340,7 +1340,7 @@ SuiteConfigManager::SuiteConfigManager()
     // Just group functions for each val class in a single generic unit test
     // for each type of ConfigManager function to maintain clarity and
     // small test size.
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestClose), "TestClose");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestOpen), "TestOpen");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAdd), "TestAdd");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAddDuplicate), "TestAddDuplicate");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasNoVals), "TestHasNoVals");
@@ -1390,11 +1390,11 @@ void SuiteConfigManager::NotifyChangedText(const Brx& /*aVal*/)
 {
 }
 
-void SuiteConfigManager::TestClose()
+void SuiteConfigManager::TestOpen()
 {
     // test that ConfigManager ASSERTs when attempting to add a value
-    // after it has been closed
-    iConfigManager->Close();
+    // after it has been opened
+    iConfigManager->Open();
     TEST_THROWS(ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
     TEST_THROWS(ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1), AssertionFailed);
     TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2), AssertionFailed);

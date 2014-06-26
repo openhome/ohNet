@@ -20,12 +20,12 @@ const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
 Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore,
-                 IConfigManagerReader& aConfigReader, Configuration::IConfigManagerWriter& aConfigWriter,
+                 IConfigManagerReader& aConfigReader, Configuration::IConfigManagerInitialiser& aConfigInit,
                  IPowerManager& aPowerManager, const Brx& aConfigPrefix)
     : iDevice(aDevice)
     , iReadStore(aReadStore)
     , iConfigReader(aConfigReader)
-    , iConfigWriter(aConfigWriter)
+    , iConfigInit(aConfigInit)
     , iLock("PRDM")
     , iLockDetails("PRDD")
     , iStarted(false)
@@ -99,7 +99,7 @@ void Product::AddSource(ISource* aSource)
 {
     ASSERT(!iStarted);
     iSources.push_back(aSource);
-    aSource->Initialise(*this, iConfigWriter, iConfigReader, iConfigPrefix);
+    aSource->Initialise(*this, iConfigInit, iConfigReader, iConfigPrefix);
 }
 
 void Product::AddAttribute(const TChar* aAttribute)

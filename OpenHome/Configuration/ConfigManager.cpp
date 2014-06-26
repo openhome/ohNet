@@ -13,7 +13,7 @@ using namespace OpenHome::Configuration;
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
+ConfigNum::ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
     : ConfigVal(aManager, aKey)
     , iMin(aMin)
     , iMax(aMax)
@@ -103,7 +103,7 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
     , iMutex("CVCM")
@@ -187,7 +187,7 @@ void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
+ConfigText::ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aKey)
     , iText(aMaxLength)
     , iMutex("CVTM")
@@ -265,7 +265,7 @@ TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
 
 ConfigManager::ConfigManager(IStoreReadWrite& aStore)
     : iStore(aStore)
-    , iClosed(false)
+    , iOpen(false)
     , iLock("CFML")
 {
 }
@@ -327,10 +327,10 @@ IStoreReadWrite& ConfigManager::Store()
     return iStore;
 }
 
-void ConfigManager::Close()
+void ConfigManager::Open()
 {
     AutoMutex a(iLock);
-    iClosed = true;
+    iOpen = true;
 }
 
 void ConfigManager::Add(ConfigNum& aNum)
@@ -384,7 +384,7 @@ void ConfigManager::AddText(const Brx& aKey, ConfigText& aText)
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
 {
     iLock.Wait();
-    if (iClosed) {
+    if (iOpen) {
         iLock.Signal();
         ASSERTS();
     }

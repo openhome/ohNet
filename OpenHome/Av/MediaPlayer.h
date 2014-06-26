@@ -32,7 +32,7 @@ namespace Media {
 namespace Configuration {
     class ConfigManager;
     class IConfigManagerReader;
-    class IConfigManagerWriter;
+    class IConfigManagerInitialiser;
     class IStoreReadWrite;
     class ConfigText;
     class ProviderConfig;
@@ -66,7 +66,7 @@ public:
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::IStoreReadWrite& ReadWriteStore() = 0;
     virtual Configuration::IConfigManagerReader& ConfigManagerReader() = 0;
-    virtual Configuration::IConfigManagerWriter& ConfigManagerWriter() = 0;
+    virtual Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
@@ -95,7 +95,7 @@ public: // from IMediaPlayer
     IReadStore& ReadStore();
     Configuration::IStoreReadWrite& ReadWriteStore();
     Configuration::IConfigManagerReader& ConfigManagerReader();
-    Configuration::IConfigManagerWriter& ConfigManagerWriter();
+    Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser();
     IPowerManager& PowerManager();
     void Add(Media::UriProvider* aUriProvider);
     void AddAttribute(const TChar* aAttribute);

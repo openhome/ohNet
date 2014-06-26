@@ -30,7 +30,7 @@ public:
     virtual void SetVisible(TBool aVisible) = 0;
     virtual void PipelineStopped() = 0;
 private:
-    virtual void Initialise(IProduct& aProduct, Configuration::IConfigManagerWriter& aConfigManagerWriter, Configuration::IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix) = 0;
+    virtual void Initialise(IProduct& aProduct, Configuration::IConfigManagerInitialiser& aConfigManagerInit, Configuration::IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix) = 0;
 };
 
 class Source : public ISource/*, protected IInfoProvider*/
@@ -49,7 +49,7 @@ protected:
     TBool IsActive() const;
     void DoActivate();
 private: // from ISource
-    void Initialise(IProduct& aProduct, Configuration::IConfigManagerWriter& aConfigManagerWriter, Configuration::IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix);
+    void Initialise(IProduct& aProduct, Configuration::IConfigManagerInitialiser& aConfigManagerInit, Configuration::IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix);
 private:
     void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
 protected:

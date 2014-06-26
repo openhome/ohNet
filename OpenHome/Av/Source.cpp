@@ -73,7 +73,7 @@ void Source::DoActivate()
     iProduct->Activate(*this);
 }
 
-void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManagerWriter, IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix)
+void Source::Initialise(IProduct& aProduct, IConfigManagerInitialiser& aConfigManagerInit, IConfigManagerReader& aConfigManagerReader, const Brx& aConfigIdPrefix)
 {
     const Brn prefix("Source.");
     const Brn suffix(".Name");
@@ -89,7 +89,7 @@ void Source::Initialise(IProduct& aProduct, IConfigManagerWriter& aConfigManager
         iConfigName = &aConfigManagerReader.GetText(key);
         iConfigNameCreated = false;
     } else {
-        iConfigName = new ConfigText(aConfigManagerWriter, key, kMaxSystemNameBytes, iName);
+        iConfigName = new ConfigText(aConfigManagerInit, key, kMaxSystemNameBytes, iName);
         iConfigNameCreated = true;
     }
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &Source::NameChanged));

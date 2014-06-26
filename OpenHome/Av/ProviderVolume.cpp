@@ -15,13 +15,13 @@ using namespace OpenHome::Net;
 // ProviderFactory
 
 IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice,
-                                      IConfigManagerWriter& aConfigManager, IPowerManager& aPowerManager,
+                                      IConfigManagerInitialiser& aConfigInit, IPowerManager& aPowerManager,
                                       IVolumeProfile& aVolumeProfile, IVolume& aVolume,
                                       IVolumeLimit& aVolumeLimit, IBalance& aBalance,
                                       IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigManager, aPowerManager,
+    return new ProviderVolume(aDevice, aConfigInit, aPowerManager,
                               aVolumeProfile, aVolume, aVolumeLimit, aBalance,
                               aMute);
 }
@@ -59,21 +59,21 @@ const Brn ProviderVolume::kPowerDownVolume("PowerDown.Volume");
 const Brn ProviderVolume::kPowerDownMute("PowerDown.Mute");
 
 ProviderVolume::ProviderVolume(DvDevice& aDevice,
-                               IConfigManagerWriter& aConfigManager,
+                               IConfigManagerInitialiser& aConfigInit,
                                IPowerManager& aPowerManager,
                                IVolumeProfile& aVolumeProfile,
                                IVolume& aVolume, IVolumeLimit& aVolumeLimit,
                                IBalance& aBalance,
                                IMute& aMute)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
-    , iConfigManager(aConfigManager)
+    , iConfigInit(aConfigInit)
     , iVolumeProfile(aVolumeProfile)
     , iVolumeSetter(aVolume)
     , iVolumeLimitSetter(aVolumeLimit)
     , iBalanceSetter(aBalance)
     , iMuteSetter(aMute)
-    , iPowerDownVolume(iConfigManager.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownVolume, kVolumeStartupDefault)
-    , iPowerDownMute(iConfigManager.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownMute, kMuteStartupDefault)
+    , iPowerDownVolume(iConfigInit.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownVolume, kVolumeStartupDefault)
+    , iPowerDownMute(iConfigInit.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownMute, kMuteStartupDefault)
     , iLock("PVOL")
 {
     // Linn services are optional, but their actions are not.
@@ -110,18 +110,18 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
 
     TInt maxBalance = iVolumeProfile.MaxBalance();
     TUint maxVolume = iVolumeProfile.MaxVolume();
-    iConfigBalance = new ConfigNum(iConfigManager, kBalance, -(maxBalance), maxBalance, 0);
+    iConfigBalance = new ConfigNum(iConfigInit, kBalance, -(maxBalance), maxBalance, 0);
     iListenerIdBalance = iConfigBalance->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigBalanceChanged));
-    iConfigVolumeLimit = new ConfigNum(iConfigManager, kVolumeLimit, 0, maxVolume, maxVolume);
+    iConfigVolumeLimit = new ConfigNum(iConfigInit, kVolumeLimit, 0, maxVolume, maxVolume);
     iListenerIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigVolumeLimitChanged));
 
     // Only care about startup volume and whether it is enabled when
     // creating this provider; it has no influence at any other time.
-    iConfigVolumeStartup = new ConfigNum(iConfigManager, kVolumeStartup, 0, maxVolume, kVolumeStartupDefault);
+    iConfigVolumeStartup = new ConfigNum(iConfigInit, kVolumeStartup, 0, maxVolume, kVolumeStartupDefault);
     std::vector<TUint> choices;
     choices.push_back(eStringIdYes);
     choices.push_back(eStringIdNo);
-    iConfigVolumeStartupEnabled = new ConfigChoice(iConfigManager, kVolumeStartupEnabled, choices, eStringIdYes);
+    iConfigVolumeStartupEnabled = new ConfigChoice(iConfigInit, kVolumeStartupEnabled, choices, eStringIdYes);
 
     // When we subscribe to a ConfigVal, the initial callback is made from the
     // same thread that made the subscription.
