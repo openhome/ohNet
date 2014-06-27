@@ -290,7 +290,6 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 
 void ConfigManager::Print() const
 {
-    WriterPrinter writerPrinter;
     Log::Print("ConfigManager: [\n");
 
     Log::Print("ConfigNum:\n");
