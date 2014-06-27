@@ -15,6 +15,7 @@
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
 #include <OpenHome/Av/ProviderFactory.h>
+#include <OpenHome/Av/ProviderVolume.h>
 #include <OpenHome/NetworkMonitor.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -55,7 +56,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Time");
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
-    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
+    iConfigInitVolume = new ConfigInitialiserVolume(*iConfigManager, iVolumeProfile);
+    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iConfigManager, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
@@ -71,6 +73,7 @@ MediaPlayer::~MediaPlayer()
     delete iProviderTime;
     delete iProviderInfo;
     delete iProviderVolume;
+    delete iConfigInitVolume;
     //delete iMuteManager;
     //delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
