@@ -137,9 +137,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iPipeline.AddObserver(*this);
 
     // Sender
-    IConfigManagerWriter& configManagerWriter = aMediaPlayer.ConfigManagerWriter();
+    IConfigManagerInitialiser& configManagerInit = aMediaPlayer.ConfigManagerInitialiser();
     IConfigManagerReader& configManagerReader = aMediaPlayer.ConfigManagerReader();
-    iSender = new Sender(env, device, *iZoneHandler, configManagerWriter, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
+    iSender = new Sender(env, device, *iZoneHandler, configManagerInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManagerReader.GetText(Product::kConfigIdRoomBase);

@@ -46,7 +46,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager, Brx::Empty());
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     //iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -117,7 +117,8 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void MediaPlayer::Start()
 {
-    iConfigManager->Close();
+    iConfigManager->Open();
+    iConfigManager->Print();
     iPipeline->Start();
     iProduct->Start();
 }
@@ -162,7 +163,7 @@ IConfigManagerReader& MediaPlayer::ConfigManagerReader()
     return *iConfigManager;
 }
 
-IConfigManagerWriter& MediaPlayer::ConfigManagerWriter()
+IConfigManagerInitialiser& MediaPlayer::ConfigManagerInitialiser()
 {
     return *iConfigManager;
 }

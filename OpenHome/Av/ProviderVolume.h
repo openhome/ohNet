@@ -39,7 +39,7 @@ private:
     static const Brn kPowerDownVolume;
     static const Brn kPowerDownMute;
 public:
-    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerWriter& aConfigManager,
+    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerInitialiser& aConfigInit,
                    IPowerManager& aPowerManager, Media::IVolumeProfile& aVolumeProfile,
                    Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit,
                    Media::IBalance& aBalance, Media::IMute& aMute);
@@ -82,7 +82,7 @@ private:
     void ConfigVolumeStartupChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void ConfigVolumeStartupEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
-    Configuration::IConfigManagerWriter& iConfigManager;
+    Configuration::IConfigManagerInitialiser& iConfigInit;
     Media::IVolumeProfile& iVolumeProfile;
     Media::IVolume& iVolumeSetter;
     Media::IVolumeLimit& iVolumeLimitSetter;

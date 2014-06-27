@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Configuration/FunctorGeneric.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -74,7 +75,7 @@ inline MemberTranslatorGeneric<KeyValuePair<Type>&,Object,void (CallType::*)(Key
     return MemberTranslatorGeneric<KeyValuePair<Type>&,Object,MemFunc>(aC,aF);
 }
 
-class IConfigManagerWriter;
+class IConfigManagerInitialiser;
 
 class ISerialisable
 {
@@ -91,10 +92,10 @@ class ConfigVal : public IObservable<T>, public ISerialisable
 public:
     static const TUint kSubscriptionIdInvalid = 0;
 protected:
-    ConfigVal(IConfigManagerWriter& aManager, const Brx& aKey);
+    ConfigVal(IConfigManagerInitialiser& aManager, const Brx& aKey);
 public:
     virtual ~ConfigVal();
-    const Brx& Key();
+    const Brx& Key() const;
 public: // from IObservable
     virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
     void Unsubscribe(TUint aId);
@@ -106,8 +107,10 @@ protected:
     void NotifySubscribers(T aVal);
     void AddInitialSubscribers();
     virtual void Write(KeyValuePair<T>& aKvp) = 0;
+private:
+    TUint SubscribeNoCallback(FunctorObserver aFunctor);
 protected:
-    IConfigManagerWriter& iConfigManager;
+    IConfigManagerInitialiser& iConfigManager;
     Bwh iKey;
 private:
     typedef std::map<TUint,FunctorObserver> Map;
@@ -118,7 +121,7 @@ private:
 };
 
 // ConfigVal
-template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const Brx& aKey)
+template <class T> ConfigVal<T>::ConfigVal(IConfigManagerInitialiser& aManager, const Brx& aKey)
     : iConfigManager(aManager)
     , iKey(aKey)
     , iObserverLock("CVOL")
@@ -127,19 +130,13 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigManagerWriter& aManager, const
 {
 }
 
-template <class T> void ConfigVal<T>::AddInitialSubscribers()
-{
-    ASSERT(iWriteObserverId == 0);
-    iWriteObserverId = Subscribe(MakeFunctorObserver<T>(*this, &ConfigVal::Write));
-}
-
 template <class T> ConfigVal<T>::~ConfigVal()
 {
     Unsubscribe(iWriteObserverId);
     ASSERT(iObservers.size() == 0);
 }
 
-template <class T> const Brx& ConfigVal<T>::Key()
+template <class T> const Brx& ConfigVal<T>::Key() const
 {
     return iKey;
 }
@@ -154,14 +151,20 @@ template <class T> void ConfigVal<T>::Unsubscribe(TUint aId)
     iObserverLock.Signal();
 }
 
-template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVal)
+template <class T> TUint ConfigVal<T>::SubscribeNoCallback(FunctorObserver aFunctor)
 {
-    KeyValuePair<T> kvp(iKey, aVal);
     iObserverLock.Wait();
     TUint id = iNextObserverId;
     iObservers.insert(std::pair<TUint,FunctorObserver>(id, aFunctor));
     iNextObserverId++;
     iObserverLock.Signal();
+    return id;
+}
+
+template <class T> TUint ConfigVal<T>::Subscribe(FunctorObserver aFunctor, T aVal)
+{
+    KeyValuePair<T> kvp(iKey, aVal);
+    TUint id = SubscribeNoCallback(aFunctor);
     aFunctor(kvp);
     return id;
 }
@@ -177,6 +180,18 @@ template <class T> void ConfigVal<T>::NotifySubscribers(T aVal)
     }
 }
 
+template <class T> void ConfigVal<T>::AddInitialSubscribers()
+{
+    // Don't write initial val out at startup.
+    // - If it already exists in store, no need to write it out.
+    // - If it doesn't exist in store, it will be the default val regardless of
+    //   whether it is ever written to store - only write to store on
+    //   subsequent changes.
+    ASSERT(iWriteObserverId == 0);
+    iWriteObserverId = SubscribeNoCallback(MakeFunctorObserver<T>(*this, &ConfigVal::Write));
+}
+
+
 /*
  * Class representing a numerical value, which can be positive or negative,
  * with upper and lower limits.
@@ -188,7 +203,7 @@ public:
     typedef FunctorGeneric<KeyValuePair<TInt>&> FunctorConfigNum;
     typedef KeyValuePair<TInt> KvpNum;
 public:
-    ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     void Set(TInt aVal);
@@ -244,7 +259,7 @@ public:
     typedef FunctorGeneric<KeyValuePair<TUint>&> FunctorConfigChoice;
     typedef KeyValuePair<TUint> KvpChoice;
 public:
-    ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     void Set(TUint aVal);
 private:
@@ -299,7 +314,7 @@ public:
     typedef FunctorGeneric<KeyValuePair<const Brx&>&> FunctorConfigText;
     typedef KeyValuePair<const Brx&> KvpText;
 public:
-    ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     void Set(const Brx& aText);
 private:
@@ -355,20 +370,25 @@ public:
 /*
  * Interface for adding values to a configuration manager.
  * Should only ever be used by owners of ConfigVal items and the class
- * responsible for Close()ing the config manager once all values have been
+ * responsible for Open()ing the config manager once all values have been
  * added.
+ *
+ * Calling Open() ensures uniqueness of keys from that point on. If an attempt
+ * is made to add a duplicate key at startup, before Open() is called, an
+ * implementer of this should throw ConfigKeyExists. (And any attempt to create
+ * a ConfigVal after Open() has been called should also cause an ASSERT.)
  */
-class IConfigManagerWriter
+class IConfigManagerInitialiser
 {
 public:
     virtual IStoreReadWrite& Store() = 0;
-    virtual void Close() = 0;
+    virtual void Open() = 0;
     virtual void Add(ConfigNum& aNum) = 0;
     virtual void Add(ConfigChoice& aChoice) = 0;
     virtual void Add(ConfigText& aText) = 0;
     virtual void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
     virtual void ToStore(const Brx& aKey, const Brx& aValue) = 0;
-    virtual ~IConfigManagerWriter() {}
+    virtual ~IConfigManagerInitialiser() {}
 };
 
 /**
@@ -386,14 +406,19 @@ public:
 template <class T>
 class SerialisedMap
 {
+private:
+    typedef std::map<const Brx*, T*, BufferPtrCmp> Map;
+public:
+    typedef typename Map::const_iterator Iterator;
 public:
     SerialisedMap();
     ~SerialisedMap();
     void Add(const Brx& aKey, T& aVal);
     TBool Has(const Brx& aKey) const;
     T& Get(const Brx& aKey) const;
+    Iterator Begin() const;
+    Iterator End() const;
 private:
-    typedef std::map<const Brx*, T*, BufferPtrCmp> Map;
     Map iMap;
     mutable Mutex iLock;
 };
@@ -407,6 +432,7 @@ template <class T> SerialisedMap<T>::SerialisedMap()
 template <class T> SerialisedMap<T>::~SerialisedMap()
 {
     // Delete all keys.
+    AutoMutex a(iLock);
     typename Map::iterator it;
     for (it = iMap.begin(); it != iMap.end(); ++it) {
         delete (*it).first;
@@ -442,10 +468,34 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
     Brn key(aKey);
     AutoMutex a(iLock);
     typename Map::const_iterator it = iMap.find(&key);
-    ASSERT(it != iMap.end()); // assert value with ID of aKey exists
+    //ASSERT(it != iMap.end()); // assert value with ID of aKey exists
+    if (it == iMap.end()) {
+        ASSERTS();
+    }
 
     return *(it->second);
 }
+
+template <class T> typename SerialisedMap<T>::Iterator SerialisedMap<T>::Begin() const
+{
+    return iMap.cbegin();
+}
+
+template <class T> typename SerialisedMap<T>::Iterator SerialisedMap<T>::End() const
+{
+    return iMap.cend();
+}
+
+/**
+ * Class implementing IWriter that writes all values using Log::Print().
+ */
+class WriterPrinter : public IWriter
+{
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
+};
 
 /*
  * Class storing a collection of ConfigVals. Values are stored with, and
@@ -454,11 +504,16 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
  *
  * Known identifiers are listed elsewhere.
  */
-class ConfigManager : public IConfigManagerReader, public IConfigManagerWriter
+class ConfigManager : public IConfigManagerReader, public IConfigManagerInitialiser
 {
+private:
+    typedef SerialisedMap<ConfigNum> ConfigNumMap;
+    typedef SerialisedMap<ConfigChoice> ConfigChoiceMap;
+    typedef SerialisedMap<ConfigText> ConfigTextMap;
 public:
     ConfigManager(IStoreReadWrite& aStore);
-public: // from IConfigManagerReader // FIXME - make these private
+    void Print() const;
+public: // from IConfigManagerReader
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
     TBool HasChoice(const Brx& aKey) const;
@@ -467,26 +522,29 @@ public: // from IConfigManagerReader // FIXME - make these private
     ConfigText& GetText(const Brx& aKey) const;
     TBool Has(const Brx& aKey) const;
     ISerialisable& Get(const Brx& aKey) const;
-public: // from IConfigManagerWriter
+public: // from IConfigManagerInitialiser
     IStoreReadWrite& Store();
-    void Close();
+    void Open();
     void Add(ConfigNum& aNum);
     void Add(ConfigChoice& aChoice);
     void Add(ConfigText& aText);
     void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
     void ToStore(const Brx& aKey, const Brx& aValue);
-protected:
+private:
     void AddNum(const Brx& aKey, ConfigNum& aNum);
     void AddChoice(const Brx& aKey, ConfigChoice& aChoice);
     void AddText(const Brx& aKey, ConfigText& aText);
 private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
+    template <class T> void Print(const ConfigVal<T>& aVal) const;
+    template <class T> void Print(const SerialisedMap<T>& aMap) const;
 private:
     IStoreReadWrite& iStore;
-    SerialisedMap<ConfigNum> iMapNum;
-    SerialisedMap<ConfigChoice> iMapChoice;
-    SerialisedMap<ConfigText> iMapText;
-    TBool iClosed;
+    ConfigNumMap iMapNum;
+    ConfigChoiceMap iMapChoice;
+    ConfigTextMap iMapText;
+    TBool iOpen;
+    Mutex iLock;
 };
 
 
@@ -499,7 +557,7 @@ class ConfigRamStore : public IStoreReadWrite
 public:
     ConfigRamStore();
     virtual ~ConfigRamStore();
-    void Print();
+    void Print() const;
 public: // from IStoreReadWrite
     void Read(const Brx& aKey, Bwx& aDest);
     void Write(const Brx& aKey, const Brx& aSource);
@@ -509,7 +567,7 @@ private:
 private:
     typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
     Map iMap;
-    Mutex iLock;
+    mutable Mutex iLock;
 };
 
 } // namespace Configuration
