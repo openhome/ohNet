@@ -432,7 +432,7 @@ template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aK
 template <class T> void ConfigManager::Print(const ConfigVal<T>& aVal) const
 {
     WriterPrinter writerPrinter;
-    Log::Print("   {");
+    Log::Print("    {");
     Log::Print(aVal.Key());
     Log::Print(", ");
     aVal.Serialise(writerPrinter);
@@ -445,9 +445,6 @@ template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
     // SerialisedMap allows, so don't need to lock.
     SerialisedMap<T>::Iterator it;
     for (it = aMap.Begin(); it != aMap.End(); ++it) {
-        Log::Print("    ");
-        Log::Print(*it->first);
-        Log::Print(": ");
         Print(*it->second);
     }
 }
