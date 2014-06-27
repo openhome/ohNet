@@ -411,6 +411,7 @@ public:
     void Add(const Brx& aKey, T& aVal);
     TBool Has(const Brx& aKey) const;
     T& Get(const Brx& aKey) const;
+    void Print() const;
 private:
     typedef std::map<const Brx*, T*, BufferPtrCmp> Map;
     Map iMap;
@@ -426,6 +427,7 @@ template <class T> SerialisedMap<T>::SerialisedMap()
 template <class T> SerialisedMap<T>::~SerialisedMap()
 {
     // Delete all keys.
+    AutoMutex a(iLock);
     typename Map::iterator it;
     for (it = iMap.begin(); it != iMap.end(); ++it) {
         delete (*it).first;
@@ -466,6 +468,17 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
     return *(it->second);
 }
 
+template <class T> void SerialisedMap<T>::Print() const
+{
+    AutoMutex a(iLock);
+    typename Map::const_iterator it;
+    for (it = iMap.begin(); it != iMap.end(); ++it) {
+        Log::Print("   {");
+        Log::Print(*it->first);
+        Log::Print("}\n");
+    }
+}
+
 /*
  * Class storing a collection of ConfigVals. Values are stored with, and
  * retrievable via, an ID of form "some.value.identifier". Classes that create
@@ -477,6 +490,7 @@ class ConfigManager : public IConfigManagerReader, public IConfigManagerInitiali
 {
 public:
     ConfigManager(IStoreReadWrite& aStore);
+    void Print() const;
 public: // from IConfigManagerReader
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
@@ -519,7 +533,7 @@ class ConfigRamStore : public IStoreReadWrite
 public:
     ConfigRamStore();
     virtual ~ConfigRamStore();
-    void Print();
+    void Print() const;
 public: // from IStoreReadWrite
     void Read(const Brx& aKey, Bwx& aDest);
     void Write(const Brx& aKey, const Brx& aSource);
@@ -529,7 +543,7 @@ private:
 private:
     typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
     Map iMap;
-    Mutex iLock;
+    mutable Mutex iLock;
 };
 
 } // namespace Configuration

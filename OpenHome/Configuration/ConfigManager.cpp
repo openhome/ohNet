@@ -270,6 +270,18 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 {
 }
 
+void ConfigManager::Print() const
+{
+    Log::Print("ConfigManager: [\n");
+    Log::Print("ConfigNum:\n");
+    iMapNum.Print();
+    Log::Print("ConfigChoice:\n");
+    iMapChoice.Print();
+    Log::Print("ConfigText:\n");
+    iMapText.Print();
+    Log::Print("]\n");
+}
+
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
     return iMapNum.Has(aKey);
@@ -409,11 +421,11 @@ ConfigRamStore::~ConfigRamStore()
     Clear();
 }
 
-void ConfigRamStore::Print()
+void ConfigRamStore::Print() const
 {
     Log::Print("RamStore: [\n");
     AutoMutex a(iLock);
-    Map::iterator it = iMap.begin();
+    Map::const_iterator it = iMap.begin();
     while (it!= iMap.end()) {
         Log::Print("   {");
         Log::Print(*it->first);

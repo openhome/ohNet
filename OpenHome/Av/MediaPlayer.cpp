@@ -118,6 +118,7 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 void MediaPlayer::Start()
 {
     iConfigManager->Open();
+    iConfigManager->Print();
     iPipeline->Start();
     iProduct->Start();
 }
