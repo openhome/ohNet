@@ -261,6 +261,24 @@ TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
 }
 
 
+// WriterPrinter
+
+void WriterPrinter::Write(TByte aValue)
+{
+    Bws<1> buf(aValue);
+    Log::Print(buf);
+}
+
+void WriterPrinter::Write(const Brx& aBuffer)
+{
+    Log::Print(aBuffer);
+}
+
+void WriterPrinter::WriteFlush()
+{
+}
+
+
 // ConfigManager
 
 ConfigManager::ConfigManager(IStoreReadWrite& aStore)
@@ -272,13 +290,44 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 
 void ConfigManager::Print() const
 {
+    // Map iterators are not invalidated by any of the actions that
+    // SerialisedMap allows, so don't need to lock.
+    WriterPrinter writerPrinter;
     Log::Print("ConfigManager: [\n");
+
     Log::Print("ConfigNum:\n");
-    iMapNum.Print();
+    ConfigNumMap::Iterator itNum;
+    for (itNum = iMapNum.Begin(); itNum != iMapNum.End(); ++itNum) {
+        Log::Print("   {");
+        Log::Print(*itNum->first);
+        Log::Print(", ");
+        ConfigNum& confVal = *itNum->second;
+        confVal.Serialise(writerPrinter);
+        Log::Print("}\n");
+    }
+
     Log::Print("ConfigChoice:\n");
-    iMapChoice.Print();
+    ConfigChoiceMap::Iterator itChoice;
+    for (itChoice = iMapChoice.Begin(); itChoice != iMapChoice.End(); ++itChoice) {
+        Log::Print("   {");
+        Log::Print(*itChoice->first);
+        Log::Print(", ");
+        ConfigChoice& confVal = *itChoice->second;
+        confVal.Serialise(writerPrinter);
+        Log::Print("}\n");
+    }
+
     Log::Print("ConfigText:\n");
-    iMapText.Print();
+    ConfigTextMap::Iterator itText;
+    for (itText = iMapText.Begin(); itText != iMapText.End(); ++itText) {
+        Log::Print("   {");
+        Log::Print(*itText->first);
+        Log::Print(", ");
+        ConfigText& confVal = *itText->second;
+        confVal.Serialise(writerPrinter);
+        Log::Print("}\n");
+    }
+
     Log::Print("]\n");
 }
 

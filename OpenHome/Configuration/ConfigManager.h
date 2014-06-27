@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Configuration/FunctorGeneric.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -405,15 +406,19 @@ public:
 template <class T>
 class SerialisedMap
 {
+private:
+    typedef std::map<const Brx*, T*, BufferPtrCmp> Map;
+public:
+    typedef typename Map::const_iterator Iterator;
 public:
     SerialisedMap();
     ~SerialisedMap();
     void Add(const Brx& aKey, T& aVal);
     TBool Has(const Brx& aKey) const;
     T& Get(const Brx& aKey) const;
-    void Print() const;
+    Iterator Begin() const;
+    Iterator End() const;
 private:
-    typedef std::map<const Brx*, T*, BufferPtrCmp> Map;
     Map iMap;
     mutable Mutex iLock;
 };
@@ -463,21 +468,34 @@ template <class T> T& SerialisedMap<T>::Get(const Brx& aKey) const
     Brn key(aKey);
     AutoMutex a(iLock);
     typename Map::const_iterator it = iMap.find(&key);
-    ASSERT(it != iMap.end()); // assert value with ID of aKey exists
+    //ASSERT(it != iMap.end()); // assert value with ID of aKey exists
+    if (it == iMap.end()) {
+        ASSERTS();
+    }
 
     return *(it->second);
 }
 
-template <class T> void SerialisedMap<T>::Print() const
+template <class T> typename SerialisedMap<T>::Iterator SerialisedMap<T>::Begin() const
 {
-    AutoMutex a(iLock);
-    typename Map::const_iterator it;
-    for (it = iMap.begin(); it != iMap.end(); ++it) {
-        Log::Print("   {");
-        Log::Print(*it->first);
-        Log::Print("}\n");
-    }
+    return iMap.cbegin();
 }
+
+template <class T> typename SerialisedMap<T>::Iterator SerialisedMap<T>::End() const
+{
+    return iMap.cend();
+}
+
+/**
+ * Class implementing IWriter that writes all values using Log::Print().
+ */
+class WriterPrinter : public IWriter
+{
+public: // from IWriter
+    void Write(TByte aValue);
+    void Write(const Brx& aBuffer);
+    void WriteFlush();
+};
 
 /*
  * Class storing a collection of ConfigVals. Values are stored with, and
@@ -488,6 +506,10 @@ template <class T> void SerialisedMap<T>::Print() const
  */
 class ConfigManager : public IConfigManagerReader, public IConfigManagerInitialiser
 {
+private:
+    typedef SerialisedMap<ConfigNum> ConfigNumMap;
+    typedef SerialisedMap<ConfigChoice> ConfigChoiceMap;
+    typedef SerialisedMap<ConfigText> ConfigTextMap;
 public:
     ConfigManager(IStoreReadWrite& aStore);
     void Print() const;
@@ -516,9 +538,9 @@ private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
 private:
     IStoreReadWrite& iStore;
-    SerialisedMap<ConfigNum> iMapNum;
-    SerialisedMap<ConfigChoice> iMapChoice;
-    SerialisedMap<ConfigText> iMapText;
+    ConfigNumMap iMapNum;
+    ConfigChoiceMap iMapChoice;
+    ConfigTextMap iMapText;
     TBool iOpen;
     Mutex iLock;
 };
