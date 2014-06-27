@@ -302,6 +302,13 @@ void ConfigManager::Print() const
     Log::Print("]\n");
 }
 
+void ConfigManager::DumpToStore()
+{
+    DumpToStore(iMapNum);
+    DumpToStore(iMapChoice);
+    DumpToStore(iMapText);
+}
+
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
     return iMapNum.Has(aKey);
@@ -445,6 +452,23 @@ template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
     typename SerialisedMap<T>::Iterator it;
     for (it = aMap.Begin(); it != aMap.End(); ++it) {
         Print(*it->second);
+    }
+}
+
+template <class T> void ConfigManager::DumpToStore(const ConfigVal<T>& aVal)
+{
+    static const TUint kMaxValueBytes = 100;  // randomly chosen
+    Bws<kMaxValueBytes> buf;
+    WriterBuffer writerBuf(buf);
+    aVal.Serialise(writerBuf);
+    ToStore(aVal.Key(), buf);
+}
+
+template <class T> void ConfigManager::DumpToStore(const SerialisedMap<T>& aMap)
+{
+    typename SerialisedMap<T>::Iterator it;
+    for (it = aMap.Begin(); it != aMap.End(); ++it) {
+        DumpToStore(*it->second);
     }
 }
 

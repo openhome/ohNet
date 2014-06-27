@@ -512,7 +512,8 @@ private:
     typedef SerialisedMap<ConfigText> ConfigTextMap;
 public:
     ConfigManager(IStoreReadWrite& aStore);
-    void Print() const;
+    void Print() const;     // for debugging!
+    void DumpToStore();     // for debugging!
 public: // from IConfigManagerReader
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
@@ -538,6 +539,8 @@ private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
     template <class T> void Print(const ConfigVal<T>& aVal) const;
     template <class T> void Print(const SerialisedMap<T>& aMap) const;
+    template <class T> void DumpToStore(const ConfigVal<T>& aVal);
+    template <class T> void DumpToStore(const SerialisedMap<T>& aMap);
 private:
     IStoreReadWrite& iStore;
     ConfigNumMap iMapNum;
