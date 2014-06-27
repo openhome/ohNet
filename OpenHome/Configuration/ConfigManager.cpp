@@ -290,43 +290,15 @@ ConfigManager::ConfigManager(IStoreReadWrite& aStore)
 
 void ConfigManager::Print() const
 {
-    // Map iterators are not invalidated by any of the actions that
-    // SerialisedMap allows, so don't need to lock.
     WriterPrinter writerPrinter;
     Log::Print("ConfigManager: [\n");
 
     Log::Print("ConfigNum:\n");
-    ConfigNumMap::Iterator itNum;
-    for (itNum = iMapNum.Begin(); itNum != iMapNum.End(); ++itNum) {
-        Log::Print("   {");
-        Log::Print(*itNum->first);
-        Log::Print(", ");
-        ConfigNum& confVal = *itNum->second;
-        confVal.Serialise(writerPrinter);
-        Log::Print("}\n");
-    }
-
+    Print(iMapNum);
     Log::Print("ConfigChoice:\n");
-    ConfigChoiceMap::Iterator itChoice;
-    for (itChoice = iMapChoice.Begin(); itChoice != iMapChoice.End(); ++itChoice) {
-        Log::Print("   {");
-        Log::Print(*itChoice->first);
-        Log::Print(", ");
-        ConfigChoice& confVal = *itChoice->second;
-        confVal.Serialise(writerPrinter);
-        Log::Print("}\n");
-    }
-
+    Print(iMapChoice);
     Log::Print("ConfigText:\n");
-    ConfigTextMap::Iterator itText;
-    for (itText = iMapText.Begin(); itText != iMapText.End(); ++itText) {
-        Log::Print("   {");
-        Log::Print(*itText->first);
-        Log::Print(", ");
-        ConfigText& confVal = *itText->second;
-        confVal.Serialise(writerPrinter);
-        Log::Print("}\n");
-    }
+    Print(iMapText);
 
     Log::Print("]\n");
 }
@@ -455,6 +427,29 @@ template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aK
     }
 
     aMap.Add(aKey, aVal);
+}
+
+template <class T> void ConfigManager::Print(const ConfigVal<T>& aVal) const
+{
+    WriterPrinter writerPrinter;
+    Log::Print("   {");
+    Log::Print(aVal.Key());
+    Log::Print(", ");
+    aVal.Serialise(writerPrinter);
+    Log::Print("}\n");
+}
+
+template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
+{
+    // Map iterators are not invalidated by any of the actions that
+    // SerialisedMap allows, so don't need to lock.
+    SerialisedMap<T>::Iterator it;
+    for (it = aMap.Begin(); it != aMap.End(); ++it) {
+        Log::Print("    ");
+        Log::Print(*it->first);
+        Log::Print(": ");
+        Print(*it->second);
+    }
 }
 
 

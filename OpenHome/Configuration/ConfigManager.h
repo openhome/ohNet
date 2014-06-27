@@ -95,7 +95,7 @@ protected:
     ConfigVal(IConfigManagerInitialiser& aManager, const Brx& aKey);
 public:
     virtual ~ConfigVal();
-    const Brx& Key();
+    const Brx& Key() const;
 public: // from IObservable
     virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
     void Unsubscribe(TUint aId);
@@ -136,7 +136,7 @@ template <class T> ConfigVal<T>::~ConfigVal()
     ASSERT(iObservers.size() == 0);
 }
 
-template <class T> const Brx& ConfigVal<T>::Key()
+template <class T> const Brx& ConfigVal<T>::Key() const
 {
     return iKey;
 }
@@ -536,6 +536,8 @@ private:
     void AddText(const Brx& aKey, ConfigText& aText);
 private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
+    template <class T> void Print(const ConfigVal<T>& aVal) const;
+    template <class T> void Print(const SerialisedMap<T>& aMap) const;
 private:
     IStoreReadWrite& iStore;
     ConfigNumMap iMapNum;
