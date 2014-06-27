@@ -443,7 +443,7 @@ template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
 {
     // Map iterators are not invalidated by any of the actions that
     // SerialisedMap allows, so don't need to lock.
-    SerialisedMap<T>::Iterator it;
+    typename SerialisedMap<T>::Iterator it;
     for (it = aMap.Begin(); it != aMap.End(); ++it) {
         Print(*it->second);
     }
