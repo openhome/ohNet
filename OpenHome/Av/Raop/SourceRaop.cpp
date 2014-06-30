@@ -77,7 +77,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     choices.push_back(kAutoNetAuxOn);
     choices.push_back(kAutoNetAuxOffVisible);
     choices.push_back(kAutoNetAuxOffNotVisible);
-    iConfigNetAux = new ConfigChoice(aMediaPlayer.ConfigManagerWriter(), kKeyNetAux, choices, iAutoNetAux);
+    iConfigNetAux = new ConfigChoice(aMediaPlayer.ConfigManagerInitialiser(), kKeyNetAux, choices, iAutoNetAux);
     iConfigSubId = iConfigNetAux->Subscribe(MakeFunctorConfigChoice(*this, &SourceRaop::AutoNetAuxChanged));
 
 

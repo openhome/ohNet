@@ -49,7 +49,6 @@ private:
     static const Brn kStartupSourceBase;
     static const TUint kMaxAttributeBytes = 1024;
 public:
-    static const TUint kConfigPrefixMaxBytes = 12;
     static const Brn kConfigIdRoomBase;
     static const Brn kConfigIdNameBase;
     static const TUint kMaxNameBytes = 20;
@@ -57,8 +56,8 @@ public:
     static const TUint kMaxSourceXmlBytes = 1024 * 2;
 public:
     Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore,
-            Configuration::IConfigManagerReader& aConfigReader, Configuration::IConfigManagerWriter& aConfigWriter,
-            IPowerManager& aPowerManager, const Brx& aConfigPrefix);
+            Configuration::IConfigManagerReader& aConfigReader, Configuration::IConfigManagerInitialiser& aConfigInit,
+            IPowerManager& aPowerManager);
     ~Product();
     void AddObserver(IProductObserver& aObserver);
     void Start();
@@ -93,7 +92,7 @@ private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
     Configuration::IConfigManagerReader& iConfigReader;
-    Configuration::IConfigManagerWriter& iConfigWriter;
+    Configuration::IConfigManagerInitialiser& iConfigInit;
     mutable Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
@@ -105,7 +104,6 @@ private:
     StoreText* iStartupSource;
     TUint iCurrentSource;
     TUint iSourceXmlChangeCount; // FIXME - isn't updated when source names/visibility change
-    Bws<kConfigPrefixMaxBytes> iConfigPrefix;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Bws<kMaxRoomBytes> iProductRoom;

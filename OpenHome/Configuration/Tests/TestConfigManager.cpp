@@ -70,7 +70,7 @@ private:  // from SuiteCVNotify
     void NotifyChanged(ConfigNum::KvpNum& aKvp);
 private:
     TInt IntFromStore(const Brx& aKey);
-    void TestInternalFunctorsCalledAtConstruction();
+    void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
     void TestSubscription();
     void TestInvalidRange();
@@ -111,7 +111,7 @@ private:  // from SuiteCVNotify
     void NotifyChanged(ConfigChoice::KvpChoice& aKvp);
 private:
     TUint UintFromStore(const Brx& aKey);
-    void TestInternalFunctorsCalledAtConstruction();
+    void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
     void TestSubscription();
     void TestValueFromStore();
@@ -149,7 +149,7 @@ private: // from SuiteUnitTest
 private:  // from SuiteCVNotify
     void NotifyChanged(ConfigText::KvpText& aKvp);
 private:
-    void TestInternalFunctorsCalledAtConstruction();
+    void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
     void TestSubscription();
     void TestValueFromStore();
@@ -170,6 +170,19 @@ private:
     Bws<kMaxLength> iLastChangeVal;
 };
 
+class SuiteSerialisedMap : public SuiteUnitTest
+{
+public:
+    SuiteSerialisedMap();
+private: // from SuiteUnitTest
+    void Setup();
+    void TearDown();
+private:
+    void TestMapKeyPersists();
+private:
+    SerialisedMap<TUint>* iMapUint;
+};
+
 class SuiteConfigManager : public SuiteUnitTest
 {
 public:
@@ -181,7 +194,7 @@ private:
     void NotifyChangedNum(TInt aVal);
     void NotifyChangedChoice(TUint aVal);
     void NotifyChangedText(const Brx& aVal);
-    void TestClose();
+    void TestOpen();
     void TestAdd();
     void TestAddDuplicate();
     void TestHasNoVals();
@@ -195,6 +208,7 @@ private:
     void TestReadStoreValExists();
     void TestReadNoStoreValExists();
     void TestWrite();
+    void TestDumpToStore();
 private:
     static const TUint kMaxNumBytes = 10;
     static const TInt kMinNum = 0;
@@ -370,7 +384,7 @@ void TestHelperWriter::WriteFlush()
 SuiteConfigNum::SuiteConfigNum()
     : SuiteCVNotify("SuiteConfigNum")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
+    AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInternalFunctorNotCalledAtConstruction), "TestInternalFunctorNotCalledAtConstruction");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestSubscription), "TestSubscription");
     AddTest(MakeFunctor(*this, &SuiteConfigNum::TestInvalidRange), "TestInvalidRange");
@@ -418,10 +432,11 @@ TInt SuiteConfigNum::IntFromStore(const Brx& aKey)
     return val;
 }
 
-void SuiteConfigNum::TestInternalFunctorsCalledAtConstruction()
+void SuiteConfigNum::TestInternalFunctorNotCalledAtConstruction()
 {
-    // there is an internal write functor - check value == value in store
-    TEST(IntFromStore(kKey) == kVal);
+    // there is an internal write functor - check value is not written to store
+    // when default
+    TEST_THROWS(IntFromStore(kKey), StoreKeyNotFound);
 }
 
 void SuiteConfigNum::TestKeyStored()
@@ -478,8 +493,15 @@ void SuiteConfigNum::TestValueFromStore()
 
 void SuiteConfigNum::TestValueWrittenToStore()
 {
-    // test that the default value has been written out to store at creation
-    TEST(IntFromStore(kKey) == kVal);
+    // test that the default value has not been written out to store at creation
+    TEST_THROWS(IntFromStore(kKey), StoreKeyNotFound);
+
+    // now change the value
+    TInt newVal = kVal+1;
+    iConfigVal->Set(newVal);
+
+    // check the change has been written to store
+    TEST(IntFromStore(kKey) == newVal);
 }
 
 void SuiteConfigNum::TestGetMin()
@@ -524,8 +546,26 @@ void SuiteConfigNum::TestSetNoUpdate()
 
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kVal);
+
+    // test still no value in store
+    TEST_THROWS(IntFromStore(kKey), StoreKeyNotFound);
+
+    // assign a new value that will be written to store
+    TInt newVal = kVal+1;
+    iConfigVal->Set(newVal);
+    TEST(iChangedCount == changedCount+1);
+    TEST(iLastChangeVal == newVal);
+    // test that value has been written out to store
+    TEST(IntFromStore(kKey) == newVal);
+
+    // try set the same value again
+    changedCount = iChangedCount;
+    iConfigVal->Set(iLastChangeVal);
+    TEST(iChangedCount == changedCount);
+    TEST(iLastChangeVal == newVal);
+
     // test value in store hasn't changed
-    TEST(IntFromStore(kKey) == kVal);
+    TEST(IntFromStore(kKey) == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -606,8 +646,28 @@ void SuiteConfigNum::TestDeserialiseNoUpdate()
 
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kVal);
+
+    // test still no value in store
+    TEST_THROWS(IntFromStore(kKey), StoreKeyNotFound);
+
+    // assign a new value that will be written to store
+    TInt newVal = kVal+1;
+    buf.SetBytes(0);
+    Ascii::AppendDec(buf, newVal);
+    iConfigVal->Deserialise(buf);
+    TEST(iChangedCount == changedCount+1);
+    TEST(iLastChangeVal == newVal);
+    // test that value has been written out to store
+    TEST(IntFromStore(kKey) == newVal);
+
+    // try set the same value again
+    changedCount = iChangedCount;
+    iConfigVal->Deserialise(buf);
+    TEST(iChangedCount == changedCount);
+    TEST(iLastChangeVal == newVal);
+
     // test value in store hasn't changed
-    TEST(IntFromStore(kKey) == kVal);
+    TEST(IntFromStore(kKey) == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -653,7 +713,7 @@ const TUint SuiteConfigChoice::kChoice3 = 1002;
 SuiteConfigChoice::SuiteConfigChoice()
     : SuiteCVNotify("SuiteConfigChoice")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
+    AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestInternalFunctorNotCalledAtConstruction), "TestInternalFunctorNotCalledAtConstruction");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestSubscription), "TestSubscription");
     AddTest(MakeFunctor(*this, &SuiteConfigChoice::TestValueFromStore), "TestValueFromStore");
@@ -702,10 +762,11 @@ TUint SuiteConfigChoice::UintFromStore(const Brx& aKey)
     return val;
 }
 
-void SuiteConfigChoice::TestInternalFunctorsCalledAtConstruction()
+void SuiteConfigChoice::TestInternalFunctorNotCalledAtConstruction()
 {
-    // there is an internal write functor - check value == value in store
-    TEST(UintFromStore(kKey) == kDefault);
+    // there is an internal write functor - check value is not written to store
+    // when default
+    TEST_THROWS(UintFromStore(kKey), StoreKeyNotFound);
 }
 
 void SuiteConfigChoice::TestKeyStored()
@@ -760,8 +821,15 @@ void SuiteConfigChoice::TestValueFromStore()
 
 void SuiteConfigChoice::TestValueWrittenToStore()
 {
-    // test that the default value has been written out to store at creation
-    TEST(UintFromStore(kKey) == kDefault);
+    // test that the default value has not been written out to store at creation
+    TEST_THROWS(UintFromStore(kKey), StoreKeyNotFound);
+
+    // now change the value
+    TUint newVal = kDefault+1;
+    iConfigVal->Set(newVal);
+
+    // check the change has been written to store
+    TEST(UintFromStore(kKey) == newVal);
 }
 
 void SuiteConfigChoice::TestAdd()
@@ -809,8 +877,26 @@ void SuiteConfigChoice::TestSetNoUpdate()
 
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
+
+    // test still no value in store
+    TEST_THROWS(UintFromStore(kKey), StoreKeyNotFound);
+
+    // assign a new value that will be written to store
+    TUint newVal = kDefault+1;
+    iConfigVal->Set(newVal);
+    TEST(iChangedCount == changedCount+1);
+    TEST(iLastChangeVal == newVal);
+    // test that value has been written out to store
+    TEST(UintFromStore(kKey) == newVal);
+
+    // try set the same value again
+    changedCount = iChangedCount;
+    iConfigVal->Set(iLastChangeVal);
+    TEST(iChangedCount == changedCount);
+    TEST(iLastChangeVal == newVal);
+
     // test value in store hasn't changed
-    TEST(UintFromStore(kKey) == kDefault);
+    TEST(UintFromStore(kKey) == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -879,8 +965,28 @@ void SuiteConfigChoice::TestDeserialiseNoUpdate()
 
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
+
+    // test still no value in store
+    TEST_THROWS(UintFromStore(kKey), StoreKeyNotFound);
+
+    // assign a new value that will be written to store
+    TUint newVal = kDefault+1;
+    buf.SetBytes(0);
+    Ascii::AppendDec(buf, newVal);
+    iConfigVal->Deserialise(buf);
+    TEST(iChangedCount == changedCount+1);
+    TEST(iLastChangeVal == newVal);
+    // test that value has been written out to store
+    TEST(UintFromStore(kKey) == newVal);
+
+    // try set the same value again
+    changedCount = iChangedCount;
+    iConfigVal->Deserialise(buf);
+    TEST(iChangedCount == changedCount);
+    TEST(iLastChangeVal == newVal);
+
     // test value in store hasn't changed
-    TEST(UintFromStore(kKey) == kDefault);
+    TEST(UintFromStore(kKey) == newVal);
 
     iConfigVal->Unsubscribe(id);
 }
@@ -915,7 +1021,7 @@ const Brn SuiteConfigText::kDefault("abcdefghijklmnopqrstuvwxyz");
 SuiteConfigText::SuiteConfigText()
     : SuiteCVNotify("SuiteConfigText")
 {
-    AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorsCalledAtConstruction), "TestInternalFunctorsCalledAtConstruction");
+    AddTest(MakeFunctor(*this, &SuiteConfigText::TestInternalFunctorNotCalledAtConstruction), "TestInternalFunctorNotCalledAtConstruction");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestKeyStored), "TestKeyStored");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestSubscription), "TestSubscription");
     AddTest(MakeFunctor(*this, &SuiteConfigText::TestValueFromStore), "TestValueFromStore");
@@ -950,12 +1056,12 @@ void SuiteConfigText::NotifyChanged(ConfigText::KvpText& aKvp)
     iLastChangeVal.Replace(aKvp.Value());
 }
 
-void SuiteConfigText::TestInternalFunctorsCalledAtConstruction()
+void SuiteConfigText::TestInternalFunctorNotCalledAtConstruction()
 {
-    // there is an internal write functor - check value == value in store
+    // there is an internal write functor - check value is not written to store
+    // when default
     Bwh valBuf(kMaxLength);
-    iStore->Read(kKey, valBuf);
-    TEST(valBuf == kDefault);
+    TEST_THROWS(iStore->Read(kKey, valBuf), StoreKeyNotFound);
 }
 
 void SuiteConfigText::TestKeyStored()
@@ -1000,10 +1106,17 @@ void SuiteConfigText::TestValueFromStore()
 
 void SuiteConfigText::TestValueWrittenToStore()
 {
-    // test that the default value has been written out to store at creation
+    // test that the default value has not been written out to store at creation
     Bwh valBuf(kDefault.Bytes());
+    TEST_THROWS(iStore->Read(kKey, valBuf), StoreKeyNotFound);
+
+    // now change the value
+    Brn newVal("zyxwvutsrqponmlkjihgfedcba");
+    iConfigVal->Set(newVal);
+
+    // check the change has been written to store
     iStore->Read(kKey, valBuf);
-    TEST(valBuf == kDefault);
+    TEST(valBuf == newVal);
 }
 
 void SuiteConfigText::TestMaxLength()
@@ -1043,10 +1156,9 @@ void SuiteConfigText::TestSetNoUpdate()
     iConfigVal->Set(kDefault);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
-    // test value in store hasn't changed
+    // test still no value in store
     Bwh valBuf(kMaxLength);
-    iStore->Read(kKey, valBuf);
-    TEST(valBuf == kDefault);
+    TEST_THROWS(iStore->Read(kKey, valBuf), StoreKeyNotFound);
     iConfigVal->Unsubscribe(id);
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
@@ -1130,10 +1242,9 @@ void SuiteConfigText::TestDeserialiseNoUpdate()
     iConfigVal->Deserialise(kDefault);
     TEST(iChangedCount == changedCount);
     TEST(iLastChangeVal == kDefault);
-    // test value in store hasn't changed
+    // test still no value in store
     Bwh valBuf(kMaxLength);
-    iStore->Read(kKey, valBuf);
-    TEST(valBuf == kDefault);
+    TEST_THROWS(iStore->Read(kKey, valBuf), StoreKeyNotFound);
     iConfigVal->Unsubscribe(id);
 
     Brn text("zyxwvutsrqponmlkjihgfedcba");
@@ -1162,6 +1273,42 @@ void SuiteConfigText::TestDeserialiseValueTooLong()
     TEST_THROWS(iConfigVal->Deserialise(buf), ConfigValueTooLong);
     const Brx& bufAfter = iLastChangeVal;
     TEST(bufAfter == bufBefore);
+}
+
+
+// SuiteSerialisedMap
+SuiteSerialisedMap::SuiteSerialisedMap()
+    : SuiteUnitTest("SuiteSerialisedMap")
+    , iMapUint(NULL)
+{
+    AddTest(MakeFunctor(*this, &SuiteSerialisedMap::TestMapKeyPersists), "TestMapKeyPersists");
+}
+
+void SuiteSerialisedMap::Setup()
+{
+    iMapUint = new SerialisedMap<TUint>();
+}
+
+void SuiteSerialisedMap::TearDown()
+{
+    delete iMapUint;
+}
+
+void SuiteSerialisedMap::TestMapKeyPersists()
+{
+    // test that a key written into the internal map of ConfigManager persists
+    // even when the original key is changed.
+    Brh key("Test.Map.Key.Original");
+    Bwh keyModifiable(key);
+    TUint val = 0;
+
+    iMapUint->Add(keyModifiable, val);
+    TEST(iMapUint->Has(key) == true);
+
+    // now modify the key for new entry and check it is not a reference that
+    // has been stored in the map.
+    keyModifiable.Replace("Test.Map.Key.New");
+    TEST(iMapUint->Has(key) == true);
 }
 
 
@@ -1194,7 +1341,7 @@ SuiteConfigManager::SuiteConfigManager()
     // Just group functions for each val class in a single generic unit test
     // for each type of ConfigManager function to maintain clarity and
     // small test size.
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestClose), "TestClose");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestOpen), "TestOpen");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAdd), "TestAdd");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestAddDuplicate), "TestAddDuplicate");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestHasNoVals), "TestHasNoVals");
@@ -1208,6 +1355,7 @@ SuiteConfigManager::SuiteConfigManager()
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists), "TestReadStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists), "TestReadNoStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite), "TestWrite");
+    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestDumpToStore), "TestDumpToStore");
 }
 
 void SuiteConfigManager::Setup()
@@ -1244,11 +1392,11 @@ void SuiteConfigManager::NotifyChangedText(const Brx& /*aVal*/)
 {
 }
 
-void SuiteConfigManager::TestClose()
+void SuiteConfigManager::TestOpen()
 {
     // test that ConfigManager ASSERTs when attempting to add a value
-    // after it has been closed
-    iConfigManager->Close();
+    // after it has been opened
+    iConfigManager->Open();
     TEST_THROWS(ConfigNum num(*iConfigManager, kKeyNum2, kMinNum, kMaxNum, kMinNum+1), AssertionFailed);
     TEST_THROWS(ConfigChoice choice(*iConfigManager, kKeyChoice2, iChoices, kChoiceDefault+1), AssertionFailed);
     TEST_THROWS(ConfigText text(*iConfigManager, kKeyText2, kMaxTextBytes, kText2), AssertionFailed);
@@ -1446,6 +1594,7 @@ void SuiteConfigManager::TestReadStoreValExists()
 {
     // test that reading from a value already in store causes store value to be
     // returned rather than default val.
+    iStore->Write(kKeyText1, kText1);
     Bwh buf(kMaxTextBytes);
     iConfigManager->FromStore(kKeyText1, buf, kText2);
     TEST(buf == kText1);
@@ -1459,7 +1608,7 @@ void SuiteConfigManager::TestReadStoreValExists()
 void SuiteConfigManager::TestReadNoStoreValExists()
 {
     // test that reading a value not in store causes default value to be
-    // returned, and written out to store.
+    // returned, but not written out to store.
     Bwh buf(kMaxTextBytes);
 
     try { // check key isn't already in store
@@ -1471,10 +1620,9 @@ void SuiteConfigManager::TestReadNoStoreValExists()
     iConfigManager->FromStore(kKeyText2, buf, kText2);
     TEST(buf == kText2);
 
-    // check value has been written to store
+    // check value doesn't (yet) exist in store
     buf.SetBytes(0);
-    iStore->Read(kKeyText2, buf);
-    TEST(buf == kText2);
+    TEST_THROWS(iStore->Read(kKeyText2, buf), StoreKeyNotFound);
 }
 
 void SuiteConfigManager::TestWrite()
@@ -1485,6 +1633,32 @@ void SuiteConfigManager::TestWrite()
     iConfigManager->ToStore(kKeyText1, kText2);
     iStore->Read(kKeyText1, buf);
     TEST(buf == kText2);
+}
+
+void SuiteConfigManager::TestDumpToStore()
+{
+    // test that calling DumpToStore() causes all values to be written to store.
+
+    Bws<kMaxTextBytes> buf;
+
+    // check no ConfigValues are currently in store - not necessary as covered by other tests.
+    TEST_THROWS(iStore->Read(kKeyNum1, buf), StoreKeyNotFound);
+    TEST_THROWS(iStore->Read(kKeyChoice1, buf), StoreKeyNotFound);
+    TEST_THROWS(iStore->Read(kKeyText1, buf), StoreKeyNotFound);
+
+    iConfigManager->DumpToStore();
+
+    // check values are now in store
+    iStore->Read(kKeyNum1, buf);
+    TInt valNum = Ascii::Int(buf);
+    TEST(valNum == kMinNum);
+
+    iStore->Read(kKeyChoice1, buf);
+    TUint valChoice = Ascii::Uint(buf);
+    TEST(valChoice == kChoiceDefault);
+
+    iStore->Read(kKeyText1, buf);
+    TEST(buf == kText1);
 }
 
 
@@ -1611,6 +1785,7 @@ void TestConfigManager()
     runner.Add(new SuiteConfigNum());
     runner.Add(new SuiteConfigChoice());
     runner.Add(new SuiteConfigText());
+    runner.Add(new SuiteSerialisedMap());
     runner.Add(new SuiteConfigManager());
     runner.Add(new SuiteRamStore());
     runner.Run();

@@ -13,7 +13,7 @@ using namespace OpenHome::Configuration;
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigManagerWriter& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
+ConfigNum::ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
     : ConfigVal(aManager, aKey)
     , iMin(aMin)
     , iMax(aMax)
@@ -103,7 +103,7 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigManagerWriter& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
     , iMutex("CVCM")
@@ -187,7 +187,7 @@ void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigManagerWriter& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
+ConfigText::ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aKey)
     , iText(aMaxLength)
     , iMutex("CVTM")
@@ -253,15 +253,61 @@ void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
 }
 
 
+// BufferPtrCmp
+
+TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
+{
+    return BufferCmp()(*aStr1, *aStr2);
+}
+
+
+// WriterPrinter
+
+void WriterPrinter::Write(TByte aValue)
+{
+    Bws<1> buf(aValue);
+    Log::Print(buf);
+}
+
+void WriterPrinter::Write(const Brx& aBuffer)
+{
+    Log::Print(aBuffer);
+}
+
+void WriterPrinter::WriteFlush()
+{
+}
+
+
 // ConfigManager
 
 ConfigManager::ConfigManager(IStoreReadWrite& aStore)
     : iStore(aStore)
-    , iClosed(false)
+    , iOpen(false)
+    , iLock("CFML")
 {
 }
 
-ConfigManager::~ConfigManager() {}
+void ConfigManager::Print() const
+{
+    Log::Print("ConfigManager: [\n");
+
+    Log::Print("ConfigNum:\n");
+    Print(iMapNum);
+    Log::Print("ConfigChoice:\n");
+    Print(iMapChoice);
+    Log::Print("ConfigText:\n");
+    Print(iMapText);
+
+    Log::Print("]\n");
+}
+
+void ConfigManager::DumpToStore()
+{
+    DumpToStore(iMapNum);
+    DumpToStore(iMapChoice);
+    DumpToStore(iMapText);
+}
 
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
@@ -320,24 +366,25 @@ IStoreReadWrite& ConfigManager::Store()
     return iStore;
 }
 
-void ConfigManager::Close()
+void ConfigManager::Open()
 {
-    iClosed = true;
+    AutoMutex a(iLock);
+    iOpen = true;
 }
 
 void ConfigManager::Add(ConfigNum& aNum)
 {
-    Add(iMapNum, aNum.Key(), aNum);
+    AddNum(aNum.Key(), aNum);
 }
 
 void ConfigManager::Add(ConfigChoice& aChoice)
 {
-    Add(iMapChoice, aChoice.Key(), aChoice);
+    AddChoice(aChoice.Key(), aChoice);
 }
 
 void ConfigManager::Add(ConfigText& aText)
 {
-    Add(iMapText, aText.Key(), aText);
+    AddText(aText.Key(), aText);
 }
 
 void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
@@ -347,7 +394,8 @@ void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)
         iStore.Read(aKey, aDest);
     }
     catch (StoreKeyNotFound&) {
-        ToStore(aKey, aDefault);
+        // Don't attempt to write default value out to store here. It will be
+        // written if/when the value is changed.
         aDest.Replace(aDefault);
     }
 }
@@ -357,14 +405,71 @@ void ConfigManager::ToStore(const Brx& aKey, const Brx& aValue)
     iStore.Write(aKey, aValue);
 }
 
+void ConfigManager::AddNum(const Brx& aKey, ConfigNum& aNum)
+{
+    Add(iMapNum, aKey, aNum);
+}
+
+void ConfigManager::AddChoice(const Brx& aKey, ConfigChoice& aChoice)
+{
+    Add(iMapChoice, aKey, aChoice);
+}
+
+void ConfigManager::AddText(const Brx& aKey, ConfigText& aText)
+{
+    Add(iMapText, aKey, aText);
+}
+
 template <class T> void ConfigManager::Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal)
 {
-    ASSERT(!iClosed);
+    iLock.Wait();
+    if (iOpen) {
+        iLock.Signal();
+        ASSERTS();
+    }
+    iLock.Signal();
     if (HasNum(aKey) || HasChoice(aKey) || HasText(aKey)) {
         THROW(ConfigKeyExists);
     }
 
     aMap.Add(aKey, aVal);
+}
+
+template <class T> void ConfigManager::Print(const ConfigVal<T>& aVal) const
+{
+    WriterPrinter writerPrinter;
+    Log::Print("    {");
+    Log::Print(aVal.Key());
+    Log::Print(", ");
+    aVal.Serialise(writerPrinter);
+    Log::Print("}\n");
+}
+
+template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
+{
+    // Map iterators are not invalidated by any of the actions that
+    // SerialisedMap allows, so don't need to lock.
+    typename SerialisedMap<T>::Iterator it;
+    for (it = aMap.Begin(); it != aMap.End(); ++it) {
+        Print(*it->second);
+    }
+}
+
+template <class T> void ConfigManager::DumpToStore(const ConfigVal<T>& aVal)
+{
+    static const TUint kMaxValueBytes = 100;  // randomly chosen
+    Bws<kMaxValueBytes> buf;
+    WriterBuffer writerBuf(buf);
+    aVal.Serialise(writerBuf);
+    ToStore(aVal.Key(), buf);
+}
+
+template <class T> void ConfigManager::DumpToStore(const SerialisedMap<T>& aMap)
+{
+    typename SerialisedMap<T>::Iterator it;
+    for (it = aMap.Begin(); it != aMap.End(); ++it) {
+        DumpToStore(*it->second);
+    }
 }
 
 
@@ -380,11 +485,11 @@ ConfigRamStore::~ConfigRamStore()
     Clear();
 }
 
-void ConfigRamStore::Print()
+void ConfigRamStore::Print() const
 {
     Log::Print("RamStore: [\n");
     AutoMutex a(iLock);
-    Map::iterator it = iMap.begin();
+    Map::const_iterator it = iMap.begin();
     while (it!= iMap.end()) {
         Log::Print("   {");
         Log::Print(*it->first);
@@ -460,12 +565,4 @@ void ConfigRamStore::Clear()
         it++;
     }
     iMap.clear();
-}
-
-
-// BufferPtrCmp
-
-TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
-{
-    return BufferCmp()(*aStr1, *aStr2);
 }

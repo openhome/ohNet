@@ -21,7 +21,7 @@ const Brn Sender::kConfigIdChannel("Sender.Channel");
 const Brn Sender::kConfigIdMode("Sender.Mode");
 const Brn Sender::kConfigIdPreset("Sender.Preset");
 
-Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigManagerWriter& aConfigManager, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
+Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigManagerInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
     : iTrack(NULL)
     , iSampleRate(0)
     , iBitDepth(0)
@@ -33,22 +33,22 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
     iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
 
-    iConfigChannel = new ConfigNum(aConfigManager, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
+    iConfigChannel = new ConfigNum(aConfigInit, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
     iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigChannelChanged));
 
     std::vector<TUint> choices;
     choices.push_back(eStringIdSongcastModeMulticast);
     choices.push_back(eStringIdSongcastModeUnicast);
-    iConfigMode = new ConfigChoice(aConfigManager, kConfigIdMode, choices, eStringIdSongcastModeUnicast);
+    iConfigMode = new ConfigChoice(aConfigInit, kConfigIdMode, choices, eStringIdSongcastModeUnicast);
     iListenerIdConfigMode = iConfigMode->Subscribe(MakeFunctorConfigChoice(*this, &Sender::ConfigModeChanged));
 
-    iConfigPreset = new ConfigNum(aConfigManager, kConfigIdPreset, kPresetMin, kPresetMax, kPresetNone);
+    iConfigPreset = new ConfigNum(aConfigInit, kConfigIdPreset, kPresetMin, kPresetMax, kPresetNone);
     iListenerIdConfigPreset = iConfigPreset->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigPresetChanged));
 
     choices.clear();
     choices.push_back(eStringIdYes);
     choices.push_back(eStringIdNo);
-    iConfigEnabled = new ConfigChoice(aConfigManager, kConfigIdEnabled, choices, eStringIdYes);
+    iConfigEnabled = new ConfigChoice(aConfigInit, kConfigIdEnabled, choices, eStringIdYes);
     iListenerIdConfigEnabled = iConfigEnabled->Subscribe(MakeFunctorConfigChoice(*this, &Sender::ConfigEnabledChanged));
 
     iPendingAudio.reserve(100); // arbitrarily chosen value.  Doesn't need to prevent any reallocation, just avoid regular churn early on

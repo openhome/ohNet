@@ -15,6 +15,7 @@
 #include <OpenHome/Av/ProviderTime.h>
 #include <OpenHome/Av/ProviderInfo.h>
 #include <OpenHome/Av/ProviderFactory.h>
+#include <OpenHome/Av/ProviderVolume.h>
 #include <OpenHome/NetworkMonitor.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 #include <OpenHome/Configuration/IStore.h>
@@ -46,7 +47,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
-    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager, Brx::Empty());
+    iProduct = new Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     //iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -55,7 +56,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Time");
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
-    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
+    iConfigInitVolume = new ConfigInitialiserVolume(*iConfigManager, iVolumeProfile);
+    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iConfigManager, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new Net::NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
@@ -71,6 +73,7 @@ MediaPlayer::~MediaPlayer()
     delete iProviderTime;
     delete iProviderInfo;
     delete iProviderVolume;
+    delete iConfigInitVolume;
     //delete iMuteManager;
     //delete iVolumeManager;
     delete iLeftVolumeHardware;   // XXX dummy ...
@@ -117,7 +120,9 @@ void MediaPlayer::AddAttribute(const TChar* aAttribute)
 
 void MediaPlayer::Start()
 {
-    iConfigManager->Close();
+    iConfigManager->Open();
+    iConfigManager->Print();
+    iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
     iProduct->Start();
 }
@@ -162,7 +167,7 @@ IConfigManagerReader& MediaPlayer::ConfigManagerReader()
     return *iConfigManager;
 }
 
-IConfigManagerWriter& MediaPlayer::ConfigManagerWriter()
+IConfigManagerInitialiser& MediaPlayer::ConfigManagerInitialiser()
 {
     return *iConfigManager;
 }

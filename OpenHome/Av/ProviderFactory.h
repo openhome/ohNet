@@ -6,7 +6,8 @@
 namespace OpenHome {
     class IPowerManager;
 namespace Configuration {
-    class IConfigManagerWriter;
+    class IConfigManagerInitialiser;
+    class IConfigManagerReader;
 }
 namespace Media {
     class IVolumeProfile;
@@ -42,7 +43,8 @@ class ProviderFactory
 public:
     static IProvider* NewVolume(Product& aProduct,
                                 Net::DvDevice& aDevice,
-                                Configuration::IConfigManagerWriter& aConfigManager,
+                                Configuration::IConfigManagerInitialiser& aConfigInit,
+                                Configuration::IConfigManagerReader& aConfigReader,
                                 IPowerManager& aPowerManager,
                                 Media::IVolumeProfile& aVolumeProfile,
                                 Media::IVolume& aVolume,

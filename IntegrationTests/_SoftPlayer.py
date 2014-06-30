@@ -81,10 +81,13 @@ class SoftPlayer( BASE.Component ):
     def Shutdown( self ):
         self.log.Info( self.dev, 'Shutting down......')
         self.shutdown = True
-        self.proc.stdin.write( 'q\n' )
-        self.proc.stdin.close()
-        self.proc.wait()
-        self.logThread.join() 
+        try:
+            self.proc.stdin.write( 'q\n' )
+            self.proc.stdin.close()
+            self.proc.wait()
+        except:
+            self.log.Info( self.dev, 'Problem shutting down' )
+        self.logThread.join()
         time.sleep( 1 )             # Let it shut down 
         
     def __Log( self ):

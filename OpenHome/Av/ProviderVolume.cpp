@@ -15,13 +15,17 @@ using namespace OpenHome::Net;
 // ProviderFactory
 
 IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice,
-                                      IConfigManagerWriter& aConfigManager, IPowerManager& aPowerManager,
-                                      IVolumeProfile& aVolumeProfile, IVolume& aVolume,
-                                      IVolumeLimit& aVolumeLimit, IBalance& aBalance,
+                                      IConfigManagerInitialiser& aConfigInit,
+                                      IConfigManagerReader& aConfigReader,
+                                      IPowerManager& aPowerManager,
+                                      IVolumeProfile& aVolumeProfile,
+                                      IVolume& aVolume,
+                                      IVolumeLimit& aVolumeLimit,
+                                      IBalance& aBalance,
                                       IMute& aMute)
 { // static
     aProduct.AddAttribute("Volume");
-    return new ProviderVolume(aDevice, aConfigManager, aPowerManager,
+    return new ProviderVolume(aDevice,aConfigInit, aConfigReader, aPowerManager,
                               aVolumeProfile, aVolume, aVolumeLimit, aBalance,
                               aMute);
 }
@@ -38,6 +42,37 @@ const TInt kInvalidBalanceCode = 812;
 const Brn  kInvalidBalanceMsg("Balance invalid");
 
 
+
+// ConfigInitialiserVolume
+
+const Brn ConfigInitialiserVolume::kBalance("Volume.Balance");
+const Brn ConfigInitialiserVolume::kVolumeLimit("Volume.Limit");
+const Brn ConfigInitialiserVolume::kVolumeStartup("Volume.Startup");
+const Brn ConfigInitialiserVolume::kVolumeStartupEnabled("Volume.Startup.Enabled");
+
+ConfigInitialiserVolume::ConfigInitialiserVolume(IConfigManagerInitialiser& aConfigInit, IVolumeProfile& aProfile)
+{
+    TInt maxBalance = aProfile.MaxBalance();
+    TUint maxVolume = aProfile.MaxVolume();
+
+    iBalance = new ConfigNum(aConfigInit, kBalance, -(maxBalance), maxBalance, 0);
+    iVolumeLimit = new ConfigNum(aConfigInit, kVolumeLimit, 0, maxVolume, maxVolume);
+    iVolumeStartup = new ConfigNum(aConfigInit, kVolumeStartup, 0, maxVolume, kVolumeStartupDefault);
+    std::vector<TUint> choices;
+    choices.push_back(eStringIdYes);
+    choices.push_back(eStringIdNo);
+    iVolumeStartupEnabled = new ConfigChoice(aConfigInit, kVolumeStartupEnabled, choices, eStringIdYes);
+}
+
+ConfigInitialiserVolume::~ConfigInitialiserVolume()
+{
+    delete iVolumeStartupEnabled;
+    delete iVolumeStartup;
+    delete iVolumeLimit;
+    delete iBalance;
+}
+
+
 /**
  * This class is an implementer of the Linn-specific UPnP volume service. It is
  * the sole manipulator of volume and related values (e.g., balance and mute).
@@ -50,30 +85,27 @@ const Brn  kInvalidBalanceMsg("Balance invalid");
  * fade-specific evented variables have no meaning.
  */
 
-const Brn ProviderVolume::kBalance("Volume.Balance");
-const Brn ProviderVolume::kVolumeLimit("Volume.Limit");
-const Brn ProviderVolume::kVolumeStartup("Volume.Startup");
-const Brn ProviderVolume::kVolumeStartupEnabled("Volume.Startup.Enabled");
-
 const Brn ProviderVolume::kPowerDownVolume("PowerDown.Volume");
 const Brn ProviderVolume::kPowerDownMute("PowerDown.Mute");
 
 ProviderVolume::ProviderVolume(DvDevice& aDevice,
-                               IConfigManagerWriter& aConfigManager,
+                               IConfigManagerInitialiser& aConfigInit,
+                               IConfigManagerReader& aConfigReader,
                                IPowerManager& aPowerManager,
-                               IVolumeProfile& aVolumeProfile,
+                               const IVolumeProfile& aVolumeProfile,
                                IVolume& aVolume, IVolumeLimit& aVolumeLimit,
-                               IBalance& aBalance,
-                               IMute& aMute)
+                               IBalance& aBalance, IMute& aMute)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
-    , iConfigManager(aConfigManager)
+    , iConfigReader(aConfigReader)
     , iVolumeProfile(aVolumeProfile)
     , iVolumeSetter(aVolume)
     , iVolumeLimitSetter(aVolumeLimit)
     , iBalanceSetter(aBalance)
     , iMuteSetter(aMute)
-    , iPowerDownVolume(iConfigManager.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownVolume, kVolumeStartupDefault)
-    , iPowerDownMute(iConfigManager.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownMute, kMuteStartupDefault)
+    , iConfigBalance(NULL)
+    , iConfigVolumeLimit(NULL)
+    , iPowerDownVolume(aConfigInit.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownVolume, ConfigInitialiserVolume::kVolumeStartupDefault)
+    , iPowerDownMute(aConfigInit.Store(), aPowerManager, kPowerPriorityHighest, kPowerDownMute, ConfigInitialiserVolume::kMuteStartupDefault)
     , iLock("PVOL")
 {
     // Linn services are optional, but their actions are not.
@@ -108,34 +140,29 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
     EnableActionMute();
     EnableActionVolumeLimit();
 
-    TInt maxBalance = iVolumeProfile.MaxBalance();
-    TUint maxVolume = iVolumeProfile.MaxVolume();
-    iConfigBalance = new ConfigNum(iConfigManager, kBalance, -(maxBalance), maxBalance, 0);
+    iConfigBalance = &aConfigReader.GetNum(ConfigInitialiserVolume::kBalance);
     iListenerIdBalance = iConfigBalance->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigBalanceChanged));
-    iConfigVolumeLimit = new ConfigNum(iConfigManager, kVolumeLimit, 0, maxVolume, maxVolume);
+    iConfigVolumeLimit = &aConfigReader.GetNum(ConfigInitialiserVolume::kVolumeLimit);
     iListenerIdVolumeLimit = iConfigVolumeLimit->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigVolumeLimitChanged));
 
     // Only care about startup volume and whether it is enabled when
     // creating this provider; it has no influence at any other time.
-    iConfigVolumeStartup = new ConfigNum(iConfigManager, kVolumeStartup, 0, maxVolume, kVolumeStartupDefault);
-    std::vector<TUint> choices;
-    choices.push_back(eStringIdYes);
-    choices.push_back(eStringIdNo);
-    iConfigVolumeStartupEnabled = new ConfigChoice(iConfigManager, kVolumeStartupEnabled, choices, eStringIdYes);
+    ConfigNum& configVolumeStartup = aConfigReader.GetNum(ConfigInitialiserVolume::kVolumeStartup);
+    ConfigChoice& configVolumeStartupEnabled = aConfigReader.GetChoice(ConfigInitialiserVolume::kVolumeStartupEnabled);
 
     // When we subscribe to a ConfigVal, the initial callback is made from the
     // same thread that made the subscription.
     // - So, we know that the callbacks must have been called (at least) once
     // by the time the Subscribe() method returns.
-    TUint iListenerIdVolumeStartup = iConfigVolumeStartup->Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigVolumeStartupChanged));
-    TUint iListenerIdVolumeStartupEnabled = iConfigVolumeStartupEnabled->Subscribe(MakeFunctorConfigChoice(*this, &ProviderVolume::ConfigVolumeStartupEnabledChanged));
+    TUint listenerIdVolumeStartup = configVolumeStartup.Subscribe(MakeFunctorConfigNum(*this, &ProviderVolume::ConfigVolumeStartupChanged));
+    TUint listenerIdVolumeStartupEnabled = configVolumeStartupEnabled.Subscribe(MakeFunctorConfigChoice(*this, &ProviderVolume::ConfigVolumeStartupEnabledChanged));
 
     // We don't care about any further changes to iConfigVolumeStartup or
     // iConfigVolumeStartupEnabled after we've made use of the initial value,
     // so we can unsubscribe. (But don't delete in case other elements wish to
     // make use of them.)
-    iConfigVolumeStartup->Unsubscribe(iListenerIdVolumeStartup);
-    iConfigVolumeStartupEnabled->Unsubscribe(iListenerIdVolumeStartupEnabled);
+    configVolumeStartup.Unsubscribe(listenerIdVolumeStartup);
+    configVolumeStartupEnabled.Unsubscribe(listenerIdVolumeStartupEnabled);
 
     // Now, check if we should use a startup volume, or use a previously stored
     // volume (or a default volume).
@@ -154,7 +181,8 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
     }
 
     // Adjust volume in case initial val is above limit. Should never be the case.
-    // Could ASSERT, but what use is that to the user if we can do something sensible here?
+    // Could ASSERT if corrupt store vals are encountered, but why do that when
+    // something sensible can be done here?
     if (volume > volLimit) {
         volume = volLimit;
     }
@@ -187,10 +215,6 @@ ProviderVolume::~ProviderVolume()
 {
     iConfigBalance->Unsubscribe(iListenerIdBalance);
     iConfigVolumeLimit->Unsubscribe(iListenerIdVolumeLimit);
-    delete iConfigVolumeStartupEnabled;
-    delete iConfigVolumeStartup;
-    delete iConfigVolumeLimit;
-    delete iConfigBalance;
 }
 
 void ProviderVolume::SetVolumeLimit(TUint aVolumeLimit)
