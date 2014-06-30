@@ -422,30 +422,18 @@ void ConfigRamStore::Read(const Brx& aKey, Bwx& aDest)
 
 void ConfigRamStore::Write(const Brx& aKey, const Brx& aSource)
 {
-    Brh* key = new Brh(aKey);
-    Brh* val = new Brh(aSource);
-
     AutoMutex a(iLock);
 
-    // std::map doesn't insert a value if key exists, so first remove existing
-    // key-value pair, if new value is different
-    Map::iterator it = iMap.find(key);
-    if (it != iMap.end()) {
-        if (*(it->second) == aSource) {
-            // new value is the same; free memory
-            delete key;
-            delete val;
-            return;
-        }
-        else {
-            // new value is different; remove old value
-            delete it->first;
-            delete it->second;
-            iMap.erase(it);
-        }
+    Map::iterator it = iMap.find(&aKey);
+    if (it == iMap.end()) {
+        Brh* key = new Brh(aKey);
+        Brh* val = new Brh(aSource);
+        iMap.insert(std::pair<const Brx*, const Brx*>(key, val));
     }
-
-    iMap.insert(std::pair<const Brx*, const Brx*>(key, val));
+    else if (*(it->second) != aSource) {
+        delete it->second;
+        it->second = new Brh(aSource);
+    }
 }
 
 void ConfigRamStore::Delete(const Brx& aKey)
