@@ -58,6 +58,12 @@ public:
     virtual Brn ReadRemaining() = 0;
 };
 
+/**
+ * The start of the pipeline.  Runs in a client thread and feeds data into the pipeline.
+ *
+ * Does not need to provide any moderation.  Calls to push encoded audio into the pipeline
+ * will block if the pipeline reaches its buffering capacity.
+ */
 class Protocol : protected IStreamHandler, protected INonCopyable
 {
 public:
@@ -66,6 +72,14 @@ public:
     ProtocolStreamResult TryStream(const Brx& aUri);
     void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
     TBool Active() const;
+    /**
+     * Interrupt any stream that is currently in-progress, or cancel a previous interruption.
+     *
+     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
+     *
+     * @param[in] aInterrupt       When true, interrupt any potentially blocking calls inside a
+     *                             Stream() call, causing them to report EProtocolStreamErrorUnrecoverable.
+     */
     virtual void Interrupt(TBool aInterrupt) = 0;
 protected:
     Protocol(Environment& aEnv);
@@ -75,7 +89,41 @@ private: // from IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
+    /**
+     * Stream a track.
+     *
+     * This call should block for as long as it takes to stream the entire resource into the
+     * pipeline (or decide that this protocol is not capable of streaming the resource).
+     * The protocol should translate received data into calls to ISupply.  Data should be
+     * pushed into the pipeline as quickly as possible, relying on the pipeline to apply
+     * any moderation
+     *
+     * @param[in] aUri             Resource to be streamed.
+     *
+     * @return  Results of attempted stream:
+     *              EProtocolStreamSuccess - the entire stream was pushed into the pipeline
+                    EProtocolErrorNotSupported - the uri is not supported by this protocol
+                    EProtocolStreamStopped - streaming was interrupted by a downstream request to stop (TryStop was called)
+                    EProtocolStreamErrorRecoverable - for internal use only; will not be reported here
+                    EProtocolStreamErrorUnrecoverable - error in stream; do not attempt to stream via other protocol(s)
+     */
     virtual ProtocolStreamResult Stream(const Brx& aUri) = 0;
+    /**
+     * Read a block of data from a uri.
+     *
+     * This call should block for as long as it takes to stream the entire resource into the
+     * pipeline (or decide that this protocol is not capable of streaming the resource).
+     * Data should be returned as quickly as possible.
+     *
+     * @param[in] aWriter          Interface used to return the requested data.
+     * @param[in] aUri             Uri to be read.
+     * @param[in] aOffset          Byte offset to start reading from.
+     * @param[in] aBytes           Number of bytes to read
+     *
+     * @return  EProtocolGetSuccess if the data was read.
+     *          EProtocolGetErrorNotSupported if the protocol doesn't support the uri.  Another protocol will be tried in this case.
+     *          EProtocolGetErrorUnrecoverable if the read failed and no other protocol should be tried.
+     */
     virtual ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) = 0;
 protected:
     Environment& iEnv;
