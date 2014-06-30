@@ -39,19 +39,19 @@ tests = [
     # UPnP AV          
     # [ 'TestAvTransportService',      'local', 'ALL'                                                             ],
     # [ 'TestRenderingControlService', 'local'                                                                    ],
-    # [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList,  8,    1,         'false'          ],
+    [ 'TestAvTransportPlayTracks',   'local', 'local',    ms,       avtList,  8,    1,         'false'          ],
 
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',      12345                                                 ],
     [ 'TestPlaylistModes',           'local', 'all',      54321                                                 ],
     [ 'TestPlaylistPlayback',        'local', 'all',      12345                                                 ],
     [ 'TestPlaylistAddDelSoak',      'local', ms,         mpList,   100                                         ],
-    # [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       mpList,   8,    'off',     'on',    'false' ],
+    [ 'TestPlaylistPlayTracks',      'local', 'local',    ms,       mpList,   8,    'off',     'on',    'false' ],
     [ 'TestPlaylistDropout',         'local', 'local',    'local',  '3600'                                      ],
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                             ],
-    # [ 'TestRadioPlayChannels',       'local', 'local',    'ohmp2',  20,       'on', 1                           ],
+    [ 'TestRadioPlayChannels',       'local', 'local',    'ohmp2',  20,       'on', 1                           ],
     
     # # Airplay
     # [ 'TestAirplayFunctions',        'local', dacpServer                                                        ],
