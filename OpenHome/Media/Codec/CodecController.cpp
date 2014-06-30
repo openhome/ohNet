@@ -162,9 +162,6 @@ void CodecController::CodecThread()
                 catch (CodecStreamStart&) {}
                 catch (CodecStreamEnded&) {}
                 catch (CodecStreamStopped&) {}
-                catch (CodecStreamSeek&) {
-                    ASSERTS();
-                }
                 catch (CodecStreamFlush&) {
                     break;
                 }
@@ -323,7 +320,7 @@ void CodecController::Read(Bwx& aBuf, TUint aBytes)
             break;
         }
     }
-     if (!DoRead(aBuf, aBytes)) {
+    if (!DoRead(aBuf, aBytes)) {
         if (iStreamStarted) {
             THROW(CodecStreamStart);
         }
