@@ -122,6 +122,11 @@ enum EMediaDataEndian
    ,EMediaDataBigEndian
 };
 
+/**
+ * Provides the pipeline's unit of timing.
+ *
+ * A single sample at any supported rate is representable as an integer number of jiffies.
+ */
 class Jiffies
 {
 public:
@@ -410,6 +415,12 @@ private:
     Bws<kMaxBytes> iMetaText;
 };
 
+/**
+ * Indicates that a break in audio may follow and that this is expected.
+ *
+ * Audio can be assumed to have already ramped down (either naturally at the end of a
+ * stream) or manually from an upstream pipeline element.
+ */
 class MsgHalt : public Msg
 {
     friend class MsgFactory;
@@ -487,6 +498,9 @@ private:
     IStreamHandler* iStreamHandler;
 };
 
+/**
+ * Indicates the start of a new audio stream.
+ */
 class MsgDecodedStream : public Msg
 {
     friend class MsgFactory;
@@ -582,6 +596,11 @@ private:
 
 class IPcmProcessor;
 
+/**
+ * Holds decoded audio and can write it to a stream.
+ *
+ * MsgAudioPcm and MsgSilence can be converted into this.
+ */
 class MsgPlayable : public Msg
 {
 public:
@@ -590,6 +609,16 @@ public:
     virtual MsgPlayable* Clone(); // create new MsgPlayable, copy size/offset
     TUint Bytes() const;
     const Media::Ramp& Ramp() const;
+    /**
+     * Extract pcm data from this msg.
+     *
+     * Any ramp is applied at the same time.
+     *
+     * @param[in] aProcessor       PCM data is returned via this interface.  Writing the data
+     *                             in a blocks is preferred.  Data may be written sample at a
+     *                             time if requested by the processor (say because it'll insert
+     *                             padding around each sample) or if a ramp is being applied.
+     */
     virtual void Read(IPcmProcessor& aProcessor) = 0;
 protected:
     MsgPlayable(AllocatorBase& aAllocator);
@@ -641,6 +670,11 @@ private:
     TUint iNumChannels;
 };
 
+/**
+ * Indicates that the pipeline is shutting down.
+ *
+ * Do not attempt to Pull() further messages after receiving this.
+ */
 class MsgQuit : public Msg
 {
 public:
@@ -649,6 +683,12 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor);
 };
 
+/**
+ * Utility to allow pipeline elements or clients to determine the type of Msg they've been passed.
+ *
+ * Derive from IMsgProcessor than call msg->Process(*this) to have the ProcessMsg overload for
+ * the appropriate type called.
+ */
 class IMsgProcessor
 {
 public:
@@ -844,20 +884,106 @@ private:
     Allocated* iAllocated;
 };
 
+/**
+ * Interface to the start of the pipeline.  Use this to push data into the pipeline.
+ */
 class ISupply
 {
 public:
     virtual ~ISupply() {}
+    /**
+     * Inform the pipeline of a change of UriProvider
+     *
+     * @param[in] aMode            Identifier for the new UriProvider
+     * @param[in] aSupportsLatency Whether any following tracks support having their latency varied.
+     * @param[in] aRealTime        Deprecated.
+     */
     virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime) = 0;
+    /**
+     * Inform the pipeline about a discontinuity in audio.
+     */
     virtual void OutputSession() = 0;
-    virtual void OutputTrack(Track& Track, TUint aTrackId) = 0;
+    /**
+     * Inform the pipeline that a new track is starting.
+     *
+     * @param[in] aTrack           Track about to be played.
+     * @param[in] aTrackId         Unique identifier for this particular play of this track.
+     */
+    virtual void OutputTrack(Track& aTrack, TUint aTrackId) = 0;
+    /**
+     * Apply a delay to subsequent audio in this stream.
+     *
+     * Any delay is calculated relative to previous delays for this session.
+     * i.e. if you output the same delay twice, the second call has no effect.
+     *
+     * @param[in] aJiffies         Delay in Jiffies.
+     */
     virtual void OutputDelay(TUint aJiffies) = 0;
+    /**
+     * Inform the pipeline that a new audio stream is starting
+     *
+     * @param[in] aUri             Uri of the stream
+     * @param[in] aTotalBytes      Length in bytes of the stream
+     * @param[in] aSeekable        Whether the stream supports Seek requests
+     * @param[in] aLive            Whether the stream is being broadcast live (and won't support seeking)
+     * @param[in] aStreamHandler   Stream handler.  Used to allow pipeline elements to communicate upstream.
+     * @param[in] aStreamId        Identifier for the pending stream.  Unique within a single track only.
+     */
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
+    /**
+     * Push a block of encoded audio into the pipeline.
+     *
+     * Data is copied into the pipeline.  The caller is free to reuse its buffer.
+     *
+     * @param[in] aData            Encoded audio.  Must be <= EncodedAudio::kMaxBytes
+     */
     virtual void OutputData(const Brx& aData) = 0;
+    /**
+     * Push metadata, describing the current stream, into the pipeline.
+     *
+     * Use of this is optional.  The pipeline will treat the data as opaque and will merely
+     * pass it on to any observers.  Each call to this should pass a complete block of
+     * metadata that is capable of being interpreted independantly of any other.
+     *
+     * @param[in] aMetadata        Metadata.  Must be <= MsgMetaText::kMaxBytes
+     */
     virtual void OutputMetadata(const Brx& aMetadata) = 0;
+    /**
+     * Push a Flush command into the pipeline.
+     *
+     * This is typically called after a call to TrySeek() or TryStop() from IStreamHandler.
+     *
+     * @param[in] aFlushId         Unique identifier for this command.  Will normally have
+     *                             earlier been returned by TrySeek() or TryStop().
+     */
     virtual void OutputFlush(TUint aFlushId) = 0;
+    /**
+     * Push a Wait command into the pipeline.
+     *
+     * This causes the pipeline to report state Waiting (no audio, this isn't unexpected)
+     * rather than Buffering (no audio, error) until OutputData() or OutputStream() is next
+     * called.
+     */
     virtual void OutputWait() = 0;
+    /**
+     * Push a Halt command into the pipeline.
+     *
+     * This informs the pipeline that a mode (1..n tracks from a single UriProvider) has
+     * ended and there may now be a break in audio.
+     * Halt commands are issues by pipeline code when required.  Client code is not expected
+     * to call this.
+     *
+     * @param[in] aHaltId          Identifier for this command.  Must be unique or MsgHalt::kIdNone.
+     */
     virtual void OutputHalt(TUint aHaltId) = 0;
+    /**
+     * Push a Quit command into the pipeline.
+     *
+     * This will be the last message passed down the pipeline.  No code should attempt to
+     * pull on any pipeline element after it receives a Quit.
+     * Quit commands are issues by pipeline code when required.  Client code is not expected
+     * to call this.
+     */
     virtual void OutputQuit() = 0;
 };
 
@@ -912,14 +1038,82 @@ public:
     virtual void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow) = 0;
 };
 
+/**
+ * Interface to allow pipeline elements to request action from an upstream component
+ */
 class IStreamHandler
 {
 public:
     virtual ~IStreamHandler() {}
+    /**
+     * Request permission to play a stream.
+     *
+     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
+     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     *
+     * @return  Whether the stream can be played.  One of
+     *            ePlayYes   - play the stream immediately.
+     *            ePlayNo    - do not play the stream.  Discard its contents immediately.
+     *            ePlayLater - play the stream later.  Do not play yet but also do not discard.
+     */
     virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    /**
+     * Attempt to seek inside the currently playing stream.
+     *
+     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
+     * Note that this may fail if the stream is non-seekable or the entire stream is
+     * already in the pipeline
+     *
+     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
+     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     * @param[in] aOffset          Byte offset into the stream.
+     *
+     * @return  Flush id.  MsgFlush::kIdInvalid if the seek request failed.
+     *          Any other value indicates success.  The code which issues the seek request
+     *          should discard data until it pulls a MsgFlush with this id.
+     */
     virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
+    /**
+     * Attempt to stop delivery of the currently playing stream.
+     *
+     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
+     * Note that this may report failure if the entire stream is already in the pipeline.
+     *
+     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
+     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     *
+     * @return  Flush id.  MsgFlush::kIdInvalid if the stop request failed.
+     *          Any other value indicates success.  The code which issues the seek request
+     *          should discard data until it pulls a MsgFlush with this id.
+     */
     virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    /**
+     * Read a block of data out of band, without affecting the state of the current stream.
+     *
+     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
+     * This is relatively inefficient so should be used with care.  (It is intended for use
+     * during format recognition for a new stream; more frequent use would be questionable.)
+     *
+     * @param[in] aWriter          Interface used to return the requested data.
+     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
+     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     * @param[in] aOffset          Byte offset to start reading from
+     * @param[in] aBytes           Number of bytes to read
+     *
+     * @return  true if exactly aBytes were read; false otherwise
+     */
     virtual TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
+    /**
+     * Inform interested parties of an unexpected break in audio.
+     *
+     * Sources which are sensitive to latency may need to restart.
+     * This may be called from a different thread.  The implementor is responsible for any synchronisation.
+     *
+     * @param[in] aMode            Reported by the MsgMode which preceded the stream which dropped out.
+     *                             i.e. identifier for the UriProvider associated with this stream
+     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
+     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     */
     virtual void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
 };
 
