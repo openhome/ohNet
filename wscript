@@ -296,6 +296,7 @@ def build(bld):
                 'OpenHome/Av/Songcast/ProviderReceiver.cpp',
                 'OpenHome/Av/Songcast/ZoneHandler.cpp',
                 'OpenHome/Av/Songcast/SourceReceiver.cpp',
+                'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',

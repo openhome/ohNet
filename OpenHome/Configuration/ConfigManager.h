@@ -6,6 +6,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Configuration/BufferPtrCmp.h>
 #include <OpenHome/Configuration/FunctorGeneric.h>
 #include <OpenHome/Configuration/IStore.h>
 
@@ -389,15 +390,6 @@ public:
     virtual void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
     virtual void ToStore(const Brx& aKey, const Brx& aValue) = 0;
     virtual ~IConfigManagerInitialiser() {}
-};
-
-/**
- * Custom comparison function for stl map keyed on Brx*
- */
-class BufferPtrCmp : public BufferCmp
-{
-public:
-    TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
 };
 
 /*

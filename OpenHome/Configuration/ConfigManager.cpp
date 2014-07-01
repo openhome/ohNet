@@ -253,14 +253,6 @@ void ConfigText::Write(KeyValuePair<const Brx&>& aKvp)
 }
 
 
-// BufferPtrCmp
-
-TBool BufferPtrCmp::operator()(const Brx* aStr1, const Brx* aStr2) const
-{
-    return BufferCmp()(*aStr1, *aStr2);
-}
-
-
 // WriterPrinter
 
 void WriterPrinter::Write(TByte aValue)
