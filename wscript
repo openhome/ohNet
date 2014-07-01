@@ -524,6 +524,7 @@ def build(bld):
                 'OpenHome/Av/Tests/TestRadio.cpp',
                 'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
                 'OpenHome/Configuration/Tests/TestFunctorGeneric.cpp',
+                'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
             ],

@@ -17,6 +17,7 @@
 #include <OpenHome/Net/Core/CpDeviceDv.h>
 #include <OpenHome/Media/ProcessorPcmUtils.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/PowerManager.h>
 
 #include <array>

@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 
 #include <climits>
 
