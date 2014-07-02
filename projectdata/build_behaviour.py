@@ -127,7 +127,10 @@ def setup_windows(context):
         OPENHOME_NO_ERROR_DIALOGS="1",
         OHNET_NO_ERROR_DIALOGS="1")
     env.update(get_vsvars_environment())
-    context.integration_test_log_dir = os.path.join(os.environ['HOMEDRIVE']+'\\', context.integration_test_log_dir)
+    if os.environ.has_key( 'HOMEDRIVE' ):
+        context.integration_test_log_dir = os.path.join(os.environ['HOMEDRIVE']+'\\', context.integration_test_log_dir)
+    else:
+        context.integration_test_log_dir = os.path.join('C:\\', context.integration_test_log_dir)
 
 # Extra Linux build configuration.
 @build_step()
