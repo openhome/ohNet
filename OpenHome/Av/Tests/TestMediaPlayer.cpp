@@ -12,6 +12,7 @@
 #include "RamStore.h"
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>

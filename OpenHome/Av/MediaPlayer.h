@@ -43,6 +43,7 @@ namespace Net {
 }
 namespace Av {
 
+class ConfigInitialiserVolume;
 class IReadStore;
 class ISource;
 class IStaticDataSource;
@@ -150,6 +151,7 @@ private:
     MutePrinter iMute;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
+    ConfigInitialiserVolume* iConfigInitVolume;
     IProvider* iProviderVolume;
     Configuration::ProviderConfig* iProviderConfig;
     Net::NetworkMonitor* iNetworkMonitor;

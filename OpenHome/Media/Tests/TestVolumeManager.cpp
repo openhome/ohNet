@@ -2,6 +2,7 @@
 
 #include <OpenHome/Media/VolumeManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/Private/Converter.h>
 
 // include "SuiteUnitTest.h"

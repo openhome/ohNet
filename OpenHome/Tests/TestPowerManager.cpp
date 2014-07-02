@@ -1,6 +1,7 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Converter.h>

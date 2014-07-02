@@ -25,22 +25,44 @@ namespace Net {
 
 namespace Av {
 
-class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider
+/**
+ * Class that instantiates ConfigVals that will later be retrieved and used by
+ * ProviderVolume.
+ *
+ * Must outlive ProviderVolume, and any other class that wishes to use volume-
+ * related ConfigVals.
+ */
+class ConfigInitialiserVolume
 {
+public:
+    static const TUint kVolumeStartupDefault = 0;
+    static const TBool kMuteStartupDefault = false;
 public:
     static const Brn kBalance;
     static const Brn kVolumeLimit;
     static const Brn kVolumeStartup;
     static const Brn kVolumeStartupEnabled;
 public:
-    static const TUint kVolumeStartupDefault = 0;
-    static const TBool kMuteStartupDefault = false;
+    ConfigInitialiserVolume(Configuration::IConfigManagerInitialiser& aConfigInit, Media::IVolumeProfile& aProfile);
+    ~ConfigInitialiserVolume();
+private:
+    Configuration::ConfigNum* iBalance;
+    Configuration::ConfigNum* iVolumeLimit;
+    Configuration::ConfigNum* iVolumeStartup;
+    Configuration::ConfigChoice* iVolumeStartupEnabled;
+};
+
+class ProviderVolume : public Net::DvProviderAvOpenhomeOrgVolume1, public IProvider
+{
 private:
     static const Brn kPowerDownVolume;
     static const Brn kPowerDownMute;
 public:
-    ProviderVolume(Net::DvDevice& aDevice, Configuration::IConfigManagerInitialiser& aConfigInit,
-                   IPowerManager& aPowerManager, Media::IVolumeProfile& aVolumeProfile,
+    ProviderVolume(Net::DvDevice& aDevice,
+                   Configuration::IConfigManagerInitialiser& aConfigInit, // FIXME - remove this and pass in an IStoreReadWrite instead?
+                   Configuration::IConfigManagerReader& aConfigReader,
+                   IPowerManager& aPowerManager,
+                   const Media::IVolumeProfile& aVolumeProfile,
                    Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit,
                    Media::IBalance& aBalance, Media::IMute& aMute);
     ~ProviderVolume();
@@ -82,8 +104,8 @@ private:
     void ConfigVolumeStartupChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void ConfigVolumeStartupEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
-    Configuration::IConfigManagerInitialiser& iConfigInit;
-    Media::IVolumeProfile& iVolumeProfile;
+    Configuration::IConfigManagerReader& iConfigReader;
+    const Media::IVolumeProfile& iVolumeProfile;
     Media::IVolume& iVolumeSetter;
     Media::IVolumeLimit& iVolumeLimitSetter;
     Media::IBalance& iBalanceSetter; // balance set via volume and configuration services
@@ -91,8 +113,6 @@ private:
 
     Configuration::ConfigNum* iConfigBalance;
     Configuration::ConfigNum* iConfigVolumeLimit;
-    Configuration::ConfigNum* iConfigVolumeStartup;
-    Configuration::ConfigChoice* iConfigVolumeStartupEnabled;
 
     TUint iListenerIdBalance;
     TUint iListenerIdVolumeLimit;

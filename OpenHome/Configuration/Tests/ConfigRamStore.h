@@ -1,0 +1,38 @@
+#ifndef HEADER_CONFIGRAMSTORE
+#define HEADER_CONFIGRAMSTORE
+
+#include <OpenHome/Configuration/BufferPtrCmp.h>
+#include <OpenHome/Configuration/IStore.h>
+#include <OpenHome/Private/Thread.h>
+
+#include <map>
+
+namespace OpenHome {
+namespace Configuration {
+
+/*
+ * Class providing a basic implementation of a read/write store for storing
+ * configuration in memory (no file writing, so no persistence between runs).
+ */
+class ConfigRamStore : public IStoreReadWrite
+{
+public:
+    ConfigRamStore();
+    virtual ~ConfigRamStore();
+    void Print() const;
+public: // from IStoreReadWrite
+    void Read(const Brx& aKey, Bwx& aDest);
+    void Write(const Brx& aKey, const Brx& aSource);
+    void Delete(const Brx& aKey);
+private:
+    void Clear();
+private:
+    typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
+    Map iMap;
+    mutable Mutex iLock;
+};
+
+} // namespace Configuration
+} // namespace OpenHome
+
+#endif // HEADER_CONFIGRAMSTORE

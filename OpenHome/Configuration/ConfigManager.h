@@ -6,6 +6,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Configuration/BufferPtrCmp.h>
 #include <OpenHome/Configuration/FunctorGeneric.h>
 #include <OpenHome/Configuration/IStore.h>
 
@@ -391,15 +392,6 @@ public:
     virtual ~IConfigManagerInitialiser() {}
 };
 
-/**
- * Custom comparison function for stl map keyed on Brx*
- */
-class BufferPtrCmp : public BufferCmp
-{
-public:
-    TBool operator()(const Brx* aStr1, const Brx* aStr2) const;
-};
-
 /*
  * Helper class for ConfigManager.
  */
@@ -512,7 +504,8 @@ private:
     typedef SerialisedMap<ConfigText> ConfigTextMap;
 public:
     ConfigManager(IStoreReadWrite& aStore);
-    void Print() const;
+    void Print() const;     // for debugging!
+    void DumpToStore();     // for debugging!
 public: // from IConfigManagerReader
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
@@ -538,6 +531,8 @@ private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
     template <class T> void Print(const ConfigVal<T>& aVal) const;
     template <class T> void Print(const SerialisedMap<T>& aMap) const;
+    template <class T> void DumpToStore(const ConfigVal<T>& aVal);
+    template <class T> void DumpToStore(const SerialisedMap<T>& aMap);
 private:
     IStoreReadWrite& iStore;
     ConfigNumMap iMapNum;
@@ -545,29 +540,6 @@ private:
     ConfigTextMap iMapText;
     TBool iOpen;
     Mutex iLock;
-};
-
-
-/*
- * Class providing a basic implementation of a read/write store for storing
- * configuration in memory (no file writing, so no persistence between runs).
- */
-class ConfigRamStore : public IStoreReadWrite
-{
-public:
-    ConfigRamStore();
-    virtual ~ConfigRamStore();
-    void Print() const;
-public: // from IStoreReadWrite
-    void Read(const Brx& aKey, Bwx& aDest);
-    void Write(const Brx& aKey, const Brx& aSource);
-    void Delete(const Brx& aKey);
-private:
-    void Clear();
-private:
-    typedef std::map<const Brx*, const Brx*, BufferPtrCmp> Map;
-    Map iMap;
-    mutable Mutex iLock;
 };
 
 } // namespace Configuration
