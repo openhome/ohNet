@@ -18,16 +18,39 @@ using namespace OpenHome::TestFramework;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
+namespace OpenHome {
+namespace Media {
 
-class SuiteCodecController : public SuiteUnitTest
-                             , private IPipelineElementUpstream
-                             , private IPipelineElementDownstream
-                             , private IStreamHandler
-                             , private IMsgProcessor
+class HelperCodecPassThrough : public CodecBase
 {
 public:
-    SuiteCodecController();
-public: // from SuiteUnitTest
+    HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
+private: // from CodecBase
+    TBool SupportsMimeType(const Brx& aMimeType);
+    TBool Recognise();
+    void StreamInitialise();
+    void Process();
+    TBool TrySeek(TUint aStreamId, TUint64 aSample);
+    void StreamCompleted();
+private:
+    const TUint iReadBytes;
+    const TUint iChannels;
+    const TUint iSampleRate;
+    const TUint iBitDepth;
+    const EMediaDataEndian iEndianness;
+    Bwh iReadBuf;
+    TUint64 iTrackOffset;
+};
+
+class SuiteCodecControllerBase : public SuiteUnitTest
+                               , private IPipelineElementUpstream
+                               , private IPipelineElementDownstream
+                               , private IStreamHandler
+                               , private IMsgProcessor
+{
+public:
+    SuiteCodecControllerBase(const TChar* aName);
+protected: // from SuiteUnitTest
     void Setup();
     void TearDown();
 private: // from IPipelineElementUpstream
@@ -56,7 +79,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
-private:
+protected:
     enum EMsgType
     {
         ENone
@@ -74,13 +97,53 @@ private:
        ,EMsgWait
        ,EMsgQuit
     };
-private:
+protected:
     void Queue(Msg* aMsg);
     void PullNext(EMsgType aExpectedMsg);
+    void PullNext(EMsgType aExpectedMsg, TUint64 aExpectedJiffies);
     Msg* CreateTrack();
     Msg* CreateEncodedStream();
-    Msg* CreateAudio(TBool aValidHeader);
+protected:
+    static const TUint kMaxMsgBytes = 960;
+    static const TUint kWavHeaderBytes = 44;
+    static const TUint kSampleRate = 44100;
+    static const TUint kNumChannels = 2;
+    static const TUint kSemWaitMs = 5000;   // only required in case tests fail
+    MsgFactory* iMsgFactory;
+    CodecController* iController;
+    Semaphore* iSemStop;
+    TUint iTotalBytes;
+    TUint iTrackOffset;
+    TUint iTrackOffsetBytes;
+    TUint64 iJiffies;
+    TUint iStopCount;
+private:
+    static const TUint kExpectedFlushId = 5;
+    AllocatorInfoLogger iInfoAggregator;
+    TrackFactory* iTrackFactory;
+    std::list<Msg*> iPendingMsgs;
+    std::list<Msg*> iReceivedMsgs;
+    Semaphore* iSemPending;
+    Semaphore* iSemReceived;
+    Mutex* iLockPending;
+    Mutex* iLockReceived;
+    EMsgType iLastReceivedMsg;
+    TUint iTrackId;
+    TUint iStreamId;
+    TUint iNextTrackId;
+    TUint iNextStreamId;
+    TBool iSeekable;
+};
 
+class SuiteCodecControllerStream : public SuiteCodecControllerBase
+{
+public:
+    SuiteCodecControllerStream();
+private: // from SuiteCodecControllerBase
+    void Setup();
+    void TearDown();
+private:
+    Msg* CreateAudio(TBool aValidHeader, TUint aDataBytes);
     void TestStreamSuccessful();
     void TestRecognitionFail();
     void TestTruncatedStreamInRecognition();
@@ -88,56 +151,96 @@ private:
     void TestTruncatedStream();
     void TestTrackTrack();
     void TestTrackEncodedStreamTrack();
-private:
-    static const TUint kWavHeaderBytes = 44;
-    static const TUint kSampleRate = 44100;
-    static const TUint kNumChannels = 2;
-    static const TUint kExpectedFlushId = 5;
-    static const TUint kSemWaitMs = 5000;   // only required in case tests fail
-
-    AllocatorInfoLogger iInfoAggregator;
-    TrackFactory* iTrackFactory;
-    MsgFactory* iMsgFactory;
-    CodecController* iController;
-
-    std::list<Msg*> iPendingMsgs;
-    std::list<Msg*> iReceivedMsgs;
-    Semaphore* iSemPending;
-    Semaphore* iSemReceived;
-    Semaphore* iSemStop;
-    Mutex* iLockPending;
-    Mutex* iLockReceived;
-    EMsgType iLastReceivedMsg;
-
-    TUint iTrackId;
-    TUint iStreamId;
-    TUint iNextTrackId;
-    TUint iNextStreamId;
-    TUint iTotalBytes;
-    TUint iTrackOffset;
-    TUint iTrackOffsetBytes;
-    TUint iJiffies;
-    TBool iSeekable;
-    TUint iStopCount;
 };
 
-
-SuiteCodecController::SuiteCodecController()
-    : SuiteUnitTest("SuiteCodecController")
+class SuiteCodecControllerPcmSize : public SuiteCodecControllerBase
 {
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestStreamSuccessful), "TestStreamSuccessful");
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestRecognitionFail), "TestRecognitionFail");
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestTrackTrack), "TestTrackTrack");
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestTrackEncodedStreamTrack), "TestTrackEncodedStreamTrack");
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestTruncatedStreamInRecognition), "TestTruncatedStreamInRecognition");
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestNoDataAfterRecognition), "TestNoDataAfterRecognition");
-    AddTest(MakeFunctor(*this, &SuiteCodecController::TestTruncatedStream), "TestTruncatedStream");
+public:
+    SuiteCodecControllerPcmSize();
+private: // // from SuiteCodecControllerBase
+    void Setup();
+    void TearDown();
+private:
+    Msg* CreateAudio();
+    void TestPcmIsExpectedSize();
+private:
+    static const TUint kBitsPerSample = 16;
+    static const TUint kSamplesPerMsg = 16;
+    static const TUint kAudioBytesPerMsg = 2*2*kSamplesPerMsg; // 16 bits (2 bytes) * 2 channels * kSamplesPerMsg
+};
+
+} // namespace Media
+} // namespace OpenHome
+
+
+// HelperCodecPassThrough
+
+HelperCodecPassThrough::HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness)
+    : iReadBytes(aReadBytes)
+    , iChannels(aChannels)
+    , iSampleRate(aSampleRate)
+    , iBitDepth(aBitDepth)
+    , iEndianness(aEndianness)
+    , iReadBuf(iReadBytes)
+    , iTrackOffset(0)
+{
 }
 
-void SuiteCodecController::Setup()
+TBool HelperCodecPassThrough::SupportsMimeType(const Brx& /*aMimeType*/)
+{
+    // CodecController passes through calls to this. Shouldn't happen in tests.
+    ASSERTS();
+    return false;
+}
+
+TBool HelperCodecPassThrough::Recognise()
+{
+    return true;    // always recognise
+}
+
+void HelperCodecPassThrough::StreamInitialise()
+{
+    iTrackOffset = 0;
+}
+
+void HelperCodecPassThrough::Process()
+{
+    if (iTrackOffset == 0) {
+        iController->OutputDecodedStream(0, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, 0, true);
+    }
+
+    iReadBuf.SetBytes(0);
+    try {
+        iController->Read(iReadBuf, iReadBytes);
+    }
+    catch (CodecStreamEnded&) {
+        THROW(CodecStreamEnded); // rethrow
+    }
+    iTrackOffset += iController->OutputAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
+}
+
+TBool HelperCodecPassThrough::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
+{
+    // Don't expect in tests.
+    return false;
+}
+
+void HelperCodecPassThrough::StreamCompleted()
+{
+}
+
+
+// SuiteCodecControllerBase
+
+SuiteCodecControllerBase::SuiteCodecControllerBase(const TChar* aName)
+    : SuiteUnitTest(aName)
+{
+}
+
+void SuiteCodecControllerBase::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 20, 20, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 100, 100, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iController = new CodecController(*iMsgFactory, *this, *this);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
@@ -150,12 +253,9 @@ void SuiteCodecController::Setup()
     iJiffies = 0;
     iSeekable = true;
     iStopCount = 0;
-
-    iController->AddCodec(CodecFactory::NewWav());
-    iController->Start();
 }
 
-void SuiteCodecController::TearDown()
+void SuiteCodecControllerBase::TearDown()
 {
     Queue(iMsgFactory->CreateMsgQuit());
     PullNext(EMsgQuit);
@@ -177,7 +277,7 @@ void SuiteCodecController::TearDown()
     delete iTrackFactory;
 }
 
-Msg* SuiteCodecController::Pull()
+Msg* SuiteCodecControllerBase::Pull()
 {
     // This is called from CodecController's own thread, so block until msg
     // available.
@@ -190,7 +290,7 @@ Msg* SuiteCodecController::Pull()
     return msg;
 }
 
-void SuiteCodecController::Push(Msg* aMsg)
+void SuiteCodecControllerBase::Push(Msg* aMsg)
 {
     iLockReceived->Wait();
     iReceivedMsgs.push_back(aMsg);
@@ -198,19 +298,19 @@ void SuiteCodecController::Push(Msg* aMsg)
     iSemReceived->Signal();
 }
 
-EStreamPlay SuiteCodecController::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteCodecControllerBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteCodecController::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteCodecControllerBase::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteCodecController::TryStop(TUint aTrackId, TUint aStreamId)
+TUint SuiteCodecControllerBase::TryStop(TUint aTrackId, TUint aStreamId)
 {
     iStopCount++;
     iSemStop->Signal();
@@ -221,85 +321,85 @@ TUint SuiteCodecController::TryStop(TUint aTrackId, TUint aStreamId)
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteCodecController::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteCodecController::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteCodecControllerBase::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
 {
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgMode* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgMode* aMsg)
 {
     iLastReceivedMsg = EMsgMode;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgSession* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgSession* aMsg)
 {
     iLastReceivedMsg = EMsgSession;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgTrack* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iLastReceivedMsg = EMsgTrack;
     iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgDelay* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgDelay* aMsg)
 {
     iLastReceivedMsg = EMsgDelay;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iLastReceivedMsg = EMsgEncodedStream;
     iStreamId = aMsg->StreamId();
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgMetaText* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastReceivedMsg = EMsgMetaText;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgHalt* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgHalt* aMsg)
 {
     iLastReceivedMsg = EMsgHalt;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgFlush* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgFlush* aMsg)
 {
     iLastReceivedMsg = EMsgFlush;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgWait* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgWait* aMsg)
 {
     iLastReceivedMsg = EMsgWait;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastReceivedMsg = EMsgDecodedStream;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastReceivedMsg = EMsgAudioPcm;
     iJiffies += aMsg->Jiffies();
@@ -319,25 +419,25 @@ Msg* SuiteCodecController::ProcessMsg(MsgAudioPcm* aMsg)
     return playable;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgSilence* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgSilence* aMsg)
 {
     iLastReceivedMsg = EMsgSilence;
     return aMsg;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgPlayable* /*aMsg*/)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgPlayable* /*aMsg*/)
 {
     ASSERTS();
     return NULL;
 }
 
-Msg* SuiteCodecController::ProcessMsg(MsgQuit* aMsg)
+Msg* SuiteCodecControllerBase::ProcessMsg(MsgQuit* aMsg)
 {
     iLastReceivedMsg = EMsgQuit;
     return aMsg;
 }
 
-void SuiteCodecController::Queue(Msg* aMsg)
+void SuiteCodecControllerBase::Queue(Msg* aMsg)
 {
     iLockPending->Wait();
     iPendingMsgs.push_back(aMsg);
@@ -345,7 +445,7 @@ void SuiteCodecController::Queue(Msg* aMsg)
     iSemPending->Signal();
 }
 
-void SuiteCodecController::PullNext(EMsgType aExpectedMsg)
+void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg)
 {
     iSemReceived->Wait(kSemWaitMs);
     iLockReceived->Wait();
@@ -359,7 +459,15 @@ void SuiteCodecController::PullNext(EMsgType aExpectedMsg)
     TEST(iLastReceivedMsg == aExpectedMsg);
 }
 
-Msg* SuiteCodecController::CreateTrack()
+void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg, TUint64 aExpectedJiffies)
+{
+    TUint64 jiffiesStart = iJiffies;
+    PullNext(aExpectedMsg);
+    TUint64 jiffiesDiff = iJiffies - jiffiesStart;
+    TEST(jiffiesDiff == aExpectedJiffies);
+}
+
+Msg* SuiteCodecControllerBase::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
@@ -367,29 +475,56 @@ Msg* SuiteCodecController::CreateTrack()
     return msg;
 }
 
-Msg* SuiteCodecController::CreateEncodedStream()
+Msg* SuiteCodecControllerBase::CreateEncodedStream()
 {
     return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, iSeekable, false, this);
 }
 
-Msg* SuiteCodecController::CreateAudio(TBool aValidHeader)
+
+// SuiteCodecControllerStream
+
+SuiteCodecControllerStream::SuiteCodecControllerStream()
+    : SuiteCodecControllerBase("SuiteCodecControllerStream")
+{
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestStreamSuccessful), "TestStreamSuccessful");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestRecognitionFail), "TestRecognitionFail");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackTrack), "TestTrackTrack");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackEncodedStreamTrack), "TestTrackEncodedStreamTrack");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStreamInRecognition), "TestTruncatedStreamInRecognition");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestNoDataAfterRecognition), "TestNoDataAfterRecognition");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStream), "TestTruncatedStream");
+}
+
+void SuiteCodecControllerStream::Setup()
+{
+    SuiteCodecControllerBase::Setup();
+    iController->AddCodec(CodecFactory::NewWav());
+    iController->Start();
+}
+
+void SuiteCodecControllerStream::TearDown()
+{
+    SuiteCodecControllerBase::TearDown();
+}
+
+Msg* SuiteCodecControllerStream::CreateAudio(TBool aValidHeader, TUint aDataBytes)
 {
     ASSERT(iTotalBytes > 0);
     static const TUint32 kFmtChunkSize = 16;
     static const TUint16 kFmtAudioFormat = 1;
     static const TUint16 kBitsPerSample = 16;
     static const TUint kBytesPerSample = kBitsPerSample/8;
-    static const TUint kDataBytes = 960;
 
     TUint headerBytes = kWavHeaderBytes;
     if (iTotalBytes < headerBytes) {
         headerBytes = iTotalBytes;
     }
     const TUint audioBytes = iTotalBytes-headerBytes;
-    TByte encodedAudioData[kDataBytes];
+    TByte encodedAudioData[kMaxMsgBytes];
 
     Bws<kWavHeaderBytes> header;
-    TUint dataBytes = kDataBytes;
+    //TUint dataBytes = kMaxMsgBytes;
+    TUint dataBytes = aDataBytes;
     if (iTrackOffset == 0) {
         // populate wav header
         // RIFF header
@@ -420,7 +555,7 @@ Msg* SuiteCodecController::CreateAudio(TBool aValidHeader)
         (void)memcpy(encodedAudioData, header.Ptr(), headerBytes);
 
         // update data byte count
-        dataBytes = kDataBytes - headerBytes;
+        dataBytes = kMaxMsgBytes - headerBytes;
     }
 
     // Only output iTotalBytes-kWavHeaderBytes of audio in total.
@@ -447,7 +582,7 @@ Msg* SuiteCodecController::CreateAudio(TBool aValidHeader)
     return audio;
 }
 
-void SuiteCodecController::TestStreamSuccessful()
+void SuiteCodecControllerStream::TestStreamSuccessful()
 {
     static const TUint kAudioBytes = 6144;
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
@@ -457,7 +592,7 @@ void SuiteCodecController::TestStreamSuccessful()
     PullNext(EMsgEncodedStream);
 
     while (iTrackOffsetBytes < kAudioBytes) {
-        Queue(CreateAudio(true));
+        Queue(CreateAudio(true, kMaxMsgBytes));
     }
     // Pushing a MsgEncodedAudio should cause a MsgDecodedStream to be pushed
     // out other end of CodecController.
@@ -468,7 +603,7 @@ void SuiteCodecController::TestStreamSuccessful()
     TEST(iJiffies == iTrackOffset);
 }
 
-void SuiteCodecController::TestRecognitionFail()
+void SuiteCodecControllerStream::TestRecognitionFail()
 {
     static const TUint kAudioBytes = 6144;
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
@@ -478,13 +613,13 @@ void SuiteCodecController::TestRecognitionFail()
     Queue(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
 
-    Queue(CreateAudio(false));
+    Queue(CreateAudio(false, kMaxMsgBytes));
 
     iSemStop->Wait();
     TEST(iStopCount == 1);
 }
 
-void SuiteCodecController::TestTruncatedStreamInRecognition()
+void SuiteCodecControllerStream::TestTruncatedStreamInRecognition()
 {
     // This partially tests the ability of the WAV codec to return from its
     // Recognise() method, but what we're interested in is that the
@@ -498,7 +633,7 @@ void SuiteCodecController::TestTruncatedStreamInRecognition()
     Queue(CreateEncodedStream());
     PullNext(EMsgEncodedStream);
 
-    Queue(CreateAudio(true));
+    Queue(CreateAudio(true, kMaxMsgBytes));
 
     // Flush remaining audio from stream out by sending a new MsgTrack.
     Queue(CreateTrack());
@@ -510,7 +645,7 @@ void SuiteCodecController::TestTruncatedStreamInRecognition()
     TEST(iJiffies == iTrackOffset);
 }
 
-void SuiteCodecController::TestNoDataAfterRecognition()
+void SuiteCodecControllerStream::TestNoDataAfterRecognition()
 {
     // WAV codec requires 12 bytes for successful recognition.
     iTotalBytes = 12;
@@ -521,7 +656,7 @@ void SuiteCodecController::TestNoDataAfterRecognition()
 
     // Only send one msg (i.e., a truncated stream).
     // Won't get a MsgDecodedStream, as data is truncated.
-    Queue(CreateAudio(true));
+    Queue(CreateAudio(true, kMaxMsgBytes));
 
     // Flush remaining audio from stream out by sending a new MsgTrack.
     Queue(CreateTrack());
@@ -530,7 +665,7 @@ void SuiteCodecController::TestNoDataAfterRecognition()
     TEST(iJiffies == iTrackOffset);
 }
 
-void SuiteCodecController::TestTruncatedStream()
+void SuiteCodecControllerStream::TestTruncatedStream()
 {
     static const TUint kAudioBytes = 6144;
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
@@ -540,7 +675,7 @@ void SuiteCodecController::TestTruncatedStream()
     PullNext(EMsgEncodedStream);
 
     // Only send one msg (i.e., a truncated stream).
-    Queue(CreateAudio(true));
+    Queue(CreateAudio(true, kMaxMsgBytes));
     PullNext(EMsgDecodedStream);
 
     // Flush remaining audio from stream out by sending a new MsgTrack.
@@ -551,7 +686,7 @@ void SuiteCodecController::TestTruncatedStream()
     TEST(iJiffies == iTrackOffset);
 }
 
-void SuiteCodecController::TestTrackTrack()
+void SuiteCodecControllerStream::TestTrackTrack()
 {
     Queue(CreateTrack());
     PullNext(EMsgTrack);
@@ -560,7 +695,7 @@ void SuiteCodecController::TestTrackTrack()
     PullNext(EMsgTrack);
 }
 
-void SuiteCodecController::TestTrackEncodedStreamTrack()
+void SuiteCodecControllerStream::TestTrackEncodedStreamTrack()
 {
     Queue(CreateTrack());
     PullNext(EMsgTrack);
@@ -575,10 +710,74 @@ void SuiteCodecController::TestTrackEncodedStreamTrack()
     TEST(iStopCount == 1);
 }
 
+
+// SuiteCodecControllerPcmSize
+
+SuiteCodecControllerPcmSize::SuiteCodecControllerPcmSize()
+    : SuiteCodecControllerBase("SuiteCodecControllerPcmSize")
+{
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerPcmSize::TestPcmIsExpectedSize), "TestPcmIsExpectedSize");
+}
+
+void SuiteCodecControllerPcmSize::Setup()
+{
+    SuiteCodecControllerBase::Setup();
+    iController->AddCodec(new HelperCodecPassThrough(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataBigEndian));
+    iController->Start();
+}
+
+void SuiteCodecControllerPcmSize::TearDown()
+{
+    SuiteCodecControllerBase::TearDown();
+}
+
+Msg* SuiteCodecControllerPcmSize::CreateAudio()
+{
+    static const TUint kBytesPerSample = kBitsPerSample/8;
+    static const TUint dataBytes = kAudioBytesPerMsg;
+
+    TByte encodedAudioData[kAudioBytesPerMsg];
+    (void)memset(encodedAudioData, 0x7f, dataBytes);
+    Brn encodedAudioBuf(encodedAudioData, dataBytes);
+    MsgAudioEncoded* audio = iMsgFactory->CreateMsgAudioEncoded(encodedAudioBuf);
+
+    TUint samples = dataBytes / (kNumChannels*kBytesPerSample);
+    TUint jiffiesPerSample = Jiffies::kPerSecond / kSampleRate;
+    iTrackOffset += samples * jiffiesPerSample;
+    iTrackOffsetBytes += dataBytes;
+    return audio;
+}
+
+void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
+{
+    static const TUint kAudioBytes = 6144;
+    static const TUint64 kJiffiesPerMsg = (Jiffies::kPerSecond / 44100) * kSamplesPerMsg;
+    iTotalBytes = kWavHeaderBytes + kAudioBytes;
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+
+    while (iTrackOffsetBytes < kAudioBytes) {
+        Queue(CreateAudio());
+    }
+    // Pushing a MsgEncodedAudio should cause a MsgDecodedStream to be pushed
+    // out other end of CodecController.
+    PullNext(EMsgDecodedStream);
+    while (iJiffies < iTrackOffset) {
+        PullNext(EMsgAudioPcm, kJiffiesPerMsg);
+    }
+
+    ASSERT(iTrackOffsetBytes == kAudioBytes); // check correct number of bytes have been output by test code
+    TEST(iJiffies == iTrackOffset);
+}
+
+
 void TestCodecController()
 {
     Runner runner("CodecController tests\n");
-    runner.Add(new SuiteCodecController());
+    runner.Add(new SuiteCodecControllerStream());
+    runner.Add(new SuiteCodecControllerPcmSize());
     runner.Run();
 }
 
