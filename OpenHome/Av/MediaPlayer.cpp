@@ -103,11 +103,6 @@ void MediaPlayer::Add(Protocol* aProtocol)
     iPipeline->Add(aProtocol);
 }
 
-void MediaPlayer::Add(ContentProcessor* aContentProcessor)
-{
-    iPipeline->Add(aContentProcessor);
-}
-
 void MediaPlayer::Add(ISource* aSource)
 {
     iProduct->AddSource(aSource);

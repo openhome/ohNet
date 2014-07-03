@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 
 /* Example OPML file
 
@@ -24,22 +25,23 @@
 */
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
-class ContentOpml : public ContentProcessor
+class ContentOpml : public Media::ContentProcessor
 {
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes);
 private:
     Bws<1024> iUri;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+using namespace OpenHome::Av;
 
 
 ContentProcessor* ContentProcessorFactory::NewOpml()

@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 
 /* Example pls file
 
@@ -28,23 +29,24 @@ Version=2
 */
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
-class ContentPls : public ContentProcessor
+class ContentPls : public Media::ContentProcessor
 {
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes);
     void Reset();
 private:
     TBool iIsPlaylist;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+using namespace OpenHome::Av;
 
 
 ContentProcessor* ContentProcessorFactory::NewPls()

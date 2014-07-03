@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Av/Debug.h>
 

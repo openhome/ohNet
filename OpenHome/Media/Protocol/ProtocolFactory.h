@@ -27,17 +27,6 @@ public:
     static Protocol* NewRaop(Environment& aEnv, Av::IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
 };
 
-class ContentProcessor;
-
-class ContentProcessorFactory
-{
-public:
-    static ContentProcessor* NewM3u();
-    static ContentProcessor* NewPls();
-    static ContentProcessor* NewOpml();
-    static ContentProcessor* NewAsx();
-};
-
 } // namespace Media
 } // namespace OpenHome
 

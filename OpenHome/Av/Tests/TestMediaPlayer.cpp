@@ -203,16 +203,6 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
 
-    // Add content processors (mainly required for Radio)
-    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
-    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
-    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
-    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
-    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
-    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
-    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
-    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
-
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
     iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
