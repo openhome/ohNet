@@ -7,7 +7,7 @@
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
-#include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Av/Raop/ProtocolRaop.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>

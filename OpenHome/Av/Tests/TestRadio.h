@@ -9,11 +9,11 @@ namespace Net {
     class DvStack;
 }
 namespace Media {
-    class DriverSongcastSender;
     class UriProviderSingleTrack;
 }
 namespace Av {
     class PresetDatabase;
+    class DriverSongcastSender;
 
 namespace Test {
 class TestRadio : private OpenHome::Media::IPipelineObserver
@@ -37,7 +37,7 @@ private:
     Environment* iEnv;
     Media::AllocatorInfoLogger iInfoLogger;
     Media::TrackFactory* iTrackFactory;
-    Media::DriverSongcastSender* iDriver;
+    DriverSongcastSender* iDriver;
     Media::UriProviderSingleTrack* iUriProvider;
     //DummySourceUpnpAv* iSourceUpnpAv;
 };

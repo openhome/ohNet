@@ -19,10 +19,10 @@ public:
     static CodecBase* NewAlac();
     static CodecBase* NewAdts();
     static CodecBase* NewFlac();
-    static CodecBase* NewRaop();
+    static CodecBase* NewRaop(); // FIXME
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
-    static CodecBase* NewOhm(Av::OhmMsgFactory& aMsgFactory);
+    static CodecBase* NewOhm(Av::OhmMsgFactory& aMsgFactory); // FIXME
 };
 
 } // namespace Codec

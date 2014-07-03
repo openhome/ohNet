@@ -1,12 +1,11 @@
-#include <OpenHome/Media/Protocol/RaopHeader.h>
+#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
-#include <OpenHome/Media/Protocol/ProtocolRaop.h>
-#include <OpenHome/Media/UdpServer.h>
+#include <OpenHome/Av/Raop/ProtocolRaop.h>
+#include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Av/Debug.h>
-#include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/Raop/Raop.h>
 
 EXCEPTION(ResendTimeout);

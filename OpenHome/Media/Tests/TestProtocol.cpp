@@ -7,10 +7,11 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Av/Utils/DriverSongcastSender.h>
+#include <OpenHome/Media/Utils/DriverBasic.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
@@ -96,14 +97,14 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // TestProtocol
 
-TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
+TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& /*aSenderUdn*/, TUint /*aSenderChannel*/)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
-    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
+    iDriver = new DriverBasic(*iPipeline, aDvStack.Env());
 }
 
 TestProtocol::~TestProtocol()

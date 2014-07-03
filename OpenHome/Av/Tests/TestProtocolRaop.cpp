@@ -4,19 +4,20 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
-#include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Av/Raop/ProtocolRaop.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/UdpServer.h>
+#include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/PowerManager.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Av/Raop/UdpServer.h>
+#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 
 #include <stdio.h>
 
@@ -64,12 +65,13 @@ int mygetch()
 #endif // _WIN32
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
-class DummyFiller : public Thread, private IPipelineIdProvider, private Av::IRaopObserver
+class DummyFiller : public Thread, private Media::IPipelineIdProvider, private IRaopObserver
 {
 public:
-    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr,
+                Media::ISupply& aSupply, Media::IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -77,7 +79,7 @@ private: // from Thread
 private: // from IPipelineIdProvider
     TUint NextTrackId();
     TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
 private: // from IRaopObserver
     void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
     void NotifySessionEnd();
@@ -89,9 +91,9 @@ private:
     static const TUint kPortControl = 60401;
     static const TUint kPortTiming = 60402;
     PowerManager iPowerManager;
-    Av::RaopDiscovery* iRaopDiscovery;
-    ProtocolManager* iProtocolManager;
-    TrackFactory* iTrackFactory;
+    RaopDiscovery* iRaopDiscovery;
+    Media::ProtocolManager* iProtocolManager;
+    Media::TrackFactory* iTrackFactory;
     UdpServerManager iServerManager;
     Brn iUrl;
     TUint iNextTrackId;
@@ -99,26 +101,26 @@ private:
     static const TUint kInvalidPipelineId = 0;
 };
 
-class TestProtocolRaop : private IPipelineObserver, private IStreamPlayObserver
+class TestProtocolRaop : private Media::IPipelineObserver, private Media::IStreamPlayObserver
 {
-    static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
+    static const TUint kMaxDriverJiffies = Media::Jiffies::kPerMs * 5;
 public:
     TestProtocolRaop(Environment& aEnv, Net::DvStack& aDvStack, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel);
     virtual ~TestProtocolRaop();
     int Run();
-private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+private: // from Media::IPipelineObserver
+    void NotifyPipelineState(Media::EPipelineState aState);
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
-private: // from IStreamPlayObserver
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+private: // from Media::IStreamPlayObserver
     void NotifyTrackFailed(TUint aTrackId);
-    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
+    void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, Media::EStreamPlay aStatus);
 private:
     DummyFiller* iFiller;
-    AllocatorInfoLogger iInfoAggregator;
-    Pipeline* iPipeline;
+    Media::AllocatorInfoLogger iInfoAggregator;
+    Media::Pipeline* iPipeline;
     DriverSongcastSender* iDriver;
     Brh iUrl;
     TUint iSeconds;
@@ -126,7 +128,7 @@ private:
     TUint iStreamId;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 using namespace OpenHome;

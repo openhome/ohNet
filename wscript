@@ -235,7 +235,6 @@ def build(bld):
                 'OpenHome/Media/TrackInspector.cpp',
                 'OpenHome/Media/VariableDelay.cpp',
                 'OpenHome/Media/Waiter.cpp',
-                'OpenHome/Media/UdpServer.cpp',
                 'OpenHome/Media/Pipeline.cpp',
                 'OpenHome/Media/IdManager.cpp',
                 'OpenHome/Media/Filler.cpp',
@@ -249,9 +248,7 @@ def build(bld):
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ProtocolTone.cpp',
-                'OpenHome/Media/Protocol/RaopHeader.cpp',
                 'OpenHome/Media/Protocol/Rtsp.cpp',
-                'OpenHome/Media/Protocol/ProtocolRaop.cpp',
                 'OpenHome/Media/Protocol/ProtocolRtsp.cpp',
                 'OpenHome/Media/Protocol/ContentAudio.cpp',
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
@@ -279,6 +276,9 @@ def build(bld):
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
                 'OpenHome/Av/Raop/Raop.cpp',
                 'OpenHome/Av/Raop/SourceRaop.cpp',
+                'OpenHome/Av/Raop/RaopHeader.cpp',
+                'OpenHome/Av/Raop/ProtocolRaop.cpp',
+                'OpenHome/Av/Raop/UdpServer.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
@@ -512,7 +512,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestVolumeManager.cpp',
                 'OpenHome/Media/Tests/TestRewinder.cpp',
                 'OpenHome/Media/Tests/TestShell.cpp',
-                'OpenHome/Media/Tests/TestUdpServer.cpp',
+                'OpenHome/Av/Tests/TestUdpServer.cpp',
                 'OpenHome/Av/Tests/TestUpnpErrors.cpp',
                 'Generated/CpUpnpOrgAVTransport1.cpp',
                 'Generated/CpUpnpOrgConnectionManager1.cpp',
@@ -623,7 +623,7 @@ def build(bld):
             target='TestProtocol',
             install_path=None)
     bld.program(
-            source='OpenHome/Media/Tests/TestProtocolRaop.cpp',
+            source='OpenHome/Av/Tests/TestProtocolRaop.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestProtocolRaop',
             install_path=None)
@@ -683,7 +683,7 @@ def build(bld):
             target='TestRewinder',
             install_path=None)
     bld.program(
-            source='OpenHome/Media/Tests/TestUdpServerMain.cpp',
+            source='OpenHome/Av/Tests/TestUdpServerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestUdpServer',
             install_path=None)

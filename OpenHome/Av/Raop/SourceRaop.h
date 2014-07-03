@@ -7,7 +7,7 @@
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
-#include <OpenHome/Media/UdpServer.h>
+#include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
 namespace OpenHome {
@@ -18,13 +18,13 @@ namespace Net {
 }
 namespace Media {
     class PipelineManager;
-    class ProtocolRaop;
     class UriProviderSingleTrack;
 }
 namespace Av {
     class IMediaPlayer;
     class IRaopDiscovery;
     class RaopDiscovery;
+    class ProtocolRaop;
 
 class SourceRaop : public Source, public IRaopObserver, private Media::IPipelineObserver
 {
@@ -73,11 +73,11 @@ private:
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
     Av::RaopDiscovery* iRaopDiscovery;
-    Media::ProtocolRaop* iProtocol;
-    Media::UdpServerManager iServerManager;
-    Media::SocketUdpServer* iServerAudio;   // no ownership
-    Media::SocketUdpServer* iServerControl; // no ownership
-    Media::SocketUdpServer* iServerTiming;  // no ownership
+    ProtocolRaop* iProtocol;
+    UdpServerManager iServerManager;
+    SocketUdpServer* iServerAudio;   // no ownership
+    SocketUdpServer* iServerControl; // no ownership
+    SocketUdpServer* iServerTiming;  // no ownership
     Configuration::ConfigChoice* iConfigNetAux;
     TUint iConfigSubId;
     TUint iCurrentAdapterChangeListenerId;

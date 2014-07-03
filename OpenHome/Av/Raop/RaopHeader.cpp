@@ -1,13 +1,13 @@
-#include <OpenHome/Media/Protocol/RaopHeader.h>
+#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Network.h>
 #include <OpenHome/Av/Debug.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Media;
-using namespace OpenHome::Media::Codec;
+using namespace OpenHome::Av;
 
 RaopDataHeader::RaopDataHeader(Brx& aRawData, TUint aSenderSkew, TUint aLatency)
     : iSenderSkew(aSenderSkew)

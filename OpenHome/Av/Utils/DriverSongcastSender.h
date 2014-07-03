@@ -1,5 +1,5 @@
-#ifndef HEADER_PIPELINE_DRIVER_SONGCAST_SENDER
-#define HEADER_PIPELINE_DRIVER_SONGCAST_SENDER
+#ifndef HEADER_DRIVER_SONGCAST_SENDER
+#define HEADER_DRIVER_SONGCAST_SENDER
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
@@ -14,9 +14,9 @@ namespace OpenHome {
 namespace Av {
     class ZoneHandler;
 }
-namespace Media {
+namespace Av {
 
-class ProcessorPcmBufPackedDualMono : public ProcessorPcmBuf
+class ProcessorPcmBufPackedDualMono : public Media::ProcessorPcmBuf
 {
 public:
     ProcessorPcmBufPackedDualMono();
@@ -30,47 +30,47 @@ private: // from IPcmProcessor
 };
 
 
-class DriverSongcastSender : public Thread, private IMsgProcessor, private Net::IResourceManager
+class DriverSongcastSender : public Thread, private Media::IMsgProcessor, private Net::IResourceManager
 {
     static const TUint kSongcastTtl = 1;
     static const TUint kSongcastLatencyMs = 300;
     static const TUint kSongcastPreset = 0;
     static const Brn kSenderIconFileName;
 public:
-    DriverSongcastSender(IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel);
+    DriverSongcastSender(Media::IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel);
     ~DriverSongcastSender();
 private: // from Thread
     void Run();
 private:
     void TimerCallback();
-    void SendAudio(MsgPlayable* aMsg);
+    void SendAudio(Media::MsgPlayable* aMsg);
     void DeviceDisabled();
-private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgMode* aMsg);
-    Msg* ProcessMsg(MsgSession* aMsg);
-    Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgDelay* aMsg);
-    Msg* ProcessMsg(MsgEncodedStream* aMsg);
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgMetaText* aMsg);
-    Msg* ProcessMsg(MsgHalt* aMsg);
-    Msg* ProcessMsg(MsgFlush* aMsg);
-    Msg* ProcessMsg(MsgWait* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from Media::IMsgProcessor
+    Media::Msg* ProcessMsg(Media::MsgMode* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgSession* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgTrack* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgDelay* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgMetaText* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgHalt* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgFlush* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgWait* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgSilence* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgQuit* aMsg);
 private: // from Net::IResourceManager
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter);
 private:
-    IPipelineElementUpstream& iPipeline;
+    Media::IPipelineElementUpstream& iPipeline;
     TUint iMaxMsgSizeJiffies;
     Environment& iEnv;
-    Av::OhmSenderDriver* iOhmSenderDriver;
-    Av::OhmSender* iOhmSender;
+    OhmSenderDriver* iOhmSenderDriver;
+    OhmSender* iOhmSender;
     Net::DvDeviceStandard* iDevice;
-    Av::ZoneHandler* iZoneHandler;
+    ZoneHandler* iZoneHandler;
     Semaphore iDeviceDisabled;
     Timer* iTimer;
     TUint iSampleRate;
@@ -83,12 +83,12 @@ private:
     TInt  iTimeOffsetUs;    // running offset in usec from ideal time
                             //  <0 means sender is behind
                             //  >0 means sender is ahead
-    MsgPlayable* iPlayable;
+    Media::MsgPlayable* iPlayable;
     TBool iAudioSent;
     TBool iQuit;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_DRIVER_SONGCAST_SENDER
+#endif // HEADER_DRIVER_SONGCAST_SENDER

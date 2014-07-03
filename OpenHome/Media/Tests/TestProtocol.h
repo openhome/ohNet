@@ -16,7 +16,7 @@ namespace Av {
 }
 namespace Media {
 class ProtocolManager;
-class DriverSongcastSender;
+class DriverBasic;
 
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
@@ -67,7 +67,8 @@ private:
     PowerManager iPowerManager;
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
-    DriverSongcastSender* iDriver;
+    DriverBasic* iDriver; /* DriverSongcastSender allows us to listen to audio
+                             but we'd prefer not to depend on the Av namespace */
     Brh iUrl;
     TUint iSeconds;
     TUint iTrackDurationSeconds;

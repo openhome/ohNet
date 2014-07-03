@@ -4,18 +4,15 @@
 #include <OpenHome/OhNetTypes.h>
 
 namespace OpenHome {
-class Environment;
-class Brx;
+    class Environment;
+    class Brx;
 namespace Av {
-class IRaopDiscovery;
-}
-namespace Net {
-class DvStack;
+    class IRaopDiscovery;
+    class UdpServerManager;
 }
 namespace Media {
 
 class Protocol;
-class UdpServerManager;
 
 class ProtocolFactory
 {
@@ -24,7 +21,7 @@ public:
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
-    static Protocol* NewRaop(Environment& aEnv, Av::IRaopDiscovery& aDiscovery, UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId);
+    static Protocol* NewRaop(Environment& aEnv, Av::IRaopDiscovery& aDiscovery, Av::UdpServerManager& aServerManager, TUint aAudioId, TUint aControlId); // FIXME
 };
 
 } // namespace Media

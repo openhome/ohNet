@@ -13,6 +13,7 @@
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 

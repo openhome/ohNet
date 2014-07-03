@@ -3,7 +3,7 @@
 #include <OpenHome/Media/Codec/AlacBase.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Media/Protocol/RaopHeader.h>
+#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
@@ -36,6 +36,7 @@ private: // from CodecBase
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
+using namespace OpenHome::Av;
 
 CodecBase* CodecFactory::NewRaop()
 { // static
