@@ -22,7 +22,6 @@ public:
     static CodecBase* NewRaop(); // FIXME
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
-    static CodecBase* NewOhm(Av::OhmMsgFactory& aMsgFactory); // FIXME
 };
 
 } // namespace Codec
