@@ -1329,6 +1329,7 @@ void MsgAudio::Clear()
     iSize = 0;
     if (iNextAudio != NULL) { 
         iNextAudio->RemoveRef(); 
+        iNextAudio = NULL;
     } 
 } 
 
@@ -1364,6 +1365,7 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     if (iNextAudio != NULL) { 
         MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
         playable->Add(child); 
+        iNextAudio = NULL;
     }
     RemoveRef();
     return playable;

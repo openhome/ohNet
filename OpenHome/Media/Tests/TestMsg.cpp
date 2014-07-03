@@ -815,6 +815,30 @@ void SuiteMsgPlayable::Test()
         subsampleVal--;
     }
 
+    // Create multiple pcm msgs, then add together. Check content.
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    MsgAudioPcm* audioPcm2 = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    audioPcm->Add(audioPcm2);
+    playable = audioPcm->CreatePlayable();
+    TEST(playable->Bytes() == data.Bytes()*2);
+    playable->Read(pcmProcessor);
+    playable->RemoveRef();
+    ptr = pcmProcessor.Ptr();
+    subsampleVal = 0xff;
+    // first half of msg
+    for (TUint i=0; i<data.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
+        ptr++;
+        subsampleVal--;
+    }
+    // second half of msg
+    subsampleVal = 0xff;
+    for (TUint i=0; i<data.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
+        ptr++;
+        subsampleVal--;
+    }
+
     // Create pcm msg, split it then convert to playable.  Read/validate contents of both
     audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
     MsgAudioPcm* remainingPcm = (MsgAudioPcm*)audioPcm->Split(audioPcm->Jiffies()/4);
