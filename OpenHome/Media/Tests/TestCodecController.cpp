@@ -113,7 +113,7 @@ protected:
     CodecController* iController;
     Semaphore* iSemStop;
     TUint iTotalBytes;
-    TUint iTrackOffset;
+    TUint64 iTrackOffset;
     TUint iTrackOffsetBytes;
     TUint64 iJiffies;
     TUint iStopCount;
@@ -214,7 +214,7 @@ void HelperCodecPassThrough::Process()
         iController->Read(iReadBuf, iReadBytes);
     }
     catch (CodecStreamEnded&) {
-        THROW(CodecStreamEnded); // rethrow
+        throw; // rethrow CodecStreamEnded
     }
     iTrackOffset += iController->OutputAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
 }
@@ -240,7 +240,7 @@ SuiteCodecControllerBase::SuiteCodecControllerBase(const TChar* aName)
 void SuiteCodecControllerBase::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 100, 100, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iController = new CodecController(*iMsgFactory, *this, *this);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
@@ -249,7 +249,8 @@ void SuiteCodecControllerBase::Setup()
     iLockReceived = new Mutex("TCMR");
     iTrackId = iStreamId = UINT_MAX;
     iNextTrackId = iNextStreamId = 1;
-    iTotalBytes = iTrackOffset = iTrackOffsetBytes = 0;
+    iTotalBytes = iTrackOffsetBytes = 0;
+    iTrackOffset = 0;
     iJiffies = 0;
     iSeekable = true;
     iStopCount = 0;
@@ -751,7 +752,9 @@ Msg* SuiteCodecControllerPcmSize::CreateAudio()
 void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
 {
     static const TUint kAudioBytes = 6144;
-    static const TUint64 kJiffiesPerMsg = (Jiffies::kPerSecond / 44100) * kSamplesPerMsg;
+    static const TUint64 kJiffiesPerEncodedMsg = (Jiffies::kPerSecond / 44100) * kSamplesPerMsg;
+    static const TUint kMaxDecodedBufferedMs = 5;   // dependant on value in CodecController
+    static const TUint kMaxDecodedBufferedJiffies = Jiffies::kPerMs * kMaxDecodedBufferedMs;
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
     Queue(CreateTrack());
     PullNext(EMsgTrack);
@@ -761,12 +764,22 @@ void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
     while (iTrackOffsetBytes < kAudioBytes) {
         Queue(CreateAudio());
     }
+    Queue(CreateEncodedStream());
+
     // Pushing a MsgEncodedAudio should cause a MsgDecodedStream to be pushed
     // out other end of CodecController.
     PullNext(EMsgDecodedStream);
-    while (iJiffies < iTrackOffset) {
-        PullNext(EMsgAudioPcm, kJiffiesPerMsg);
+    while (iJiffies < (iTrackOffset-kMaxDecodedBufferedJiffies)) {
+        PullNext(EMsgAudioPcm, kMaxDecodedBufferedJiffies);
     }
+    if (iJiffies < iTrackOffset) {
+        // Still a final (shorter) MsgAudioPcm to pull.
+        const TUint64 finalMsgJiffies = iTrackOffset-iJiffies;
+        PullNext(EMsgAudioPcm, finalMsgJiffies);
+    }
+
+    PullNext(EMsgEncodedStream);
+    PullNext(EMsgDecodedStream);    // dummy codec will always recognise a stream and output MsgDecodedStream
 
     ASSERT(iTrackOffsetBytes == kAudioBytes); // check correct number of bytes have been output by test code
     TEST(iJiffies == iTrackOffset);

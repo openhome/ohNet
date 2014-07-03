@@ -266,6 +266,7 @@ private:
     void Queue(Msg* aMsg);
     TBool QueueTrackData() const;
     void ReleaseAudioEncoded();
+    void FlushAudioPcm();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
 private: // ISeeker
     void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
@@ -307,6 +308,8 @@ private: // IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
+    static const TUint kMaxDecodedBufferedMs = 5; // buffer MsgAudioPcm until we have, at most, this many ms
+                                                  // (unless we hit DecodedAudio::kMaxBytes first)
     MsgFactory& iMsgFactory;
     Rewinder iRewinder;
     Logger* iLoggerRewinder;
@@ -331,6 +334,7 @@ private:
     TUint iSeekHandle;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
+    MsgAudio* iAudioPcm;
 
     TBool iSeekable;
     TBool iLive;
