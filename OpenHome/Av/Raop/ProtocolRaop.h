@@ -15,6 +15,7 @@ namespace Av {
 
 class SocketUdpServer;
 class UdpServerManager;
+class IRaopDiscovery;
 
 class RaopAudio
 {

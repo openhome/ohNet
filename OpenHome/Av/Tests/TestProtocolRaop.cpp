@@ -152,7 +152,7 @@ DummyFiller::DummyFiller(Environment& aEnv, Net::DvStack& aDvStack, const TChar*
     TUint audioId = iServerManager.CreateServer(kPortAudio);
     TUint controlId = iServerManager.CreateServer(kPortControl);
     TUint timingId = iServerManager.CreateServer(kPortTiming);
-    iProtocolManager->Add(ProtocolFactory::NewRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId));
+    iProtocolManager->Add(new ProtocolRaop(aEnv, *iRaopDiscovery, iServerManager, audioId, controlId));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 
     SocketUdpServer& audioServer = iServerManager.Find(audioId);
