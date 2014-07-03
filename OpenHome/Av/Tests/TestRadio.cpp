@@ -5,7 +5,7 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>

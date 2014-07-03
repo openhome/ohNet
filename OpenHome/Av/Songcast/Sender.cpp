@@ -1,4 +1,4 @@
-#include <OpenHome/Media/Sender.h>
+#include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
@@ -11,6 +11,7 @@
 #include <vector>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 

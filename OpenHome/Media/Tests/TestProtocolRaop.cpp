@@ -7,7 +7,7 @@
 #include <OpenHome/Media/Protocol/ProtocolRaop.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/UdpServer.h>
 #include <OpenHome/Av/InfoProvider.h>

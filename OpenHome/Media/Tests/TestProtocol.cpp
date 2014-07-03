@@ -7,7 +7,7 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
@@ -15,6 +15,7 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 // Songcast
+#include <OpenHome/Av/Songcast/CodecOhm.h>
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
@@ -42,7 +43,7 @@ DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvide
     iTrackFactory = new TrackFactory(aInfoAggregator, 10);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iTimestamper = new DefaultTimestamper(aEnv);
-    aPipeline.AddCodec(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
+    aPipeline.AddCodec(new CodecOhm(*iOhmMsgFactory));
 
     iProtocolManager = new ProtocolManager(aPipeline, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
