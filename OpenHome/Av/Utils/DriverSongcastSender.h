@@ -4,7 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 

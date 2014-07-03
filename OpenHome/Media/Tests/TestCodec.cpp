@@ -8,7 +8,7 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Private/File.h>

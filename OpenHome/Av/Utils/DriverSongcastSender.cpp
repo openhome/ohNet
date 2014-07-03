@@ -7,7 +7,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Private/Timer.h>
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>

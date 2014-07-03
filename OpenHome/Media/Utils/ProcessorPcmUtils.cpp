@@ -1,4 +1,4 @@
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

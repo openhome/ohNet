@@ -4,7 +4,7 @@
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/InfoProvider.h>
 #include "AllocatorInfoLogger.h"
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/ClockPuller.h>
 
 #include <string.h>

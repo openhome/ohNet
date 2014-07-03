@@ -7,7 +7,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/CodecController.h>
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Buffer.h>

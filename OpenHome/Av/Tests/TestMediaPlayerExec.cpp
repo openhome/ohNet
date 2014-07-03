@@ -4,7 +4,7 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/DriverBasic.h>
+#include <OpenHome/Media/Utils/DriverBasic.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include "TestMediaPlayer.h"
 #include <OpenHome/Private/Printer.h>
