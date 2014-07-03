@@ -1,4 +1,3 @@
-#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
