@@ -253,14 +253,32 @@ def build(bld):
                 'OpenHome/Av/MediaPlayer.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/VolumeManager.cpp',
-                'Generated/DvUpnpOrgAVTransport1.cpp',
-                'OpenHome/Av/UpnpAv/ProviderAvTransport.cpp',
-                'Generated/DvUpnpOrgConnectionManager1.cpp',
-                'OpenHome/Av/UpnpAv/ProviderConnectionManager.cpp',
-                'Generated/DvUpnpOrgRenderingControl1.cpp',
-                'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
-                'OpenHome/Av/UpnpAv/UpnpAv.cpp',
-                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp',
+                'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
+                'OpenHome/Configuration/BufferPtrCmp.cpp',
+                'OpenHome/Configuration/ConfigManager.cpp',
+                'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
+                'OpenHome/Configuration/ProviderConfig.cpp',
+                'OpenHome/PowerManager.cpp',
+            ],
+            use=['OHNET', 'OPENSSL', 'OHNETMON'],
+            target='ohMediaPlayer')
+
+
+    # Library
+    bld.stlib(
+            source=[
+                'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
+                'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
+                'OpenHome/Av/Playlist/SourcePlaylist.cpp',
+                'OpenHome/Av/Playlist/TrackDatabase.cpp',
+                'OpenHome/Av/Playlist/UriProviderPlaylist.cpp'
+            ],
+            use=['OHNET', 'ohMediaPlayer'],
+            target='SourcePlaylist')
+
+    # Library
+    bld.stlib(
+            source=[
                 'OpenHome/Av/Radio/SourceRadio.cpp',
                 'OpenHome/Av/Radio/PresetDatabase.cpp',
                 'OpenHome/Av/Radio/TuneIn.cpp',
@@ -270,12 +288,13 @@ def build(bld):
                 'OpenHome/Av/Radio/ContentPls.cpp',
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
-                'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
-                'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
-                'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
-                'OpenHome/Av/Playlist/SourcePlaylist.cpp',
-                'OpenHome/Av/Playlist/TrackDatabase.cpp',
-                'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
+            ],
+            use=['OHNET', 'ohMediaPlayer'],
+            target='SourceRadio')
+
+    # Library
+    bld.stlib(
+            source=[
                 'OpenHome/Av/Songcast/Ohm.cpp',
                 'OpenHome/Av/Songcast/OhmMsg.cpp',
                 'OpenHome/Av/Songcast/OhmSender.cpp',
@@ -291,15 +310,9 @@ def build(bld):
                 'OpenHome/Av/Songcast/SourceReceiver.cpp',
                 'OpenHome/Av/Songcast/Sender.cpp',
                 'OpenHome/Av/Utils/DriverSongcastSender.cpp',
-                'OpenHome/Configuration/BufferPtrCmp.cpp',
-                'OpenHome/Configuration/ConfigManager.cpp',
-                'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
-                'OpenHome/Configuration/ProviderConfig.cpp',
-                'OpenHome/PowerManager.cpp',
             ],
-            use=['OHNET', 'OPENSSL', 'OHNETMON'],
-            target='ohMediaPlayer')
-
+            use=['OHNET', 'ohMediaPlayer'],
+            target='SourceSongcast')
 
     # Library
     bld.stlib(
@@ -309,10 +322,25 @@ def build(bld):
                 'OpenHome/Av/Raop/RaopHeader.cpp',
                 'OpenHome/Av/Raop/ProtocolRaop.cpp',
                 'OpenHome/Av/Raop/UdpServer.cpp',
-                'OpenHome/Av/Raop/CodecRaop.cpp',
+                'OpenHome/Av/Raop/CodecRaop.cpp'
             ],
-            use=['OHNET', 'OPENSSL', 'CodecAlacBase'],
+            use=['OHNET', 'OPENSSL', 'ohMediaPlayer', 'CodecAlacBase'],
             target='SourceRaop')
+
+    # Library
+    bld.stlib(
+            source=[
+                'Generated/DvUpnpOrgAVTransport1.cpp',
+                'OpenHome/Av/UpnpAv/ProviderAvTransport.cpp',
+                'Generated/DvUpnpOrgConnectionManager1.cpp',
+                'OpenHome/Av/UpnpAv/ProviderConnectionManager.cpp',
+                'Generated/DvUpnpOrgRenderingControl1.cpp',
+                'OpenHome/Av/UpnpAv/ProviderRenderingControl.cpp',
+                'OpenHome/Av/UpnpAv/UpnpAv.cpp',
+                'OpenHome/Av/UpnpAv/UriProviderRepeater.cpp'
+            ],
+            use=['OHNET', 'ohMediaPlayer'],
+            target='SourceUpnpAv')
 
     # Wav
     bld.stlib(
@@ -535,7 +563,7 @@ def build(bld):
 
     bld.program(
             source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourceRaop', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayerTestUtils'],
             target='TestShell',
             install_path=None)
     bld.program(
@@ -610,7 +638,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestContentProcessorMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourceRadio', 'ohMediaPlayerTestUtils'],
             target='TestContentProcessor',
             install_path=None)
     bld.program(
@@ -690,32 +718,32 @@ def build(bld):
     #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourceUpnpAv', 'ohMediaPlayerTestUtils'],
             target='TestUpnpErrors',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestTrackDatabaseMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourcePlaylist', 'ohMediaPlayerTestUtils'],
             target='TestTrackDatabase',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourcePlaylist', 'ohMediaPlayerTestUtils'],
             target='TestPlaylist',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestRadioMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourceRadio', 'SourceSongcast', 'ohMediaPlayerTestUtils'],
             target='TestRadio',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourceUpnpAv', 'ohMediaPlayerTestUtils'],
             target='TestUriProviderRepeater',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourceRaop', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -739,7 +767,7 @@ def build(bld):
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecVorbis', 'CodecWav', 'libOgg']
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecVorbis', 'CodecWav', 'libOgg']
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,

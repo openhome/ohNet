@@ -15,12 +15,6 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-// Songcast
-#include <OpenHome/Av/Songcast/CodecOhm.h>
-#include <OpenHome/Av/Songcast/ProtocolOhm.h>
-#include <OpenHome/Av/Songcast/ProtocolOhu.h>
-#include <OpenHome/Av/Songcast/OhmMsg.h>
-#include <OpenHome/Av/Songcast/ProtocolOhBase.h>
 
 #include <stdio.h>
 
@@ -35,33 +29,25 @@ using namespace OpenHome::Av;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager)
+DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& /*aPowerManager*/)
     : Thread("SPHt")
     , iPipeline(aPipeline)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iTrackFactory = new TrackFactory(aInfoAggregator, 10);
-    iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
-    iTimestamper = new DefaultTimestamper(aEnv);
-    aPipeline.AddCodec(new CodecOhm(*iOhmMsgFactory));
 
     iProtocolManager = new ProtocolManager(aPipeline, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewTone(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewRtsp(aEnv, Brn("GUID-TestProtocol-0123456789")));
-    static const Brn kSongcastMode("Songcast");
-    iProtocolManager->Add(new ProtocolOhm(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode));
-    iProtocolManager->Add(new ProtocolOhu(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode, aPowerManager));
 }
 
 DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
     delete iTrackFactory;
-    delete iOhmMsgFactory;
-    delete iTimestamper;
 }
 
 void DummyFiller::Start(const Brx& aUrl)
