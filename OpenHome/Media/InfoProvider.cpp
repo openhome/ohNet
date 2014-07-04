@@ -1,4 +1,4 @@
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
@@ -9,7 +9,7 @@
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Av;
+using namespace OpenHome::Media;
 
 
 static const TChar kShellCommandInfo[] = "info";

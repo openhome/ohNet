@@ -9,7 +9,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 namespace OpenHome {
 namespace Media {

@@ -1,7 +1,7 @@
 #include <OpenHome/Media/Codec/AacBase.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <string.h>
 

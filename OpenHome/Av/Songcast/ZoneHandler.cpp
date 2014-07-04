@@ -183,9 +183,9 @@ void ZoneHandler::Run()
                         OhzHeaderZoneQuery headerZoneQuery;
                         headerZoneQuery.Internalise(iReadBuffer, header);
                         Brn zone = iReadBuffer.Read(headerZoneQuery.ZoneBytes());
-                        LOG(kMedia, "ZoneHandler::Run received zone query for ");
-                        LOG(kMedia, zone);
-                        LOG(kMedia, "\n");
+                        LOG(kSongcast, "ZoneHandler::Run received zone query for ");
+                        LOG(kSongcast, zone);
+                        LOG(kSongcast, "\n");
                         if (zone == iSenderZone) {
                             SendZoneUri(1);
                         }

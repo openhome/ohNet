@@ -2,7 +2,7 @@
 """TestAirplayFunctions - test Net Aux source functionality.
  
 Parameters:
-    arg#1 - DUT ['local' for internal SoftPlayer on loopback]
+    arg#1 - DUT ['local' for internal SoftPlayer (NOT on loopback)]
     arg#2 - iTunes server (PC name)
     
 NOTES
@@ -50,7 +50,6 @@ class TestAirplayFunctions( BASE.BaseTest ):
     def Test( self, args ):
         """Net Aux test"""
         itunesServer = None
-        loopback     = False
 
         # parse command line arguments
         try:
@@ -61,10 +60,9 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         if self.dutName.lower() == 'local':
-            loopback = True
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev' )
             self.dutName = self.soft.name
-            time.sleep( 5 )     # allow time for iTunes to discover device
+            time.sleep( 10 )     # allow time for iTunes to discover device
 
         # setup self.dacp (iTunes) control
         self.dacp = DacpClient.DacpClient( itunesServer )
@@ -76,7 +74,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
                     
         # setup DUT
         self.dutDev = self.dutName.split( ':' )[0]
-        self.dut = Volkano.VolkanoDevice( self.dutName, aIsDut=False, aLoopback=loopback )
+        self.dut = Volkano.VolkanoDevice( self.dutName, aIsDut=False )
         self.dut.product.AddSubscriber( self.__ProductEvtCb )
                         
         # get list of available tracks from iTunes
@@ -182,6 +180,9 @@ class TestAirplayFunctions( BASE.BaseTest ):
         
     def _CheckAudioFreq( self ):
         """Check audio frequency of Net Aux tracks"""
+        # This does NOT check actual frequency of playback as it has been adapted
+        # to work with SoftPlayers. It merely checks that playback occurs without
+        # any errors.
         if self.dut.volume is not None:
             self.dut.volume.volume = 80
         self.srcChanged.clear()
@@ -205,9 +206,13 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Info( '' )
             self.dacp.PlayTrack( title )
             self._MonitorPlayback( 10 )
-            
+        self.dacp.Pause()
+
     def _CheckVolume( self ):
         """Check volume control on server is reflected in DS output"""
+        # This does NOT check actual frequency of playback as it has been adapted
+        # to work with SoftPlayers. It merely checks that volume can be set without
+        # # any adverse affects
         if self.dut.volume is not None:
             self.dut.volume.volume = 80
         self.srcChanged.clear()
@@ -226,32 +231,38 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Info( 'AirPlay volume set to %d' % setVol )
             self.log.Info ( '' )
             self.dacp.volume = setVol
-            self._MonitorPlayback( 10 )
-            
-    def _MonitorPlayback( self, aSecs ):
-        """Monitor AirPlay playback"""
-        self.dut.time.AddSubscriber( self.__TimeEvtCb )
-        self.timedOut = False
-        t = LogThread.Timer( aSecs, self.__TimerCb )
-        t.start()
-        while not self.timedOut:
-            self.timeEvent.clear()
-            self.timeEvent.wait( 2 )
-            if not self.timeEvent.is_set():
-                self.log.Fail( self.dutDev, 'No time update for 2s during Airplay playback' )
-            else:
-                info = self.dacp.nowPlaying
-                self.log.Info( self.dacp.dev, info )        
-        self.dut.time.RemoveSubscriber( self.__TimeEvtCb )
+            self._MonitorPlayback( 5 )
+        self.dacp.Pause()
 
-    @staticmethod
-    def _ToDb( aVmeas, aVzero ):
-        """Convert amplitude from Vrms to dB"""
-        try:
-            db = round( 20 * math.log10( aVmeas/aVzero ), 3 )
-        except:
-            db = -999
-        return db
+    def _MonitorPlayback( self, aSecs ):
+        """Check AirPlay playback over specified period"""
+        self.dut.time.AddSubscriber( self.__TimeEvtCb )
+        self.timeEvent.clear()
+        self.timeEvent.wait( 5 )
+        if not self.timeEvent.is_set():
+            self.log.Fail( self.dutDev, 'Airplay playback did not start within 5s' )
+        else:
+            info = self.dacp.nowPlaying
+            dutStartTime = self.dut.time.seconds
+            apStartTime = int( info['remains'] )
+            self.timedOut = False
+            t = LogThread.Timer( aSecs, self.__TimedOutCb )
+            t.start()
+            while not self.timedOut:
+                self.timeEvent.clear()
+                self.timeEvent.wait( 2 )
+                if not self.timeEvent.is_set():
+                    self.log.Fail( self.dutDev, 'No time update for 2s during Airplay playback' )
+                else:
+                    info = self.dacp.nowPlaying
+                    self.log.Info( self.dacp.dev, info )
+            dutPlayTime = self.dut.time.seconds-dutStartTime
+            apPlayTime = apStartTime-int( info['remains'] )
+            self.log.CheckLimits( self.dutDev, 'GELE', dutPlayTime, aSecs, aSecs+1,
+                '%d/%d actual/expected DUT measured playback time' % (dutPlayTime, aSecs) )
+            self.log.CheckLimits( self.dutDev, 'GELE', apPlayTime, aSecs, aSecs+1,
+                '%d/%d actual/expected AirPlay measured playback time' % (apPlayTime, aSecs) )
+        self.dut.time.RemoveSubscriber( self.__TimeEvtCb )
 
     # noinspection PyUnusedLocal
     def __ProductEvtCb( self, service, svName, svVal, svSeq ):
@@ -264,8 +275,8 @@ class TestAirplayFunctions( BASE.BaseTest ):
         """Callback on events from Time service"""
         self.timeEvent.set()
 
-    def __TimerCb( self ):
-        """Timer CB - set flag on expiry"""
+    def __TimedOutCb( self ):
+        """TimedOut CB - set flag on expiry"""
         self.timedOut = True
         
 if __name__ == '__main__':

@@ -1,46 +1,21 @@
+#include <OpenHome/Av/Raop/CodecRaop.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Media/Codec/AlacBase.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Media/Protocol/RaopHeader.h>
+#include <OpenHome/Av/Raop/RaopHeader.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Av/Debug.h>
-
-namespace OpenHome {
-namespace Media {
-namespace Codec {
-
-class CodecRaop : public CodecAlacBase
-{
-public:
-    CodecRaop();
-    ~CodecRaop();
-private: // from CodecBase
-    TBool Recognise();
-    void StreamInitialise();
-    void Process();
-    TBool TrySeek(TUint aStreamId, TUint64 aSample);
-    void StreamCompleted();
-};
-
-} // namespace Codec
-} // namespace Media
-} // namespace OpenHome
-
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
-
-CodecBase* CodecFactory::NewRaop()
-{ // static
-    return new CodecRaop();
-}
+using namespace OpenHome::Av;
 
 
 // CodecRaop

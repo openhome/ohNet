@@ -13,7 +13,7 @@
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
-#include <OpenHome/Media/IconDriverSongcastSender.h> // FIXME - poor location for this file
+#include <OpenHome/Av/Utils/IconDriverSongcastSender.h>
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 
@@ -192,7 +192,6 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
@@ -202,16 +201,6 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
-
-    // Add content processors (mainly required for Radio)
-    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
-    iMediaPlayer->Add(ContentProcessorFactory::NewM3u());
-    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
-    iMediaPlayer->Add(ContentProcessorFactory::NewPls());
-    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
-    iMediaPlayer->Add(ContentProcessorFactory::NewOpml());
-    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
-    iMediaPlayer->Add(ContentProcessorFactory::NewAsx());
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));

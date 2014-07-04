@@ -55,6 +55,7 @@
 #     Connect via ssh and issue commands. Command arguments similar to python().
 #  
 
+import os
 from ci import (
         build_step, require_version, add_option, specify_optional_steps,
         build_condition, default_platform, get_dependency_args,
@@ -112,6 +113,9 @@ def setup_universal(context):
     context.configure_args = get_dependency_args(env={'debugmode':env['OH_DEBUG']})
     context.configure_args += ["--dest-platform", env["OH_PLATFORM"]]
     context.configure_args += ["--" + context.options.debugmode.lower()]
+    context.integration_test_media_server = context.env.get('MEDIA_SERVER', 'N/A')
+    context.integration_test_dacp_server = context.env.get('DACP_SERVER', 'N/A')
+    context.integration_test_log_dir = context.env.get('LOG_DIR', 'NightlyLogs')
 
 # Extra Windows build configuration.
 @build_step()
@@ -123,6 +127,10 @@ def setup_windows(context):
         OPENHOME_NO_ERROR_DIALOGS="1",
         OHNET_NO_ERROR_DIALOGS="1")
     env.update(get_vsvars_environment())
+    if os.environ.has_key( 'HOMEDRIVE' ):
+        context.integration_test_log_dir = os.path.join(os.environ['HOMEDRIVE']+'\\', context.integration_test_log_dir)
+    else:
+        context.integration_test_log_dir = os.path.join('C:\\', context.integration_test_log_dir)
 
 # Extra Linux build configuration.
 @build_step()
@@ -132,6 +140,7 @@ def setup_windows(context):
 @build_condition(OH_PLATFORM="Linux-ppc32")
 def setup_linux(context):
     env = context.env
+    context.integration_test_log_dir = os.path.join(os.environ['HOME'], context.integration_test_log_dir)
 
 # Principal build steps.
 @build_step("fetch", optional=True)
@@ -171,6 +180,12 @@ def install(context):
 @build_condition(OH_PLATFORM="Windows-x64")
 def integration_test(context):
     python("IntegrationTests/SuitePostBuild.py")
+
+@build_step("integration_test_full", optional=True, default=False)
+@build_condition(OH_PLATFORM="Windows-x86")
+@build_condition(OH_PLATFORM="Linux-x86")
+def integration_test_full(context):
+    python("IntegrationTests/SuiteLocal.py", context.integration_test_media_server, context.integration_test_dacp_server, context.integration_test_log_dir )
 
 @build_step("publish", optional=True, default=False)
 def publish(context):

@@ -1,10 +1,10 @@
-#include <OpenHome/Media/UdpServer.h>
+#include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 
 using namespace OpenHome;
-using namespace OpenHome::Media;
+using namespace OpenHome::Av;
 using namespace OpenHome::TestFramework;
 
 

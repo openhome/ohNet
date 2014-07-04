@@ -2,7 +2,7 @@
 #define HEADER_TESTPROTOCOL
 
 #include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/PowerManager.h>
 
@@ -16,12 +16,12 @@ namespace Av {
 }
 namespace Media {
 class ProtocolManager;
-class DriverSongcastSender;
+class DriverBasic;
 
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager);
+    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
@@ -34,8 +34,6 @@ private:
     Pipeline& iPipeline;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
-    Av::OhmMsgFactory* iOhmMsgFactory;
-    Av::DefaultTimestamper* iTimestamper;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -67,7 +65,8 @@ private:
     PowerManager iPowerManager;
     DummyFiller* iFiller;
     AllocatorInfoLogger iInfoAggregator;
-    DriverSongcastSender* iDriver;
+    DriverBasic* iDriver; /* DriverSongcastSender allows us to listen to audio
+                             but we'd prefer not to depend on the Av namespace */
     Brh iUrl;
     TUint iSeconds;
     TUint iTrackDurationSeconds;

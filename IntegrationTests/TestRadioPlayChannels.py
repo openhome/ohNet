@@ -132,8 +132,8 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                     continue
 
                 # start playback
-                self.startTime = time.time()
                 self._StartPlayback( title )
+                self.startTime = time.time()
 
                 # log 'now playing' info, set and wait for playback timer
                 if self.sender.radio.transportState == 'Playing':

@@ -7,10 +7,11 @@
 #include <OpenHome/Av/Raop/SourceRaop.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
-#include <OpenHome/Media/Protocol/ProtocolRaop.h>
+#include <OpenHome/Av/Raop/ProtocolRaop.h>
 #include <OpenHome/Av/Raop/Raop.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
+#include <OpenHome/Av/Raop/CodecRaop.h>
 
 #include <limits.h>
 
@@ -66,6 +67,7 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
 
     iProtocol = new ProtocolRaop(aMediaPlayer.Env(), *iRaopDiscovery, iServerManager, iAudioId, iControlId);          // creating directly, rather than through ProtocolFactory
     iPipeline.Add(iProtocol);   // takes ownership
+    iPipeline.Add(new CodecRaop());
     iPipeline.AddObserver(*this);
 
     iServerAudio = &iServerManager.Find(iAudioId);

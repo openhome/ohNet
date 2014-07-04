@@ -6,6 +6,7 @@
 #include <OpenHome/Av/Radio/ProviderRadio.h>
 #include <OpenHome/Av/Radio/TuneIn.h>
 #include <OpenHome/Media/PipelineManager.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
@@ -46,6 +47,14 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
     iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, aConfigInit);
+    iPipeline.Add(ContentProcessorFactory::NewM3u());
+    iPipeline.Add(ContentProcessorFactory::NewM3u());
+    iPipeline.Add(ContentProcessorFactory::NewPls());
+    iPipeline.Add(ContentProcessorFactory::NewPls());
+    iPipeline.Add(ContentProcessorFactory::NewOpml());
+    iPipeline.Add(ContentProcessorFactory::NewOpml());
+    iPipeline.Add(ContentProcessorFactory::NewAsx());
+    iPipeline.Add(ContentProcessorFactory::NewAsx());
     iPipeline.AddObserver(*this);
 }
 

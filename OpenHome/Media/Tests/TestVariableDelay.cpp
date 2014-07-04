@@ -2,9 +2,9 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/VariableDelay.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Av/InfoProvider.h>
-#include "AllocatorInfoLogger.h"
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <limits.h>

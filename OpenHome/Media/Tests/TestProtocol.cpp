@@ -7,18 +7,14 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Media/Utils/DriverBasic.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Av/Debug.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-// Songcast
-#include <OpenHome/Av/Songcast/ProtocolOhm.h>
-#include <OpenHome/Av/Songcast/ProtocolOhu.h>
-#include <OpenHome/Av/Songcast/OhmMsg.h>
-#include <OpenHome/Av/Songcast/ProtocolOhBase.h>
+#include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 #include <stdio.h>
 
@@ -33,33 +29,25 @@ using namespace OpenHome::Av;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager)
+DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator, IPowerManager& /*aPowerManager*/)
     : Thread("SPHt")
     , iPipeline(aPipeline)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iTrackFactory = new TrackFactory(aInfoAggregator, 10);
-    iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
-    iTimestamper = new DefaultTimestamper(aEnv);
-    aPipeline.AddCodec(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
 
     iProtocolManager = new ProtocolManager(aPipeline, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewTone(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewRtsp(aEnv, Brn("GUID-TestProtocol-0123456789")));
-    static const Brn kSongcastMode("Songcast");
-    iProtocolManager->Add(new ProtocolOhm(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode));
-    iProtocolManager->Add(new ProtocolOhu(aEnv, *iOhmMsgFactory, *iTrackFactory, *iTimestamper, kSongcastMode, aPowerManager));
 }
 
 DummyFiller::~DummyFiller()
 {
     delete iProtocolManager;
     delete iTrackFactory;
-    delete iOhmMsgFactory;
-    delete iTimestamper;
 }
 
 void DummyFiller::Start(const Brx& aUrl)
@@ -95,14 +83,14 @@ EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
 
 // TestProtocol
 
-TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& aSenderUdn, TUint aSenderChannel)
+TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx& aUrl, const Brx& /*aSenderUdn*/, TUint /*aSenderChannel*/)
     : iUrl(aUrl)
     , iStreamId(0)
 {
     iPipeline = new Pipeline(iInfoAggregator, *this, *this, kMaxDriverJiffies);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
-    iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
+    iDriver = new DriverBasic(*iPipeline, aDvStack.Env());
 }
 
 TestProtocol::~TestProtocol()

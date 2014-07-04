@@ -1,10 +1,10 @@
-#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 
 /* Example asx files
 
@@ -44,13 +44,13 @@ Ref2=http://212.58.252.33:80/wms/england/lrcumbria?MSWMExt=.asf
 */
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
-class ContentAsx : public ContentProcessor
+class ContentAsx : public Media::ContentProcessor
 {
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes);
     void Reset();
 private:
     enum FormatVersion
@@ -64,10 +64,11 @@ private:
     TBool iInEntryBlock;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 
