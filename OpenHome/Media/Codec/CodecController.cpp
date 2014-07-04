@@ -714,8 +714,8 @@ void CodecController::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aSt
 // DecodedAudioBuffer
 
 CodecController::DecodedAudioBuffer::DecodedAudioBuffer(MsgFactory& aMsgFactory, TUint aJiffyLimit)
-    : iMsgFactory(aMsgFactory)
-    , iJiffiesMax(aJiffyLimit)
+    : iJiffiesMax(aJiffyLimit)
+    , iMsgFactory(aMsgFactory)
     , iChannels(0)
     , iSampleRate(0)
     , iBitDepth(0)
