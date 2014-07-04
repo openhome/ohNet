@@ -1,7 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Filler.h>
-#include <OpenHome/Av/InfoProvider.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Private/Thread.h>
 

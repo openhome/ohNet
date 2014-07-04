@@ -4,7 +4,7 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>

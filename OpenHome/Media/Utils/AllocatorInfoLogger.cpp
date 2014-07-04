@@ -1,4 +1,4 @@
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Msg.h>
 
@@ -18,7 +18,7 @@ void AllocatorInfoLogger::PrintStats()
     }
 }
 
-void AllocatorInfoLogger::Register(Av::IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
+void AllocatorInfoLogger::Register(IInfoProvider& aProvider, std::vector<Brn>& /*aSupportedQueries*/)
 {
     iInfoProviders.push_back(&aProvider);
 }

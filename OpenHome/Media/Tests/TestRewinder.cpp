@@ -1,7 +1,7 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Rewinder.h>
 #include <OpenHome/Media/Msg.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 #include <string.h>
 #include <vector>

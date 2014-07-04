@@ -5,8 +5,8 @@
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Av/InfoProvider.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 

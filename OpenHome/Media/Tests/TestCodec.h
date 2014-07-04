@@ -70,13 +70,13 @@ private:
     std::vector<AudioFileDescriptor> iStreamOnlyFiles;
 };
 
-class TestCodecInfoAggregator : public Av::IInfoAggregator
+class TestCodecInfoAggregator : public IInfoAggregator
 {
 public:
     TestCodecInfoAggregator();
     virtual ~TestCodecInfoAggregator();
 public: // from IInfoAggregator
-    void Register(Av::IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
+    void Register(IInfoProvider& aProvider, std::vector<Brn>& aSupportedQueries);
 };
 
 class TestCodecFlushIdProvider : public IFlushIdProvider
@@ -95,7 +95,7 @@ class TestCodecFiller : public Thread, private IPipelineIdProvider
 private:
     static const TUint kInvalidPipelineId = 0;
 public:
-    TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator);
+    TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator);
     ~TestCodecFiller();
     void Start(const Brx& aUrl);
     TUint TrackId();

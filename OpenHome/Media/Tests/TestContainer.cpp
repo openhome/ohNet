@@ -1,10 +1,10 @@
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Debug.h>
 
 #include <vector>

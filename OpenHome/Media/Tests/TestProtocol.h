@@ -2,7 +2,7 @@
 #define HEADER_TESTPROTOCOL
 
 #include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/PowerManager.h>
 
@@ -21,7 +21,7 @@ class DriverBasic;
 class DummyFiller : public Thread, private IPipelineIdProvider
 {
 public:
-    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager);
+    DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator, IPowerManager& aPowerManager);
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread

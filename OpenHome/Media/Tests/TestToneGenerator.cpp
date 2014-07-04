@@ -15,7 +15,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Globals.h>  // dummy Environment
 
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 
 using namespace OpenHome;

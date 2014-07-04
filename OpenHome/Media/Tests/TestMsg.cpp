@@ -1,7 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/RampArray.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 
 #include <string.h>

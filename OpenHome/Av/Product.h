@@ -8,7 +8,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/PowerManager.h>
 
@@ -43,7 +43,7 @@ public:
     virtual void SourceXmlChanged() = 0;
 };
 
-class Product : private IProduct, private IInfoProvider, private INonCopyable
+class Product : private IProduct, private Media::IInfoProvider, private INonCopyable
 {
 private:
     static const Brn kStartupSourceBase;
@@ -86,7 +86,7 @@ private:
 private: // from IProduct
     void Activate(ISource& aSource);
     void NotifySourceNameChanged(ISource& aSource);
-private: // from IInfoProvider
+private: // from Media::IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 private:
     Net::DvDevice& iDevice; // do we need to store this?

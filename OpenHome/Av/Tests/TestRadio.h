@@ -2,7 +2,7 @@
 #define HEADER_TESTRADIO
 
 #include <OpenHome/Media/PipelineManager.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 namespace OpenHome {
 namespace Net {

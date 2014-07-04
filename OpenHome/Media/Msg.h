@@ -8,7 +8,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 
 #include <limits.h>
 
@@ -19,7 +19,7 @@ namespace Media {
 
 class Allocated;
 
-class AllocatorBase : private Av::IInfoProvider
+class AllocatorBase : private IInfoProvider
 {
 public:
     ~AllocatorBase();
@@ -31,11 +31,11 @@ public:
     void GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCellsUsed, TUint& aCellsUsedMax) const;
     static const Brn kQueryMemory;
 protected:
-    AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator);
+    AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, IInfoAggregator& aInfoAggregator);
     Allocated* DoAllocate();
 private:
     Allocated* Read();
-private: // from Av::IInfoProvider
+private: // from IInfoProvider
     void QueryInfo(const Brx& aQuery, IWriter& aWriter);
 protected:
     FifoLiteDynamic<Allocated*> iFree;
@@ -51,12 +51,12 @@ private:
 template <class T> class Allocator : public AllocatorBase
 {
 public:
-    Allocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator);
+    Allocator(const TChar* aName, TUint aNumCells, IInfoAggregator& aInfoAggregator);
     virtual ~Allocator();
     T* Allocate();
 };
 
-template <class T> Allocator<T>::Allocator(const TChar* aName, TUint aNumCells, Av::IInfoAggregator& aInfoAggregator)
+template <class T> Allocator<T>::Allocator(const TChar* aName, TUint aNumCells, IInfoAggregator& aInfoAggregator)
     : AllocatorBase(aName, aNumCells, sizeof(T), aInfoAggregator)
 {
     for (TUint i=0; i<aNumCells; i++) {
@@ -1155,7 +1155,7 @@ public:
 class TrackFactory
 {
 public:
-    TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount);
+    TrackFactory(IInfoAggregator& aInfoAggregator, TUint aTrackCount);
     Track* CreateTrack(const Brx& aUri, const Brx& aMetaData);
 private:
     Allocator<Track> iAllocatorTrack;
@@ -1166,7 +1166,7 @@ private:
 class MsgFactory
 {
 public:
-    MsgFactory(Av::IInfoAggregator& aInfoAggregator,
+    MsgFactory(IInfoAggregator& aInfoAggregator,
                TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,

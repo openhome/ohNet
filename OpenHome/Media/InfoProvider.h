@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace OpenHome {
-namespace Av {
+namespace Media {
 
 class IInfoProvider
 {
@@ -39,7 +39,7 @@ private:
     QueryMap iQueries;
 };
 
-} // namespace Av
+} // namespace Media
 } // namespace OpenHome
 
 #endif // HEADER_INFO_PROVIDER

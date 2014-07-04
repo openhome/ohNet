@@ -2,7 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/VolumeManager.h>

@@ -30,7 +30,7 @@ class UriProvider;
 class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver
 {
 public:
-    PipelineManager(Av::IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, TUint aDriverMaxAudioBytes); // FIXME - config options
+    PipelineManager(IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory, TUint aDriverMaxAudioBytes); // FIXME - config options
     ~PipelineManager();
     /**
      * Signal that the pipeline should quit.

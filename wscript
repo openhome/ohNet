@@ -198,7 +198,7 @@ def build(bld):
     bld.stlib(
             source=[
                 'OpenHome/Av/FaultCode.cpp',
-                'OpenHome/Av/InfoProvider.cpp',
+                'OpenHome/Media/InfoProvider.cpp',
                 'OpenHome/Av/KvpStore.cpp',
                 'OpenHome/Av/ProviderUtils.cpp',
                 'OpenHome/Av/Product.cpp',
@@ -253,7 +253,7 @@ def build(bld):
                 'OpenHome/Av/MediaPlayer.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/VolumeManager.cpp',
-                'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
+                'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',

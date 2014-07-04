@@ -9,12 +9,12 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Utils/DriverBasic.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Debug.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 #include <stdio.h>
 
@@ -29,7 +29,7 @@ using namespace OpenHome::Av;
 
 // DummyFiller
 
-DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator, IPowerManager& /*aPowerManager*/)
+DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator, IPowerManager& /*aPowerManager*/)
     : Thread("SPHt")
     , iPipeline(aPipeline)
     , iNextTrackId(kInvalidPipelineId+1)
