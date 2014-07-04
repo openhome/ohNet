@@ -204,7 +204,7 @@ private:
     TUint iClientTimingPort;
 };
 
-class RaopDiscoveryServer : public IRaopDiscovery, private Av::IRaopObserver, private INonCopyable
+class RaopDiscoveryServer : public IRaopDiscovery, private IRaopObserver, private INonCopyable
 {
 public:
     RaopDiscoveryServer(Environment& aEnv, Net::DvStack& aDvStack, NetworkAdapter& aNif, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
@@ -241,7 +241,7 @@ private:
     static const TChar* kAdapterCookie;
     Environment& iEnv;
     NetworkAdapter& iAdapter;
-    std::vector<Av::IRaopServerObserver*> iObservers;
+    std::vector<IRaopServerObserver*> iObservers;
     RaopDevice* iRaopDevice;
     SocketTcpServer* iRaopDiscoveryServer;
     RaopDiscoverySession* iRaopDiscoverySession1;
@@ -249,7 +249,7 @@ private:
     Mutex iObserversLock;
 };
 
-class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private Av::IRaopServerObserver, private INonCopyable
+class RaopDiscovery : public IRaopDiscovery, public IPowerHandler, private IRaopServerObserver, private INonCopyable
 {
 public:
     RaopDiscovery(Environment& aEnv, Net::DvStack& aDvStack, IPowerManager& aPowerManager, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
@@ -287,7 +287,7 @@ private:
     const Bws<RaopDevice::kMaxNameBytes> iFriendlyName;
     const Bws<RaopDevice::kMacAddrBytes> iMacAddr;
     std::vector<RaopDiscoveryServer*> iServers;
-    std::vector<Av::IRaopObserver*> iObservers;
+    std::vector<IRaopObserver*> iObservers;
     TUint iCurrentAdapterChangeListenerId;
     TUint iSubnetListChangeListenerId;
     RaopDiscoveryServer* iCurrent; // protected by iServersLock

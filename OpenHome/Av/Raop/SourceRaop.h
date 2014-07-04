@@ -31,9 +31,9 @@ class SourceRaop : public Source, public IRaopObserver, private Media::IPipeline
 private:
     static const Brn kRaopPrefix;
 public:
-    SourceRaop(Av::IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
+    SourceRaop(IMediaPlayer& aMediaPlayer, Media::UriProviderSingleTrack& aUriProvider, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr);
     ~SourceRaop();
-    Av::IRaopDiscovery& Discovery();
+    IRaopDiscovery& Discovery();
 private: // from ISource
     void Activate();
     void Deactivate();
@@ -72,7 +72,7 @@ private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;
     Media::UriProviderSingleTrack& iUriProvider;
-    Av::RaopDiscovery* iRaopDiscovery;
+    RaopDiscovery* iRaopDiscovery;
     ProtocolRaop* iProtocol;
     UdpServerManager iServerManager;
     SocketUdpServer* iServerAudio;   // no ownership

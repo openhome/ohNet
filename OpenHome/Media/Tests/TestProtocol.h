@@ -34,8 +34,6 @@ private:
     Pipeline& iPipeline;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
-    Av::OhmMsgFactory* iOhmMsgFactory;
-    Av::DefaultTimestamper* iTimestamper;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;

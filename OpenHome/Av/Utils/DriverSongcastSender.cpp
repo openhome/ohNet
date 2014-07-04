@@ -121,7 +121,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
-    iOhmSenderDriver = new Av::OhmSenderDriver(iEnv);
+    iOhmSenderDriver = new OhmSenderDriver(iEnv);
 
     Bws<64> udn("Driver-");
     udn.Append(aName);
@@ -142,9 +142,9 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iZoneHandler = new Av::ZoneHandler(iEnv, udn);
+    iZoneHandler = new ZoneHandler(iEnv, udn);
 
-    iOhmSender = new Av::OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
+    iOhmSender = new OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
     iOhmSender->SetEnabled(true);
     iDevice->SetEnabled();
     iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback));

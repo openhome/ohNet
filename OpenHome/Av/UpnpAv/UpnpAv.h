@@ -39,7 +39,7 @@ class SourceUpnpAv : public Source, private ISourceUpnpAv, private Media::IPipel
 public:
     static const TChar* kSourceName;
 public:
-    SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Av::UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols);
+    SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, UriProviderRepeater& aUriProvider, const Brx& aSupportedProtocols);
     ~SourceUpnpAv();
 private:
     void EnsureActive();
@@ -66,7 +66,7 @@ private:
     Mutex iActivationLock;
     Net::DvDevice& iDevice;
     Media::PipelineManager& iPipeline;
-    Av::UriProviderRepeater& iUriProvider;
+    UriProviderRepeater& iUriProvider;
     Media::Track* iTrack;
     ProviderAvTransport* iProviderAvTransport;
     ProviderConnectionManager* iProviderConnectionManager;
