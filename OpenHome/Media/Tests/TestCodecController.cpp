@@ -465,6 +465,7 @@ void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg, TUint64 aExpected
     TUint64 jiffiesStart = iJiffies;
     PullNext(aExpectedMsg);
     TUint64 jiffiesDiff = iJiffies - jiffiesStart;
+    //Log::Print("jiffiesDiff: %llu, aExpectedJiffies: %llu\n", jiffiesDiff, aExpectedJiffies);
     TEST(jiffiesDiff == aExpectedJiffies);
 }
 
@@ -755,6 +756,11 @@ void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
     static const TUint64 kJiffiesPerEncodedMsg = (Jiffies::kPerSecond / 44100) * kSamplesPerMsg;
     static const TUint kMaxDecodedBufferedMs = 5;   // dependant on value in CodecController
     static const TUint kMaxDecodedBufferedJiffies = Jiffies::kPerMs * kMaxDecodedBufferedMs;
+
+    // Msg will be output when we reach/violate jiffies capacity, so the +1 msg will trigger the output.
+    ASSERT(kMaxDecodedBufferedJiffies%kJiffiesPerEncodedMsg != 0);
+    static const TUint msgCount = (kMaxDecodedBufferedJiffies/kJiffiesPerEncodedMsg) + 1;
+
     iTotalBytes = kWavHeaderBytes + kAudioBytes;
     Queue(CreateTrack());
     PullNext(EMsgTrack);
@@ -770,7 +776,7 @@ void SuiteCodecControllerPcmSize::TestPcmIsExpectedSize()
     // out other end of CodecController.
     PullNext(EMsgDecodedStream);
     while (iJiffies < (iTrackOffset-kMaxDecodedBufferedJiffies)) {
-        PullNext(EMsgAudioPcm, kMaxDecodedBufferedJiffies);
+        PullNext(EMsgAudioPcm, kJiffiesPerEncodedMsg*msgCount);
     }
     if (iJiffies < iTrackOffset) {
         // Still a final (shorter) MsgAudioPcm to pull.
