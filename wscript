@@ -212,10 +212,6 @@ def build(bld):
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
                 'Generated/DvAvOpenhomeOrgSender1.cpp',
-                'OpenHome/Av/Songcast/Ohm.cpp',
-                'OpenHome/Av/Songcast/OhmMsg.cpp',
-                'OpenHome/Av/Songcast/OhmSender.cpp',
-                'OpenHome/Av/Songcast/OhmSocket.cpp',
                 'OpenHome/Media/AudioReservoir.cpp',
                 'OpenHome/Media/DecodedAudioReservoir.cpp',
                 'OpenHome/Media/EncodedAudioReservoir.cpp',
@@ -274,17 +270,16 @@ def build(bld):
                 'OpenHome/Av/Radio/ContentPls.cpp',
                 'Generated/DvAvOpenhomeOrgRadio1.cpp',
                 'OpenHome/Av/Radio/ProviderRadio.cpp',
-                'OpenHome/Av/Raop/Raop.cpp',
-                'OpenHome/Av/Raop/SourceRaop.cpp',
-                'OpenHome/Av/Raop/RaopHeader.cpp',
-                'OpenHome/Av/Raop/ProtocolRaop.cpp',
-                'OpenHome/Av/Raop/UdpServer.cpp',
                 'OpenHome/Media/Tests/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'Generated/DvAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
                 'OpenHome/Av/Playlist/SourcePlaylist.cpp',
                 'OpenHome/Av/Playlist/TrackDatabase.cpp',
                 'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
+                'OpenHome/Av/Songcast/Ohm.cpp',
+                'OpenHome/Av/Songcast/OhmMsg.cpp',
+                'OpenHome/Av/Songcast/OhmSender.cpp',
+                'OpenHome/Av/Songcast/OhmSocket.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhBase.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhu.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhm.cpp',
@@ -304,6 +299,20 @@ def build(bld):
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohMediaPlayer')
+
+
+    # Library
+    bld.stlib(
+            source=[
+                'OpenHome/Av/Raop/Raop.cpp',
+                'OpenHome/Av/Raop/SourceRaop.cpp',
+                'OpenHome/Av/Raop/RaopHeader.cpp',
+                'OpenHome/Av/Raop/ProtocolRaop.cpp',
+                'OpenHome/Av/Raop/UdpServer.cpp',
+                'OpenHome/Av/Raop/CodecRaop.cpp',
+            ],
+            use=['OHNET', 'OPENSSL', 'CodecAlacBase'],
+            target='SourceRaop')
 
     # Wav
     bld.stlib(
@@ -373,14 +382,6 @@ def build(bld):
             ],
             use=['CodecAlacBase', 'OHNET'],
             target='CodecAlac')
-
-    # Raop
-    bld.stlib(
-            source=[
-                 'OpenHome/Media/Codec/Raop.cpp',
-            ],
-            use=['CodecAlacBase', 'OHNET', 'OPENSSL'],
-            target='CodecRaop')
 
     # AACBase
     bld.stlib(
@@ -529,12 +530,12 @@ def build(bld):
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
             ],
-            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecRaop', 'CodecVorbis'],
+            use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
 
     bld.program(
             source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourceRaop', 'ohMediaPlayerTestUtils'],
             target='TestShell',
             install_path=None)
     bld.program(
@@ -623,11 +624,6 @@ def build(bld):
             target='TestProtocol',
             install_path=None)
     bld.program(
-            source='OpenHome/Av/Tests/TestProtocolRaop.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
-            target='TestProtocolRaop',
-            install_path=None)
-    bld.program(
             source='OpenHome/Av/Tests/TestStoreMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestStore',
@@ -684,7 +680,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUdpServerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'SourceRaop', 'ohMediaPlayerTestUtils'],
             target='TestUdpServer',
             install_path=None)
     #bld.program(
@@ -719,7 +715,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourceRaop', 'ohMediaPlayerTestUtils', 'OPENSSL'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
@@ -743,7 +739,7 @@ def build(bld):
 def bundle(ctx):
     print 'bundle binaries'
     header_files = gather_files(ctx, '{top}', ['OpenHome/**/*.h'])
-    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecRaop', 'CodecVorbis', 'CodecWav', 'libOgg']
+    lib_names = ['ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop', 'CodecAac', 'CodecAacBase', 'CodecAdts', 'CodecAifc', 'CodecAiff', 'CodecAiffBase', 'CodecAlac', 'CodecAlacBase', 'CodecFlac', 'CodecVorbis', 'CodecWav', 'libOgg']
     lib_files = gather_files(ctx, '{bld}', (ctx.env.cxxstlib_PATTERN % x for x in lib_names))
     bundle_dev_files = build_tree({
         'ohMediaPlayer/lib' : lib_files,

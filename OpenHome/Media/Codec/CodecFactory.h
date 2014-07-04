@@ -19,7 +19,6 @@ public:
     static CodecBase* NewAlac();
     static CodecBase* NewAdts();
     static CodecBase* NewFlac();
-    static CodecBase* NewRaop(); // FIXME
     static CodecBase* NewVorbis();
     static CodecBase* NewWav();
 };

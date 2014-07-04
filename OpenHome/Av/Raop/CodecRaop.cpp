@@ -1,3 +1,4 @@
+#include <OpenHome/Av/Raop/CodecRaop.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Media/Codec/AlacBase.h>
@@ -11,37 +12,10 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Av/Debug.h>
 
-namespace OpenHome {
-namespace Media {
-namespace Codec {
-
-class CodecRaop : public CodecAlacBase
-{
-public:
-    CodecRaop();
-    ~CodecRaop();
-private: // from CodecBase
-    TBool Recognise();
-    void StreamInitialise();
-    void Process();
-    TBool TrySeek(TUint aStreamId, TUint64 aSample);
-    void StreamCompleted();
-};
-
-} // namespace Codec
-} // namespace Media
-} // namespace OpenHome
-
-
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 using namespace OpenHome::Av;
-
-CodecBase* CodecFactory::NewRaop()
-{ // static
-    return new CodecRaop();
-}
 
 
 // CodecRaop

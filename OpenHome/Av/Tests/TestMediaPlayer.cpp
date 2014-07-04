@@ -192,7 +192,6 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
-    iMediaPlayer->Add(Codec::CodecFactory::NewRaop());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
