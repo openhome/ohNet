@@ -563,7 +563,7 @@ def build(bld):
 
     bld.program(
             source='OpenHome/Media/Tests/TestShellMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceRaop', 'SourceUpnpAv'],
             target='TestShell',
             install_path=None)
     bld.program(
@@ -638,7 +638,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestContentProcessorMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourceRadio', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRadio'],
             target='TestContentProcessor',
             install_path=None)
     bld.program(
@@ -708,7 +708,7 @@ def build(bld):
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUdpServerMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourceRaop', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop'],
             target='TestUdpServer',
             install_path=None)
     #bld.program(
@@ -718,32 +718,32 @@ def build(bld):
     #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourceUpnpAv', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceUpnpAv'],
             target='TestUpnpErrors',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestTrackDatabaseMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourcePlaylist', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestTrackDatabase',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourcePlaylist', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestPlaylist',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestRadioMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourceRadio', 'SourceSongcast', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRadio', 'SourceSongcast'],
             target='TestRadio',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'SourceUpnpAv', 'ohMediaPlayerTestUtils'],
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceUpnpAv'],
             target='TestUriProviderRepeater',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestMediaPlayerMain.cpp',
-            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'OPENSSL'],
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
