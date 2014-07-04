@@ -4,7 +4,7 @@
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Parser.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Raop/Raop.h>
 
 EXCEPTION(ResendTimeout);

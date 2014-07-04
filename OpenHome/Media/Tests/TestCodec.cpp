@@ -16,7 +16,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/OsWrapper.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 

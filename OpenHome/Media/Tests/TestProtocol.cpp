@@ -13,7 +13,7 @@
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
 
 #include <stdio.h>

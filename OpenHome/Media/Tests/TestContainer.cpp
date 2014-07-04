@@ -5,7 +5,7 @@
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include "AllocatorInfoLogger.h"
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <vector>
 

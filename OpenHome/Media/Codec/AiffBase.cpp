@@ -2,7 +2,7 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
