@@ -3,7 +3,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Ascii.h>
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Arch.h>
@@ -83,7 +83,7 @@ void AllocatorBase::GetStats(TUint& aCellsTotal, TUint& aCellBytes, TUint& aCell
     iLock.Signal();
 }
 
-AllocatorBase::AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, Av::IInfoAggregator& aInfoAggregator)
+AllocatorBase::AllocatorBase(const TChar* aName, TUint aNumCells, TUint aCellBytes, IInfoAggregator& aInfoAggregator)
     : iFree(aNumCells)
     , iLock("PAL1")
     , iName(aName)
@@ -1329,6 +1329,7 @@ void MsgAudio::Clear()
     iSize = 0;
     if (iNextAudio != NULL) { 
         iNextAudio->RemoveRef(); 
+        iNextAudio = NULL;
     } 
 } 
 
@@ -1364,6 +1365,7 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     if (iNextAudio != NULL) { 
         MsgPlayable* child = static_cast<MsgAudioPcm*>(iNextAudio)->CreatePlayable(); 
         playable->Add(child); 
+        iNextAudio = NULL;
     }
     RemoveRef();
     return playable;
@@ -2307,7 +2309,7 @@ AutoAllocatedRef::~AutoAllocatedRef()
     
 // TrackFactory
 
-TrackFactory::TrackFactory(Av::IInfoAggregator& aInfoAggregator, TUint aTrackCount)
+TrackFactory::TrackFactory(IInfoAggregator& aInfoAggregator, TUint aTrackCount)
     : iAllocatorTrack("Track", aTrackCount, aInfoAggregator)
     , iLock("TRKF")
     , iNextId(1)
@@ -2327,7 +2329,7 @@ Track* TrackFactory::CreateTrack(const Brx& aUri, const Brx& aMetaData)
 
 // MsgFactory
 
-MsgFactory::MsgFactory(Av::IInfoAggregator& aInfoAggregator,
+MsgFactory::MsgFactory(IInfoAggregator& aInfoAggregator,
                        TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount, 
                        TUint aDecodedAudioCount, TUint aMsgAudioPcmCount, TUint aMsgSilenceCount,
                        TUint aMsgPlayablePcmCount, TUint aMsgPlayableSilenceCount, TUint aMsgDecodedStreamCount,

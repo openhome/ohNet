@@ -266,6 +266,7 @@ private:
     void Queue(Msg* aMsg);
     TBool QueueTrackData() const;
     void ReleaseAudioEncoded();
+    void FlushAudioPcm();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
 private: // ISeeker
     void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
@@ -306,7 +307,39 @@ private: // IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
+    class DecodedAudioBuffer : public INonCopyable
+    {
+        // Used in a synchronous manner by CodecController, so no internal locking.
+    public:
+        DecodedAudioBuffer(MsgFactory& aMsgFactory, TUint aJiffyLimit);
+        TBool Initialised();
+        void Initialise(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
+        Brn AddToBuffer(const Brx& aData);      // Split buffer if req'd and return remainder.
+        TBool BufferFull();                     // Useful in rare cases of full buffer. Allows
+                                                // outputting buffer immediately after filling
+                                                // instead of waiting for next AddToBuffer().
+        MsgAudioPcm* CreateMsgAudioPcm();       // Will return NULL if no data.
+        void Clear();                           // Clears buffer and resets internal state (mainly iTrackOffset)
+    public:
+        static TUint JiffiesFromBytes(TUint aBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth);
+    private:
+        TUint Jiffies();
+    private:
+        static const TUint kMaxBytes = DecodedAudio::kMaxBytes;
+        const TUint iJiffiesMax;
+        MsgFactory& iMsgFactory;
+        Bws<kMaxBytes> iDecodedAudio;
+        TUint iChannels;
+        TUint iSampleRate;
+        TUint iBitDepth;
+        EMediaDataEndian iEndian;
+        TUint64 iTrackOffset;
+    };
+private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
+    static const TUint kMaxDecodedBufferedMs = 5; // buffer MsgAudioPcm until we have, at most, this many ms
+                                                  // (unless we hit DecodedAudio::kMaxBytes first)
+    static const TUint kMaxDecodedBufferedJiffies = Jiffies::kPerMs * kMaxDecodedBufferedMs;
     MsgFactory& iMsgFactory;
     Rewinder iRewinder;
     Logger* iLoggerRewinder;
@@ -331,6 +364,7 @@ private:
     TUint iSeekHandle;
     MsgDecodedStream* iPostSeekStreamInfo;
     MsgAudioEncoded* iAudioEncoded;
+    DecodedAudioBuffer iDecodedAudio;
 
     TBool iSeekable;
     TBool iLive;

@@ -7,7 +7,7 @@
 EXCEPTION(UdpServerClosed);
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
 /**
  * Storage class for the output of a UdpSocketBase::Receive call
@@ -95,7 +95,7 @@ private:
     Mutex iLock;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 #endif // HEADER_PIPELINE_UDPSERVER

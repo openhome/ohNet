@@ -2,8 +2,8 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Gorger.h>
 #include <OpenHome/Media/Msg.h>
-#include <OpenHome/Av/InfoProvider.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 #include <list>
 

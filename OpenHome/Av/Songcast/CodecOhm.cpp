@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Codec/CodecController.h>
-#include <OpenHome/Media/Codec/CodecFactory.h>
+#include <OpenHome/Av/Songcast/CodecOhm.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -11,53 +11,11 @@
 
 #include <string.h>
 
-namespace OpenHome {
-namespace Media {
-namespace Codec {
-
-class CodecOhm : public CodecBase, private IReader
-{
-public:
-    CodecOhm(Av::OhmMsgFactory& aMsgFactory);
-    ~CodecOhm();
-private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
-    void StreamInitialise();
-    void Process();
-    TBool TrySeek(TUint aStreamId, TUint64 aSample);
-private: // from IReader
-    Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
-    void ReadFlush();
-    void ReadInterrupt();
-private:
-    void OutputDelay();
-private:
-    Av::OhmMsgFactory& iMsgFactory;
-    Bws<Av::OhmMsgAudioBlob::kMaxBytes> iBuf;
-    TUint iOffset;
-    TBool iStreamOutput;
-    TBool iSendSession;
-    TUint iSampleRate;
-    TUint iLatency;
-};
-
-} // namespace Codec
-} // namespace Media
-} // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 using namespace OpenHome::Av;
-
-CodecBase* CodecFactory::NewOhm(OhmMsgFactory& aMsgFactory)
-{ // static
-    return new CodecOhm(aMsgFactory);
-}
-
-
 
 CodecOhm::CodecOhm(OhmMsgFactory& aMsgFactory)
     : iMsgFactory(aMsgFactory)

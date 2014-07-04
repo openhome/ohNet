@@ -2,8 +2,8 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Private/Http.h>
-#include <OpenHome/Av/InfoProvider.h>
-#include "AllocatorInfoLogger.h"
+#include <OpenHome/Media/InfoProvider.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Net/Private/Globals.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Network.h>

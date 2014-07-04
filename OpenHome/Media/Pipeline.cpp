@@ -28,7 +28,7 @@ using namespace OpenHome::Media;
 
 // Pipeline
 
-Pipeline::Pipeline(Av::IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes)
+Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes)
     : iObserver(aObserver)
     , iLock("PLMG")
     , iState(EStopped)

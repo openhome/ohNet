@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -8,10 +8,11 @@
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
 class SuiteContent : public Suite, protected IProtocolSet, protected IProtocolReader
 {

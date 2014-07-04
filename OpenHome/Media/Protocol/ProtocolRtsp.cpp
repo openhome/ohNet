@@ -1,6 +1,6 @@
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolRtsp.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/OsWrapper.h>
 
 using namespace OpenHome;

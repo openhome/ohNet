@@ -4,7 +4,7 @@
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 namespace OpenHome {
 namespace Media {

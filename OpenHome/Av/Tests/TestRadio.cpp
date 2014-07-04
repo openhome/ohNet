@@ -4,8 +4,8 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Av/UpnpAv/UpnpAv.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
+#include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Av/Debug.h>
 

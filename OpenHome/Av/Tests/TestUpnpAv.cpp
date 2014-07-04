@@ -6,8 +6,8 @@
 #include <OpenHome/Av/UpnpAv/ProviderAvTransport.h>
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
+#include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>

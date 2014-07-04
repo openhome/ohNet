@@ -1,13 +1,11 @@
-#ifndef HEADER_PIPELINE_CODEC_RAOP_HEADER
-#define HEADER_PIPELINE_CODEC_RAOP_HEADER
+#ifndef HEADER_RAOP_HEADER
+#define HEADER_RAOP_HEADER
 
 #include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Exception.h>
-#include <OpenHome/Media/Codec/Container.h>
-#include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Buffer.h>
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
 class RaopDataHeader
 {
@@ -36,7 +34,7 @@ private:
     TBool iMute;
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
-#endif //HEADER_PIPELINE_CODEC_RAOP_DATA
+#endif // HEADER_RAOP_HEADER

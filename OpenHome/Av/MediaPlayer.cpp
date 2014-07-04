@@ -2,7 +2,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Core/DvDevice.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/VolumeManager.h>
@@ -101,11 +101,6 @@ void MediaPlayer::Add(Codec::CodecBase* aCodec)
 void MediaPlayer::Add(Protocol* aProtocol)
 {
     iPipeline->Add(aProtocol);
-}
-
-void MediaPlayer::Add(ContentProcessor* aContentProcessor)
-{
-    iPipeline->Add(aContentProcessor);
 }
 
 void MediaPlayer::Add(ISource* aSource)

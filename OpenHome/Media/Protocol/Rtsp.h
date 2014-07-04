@@ -298,7 +298,7 @@ private:
     TUint iSeq;
     HttpHeaderContentLength iHeaderContentLength;
     HeaderRtspSession iHeaderRtspSession;
-    const Bws<100> iGuid;         // GUID must be unique and identical for all requests in a single streaming session
+    const Bws<100> iGuid;         // unique; same GUID must be used for all requests in a single streaming session
 };
 
 } //namespace Media

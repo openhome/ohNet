@@ -1,10 +1,10 @@
-#include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
+#include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 
 /* Example pls file
 
@@ -19,20 +19,21 @@ C:\Documents and Settings\I\My Music\Greatest Hits\Example.ogg
 */
 
 namespace OpenHome {
-namespace Media {
+namespace Av {
 
-class ContentM3u : public ContentProcessor
+class ContentM3u : public Media::ContentProcessor
 {
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
+    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes);
 };
 
-} // namespace Media
+} // namespace Av
 } // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+using namespace OpenHome::Av;
 
 
 ContentProcessor* ContentProcessorFactory::NewM3u()

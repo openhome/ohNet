@@ -6,7 +6,7 @@
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 

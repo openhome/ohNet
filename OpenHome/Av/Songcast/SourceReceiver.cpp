@@ -9,12 +9,13 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
+#include <OpenHome/Av/Songcast/CodecOhm.h>
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
-#include <OpenHome/Media/Sender.h>
+#include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
@@ -65,7 +66,7 @@ private:
     ProviderReceiver* iProviderReceiver;
     Media::UriProviderSingleTrack* iUriProvider;
     OhmMsgFactory* iOhmMsgFactory;
-    Media::Sender* iSender;
+    Sender* iSender;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
     Bws<ZoneHandler::kMaxZoneBytes> iZone;
     Media::BwsTrackUri iTrackUri;
@@ -130,7 +131,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iUriProvider = new UriProviderSingleTrack(kMode, true, true, trackFactory);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
-    iPipeline.Add(Codec::CodecFactory::NewOhm(*iOhmMsgFactory));
+    iPipeline.Add(new CodecOhm(*iOhmMsgFactory));
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
     iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf, aMediaPlayer.PowerManager()));
     iZoneHandler->AddListener(*this);

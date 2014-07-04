@@ -5,7 +5,7 @@
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #undef X        //defined in os_types.h!
 

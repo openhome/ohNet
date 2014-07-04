@@ -1,4 +1,4 @@
-#include <OpenHome/Media/Sender.h>
+#include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
@@ -11,6 +11,7 @@
 #include <vector>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
@@ -21,7 +22,7 @@ const Brn Sender::kConfigIdChannel("Sender.Channel");
 const Brn Sender::kConfigIdMode("Sender.Mode");
 const Brn Sender::kConfigIdPreset("Sender.Preset");
 
-Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandler& aZoneHandler, IConfigManagerInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
+Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, IConfigManagerInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
     : iTrack(NULL)
     , iSampleRate(0)
     , iBitDepth(0)
@@ -29,9 +30,9 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, Av::ZoneHandle
     , iMinLatencyMs(aMinLatencyMs)
 {
     const TInt defaultChannel = (TInt)aEnv.Random(kChannelMax, kChannelMin);
-    iOhmSenderDriver = new Av::OhmSenderDriver(aEnv);
+    iOhmSenderDriver = new OhmSenderDriver(aEnv);
     // create sender with default configuration.  CongfigVals below will each call back on construction, allowing these to be updated
-    iOhmSender = new Av::OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
+    iOhmSender = new OhmSender(aEnv, aDevice, *iOhmSenderDriver, aZoneHandler, aName, defaultChannel, aMinLatencyMs, false/*unicast*/, aIconFileName);
 
     iConfigChannel = new ConfigNum(aConfigInit, kConfigIdChannel, kChannelMin, kChannelMax, defaultChannel);
     iListenerIdConfigChannel = iConfigChannel->Subscribe(MakeFunctorConfigNum(*this, &Sender::ConfigChannelChanged));

@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Tests/TestCodec.h>
-#include <OpenHome/Av/InfoProvider.h>
+#include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -8,7 +8,7 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 #include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Private/File.h>
@@ -16,8 +16,8 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/OsWrapper.h>
-#include <OpenHome/Av/Debug.h>
-#include <OpenHome/Media/Tests/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 
 #include <vector>
@@ -152,7 +152,7 @@ TestCodecInfoAggregator::~TestCodecInfoAggregator()
 {
 }
 
-void TestCodecInfoAggregator::Register(Av::IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
+void TestCodecInfoAggregator::Register(IInfoProvider& /*aProvider*/, std::vector<Brn>& /*aSupportedQueries*/)
 {
 }
 
@@ -176,7 +176,7 @@ TUint TestCodecFlushIdProvider::NextFlushId()
 
 // TestCodecFiller
 
-TestCodecFiller::TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, Av::IInfoAggregator& aInfoAggregator)
+TestCodecFiller::TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator)
     : Thread("TCFL")
     , iSupply(aSupply)
     , iNextTrackId(kInvalidPipelineId+1)

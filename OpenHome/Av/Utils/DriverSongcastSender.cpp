@@ -1,4 +1,4 @@
-#include <OpenHome/Media/DriverSongcastSender.h>
+#include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include "IconDriverSongcastSender.h"
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
@@ -7,12 +7,13 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Private/Timer.h>
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
 
@@ -120,7 +121,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     , iQuit(false)
 {
     ASSERT(aMaxMsgSizeJiffies % Jiffies::kPerMs == 0);
-    iOhmSenderDriver = new Av::OhmSenderDriver(iEnv);
+    iOhmSenderDriver = new OhmSenderDriver(iEnv);
 
     Bws<64> udn("Driver-");
     udn.Append(aName);
@@ -141,9 +142,9 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iZoneHandler = new Av::ZoneHandler(iEnv, udn);
+    iZoneHandler = new ZoneHandler(iEnv, udn);
 
-    iOhmSender = new Av::OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
+    iOhmSender = new OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
     iOhmSender->SetEnabled(true);
     iDevice->SetEnabled();
     iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback));

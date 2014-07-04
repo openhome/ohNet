@@ -21,7 +21,6 @@ namespace Media {
     class IVolumeManagerLimits;
     class UriProvider;
     class Protocol;
-    class ContentProcessor;
     namespace Codec {
         class CodecBase;
     }
@@ -84,7 +83,6 @@ public:
     void Quit();
     void Add(Media::Codec::CodecBase* aCodec);
     void Add(Media::Protocol* aProtocol);
-    void Add(Media::ContentProcessor* aContentProcessor);
     void Add(ISource* aSource);
     void Start();
 public: // from IMediaPlayer

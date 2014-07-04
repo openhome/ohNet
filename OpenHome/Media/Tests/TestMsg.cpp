@@ -1,8 +1,8 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Msg.h>
 #include <OpenHome/Media/RampArray.h>
-#include "AllocatorInfoLogger.h"
-#include <OpenHome/Media/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
+#include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 
 #include <string.h>
 #include <vector>
@@ -809,6 +809,30 @@ void SuiteMsgPlayable::Test()
     playable->RemoveRef();
     const TByte* ptr = pcmProcessor.Ptr();
     TUint subsampleVal = 0xff;
+    for (TUint i=0; i<data.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
+        ptr++;
+        subsampleVal--;
+    }
+
+    // Create multiple pcm msgs, then add together. Check content.
+    audioPcm = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    MsgAudioPcm* audioPcm2 = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    audioPcm->Add(audioPcm2);
+    playable = audioPcm->CreatePlayable();
+    TEST(playable->Bytes() == data.Bytes()*2);
+    playable->Read(pcmProcessor);
+    playable->RemoveRef();
+    ptr = pcmProcessor.Ptr();
+    subsampleVal = 0xff;
+    // first half of msg
+    for (TUint i=0; i<data.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
+        ptr++;
+        subsampleVal--;
+    }
+    // second half of msg
+    subsampleVal = 0xff;
     for (TUint i=0; i<data.Bytes(); i++) {
         TEST(*ptr == subsampleVal);
         ptr++;
