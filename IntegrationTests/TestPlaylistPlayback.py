@@ -193,8 +193,8 @@ class Config:
             if self.action in ['Play','Pause','Stop','Next','Previous']:
                 getattr( aDut.playlist, self.action )()
             else:
-                mini = self._SubstMacros( self.minVal )
-                maxi = self._SubstMacros( self.maxVal )
+                mini = self._SubstMacros( self.minVal, aDut )
+                maxi = self._SubstMacros( self.maxVal, aDut )
                 self.precon.log.Info( self.precon.dev, 'MIN %s  MAX %s' % (str(mini), str(maxi)))
 
                 if mini == '':
@@ -216,8 +216,8 @@ class Config:
             self.timeEvent.wait( 5 )            
             aDut.time.RemoveSubscriber( self._timeEventCb )
 
-        # noinspection PyMethodMayBeStatic
-        def _SubstMacros( self, aArg ):
+        # noinspection PyMethodMayBeStatic, PyUnusedLocal
+        def _SubstMacros( self, aArg, aDut ):
             """Substitute parameter macros with actual values. Some of these are
                NOT KNOWN at __init__ time, so call the substs at Invoke() time
                Valid macros are:
