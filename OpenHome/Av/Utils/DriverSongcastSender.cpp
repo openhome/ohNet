@@ -276,9 +276,9 @@ void DriverSongcastSender::DeviceDisabled()
     iDeviceDisabled.Signal();
 }
 
-Msg* DriverSongcastSender::ProcessMsg(MsgMode* /*aMsg*/)
+Msg* DriverSongcastSender::ProcessMsg(MsgMode* aMsg)
 {
-    ASSERTS();
+    aMsg->RemoveRef();
     return NULL;
 }
 
