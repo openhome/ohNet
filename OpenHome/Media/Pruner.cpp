@@ -11,12 +11,16 @@ using namespace OpenHome::Media;
 
 Pruner::Pruner(IPipelineElementUpstream& aUpstreamElement)
     : iUpstreamElement(aUpstreamElement)
+    , iPendingMode(NULL)
     , iWaitingForAudio(false)
 {
 }
 
 Pruner::~Pruner()
 {
+    if (iPendingMode != NULL) {
+        iPendingMode->RemoveRef();
+    }
 }
 
 Msg* Pruner::Pull()
@@ -26,6 +30,10 @@ Msg* Pruner::Pull()
         if (iWaitingForAudio || iQueue.IsEmpty()) {
             msg = iUpstreamElement.Pull();
             msg = msg->Process(*this);
+        }
+        else if (iPendingMode != NULL) {
+            msg = iPendingMode;
+            iPendingMode = NULL;
         }
         else {
             msg = iQueue.Dequeue();
@@ -52,7 +60,16 @@ Msg* Pruner::TryQueueCancelWaiting(Msg* aMsg)
 
 Msg* Pruner::ProcessMsg(MsgMode* aMsg)
 {
-    aMsg->RemoveRef();
+    if (iWaitingForAudio) {
+        while (!iQueue.IsEmpty()) {
+            iQueue.Dequeue()->RemoveRef();
+        }
+    }
+    iWaitingForAudio = true;
+    if (iPendingMode != NULL) {
+        iPendingMode->RemoveRef();
+    }
+    iPendingMode = aMsg;
     return NULL;
 }
 

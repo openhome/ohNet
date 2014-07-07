@@ -113,10 +113,11 @@ void PreDriver::CalculateMaxPlayable()
     iMaxPlayableBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iStreamInfo->StreamInfo().NumChannels(), iStreamInfo->StreamInfo().BitDepth() / 8);
 }
 
-Msg* PreDriver::ProcessMsg(MsgMode* /*aMsg*/)
+Msg* PreDriver::ProcessMsg(MsgMode* aMsg)
 {
-    ASSERTS();
-    return NULL;
+    ASSERT(iPending == NULL);
+    iPending = aMsg;
+    return NextStoredMsg(true);
 }
 
 Msg* PreDriver::ProcessMsg(MsgSession* /*aMsg*/)

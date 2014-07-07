@@ -10,7 +10,6 @@ namespace Media {
 
 /*
 Element which removes msgs which aren't needed downstream:
-    MsgMode
     MsgEncodedStream
     MsgDelay
     MsgMetaText
@@ -47,6 +46,7 @@ private: // IMsgProcessor
 private:
     IPipelineElementUpstream& iUpstreamElement;
     MsgQueue iQueue;
+    MsgMode* iPendingMode;
     TBool iWaitingForAudio;
 };
 
