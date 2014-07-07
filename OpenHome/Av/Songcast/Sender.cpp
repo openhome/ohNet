@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Songcast/Sender.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Av/Songcast/ZoneHandler.h>

@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/PreDriver.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/PreDriver.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>

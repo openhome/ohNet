@@ -1,7 +1,7 @@
 #ifndef HEADER_TESTPROTOCOL
 #define HEADER_TESTPROTOCOL
 
-#include <OpenHome/Media/Pipeline.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/PowerManager.h>

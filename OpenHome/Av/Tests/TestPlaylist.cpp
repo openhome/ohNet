@@ -4,7 +4,7 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/PipelineObserver.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Private/DviStack.h>

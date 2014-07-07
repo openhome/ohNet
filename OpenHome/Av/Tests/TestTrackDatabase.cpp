@@ -2,7 +2,7 @@
 #include <OpenHome/Av/Playlist/TrackDatabase.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Net/Private/Globals.h>
 
 #include <limits.h>

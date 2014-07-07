@@ -1,7 +1,7 @@
 #ifndef HEADER_SONGCAST_SENDER
 #define HEADER_SONGCAST_SENDER
 
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>

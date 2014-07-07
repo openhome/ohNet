@@ -3,7 +3,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Av/Songcast/OhmSender.h>
 #include <OpenHome/Private/Timer.h>

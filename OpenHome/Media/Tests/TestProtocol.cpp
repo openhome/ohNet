@@ -5,10 +5,10 @@
 #include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
-#include <OpenHome/Media/Pipeline.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Utils/DriverBasic.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Net/Private/DviStack.h>

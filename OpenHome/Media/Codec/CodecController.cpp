@@ -4,10 +4,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
-#include <OpenHome/Media/Rewinder.h>
-#include <OpenHome/Media/Logger.h>
+#include <OpenHome/Media/Pipeline/Rewinder.h>
+#include <OpenHome/Media/Pipeline/Logger.h>
 
 #include <algorithm>
 

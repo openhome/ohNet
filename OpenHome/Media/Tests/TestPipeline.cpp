@@ -1,9 +1,9 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/Pipeline.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Media/RampArray.h>
+#include <OpenHome/Media/Pipeline/RampArray.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 

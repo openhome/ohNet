@@ -1,5 +1,5 @@
 #include <OpenHome/Media/PipelineManager.h>
-#include <OpenHome/Media/Pipeline.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Media/IdManager.h>

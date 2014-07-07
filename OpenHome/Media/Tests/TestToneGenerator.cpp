@@ -2,14 +2,14 @@
 
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolTone.h>
-#include <OpenHome/Media/Supply.h>
-#include <OpenHome/Media/EncodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/Supply.h>
+#include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Functor.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
 
 #include <OpenHome/Private/Thread.h>

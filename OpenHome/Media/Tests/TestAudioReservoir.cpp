@@ -1,7 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/AudioReservoir.h>
-#include <OpenHome/Media/DecodedAudioReservoir.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/AudioReservoir.h>
+#include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>

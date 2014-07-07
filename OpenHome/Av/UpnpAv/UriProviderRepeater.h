@@ -3,9 +3,9 @@
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Filler.h>
-#include <OpenHome/Media/TrackInspector.h>
+#include <OpenHome/Media/Pipeline/TrackInspector.h>
 
 namespace OpenHome {
 namespace Av {

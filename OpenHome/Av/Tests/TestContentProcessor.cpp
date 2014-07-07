@@ -1,7 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Av/Radio/ContentProcessorFactory.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/File.h>

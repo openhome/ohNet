@@ -8,7 +8,7 @@
 #include <Generated/DvAvOpenhomeOrgRadio1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Av/Radio/SourceRadio.h>
 

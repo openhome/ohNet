@@ -1,6 +1,6 @@
 #include <OpenHome/Private/SuiteUnitTest.h>
-#include <OpenHome/Media/Rewinder.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Rewinder.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
 #include <string.h>

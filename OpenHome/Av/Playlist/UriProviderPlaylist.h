@@ -6,9 +6,9 @@
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Av/Playlist/TrackDatabase.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
-#include <OpenHome/Media/TrackInspector.h>
+#include <OpenHome/Media/Pipeline/TrackInspector.h>
 
 #include <array>
 #include <vector>

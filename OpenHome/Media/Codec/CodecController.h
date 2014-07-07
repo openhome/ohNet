@@ -5,8 +5,8 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/Media/Msg.h>
-#include <OpenHome/Media/Rewinder.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Rewinder.h>
 
 #include <vector>
 

@@ -1,6 +1,6 @@
 #include <OpenHome/Media/Protocol/ContentAudio.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Buffer.h>
 
 using namespace OpenHome;

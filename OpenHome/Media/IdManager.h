@@ -5,7 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
 namespace Media {
