@@ -158,26 +158,25 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgHalt);
 
-    // Send Audio then Format with different sample rate.  Check Halt is delivered before Format.
+    // Send Audio then Format with different sample rate.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iSampleRate = 48000;
     iNextGeneratedMsg = EMsgDecodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgHalt);
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
 
-    // Send Audio then Format with different bit depth.  Check Halt is delivered before Format.
+    // Send Audio then Format with different bit depth.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iBitDepth = 24;
     iNextGeneratedMsg = EMsgDecodedStream;
-    do {
+    while (iPreDriver->iPlayable != NULL) {
         iPreDriver->Pull()->Process(*this)->RemoveRef();
-    } while (iLastMsg != EMsgHalt);
+        TEST(iLastMsg == EMsgPlayable);
+    }
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
 
@@ -188,18 +187,18 @@ void SuitePreDriver::Test()
     TEST(iLastMsg == EMsgDecodedStream);
 
     // Send Audio then Format with same sample rate + bit depth but different no. channels.
-    // Check Halt is delivered before Format.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iNumChannels = 2;
     iNextGeneratedMsg = EMsgDecodedStream;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgPlayable);
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgHalt);
+    while (iPreDriver->iPlayable != NULL) {
+        iPreDriver->Pull()->Process(*this)->RemoveRef();
+        TEST(iLastMsg == EMsgPlayable);
+    }
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
+    TEST(iPreDriver->iPlayable == NULL);
 }
 
 Msg* SuitePreDriver::Pull()

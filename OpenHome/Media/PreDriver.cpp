@@ -16,9 +16,8 @@ PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstrea
     , iMaxPlayableBytes(0)
     , iPlayable(NULL)
     , iStreamInfo(NULL)
-    , iPendingFormatChange(NULL)
-    , iPendingHalt(NULL)
-    , iHalted(true)
+    , iPending(NULL)
+    , iRecalculateMaxPlayable(false)
     , iShutdownSem("PDSD", 0)
 {
 }
@@ -32,11 +31,8 @@ PreDriver::~PreDriver()
     if (iPlayable != NULL) {
         iPlayable->RemoveRef();
     }
-    if (iPendingFormatChange != NULL) {
-        iPendingFormatChange->RemoveRef();
-    }
-    if (iPendingHalt != NULL) {
-        iPendingHalt->RemoveRef();
+    if (iPending != NULL) {
+        iPending->RemoveRef();
     }
 }
 
@@ -44,7 +40,8 @@ Msg* PreDriver::Pull()
 {
     Msg* msg;
     do {
-        msg = NextStoredMsg();
+        const TBool requireFullPlayable = (iPending != NULL);
+        msg = NextStoredMsg(requireFullPlayable);
         if (msg == NULL) {
             msg = iUpstreamElement.Pull();
             ASSERT(msg != NULL);
@@ -54,32 +51,27 @@ Msg* PreDriver::Pull()
     return msg;
 }
 
-Msg* PreDriver::NextStoredMsg()
+Msg* PreDriver::NextStoredMsg(TBool aDeliverShortPlayable)
 {
     Msg* msg = NULL;
     if (iPlayable != NULL) {
         const TUint bytes = iPlayable->Bytes();
-        if (bytes == iMaxPlayableBytes) {
-            msg = iPlayable;
-            iPlayable = NULL;
-        }
-        else if (bytes > iMaxPlayableBytes) {
+        if (bytes > iMaxPlayableBytes) {
             msg = iPlayable;
             iPlayable = iPlayable->Split(iMaxPlayableBytes);
         }
-        else if (iPendingHalt != NULL || iPendingFormatChange != NULL) {
+        else if (bytes == iMaxPlayableBytes || aDeliverShortPlayable) {
             msg = iPlayable;
             iPlayable = NULL;
         }
     }
-    else if (iPendingHalt != NULL) {
-        msg = iPendingHalt;
-        iPendingHalt = NULL;
-    }
-    else if (iPendingFormatChange != NULL) {
-        CalculateMaxPlayable();
-        msg = iPendingFormatChange;
-        iPendingFormatChange = NULL;
+    if (msg == NULL && iPending != NULL) {
+        msg = iPending;
+        iPending = NULL;
+        if (iRecalculateMaxPlayable) {
+            CalculateMaxPlayable();
+            iRecalculateMaxPlayable = false;
+        }
     }
     return msg;
 }
@@ -165,14 +157,9 @@ Msg* PreDriver::ProcessMsg(MsgMetaText* /*aMsg*/)
 
 Msg* PreDriver::ProcessMsg(MsgHalt* aMsg)
 {
-    iHalted = true;
-    if (iPlayable != NULL) {
-        iPendingHalt = aMsg;
-        Msg* msg = iPlayable;
-        iPlayable = NULL;
-        return msg;
-    }
-    return aMsg;
+    ASSERT(iPending == NULL);
+    iPending = aMsg;
+    return NextStoredMsg(true);
 }
 
 Msg* PreDriver::ProcessMsg(MsgFlush* /*aMsg*/)
@@ -189,41 +176,34 @@ Msg* PreDriver::ProcessMsg(MsgWait* /*aMsg*/)
 
 Msg* PreDriver::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
-    if (iStreamInfo != NULL &&
-        aMsg->StreamInfo().SampleRate() == stream.SampleRate() &&
-        aMsg->StreamInfo().BitDepth() == stream.BitDepth() &&
-        aMsg->StreamInfo().NumChannels() == stream.NumChannels()) {
-            // no change in format.  Discard this msg
-            aMsg->RemoveRef();
-            return NULL;
-    }
     if (iStreamInfo != NULL) {
+        const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
+        if (aMsg->StreamInfo().SampleRate() == stream.SampleRate() &&
+            aMsg->StreamInfo().BitDepth() == stream.BitDepth() &&
+            aMsg->StreamInfo().NumChannels() == stream.NumChannels()) {
+                // no change in format.  Discard this msg
+                aMsg->RemoveRef();
+                return NULL;
+        }
         iStreamInfo->RemoveRef();
     }
     iStreamInfo = aMsg;
     iStreamInfo->AddRef();
-    if (iHalted) {
-        ASSERT(iPlayable == NULL);
-        CalculateMaxPlayable();
-        return aMsg;
-    }
-    iHalted = true;
-    iPendingFormatChange = aMsg;
-    iPendingHalt = iMsgFactory.CreateMsgHalt();
-    return NextStoredMsg();
+    iRecalculateMaxPlayable = true;
+
+    ASSERT(iPending == NULL);
+    iPending = aMsg;
+    return NextStoredMsg(true);
 }
 
 Msg* PreDriver::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iHalted = false;
     MsgPlayable* playable = aMsg->CreatePlayable();
     return AddPlayable(playable);
 }
 
 Msg* PreDriver::ProcessMsg(MsgSilence* aMsg)
 {
-    iHalted = false;
     const DecodedStreamInfo& stream = iStreamInfo->StreamInfo();
     MsgPlayable* playable = aMsg->CreatePlayable(stream.SampleRate(), stream.BitDepth(), stream.NumChannels());
     return AddPlayable(playable);
