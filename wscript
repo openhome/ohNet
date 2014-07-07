@@ -261,7 +261,6 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgVolume1.cpp',
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
-                'Generated/DvAvOpenhomeOrgSender1.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
@@ -301,6 +300,7 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
+                'Generated/DvAvOpenhomeOrgSender1.cpp',
                 'OpenHome/Av/Songcast/Ohm.cpp',
                 'OpenHome/Av/Songcast/OhmMsg.cpp',
                 'OpenHome/Av/Songcast/OhmSender.cpp',
