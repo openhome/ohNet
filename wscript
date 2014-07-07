@@ -197,21 +197,7 @@ def build(bld):
     # Library
     bld.stlib(
             source=[
-                'OpenHome/Av/FaultCode.cpp',
                 'OpenHome/Media/InfoProvider.cpp',
-                'OpenHome/Av/KvpStore.cpp',
-                'OpenHome/Av/ProviderUtils.cpp',
-                'OpenHome/Av/Product.cpp',
-                'Generated/DvAvOpenhomeOrgProduct1.cpp',
-                'OpenHome/Av/ProviderProduct.cpp',
-                'Generated/DvAvOpenhomeOrgTime1.cpp',
-                'OpenHome/Av/ProviderTime.cpp',
-                'Generated/DvAvOpenhomeOrgInfo1.cpp',
-                'OpenHome/Av/ProviderInfo.cpp',
-                'Generated/DvAvOpenhomeOrgVolume1.cpp',
-                'OpenHome/Av/ProviderVolume.cpp',
-                'OpenHome/Av/Source.cpp',
-                'Generated/DvAvOpenhomeOrgSender1.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/EncodedAudioReservoir.cpp',
@@ -250,19 +236,39 @@ def build(bld):
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
-                'OpenHome/Av/MediaPlayer.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/VolumeManager.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
+            ],
+            use=['OHNET', 'OPENSSL', 'OHNETMON'],
+            target='ohPipeline')
+
+    # Library
+    bld.stlib(
+            source=[
+                'OpenHome/Av/FaultCode.cpp',
+                'OpenHome/Av/KvpStore.cpp',
+                'OpenHome/Av/ProviderUtils.cpp',
+                'OpenHome/Av/Product.cpp',
+                'Generated/DvAvOpenhomeOrgProduct1.cpp',
+                'OpenHome/Av/ProviderProduct.cpp',
+                'Generated/DvAvOpenhomeOrgTime1.cpp',
+                'OpenHome/Av/ProviderTime.cpp',
+                'Generated/DvAvOpenhomeOrgInfo1.cpp',
+                'OpenHome/Av/ProviderInfo.cpp',
+                'Generated/DvAvOpenhomeOrgVolume1.cpp',
+                'OpenHome/Av/ProviderVolume.cpp',
+                'OpenHome/Av/Source.cpp',
+                'Generated/DvAvOpenhomeOrgSender1.cpp',
+                'OpenHome/Av/MediaPlayer.cpp',
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
                 'OpenHome/PowerManager.cpp',
             ],
-            use=['OHNET', 'OPENSSL', 'OHNETMON'],
+            use=['OHNET', 'OPENSSL', 'OHNETMON', 'ohPipeline'],
             target='ohMediaPlayer')
-
 
     # Library
     bld.stlib(
