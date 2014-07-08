@@ -4,7 +4,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
 #include <OpenHome/Av/Songcast/Ohm.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Uri.h>

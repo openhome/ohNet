@@ -13,7 +13,7 @@
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>

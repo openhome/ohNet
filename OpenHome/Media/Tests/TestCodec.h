@@ -1,7 +1,7 @@
 #ifndef HEADER_TESTCODEC
 #define HEADER_TESTCODEC
 
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 
 namespace OpenHome {

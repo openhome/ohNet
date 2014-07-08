@@ -9,7 +9,7 @@
 #include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 
 #include <vector>

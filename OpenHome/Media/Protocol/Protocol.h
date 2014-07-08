@@ -7,7 +7,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
 class Environment;

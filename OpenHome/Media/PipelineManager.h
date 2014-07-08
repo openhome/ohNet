@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_MANAGER
 #define HEADER_PIPELINE_MANAGER
 
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Private/Thread.h>
 

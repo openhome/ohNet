@@ -1,7 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
-#include <OpenHome/Media/Gorger.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Gorger.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 

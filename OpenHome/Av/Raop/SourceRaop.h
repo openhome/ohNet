@@ -5,7 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Raop/Raop.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Av/Raop/UdpServer.h>
 #include <OpenHome/Configuration/ConfigManager.h>

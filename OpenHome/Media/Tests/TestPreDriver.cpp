@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/PreDriver.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/PreDriver.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
@@ -50,6 +50,7 @@ private:
        ,EMsgSilence
        ,EMsgPlayable
        ,EMsgDecodedStream
+       ,EMsgMode
        ,EMsgTrack
        ,EMsgEncodedStream
        ,EMsgMetaText
@@ -158,26 +159,34 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgHalt);
 
-    // Send Audio then Format with different sample rate.  Check Halt is delivered before Format.
+    // Send Audio then Format with different sample rate.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iSampleRate = 48000;
     iNextGeneratedMsg = EMsgDecodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgHalt);
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
 
-    // Send Audio then Format with different bit depth.  Check Halt is delivered before Format.
+    // Send Mode.  Confirm any pending audio is delivered first
+    iNextGeneratedMsg = EMsgMode;
+    while (iPreDriver->iPlayable != NULL) {
+        iPreDriver->Pull()->Process(*this)->RemoveRef();
+        TEST(iLastMsg == EMsgPlayable);
+    }
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgMode);
+
+    // Send Audio then Format with different bit depth.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iBitDepth = 24;
     iNextGeneratedMsg = EMsgDecodedStream;
-    do {
+    while (iPreDriver->iPlayable != NULL) {
         iPreDriver->Pull()->Process(*this)->RemoveRef();
-    } while (iLastMsg != EMsgHalt);
+        TEST(iLastMsg == EMsgPlayable);
+    }
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
 
@@ -188,18 +197,18 @@ void SuitePreDriver::Test()
     TEST(iLastMsg == EMsgDecodedStream);
 
     // Send Audio then Format with same sample rate + bit depth but different no. channels.
-    // Check Halt is delivered before Format.
     iNextGeneratedMsg = EMsgAudioPcm;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgPlayable);
     iNumChannels = 2;
     iNextGeneratedMsg = EMsgDecodedStream;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgPlayable);
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgHalt);
+    while (iPreDriver->iPlayable != NULL) {
+        iPreDriver->Pull()->Process(*this)->RemoveRef();
+        TEST(iLastMsg == EMsgPlayable);
+    }
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
+    TEST(iPreDriver->iPlayable == NULL);
 }
 
 Msg* SuitePreDriver::Pull()
@@ -218,6 +227,9 @@ Msg* SuitePreDriver::Pull()
     case EMsgDecodedStream:
         iNextGeneratedMsg = EMsgSilence;
         return iMsgFactory->CreateMsgDecodedStream(0, 128000, iBitDepth, iSampleRate, iNumChannels, Brn("dummy codec"), (TUint64)1<<31, 0, false, false, false, NULL);
+    case EMsgMode:
+        iNextGeneratedMsg = EMsgTrack;
+        return iMsgFactory->CreateMsgMode(Brn("dummyMode"), true, false, NULL);
     case EMsgTrack:
     {
         iNextGeneratedMsg = EMsgAudioPcm; // msg will be discarded by PreDriver which will immediately Pull again.
@@ -255,10 +267,10 @@ MsgAudioPcm* SuitePreDriver::CreateAudio()
     return audio;
 }
 
-Msg* SuitePreDriver::ProcessMsg(MsgMode* /*aMsg*/)
+Msg* SuitePreDriver::ProcessMsg(MsgMode* aMsg)
 {
-    ASSERTS();
-    return NULL;
+    iLastMsg = EMsgMode;
+    return aMsg;
 }
 
 Msg* SuitePreDriver::ProcessMsg(MsgSession* /*aMsg*/)

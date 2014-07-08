@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/Supply.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Supply.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 

@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Av/UpnpAv/UriProviderRepeater.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Functor.h>

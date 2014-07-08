@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/Pruner.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Pruner.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Functor.h>
@@ -49,6 +49,7 @@ private:
     void DecodedStreamPassedOn();
     void TrackWithoutAudioAllMsgsDiscarded();
     void SilenceUnblocksTrackMsgs();
+    void ModeWithoutAudioAllMsgsDiscarded();
 private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // IMsgProcessor
@@ -92,11 +93,12 @@ SuitePruner::SuitePruner()
     AddTest(MakeFunctor(*this, &SuitePruner::DecodedStreamPassedOn), "DecodedStreamPassedOn");
     AddTest(MakeFunctor(*this, &SuitePruner::TrackWithoutAudioAllMsgsDiscarded), "TrackWithoutAudioAllMsgsDiscarded");
     AddTest(MakeFunctor(*this, &SuitePruner::SilenceUnblocksTrackMsgs), "SilenceUnblocksTrackMsgs");
+    AddTest(MakeFunctor(*this, &SuitePruner::ModeWithoutAudioAllMsgsDiscarded), "ModeWithoutAudioAllMsgsDiscarded");
 }
 
 void SuitePruner::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
     iNextTrackId = 0;
@@ -126,6 +128,7 @@ void SuitePruner::MsgsDiscarded()
 {
     EMsgType msgs[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgEncodedStream, EMsgMetaText, EMsgWait, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgTrack);
     TEST(DoPull() == EMsgAudioPcm);
     TEST(iPendingMsgs.size() == 0);
@@ -162,8 +165,9 @@ void SuitePruner::DecodedStreamPassedOn()
 
 void SuitePruner::TrackWithoutAudioAllMsgsDiscarded()
 {
-    EMsgType msgs[] = { EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgAudioPcm };
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgAudioPcm };
     iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgMode);
     TEST(DoPull() == EMsgTrack);
     TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgAudioPcm);
@@ -177,6 +181,18 @@ void SuitePruner::SilenceUnblocksTrackMsgs()
     TEST(DoPull() == EMsgTrack);
     TEST(DoPull() == EMsgDecodedStream);
     TEST(DoPull() == EMsgSilence);
+    TEST(iPendingMsgs.size() == 0);
+}
+
+void SuitePruner::ModeWithoutAudioAllMsgsDiscarded()
+{
+    EMsgType msgs[] = { EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgHalt, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream,
+                        EMsgMode, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream, EMsgAudioPcm };
+    iPendingMsgs.assign(msgs, msgs+NUM_EMEMS(msgs));
+    TEST(DoPull() == EMsgMode);
+    TEST(DoPull() == EMsgTrack);
+    TEST(DoPull() == EMsgDecodedStream);
+    TEST(DoPull() == EMsgAudioPcm);
     TEST(iPendingMsgs.size() == 0);
 }
 

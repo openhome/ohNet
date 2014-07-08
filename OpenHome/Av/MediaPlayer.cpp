@@ -6,7 +6,7 @@
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/VolumeManager.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Standard.h>

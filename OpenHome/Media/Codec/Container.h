@@ -4,7 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 EXCEPTION(CodecStreamCorrupt);
 

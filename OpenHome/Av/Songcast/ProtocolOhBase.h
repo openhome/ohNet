@@ -5,7 +5,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
 #include <OpenHome/Av/Songcast/OhmSocket.h>
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>

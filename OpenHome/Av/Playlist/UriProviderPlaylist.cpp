@@ -3,10 +3,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Filler.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Av/Playlist/TrackDatabase.h>
-#include <OpenHome/Media/TrackInspector.h>
+#include <OpenHome/Media/Pipeline/TrackInspector.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;

@@ -5,7 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>
-#include <OpenHome/Media/Msg.h> // for kTrackMetaDataMaxBytes
+#include <OpenHome/Media/Pipeline/Msg.h> // for kTrackMetaDataMaxBytes
 
 #include "Ohm.h"
 

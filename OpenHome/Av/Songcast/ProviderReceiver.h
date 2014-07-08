@@ -8,7 +8,7 @@
 #include <Generated/DvAvOpenhomeOrgReceiver1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Media/PipelineObserver.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
 using namespace Net;

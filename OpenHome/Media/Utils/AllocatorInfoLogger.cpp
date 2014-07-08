@@ -1,6 +1,6 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

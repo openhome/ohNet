@@ -1,13 +1,13 @@
 #include <OpenHome/Media/Tests/TestCodec.h>
 #include <OpenHome/Media/InfoProvider.h>
-#include <OpenHome/Media/EncodedAudioReservoir.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
-#include <OpenHome/Media/Pipeline.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>

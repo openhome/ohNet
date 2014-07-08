@@ -3,7 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/Media/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;

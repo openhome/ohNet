@@ -13,7 +13,7 @@
 #include <cstring>
 
 #include <OpenHome/Private/Printer.h>  // XXX Log::Print()
-#include <OpenHome/Media/Msg.h>  // XXX MsgFlush::kIdInvalid
+#include <OpenHome/Media/Pipeline/Msg.h>  // XXX MsgFlush::kIdInvalid
 #include <cctype>  // XXX isprint()
 
 #undef TONE_LOG_VERBOSE
