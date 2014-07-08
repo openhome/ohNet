@@ -21,7 +21,7 @@ class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, privat
 {
     friend class SuitePreDriver;
 public:
-    PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies);
+    PreDriver(IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies);
     virtual ~PreDriver();
 public: // from IPipelineElementUpstream
     Msg* Pull();
@@ -46,9 +46,8 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
-    MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
-    TUint iMaxPlayableJiffies;
+    const TUint iMaxPlayableJiffies;
     TUint iMaxPlayableBytes;
     MsgPlayable* iPlayable;
     MsgDecodedStream* iStreamInfo;

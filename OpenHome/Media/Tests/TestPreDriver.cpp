@@ -94,7 +94,7 @@ SuitePreDriver::SuitePreDriver()
     iAudioMsgSizeJiffies = audio->Jiffies();
     audio->RemoveRef();
     iNextMsgSilenceSize = iAudioMsgSizeJiffies;
-    iPreDriver = new PreDriver(*iMsgFactory, *this, iAudioMsgSizeJiffies);
+    iPreDriver = new PreDriver(*this, iAudioMsgSizeJiffies);
 }
 
 SuitePreDriver::~SuitePreDriver()

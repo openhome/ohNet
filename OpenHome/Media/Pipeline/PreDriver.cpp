@@ -9,9 +9,8 @@ using namespace OpenHome::Media;
 
 // PreDriver
 
-PreDriver::PreDriver(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies)
-    : iMsgFactory(aMsgFactory)
-    , iUpstreamElement(aUpstreamElement)
+PreDriver::PreDriver(IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies)
+    : iUpstreamElement(aUpstreamElement)
     , iMaxPlayableJiffies(aMaxPlayableJiffies)
     , iMaxPlayableBytes(0)
     , iPlayable(NULL)
