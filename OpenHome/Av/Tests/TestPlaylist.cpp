@@ -90,7 +90,6 @@ private:
 class SuitePlaylist : public SuiteUnitTest, private IPipelineObserver
 {
     static const TUint kNumTracks = 4;
-    static const TUint kDriverMaxJiffies = Jiffies::kPerMs * 5;
     static const TChar* kFmtTone;
 public:
     SuitePlaylist(CpStack& aCpStack, DvStack& aDvStack);
@@ -411,7 +410,7 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, kDriverMaxJiffies, *iRamStore, *iConfigRamStore);
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore);
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors

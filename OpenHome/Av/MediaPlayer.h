@@ -77,7 +77,7 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
     static const TUint kTrackCount = 1200;
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
-                TUint aDriverMaxJiffies, IStaticDataSource& aStaticDataSource,
+                IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore);
     ~MediaPlayer();
     void Quit();

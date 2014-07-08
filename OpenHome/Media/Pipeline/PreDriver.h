@@ -13,22 +13,15 @@ Element which sits at the very right of the generic pipeline.
 Passes on Format, Halt and Quit msgs.
 Only passes on Format when either sample rate and/or bit depth changes.
 Converts AudioPcm, Silence msgs to Playable.
-Combines Playable msgs into client-specified lengths.
-May send shorter msg if format change or Halt is encountered.
 */
     
 class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
-    friend class SuitePreDriver;
 public:
-    PreDriver(IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies);
+    PreDriver(IPipelineElementUpstream& aUpstreamElement);
     virtual ~PreDriver();
 public: // from IPipelineElementUpstream
     Msg* Pull();
-private:
-    Msg* NextStoredMsg(TBool aDeliverShortPlayable);
-    Msg* AddPlayable(MsgPlayable* aPlayable);
-    void CalculateMaxPlayable();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgSession* aMsg);
@@ -47,12 +40,9 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     IPipelineElementUpstream& iUpstreamElement;
-    const TUint iMaxPlayableJiffies;
-    TUint iMaxPlayableBytes;
-    MsgPlayable* iPlayable;
-    MsgDecodedStream* iStreamInfo;
-    Msg* iPending;
-    TBool iRecalculateMaxPlayable;
+    TUint iSampleRate;
+    TUint iBitDepth;
+    TUint iNumChannels;
     Semaphore iShutdownSem;
 };
 

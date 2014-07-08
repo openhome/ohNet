@@ -28,7 +28,7 @@ using namespace OpenHome::Media;
 
 // Pipeline
 
-Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes)
+Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver)
     : iObserver(aObserver)
     , iLock("PLMG")
     , iState(EStopped)
@@ -93,7 +93,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
                                                kStarvationMonitorRampUpDuration);
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
-    iPreDriver = new PreDriver(*iLoggerStarvationMonitor, aDriverMaxAudioBytes);
+    iPreDriver = new PreDriver(*iLoggerStarvationMonitor);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
 
     iPipelineEnd = iLoggerPreDriver;

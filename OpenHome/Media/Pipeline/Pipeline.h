@@ -64,7 +64,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kPerMs * 100;
     static const TUint kSenderMinLatency                     = Jiffies::kPerMs * 150;
 public:
-    Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, TUint aDriverMaxAudioBytes);
+    Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
