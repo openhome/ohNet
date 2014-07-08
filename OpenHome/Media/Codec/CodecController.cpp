@@ -300,8 +300,8 @@ void CodecController::FlushAudioPcm()
     MsgAudioPcm* audio = iDecodedAudio.CreateMsgAudioPcm();
     if (audio != NULL) {
         Queue(audio);
-        iDecodedAudio.Clear(); // Do this as TrySeek() calls FlushAudioPcm, which will change iTrackOffset.
     }
+    iDecodedAudio.Clear(); // Do this as TrySeek() calls FlushAudioPcm, which will change iTrackOffset.
 }
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
