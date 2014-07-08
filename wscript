@@ -241,6 +241,7 @@ def build(bld):
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
+                'OpenHome/Media/Utils/Aggregator.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohPipeline')
@@ -540,6 +541,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodecInit.cpp',
                 'OpenHome/Media/Tests/TestCodecController.cpp',
                 'OpenHome/Media/Tests/TestContainer.cpp',
+                'OpenHome/Media/Tests/TestAggregator.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
@@ -681,6 +683,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestContainerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestContainer',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestAggregatorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestAggregator',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestIdProviderMain.cpp',

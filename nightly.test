@@ -18,6 +18,7 @@ tests = '''
     TestTrackInspector
     TestReporter
     TestPruner
+    TestGorger
     TestStarvationMonitor
     TestPreDriver
     TestContentProcessor
@@ -25,6 +26,7 @@ tests = '''
     TestProtocolHttp
     TestCodec               -s {ws_hostname} -p {ws_port} -t full
     TestCodecController
+    TestAggregator
     TestIdProvider
     TestFiller
     TestUpnpErrors
