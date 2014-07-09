@@ -9,9 +9,9 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
 
-TestMediaPlayer* CreateMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, TUint aMaxDriverJiffies, const TChar* aTuneInUserName)
+TestMediaPlayer* CreateMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName)
 {
-    return new TestMediaPlayer(aDvStack, aUdn, aRoom, aProductName, aMaxDriverJiffies, aTuneInUserName);
+    return new TestMediaPlayer(aDvStack, aUdn, aRoom, aProductName, aTuneInUserName);
 }
 
 int CDECL main(int aArgc, char* aArgv[])

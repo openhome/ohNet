@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Pipeline/RampArray.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
+#include <OpenHome/Media/Utils/Aggregator.h>
 
 #include <string.h>
 #include <vector>
@@ -98,6 +99,7 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
     Pipeline* iPipeline;
+    Aggregator* iAggregator;
     TrackFactory* iTrackFactory;
     IPipelineElementUpstream* iPipelineEnd;
     TUint iSampleRate;
@@ -257,12 +259,13 @@ SuitePipeline::SuitePipeline()
     , iSemQuit("TPSQ", 0)
     , iQuitReceived(false)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, *this, kDriverMaxAudioJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, *this);
+    iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(*iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
     iPipeline->Start();
-    iPipelineEnd = iPipeline;
+    iPipelineEnd = iAggregator;
 }
 
 SuitePipeline::~SuitePipeline()
@@ -276,6 +279,7 @@ SuitePipeline::~SuitePipeline()
     iPipeline->Quit();
     iSemQuit.Wait();
     delete iSupplier;
+    delete iAggregator;
     delete iPipeline;
     delete iTrackFactory;
     delete th;
@@ -325,7 +329,7 @@ void SuitePipeline::Test()
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelineBuffering);
     TEST((iJiffies >= Pipeline::kStarvationMonitorStarvationThreshold) &&
-         (iJiffies <=  Pipeline::kStarvationMonitorStarvationThreshold + iLastMsgJiffies + kDriverMaxAudioJiffies));
+         (iJiffies <=  Pipeline::kStarvationMonitorStarvationThreshold + iLastMsgJiffies));
 
     // Push audio again.  Check that it ramps up in Pipeline::kStarvationMonitorRampUpDuration.
     Print("\nRecover from starvation\n");

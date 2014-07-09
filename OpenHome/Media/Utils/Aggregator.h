@@ -1,5 +1,5 @@
-#ifndef HEADER_PIPELINE_PREDRIVER
-#define HEADER_PIPELINE_PREDRIVER
+#ifndef HEADER_PIPELINE_AGGREGATOR
+#define HEADER_PIPELINE_AGGREGATOR
 
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Standard.h>
@@ -9,19 +9,23 @@ namespace OpenHome {
 namespace Media {
 
 /*
-Element which sits at the very right of the generic pipeline.
-Passes on Format, Halt and Quit msgs.
-Only passes on Format when either sample rate and/or bit depth changes.
-Converts AudioPcm, Silence msgs to Playable.
+Utility class which is not part of the generic pipeline.
+May be used by audio drivers to combine/split audio data to a preferred duration.
+May send shorter msg if format change or Halt is encountered.
 */
-    
-class PreDriver : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
+
+class Aggregator : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
+    friend class SuiteAggregator;
 public:
-    PreDriver(IPipelineElementUpstream& aUpstreamElement);
-    virtual ~PreDriver();
+    Aggregator(IPipelineElementUpstream& aUpstreamElement, TUint aMaxPlayableJiffies);
+    virtual ~Aggregator();
 public: // from IPipelineElementUpstream
     Msg* Pull();
+private:
+    Msg* NextStoredMsg(TBool aDeliverShortPlayable);
+    Msg* AddPlayable(MsgPlayable* aPlayable);
+    void CalculateMaxPlayable();
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgSession* aMsg);
@@ -40,13 +44,17 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg);
 private:
     IPipelineElementUpstream& iUpstreamElement;
+    const TUint iMaxPlayableJiffies;
+    TUint iMaxPlayableBytes;
+    MsgPlayable* iPlayable;
     TUint iSampleRate;
     TUint iBitDepth;
     TUint iNumChannels;
-    Semaphore iShutdownSem;
+    Msg* iPending;
+    TBool iRecalculateMaxPlayable;
 };
 
 } // namespace Media
 } // namespace OpenHome
 
-#endif // HEADER_PIPELINE_PREDRIVER
+#endif // HEADER_PIPELINE_AGGREGATOR

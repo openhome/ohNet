@@ -93,8 +93,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
         }
         udn.Replace(optionUdn.Value());
     }
-    static const TUint kMaxDriverJiffies = Media::Jiffies::kPerMs * 5;
-    TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), kMaxDriverJiffies, optionTuneIn.CString());
+    TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), optionTuneIn.CString());
     DriverBasic* driver = new DriverBasic(tmp->Pipeline(), dvStack->Env());
     tmp->Run();
     tmp->StopPipeline();

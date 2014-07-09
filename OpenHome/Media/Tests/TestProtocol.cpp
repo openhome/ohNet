@@ -87,7 +87,7 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     : iUrl(aUrl)
     , iStreamId(0)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, *this, kMaxDriverJiffies);
+    iPipeline = new Pipeline(iInfoAggregator, *this, *this);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
     iDriver = new DriverBasic(*iPipeline, aDvStack.Env());

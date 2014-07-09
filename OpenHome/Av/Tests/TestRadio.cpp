@@ -37,7 +37,7 @@ TestRadio::TestRadio(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChan
 {
     static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory, kMaxDriverJiffies);
+    iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory);
     iPipeline->AddObserver(*this);
     iEnv = &aDvStack.Env();
 

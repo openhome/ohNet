@@ -94,7 +94,7 @@ SuitePreDriver::SuitePreDriver()
     iAudioMsgSizeJiffies = audio->Jiffies();
     audio->RemoveRef();
     iNextMsgSilenceSize = iAudioMsgSizeJiffies;
-    iPreDriver = new PreDriver(*iMsgFactory, *this, iAudioMsgSizeJiffies);
+    iPreDriver = new PreDriver(*this);
 }
 
 SuitePreDriver::~SuitePreDriver()
@@ -106,19 +106,6 @@ SuitePreDriver::~SuitePreDriver()
 
 void SuitePreDriver::Test()
 {
-    /*
-    Test goes something like
-        Send Format msg; check it is passed on.
-        Send Audio; check it is passed on.
-        Send Silence; check it is passed on.
-        Send Quit; check it is passed on.
-        Send Track, AudioStream, MetaText; check neither are passed on.
-        Send Format with same sample rate + bit depth.  Check it isn't passed on (we move on to Silence instead).
-        Send Halt; check it is passed on.
-        Send Audio then Format with different sample rate.  Check Halt is delivered before Format.
-        Send Audio then Format with different bit depth.  Check Halt is delivered before Format.
-    */
-
     iSampleRate = 44100;
     iBitDepth = 16;
 
@@ -144,6 +131,11 @@ void SuitePreDriver::Test()
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgQuit);
 
+    // Send Mode; check it is passed on.
+    iNextGeneratedMsg = EMsgMode;
+    iPreDriver->Pull()->Process(*this)->RemoveRef();
+    TEST(iLastMsg == EMsgMode);
+
     // Send Track; check it isn't passed on.
     iNextGeneratedMsg = EMsgTrack;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
@@ -167,48 +159,6 @@ void SuitePreDriver::Test()
     iNextGeneratedMsg = EMsgDecodedStream;
     iPreDriver->Pull()->Process(*this)->RemoveRef();
     TEST(iLastMsg == EMsgDecodedStream);
-
-    // Send Mode.  Confirm any pending audio is delivered first
-    iNextGeneratedMsg = EMsgMode;
-    while (iPreDriver->iPlayable != NULL) {
-        iPreDriver->Pull()->Process(*this)->RemoveRef();
-        TEST(iLastMsg == EMsgPlayable);
-    }
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgMode);
-
-    // Send Audio then Format with different bit depth.
-    iNextGeneratedMsg = EMsgAudioPcm;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgPlayable);
-    iBitDepth = 24;
-    iNextGeneratedMsg = EMsgDecodedStream;
-    while (iPreDriver->iPlayable != NULL) {
-        iPreDriver->Pull()->Process(*this)->RemoveRef();
-        TEST(iLastMsg == EMsgPlayable);
-    }
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgDecodedStream);
-
-    // Send Format with same sample rate + bit depth but different no. channels.
-    iNumChannels = 1;
-    iNextGeneratedMsg = EMsgDecodedStream;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgDecodedStream);
-
-    // Send Audio then Format with same sample rate + bit depth but different no. channels.
-    iNextGeneratedMsg = EMsgAudioPcm;
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgPlayable);
-    iNumChannels = 2;
-    iNextGeneratedMsg = EMsgDecodedStream;
-    while (iPreDriver->iPlayable != NULL) {
-        iPreDriver->Pull()->Process(*this)->RemoveRef();
-        TEST(iLastMsg == EMsgPlayable);
-    }
-    iPreDriver->Pull()->Process(*this)->RemoveRef();
-    TEST(iLastMsg == EMsgDecodedStream);
-    TEST(iPreDriver->iPlayable == NULL);
 }
 
 Msg* SuitePreDriver::Pull()
@@ -368,5 +318,3 @@ void TestPreDriver()
     runner.Add(new SuitePreDriver());
     runner.Run();
 }
-
-

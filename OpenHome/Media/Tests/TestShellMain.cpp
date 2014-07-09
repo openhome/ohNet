@@ -10,6 +10,7 @@ using namespace OpenHome::Net;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
+SIMPLE_TEST_DECLARATION(TestAggregator);
 SIMPLE_TEST_DECLARATION(TestAudioReservoir);
 SIMPLE_TEST_DECLARATION(TestCodecController);
 SIMPLE_TEST_DECLARATION(TestConfigManager);
@@ -62,6 +63,7 @@ static void ShellTestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack, const std:
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     std::vector<ShellTest> shellTests;
+    shellTests.push_back(ShellTest("TestAggregator", ShellTestAggregator));
     shellTests.push_back(ShellTest("TestAudioReservoir", ShellTestAudioReservoir));
     shellTests.push_back(ShellTest("TestCodecController", ShellTestCodecController));
     shellTests.push_back(ShellTest("TestConfigManager", ShellTestConfigManager));
