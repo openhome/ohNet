@@ -787,6 +787,9 @@ void SuiteCodecControllerStream::TestSeek()
     }
 
     // Do a seek.
+    Thread::Sleep(50);  // FIXME - quick fix to stop race condition where last
+                        // encoded audio msg may not have been processed before
+                        // seek (and is thus discarded).
     ISeeker& seeker = *iController;
     TUint handle = ISeeker::kHandleError;
     TUint seekSeconds = 1;
