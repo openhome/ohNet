@@ -209,6 +209,7 @@ void CodecController::CodecThread()
                     ISeekObserver* seekObserver = iSeekObserver;
                     iLock.Signal();
                     if (seek) {
+                        FlushAudioPcm();
                         TUint64 sampleNum = iSeekSeconds * iSampleRate;
                         (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
                         seekObserver->NotifySeekComplete(iSeekHandle, iExpectedFlushId);
@@ -232,6 +233,7 @@ void CodecController::CodecThread()
             FlushAudioPcm();
         }
         if (!iStreamStarted && !iStreamEnded) {
+            FlushAudioPcm(); // can't call this while lock is already held; so just push audio here
             iLock.Wait();
             if (iExpectedFlushId == MsgFlush::kIdInvalid) {
                 iExpectedFlushId = iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
@@ -297,6 +299,7 @@ void CodecController::ReleaseAudioEncoded()
 
 void CodecController::FlushAudioPcm()
 {
+    AutoMutex a(iLock);
     MsgAudioPcm* audio = iDecodedAudio.CreateMsgAudioPcm();
     if (audio != NULL) {
         Queue(audio);
@@ -389,7 +392,6 @@ TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 
 TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
 {
-    FlushAudioPcm();
     TUint flushId = iStreamHandler->TrySeek(iTrackIdPipeline, aStreamId, aBytePos);
     if (flushId != MsgFlush::kIdInvalid) {
         ReleaseAudioEncoded();
@@ -445,13 +447,12 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     TUint jiffies = DecodedAudioBuffer::JiffiesFromBytes(aData.Bytes(), aChannels, aSampleRate, aBitDepth);
 
     // Discard decoded audio if a flush is pending.
-    iLock.Wait();
+    AutoMutex a(iLock);
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
         iLock.Signal();
         iDecodedAudio.Clear();
         return jiffies;
     }
-    iLock.Signal();
 
     if (!iDecodedAudio.Initialised()) {
         // New stream or audio may have been flushed.
