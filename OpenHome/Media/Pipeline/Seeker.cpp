@@ -14,7 +14,7 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iState(ERunning)
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
-    , iCurrentRampValue(Ramp::kRampMax)
+    , iCurrentRampValue(Ramp::kMax)
     , iSeekSeconds(UINT_MAX)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(UINT_MAX)
@@ -47,7 +47,7 @@ TBool Seeker::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBoo
     else {
         iState = ERampingDown;
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
     }
     return true;
 }
@@ -119,7 +119,7 @@ Msg* Seeker::ProcessMsg(MsgFlush* aMsg)
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMin;
+        iCurrentRampValue = Ramp::kMin;
         return NULL;
     }
     return aMsg;
@@ -166,7 +166,7 @@ void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
     if (iTargetFlushId == MsgFlush::kIdInvalid) {
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMin;
+        iCurrentRampValue = Ramp::kMin;
     }
 }
 
@@ -229,7 +229,7 @@ Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
 void Seeker::NewStream()
 {
     iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
+    iCurrentRampValue = Ramp::kMax;
     iState = ERunning;
     iSeekHandle = ISeeker::kHandleError;
     iStreamIsSeekable = true;

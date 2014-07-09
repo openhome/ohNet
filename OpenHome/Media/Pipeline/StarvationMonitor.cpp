@@ -24,7 +24,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iLock("STRV")
     , iSemIn("STR1", 0)
     , iSemOut("STR2", 0)
-    , iCurrentRampValue(Ramp::kRampMax)
+    , iCurrentRampValue(Ramp::kMax)
     , iPlannedHalt(true)
     , iHaltDelivered(false)
     , iExit(false)
@@ -70,7 +70,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
         }
         else {
             UpdateStatus(ERampingUp);
-            iCurrentRampValue = Ramp::kRampMin;
+            iCurrentRampValue = Ramp::kMin;
             iRemainingRampSize = iRampUpSize;
         }
         iSemOut.Signal();
@@ -141,25 +141,25 @@ MsgAudio* StarvationMonitor::DoProcessMsgOut(MsgAudio* aMsg)
     if (!iPlannedHalt && (remainingSize < iStarvationThreshold) && (iStatus == ERunning)) {
         UpdateStatus(ERampingDown);
         iRampDownDuration = remainingSize + aMsg->Jiffies();
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
         iRemainingRampSize = iRampDownDuration;
     }
     if (iStatus == ERampingDown) {
         Ramp(aMsg, Ramp::EDown);
-        if (iCurrentRampValue == Ramp::kRampMin) {
+        if (iCurrentRampValue == Ramp::kMin) {
             UpdateStatus(EBuffering);
             enteredBuffering = true;
         }
         if (remainingSize == 0) {
-            ASSERT(iCurrentRampValue == Ramp::kRampMin);
+            ASSERT(iCurrentRampValue == Ramp::kMin);
         }
     }
     else if (iStatus == ERampingUp) {
         Ramp(aMsg, Ramp::EUp);
         /* don't check iCurrentRampValue here.  If our ramp up intersects with a ramp down
-           from further up the pipeline, our ramp will end at a value less than Ramp::kRampMax */
+           from further up the pipeline, our ramp will end at a value less than Ramp::kMax */
         if (iRemainingRampSize == 0) {
-            iCurrentRampValue = Ramp::kRampMax;
+            iCurrentRampValue = Ramp::kMax;
             UpdateStatus(ERunning);
         }
     }

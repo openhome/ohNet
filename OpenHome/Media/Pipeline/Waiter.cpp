@@ -15,7 +15,7 @@ Waiter::Waiter(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iState(ERunning)
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
-    , iCurrentRampValue(Ramp::kRampMax)
+    , iCurrentRampValue(Ramp::kMax)
     , iTargetFlushId(MsgFlush::kIdInvalid)
 {
 }
@@ -49,7 +49,7 @@ void Waiter::Wait(TUint aFlushId, TBool aRampDown)
     else {
         iState = ERampingDown;
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
     }
 }
 
@@ -121,7 +121,7 @@ Msg* Waiter::ProcessMsg(MsgFlush* aMsg)
         iTargetFlushId = MsgFlush::kIdInvalid;
         iState = ERampingUp;
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMin;
+        iCurrentRampValue = Ramp::kMin;
         return NULL;
     }
     return aMsg;
@@ -200,7 +200,7 @@ Msg* Waiter::ProcessFlushable(Msg* aMsg)
 Msg* Waiter::ProcessAudio(MsgAudio* aMsg)
 {
     if (iState == ERampingDown || iState == ERampingUp) {
-        if (iState == ERampingUp && iCurrentRampValue == Ramp::kRampMin) {
+        if (iState == ERampingUp && iCurrentRampValue == Ramp::kMin) {
             // Start of ramping up.
             iObserver.PipelineWaiting(false);
         }
@@ -239,6 +239,6 @@ Msg* Waiter::ProcessAudio(MsgAudio* aMsg)
 void Waiter::NewStream()
 {
     iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
+    iCurrentRampValue = Ramp::kMax;
     iState = ERunning;
 }

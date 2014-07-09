@@ -78,7 +78,7 @@ void Stopper::BeginPause()
     {
     case ERunning:
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
         SetState(ERampingDown);
         break;
     case ERampingDown:
@@ -110,7 +110,7 @@ void Stopper::BeginStop(TUint aHaltId)
     {
     case ERunning:
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
         SetState(ERampingDown);
         break;
     case ERampingDown:
@@ -357,7 +357,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
 void Stopper::NewStream()
 {
     iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
+    iCurrentRampValue = Ramp::kMax;
     SetState(ERunning);
     iCheckedStreamPlayable = false;
     iHaltPending = false;
@@ -374,6 +374,7 @@ void Stopper::HandleStopped()
 void Stopper::SetState(EState aState)
 {
     LOG(kPipeline, "Stopper changing state from %s to %s\n", State(), State(aState));
+    LOG(kPipeline, "  iRemainingRampSize=%u, iCurrentRampValue=%08x\n", iRemainingRampSize, iCurrentRampValue);
     iState = aState;
 }
 

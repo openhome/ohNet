@@ -14,7 +14,7 @@ Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iState(eStarting)
     , iRampDuration(aRampDuration)
     , iRemainingRampSize(0)
-    , iCurrentRampValue(Ramp::kRampMax)
+    , iCurrentRampValue(Ramp::kMax)
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
@@ -158,7 +158,7 @@ TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
     else if (iState == eRunning) {
         iState = eRamping;
         iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
     }
     return (state != iState);
 }
@@ -209,6 +209,6 @@ Msg* Skipper::ProcessAudio(MsgAudio* aMsg)
 void Skipper::NewStream()
 {
     iRemainingRampSize = 0;
-    iCurrentRampValue = Ramp::kRampMax;
+    iCurrentRampValue = Ramp::kMax;
     iState = (iTargetFlushId == MsgFlush::kIdInvalid? eStarting : eFlushing);
 }

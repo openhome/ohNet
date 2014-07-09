@@ -422,14 +422,14 @@ Ramp::Ramp()
 #ifdef _WIN32
 # pragma warning (disable: 4127)
 #endif // _WIN32
-    ASSERT_DEBUG(kRampMax <= 1<<30); // some 32-bit values in ramp calculations should become 64-bit if this increases
+    ASSERT_DEBUG(kMax <= 1<<30); // some 32-bit values in ramp calculations should become 64-bit if this increases
     ASSERT_DEBUG(kRampArrayCount == 512); // <<22 and >>23 code needs review if this changes
 }
 
 void Ramp::Reset()
 {
-    iStart = kRampMax;
-    iEnd = kRampMax;
+    iStart = kMax;
+    iEnd = kMax;
     iDirection = ENone;
     iEnabled = false;
 }
@@ -444,7 +444,7 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
     iEnabled = true;
     aSplit.Reset();
     aSplitPos = 0xffffffff;
-    const TUint rampRemaining = (aDirection == EDown? aStart : kRampMax-aStart);
+    const TUint rampRemaining = (aDirection == EDown? aStart : kMax-aStart);
     // Always round up rampDelta values to avoid rounding errors leading to a ramp failing to complete in its duration 
     TUint rampDelta = ((rampRemaining * (TUint64)aFragmentSize) + aRemainingDuration - 1) / aRemainingDuration;
     // Rounding up rampDelta means that a ramp may overshoot.
@@ -460,9 +460,9 @@ TBool Ramp::Set(TUint aStart, TUint aFragmentSize, TUint aRemainingDuration, EDi
         }
     }
     else { // aDirection == EUp
-        if (aStart + rampDelta > kRampMax) {
-            ASSERT(aStart + rampDelta - kRampMax <= aFragmentSize - 1); // anything larger must be the result of programming rather than rounding error
-            rampEnd = kRampMax;
+        if (aStart + rampDelta > kMax) {
+            ASSERT(aStart + rampDelta - kMax <= aFragmentSize - 1); // anything larger must be the result of programming rather than rounding error
+            rampEnd = kMax;
         }
         else {
             rampEnd = aStart + rampDelta;
@@ -562,8 +562,8 @@ void Ramp::SelectLowerRampPoints(TUint aRequestedStart, TUint aRequestedEnd)
 
 void Ramp::Validate()
 {
-    ASSERT(iStart <= kRampMax);
-    ASSERT(iEnd <= kRampMax);
+    ASSERT(iStart <= kMax);
+    ASSERT(iEnd <= kMax);
     switch (iDirection)
     {
     case ENone:
@@ -619,7 +619,7 @@ TUint RampApplicator::Start(const Brx& aData, TUint aBitDepth, TUint aNumChannel
     ASSERT_DEBUG(aData.Bytes() % ((iBitDepth/8) * iNumChannels) == 0);
     iNumSamples = aData.Bytes() / ((iBitDepth/8) * iNumChannels);
     iTotalRamp = iRamp.Start() - iRamp.End();
-    iFullRampSpan = Ramp::kRampMax - Ramp::kRampMin;
+    iFullRampSpan = Ramp::kMax - Ramp::kMin;
     iLoopCount = 0;
     return iNumSamples;
 }
@@ -1301,7 +1301,7 @@ TUint MsgAudio::SetRamp(TUint aStart, TUint& aRemainingDuration, Ramp::EDirectio
     }
 
     // It may be possible to terminate ramps down early if the msg had previously been ramped
-    if (aDirection == Ramp::EDown && rampEnd == Ramp::kRampMin) {
+    if (aDirection == Ramp::EDown && rampEnd == Ramp::kMin) {
         aRemainingDuration = 0;
     }
 
