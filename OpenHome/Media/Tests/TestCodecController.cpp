@@ -103,11 +103,13 @@ protected:
     void PullNext(EMsgType aExpectedMsg, TUint64 aExpectedJiffies);
     Msg* CreateTrack();
     Msg* CreateEncodedStream();
+    MsgFlush* CreateFlush();
 protected:
     static const TUint kMaxMsgBytes = 960;
     static const TUint kWavHeaderBytes = 44;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const TUint kExpectedFlushId = 5;
     static const TUint kSemWaitMs = 5000;   // only required in case tests fail
     MsgFactory* iMsgFactory;
     CodecController* iController;
@@ -116,9 +118,11 @@ protected:
     TUint64 iTrackOffset;
     TUint iTrackOffsetBytes;
     TUint64 iJiffies;
+    TUint64 iMsgOffset;
     TUint iStopCount;
+    TUint iTrackId;
+    TUint iStreamId;
 private:
-    static const TUint kExpectedFlushId = 5;
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
     std::list<Msg*> iPendingMsgs;
@@ -128,20 +132,23 @@ private:
     Mutex* iLockPending;
     Mutex* iLockReceived;
     EMsgType iLastReceivedMsg;
-    TUint iTrackId;
-    TUint iStreamId;
     TUint iNextTrackId;
     TUint iNextStreamId;
     TBool iSeekable;
 };
 
 class SuiteCodecControllerStream : public SuiteCodecControllerBase
+                                 , public ISeekObserver
 {
 public:
     SuiteCodecControllerStream();
 private: // from SuiteCodecControllerBase
     void Setup();
     void TearDown();
+private: // from SuiteCodecControllerBase
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+private: // from ISeekObserver
+    void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
     Msg* CreateAudio(TBool aValidHeader, TUint aDataBytes);
     void TestStreamSuccessful();
@@ -151,6 +158,12 @@ private:
     void TestTruncatedStream();
     void TestTrackTrack();
     void TestTrackEncodedStreamTrack();
+    void TestSeek();
+private:
+    Semaphore* iSemSeek;
+    TUint iHandle;
+    TUint iExpectedFlushId;
+    TUint iFlushId;
 };
 
 class SuiteCodecControllerPcmSize : public SuiteCodecControllerBase
@@ -219,10 +232,10 @@ void HelperCodecPassThrough::Process()
     iTrackOffset += iController->OutputAudioPcm(iReadBuf, iChannels, iSampleRate, iBitDepth, iEndianness, iTrackOffset);
 }
 
-TBool HelperCodecPassThrough::TrySeek(TUint /*aStreamId*/, TUint64 /*aSample*/)
+TBool HelperCodecPassThrough::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    // Don't expect in tests.
-    return false;
+    iController->OutputDecodedStream(aStreamId, iBitDepth, iSampleRate, iChannels, Brn("PASS"), 0, aSample, true);
+    return true;
 }
 
 void HelperCodecPassThrough::StreamCompleted()
@@ -240,7 +253,8 @@ SuiteCodecControllerBase::SuiteCodecControllerBase(const TChar* aName)
 void SuiteCodecControllerBase::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
-    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
+    // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
+    iMsgFactory = new MsgFactory(iInfoAggregator, 350, 350, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iController = new CodecController(*iMsgFactory, *this, *this);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
@@ -248,10 +262,11 @@ void SuiteCodecControllerBase::Setup()
     iLockPending = new Mutex("TCMP");
     iLockReceived = new Mutex("TCMR");
     iTrackId = iStreamId = UINT_MAX;
-    iNextTrackId = iNextStreamId = 1;
+    iNextTrackId = iNextStreamId = 0;
     iTotalBytes = iTrackOffsetBytes = 0;
     iTrackOffset = 0;
     iJiffies = 0;
+    iMsgOffset = 0;
     iSeekable = true;
     iStopCount = 0;
 }
@@ -403,6 +418,7 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgDecodedStream* aMsg)
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgAudioPcm* aMsg)
 {
     iLastReceivedMsg = EMsgAudioPcm;
+    iMsgOffset = aMsg->TrackOffset();
     iJiffies += aMsg->Jiffies();
     MsgPlayable* playable = aMsg->CreatePlayable();
     ProcessorPcmBufPacked pcmProcessor;
@@ -472,7 +488,7 @@ void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg, TUint64 aExpected
 Msg* SuiteCodecControllerBase::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track, ++iNextTrackId);
     track->RemoveRef();
     return msg;
 }
@@ -480,6 +496,11 @@ Msg* SuiteCodecControllerBase::CreateTrack()
 Msg* SuiteCodecControllerBase::CreateEncodedStream()
 {
     return iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1<<21, ++iNextStreamId, iSeekable, false, this);
+}
+
+MsgFlush* SuiteCodecControllerBase::CreateFlush()
+{
+    return iMsgFactory->CreateMsgFlush(kExpectedFlushId);
 }
 
 
@@ -495,18 +516,37 @@ SuiteCodecControllerStream::SuiteCodecControllerStream()
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStreamInRecognition), "TestTruncatedStreamInRecognition");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestNoDataAfterRecognition), "TestNoDataAfterRecognition");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStream), "TestTruncatedStream");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestSeek), "TestSeek");
 }
 
 void SuiteCodecControllerStream::Setup()
 {
     SuiteCodecControllerBase::Setup();
+    iSemSeek = new Semaphore("SCCS", 0);
+    iHandle = ISeeker::kHandleError;
+    iExpectedFlushId = iFlushId = MsgFlush::kIdInvalid;
     iController->AddCodec(CodecFactory::NewWav());
     iController->Start();
 }
 
 void SuiteCodecControllerStream::TearDown()
 {
+    delete iSemSeek;
     SuiteCodecControllerBase::TearDown();
+}
+
+TUint SuiteCodecControllerStream::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 /*aOffset*/)
+{
+    TEST(aTrackId == iTrackId);
+    TEST(aStreamId == aStreamId);
+    return kExpectedFlushId;
+}
+
+void SuiteCodecControllerStream::NotifySeekComplete(TUint aHandle, TUint aFlushId)
+{
+    iHandle = aHandle;
+    iFlushId = aFlushId;
+    iSemSeek->Signal();
 }
 
 Msg* SuiteCodecControllerStream::CreateAudio(TBool aValidHeader, TUint aDataBytes)
@@ -710,6 +750,103 @@ void SuiteCodecControllerStream::TestTrackEncodedStreamTrack()
 
     iSemStop->Wait();
     TEST(iStopCount == 1);
+}
+
+void SuiteCodecControllerStream::TestSeek()
+{
+    static const TUint kMaxEncodedBytes = kMaxMsgBytes;
+    static const TUint kSeconds = 3;
+    static const TUint kChannels = 2;
+    static const TUint kBitDepthBytes = 16/8;
+    static const TUint kSamples = kSampleRate * kSeconds;
+    static const TUint kAudioBytes = kSamples * kChannels * kBitDepthBytes;
+    iTotalBytes = kWavHeaderBytes + kAudioBytes;
+
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+
+    while (iTrackOffsetBytes < kAudioBytes/2) { // get halfway through stream
+        Queue(CreateAudio(true, kMaxEncodedBytes));
+    }
+    // Pushing a MsgEncodedAudio should cause a MsgDecodedStream to be pushed
+    // out other end of CodecController.
+    PullNext(EMsgDecodedStream);
+
+    // Can only pull through queued-1 msgs, as CodecController will block when no more available.
+    TUint maxPullBytes = iTrackOffsetBytes - kMaxEncodedBytes;
+    TUint maxPullSamples = maxPullBytes/kChannels/kBitDepthBytes;
+    TUint maxPullJiffies = maxPullSamples * Jiffies::JiffiesPerSample(kSampleRate);
+    while (iJiffies < maxPullJiffies) {
+        TUint64 jiffiesBefore = iJiffies;
+        PullNext(EMsgAudioPcm);
+        TUint64 offsetAfter = iMsgOffset;
+        TEST(offsetAfter == jiffiesBefore); // check next Msg starts where previous msg ended in stream
+    }
+
+    // Do a seek.
+    ISeeker& seeker = *iController;
+    TUint handle = ISeeker::kHandleError;
+    TUint seekSeconds = 1;
+    seeker.StartSeek(iTrackId, iStreamId, seekSeconds, *this, handle); // seek to 1s
+
+    // Send some more msgs down to cause CodecController to unblock and start the seek.
+    // These will be discarded.
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+    Queue(CreateAudio(true, kMaxEncodedBytes));
+
+    // Wait for seek to complete.
+    iSemSeek->Wait(kSemWaitMs);
+    TEST(iHandle == handle);
+    TEST(iFlushId == kExpectedFlushId);
+
+    // Adjust sending offsets and queue some more msgs.
+    //iTrackOffsetBytes = kWavHeaderBytes + kSampleRate*kChannels*kBitDepthBytes * seekSeconds;
+    iTrackOffsetBytes = kSampleRate*kChannels*kBitDepthBytes * seekSeconds;
+    iTrackOffset = Jiffies::kPerSecond * seekSeconds;
+    Queue(CreateFlush());
+    while (iTrackOffsetBytes < kAudioBytes) {
+        Queue(CreateAudio(true, kMaxEncodedBytes));
+    }
+    Queue(CreateEncodedStream()); // allows us to retrieve ALL MsgAudioPcm
+
+    // Pull last EMsgAudioPcm that has been flushed out.
+    TUint64 jiffiesBefore = iJiffies;
+    PullNext(EMsgAudioPcm);
+    TUint64 offsetAfter = iMsgOffset;
+    TEST(offsetAfter == jiffiesBefore);
+
+    // MsgFlush and MsgDecodedStream follow a successful seek.
+    PullNext(EMsgFlush);
+    PullNext(EMsgDecodedStream);
+
+    // Adjust jiffy total to account for seek.
+    TUint64 totalJiffies = iJiffies + (kSeconds-seekSeconds)*Jiffies::kPerSecond;
+
+    // Get first MsgAudioPcm after seek.
+    TUint64 jiffiesOffset = iJiffies;
+    PullNext(EMsgAudioPcm);
+    TUint64 offsetAfterSeek = iMsgOffset;
+    TEST(offsetAfterSeek == Jiffies::kPerSecond*seekSeconds); // check new offset is seek position
+
+    // Pull remainder of stream.
+    while (iJiffies < totalJiffies) {
+        TUint64 jiffiesBefore = iJiffies;
+        PullNext(EMsgAudioPcm);
+        TUint64 offsetAfter = iMsgOffset + jiffiesOffset - offsetAfterSeek;
+        TEST(offsetAfter == jiffiesBefore);
+    }
+
+    PullNext(EMsgEncodedStream);
+    //PullNext(EMsgDecodedStream);    // WAV doesn't output this until more audio passes through
+
+    TEST(iJiffies == totalJiffies);
 }
 
 
