@@ -16,6 +16,7 @@ tests = '''
     TestSkipper
     TestStopper
     TestTrackInspector
+    TestRamper
     TestReporter
     TestPruner
     TestGorger
