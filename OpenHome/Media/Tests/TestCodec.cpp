@@ -526,11 +526,11 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
+    , iSemSeek("SCSS", 0)
     , iFileNumStart(0)
     , iFileNumEnd(0)
     , iFileNumBack(0)
     , iFileNumForward(0)
-    , iSemSeek("SCSS", 0)
 {
     std::vector<AudioFileDescriptor>::iterator it;
     for (it = iFiles.begin(); it != iFiles.end(); ++it) {
@@ -546,11 +546,11 @@ SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDes
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
+    , iSemSeek("SCSS", 0)
     , iFileNumStart(0)
     , iFileNumEnd(0)
     , iFileNumBack(0)
     , iFileNumForward(0)
-    , iSemSeek("SCSS", 0)
 {
 }
 
