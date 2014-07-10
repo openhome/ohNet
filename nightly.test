@@ -24,7 +24,7 @@ tests = '''
     TestContentProcessor
     TestPipeline
     TestProtocolHttp
-    TestCodec               -s {ws_hostname} -p {ws_port} -t full
+    #TestCodec               -s {ws_hostname} -p {ws_port} -t full
     TestCodecController
     TestAggregator
     TestIdProvider
