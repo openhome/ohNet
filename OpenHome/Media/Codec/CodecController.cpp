@@ -449,7 +449,6 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
     // Discard decoded audio if a flush is pending.
     AutoMutex a(iLock);
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        iLock.Signal();
         iDecodedAudio.Clear();
         return jiffies;
     }
