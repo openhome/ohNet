@@ -170,6 +170,7 @@ public:
     TUint JiffiesFromBytes(TUint aBytes) const;
     TUint NumChannels() const;
     TUint BitDepth() const;
+    void Aggregate(DecodedAudio& aDecodedAudio);
 private:
     void Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian);
     void CopyToBigEndian16(const Brx& aData);
@@ -551,6 +552,7 @@ public:
     MsgAudioPcm(AllocatorBase& aAllocator);
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
+    void Aggregate(MsgAudioPcm& aMsg); // append aMsg to the end of this msg, removes ref on aMsg
 public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:

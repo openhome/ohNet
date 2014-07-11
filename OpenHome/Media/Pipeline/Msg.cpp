@@ -335,6 +335,19 @@ TUint DecodedAudio::BitDepth() const
     return iBitDepth;
 }
 
+void DecodedAudio::Aggregate(DecodedAudio& aDecodedAudio)
+{
+    ASSERT(Bytes()+aDecodedAudio.Bytes() <= kMaxBytes);
+    ASSERT(aDecodedAudio.iChannels == iChannels);
+    ASSERT(aDecodedAudio.iSampleRate == iSampleRate);
+    ASSERT(aDecodedAudio.iBitDepth == iBitDepth);
+    ASSERT(aDecodedAudio.iByteDepth == iByteDepth);
+    ASSERT(aDecodedAudio.iJiffiesPerSample == iJiffiesPerSample);
+
+    memcpy(&iData[iSubsampleCount*iByteDepth], aDecodedAudio.iData, aDecodedAudio.Bytes());
+    iSubsampleCount += aDecodedAudio.Bytes() / iByteDepth;
+}
+
 void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian)
 {
     iChannels = aChannels;
@@ -1369,6 +1382,17 @@ MsgPlayable* MsgAudioPcm::CreatePlayable()
     }
     RemoveRef();
     return playable;
+}
+
+void MsgAudioPcm::Aggregate(MsgAudioPcm& aMsg)
+{
+    ASSERT(aMsg.iTrackOffset == iTrackOffset+Jiffies());   // aMsg must logically follow this one
+    ASSERT(!iRamp.IsEnabled() && !aMsg.iRamp.IsEnabled()); // no ramps allowed
+    ASSERT(iNextAudio == NULL && aMsg.iNextAudio == NULL); // no chained msgs allowed
+
+    iAudioData->Aggregate(*aMsg.iAudioData);
+    iSize += aMsg.Jiffies();
+    aMsg.RemoveRef();
 }
 
 MsgAudio* MsgAudioPcm::Clone()

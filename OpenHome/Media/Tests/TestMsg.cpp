@@ -724,6 +724,96 @@ void SuiteMsgAudio::Test()
     remaining->RemoveRef();
     TEST(remaining->Jiffies() == 0);
 
+
+
+    // Aggregate 2 msgs. Check their combined lengths are reported.
+    static const TUint dataSizeHalfDecodedAudio = DecodedAudio::kMaxBytes/2;
+    static const TUint secondOffsetSamples = dataSizeHalfDecodedAudio / 2; // iBitDepth = 8 bits = 1 byte
+    static const TUint secondsOffsetJiffies = Jiffies::JiffiesPerSample(44100) * secondOffsetSamples;
+    Bwh data1(dataSizeHalfDecodedAudio, dataSizeHalfDecodedAudio);
+    (void)memset((void*)data1.Ptr(), 0x01, data1.Bytes());
+    Bwh data2(dataSizeHalfDecodedAudio, dataSizeHalfDecodedAudio);
+    (void)memset((void*)data2.Ptr(), 0x02, data2.Bytes());
+
+    MsgAudioPcm* msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    MsgAudioPcm* msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+    TUint expectedJiffiesAggregated = msgAggregate1->Jiffies() + msgAggregate2->Jiffies();
+    msgAggregate1->Aggregate(*msgAggregate2); // ref is removed
+    TEST(msgAggregate1->Jiffies() == expectedJiffiesAggregated);
+
+    // Check underlying DecodedAudio was also combined (i.e. check that MsgAudioPcm->iSize wasn't just updated).
+    MsgPlayable* aggregatedPlayable = msgAggregate1->CreatePlayable();
+    TEST(aggregatedPlayable->Bytes() == dataSizeHalfDecodedAudio*2);
+    ProcessorPcmBufPacked pcmProcessor;
+    aggregatedPlayable->Read(pcmProcessor);
+    aggregatedPlayable->RemoveRef();
+    const TByte* ptr = pcmProcessor.Ptr();
+    TUint subsampleVal = 0x01;
+    for (TUint i=0; i<data1.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
+        ptr++;
+    }
+    subsampleVal = 0x02;
+    for (TUint i=data1.Bytes(); i<data1.Bytes()+data2.Bytes(); i++) {
+        TEST(*ptr == subsampleVal);
+        ptr++;
+    }
+
+
+    // Try aggregate two msgs with different: #channels
+    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 1, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    msgAggregate1->RemoveRef();
+    msgAggregate2->RemoveRef();
+
+    // Try aggregate two msgs with different: sample rate
+    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 48000, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    msgAggregate1->RemoveRef();
+    msgAggregate2->RemoveRef();
+
+    // Try aggregate two msgs with different: bit depth
+    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 16, EMediaDataLittleEndian, secondsOffsetJiffies);
+    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    msgAggregate1->RemoveRef();
+    msgAggregate2->RemoveRef();
+
+    // Try aggregate two msgs, where one has a ramp set
+    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+    TUint rampRemaining = Ramp::kRampMax;
+    MsgAudio* msgRemaining = NULL;
+    msgAggregate2->SetRamp(0, rampRemaining, Ramp::EUp, msgRemaining);
+    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    msgAggregate1->RemoveRef();
+    msgAggregate2->RemoveRef();
+
+    // Try aggregate two msgs that will overflow underlying DecodedAudio
+    Bwh data3(dataSizeHalfDecodedAudio*2, dataSizeHalfDecodedAudio*2);
+    (void)memset((void*)data3.Ptr(), 0x03, data3.Bytes());
+    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data3, 2, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+
+    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    msgAggregate1->RemoveRef();
+    msgAggregate2->RemoveRef();
+
+    // Try aggregate two msgs, where one has a msg chain
+    Bwh data4(dataSizeHalfDecodedAudio/2, dataSizeHalfDecodedAudio/2);
+    (void)memset((void*)data4.Ptr(), 0x04, data4.Bytes());
+    msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
+    msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+    MsgAudioPcm* msgChained = iMsgFactory->CreateMsgAudioPcm(data4, 2, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
+    msgAggregate2->Add(msgChained);
+    TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
+    msgAggregate1->RemoveRef();
+    msgAggregate2->RemoveRef();
+
+
+
     // Check creating zero-length msg asserts
     TEST_THROWS(iMsgFactory->CreateMsgAudioPcm(Brx::Empty(), 2, 44100, 8, EMediaDataLittleEndian, 0), AssertionFailed);
 
@@ -2469,4 +2559,3 @@ void TestMsg()
     runner.Add(new SuiteMsgReservoir());
     runner.Run();
 }
-
