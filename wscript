@@ -199,6 +199,7 @@ def build(bld):
             source=[
                 'OpenHome/Media/InfoProvider.cpp',
                 'OpenHome/Media/Pipeline/AudioReservoir.cpp',
+                'OpenHome/Media/Pipeline/DecodedAudioAggregator.cpp',
                 'OpenHome/Media/Pipeline/DecodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/EncodedAudioReservoir.cpp',
                 'OpenHome/Media/Pipeline/Gorger.cpp',
@@ -540,6 +541,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestCodec.cpp',
                 'OpenHome/Media/Tests/TestCodecInit.cpp',
                 'OpenHome/Media/Tests/TestCodecController.cpp',
+                'OpenHome/Media/Tests/TestDecodedAudioAggregator.cpp',
                 'OpenHome/Media/Tests/TestContainer.cpp',
                 'OpenHome/Media/Tests/TestAggregator.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
@@ -678,6 +680,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestCodecControllerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestCodecController',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestDecodedAudioAggregatorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestDecodedAudioAggregator',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestContainerMain.cpp',
