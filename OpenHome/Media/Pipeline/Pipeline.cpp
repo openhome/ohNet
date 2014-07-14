@@ -56,6 +56,8 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
+    iDecodedAudioAggregator = new DecodedAudioAggregator(*iDecodedAudioReservoir, *iMsgFactory);
+    iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioAggregator);
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
@@ -63,7 +65,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
-    iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioReservoir);
+    iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioAggregator);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController);
 
     iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, kSeekerRampDuration);
@@ -105,6 +107,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
+    //iLoggerDecodedAudioAggregator->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerSeeker->SetEnabled(true);
     //iLoggerVariableDelay1->SetEnabled(true);
@@ -124,6 +127,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
+    //iLoggerDecodedAudioAggregator->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerSeeker->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay1->SetFilter(Logger::EMsgAll);

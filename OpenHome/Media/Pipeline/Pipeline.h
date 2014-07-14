@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
 #include <OpenHome/Media/Pipeline/VariableDelay.h>
@@ -134,6 +135,8 @@ private:
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
+    DecodedAudioAggregator* iDecodedAudioAggregator;
+    Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
     Logger* iLoggerDecodedAudioReservoir;
     Seeker* iSeeker;
