@@ -53,6 +53,7 @@ private:
     TUint iNumChannels;
     ThreadFunctor* iThread;
     TBool iQuit;
+    TBool iHalted;
 };
 
 } // namespace Media
