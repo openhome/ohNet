@@ -61,7 +61,6 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
     iDecodedAudioAggregator = new DecodedAudioAggregator(*iLoggerDecodedAudioAggregator, *iMsgFactory);
 
-
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
     iContainer->AddContainer(new Codec::Mpeg4Start());
