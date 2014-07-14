@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <limits.h>
 
@@ -145,6 +146,9 @@ void PipelineManager::Stop()
 void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
+    LOG(kMedia, "PipelineManager::StopPrefetch(");
+    LOG(kMedia, aMode);
+    LOG(kMedia, ", %u)\n", aTrackId);
     /*const TUint haltId = */iFiller->Stop(); // FIXME - could get away without Filler generating a Halt here
     iPipeline->RemoveCurrentStream();
     iIdManager->InvalidatePending();
@@ -158,7 +162,7 @@ void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
                                          timeout after 5s as a workaround */
     }
     catch (Timeout&) {
-        Log::Print("WARNING: Timeout from PipelineManager::StopPrefetch.  trackId=%u, mode=");
+        Log::Print("WARNING: Timeout from PipelineManager::StopPrefetch.  trackId=%u, mode=", aTrackId);
         Log::Print(aMode);
         Log::Print("\n");
     }
@@ -341,6 +345,9 @@ void PipelineManager::PrefetchObserver::NotifyStreamPlayStatus(TUint aTrackId, T
 void PipelineManager::PrefetchObserver::CheckTrack(TUint aTrackId)
 {
     iLock.Wait();
+    if (iTrackId != UINT_MAX) {
+        LOG(kMedia, "PipelineManager::PrefetchObserver::CheckTrack expected %u, got %u\n", iTrackId, aTrackId);
+    }
     if (aTrackId == iTrackId) {
         iSem.Signal();
         iTrackId = UINT_MAX;

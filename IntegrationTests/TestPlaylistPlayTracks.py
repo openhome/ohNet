@@ -9,7 +9,7 @@ Parameters:
     arg#5 - Time to play before skipping to next (None = play all)
     arg#6 - Repeat mode [on/off] (optional - default off)
     arg#7 - Shuffle mode [on/off] - (optional - default off)
-    arg#7 - Set False to prevent use of loopback adapter for local SoftPlayers (optional - default True)
+    arg#8 - Set False to prevent use of loopback adapter for local SoftPlayers (optional - default True)
 
 Test test which plays tracks from a playlist sequentially. The tracks may be
 played for their entirety or any specified length of time. Repeat and shuffle

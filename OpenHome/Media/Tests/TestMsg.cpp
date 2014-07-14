@@ -1117,50 +1117,50 @@ void SuiteRamp::Test()
     Ramp ramp;
     Ramp split;
     TUint splitPos;
-    TEST(!ramp.Set(Ramp::kRampMax, jiffies, jiffies, Ramp::EDown, split, splitPos));
-    TEST(ramp.Start() == Ramp::kRampMax);
-    TEST(ramp.End() == Ramp::kRampMin);
+    TEST(!ramp.Set(Ramp::kMax, jiffies, jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == Ramp::kMax);
+    TEST(ramp.End() == Ramp::kMin);
     TEST(ramp.Direction() == Ramp::EDown);
 
     // start=Ramp::kMax, direction=up, duration=fragmentSize.  Check asserts as invalid to ramp up beyond max
     ramp.Reset();
-    TEST_THROWS(ramp.Set(Ramp::kRampMax, jiffies, jiffies, Ramp::EUp, split, splitPos), AssertionFailed);
+    TEST_THROWS(ramp.Set(Ramp::kMax, jiffies, jiffies, Ramp::EUp, split, splitPos), AssertionFailed);
 
     // start=Ramp::kMin, direction=up, duration=fragmentSize.  Apply, check end is Ramp::kMax
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMin, jiffies, jiffies, Ramp::EUp, split, splitPos));
-    TEST(ramp.Start() == Ramp::kRampMin);
-    TEST(ramp.End() == Ramp::kRampMax);
+    TEST(!ramp.Set(Ramp::kMin, jiffies, jiffies, Ramp::EUp, split, splitPos));
+    TEST(ramp.Start() == Ramp::kMin);
+    TEST(ramp.End() == Ramp::kMax);
     TEST(ramp.Direction() == Ramp::EUp);
 
     // start=Ramp::kMax, direction=down, duration=2*fragmentSize.  Apply, check end is 50%
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, jiffies, 2*jiffies, Ramp::EDown, split, splitPos));
-    TEST(ramp.Start() == Ramp::kRampMax);
-    TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 2);
+    TEST(!ramp.Set(Ramp::kMax, jiffies, 2*jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Start() == Ramp::kMax);
+    TEST(ramp.End() == (Ramp::kMax - Ramp::kMin) / 2);
     TEST(ramp.Direction() == Ramp::EDown);
 
     // start=Ramp::kMin, direction=up, duration=2*fragmentSize.  Apply, check end is 50%
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMin, jiffies, 2*jiffies, Ramp::EUp, split, splitPos));
-    TEST(ramp.Start() == Ramp::kRampMin);
-    TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 2);
+    TEST(!ramp.Set(Ramp::kMin, jiffies, 2*jiffies, Ramp::EUp, split, splitPos));
+    TEST(ramp.Start() == Ramp::kMin);
+    TEST(ramp.End() == (Ramp::kMax - Ramp::kMin) / 2);
     TEST(ramp.Direction() == Ramp::EUp);
 
     // start=50%, direction=down, duration=4*fragmentSize (so remainingDuration=2*fragmentSize).  Apply, check end is 25%
     ramp.Reset();
-    TUint start = (Ramp::kRampMax - Ramp::kRampMin) / 2;
+    TUint start = (Ramp::kMax - Ramp::kMin) / 2;
     TEST(!ramp.Set(start, jiffies, 2*jiffies, Ramp::EDown, split, splitPos));
     TEST(ramp.Start() == start);
-    TEST(ramp.End() == (Ramp::kRampMax - Ramp::kRampMin) / 4);
+    TEST(ramp.End() == (Ramp::kMax - Ramp::kMin) / 4);
     TEST(ramp.Direction() == Ramp::EDown);
 
     // start=50%, direction=up, duration=4*fragmentSize (so remainingDuration=2*fragmentSize).  Apply, check end is 75%
     ramp.Reset();
-    start = (Ramp::kRampMax - Ramp::kRampMin) / 2;
+    start = (Ramp::kMax - Ramp::kMin) / 2;
     TEST(!ramp.Set(start, jiffies, 2*jiffies, Ramp::EUp, split, splitPos));
     TEST(ramp.Start() == start);
-    TEST(ramp.End() == Ramp::kRampMax - ((Ramp::kRampMax - Ramp::kRampMin) / 4));
+    TEST(ramp.End() == Ramp::kMax - ((Ramp::kMax - Ramp::kMin) / 4));
     TEST(ramp.Direction() == Ramp::EUp);
 
     // Apply ramp [Max...Min].  Check start/end values and that subsequent values never rise
@@ -1171,7 +1171,7 @@ void SuiteRamp::Test()
     Brn audioBuf(audioData, kAudioDataSize);
 
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
     RampApplicator applicator(ramp);
     TUint prevSampleVal = 0x7f, sampleVal = 0;
     TByte sample[DecodedAudio::kMaxNumChannels * 3];
@@ -1190,7 +1190,7 @@ void SuiteRamp::Test()
 
     // Repeat the above test, but for 16-bit subsamples
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
     prevSampleVal = 0x7f7f;
     numSamples = applicator.Start(audioBuf, 16, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1203,7 +1203,7 @@ void SuiteRamp::Test()
 
     // Repeat the above test, but for 24-bit subsamples
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize, Ramp::EDown, split, splitPos));
     prevSampleVal = 0x7f7f7f;
     numSamples = applicator.Start(audioBuf, 24, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1216,7 +1216,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [Min...Max].  Check start/end values and that subsequent values never fall
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize, kAudioDataSize, Ramp::EUp, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMin, kAudioDataSize, kAudioDataSize, Ramp::EUp, split, splitPos));
     prevSampleVal = 0;
     numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1233,7 +1233,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [Max...50%].  Check start/end values
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax, kAudioDataSize, kAudioDataSize*2, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax, kAudioDataSize, kAudioDataSize*2, Ramp::EDown, split, splitPos));
     prevSampleVal = 0;
     numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1248,7 +1248,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [Min...50%].  Check start/end values
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMin, kAudioDataSize, kAudioDataSize*2, Ramp::EUp, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMin, kAudioDataSize, kAudioDataSize*2, Ramp::EUp, split, splitPos));
     prevSampleVal = 0;
     numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1263,7 +1263,7 @@ void SuiteRamp::Test()
 
     // Apply ramp [50%...25%].  Check start/end values
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, kAudioDataSize, kAudioDataSize*2, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax / 2, kAudioDataSize, kAudioDataSize*2, Ramp::EDown, split, splitPos));
     prevSampleVal = 0;
     numSamples = applicator.Start(audioBuf, 8, 2);
     for (TUint i=0; i<numSamples; i++) {
@@ -1279,10 +1279,10 @@ void SuiteRamp::Test()
 
     // Create [50%...Min] ramp.  Add [Min...50%] ramp.  Check this splits into [Min...25%], [25%...Min]
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, jiffies, Ramp::EDown, split, splitPos));
-    TEST(ramp.Set(Ramp::kRampMin, jiffies, 2 * jiffies, Ramp::EUp, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax / 2, jiffies, jiffies, Ramp::EDown, split, splitPos));
+    TEST(ramp.Set(Ramp::kMin, jiffies, 2 * jiffies, Ramp::EUp, split, splitPos));
     TEST(ramp.Start() == 0);
-    TEST(ramp.End() == Ramp::kRampMax / 4);
+    TEST(ramp.End() == Ramp::kMax / 4);
     TEST(ramp.Direction() == Ramp::EUp);
     TEST(split.Start() == ramp.End());
     TEST(split.End() == 0);
@@ -1292,20 +1292,20 @@ void SuiteRamp::Test()
 
     // Create [50%...25%] ramp.  Add [70%...30%] ramp.  Check original ramp is retained.
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 4 * jiffies, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax / 2, jiffies, 4 * jiffies, Ramp::EDown, split, splitPos));
     start = ramp.Start();
     TUint end = ramp.End();
     Ramp::EDirection direction = ramp.Direction();
-    TEST(!ramp.Set(((TUint64)10 * Ramp::kRampMax) / 7, jiffies, (5 * jiffies) / 2, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(((TUint64)10 * Ramp::kMax) / 7, jiffies, (5 * jiffies) / 2, Ramp::EDown, split, splitPos));
     TEST(ramp.Start() == start);
     TEST(ramp.End() == end);
     TEST(ramp.Direction() == direction);
 
     // Create [50%...25%] ramp.  Add [40%...Min] ramp.  Check new ramp is used.
     ramp.Reset();
-    TEST(!ramp.Set(Ramp::kRampMax / 2, jiffies, 2 * jiffies, Ramp::EDown, split, splitPos));
+    TEST(!ramp.Set(Ramp::kMax / 2, jiffies, 2 * jiffies, Ramp::EDown, split, splitPos));
     start = ramp.Start();
-    start = ((TUint64)2 * Ramp::kRampMax) / 5;
+    start = ((TUint64)2 * Ramp::kMax) / 5;
     TEST(!ramp.Set(start, jiffies, jiffies, Ramp::EDown, split, splitPos));
     TEST(ramp.Start() == start);
     TEST(ramp.End() == 0);
@@ -1314,7 +1314,7 @@ void SuiteRamp::Test()
     // Create MsgSilence.  Set [Max...Min] ramp.  Convert to playable and check output is all zeros
     MsgSilence* silence = iMsgFactory->CreateMsgSilence(jiffies);
     MsgAudio* remaining = NULL;
-    TEST(Ramp::kRampMin == silence->SetRamp(Ramp::kRampMax, jiffies, Ramp::EDown, remaining));
+    TEST(Ramp::kMin == silence->SetRamp(Ramp::kMax, jiffies, Ramp::EDown, remaining));
     TEST(remaining == NULL);
     MsgPlayable* playable = silence->CreatePlayable(44100, 8, 2);
     TEST(playable != NULL);
@@ -1336,9 +1336,9 @@ void SuiteRamp::Test()
     MsgAudioPcm* audioPcm = iMsgFactory->CreateMsgAudioPcm(encodedAudio, kNumChannels, 44100, 16, EMediaDataLittleEndian, 0);
     jiffies = audioPcm->Jiffies();
     TUint remainingDuration = jiffies;
-    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMax / 2, remainingDuration, Ramp::EDown, remaining));
+    TEST(Ramp::kMin == audioPcm->SetRamp(Ramp::kMax / 2, remainingDuration, Ramp::EDown, remaining));
     remainingDuration = jiffies * 2;
-    TEST(Ramp::kRampMin == audioPcm->SetRamp(Ramp::kRampMin, remainingDuration, Ramp::EUp, remaining));
+    TEST(Ramp::kMin == audioPcm->SetRamp(Ramp::kMin, remainingDuration, Ramp::EUp, remaining));
     TEST(remaining != NULL);
     TEST(audioPcm->Jiffies() == jiffies / 2);
     TEST(audioPcm->Jiffies() == remaining->Jiffies());
@@ -1378,10 +1378,10 @@ void SuiteRamp::Test()
     MsgSilence* silence2 = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs * 23);
     const TUint duration = silence->Jiffies() + silence2->Jiffies();
     remainingDuration = duration;
-    TUint currentRamp = Ramp::kRampMax;
+    TUint currentRamp = Ramp::kMax;
     currentRamp = silence->SetRamp(currentRamp, remainingDuration, Ramp::EDown, remaining);
     currentRamp = silence2->SetRamp(currentRamp, remainingDuration, Ramp::EDown, remaining);
-    TEST(currentRamp == Ramp::kRampMin);
+    TEST(currentRamp == Ramp::kMin);
     silence->RemoveRef();
     silence2->RemoveRef();
 }

@@ -207,6 +207,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Msg.cpp',
                 'OpenHome/Media/Pipeline/PreDriver.cpp',
                 'OpenHome/Media/Pipeline/Pruner.cpp',
+                'OpenHome/Media/Pipeline/Ramper.cpp',
                 'OpenHome/Media/Pipeline/Reporter.cpp',
                 'OpenHome/Media/Pipeline/Rewinder.cpp',
                 'OpenHome/Media/Pipeline/Seeker.cpp',
@@ -243,6 +244,7 @@ def build(bld):
                 'OpenHome/Configuration/BufferPtrCmp.cpp',
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'OpenHome/Media/Utils/Aggregator.cpp',
+                'OpenHome/Media/Utils/Silencer.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohPipeline')
@@ -530,6 +532,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
+                'OpenHome/Media/Tests/TestRamper.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestGorger.cpp',
@@ -544,6 +547,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestDecodedAudioAggregator.cpp',
                 'OpenHome/Media/Tests/TestContainer.cpp',
                 'OpenHome/Media/Tests/TestAggregator.cpp',
+                'OpenHome/Media/Tests/TestSilencer.cpp',
                 'OpenHome/Media/Tests/TestIdProvider.cpp',
                 'OpenHome/Media/Tests/TestFiller.cpp',
                 'OpenHome/Media/Tests/TestToneGenerator.cpp',
@@ -627,6 +631,11 @@ def build(bld):
             target='TestTrackInspector',
             install_path=None)
     bld.program(
+            source='OpenHome/Media/Tests/TestRamperMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestRamper',
+            install_path=None)
+    bld.program(
             source='OpenHome/Media/Tests/TestReporterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestReporter',
@@ -695,6 +704,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestAggregatorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestAggregator',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestSilencerMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSilencer',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestIdProviderMain.cpp',

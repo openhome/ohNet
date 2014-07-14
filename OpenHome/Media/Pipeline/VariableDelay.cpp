@@ -21,7 +21,7 @@ VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& 
     , iRampDuration(aRampDuration)
     , iEnabled(false)
     , iInStream(false)
-    , iCurrentRampValue(Ramp::kRampMax)
+    , iCurrentRampValue(Ramp::kMax)
     , iRemainingRampSize(0)
     , iStreamHandler(NULL)
 {
@@ -42,7 +42,7 @@ Msg* VariableDelay::Pull()
         if (iDelayAdjustment == 0) {
             iStatus = (iStatus==ERampedDown? ERampingUp : ERunning);
             iRampDirection = Ramp::EUp;
-            iCurrentRampValue = Ramp::kRampMin;
+            iCurrentRampValue = Ramp::kMin;
             iRemainingRampSize = iRampDuration;
         }
     }
@@ -177,13 +177,13 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
     {
     case EStarting:
         iRampDirection = Ramp::ENone;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
         iRemainingRampSize = iRampDuration;
         break;
     case ERunning:
         iStatus = ERampingDown;
         iRampDirection = Ramp::EDown;
-        iCurrentRampValue = Ramp::kRampMax;
+        iCurrentRampValue = Ramp::kMax;
         iRemainingRampSize = iRampDuration;
         break;
     case ERampingDown:
@@ -246,7 +246,7 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
     iStreamHandler = stream.StreamHandler();
     iStatus = EStarting;
     iRampDirection = Ramp::ENone;
-    iCurrentRampValue = Ramp::kRampMax;
+    iCurrentRampValue = Ramp::kMax;
     iRemainingRampSize = iRampDuration;
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
                                                                stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
@@ -322,7 +322,7 @@ void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStre
         case ERunning:
             iStatus = ERampingDown;
             iRampDirection = Ramp::EDown;
-            iCurrentRampValue = Ramp::kRampMax;
+            iCurrentRampValue = Ramp::kMax;
             iRemainingRampSize = iRampDuration;
             break;
         case ERampingDown:

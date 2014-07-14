@@ -203,8 +203,8 @@ private:
 class Ramp
 {
 public:
-    static const TUint kRampMax = 1<<30;
-    static const TUint kRampMin = 0;
+    static const TUint kMax = 1<<30;
+    static const TUint kMin = 0;
     enum EDirection
     {
         ENone

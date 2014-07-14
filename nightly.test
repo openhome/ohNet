@@ -16,6 +16,7 @@ tests = '''
     TestSkipper
     TestStopper
     TestTrackInspector
+    TestRamper
     TestReporter
     TestPruner
     TestGorger
@@ -27,6 +28,7 @@ tests = '''
     TestCodec               -s {ws_hostname} -p {ws_port} -t full
     TestCodecController
     TestAggregator
+    TestSilencer
     TestIdProvider
     TestFiller
     TestUpnpErrors

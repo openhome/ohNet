@@ -8,6 +8,7 @@
 #include <OpenHome/Media/Codec/Id3v2.h>
 #include <OpenHome/Media/Pipeline/Rewinder.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <algorithm>
 
@@ -139,6 +140,7 @@ void CodecController::CodecThread()
             ReleaseAudioEncoded();
             iLock.Signal();
 
+            LOG(kMedia, "CodecThread - search for new stream\n");
             // Find next start of stream marker, ignoring any audio or meta data we encounter
             while (!iStreamStarted && !iQuit) {
                 Msg* msg = PullMsg();
@@ -152,6 +154,7 @@ void CodecController::CodecThread()
             iQueueTrackData = true;
             iStreamStarted = iStreamEnded = false;
             iRecognising = true;
+            LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackIdPipeline, iStreamId);
 
             for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
@@ -181,6 +184,7 @@ void CodecController::CodecThread()
             if (iQuit) {
                 break;
             }
+            LOG(kMedia, "CodecThread: recognition complete\n");
             if (iActiveCodec == NULL) {
                 if (iTrackIdPipeline != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
                     Log::Print("Failed to recognise audio format, flushing stream...\n");
@@ -637,6 +641,7 @@ TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
         iStreamStopped = true;
     }
     if (iStreamHandler == NULL) {
+        LOG(kMedia, "CodecController::TryStop returning MsgFlush::kIdInvalid (no stream handler)\n");
         return MsgFlush::kIdInvalid;
     }
     const TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
@@ -644,6 +649,8 @@ TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
         iExpectedFlushId = flushId;
         iConsumeExpectedFlush = false;
     }
+    LOG(kMedia, "CodecController::TryStop(%u, %u) returning %u.  iTrackId=%u, iStreamId=%u, iStreamStopped=%u\n",
+                aTrackId, aStreamId, flushId, iTrackIdPipeline, iStreamId, iStreamStopped);
 
     return flushId;
 }

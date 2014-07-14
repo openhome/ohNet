@@ -6,6 +6,7 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -110,6 +111,7 @@ TUint Filler::Stop()
 {
     AutoMutex a(iLock);
     TUint haltId = MsgHalt::kIdNone;
+    LOG(kMedia, "Filler::Stop iStopped=%u\n", iStopped);
     if (!iStopped) {
         haltId = ++iNextHaltId;
         iStopped = true;
@@ -206,6 +208,7 @@ void Filler::Run()
                 iTrack = NULL;
             }
             iTrackPlayStatus = iActiveUriProvider->GetNext(iTrack);
+            LOG(kMedia, "FILLER: iActiveUriProvider->GetNext() returned trackId=%u, status=%d\n", iTrack? iTrack->Id() : 0, iTrackPlayStatus);
             TBool failed = false;
             if (iPrefetchTrackId == Track::kIdNone) {
                 failed = (iTrack != NULL);
@@ -249,7 +252,9 @@ void Filler::Run()
                 iLock.Signal();
                 ASSERT(iTrack != NULL);
                 OutputSession();
+                LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
                 (void)iUriStreamer->DoStream(*iTrack);
+                LOG(kMedia, "< iUriStreamer->DoStream(%u)\n", iTrack->Id());
             }
         }
     }

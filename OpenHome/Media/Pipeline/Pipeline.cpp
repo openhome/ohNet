@@ -13,6 +13,7 @@
 #include <OpenHome/Media/Pipeline/TrackInspector.h>
 #include <OpenHome/Media/Pipeline/Skipper.h>
 #include <OpenHome/Media/Pipeline/Stopper.h>
+#include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/Splitter.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
@@ -81,7 +82,9 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iStopper = new Stopper(*iMsgFactory, *iLoggerWaiter, *this, kStopperRampDuration);
     iStopper->SetStreamPlayObserver(aStreamPlayObserver);
     iLoggerStopper = new Logger(*iStopper, "Stopper");
-    iGorger = new Gorger(*iMsgFactory, *iLoggerStopper, kGorgerDuration);
+    iRamper = new Ramper(*iLoggerStopper, kRamperRampDuration);
+    iLoggerRamper = new Logger(*iRamper, "Ramper");
+    iGorger = new Gorger(*iMsgFactory, *iLoggerRamper, kGorgerDuration);
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iReporter = new Reporter(*iLoggerGorger, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -115,6 +118,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     //iLoggerSkipper->SetEnabled(true);
     //iLoggerWaiter->SetEnabled(true);
     //iLoggerStopper->SetEnabled(true);
+    //iLoggerRamper->SetEnabled(true);
     //iLoggerGorger->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
@@ -135,6 +139,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     //iLoggerSkipper->SetFilter(Logger::EMsgAll);
     //iLoggerWaiter->SetFilter(Logger::EMsgAll);
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
+    //iLoggerRamper->SetFilter(Logger::EMsgAll);
     //iLoggerGorger->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
@@ -165,6 +170,8 @@ Pipeline::~Pipeline()
     delete iReporter;
     delete iLoggerGorger;
     delete iGorger;
+    delete iLoggerRamper;
+    delete iRamper;
     delete iLoggerStopper;
     delete iStopper;
     delete iLoggerWaiter;
