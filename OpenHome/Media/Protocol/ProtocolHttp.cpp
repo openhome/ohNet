@@ -102,13 +102,11 @@ Protocol* ProtocolFactory::NewHttp(Environment& aEnv)
 
 void HeaderIcyMetadata::Write(WriterHttpHeader& aWriter)
 {
-    LOG(kMedia, "HeaderIcyMetadata::Write\n");
     aWriter.WriteHeader(Brn("Icy-MetaData"), Brn("1"));
 }
 
 TUint HeaderIcyMetadata::Bytes() const
 {
-    LOG(kMedia, "HeaderIcyMetadata::Bytes %d\n", iBytes);
     if (Received()) {
         return iBytes;
     }
@@ -122,10 +120,6 @@ TBool HeaderIcyMetadata::Recognise(const Brx& aHeader)
 
 void HeaderIcyMetadata::Process(const Brx& aValue)
 {
-    LOG(kMedia, "HeaderIcyMetadata::Process ");
-    LOG(kMedia, aValue);
-    LOG(kMedia, "\n");
-
     try {
         iBytes = Ascii::Uint(aValue);
         SetReceived();
@@ -133,8 +127,6 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
     catch (AsciiError&) {
         THROW(HttpError);
     }
-
-    LOG(kMedia, "HeaderIcyMetadata::Process SUCCEEDED (%d)\n", iBytes);
 }
 
 
@@ -500,8 +492,6 @@ ProtocolStreamResult ProtocolHttp::DoStream()
 
 ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
 {
-    LOG(kMedia, "ProtocolHttp::DoRestream %lld\n", aOffset);
-
     Interrupt(false);
     const TUint code = WriteRequest(aOffset);
     if (code == 0) {
@@ -509,7 +499,6 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
     }
     iTotalBytes = iHeaderContentLength.ContentLength();
     if (code != HttpStatus::kPartialContent.Code()) {
-        LOG(kMedia, "ProtocolHttp::DoRestream Not seekable\n");
         return EProtocolStreamErrorUnrecoverable;
     }
 
@@ -518,8 +507,6 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
 
 ProtocolStreamResult ProtocolHttp::DoLiveStream()
 {
-    LOG(kMedia, "ProtocolHttp::DoLiveStream\n");
-
     Interrupt(false);
     const TUint code = WriteRequest(0);
     iLive = false;
