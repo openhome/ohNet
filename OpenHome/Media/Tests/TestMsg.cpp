@@ -784,7 +784,7 @@ void SuiteMsgAudio::Test()
     // Try aggregate two msgs, where one has a ramp set
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
     msgAggregate2 = iMsgFactory->CreateMsgAudioPcm(data2, 2, 44100, 8, EMediaDataLittleEndian, secondsOffsetJiffies);
-    TUint rampRemaining = Ramp::kRampMax;
+    TUint rampRemaining = Ramp::kMax;
     MsgAudio* msgRemaining = NULL;
     msgAggregate2->SetRamp(0, rampRemaining, Ramp::EUp, msgRemaining);
     TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
