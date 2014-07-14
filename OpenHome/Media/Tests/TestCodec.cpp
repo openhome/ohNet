@@ -526,7 +526,6 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
-    , iSemSeek("SCSS", 0)
     , iFileNumStart(0)
     , iFileNumEnd(0)
     , iFileNumBack(0)
@@ -546,7 +545,6 @@ SuiteCodecSeek::SuiteCodecSeek(const TChar* aSuiteName, std::vector<AudioFileDes
     , iSeek(true)
     , iSeekPos(0)
     , iSeekSuccess(false)
-    , iSemSeek("SCSS", 0)
     , iFileNumStart(0)
     , iFileNumEnd(0)
     , iFileNumBack(0)
@@ -562,7 +560,7 @@ Msg* SuiteCodecSeek::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek && (iJiffies >= SuiteCodecStream::kTotalJiffies/2)) {
-        iSemSeek.Signal();
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
         iSeek = false;
     }
     return aMsg;
@@ -573,14 +571,6 @@ void SuiteCodecSeek::Setup()
     SuiteCodecStream::Setup();
     iSeek = true;
     iSeekSuccess = false;
-    iSeekThread = new ThreadFunctor("SuiteCodecSeek", MakeFunctor(*this, &SuiteCodecSeek::SeekThread), kPriorityNormal);
-    iSeekThread->Start();
-}
-
-void SuiteCodecSeek::TearDown()
-{
-    delete iSeekThread;
-    SuiteCodecStream::TearDown();
 }
 
 TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos)
@@ -588,12 +578,6 @@ TUint64 SuiteCodecSeek::ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint 
     TUint durationInSecs = aSeekInit + (aDuration-aSeekPos);
     TUint64 jiffies = durationInSecs * Jiffies::kPerSecond;
     return jiffies;
-}
-
-void SuiteCodecSeek::SeekThread()
-{
-    iSemSeek.Wait();
-    iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
 }
 
 void SuiteCodecSeek::TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec)
@@ -686,7 +670,7 @@ Msg* SuiteCodecSeekFromStart::ProcessMsg(MsgAudioPcm* aMsg)
 {
     aMsg = (MsgAudioPcm*) SuiteCodecStream::ProcessMsg(aMsg);
     if (iSeek) {
-        iSemSeek.Signal();
+        iSeekSuccess = iPipeline->SeekCurrentTrack(iSeekPos);
         iSeek = false;
     }
     return aMsg;
