@@ -53,7 +53,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iSeekHandle(0)
     , iPostSeekStreamInfo(NULL)
     , iAudioEncoded(NULL)
-    , iDecodedAudio(iMsgFactory, kMaxDecodedBufferedJiffies)
     , iSeekable(false)
     , iLive(false)
     , iStreamHandler(NULL)
@@ -77,7 +76,6 @@ CodecController::~CodecController()
     for (size_t i=0; i<iCodecs.size(); i++) {
         delete iCodecs[i];
     }
-    FlushAudioPcm();
     ReleaseAudioEncoded();
     if (iPostSeekStreamInfo != NULL) {
         iPostSeekStreamInfo->RemoveRef();
@@ -209,7 +207,6 @@ void CodecController::CodecThread()
                     ISeekObserver* seekObserver = iSeekObserver;
                     iLock.Signal();
                     if (seek) {
-                        FlushAudioPcm();
                         TUint64 sampleNum = iSeekSeconds * iSampleRate;
                         (void)iActiveCodec->TrySeek(iStreamId, sampleNum);
                         seekObserver->NotifySeekComplete(iSeekHandle, iExpectedFlushId);
@@ -230,10 +227,8 @@ void CodecController::CodecThread()
         catch (CodecStreamFlush&) {}
         if (iActiveCodec != NULL) {
             iActiveCodec->StreamCompleted();
-            FlushAudioPcm();
         }
         if (!iStreamStarted && !iStreamEnded) {
-            FlushAudioPcm(); // can't call this while lock is already held; so just push audio here
             iLock.Wait();
             if (iExpectedFlushId == MsgFlush::kIdInvalid) {
                 iExpectedFlushId = iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
@@ -295,16 +290,6 @@ void CodecController::ReleaseAudioEncoded()
         iAudioEncoded->RemoveRef();
         iAudioEncoded = NULL;
     }
-}
-
-void CodecController::FlushAudioPcm()
-{
-    AutoMutex a(iLock);
-    MsgAudioPcm* audio = iDecodedAudio.CreateMsgAudioPcm();
-    if (audio != NULL) {
-        Queue(audio);
-    }
-    iDecodedAudio.Clear(); // Do this as TrySeek() calls FlushAudioPcm, which will change iTrackOffset.
 }
 
 void CodecController::Read(Bwx& aBuf, TUint aBytes)
@@ -414,7 +399,6 @@ TUint64 CodecController::StreamPos() const
 
 void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless)
 {
-    FlushAudioPcm();
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
         THROW(CodecStreamCorrupt);
     }
@@ -435,7 +419,6 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
 
 void CodecController::OutputDelay(TUint aJiffies)
 {
-    FlushAudioPcm();
     iLock.Wait();
     MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
     Queue(msg);
@@ -444,35 +427,9 @@ void CodecController::OutputDelay(TUint aJiffies)
 
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
 {
-    TUint jiffies = DecodedAudioBuffer::JiffiesFromBytes(aData.Bytes(), aChannels, aSampleRate, aBitDepth);
-
-    // Discard decoded audio if a flush is pending.
-    AutoMutex a(iLock);
-    if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        iDecodedAudio.Clear();
-        return jiffies;
-    }
-
-    if (!iDecodedAudio.Initialised()) {
-        // New stream or audio may have been flushed.
-        iDecodedAudio.Initialise(aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
-    }
-
-    Brn remaining = iDecodedAudio.AddToBuffer(aData);
-    while (remaining != Brx::Empty()) {
-        // Have remainder, so buffer is full. Output audio and buffer new audio.
-        MsgAudioPcm* audio = iDecodedAudio.CreateMsgAudioPcm();
-        Queue(audio);
-        remaining = iDecodedAudio.AddToBuffer(remaining);
-    }
-
-    // Brx::Empty() returned from AddToBuffer() always signifies a successful add.
-    // However, if could be the case that the buffer was filled to its boundaries.
-    if (iDecodedAudio.BufferFull()) {
-        MsgAudioPcm* audio = iDecodedAudio.CreateMsgAudioPcm();
-        Queue(audio);
-    }
-
+    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
+    TUint jiffies= audio->Jiffies();
+    Queue(audio);
     return jiffies;
 }
 
@@ -487,21 +444,18 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
 
 void CodecController::OutputWait()
 {
-    FlushAudioPcm();
     MsgWait* wait = iMsgFactory.CreateMsgWait();
     Queue(wait);
 }
 
 void CodecController::OutputHalt()
 {
-    FlushAudioPcm();
     MsgHalt* halt = iMsgFactory.CreateMsgHalt();
     Queue(halt);
 }
 
 void CodecController::OutputSession()
 {
-    FlushAudioPcm();
     MsgSession* session = iMsgFactory.CreateMsgSession();
     Queue(session);
 }
@@ -678,7 +632,6 @@ TUint CodecController::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 
 
 TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    FlushAudioPcm();
     AutoMutex a(iLock);
     if (iTrackIdPipeline == aTrackId && iStreamId == aStreamId) {
         iStreamStopped = true;
@@ -708,93 +661,4 @@ void CodecController::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aSt
     if (iStreamHandler != NULL) {
         iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
     }
-}
-
-
-// DecodedAudioBuffer
-
-CodecController::DecodedAudioBuffer::DecodedAudioBuffer(MsgFactory& aMsgFactory, TUint aJiffyLimit)
-    : iJiffiesMax(aJiffyLimit)
-    , iMsgFactory(aMsgFactory)
-    , iChannels(0)
-    , iSampleRate(0)
-    , iBitDepth(0)
-    , iEndian(EMediaDataLittleEndian)
-    , iTrackOffset()
-{
-}
-
-TBool CodecController::DecodedAudioBuffer::Initialised()
-{
-    return iChannels != 0;
-}
-
-void CodecController::DecodedAudioBuffer::Initialise(TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset)
-{
-    ASSERT(iDecodedAudio.Bytes() == 0);
-    iChannels = aChannels;
-    iSampleRate = aSampleRate;
-    iBitDepth = aBitDepth;
-    iEndian = aEndian;
-    iTrackOffset = aTrackOffset;
-}
-
-Brn CodecController::DecodedAudioBuffer::AddToBuffer(const Brx& aData)
-{
-    ASSERT(iSampleRate != 0);
-
-    // This method only looks at the byte capacity when deciding whether to
-    // buffer data. There is no point in chopping the data purely on a jiffy
-    // limit when buffer space could be used to output all jiffies together.
-
-    if (iDecodedAudio.Bytes() + aData.Bytes() <= kMaxBytes) {
-        // Have byte capacity to add new data.
-        iDecodedAudio.Append(aData);
-        return Brx::Empty();
-    }
-    else {
-        // New data needs chopped to be added to msg.
-        const TUint splitPoint = kMaxBytes - iDecodedAudio.Bytes();
-        Brn remaining = aData.Split(splitPoint);
-        iDecodedAudio.Append(aData.Ptr(), splitPoint);
-        return remaining;
-    }
-}
-
-TBool CodecController::DecodedAudioBuffer::BufferFull()
-{
-    return (iDecodedAudio.Bytes() == kMaxBytes) // can't violate byte limit
-            || (Jiffies() >= iJiffiesMax);      // but can violate jiffy limit to use space more efficiently
-}
-
-MsgAudioPcm* CodecController::DecodedAudioBuffer::CreateMsgAudioPcm()
-{
-    if (iDecodedAudio.Bytes() == 0) {
-        return NULL;
-    }
-    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(iDecodedAudio, iChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
-    iTrackOffset += Jiffies();
-    iDecodedAudio.SetBytes(0);
-    return audio;
-}
-
-void CodecController::DecodedAudioBuffer::Clear()
-{
-    iDecodedAudio.SetBytes(0);
-    Initialise(0, 0, 0, EMediaDataLittleEndian, 0);
-}
-
-TUint CodecController::DecodedAudioBuffer::JiffiesFromBytes(TUint aBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth)
-{
-    const TUint bytesPerSample = aChannels * aBitDepth/8;
-    ASSERT(aBytes % bytesPerSample == 0);    // expect sample boundary
-    const TUint samples = aBytes / bytesPerSample;
-    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aSampleRate);
-    const TUint jiffies = samples * jiffiesPerSample;
-    return jiffies;
-}
-
-TUint CodecController::DecodedAudioBuffer::Jiffies()
-{
-    return JiffiesFromBytes(iDecodedAudio.Bytes(), iChannels, iSampleRate, iBitDepth);
 }
