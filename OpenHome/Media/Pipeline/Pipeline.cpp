@@ -57,8 +57,10 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
-    iDecodedAudioAggregator = new DecodedAudioAggregator(*iDecodedAudioReservoir, *iMsgFactory);
-    iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioAggregator);
+
+    iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
+    iDecodedAudioAggregator = new DecodedAudioAggregator(*iLoggerDecodedAudioAggregator, *iMsgFactory);
+
 
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
@@ -186,6 +188,8 @@ Pipeline::~Pipeline()
     delete iSeeker;
     delete iLoggerDecodedAudioReservoir;
     delete iDecodedAudioReservoir;
+    delete iLoggerDecodedAudioAggregator;
+    delete iDecodedAudioAggregator;
     delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;
