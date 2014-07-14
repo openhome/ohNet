@@ -230,9 +230,11 @@ protected:
     static TUint64 ExpectedJiffies(TUint aDuration, TUint aSeekInit, TUint aSeekPos);
 private: // from SuiteUnitTest
     void Setup();
+    void TearDown();
 public: // from MsgProcessor
     Msg* ProcessMsg(MsgAudioPcm* aMsg);
 private:
+    void SeekThread();
     void TestSeeking(TUint aDuration, TUint aSeekPos, TUint aCodec);
     void TestSeekingToStart();
     void TestSeekingToEnd();
@@ -242,11 +244,13 @@ protected:
     TBool iSeek;
     TUint iSeekPos;
     TBool iSeekSuccess;
+    Semaphore iSemSeek;
 private:
     TUint iFileNumStart;
     TUint iFileNumEnd;
     TUint iFileNumBack;
     TUint iFileNumForward;
+    ThreadFunctor* iSeekThread;
 };
 
 class SuiteCodecSeekFromStart : public SuiteCodecSeek
