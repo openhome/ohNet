@@ -33,6 +33,7 @@ class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
 public:
     ProtocolHttp(Environment& aEnv);
 private: // from Protocol
+    void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private: // from IStreamHandler
@@ -155,6 +156,19 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     iReaderResponse.AddHeader(iHeaderLocation);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
+}
+
+void ProtocolHttp::Interrupt(TBool aInterrupt)
+{
+    iLock.Wait();
+    if (iActive) {
+        Log::Print("ProtocolHttp::Interrupt(%u)\n", aInterrupt);
+        if (aInterrupt) {
+            iStopped = true;
+        }
+        iTcpClient.Interrupt(aInterrupt);
+    }
+    iLock.Signal();
 }
 
 ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
