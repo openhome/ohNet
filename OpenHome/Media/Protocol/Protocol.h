@@ -131,7 +131,6 @@ protected:
     IPipelineIdProvider* iIdProvider;
     ISupply* iSupply;
     IFlushIdProvider* iFlushIdProvider;
-private:
     TBool iActive;
 private:
     class AutoStream : private INonCopyable

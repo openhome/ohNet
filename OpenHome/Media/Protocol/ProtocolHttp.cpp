@@ -162,7 +162,7 @@ void ProtocolHttp::Interrupt(TBool aInterrupt)
 {
     iLock.Wait();
     if (iActive) {
-        Log::Print("ProtocolHttp::Interrupt(%u)\n", aInterrupt);
+        LOG(kMedia, "ProtocolHttp::Interrupt(%u)\n", aInterrupt);
         if (aInterrupt) {
             iStopped = true;
         }
