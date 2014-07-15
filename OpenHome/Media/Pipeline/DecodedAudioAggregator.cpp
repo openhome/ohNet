@@ -140,6 +140,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgHalt* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgFlush* aMsg)
 {
     AutoMutex a(iLock);
+    ReleaseAggregatedAudio();
     if (iExpectedFlushId == aMsg->Id()) {
         iExpectedFlushId = MsgFlush::kIdInvalid;
     }
@@ -154,8 +155,10 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgWait* aMsg)
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    OutputAggregatedAudio();    // seek may have been performed prior to this
     AutoMutex a(iLock);
+    ReleaseAggregatedAudio();   // If there was any buffered audio prior to this
+                                // then there was probably a Seek, which this element
+                                // is not involved in. So, just discard buffered audio.
     ASSERT(iDecodedAudio == NULL);
     const DecodedStreamInfo& info = aMsg->StreamInfo();
     iChannels = info.NumChannels();
