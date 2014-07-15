@@ -16,6 +16,7 @@ SIMPLE_TEST_DECLARATION(TestCodecController);
 SIMPLE_TEST_DECLARATION(TestConfigManager);
 SIMPLE_TEST_DECLARATION(TestContainer);
 SIMPLE_TEST_DECLARATION(TestContentProcessor);
+SIMPLE_TEST_DECLARATION(TestDecodedAudioAggregator);
 SIMPLE_TEST_DECLARATION(TestIdProvider);
 SIMPLE_TEST_DECLARATION(TestFiller);
 SIMPLE_TEST_DECLARATION(TestToneGenerator);
@@ -71,6 +72,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestConfigManager", ShellTestConfigManager));
     shellTests.push_back(ShellTest("TestContainer", ShellTestContainer));
     shellTests.push_back(ShellTest("TestContentProcessor", ShellTestContentProcessor));
+    shellTests.push_back(ShellTest("TestDecodedAudioAggregator", ShellTestDecodedAudioAggregator));
     shellTests.push_back(ShellTest("TestIdProvider", ShellTestIdProvider));
     shellTests.push_back(ShellTest("TestFiller", ShellTestFiller));
     shellTests.push_back(ShellTest("TestToneGenerator", ShellTestToneGenerator));
