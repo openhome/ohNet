@@ -47,6 +47,7 @@ Silencer::Silencer(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iBitDepth(0)
     , iNumChannels(0)
     , iQuit(false)
+    , iHalted(true)
 {
     iThread = new ThreadFunctor("Silencer", MakeFunctor(*this, &Silencer::Run), aThreadPriority);
     iThread->Start();
