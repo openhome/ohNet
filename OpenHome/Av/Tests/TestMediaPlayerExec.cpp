@@ -10,6 +10,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
@@ -44,7 +45,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     if (optionLoopback.Value() == true) {
         initParams->SetUseLoopbackNetworkAdapter();
     }
-//    Debug::SetLevel(Debug::kSongcast);
+//    Debug::SetLevel(Debug::kPipeline | Debug::kMedia);
     Net::Library* lib = new Net::Library(initParams);
     Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
