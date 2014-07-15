@@ -93,6 +93,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
     OutputAggregatedAudio();
     AutoMutex a(iLock);
     iTrackId = aMsg->IdPipeline();
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
 
