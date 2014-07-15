@@ -13,6 +13,8 @@ DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDown
     , iMsgFactory(aMsgFactory)
     , iStreamHandler(NULL)
     , iDecodedAudio(NULL)
+    , iTrackId(IPipelineIdProvider::kTrackIdInvalid)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iChannels(0)
     , iSampleRate(0)
     , iBitDepth(0)
@@ -40,24 +42,20 @@ EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aTrackId, TUint aStreamId)
     }
 }
 
-TUint DecodedAudioAggregator::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint DecodedAudioAggregator::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
-    OutputAggregatedAudio();
-    if (iStreamHandler != NULL) {
-        TUint flushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
-        AutoMutex a(iLock);
-        iExpectedFlushId = flushId;
-        return flushId;
-    }
+    ASSERTS(); // expect Seek requests to go from Seeker to CodecController, bypassing this (and other) downstream element(s).
     return MsgFlush::kIdInvalid;
 }
 
 TUint DecodedAudioAggregator::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    OutputAggregatedAudio();
+    AutoMutex a(iLock);
+    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+        ReleaseAggregatedAudio();
+    }
     if (iStreamHandler != NULL) {
         TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
-        AutoMutex a(iLock);
         iExpectedFlushId = flushId;
         return flushId;
     }
@@ -93,6 +91,8 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgSession* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
 {
     OutputAggregatedAudio();
+    AutoMutex a(iLock);
+    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -105,6 +105,8 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDelay* aMsg)
 Msg* DecodedAudioAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 {
     OutputAggregatedAudio();
+    AutoMutex a(iLock);
+    iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();
@@ -152,7 +154,7 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgWait* aMsg)
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    //OutputAggregatedAudio();  // shouldn't ever have aggregated audio stored when this is called
+    OutputAggregatedAudio();    // seek may have been performed prior to this
     AutoMutex a(iLock);
     ASSERT(iDecodedAudio == NULL);
     const DecodedStreamInfo& info = aMsg->StreamInfo();
@@ -164,13 +166,11 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgAudioPcm* aMsg)
 {
-    iLock.Wait();
+    AutoMutex a(iLock);
     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
-        iLock.Signal();
         aMsg->RemoveRef();
         return NULL;
     }
-    iLock.Signal();
     return TryAggregate(aMsg);
 }
 
@@ -203,7 +203,8 @@ MsgAudioPcm* DecodedAudioAggregator::TryAggregate(MsgAudioPcm* aMsg)
     // buffer data. There is no point in chopping the data purely on a jiffy
     // limit when buffer space could be used to output all jiffies together.
 
-    AutoMutex a(iLock);
+    // NOTE: iLock should be held by caller.
+
     TUint jiffies = aMsg->Jiffies();
     const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(iSampleRate);
     const TUint msgBytes = Jiffies::BytesFromJiffies(jiffies, jiffiesPerSample, iChannels, iBitDepth/8);
@@ -253,9 +254,22 @@ void DecodedAudioAggregator::Queue(Msg* aMsg)
 
 void DecodedAudioAggregator::OutputAggregatedAudio()
 {
-    AutoMutex a(iLock);
+    iLock.Wait();
     if (iDecodedAudio != NULL) {
-        Queue(iDecodedAudio);
+        MsgAudioPcm* msg = iDecodedAudio;
+        iDecodedAudio = NULL;
+        iLock.Signal();
+        Queue(msg);
+        return;
+    }
+    iLock.Signal();
+}
+
+void DecodedAudioAggregator::ReleaseAggregatedAudio()
+{
+    // NOTE: iLock must be held by caller.
+    if (iDecodedAudio != NULL) {
+        iDecodedAudio->RemoveRef();
         iDecodedAudio = NULL;
     }
 }

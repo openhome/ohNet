@@ -49,11 +49,14 @@ private:
     MsgAudioPcm* TryAggregate(MsgAudioPcm* aMsg);
     void Queue(Msg* aMsg);
     void OutputAggregatedAudio();
+    void ReleaseAggregatedAudio();
 private:
     IPipelineElementDownstream& iDownstreamElement;
     MsgFactory& iMsgFactory;
     IStreamHandler* iStreamHandler;
     MsgAudioPcm* iDecodedAudio;
+    TUint iStreamId;
+    TUint iTrackId;
     TUint iChannels;
     TUint iSampleRate;
     TUint iBitDepth;
