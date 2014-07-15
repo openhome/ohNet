@@ -19,7 +19,6 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
-    , iStreamHandler(NULL)
 {
 }
 
@@ -90,7 +89,6 @@ Msg* Seeker::ProcessMsg(MsgEncodedStream* aMsg)
 {
     NewStream();
     iStreamId = aMsg->StreamId();
-    iStreamHandler = aMsg->StreamHandler();
     iStreamIsSeekable = aMsg->Seekable();
     return aMsg;
 }
