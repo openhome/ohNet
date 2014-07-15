@@ -3,6 +3,7 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -151,6 +152,7 @@ Msg* Skipper::ProcessMsg(MsgQuit* aMsg)
 
 TBool Skipper::TryRemoveCurrentStream(TBool aRampDown)
 {
+    LOG(kMedia, "Skipper::TryRemoveCurrentStream(%u), iState=%u\n", aRampDown, iState);
     EState state = iState;
     if (!aRampDown || iState == eStarting) {
         StartFlushing(false); // if we don't need to ramp down we should already be halted (so don't need to generate another MsgHalt)
