@@ -512,7 +512,7 @@ void SuiteDecodedAudioAggregator::TestPcmIsExpectedSize()
 
 void TestDecodedAudioAggregator()
 {
-    Runner runner("CodecController tests\n");
+    Runner runner("DecodedAudioAggregator tests\n");
     runner.Add(new SuiteDecodedAudioAggregator());
     runner.Run();
 }
