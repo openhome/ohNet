@@ -378,7 +378,7 @@ MsgAudioPcm* SuiteDecodedAudioAggregator::CreateAudio(TUint aBytes)
     (void)memset(decodedAudioData, 0x7f, aBytes);
     Brn decodedAudioBuf(decodedAudioData, aBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(decodedAudioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, iTrackOffset);
-    delete decodedAudioData;
+    delete[] decodedAudioData;
 
     TUint samples = aBytes / (kChannels*kByteDepth);
     TUint jiffiesPerSample = Jiffies::kPerSecond / kSampleRate;
