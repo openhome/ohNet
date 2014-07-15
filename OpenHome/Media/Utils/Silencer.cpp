@@ -47,6 +47,7 @@ Silencer::Silencer(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamE
     , iBitDepth(0)
     , iNumChannels(0)
     , iQuit(false)
+    , iHalted(true)
 {
     iThread = new ThreadFunctor("Silencer", MakeFunctor(*this, &Silencer::Run), aThreadPriority);
     iThread->Start();
@@ -74,11 +75,25 @@ Msg* Silencer::Pull()
             msg = iFifo.Read()->Process(*this);
         }
         else { // generate silence
+            ASSERT(iHalted);
             auto msgSilence = iMsgFactory.CreateMsgSilence(iSilenceJiffies);
             msg = msgSilence->CreatePlayable(iSampleRate, iBitDepth, iNumChannels);
         }
     }
     return msg;
+}
+
+Msg* Silencer::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Silencer::ProcessMsg(MsgHalt* aMsg)
+{
+    // swallow halt messages - the driver presumably can't do anything with them if its using this class
+    iHalted = true;
+    aMsg->RemoveRef();
+    return NULL;
 }
 
 Msg* Silencer::ProcessMsg(MsgDecodedStream* aMsg)
@@ -90,17 +105,16 @@ Msg* Silencer::ProcessMsg(MsgDecodedStream* aMsg)
     return aMsg;
 }
 
-// swallow halt messages - the driver presumably can't do anything with them if its using this class
-Msg* Silencer::ProcessMsg(MsgHalt* aMsg)
+Msg* Silencer::ProcessMsg(MsgPlayable* aMsg)
 {
-    aMsg->RemoveRef();
-    return NULL;
+    iHalted = false;
+    return aMsg;
 }
 
-// passthrough: we sit to the right of the pre-driver
-Msg* Silencer::ProcessMsg(MsgMode* aMsg)     { return aMsg; }
-Msg* Silencer::ProcessMsg(MsgPlayable* aMsg) { return aMsg; }
-Msg* Silencer::ProcessMsg(MsgQuit* aMsg)     { return aMsg; }
+Msg* Silencer::ProcessMsg(MsgQuit* aMsg)
+{
+    return aMsg;
+}
 
 // not expected beyond the generic pipeline
 Msg* Silencer::ProcessMsg(MsgSession* aMsg)       { ASSERTS(); return aMsg; }

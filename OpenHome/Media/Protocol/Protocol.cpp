@@ -128,13 +128,11 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
 
 void ProtocolNetwork::Interrupt(TBool aInterrupt)
 {
-    LOG(kMedia, ">ProtocolNetwork::Interrupt\n");
-
     iLock.Wait();
-    iTcpClient.Interrupt(aInterrupt);
+    if (iActive) {
+        iTcpClient.Interrupt(aInterrupt);
+    }
     iLock.Signal();
-
-    LOG(kMedia, "<ProtocolNetwork::Interrupt\n");
 }
 
 void ProtocolNetwork::Open()
@@ -229,8 +227,6 @@ Brn ContentProcessor::ReadLine(IProtocolReader& aReader, TUint64& aBytesRemainin
             THROW(ReaderError);
         }
         if (line.Bytes() > 0) {
-            LOG(kMedia, line);
-            LOG(kMedia, "\n");
             return line;
         }
     }
