@@ -88,7 +88,7 @@ private:
 // SuiteSilencer
 
 SuiteSilencer::SuiteSilencer()
-    : SuiteUnitTest("Aggregator tests")
+    : SuiteUnitTest("Silencer tests")
     , iLock("TSIL")
     , iMsgSem("TSIL", 0)
     , iLastMsg(ENone)
