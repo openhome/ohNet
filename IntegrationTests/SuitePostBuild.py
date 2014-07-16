@@ -34,8 +34,8 @@ tests = [
     # OH Playlist Service
     [ 'TestPlaylistPlayTracks',    'local', 'local', 'None', 'None', 5,   'off', 'on' ],
 
-    # # OH Radio Service
-    [ 'TestRadioPlayChannels',     'local', 'local', 'ohmp', 7,      'on'             ]
+    # OH Radio Service
+    #[ 'TestRadioPlayChannels',     'local', 'local', 'ohmp', 7,      'on'             ]
 ]
 
 Suite.Suite( tests, logDir )
