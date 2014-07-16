@@ -327,65 +327,6 @@ void Bwx::Append(const TByte* aPtr, TUint aBytes)
     iBytes = Bytes() + aBytes;
 }
 
-TBool Bwx::TryAppend(TUint16 aValue)
-{
-    if ((iMaxBytes-Bytes())<2)
-    {
-        return(false);
-    }
-    Append(aValue);
-    return(true);
-}
-void Bwx::Append(TUint16 aValue)
-{
-    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
-    Append(ptr, 2);
-}
-
-TBool Bwx::TryAppend(TInt16 aValue)
-{
-    if ((iMaxBytes-Bytes())<2)
-    {
-        return(false);
-    }
-    Append(aValue);
-    return(true);
-}
-void Bwx::Append(TInt16 aValue)
-{
-    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
-    Append(ptr, 2);
-}
-
-TBool Bwx::TryAppend(TUint32 aValue)
-{
-    if ((iMaxBytes-Bytes())<4)
-    {
-        return(false);
-    }
-    Append(aValue);
-    return(true);
-}
-void Bwx::Append(TUint32 aValue)
-{
-    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
-    Append(ptr, 4);
-}
-
-TBool Bwx::TryAppend(TInt32 aValue)
-{
-    if ((iMaxBytes-Bytes())<4)
-    {
-        return(false);
-    }
-    Append(aValue);
-    return(true);
-}
-void Bwx::Append(TInt32 aValue)
-{
-    TByte* ptr = reinterpret_cast<TByte*>(&aValue);
-    Append(ptr, 4);
-}
 
 void Bwx::AppendPrintf(const TChar* aFormatString, ...)
 {
