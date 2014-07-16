@@ -13,9 +13,6 @@ EXCEPTION(Timeout)
 namespace OpenHome {
 
 enum ThreadPriority {
-    //Total priority range is 50 -> 150 inclusive = 101 possible priorities
-    //NOTE: Do not use less than eLowest or greater than eHighest without
-    //discussing the system wide implications with others.
     kPriorityMuchMore = 4
    ,kPriorityMore = 2
    ,kPriorityLess = -2
