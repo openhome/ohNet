@@ -161,7 +161,11 @@ protected:
      * @param aStackBytes  Stack size in bytes
      */
     Thread(const TChar* aName, TUint aPriority = kPriorityNormal, TUint aStackBytes = kDefaultStackBytes);
-    virtual void Run() = 0;
+
+    /**
+     * Derived classes should override the Run() method. Default implementation does nothing.
+     */
+    virtual void Run();
 
     /**
      * Throws ThreadKill if Kill() has been called.

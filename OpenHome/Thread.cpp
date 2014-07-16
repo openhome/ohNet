@@ -115,6 +115,15 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     iName.PtrZ();
 }
 
+void Thread::Run()
+{
+    /**
+     * Does nothing. Allows destructor to be entered before Run() has been
+     * called, in which case Run() will not resolve to a pure virtual method if
+     * it is subequently called.
+     */
+}
+
 Thread::~Thread()
 {
     LOG(kThread, "> Thread::~Thread() called for thread: %p\n", this);
@@ -135,7 +144,6 @@ void Thread::EntryPoint(void* aArg)
 { // static
     Thread* self = (Thread*)aArg;
     try {
-        self->CheckForKill();
         self->Run();
     }
     catch(ThreadKill&) {
