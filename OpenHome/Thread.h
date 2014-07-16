@@ -204,7 +204,6 @@ private:
     virtual void Run();
 private:
     Functor iFunctor;
-    Semaphore iStarted;
 };
 
 /**

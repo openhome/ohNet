@@ -663,6 +663,84 @@ void SuiteThreadKill::Test()
 }
 
 
+class SuiteThreadNotStarted : public Suite
+{
+public:
+    SuiteThreadNotStarted() : Suite("Thread not started") {}
+    void Test();
+};
+
+void SuiteThreadNotStarted::Test()
+{
+    Semaphore sem("", 0);
+    Thread* th = new ThreadKillable(sem);
+    delete th;
+
+    // Successful completion of this test signifies that Threads can be deleted
+    // without having been Start()ed.
+}
+
+
+class SuiteThreadFunctor : public Suite
+{
+public:
+    SuiteThreadFunctor() : Suite("ThreadFunctor") {}
+    void Test();
+private:
+    void Run();
+private:
+    Semaphore* iSem;
+    ThreadFunctor* iFunctor;
+};
+
+void SuiteThreadFunctor::Test()
+{
+    iSem = new Semaphore("", 0);
+    iFunctor = new ThreadFunctor("STFF", MakeFunctor(*this, &SuiteThreadFunctor::Run));
+    iFunctor->Start();
+    iSem->Wait();
+    delete iFunctor;
+    delete iSem;
+}
+
+void SuiteThreadFunctor::Run()
+{
+    try {
+        TEST(iFunctor->TryWait() == false);
+        iFunctor->Signal();
+        TEST(iFunctor->TryWait() == true);
+        iFunctor->CheckCurrentForKill();
+        iFunctor->Kill();
+        TEST_THROWS(iFunctor->CheckCurrentForKill(), ThreadKill);
+        TEST_THROWS(iFunctor->Wait(), ThreadKill);
+        TEST_THROWS(iFunctor->TryWait(), ThreadKill);
+    }
+    catch(ThreadKill&) {
+        ASSERT(0);
+    }
+    iSem->Signal();
+}
+
+
+class SuiteThreadFunctorNotStarted : public Suite
+{
+public:
+    SuiteThreadFunctorNotStarted() : Suite("ThreadFunctor not started") {}
+    void Test();
+private:
+    void Run() {}
+};
+
+void SuiteThreadFunctorNotStarted::Test()
+{
+    ThreadFunctor* tf = new ThreadFunctor("STFF", MakeFunctor(*this, &SuiteThreadFunctorNotStarted::Run));
+    delete tf;
+
+    // Successful completion of this test signifies that ThreadFunctors can be
+    // deleted without having been Start()ed.
+}
+
+
 class MainTestThread : public Thread
 {
 public:
@@ -681,6 +759,9 @@ void MainTestThread::Run()
     // (which run on servers with variable loads)
     //runner.Add(new SuitePerformance());
     runner.Add(new SuiteThreadKill());
+    runner.Add(new SuiteThreadNotStarted());
+    runner.Add(new SuiteThreadFunctor());
+    runner.Add(new SuiteThreadFunctorNotStarted());
     if (OpenHome::Thread::SupportsPriorities())
     {
         runner.Add(new SuitePriority());
