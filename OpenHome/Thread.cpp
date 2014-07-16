@@ -135,6 +135,7 @@ void Thread::EntryPoint(void* aArg)
 { // static
     Thread* self = (Thread*)aArg;
     try {
+        self->CheckForKill();
         self->Run();
     }
     catch(ThreadKill&) {
