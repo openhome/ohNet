@@ -21,7 +21,7 @@ void SuiteReaderBinary::Test()
 
     // ReaderBinary::Read()
 
-    TEST(readerBinary.Read(8) == buffer);
+    TEST(readerBinary.Read(8) == buffer.Split(0, 8));
 
     // ReaderBinary::ReadUintBe
 
@@ -96,15 +96,15 @@ void SuiteReaderBinary::Test()
     TByte dataSigned[] = { 0xff, 0xaa, 0xbb, 0xff };
     Brn bufferSigned(dataSigned, sizeof(dataSigned));
 
-    readerBuffer.Set(buffer);
+    readerBuffer.Set(bufferSigned);
     TEST(readerBinary.ReadIntBe(1) == TInt(0xff));
-    readerBuffer.Set(buffer);
+    readerBuffer.Set(bufferSigned);
     TEST(readerBinary.ReadIntBe(2) == TInt(0xffaa));
-    readerBuffer.Set(buffer);
+    readerBuffer.Set(bufferSigned);
     TEST(readerBinary.ReadIntBe(3) == TInt(0xffaabb));
-    readerBuffer.Set(buffer);
+    readerBuffer.Set(bufferSigned);
     TEST(readerBinary.ReadIntBe(4) == TInt(0xffaabbff));
-    readerBuffer.Set(buffer);
+    readerBuffer.Set(bufferSigned);
     TEST_THROWS(readerBinary.ReadIntBe(5), AssertionFailed);
 }
 
