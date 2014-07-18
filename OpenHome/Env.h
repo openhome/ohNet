@@ -7,7 +7,7 @@
 #ifndef HEADER_STACK
 #define HEADER_STACK
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 #include <vector>
 #include <map>

@@ -140,8 +140,10 @@ copy_build_includes:
 	move $(inc_build)\OpenHome\Private\Functor*.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\MimeTypes.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\OhNetDefines.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\Defines.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\OsTypes.h $(inc_build)\OpenHome > nul
 	move $(inc_build)\OpenHome\Private\OhNetTypes.h $(inc_build)\OpenHome > nul
+	move $(inc_build)\OpenHome\Private\Types.h $(inc_build)\OpenHome > nul
 	copy OpenHome\TestFramework\*.h $(inc_build)\OpenHome\Private > nul
 	copy OpenHome\Net\*.h $(inc_build)\OpenHome\Net\Private > nul
 	move $(inc_build)\OpenHome\Net\Private\FunctorAsync.h $(inc_build)\OpenHome\Net\Core > nul

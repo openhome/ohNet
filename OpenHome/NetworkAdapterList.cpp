@@ -1,5 +1,5 @@
 #include <OpenHome/Private/NetworkAdapterList.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Env.h>

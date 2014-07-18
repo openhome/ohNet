@@ -1,7 +1,7 @@
 #ifndef HEADER_BUFFER
 #define HEADER_BUFFER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
 #include <cstdarg>

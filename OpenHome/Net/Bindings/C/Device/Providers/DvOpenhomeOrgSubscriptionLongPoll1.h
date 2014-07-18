@@ -4,7 +4,7 @@
 #ifndef HEADER_DVOPENHOMEORGSUBSCRIPTIONLONGPOLL1_C
 #define HEADER_DVOPENHOMEORGSUBSCRIPTIONLONGPOLL1_C
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
 #include <OpenHome/Net/C/DvInvocation.h>

@@ -1,6 +1,6 @@
 #include "SuiteUnitTest.h"
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Functor.h>
 
 #include <string.h>

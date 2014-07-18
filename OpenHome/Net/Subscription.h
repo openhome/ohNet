@@ -1,7 +1,7 @@
 #ifndef HEADER_SUBSCRIPTION
 #define HEADER_SUBSCRIPTION
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Http.h>
 

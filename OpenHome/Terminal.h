@@ -1,7 +1,7 @@
 #ifndef HEADER_TERMINAL
 #define HEADER_TERMINAL
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Exception.h>

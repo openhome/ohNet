@@ -1,7 +1,7 @@
 #ifndef HEADER_SHELL
 #define HEADER_SHELL
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Network.h>

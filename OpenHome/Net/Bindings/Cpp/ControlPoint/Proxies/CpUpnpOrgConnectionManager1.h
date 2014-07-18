@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPORGCONNECTIONMANAGER1CPP
 #define HEADER_UPNPORGCONNECTIONMANAGER1CPP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>

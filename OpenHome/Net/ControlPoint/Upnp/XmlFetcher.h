@@ -8,7 +8,7 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Net/Private/Error.h>

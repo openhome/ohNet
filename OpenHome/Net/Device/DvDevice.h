@@ -1,7 +1,7 @@
 #ifndef HEADER_DVDEVICE
 #define HEADER_DVDEVICE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/DvResourceWriter.h>

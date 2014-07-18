@@ -2,8 +2,8 @@
 #define HEADER_OHNET_DEVICE_CPP
 
 #include <OpenHome/OsTypes.h>
-#include <OpenHome/OhNetTypes.h>
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Types.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/MimeTypes.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Exception.h>

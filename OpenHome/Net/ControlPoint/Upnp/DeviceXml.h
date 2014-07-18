@@ -5,7 +5,7 @@
 #ifndef HEADER_DEVICE_XML
 #define HEADER_DEVICE_XML
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 namespace OpenHome {

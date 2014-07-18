@@ -1,7 +1,7 @@
 #ifndef HEADER_IFACE_DEVICECPP
 #define HEADER_IFACE_DEVICECPP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <stddef.h>
 #include <string.h>
 

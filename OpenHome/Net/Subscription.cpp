@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Private/Subscription.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Http.h>
 

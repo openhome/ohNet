@@ -1,7 +1,7 @@
 #ifndef HEADER_CPDEVICEC
 #define HEADER_CPDEVICEC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 
 #ifdef __cplusplus

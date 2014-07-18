@@ -1,5 +1,5 @@
 #include "TestBasicDv.h"
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Cpp/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Private/Ascii.h>

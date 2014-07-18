@@ -1,7 +1,7 @@
 #ifndef HEADER_DVISUBSCRIPTION
 #define HEADER_DVISUBSCRIPTION
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Network.h>

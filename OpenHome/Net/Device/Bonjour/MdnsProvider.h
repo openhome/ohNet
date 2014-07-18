@@ -2,7 +2,7 @@
 #define HEADER_MDNSPROVIDER
 
 #include <OpenHome/Net/Private/Bonjour.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/MdnsPlatform.h>
 
 namespace OpenHome {

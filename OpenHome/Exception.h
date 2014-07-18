@@ -1,7 +1,7 @@
 #ifndef HEADER_EXCEPTION
 #define HEADER_EXCEPTION
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <exception>
 
 #ifdef DEFINE_TRACE

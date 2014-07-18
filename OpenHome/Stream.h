@@ -2,7 +2,7 @@
 #define HEADER_STREAM
 
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 

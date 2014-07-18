@@ -1,7 +1,7 @@
 #ifndef HEADER_CPDEVICEDVC
 #define HEADER_CPDEVICEDVC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/Net/C/CpDevice.h>
 #include <OpenHome/Net/C/DvDevice.h>
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_DVPROVIDER_C
 #define HEADER_DVPROVIDER_C
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
 #include <OpenHome/Net/C/Service.h>

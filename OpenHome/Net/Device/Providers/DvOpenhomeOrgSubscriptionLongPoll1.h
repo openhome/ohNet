@@ -1,7 +1,7 @@
 #ifndef HEADER_DVOPENHOMEORGSUBSCRIPTIONLONGPOLL1
 #define HEADER_DVOPENHOMEORGSUBSCRIPTIONLONGPOLL1
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>

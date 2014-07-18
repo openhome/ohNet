@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Private/CpiService.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
 #include <OpenHome/Private/Env.h>

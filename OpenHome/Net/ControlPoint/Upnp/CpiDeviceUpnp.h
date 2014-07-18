@@ -8,7 +8,7 @@
 #ifndef HEADER_CPIDEVICEUPNP
 #define HEADER_CPIDEVICEUPNP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Discovery.h>

@@ -1,7 +1,7 @@
 #ifndef HEADER_STANDARD
 #define HEADER_STANDARD
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 
 EXCEPTION(AssertionFailed)

@@ -5,7 +5,7 @@
 #define HEADER_UPNPORGCONNECTIONMANAGER1_C
 
 #include <OpenHome/OsTypes.h>
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/Net/C/Async.h>
 #include <OpenHome/Net/C/OhNet.h>
 #include <OpenHome/Net/C/CpDevice.h>

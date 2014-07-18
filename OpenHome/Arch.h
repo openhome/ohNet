@@ -1,7 +1,7 @@
 #ifndef HEADER_ARCH
 #define HEADER_ARCH
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/OsWrapper.h>
 
 namespace OpenHome {

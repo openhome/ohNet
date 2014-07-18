@@ -1,5 +1,5 @@
 #include <OpenHome/Net/C/CpDeviceUpnp.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/CpiDeviceUpnp.h>
 #include <OpenHome/Net/Private/FunctorCpiDevice.h>

@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Private/Service.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Net/Private/Ssdp.h>

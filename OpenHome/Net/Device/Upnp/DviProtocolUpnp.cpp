@@ -1,6 +1,6 @@
 #include <OpenHome/Net/Private/DviProtocolUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviStack.h>

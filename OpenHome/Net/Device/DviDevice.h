@@ -1,7 +1,7 @@
 #ifndef HEADER_DVIDEVICE
 #define HEADER_DVIDEVICE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/DviService.h>

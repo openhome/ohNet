@@ -10,7 +10,7 @@
 #define HEADER_OS_C
 
 #include <OpenHome/OsTypes.h>
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 
 /**
  * 'Null' handle implying no underlying OS object exists

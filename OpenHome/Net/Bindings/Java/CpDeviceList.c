@@ -5,7 +5,7 @@
 #include "CpDeviceList.h"
 #include "CpDeviceListCallback.h"
 #include "JniCallbackList.h"
-#include "OpenHome/OhNetDefines.h"
+#include "OpenHome/Defines.h"
 #include "OpenHome/Net/C/CpDevice.h"
 #include "OpenHome/Net/C/CpDeviceUpnp.h"
 

@@ -1,6 +1,6 @@
 #include <OpenHome/Net/C/Async.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;

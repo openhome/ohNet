@@ -1,7 +1,7 @@
 #ifndef HEADER_IFACE_NETWORKADAPTER
 #define HEADER_IFACE_NETWORKADAPTER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <stddef.h>
 #include <string.h>
 

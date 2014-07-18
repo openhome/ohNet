@@ -1,5 +1,5 @@
 #include "JniCallbackList.h"
-#include "OpenHome/OhNetDefines.h"
+#include "OpenHome/Defines.h"
 #include "OpenHome/Net/C/CpDevice.h"
 
 void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice);

@@ -1,7 +1,7 @@
 #ifndef HEADER_SERVICE_PROXYC
 #define HEADER_SERVICE_PROXYC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/OhNet.h>
 #include <OpenHome/Net/C/Service.h>

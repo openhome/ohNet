@@ -9,7 +9,7 @@
 #include <OpenHome/Net/C/CpUpnpOrgConnectionManager1.h>
 #include <OpenHome/Net/C/CpProxy.h>
 #include <OpenHome/Net/C/Async.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>

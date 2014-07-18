@@ -1,7 +1,7 @@
 #ifndef HEADER_OPENHOMEORGSUBSCRIPTIONLONGPOLL1CPP
 #define HEADER_OPENHOMEORGSUBSCRIPTIONLONGPOLL1CPP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>

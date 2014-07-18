@@ -2,7 +2,7 @@
 #define HEADER_SERVICE_PROXY
 
 #include <OpenHome/Functor.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Buffer.h>
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPORGRENDERINGCONTROL2
 #define HEADER_UPNPORGRENDERINGCONTROL2
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>

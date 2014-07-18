@@ -1,7 +1,7 @@
 #ifndef HEADER_DVINVOCATION_C
 #define HEADER_DVINVOCATION_C
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 
 #ifdef __cplusplus

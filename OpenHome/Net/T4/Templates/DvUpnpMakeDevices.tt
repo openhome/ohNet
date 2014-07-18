@@ -20,7 +20,7 @@ objects_devices = \
 <#  } #>
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
-headers_device = $(inc_build)/OpenHome/OhNetTypes.h \
+headers_device = $(inc_build)/OpenHome/Types.h \
                  $(inc_build)/OpenHome/Net/Private/DviService.h \
                  $(inc_build)/OpenHome/Functor.h \
                  $(inc_build)/OpenHome/Net/Private/Service.h \

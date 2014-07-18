@@ -1,7 +1,7 @@
 #ifndef HEADER_NETWORKINTERFACELIST
 #define HEADER_NETWORKINTERFACELIST
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/FunctorNetworkAdapter.h>

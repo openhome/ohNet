@@ -4,7 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGPRODUCT1_C
 #define HEADER_DVAVOPENHOMEORGPRODUCT1_C
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
 #include <OpenHome/Net/C/DvInvocation.h>

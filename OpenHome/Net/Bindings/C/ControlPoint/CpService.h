@@ -1,7 +1,7 @@
 #ifndef HEADER_CPSERVICEC
 #define HEADER_CPSERVICEC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/CpDevice.h>
 #include <OpenHome/Net/C/Service.h>

@@ -1,7 +1,7 @@
 #ifndef HEADER_TESTBASICCPC
 #define HEADER_TESTBASICCPC
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/C/CpDevice.h>
 
 namespace OpenHome {

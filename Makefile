@@ -418,15 +418,19 @@ copy_build_includes:
 	rm $(inc_build)/OpenHome/Private/Functor*.h
 	rm $(inc_build)/OpenHome/Private/MimeTypes.h
 	rm $(inc_build)/OpenHome/Private/OhNetDefines.h
+	rm $(inc_build)/OpenHome/Private/Defines.h
 	rm $(inc_build)/OpenHome/Private/OsTypes.h
 	rm $(inc_build)/OpenHome/Private/OhNetTypes.h
+	rm $(inc_build)/OpenHome/Private/Types.h
 	$(cp) OpenHome/Buffer.h $(inc_build)/OpenHome
 	$(cp) OpenHome/Exception.h $(inc_build)/OpenHome
 	$(cp) OpenHome/Functor*.h $(inc_build)/OpenHome
 	$(cp) OpenHome/MimeTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OhNetDefines.h $(inc_build)/OpenHome
+	$(cp) OpenHome/Defines.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OsTypes.h $(inc_build)/OpenHome
 	$(cp) OpenHome/OhNetTypes.h $(inc_build)/OpenHome
+	$(cp) OpenHome/Types.h $(inc_build)/OpenHome
 	$(cp) OpenHome/TestFramework/*.h $(inc_build)/OpenHome/Private
 	$(cp) OpenHome/Net/*.h $(inc_build)/OpenHome/Net/Private
 	rm $(inc_build)/OpenHome/Net/Private/FunctorAsync.h

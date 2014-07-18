@@ -5,7 +5,7 @@
 #define HEADER_OS_WRAPPER
 
 #include <OpenHome/Os.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Core/OhNet.h>

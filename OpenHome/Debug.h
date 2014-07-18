@@ -4,7 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <stdarg.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 class AutoLog
 {

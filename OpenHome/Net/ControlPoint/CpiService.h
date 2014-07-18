@@ -10,7 +10,7 @@
 #ifndef HEADER_CPISERVICE
 #define HEADER_CPISERVICE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/CpiDevice.h>

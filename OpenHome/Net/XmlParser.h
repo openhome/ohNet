@@ -2,7 +2,7 @@
 #define HEADER_XML_PARSER
 
 #include <OpenHome/Buffer.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 
 EXCEPTION(XmlError)

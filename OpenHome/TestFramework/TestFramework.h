@@ -3,7 +3,7 @@
 
 #include <OpenHome/Private/Standard.h>
 #include <stdio.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/FunctorMsg.h>
 #include <OpenHome/Net/Core/OhNet.h>

@@ -1,6 +1,6 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/Discovery.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Timer.h>

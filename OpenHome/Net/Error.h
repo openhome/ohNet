@@ -1,7 +1,7 @@
 #ifndef HEADER_ERROR
 #define HEADER_ERROR
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>
 

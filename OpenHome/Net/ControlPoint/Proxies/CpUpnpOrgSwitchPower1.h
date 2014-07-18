@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPORGSWITCHPOWER1
 #define HEADER_UPNPORGSWITCHPOWER1
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>

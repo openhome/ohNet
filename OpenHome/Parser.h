@@ -2,7 +2,7 @@
 #define HEADER_ASCII_PARSER
 
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 namespace OpenHome {

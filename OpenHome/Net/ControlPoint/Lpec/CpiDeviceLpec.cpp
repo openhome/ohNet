@@ -1,6 +1,6 @@
 #include <OpenHome/Net/Private/CpiDeviceLpec.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Private/CpiService.h>

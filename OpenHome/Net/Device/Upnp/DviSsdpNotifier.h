@@ -3,7 +3,7 @@
 
 #include <OpenHome/Net/Private/DviProtocolUpnp.h>
 #include <OpenHome/Private/Network.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/Ssdp.h>
 

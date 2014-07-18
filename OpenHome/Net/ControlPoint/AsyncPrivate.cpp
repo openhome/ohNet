@@ -1,6 +1,6 @@
 #include <OpenHome/Net/Private/AsyncPrivate.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/CpProxy.h>
 #include <OpenHome/Net/Private/Error.h>

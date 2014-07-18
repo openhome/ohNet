@@ -1,7 +1,7 @@
 #ifndef HEADER_SSDP_DISCOVERY
 #define HEADER_SSDP_DISCOVERY
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Ssdp.h>

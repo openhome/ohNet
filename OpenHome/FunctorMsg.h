@@ -1,7 +1,7 @@
 #ifndef HEADER_IFACE_MSG
 #define HEADER_IFACE_MSG
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <stddef.h>
 #include <string.h>
 

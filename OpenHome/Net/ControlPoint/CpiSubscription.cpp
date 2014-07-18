@@ -3,7 +3,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Private/Uri.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/CpiDevice.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Timer.h>

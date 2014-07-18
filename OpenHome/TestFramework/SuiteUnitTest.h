@@ -2,7 +2,7 @@
 #define HEADER_SUITE_UNIT_TEST
 
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Functor.h>
 
 #include <vector>

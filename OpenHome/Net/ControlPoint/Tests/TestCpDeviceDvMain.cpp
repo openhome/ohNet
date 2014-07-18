@@ -1,4 +1,4 @@
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/Core/OhNet.h>
 

@@ -1,7 +1,7 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
 #include "TestBasicDv.h"
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Net/Core/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>

@@ -13,7 +13,7 @@
 #ifndef HEADER_FUNCTOR
 #define HEADER_FUNCTOR
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <stddef.h>
 #include <string.h>
 

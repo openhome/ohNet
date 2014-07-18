@@ -7,7 +7,7 @@
 #ifndef HEADER_CPI_STACK
 #define HEADER_CPI_STACK
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Standard.h>
 

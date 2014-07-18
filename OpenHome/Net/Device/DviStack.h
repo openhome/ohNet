@@ -7,7 +7,7 @@
 #ifndef HEADER_DVI_STACK
 #define HEADER_DVI_STACK
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Private/DviServerUpnp.h>
 #include <OpenHome/Net/Private/DviDevice.h>

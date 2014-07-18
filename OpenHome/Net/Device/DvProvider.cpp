@@ -1,5 +1,5 @@
 #include <OpenHome/Net/Core/DvProvider.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Private/Printer.h>

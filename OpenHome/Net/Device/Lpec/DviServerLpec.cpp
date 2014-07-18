@@ -1,4 +1,4 @@
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/DviServerLpec.h>
 #include <OpenHome/Private/Network.h>

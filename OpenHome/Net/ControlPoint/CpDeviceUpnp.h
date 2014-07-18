@@ -1,7 +1,7 @@
 #ifndef HEADER_CPDEVICEUPNP
 #define HEADER_CPDEVICEUPNP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/CpDevice.h>
 #include <OpenHome/Net/Core/FunctorCpDevice.h>

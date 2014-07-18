@@ -1,7 +1,7 @@
 #ifndef HEADER_DVSERVERUPNPC
 #define HEADER_DVSERVERUPNPC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/DvDevice.h>
 

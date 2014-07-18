@@ -1,7 +1,7 @@
 #ifndef HEADER_DV_INVOCATION_RESPONSE
 #define HEADER_DV_INVOCATION_RESPONSE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 

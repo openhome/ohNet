@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPORGSCHEDULEDRECORDING2
 #define HEADER_UPNPORGSCHEDULEDRECORDING2
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>

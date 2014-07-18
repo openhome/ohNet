@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "Invocation.h"
 #include "JniCallbackList.h"
-#include "OpenHome/OhNetDefines.h"
+#include "OpenHome/Defines.h"
 #include "OpenHome/Net/C/CpService.h"
 
 #ifdef __cplusplus

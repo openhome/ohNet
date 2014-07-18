@@ -1,10 +1,9 @@
 #include "DvAvOpenhomeOrgSender1.h"
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/C/DviDeviceC.h>
 #include <OpenHome/Net/Core/DvProvider.h>
 #include <OpenHome/Net/C/OhNet.h>
-#include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>

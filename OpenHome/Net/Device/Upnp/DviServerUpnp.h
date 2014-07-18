@@ -1,7 +1,7 @@
 #ifndef HEADER_DVI_SERVER_UPNP
 #define HEADER_DVI_SERVER_UPNP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>

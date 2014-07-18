@@ -3,7 +3,7 @@
 // ... then checks how many times GetProtocolInfo can be run on each device in a second
 
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Private/Discovery.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Timer.h>

@@ -2,7 +2,7 @@
 #define HEADER_TIMER
 
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Queue.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Functor.h>

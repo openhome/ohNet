@@ -1,7 +1,7 @@
 #ifndef HEADER_IFACE_DVIINVOCATION
 #define HEADER_IFACE_DVIINVOCATION
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 namespace OpenHome {
 namespace Net {

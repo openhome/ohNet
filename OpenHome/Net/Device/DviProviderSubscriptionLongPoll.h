@@ -1,7 +1,7 @@
 #ifndef HEADER_DVI_PROVIDER_SUBSCRIPTION_LONGPOLL
 #define HEADER_DVI_PROVIDER_SUBSCRIPTION_LONGPOLL
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/DvOpenhomeOrgSubscriptionLongPoll1.h>
 #include <OpenHome/Net/Core/DvDevice.h>

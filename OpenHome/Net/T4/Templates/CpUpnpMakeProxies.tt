@@ -25,7 +25,7 @@ headers_proxy = $(inc_build)/OpenHome/Buffer.h \
                 $(inc_build)/OpenHome/Exception.h \
                 $(inc_build)/OpenHome/Functor.h \
                 $(inc_build)/OpenHome/Net/Core/FunctorAsync.h \
-                $(inc_build)/OpenHome/OhNetTypes.h \
+                $(inc_build)/OpenHome/Types.h \
                 $(inc_build)/OpenHome/Net/Core/CpProxy.h \
                 $(inc_build)/OpenHome/Net/Private/CpiService.h \
                 $(inc_build)/OpenHome/Net/Private/Service.h \

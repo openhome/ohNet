@@ -1,4 +1,4 @@
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Os.h>

@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPC
 #define HEADER_UPNPC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/Async.h>
 

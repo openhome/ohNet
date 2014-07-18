@@ -1,7 +1,7 @@
 #ifndef HEADER_SERVICEC
 #define HEADER_SERVICEC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/OhNet.h>
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_DVUPNPORGCONNECTIONMANAGER2CPP
 #define HEADER_DVUPNPORGCONNECTIONMANAGER2CPP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>

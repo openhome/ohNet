@@ -1,7 +1,7 @@
 #ifndef HEADER_DVUPNPORGSCHEDULEDRECORDING1CPP
 #define HEADER_DVUPNPORGSCHEDULEDRECORDING1CPP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>

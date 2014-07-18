@@ -7,7 +7,7 @@
 #ifndef HEADER_SERVICE
 #define HEADER_SERVICE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>

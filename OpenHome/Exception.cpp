@@ -1,6 +1,6 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Standard.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/OsWrapper.h>

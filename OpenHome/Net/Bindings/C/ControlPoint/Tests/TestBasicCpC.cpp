@@ -1,6 +1,6 @@
 #include "TestBasicCp.h"
 #include <OpenHome/Net/C/OhNet.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/C/CpProxy.h>
 #include <OpenHome/Net/C/CpOpenhomeOrgTestBasic1.h>

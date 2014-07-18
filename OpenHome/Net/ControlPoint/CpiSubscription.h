@@ -1,7 +1,7 @@
 #ifndef HEADER_CPISUBSCRIPTION
 #define HEADER_CPISUBSCRIPTION
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/CpiService.h>
 #include <OpenHome/Private/Timer.h>

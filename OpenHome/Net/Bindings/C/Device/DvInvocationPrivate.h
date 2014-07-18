@@ -1,7 +1,7 @@
 #ifndef HEADER_DVINVOCATION_PRIVATE_C
 #define HEADER_DVINVOCATION_PRIVATE_C
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Net/C/DvInvocation.h>

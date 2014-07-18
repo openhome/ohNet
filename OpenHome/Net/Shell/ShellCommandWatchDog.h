@@ -2,7 +2,7 @@
 #define HEADER_SHELL_COMMAND_WATCHDOG
 
 #include <OpenHome/Net/Private/Shell.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 #include <cstdlib>

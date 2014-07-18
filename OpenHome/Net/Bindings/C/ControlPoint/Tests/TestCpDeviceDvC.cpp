@@ -4,7 +4,7 @@
 */
 
 #include <OpenHome/Net/C/OhNet.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Net/C/CpDevice.h>
 #include <OpenHome/Net/C/CpDeviceDv.h>

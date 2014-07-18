@@ -1,7 +1,7 @@
 #ifndef HEADER_CPDEVICEUPNPC
 #define HEADER_CPDEVICEUPNPC
 
-#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Defines.h>
 #include <OpenHome/OsTypes.h>
 #include <OpenHome/Net/C/CpDevice.h>
 

@@ -1,7 +1,7 @@
 #include <OpenHome/Net/Private/CpiDeviceDv.h>
 #include <OpenHome/Net/Private/DviDevice.h>
 #include <OpenHome/Net/Private/DviService.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/CpiService.h>
 #include <OpenHome/Net/Private/CpiSubscription.h>

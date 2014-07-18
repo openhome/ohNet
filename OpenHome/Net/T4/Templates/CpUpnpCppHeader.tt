@@ -62,7 +62,7 @@
 #ifndef HEADER_<#=fileName.ToUpper()#>
 #define HEADER_<#=fileName.ToUpper()#>
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 <# if (useBuffers == 1) #>
 <# { #>
 #include <OpenHome/Buffer.h>

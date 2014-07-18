@@ -1,7 +1,7 @@
 #ifndef HEADER_DVI_SERVER_LPEC
 #define HEADER_DVI_SERVER_LPEC
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Network.h>

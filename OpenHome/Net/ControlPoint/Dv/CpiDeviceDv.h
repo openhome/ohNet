@@ -2,7 +2,7 @@
 #define HEADER_CP_DEVICE_SOCKET
 
 #include <OpenHome/Net/Private/CpiDevice.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/DviSubscription.h>

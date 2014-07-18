@@ -1,7 +1,7 @@
 #ifndef HEADER_ASYNC_PRIVATE
 #define HEADER_ASYNC_PRIVATE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Core/CpProxy.h>

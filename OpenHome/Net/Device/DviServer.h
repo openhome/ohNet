@@ -1,7 +1,7 @@
 #ifndef HEADER_DVI_SERVER
 #define HEADER_DVI_SERVER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Private/Thread.h>

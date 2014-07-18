@@ -1,7 +1,7 @@
 #ifndef HEADER_DVUPNPORGCONTENTDIRECTORY3
 #define HEADER_DVUPNPORGCONTENTDIRECTORY3
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>

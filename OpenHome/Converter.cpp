@@ -1,5 +1,5 @@
 #include <OpenHome/Private/Converter.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 

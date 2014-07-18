@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPORGAVTRANSPORT1
 #define HEADER_UPNPORGAVTRANSPORT1
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Functor.h>
