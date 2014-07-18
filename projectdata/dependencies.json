@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.1233",
+        "version": "1.0.1236",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.79",
+        "version": "0.0.85",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -45,7 +45,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.171",
+        "version":          "0.0.173",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv5": false,
