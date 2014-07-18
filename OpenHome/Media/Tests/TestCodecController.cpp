@@ -150,6 +150,8 @@ private: // from SuiteCodecControllerBase
 private: // from ISeekObserver
     void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
+    static void WriteUint16Le(WriterBinary& aWriter, TUint16 aValue);
+    static void WriteUint32Le(WriterBinary& aWriter, TUint32 aValue);
     Msg* CreateAudio(TBool aValidHeader, TUint aDataBytes);
     void TestStreamSuccessful();
     void TestRecognitionFail();
@@ -549,6 +551,21 @@ void SuiteCodecControllerStream::NotifySeekComplete(TUint aHandle, TUint aFlushI
     iSemSeek->Signal();
 }
 
+void SuiteCodecControllerStream::WriteUint16Le(WriterBinary& aWriter, TUint16 aValue)
+{
+    aWriter.WriteUint16Be(SwapEndian16(aValue));
+}
+
+void SuiteCodecControllerStream::WriteUint32Le(WriterBinary& aWriter, TUint32 aValue)
+{
+    // WriterBinary only has ability to output big endian values.
+    // This test suite has a rare case where little endian data is required for
+    // a WAV header.
+    // Instead of adding little endian methods to WriterBinary only for this
+    // test, provide these helper methods to force little endian output.
+    aWriter.WriteUint32Be(SwapEndian32(aValue));
+}
+
 Msg* SuiteCodecControllerStream::CreateAudio(TBool aValidHeader, TUint aDataBytes)
 {
     ASSERT(iTotalBytes > 0);
@@ -573,27 +590,28 @@ Msg* SuiteCodecControllerStream::CreateAudio(TBool aValidHeader, TUint aDataByte
         // populate wav header
         // RIFF header
         if (aValidHeader) {
-            writerBuf.Write(Brn("RIFF"));                                        // ChunkID
+            writerBuf.Write(Brn("RIFF"));                                       // ChunkID
         }
         else {
             writerBuf.Write(Brn("NULL"));
         }
-        writerBin.WriteUint32Be(Arch::BigEndian4(36+audioBytes));                             // ChunkSize
-        writerBuf.Write(Brn("WAVE"));                                            // Format
+
+        WriteUint32Le(writerBin, 36+audioBytes);                                // ChunkSize
+        writerBuf.Write(Brn("WAVE"));                                           // Format
 
         // fmt subchunk
-        writerBuf.Write(Brn("fmt "));                                            // Subchunk1ID
-        writerBin.WriteUint32Be(Arch::BigEndian4(kFmtChunkSize));                             // Subchunk1Size
-        writerBin.WriteUint16Be(Arch::BigEndian2(kFmtAudioFormat));                           // AudioFormat
-        writerBin.WriteUint16Be(Arch::BigEndian2(kNumChannels));                              // NumChannels
-        writerBin.WriteUint32Be(Arch::BigEndian4(kSampleRate));                               // SampleRate
-        writerBin.WriteUint32Be(Arch::BigEndian4(kSampleRate*kNumChannels*kBytesPerSample));  // ByteRate
-        writerBin.WriteUint16Be(Arch::BigEndian2(kNumChannels*kBytesPerSample));              // BlockAlign
-        writerBin.WriteUint16Be(Arch::BigEndian2(kBitsPerSample));                            // BitsPerSample
+        writerBuf.Write(Brn("fmt "));                                           // Subchunk1ID
+        WriteUint32Le(writerBin, kFmtChunkSize);                                // Subchunk1Size
+        WriteUint16Le(writerBin, kFmtAudioFormat);                              // AudioFormat
+        WriteUint16Le(writerBin, kNumChannels);                                 // NumChannels
+        WriteUint32Le(writerBin, kSampleRate);                                  // SampleRate
+        WriteUint32Le(writerBin, kSampleRate*kNumChannels*kBytesPerSample);     // ByteRate
+        WriteUint16Le(writerBin, kNumChannels*kBytesPerSample);                 // BlockAlign
+        WriteUint16Le(writerBin, kBitsPerSample);                               // BitsPerSample
 
         // data subchunk
-        writerBuf.Write(Brn("data"));                                            // Subchunk2ID
-        writerBin.WriteUint32Be(Arch::BigEndian4(audioBytes));                                // Subchunk2Size
+        writerBuf.Write(Brn("data"));                                           // Subchunk2ID
+        WriteUint32Le(writerBin, audioBytes);                                   // Subchunk2Size
 
         // append to encoded bytes buffer
         (void)memcpy(encodedAudioData, header.Ptr(), headerBytes);
