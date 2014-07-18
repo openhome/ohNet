@@ -155,7 +155,7 @@ TBool SuiteWriterBinary::CheckBuffer(TUint aCount, ...)
 
     va_end(args);
 
-    auto result = iBuffer == buffer;
+    TBool result = (iBuffer == buffer);
     ResetBuffer();
     return result;
 }
