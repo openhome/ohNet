@@ -565,33 +565,35 @@ Msg* SuiteCodecControllerStream::CreateAudio(TBool aValidHeader, TUint aDataByte
     TByte encodedAudioData[kMaxMsgBytes];
 
     Bws<kWavHeaderBytes> header;
+    WriterBuffer writerBuf(header);
+    WriterBinary writerBin(writerBuf);
     //TUint dataBytes = kMaxMsgBytes;
     TUint dataBytes = aDataBytes;
     if (iTrackOffset == 0) {
         // populate wav header
         // RIFF header
         if (aValidHeader) {
-            header.Append("RIFF");                                                      // ChunkID
+            writerBuf.Write(Brn("RIFF"));                                        // ChunkID
         }
         else {
-            header.Append("NULL");
+            writerBuf.Write(Brn("NULL"));
         }
-        header.Append(Arch::LittleEndian4(36+audioBytes));                              // ChunkSize
-        header.Append("WAVE");                                                          // Format
+        writerBin.WriteUint32Be(Arch::BigEndian4(36+audioBytes));                             // ChunkSize
+        writerBuf.Write(Brn("WAVE"));                                            // Format
 
         // fmt subchunk
-        header.Append("fmt ");                                                          // Subchunk1ID
-        header.Append(Arch::LittleEndian4(kFmtChunkSize));                              // Subchunk1Size
-        header.Append(Arch::LittleEndian2(kFmtAudioFormat));                            // AudioFormat
-        header.Append(Arch::LittleEndian2(kNumChannels));                               // NumChannels
-        header.Append(Arch::LittleEndian4(kSampleRate));                                // SampleRate
-        header.Append(Arch::LittleEndian4(kSampleRate*kNumChannels*kBytesPerSample));   // ByteRate
-        header.Append(Arch::LittleEndian2(kNumChannels*kBytesPerSample));               // BlockAlign
-        header.Append(Arch::LittleEndian2(kBitsPerSample));                             // BitsPerSample
+        writerBuf.Write(Brn("fmt "));                                            // Subchunk1ID
+        writerBin.WriteUint32Be(Arch::BigEndian4(kFmtChunkSize));                             // Subchunk1Size
+        writerBin.WriteUint16Be(Arch::BigEndian2(kFmtAudioFormat));                           // AudioFormat
+        writerBin.WriteUint16Be(Arch::BigEndian2(kNumChannels));                              // NumChannels
+        writerBin.WriteUint32Be(Arch::BigEndian4(kSampleRate));                               // SampleRate
+        writerBin.WriteUint32Be(Arch::BigEndian4(kSampleRate*kNumChannels*kBytesPerSample));  // ByteRate
+        writerBin.WriteUint16Be(Arch::BigEndian2(kNumChannels*kBytesPerSample));              // BlockAlign
+        writerBin.WriteUint16Be(Arch::BigEndian2(kBitsPerSample));                            // BitsPerSample
 
         // data subchunk
-        header.Append("data");                                                          // Subchunk2ID
-        header.Append(Arch::LittleEndian4(audioBytes));                                 // Subchunk2Size
+        writerBuf.Write(Brn("data"));                                            // Subchunk2ID
+        writerBin.WriteUint32Be(Arch::BigEndian4(audioBytes));                                // Subchunk2Size
 
         // append to encoded bytes buffer
         (void)memcpy(encodedAudioData, header.Ptr(), headerBytes);

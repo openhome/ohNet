@@ -23,7 +23,9 @@ ConfigNum::ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt 
 
     Bws<sizeof(TInt)> initialBuf;
     Bws<sizeof(TInt)> defaultBuf;
-    defaultBuf.Append(Arch::BigEndian4(aDefault));
+    WriterBuffer writerBuf(defaultBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aDefault);
     iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TInt initialVal = Converter::BeUint32At(initialBuf, 0);
 
@@ -96,7 +98,9 @@ void ConfigNum::Deserialise(const Brx& aString)
 void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 {
     Bws<sizeof(TInt)> valBuf;
-    valBuf.Append(Arch::BigEndian4(aKvp.Value()));
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aKvp.Value());
     iConfigManager.ToStore(iKey, valBuf);
 }
 
@@ -110,7 +114,9 @@ ConfigChoice::ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey,
 {
     Bws<sizeof(TUint)> initialBuf;
     Bws<sizeof(TUint)> defaultBuf;
-    defaultBuf.Append(Arch::BigEndian4(aDefault));
+    WriterBuffer writerBuf(defaultBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aDefault);
     iConfigManager.FromStore(iKey, initialBuf, defaultBuf);
     TUint initialVal = Converter::BeUint32At(initialBuf, 0);
 
@@ -180,7 +186,9 @@ void ConfigChoice::Deserialise(const Brx& aString)
 void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 {
     Bws<sizeof(TUint)> valBuf;
-    valBuf.Append(Arch::BigEndian4(aKvp.Value()));
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aKvp.Value());
     iConfigManager.ToStore(iKey, valBuf);
 }
 

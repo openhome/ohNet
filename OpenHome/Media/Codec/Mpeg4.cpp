@@ -507,28 +507,30 @@ void Mpeg4MediaInfoBase::Process()
         iCodecSpecificData.SetBytes(0);
 
         try {
-            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // ?
-            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // max_samples_per_frame
+            WriterBuffer writerBuf(iCodecSpecificData);
+            WriterBinary writerBin(writerBuf);
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // ?
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // max_samples_per_frame
             iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // 7a
 
             iBitDepth = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // bit depth
-            iCodecSpecificData.Append(static_cast<TUint8>(iBitDepth));
+            writerBin.WriteUint8(static_cast<TUint8>(iBitDepth));
 
-            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_historymult
-            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_initialhistory
-            iCodecSpecificData.Append(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_kmodifier
+            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_historymult
+            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_initialhistory
+            writerBin.WriteUint8(static_cast<TUint8>(Ascii::Uint(fmtp.Next())));        // rice_kmodifier
 
             iChannels = static_cast<TUint16>(Ascii::Uint(fmtp.Next()));                      // 7f - I think that this is channels
-            iCodecSpecificData.Append(static_cast<TUint8>(iChannels));
+            writerBin.WriteUint8(static_cast<TUint8>(iChannels));
 
-            iCodecSpecificData.Append(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));       // 80
-            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // 82
-            iCodecSpecificData.Append(Arch::BigEndian4(Ascii::Uint(fmtp.Next())));           // 86
+            writerBin.WriteUint16Be(static_cast<TUint16>(Ascii::Uint(fmtp.Next())));       // 80
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // 82
+            writerBin.WriteUint32Be(Ascii::Uint(fmtp.Next()));           // 86
 
             TUint rate = Ascii::Uint(fmtp.NextLine());
             iTimescale = rate;
             iSampleRate = rate;
-            iCodecSpecificData.Append(Arch::BigEndian4(rate)); // parsed fmtp data to be passed to alac decoder
+            writerBin.WriteUint32Be(rate); // parsed fmtp data to be passed to alac decoder
         }
         catch (AsciiError&) {
             THROW(MediaCodecRaopNotFound);

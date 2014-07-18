@@ -473,7 +473,9 @@ void SuiteStoreValOrdering::OrderingRamStore::Write(const Brx& aKey, const Brx& 
 {
     TUint time = Os::TimeInMs(iEnv.OsCtx());
     Bws<sizeof(TInt)> buf;
-    buf.Append(Arch::BigEndian4(time));
+    WriterBuffer writerBuf(buf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(time);
     ConfigRamStore::Write(aKey, buf);
     Thread::Sleep(kSleepTime);
 }
@@ -562,7 +564,9 @@ void SuiteStoreInt::TestValueFromStore()
     static const Brn key("store.int.key2");
     const TInt storeVal = kDefault*2;
     Bws<sizeof(TInt)> buf;
-    buf.Append(Arch::BigEndian4(storeVal));
+    WriterBuffer writerBuf(buf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(storeVal);
     iStore->Write(key, buf);
 
     // create StoreInt and check it uses value from store
