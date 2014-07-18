@@ -39,21 +39,21 @@ void SuiteReaderBinary::Test()
     // ReaderBinary::ReadUintBe64
 
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(1) == TUint64(0x12));
+    TEST(readerBinary.ReadUint64Be(1) == 0x12);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(2) == TUint64(0x1234));
+    TEST(readerBinary.ReadUint64Be(2) == 0x1234);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(3) == TUint64(0x123456));
+    TEST(readerBinary.ReadUint64Be(3) == 0x123456);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(4) == TUint64(0x12345678));
+    TEST(readerBinary.ReadUint64Be(4) == 0x12345678);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(5) == TUint64(0x123456789a));
+    TEST(readerBinary.ReadUint64Be(5) == 0x123456789a);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(6) == TUint64(0x123456789abc));
+    TEST(readerBinary.ReadUint64Be(6) == 0x123456789abc);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(7) == TUint64(0x123456789abcde));
+    TEST(readerBinary.ReadUint64Be(7) == 0x123456789abcde);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Be(8) == TUint64(0x123456789abcdef0));
+    TEST(readerBinary.ReadUint64Be(8) == 0x123456789abcdef0);
     readerBuffer.Set(buffer);
     TEST_THROWS(readerBinary.ReadUint64Be(9), AssertionFailed);
 
@@ -73,21 +73,21 @@ void SuiteReaderBinary::Test()
     // ReaderBinary::ReadUintLe64
 
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(1) == TUint64(0x12));
+    TEST(readerBinary.ReadUint64Le(1) == 0x12);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(2) == TUint64(0x3412));
+    TEST(readerBinary.ReadUint64Le(2) == 0x3412);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(3) == TUint64(0x563412));
+    TEST(readerBinary.ReadUint64Le(3) == 0x563412);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(4) == TUint64(0x78563412));
+    TEST(readerBinary.ReadUint64Le(4) == 0x78563412);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(5) == TUint64(0x9a78563412));
+    TEST(readerBinary.ReadUint64Le(5) == 0x9a78563412);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(6) == TUint64(0xbc9a78563412));
+    TEST(readerBinary.ReadUint64Le(6) == 0xbc9a78563412);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(7) == TUint64(0xdebc9a78563412));
+    TEST(readerBinary.ReadUint64Le(7) == 0xdebc9a78563412);
     readerBuffer.Set(buffer);
-    TEST(readerBinary.ReadUint64Le(8) == TUint64(0xf0debc9a78563412));
+    TEST(readerBinary.ReadUint64Le(8) == 0xf0debc9a78563412);
     readerBuffer.Set(buffer);
     TEST_THROWS(readerBinary.ReadUint64Le(9), AssertionFailed);
 
