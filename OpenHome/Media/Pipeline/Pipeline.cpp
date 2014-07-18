@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Pipeline/Pipeline.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Supply.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
@@ -20,7 +20,6 @@
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
 #include <OpenHome/Media/Pipeline/PreDriver.h>
-#include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

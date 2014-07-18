@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Radio/TuneIn.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>

@@ -1,7 +1,7 @@
 #ifndef HEADER_SOURCE_RAOP
 #define HEADER_SOURCE_RAOP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Av/Raop/Raop.h>

@@ -1,5 +1,5 @@
 #include <OpenHome/Av/UpnpAv/ProviderConnectionManager.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvUpnpOrgConnectionManager1.h>
 #include <OpenHome/Private/Ascii.h>

@@ -1,5 +1,5 @@
 #include <OpenHome/Av/FaultCode.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 using namespace OpenHome;

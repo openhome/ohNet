@@ -1,7 +1,7 @@
 #ifndef HEADER_FAULT_CODE
 #define HEADER_FAULT_CODE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 

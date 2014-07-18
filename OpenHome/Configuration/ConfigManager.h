@@ -1,7 +1,7 @@
 #ifndef HEADER_CONFIGMANAGER
 #define HEADER_CONFIGMANAGER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>

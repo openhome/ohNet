@@ -1,7 +1,7 @@
 #ifndef HEADER_KVPSTORE
 #define HEADER_KVPSTORE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 

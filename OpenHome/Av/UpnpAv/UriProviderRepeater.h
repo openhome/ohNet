@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_URIPROVIDER_REPEATER
 #define HEADER_PIPELINE_URIPROVIDER_REPEATER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Filler.h>

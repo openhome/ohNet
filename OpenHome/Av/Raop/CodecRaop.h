@@ -3,7 +3,7 @@
 
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/AlacBase.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 namespace OpenHome {
 namespace Av {

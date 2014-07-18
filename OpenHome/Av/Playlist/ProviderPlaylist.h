@@ -1,7 +1,7 @@
 #ifndef HEADER_PROVIDER_PLAYLIST
 #define HEADER_PROVIDER_PLAYLIST
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>

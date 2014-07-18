@@ -1,7 +1,7 @@
 #ifndef HEADER_ALLOCATOR_INFO_LOGGER
 #define HEADER_ALLOCATOR_INFO_LOGGER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Private/Stream.h>

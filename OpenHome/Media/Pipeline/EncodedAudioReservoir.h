@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_ENCODED_AUDIO_RESERVOIR
 #define HEADER_PIPELINE_ENCODED_AUDIO_RESERVOIR
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/AudioReservoir.h>
 
 namespace OpenHome {

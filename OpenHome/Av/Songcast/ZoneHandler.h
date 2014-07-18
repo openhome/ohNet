@@ -1,7 +1,7 @@
 #ifndef HEADER_ZONE_HANDLER
 #define HEADER_ZONE_HANDLER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Network.h>

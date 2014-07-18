@@ -1,7 +1,7 @@
 #ifndef HEADER_RAOP_HEADER
 #define HEADER_RAOP_HEADER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 namespace OpenHome {

@@ -1,7 +1,7 @@
 #ifndef HEADER_PROTOCOL_OHBASE
 #define HEADER_PROTOCOL_OHBASE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>

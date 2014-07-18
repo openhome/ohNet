@@ -1,7 +1,7 @@
 #ifndef HEADER_OHM_SOCKET
 #define HEADER_OHM_SOCKET
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Private/Network.h>

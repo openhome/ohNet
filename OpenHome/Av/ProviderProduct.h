@@ -1,7 +1,7 @@
 #ifndef HEADER_PROVIDER_PRODUCT_1
 #define HEADER_PROVIDER_PRODUCT_1
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvAvOpenhomeOrgProduct1.h>

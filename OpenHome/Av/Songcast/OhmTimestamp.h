@@ -1,7 +1,7 @@
 #ifndef HEADER_OHM_TIMESTAMP
 #define HEADER_OHM_TIMESTAMP
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 
 namespace OpenHome {

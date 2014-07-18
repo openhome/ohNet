@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_STARVATION_MONITOR
 #define HEADER_PIPELINE_STARVATION_MONITOR
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

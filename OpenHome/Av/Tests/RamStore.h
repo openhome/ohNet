@@ -2,7 +2,7 @@
 #define HEADER_RAM_STORE
 
 #include <OpenHome/Av/KvpStore.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 #include <map>

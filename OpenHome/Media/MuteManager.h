@@ -1,7 +1,7 @@
 #ifndef HEADER_MUTE_MANAGER
 #define HEADER_MUTE_MANAGER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 #include <OpenHome/Private/Thread.h>  // Mutex
 

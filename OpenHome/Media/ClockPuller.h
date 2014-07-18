@@ -1,7 +1,7 @@
 #ifndef HEADER_CLOCK_PULLER
 #define HEADER_CLOCK_PULLER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_PROVIDER_CONNECTIONMANAGER
 #define HEADER_PROVIDER_CONNECTIONMANAGER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvUpnpOrgConnectionManager1.h>

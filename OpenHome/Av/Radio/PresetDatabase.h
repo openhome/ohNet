@@ -1,7 +1,7 @@
 #ifndef HEADER_PRESET_DATABASE
 #define HEADER_PRESET_DATABASE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

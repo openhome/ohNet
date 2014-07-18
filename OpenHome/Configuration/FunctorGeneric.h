@@ -13,7 +13,7 @@
 #ifndef HEADER_IFACE_FUNCTORGENERIC
 #define HEADER_IFACE_FUNCTORGENERIC
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <stddef.h>
 #include <string.h>
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_AUDIO_RESERVOIR
 #define HEADER_PIPELINE_AUDIO_RESERVOIR
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>

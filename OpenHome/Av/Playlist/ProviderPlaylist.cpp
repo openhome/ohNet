@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Playlist/ProviderPlaylist.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvAvOpenhomeOrgPlaylist1.h>
 #include <OpenHome/Media/Pipeline/Msg.h>

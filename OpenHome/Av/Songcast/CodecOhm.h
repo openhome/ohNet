@@ -2,7 +2,7 @@
 #define HEADER_CODEC_OHM
 
 #include <OpenHome/Media/Codec/CodecController.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/Ohm.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>

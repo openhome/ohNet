@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_REWINDER
 #define HEADER_PIPELINE_REWINDER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Fifo.h>
 #include <OpenHome/Private/Standard.h>

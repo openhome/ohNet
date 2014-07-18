@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Raop/RaopHeader.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>

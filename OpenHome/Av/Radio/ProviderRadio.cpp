@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Radio/ProviderRadio.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvAvOpenhomeOrgRadio1.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>

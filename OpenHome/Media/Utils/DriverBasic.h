@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_DRIVER_BASIC
 #define HEADER_PIPELINE_DRIVER_BASIC
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>

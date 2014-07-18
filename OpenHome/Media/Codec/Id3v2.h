@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_CODEC_ID3V2
 #define HEADER_PIPELINE_CODEC_ID3V2
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Codec/Container.h>
 
 namespace OpenHome {
