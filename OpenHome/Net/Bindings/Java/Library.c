@@ -124,6 +124,20 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
 
 /*
  * Class:     org_openhome_net_core_Library
+ * Method:    OhNetLibraryNotifySuspended
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryNotifySuspended
+  (JNIEnv *aEnv, jclass aClass)
+{
+    aEnv = aEnv;
+    aClass = aClass;
+
+    OhNetLibraryNotifySuspended();
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryNotifyResumed
  * Signature: ()V
  */

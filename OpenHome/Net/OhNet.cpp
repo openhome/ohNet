@@ -644,6 +644,11 @@ NetworkAdapter* Library::CurrentSubnetAdapter(const char* aCookie)
     return iEnv->NetworkAdapterList().CurrentAdapter(aCookie);
 }
 
+void Library::NotifySuspended()
+{
+    iEnv->NotifySuspended();
+}
+
 void Library::NotifyResumed()
 {
     iEnv->NotifyResumed();
@@ -700,6 +705,11 @@ void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter(const char* aCookie)
 {
     return gEnv->NetworkAdapterList().CurrentAdapter(aCookie);
+}
+
+void UpnpLibrary::NotifySuspended()
+{
+    gEnv->NotifySuspended();
 }
 
 void UpnpLibrary::NotifyResumed()

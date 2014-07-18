@@ -138,6 +138,7 @@ private:
     void SetRenewTimer(TUint aMaxSeconds);
     void Resubscribe();
     void NotifySubnetChanged();
+    void Suspend();
 private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
@@ -163,6 +164,7 @@ private:
     TUint iRefCount;
     IInterruptHandler* iInterruptHandler;
     TBool iRejectFutureOperations;
+    TBool iSuspended;
 
     friend class CpiSubscriptionManager;
 };
@@ -194,7 +196,7 @@ class PendingSubscription;
 /**
  * Singleton which manages the pools of Subscriber and active Subscription instances
  */
-class CpiSubscriptionManager : public Thread, private IResumeObserver
+class CpiSubscriptionManager : public Thread, private IResumeObserver, private ISuspendObserver
 {
 public:
     CpiSubscriptionManager(CpStack& aCpStack);
@@ -216,6 +218,8 @@ public:
     void ScheduleLocked(CpiSubscription& aSubscription);
     TUint EventServerPort();
     void RenewAll();
+private: // from ISuspendObserver
+    void NotifySuspended();
 private: // from IResumeObserver
     void NotifyResumed();
 private:

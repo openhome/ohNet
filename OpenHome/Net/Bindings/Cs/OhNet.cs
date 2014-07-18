@@ -1025,6 +1025,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetLibraryNotifySuspended();
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void OhNetLibraryNotifyResumed();
 #if IOS
         [DllImport("__Internal")]
@@ -1182,6 +1188,17 @@ namespace OpenHome.Net.Core
         public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
             OhNetSetCurrentSubnet(aSubnet.Subnet());
+        }
+
+        /// <summary>
+        /// Inform the library that the application has been suspended.
+        /// </summary>
+        /// <remarks>This is necessary if the application may be paused while other processes on
+        /// a device continued to be executed (e.g. when an app moves to background on iOS).
+        /// It is typically not necessary to call this when the host device hibernates.</remarks>
+        public void NotifySuspended()
+        {
+            OhNetLibraryNotifySuspended();
         }
 
         /// <summary>

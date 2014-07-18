@@ -27,6 +27,12 @@ public:
     virtual ~IStack() {}
 };
 
+class ISuspendObserver
+{
+public:
+    virtual void NotifySuspended() = 0; // not allowed to throw
+};
+
 class IResumeObserver
 {
 public:
@@ -61,8 +67,11 @@ public:
     OpenHome::NetworkAdapterList& NetworkAdapterList();
     Net::SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     void MulticastListenerRelease(TIpAddress aInterface);
+    void AddSuspendObserver(ISuspendObserver& aObserver);
     void AddResumeObserver(IResumeObserver& aObserver);
+    void RemoveSuspendObserver(ISuspendObserver& aObserver);
     void RemoveResumeObserver(IResumeObserver& aObserver);
+    void NotifySuspended();
     void NotifyResumed();
     TUint SequenceNumber();
     TInt Random();
@@ -86,8 +95,9 @@ private:
     OpenHome::Mutex* iPublicLock;
     OpenHome::NetworkAdapterList* iNetworkAdapterList;
     std::vector<MListener*> iMulticastListeners;
+    std::vector<ISuspendObserver*> iSuspendObservers;
     std::vector<IResumeObserver*> iResumeObservers;
-    OpenHome::Mutex* iResumeObserverLock;
+    OpenHome::Mutex* iSuspendResumeObserverLock;
     TUint iSequenceNumber;
     IStack* iCpStack;
     IStack* iDvStack;

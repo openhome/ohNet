@@ -169,6 +169,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iPendingOperation(eNone)
     , iRefCount(1)
     , iInterruptHandler(NULL)
+    , iSuspended(false)
 {
     iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
@@ -354,7 +355,8 @@ void CpiSubscription::SetRenewTimer(TUint aMaxSeconds)
 
 void CpiSubscription::Resubscribe()
 {
-    if (StartSchedule(eResubscribe, false)) {
+    EOperation op = iSuspended? eSubscribe : eResubscribe;
+    if (StartSchedule(op, false)) {
         iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
     }
 }
@@ -373,6 +375,15 @@ void CpiSubscription::NotifySubnetChanged()
     Brh tmp;
     iSid.TransferTo(tmp);
     lock.Signal();
+}
+
+void CpiSubscription::Suspend()
+{
+    iTimer->Cancel();
+    iSuspended = true;
+    if (StartSchedule(eSubscribe, false)) {
+        iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
+    }
 }
 
 void CpiSubscription::EventUpdateStart()
@@ -527,6 +538,7 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
     functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
     iSubnetListenerId = ifList.AddSubnetListChangeListener(functor);
+    iCpStack.Env().AddSuspendObserver(*this);
     iCpStack.Env().AddResumeObserver(*this);
     if (currentInterface == NULL) {
         iEventServer = NULL;
@@ -562,6 +574,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 
     iLock.Wait();
     iActive = false;
+    iCpStack.Env().RemoveSuspendObserver(*this);
     iCpStack.Env().RemoveResumeObserver(*this);
     TBool wait = !ReadyForShutdown();
     iShutdownSem.Clear();
@@ -688,11 +701,28 @@ void CpiSubscriptionManager::RenewAll()
     }
 }
 
+void CpiSubscriptionManager::NotifySuspended()
+{
+    AutoMutex a(iLock);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        it->second->Suspend();
+        it++;
+    }
+}
+
 void CpiSubscriptionManager::NotifyResumed()
 {
     /* sockets are unusable on iOS when we resume so we need to perform as same actions
        as when we change address within the current subnet */
     HandleInterfaceChange(false);
+
+    AutoMutex a(iLock);
+    std::map<TUint,CpiSubscription*>::iterator it = iMap.begin();
+    while (it != iMap.end()) {
+        it->second->iSuspended = false;
+        it++;
+    }
 }
 
 void CpiSubscriptionManager::CurrentNetworkAdapterChanged()

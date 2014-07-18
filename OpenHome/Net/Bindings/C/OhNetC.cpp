@@ -49,6 +49,11 @@ void STDCALL OhNetLibraryClose()
     UpnpLibrary::Close();
 }
 
+void STDCALL OhNetLibraryNotifySuspended(void)
+{
+    UpnpLibrary::NotifySuspended();
+}
+
 void STDCALL OhNetLibraryNotifyResumed(void)
 {
     UpnpLibrary::NotifyResumed();

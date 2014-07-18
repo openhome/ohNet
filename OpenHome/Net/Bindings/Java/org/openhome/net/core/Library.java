@@ -14,6 +14,7 @@ public class Library
     private static native void OhNetLibraryClose();
     private static native void OhNetSetCurrentSubnet(long aSubnet);
     private static native long OhNetCurrentSubnetAdapter();
+    private static native void OhNetLibraryNotifySuspended();
     private static native void OhNetLibraryNotifyResumed();
     private static native void OhNetDebugSetLevel(int aLevel);
     private static native void OhNetAbortProcess();
@@ -173,7 +174,19 @@ public class Library
     }
 
     /**
-     * Inform the library that the application has been resumed
+     * Inform the library that the application has been suspended.
+     *
+     * This is necessary if the application may be paused while other processes on
+     * a device continued to be executed (e.g. when an app moves to background on iOS).
+     * It is typically not necessary to call this when the host device hibernates.
+     */
+     public void notifySuspended()
+     {
+         OhNetLibraryNotifySuspended();
+     }
+
+    /**
+     * Inform the library that the application has been resumed.
      *
      * This is necessary if the application may have been paused while other processes on
      * a device continued to be executed (e.g. when an app moves to background on iOS).

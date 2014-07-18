@@ -524,7 +524,16 @@ public:
     NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
 
     /**
-     * Inform the library that the application has been resumed
+     * Inform the library that the application has been suspended.
+     *
+     * This is necessary if the application may be paused while other processes on
+     * a device continued to be executed (e.g. when an app moves to background on iOS).
+     * It is typically not necessary to call this when the host device hibernates.
+     */
+    void NotifySuspended();
+
+    /**
+     * Inform the library that the application has been resumed.
      *
      * This is necessary if the application may have been paused while other processes on
      * a device continued to be executed (e.g. when an app moves to background on iOS).
@@ -649,6 +658,15 @@ public:
      *          Or NULL if there is no currently selected adapter.
      */
     static NetworkAdapter* CurrentSubnetAdapter(const char* aCookie);
+
+    /**
+     * Inform the library that the application has been suspended.
+     *
+     * This is necessary if the application may be paused while other processes on
+     * a device continued to be executed (e.g. when an app moves to background on iOS).
+     * It is typically not necessary to call this when the host device hibernates.
+     */
+    static void NotifySuspended();
 
     /**
      * Inform the library that the application has been resumed
