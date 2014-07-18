@@ -577,6 +577,39 @@ void WriterBinary::WriteUint64Be(TUint64 aValue)
     iWriter.Write((TByte)(aValue));
 }
 
+void WriterBinary::WriteUint16Le(TUint aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+}
+
+void WriterBinary::WriteUint24Le(TUint aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue >> 16));
+}
+
+void WriterBinary::WriteUint32Le(TUint aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue >> 16));
+    iWriter.Write((TByte)(aValue >> 24));
+}
+
+void WriterBinary::WriteUint64Le(TUint64 aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue >> 16));
+    iWriter.Write((TByte)(aValue >> 24));
+    iWriter.Write((TByte)(aValue >> 32));
+    iWriter.Write((TByte)(aValue >> 40));
+    iWriter.Write((TByte)(aValue >> 48));
+    iWriter.Write((TByte)(aValue >> 56));
+}
+
 void WriterBinary::WriteInt8(TInt aValue)
 {
     iWriter.Write((TByte)(aValue));
@@ -615,4 +648,36 @@ void WriterBinary::WriteInt64Be(TInt64 aValue)
     iWriter.Write((TByte)(aValue));
 }
 
+void WriterBinary::WriteInt16Le(TInt aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+}
+
+void WriterBinary::WriteInt24Le(TInt aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue >> 16));
+}
+
+void WriterBinary::WriteInt32Le(TInt aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue >> 16));
+    iWriter.Write((TByte)(aValue >> 24));
+}
+
+void WriterBinary::WriteInt64Le(TInt64 aValue)
+{
+    iWriter.Write((TByte)(aValue));
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue >> 16));
+    iWriter.Write((TByte)(aValue >> 24));
+    iWriter.Write((TByte)(aValue >> 32));
+    iWriter.Write((TByte)(aValue >> 40));
+    iWriter.Write((TByte)(aValue >> 48));
+    iWriter.Write((TByte)(aValue >> 56));
+}
 

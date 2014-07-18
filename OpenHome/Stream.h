@@ -212,11 +212,19 @@ public:
     void WriteUint24Be(TUint aValue);
     void WriteUint32Be(TUint aValue);
     void WriteUint64Be(TUint64 aValue);
+    void WriteUint16Le(TUint aValue);
+    void WriteUint24Le(TUint aValue);
+    void WriteUint32Le(TUint aValue);
+    void WriteUint64Le(TUint64 aValue);
     void WriteInt8(TInt aValue);
     void WriteInt16Be(TInt aValue);
     void WriteInt24Be(TInt aValue);
     void WriteInt32Be(TInt aValue);
     void WriteInt64Be(TInt64 aValue);
+    void WriteInt16Le(TInt aValue);
+    void WriteInt24Le(TInt aValue);
+    void WriteInt32Le(TInt aValue);
+    void WriteInt64Le(TInt64 aValue);
 private:
     IWriter& iWriter;
 };
