@@ -492,6 +492,14 @@ $(objdir)TestFifo.$(objext) : OpenHome/Tests/TestFifo.cpp $(headers)
 $(objdir)TestFifoMain.$(objext) : OpenHome/Tests/TestFifoMain.cpp $(headers)
 	$(compiler)TestFifoMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestFifoMain.cpp
 
+TestStream: $(objdir)TestStream.$(exeext) 
+$(objdir)TestStream.$(exeext) :  ohNetCore $(objdir)TestStream.$(objext) $(objdir)TestStreamMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestStream.$(exeext) $(objdir)TestStreamMain.$(objext) $(objdir)TestStream.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestStream.$(objext) : OpenHome/Tests/TestStream.cpp $(headers)
+	$(compiler)TestStream.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestStream.cpp
+$(objdir)TestStreamMain.$(objext) : OpenHome/Tests/TestStreamMain.cpp $(headers)
+	$(compiler)TestStreamMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestStreamMain.cpp
+
 TestTextUtils: $(objdir)TestTextUtils.$(exeext) 
 $(objdir)TestTextUtils.$(exeext) :  ohNetCore $(objdir)TestTextUtils.$(objext) $(objdir)TestTextUtilsMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestTextUtils.$(exeext) $(objdir)TestTextUtilsMain.$(objext) $(objdir)TestTextUtils.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -758,6 +766,7 @@ tests_core = \
 	$(objdir)TestBuffer.$(objext) \
 	$(objdir)TestThread.$(objext) \
 	$(objdir)TestFifo.$(objext) \
+	$(objdir)TestStream.$(objext) \
 	$(objdir)TestFile.$(objext) \
 	$(objdir)TestQueue.$(objext) \
 	$(objdir)TestTextUtils.$(objext) \
@@ -783,7 +792,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFifo TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

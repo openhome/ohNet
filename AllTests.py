@@ -283,6 +283,7 @@ class TestCase(object):
         return path
 
 gAllTests = [ TestCase('TestBuffer', [], True)
+             ,TestCase('TestStream', [], True)
              ,TestCase('TestThread', [], True)
              ,TestCase('TestFifo', [], True)
              ,TestCase('TestFile', [], True)
