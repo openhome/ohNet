@@ -17,7 +17,7 @@ openhome_configuration = Debug
 android_ndk_debug = 1
 else
 debug_specific_cflags = -g -O2
-debug_csharp = /optimize+
+debug_csharp = /optimize+ /debug:pdbonly
 build_dir = Release
 openhome_configuration = Release
 android_ndk_debug=0
