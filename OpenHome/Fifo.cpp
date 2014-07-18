@@ -93,7 +93,6 @@ TUint FifoBase::ReadOpen()
     if(iReadIndex == Slots()) {
         iReadIndex = 0;
     }
-    iMutexRead.Signal();
     return index;
 }
 
@@ -102,6 +101,7 @@ void FifoBase::ReadClose()
     iMutexWrite.Wait();
     iSlotsUsed--;
     iMutexWrite.Signal();
+    iMutexRead.Signal();
     iSemaWrite.Signal();
 }
 
