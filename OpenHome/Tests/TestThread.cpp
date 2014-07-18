@@ -662,6 +662,187 @@ void SuiteThreadKill::Test()
     delete th;
 }
 
+class ThreadDummy : public Thread
+{
+public:
+    ThreadDummy(TUint aPriority = kPriorityNormal) : Thread("DUMM", aPriority) {}
+public: // from Thread
+    void Run() {}
+};
+
+
+class SuiteThreadNotStarted : public Suite
+{
+public:
+    SuiteThreadNotStarted() : Suite("Thread not started") {}
+    void Test();
+};
+
+void SuiteThreadNotStarted::Test()
+{
+    Thread* th = new ThreadDummy();
+    delete th;
+
+    // Successful completion of this test signifies that Threads can be deleted
+    // without having been Start()ed.
+}
+
+
+class SuiteThreadStartDelete : public Suite
+{
+private:
+    static const TUint kThreadCount = 10000;
+    static const TUint kUpdateInterval = 100;
+public:
+    SuiteThreadStartDelete() : Suite("Thread start and delete cycle") {}
+    void Test();
+};
+
+void SuiteThreadStartDelete::Test()
+{
+    static const TUint kPriorityLowest = kPrioritySystemLowest;
+    static const TUint kPriorityHighest = kPrioritySystemHighest;
+    TBool priorityIncreasing = true;
+    TUint priority = kPriorityLowest;
+    for (TUint i=0; i< kThreadCount; i++) {
+        Thread* th = new ThreadDummy(priority);
+        th->Start();
+        delete th;
+
+        if (priorityIncreasing) {
+            if (priority == kPriorityHighest) {
+                priorityIncreasing = false;
+                priority--;
+            }
+            else {
+                priority++;
+            }
+        }
+        else {
+            if (priority == kPriorityLowest) {
+                priorityIncreasing = true;
+                priority++;
+            }
+            else {
+                priority--;
+            }
+        }
+
+        if (i % kUpdateInterval == 0) {
+            TEST(true); // only to show progress
+        }
+    }
+}
+
+
+class SuiteThreadFunctor : public Suite
+{
+public:
+    SuiteThreadFunctor() : Suite("ThreadFunctor") {}
+    void Test();
+private:
+    void Run();
+private:
+    Semaphore* iSem;
+    ThreadFunctor* iFunctor;
+};
+
+void SuiteThreadFunctor::Test()
+{
+    iSem = new Semaphore("", 0);
+    iFunctor = new ThreadFunctor("STFF", MakeFunctor(*this, &SuiteThreadFunctor::Run));
+    iFunctor->Start();
+    iSem->Wait();
+    delete iFunctor;
+    delete iSem;
+}
+
+void SuiteThreadFunctor::Run()
+{
+    try {
+        TEST(iFunctor->TryWait() == false);
+        iFunctor->Signal();
+        TEST(iFunctor->TryWait() == true);
+        iFunctor->CheckCurrentForKill();
+        iFunctor->Kill();
+        TEST_THROWS(iFunctor->CheckCurrentForKill(), ThreadKill);
+        TEST_THROWS(iFunctor->Wait(), ThreadKill);
+        TEST_THROWS(iFunctor->TryWait(), ThreadKill);
+    }
+    catch(ThreadKill&) {
+        ASSERT(0);
+    }
+    iSem->Signal();
+}
+
+
+class SuiteThreadFunctorNotStarted : public Suite
+{
+public:
+    SuiteThreadFunctorNotStarted() : Suite("ThreadFunctor not started") {}
+    void Test();
+private:
+    void Run() {}
+};
+
+void SuiteThreadFunctorNotStarted::Test()
+{
+    ThreadFunctor* tf = new ThreadFunctor("STFF", MakeFunctor(*this, &SuiteThreadFunctorNotStarted::Run));
+    delete tf;
+
+    // Successful completion of this test signifies that ThreadFunctors can be
+    // deleted without having been Start()ed.
+}
+
+
+class SuiteThreadFunctorStartDelete : public Suite
+{
+private:
+    static const TUint kThreadCount = 10000;
+    static const TUint kUpdateInterval = 100;
+public:
+    SuiteThreadFunctorStartDelete() : Suite("ThreadFunctor start and delete cycle") {}
+    void Test();
+private:
+    void Run() {}
+};
+
+void SuiteThreadFunctorStartDelete::Test()
+{
+    static const TUint kPriorityLowest = kPrioritySystemLowest;
+    static const TUint kPriorityHighest = kPrioritySystemHighest;
+    TBool priorityIncreasing = true;
+    TUint priority = kPriorityLowest;
+    for (TUint i=0; i< kThreadCount; i++) {
+        ThreadFunctor* tf = new ThreadFunctor("TFSD", MakeFunctor(*this, &SuiteThreadFunctorStartDelete::Run), priority);
+        tf->Start();
+        delete tf;
+
+        if (priorityIncreasing) {
+            if (priority == kPriorityHighest) {
+                priorityIncreasing = false;
+                priority--;
+            }
+            else {
+                priority++;
+            }
+        }
+        else {
+            if (priority == kPriorityLowest) {
+                priorityIncreasing = true;
+                priority++;
+            }
+            else {
+                priority--;
+            }
+        }
+
+        if (i % kUpdateInterval == 0) {
+            TEST(true); // only to show progress
+        }
+    }
+}
+
 
 class MainTestThread : public Thread
 {
@@ -681,6 +862,11 @@ void MainTestThread::Run()
     // (which run on servers with variable loads)
     //runner.Add(new SuitePerformance());
     runner.Add(new SuiteThreadKill());
+    runner.Add(new SuiteThreadNotStarted());
+    runner.Add(new SuiteThreadStartDelete());
+    runner.Add(new SuiteThreadFunctor());
+    runner.Add(new SuiteThreadFunctorNotStarted());
+    runner.Add(new SuiteThreadFunctorStartDelete());
     if (OpenHome::Thread::SupportsPriorities())
     {
         runner.Add(new SuitePriority());

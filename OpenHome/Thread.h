@@ -13,9 +13,6 @@ EXCEPTION(Timeout)
 namespace OpenHome {
 
 enum ThreadPriority {
-    //Total priority range is 50 -> 150 inclusive = 101 possible priorities
-    //NOTE: Do not use less than eLowest or greater than eHighest without
-    //discussing the system wide implications with others.
     kPriorityMuchMore = 4
    ,kPriorityMore = 2
    ,kPriorityLess = -2
@@ -164,7 +161,11 @@ protected:
      * @param aStackBytes  Stack size in bytes
      */
     Thread(const TChar* aName, TUint aPriority = kPriorityNormal, TUint aStackBytes = kDefaultStackBytes);
-    virtual void Run() = 0;
+
+    /**
+     * Derived classes should override the Run() method. Default implementation does nothing.
+     */
+    virtual void Run();
 
     /**
      * Throws ThreadKill if Kill() has been called.
@@ -204,7 +205,6 @@ private:
     virtual void Run();
 private:
     Functor iFunctor;
-    Semaphore iStarted;
 };
 
 /**

@@ -103,7 +103,7 @@ const TUint OpenHome::Thread::kDefaultStackBytes = 32 * 1024;
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
     , iSema("TSEM", 0)
-    , iTerminated(aName, 0)
+    , iTerminated(aName, 1)
     , iKill(false)
     , iStackBytes(aStackBytes)
     , iPriority(aPriority)
@@ -113,6 +113,15 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     const TUint bytes = std::min(iName.MaxBytes(), (TUint)strlen(aName));
     iName.Replace((TByte*)aName, bytes);
     iName.PtrZ();
+}
+
+void Thread::Run()
+{
+    /**
+     * Does nothing. Allows destructor to be entered before Run() has been
+     * called, in which case Run() will not resolve to a pure virtual method if
+     * it is subequently called.
+     */
 }
 
 Thread::~Thread()
@@ -126,6 +135,7 @@ Thread::~Thread()
 
 void Thread::Start()
 {
+    iTerminated.Wait();
     ASSERT(iHandle == kHandleNull);
     iHandle = OpenHome::Os::ThreadCreate(OpenHome::gEnv->OsCtx(), (TChar*)iName.Ptr(), iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
@@ -254,7 +264,7 @@ bool Thread::operator!= (const Thread& other) const {
 void Thread::Join()
 {
     LOG(kThread, "Thread::Join() called for thread: %p\n", this);
-    
+
     iTerminated.Wait();
     iTerminated.Signal();
 }
@@ -265,18 +275,17 @@ void Thread::Join()
 ThreadFunctor::ThreadFunctor(const TChar* aName, Functor aFunctor, TUint aPriority, TUint aStackBytes)
     : Thread(aName, aPriority, aStackBytes)
     , iFunctor(aFunctor)
-    , iStarted("TFSM", 0)
 {
 }
 
 ThreadFunctor::~ThreadFunctor()
 {
-    iStarted.Wait();
+    Kill();
+    Join();
 }
 
 void ThreadFunctor::Run()
 {
-    iStarted.Signal();
     iFunctor();
 }
 

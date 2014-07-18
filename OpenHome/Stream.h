@@ -197,6 +197,7 @@ public:
     TUint64 ReadUint64Be(TUint aBytes);
     TUint64 ReadUint64Le(TUint aBytes);
     TInt ReadIntBe(TUint aBytes);
+    TInt ReadIntLe(TUint aBytes);
 private:
     IReader& iReader;
 };
