@@ -198,7 +198,9 @@ void StoreInt::Write()
 {
     AutoMutex a(iLock);
     Bws<sizeof(TInt)> buf;
-    buf.Append(Arch::BigEndian4(iVal));
+    WriterBuffer writerBuf(buf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(iVal);
     iStore.Write(iKey, buf);
 }
 

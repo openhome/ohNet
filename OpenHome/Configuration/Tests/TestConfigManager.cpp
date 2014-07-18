@@ -480,7 +480,9 @@ void SuiteConfigNum::TestValueFromStore()
     const Brn key("conf.num.2");
     const TInt storeVal = kVal+1;
     Bws<sizeof(TInt)> valBuf;
-    valBuf.Append(Arch::BigEndian4(storeVal));
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(storeVal);
     iStore->Write(key, valBuf);
     ConfigNum num(*iConfigManager, key, kMin, kMax, kVal);
     TUint id = num.Subscribe(MakeFunctorConfigNum(*this, &SuiteConfigNum::NotifyChanged));
@@ -803,7 +805,9 @@ void SuiteConfigChoice::TestValueFromStore()
     const Brn key("conf.choice.2");
     const TUint storeVal = kDefault+1;
     Bws<sizeof(TUint)> valBuf;
-    valBuf.Append(Arch::BigEndian4(storeVal));
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(storeVal);
     iStore->Write(key, valBuf);
 
     std::vector<TUint> choices;
