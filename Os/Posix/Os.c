@@ -35,9 +35,6 @@
 #include <unistd.h>
 #include <ifaddrs.h>
 #include <signal.h>
-#ifdef __linux__
-# include <execinfo.h>
-#endif /* __linux__ */
 
 #ifdef PLATFORM_MACOSX_GNU
 #include <SystemConfiguration/SystemConfiguration.h>
@@ -125,10 +122,10 @@ void OsBreakpoint(OsContext* aContext)
     raise(SIGTRAP);
 }
 
-#ifdef PLATFORM_IOS
-# undef STACK_TRACE_ENABLE
-#else
+#if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 # define STACK_TRACE_ENABLE
+#else
+# undef  STACK_TRACE_ENABLE
 #endif
 
 #ifdef STACK_TRACE_ENABLE
