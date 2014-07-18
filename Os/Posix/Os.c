@@ -815,7 +815,10 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
 
     int32_t received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen));
     if (received==-1 && errno==EWOULDBLOCK) {
-        int32_t selectErr = TEMP_FAILURE_RETRY(select(nfds(handle), &read, NULL, &error, NULL));
+        int32_t selectErr;
+        do {
+            selectErr = TEMP_FAILURE_RETRY(select(nfds(handle), &read, NULL, &error, NULL));
+        } while (selectErr == -1L && errno == EINTR && !SocketInterrupted(handle));
         if (selectErr > 0 && FD_ISSET(handle->iSocket, &read)) {
             received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, MSG_NOSIGNAL, (struct sockaddr*)&addr, &addrLen));
         }
