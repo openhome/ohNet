@@ -106,6 +106,19 @@ void SuiteReaderBinary::Test()
     TEST(readerBinary.ReadIntBe(4) == TInt(0xffaabbff));
     readerBuffer.Set(bufferSigned);
     TEST_THROWS(readerBinary.ReadIntBe(5), AssertionFailed);
+
+    // ReaderBinary::ReadIntLe
+
+    readerBuffer.Set(bufferSigned);
+    TEST(readerBinary.ReadIntLe(1) == TInt(0xff));
+    readerBuffer.Set(bufferSigned);
+    TEST(readerBinary.ReadIntLe(2) == TInt(0xaaff));
+    readerBuffer.Set(bufferSigned);
+    TEST(readerBinary.ReadIntLe(3) == TInt(0xbbaaff));
+    readerBuffer.Set(bufferSigned);
+    TEST(readerBinary.ReadIntLe(4) == TInt(0xffbbaaff));
+    readerBuffer.Set(bufferSigned);
+    TEST_THROWS(readerBinary.ReadIntLe(5), AssertionFailed);
 }
 
 void TestStream()

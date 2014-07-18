@@ -466,6 +466,25 @@ TInt ReaderBinary::ReadIntBe(TUint aBytes)
     return val;
 }
 
+TInt ReaderBinary::ReadIntLe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TInt));
+    TInt val = 0;
+    TUint shift = 0;
+
+    TInt sbyte = iReader.Read(1).At(0);
+    val += sbyte << (shift*8);
+    shift++;
+
+    while(shift < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << (shift*8);
+        shift++;
+    }
+    return val;
+}
+
 TUint ReaderBinary::ReadUintLe(TUint aBytes)
 {
     ASSERT(aBytes > 0);
