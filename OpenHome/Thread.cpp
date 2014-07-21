@@ -129,7 +129,9 @@ Thread::~Thread()
     LOG(kThread, "> Thread::~Thread() called for thread: %p\n", this);
     Kill();
     Join();
-    OpenHome::Os::ThreadDestroy(iHandle);
+    if ( iHandle != kHandleNull ) {
+        OpenHome::Os::ThreadDestroy(iHandle);
+    }
     LOG(kThread, "< Thread::~Thread() called for thread: %p\n", this);
 }
 
