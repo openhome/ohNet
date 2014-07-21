@@ -712,7 +712,7 @@ private:
     TUint iPrioMin;
     TUint iPrioMax;
     TUint iPrioCurrent;
-    TUint iStep;
+    TInt iStep;
 };
 
 class SuiteThreadStartDelete : public Suite
