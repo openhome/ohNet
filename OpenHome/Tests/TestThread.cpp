@@ -701,7 +701,7 @@ public:
     }
     TUint Next()
     {
-        auto prio = iPrioCurrent;
+        TUint prio = iPrioCurrent;
         iPrioCurrent += iStep;
         if ( iPrioCurrent == iPrioMin || iPrioCurrent == iPrioMax ) {
             iStep *= -1;
