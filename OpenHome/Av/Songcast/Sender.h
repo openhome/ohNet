@@ -2,7 +2,7 @@
 #define HEADER_SONGCAST_SENDER
 
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Configuration/ConfigManager.h>

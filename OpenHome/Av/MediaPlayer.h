@@ -1,7 +1,7 @@
 #ifndef HEADER_MEDIAPLAYER
 #define HEADER_MEDIAPLAYER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/MuteManager.h>
 #include <OpenHome/Media/VolumeManager.h>

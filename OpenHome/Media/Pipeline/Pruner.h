@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_PRUNER
 #define HEADER_PIPELINE_PRUNER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

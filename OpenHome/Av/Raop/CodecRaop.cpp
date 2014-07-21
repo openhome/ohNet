@@ -1,6 +1,6 @@
 #include <OpenHome/Av/Raop/CodecRaop.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Codec/AlacBase.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>

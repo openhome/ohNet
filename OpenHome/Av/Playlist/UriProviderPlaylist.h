@@ -1,7 +1,7 @@
 #ifndef HEADER_URI_PROVIDER_PLAYLIST
 #define HEADER_URI_PROVIDER_PLAYLIST
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Filler.h>
 #include <OpenHome/Av/Playlist/TrackDatabase.h>

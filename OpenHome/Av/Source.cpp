@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Source.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>

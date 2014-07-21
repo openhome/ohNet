@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_MSG
 #define HEADER_PIPELINE_MSG
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Fifo.h>

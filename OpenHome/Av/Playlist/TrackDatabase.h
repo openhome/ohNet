@@ -1,7 +1,7 @@
 #ifndef HEADER_TRACK_DATABASE
 #define HEADER_TRACK_DATABASE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Thread.h>

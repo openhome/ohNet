@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_PREDRIVER
 #define HEADER_PIPELINE_PREDRIVER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

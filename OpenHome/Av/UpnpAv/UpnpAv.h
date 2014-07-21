@@ -1,7 +1,7 @@
 #ifndef HEADER_UPNPAV_DEVICE
 #define HEADER_UPNPAV_DEVICE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Functor.h>

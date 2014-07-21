@@ -1,7 +1,7 @@
 #ifndef HEADER_SOURCE
 #define HEADER_SOURCE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Configuration/ConfigManager.h>

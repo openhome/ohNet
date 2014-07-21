@@ -1,7 +1,7 @@
 #ifndef HEADER_OHM
 #define HEADER_OHM
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
 

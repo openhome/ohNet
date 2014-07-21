@@ -1,7 +1,7 @@
 #ifndef HEADER_OHM_SENDER
 #define HEADER_OHM_SENDER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Private/Thread.h>

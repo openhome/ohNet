@@ -2,7 +2,7 @@
 #define HEADER_VOLUME_MANAGER
 
 #include <OpenHome/Buffer.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/PowerManager.h>

@@ -1,7 +1,7 @@
 #ifndef HEADER_POWERMANAGER
 #define HEADER_POWERMANAGER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Thread.h>
 

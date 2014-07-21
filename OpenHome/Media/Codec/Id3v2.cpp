@@ -2,7 +2,7 @@
 // Based on description from http://id3.org/id3v2.3.0
 
 #include <OpenHome/Media/Codec/Id3v2.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Media/Codec/Container.h>

@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Songcast/ProtocolOhBase.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>

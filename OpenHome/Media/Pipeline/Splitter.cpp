@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Pipeline/Splitter.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

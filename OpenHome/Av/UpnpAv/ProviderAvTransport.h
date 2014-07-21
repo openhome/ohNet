@@ -1,7 +1,7 @@
 #ifndef HEADER_PROVIDER_AVTRANSPORT
 #define HEADER_PROVIDER_AVTRANSPORT
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvUpnpOrgAVTransport1.h>

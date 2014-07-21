@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE
 #define HEADER_PIPELINE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/Msg.h>

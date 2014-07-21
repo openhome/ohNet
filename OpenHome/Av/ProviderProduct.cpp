@@ -1,4 +1,4 @@
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvAvOpenhomeOrgProduct1.h>
 #include <OpenHome/Av/ProviderProduct.h>

@@ -1,7 +1,7 @@
 #ifndef HEADER_PROTOCOL_OHU
 #define HEADER_PROTOCOL_OHU
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Songcast/ProtocolOhBase.h>
 #include <OpenHome/Private/Network.h>

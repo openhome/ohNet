@@ -1,7 +1,7 @@
 #ifndef HEADER_OHMMSG
 #define HEADER_OHMMSG
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Fifo.h>

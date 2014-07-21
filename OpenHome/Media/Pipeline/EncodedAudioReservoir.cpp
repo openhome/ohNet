@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

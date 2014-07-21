@@ -1,5 +1,5 @@
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Env.h>
 

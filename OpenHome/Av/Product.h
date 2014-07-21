@@ -1,7 +1,7 @@
 #ifndef HEADER_PRODUCT
 #define HEADER_PRODUCT
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>

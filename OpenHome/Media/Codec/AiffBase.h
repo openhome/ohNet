@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_CODEC_AIFF_BASE
 #define HEADER_PIPELINE_CODEC_AIFF_BASE
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Codec/CodecController.h>
 

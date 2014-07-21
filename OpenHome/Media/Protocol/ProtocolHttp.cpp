@@ -2,7 +2,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Debug.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>

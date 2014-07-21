@@ -1,7 +1,7 @@
 #ifndef HEADER_TESTMEDIAPLAYER
 #define HEADER_TESTMEDIAPLAYER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 
 #include <OpenHome/Av/MediaPlayer.h>

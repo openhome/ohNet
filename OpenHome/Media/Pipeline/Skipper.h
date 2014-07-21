@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_SKIPPER
 #define HEADER_PIPELINE_SKIPPER
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

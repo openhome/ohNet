@@ -1,7 +1,7 @@
 #ifndef HEADER_PROCESSOR_PCM_UTILS
 #define HEADER_PROCESSOR_PCM_UTILS
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

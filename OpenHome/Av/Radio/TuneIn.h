@@ -1,7 +1,7 @@
 #ifndef HEADER_TUNEIN
 #define HEADER_TUNEIN
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Stream.h>

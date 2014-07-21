@@ -2,7 +2,7 @@
 #define HEADER_PIPELINE_CODEC_ALAC_BASE
 
 #include <OpenHome/Buffer.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Media/Codec/AlacBase.h>
 #include <OpenHome/Media/Codec/Mpeg4.h>
 

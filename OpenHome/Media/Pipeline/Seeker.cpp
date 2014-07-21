@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Pipeline/Seeker.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

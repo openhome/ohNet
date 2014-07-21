@@ -1,5 +1,5 @@
 #include <OpenHome/Av/UpnpAv/ProviderRenderingControl.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <Generated/DvUpnpOrgRenderingControl1.h>
 #include <OpenHome/Private/Ascii.h>

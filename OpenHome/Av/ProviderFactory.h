@@ -1,7 +1,7 @@
 #ifndef HEADER_PROVIDER_FACTORY
 #define HEADER_PROVIDER_FACTORY
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 namespace OpenHome {
     class IPowerManager;

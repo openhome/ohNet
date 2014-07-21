@@ -1,5 +1,5 @@
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_PROVIDER_RENDERINGCONTROL
 #define HEADER_PROVIDER_RENDERINGCONTROL
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
 #include <Generated/DvUpnpOrgRenderingControl1.h>

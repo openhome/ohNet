@@ -1,7 +1,7 @@
 #ifndef HEADER_PIPELINE_CODEC_MPEG4
 #define HEADER_PIPELINE_CODEC_MPEG4
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>

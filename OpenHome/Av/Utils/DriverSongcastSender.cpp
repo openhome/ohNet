@@ -1,6 +1,6 @@
 #include <OpenHome/Av/Utils/DriverSongcastSender.h>
 #include "IconDriverSongcastSender.h"
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>

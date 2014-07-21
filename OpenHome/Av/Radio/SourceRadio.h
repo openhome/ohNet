@@ -1,7 +1,7 @@
 #ifndef HEADER_SOURCE_RADIO
 #define HEADER_SOURCE_RADIO
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Source.h>
 #include <OpenHome/Media/Pipeline/Msg.h>

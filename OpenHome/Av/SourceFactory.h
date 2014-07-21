@@ -1,7 +1,7 @@
 #ifndef HEADER_SOURCE_FACTORY
 #define HEADER_SOURCE_FACTORY
 
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 
 namespace OpenHome {
 namespace Net {

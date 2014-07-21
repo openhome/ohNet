@@ -1,5 +1,5 @@
 #include <OpenHome/Av/KvpStore.h>
-#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Thread.h>
 
