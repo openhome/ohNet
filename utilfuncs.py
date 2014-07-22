@@ -89,6 +89,7 @@ def configure_toolchain(conf):
         conf.env.append_value('CFLAGS', conf.env['CXXFLAGS'])
         # Only enable warnings for C++ code as C code is typically third party and often generates many warnings
         conf.env.append_value('CXXFLAGS',['/W4', '/WX'])
+        conf.env.append_value('LINKFLAGS', ['/SUBSYSTEM:CONSOLE'])
     else:
         conf.load('compiler_cxx')
         conf.load('compiler_c')
@@ -277,6 +278,26 @@ def guess_ohnet_location(conf):
             'dependencies/{options.dest_platform}/ohNet-{options.dest_platform}-{debugmode_tc}/lib/t4',
         ],
         message='Specify --ohnet')
+    )
+
+def guess_ohnetmon_location(conf):
+    set_env_verbose(conf, 'INCLUDES_OHNETMON', match_path(
+        conf,
+        [
+            '{options.ohnetmon_include_dir}',
+            '{options.ohnetmon}',
+            'dependencies/{options.dest_platform}/ohNetmon/include',
+        ],
+        message='Specify --ohnetmon-include-dir or --ohnetmon')
+    )
+    set_env_verbose(conf, 'STLIBPATH_OHNETMON', match_path(
+        conf,
+        [
+            '{options.ohnetmon_lib_dir}',
+            '{options.ohnetmon}/build',
+            'dependencies/{options.dest_platform}/ohNetmon/lib',
+        ],
+        message='Specify --ohnetmon-lib-dir or --ohnetmon')
     )
 
 def guess_ohmediaplayer_location(conf):
