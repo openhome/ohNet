@@ -10,9 +10,6 @@
 #include <Ws2tcpip.h>
 #include <Iphlpapi.h>
 #include <Dbghelp.h>
-#if NTDDI_VERSION > 0x06010000
-# include <versionhelpers.h>
-#endif
 
 static const uint32_t kMinStackBytes = 1024 * 16;
 static const uint32_t kStackPaddingBytes = 1024 * 16;
@@ -259,10 +256,12 @@ void OsGetPlatformNameAndVersion(OsContext* aContext, char** aName, uint32_t* aM
 #else
     /* There doesn't seem to be any reliable way to determine version info on Windows 8.1 and beyond
        The recommended route appears to be to add ever more IsWindowsXxx tests as new OS versions are released... */
+	/* The recommended route doesn't appear to always work.
+	   Reporting host OS version has questionable benefit anyway so just hard-code something credible. */
     UNUSED(aContext);
     *aName = "Windows";
     *aMajor = 6;
-    *aMinor = (IsWindows8Point1OrGreater()? 3 : 2);
+    *aMinor = 3;
 #endif
 }
 
