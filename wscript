@@ -13,7 +13,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task
-from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_libplatform_location
+from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_ohnetmon_location, guess_libplatform_location
 
 def options(opt):
     opt.load('msvc')
@@ -21,8 +21,11 @@ def options(opt):
     opt.load('compiler_c')
     opt.add_option('--ohnet-include-dir', action='store', default=None)
     opt.add_option('--ohnet-lib-dir', action='store', default=None)
+    opt.add_option('--ohnetmon-include-dir', action='store', default=None)
+    opt.add_option('--ohnetmon-lib-dir', action='store', default=None)
     opt.add_option('--testharness-dir', action='store', default=os.path.join('dependencies', 'AnyPlatform', 'testharness'))
     opt.add_option('--ohnet', action='store', default=None)
+    opt.add_option('--ohnetmon', action='store', default=None)
     opt.add_option('--libplatform', action='store', default=None)
     opt.add_option('--debug', action='store_const', dest="debugmode", const="Debug", default="Release")
     opt.add_option('--release', action='store_const', dest="debugmode",  const="Release", default="Release")
@@ -52,6 +55,7 @@ def configure(conf):
 
     configure_toolchain(conf)
     guess_ohnet_location(conf)
+    guess_ohnetmon_location(conf)
 
     conf.env.dest_platform = conf.options.dest_platform
     conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
@@ -63,9 +67,6 @@ def configure(conf):
     if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
         conf.env.append_value('DEFINES', ['DEFINE_TRACE', 'NETWORK_NTOHL_LOCAL', 'NOTERMIOS']) # Tell FLAC to use local ntohl implementation
 
-    conf.env.INCLUDES_OHNETMON = [os.path.join('dependencies', conf.options.dest_platform, 'ohNetmon', 'include')]
-    conf.env.STLIBPATH_OHNETMON = [os.path.join(conf.path.find_node('.').abspath(),
-                                                os.path.join('dependencies', conf.options.dest_platform, 'ohNetmon', 'lib'))]
     conf.env.STLIB_OHNETMON = ['ohNetmon']
 
     conf.env.INCLUDES = [
@@ -117,7 +118,7 @@ def configure(conf):
         os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib')),
     ]
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
-        conf.env.STLIB_OPENSSL = ['eay32']
+        conf.env.STLIB_OPENSSL = ['libeay32']
         conf.env.LIB_OPENSSL = ['advapi32', 'gdi32', 'user32']
     else:
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ppc32']:
