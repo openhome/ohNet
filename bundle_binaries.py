@@ -6,7 +6,7 @@ import os
 from collections import namedtuple
 
 def exclude_non_binary(filename):
-    if filename.lower().startswith("test"):
+    if filename.lower().startswith("test") and not filename.lower().startswith("testframework"):
         return True
     executable_extensions = [".dll", ".so", ".elf", ".lib", ".map", ".pdb", ".dylib", ".a", ".jar"]
     has_executable_extension = any(filename.endswith(ex) for ex in executable_extensions)
