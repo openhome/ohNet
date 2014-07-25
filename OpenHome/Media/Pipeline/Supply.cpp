@@ -20,9 +20,9 @@ Supply::~Supply()
 {
 }
 
-void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
 {
-    MsgMode* msg = iMsgFactory.CreateMsgMode(aMode, aSupportsLatency, aRealTime, NULL);
+    MsgMode* msg = iMsgFactory.CreateMsgMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
     iDownStreamElement.Push(msg);
 }
 

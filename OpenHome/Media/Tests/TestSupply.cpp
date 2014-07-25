@@ -148,7 +148,7 @@ SuiteSupply::~SuiteSupply()
 void SuiteSupply::Test()
 {
     TUint expectedMsgCount = 0;
-    iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies);
+    iSupply->OutputMode(Brn(kMode), kSupportsLatency, kDelayJiffies, NULL);
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputSession();
     TEST(++expectedMsgCount == iMsgPushCount);

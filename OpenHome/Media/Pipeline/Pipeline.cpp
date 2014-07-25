@@ -334,9 +334,9 @@ TUint Pipeline::SenderMinLatencyMs() const
     return kSenderMinLatency / Jiffies::kPerMs;
 }
 
-void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
 {
-    iSupply->OutputMode(aMode, aSupportsLatency, aRealTime);
+    iSupply->OutputMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
 }
 
 void Pipeline::OutputSession()

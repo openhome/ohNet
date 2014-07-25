@@ -25,7 +25,7 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory());
+    UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", false, false, NULL, aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigManagerInitialiser());
 }

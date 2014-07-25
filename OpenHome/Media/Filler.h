@@ -16,6 +16,8 @@ EXCEPTION(UriProviderInvalidId);
 namespace OpenHome {
 namespace Media {
 
+class IClockPuller;
+
 class UriProvider
 {
 public:
@@ -23,6 +25,7 @@ public:
     const Brx& Mode() const;
     TBool SupportsLatency() const;
     TBool IsRealTime() const;
+    IClockPuller* ClockPuller() const;
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -30,11 +33,12 @@ public:
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
-    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime);
+    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
 private:
     BwsMode iMode;
     TBool iSupportsLatency;
     TBool iRealTime;
+    IClockPuller* iClockPuller;
 };
 
 class Filler : private Thread, public ISupply
@@ -58,7 +62,7 @@ private:
 private: // from Thread
     void Run();
 private: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);

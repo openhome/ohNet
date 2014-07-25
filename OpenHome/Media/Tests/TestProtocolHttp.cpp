@@ -212,7 +212,7 @@ public:
     TUint StreamCount();
     TUint DataTotal();
 public: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);
@@ -797,7 +797,7 @@ TUint TestHttpSupplier::DataTotal()
     return iDataTotal;
 }
 
-void TestHttpSupplier::OutputMode(const Brx& /*aMode*/, TBool /*aSupportsLatency*/, TBool /*aRealTime*/)
+void TestHttpSupplier::OutputMode(const Brx& /*aMode*/, TBool /*aSupportsLatency*/, TBool /*aRealTime*/, IClockPuller* /*aClockPuller*/)
 {
 }
 

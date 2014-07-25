@@ -28,10 +28,16 @@ TBool UriProvider::IsRealTime() const
     return iRealTime;
 }
 
-UriProvider::UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime)
+IClockPuller* UriProvider::ClockPuller() const
+{
+    return iClockPuller;
+}
+
+UriProvider::UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
     : iMode(aMode)
     , iSupportsLatency(aSupportsLatency)
     , iRealTime(aRealTime)
+    , iClockPuller(aClockPuller)
 {
 }
 
@@ -223,7 +229,7 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                OutputMode(Brn("null"), false, true);
+                OutputMode(Brn("null"), false, true, NULL);
                 OutputSession();
                 iChangedMode = true;
                 iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
@@ -243,7 +249,7 @@ void Filler::Run()
                     ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
                                                              hard/impossible if the Gorger was allowed to buffer
                                                              content between the two VariableDelays */
-                    OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime);
+                    OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller());
                     if (!supportsLatency) {
                         OutputDelay(iDefaultDelay);
                     }
@@ -264,10 +270,10 @@ void Filler::Run()
     iSupply.OutputQuit();
 }
 
-void Filler::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+void Filler::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
 {
     if (!iQuit) {
-        iSupply.OutputMode(aMode, aSupportsLatency, aRealTime);
+        iSupply.OutputMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
     }
 }
 

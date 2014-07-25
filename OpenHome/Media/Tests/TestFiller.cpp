@@ -77,7 +77,7 @@ public:
     TUint LastDelayJiffies() const;
     TUint SessionCount() const;
 private: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);
@@ -136,7 +136,7 @@ using namespace OpenHome::Media::TestFiller;
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
-    : UriProvider("Dummy", false, false)
+    : UriProvider("Dummy", false, false, NULL)
     , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)
@@ -343,7 +343,7 @@ TUint DummySupply::SessionCount() const
     return iSessionCount;
 }
 
-void DummySupply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+void DummySupply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* /*aClockPuller*/)
 {
     iLastMode.Replace(aMode);
     iLastSupportsLatency = aSupportsLatency;

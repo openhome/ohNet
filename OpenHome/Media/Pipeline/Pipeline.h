@@ -84,7 +84,7 @@ public:
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
 public: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);

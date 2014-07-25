@@ -899,8 +899,9 @@ public:
      * @param[in] aMode            Identifier for the new UriProvider
      * @param[in] aSupportsLatency Whether any following tracks support having their latency varied.
      * @param[in] aRealTime        Deprecated.
+     * @param[in] aClockPuller     Clock puller.  May be NULL.
      */
-    virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime) = 0;
+    virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) = 0;
     /**
      * Inform the pipeline about a discontinuity in audio.
      */
