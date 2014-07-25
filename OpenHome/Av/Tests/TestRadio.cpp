@@ -42,7 +42,7 @@ TestRadio::TestRadio(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChan
     iEnv = &aDvStack.Env();
 
     iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
-    iUriProvider = new UriProviderSingleTrack("Radio", false, false, NULL, *iTrackFactory);
+    iUriProvider = new UriProviderSingleTrack("Radio", false, false, *iTrackFactory);
     iPipeline->Add(iUriProvider);
 //    iSourceUpnpAv = new DummySourceUpnpAv(aDvStack, *iPipeline, *iUriProvider);
 }

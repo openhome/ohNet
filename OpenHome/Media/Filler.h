@@ -25,7 +25,7 @@ public:
     const Brx& Mode() const;
     TBool SupportsLatency() const;
     TBool IsRealTime() const;
-    IClockPuller* ClockPuller() const;
+    virtual IClockPuller* ClockPuller() const;
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -33,12 +33,11 @@ public:
     virtual TBool MoveNext() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
     virtual TBool MovePrevious() = 0; // returns true if GetNext would return a non-NULL track and ePlayYes
 protected:
-    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
+    UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime);
 private:
     BwsMode iMode;
     TBool iSupportsLatency;
     TBool iRealTime;
-    IClockPuller* iClockPuller;
 };
 
 class Filler : private Thread, public ISupply

@@ -136,7 +136,7 @@ using namespace OpenHome::Media::TestFiller;
 // DummyUriProvider
 
 DummyUriProvider::DummyUriProvider(TrackFactory& aTrackFactory)
-    : UriProvider("Dummy", false, false, NULL)
+    : UriProvider("Dummy", false, false)
     , iTrackFactory(aTrackFactory)
     , iIndex(-1)
     , iPendingIndex(-1)

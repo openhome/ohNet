@@ -30,14 +30,13 @@ TBool UriProvider::IsRealTime() const
 
 IClockPuller* UriProvider::ClockPuller() const
 {
-    return iClockPuller;
+    return NULL;
 }
 
-UriProvider::UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
+UriProvider::UriProvider(const TChar* aMode, TBool aSupportsLatency, TBool aRealTime)
     : iMode(aMode)
     , iSupportsLatency(aSupportsLatency)
     , iRealTime(aRealTime)
-    , iClockPuller(aClockPuller)
 {
 }
 
