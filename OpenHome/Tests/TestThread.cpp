@@ -619,6 +619,23 @@ void SuiteAutoMutex::Test()
 }
 
 
+class SuiteAutoSemaphore : public Suite
+{
+public:
+    SuiteAutoSemaphore() : Suite("AutoSemaphore functionality") {}
+    void Test();
+};
+
+void SuiteAutoSemaphore::Test()
+{
+    Semaphore sem("asem", 1);
+    {
+        AutoSemaphore _(sem);
+        TEST(!sem.Clear());
+    }
+    TEST(sem.Clear());
+}
+
 class ThreadKillable : public Thread
 {
 public:
@@ -844,6 +861,7 @@ void MainTestThread::Run()
     runner.Add(new SuiteSemaphore());
     runner.Add(new SuiteMutex());
     runner.Add(new SuiteAutoMutex());
+    runner.Add(new SuiteAutoSemaphore());
     runner.Add(new SuiteStartStop());
     // Performance tests disabled as they cause intermittent failures for automated tests
     // (which run on servers with variable loads)

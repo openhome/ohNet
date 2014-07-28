@@ -378,7 +378,6 @@ TBool CpiDeviceLpec::Invocable::HandleLpecResponse(const Brx& aMethod, const Brx
     Brn body = Ascii::Trim(aBody);
     Parser parser(body);
     if (aMethod == Lpec::kMethodError) {
-        AutoSemaphore a(iSem);
         TUint code = 0;
         try {
             Brn codeBuf = parser.Next(' ');
@@ -389,13 +388,13 @@ TBool CpiDeviceLpec::Invocable::HandleLpecResponse(const Brx& aMethod, const Brx
         parser.Next(Lpec::kArgumentDelimiter);
         Brn description = parser.Next(Lpec::kArgumentDelimiter);
         iInvocation->SetError(Error::eUpnp/*nearest alternative to eProtocol*/, code, description);
+        iSem.Signal();
         return true;
     }
     else if (aMethod != Lpec::kMethodResponse) {
         return false;
     }
 
-    AutoSemaphore a(iSem);
     const std::vector<Argument*>& outArgs = iInvocation->OutputArguments();
     try {
         OutputProcessor outputProcessor;
@@ -406,8 +405,10 @@ TBool CpiDeviceLpec::Invocable::HandleLpecResponse(const Brx& aMethod, const Brx
         }
     }
     catch (Exception&) {
+        iSem.Signal();
         THROW(ReaderError);
     }
+    iSem.Signal();
 
     return true;
 }
