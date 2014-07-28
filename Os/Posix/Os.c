@@ -117,11 +117,6 @@ void OsQuit(OsContext* aContext)
     abort();
 }
 
-void OsBreakpoint(OsContext* aContext)
-{
-    raise(SIGTRAP);
-}
-
 #if defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_IOS)
 # define STACK_TRACE_ENABLE
 #else

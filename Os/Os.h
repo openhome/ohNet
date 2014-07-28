@@ -70,16 +70,6 @@ void OsDestroy(OsContext* aContext);
 void OsQuit(OsContext* aContext);
 
 /**
- * Cause a breakpoint.
- *
- * OS specific way of causing a breakpoint such that an OS specific debugger
- * can catch the breakpoint and allow debugging of the program.
- *
- * @param[in] aContext     Returned from OsCreate().
- */
-void OsBreakpoint(OsContext* aContext);
-
-/**
  * Initialise a stack trace for the current call stack.
  *
  * Non-trivial implementation of this, and every other OsStackTrace function is entirely optional.

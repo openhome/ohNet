@@ -125,11 +125,6 @@ void OsQuit(OsContext* aContext)
     abort();
 }
 
-void OsBreakpoint(OsContext* aContext)
-{
-    UNUSED(aContext);
-}
-
 #define STACK_TRACE_MAX_DEPTH 32
 typedef struct OsStackTrace
 {
