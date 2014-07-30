@@ -1,6 +1,7 @@
-Copyright 2011-13, Linn Products Ltd. All rights reserved.
+Copyright 2011-14, Linn Products Ltd. All rights reserved.
 
-Contact Linn - at software-licenses@linn.co.uk - to discuss a license for this code.
+Unless otherwise stated, all code in this project is licensed under the 2-clause
+(Simplified) BSD license.  See BsdLicense.txt for details.
 
 Files at the following locations are licensed under separate terms:
   OpenHome/Functor.h
