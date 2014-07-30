@@ -355,6 +355,12 @@ IStack* Environment::DviStack()
     return iDvStack;
 }
 
+void Environment::SetInitParams(InitialisationParams* aInitParams)
+{
+    std::swap(aInitParams, iInitParams);
+    delete aInitParams;
+}
+
 
 // MListener
 

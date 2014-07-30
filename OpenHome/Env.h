@@ -83,6 +83,7 @@ public:
     void ListObjects();
     IStack* CpiStack();
     IStack* DviStack();
+    void SetInitParams(Net::InitialisationParams* aInitParams);
 private:
     void Construct(FunctorMsg& aLogOutput);
     void SetCpStack(IStack* aStack);

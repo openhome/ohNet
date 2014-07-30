@@ -599,14 +599,24 @@ void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 
 Library::Library(InitialisationParams* aInitParams)
 {
-    iEnv = new OpenHome::Environment(aInitParams);
+    if ( gEnv == NULL ) {
+        iEnvOwner = true;
+        iEnv = new OpenHome::Environment(aInitParams);
+    }
+    else {
+        iEnvOwner = false;
+        iEnv = gEnv;
+        iEnv->SetInitParams(aInitParams);
+    }
     //Debug::SetLevel(Debug::kError);
 }
 
 Library::~Library()
 {
-    delete iEnv;
-    gEnv = NULL;
+    if ( iEnvOwner ) {
+        delete iEnv;
+        gEnv = NULL;
+    }
 }
 
 OpenHome::Environment& Library::Env()
