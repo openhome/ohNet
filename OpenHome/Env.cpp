@@ -67,6 +67,11 @@ Environment::Environment(FunctorMsg& aLogOutput)
     Construct(aLogOutput);
 }
 
+Environment* Environment::Create(FunctorMsg& aLogOutput)
+{
+    return new Environment(aLogOutput);
+}
+
 Environment::Environment(InitialisationParams* aInitParams)
     : iOsContext(NULL)
     , iInitParams(aInitParams)
@@ -105,6 +110,11 @@ Environment::Environment(InitialisationParams* aInitParams)
     if (networkAdapterChangeListener) {
         iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener);
     }
+}
+
+Environment* Environment::Create(InitialisationParams* aInitParams)
+{
+    return new Environment(aInitParams);
 }
 
 void Environment::Construct(FunctorMsg& aLogOutput)

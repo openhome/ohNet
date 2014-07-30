@@ -51,6 +51,8 @@ class Environment
     friend class Net::CpStack;
     friend class Net::DvStack;
 public:
+    static Environment* Create(FunctorMsg& aLogOutput);
+    static Environment* Create(Net::InitialisationParams* aInitParams);
     Environment(FunctorMsg& aLogOutput);
     Environment(Net::InitialisationParams* aInitParams);
     ~Environment();
