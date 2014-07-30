@@ -2,12 +2,13 @@
 #define HEADER_PROVIDER_CONFIG1
 
 #include <Generated/DvAvOpenhomeOrgConfiguration1.h>
+#include <OpenHome/Av/ProviderFactory.h>
 
 namespace OpenHome {
 namespace Configuration {
     class IConfigManagerReader;
 
-class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguration1
+class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguration1, public Av::IProvider
 {
 public:
     ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManagerReader& aConfigManager);
