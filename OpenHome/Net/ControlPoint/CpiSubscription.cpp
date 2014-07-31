@@ -550,9 +550,6 @@ CpiSubscriptionManager::CpiSubscriptionManager(CpStack& aCpStack)
         iLock.Signal();
     }
 
-#ifndef _WIN32
-    ASSERT(iCpStack.Env().InitParams()->NumSubscriberThreads() <= 9);
-#endif
     const TUint numThreads = iCpStack.Env().InitParams()->NumSubscriberThreads();
     iSubscribers = (Subscriber**)malloc(sizeof(*iSubscribers) * numThreads);
     for (TUint i=0; i<numThreads; i++) {
