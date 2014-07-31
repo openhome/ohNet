@@ -95,9 +95,17 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.334",
+        "version": "0.0.341",
         "platform-specific": false,
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
+    },
+    {
+        "name": "FunctionalTestData",
+        "type": "internal",
+        "version": "0.0.11",
+        "platform-specific": false,
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTestData/FunctionalTestData-${version}.zip",
+        "dest": "dependencies/AnyPlatform/FunctionalTestData"
     }
 ]
