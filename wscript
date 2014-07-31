@@ -264,6 +264,7 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgInfo1.cpp',
                 'OpenHome/Av/ProviderInfo.cpp',
                 'Generated/DvAvOpenhomeOrgVolume1.cpp',
+                'OpenHome/Av/ConfigInitialiserVolume.cpp',
                 'OpenHome/Av/ProviderVolume.cpp',
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
