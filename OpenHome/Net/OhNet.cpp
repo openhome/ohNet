@@ -601,7 +601,7 @@ Library::Library(InitialisationParams* aInitParams)
 {
     if ( gEnv == NULL ) {
         iEnvOwner = true;
-        iEnv = new OpenHome::Environment(aInitParams);
+        iEnv = Environment::Create(aInitParams);
     }
     else {
         iEnvOwner = false;
