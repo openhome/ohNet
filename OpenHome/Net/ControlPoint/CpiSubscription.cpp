@@ -381,7 +381,7 @@ void CpiSubscription::Suspend()
 {
     iTimer->Cancel();
     iSuspended = true;
-    if (StartSchedule(eSubscribe, false)) {
+    if (StartSchedule(eUnsubscribe, false)) {
         iDevice.GetCpStack().SubscriptionManager().ScheduleLocked(*this);
     }
 }
