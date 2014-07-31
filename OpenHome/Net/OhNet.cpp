@@ -599,14 +599,24 @@ void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 
 Library::Library(InitialisationParams* aInitParams)
 {
-    iEnv = new OpenHome::Environment(aInitParams);
+    if ( gEnv == NULL ) {
+        iEnvOwner = true;
+        iEnv = Environment::Create(aInitParams);
+    }
+    else {
+        iEnvOwner = false;
+        iEnv = gEnv;
+        iEnv->SetInitParams(aInitParams);
+    }
     //Debug::SetLevel(Debug::kError);
 }
 
 Library::~Library()
 {
-    delete iEnv;
-    gEnv = NULL;
+    if ( iEnvOwner ) {
+        delete iEnv;
+        gEnv = NULL;
+    }
 }
 
 OpenHome::Environment& Library::Env()
@@ -660,14 +670,14 @@ void Library::NotifyResumed()
 Environment* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     ASSERT(gEnv == NULL);
-    Environment* env = new Environment(aInitParams);
+    Environment* env = Environment::Create(aInitParams);
     //Debug::SetLevel(Debug::kError);
     return env;
 }
 
 Environment* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 {
-    Environment* env = new Environment(aInitParams->LogOutput());
+    Environment* env = Environment::Create(aInitParams->LogOutput());
     return env;
 }
 

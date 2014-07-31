@@ -542,6 +542,7 @@ public:
     void NotifyResumed();
 private:
     OpenHome::Environment* iEnv;
+    OpenHome::TBool iEnvOwner;
 };
 
 

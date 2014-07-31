@@ -51,8 +51,8 @@ class Environment
     friend class Net::CpStack;
     friend class Net::DvStack;
 public:
-    Environment(FunctorMsg& aLogOutput);
-    Environment(Net::InitialisationParams* aInitParams);
+    static Environment* Create(FunctorMsg& aLogOutput);
+    static Environment* Create(Net::InitialisationParams* aInitParams);
     ~Environment();
 
     void GetVersion(TUint& aMajor, TUint& aMinor);
@@ -83,7 +83,10 @@ public:
     void ListObjects();
     IStack* CpiStack();
     IStack* DviStack();
+    void SetInitParams(Net::InitialisationParams* aInitParams);
 private:
+    Environment(FunctorMsg& aLogOutput);
+    Environment(Net::InitialisationParams* aInitParams);
     void Construct(FunctorMsg& aLogOutput);
     void SetCpStack(IStack* aStack);
     void SetDvStack(IStack* aStack);
