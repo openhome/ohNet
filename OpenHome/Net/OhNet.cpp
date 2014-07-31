@@ -670,14 +670,14 @@ void Library::NotifyResumed()
 Environment* UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     ASSERT(gEnv == NULL);
-    Environment* env = new Environment(aInitParams);
+    Environment* env = Environment::Create(aInitParams);
     //Debug::SetLevel(Debug::kError);
     return env;
 }
 
 Environment* UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 {
-    Environment* env = new Environment(aInitParams->LogOutput());
+    Environment* env = Environment::Create(aInitParams->LogOutput());
     return env;
 }
 
