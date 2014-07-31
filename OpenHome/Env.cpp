@@ -357,8 +357,8 @@ IStack* Environment::DviStack()
 
 void Environment::SetInitParams(InitialisationParams* aInitParams)
 {
-    std::swap(aInitParams, iInitParams);
-    delete aInitParams;
+    delete iInitParams;
+    iInitParams = aInitParams;
 }
 
 
