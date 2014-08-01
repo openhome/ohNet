@@ -15,6 +15,7 @@
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Private/NetworkAdapterList.h>
 #include <OpenHome/Net/Private/Globals.h>
+#include <OpenHome/OsWrapper.h>
 
 #include <list>
 #include <map>
@@ -324,6 +325,7 @@ void CpiSubscription::DoUnsubscribe()
     LOG(kEvent, "\n");
     iEnv.Mutex().Signal();
 
+    const TUint startTime = Os::TimeInMs(iEnv.OsCtx());
     iTimer->Cancel();
     if (iSid.Bytes() == 0) {
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
@@ -335,9 +337,10 @@ void CpiSubscription::DoUnsubscribe()
     iEnv.Mutex().Signal();
     iDevice.Unsubscribe(*this, sid);
     iEnv.Mutex().Wait();
+    const TUint diffTime = Os::TimeInMs(iEnv.OsCtx()) - startTime; // ignore possibility of time wrapping
     LOG(kEvent, "Unsubscribed (%p) sid ", this);
     LOG(kEvent, sid);
-    LOG(kEvent, "\n");
+    LOG(kEvent, " %ums\n", diffTime);
     iEnv.Mutex().Signal();
 }
 

@@ -616,6 +616,12 @@ $(objdir)TestNetworkInterfaceChange.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgCon
 $(objdir)TestNetworkInterfaceChange.$(objext) : OpenHome/Net/ControlPoint/Tests/TestNetworkInterfaceChange.cpp $(headers)
 	$(compiler)TestNetworkInterfaceChange.$(objext) -c $(cppflags) $(includes) OpenHome/Net/ControlPoint/Tests/TestNetworkInterfaceChange.cpp
 
+TestSuspendResume: $(objdir)TestSuspendResume.$(exeext)
+$(objdir)TestSuspendResume.$(exeext) :  ohNetCore $(objdir)TestSuspendResume.$(objext) $(libprefix)TestFramework.$(libext)
+       $(link) $(linkoutput)$(objdir)TestSuspendResume.$(exeext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgSender1.$(objext) $(objdir)TestSuspendResume.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestSuspendResume.$(objext) : OpenHome/Net/ControlPoint/Tests/TestSuspendResume.cpp $(headers)
+       $(compiler)TestSuspendResume.$(objext) -c $(cppflags) $(includes) OpenHome/Net/ControlPoint/Tests/TestSuspendResume.cpp
+
 TestProxyC: $(objdir)TestProxyC.$(exeext) 
 $(objdir)TestProxyC.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestProxyC.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
 	$(link) $(linkoutput)$(objdir)TestProxyC.$(exeext) $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestProxyC.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)ohNetCore.$(libext)
