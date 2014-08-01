@@ -26,14 +26,13 @@ import Utils.Network.HttpServer   as HttpServer
 import Utils.Common               as Common
 import _SoftPlayer                as SoftPlayer
 import LogThread
-import Path
 import os
 import random
 import sys
 import time
 import threading
 
-kAudioRoot = os.path.join( Path.AudioDir(), 'MusicTracks/' )
+kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 kDelay1    = 3
 kDelay2    = 8

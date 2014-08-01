@@ -20,7 +20,6 @@ import Upnp.ControlPoints.Volkano       as Volkano
 import Upnp.ControlPoints.MediaRenderer as MR
 import Utils.Network.HttpServer         as HttpServer
 import _SoftPlayer                      as SoftPlayer
-import Path
 import os
 import random
 import sys
@@ -123,7 +122,7 @@ kNonStaticSvs = \
     # 'TransportState'  - ignore in SV checks as state is checked seperately
 ]
 
-kAudioRoot = os.path.join( Path.AudioDir(), 'MusicTracks/' )
+kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
 kAvtNs     = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
 kDidlNs    = '{urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/}'
 

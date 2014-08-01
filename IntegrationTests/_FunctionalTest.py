@@ -40,3 +40,6 @@ else:
 sys.path.insert( 0, os.path.normpath( os.path.join( ohnet, 'lib' )))
 sys.path.insert( 0, os.path.normpath( os.path.join( test, 'Components' )))
 sys.path.insert( 0, os.path.normpath( os.path.join( test, 'Framework' )))
+
+# paths to data files
+audioDir = os.path.join( deps, 'AnyPlatform/FunctionalTestData/Audio' )
