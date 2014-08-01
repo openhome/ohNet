@@ -22,6 +22,7 @@ void DvInvocationCPrivate::GetInvocationC(IDvInvocationC** aInvocation, void** a
 IDviInvocation& DvInvocationCPrivate::Invocation(void* aPtr)
 {
     DvInvocationCPrivate* self = reinterpret_cast<DvInvocationCPrivate*>(aPtr);
+    ASSERT(self != NULL);
     return self->iInvocation;
 }
 

@@ -46,6 +46,7 @@ void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::
 int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
 { // static
     IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
+    ASSERT(writer != NULL);
     try {
         writer->WriteResourceBegin(aTotalBytes, aMimeType);
     }
@@ -58,6 +59,7 @@ int32_t STDCALL DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes,
 int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes)
 { // static
     IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
+    ASSERT(writer != NULL);
     try {
         writer->WriteResource(aData, aBytes);
     }
@@ -70,6 +72,7 @@ int32_t STDCALL DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint
 int32_t STDCALL DviDeviceC::WriteResourceEnd(void* aPtr)
 { // static
     IResourceWriter* writer = reinterpret_cast<IResourceWriter*>(aPtr);
+    ASSERT(writer != NULL);
     try {
         writer->WriteResourceEnd();
     }

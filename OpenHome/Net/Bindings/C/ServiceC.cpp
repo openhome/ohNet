@@ -37,6 +37,7 @@ ServiceParameter STDCALL ServiceParameterCreateBinary(const char* aName)
 ServiceParameter STDCALL ServiceParameterCreateRelated(const char* aName, ServiceProperty aProperty)
 {
     OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
+    ASSERT(prop != NULL);
     return (ServiceParameter)new ParameterRelated(aName, *prop);
 }
 
@@ -54,6 +55,7 @@ ServiceProperty STDCALL ServicePropertyCreateIntCp(const char* aName, OhNetCallb
 ServiceProperty STDCALL ServicePropertyCreateIntDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ServiceProperty)new PropertyInt(*gEnv, param);
 }
 
@@ -66,6 +68,7 @@ ServiceProperty STDCALL ServicePropertyCreateUintCp(const char* aName, OhNetCall
 ServiceProperty STDCALL ServicePropertyCreateUintDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ServiceProperty)new PropertyUint(*gEnv, param);
 }
 
@@ -78,6 +81,7 @@ ServiceProperty STDCALL ServicePropertyCreateBoolCp(const char* aName, OhNetCall
 ServiceProperty STDCALL ServicePropertyCreateBoolDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ServiceProperty)new PropertyBool(*gEnv, param);
 }
 
@@ -90,6 +94,7 @@ ServiceProperty STDCALL ServicePropertyCreateStringCp(const char* aName, OhNetCa
 ServiceProperty STDCALL ServicePropertyCreateStringDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ServiceProperty)new PropertyString(*gEnv, param);
 }
 
@@ -102,6 +107,7 @@ ServiceProperty STDCALL ServicePropertyCreateBinaryCp(const char* aName, OhNetCa
 ServiceProperty STDCALL ServicePropertyCreateBinaryDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ServiceProperty)new PropertyBinary(*gEnv, param);
 }
 

@@ -14,6 +14,7 @@ using namespace OpenHome::Net;
 CpService STDCALL CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
+    ASSERT(device != NULL);
     return (CpService)new CpiService(aDomain, aName, aVersion, *device);
 }
 
@@ -46,30 +47,35 @@ void STDCALL CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation
 ActionArgument STDCALL ActionArgumentCreateIntInput(ServiceParameter aParameter, int32_t aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentInt(*param, aValue);
 }
 
 ActionArgument STDCALL ActionArgumentCreateIntOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentInt(*param);
 }
 
 ActionArgument STDCALL ActionArgumentCreateUintInput(ServiceParameter aParameter, uint32_t aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentUint(*param, aValue);
 }
 
 ActionArgument STDCALL ActionArgumentCreateUintOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentUint(*param);
 }
 
 ActionArgument STDCALL ActionArgumentCreateBoolInput(ServiceParameter aParameter, uint32_t aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     TBool val = (aValue!=0);
     return (ActionArgument)new ArgumentBool(*param, val);
 }
@@ -77,12 +83,14 @@ ActionArgument STDCALL ActionArgumentCreateBoolInput(ServiceParameter aParameter
 ActionArgument STDCALL ActionArgumentCreateBoolOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentBool(*param);
 }
 
 ActionArgument STDCALL ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     Brn buf(aValue);
     return (ActionArgument)new ArgumentString(*param, buf);
 }
@@ -90,12 +98,14 @@ ActionArgument STDCALL ActionArgumentCreateStringInput(ServiceParameter aParamet
 ActionArgument STDCALL ActionArgumentCreateStringOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentString(*param);
 }
 
 ActionArgument STDCALL ActionArgumentCreateBinaryInput(ServiceParameter aParameter, const uint8_t* aData, uint32_t aLen)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     Brn buf(aData, aLen);
     return (ActionArgument)new ArgumentBinary(*param, buf);
 }
@@ -103,6 +113,7 @@ ActionArgument STDCALL ActionArgumentCreateBinaryInput(ServiceParameter aParamet
 ActionArgument STDCALL ActionArgumentCreateBinaryOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
+    ASSERT(param != NULL);
     return (ActionArgument)new ArgumentBinary(*param);
 }
 

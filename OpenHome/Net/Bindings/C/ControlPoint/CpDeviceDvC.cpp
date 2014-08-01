@@ -10,6 +10,8 @@ using namespace OpenHome::Net;
 CpDeviceC STDCALL CpDeviceDvCreate(DvDeviceC aDevice)
 {
     DvDevice* dv = DviDeviceC::DeviceFromHandle(aDevice);
+    ASSERT(dv != NULL);
     CpiDeviceDv* cp = new CpiDeviceDv(*gCpStack, dv->Device());
+    ASSERT(cp != NULL);
     return (CpDeviceC)(&cp->Device());
 }

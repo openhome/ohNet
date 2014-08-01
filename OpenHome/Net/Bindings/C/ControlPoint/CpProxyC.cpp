@@ -32,6 +32,7 @@ CpProxyC::~CpProxyC()
 THandle STDCALL CpProxyCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
+    ASSERT(device != NULL);
     return new CpProxyC(aDomain, aName, aVersion, *device);
 }
 
@@ -44,6 +45,7 @@ void STDCALL CpProxyDestroy(THandle aProxy)
 THandle STDCALL CpProxyService(THandle aProxy)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aProxy);
+    ASSERT(proxyC != NULL);
     return (THandle)proxyC->Service();
 }
 
