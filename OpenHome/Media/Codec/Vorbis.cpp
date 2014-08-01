@@ -59,7 +59,6 @@ private:
 
     void *iDataSource; // dummy stream identifier
     OggVorbis_File iVf;
-    vorbis_info* iInfo;
 
     Bws<DecodedAudio::kMaxBytes> iInBuf;
     Bws<DecodedAudio::kMaxBytes> iOutBuf;
@@ -67,7 +66,6 @@ private:
  
     TUint32 iSampleRate;
     TUint32 iBytesPerSec;
-    TUint32 iBitrateMax;
     TUint32 iBitrateAverage;
     TUint16 iChannels;
     TUint16 iBytesPerSample;
@@ -76,7 +74,7 @@ private:
     TUint64 iTotalSamplesOutput;
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
-    TInt iLink;
+    TInt iBitstream;
 
     TBool iStreamEnded;
     TBool iNewStreamStarted;
@@ -226,17 +224,16 @@ TBool CodecVorbis::Recognise()
 void CodecVorbis::StreamInitialise()
 {
     LOG(kCodec, "CodecVorbis::StreamInitialise\n");
-    iLink = 0;
+    iBitstream = 0;
     iStreamEnded = false;
     iNewStreamStarted = false;
 
     ov_test_open(&iVf);
 
-    iInfo = ov_info(&iVf, -1);
-    iChannels = (TUint16)iInfo->channels;
-    iBitrateMax = iInfo->bitrate_upper;
-    iBitrateAverage = iInfo->bitrate_nominal;
-    iSampleRate = iInfo->rate;
+    vorbis_info* info = ov_info(&iVf, -1);
+    iChannels = static_cast<TUint16>(info->channels);
+    iBitrateAverage = info->bitrate_nominal;
+    iSampleRate = info->rate;
 
     iBitDepth = 16;                 //always 16bit
     iTotalSamplesOutput = 0;
@@ -421,18 +418,18 @@ void CodecVorbis::Process()
 {
     LOG(kCodec, "\n CodecVorbis::Process\n");
 
-    TInt *bitstream = 0;
+    TInt bitstream = 0;
     TUint iPrevBytes = iOutBuf.Bytes();
 
     if(!iStreamEnded || !iNewStreamStarted) {
-        LOG(kCodec, "CodecVorbis::Process bitstream %d\n", *bitstream);
+        LOG(kCodec, "CodecVorbis::Process bitstream %d\n", bitstream);
         try {
             char *pcm = (char *)iInBuf.Ptr();
             TInt request = (iOutBuf.MaxBytes() - iOutBuf.Bytes());
             ASSERT((TInt)iInBuf.MaxBytes() >= request);
 
             TInt bytes = 0;
-            bytes = ov_read(&iVf, pcm, request, (int *)bitstream);
+            bytes = ov_read(&iVf, pcm, request, &bitstream);
 
             if(bytes == 0) {
                 THROW(CodecStreamEnded);
@@ -442,18 +439,34 @@ void CodecVorbis::Process()
                 THROW(CodecStreamCorrupt);
             }
 
-            if(iLink != iVf.current_link) {
-                // new track - new metadata
-                // As the vorbis decoder is not preloaded with all vorbis_info structs,
-                // usual scenario is where we encounter our first (logical) bitstream of
-                // audio in the chain, so link goes from 0 to 1.
-                LOG(kCodec, "CodecVorbis::Process new track %d, %d\n", iLink, iVf.current_link);
-                iLink = iVf.current_link;
-                // We don't yet handle the case of chained bitstreams.
-                if (iLink > 1) {
-                    Log::Print("\nERROR: CodecVorbis::Process new track identified within Ogg container.\n");
-                    iStreamEnded = true;
+            if(bitstream != iBitstream) {
+                LOG(kCodec, "CodecVorbis::Process new bitstream %d, %d\n", iBitstream, bitstream);
+                iBitstream = bitstream;
+
+                // Encountered a new logical bitstream. Better push any
+                // buffered PCM from previous stream.
+                if (iOutBuf.Bytes() > 0) {
+                    iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
+                        iBitDepth, EMediaDataBigEndian, iTrackOffset);
+                    iOutBuf.SetBytes(0);
+                    LOG(kCodec, "CodecVorbis::Process output (new bitstream detected) - total samples = %llu\n", iTotalSamplesOutput);
                 }
+
+                // Now, call ov_info() and send a MsgDecodedStream, then
+                // continue decoding as normal.
+                vorbis_info* info = ov_info(&iVf, -1);
+                iChannels = static_cast<TUint16>(info->channels);
+                iBitrateAverage = info->bitrate_nominal;
+                iSampleRate = info->rate;
+
+                iBytesPerSample = iChannels*iBitDepth/8;
+                iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
+
+                // FIXME - reusing iTrackLengthJiffies is incorrect, but it was
+                // almost definitely wrong when we started this chained stream anyway.
+
+                LOG(kCodec, "CodecVorbis::Process new bitstream: iBitrateAverage %u, iBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
+                iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
             }
 
             TUint samples = bytes/iBytesPerSample;
