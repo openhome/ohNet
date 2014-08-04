@@ -2,8 +2,10 @@
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Converter.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
 
@@ -24,6 +26,8 @@ namespace Codec {
 
 class CodecVorbis : public CodecBase, public IWriter
 {
+private:
+    static const TUint kIcyMetadataBytes = 255 * 16;
 public:
     static const Brn kCodecVorbis;
 public:
@@ -51,6 +55,7 @@ private:
     TUint64 GetTotalSamples();
     void BigEndian(TInt16* aDst, TInt16* aSrc, TUint aSamples);
     void FlushOutput();
+    void OutputMetaData();
 private:
     static const TUint kHeaderBytesReq = 14; // granule pos is byte 6:13 inclusive
     static const TUint kSearchChunkSize = 1024;
@@ -75,6 +80,8 @@ private:
     TUint64 iTrackLengthJiffies;
     TUint64 iTrackOffset;
     TInt iBitstream;
+    Bws<kIcyMetadataBytes> iIcyMetadata;
+    Bws<kIcyMetadataBytes> iNewIcyMetadata;
 
     TBool iStreamEnded;
     TBool iNewStreamStarted;
@@ -452,8 +459,8 @@ void CodecVorbis::Process()
                     LOG(kCodec, "CodecVorbis::Process output (new bitstream detected) - total samples = %llu\n", iTotalSamplesOutput);
                 }
 
-                // Now, call ov_info() and send a MsgDecodedStream, then
-                // continue decoding as normal.
+                // Now, call ov_info() and send a MsgDecodedStream, send a new
+                // MsgMetaText, then continue decoding as normal.
                 vorbis_info* info = ov_info(&iVf, -1);
                 iChannels = static_cast<TUint16>(info->channels);
                 iBitrateAverage = info->bitrate_nominal;
@@ -461,6 +468,8 @@ void CodecVorbis::Process()
 
                 iBytesPerSample = iChannels*iBitDepth/8;
                 iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
+
+                OutputMetaData();
 
                 // FIXME - reusing iTrackLengthJiffies is incorrect, but it was
                 // almost definitely wrong when we started this chained stream anyway.
@@ -510,5 +519,49 @@ void CodecVorbis::FlushOutput()
             THROW(CodecStreamStart);
         }
         THROW(CodecStreamEnded);
+    }
+}
+
+void CodecVorbis::OutputMetaData()
+{
+    vorbis_comment* vc = ov_comment(&iVf, -1);
+    Brn artist = Brx::Empty();
+    Brn title = Brx::Empty();
+
+    for (TInt i=0; i<vc->comments; i++) {
+        Brn comment(reinterpret_cast<const TByte*>(vc->user_comments[i]), vc->comment_lengths[i]);
+        LOG(kCodec, "CodecVorbis::OutputMetaData comment: ");
+        LOG(kCodec, comment);
+        LOG(kCodec, "\n");
+
+        Parser parser(comment);
+        Brn tag = parser.Next('=');
+        if (Ascii::CaseInsensitiveEquals(tag, Brn("artist"))) {
+            artist = parser.Remaining();
+        }
+        else if (Ascii::CaseInsensitiveEquals(tag, Brn("title"))) {
+            title = parser.Remaining();
+        }
+
+        if (artist != Brx::Empty() || title != Brx::Empty()) {
+            iNewIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
+            iNewIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
+            iNewIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
+            iNewIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
+
+            iNewIcyMetadata.Append(artist);
+            if (artist != Brx::Empty() && title != Brx::Empty()) {
+                iNewIcyMetadata.Append(" - ");
+            }
+            iNewIcyMetadata.Append(title);
+
+            iNewIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
+            iNewIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
+            if (iNewIcyMetadata != iIcyMetadata) {
+                iIcyMetadata.Replace(iNewIcyMetadata);
+                iController->OutputMetaText(iIcyMetadata);
+            }
+            break;
+        }
     }
 }
