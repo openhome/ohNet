@@ -366,10 +366,10 @@ Msg* MsgProcessor::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
     ASSERTS();
     return NULL;
 }
-Msg* MsgProcessor::ProcessMsg(MsgMetaText* /*aMsg*/)
+Msg* MsgProcessor::ProcessMsg(MsgMetaText* aMsg)
 {
     //LOG(kMedia, ">MsgProcessor::ProcessMsgMetaText\n");
-    ASSERTS();
+    aMsg->RemoveRef();
     return NULL;
 }
 Msg* MsgProcessor::ProcessMsg(MsgHalt* /*aMsg*/)
