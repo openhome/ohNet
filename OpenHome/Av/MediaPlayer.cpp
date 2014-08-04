@@ -10,6 +10,7 @@
 #include <OpenHome/Media/UriProviderSingleTrack.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Av/ConfigInitialiserVolume.h>
 #include <OpenHome/Av/KvpStore.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Av/ProviderTime.h>

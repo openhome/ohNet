@@ -23,13 +23,12 @@ import Utils.Network.HttpServer       as HttpServer
 import Utils.Common                   as Common
 import _SoftPlayer                    as SoftPlayer
 import LogThread
-import Path
 import os
 import sys
 import threading
 import time
 
-kAudioRoot = os.path.join( Path.AudioDir(), 'LRTones/' )
+kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 

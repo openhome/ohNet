@@ -41,12 +41,13 @@ public:
 class ProviderFactory
 {
 public:
+    static IProvider* NewConfiguration(Product& aProduct, Net::DvDevice& aDevice, Configuration::IConfigManagerReader& aConfigReader);
     static IProvider* NewVolume(Product& aProduct,
                                 Net::DvDevice& aDevice,
                                 Configuration::IConfigManagerInitialiser& aConfigInit,
                                 Configuration::IConfigManagerReader& aConfigReader,
                                 IPowerManager& aPowerManager,
-                                Media::IVolumeProfile& aVolumeProfile,
+                                const Media::IVolumeProfile& aVolumeProfile,
                                 Media::IVolume& aVolume,
                                 Media::IVolumeLimit& aVolumeLimit,
                                 Media::IBalance& aBalance,

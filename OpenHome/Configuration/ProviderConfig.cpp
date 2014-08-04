@@ -1,9 +1,20 @@
 #include <OpenHome/Configuration/ProviderConfig.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Av/Product.h>
 
 using namespace OpenHome;
+using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Net;
+
+
+// ProviderFactory
+
+IProvider* ProviderFactory::NewConfiguration(Product& aProduct, DvDevice& aDevice, IConfigManagerReader& aConfigReader)
+{ // static
+    aProduct.AddAttribute("Configuration");
+    return new ProviderConfig(aDevice, aConfigReader);
+}
 
 
 // ProviderConfig

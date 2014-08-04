@@ -26,7 +26,6 @@ import Upnp.ControlPoints.Volkano as Volkano
 import Utils.Network.HttpServer   as HttpServer
 import Utils.Common               as Common
 import _SoftPlayer                as SoftPlayer
-import Path
 import os
 import random
 import sys
@@ -50,7 +49,7 @@ kInvokes   = ['Pause',
               'SeekIndex',
               'Stop']
 
-kAudioRoot = os.path.join( Path.AudioDir(), 'MusicTracks/' )
+kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'MusicTracks/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
 

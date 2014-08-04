@@ -24,7 +24,6 @@ import Utils.Common                     as Common
 import Utils.Network.HttpServer         as HttpServer
 import _SoftPlayer                      as SoftPlayer
 import LogThread
-import Path
 import os
 import sys
 import threading
@@ -32,8 +31,10 @@ import time
 import xml.etree.ElementTree as ET
 
 kAvtNs     = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
-kAudioRoot = os.path.join( Path.AudioDir(), 'LRTones/' )
+kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
+
+print "\n---->", kAudioRoot
 
 
 class TestAvTransportPlayTracks( BASE.BaseTest ):

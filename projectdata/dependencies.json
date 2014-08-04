@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.1247",
+        "version": "1.0.1259",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.85",
+        "version": "0.0.88",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -45,7 +45,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.173",
+        "version":          "0.0.175",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv5": false,
@@ -95,9 +95,17 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.334",
+        "version": "0.0.341",
         "platform-specific": false,
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-ohMediaPlayer-${version}.zip",
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
+    },
+    {
+        "name": "FunctionalTestData",
+        "type": "internal",
+        "version": "0.0.11",
+        "platform-specific": false,
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTestData/FunctionalTestData-${version}.zip",
+        "dest": "dependencies/AnyPlatform/FunctionalTestData"
     }
 ]
