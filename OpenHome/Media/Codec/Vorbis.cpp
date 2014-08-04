@@ -543,25 +543,28 @@ void CodecVorbis::OutputMetaData()
             title = parser.Remaining();
         }
 
-        if (artist != Brx::Empty() || title != Brx::Empty()) {
-            iNewIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
-            iNewIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
-            iNewIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
-            iNewIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
+        if (artist != Brx::Empty() && title != Brx::Empty()) {
+            break; // terminate loop early if we have both artist and title
+        }
+    }
 
-            iNewIcyMetadata.Append(artist);
-            if (artist != Brx::Empty() && title != Brx::Empty()) {
-                iNewIcyMetadata.Append(" - ");
-            }
-            iNewIcyMetadata.Append(title);
+    if (artist != Brx::Empty() || title != Brx::Empty()) {
+        iNewIcyMetadata.Replace("<DIDL-Lite xmlns:dc='http://purl.org/dc/elements/1.1/' ");
+        iNewIcyMetadata.Append("xmlns:upnp='urn:schemas-upnp-org:metadata-1-0/upnp/' ");
+        iNewIcyMetadata.Append("xmlns='urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/'>");
+        iNewIcyMetadata.Append("<item id='' parentID='' restricted='True'><dc:title>");
 
-            iNewIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
-            iNewIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
-            if (iNewIcyMetadata != iIcyMetadata) {
-                iIcyMetadata.Replace(iNewIcyMetadata);
-                iController->OutputMetaText(iIcyMetadata);
-            }
-            break;
+        iNewIcyMetadata.Append(artist);
+        if (artist != Brx::Empty() && title != Brx::Empty()) {
+            iNewIcyMetadata.Append(" - ");
+        }
+        iNewIcyMetadata.Append(title);
+
+        iNewIcyMetadata.Append("</dc:title><upnp:albumArtURI></upnp:albumArtURI>");
+        iNewIcyMetadata.Append("<upnp:class>object.item</upnp:class></item></DIDL-Lite>");
+        if (iNewIcyMetadata != iIcyMetadata) {
+            iIcyMetadata.Replace(iNewIcyMetadata);
+            iController->OutputMetaText(iIcyMetadata);
         }
     }
 }
