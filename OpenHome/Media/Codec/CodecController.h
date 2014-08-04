@@ -174,6 +174,14 @@ public:
      * ramps or delays as appropriate.
      */
     virtual void OutputSession() = 0;
+    /**
+     * Notify the pipeline of an update in meta text.
+     *
+     * This allows the pipeline to output additional information about a stream.
+     *
+     * @param[in] aMetaText          Meta text. Must be in DIDL-Lite format.
+     */
+    virtual void OutputMetaText(const Brx& aMetaText) = 0;
 };
     
 /**
@@ -283,6 +291,7 @@ private: // ICodecController
     void OutputWait();
     void OutputHalt();
     void OutputSession();
+    void OutputMetaText(const Brx& aMetaText);
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgSession* aMsg);

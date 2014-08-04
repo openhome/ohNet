@@ -464,6 +464,12 @@ void CodecController::OutputSession()
     Queue(session);
 }
 
+void CodecController::OutputMetaText(const Brx& aMetaText)
+{
+    MsgMetaText* text = iMsgFactory.CreateMsgMetaText(aMetaText);
+    Queue(text);
+}
+
 Msg* CodecController::ProcessMsg(MsgMode* aMsg)
 {
     if (iRecognising) {
