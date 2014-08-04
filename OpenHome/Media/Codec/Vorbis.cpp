@@ -429,7 +429,7 @@ void CodecVorbis::Process()
             ASSERT((TInt)iInBuf.MaxBytes() >= request);
 
             TInt bytes = 0;
-            bytes = ov_read(&iVf, pcm, request, &bitstream);
+            bytes = ov_read(&iVf, pcm, request, (int*)&bitstream);
 
             if(bytes == 0) {
                 THROW(CodecStreamEnded);
