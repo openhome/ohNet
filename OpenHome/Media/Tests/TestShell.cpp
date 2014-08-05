@@ -41,7 +41,5 @@ void OpenHome::Media::ExecuteTestShell(Net::InitialisationParams* aInitParams, s
     delete cmdDebug;
     delete cmdRun;
     delete shell;
-
-    // Deleting lib is unsafe on Core-* platforms. Significant amounts of OhNet code is still running that relies on gEnv.
-    //delete lib;
+    delete lib;
 }
