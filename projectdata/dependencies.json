@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.92",
+        "version": "0.0.93",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
