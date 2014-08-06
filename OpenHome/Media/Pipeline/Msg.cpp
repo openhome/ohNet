@@ -608,6 +608,9 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
         TUint ramp = ((iStart-iEnd) * (TUint64)aNewSize) / aCurrentSize;
         iEnd = iStart - ramp;
     }
+    if (iStart == iEnd) {
+        iDirection = ENone;
+    }
     remaining.iStart = iEnd; // FIXME - remaining.iStart is one sample on from iEnd so should have a ramp value that progresses one 'step'
     //Log::Print("Split [%08x : %08x] ramp into [%08x : %08x] and [%08x : %08x]\n", start, end, iStart, iEnd, remaining.iStart, remaining.iEnd);
     Validate();
