@@ -469,13 +469,13 @@ void CodecVorbis::Process()
                 iBytesPerSample = iChannels*iBitDepth/8;
                 iBytesPerSec = iBitrateAverage/8; // bitrate of raw data rather than the output bitrate
 
-                OutputMetaData();
-
                 // FIXME - reusing iTrackLengthJiffies is incorrect, but it was
                 // almost definitely wrong when we started this chained stream anyway.
 
                 LOG(kCodec, "CodecVorbis::Process new bitstream: iBitrateAverage %u, iBitDepth %u, iSampleRate %u, iChannels %u, iTrackLengthJiffies %llu\n", iBitrateAverage, iBitDepth, iSampleRate, iChannels, iTrackLengthJiffies);
                 iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iSampleRate, iChannels, kCodecVorbis, iTrackLengthJiffies, 0, false);
+
+                OutputMetaData();
             }
 
             TUint samples = bytes/iBytesPerSample;
