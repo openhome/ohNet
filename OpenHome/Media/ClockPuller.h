@@ -14,7 +14,7 @@ class IClockPuller
 {
 public:
     virtual ~IClockPuller() {}
-    virtual void StartDecodedReservoir(TUint aCapacityJiffies) = 0;
+    virtual void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) = 0;
     virtual void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) = 0;
     virtual void NotifySizeDecodedReservoir(TUint aJiffies) = 0;
     virtual void StopDecodedReservoir() = 0;
@@ -22,6 +22,19 @@ public:
     virtual void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) = 0;
     virtual void NotifySizeStarvationMonitor(TUint aJiffies) = 0;
     virtual void StopStarvationMonitor() = 0;
+};
+
+class IPullableClock
+{
+public:
+    virtual ~IPullableClock() {}
+    /**
+     * Signal that the clock should be pulled.
+     *
+     * @param[in] aValue      Percentage of current rate in the range (4%..-4%].
+     *                        Top bit gives sign, next two bits are integer value, remaining 29 bits are fraction.
+     */
+    virtual void PullClock(TInt32 aValue) = 0;
 };
 
 } // namespace Media

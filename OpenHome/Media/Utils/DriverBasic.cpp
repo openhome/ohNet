@@ -10,16 +10,16 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
-DriverBasic::DriverBasic(IPipelineElementUpstream& aPipeline, Environment& aEnv)
+DriverBasic::DriverBasic(Environment& aEnv)
     : Thread("PipelineAnimator", kPrioritySystemHighest)
-    , iPipeline(aPipeline)
+    , iPipeline(NULL)
     , iOsCtx(aEnv.OsCtx())
     , iPlayable(NULL)
+    , iPullLock("DBPL")
+    , iPullValue(kClockPullDefault)
     , iQuit(false)
 {
     iTimer = new Timer(aEnv, MakeFunctor(*this, &DriverBasic::TimerCallback));
-    Start();
-    iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
 }
 
 DriverBasic::~DriverBasic()
@@ -28,10 +28,17 @@ DriverBasic::~DriverBasic()
     delete iTimer;
 }
 
+void DriverBasic::SetPipeline(IPipelineElementUpstream& aPipeline)
+{
+    iPipeline = &aPipeline;
+    Start();
+    iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
+}
+
 void DriverBasic::Run()
 {
     // pull the first (assumed non-audio) msg here so that any delays populating the pipeline don't affect timing calculations below.
-    Msg* msg = iPipeline.Pull();
+    Msg* msg = iPipeline->Pull();
     ASSERT(msg != NULL);
     (void)msg->Process(*this);
 
@@ -45,7 +52,7 @@ void DriverBasic::Run()
                     ProcessAudio(iPlayable);
                 }
                 else {
-                    Msg* msg = iPipeline.Pull();
+                    Msg* msg = iPipeline->Pull();
                     msg = msg->Process(*this);
                     ASSERT(msg == NULL);
                 }
@@ -64,6 +71,16 @@ void DriverBasic::Run()
             }
             else {
                 iPendingJiffies = diffMs * Jiffies::kPerMs;
+                iPullLock.Wait();
+                if (iPullValue != kClockPullDefault) {
+                    TInt64 pending64 = iPullValue * iPendingJiffies;
+                    pending64 /= kClockPullDefault;
+                    //Log::Print("iPendingJiffies=%08x, pull=%08x\n", iPendingJiffies, pending64); // FIXME
+                    //TInt pending = (TInt)iPendingJiffies + (TInt)pending64;
+                    //Log::Print("Pulled clock, now want %u jiffies (%ums, %d%%) extra\n", (TUint)pending, pending/Jiffies::kPerMs, (pending-(TInt)iPendingJiffies)/iPendingJiffies); // FIXME
+                    iPendingJiffies = (TUint)pending64;
+                }
+                iPullLock.Signal();
             }
         }
     }
@@ -71,7 +88,7 @@ void DriverBasic::Run()
 
     // pull until the pipeline is emptied
     while (!iQuit) {
-        Msg* msg = iPipeline.Pull();
+        Msg* msg = iPipeline->Pull();
         msg = msg->Process(*this);
         ASSERT(msg == NULL);
         if (iPlayable != NULL) {
@@ -106,6 +123,9 @@ void DriverBasic::ProcessAudio(MsgPlayable* aMsg)
 
 Msg* DriverBasic::ProcessMsg(MsgMode* aMsg)
 {
+    iPullLock.Wait();
+    iPullValue = kClockPullDefault;
+    iPullLock.Signal();
     aMsg->RemoveRef();
     return NULL;
 }
@@ -202,4 +222,11 @@ Msg* DriverBasic::ProcessMsg(MsgQuit* aMsg)
     iNextTimerDuration = 0;
     aMsg->RemoveRef();
     return NULL;
+}
+
+void DriverBasic::PullClock(TInt32 aValue)
+{
+    AutoMutex _(iPullLock);
+    iPullValue += aValue;
+    Log::Print("DriverBasic::PullClock now at %u%%\n", iPullValue / (1<<29));
 }

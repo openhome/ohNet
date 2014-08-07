@@ -33,10 +33,12 @@ using namespace OpenHome::Net;
 
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStaticDataSource& aStaticDataSource,
-                         IStoreReadWrite& aReadWriteStore)
+                         IStoreReadWrite& aReadWriteStore,
+                         IPullableClock* aPullableClock)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
+    , iPullableClock(aPullableClock)
     , iConfigProductRoom(NULL)
     , iConfigProductName(NULL)
 {
@@ -156,6 +158,11 @@ IReadStore& MediaPlayer::ReadStore()
 IStoreReadWrite& MediaPlayer::ReadWriteStore()
 {
     return iReadWriteStore;
+}
+
+IPullableClock* MediaPlayer::PullableClock()
+{
+    return iPullableClock;
 }
 
 IConfigManagerReader& MediaPlayer::ConfigManagerReader()

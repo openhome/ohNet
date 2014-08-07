@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Core/DvDevice.h>
 
@@ -12,12 +13,14 @@ namespace OpenHome {
     class Timer;
 namespace Media {
 
-class DriverBasic : public Thread, private IMsgProcessor
+class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock
 {
     static const TUint kTimerFrequencyMs = 5;
+    static const TInt64 kClockPullDefault = (1 << 29) * 100LL;
 public:
-    DriverBasic(IPipelineElementUpstream& aPipeline, Environment& aEnv);
+    DriverBasic(Environment& aEnv);
     ~DriverBasic();
+    void SetPipeline(IPipelineElementUpstream& aPipeline);
 private: // from Thread
     void Run();
 private:
@@ -39,8 +42,10 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgSilence* aMsg);
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
+private: // from IPullableClock
+    void PullClock(TInt32 aValue);
 private:
-    IPipelineElementUpstream& iPipeline;
+    IPipelineElementUpstream* iPipeline;
     Timer* iTimer;
     OsContext* iOsCtx;
     TUint iSampleRate;
@@ -51,6 +56,8 @@ private:
     TUint64 iLastTimeUs;
     TUint iNextTimerDuration;
     MsgPlayable* iPlayable;
+    Mutex iPullLock;
+    TInt64 iPullValue;
     TBool iQuit;
 };
 

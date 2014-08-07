@@ -90,7 +90,8 @@ TestProtocol::TestProtocol(Environment& aEnv, Net::DvStack& aDvStack, const Brx&
     iPipeline = new Pipeline(iInfoAggregator, *this, *this);
     iFiller = new DummyFiller(aEnv, *iPipeline, *iPipeline, iInfoAggregator, iPowerManager);
 
-    iDriver = new DriverBasic(*iPipeline, aDvStack.Env());
+    iDriver = new DriverBasic(aDvStack.Env());
+    iDriver->SetPipeline(*iPipeline);
 }
 
 TestProtocol::~TestProtocol()

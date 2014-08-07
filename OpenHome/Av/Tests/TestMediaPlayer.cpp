@@ -28,7 +28,7 @@ using namespace OpenHome::Net;
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
-TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName)
+TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, IPullableClock* aPullableClock)
     : iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
 {
@@ -80,7 +80,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, aPullableClock);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

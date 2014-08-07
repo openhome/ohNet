@@ -27,6 +27,7 @@ namespace Media {
     class AllocatorInfoLogger;
     class LoggingPipelineObserver;
     class TrackFactory;
+    class IPullableClock;
 }
 namespace Configuration {
     class ConfigManager;
@@ -65,6 +66,7 @@ public:
     virtual Media::TrackFactory& TrackFactory() = 0;
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::IStoreReadWrite& ReadWriteStore() = 0;
+    virtual Media::IPullableClock* PullableClock() = 0;
     virtual Configuration::IConfigManagerReader& ConfigManagerReader() = 0;
     virtual Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
@@ -78,7 +80,8 @@ class MediaPlayer : public IMediaPlayer, private INonCopyable
 public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 IStaticDataSource& aStaticDataSource,
-                Configuration::IStoreReadWrite& aReadWriteStore);
+                Configuration::IStoreReadWrite& aReadWriteStore,
+                Media::IPullableClock* aPullableClock);
     ~MediaPlayer();
     void Quit();
     void Add(Media::Codec::CodecBase* aCodec);
@@ -93,6 +96,7 @@ public: // from IMediaPlayer
     Media::TrackFactory& TrackFactory();
     IReadStore& ReadStore();
     Configuration::IStoreReadWrite& ReadWriteStore();
+    Media::IPullableClock* PullableClock();
     Configuration::IConfigManagerReader& ConfigManagerReader();
     Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser();
     IPowerManager& PowerManager();
@@ -133,6 +137,7 @@ private:
     Media::PipelineManager* iPipeline;
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
+    Media::IPullableClock* iPullableClock;
     Configuration::ConfigManager* iConfigManager;
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;

@@ -28,7 +28,7 @@ TBool UriProvider::IsRealTime() const
     return iRealTime;
 }
 
-IClockPuller* UriProvider::ClockPuller() const
+IClockPuller* UriProvider::ClockPuller()
 {
     return NULL;
 }

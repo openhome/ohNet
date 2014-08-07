@@ -34,13 +34,15 @@ namespace Media {
 class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
+    static const TUint kDecodedReservoirMultiplier = 6; // FIXME - temp bodge for local testing
+
     static const TUint kMsgCountEncodedAudio    = 768;
     static const TUint kMsgCountAudioEncoded    = 768;
-    static const TUint kMsgCountDecodedAudio    = 512;
-    static const TUint kMsgCountAudioPcm        = 768;
+    static const TUint kMsgCountDecodedAudio    = 600;
+    static const TUint kMsgCountAudioPcm        = 900;
     static const TUint kMsgCountSilence         = 512;
-    static const TUint kMsgCountPlayablePcm     = 1024;
-    static const TUint kMsgCountPlayableSilence = 1024;
+    static const TUint kMsgCountPlayablePcm     = 100;
+    static const TUint kMsgCountPlayableSilence = 100;
     static const TUint kMsgCountEncodedStream   = 20;
     static const TUint kMsgCountTrack           = 20;
     static const TUint kMsgCountDecodedStream   = 20;
@@ -54,14 +56,14 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountQuit            = 1;
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
-    static const TUint kDecodedReservoirSize                 = Jiffies::kPerMs * 1000;
+    static const TUint kDecodedReservoirSize                 = Jiffies::kPerMs * 1536; // some clock pulling algorithms will prefer this is larger than kGorgerDuration
     static const TUint kSeekerRampDuration                   = Jiffies::kPerMs * 20;
     static const TUint kVariableDelayRampDuration            = Jiffies::kPerMs * 20;
     static const TUint kSkipperRampDuration                  = Jiffies::kPerMs * 500;
     static const TUint kWaiterRampDuration                   = Jiffies::kPerMs * 50;
     static const TUint kStopperRampDuration                  = Jiffies::kPerMs * 500;
     static const TUint kRamperRampDuration                   = Jiffies::kPerMs * 2000;
-    static const TUint kGorgerDuration                       = Jiffies::kPerMs * 1000;
+    static const TUint kGorgerDuration                       = Jiffies::kPerMs * 1024;
     static const TUint kStarvationMonitorNormalSize          = Jiffies::kPerMs * 50;
     static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kPerMs * 20;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kPerMs * 100;

@@ -239,6 +239,7 @@ def build(bld):
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
+                'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/VolumeManager.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
@@ -246,6 +247,7 @@ def build(bld):
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'OpenHome/Media/Utils/Aggregator.cpp',
                 'OpenHome/Media/Utils/Silencer.cpp',
+                'OpenHome/Media/Utils/ClockPullerLogging.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohPipeline')

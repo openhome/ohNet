@@ -18,6 +18,7 @@
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Media/ClockPullerUtilisation.h>
 
 namespace OpenHome {
 namespace Media {
@@ -25,6 +26,17 @@ namespace Media {
     class Sender;
 }
 namespace Av {
+
+class UriProviderSongcast : public Media::UriProviderSingleTrack
+{
+public:
+    UriProviderSongcast(IMediaPlayer& aMediaPlayer);
+    ~UriProviderSongcast();
+private: // from UriProvider
+    Media::IClockPuller* ClockPuller();
+private:
+    Media::ClockPullerUtilisation* iClockPuller;
+};
 
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
 {
@@ -64,7 +76,7 @@ private:
     ThreadFunctor* iZoneChangeThread;
     ZoneHandler* iZoneHandler;
     ProviderReceiver* iProviderReceiver;
-    Media::UriProviderSingleTrack* iUriProvider;
+    UriProviderSongcast* iUriProvider;
     OhmMsgFactory* iOhmMsgFactory;
     Sender* iSender;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
@@ -102,6 +114,31 @@ ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper&
 }
 
 
+// UriProviderSongcast
+
+UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
+    : UriProviderSingleTrack("Receiver", true, true, aMediaPlayer.TrackFactory())
+{
+    IPullableClock* pullable = aMediaPlayer.PullableClock();
+    if (pullable == NULL) {
+        iClockPuller = NULL;
+    }
+    else {
+        iClockPuller = new ClockPullerUtilisation(aMediaPlayer.Env(), *pullable);
+    }
+}
+
+UriProviderSongcast::~UriProviderSongcast()
+{
+    delete iClockPuller;
+}
+
+IClockPuller* UriProviderSongcast::ClockPuller()
+{
+    return iClockPuller;
+}
+
+
 // SourceReceiver
 
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
@@ -125,15 +162,13 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
 
     // Receiver
     iProviderReceiver = new ProviderReceiver(device, *this, kProtocolInfo);
-    TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
-    static const TChar * kMode = "Receiver";
-    const Brn kModeBuf(kMode);
-    iUriProvider = new UriProviderSingleTrack(kMode, true, true, trackFactory);
+    iUriProvider = new UriProviderSongcast(aMediaPlayer);
     iPipeline.Add(iUriProvider);
     iOhmMsgFactory = new OhmMsgFactory(250, 250, 10, 10);
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory));
-    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf));
-    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, kModeBuf, aMediaPlayer.PowerManager()));
+    TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
+    iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, iUriProvider->Mode()));
+    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
 
