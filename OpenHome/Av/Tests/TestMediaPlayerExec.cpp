@@ -95,7 +95,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
         udn.Replace(optionUdn.Value());
     }
     DriverBasic* driver = new DriverBasic(dvStack->Env());
-    TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), optionTuneIn.CString(), driver);
+    TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), optionTuneIn.CString(), NULL/*driver*/);
     driver->SetPipeline(tmp->Pipeline());
     tmp->Run();
     tmp->StopPipeline();
