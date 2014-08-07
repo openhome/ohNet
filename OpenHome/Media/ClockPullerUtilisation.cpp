@@ -5,7 +5,6 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Env.h>
 
-#include <algorithm>
 #include <cstdlib>
 #include <vector>
 
@@ -39,7 +38,7 @@ void UtilisationHistory::Add(TUint aJiffies)
             TBool valuesSteady = true;
             const TInt initial = iHistory[0];
             for (TUint i=1; i<iHistory.size(); i++) {
-                if (std::abs(initial - iHistory[i]) > kMaxExpectedDeviation) {
+                if ((TUint)std::abs(initial - iHistory[i]) > kMaxExpectedDeviation) {
                     valuesSteady = false;
                     break;
                 }
@@ -79,7 +78,7 @@ void UtilisationHistory::Add(TUint aJiffies)
         }
 
         TInt diff = (TInt)(iTotal - iExpectedTotal);
-        if (/*iDeviationCount == 0 && */std::abs(diff) > kMaxAllowedTotalsDeviation) {
+        if (/*iDeviationCount == 0 && */(TUint)std::abs(diff) > kMaxAllowedTotalsDeviation) {
             iObserver.NotifyClockDrift(diff, iSamples);
             Reset();
         }
@@ -105,8 +104,8 @@ void UtilisationHistory::Smooth(TUint& aJiffies, TInt aIndexToSkip)
     if (absDeviation > kMaxExpectedDeviation) {
         iDeviationCount++;
     }
-    else {
-        iDeviationCount = std::max(iDeviationCount-1, 0u);
+    else if (iDeviationCount > 0) {
+        iDeviationCount--;
     }
     if (absDeviation >= iHistory.size()) {
         TInt sharePerElement = deviation / (TInt)iHistory.size();

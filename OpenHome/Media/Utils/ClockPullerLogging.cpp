@@ -104,9 +104,9 @@ void UtilisationHistoryLogging::AddAverage(TUint aJiffies)
 
 ClockPullerLogging::ClockPullerLogging(Environment& aEnv)
     : iLock("CPLL")
-    , iActiveCount(0)
     , iUtilisationLeft(aEnv)
     , iUtilisationRight(aEnv)
+    , iActiveCount(0)
 {
 }
 
