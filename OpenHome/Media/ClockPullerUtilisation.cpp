@@ -5,7 +5,6 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Env.h>
 
-#include <algorithm>
 #include <cstdlib>
 #include <vector>
 
@@ -105,8 +104,8 @@ void UtilisationHistory::Smooth(TUint& aJiffies, TInt aIndexToSkip)
     if (absDeviation > kMaxExpectedDeviation) {
         iDeviationCount++;
     }
-    else {
-        iDeviationCount = std::max(iDeviationCount-1, 0u);
+    else if (iDeviationCount > 0) {
+        iDeviationCount--;
     }
     if (absDeviation >= iHistory.size()) {
         TInt sharePerElement = deviation / (TInt)iHistory.size();
