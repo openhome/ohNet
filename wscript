@@ -825,7 +825,7 @@ def test(tst):
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
         tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
-    tst(rule=rule, source=[tst.test_manifest, os.path.join('..', 'projectdata', 'dependencies.json'), 'TestShell.exe'])
+    tst(rule=rule, source=[tst.test_manifest, os.path.join('projectdata', 'dependencies.json'), 'TestShell.exe'])
 
 def test_full(tst):
     tst.test_manifest = 'nightly.test'
