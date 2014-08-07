@@ -818,6 +818,10 @@ def bundle(ctx):
 def test(tst):
     if not hasattr(tst, 'test_manifest'):
         tst.test_manifest = 'oncommit.test'
+    if tst.env.dest_platform in ['Windows-x86', 'Windows-x64']:
+        tst.executable_dep = 'TestShell.exe'
+    else:
+        tst.executable_dep = 'TestShell'
     print 'Testing using manifest:', tst.test_manifest
     rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
         test        = os.path.join(tst.env.testharness_dir, 'Test'),
@@ -825,7 +829,7 @@ def test(tst):
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
         tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
-    tst(rule=rule, source=[tst.test_manifest, os.path.join('projectdata', 'dependencies.json'), 'TestShell.exe'])
+    tst(rule=rule, source=[tst.test_manifest, os.path.join('projectdata', 'dependencies.json'), tst.executable_dep])
 
 def test_full(tst):
     tst.test_manifest = 'nightly.test'
