@@ -309,7 +309,6 @@ exeext = elf
 linkoutput = -o 
 dllprefix = lib
 link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
-link_dll_service = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 ifeq ($(platform), iOS)
 	csharp = /Developer/MonoTouch/usr/bin/smcs /nologo $(debug_csharp)
 else

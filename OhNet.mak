@@ -62,7 +62,6 @@ dllprefix =
 dllext = dll
 linkopts_ohNet =
 link_dll = link /nologo $(link_flag_debug_dll) /map Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
-link_dll_service = link /nologo $(link_flag_debug_dll)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib Dbghelp.lib /dll
 csharp = csc /nologo /platform:$(csplatform)
 csharpdefines = 
 publicjavadir = OpenHome\Net\Bindings\Java^\
