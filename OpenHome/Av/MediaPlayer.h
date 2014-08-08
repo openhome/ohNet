@@ -39,7 +39,6 @@ namespace Configuration {
 }
 namespace Net {
     class DvProvider;
-    class NetworkMonitor;
 }
 namespace Av {
 
@@ -54,6 +53,7 @@ class ProviderTime;
 class ProviderInfo;
 class ProviderVolume;
 class KvpStore;
+class NetworkMonitor;
 
 class IMediaPlayer
 {
@@ -157,7 +157,7 @@ private:
     ConfigInitialiserVolume* iConfigInitVolume;
     IProvider* iProviderVolume;
     Configuration::ProviderConfig* iProviderConfig;
-    Net::NetworkMonitor* iNetworkMonitor;
+    NetworkMonitor* iNetworkMonitor;
 };
 
 } // namespace Av
