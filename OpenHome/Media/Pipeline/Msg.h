@@ -720,7 +720,7 @@ class IPcmProcessor
 public:
     virtual ~IPcmProcessor() {}
     /**
-     * Called once per call to MsgPlayable::ProcessAudio.
+     * Called once per call to MsgPlayable::Read.
      *
      * Will be called before any calls to ProcessFragment or ProcessSample.
      */
@@ -752,7 +752,7 @@ public:
     virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) = 0;
     virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) = 0;
     /**
-     * Called once per call to MsgPlayable::ProcessAudio.
+     * Called once per call to MsgPlayable::Read.
      *
      * No more calls to ProcessFragment or ProcessSample will be made after this.
      */
