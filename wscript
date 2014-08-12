@@ -571,7 +571,6 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
                 'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
-                'OpenHome/Configuration/Tests/TestFunctorGeneric.cpp',
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
@@ -784,11 +783,6 @@ def build(bld):
             use=['OHNET', 'SHELL', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist', 'SourceRadio', 'SourceSongcast', 'SourceRaop', 'SourceUpnpAv', 'OPENSSL'],
             target='TestMediaPlayer',
             install_path='install/bin')
-    bld.program(
-            source='OpenHome/Configuration/Tests/TestFunctorGenericMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestFunctorGeneric',
-            install_path=None)
     bld.program(
             source='OpenHome/Configuration/Tests/TestConfigManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
