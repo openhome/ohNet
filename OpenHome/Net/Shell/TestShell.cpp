@@ -21,6 +21,9 @@ static void RunTestThread(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const st
 extern void TestException();
 static void RunTestException(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestException(); }
 
+extern void TestFunctorGeneric();
+static void RunTestFunctorGeneric(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestFunctorGeneric(); }
+
 extern void TestFifo();
 static void RunTestFifo(CpStack& /*aCpStack*/, DvStack& /*aDvStack*/, const std::vector<Brn>& /*aArgs*/) { TestFifo(); }
 
@@ -69,6 +72,7 @@ static void RunTestDvSubscription(CpStack& aCpStack, DvStack& aDvStack, const st
 extern void TestDvLpec(CpStack& aCpStack, DvStack& aDvStack);
 static void RunTestDvLpec(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/) { TestDvLpec(aCpStack, aDvStack); }
 
+
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Library* lib = new Library(aInitParams);
@@ -89,7 +93,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
 
     std::vector<ShellTest> shellTests;
     shellTests.push_back(ShellTest("TestBuffer", RunTestBuffer));
-    shellTests.push_back(ShellTest("TestBuffer", RunTestBuffer));
     shellTests.push_back(ShellTest("TestThread", RunTestThread));
     shellTests.push_back(ShellTest("TestFifo", RunTestFifo));
     shellTests.push_back(ShellTest("TestQueue", RunTestQueue));
@@ -108,6 +111,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestDvSubscription", RunTestDvSubscription));
     shellTests.push_back(ShellTest("TestDvLpec", RunTestDvLpec));
     shellTests.push_back(ShellTest("TestException", RunTestException));
+    shellTests.push_back(ShellTest("TestFunctorGeneric", RunTestFunctorGeneric));
 
     ShellCommandRun* cmdRun = new ShellCommandRun(*cpStack, *dvStack, *shell, shellTests);
     ShellCommandDebug* cmdDebug = new ShellCommandDebug(*shell);

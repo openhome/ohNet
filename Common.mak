@@ -136,7 +136,7 @@ headers = \
 	$(inc_build)/OpenHome/Private/Converter.h \
 	$(inc_build)/OpenHome/Private/Debug.h \
 	$(inc_build)/OpenHome/Private/Fifo.h \
-        $(inc_build)/OpenHome/Private/File.h \
+	$(inc_build)/OpenHome/Private/File.h \
 	$(inc_build)/OpenHome/Private/Http.h \
 	$(inc_build)/OpenHome/Private/md5.h \
 	$(inc_build)/OpenHome/Private/Network.h \
@@ -460,6 +460,14 @@ $(objdir)TestException.$(objext) : OpenHome/Tests/TestException.cpp $(headers)
 $(objdir)TestExceptionMain.$(objext) : OpenHome/Tests/TestExceptionMain.cpp $(headers)
 	$(compiler)TestExceptionMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestExceptionMain.cpp
 
+TestFunctorGeneric: $(objdir)TestFunctorGeneric.$(exeext)
+$(objdir)TestFunctorGeneric.$(exeext) :  ohNetCore $(objdir)TestFunctorGeneric.$(objext) $(objdir)TestFunctorGenericMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestFunctorGeneric.$(exeext) $(objdir)TestFunctorGenericMain.$(objext) $(objdir)TestFunctorGeneric.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestFunctorGeneric.$(objext) : OpenHome/Tests/TestFunctorGeneric.cpp $(headers)
+	$(compiler)TestFunctorGeneric.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestFunctorGeneric.cpp
+$(objdir)TestFunctorGenericMain.$(objext) : OpenHome/Tests/TestFunctorGenericMain.cpp $(headers)
+	$(compiler)TestFunctorGenericMain.$(objext) -c $(cppflags) $(includes) OpenHome/Tests/TestFunctorGenericMain.cpp
+
 TestFile: $(objdir)TestFile.$(exeext) 
 $(objdir)TestFile.$(exeext) :  ohNetCore $(objdir)TestFile.$(objext) $(objdir)TestFileMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestFile.$(exeext) $(objdir)TestFileMain.$(objext) $(objdir)TestFile.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -771,6 +779,7 @@ $(objdir)ShellCommandWatchDog.$(objext) : OpenHome/Net/Shell/ShellCommandWatchDo
 tests_core = \
 	$(objdir)TestBuffer.$(objext) \
 	$(objdir)TestThread.$(objext) \
+	$(objdir)TestFunctorGeneric.$(objext) \
 	$(objdir)TestFifo.$(objext) \
 	$(objdir)TestStream.$(objext) \
 	$(objdir)TestFile.$(objext) \
@@ -798,7 +807,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 

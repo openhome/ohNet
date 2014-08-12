@@ -157,6 +157,70 @@ MakeFunctor(const Object& aC, TRT(CallType::* const &aF)() const)
     return MemberTranslator<const Object,MemFunc>(aC,aF);
     }
 
+
+template<class Type>
+/**
+ * Generic callback with one argument
+ *
+ * Can be implemented using a pointer to a member function
+ * @ingroup Callbacks
+ */
+class FunctorGeneric
+{
+public:
+    void operator()(Type aType) const { iThunk(*this, aType); }
+    typedef TAny (FunctorGeneric::*MemberFunction)();
+    static const TUint kFudgeFactor = 2;
+
+    TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
+    TAny* iObject;
+
+protected:
+    typedef void (*Thunk)(const FunctorGeneric&, Type);
+    FunctorGeneric(Thunk aT, const TAny* aObject, const TAny* aCallback, TUint aBytes)
+        : iThunk(aT)
+    {
+        iObject = (TAny*)aObject;
+        memcpy(iCallbackMember, aCallback, aBytes);
+    }
+
+private:
+    Thunk iThunk;
+};
+
+
+template<class Type, class Object, class MemFunc>
+class MemberTranslatorGeneric : public FunctorGeneric<Type>
+{
+public:
+    MemberTranslatorGeneric(Object& aC, const MemFunc& aM) :
+        FunctorGeneric<Type>(Thunk,&aC,&aM,sizeof(MemFunc)) {}
+    static void Thunk(const FunctorGeneric<Type>& aFb, Type aType)
+    {
+        Object* object = (Object*)aFb.iObject;
+        MemFunc& memFunc(*(MemFunc*)(TAny*)(aFb.iCallbackMember));
+        (object->*memFunc)(aType);
+    }
+};
+
+template<class Type, class Object, class CallType>
+/**
+ * Create a FunctorGeneric around a non-const C++ member function
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aC        this pointer for the callback
+ * @param[in] aF        Pointer to a non-const member function taking one argument
+ *
+ * @return  a Functor object
+ */
+inline MemberTranslatorGeneric<Type,Object,void (CallType::*)(Type)>
+MakeFunctorGeneric(Object& aC, void(CallType::* const &aF)(Type))
+    {
+    typedef void(CallType::*MemFunc)(Type);
+    return MemberTranslatorGeneric<Type,Object,MemFunc>(aC,aF);
+    }
+
 } // namespace OpenHome
 
 #endif // HEADER_FUNCTOR

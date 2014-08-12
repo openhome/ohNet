@@ -285,6 +285,7 @@ class TestCase(object):
 gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestStream', [], True)
              ,TestCase('TestThread', [], True)
+             ,TestCase('TestFunctorGeneric', [], True)
              ,TestCase('TestFifo', [], True)
              ,TestCase('TestFile', [], True)
              ,TestCase('TestQueue', [], True)
