@@ -1223,6 +1223,11 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     if (aJiffies > iSize && iNextAudio != NULL) {
         return iNextAudio->Split(aJiffies - iSize);
     }
+    else if (aJiffies == iSize && iNextAudio != NULL) {
+        MsgAudio* split = iNextAudio;
+        iNextAudio = NULL;
+        return split;
+    }
     return DoSplit(aJiffies);
 }
 
