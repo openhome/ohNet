@@ -126,6 +126,7 @@ endif
 
 
 ifeq ($(platform),iOS)
+	nocpp11=yes
 	linkopts_ohNet =
 	platform_prefix=iPhoneOS
 	platform_compiler=arm-apple-darwin10
@@ -157,21 +158,21 @@ ifeq ($(platform),IntelMac)
 	platform ?= IntelMac
 	linkopts_ohNet = -Wl,-install_name,@loader_path/libohNet.dylib
 	ifeq ($(mac-64),1)
-		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
+		platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.7
 		platform_linkflags = -arch x86_64 -framework CoreFoundation -framework SystemConfiguration
 		osbuilddir = Mac-x64
 		openhome_architecture = x64
 	else
-		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.4
+		platform_cflags = -DPLATFORM_MACOSX_GNU -m32 -mmacosx-version-min=10.7
 		platform_linkflags = -m32 -framework CoreFoundation -framework SystemConfiguration		
 		osbuilddir = Mac-x86
 		openhome_architecture = x86
 	endif
 
 	objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
-	compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-	link = ${CROSS_COMPILE}g++ -pthread $(platform_linkflags)
-	ar = ${CROSS_COMPILE}ar rc $(objdir)
+	compiler = clang -fPIC -stdlib=libc++ -o $(objdir)
+	link = clang++ -pthread -stdlib=libc++ $(platform_linkflags)
+	ar = ar rc $(objdir)
 	openhome_system = Mac
 endif
 
@@ -286,6 +287,8 @@ cflags_base = -fexceptions -Wall $(version_specific_cflags_third_party) -pipe -D
 cflags_third_party = $(cflags_base) -Wno-int-to-pointer-cast
 ifeq ($(nocpp11), yes)
     cppflags = $(cflags_base) -Werror
+else ifeq ($(platform),IntelMac)
+    cppflags = $(cflags_base) -std=c++11 -Werror
 else
     cppflags = $(cflags_base) -std=c++0x -D__STDC_VERSION__=199901L -Werror
 endif
@@ -308,7 +311,11 @@ endif
 exeext = elf
 linkoutput = -o 
 dllprefix = lib
-link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
+ifeq ($(MACHINE), Darwin)
+	link_dll = $(version_specific_library_path) clang++ -pthread  $(platform_linkflags) -shared -stdlib=libc++
+else
+	link_dll = $(version_specific_library_path) ${CROSS_COMPILE}g++ -pthread  $(platform_linkflags) -shared -shared-libgcc
+endif
 ifeq ($(platform), iOS)
 	csharp = /Developer/MonoTouch/usr/bin/smcs /nologo $(debug_csharp)
 else
