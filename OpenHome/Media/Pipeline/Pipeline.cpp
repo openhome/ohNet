@@ -40,8 +40,8 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
-                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
-                                 kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
+                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountDecodedStream,
+                                 kMsgCountTrack, kMsgCountEncodedStream, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
                                  kMsgCountMode, kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
 
