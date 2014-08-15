@@ -145,11 +145,12 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                         self.playTimer.start()
                         self.playTimerExpired.wait()
                         self.log.Pass( self.senderDev,
-                            'Completed %ds playback of %s' % (playTime,title) )
+                            'Completed playback of %s' % title )
 
                         measTime = int( time.time()-self.startTime )
                         evtTime = self.sender.time.seconds
                         self.log.CheckLimits( self.senderDev, 'GELE', evtTime, measTime-1, measTime+1, 'Evented/Measured playback time' )
+                        self.log.CheckLimits( self.senderDev, 'GELE', playTime, measTime-1, measTime+1, 'Requested/Measured playback time' )
 
                         if self.sender.radio.transportState != 'Stopped':
                             self.isStopped.clear()
@@ -229,11 +230,12 @@ class TestRadioPlayChannels( BASE.BaseTest ):
         self.metaUpdated.clear()
         self.isStopped.clear()
         self.sender.radio.SetId( aChannel[0], aUri )
-                        
+
         self.uriUpdated.wait( 5 )
         self.metaUpdated.wait( 0.1 )
         self.idUpdated.wait( 0.1 )
-            
+        time.sleep( 1 )
+
         # check evented information after channel updates
         failed = False
         if not self.uriUpdated.isSet():
@@ -305,7 +307,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                     self.playTimer.cancel()
                     self.playTimer = None
                     self.playTimerExpired.set()
-                    self.log.Warn( self.senderDev, 'Playback of %s stopped unexpectedly' % self.title )
+                    self.log.Fail( self.senderDev, 'Playback of %s stopped unexpectedly' % self.title )
                 self.isPlaying.clear()
                 self.isStopped.set()
         elif aSvName == 'Id':

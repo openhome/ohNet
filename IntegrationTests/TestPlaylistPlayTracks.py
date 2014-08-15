@@ -249,11 +249,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             
     def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""
-        if self.checkInfoTimer:
-            self.checkInfoTimer.cancel()
-
         if aId>0:
             self.trackChangeMutex.acquire()
+            if self.checkInfoTimer:
+                self.checkInfoTimer.cancel()
             self._CheckPlayTime()
             if not self.senderStopped.isSet():
                 self.numTrack += 1
