@@ -325,9 +325,6 @@ class TestSongcastPlayback( BASE.BaseTest ):
             dut1Name = self.soft1.name
         self.dut1Dev = dut1Name.split( ':' )[0]
         self.dut1 = Volkano.VolkanoDevice( dut1Name, aIsDut=True, aLoopback=loopback )
-        if self.dut1.exakt is not None:
-            import Utils.Audio.DigitalCrossover as DigitalCrossover
-            DigitalCrossover.SetAllFlat( self.dut1 )
         self.log.Header2( '', '    ------ Creating DUT #2 (%s) ------' % dut2Name )
         if dut2Name.lower() == 'local':
             self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestDev2', aLoopback=loopback )
