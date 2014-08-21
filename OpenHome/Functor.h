@@ -172,6 +172,11 @@ public:
     typedef TAny (FunctorGeneric::*MemberFunction)();
     static const TUint kFudgeFactor = 2;
 
+    FunctorGeneric() : iObject(0)
+    {
+        memset(iCallbackMember, 0 , sizeof(iCallbackMember));
+    }
+
     TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     TAny* iObject;
 
