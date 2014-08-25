@@ -264,13 +264,45 @@ void CpiDeviceUpnp::GetServiceUri(Uri& aUri, const TChar* aType, const ServiceTy
     Brn serviceList = XmlParserBasic::Find("serviceList", device);
     Brn service;
     Brn serviceType;
+    Brn devServiceTypeNoVer;
+    TUint devVersion = 0;
     const Brx& targServiceType = aServiceType.FullName();
+    // Must have backwards compatibility. Need to compare service type and version separately.
+    Parser serviceParser = targServiceType;
+    serviceParser.Next(':');    // urn
+    serviceParser.Next(':');    // schema url
+    serviceParser.Next(':');    // service
+    serviceParser.Next(':');    // name
+    Brn targServiceTypeNoVer(targServiceType.Ptr(), serviceParser.Index()); // full name minus ":x" (where x is version)
+    Brn targVersionBuf = serviceParser.NextToEnd();    // version!
+    TUint targVersion = 0;
+    try {
+        targVersion = Ascii::Uint(targVersionBuf);
+    }
+    catch (AsciiError&) {
+        THROW(XmlError);
+    }
     do {
         Brn remaining;
         service.Set(XmlParserBasic::Find("service", serviceList, remaining));
         serviceType.Set(XmlParserBasic::Find("serviceType", service));
         serviceList.Set(remaining);
-    } while (serviceType != targServiceType);
+        // Parse service type and version separately.
+        serviceParser.Set(serviceType);
+        serviceParser.Next(':');    // urn
+        serviceParser.Next(':');    // schema url
+        serviceParser.Next(':');    // service
+        serviceParser.Next(':');    // name
+        devServiceTypeNoVer.Set(serviceType.Ptr(), serviceParser.Index()); // full name minus ":x" (where x is version)
+        Brn devVersionBuf = serviceParser.NextToEnd();    // version!
+        try {
+            devVersion = Ascii::Uint(devVersionBuf);
+        }
+        catch (AsciiError&) {
+            THROW(XmlError);
+        }
+        // MUST allow use of device with version >= target version
+    } while (devServiceTypeNoVer != targServiceTypeNoVer || devVersion < targVersion);
     Brn path = XmlParserBasic::Find(aType, service);
     if (path.Bytes() == 0) {
         // no event url => service doesn't have any evented state variables
