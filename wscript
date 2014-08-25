@@ -239,6 +239,7 @@ def build(bld):
                 'OpenHome/Media/UriProviderSingleTrack.cpp',
                 'OpenHome/Media/PipelineManager.cpp',
                 'OpenHome/Media/PipelineObserver.cpp',
+                'OpenHome/Media/ClockPullerUtilisation.cpp',
                 'OpenHome/Media/MuteManager.cpp',
                 'OpenHome/Media/VolumeManager.cpp',
                 'OpenHome/Media/Utils/AllocatorInfoLogger.cpp', # needed here by MediaPlayer.  Should move back to tests lib
@@ -246,6 +247,7 @@ def build(bld):
                 'OpenHome/Configuration/ConfigManager.cpp',
                 'OpenHome/Media/Utils/Aggregator.cpp',
                 'OpenHome/Media/Utils/Silencer.cpp',
+                'OpenHome/Media/Utils/ClockPullerLogging.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohPipeline')
@@ -569,7 +571,6 @@ def build(bld):
                 'OpenHome/Av/Tests/TestMediaPlayerExec.cpp',
                 'OpenHome/Av/Tests/TestRadio.cpp',
                 'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
-                'OpenHome/Configuration/Tests/TestFunctorGeneric.cpp',
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
@@ -783,11 +784,6 @@ def build(bld):
             target='TestMediaPlayer',
             install_path='install/bin')
     bld.program(
-            source='OpenHome/Configuration/Tests/TestFunctorGenericMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-            target='TestFunctorGeneric',
-            install_path=None)
-    bld.program(
             source='OpenHome/Configuration/Tests/TestConfigManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestConfigManager',
@@ -816,6 +812,10 @@ def bundle(ctx):
 def test(tst):
     if not hasattr(tst, 'test_manifest'):
         tst.test_manifest = 'oncommit.test'
+    if tst.env.dest_platform in ['Windows-x86', 'Windows-x64']:
+        tst.executable_dep = 'TestShell.exe'
+    else:
+        tst.executable_dep = 'TestShell'
     print 'Testing using manifest:', tst.test_manifest
     rule = 'python {test} -m {manifest} -p {platform} -b {build_dir} -t {tool_dir}'.format(
         test        = os.path.join(tst.env.testharness_dir, 'Test'),
@@ -823,7 +823,7 @@ def test(tst):
         platform    =  tst.env.dest_platform,
         build_dir   = '.',
         tool_dir    = os.path.join('..', 'dependencies', 'AnyPlatform'))
-    tst(rule=rule, source=tst.test_manifest)
+    tst(rule=rule, source=[tst.test_manifest, os.path.join('projectdata', 'dependencies.json'), tst.executable_dep])
 
 def test_full(tst):
     tst.test_manifest = 'nightly.test'

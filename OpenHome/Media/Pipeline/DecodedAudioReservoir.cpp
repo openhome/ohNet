@@ -59,7 +59,7 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
     }
     iClockPuller = aMsg->ClockPuller();
     if (iClockPuller != NULL) {
-        iClockPuller->StartDecodedReservoir(iMaxJiffies);
+        iClockPuller->StartDecodedReservoir(iMaxJiffies, kUtilisationSamplePeriodJiffies);
     }
     iTrackId = Track::kIdNone;
     iStreamId = UINT_MAX;

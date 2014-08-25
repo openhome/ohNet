@@ -31,6 +31,7 @@ namespace Net {
 namespace Media {
     class PipelineManager;
     class DriverSongcastSender;
+    class IPullableClock;
 }
 namespace Configuration {
     class ConfigRamStore;
@@ -45,7 +46,7 @@ class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
 public:
-    TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName);
+    TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
     virtual ~TestMediaPlayer();
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
@@ -84,7 +85,7 @@ private:
     Net::ShellCommandDebug* iShellDebug;
 };
 
-typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName);
+typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
 int ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateMediaPlayerFunc aFunc);
 
 } // namespace Test

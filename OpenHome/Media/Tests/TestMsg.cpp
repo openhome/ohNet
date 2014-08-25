@@ -724,7 +724,16 @@ void SuiteMsgAudio::Test()
     remaining->RemoveRef();
     TEST(remaining->Jiffies() == 0);
 
-
+    // Add 2 msgs.  Split at their boundary.
+    msg = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kPerMs * 5);
+    MsgAudioPcm* msg2 = iMsgFactory->CreateMsgAudioPcm(data, 2, 44100, 8, EMediaDataLittleEndian, Jiffies::kPerMs * 2);
+    jiffies = msg->Jiffies();
+    msg->Add(msg2);
+    MsgAudio* split = msg->Split(jiffies);
+    TEST(msg->Jiffies() == jiffies);
+    TEST(split->Jiffies() == msg2->Jiffies());
+    msg->RemoveRef();
+    msg2->RemoveRef();
 
     // Aggregate 2 msgs. Check their combined lengths are reported.
     static const TUint dataSizeHalfDecodedAudio = DecodedAudio::kMaxBytes/2;
@@ -758,7 +767,6 @@ void SuiteMsgAudio::Test()
         TEST(*ptr == subsampleVal);
         ptr++;
     }
-
 
     // Try aggregate two msgs with different: #channels
     msgAggregate1 = iMsgFactory->CreateMsgAudioPcm(data1, 2, 44100, 8, EMediaDataLittleEndian, 0);
@@ -811,8 +819,6 @@ void SuiteMsgAudio::Test()
     TEST_THROWS(msgAggregate1->Aggregate(*msgAggregate2), AssertionFailed);
     msgAggregate1->RemoveRef();
     msgAggregate2->RemoveRef();
-
-
 
     // Check creating zero-length msg asserts
     TEST_THROWS(iMsgFactory->CreateMsgAudioPcm(Brx::Empty(), 2, 44100, 8, EMediaDataLittleEndian, 0), AssertionFailed);

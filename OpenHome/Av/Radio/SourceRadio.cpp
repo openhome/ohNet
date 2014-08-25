@@ -12,8 +12,27 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media//ClockPullerUtilisation.h>
 
 #include <limits.h>
+
+namespace OpenHome {
+namespace Av {
+
+class UriProviderRadio : public Media::UriProviderSingleTrack
+{
+public:
+    UriProviderRadio(IMediaPlayer& aMediaPlayer);
+    ~UriProviderRadio();
+private: // from UriProvider
+    Media::IClockPuller* ClockPuller();
+private:
+    Media::ClockPullerUtilisation* iClockPuller;
+};
+
+} // namespace Av
+} // namespace OpenHome
+
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -25,9 +44,34 @@ using namespace OpenHome::Media;
 
 ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols)
 { // static
-    UriProviderSingleTrack* radioUriProvider = new UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory());
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
     return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigManagerInitialiser());
+}
+
+
+// UriProviderRadio
+
+UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
+    : UriProviderSingleTrack("Radio", false, false, aMediaPlayer.TrackFactory())
+{
+    IPullableClock* pullable = aMediaPlayer.PullableClock();
+    if (pullable == NULL) {
+        iClockPuller = NULL;
+    }
+    else {
+        iClockPuller = new ClockPullerUtilisation(aMediaPlayer.Env(), *pullable);
+    }
+}
+
+UriProviderRadio::~UriProviderRadio()
+{
+    delete iClockPuller;
+}
+
+IClockPuller* UriProviderRadio::ClockPuller()
+{
+    return iClockPuller;
 }
 
 

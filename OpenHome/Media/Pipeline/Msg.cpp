@@ -608,6 +608,9 @@ Ramp Ramp::Split(TUint aNewSize, TUint aCurrentSize)
         TUint ramp = ((iStart-iEnd) * (TUint64)aNewSize) / aCurrentSize;
         iEnd = iStart - ramp;
     }
+    if (iStart == iEnd) {
+        iDirection = ENone;
+    }
     remaining.iStart = iEnd; // FIXME - remaining.iStart is one sample on from iEnd so should have a ramp value that progresses one 'step'
     //Log::Print("Split [%08x : %08x] ramp into [%08x : %08x] and [%08x : %08x]\n", start, end, iStart, iEnd, remaining.iStart, remaining.iEnd);
     Validate();
@@ -1220,6 +1223,11 @@ MsgAudio* MsgAudio::Split(TUint aJiffies)
     if (aJiffies > iSize && iNextAudio != NULL) {
         return iNextAudio->Split(aJiffies - iSize);
     }
+    else if (aJiffies == iSize && iNextAudio != NULL) {
+        MsgAudio* split = iNextAudio;
+        iNextAudio = NULL;
+        return split;
+    }
     return DoSplit(aJiffies);
 }
 
@@ -1828,6 +1836,32 @@ MsgQuit::MsgQuit(AllocatorBase& aAllocator)
 Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 {
     return aProcessor.ProcessMsg(this);
+}
+
+
+// StreamId
+
+StreamId::StreamId()
+    : iTrackId(IPipelineIdProvider::kTrackIdInvalid)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
+{
+}
+
+void StreamId::SetTrack(TUint aId)
+{
+    iTrackId = aId;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+}
+
+void StreamId::SetStream(TUint aId)
+{
+    ASSERT(iTrackId != IPipelineIdProvider::kTrackIdInvalid);
+    iStreamId = aId;
+}
+
+TBool StreamId::operator ==(const StreamId& aId) const
+{
+    return (iTrackId == aId.iTrackId && iStreamId == aId.iStreamId);
 }
 
 

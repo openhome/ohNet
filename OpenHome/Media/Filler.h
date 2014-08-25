@@ -16,6 +16,8 @@ EXCEPTION(UriProviderInvalidId);
 namespace OpenHome {
 namespace Media {
 
+class IClockPuller;
+
 class UriProvider
 {
 public:
@@ -23,6 +25,7 @@ public:
     const Brx& Mode() const;
     TBool SupportsLatency() const;
     TBool IsRealTime() const;
+    virtual IClockPuller* ClockPuller();
     virtual void Begin(TUint aTrackId) = 0;
     virtual void BeginLater(TUint aTrackId) = 0; // Queue a track but return ePlayLater when OkToPlay() is called
     virtual EStreamPlay GetNext(Track*& aTrack) = 0;
@@ -58,7 +61,7 @@ private:
 private: // from Thread
     void Run();
 private: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime);
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     void OutputSession();
     void OutputTrack(Track& aTrack, TUint aTrackId);
     void OutputDelay(TUint aJiffies);

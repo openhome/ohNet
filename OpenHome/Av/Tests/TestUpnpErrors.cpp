@@ -543,6 +543,12 @@ void SuiteRenderingControl::Test()
     TEST_THROWS_PROXYERROR(iProxy->SyncGetVolumeDBRange(0, Brn("E"),   outInt, outInt), 402);
 }
 
+class SuiteGuaranteedFailure : public Suite
+{
+public:
+    SuiteGuaranteedFailure(const TChar *aMessage) : Suite(aMessage) {}
+    void Test() { TEST(false); }
+};
 
 
 void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
@@ -556,22 +562,33 @@ void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
 
     Bwh udn("UpnpErrorTests");
     RandomiseUdn(aDvStack, udn);
-    DummySourceUpnpAv* dummySource = new DummySourceUpnpAv(aDvStack, udn);
-    Semaphore sem("sem1", 0);
-    CpDevices* cpDevices = new CpDevices(sem);
-    cpDevices->Start(aCpStack, udn);
-    sem.Wait(30*1000); // allow up to 30 seconds to find our one device
-    CpDevice& cpDevice = cpDevices->Device();
+    DummySourceUpnpAv dummySource(aDvStack, udn);
 
-    initParams->SetMsearchTime(oldMsearchTime);
+    Semaphore sem("sem1", 0);
+    CpDevices cpDevices(sem);
+    cpDevices.Start(aCpStack, udn);
 
     Runner runner("Upnp error reporting tests\n");
-    runner.Add(new SuiteAvTransport(cpDevice));
-    runner.Add(new SuiteConnectionManager(cpDevice));
-    runner.Add(new SuiteRenderingControl(cpDevice));
-    runner.Run();
 
-    initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
-    delete cpDevices;
-    delete dummySource;
+    try {
+        sem.Wait(30*1000); // allow up to 30 seconds to find our one device
+
+        CpDevice& cpDevice = cpDevices.Device();
+
+        initParams->SetMsearchTime(oldMsearchTime);
+
+        runner.Add(new SuiteAvTransport(cpDevice));
+        runner.Add(new SuiteConnectionManager(cpDevice));
+        runner.Add(new SuiteRenderingControl(cpDevice));
+
+        initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
+    }
+    catch ( Timeout& ) {
+        runner.Add(new SuiteGuaranteedFailure("This test fails if our device could not be detected."));
+        initParams->SetMsearchTime(oldMsearchTime);
+        initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
+    }
+
+    runner.Run();
 }
+

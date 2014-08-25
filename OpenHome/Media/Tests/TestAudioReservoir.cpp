@@ -125,7 +125,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 private: // from IClockPuller
-    void StartDecodedReservoir(TUint aCapacityJiffies);
+    void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
     void StopDecodedReservoir();
@@ -614,9 +614,10 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
     return NULL;
 }
 
-void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies)
+void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency)
 {
     TEST(aCapacityJiffies == kReservoirSize);
+    TEST(aNotificationFrequency == iReservoir->kUtilisationSamplePeriodJiffies);
     iStartCalled = true;
 }
 

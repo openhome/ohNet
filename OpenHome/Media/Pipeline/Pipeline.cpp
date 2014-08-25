@@ -40,8 +40,8 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iMsgFactory = new MsgFactory(aInfoAggregator,
                                  kMsgCountEncodedAudio, kMsgCountAudioEncoded,
                                  kMsgCountDecodedAudio, kMsgCountAudioPcm, kMsgCountSilence,
-                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountEncodedStream,
-                                 kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
+                                 kMsgCountPlayablePcm, kMsgCountPlayableSilence, kMsgCountDecodedStream,
+                                 kMsgCountTrack, kMsgCountEncodedStream, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
                                  kMsgCountMode, kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
 
@@ -334,9 +334,9 @@ TUint Pipeline::SenderMinLatencyMs() const
     return kSenderMinLatency / Jiffies::kPerMs;
 }
 
-void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime)
+void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
 {
-    iSupply->OutputMode(aMode, aSupportsLatency, aRealTime);
+    iSupply->OutputMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
 }
 
 void Pipeline::OutputSession()

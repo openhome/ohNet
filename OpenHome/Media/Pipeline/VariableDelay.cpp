@@ -188,10 +188,17 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         break;
     case ERampingDown:
         if (iDelayAdjustment == 0) {
-            iStatus = ERampingUp;
-            iRampDirection = Ramp::EUp;
-            // retain current value of iCurrentRampValue
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            if (iRampDuration == iRemainingRampSize) {
+                iStatus = ERunning;
+                iRampDirection = Ramp::ENone;
+                iRemainingRampSize = 0;
+            }
+            else {
+                iStatus = ERampingUp;
+                iRampDirection = Ramp::EUp;
+                // retain current value of iCurrentRampValue
+                iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            }
         }
         break;
     case ERampedDown:
@@ -201,6 +208,9 @@ Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
         iRampDirection = Ramp::EDown;
         // retain current value of iCurrentRampValue
         iRemainingRampSize = iRampDuration - iRemainingRampSize;
+        if (iRemainingRampSize == 0) {
+            iStatus = ERampedDown;
+        }
         break;
     }
 

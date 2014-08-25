@@ -12,8 +12,27 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Av/Raop/CodecRaop.h>
+#include <OpenHome/Media/Utils/ClockPullerLogging.h>
 
 #include <limits.h>
+
+namespace OpenHome {
+namespace Av {
+
+class UriProviderRaop : public Media::UriProviderSingleTrack
+{
+public:
+    UriProviderRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory);
+    ~UriProviderRaop();
+private: // from UriProvider
+    Media::IClockPuller* ClockPuller();
+private:
+    Media::ClockPullerLogging* iClockPuller;
+};
+
+} // namespace Av
+} // namespace OpenHome
+
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -25,9 +44,29 @@ using namespace OpenHome::Net;
 // SourceFactory
 ISource* SourceFactory::NewRaop(IMediaPlayer& aMediaPlayer, const TChar* aHostName, const TChar* aFriendlyName, const Brx& aMacAddr)
 { // static
-    UriProviderSingleTrack* raopUriProvider = new UriProviderSingleTrack("RAOP", true, true, aMediaPlayer.TrackFactory());
+    UriProviderSingleTrack* raopUriProvider = new UriProviderRaop(aMediaPlayer.Env(), aMediaPlayer.TrackFactory());
     aMediaPlayer.Add(raopUriProvider);
     return new SourceRaop(aMediaPlayer, *raopUriProvider, aHostName, aFriendlyName, aMacAddr);
+}
+
+
+// UriProviderRaop
+
+UriProviderRaop::UriProviderRaop(Environment& aEnv, TrackFactory& aTrackFactory)
+    : UriProviderSingleTrack("RAOP", true, true, aTrackFactory)
+{
+    iClockPuller = new ClockPullerLogging(aEnv);
+}
+
+UriProviderRaop::~UriProviderRaop()
+{
+    delete iClockPuller;
+}
+
+IClockPuller* UriProviderRaop::ClockPuller()
+{
+    return NULL; // a logging puller is useful during development but too noisy to commit
+    //return iClockPuller;
 }
 
 

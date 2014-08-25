@@ -720,7 +720,7 @@ class IPcmProcessor
 public:
     virtual ~IPcmProcessor() {}
     /**
-     * Called once per call to MsgPlayable::ProcessAudio.
+     * Called once per call to MsgPlayable::Read.
      *
      * Will be called before any calls to ProcessFragment or ProcessSample.
      */
@@ -752,11 +752,26 @@ public:
     virtual void ProcessSample16(const TByte* aSample, TUint aNumChannels) = 0;
     virtual void ProcessSample24(const TByte* aSample, TUint aNumChannels) = 0;
     /**
-     * Called once per call to MsgPlayable::ProcessAudio.
+     * Called once per call to MsgPlayable::Read.
      *
      * No more calls to ProcessFragment or ProcessSample will be made after this.
      */
     virtual void EndBlock() = 0;
+};
+
+class StreamId
+{
+public:
+    StreamId();
+    void SetTrack(TUint aId);
+    void SetStream(TUint aId);
+    TBool operator ==(const StreamId& aId) const;
+    TBool operator !=(const StreamId& aId) const { return !(*this==aId); }
+    TUint IdPipeline() const { return iTrackId; }
+    TUint IdStream() const { return iStreamId; }
+private:
+    TUint iTrackId;
+    TUint iStreamId;
 };
 
 class MsgQueue
@@ -899,8 +914,9 @@ public:
      * @param[in] aMode            Identifier for the new UriProvider
      * @param[in] aSupportsLatency Whether any following tracks support having their latency varied.
      * @param[in] aRealTime        Deprecated.
+     * @param[in] aClockPuller     Clock puller.  May be NULL.
      */
-    virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime) = 0;
+    virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) = 0;
     /**
      * Inform the pipeline about a discontinuity in audio.
      */

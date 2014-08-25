@@ -47,10 +47,8 @@
 #include <sys/stat.h> /* for stat() */
 #include <sys/types.h> /* for off_t */
 #if defined _MSC_VER || defined __BORLANDC__ || defined __MINGW32__
-#if _MSC_VER <= 1700 || defined __BORLANDC__ /* 1700 == VS2012 */
 #define fseeko fseek
 #define ftello ftell
-#endif
 #endif
 #include "FLAC/assert.h"
 #include "share/alloc.h"
