@@ -82,9 +82,9 @@ class Config:
             
             aDut.playlist.AddSubscriber( _EventCb )
             if self.track != '-':
-                playingEvent.clear()
+                idEvent.clear()
                 aDut.playlist.SeekIndex( self.track )
-                playingEvent.wait( 3 )
+                idEvent.wait( 3 )
                 trackId = aDut.playlist.idArray[self.track]
             else:
                 playingEvent.clear()
@@ -96,7 +96,7 @@ class Config:
             self.log.FailUnless( self.dev, aDut.playlist.id==trackId,
                 'Selected track %s (got ID %s)' % ( self.track,aDut.playlist.id) )
             self.listorder = aDut.playlist.idArray
-            
+
         def _SetupPlaylist( self, aDut ):
             """Setup playlist on DUT"""
             idArrayEvt = threading.Event()
