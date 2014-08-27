@@ -363,8 +363,8 @@ class Config:
             expState = aState
             expTrack = aTrack
             expSecs  = aSecs
-            if expSecs > aDut.info.duration:
-                expSecs = expSecs - aDut.info.duration
+            if expSecs > self.precon.duration:
+                expSecs = expSecs - self.precon.duration
                 expTrack += 1
                 if expTrack >= self.precon.plLen:
                     expTrack = 0
