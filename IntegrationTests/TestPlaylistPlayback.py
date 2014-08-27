@@ -479,13 +479,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
-                            
-        # seed the random number generator
-        if not seed:
-            seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % seed )
-        random.seed( seed )
-                
+
         # create renderer CP and subscribe for DS events
         if dutName.lower() == 'local':
             loopback = True
@@ -498,7 +492,13 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         # start audio 
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
-        
+
+        # seed the random number generator (do AFTER DUT created or gets re-seeded)
+        if not seed:
+            seed = int( time.time() ) % 1000000
+        self.log.Pass( '', 'Seeding random number generator with %d' % seed )
+        random.seed( seed )
+
         # create test confgurations as specified by mode
         testConfigs = self._GetConfigs( mode )
         

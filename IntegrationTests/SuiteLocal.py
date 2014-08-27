@@ -3,7 +3,7 @@
 
 Parameters:
     arg#1 - UPnP Media Server to use for tests
-    arg#1 - DACP (iTunes) server PC
+    arg#2 - DACP (iTunes) server PC
     arg#3 - [Optional] log directory
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s).
@@ -47,9 +47,9 @@ tests = [
     [ 'TestAvTransportPlayTracks',   'local', 'local', ms,       avtList,  8,    1,         'false'          ],
 
     # OH Playlist Service
-    [ 'TestPlaylistHandling',        'local', 'all',   12345                                                 ],
-    [ 'TestPlaylistModes',           'local', 'all',   54321                                                 ],
-    [ 'TestPlaylistPlayback',        'local', 'all',   12345                                                 ],
+    [ 'TestPlaylistHandling',        'local', 'all',   0                                                     ],
+    [ 'TestPlaylistModes',           'local', 'all',   0                                                     ],
+    [ 'TestPlaylistPlayback',        'local', 'all',   0                                                     ],
     [ 'TestPlaylistAddDelSoak',      'local', ms,      mpList,   100                                         ],
     [ 'TestPlaylistPlayTracks',      'local', 'local', ms,       mpList,   8,    'off',     'on',    'false' ],
     [ 'TestPlaylistDropout',         'local', 'local', 'local',  '3600'                                      ],
@@ -62,20 +62,20 @@ tests = [
     [ 'TestAirplayFunctions',        'local', dacp                                                           ],
     [ 'TestAirplayDropout',          'local', dacp,    apTrack,  '3600'                                      ],
 
-    # # Songcast
-    # [ 'TestSongcastPlayback',        'local', 'local', 'local',  'all',   12345                              ],
-    # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'stop'                      ],
-    # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'source'                    ],
-    # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'sender'                    ],
-    # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'standby'                   ],
-    # [ 'TestSongcastDropout',         'local', 'local', 600,                                                  ],
+    # Songcast
+    [ 'TestSongcastPlayback',        'local', 'local', 'local',  'all',   12345                              ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'stop'                      ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'source'                    ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'sender'                    ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'standby'                   ],
+    [ 'TestSongcastDropout',         'local', 'local', 600,                                                  ],
 
     # Volume
     [ 'TestVolumeControl',           'local'                                                                 ],
     
-    # # Misc
-    # [ 'TestAudioConx',               'local', 'all'                                                          ],
-    # [ 'TestStandbyCycleSoak',        'local',  100                                                           ]
+    # Misc
+    [ 'TestAudioConx',               'local', 'all'                                                          ],
+    [ 'TestStandbyCycleSoak',        'local',  100                                                           ]
     
     # N/A to SoftPlayer(s)
     #    - AutoPlay
