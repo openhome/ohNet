@@ -86,7 +86,8 @@ class Config:
                 self.durationEvent.clear()
                 self.idEvent.clear()
                 aDut.playlist.SeekIndex( self.track )
-                self.idEvent.wait( 5 )
+                if aDut.playlist.PlaylistIndex( aDut.playlist.id ) != self.track:
+                    self.idEvent.wait( 5 )
                 if self.state == 'Stopped':
                     self.stoppedEvent.clear()
                     aDut.playlist.Stop()
@@ -286,8 +287,7 @@ class Config:
             """Check values from DS are as expected"""
             
             aLog.Info( '' )
-            aLog.Debug( "ID --> %d" % aDut.playlist.id )
-            evtTrack = aDut.playlist.PlaylistIndex( aDut.playlist.id )     
+            evtTrack = aDut.playlist.PlaylistIndex( aDut.playlist.id )
             aLog.FailUnless( aDev, evtTrack==aTrack,
                 '[%d] (%d/%d) Actual/Expected EVENTED track index %ds after invoke' %
                 (self.id, evtTrack, aTrack, aAfter) )
