@@ -56,6 +56,7 @@ class Config:
             self.duration      = None
             self.evtTime       = -1
             self.durationEvent = threading.Event()
+            self.idEvent       = threading.Event()
             self.idArrayEvent  = threading.Event()
             self.stoppedEvent  = threading.Event()
             self.pausedEvent   = threading.Event()
@@ -83,9 +84,9 @@ class Config:
             
             if self.track != -1:
                 self.durationEvent.clear()
-                self.playingEvent.clear()
+                self.idEvent.clear()
                 aDut.playlist.SeekIndex( self.track )
-                self.playingEvent.wait( 5 )                    
+                self.idEvent.wait( 5 )
                 if self.state == 'Stopped':
                     self.stoppedEvent.clear()
                     aDut.playlist.Stop()
@@ -167,7 +168,9 @@ class Config:
                 elif aSvVal == 'Playing':
                     self.playingEvent.set()
                 elif aSvVal == 'Paused':
-                    self.pausedEvent.set()        
+                    self.pausedEvent.set()
+            elif aSvName == 'Id':
+                self.idEvent.set()
             elif aSvName == 'IdArray' and aSvVal not in [0,'0']:
                 self.idArrayEvent.set()        
                 
@@ -283,6 +286,7 @@ class Config:
             """Check values from DS are as expected"""
             
             aLog.Info( '' )
+            aLog.Debug( "ID --> %d" % aDut.playlist.id )
             evtTrack = aDut.playlist.PlaylistIndex( aDut.playlist.id )     
             aLog.FailUnless( aDev, evtTrack==aTrack,
                 '[%d] (%d/%d) Actual/Expected EVENTED track index %ds after invoke' %
