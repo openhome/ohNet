@@ -208,7 +208,9 @@ class Config:
                     self.val = mini
                 else:
                     self.val = random.randint( mini, maxi )
-                getattr( aDut.playlist, self.action )( self.val )
+                err = getattr( aDut.playlist, self.action )( self.val, aReturnErr=True )
+                if err:
+                    self.precon.log.Fail( self.precon.dev, '%s' % err )
             self.timer1.start()
             self.timer2.start()
             # either DS will start playback in which case need to wait for event
