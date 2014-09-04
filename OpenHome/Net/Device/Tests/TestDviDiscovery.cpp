@@ -554,10 +554,10 @@ void SuiteMsearch::Test()
     device->Destroy();
     //Wait(); // allow time for initial annoucements to be delivered
 
-    /*TestMsearchAll();
+    TestMsearchAll();
     TestMsearchRoot();
     TestMsearchUuid();
-    TestMsearchDeviceType();*/
+    TestMsearchDeviceType();
     TestMsearchServiceType();
 }
 
