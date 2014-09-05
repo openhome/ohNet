@@ -86,6 +86,12 @@ public:
      * @param[in]  aFunctor  The callback to be run
      */
     DllExport void SetPropertyInitialEvent(Functor& aFunctor);
+    /**
+     * Query which service version the remote device implements.
+     *
+     * @return  Service version
+     */
+    DllExport TUint Version() const;
 protected:
     DllExport CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice);
 

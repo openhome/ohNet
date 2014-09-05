@@ -112,6 +112,12 @@ void CpiDeviceDv::NotifyRemovedBeforeReady()
 {
 }
 
+TUint CpiDeviceDv::Version(const ServiceType& /*aServiceType*/) const
+{
+    ASSERTS();
+    return 0;
+}
+
 void CpiDeviceDv::Release()
 {
     iDeviceDv.RemoveWeakRef();

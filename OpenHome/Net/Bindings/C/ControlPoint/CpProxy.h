@@ -86,6 +86,15 @@ DllExport void STDCALL CpProxySetPropertyChanged(THandle aHandle, OhNetCallback 
 DllExport void STDCALL CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
+ * Query which service version the remote device implements.
+ *
+ * @param[in] aHandle    Returned from [service]CreateEvented
+ *
+ * @return  Service version
+ */
+DllExport uint32_t STDCALL CpProxyVersion(THandle aHandle);
+
+/**
  * Must be called before reading the value of a property.
  *
  * @param[in] aHandle    Returned from [service]CreateEvented

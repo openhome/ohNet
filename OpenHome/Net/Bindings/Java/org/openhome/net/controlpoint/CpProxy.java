@@ -25,6 +25,7 @@ public class CpProxy implements ICpProxy
 	private static native void CpProxyUnsubscribe(long aHandle);
 	private static native long CpProxySetPropertyChanged(long aHandle, IPropertyChangeListener aCallback);
 	private static native long CpProxySetPropertyInitialEvent(long aHandle, IPropertyChangeListener aCallback);
+    private static native long CpProxyVersion(long aHandle);
 	private static native void CpProxyPropertyReadLock(long aHandle);
 	private static native void CpProxyPropertyReadUnlock(long aHandle);
 	private static native void CpProxyAddProperty(long aHandle, long aProperty);
@@ -132,7 +133,15 @@ public class CpProxy implements ICpProxy
     		iCallbackNativeInitialEvent = CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent);
     	}
     }
-	
+
+    /**
+     * Query service version implemented by the remote device
+     */
+    public long version()
+    {
+        return CpProxyVersion(iHandle);
+    }
+
     /**
      * Acquire a lock to read the value of a property.
      * Must be called before reading the value of a property.

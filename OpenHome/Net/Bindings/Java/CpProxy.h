@@ -65,6 +65,14 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPro
 
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
+ * Method:    CpProxyVersion
+ * Signature: (J)V
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyVersion
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyPropertyReadLock
  * Signature: (J)V
  */

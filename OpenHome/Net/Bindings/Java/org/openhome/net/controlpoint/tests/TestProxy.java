@@ -166,6 +166,9 @@ public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IProp
             int countBefore = iSubscriptionCount;
             System.out.print("Device " + device.getUdn());
             CpProxyUpnpOrgConnectionManager1 connMgr = new CpProxyUpnpOrgConnectionManager1(device);
+            long version = connMgr.version();
+            if (version < 1 || version > 4)
+                System.out.println("\tWARNING: implausible version for service - " + version);
             connMgr.setPropertyChanged(this);
             Date startTime = new Date();
             while(true)

@@ -79,6 +79,13 @@ void STDCALL CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCall
     proxyC->SetPropertyInitialEvent(functor);
 }
 
+TUint STDCALL CpProxyVersion(THandle aHandle)
+{
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
+    ASSERT(proxyC != NULL);
+    return proxyC->Version();
+}
+
 void STDCALL CpProxyPropertyReadLock(THandle aHandle)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);

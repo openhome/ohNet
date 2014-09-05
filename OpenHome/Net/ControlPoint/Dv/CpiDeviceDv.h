@@ -30,6 +30,7 @@ private: // ICpiProtocol
     TUint Renew(CpiSubscription& aSubscription);
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
     void NotifyRemovedBeforeReady();
+    TUint Version(const ServiceType& aServiceType) const;
 private: // ICpiDeviceObserver
     void Release();
 private: // IPropertyWriterFactory

@@ -136,6 +136,11 @@ void CpProxy::SetPropertyInitialEvent(Functor& aFunctor)
     iLock->Signal();
 }
 
+TUint CpProxy::Version() const
+{
+    return iService->Version();
+}
+
 Mutex& CpProxy::PropertyReadLock() const
 {
     return *iPropertyReadLock;

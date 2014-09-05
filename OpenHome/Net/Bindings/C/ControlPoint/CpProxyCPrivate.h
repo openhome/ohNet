@@ -19,6 +19,7 @@ public:
     DllExport void Unsubscribe() { iProxy->Unsubscribe(); }
     DllExport void SetPropertyChanged(Functor& aFunctor) { iProxy->SetPropertyChanged(aFunctor); }
     DllExport void SetPropertyInitialEvent(Functor& aFunctor) { iProxy->SetPropertyInitialEvent(aFunctor); }
+    DllExport uint32_t Version() const { return iProxy->Version(); }
     DllExport CpiService* Service() const { return iProxy->iService; }
     DllExport void AddProperty(Property* aProperty) { iProxy->AddProperty(aProperty); }
     DllExport Mutex& GetPropertyReadLock() const { return iProxy->PropertyReadLock(); }

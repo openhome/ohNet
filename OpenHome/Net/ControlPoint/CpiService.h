@@ -107,6 +107,11 @@ public:
      * Return the device this service operates on.
      */
     CpiDevice& Device();
+
+    /**
+     * Query the version of the service.
+     */
+    TUint Version() const;
 private:
     void Renew();
 private: // from IStackObject

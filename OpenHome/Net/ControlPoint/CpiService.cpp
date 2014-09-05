@@ -103,6 +103,11 @@ CpiDevice& CpiService::Device()
     return iDevice;
 }
 
+TUint CpiService::Version() const
+{
+    return iDevice.Version(iServiceType);
+}
+
 void CpiService::ListObjectDetails() const
 {
     Log::Print("  CpiService: addr=%p, serviceType=", this);

@@ -114,6 +114,7 @@ void DeviceListTI::Poll()
         Print("Device ");
         Print(device->Udn());
         iConnMgr = new CpProxyUpnpOrgConnectionManager1(*device);
+        ASSERT(iConnMgr->Version() > 0);
         iStopTimeMs = Os::TimeInMs(iEnv.OsCtx()) + kDevicePollMs;
         timer.FireIn(kDevicePollMs);
         for (TUint j=0; j<iEnv.InitParams()->NumActionInvokerThreads(); j++) {

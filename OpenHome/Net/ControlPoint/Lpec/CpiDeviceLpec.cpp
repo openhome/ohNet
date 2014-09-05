@@ -286,6 +286,12 @@ void CpiDeviceLpec::NotifyRemovedBeforeReady()
 {
 }
 
+TUint CpiDeviceLpec::Version(const ServiceType& /*aServiceType*/) const
+{
+    ASSERTS();
+    return 0;
+}
+
 void CpiDeviceLpec::Release()
 {
     delete this;

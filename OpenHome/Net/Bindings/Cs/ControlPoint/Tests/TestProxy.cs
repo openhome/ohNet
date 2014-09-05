@@ -126,6 +126,11 @@ namespace OpenHome.Net
                 uint countBefore = iActionCount;
                 Console.Write("Device " + device.Udn());
                 iConnMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
+                uint version = iConnMgr.Version();
+                if (version < 1 || version > 4) // arbitrarily chosen upper bound
+                {
+                    Console.WriteLine("\n\tERROR: service version reported as " + version);
+                }
                 iActionPollStopTime = DateTime.Now.AddMilliseconds(kDevicePollMs);
                 timer.Interval = kDevicePollMs;
                 timer.Enabled = false;

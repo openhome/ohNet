@@ -108,6 +108,12 @@ namespace OpenHome.Net.ControlPoint
 #else
         [DllImport("ohNet")]
 #endif
+        static extern uint CpProxyVersion(IntPtr aHandle);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern void CpProxyPropertyReadLock(IntPtr aHandle);
 #if IOS
         [DllImport("__Internal")]
@@ -175,6 +181,11 @@ namespace OpenHome.Net.ControlPoint
             iCallbackInitialEvent = new Callback(InitialEvent);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
             CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
+        }
+
+        public uint Version()
+        {
+            return CpProxyVersion(iHandle);
         }
 
         protected CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
