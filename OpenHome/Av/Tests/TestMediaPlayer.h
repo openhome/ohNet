@@ -85,7 +85,7 @@ private:
     Net::ShellCommandDebug* iShellDebug;
 };
 
-typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
+typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::CpStack& aCpStack, Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
 int ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateMediaPlayerFunc aFunc);
 
 } // namespace Test

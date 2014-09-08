@@ -47,7 +47,7 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     }
 //    Debug::SetLevel(Debug::kPipeline | Debug::kMedia);
     Net::Library* lib = new Net::Library(initParams);
-    Net::DvStack* dvStack = lib->StartDv();
+    //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
     const TUint adapterIndex = optionAdapter.Value();
     if (subnetList->size() <= adapterIndex) {
@@ -63,6 +63,9 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
     TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
     Library::DestroySubnetList(subnetList);
     lib->SetCurrentSubnet(subnet);
+    Net::CpStack* cpStack = NULL;
+    Net::DvStack* dvStack = NULL;
+    lib->StartCombined(subnet, cpStack, dvStack);
     Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
     const Brx& room = optionRoom.Value();
@@ -95,13 +98,13 @@ int OpenHome::Av::Test::ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateM
         udn.Replace(optionUdn.Value());
     }
     DriverBasic* driver = new DriverBasic(dvStack->Env());
-    TestMediaPlayer* tmp = (*aFunc)(*dvStack, udn, optionRoom.CString(), optionName.CString(), optionTuneIn.CString(), NULL/*driver*/);
+    TestMediaPlayer* tmp = (*aFunc)(*cpStack, *dvStack, udn, optionRoom.CString(), optionName.CString(), optionTuneIn.CString(), NULL/*driver*/);
     driver->SetPipeline(tmp->Pipeline());
     tmp->Run();
     tmp->StopPipeline();
     delete driver;
     delete tmp;
-    
+
     delete lib;
 
     return 0;
