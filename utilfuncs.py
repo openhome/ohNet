@@ -320,6 +320,26 @@ def guess_ohmediaplayer_location(conf):
         message='Specify --ohmediaplayer-lib-dir or --ohmediaplayer')
     )
 
+def guess_ohtopology_location(conf):
+    set_env_verbose(conf, 'INCLUDES_OHTOPOLOGY', match_path(
+        conf,
+        [
+            '{options.ohtopology_include_dir}',
+            '{options.ohtopology}',
+            'dependencies/{options.dest_platform}/ohTopology/include',
+        ],
+        message='Specify --ohtopology-include-dir or --ohtopology')
+    )
+    set_env_verbose(conf, 'STLIBPATH_OHTOPOLOGY', match_path(
+        conf,
+        [
+            '{options.ohtopology_lib_dir}',
+            '{options.ohtopology}/build',
+            'dependencies/{options.dest_platform}/ohTopology/lib',
+        ],
+        message='Specify --ohtopology-lib-dir or --ohtopology')
+    )
+
 def get_platform_info(dest_platform):
     platforms = {
         'Linux-x86': dict(endian='LITTLE',   build_platform='linux2', ohnet_plat_dir='Posix'),
