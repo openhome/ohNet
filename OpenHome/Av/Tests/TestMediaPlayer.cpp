@@ -421,6 +421,7 @@ void TestMediaPlayerInit::SeedRandomNumberGenerator(Environment& aEnv, const Brx
         hash += aRoom[i];
     }
     hash += port;
+    Log::Print("Seeding random number generator with: %u\n", hash);
     aEnv.SetRandomSeed(hash);
 }
 
