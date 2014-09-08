@@ -12,6 +12,7 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/OptionParser.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/SourceFactory.h>
@@ -23,6 +24,7 @@
 namespace OpenHome {
     class PowerManager;
 namespace Net {
+    class DviServerUpnp;
     class DvStack;
     class DvDevice;
     class Shell;
@@ -83,6 +85,38 @@ private:
     IPowerManagerObserver* iPowerObserver;
     Net::Shell* iShell;
     Net::ShellCommandDebug* iShellDebug;
+};
+
+class TestMediaPlayerOptions
+{
+public:
+    TestMediaPlayerOptions();
+    TBool Parse(int aArgc, char* aArgv[]);
+    TestFramework::OptionString& Room();
+    TestFramework::OptionString& Name();
+    TestFramework::OptionString& Udn();
+    TestFramework::OptionUint& Channel();
+    TestFramework::OptionUint& Adapter();
+    TestFramework::OptionString& TuneIn();
+    TestFramework::OptionBool& Loopback();
+private:
+    TestFramework::OptionParser iParser;
+    TestFramework::OptionString iOptionRoom;
+    TestFramework::OptionString iOptionName;
+    TestFramework::OptionString iOptionUdn;
+    TestFramework::OptionUint iOptionChannel;
+    TestFramework::OptionUint iOptionAdapter;
+    TestFramework::OptionString iOptionTuneIn;
+    TestFramework::OptionBool iOptionLoopback;
+};
+
+// Not very nice, but only to allow reusable test functions.
+class TestMediaPlayerInit
+{
+public:
+    static OpenHome::Net::Library* CreateLibrary(TBool aLoopback, TUint aAdapter);  // creates lib; client must start appropriate stacks
+    static void SeedRandomNumberGenerator(Environment& aEnv, const Brx& aRoom, TIpAddress aAddress, Net::DviServerUpnp& aServer);    // seed from room + server port
+    static void AppendUniqueId(Environment& aEnv, const Brx& aUserUdn, const Brx& aDefaultUdn, Bwh& aOutput);
 };
 
 typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::CpStack& aCpStack, Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
