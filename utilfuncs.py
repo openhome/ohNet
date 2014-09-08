@@ -107,7 +107,7 @@ def configure_toolchain(conf):
         # C++11 support is only relevant to C++ code.
         # ...but does seem to have some effect on the level of C supported by C++ files.
         if conf.options.dest_platform == 'Mac-x86':
-            conf.env.append_value('CXXFLAGS', ['-std=c++11', '-D_POSIX_C_SOURCE=199309', '-stdlib=libc++'])
+            conf.env.append_value('CXXFLAGS', ['-std=c++11', '-D_POSIX_C_SOURCE=199309', '-stdlib=libstdc++'])
         else:
             conf.env.append_value('CXXFLAGS', ['-std=c++0x', '-D__STDC_VERSION__=199901L'])
             conf.env.append_value('LINKFLAGS', '-Wl,--fatal-warnings')
@@ -130,7 +130,7 @@ def configure_toolchain(conf):
                 conf.env.append_value('CFLAGS', ['-arch', 'x86_64'])
                 conf.env.append_value('LINKFLAGS', ['-arch', 'x86_64'])
             conf.env.append_value('CXXFLAGS',['-fPIC', '-mmacosx-version-min=10.7', '-DPLATFORM_MACOSX_GNU'])
-            conf.env.append_value('LINKFLAGS',['-stdlib=libc++', '-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
+            conf.env.append_value('LINKFLAGS',['-stdlib=libstdc++', '-framework', 'CoreFoundation', '-framework', 'SystemConfiguration'])
         # Options for Core-ppc32 and Core-armv5 / Core-armv6
         if conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']:
 
