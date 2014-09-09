@@ -25,8 +25,11 @@ class Adapter():
     #
              
     def _GetAddress( self ):
-        return self.lib.OhNetNetworkAdapterAddress( self.handle )
-         
+        x = self.lib.OhNetNetworkAdapterAddress( self.handle )
+        if x<0:
+            x += 2**32  # convert to unsigned long
+        return x
+
     def _GetSubnet( self ):
         return self.lib.OhNetNetworkAdapterSubnet( self.handle )
          
