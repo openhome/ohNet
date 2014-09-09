@@ -5,6 +5,7 @@
 #include <OpenHome/Net/Core/DvDevice.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Av/SourceFactory.h>
@@ -23,6 +24,7 @@ using namespace OpenHome::Av::Test;
 using namespace OpenHome::Configuration;
 using namespace OpenHome::Media;
 using namespace OpenHome::Net;
+using namespace OpenHome::TestFramework;
 
 // TestMediaPlayer
 
@@ -32,6 +34,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     : iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
 {
+    Debug::SetLevel(Debug::kEvent);
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
     friendlyName.Append(':');
@@ -307,4 +310,134 @@ TBool TestMediaPlayer::TryDisable(DvDevice& aDevice)
 void TestMediaPlayer::Disabled()
 {
     iDisabled.Signal();
+}
+
+
+// TestMediaPlayerOptions
+
+TestMediaPlayerOptions::TestMediaPlayerOptions()
+    : iOptionRoom("-r", "--room", Brn(""), "room the Product service will report")
+    , iOptionName("-n", "--name", Brn("SoftPlayer"), "Product name")
+    , iOptionUdn("-u", "--udn", Brn(""), "Udn (optional - one will be generated if this is left blank)")
+    , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
+    , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
+    , iOptionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name")
+    , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
+{
+    iParser.AddOption(&iOptionRoom);
+    iParser.AddOption(&iOptionName);
+    iParser.AddOption(&iOptionUdn);
+    iParser.AddOption(&iOptionChannel);
+    iParser.AddOption(&iOptionAdapter);
+    iParser.AddOption(&iOptionTuneIn);
+    iParser.AddOption(&iOptionLoopback);
+}
+
+TBool TestMediaPlayerOptions::Parse(int aArgc, char* aArgv[])
+{
+    return iParser.Parse(aArgc, aArgv);
+}
+
+OptionString& TestMediaPlayerOptions::Room()
+{
+    return iOptionRoom;
+}
+
+OptionString& TestMediaPlayerOptions::Name()
+{
+    return iOptionName;
+}
+
+OptionString& TestMediaPlayerOptions::Udn()
+{
+    return iOptionUdn;
+}
+
+OptionUint& TestMediaPlayerOptions::Channel()
+{
+    return iOptionChannel;
+}
+
+OptionUint& TestMediaPlayerOptions::Adapter()
+{
+    return iOptionAdapter;
+}
+
+OptionString& TestMediaPlayerOptions::TuneIn()
+{
+    return iOptionTuneIn;
+}
+
+OptionBool& TestMediaPlayerOptions::Loopback()
+{
+    return iOptionLoopback;
+}
+
+
+// TestMediaPlayerInit
+
+OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUint aAdapter)
+{
+    InitialisationParams* initParams = InitialisationParams::Create();
+    initParams->SetDvEnableBonjour();
+    if (aLoopback == true) {
+        initParams->SetUseLoopbackNetworkAdapter();
+    }
+
+//    Debug::SetLevel(Debug::kPipeline | Debug::kMedia);
+    Net::Library* lib = new Net::Library(initParams);
+    //Net::DvStack* dvStack = lib->StartDv();
+    std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
+    const TUint adapterIndex = aAdapter;
+    if (subnetList->size() <= adapterIndex) {
+        Log::Print("ERROR: adapter %u doesn't exist\n", adapterIndex);
+        ASSERTS();
+    }
+    Log::Print ("adapter list:\n");
+    for (unsigned i=0; i<subnetList->size(); ++i) {
+        TIpAddress addr = (*subnetList)[i]->Address();
+        Log::Print ("  %d: %d.%d.%d.%d\n", i, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    }
+    //TIpAddress address = (*subnetList)[adapterIndex]->Address();
+    TIpAddress subnet = (*subnetList)[adapterIndex]->Subnet();
+    Library::DestroySubnetList(subnetList);
+    lib->SetCurrentSubnet(subnet);
+    Log::Print("using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
+    return lib;
+}
+
+void TestMediaPlayerInit::SeedRandomNumberGenerator(Environment& aEnv, const Brx& aRoom, TIpAddress aAddress, DviServerUpnp& aServer)
+{
+    if (aRoom == Brx::Empty()) {
+        Log::Print("ERROR: room must be set\n");
+        ASSERTS();
+    }
+    // Re-seed random number generator with hash of (unique) room name + UPnP
+    // device server port to avoid UDN clashes.
+    TUint port = aServer.Port(aAddress);
+    Log::Print("UPnP DV server using port: %u\n", port);
+    TUint hash = 0;
+    for (TUint i=0; i<aRoom.Bytes(); i++) {
+        hash += aRoom[i];
+    }
+    hash += port;
+    Log::Print("Seeding random number generator with: %u\n", hash);
+    aEnv.SetRandomSeed(hash);
+}
+
+void TestMediaPlayerInit::AppendUniqueId(Environment& aEnv, const Brx& aUserUdn, const Brx& aDefaultUdn, Bwh& aOutput)
+{
+    if (aUserUdn.Bytes() == 0) {
+        if (aOutput.MaxBytes() < aDefaultUdn.Bytes()) {
+            aOutput.Grow(aDefaultUdn.Bytes());
+        }
+        aOutput.Replace(aDefaultUdn);
+        RandomiseUdn(aEnv, aOutput);
+    }
+    else {
+        if (aUserUdn.Bytes() > aOutput.MaxBytes()) {
+            aOutput.Grow(aUserUdn.Bytes());
+        }
+        aOutput.Replace(aUserUdn);
+    }
 }

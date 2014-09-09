@@ -124,11 +124,6 @@ class TestSongcastDropout( BASE.BaseTest ):
         
         # start songcast receipt on receivers
         for rcvr in self.rcvrs:
-            # Handle 'hub' products
-            if rcvr.exakt is not None:
-                import Utils.Audio.DigitalCrossover as DigitalCrossover
-                DigitalCrossover.SetAllFlat( rcvr )
-                
             rcvr.receiver.AddSubscriber( self._RcvrReceiverCb )
             self.rcvrUriSet.clear()
             rcvr.receiver.SetSender( '', '' )

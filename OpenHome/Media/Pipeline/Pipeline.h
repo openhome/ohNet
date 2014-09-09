@@ -34,26 +34,6 @@ namespace Media {
 class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
-    static const TUint kDecodedReservoirMultiplier = 6; // FIXME - temp bodge for local testing
-
-    static const TUint kMsgCountEncodedAudio    = 768;
-    static const TUint kMsgCountAudioEncoded    = 768;
-    static const TUint kMsgCountDecodedAudio    = 600;
-    static const TUint kMsgCountAudioPcm        = 900;
-    static const TUint kMsgCountSilence         = 512;
-    static const TUint kMsgCountPlayablePcm     = 100;
-    static const TUint kMsgCountPlayableSilence = 100;
-    static const TUint kMsgCountEncodedStream   = 20;
-    static const TUint kMsgCountTrack           = 20;
-    static const TUint kMsgCountDecodedStream   = 20;
-    static const TUint kMsgCountMetaText        = 20;
-    static const TUint kMsgCountHalt            = 20;
-    static const TUint kMsgCountFlush           = 16;
-    static const TUint kMsgCountWait            = 16;
-    static const TUint kMsgCountMode            = 20;
-    static const TUint kMsgCountSession         = 20;
-    static const TUint kMsgCountDelay           = 20;
-    static const TUint kMsgCountQuit            = 1;
 
     static const TUint kEncodedReservoirSizeBytes            = 500 * 1024;
     static const TUint kDecodedReservoirSize                 = Jiffies::kPerMs * 1536; // some clock pulling algorithms will prefer this is larger than kGorgerDuration
@@ -68,6 +48,27 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kStarvationMonitorStarvationThreshold = Jiffies::kPerMs * 20;
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kPerMs * 100;
     static const TUint kSenderMinLatency                     = Jiffies::kPerMs * 150;
+
+    static const TUint kMaxEncodedStreams = (kEncodedReservoirSizeBytes / (4 * 1024)) + 1; // 4k assumed about as small an encoded stream as we'll see
+
+    static const TUint kMsgCountEncodedAudio    = 768;
+    static const TUint kMsgCountAudioEncoded    = 768;
+    static const TUint kMsgCountDecodedAudio    = 600;
+    static const TUint kMsgCountAudioPcm        = 900;
+    static const TUint kMsgCountSilence         = 512;
+    static const TUint kMsgCountPlayablePcm     = 100;
+    static const TUint kMsgCountPlayableSilence = 100;
+    static const TUint kMsgCountEncodedStream   = kMaxEncodedStreams + 1;
+    static const TUint kMsgCountTrack           = kMaxEncodedStreams + 10;
+    static const TUint kMsgCountDecodedStream   = 20;
+    static const TUint kMsgCountMetaText        = 20;
+    static const TUint kMsgCountHalt            = 20;
+    static const TUint kMsgCountFlush           = 16;
+    static const TUint kMsgCountWait            = 16;
+    static const TUint kMsgCountMode            = 20;
+    static const TUint kMsgCountSession         = kMaxEncodedStreams + 10;
+    static const TUint kMsgCountDelay           = 20;
+    static const TUint kMsgCountQuit            = 1;
 public:
     Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver);
     virtual ~Pipeline();

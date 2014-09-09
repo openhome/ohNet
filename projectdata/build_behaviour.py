@@ -69,7 +69,7 @@ add_option("-t", "--target", help="Target platform.")
 add_option("-a", "--artifacts", help="Build artifacts directory. Used to fetch dependencies.")
 add_option("--debug", action="store_const", const="Debug", dest="debugmode", help="Build debug version.")
 add_option("--release", action="store_const", const="Release", dest="debugmode", default="Release", help="Build release version.")
-add_option("--steps", default="default", help="Steps to run, comma separated. (all,default,fetch,configure,build,bundle,tests,publish)")
+add_option("--steps", default="default", help="Steps to run, comma separated. (all,default,fetch,configure,clean,build,bundle,test,test_full,publish)")
 add_option("--publish-version", action="store", help="Specify version string.")
 add_option("--fetch-only", action="store_const", const="fetch", dest="steps", help="Fetch dependencies only.")
 

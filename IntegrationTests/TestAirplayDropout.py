@@ -68,12 +68,7 @@ class TestAirplayDropout( BASE.BaseTest ):
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         if self.dut.volume is not None:
             self.dut.volume.volume = 65
-                
-        # Handle 'hub' products            
-        if self.dut.exakt is not None:
-            import Utils.Audio.DigitalCrossover as DigitalCrossover
-            DigitalCrossover.SetAllFlat( self.dut )
-            
+
         # setup dacp (iTunes) control
         self.dacp = DacpClient.DacpClient( iTunesServer )
         if dutName not in self.dacp.speakers:

@@ -200,11 +200,6 @@ class TestSongcastConnect( BASE.BaseTest ):
         self.dut4 = Volkano.VolkanoDevice( dut4Name, aIsDut=True, aLoopback=loopback )
         if self.dut1.volume is not None:
             self.dut1.volume.volume = 75
-            
-        # Handle 'hub' products
-        if self.dut1.exakt is not None:
-            import Utils.Audio.DigitalCrossover as DigitalCrossover
-            DigitalCrossover.SetAllFlat( self.dut1 )
 
         # run the selected test scenarios
         for self.disconx in disconnect:

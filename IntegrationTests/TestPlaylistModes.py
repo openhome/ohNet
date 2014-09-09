@@ -81,22 +81,25 @@ class Config:
                 self._SetupPlaylist( aDut )
             
             aDut.playlist.AddSubscriber( _EventCb )
+            idEvent.clear()
+            playingEvent.clear()
             if self.track != '-':
-                playingEvent.clear()
                 aDut.playlist.SeekIndex( self.track )
-                playingEvent.wait( 3 )
-                trackId = aDut.playlist.idArray[self.track]
             else:
-                playingEvent.clear()
                 aDut.playlist.Play()
-                playingEvent.wait( 3 )
-                trackId = aDut.playlist.id
-                self.startIdx = aDut.playlist.PlaylistIndex( trackId )
+            playingEvent.wait( 3 )
+            idEvent.wait( 1 )
             aDut.playlist.RemoveSubscriber( _EventCb )
+
+            if self.track != '-':
+                trackId = aDut.playlist.idArray[self.track]     # check selected = requested track
+            else:
+                trackId = aDut.playlist.id                       # forces pass when requested unspecified
             self.log.FailUnless( self.dev, aDut.playlist.id==trackId,
                 'Selected track %s (got ID %s)' % ( self.track,aDut.playlist.id) )
+            self.startIdx = aDut.playlist.PlaylistIndex( trackId )
             self.listorder = aDut.playlist.idArray
-            
+
         def _SetupPlaylist( self, aDut ):
             """Setup playlist on DUT"""
             idArrayEvt = threading.Event()
@@ -155,7 +158,6 @@ class Config:
         def Invoke( self, aDut ):
             """Skip thru all tracks recording order until Stopped or listlen+2"""
             orderEvt    = threading.Event()
-            durationEvt = threading.Event()
             playing     = threading.Event()
             stim        = 'aDut.playlist.%s()' % self.seek.title()
             self.playorder.append( aDut.playlist.id )
@@ -171,37 +173,25 @@ class Config:
                     th = LogThread.Thread( target=_UpdatePlayorder, args=[aSvVal] )
                     th.start()
 
-            # noinspection PyUnusedLocal
-            def _InfoEventCb( aService, aSvName, aSvVal, aSvSeq ):
-                if aSvName == 'Duration':
-                    if aSvVal > 0:
-                        durationEvt.set()
-                    
             def _UpdatePlayorder( *args ):
-                durationEvt.wait( 5 )
-                if not durationEvt.isSet():
-                    self.precon.log.Warn( self.precon.dev, 'Timeout on Duration event' )
-                playing.wait( 3 )
-                if playing.isSet():    
+                time.sleep( 2 )     # wait for transport state to 'settle'
+                if playing.isSet():
                     self.playorder.append( int( args[0] ))
-                durationEvt.clear()
                 orderEvt.set()
                     
             aDut.playlist.AddSubscriber( _PlaylistEventCb )
-            aDut.info.AddSubscriber( _InfoEventCb )
             if aDut.playlist.transportState == 'Playing':
                 playing.set()
 
             for i in range( self.precon.plLen+2 ):
                 orderEvt.clear()
                 eval( stim )
-                orderEvt.wait( 5 )
+                orderEvt.wait( 5 )  # must be longer than total delays in  _UpdatePlayorder
                 if aDut.playlist.polledTransportState == 'Stopped':
                     self.precon.log.Pass( self.precon.dev, 'Playlist exhausted after <%s> action' % self.seek )
                     break
                 self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action' % self.seek )
 
-            aDut.info.RemoveSubscriber( _InfoEventCb )
             aDut.playlist.RemoveSubscriber( _PlaylistEventCb )
 
 
@@ -337,12 +327,6 @@ class TestPlaylistModes( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
                             
-        # seed the random number generator
-        if not seed:
-            seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % seed )
-        random.seed( seed )
-                
         # create DUT
         if dutName.lower() == 'local':
             loopback = True
@@ -353,8 +337,14 @@ class TestPlaylistModes( BASE.BaseTest ):
         
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
-        self.server.Start()        
-        
+        self.server.Start()
+
+        # seed the random number generator (do AFTER DUT created or gets re-seeded)
+        if not seed:
+            seed = int( time.time() ) % 1000000
+        self.log.Pass( '', 'Seeding random number generator with %d' % seed )
+        random.seed( seed )
+
         # create test confgurations as specified by mode
         testConfigs = self._GetConfigs( mode )
         

@@ -363,8 +363,8 @@ class Config:
             expState = aState
             expTrack = aTrack
             expSecs  = aSecs
-            if expSecs > aDut.info.duration:
-                expSecs = expSecs - aDut.info.duration
+            if expSecs > self.precon.duration:
+                expSecs = expSecs - self.precon.duration
                 expTrack += 1
                 if expTrack >= self.precon.plLen:
                     expTrack = 0
@@ -452,13 +452,7 @@ class TestPlaylistHandling( BASE.BaseTest ):
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
-                            
-        # seed the random number generator
-        if not seed:
-            seed = int( time.time() ) % 1000000
-        self.log.Info( '', 'Seeding random number generator with %d' % seed )
-        random.seed( seed )
-                
+
         # create DUT
         if dutName.lower() == 'local':
             loopback = True
@@ -470,7 +464,13 @@ class TestPlaylistHandling( BASE.BaseTest ):
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
-        
+
+        # seed the random number generator (do AFTER DUT created or gets re-seeded)
+        if not seed:
+            seed = int( time.time() ) % 1000000
+        self.log.Pass( '', 'Seeding random number generator with %d' % seed )
+        random.seed( seed )
+
         # create test confgurations as specified by mode
         testConfigs = self._GetConfigs( mode )
         
