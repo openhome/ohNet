@@ -190,7 +190,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         iSem.Wait();
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
-    while (res == EProtocolStreamErrorRecoverable) {
+    while (res == EProtocolStreamErrorRecoverable || iSeek) {
         if (iStopped) {
             res = EProtocolStreamStopped;
             break;
