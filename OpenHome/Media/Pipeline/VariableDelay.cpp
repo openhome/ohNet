@@ -299,7 +299,7 @@ EStreamPlay VariableDelay::OkToPlay(TUint aTrackId, TUint aStreamId)
 TUint VariableDelay::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+        return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
     }
     return MsgFlush::kIdInvalid;
 }
