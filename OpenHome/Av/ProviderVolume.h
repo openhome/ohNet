@@ -77,7 +77,6 @@ private:
     void ConfigVolumeStartupChanged(Configuration::ConfigNum::KvpNum& aKvp);
     void ConfigVolumeStartupEnabledChanged(Configuration::ConfigChoice::KvpChoice& aKvp);
 private:
-    Configuration::IConfigManagerReader& iConfigReader;
     const Media::IVolumeProfile& iVolumeProfile;
     Media::IVolume& iVolumeSetter;
     Media::IVolumeLimit& iVolumeLimitSetter;

@@ -143,10 +143,8 @@ private:
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Product* iProduct;
-    Media::IMuteManager* iMuteManager;
     Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
     Media::IVolume* iRightVolumeHardware;  // XXX volume hardware
-    Media::IVolumeManagerLimits* iVolumeManager;
     VolumeProfile iVolumeProfile;
     VolumePrinter iVolume; // FIXME - replace with real implementations
     Media::VolumeLimitNull iVolumeLimit;

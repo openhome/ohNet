@@ -66,7 +66,6 @@ ProviderVolume::ProviderVolume(DvDevice& aDevice,
                                IVolume& aVolume, IVolumeLimit& aVolumeLimit,
                                IBalance& aBalance, IMute& aMute)
     : DvProviderAvOpenhomeOrgVolume1(aDevice)
-    , iConfigReader(aConfigReader)
     , iVolumeProfile(aVolumeProfile)
     , iVolumeSetter(aVolume)
     , iVolumeLimitSetter(aVolumeLimit)
