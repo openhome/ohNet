@@ -351,6 +351,7 @@ void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint a
         iLock.Wait();
         iPipelineTrackId = aIdPipeline;
         iTrackId = aTrack.Id();
+        iTrackPosSeconds = 0;
         iLock.Signal();
     }
 }
