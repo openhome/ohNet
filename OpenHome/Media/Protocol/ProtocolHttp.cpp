@@ -200,9 +200,11 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
             res = DoLiveStream();
         }
         else if (iSeek) {
+            iLock.Wait();
             iSupply->OutputFlush(iNextFlushId);
             iOffset = iSeekPos;
             iSeek = false;
+            iLock.Signal();
             res = DoSeek(iOffset);
         }
         else {
@@ -223,7 +225,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         }
     }
     iLock.Wait();
-    if (iStopped) {
+    if (iStopped || iSeek) {
         iSupply->OutputFlush(iNextFlushId);
     }
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
