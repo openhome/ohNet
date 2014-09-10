@@ -826,14 +826,15 @@ THandle OsNetworkAccept(THandle aHandle, TIpAddress* aClientAddress, uint32_t* a
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 {
     int32_t ret = 0;
-    struct hostent* dns = gethostbyname(aAddress);
-    if (NULL == dns) {
+    struct addrinfo *results = NULL;
+    ret = getaddrinfo(aAddress, "", NULL, &results);
+    if (results == NULL) {
         ret = -1;
     }
     else {
-        *aHost = *((uint32_t*)(dns->h_addr_list[0]));
+        *aHost = ((struct sockaddr_in*)results[0].ai_addr)->sin_addr.s_addr;
+        freeaddrinfo(results);
     }
-
     return ret;
 }
 
