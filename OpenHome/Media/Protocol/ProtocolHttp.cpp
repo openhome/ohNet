@@ -55,6 +55,7 @@ private:
     void StartStream();
     TUint WriteRequest(TUint64 aOffset);
     ProtocolStreamResult ProcessContent();
+    TBool ContinueStreaming(ProtocolStreamResult aResult);
     void ExtractMetadata();
 private:
     WriterHttpRequest iWriterRequest;
@@ -190,7 +191,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         iSem.Wait();
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
-    while (res == EProtocolStreamErrorRecoverable || iSeek) {
+    while (ContinueStreaming(res)) {
         if (iStopped) {
             res = EProtocolStreamStopped;
             break;
@@ -225,10 +226,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         }
     }
     iLock.Wait();
-    if (iStopped || iSeek) {
+    ASSERT(!iSeek);
+    if (iStopped) {
         iSupply->OutputFlush(iNextFlushId);
     }
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
     if (iContentProcessor != NULL) {
         iContentProcessor->Reset();
@@ -631,6 +632,16 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
     return iContentProcessor->Stream(*this, iTotalBytes);
 }
 
+TBool ProtocolHttp::ContinueStreaming(ProtocolStreamResult aResult)
+{
+    AutoMutex a(iLock);
+    if (aResult == EProtocolStreamErrorRecoverable || iSeek) {
+        return true;
+    }
+    // clear iStreamId to prevent TrySeek or TryStop returning a valid flush id
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    return false;
+}
 
 void ProtocolHttp::ExtractMetadata()
 {
@@ -671,6 +682,3 @@ void ProtocolHttp::ExtractMetadata()
         }
     }
 }
-
-
-
