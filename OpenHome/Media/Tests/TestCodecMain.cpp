@@ -14,6 +14,17 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
 {
     Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
+
+    Log::Print(
+        "\n"
+        "======================================================\n"
+        "TestCodecMain overriding server name to 'localhost'\n"
+        "This is a temporary hack to avoid DNS issues with OSX\n"
+        "======================================================\n"
+        "\n");
+    args.emplace_back("-s");
+    args.emplace_back("localhost");
+
     TestCodec(lib->Env(), CreateTestCodecPipeline, TestCodecFiles, args);
     delete lib;
 }
