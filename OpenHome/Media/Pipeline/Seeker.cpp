@@ -175,6 +175,8 @@ void Seeker::DoSeek()
     iSeeker.StartSeek(iTrackId, iStreamId, iSeekSeconds, *this, iSeekHandle);
     if (iSeekHandle == ISeeker::kHandleError) {
         iState = ERampingUp;
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kMin;
     }
     else {
         while (!iQueue.IsEmpty()) {
