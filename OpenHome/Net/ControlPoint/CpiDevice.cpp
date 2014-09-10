@@ -106,9 +106,9 @@ void CpiDevice::NotifyRemovedBeforeReady()
     iProtocol.NotifyRemovedBeforeReady();
 }
 
-TUint CpiDevice::Version(const ServiceType& aServiceType) const
+TUint CpiDevice::Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const
 {
-    return iProtocol.Version(aServiceType);
+    return iProtocol.Version(aDomain, aName, aProxyVersion);
 }
 
 void CpiDevice::SetReady()

@@ -286,10 +286,9 @@ void CpiDeviceLpec::NotifyRemovedBeforeReady()
 {
 }
 
-TUint CpiDeviceLpec::Version(const ServiceType& /*aServiceType*/) const
+TUint CpiDeviceLpec::Version(const TChar* /*aDomain*/, const TChar* /*aName*/, TUint aProxyVersion) const
 {
-    ASSERTS();
-    return 0;
+    return aProxyVersion; // FIXME - could store list of remote services and lookup on that
 }
 
 void CpiDeviceLpec::Release()

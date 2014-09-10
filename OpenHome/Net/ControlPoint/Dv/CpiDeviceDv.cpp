@@ -112,10 +112,11 @@ void CpiDeviceDv::NotifyRemovedBeforeReady()
 {
 }
 
-TUint CpiDeviceDv::Version(const ServiceType& /*aServiceType*/) const
+TUint CpiDeviceDv::Version(const TChar* /*aDomain*/, const TChar* /*aName*/, TUint aProxyVersion) const
 {
-    ASSERTS();
-    return 0;
+    return aProxyVersion; /* FIXME - could use DviDevice to determine actual version of service
+                             Since we're in the same binary as that service, it isn't unusual to
+                             expect cp to know which dv versions it is talking to however... */
 }
 
 void CpiDeviceDv::Release()
