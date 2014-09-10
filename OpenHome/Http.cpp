@@ -7,6 +7,7 @@
 #include <OpenHome/Private/Uri.h>
 
 #include <ctype.h>
+#include <algorithm>
 
 using namespace OpenHome;
 
