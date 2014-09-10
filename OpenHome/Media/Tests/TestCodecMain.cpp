@@ -12,6 +12,7 @@ extern AudioFileCollection* TestCodecFiles();
 
 void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
+    static const Brn kLocalhost("127.0.0.1");
     Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
 
@@ -20,6 +21,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
         "======================================================\n"
         "TestCodecMain overriding server name to 'localhost'\n"
         "This is a temporary hack to avoid DNS issues with OSX\n"
+        "Only the standalone version of TestCodec is affected by this.\n"
         "======================================================\n"
         "\n");
     args.emplace_back("-s");
