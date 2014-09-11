@@ -813,7 +813,7 @@ TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerfo
 
 Tests: TestsNative TestsCs
 
-$(objdir)ohNet.net.dll: \
+$(objdir)ohNet.net.dll: make_obj_dir \
 	$(csCp)CpDevice.cs \
 	$(csCp)CpDeviceUpnp.cs \
 	$(csCp)CpProxy.cs \
