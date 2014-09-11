@@ -140,6 +140,14 @@ typedef struct {
 
 /* Ogg BITSTREAM PRIMITIVES: bitstream ************************/
 
+#define oggpack_readinit    vorbis_oggpack_readinit
+#define oggpack_look        vorbis_oggpack_look
+#define oggpack_adv         vorbis_oggpack_adv
+#define oggpack_read        vorbis_oggpack_read
+#define oggpack_bytes       vorbis_oggpack_bytes
+#define oggpack_bits        vorbis_oggpack_bits
+#define oggpack_eop         vorbis_oggpack_eop
+
 extern void  oggpack_readinit(oggpack_buffer *b,ogg_reference *r);
 extern long  oggpack_look(oggpack_buffer *b,int bits);
 extern void  oggpack_adv(oggpack_buffer *b,int bits);
@@ -149,6 +157,17 @@ extern long  oggpack_bits(oggpack_buffer *b);
 extern int   oggpack_eop(oggpack_buffer *b);
 
 /* Ogg BITSTREAM PRIMITIVES: decoding **************************/
+
+#define ogg_sync_create         vorbis_ogg_sync_create
+#define ogg2_sync_destroy       vorbis_ogg2_sync_destroy
+#define ogg2_sync_reset         vorbis_ogg2_sync_reset
+#define ogg2_sync_bufferin      vorbis_ogg2_sync_bufferin
+#define ogg2_sync_wrote         vorbis_ogg2_sync_wrote
+#define ogg2_sync_pageseek      vorbis_ogg2_sync_pageseek
+#define ogg2_sync_pageout       vorbis_ogg2_sync_pageout
+#define ogg2_stream_pagein      vorbis_ogg2_stream_pagein
+#define ogg2_stream_packetout   vorbis_ogg2_stream_packetout
+#define ogg2_stream_packetpeek  vorbis_ogg2_stream_packetpeek
 
 extern ogg_sync_state *ogg2_sync_create(void);
 extern int      ogg2_sync_destroy(ogg_sync_state *oy);
@@ -163,6 +182,25 @@ extern int      ogg2_stream_packetout(ogg_stream_state *os,ogg_packet *op);
 extern int      ogg2_stream_packetpeek(ogg_stream_state *os,ogg_packet *op);
 
 /* Ogg BITSTREAM PRIMITIVES: general ***************************/
+
+#define ogg2_stream_create          vorbis_ogg2_stream_create
+#define ogg2_stream_destroy         vorbis_ogg2_stream_destroy
+#define ogg2_stream_reset           vorbis_ogg2_stream_reset
+#define ogg2_stream_reset_serialno  vorbis_ogg2_stream_reset_serialno
+#define ogg2_stream_eos             vorbis_ogg2_stream_eos
+#define ogg2_page_checksum_set      vorbis_ogg2_page_checksum_set
+#define ogg2_page_version           vorbis_ogg2_page_version
+#define ogg2_page_continued         vorbis_ogg2_page_continued
+#define ogg2_page_bos               vorbis_ogg2_page_bos
+#define ogg2_page_eos               vorbis_ogg2_page_eos
+#define ogg2_page_granulepos        vorbis_ogg2_page_granulepos
+#define ogg2_page_serialno          vorbis_ogg2_page_serialno
+#define ogg2_page_pageno            vorbis_ogg2_page_pageno
+#define ogg2_page_packets           vorbis_ogg2_page_packets
+#define ogg2_page_getbuffer         vorbis_ogg2_page_getbuffer
+#define ogg2_packet_release         vorbis_ogg2_packet_release
+#define ogg2_page_release           vorbis_ogg2_page_release
+#define ogg2_page_dup               vorbis_ogg2_page_dup
 
 extern ogg_stream_state *ogg2_stream_create(int serialno);
 extern int      ogg2_stream_destroy(ogg_stream_state *os);
