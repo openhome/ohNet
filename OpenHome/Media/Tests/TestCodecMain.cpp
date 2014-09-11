@@ -16,22 +16,17 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     Net::Library* lib = new Net::Library(aInitParams);
     std::vector<Brn> args = OptionParser::ConvertArgs(aArgc, aArgv);
 
-    // This is an override to force all instantiations to run via localhost
-    // regardless of '-s' arg.
-    // (Core platforms are not instantiated via this Main() method, so they
-    // remain unaffected.)
-    for (TUint i=0; i<args.size(); i++) {
-        if (args[i] == Brn("-s")) {
-            TUint hostIdx = i+1;
-            ASSERT(hostIdx < args.size());
-            Brn hostOld = args[hostIdx];
-            args[hostIdx] = kLocalhost;
-            Log::Print("OVERRIDE: TestCodec using '127.0.0.1' instead of argument '");
-            Log::Print(hostOld);
-            Log::Print("'\n");
-            break;
-        }
-    }
+    Log::Print(
+        "\n"
+        "======================================================\n"
+        "TestCodecMain overriding server name to 'localhost'\n"
+        "This is a temporary hack to avoid DNS issues with OSX\n"
+        "Only the standalone version of TestCodec is affected by this.\n"
+        "======================================================\n"
+        "\n");
+    args.emplace_back("-s");
+    args.emplace_back("localhost");
+
     TestCodec(lib->Env(), CreateTestCodecPipeline, TestCodecFiles, args);
     delete lib;
 }
