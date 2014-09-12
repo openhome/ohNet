@@ -44,195 +44,240 @@ class Config:
     class Precon:
         """Configuration subclass for precondition info and setup"""
         
-        def __init__( self, aId, aState, aPlLen, aTrack, aSecs, aRepeat, aTracks, aLog, aDev ):
+        def __init__( self, aConf, aDut, aDev, aLog ):
             """Initialise class data"""
-            self.id            = aId
-            self.state         = aState
-            self.plLen         = None
-            self.plLen         = self._SubstMacros( aPlLen )
-            self.track         = self._SubstMacros( aTrack )
-            self.secs          = aSecs
-            self.repeat        = aRepeat
-            self.duration      = None
-            self.evtTime       = -1
-            self.durationEvent = threading.Event()
-            self.idEvent       = threading.Event()
-            self.idArrayEvent  = threading.Event()
-            self.stoppedEvent  = threading.Event()
-            self.pausedEvent   = threading.Event()
-            self.playingEvent  = threading.Event()
-            self.timeEvent     = threading.Event()
-            self.log           = aLog
-            self.dev           = aDev
+            self.conf     = aConf
+            self.testId   = aConf[0]
+            self.dut      = aDut
+            self.dev      = aDev
+            self.log      = aLog
+            self.plLen    = 0
+            self.index    = 0
+            self.secs     = 0
+            self.state    = 'Unknown'
+            self.duration = 0
 
-            # create random playlist
-            self.playlist = []
-            for i in range( self.plLen ):
-                self.playlist.append( aTracks[random.randint( 0, len( aTracks )-1)])
-
-        def Setup( self, aDut ):
+        def Setup( self, aTracks ):
             """Setup preconditions on the renderer"""
-            aDut.playlist.DeleteAllTracks()
+            success = True
+            state  = self.conf[1]
+            plLen  = self.conf[2]
+            index  = self.conf[3]
+            secs   = self.conf[4]
+            repeat = self.conf[5]
+
+            self._AddPlaylist( aTracks, plLen, repeat )
+            self._SelectTrack( index )
+            self._SelectSecs( state, secs )
+            self._SetState( state )
+
+            msg = '[%d] Preconditions: %d tracks, index %d, state %s, secs %d, duration %d' \
+                % (self.testId, self.plLen, self.index, self.state, self.secs, self.duration )
+            if self.dut.playlist.transportState != self.state or \
+               self.dut.playlist.PlaylistIndex( self.dut.playlist.id ) != self.index:
+                success = False
+            self.log.FailUnless( self.dev, success, msg )
+            return success
+
+        def _AddPlaylist( self, aTracks, aPlLen, aRepeat ):
+            """Generate and add playlist to DUT"""
+            event = threading.Event()
+
+            # noinspection PyUnusedLocal
+            def EventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'IdArray' and aSvVal not in [0,'0']:
+                    event.set()
+
+            if aPlLen == '@N':
+                self.plLen = random.randint( 8, 30 )
             self.log.Info( self.dev, 'Adding playlist of %d tracks' % self.plLen )
-            aDut.playlist.AddSubscriber( self._PlaylistEventCb )
-            aDut.playlist.AddPlaylist( self.playlist )
-            self.idArrayEvent.wait( 5 )
+            playlist = []
+            for i in range( self.plLen ):
+                playlist.append( aTracks[random.randint( 0, len( aTracks )-1)])
+            self.dut.playlist.DeleteAllTracks()
+            self.dut.playlist.AddSubscriber( EventCb )
+            self.dut.playlist.AddPlaylist( playlist )
+            event.wait( 5 )
+            self.dut.playlist.RemoveSubscriber( EventCb )
             self.log.Info( self.dev, 'Added playlist of %d tracks' % self.plLen )
-            aDut.playlist.repeat = self.repeat
-            aDut.info.AddSubscriber( self._InfoEventCb )
-            aDut.time.AddSubscriber( self._TimeEventCb )
+            self.repeat = aRepeat
+            self.dut.playlist.repeat = self.repeat
 
-            if self.track != -1:
-                self.durationEvent.clear()
-                self.idEvent.clear()
-                aDut.playlist.SeekIndex( self.track )
-                if aDut.playlist.PlaylistIndex( aDut.playlist.id ) != self.track:
-                    self.idEvent.wait( 5 )
-                if self.state == 'Stopped':
-                    self.stoppedEvent.clear()
-                    aDut.playlist.Stop()
-                    self.stoppedEvent.wait( 5 )
-                    self.duration = None
-                elif self.state in ['Playing', 'Paused']:
-                    if self.secs == '@T':
-                        self.durationEvent.wait( 5 )
-                        self.duration = aDut.info.duration
-                        if not self.durationEvent.isSet():
-                            self.log.Info( self.dev,
-                                'Duration event timed-out, assume unchanged (%d)'
-                                % self.duration )
-                        if self.duration > 12:
-                            self.secs = random.randint( 5, self.duration-12 )
-                        else:
-                            self.log.Warn( self.dev, 'Duration value not updated' )
-                            self.secs = random.randint( 5, 95 )
-                        self.timeEvent.clear()
-                        self.playingEvent.clear()
-                        aDut.playlist.SeekSecondAbsolute( self.secs )
-                        tries = 0
-                        while self.evtTime != self.secs and tries < 5:
-                            tries += 1
-                            self.timeEvent.wait( 2 )
-                            self.timeEvent.clear()
-                        if aDut.playlist.transportState != 'Playing':
-                            self.playingEvent.wait( 3 )
-                    if self.state == 'Paused':
-                        self.pausedEvent.clear()
-                        aDut.playlist.Pause()
-                        self.pausedEvent.wait( 5 )
-            aDut.time.RemoveSubscriber( self._TimeEventCb )
-            aDut.info.RemoveSubscriber( self._InfoEventCb )
-            aDut.playlist.RemoveSubscriber( self._PlaylistEventCb )
-            dutState = aDut.playlist.transportState
-            if dutState == self.state:
-                self.log.Pass( self.dev, '[%d] Preconditions setup' % self.id )
-            else:
-                self.log.Fail( self.dev, '[%d] Actual/Required precondition state %s/%s' %
-                    (self.id, dutState, self.state) )
+        def _SelectTrack( self, aIndex ):
+            """Seek the specified track in the playlist"""
+            playlistEvent = threading.Event()
+            infoEvent = threading.Event()
 
-        def _SubstMacros( self, aArg ):
-            """Substitute parameter macros with actual values.
-               Valid macros are:
-                @m - random track within playlist
-                @N - playlist length -> random value between 8 and 30
-            """
-            try:
-                if not self.plLen:
-                    aArg = aArg.replace( '@N', 'random.randint( 8, 30 )' )
-                else:
-                    aArg = aArg.replace( '@N', 'self.plLen' )
-                aArg = aArg.replace( '@m', 'random.randint( 2, self.plLen-3 )' )
-                subst = eval( aArg )
-            except:
-                subst = aArg
-            return subst
+            # noinspection PyUnusedLocal
+            def PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'Id':
+                    playlistEvent.set()
 
-        # noinspection PyUnusedLocal
-        def _InfoEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            """Callback from Info service events"""
-            if aSvName == 'Duration' and aSvVal not in [0,'0']:
-                self.durationEvent.set()
+            aIndex = aIndex.replace( '@N', 'self.plLen' )
+            aIndex = aIndex.replace( '@m', 'random.randint( 2, self.plLen-3 )' )
+            self.index = eval( aIndex )
+            self.dut.playlist.AddSubscriber( PlaylistEventCb )
+            playlistEvent.clear()
+            infoEvent.clear()
+            self.dut.playlist.SeekIndex( self.index )
+            if self.dut.playlist.PlaylistIndex( self.dut.playlist.id ) != self.index:
+                playlistEvent.wait( 5 )
+            self.dut.playlist.RemoveSubscriber( PlaylistEventCb )
 
-        # noinspection PyUnusedLocal
-        def _TimeEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            """Callback from Time service events"""
-            if aSvName == 'Seconds':
-                self.evtTime = int( aSvVal )
-                self.timeEvent.set()
+        def _SelectSecs( self, aState, aSecs ):
+            """Seek to the specified time in the track"""
+            secondsEvent = threading.Event()
+            durationEvent = threading.Event()
 
-        # noinspection PyUnusedLocal
-        def _PlaylistEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            """Callback from Playlist service events"""
-            if aSvName == 'TransportState':
-                if aSvVal == 'Stopped':
-                    self.stoppedEvent.set()
-                elif aSvVal == 'Playing':
-                    self.playingEvent.set()
-                elif aSvVal == 'Paused':
-                    self.pausedEvent.set()
-            elif aSvName == 'Id':
-                self.idEvent.set()
-            elif aSvName == 'IdArray' and aSvVal not in [0,'0']:
-                self.idArrayEvent.set()
+            # noinspection PyUnusedLocal
+            def TimeEventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'Seconds':
+                    secondsEvent.set()
+
+            # noinspection PyUnusedLocal
+            def InfoEventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'Duration':
+                    durationEvent.set()
+
+            self.dut.info.AddSubscriber( InfoEventCb )
+            durationEvent.wait( 2 )
+            self.dut.info.RemoveSubscriber( InfoEventCb )
+            self.duration = self.dut.info.duration
+
+            if aState in ['Playing', 'Paused']:
+                if aSecs == '@T':
+                    if self.duration > 12:
+                        self.secs = random.randint( 5, self.duration-12 )
+                    else:
+                        self.log.Warn( self.dev, 'Invalid duration value' )
+                        self.secs = random.randint( 5, 95 )
+                self.dut.time.AddSubscriber( TimeEventCb )
+                secondsEvent.clear()
+                self.dut.playlist.SeekSecondAbsolute( self.secs )
+                tries = 0
+                while self.dut.time.seconds != self.secs and tries < 5:
+                    tries += 1
+                    secondsEvent.wait( 2 )
+                    secondsEvent.clear()
+                self.dut.time.RemoveSubscriber( TimeEventCb )
+
+        def _SetState( self, aState ):
+            """Set the transport state"""
+            stoppedEvent = threading.Event()
+            pausedEvent = threading.Event()
+            playingEvent = threading.Event()
+            start = time.time()
+
+            # noinspection PyUnusedLocal
+            def EventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'TransportState':
+                    if aSvVal == 'Stopped':
+                        stoppedEvent.set()
+                    elif aSvVal == 'Paused':
+                        pausedEvent.set()
+                    elif aSvVal == 'Playing':
+                        playingEvent.set()
+
+            self.dut.playlist.AddSubscriber( EventCb )
+            if aState == 'Stopped':
+                if self.dut.playlist.transportState != 'Stopped':
+                    stoppedEvent.clear()
+                    self.dut.playlist.Stop()
+                    stoppedEvent.wait( 5 )
+            elif aState == 'Paused':
+                if self.dut.playlist.transportState != 'Paused':
+                    pausedEvent.clear()
+                    self.dut.playlist.Pause()
+                    pausedEvent.wait( 5 )
+            elif aState == 'Playing':
+                if self.dut.playlist.transportState != 'Playing':
+                    playingEvent.clear()
+                    self.dut.playlist.Play()
+                    playingEvent.wait( 5 )
+            self.dut.playlist.RemoveSubscriber( EventCb )
+            self.state = aState
+            self.secs += int( round( time.time()-start ))   # adjust for elapsed playback time
 
 
     class Stimulus:
         """Configuration subclass for stimulus info and invokation"""
 
-        def __init__( self, aAction, aMinVal, aMaxVal, aError, aPrecon, aTimer1, aTimer2 ):
+        def __init__( self, aConf, aDut, aDev, aLog, aPre ):
             """Initialise class data"""
-            self.action = aAction
-            self.precon = aPrecon
-            self.minVal = aMinVal
-            self.maxVal = aMaxVal
-            self.err    = aError
-            self.timer1 = aTimer1
-            self.timer2 = aTimer2
+            self.testId = aConf[0]
+            self.conf   = aConf
+            self.dut    = aDut
+            self.dev    = aDev
+            self.log    = aLog
+            self.precon = aPre
             self.val    = 0
-            self.timeEvent= threading.Event()
 
-        def Invoke( self, aDut ):
+        def Invoke( self ):
             """Invoke stimulus on specified renderer"""
-            aDut.time.AddSubscriber( self._timeEventCb )
-            if self.action in ['Play','Pause','Stop','Next','Previous']:
-                getattr( aDut.playlist, self.action )()
-            else:
-                mini = self._SubstMacros( self.minVal, aDut )
-                maxi = self._SubstMacros( self.maxVal, aDut )
-                self.precon.log.Info( self.precon.dev, 'MIN %s  MAX %s' % (str(mini), str(maxi)))
+            success = True
+            action  = self.conf[6]
+            minVal  = self.conf[7]
+            maxVal  = self.conf[8]
+            expErr  = self.conf[9]
 
+            if action in ['Play','Pause','Stop','Next','Previous']:
+                getattr( self.dut.playlist, action )()
+            else:
+                mini = self._SubstMacros( minVal )
+                maxi = self._SubstMacros( maxVal )
+                self.log.Debug( 'MIN %s  MAX %s' % (str(mini), str(maxi)))
                 if mini == '':
-                    self.val = random.randint( maxi-100, maxi )
+                    self.val = random.randint( maxi-99, maxi )
                 elif maxi == '':
-                    self.val = random.randint( mini, mini+100 )
+                    self.val = random.randint( mini, mini+99 )
                 elif mini == maxi:
                     self.val = mini
                 else:
                     self.val = random.randint( mini, maxi )
-                err = getattr( aDut.playlist, self.action )( self.val, aReturnErr=True )
-                if err:
-                    if self.err:
-                        devErr = int( err.split( ':' )[0] )
-                        self.precon.log.FailUnless( self.precon.dev, devErr==self.err,
-                            '[%d] %d/%d Actual/Expected UPnP error code' % (self.precon.id, devErr, self.err) )
+
+                errRet = getattr( self.dut.playlist, action )( self.val, aReturnErr=True )
+                if errRet:
+                    if expErr:
+                        devErr = int( errRet.split( ':' )[0] )
+                        msg = '[%d] %d/%d Actual/Expected UPnP error code' % (self.testId, devErr, expErr)
+                        if devErr != expErr:
+                            success = False
+                            self.log.Fail( self.dev, msg )
+                        else:
+                            self.log.Pass( self.dev, msg )
                     else:
-                        self.precon.log.Fail( self.precon.dev, '[%d] %s' % (self.precon.id, err) )
+                        success = False
+                        self.log.Fail( self.dev, '[%d] %s' % (self.testId, errRet) )
                 else:
-                    if self.err:
-                        self.precon.log.Fail( self.precon.dev,
-                            '[%d] Expected UPnP error code %d, got none' % (self.precon.id, self.err) )
-            self.timer1.start()
-            self.timer2.start()
+                    if expErr:
+                        success = False
+                        self.log.Fail( self.dev,
+                            '[%d] Expected UPnP error code %d, got none' % (self.testId, expErr) )
+
+            self._WaitForTimeEvent()
+            msg = '[%d] Invoked %s with value %d' % (self.testId, action, self.val)
+            self.log.FailUnless( self.dev, success, msg )
+            return success
+
+        def _WaitForTimeEvent( self ):
+            """Waits for playback to start (or timeout)"""
+            timeEvent = threading.Event()
+
+            # noinspection PyUnusedLocal
+            def EventCb( aService, aSvName, aSvVal, aSvSeq ):
+                timeEvent.set()
+
             # either DS will start playback in which case need to wait for event
             # before starting outcome timers, or will not be playing in which
             # case wait will timeout without any affect on the result (#2527)
             time.sleep( 0.5 )
-            self.timeEvent.clear()
-            self.timeEvent.wait( 5 )
-            aDut.time.RemoveSubscriber( self._timeEventCb )
+            self.dut.time.AddSubscriber( EventCb )
+            timeEvent.clear()
+            timeEvent.wait( 5 )
+            self.dut.time.RemoveSubscriber( EventCb )
 
         # noinspection PyMethodMayBeStatic, PyUnusedLocal
-        def _SubstMacros( self, aArg, aDut ):
+        def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values. Some of these are
                NOT KNOWN at __init__ time, so call the substs at Invoke() time
                Valid macros are:
@@ -242,7 +287,7 @@ class Config:
                 @T - current track secs
             """
             try:
-                aArg = aArg.replace( '@D', 'aDut.info.duration' )
+                aArg = aArg.replace( '@D', 'self.precon.duration' )
                 aArg = aArg.replace( '@m', 'self.precon.track' )
                 aArg = aArg.replace( '@N', 'self.precon.plLen' )
                 aArg = aArg.replace( '@T', 'self.precon.secs' )
@@ -251,149 +296,155 @@ class Config:
                 subst = aArg
             return subst
 
-        # noinspection PyUnusedLocal
-        def _timeEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
-            """Callback from Time service events"""
-            self.timeEvent.set()
-
 
     class Outcome:
         """Configuration subclass for outcome checking"""
 
-        def __init__( self, aId, aState, aTrack, aSecs, aPrecon, aStim, aDelay1, aDelay2 ):
+        def __init__( self, aConf, aDut, aDev, aLog, aPre, aStim ):
             """Initialise class data"""
-            self.id     = aId
-            self.state  = aState
-            self.track  = aTrack
-            self.secs   = aSecs
-            self.precon = aPrecon
+            self.testId = aConf[0]
+            self.conf   = aConf
+            self.dut    = aDut
+            self.dev    = aDev
+            self.log    = aLog
+            self.precon = aPre
             self.stim   = aStim
-            self.delay1 = aDelay1
-            self.delay2 = aDelay2
 
-        def Check( self, aLog, aDut, aDev ):
+        def Check( self ):
             """Check outcome on specified renderer"""
-            expState = self.state
-            expTrack = int( self._SubstMacros( self.track ))
-            expSecs  = int( self._SubstMacros( self.secs ))
+
+            def t1Cb():
+                delay1.set()
+
+            def t2Cb():
+                delay2.set()
+
+            delay1 = threading.Event()
+            delay2 = threading.Event()
+            timer1 = LogThread.Timer( kDelay1, t1Cb )
+            timer2 = LogThread.Timer( kDelay2, t2Cb )
+            timer1.start()
+            timer2.start()
+
+            expState = self.conf[10]
+            expTrack = int( self._SubstMacros( self.conf[11] ))
+            expSecs  = int( self._SubstMacros( self.conf[12] ))
 
             # wait a few secs (from time event/timeout) and check values
-            self.delay1.wait()
+            delay1.wait()
             if expState == 'Playing':
                 expSecs += kDelay1
                 (expState, expTrack, expSecs) = \
                     self._RecalcExpected( expState, expTrack, expSecs )
-            self._CheckValues( aLog, aDut, aDev, expState, expTrack, expSecs, kDelay1 )
+            self._CheckValues( expState, expTrack, expSecs, kDelay1 )
 
             # wait a few more secs and check that values are changing correctly
             # (if Playing) or not changing as expected (if Paused, Stopped)
-            self.delay2.wait()
+            delay2.wait()
             if expState == 'Playing':
                 expSecs += kDelay2-kDelay1
                 (expState, expTrack, expSecs) = \
                     self._RecalcExpected( expState, expTrack, expSecs )
-            self._CheckValues(
-                aLog, aDut, aDev, expState, expTrack, expSecs, kDelay2 )
+            self._CheckValues( expState, expTrack, expSecs, kDelay2 )
 
-        def _CheckValues( self, aLog, aDut, aDev, aState, aTrack, aSecs, aAfter ):
+        def _CheckValues( self, aState, aTrack, aSecs, aAfter ):
             """Check values from DS are as expected"""
-
-            aLog.Info( '' )
-            evtTrack = aDut.playlist.PlaylistIndex( aDut.playlist.id )
-            aLog.FailUnless( aDev, evtTrack==aTrack,
+            self.log.Info( '', '' )
+            evtTrack = self.dut.playlist.PlaylistIndex( self.dut.playlist.id )
+            self.log.FailUnless( self.dev, evtTrack==aTrack,
                 '[%d] (%d/%d) Actual/Expected EVENTED track index %ds after invoke' %
-                (self.id, evtTrack, aTrack, aAfter) )
+                (self.testId, evtTrack, aTrack, aAfter) )
 
-            evtState = aDut.playlist.transportState
-            aLog.FailUnless( aDev, evtState==aState,
+            evtState = self.dut.playlist.transportState
+            self.log.FailUnless( self.dev, evtState==aState,
                 '[%d] (%s/%s) Actual/Expected EVENTED transport state %ds after invoke' %
-                (self.id, evtState, aState, aAfter) )
+                (self.testId, evtState, aState, aAfter) )
 
-            pollState = aDut.playlist.polledTransportState
-            aLog.FailUnless( aDev, pollState==aState,
+            pollState = self.dut.playlist.polledTransportState
+            self.log.FailUnless( self.dev, pollState==aState,
                 '[%d] (%s/%s) Actual/Expected POLLED transport state %ds after invoke' %
-                (self.id, pollState, aState, aAfter) )
+                (self.testId, pollState, aState, aAfter) )
 
-            evtSecs = aDut.time.seconds
-            aLog.CheckLimits( aDev, 'GELE', evtSecs, aSecs-2, aSecs+1,
-                '[%d] Expected EVENTED track seconds %ds after invoke' % (self.id, aAfter) )
+            evtSecs = self.dut.time.seconds
+            self.log.CheckLimits( self.dev, 'GELE', evtSecs, aSecs-1, aSecs+1,
+                '[%d] Expected EVENTED track seconds %ds after invoke' % (self.testId, aAfter) )
 
-            pollSecs = aDut.time.polledSeconds
-            aLog.CheckLimits( aDev, 'GELE', pollSecs, aSecs-2, aSecs+1,
-                '[%d] Expected POLLED track seconds %ds after invoke' % (self.id, aAfter) )
+            pollSecs = self.dut.time.polledSeconds
+            self.log.CheckLimits( self.dev, 'GELE', pollSecs, aSecs-2, aSecs+1,
+                '[%d] Expected POLLED track seconds %ds after invoke' % (self.testId, aAfter) )
 
-            pollBitDepth = aDut.info.polledBitDepth
-            evtBitDepth = aDut.info.bitDepth
-            aLog.FailUnless( aDev, pollBitDepth==evtBitDepth,
+            pollBitDepth = self.dut.info.polledBitDepth
+            evtBitDepth = self.dut.info.bitDepth
+            self.log.FailUnless( self.dev, pollBitDepth==evtBitDepth,
                 '[%d] (%s/%s) Polled/Evented bit depth %ds after invoke' %
-                (self.id, pollBitDepth, evtBitDepth, aAfter) )
+                (self.testId, pollBitDepth, evtBitDepth, aAfter) )
 
-            pollBitRate = aDut.info.polledBitRate
-            evtBitRate = aDut.info.bitRate
-            aLog.FailUnless( aDev, pollBitRate==evtBitRate,
+            pollBitRate = self.dut.info.polledBitRate
+            evtBitRate = self.dut.info.bitRate
+            self.log.FailUnless( self.dev, pollBitRate==evtBitRate,
                 '[%d] (%s/%s) Polled/Evented bit rate %ds after invoke' %
-                (self.id, pollBitRate, evtBitRate, aAfter) )
+                (self.testId, pollBitRate, evtBitRate, aAfter) )
 
-            pollCodecName = aDut.info.polledCodecName
-            evtCodecName = aDut.info.codecName
-            aLog.FailUnless( aDev, pollCodecName==evtCodecName,
+            pollCodecName = self.dut.info.polledCodecName
+            evtCodecName = self.dut.info.codecName
+            self.log.FailUnless( self.dev, pollCodecName==evtCodecName,
                 '[%d] (%s/%s) Polled/Evented codec name %ds after invoke' %
-                (self.id, pollCodecName, evtCodecName, aAfter) )
+                (self.testId, pollCodecName, evtCodecName, aAfter) )
 
-            pollDetailsCount = aDut.info.polledDetailsCount
-            evtDetailsCount = aDut.info.detailsCount
-            aLog.FailUnless( aDev, pollDetailsCount==evtDetailsCount,
+            pollDetailsCount = self.dut.info.polledDetailsCount
+            evtDetailsCount = self.dut.info.detailsCount
+            self.log.FailUnless( self.dev, pollDetailsCount==evtDetailsCount,
                 '[%d] (%s/%s) Polled/Evented details count %ds after invoke' %
-                (self.id, pollDetailsCount, evtDetailsCount, aAfter) )
+                (self.testId, pollDetailsCount, evtDetailsCount, aAfter) )
 
-            pollDuration = aDut.info.polledDuration
-            evtDuration = aDut.info.duration
-            aLog.FailUnless( aDev, pollDuration==evtDuration,
+            pollDuration = self.dut.info.polledDuration
+            evtDuration = self.dut.info.duration
+            self.log.FailUnless( self.dev, pollDuration==evtDuration,
                 '[%d] (%s/%s) Polled/Evented duration %ds after invoke' %
-                (self.id, pollDuration, evtDuration, aAfter) )
+                (self.testId, pollDuration, evtDuration, aAfter) )
 
-            pollLossless = aDut.info.polledLossless
-            evtLossless = aDut.info.lossless
-            aLog.FailUnless( aDev, pollLossless==evtLossless,
+            pollLossless = self.dut.info.polledLossless
+            evtLossless = self.dut.info.lossless
+            self.log.FailUnless( self.dev, pollLossless==evtLossless,
                 '[%d] (%s/%s) Polled/Evented lossless %ds after invoke' %
-                (self.id, pollLossless, evtLossless, aAfter) )
+                (self.testId, pollLossless, evtLossless, aAfter) )
 
-            pollMetadata = aDut.info.polledMetadata
-            evtMetadata = aDut.info.metadata
-            aLog.FailUnless( aDev, pollMetadata==evtMetadata,
+            pollMetadata = self.dut.info.polledMetadata
+            evtMetadata = self.dut.info.metadata
+            self.log.FailUnless( self.dev, pollMetadata==evtMetadata,
                 '[%d] (%s/%s) Polled/Evented metadata %ds after invoke' %
-                (self.id, pollMetadata, evtMetadata, aAfter) )
+                (self.testId, pollMetadata, evtMetadata, aAfter) )
 
-            pollMetatext = aDut.info.polledMetatext
-            evtMetatext = aDut.info.metatext
-            aLog.FailUnless( aDev, pollMetatext==evtMetatext,
+            pollMetatext = self.dut.info.polledMetatext
+            evtMetatext = self.dut.info.metatext
+            self.log.FailUnless( self.dev, pollMetatext==evtMetatext,
                 '[%d] (%s/%s) Polled/Evented metatext %ds after invoke' %
-                (self.id, pollMetatext, evtMetatext, aAfter) )
+                (self.testId, pollMetatext, evtMetatext, aAfter) )
 
-            pollMetatextCount = aDut.info.polledMetatextCount
-            evtMetatextCount = aDut.info.metatextCount
-            aLog.FailUnless( aDev, pollMetatextCount==evtMetatextCount,
+            pollMetatextCount = self.dut.info.polledMetatextCount
+            evtMetatextCount = self.dut.info.metatextCount
+            self.log.FailUnless( self.dev, pollMetatextCount==evtMetatextCount,
                 '[%d] (%s/%s) Polled/Evented metatext count %ds after invoke' %
-                (self.id, pollMetatextCount, evtMetatextCount, aAfter) )
+                (self.testId, pollMetatextCount, evtMetatextCount, aAfter) )
 
-            pollSampleRate = aDut.info.polledSampleRate
-            evtSampleRate = aDut.info.sampleRate
-            aLog.FailUnless( aDev, pollSampleRate==evtSampleRate,
+            pollSampleRate = self.dut.info.polledSampleRate
+            evtSampleRate = self.dut.info.sampleRate
+            self.log.FailUnless( self.dev, pollSampleRate==evtSampleRate,
                 '[%d] (%s/%s) Polled/Evented sample rate %ds after invoke' %
-                (self.id, pollSampleRate, evtSampleRate, aAfter) )
+                (self.testId, pollSampleRate, evtSampleRate, aAfter) )
 
-            pollTrackCount = aDut.info.polledTrackCount
-            evtTrackCount = aDut.info.trackCount
-            aLog.FailUnless( aDev, pollTrackCount==evtTrackCount,
+            pollTrackCount = self.dut.info.polledTrackCount
+            evtTrackCount = self.dut.info.trackCount
+            self.log.FailUnless( self.dev, pollTrackCount==evtTrackCount,
                 '[%d] (%s/%s) Polled/Evented track count %ds after invoke' %
-                (self.id, pollTrackCount, evtTrackCount, aAfter) )
+                (self.testId, pollTrackCount, evtTrackCount, aAfter) )
 
-            pollUri = aDut.info.polledUri
-            evtUri = aDut.info.uri
-            aLog.FailUnless( aDev, pollUri==evtUri,
+            pollUri = self.dut.info.polledUri
+            evtUri = self.dut.info.uri
+            self.log.FailUnless( self.dev, pollUri==evtUri,
                 '[%d] (%s/%s) Polled/Evented URI %ds after invoke' %
-                (self.id, pollUri, evtUri, aAfter) )
-            aLog.Info( '' )
+                (self.testId, pollUri, evtUri, aAfter) )
+            self.log.Info( '', '' )
 
         def _RecalcExpected( self, aState, aTrack, aSecs ):
             """Recalculate expected values after playback over time"""
@@ -423,9 +474,9 @@ class Config:
                 @y - current track secs
             """
             try:
-                aArg = aArg.replace( '@D', 'aDut.info.duration' )
+                aArg = aArg.replace( '@D', 'self.precon.duration' )
                 aArg = aArg.replace( '@N', 'self.precon.plLen' )
-                aArg = aArg.replace( '@m', 'self.precon.track' )
+                aArg = aArg.replace( '@m', 'self.precon.index' )
                 aArg = aArg.replace( '@T', 'self.precon.secs' )
                 aArg = aArg.replace( '@x', 'self.stim.val' )
                 aArg = aArg.replace( '@y', 'self.stim.val' )
@@ -437,36 +488,23 @@ class Config:
 
     def __init__( self, aLog, aDev, aDut, aConf, aTracks ):
         """Initialise class (and sub-class) data"""
-        self.log    = aLog
-        self.id     = aConf[0]
-        self.dut    = aDut
-        self.dev    = aDev
-        self.delay1 = threading.Event()
-        self.delay2 = threading.Event()
-        timer1      = LogThread.Timer( kDelay1, self.__t1Cb )
-        timer2      = LogThread.Timer( kDelay2, self.__t2Cb )
+        self.conf   = aConf
+        self.tracks = aTracks
+        self.testId = aConf[0]
 
-        self.pre  = self.Precon( self.id, aConf[1], aConf[2], aConf[3],
-                                 aConf[4], aConf[5], aTracks, self.log, aDev )
-        self.stim = self.Stimulus( aConf[6], aConf[7], aConf[8], aConf[9], self.pre,
-                                   timer1, timer2 )
-        self.out  = self.Outcome( self.id, aConf[10], aConf[11], aConf[12],
-                                  self.pre, self.stim, self.delay1, self.delay2 )
+        self.pre  = self.Precon( aConf, aDut, aDev, aLog )
+        self.stim = self.Stimulus( aConf, aDut, aDev, aLog, self.pre )
+        self.out  = self.Outcome( aConf, aDut, aDev, aLog, self.pre, self.stim )
 
     def Setup( self ):
-        self.pre.Setup( self.dut )
+        #self.pre.Setup( self.dut )
+        return self.pre.Setup( self.tracks )
 
     def InvokeStimulus( self ):
-        self.stim.Invoke( self.dut )
+        return self.stim.Invoke()
 
     def CheckOutcome( self ):
-        self.out.Check( self.log, self.dut, self.dev )
-
-    def __t1Cb( self ):
-        self.delay1.set()
-
-    def __t2Cb( self ):
-        self.delay2.set()
+        self.out.Check()
 
 
 class TestPlaylistPlayback( BASE.BaseTest ):
@@ -525,11 +563,12 @@ class TestPlaylistPlayback( BASE.BaseTest ):
             numConfig += 1
             self.log.Info( '' )
             self.log.Info( '', 'Testing config ID# %d (%d of %d)' % \
-                           (config.id, numConfig, numConfigs) )
+                           (config.testId, numConfig, numConfigs) )
             self.log.Info( '' )
-            config.Setup()
-            config.InvokeStimulus()
-            config.CheckOutcome()
+            x =  config.Setup()
+            if x:
+                if config.InvokeStimulus():
+                    config.CheckOutcome()
 
         # stop playback
         self.dut.playlist.Stop()
@@ -628,13 +667,13 @@ configTable = \
 
     (240, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',          '0',     '0'),
     (241, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',          '0',    '@y'),
-    (242, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',        '',      '-1',   0, 'Playing',          '0',     '0'),
+    (242, 'Stopped', '@N',    '0',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',          '0',     '0'),
     (243, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',         '@m',     '0'),
     (244, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',         '@m',    '@y'),
-    (245, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',        '',      '-1',   0, 'Playing',         '@m',     '0'),
+    (245, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',         '@m',     '0'),
     (246, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',       '0',       '0',   0, 'Playing',       '@N-1',     '0'),
     (247, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',       '1',        '',   0, 'Playing',       '@N-1',    '@y'),
-    (248, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',        '',      '-1',   0, 'Playing',       '@N-1',     '0'),
+    (248, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekSecondRelative',     '-99',      '-1',   0, 'Playing',       '@N-1',     '0'),
 
     (250, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,       '0',       '0',   0, 'Playing',          '0',     '0'),
     (251, 'Stopped', '@N',    '0',  '0', 'off', 'SeekIndex'         ,       '1',    '@N-2',   0, 'Playing',         '@x',     '0'),
@@ -662,37 +701,38 @@ configTable = \
     (280, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
     (281, 'Stopped', '@N', '@N-1',  '0',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Stopped',       '@N-1',     '0'),
 
-    # (290, 'Stopped', '@N',   '@p',  '0', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@p',     '0'),
-    # (291, 'Stopped', '@N',   '@p',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',         '@p',     '0'),
-    # (292, 'Stopped', '@N',   '@p',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (293, 'Stopped', '@N',   '@p',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',         '@r',     '0'),
-    # (294, 'Stopped', '@N',   '@p',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',         '@p',     '0'),
-    # (295, 'Stopped', '@N',   '@q',  '0', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@q',     '0'),
-    # (296, 'Stopped', '@N',   '@q',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',         '@p',     '0'),
-    # (297, 'Stopped', '@N',   '@q',  '0', 'off', 'SeekId'                 '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (298, 'Stopped', '@N',   '@q',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',         '@r',     '0'),
-    # (299, 'Stopped', '@N',   '@q',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',         '@m',     '0'),
-    # (300, 'Stopped', '@N',   '@r',  '0', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@r',     '0'),
-    # (301, 'Stopped', '@N',   '@r',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',         '@p',     '0'),
-    # (302, 'Stopped', '@N',   '@r',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (303, 'Stopped', '@N',   '@r',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',         '@r',     '0'),
-    # (304, 'Stopped', '@N',   '@r',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',         '@r',     '0'),
+    # replace pqr in stim with old stuff ... or maybe not - makes calcs difficult
+    # (290, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',          '0',     '0'),
+    # (291, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (292, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (293, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (294, 'Stopped', '@N',    '0',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',          '0',     '0'),
+    # (295, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@m',     '0'),
+    # (296, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (297, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'                 '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (298, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (299, 'Stopped', '@N',   '@m',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',         '@m',     '0'),
+    # (300, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',       '@N-1',     '0'),
+    # (301, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (302, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (303, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (304, 'Stopped', '@N', '@N-1',  '0', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',       '@N-1',     '0'),
     #
-    # (310, 'Stopped', '@N',   '@p',  '0',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@p',     '0'),
-    # (311, 'Stopped', '@N',   '@p',  '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (312, 'Stopped', '@N',   '@p',  '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (313, 'Stopped', '@N',   '@p',  '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (314, 'Stopped', '@N',   '@p',  '0',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',          '0',     '0'),
-    # (315, 'Stopped', '@N',   '@q',  '0',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@q',     '0'),
-    # (316, 'Stopped', '@N',   '@q',  '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (317, 'Stopped', '@N',   '@q',  '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (318, 'Stopped', '@N',   '@q',  '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (319, 'Stopped', '@N',   '@q',  '0',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',         '@m',     '0'),
-    # (320, 'Stopped', '@N',   '@r',  '0',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@r',     '0'),
-    # (321, 'Stopped', '@N',   '@r',  '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (322, 'Stopped', '@N',   '@r',  '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (323, 'Stopped', '@N',   '@r',  '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (324, 'Stopped', '@N',   '@r',  '0',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',       '@N-1',     '0'),
+    # (310, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',          '0',     '0'),
+    # (311, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (312, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (313, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (314, 'Stopped', '@N',    '0',  '0',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',          '0',     '0'),
+    # (315, 'Stopped', '@N',    '@m,  '0',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',         '@m',     '0'),
+    # (316, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (317, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (318, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (319, 'Stopped', '@N',    '@m', '0',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',         '@m',     '0'),
+    # (320, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Stopped',        @N-1',     '0'),
+    # (321, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (322, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (323, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (324, 'Stopped', '@N',  '@N-1', '0',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Stopped',       '@N-1',     '0'),
 
     (330, 'Stopped', '@N',    '0',  '0', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
     (331, 'Stopped', '@N',    '0',  '0', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',          '0',     '0'),
@@ -825,37 +865,37 @@ configTable = \
     (560, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
     (561, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Playing',       '@N-1',    '@T'),
 
-    # (570, 'Playing', '@N',   '@p', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@p',    '@T'),
-    # (571, 'Playing', '@N',   '@p', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (572, 'Playing', '@N',   '@p', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (573, 'Playing', '@N',   '@p', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (574, 'Playing', '@N',   '@p', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@p',    '@T'),
-    # (575, 'Playing', '@N',   '@q', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@q',    '@T'),
-    # (576, 'Playing', '@N',   '@q', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (577, 'Playing', '@N',   '@q', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (578, 'Playing', '@N',   '@q', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (579, 'Playing', '@N',   '@q', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@m',    '@T'),
-    # (580, 'Playing', '@N',   '@r', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@r',    '@T'),
-    # (581, 'Playing', '@N',   '@r', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (582, 'Playing', '@N',   '@r', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (583, 'Playing', '@N',   '@r', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (584, 'Playing', '@N',   '@r', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',       '@N-1',    '@T'),
+    # (570, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',          '0',    '@T'),
+    # (571, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (572, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (573, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (574, 'Playing', '@N',    '0', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',          '0',    '@T'),
+    # (575, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@m',    '@T'),
+    # (576, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (577, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (578, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (579, 'Playing', '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@m',    '@T'),
+    # (580, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',       '@N-1',    '@T'),
+    # (581, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (582, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (583, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (584, 'Playing', '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',       '@N-1',    '@T'),
     #
-    # (590, 'Playing', '@N',   '@p', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@p',    '@T'),
-    # (591, 'Playing', '@N',   '@p', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (592, 'Playing', '@N',   '@p', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (593, 'Playing', '@N',   '@p', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (594, 'Playing', '@N',   '@p', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@p',    '@T'),
-    # (595, 'Playing', '@N',   '@q', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@q',    '@T'),
-    # (596, 'Playing', '@N',   '@q', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (597, 'Playing', '@N',   '@q', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (598, 'Playing', '@N',   '@q', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (599, 'Playing', '@N',   '@q', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@q',    '@T'),
-    # (600, 'Playing', '@N',   '@r', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@r',    '@T'),
-    # (601, 'Playing', '@N',   '@r', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (602, 'Playing', '@N',   '@r', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (603, 'Playing', '@N',   '@r', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (604, 'Playing', '@N',   '@r', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@r',    '@T'),
+    # (590, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',          '0',    '@T'),
+    # (591, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (592, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (593, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (594, 'Playing', '@N',    '0', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',          '0',    '@T'),
+    # (595, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',         '@m',    '@T'),
+    # (596, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (597, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (598, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (599, 'Playing', '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',         '@m',    '@T'),
+    # (600, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Playing',       '@N-1',    '@T'),
+    # (601, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (602, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (603, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (604, 'Playing', '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Playing',       '@N-1',    '@T'),
 
     (610, 'Playing', '@N',    '0', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
     (611, 'Playing', '@N',    '0', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',         '0',      '0'),
@@ -988,37 +1028,37 @@ configTable = \
     (860, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,    '@N-1',    '@N-1',   0, 'Playing',       '@N-1',     '0'),
     (861, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekIndex'         ,      '@N',        '', 802, 'Paused',        '@N-1',    '@T'),
 
-    # (870, 'Paused' , '@N',   '@p', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@p',    '@T'),
-    # (871, 'Paused' , '@N',   '@p', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (872, 'Paused' , '@N',   '@p', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (873, 'Paused' , '@N',   '@p', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (874, 'Paused' , '@N',   '@p', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@p',    '@T'),
-    # (875, 'Paused' , '@N',   '@q', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@q',    '@T'),
-    # (876, 'Paused' , '@N',   '@q', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (877, 'Paused' , '@N',   '@q', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (878, 'Paused' , '@N',   '@q', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (879, 'Paused' , '@N',   '@q', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@q',    '@T'),
-    # (880, 'Paused' , '@N',   '@r', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@r',    '@T'),
-    # (881, 'Paused' , '@N',   '@r', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (882, 'Paused' , '@N',   '@r', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (883, 'Paused' , '@N',   '@r', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (884, 'Paused' , '@N',   '@r', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@r',    '@T'),
+    # (870, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',           '0',    '@T'),
+    # (871, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (872, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (873, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (874, 'Paused' , '@N',    '0', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',           '0',    '@T'),
+    # (875, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@m',    '@T'),
+    # (876, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (877, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (878, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (879, 'Paused' , '@N',   '@m', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@m',    '@T'),
+    # (880, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',        '@N-1',    '@T'),
+    # (881, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (882, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (883, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (884, 'Paused' , '@N', '@N-1', '@T', 'off', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',        '@N-1',    '@T'),
     #
-    # (890, 'Paused' , '@N',   '@p', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@p',    '@T'),
-    # (891, 'Paused' , '@N',   '@p', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (892, 'Paused' , '@N',   '@p', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (893, 'Paused' , '@N',   '@p', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (894, 'Paused' , '@N',   '@p', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@p',    '@T'),
-    # (895, 'Paused' , '@N',   '@q', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@q',    '@T'),
-    # (896, 'Paused' , '@N',   '@q', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (897, 'Paused' , '@N',   '@q', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (898, 'Paused' , '@N',   '@q', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (899, 'Paused' , '@N',   '@q', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@q',    '@T'),
-    # (900, 'Paused' , '@N',   '@r', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@r',    '@T'),
-    # (901, 'Paused' , '@N',   '@r', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
-    # (902, 'Paused' , '@N',   '@r', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
-    # (903, 'Paused' , '@N',   '@r', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
-    # (904, 'Paused' , '@N',   '@r', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@r',    '@T'),
+    # (890, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',           '0',    '@T'),
+    # (891, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (892, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (893, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (894, 'Paused' , '@N',    '0', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',           '0',    '@T'),
+    # (895, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',          '@m',    '@T'),
+    # (896, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (897, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (898, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (899, 'Paused' , '@N',   '@m', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',          '@m',    '@T'),
+    # (900, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,        '',    '@p-1', 802, 'Paused',         @N-1',    '@T'),
+    # (901, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@p',      '@p',   0, 'Playing',          '0',     '0'),
+    # (902, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@p+1',    '@r-1',   0, 'Playing',         '@x',     '0'),
+    # (903, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,      '@r',      '@r',   0, 'Playing',       '@N-1',     '0'),
+    # (904, 'Paused' , '@N', '@N-1', '@T',  'on', 'SeekId'            ,    '@r+1',        '', 802, 'Paused',        '@N-1',    '@T'),
 
     (910, 'Paused' , '@N',    '0', '@T', 'off', 'Next'              ,        '',        '',   0, 'Playing',          '1',     '0'),
     (911, 'Paused' , '@N',    '0', '@T', 'off', 'Previous'          ,        '',        '',   0, 'Stopped',          '0',     '0'),
