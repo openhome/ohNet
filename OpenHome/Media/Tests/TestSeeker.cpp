@@ -92,6 +92,7 @@ private:
     void TestNewTrackCancelsRampDownAndSeek();
     void TestNewTrackCancelsRampUp();
     void TestOverlappingSeekIgnored();
+    void TestSeekForwardFailStillSeeks();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -101,8 +102,10 @@ private:
     TBool iRampingDown;
     TBool iRampingUp;
     TBool iSeekable;
+    TBool iGenerateAudio;
     TUint iTrackId;
     TUint iStreamId;
+    TUint iMsgAudioSize;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
@@ -139,6 +142,7 @@ SuiteSeeker::SuiteSeeker()
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestNewTrackCancelsRampDownAndSeek), "TestNewTrackCancelsRampDownAndSeek");
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestNewTrackCancelsRampUp), "TestNewTrackCancelsRampUp");
     AddTest(MakeFunctor(*this, &SuiteSeeker::TestOverlappingSeekIgnored), "TestOverlappingSeekIgnored");
+    AddTest(MakeFunctor(*this, &SuiteSeeker::TestSeekForwardFailStillSeeks), "TestSeekForwardFailStillSeeks");
 }
 
 SuiteSeeker::~SuiteSeeker()
@@ -153,9 +157,11 @@ void SuiteSeeker::Setup()
     iSeekResponseThread = new ThreadFunctor("SeekResponse", MakeFunctor(*this, &SuiteSeeker::SeekResponseThread));
     iSeekResponseThread->Start();
     iTrackId = iStreamId = UINT_MAX;
+    iMsgAudioSize = 0;
     iTrackOffset = 0;
     iRampingDown = iRampingUp = false;
     iSeekable = true;
+    iGenerateAudio = false;
     iLastSubsample = 0xffffff;
     iNextTrackId = 1;
     iNextStreamId = 1;
@@ -181,6 +187,9 @@ void SuiteSeeker::TearDown()
 
 Msg* SuiteSeeker::Pull()
 {
+    if (iGenerateAudio) {
+        return CreateAudio();
+    }
     ASSERT(iPendingMsgs.size() > 0);
     Msg* msg = iPendingMsgs.front();
     iPendingMsgs.pop_front();
@@ -393,6 +402,7 @@ Msg* SuiteSeeker::CreateAudio()
     (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
     MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, EMediaDataLittleEndian, iTrackOffset);
+    iMsgAudioSize = audio->Jiffies();
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -692,6 +702,33 @@ void SuiteSeeker::TestOverlappingSeekIgnored()
     TEST(iSeekSeconds == kExpectedSeekSeconds);
 }
 
+void SuiteSeeker::TestSeekForwardFailStillSeeks()
+{
+    iPendingMsgs.push_back(CreateTrack());
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    iPendingMsgs.push_back(CreateAudio());
+    for (TUint i=0; i<4; i++) {
+        PullNext();
+    }
+
+    iNextSeekResponse = MsgFlush::kIdInvalid;
+    static const TUint kSeekSecs = 5;
+    TEST(iSeeker->Seek(iTrackId, iStreamId, kSeekSecs, true));
+    iRampingDown = true;
+    iJiffies = 0;
+    while (iRampingDown) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iSeeker->iState == Seeker::EFlushing);
+    PullNext(EMsgHalt);
+    iGenerateAudio = true;
+    iRampingUp = true; // not true yet but will be for the next msg we pull
+    PullNext(EMsgAudioPcm);
+    TEST(iTrackOffset >= kSeekSecs * Jiffies::kPerSecond);
+    TEST(iTrackOffset < (kSeekSecs * Jiffies::kPerSecond) + iMsgAudioSize);
+}
 
 
 void TestSeeker()

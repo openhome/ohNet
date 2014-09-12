@@ -34,6 +34,7 @@ TBool Seeker::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBoo
     }
 
     iSeekSeconds = aSecondsAbsolute;
+    iFlushEndJiffies = 0;
 
     if (iState == ERampingUp) {
         iState = ERampingDown;
@@ -130,6 +131,9 @@ Msg* Seeker::ProcessMsg(MsgWait* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
+    iStreamPosJiffies = Jiffies::JiffiesPerSample(streamInfo.SampleRate());
+    iStreamPosJiffies *= streamInfo.SampleStart();
     return aMsg;
 }
 
@@ -156,15 +160,14 @@ Msg* Seeker::ProcessMsg(MsgQuit* aMsg)
 
 void Seeker::NotifySeekComplete(TUint aHandle, TUint aFlushId)
 {
+    AutoMutex a(iLock);
     if (aHandle != iSeekHandle) {
         return;
     }
     ASSERT(iState == EFlushing);
     iTargetFlushId = aFlushId;
     if (iTargetFlushId == MsgFlush::kIdInvalid) {
-        iState = ERampingUp;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kMin;
+        HandleSeekFail();
     }
 }
 
@@ -174,9 +177,7 @@ void Seeker::DoSeek()
                            could be called from another thread before StartSeek returns. */
     iSeeker.StartSeek(iTrackId, iStreamId, iSeekSeconds, *this, iSeekHandle);
     if (iSeekHandle == ISeeker::kHandleError) {
-        iState = ERampingUp;
-        iRemainingRampSize = iRampDuration;
-        iCurrentRampValue = Ramp::kMin;
+        HandleSeekFail();
     }
     else {
         while (!iQueue.IsEmpty()) {
@@ -198,6 +199,23 @@ Msg* Seeker::ProcessFlushable(Msg* aMsg)
 
 Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
 {
+    iStreamPosJiffies += aMsg->Jiffies();
+    if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
+        ASSERT(iState == EFlushing);
+        const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
+        MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
+        if (split != NULL) {
+            iQueue.EnqueueAtHead(split);
+        }
+        iStreamPosJiffies -= splitJiffies;
+        ASSERT(iStreamPosJiffies == iFlushEndJiffies);
+    }
+    if (iFlushEndJiffies == iStreamPosJiffies) {
+        ASSERT(iState == EFlushing);
+        iState = ERampingUp;
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kMin;
+    }
     if (iState == ERampingDown || iState == ERampingUp) {
         MsgAudio* split;
         if (aMsg->Jiffies() > iRemainingRampSize) {
@@ -233,4 +251,22 @@ void Seeker::NewStream()
     iState = ERunning;
     iSeekHandle = ISeeker::kHandleError;
     iStreamIsSeekable = true;
+    iStreamPosJiffies = 0;
+    iFlushEndJiffies = 0;
+}
+
+void Seeker::HandleSeekFail()
+{
+    TUint64 seekJiffies = ((TUint64)iSeekSeconds) * Jiffies::kPerSecond;
+    if (seekJiffies > iStreamPosJiffies) {
+        iFlushEndJiffies = seekJiffies;
+        iState = EFlushing;
+    }
+    else {
+        /* No special treatment of (seekJiffies == iStreamPosJiffies) required.
+           If we happen to be at the precise seek point, we'd just ramp up anyway... */
+        iState = ERampingUp;
+        iRemainingRampSize = iRampDuration;
+        iCurrentRampValue = Ramp::kMin;
+    }
 }

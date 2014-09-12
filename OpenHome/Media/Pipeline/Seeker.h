@@ -51,6 +51,7 @@ private:
     Msg* ProcessFlushable(Msg* aMsg);
     Msg* ProcessAudio(MsgAudio* aMsg);
     void NewStream();
+    void HandleSeekFail();
 private:
     enum EState
     {
@@ -68,6 +69,7 @@ private:
     const TUint iRampDuration;
     TUint iRemainingRampSize;
     TUint iCurrentRampValue;
+    TUint iSampleRate;
     TUint iSeekSeconds;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iSeekHandle;
@@ -75,6 +77,8 @@ private:
     TUint iTrackId;
     TUint iStreamId;
     TBool iStreamIsSeekable;
+    TUint64 iStreamPosJiffies;
+    TUint64 iFlushEndJiffies;
 };
 
 } // namespace Media
