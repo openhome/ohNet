@@ -13,7 +13,7 @@ using namespace OpenHome::Media;
 // StarvationMonitor
 
 StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStarvationMonitorObserver& aObserver,
-                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize)
+                                     TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, TUint aMaxStreamCount)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
@@ -21,6 +21,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iNormalMax(aNormalSize)
     , iStarvationThreshold(aStarvationThreshold)
     , iRampUpSize(aRampUpSize)
+    , iMaxStreamCount(aMaxStreamCount)
     , iLock("STRV")
     , iSemIn("STR1", 0)
     , iSemOut("STR2", 0)
@@ -61,7 +62,7 @@ void StarvationMonitor::Enqueue(Msg* aMsg)
     // we don't deadlock if a single message larger than iNormalMax is queued.
     DoEnqueue(aMsg);
     iLock.Wait();
-    TBool isFull = (iStatus != EBuffering && Jiffies() >= iNormalMax);
+    TBool isFull = (DecodedStreamCount() > iMaxStreamCount || (iStatus != EBuffering && Jiffies() >= iNormalMax));
     if (iStatus == EBuffering && Jiffies() >= iNormalMax) {
         iHaltDelivered = false;
         if (iPlannedHalt) {

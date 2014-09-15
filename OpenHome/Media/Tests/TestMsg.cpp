@@ -283,6 +283,7 @@ public:
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
+       ,EMsgDecodedStream
        ,EMsgMetaText
        ,EMsgHalt
        ,EMsgFlush
@@ -291,13 +292,15 @@ public:
     };
 public:
     TestMsgReservoir();
-    void Enqueue(Msg* aMsg)         { DoEnqueue(aMsg); }
-    Msg* Dequeue()                  { return DoDequeue(); }
-    void EnqueueAtHead(Msg* aMsg)   { MsgReservoir::EnqueueAtHead(aMsg); }
-    TUint Jiffies() const           { return MsgReservoir::Jiffies(); }
-    EMsgType LastIn() const         { return iLastMsgIn; }
-    EMsgType LastOut() const        { return iLastMsgOut; }
-    void SplitNextAudio()           { iSplitNextAudio = true; }
+    void Enqueue(Msg* aMsg)          { DoEnqueue(aMsg); }
+    Msg* Dequeue()                   { return DoDequeue(); }
+    void EnqueueAtHead(Msg* aMsg)    { MsgReservoir::EnqueueAtHead(aMsg); }
+    TUint Jiffies() const            { return MsgReservoir::Jiffies(); }
+    TUint EncodedStreamCount() const { return MsgReservoir::EncodedStreamCount(); }
+    TUint DecodedStreamCount() const { return MsgReservoir::DecodedStreamCount(); }
+    EMsgType LastIn() const          { return iLastMsgIn; }
+    EMsgType LastOut() const         { return iLastMsgOut; }
+    void SplitNextAudio()            { iSplitNextAudio = true; }
 private:
     Msg* ProcessMsgAudioOut(MsgAudio* aMsgAudio);
 private: // from MsgQueueFlushable
@@ -308,6 +311,7 @@ private: // from MsgQueueFlushable
     void ProcessMsgIn(MsgTrack* aMsg);
     void ProcessMsgIn(MsgDelay* aMsg);
     void ProcessMsgIn(MsgEncodedStream* aMsg);
+    void ProcessMsgIn(MsgDecodedStream* aMsg);
     void ProcessMsgIn(MsgMetaText* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgFlush* aMsg);
@@ -320,6 +324,7 @@ private: // from MsgQueueFlushable
     Msg* ProcessMsgOut(MsgTrack* aMsg);
     Msg* ProcessMsgOut(MsgDelay* aMsg);
     Msg* ProcessMsgOut(MsgEncodedStream* aMsg);
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
     Msg* ProcessMsgOut(MsgMetaText* aMsg);
     Msg* ProcessMsgOut(MsgHalt* aMsg);
     Msg* ProcessMsgOut(MsgFlush* aMsg);
@@ -2253,9 +2258,19 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
     msg = iMsgFactory->CreateMsgEncodedStream(Brn("http://1.2.3.4:5"), Brn("metatext"), 0, 0, false, false, NULL);
+    TEST(queue->EncodedStreamCount() == 0);
     queue->Enqueue(msg);
     TEST(queue->Jiffies() == 0);
     TEST(queue->LastIn() == TestMsgReservoir::EMsgEncodedStream);
+    TEST(queue->EncodedStreamCount() == 1);
+    TEST(queue->LastOut() == TestMsgReservoir::ENone);
+
+    msg = iMsgFactory->CreateMsgDecodedStream(3, 128, 16, 44100, 2, Brn("test codec"), 1<<16, 0, true, true, false, NULL);
+    TEST(queue->DecodedStreamCount() == 0);
+    queue->Enqueue(msg);
+    TEST(queue->Jiffies() == 0);
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgDecodedStream);
+    TEST(queue->DecodedStreamCount() == 1);
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
     MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
@@ -2331,9 +2346,19 @@ void SuiteMsgReservoir::Test()
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
+    TEST(queue->EncodedStreamCount() == 1);
     msg = queue->Dequeue();
     TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
     TEST(queue->LastOut() == TestMsgReservoir::EMsgEncodedStream);
+    TEST(queue->EncodedStreamCount() == 0);
+    TEST(queue->Jiffies() == jiffies);
+    msg->RemoveRef();
+
+    TEST(queue->DecodedStreamCount() == 1);
+    msg = queue->Dequeue();
+    TEST(queue->LastIn() == TestMsgReservoir::EMsgHalt);
+    TEST(queue->LastOut() == TestMsgReservoir::EMsgDecodedStream);
+    TEST(queue->DecodedStreamCount() == 0);
     TEST(queue->Jiffies() == jiffies);
     msg->RemoveRef();
 
@@ -2445,6 +2470,11 @@ void TestMsgReservoir::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
     iLastMsgIn = EMsgEncodedStream;
 }
 
+void TestMsgReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
+{
+    iLastMsgIn = EMsgDecodedStream;
+}
+
 void TestMsgReservoir::ProcessMsgIn(MsgMetaText* /*aMsg*/)
 {
     iLastMsgIn = EMsgMetaText;
@@ -2509,6 +2539,12 @@ Msg* TestMsgReservoir::ProcessMsgOut(MsgDelay* aMsg)
 Msg* TestMsgReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
 {
     iLastMsgOut = EMsgEncodedStream;
+    return aMsg;
+}
+
+Msg* TestMsgReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
+{
+    iLastMsgOut = EMsgDecodedStream;
     return aMsg;
 }
 

@@ -10,10 +10,11 @@ namespace Media {
 class EncodedAudioReservoir : public AudioReservoir
 {
 public:
-    EncodedAudioReservoir(TUint aMaxSize);
+    EncodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
     TUint SizeInBytes() const;
 private: // from AudioReservoir
     TUint Size() const;
+    TUint StreamCount() const;
 private: // from MsgReservoir
     void ProcessMsgIn(MsgAudioEncoded* aMsg);
 };

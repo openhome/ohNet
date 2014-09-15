@@ -49,7 +49,8 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kStarvationMonitorRampUpDuration      = Jiffies::kPerMs * 100;
     static const TUint kSenderMinLatency                     = Jiffies::kPerMs * 150;
 
-    static const TUint kMaxEncodedStreams = (kEncodedReservoirSizeBytes / (4 * 1024)) + 1; // 4k assumed about as small an encoded stream as we'll see
+    static const TUint kMaxReservoirStreams     = 10;
+    static const TUint kReservoirCount          = 4; // Encoded + Decoded + StarvationMonitor + spare
 
     static const TUint kMsgCountEncodedAudio    = 768;
     static const TUint kMsgCountAudioEncoded    = 768;
@@ -58,16 +59,16 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountSilence         = 512;
     static const TUint kMsgCountPlayablePcm     = 100;
     static const TUint kMsgCountPlayableSilence = 100;
-    static const TUint kMsgCountEncodedStream   = kMaxEncodedStreams + 1;
-    static const TUint kMsgCountTrack           = kMaxEncodedStreams + 10;
-    static const TUint kMsgCountDecodedStream   = 20;
+    static const TUint kMsgCountEncodedStream   = kMaxReservoirStreams * kReservoirCount;
+    static const TUint kMsgCountTrack           = kMaxReservoirStreams * kReservoirCount;
+    static const TUint kMsgCountDecodedStream   = kMaxReservoirStreams * kReservoirCount;
     static const TUint kMsgCountMetaText        = 20;
     static const TUint kMsgCountHalt            = 20;
     static const TUint kMsgCountFlush           = 16;
     static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountMode            = 20;
-    static const TUint kMsgCountSession         = kMaxEncodedStreams + 10;
-    static const TUint kMsgCountDelay           = 20;
+    static const TUint kMsgCountSession         = kMaxReservoirStreams * kReservoirCount;
+    static const TUint kMsgCountDelay           = kMaxReservoirStreams * kReservoirCount;
     static const TUint kMsgCountQuit            = 1;
 public:
     Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer);

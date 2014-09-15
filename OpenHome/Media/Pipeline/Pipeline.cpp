@@ -47,14 +47,14 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
 
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kMaxReservoirStreams);
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
     // construct push logger slightly out of sequence
     iLoggerSupply = new Logger("Supply", *iEncodedAudioReservoir);
     iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize);
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize, kMaxReservoirStreams);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
@@ -96,7 +96,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iLoggerPruner = new Logger(*iPruner, "Pruner");
     iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
                                                kStarvationMonitorNormalSize, kStarvationMonitorStarvationThreshold,
-                                               kStarvationMonitorRampUpDuration);
+                                               kStarvationMonitorRampUpDuration, kMaxReservoirStreams);
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iLoggerStarvationMonitor);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");

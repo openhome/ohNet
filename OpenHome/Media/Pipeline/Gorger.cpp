@@ -132,7 +132,8 @@ Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iLock.Wait();
-    SetGorging(iCanGorge);
+    const TBool canGorge = (iCanGorge && DecodedStreamCount()==0);
+    SetGorging(canGorge);
     iStreamHandler = stream.StreamHandler();
     iLock.Signal();
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),

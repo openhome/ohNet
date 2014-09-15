@@ -15,7 +15,7 @@ class DecodedAudioReservoir : public AudioReservoir
 {
     friend class SuiteReservoirHistory;
 public:
-    DecodedAudioReservoir(TUint aMaxSize);
+    DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
     void ProcessMsgIn(MsgAudioPcm* aMsg);
@@ -27,6 +27,7 @@ private: // from MsgReservoir
     Msg* ProcessMsgOut(MsgSilence* aMsg);
 private: // from AudioReservoir
     TUint Size() const;
+    TUint StreamCount() const;
 private:
     void DoProcessMsgIn();
     Msg* DoProcessMsgOut(MsgAudio* aMsg);

@@ -25,6 +25,7 @@ class SuiteStarvationMonitor : public Suite, private IPipelineElementUpstream, p
     static const TUint kRegularSize         = Jiffies::kPerMs * 100;
     static const TUint kStarvationThreshold = Jiffies::kPerMs * 40;
     static const TUint kRampUpSize          = Jiffies::kPerMs * 50;
+    static const TUint kMaxStreamCount      = 5;
 
     static const TUint kSampleRate  = 44100;
     static const TUint kNumChannels = 2;
@@ -113,7 +114,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iBuffering(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize);
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()

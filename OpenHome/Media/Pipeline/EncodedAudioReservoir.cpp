@@ -6,8 +6,8 @@ using namespace OpenHome::Media;
 
 // EncodedAudioReservoir
 
-EncodedAudioReservoir::EncodedAudioReservoir(TUint aMaxSize)
-    : AudioReservoir(aMaxSize)
+EncodedAudioReservoir::EncodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount)
+    : AudioReservoir(aMaxSize, aMaxStreamCount)
 {
 }
 
@@ -19,6 +19,11 @@ TUint EncodedAudioReservoir::SizeInBytes() const
 TUint EncodedAudioReservoir::Size() const
 {
     return EncodedBytes();
+}
+
+TUint EncodedAudioReservoir::StreamCount() const
+{
+    return EncodedStreamCount();
 }
 
 void EncodedAudioReservoir::ProcessMsgIn(MsgAudioEncoded* /*aMsg*/)

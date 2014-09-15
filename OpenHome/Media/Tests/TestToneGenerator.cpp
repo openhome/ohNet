@@ -154,7 +154,8 @@ private:
     static const TUint kMsgCountSession         = 1;
     static const TUint kMsgCountDelay           = 1;
     static const TUint kMsgCountQuit            = 1;
-    static const TUint kEncodedReservoirSizeBytes = 20 * 1024;
+    static const TUint kEncodedReservoirSizeBytes  = 20 * 1024;
+    static const TUint kEncodedReservoirMaxStreams = 10;
 
     TrackFactory* iTrackFactory;
     ProtocolManager* iProtocolManager;
@@ -502,7 +503,7 @@ void SuiteGeneratorAny::Setup()
                              kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
                              kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
                              kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kEncodedReservoirMaxStreams);
     iSupply = new Supply(*iMsgFactory, *iEncodedAudioReservoir);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this);

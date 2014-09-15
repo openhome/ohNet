@@ -805,6 +805,8 @@ protected:
     TUint Jiffies() const;
     TUint EncodedBytes() const;
     TBool IsEmpty() const;
+    TUint EncodedStreamCount() const;
+    TUint DecodedStreamCount() const;
 private:
     void Add(TUint& aValue, TUint aAdded);
     void Remove(TUint& aValue, TUint aRemoved);
@@ -889,6 +891,8 @@ private:
     MsgQueue iQueue;
     TUint iEncodedBytes;
     TUint iJiffies;
+    TUint iEncodedStreamCount;
+    TUint iDecodedStreamCount;
 };
 
 // removes ref on destruction.  Does NOT claim ref on construction.

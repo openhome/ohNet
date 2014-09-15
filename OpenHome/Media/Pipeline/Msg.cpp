@@ -1974,6 +1974,8 @@ MsgReservoir::MsgReservoir()
     : iLock("MQJF")
     , iEncodedBytes(0)
     , iJiffies(0)
+    , iEncodedStreamCount(0)
+    , iDecodedStreamCount(0)
 {
 }
 
@@ -2020,6 +2022,18 @@ TUint MsgReservoir::EncodedBytes() const
 TBool MsgReservoir::IsEmpty() const
 {
     return iQueue.IsEmpty();
+}
+
+TUint MsgReservoir::EncodedStreamCount() const
+{
+    AutoMutex a(iLock);
+    return iEncodedStreamCount;
+}
+
+TUint MsgReservoir::DecodedStreamCount() const
+{
+    AutoMutex a(iLock);
+    return iDecodedStreamCount;
 }
 
 void MsgReservoir::Add(TUint& aValue, TUint aAdded)
@@ -2197,6 +2211,9 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDelay* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iEncodedStreamCount++;
+    iQueue.iLock.Signal();
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
@@ -2234,6 +2251,9 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgWait* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iDecodedStreamCount++;
+    iQueue.iLock.Signal();
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
@@ -2294,6 +2314,9 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDelay* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iEncodedStreamCount--;
+    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 
@@ -2325,6 +2348,9 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgWait* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iDecodedStreamCount--;
+    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 

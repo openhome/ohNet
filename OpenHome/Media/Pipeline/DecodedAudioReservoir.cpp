@@ -10,8 +10,8 @@ using namespace OpenHome::Media;
 
 // DecodedAudioReservoir
 
-DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize)
-    : AudioReservoir(aMaxSize)
+DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount)
+    : AudioReservoir(aMaxSize, aMaxStreamCount)
     , iClockPuller(NULL)
     , iLock("DCAR")
     , iMaxJiffies(aMaxSize)
@@ -30,6 +30,11 @@ TUint DecodedAudioReservoir::SizeInJiffies() const
 TUint DecodedAudioReservoir::Size() const
 {
     return Jiffies();
+}
+
+TUint DecodedAudioReservoir::StreamCount() const
+{
+    return DecodedStreamCount();
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)
