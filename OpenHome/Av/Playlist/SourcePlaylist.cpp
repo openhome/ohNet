@@ -256,6 +256,13 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
 {
     EnsureActive();
 
+    /* We don't use the Track returned from GetTrackById().
+       We just want this call to throw if aId is not valid. */
+    Track* track = NULL;
+    static_cast<ITrackDatabase*>(iDatabase)->GetTrackById(aId, track);
+    ASSERT(track != NULL);
+    track->RemoveRef();
+
     iLock.Wait();
     if (iShuffler->TryMoveToStart(aId)) {
         iNewPlaylist = false;
