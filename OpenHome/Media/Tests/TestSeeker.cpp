@@ -731,6 +731,7 @@ void SuiteSeeker::TestSeekForwardFailStillSeeks()
         iPendingMsgs.push_back(CreateAudio());
         PullNext(EMsgAudioPcm);
     }
+    iSeekerResponse.Wait();
     TEST(iSeeker->iState == Seeker::EFlushing);
     PullNext(EMsgHalt);
     iGenerateAudio = true;
