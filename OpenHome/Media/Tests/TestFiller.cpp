@@ -99,7 +99,7 @@ private:
     TUint iSessionCount;
 };
 
-class SuiteFiller : public Suite, private IPipelineIdTracker, private IStreamPlayObserver
+class SuiteFiller : public Suite, private IPipelineIdTracker, private IFlushIdProvider, private IStreamPlayObserver
 {
     static const TUint kDefaultLatency = Jiffies::kPerMs * 150;
 public:
@@ -109,6 +109,8 @@ private: // from Suite
     void Test();
 private: // from IPipelineIdTracker
     void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow);
+private: // from IFlushIdProvider
+    TUint NextFlushId();
 private: // from IStreamPlayObserver
     void NotifyTrackFailed(TUint aTrackId);
     void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
@@ -125,6 +127,7 @@ private:
     TUint iPipelineTrackId;
     TUint iStreamId;
     TBool iPlayNow;
+    TUint iNextFlushId;
 };
 
 } // namespace TestFiller
@@ -406,10 +409,11 @@ SuiteFiller::SuiteFiller()
     : Suite("Trivial Filler tests")
     , iTrackAddedSem("TASM", 0)
     , iTrackCompleteSem("TCSM", 0)
+    , iNextFlushId(1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *iTrackFactory, *this, kDefaultLatency);
+    iFiller = new Filler(*iDummySupply, *this, *this, *iTrackFactory, *this, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
@@ -543,6 +547,11 @@ void SuiteFiller::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, 
     iPipelineTrackId = aPipelineTrackId;
     iStreamId = aStreamId;
     iPlayNow = aPlayNow;
+}
+
+TUint SuiteFiller::NextFlushId()
+{
+    return iNextFlushId++;
 }
 
 void SuiteFiller::NotifyTrackFailed(TUint /*aTrackId*/)

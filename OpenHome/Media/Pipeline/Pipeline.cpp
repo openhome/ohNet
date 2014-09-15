@@ -28,7 +28,7 @@ using namespace OpenHome::Media;
 
 // Pipeline
 
-Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver)
+Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer)
     : iObserver(aObserver)
     , iLock("PLMG")
     , iState(EStopped)
@@ -69,7 +69,7 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
     iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioAggregator);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController);
 
-    iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, kSeekerRampDuration);
+    iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, aSeekRestreamer, kSeekerRampDuration);
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
     iVariableDelay1 = new VariableDelay(*iMsgFactory, *iLoggerSeeker, kSenderMinLatency, kVariableDelayRampDuration);
     iLoggerVariableDelay1 = new Logger(*iVariableDelay1, "VariableDelay1");

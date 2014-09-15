@@ -47,7 +47,7 @@ private:
     TUint iHaltId;
 };
 
-class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver
+class SuitePipeline : public Suite, private IPipelineObserver, private IMsgProcessor, private IStreamPlayObserver, private ISeekRestreamer
 {
     static const TUint kBitDepth    = 24;
     static const TUint kSampleRate  = 192000;
@@ -95,6 +95,8 @@ private: // from IMsgProcessor
 private: // from IStreamPlayObserver
     void NotifyTrackFailed(TUint aTrackId);
     void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
+private: // from ISeekRestreamer
+    TUint SeekRestream(const Brx& aMode, TUint aTrackId);
 private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
@@ -259,7 +261,7 @@ SuitePipeline::SuitePipeline()
     , iSemQuit("TPSQ", 0)
     , iQuitReceived(false)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, *this);
+    iPipeline = new Pipeline(iInfoAggregator, *this, *this, *this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(*iPipeline, *iTrackFactory);
@@ -679,6 +681,12 @@ void SuitePipeline::NotifyTrackFailed(TUint /*aTrackId*/)
 
 void SuitePipeline::NotifyStreamPlayStatus(TUint /*aTrackId*/, TUint /*aStreamId*/, EStreamPlay /*aStatus*/)
 {
+}
+
+TUint SuitePipeline::SeekRestream(const Brx& /*aMode*/, TUint /*aTrackId*/)
+{
+    ASSERTS();
+    return MsgFlush::kIdInvalid;
 }
 
 

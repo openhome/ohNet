@@ -70,7 +70,7 @@ class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushI
     static const TUint kMsgCountDelay           = 20;
     static const TUint kMsgCountQuit            = 1;
 public:
-    Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver);
+    Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();

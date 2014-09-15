@@ -19,9 +19,9 @@ PipelineManager::PipelineManager(IInfoAggregator& aInfoAggregator, TrackFactory&
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver);
+    iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver, *this);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
+    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
@@ -296,6 +296,13 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyStreamInfo(aStreamInfo);
     }
+}
+
+TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
+{
+    const TUint flushId = iFiller->Flush();
+    iFiller->Play(aMode, aTrackId);
+    return flushId;
 }
 
 

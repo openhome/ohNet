@@ -44,7 +44,7 @@ class Filler : private Thread, public ISupply
 {
     static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
+    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -52,12 +52,14 @@ public:
     void Play(const Brx& aMode, TUint aTrackId);
     void PlayLater(const Brx& aMode, TUint aTrackId);
     TUint Stop(); // Stops filler and encourages protocols to stop.  Returns haltId iff filler was active
+    TUint Flush(); // Stops filler, encourages protocols to stop.  Returns flushId.  MsgFlush will be delivered once protocol is stopped.
     TBool Next(const Brx& aMode);
     TBool Prev(const Brx& aMode);
     TBool IsStopped() const;
     TUint NullTrackId() const;
 private:
     void UpdateActiveUriProvider(const Brx& aMode);
+    TUint StopLocked();
 private: // from Thread
     void Run();
 private: // from ISupply
@@ -89,6 +91,7 @@ private:
     mutable Mutex iLock;
     ISupply& iSupply;
     IPipelineIdTracker& iPipelineIdTracker;
+    IFlushIdProvider& iFlushIdProvider;
     std::vector<UriProvider*> iUriProviders;
     UriProvider* iActiveUriProvider;
     IUriStreamer* iUriStreamer;
@@ -100,6 +103,7 @@ private:
     TBool iChangedMode;
     EStreamPlay iTrackPlayStatus;
     TUint iNextHaltId;
+    TUint iNextFlushId;
     Track* iNullTrack; // delivered when uri provider cannot return a Track
     NullTrackStreamHandler iNullTrackStreamHandler;
     IStreamPlayObserver& iStreamPlayObserver;

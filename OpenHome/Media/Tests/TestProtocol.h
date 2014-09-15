@@ -40,7 +40,7 @@ private:
     static const TUint kInvalidPipelineId = 0;
 };
 
-class TestProtocol : private IPipelineObserver, private IStreamPlayObserver
+class TestProtocol : private IPipelineObserver, private IStreamPlayObserver, private ISeekRestreamer
 {
     static const TUint kSeekStepSeconds = 10;
 public:
@@ -58,6 +58,8 @@ private: // from IPipelineObserver
 private: // from IStreamPlayObserver
     void NotifyTrackFailed(TUint aTrackId);
     void NotifyStreamPlayStatus(TUint aTrackId, TUint aStreamId, EStreamPlay aStatus);
+private: // from ISeekRestreamer
+    TUint SeekRestream(const Brx& aMode, TUint aTrackId);
 protected:
     Pipeline* iPipeline;
 private:

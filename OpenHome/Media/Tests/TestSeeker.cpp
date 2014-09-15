@@ -16,7 +16,7 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteSeeker : public SuiteUnitTest, private IPipelineElementUpstream, private ISeeker, private IStreamHandler, private IMsgProcessor
+class SuiteSeeker : public SuiteUnitTest, private IPipelineElementUpstream, private ISeeker, private ISeekRestreamer, private IStreamHandler, private IMsgProcessor
 {
     static const TUint kRampDuration = Jiffies::kPerMs * 20;
     static const TUint kExpectedFlushId = 5;
@@ -33,6 +33,8 @@ private: // from IPipelineElementUpstream
     Msg* Pull();
 private: // from ISeeker
     void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
+private: // from ISeekRestreamer
+    TUint SeekRestream(const Brx& aMode, TUint aTrackId);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -105,6 +107,7 @@ private:
     TBool iGenerateAudio;
     TUint iTrackId;
     TUint iStreamId;
+    TUint64 iStreamSampleStart;
     TUint iMsgAudioSize;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
@@ -153,10 +156,11 @@ void SuiteSeeker::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 5, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
-    iSeeker = new Seeker(*iMsgFactory, *this, *this, kRampDuration);
+    iSeeker = new Seeker(*iMsgFactory, *this, *this, *this, kRampDuration);
     iSeekResponseThread = new ThreadFunctor("SeekResponse", MakeFunctor(*this, &SuiteSeeker::SeekResponseThread));
     iSeekResponseThread->Start();
     iTrackId = iStreamId = UINT_MAX;
+    iStreamSampleStart = UINT_MAX;
     iMsgAudioSize = 0;
     iTrackOffset = 0;
     iRampingDown = iRampingUp = false;
@@ -208,6 +212,11 @@ void SuiteSeeker::StartSeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSeco
     iSeekObserver = &aObserver;
     aHandle = ++iSeekHandle;
     iSeekResponseThread->Signal();
+}
+
+TUint SuiteSeeker::SeekRestream(const Brx& /*aMode*/, TUint /*aTrackId*/)
+{
+    return MsgFlush::kIdInvalid;
 }
 
 TUint SuiteSeeker::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
@@ -299,6 +308,7 @@ Msg* SuiteSeeker::ProcessMsg(MsgWait* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgDecodedStream* aMsg)
 {
     iLastPulledMsg = EMsgDecodedStream;
+    iStreamSampleStart = aMsg->StreamInfo().SampleStart();
     return aMsg;
 }
 
@@ -724,7 +734,10 @@ void SuiteSeeker::TestSeekForwardFailStillSeeks()
     TEST(iSeeker->iState == Seeker::EFlushing);
     PullNext(EMsgHalt);
     iGenerateAudio = true;
-    iRampingUp = true; // not true yet but will be for the next msg we pull
+    PullNext(EMsgDecodedStream);
+    TEST(iStreamSampleStart == kSeekSecs * kSampleRate);
+    iGenerateAudio = false;
+    iRampingUp = true;
     PullNext(EMsgAudioPcm);
     TEST(iTrackOffset >= kSeekSecs * Jiffies::kPerSecond);
     TEST(iTrackOffset < (kSeekSecs * Jiffies::kPerSecond) + iMsgAudioSize);

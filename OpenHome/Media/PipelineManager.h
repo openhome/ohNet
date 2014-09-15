@@ -27,7 +27,7 @@ class UriProvider;
 /**
  * External interface to the pipeline.
  */
-class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver
+class PipelineManager : public IPipelineElementUpstream, public IPipelineIdManager, private IPipelineObserver, private ISeekRestreamer
 {
 public:
     PipelineManager(IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory); // FIXME - config options
@@ -212,6 +212,8 @@ private: // from IPipelineObserver
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+private: // from ISeekRestreamer
+    TUint SeekRestream(const Brx& aMode, TUint aTrackId);
 private:
     class PrefetchObserver : public IStreamPlayObserver
     {

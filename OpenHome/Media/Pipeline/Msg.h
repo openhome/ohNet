@@ -1149,6 +1149,13 @@ public:
     virtual void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle) = 0; // aHandle will be set to value that is later passed to NotifySeekComplete.  Or kHandleError.
 };
 
+class ISeekRestreamer
+{
+public:
+    virtual ~ISeekRestreamer() {}
+    virtual TUint SeekRestream(const Brx& aMode, TUint aTrackId) = 0; // returns flush id that'll preceed restreamed track
+};
+
 class IStopper
 {
 public:

@@ -47,11 +47,12 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
+Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
     : Thread("Filler", kPriorityVeryHigh-3)
     , iLock("FILL")
     , iSupply(aSupply)
     , iPipelineIdTracker(aIdTracker)
+    , iFlushIdProvider(aFlushIdProvider)
     , iActiveUriProvider(NULL)
     , iUriStreamer(NULL)
     , iTrack(NULL)
@@ -60,6 +61,7 @@ Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, TrackFactory& a
     , iQuit(false)
     , iChangedMode(true)
     , iNextHaltId(MsgHalt::kIdNone + 1)
+    , iNextFlushId(MsgFlush::kIdInvalid)
     , iStreamPlayObserver(aStreamPlayObserver)
     , iDefaultDelay(aDefaultDelay)
     , iPrefetchTrackId(kPrefetchTrackIdInvalid)
@@ -115,16 +117,20 @@ void Filler::PlayLater(const Brx& aMode, TUint aTrackId)
 TUint Filler::Stop()
 {
     AutoMutex a(iLock);
-    TUint haltId = MsgHalt::kIdNone;
-    LOG(kMedia, "Filler::Stop iStopped=%u\n", iStopped);
-    if (!iStopped) {
-        haltId = ++iNextHaltId;
-        iStopped = true;
-        iSendHalt = true;
-    }
-    iUriStreamer->Interrupt(true);
+    const TUint haltId = StopLocked();
     Signal();
     return haltId;
+}
+
+TUint Filler::Flush()
+{
+    AutoMutex a(iLock);
+    (void)StopLocked();
+    if (iNextFlushId == MsgFlush::kIdInvalid) {
+        iNextFlushId = iFlushIdProvider.NextFlushId();
+    }
+    Signal();
+    return iNextFlushId;
 }
 
 TBool Filler::Next(const Brx& aMode)
@@ -184,6 +190,19 @@ void Filler::UpdateActiveUriProvider(const Brx& aMode)
     }
 }
 
+TUint Filler::StopLocked()
+{
+    TUint haltId = MsgHalt::kIdNone;
+    LOG(kMedia, "Filler::StopLocked iStopped=%u\n", iStopped);
+    if (!iStopped) {
+        haltId = ++iNextHaltId;
+        iStopped = true;
+        iSendHalt = true;
+    }
+    iUriStreamer->Interrupt(true);
+    return haltId;
+}
+
 void Filler::Run()
 {
     try {
@@ -194,6 +213,10 @@ void Filler::Run()
                 const TBool wait = iStopped;
                 const TBool sendHalt = iSendHalt;
                 iSendHalt = false;
+                if (iNextFlushId != MsgFlush::kIdInvalid) {
+                    iSupply.OutputFlush(iNextFlushId);
+                    iNextFlushId = MsgFlush::kIdInvalid;
+                }
                 iLock.Signal();
                 if (!wait) {
                     break;

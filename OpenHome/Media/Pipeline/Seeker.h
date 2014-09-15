@@ -23,7 +23,7 @@ class Seeker : public IPipelineElementUpstream, private IMsgProcessor, private I
 {
     friend class SuiteSeeker;
 public:
-    Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, TUint aRampDuration);
+    Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration);
     virtual ~Seeker();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
 public: // from IPipelineElementUpstream
@@ -64,6 +64,7 @@ private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     ISeeker& iSeeker;
+    ISeekRestreamer& iRestreamer;
     Mutex iLock;
     EState iState;
     const TUint iRampDuration;
@@ -74,11 +75,16 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iSeekHandle;
     TUint iTargetFlushId;
+    TUint iTargetTrackId;
+    BwsMode iMode;
     TUint iTrackId;
+    TUint iPipelineTrackId;
     TUint iStreamId;
     TBool iStreamIsSeekable;
     TUint64 iStreamPosJiffies;
     TUint64 iFlushEndJiffies;
+    TUint iSeekConsecutiveFailureCount;
+    MsgDecodedStream* iMsgStream;
 };
 
 } // namespace Media
