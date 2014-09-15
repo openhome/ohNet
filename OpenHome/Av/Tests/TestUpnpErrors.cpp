@@ -580,15 +580,13 @@ void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack)
         runner.Add(new SuiteAvTransport(cpDevice));
         runner.Add(new SuiteConnectionManager(cpDevice));
         runner.Add(new SuiteRenderingControl(cpDevice));
-
-        initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
     }
     catch ( Timeout& ) {
         runner.Add(new SuiteGuaranteedFailure("This test fails if our device could not be detected."));
-        initParams->SetMsearchTime(oldMsearchTime);
-        initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
     }
 
     runner.Run();
+    initParams->SetMsearchTime(oldMsearchTime);
+    initParams->SetAsyncErrorHandler(oldAsyncErrorHandler);
 }
 
