@@ -279,6 +279,7 @@ ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 a
 
         const TUint code = iReaderResponse.Status().Code();
         iTotalBytes = iHeaderContentLength.ContentLength();
+        iTotalBytes = std::min(iTotalBytes, (TUint64)aBytes);
         // FIXME - should parse the Content-Range response to ensure we're
         // getting the bytes requested - the server may (validly) opt not to
         // honour our request.
