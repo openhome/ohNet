@@ -10,11 +10,12 @@ using namespace OpenHome::Media;
 
 // DecodedAudioReservoir
 
-DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount)
-    : AudioReservoir(aMaxSize, aMaxStreamCount)
-    , iClockPuller(NULL)
+DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCount, TUint aMaxStreamCount)
+    : iClockPuller(NULL)
     , iLock("DCAR")
     , iMaxJiffies(aMaxSize)
+    , iMaxSessionCount(aMaxSessionCount)
+    , iMaxStreamCount(aMaxStreamCount)
     , iJiffiesUntilNextUsageReport(kUtilisationSamplePeriodJiffies)
     , iThreadExcludeBlock(NULL)
     , iTrackId(Track::kIdNone)
@@ -27,14 +28,19 @@ TUint DecodedAudioReservoir::SizeInJiffies() const
     return Jiffies();
 }
 
-TUint DecodedAudioReservoir::Size() const
+TBool DecodedAudioReservoir::IsFull() const
 {
-    return Jiffies();
+    return (Jiffies() > iMaxJiffies || DecodedStreamCount() >= iMaxStreamCount || SessionCount() >= iMaxSessionCount);
 }
 
-TUint DecodedAudioReservoir::StreamCount() const
+void DecodedAudioReservoir::ProcessMsgIn(MsgSession* /*aMsg*/)
 {
-    return DecodedStreamCount();
+    DoProcessMsgIn();
+}
+
+void DecodedAudioReservoir::ProcessMsgIn(MsgDecodedStream* /*aMsg*/)
+{
+    DoProcessMsgIn();
 }
 
 void DecodedAudioReservoir::ProcessMsgIn(MsgAudioPcm* /*aMsg*/)

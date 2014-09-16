@@ -27,14 +27,11 @@ public: // from IPipelineElementUpstream
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 protected:
-    AudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
+    AudioReservoir();
     void BlockIfFull();
 private:
-    virtual TUint Size() const = 0;
-    virtual TUint StreamCount() const = 0;
+    virtual TBool IsFull() const = 0;
 private:
-    const TUint iMaxSize;
-    const TUint iMaxStreamCount;
     Mutex iLock;
     Semaphore iSem;
 };

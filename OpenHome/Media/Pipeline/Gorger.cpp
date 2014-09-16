@@ -105,6 +105,13 @@ void Gorger::ProcessMsgIn(MsgTrack* /*aMsg*/)
     iLock.Signal();
 }
 
+void Gorger::ProcessMsgIn(MsgSession* /*aMsg*/)
+{
+    iLock.Wait();
+    SetGorging(false);
+    iLock.Signal();
+}
+
 void Gorger::ProcessMsgIn(MsgHalt* /*aMsg*/)
 {
     iLock.Wait();
@@ -132,7 +139,7 @@ Msg* Gorger::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iLock.Wait();
-    const TBool canGorge = (iCanGorge && DecodedStreamCount()==0);
+    const TBool canGorge = (iCanGorge && DecodedStreamCount()==0  && SessionCount()==0);
     SetGorging(canGorge);
     iStreamHandler = stream.StreamHandler();
     iLock.Signal();

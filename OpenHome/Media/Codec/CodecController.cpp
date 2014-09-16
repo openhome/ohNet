@@ -272,7 +272,6 @@ Msg* CodecController::PullMsg()
     iLock.Signal();
     Msg* msg = iLoggerRewinder->Pull();
     {
-        AutoMutex a(iLock);
         msg = msg->Process(*this);
     }
     return msg;
@@ -499,8 +498,10 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
         return NULL;
     }
 
+    iLock.Wait();
     iTrackId = aMsg->Track().Id();
     iTrackIdPipeline = aMsg->IdPipeline();
+    iLock.Signal();
     return aMsg;
 }
 
@@ -522,6 +523,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
         return NULL;
     }
 
+    iLock.Wait();
     iStreamStarted = true;
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
@@ -529,6 +531,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iSeekable = aMsg->Seekable();
     iLive = aMsg->Live();
     iStreamHandler = aMsg->StreamHandler();
+    iLock.Signal();
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
     aMsg->RemoveRef();
     return msg;
