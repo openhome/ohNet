@@ -503,7 +503,7 @@ void SuiteGeneratorAny::Setup()
                              kMsgCountTrack, kMsgCountDecodedStream, kMsgCountMetaText,
                              kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
                              kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kEncodedReservoirMaxStreams);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iSupply = new Supply(*iMsgFactory, *iEncodedAudioReservoir);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this);

@@ -1974,6 +1974,7 @@ MsgReservoir::MsgReservoir()
     : iLock("MQJF")
     , iEncodedBytes(0)
     , iJiffies(0)
+    , iSessionCount(0)
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
 {
@@ -2022,6 +2023,12 @@ TUint MsgReservoir::EncodedBytes() const
 TBool MsgReservoir::IsEmpty() const
 {
     return iQueue.IsEmpty();
+}
+
+TUint MsgReservoir::SessionCount() const
+{
+    AutoMutex a(iLock);
+    return iSessionCount;
 }
 
 TUint MsgReservoir::EncodedStreamCount() const
@@ -2193,6 +2200,9 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgMode* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgSession* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iSessionCount++;
+    iQueue.iLock.Signal();
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
 }
@@ -2299,6 +2309,9 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgMode* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgSession* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iSessionCount--;
+    iQueue.iLock.Signal();
     return iQueue.ProcessMsgOut(aMsg);
 }
 

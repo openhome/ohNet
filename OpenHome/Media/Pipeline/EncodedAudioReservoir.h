@@ -10,13 +10,18 @@ namespace Media {
 class EncodedAudioReservoir : public AudioReservoir
 {
 public:
-    EncodedAudioReservoir(TUint aMaxSize, TUint aMaxStreamCount);
+    EncodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCount, TUint aMaxStreamCount);
     TUint SizeInBytes() const;
 private: // from AudioReservoir
-    TUint Size() const;
-    TUint StreamCount() const;
+    TBool IsFull() const;
 private: // from MsgReservoir
+    void ProcessMsgIn(MsgSession* aMsg);
+    void ProcessMsgIn(MsgEncodedStream* aMsg);
     void ProcessMsgIn(MsgAudioEncoded* aMsg);
+private:
+    const TUint iMaxBytes;
+    const TUint iMaxSessionCount;
+    const TUint iMaxStreamCount;
 };
 
 } // namespace Media

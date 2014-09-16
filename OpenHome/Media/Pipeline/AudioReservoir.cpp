@@ -10,10 +10,8 @@ using namespace OpenHome::Media;
 
 // AudioReservoir
 
-AudioReservoir::AudioReservoir(TUint aMaxSize, TUint aMaxStreamCount)
-    : iMaxSize(aMaxSize)
-    , iMaxStreamCount(aMaxStreamCount)
-    , iLock("ARES")
+AudioReservoir::AudioReservoir()
+    : iLock("ARES")
     , iSem("ARES", 0)
 {
 }
@@ -28,7 +26,7 @@ Msg* AudioReservoir::Pull()
     do {
         msg = DoDequeue();
         iLock.Wait();
-        if (Size() < iMaxSize) {
+        if (!IsFull()) {
             iSem.Signal();
         }
         iLock.Signal();
@@ -44,7 +42,7 @@ void AudioReservoir::Push(Msg* aMsg)
 void AudioReservoir::BlockIfFull()
 {
     iLock.Wait();
-    const TBool full = (Size() >= iMaxSize || StreamCount() >= iMaxStreamCount);
+    const TBool full = IsFull();
     (void)iSem.Clear();
     iLock.Signal();
     if (full) {

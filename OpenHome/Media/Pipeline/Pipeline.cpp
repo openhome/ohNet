@@ -47,14 +47,14 @@ Pipeline::Pipeline(IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserve
 
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kMaxReservoirStreams);
+    iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kMaxReservoirStreams, kMaxReservoirStreams);
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
     // construct push logger slightly out of sequence
     iLoggerSupply = new Logger("Supply", *iEncodedAudioReservoir);
     iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
-    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize, kMaxReservoirStreams);
+    iDecodedAudioReservoir = new DecodedAudioReservoir(kDecodedReservoirSize, kMaxReservoirStreams, kMaxReservoirStreams);
     iLoggerDecodedAudioReservoir = new Logger(*iDecodedAudioReservoir, "Decoded Audio Reservoir");
 
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);

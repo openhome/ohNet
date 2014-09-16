@@ -805,6 +805,7 @@ protected:
     TUint Jiffies() const;
     TUint EncodedBytes() const;
     TBool IsEmpty() const;
+    TUint SessionCount() const;
     TUint EncodedStreamCount() const;
     TUint DecodedStreamCount() const;
 private:
@@ -891,6 +892,7 @@ private:
     MsgQueue iQueue;
     TUint iEncodedBytes;
     TUint iJiffies;
+    TUint iSessionCount;
     TUint iEncodedStreamCount;
     TUint iDecodedStreamCount;
 };

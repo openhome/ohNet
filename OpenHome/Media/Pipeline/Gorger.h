@@ -34,6 +34,7 @@ private:
 private: // from MsgReservoir
     void ProcessMsgIn(MsgMode* aMsg);
     void ProcessMsgIn(MsgTrack* aMsg);
+    void ProcessMsgIn(MsgSession* aMsg);
     void ProcessMsgIn(MsgHalt* aMsg);
     void ProcessMsgIn(MsgQuit* aMsg);
     void ProcessMsgIn(MsgDecodedStream* aMsg);

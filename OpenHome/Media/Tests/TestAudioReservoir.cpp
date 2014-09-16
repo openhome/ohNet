@@ -80,11 +80,12 @@ private:
     void MsgEnqueueThread();
     TBool EnqueueMsg(EMsgType aType);
     MsgAudio* CreateAudio();
+    TBool ReservoirIsFull() const { return static_cast<AudioReservoir*>(iReservoir)->IsFull(); }
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
-    AudioReservoir* iReservoir;
+    DecodedAudioReservoir* iReservoir;
     ThreadFunctor* iThread;
     EMsgGenerationState iMsgGenerationState;
     EMsgType iNextGeneratedMsg;
@@ -167,7 +168,7 @@ SuiteAudioReservoir::SuiteAudioReservoir()
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, kMaxStreams+2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams, kMaxStreams);
     iThread = new ThreadFunctor("TEST", MakeFunctor(*this, &SuiteAudioReservoir::MsgEnqueueThread));
     iThread->Start();
     iSemUpstreamComplete.Wait();
@@ -232,24 +233,25 @@ void SuiteAudioReservoir::Test()
     jiffies = iReservoir->Jiffies();
 
     // Keep adding DecodedStream until Enqueue blocks
-    for (TUint i=0; i<=kMaxStreams; i++) {
+    for (TUint i=0; i<kMaxStreams-1; i++) {
         GenerateMsg(EMsgDecodedStream);
         iSemUpstreamComplete.Wait();
     }
-    // lazy check that Enqueue has blocked
-    // ...sleep for a while then check size of reservoir is unchanged
-    Thread::Sleep(25);
+    TEST(!ReservoirIsFull());
+    GenerateMsg(EMsgDecodedStream);
+    while (!ReservoirIsFull()) {
+        Thread::Sleep(1);
+    }
+    TEST(ReservoirIsFull());
     TEST(iReservoir->Jiffies() == jiffies);
     do {
+        TEST(ReservoirIsFull());
         msg = iReservoir->Pull();
         msg = msg->Process(*this);
     } while (iLastMsg == EMsgAudioPcm);
     TEST(iLastMsg == EMsgDecodedStream);
     msg->RemoveRef();
-
-    (void)iSemUpstreamComplete.Clear();
-    GenerateMsg(EMsgDecodedStream);
-    iSemUpstreamComplete.Wait();
+    TEST(!ReservoirIsFull());
 }
 
 void SuiteAudioReservoir::GenerateMsg(EMsgType aType)
@@ -303,14 +305,14 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgAudioPcm:
     {
         MsgAudio* audio = CreateAudio();
-        shouldBlock = (iReservoir->Size() + audio->Jiffies() >= kReservoirSize);
+        shouldBlock = (iReservoir->SizeInJiffies() + audio->Jiffies() >= kReservoirSize);
         msg = audio;
         break;
     }
     case EMsgSilence:
     {
         MsgAudio* audio = iMsgFactory->CreateMsgSilence(Jiffies::kPerMs);
-        shouldBlock = (iReservoir->Size() + audio->Jiffies() >= kReservoirSize);
+        shouldBlock = (iReservoir->SizeInJiffies() + audio->Jiffies() >= kReservoirSize);
         msg = audio;
         break;
     }
@@ -485,7 +487,7 @@ SuiteReservoirHistory::SuiteReservoirHistory()
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams);
+    iReservoir = new DecodedAudioReservoir(kReservoirSize, kMaxStreams, kMaxStreams);
     memset(iBuf, 0xff, sizeof(iBuf));
 }
 
