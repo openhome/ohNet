@@ -95,7 +95,7 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.365",
+        "version": "0.0.372",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
