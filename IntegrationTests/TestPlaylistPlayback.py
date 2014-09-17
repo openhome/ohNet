@@ -376,7 +376,7 @@ class Config:
                 (self.testId, pollState, aState, aAfter) )
 
             evtSecs = self.dut.time.seconds
-            self.log.CheckLimits( self.dev, 'GELE', evtSecs, aSecs-1, aSecs+1,
+            self.log.CheckLimits( self.dev, 'GELE', evtSecs, aSecs-2, aSecs+1,
                 '[%d] Expected EVENTED track seconds %ds after invoke' % (self.testId, aAfter) )
 
             pollSecs = self.dut.time.polledSeconds
