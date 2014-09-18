@@ -203,6 +203,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         else if (iSeek) {
             iLock.Wait();
             iSupply->OutputFlush(iNextFlushId);
+            iNextFlushId = MsgFlush::kIdInvalid;
             iOffset = iSeekPos;
             iSeek = false;
             iLock.Signal();
@@ -342,7 +343,12 @@ TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = aOffset;
-        iNextFlushId = iFlushIdProvider->NextFlushId();
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
+            /* If a valid flushId is set then We've previously promised to send a Flush but haven't
+               got round to it yet.  Re-use the same id for any other requests that come in before
+               our main thread gets a chance to issue a Flush */
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+        }
     }
     iLock.Signal();
     if (!streamIsValid) {
@@ -357,7 +363,12 @@ TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
     iLock.Wait();
     const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     if (stop) {
-        iNextFlushId = iFlushIdProvider->NextFlushId();
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
+            /* If a valid flushId is set then We've previously promised to send a Flush but haven't
+               got round to it yet.  Re-use the same id for any other requests that come in before
+               our main thread gets a chance to issue a Flush */
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+        }
         iStopped = true;
         iTcpClient.Interrupt(true);
         if (iLive) {
