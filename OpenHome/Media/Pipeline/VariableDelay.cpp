@@ -340,10 +340,15 @@ void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStre
         case ERampedDown:
             break;
         case ERampingUp:
-            iStatus = ERampingDown;
             iRampDirection = Ramp::EDown;
             // retain current value of iCurrentRampValue
             iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            if (iRemainingRampSize == 0) {
+                iStatus = ERampedDown;
+            }
+            else {
+                iStatus = ERampingDown;
+            }
             break;
         default:
             ASSERTS();

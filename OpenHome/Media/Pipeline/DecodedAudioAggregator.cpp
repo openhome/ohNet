@@ -79,6 +79,7 @@ void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aTrackId, TU
 
 Msg* DecodedAudioAggregator::ProcessMsg(MsgMode* aMsg)
 {
+    OutputAggregatedAudio();
     return aMsg;
 }
 

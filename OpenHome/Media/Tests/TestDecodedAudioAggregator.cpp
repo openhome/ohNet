@@ -1,6 +1,3 @@
-#ifndef HEADER_TESTCODECCONTROLLER
-#define HEADER_TESTCODECCONTROLLER
-
 #include <OpenHome/Private/SuiteUnitTest.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
@@ -516,5 +513,3 @@ void TestDecodedAudioAggregator()
     runner.Add(new SuiteDecodedAudioAggregator());
     runner.Run();
 }
-
-#endif // HEADER_TESTCODECCONTROLLER
