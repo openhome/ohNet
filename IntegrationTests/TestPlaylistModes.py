@@ -190,7 +190,15 @@ class Config:
                 if aDut.playlist.polledTransportState == 'Stopped':
                     self.precon.log.Pass( self.precon.dev, 'Playlist exhausted after <%s> action' % self.seek )
                     break
-                self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action' % self.seek )
+                # The only scenario where we can play the same track twice in a row (and hence not
+                # get an Id event) is when both shuffle and repeat modes are enabled, and we have
+                # moved to the first track in a subsequent loop thru the playlist. There is no
+                # reason why the last track in one shuffling cannot be the first track in the
+                # subsequent shuffling
+                if i==self.precon.plLen-1 and self.precon.shuffle=='on' and self.precon.repeat=='on':
+                    self.precon.log.WarnUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action at start of 2nd loop of playlist' % self.seek )
+                else:
+                    self.precon.log.FailUnless( self.precon.dev, orderEvt.is_set(), 'Executed <%s> action' % self.seek )
 
             aDut.playlist.RemoveSubscriber( _PlaylistEventCb )
 
