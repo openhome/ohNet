@@ -55,6 +55,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.nextTimer        = None
         self.stateTimer       = None
         self.checkInfoTimer   = None
+        self.timestamp        = time.time()
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
@@ -245,10 +246,15 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
                 self.nextTimer = None
             # Run on seperate thread so Playback events not blocked
             thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal),self.sender.playlist.id] )
-            thread.start()                
-            
+            thread.start()
+
     def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""
+        now = time.time()
+        if now-self.timestamp < 2:
+            self.log.Fail( self.senderDev, 'Track %d did NOT play' % self.numTrack )
+        self.timestamp = now
+
         if aId>0:
             self.trackChangeMutex.acquire()
             if self.checkInfoTimer:
