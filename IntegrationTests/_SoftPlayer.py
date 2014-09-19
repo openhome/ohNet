@@ -100,8 +100,12 @@ class SoftPlayer( BASE.Component ):
             if 'Unhandled' in msg:
                 exception = True
                 
-            if not exception: 
-                self.log.Info( self.dev, '%s' % msg )
+            if not exception:
+                lower = msg.lower()
+                if 'failed' in lower or 'warning' in lower:
+                    self.log.Warn( self.dev, '%s' % msg )
+                else:
+                    self.log.Info( self.dev, '%s' % msg )
             else:
                 self.log.Fail( self.dev, '%s' % msg )
                 self.shutdown = True        # force loop exit        
