@@ -134,6 +134,7 @@ class TestRadioService( BASE.BaseTest ):
             self.TestPresets()
         if mode in ['all','manual']:
             self.TestManual()
+        time.sleep( 3 )     # needed to ensure clean shutdown of SoftPlayer
             
     def Cleanup( self ):
         """Perform cleanup on test exit"""
