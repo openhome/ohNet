@@ -147,7 +147,7 @@ class SoftPlayer( BASE.Component ):
     
 if __name__ == '__main__':
 
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp4' )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2' )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
