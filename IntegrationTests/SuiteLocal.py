@@ -54,9 +54,9 @@ tests = [
     [ 'TestPlaylistPlayTracks',      'local', 'local', ms,       mpList,   8,    'off',     'on',    'false' ],
     [ 'TestPlaylistDropout',         'local', 'local', 'local',  '3600'                                      ],
 
-    # # OH Radio Service
-    # [ 'TestRadioService',            'local', 'all'                                                          ],
-    # [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2',  20,       'on', 1                           ],
+    # OH Radio Service
+    [ 'TestRadioService',            'local', 'all'                                                          ],
+    [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2',  20,       'on', 1                           ],
     #
     # # Airplay
     # [ 'TestAirplayFunctions',        'local', dacp                                                           ],
@@ -69,10 +69,10 @@ tests = [
     # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'sender'                    ],
     # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'standby'                   ],
     # [ 'TestSongcastDropout',         'local', 'local', 600,                                                  ],
-    #
-    # # Volume
-    # [ 'TestVolumeControl',           'local'                                                                 ],
-    #
+
+    # Volume
+    [ 'TestVolumeControl',           'local'                                                                 ],
+
     # # Misc
     # [ 'TestAudioConx',               'local', 'all'                                                          ],
     # [ 'TestStandbyCycleSoak',        'local',  100                                                           ]
