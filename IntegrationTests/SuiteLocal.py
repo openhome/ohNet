@@ -57,11 +57,11 @@ tests = [
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                          ],
     [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2',  20,       'on', 1                           ],
-    #
-    # # Airplay
-    # [ 'TestAirplayFunctions',        'local', dacp                                                           ],
-    # [ 'TestAirplayDropout',          'local', dacp,    apTrack,  '3600'                                      ],
-    #
+
+    # Airplay
+    [ 'TestAirplayFunctions',        'local', dacp                                                           ],
+    [ 'TestAirplayDropout',          'local', dacp,    apTrack,  '3600'                                      ],
+
     # # Songcast
     # [ 'TestSongcastPlayback',        'local', 'local', 'local',  'all',   12345                              ],
     # [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'stop'                      ],
