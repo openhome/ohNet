@@ -71,6 +71,8 @@ def guess_dest_platform():
         return 'Mac-x86'
     return None
 
+def is_core_platform(conf):
+    return conf.options.dest_platform in ['Core-ppc32', 'Core-armv5', 'Core-armv6']
 
 def configure_toolchain(conf):
     import os, sys
