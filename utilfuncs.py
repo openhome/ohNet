@@ -161,8 +161,7 @@ def configure_toolchain(conf):
             except KeyError:
                 linkflags = [   '-B', conf.env.STLIBPATH_PLATFORM,
                                 os.path.join(conf.env.STLIBPATH_PLATFORM, 'FileOpen.o'),
-                                # libosa path is hardcoded here :(
-                                '-B', '../dependencies/' + platform + '/libosa/lib/',
+                                '-B', conf.env.STLIBPATH_OSA,
                                 '-specs', 'bsp_specs']
 
             mcpu = ['-mcpu=' + cpu]
