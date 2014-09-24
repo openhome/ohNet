@@ -193,6 +193,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.checkInfoTimer.cancel()
         if self.playTimer:
              self.playTimer.cancel()
+        if self.nextTimer:
+            self.nextTimer.cancel()
+        if self.stateTimer:
+            self.stateTimer.cancel()
         if self.server:
             self.server.Shutdown()
         if self.sender: 
