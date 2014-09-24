@@ -161,26 +161,26 @@ def configure_toolchain(conf):
             except KeyError:
                 linkflags = [   '-B', conf.env.STLIBPATH_PLATFORM,
                                 os.path.join(conf.env.STLIBPATH_PLATFORM, 'FileOpen.o'),
-                                '-ltarget',
-                                '-lplatform',
                                 # libosa path is hardcoded here :(
                                 '-B', '../dependencies/' + platform + '/libosa/lib/',
                                 '-specs', 'bsp_specs']
 
-            conf.env.append_value('LINKFLAGS', linkflags)
-            conf.env.append_value('LINKFLAGS',  ['-mcpu=' + cpu])
-            conf.env.append_value('CXXFLAGS',  ['-mcpu=' + cpu])
-            conf.env.append_value('CFLAGS',    ['-mcpu=' + cpu])
+            mcpu = ['-mcpu=' + cpu]
+
+            conf.env.append_value('LINKFLAGS',  linkflags)
+            conf.env.append_value('LINKFLAGS',  mcpu)
+            conf.env.append_value('CXXFLAGS',   mcpu)
+            conf.env.append_value('CFLAGS',     mcpu)
             conf.env.append_value('DEFINES',   ['BYTE_ORDER=' + platform_info['endian'] + '_ENDIAN'])
 
     if conf.options.cross or os.environ.get('CROSS_COMPILE', None):
         cross_compile = conf.options.cross or os.environ['CROSS_COMPILE']
         conf.msg('Cross compiling using compiler prefix:', cross_compile)
-        conf.env.CC = cross_compile + 'gcc'
-        conf.env.CXX = cross_compile + 'g++'
-        conf.env.AR = cross_compile + 'ar'
-        conf.env.LINK_CXX = cross_compile + 'g++'
-        conf.env.LINK_CC = cross_compile + 'gcc'
+        conf.env.CC         = cross_compile + 'gcc'
+        conf.env.CXX        = cross_compile + 'g++'
+        conf.env.AR         = cross_compile + 'ar'
+        conf.env.LINK_CXX   = cross_compile + 'g++'
+        conf.env.LINK_CC    = cross_compile + 'gcc'
 
 # helper functions for guess_xxx_location
 
@@ -338,6 +338,24 @@ def guess_ohtopology_location(conf):
             'dependencies/{options.dest_platform}/ohTopology/lib',
         ],
         message='Specify --ohtopology-lib-dir or --ohtopology')
+    )
+
+def guess_libosa_location(conf):
+    set_env_verbose(conf, 'INCLUDES_OSA', match_path(
+        conf,
+        [
+            '{options.libosa}/install/{options.dest_platform}-{debugmode_tc}/libosa/include/',
+            'dependencies/{options.dest_platform}/libosa/include'
+        ],
+        message='Specify --libosa')
+    )
+    set_env_verbose(conf, 'STLIBPATH_OSA', match_path(
+        conf,
+        [
+            '{options.libosa}/install/{options.dest_platform}-{debugmode_tc}/libosa/lib/',
+            'dependencies/{options.dest_platform}/libosa/lib'
+        ],
+        message='Specify --libosa')
     )
 
 def get_platform_info(dest_platform):
