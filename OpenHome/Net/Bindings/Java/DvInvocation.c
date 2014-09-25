@@ -279,10 +279,14 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocation
         return NULL;
     }
     result = DvInvocationReadStringAsBuffer(invocation, name, &value, &len);
-    byteArray = (*aEnv)->NewByteArray(aEnv, len);
-    (*aEnv)->SetByteArrayRegion(aEnv, byteArray, 0, len, (jbyte *) value);
-    utf8 = (*aEnv)->NewStringUTF(aEnv, "UTF-8");
-    valueJava = (*aEnv)->NewObject(aEnv, stringClass, cidString, byteArray, utf8);
+    if (result == 0) {
+        byteArray = (*aEnv)->NewByteArray(aEnv, len);
+        (*aEnv)->SetByteArrayRegion(aEnv, byteArray, 0, len, (jbyte *) value);
+        utf8 = (*aEnv)->NewStringUTF(aEnv, "UTF-8");
+        valueJava = (*aEnv)->NewObject(aEnv, stringClass, cidString, byteArray, utf8);
+    } else {
+        valueJava = NULL;
+    }
     status = (*aEnv)->NewObject(aEnv, statusClass, cidStatus, aObject, valueJava, result);
     // local refs for stringClass and statusClass will be deleted when method returns
     (*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
@@ -321,8 +325,12 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvInvocation_DvInvocation
         return NULL;
 	}
 	result = DvInvocationReadBinary(invocation, name, &value, &len);
-	valueJava = (*aEnv)->NewByteArray(aEnv, len);
-	(*aEnv)->SetByteArrayRegion(aEnv, valueJava, 0, len, (jbyte *) value);
+    if (result == 0) {
+	    valueJava = (*aEnv)->NewByteArray(aEnv, len);
+        (*aEnv)->SetByteArrayRegion(aEnv, valueJava, 0, len, (jbyte *) value);
+    } else {
+        valueJava = NULL;
+    }
 	status = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, valueJava, result);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	(*aEnv)->DeleteLocalRef(aEnv, statusClass);

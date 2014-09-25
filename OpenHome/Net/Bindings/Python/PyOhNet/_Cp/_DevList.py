@@ -91,10 +91,12 @@ class DeviceList():
         self.removedCbs.append( aCb )
     
     def RemoveAddedCb( self, aCb ):
-        self.addedCbs.remove( aCb )
+        if aCb in self.addedCbs:
+            self.addedCbs.remove( aCb )
     
     def RemoveRemovedCb( self, aCb ):
-        self.removedCbs.remove( aCb )
+        if aCb in self.removedCbs:
+            self.removedCbs.remove( aCb )
     
     def Refresh( self ):
         if self.handle:

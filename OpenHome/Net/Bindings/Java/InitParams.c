@@ -552,6 +552,21 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetU
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetIncludeLoopbackNetworkAdapter
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetIncludeLoopbackNetworkAdapter
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
+{
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetInitParamsSetIncludeLoopbackNetworkAdapter(params);
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetDvMaxUpdateTime
  * Signature: (JI)V
  */

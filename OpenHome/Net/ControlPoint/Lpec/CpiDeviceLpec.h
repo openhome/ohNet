@@ -45,7 +45,7 @@ private: // from ICpiProtocol
     TUint Renew(CpiSubscription& aSubscription);
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
     void NotifyRemovedBeforeReady();
-    TUint Version(const ServiceType& aServiceType) const;
+    TUint Version(const TChar* aDomain, const TChar* aName, TUint aProxyVersion) const;
 private: // from ICpiDeviceObserver
     void Release();
 private:
