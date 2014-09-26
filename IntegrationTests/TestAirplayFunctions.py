@@ -216,8 +216,8 @@ class TestAirplayFunctions( BASE.BaseTest ):
         if self.dut.volume is not None:
             self.dut.volume.volume = 80
         self.srcChanged.clear()
-        self.dacp.speaker = 'My Computer'
-        time.sleep( 5 )
+        # self.dacp.speaker = 'My Computer'
+        # time.sleep( 5 )
         self.dacp.speaker = self.dutName
         time.sleep( 5 )
         self.dacp.PlayTrack( kVolTrack )

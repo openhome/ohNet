@@ -118,7 +118,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                     break
 
                 if not channel[1]:
-                    self.log.Warn( self.senderDev, '%s: No Channel Data -> skipping' % testMsg )
+                    self.log.Info( self.senderDev, '%s: No Channel Data -> skipping' % testMsg )
                     continue
 
                 # extract channel info and log test header
@@ -144,13 +144,13 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                         self.playTimer = LogThread.Timer( playTime, self._PlayTimerCb )
                         self.playTimer.start()
                         self.playTimerExpired.wait()
-                        self.log.Pass( self.senderDev,
-                            'Completed playback of %s' % title )
 
-                        measTime = int( time.time()-self.startTime )
-                        evtTime = self.sender.time.seconds
-                        self.log.CheckLimits( self.senderDev, 'GELE', evtTime, measTime-1, measTime+1, 'Evented/Measured playback time' )
-                        self.log.CheckLimits( self.senderDev, 'GELE', playTime, measTime-1, measTime+1, 'Requested/Measured playback time' )
+                        if self.sender.radio.transportState == 'Playing':
+                            self.log.Pass( self.senderDev, 'Completed playback of %s' % title )
+                            measTime = int( time.time()-self.startTime )
+                            evtTime = self.sender.time.seconds
+                            self.log.CheckLimits( self.senderDev, 'GELE', evtTime, measTime-1, measTime+1, 'Evented/Measured playback time' )
+                            self.log.CheckLimits( self.senderDev, 'GELE', playTime, measTime-1, measTime+1, 'Requested/Measured playback time' )
 
                         if self.sender.radio.transportState != 'Stopped':
                             self.isStopped.clear()
@@ -284,10 +284,16 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             self.sender.radio.Play()
             self.isPlaying.wait( 10 )
 
-        if not self.isPlaying.isSet():
-            self.log.Warn( self.senderDev, 'FAILED playback of %s' % aTitle )
+        if 'Not Supported' in aTitle or 'Not Available' in aTitle:
+            if not self.isPlaying.isSet():
+                self.log.Pass( self.senderDev, 'FAILED playback of %s (as expected)' % aTitle )
+            else:
+                self.log.Fail( self.senderDev, 'STARTED playback of %s (unexpectedly)' % aTitle )
         else:
-            self.log.Pass( self.senderDev, 'Started playback of %s' % aTitle )
+            if not self.isPlaying.isSet():
+                self.log.Fail( self.senderDev, 'FAILED to start playback of %s' % aTitle )
+            else:
+                self.log.Pass( self.senderDev, 'STARTED playback of %s' % aTitle )
 
     # noinspection PyUnusedLocal
     def _RadioEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
@@ -302,6 +308,14 @@ class TestRadioPlayChannels( BASE.BaseTest ):
                 self.isStopped.clear()
                 self.isPlaying.set()
                 self.startTime = time.time()
+            elif aSvVal == 'Buffering':
+                if self.playTimer:
+                    self.playTimer.cancel()
+                    self.playTimer = None
+                    self.playTimerExpired.set()
+                    self.log.Fail( self.senderDev, 'Playback of %s gone buffering' % self.title )
+                self.isPlaying.clear()
+                self.isStopped.clear()
             elif aSvVal == 'Stopped':
                 if self.playTimer:
                     self.playTimer.cancel()

@@ -100,8 +100,12 @@ class SoftPlayer( BASE.Component ):
             if 'Unhandled' in msg:
                 exception = True
                 
-            if not exception: 
-                self.log.Info( self.dev, '%s' % msg )
+            if not exception:
+                lower = msg.lower()
+                if 'failed' in lower or 'warning' in lower:
+                    self.log.Warn( self.dev, '%s' % msg )
+                else:
+                    self.log.Info( self.dev, '%s' % msg )
             else:
                 self.log.Fail( self.dev, '%s' % msg )
                 self.shutdown = True        # force loop exit        
@@ -143,7 +147,7 @@ class SoftPlayer( BASE.Component ):
     
 if __name__ == '__main__':
 
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp4' )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2' )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
