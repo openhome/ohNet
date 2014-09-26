@@ -63,13 +63,14 @@ static void TestHttps(Environment& aEnv, const Brx& aHost, const Brx& aPath)
     else {
         TUint length = headerContentLength.ContentLength();
         while (length > 0) {
-            const TUint bytes = std::min(length, 1024u);
+            const TUint bytes = std::min(length, (TUint)1024);
             Brn buf = readBuffer->Read(bytes);
             Print(buf);
             length -= buf.Bytes();
         }
     }
 
+    socket->Close();
     delete writerRequest;
     delete writeBuffer;
     delete readerResponse;
