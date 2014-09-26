@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.0.1328",
+        "version": "1.0.1331",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.61",
+        "version": "0.0.62",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {   "name": "TestTones",
@@ -82,7 +82,7 @@
         "type": "external",
         "platform-specific": true,
         "external-version": "1.0.0d",
-        "internal-version": "0.1.27",
+        "internal-version": "0.1.32",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${external-version}-${internal-version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
