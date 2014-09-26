@@ -118,12 +118,12 @@ def configure(conf):
         os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'lib')),
     ]
     if conf.options.dest_platform in ['Windows-x86', 'Windows-x64']:
-        conf.env.STLIB_OPENSSL = ['libeay32']
+        conf.env.STLIB_OPENSSL = ['libeay32', 'ssleay32']
         conf.env.LIB_OPENSSL = ['advapi32', 'gdi32', 'user32']
     else:
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ppc32']:
             conf.env.LIB_OPENSSL = ['dl']
-        conf.env.STLIB_OPENSSL = ['crypto']
+        conf.env.STLIB_OPENSSL = ['ssl', 'crypto']
     conf.env.INCLUDES_OPENSSL = [
         os.path.join('dependencies', conf.options.dest_platform, 'openssl', 'include'),
     ]
@@ -248,6 +248,7 @@ def build(bld):
                 'OpenHome/Media/Utils/Aggregator.cpp',
                 'OpenHome/Media/Utils/Silencer.cpp',
                 'OpenHome/Media/Utils/ClockPullerLogging.cpp',
+                'OpenHome/SocketSsl.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON'],
             target='ohPipeline')
@@ -791,6 +792,16 @@ def build(bld):
             source='OpenHome/Tests/TestPowerManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPowerManager',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Tests/TestHttps.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
+            target='TestHttps',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Tests/TestHttpsBsd.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
+            target='TestHttpsBsd',
             install_path=None)
 
 
