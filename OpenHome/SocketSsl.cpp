@@ -291,7 +291,7 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
     {
     case BIO_CB_READ:
     {
-        BIO_reset(b);
+        (void)BIO_reset(b);
         SocketSslImpl* self = reinterpret_cast<SocketSslImpl*>(BIO_get_callback_arg(b));
         char* data;
         long len = BIO_get_mem_data(b, &data);
