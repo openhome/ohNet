@@ -801,11 +801,11 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
             target='TestHttps',
             install_path=None)
-    bld.program(
-            source='OpenHome/Tests/TestHttpsBsd.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
-            target='TestHttpsBsd',
-            install_path=None)
+    #bld.program(
+    #        source='OpenHome/Tests/TestHttpsBsd.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
+    #        target='TestHttpsBsd',
+    #        install_path=None)
 
 
 # Bundles
