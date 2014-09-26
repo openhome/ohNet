@@ -552,6 +552,7 @@ class TestPlaylistPlayback( BASE.BaseTest ):
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
         self.dut.playlist.shuffle = False
+        self.dut.product.sourceIndex = 0
 
         # start audio
         self.server = HttpServer.HttpServer( kAudioRoot )

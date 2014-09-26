@@ -460,7 +460,8 @@ class TestPlaylistHandling( BASE.BaseTest ):
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
-                
+        self.dut.product.sourceIndex = 0
+
         # start audio server
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()        
