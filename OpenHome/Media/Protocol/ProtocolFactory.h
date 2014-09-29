@@ -14,6 +14,7 @@ class ProtocolFactory
 {
 public:
     static Protocol* NewHttp(Environment& aEnv);
+    static Protocol* NewHttps(Environment& aEnv);
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);

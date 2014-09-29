@@ -234,6 +234,7 @@ def build(bld):
                 'OpenHome/Media/Codec/CodecController.cpp',
                 'OpenHome/Media/Protocol/Protocol.cpp',
                 'OpenHome/Media/Protocol/ProtocolHttp.cpp',
+                'OpenHome/Media/Protocol/ProtocolHttps.cpp',
                 'OpenHome/Media/Protocol/ProtocolFile.cpp',
                 'OpenHome/Media/Protocol/ProtocolTone.cpp',
                 'OpenHome/Media/Protocol/Rtsp.cpp',

@@ -18,6 +18,7 @@ public:
     ~SocketSsl();
     void Connect(const Endpoint& aEndpoint, TUint aTimeoutMs);
     void Close();
+    void Interrupt(TBool aInterrupt);
     void LogVerbose(TBool aVerbose);
 public: // from IWriter
     void Write(TByte aValue);

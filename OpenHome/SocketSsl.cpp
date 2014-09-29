@@ -36,6 +36,7 @@ public:
     ~SocketSslImpl();
     void Connect(const Endpoint& aEndpoint, TUint aTimeoutMs);
     void Close();
+    void Interrupt(TBool aInterrupt);
     void LogVerbose(TBool aVerbose);
 public: // from IWriter
     void Write(TByte aValue);
@@ -113,6 +114,11 @@ void SocketSsl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 void SocketSsl::Close()
 {
     iImpl->Close();
+}
+
+void SocketSsl::Interrupt(TBool aInterrupt)
+{
+    iImpl->Interrupt(aInterrupt);
 }
 
 void SocketSsl::LogVerbose(TBool aVerbose)
@@ -216,6 +222,11 @@ void SocketSslImpl::Close()
         iSocketTcp.Close();
         iConnected = false;
     }
+}
+
+void SocketSslImpl::Interrupt(TBool aInterrupt)
+{
+    iSocketTcp.Interrupt(aInterrupt);
 }
 
 void SocketSslImpl::LogVerbose(TBool aVerbose)
