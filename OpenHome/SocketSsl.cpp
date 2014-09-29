@@ -50,7 +50,6 @@ private:
     SocketTcpClient iSocketTcp;
     SSL* iSsl;
     TBool iConnected;
-    TBool iConnecting;
     TBool iVerbose;
 };
 
@@ -172,7 +171,6 @@ static void SslInfoCallback(const SSL* ssl, int flag, int ret)
 SocketSslImpl::SocketSslImpl(Environment& aEnv, TUint aReadBytes)
     : iEnv(aEnv)
     , iConnected(false)
-    , iConnecting(false)
     , iVerbose(false)
 {
     iSocketTcp.Open(aEnv);
@@ -202,13 +200,10 @@ SocketSslImpl::~SocketSslImpl()
 void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 {
     iSocketTcp.Connect(aEndpoint, aTimeoutMs);
-    iConnecting = true;
     if (1 != SSL_connect(iSsl)) {
-        iConnecting = false;
         iSocketTcp.Close();
         THROW(NetworkError);
     }
-    iConnecting = false;
     iConnected = true;
 }
 
@@ -299,19 +294,21 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
             printf("SSL: Wanted %d bytes, bio only has space for %d\n", argi, (int)len);
             argi = len;
         }
-        Bwn buf(data, argi);
+        int remaining = argi;
         try {
-            if (self->iConnecting) {
-                self->iSocketTcp.Receive(buf, buf.MaxBytes());
-            }
-            else {
+            while (remaining > 0) {
+                Bwn buf(data, remaining);
                 self->iSocketTcp.Read(buf);
+                if (buf.Bytes() == 0) {
+                    break;
+                }
+                data += buf.Bytes();
+                remaining -= buf.Bytes();
             }
-            retvalue = buf.Bytes();
         }
         catch (ReaderError&) {
-            retvalue = -1;
         }
+        retvalue = argi - remaining;
         if (retvalue < argi) {
             printf("SSL: Wanted %d bytes, read %d\n", argi, (int)retvalue);
         }
