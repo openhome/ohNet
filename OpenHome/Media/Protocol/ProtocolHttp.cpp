@@ -50,6 +50,7 @@ private: // from IProtocolReader
 private:
     void Reinitialise(const Brx& aUri);
     ProtocolStreamResult DoStream();
+    ProtocolGetResult DoGet(IWriter& aWriter, TUint64 aOffset, TUint aBytes);
     ProtocolStreamResult DoSeek(TUint64 aOffset);
     ProtocolStreamResult DoLiveStream();
     void StartStream();
@@ -255,74 +256,9 @@ ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 a
         return EProtocolGetErrorUnrecoverable;
     }
 
-    try {
-        LOG(kMedia, "ProtocolHttp::Get send request\n");
-        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
-        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
-        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
-        Http::WriteHeaderConnectionClose(iWriterRequest);
-        TUint64 last = aOffset+aBytes;
-        if (last > 0) {
-            last -= 1;  // need to adjust for last byte position as request
-                        // requires absolute positions, rather than range
-        }
-        Http::WriteHeaderRange(iWriterRequest, aOffset, last);
-        iWriterRequest.WriteFlush();
-    }
-    catch(WriterError&) {
-        LOG(kMedia, "ProtocolHttp::Get WriterError\n");
-        return EProtocolGetErrorUnrecoverable;
-    }
-
-    try {
-        LOG(kMedia, "ProtocolHttp::Get read response\n");
-        iReaderResponse.Read();
-
-        const TUint code = iReaderResponse.Status().Code();
-        iTotalBytes = iHeaderContentLength.ContentLength();
-        iTotalBytes = std::min(iTotalBytes, (TUint64)aBytes);
-        // FIXME - should parse the Content-Range response to ensure we're
-        // getting the bytes requested - the server may (validly) opt not to
-        // honour our request.
-        LOG(kMedia, "ProtocolHttp::Get response code %d\n", code);
-        if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-            LOG(kMedia, "ProtocolHttp::Get failed\n");
-            return EProtocolGetErrorUnrecoverable;
-        }
-        if (code == HttpStatus::kPartialContent.Code()) {
-            LOG(kMedia, "ProtocolHttp::Get 'Partial Content' (%lld bytes)\n", iTotalBytes);
-            if (iTotalBytes >= aBytes) {
-                TUint64 count = 0;
-                TUint bytes = 1024; // FIXME - choose better value or justify this
-                while (count < iTotalBytes) {
-                    const TUint remaining = static_cast<TUint>(iTotalBytes-count);
-                    if (remaining < bytes) {
-                        bytes = remaining;
-                    }
-                    Brn buf = Read(bytes);
-                    aWriter.Write(buf);
-                    count += buf.Bytes();
-                    // If we start pushing some bytes to IWriter then get an
-                    // error, will fall through and return
-                    // EProtocolGetErrorUnrecoverable below, so IWriter won't
-                    // receive duplicate data and TryGet() will return false,
-                    // so IWriter knows to invalidate any data it's received.
-                }
-                return EProtocolGetSuccess;
-            }
-        }
-        else { // code == HttpStatus::kOk.Code()
-            LOG(kMedia, "ProtocolHttp::Get 'OK' (%lld bytes)\n", iTotalBytes);
-        }
-
-    }
-    catch(HttpError&) {
-        LOG(kMedia, "ProtocolHttp::Get HttpError\n");
-    }
-    catch(ReaderError&) {
-        LOG(kMedia, "ProtocolHttp::Get ReaderError\n");
-    }
-    return EProtocolGetErrorUnrecoverable;
+    ProtocolGetResult res = DoGet(aWriter, aOffset, aBytes);
+    Close();
+    return res;
 }
 
 EStreamPlay ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
@@ -503,6 +439,78 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     }
 
     return ProcessContent();
+}
+
+ProtocolGetResult ProtocolHttp::DoGet(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
+{
+    try {
+        LOG(kMedia, "ProtocolHttp::Get send request\n");
+        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
+        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
+        Http::WriteHeaderConnectionClose(iWriterRequest);
+        TUint64 last = aOffset+aBytes;
+        if (last > 0) {
+            last -= 1;  // need to adjust for last byte position as request
+                        // requires absolute positions, rather than range
+        }
+        Http::WriteHeaderRange(iWriterRequest, aOffset, last);
+        iWriterRequest.WriteFlush();
+    }
+    catch(WriterError&) {
+        LOG(kMedia, "ProtocolHttp::Get WriterError\n");
+        return EProtocolGetErrorUnrecoverable;
+    }
+
+    try {
+        LOG(kMedia, "ProtocolHttp::Get read response\n");
+        iReaderResponse.Read();
+
+        const TUint code = iReaderResponse.Status().Code();
+        iTotalBytes = iHeaderContentLength.ContentLength();
+        iTotalBytes = std::min(iTotalBytes, (TUint64)aBytes);
+        // FIXME - should parse the Content-Range response to ensure we're
+        // getting the bytes requested - the server may (validly) opt not to
+        // honour our request.
+        LOG(kMedia, "ProtocolHttp::Get response code %d\n", code);
+        if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
+            LOG(kMedia, "ProtocolHttp::Get failed\n");
+            return EProtocolGetErrorUnrecoverable;
+        }
+        if (code == HttpStatus::kPartialContent.Code()) {
+            LOG(kMedia, "ProtocolHttp::Get 'Partial Content' (%lld bytes)\n", iTotalBytes);
+            if (iTotalBytes >= aBytes) {
+                TUint64 count = 0;
+                TUint bytes = 1024; // FIXME - choose better value or justify this
+                while (count < iTotalBytes) {
+                    const TUint remaining = static_cast<TUint>(iTotalBytes-count);
+                    if (remaining < bytes) {
+                        bytes = remaining;
+                    }
+                    Brn buf = Read(bytes);
+                    aWriter.Write(buf);
+                    count += buf.Bytes();
+                    // If we start pushing some bytes to IWriter then get an
+                    // error, will fall through and return
+                    // EProtocolGetErrorUnrecoverable below, so IWriter won't
+                    // receive duplicate data and TryGet() will return false,
+                    // so IWriter knows to invalidate any data it's received.
+                }
+                return EProtocolGetSuccess;
+            }
+        }
+        else { // code == HttpStatus::kOk.Code()
+            LOG(kMedia, "ProtocolHttp::Get 'OK' (%lld bytes)\n", iTotalBytes);
+        }
+
+    }
+    catch(HttpError&) {
+        LOG(kMedia, "ProtocolHttp::Get HttpError\n");
+    }
+    catch(ReaderError&) {
+        LOG(kMedia, "ProtocolHttp::Get ReaderError\n");
+    }
+    return EProtocolGetErrorUnrecoverable;
 }
 
 ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
