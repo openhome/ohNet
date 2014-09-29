@@ -50,7 +50,16 @@ static long BioCallback(BIO *b, int oper, const char *argp, int argi, long /*arg
             printf("Wanted %d bytes, bio only has space for %ld\n", argi, len);
             argi = len;
         }
-        retvalue = recv(*socketH, data, argi, 0);
+        int remaining = argi;
+        while (remaining > 0) {
+            int bytes = recv(*socketH, data, remaining, 0);
+            if (bytes <= 0) {
+                break;
+            }
+            data += bytes;
+            remaining -= bytes;
+        }
+        retvalue = argi - remaining;
         if (retvalue < argi) {
             printf("Wanted %d bytes, read %ld\n", argi, retvalue);
         }
@@ -59,7 +68,17 @@ static long BioCallback(BIO *b, int oper, const char *argp, int argi, long /*arg
     case BIO_CB_WRITE:
     {
         SOCKET* socketH = (SOCKET*)BIO_get_callback_arg(b);
-        retvalue = send(*socketH, argp, argi, 0);
+        int remaining = argi;
+        const char* p = argp;
+        while (remaining > 0) {
+            int bytes = send(*socketH, p, remaining, 0);
+            if (bytes <= 0) {
+                break;
+            }
+            p += bytes;
+            remaining -= bytes;
+        }
+        retvalue = argi - remaining;
         if (retvalue < argi) {
             printf("Wanted %d bytes, wrote %ld\n", argi, retvalue);
         }
@@ -148,11 +167,14 @@ int main(int argc, char* argv[])
     {
         char resp[1024];
         int bytes;
-        //do {
+        for (;;) {
             bytes = SSL_read(ssl, resp, sizeof(resp)-1);
+            if (bytes <= 0 ) {
+                break;
+            }
             resp[bytes] = '\0';
-            printf("response (%d bytes) is:\n%s\n", bytes, resp);
-        //} while (bytes > 0);
+            printf("%s", resp);
+        }
     }
 
     SSL_shutdown(ssl);
