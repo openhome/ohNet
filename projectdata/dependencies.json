@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.93",
+        "version": "0.0.103",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,
@@ -45,7 +45,7 @@
     },
     {   "name":             "libosa",
         "type":             "internal",
-        "version":          "0.0.175",
+        "version":          "0.0.181",
         "archive-suffix":   "-Release",
         "platform-ignore": {
             "Core-armv5": false,
@@ -82,7 +82,7 @@
         "type": "external",
         "platform-specific": true,
         "external-version": "1.0.0d",
-        "internal-version": "0.1.32",
+        "internal-version": "0.1.35",
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${external-version}-${internal-version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
