@@ -5,16 +5,18 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
 
 #include "openssl/bio.h"
 #include "openssl/ssl.h"
 #include "openssl/err.h"
 #include "openssl/engine.h"
 
-#include <stdio.h> // FIXME - for printf - needs to be removed
 #include <stdlib.h>
 
 namespace OpenHome {
+
+#define kSsl  kApplication6
 
 class SslContext
 {
@@ -151,17 +153,17 @@ void SocketSsl::ReadInterrupt()
 
 // SocketSslImpl
 
-#define SSL_WHERE_INFO(ssl, flag, logIfSet, msg) {                     \
-    if(flag & logIfSet) {                                              \
-      printf("%20.20s - %30.30s  - %5.10s\n",                          \
-              msg, SSL_state_string_long(ssl), SSL_state_string(ssl)); \
-    }                                                                  \
+#define SSL_WHERE_INFO(ssl, flag, logIfSet, msg) {                       \
+    if(flag & logIfSet) {                                                \
+      LOG(kSsl, "%20.20s - %30.30s  - %5.10s\n",                         \
+                msg, SSL_state_string_long(ssl), SSL_state_string(ssl)); \
+    }                                                                    \
   } 
 
 static void SslInfoCallback(const SSL* ssl, int flag, int ret)
 {
     if(ret == 0) {
-        printf("-- SslInfoCallback: error occured.\n");
+        LOG(kSsl, "-- SslInfoCallback: error occured.\n");
     }
     SSL_WHERE_INFO(ssl, flag, SSL_CB_LOOP, "LOOP");
     SSL_WHERE_INFO(ssl, flag, SSL_CB_HANDSHAKE_START, "HANDSHAKE START");
@@ -249,16 +251,7 @@ void SocketSslImpl::Read(Bwx& aBuffer)
 {
     int bytes = SSL_read(iSsl, ((void*)(aBuffer.Ptr() + aBuffer.Bytes())), aBuffer.MaxBytes() - aBuffer.Bytes());
     if (bytes <= 0) {
-        printf("SSL_read returned %d\n", bytes);
-        int err = SSL_get_error(iSsl, bytes);
-        printf("SSL_get_error()=%d\n", err);
-        if (err == SSL_ERROR_SSL) {
-            printf("ERR_get_error()=%ld\n", ERR_get_error());
-        }
-        const char* file = NULL;
-        int line = 0;
-        printf("ERR_get_error_line() returned %ld\n", ERR_get_error_line(&file, &line));
-        printf("file=%s, line=%d\n", file, line);
+        LOG2(kSsl, kError, "SSL_read returned %d, SSL_get_error()=%d\n", bytes, SSL_get_error(iSsl, bytes));
         THROW(ReaderError);
     }
     aBuffer.SetBytes(aBuffer.Bytes() + bytes);
@@ -281,7 +274,6 @@ void SocketSslImpl::ReadInterrupt()
 
 long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, long /*argl*/, long retvalue)
 { // static
-    //printf("BioCallback: oper=%x\n", oper);
     switch (oper)
     {
     case BIO_CB_READ:
@@ -291,7 +283,7 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
         char* data;
         long len = BIO_get_mem_data(b, &data);
         if (argi > len) {
-            printf("SSL: Wanted %d bytes, bio only has space for %d\n", argi, (int)len);
+            LOG2(kSsl, kError, "SSL: Wanted %d bytes, bio only has space for %d\n", argi, (int)len);
             argi = len;
         }
         int remaining = argi;
@@ -310,7 +302,7 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
         }
         retvalue = argi - remaining;
         if (retvalue < argi) {
-            printf("SSL: Wanted %d bytes, read %d\n", argi, (int)retvalue);
+            LOG(kSsl, "SSL: Wanted %d bytes, read %d\n", argi, (int)retvalue);
         }
     }
         break;
@@ -326,7 +318,7 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
             retvalue = -1;
         }
         if (retvalue < argi) {
-            printf("SSL: Wanted %d bytes, wrote %d\n", argi, (int)retvalue);
+            LOG2(kSsl, kError, "SSL: Wanted %d bytes, wrote %d\n", argi, (int)retvalue);
         }
     }
         break;
