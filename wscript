@@ -289,7 +289,8 @@ def build(bld):
                 'OpenHome/Av/Playlist/ProviderPlaylist.cpp',
                 'OpenHome/Av/Playlist/SourcePlaylist.cpp',
                 'OpenHome/Av/Playlist/TrackDatabase.cpp',
-                'OpenHome/Av/Playlist/UriProviderPlaylist.cpp'
+                'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
+                'OpenHome/Av/Tidal/ProtocolTidal.cpp'
             ],
             use=['OHNET', 'ohMediaPlayer'],
             target='SourcePlaylist')
@@ -806,6 +807,11 @@ def build(bld):
     #        source='OpenHome/Tests/TestHttpsBsd.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
     #        target='TestHttpsBsd',
+    #        install_path=None)
+    #bld.program(
+    #        source='OpenHome/Av/Tidal/TestTidal.cpp',
+    #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
+    #        target='TestTidal',
     #        install_path=None)
 
 
