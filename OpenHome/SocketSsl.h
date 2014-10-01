@@ -16,6 +16,7 @@ class SocketSsl : public IWriter, public IReaderSource
 public:
     SocketSsl(Environment& aEnv, TUint aReadBytes);
     ~SocketSsl();
+    void SetSecure(TBool aSecure);
     void Connect(const Endpoint& aEndpoint, TUint aTimeoutMs);
     void Close();
     void Interrupt(TBool aInterrupt);

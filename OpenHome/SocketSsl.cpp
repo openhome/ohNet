@@ -34,6 +34,7 @@ class SocketSslImpl : public IWriter, public IReaderSource
 public:
     SocketSslImpl(Environment& aEnv, TUint aReadBytes);
     ~SocketSslImpl();
+    void SetSecure(TBool aSecure);
     void Connect(const Endpoint& aEndpoint, TUint aTimeoutMs);
     void Close();
     void Interrupt(TBool aInterrupt);
@@ -52,6 +53,7 @@ private:
     Environment& iEnv;
     SocketTcpClient iSocketTcp;
     SSL* iSsl;
+    TBool iSecure;
     TBool iConnected;
     TBool iVerbose;
 };
@@ -104,6 +106,11 @@ SocketSsl::SocketSsl(Environment& aEnv, TUint aReadBytes)
 SocketSsl::~SocketSsl()
 {
     delete iImpl;
+}
+
+void SocketSsl::SetSecure(TBool aSecure)
+{
+    iImpl->SetSecure(aSecure);
 }
 
 void SocketSsl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
@@ -178,10 +185,10 @@ static void SslInfoCallback(const SSL* ssl, int flag, int ret)
 
 SocketSslImpl::SocketSslImpl(Environment& aEnv, TUint aReadBytes)
     : iEnv(aEnv)
+    , iSecure(true)
     , iConnected(false)
     , iVerbose(false)
 {
-    iSocketTcp.Open(aEnv);
     iSsl = SSL_new(SslContext::Get(aEnv));
     SSL_set_info_callback(iSsl, SslInfoCallback);
     const TUint memBufSize = (kMinReadBytes<aReadBytes? aReadBytes : kMinReadBytes);
@@ -205,10 +212,16 @@ SocketSslImpl::~SocketSslImpl()
     SslContext::RemoveRef(iEnv);
 }
 
+void SocketSslImpl::SetSecure(TBool aSecure)
+{
+    iSecure = aSecure;
+}
+
 void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 {
+    iSocketTcp.Open(iEnv);
     iSocketTcp.Connect(aEndpoint, aTimeoutMs);
-    if (1 != SSL_connect(iSsl)) {
+    if (iSecure && 1 != SSL_connect(iSsl)) {
         iSocketTcp.Close();
         THROW(NetworkError);
     }
@@ -218,7 +231,9 @@ void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 void SocketSslImpl::Close()
 {
     if (iConnected) {
-        (void)SSL_shutdown(iSsl);
+        if (iSecure) {
+            (void)SSL_shutdown(iSsl);
+        }
         iSocketTcp.Close();
         iConnected = false;
     }
@@ -242,14 +257,19 @@ void SocketSslImpl::Write(TByte aValue)
 
 void SocketSslImpl::Write(const Brx& aBuffer)
 {
-    const int bytes = (int)aBuffer.Bytes();
     if (iVerbose) {
         Log::Print("SocketSsl writing\n");
         Log::Print(aBuffer);
         Log::Print("\n");
     }
-    if (bytes != SSL_write(iSsl, aBuffer.Ptr(), bytes)) {
-        THROW(WriterError);
+    if (iSecure) {
+        const int bytes = (int)aBuffer.Bytes();
+        if (bytes != SSL_write(iSsl, aBuffer.Ptr(), bytes)) {
+            THROW(WriterError);
+        }
+    }
+    else {
+        iSocketTcp.Write(aBuffer);
     }
 }
 
@@ -260,12 +280,17 @@ void SocketSslImpl::WriteFlush()
 
 void SocketSslImpl::Read(Bwx& aBuffer)
 {
-    int bytes = SSL_read(iSsl, ((void*)(aBuffer.Ptr() + aBuffer.Bytes())), aBuffer.MaxBytes() - aBuffer.Bytes());
-    if (bytes <= 0) {
-        LOG2(kSsl, kError, "SSL_read returned %d, SSL_get_error()=%d\n", bytes, SSL_get_error(iSsl, bytes));
-        THROW(ReaderError);
+    if (iSecure) {
+        int bytes = SSL_read(iSsl, ((void*)(aBuffer.Ptr() + aBuffer.Bytes())), aBuffer.MaxBytes() - aBuffer.Bytes());
+        if (bytes <= 0) {
+            LOG2(kSsl, kError, "SSL_read returned %d, SSL_get_error()=%d\n", bytes, SSL_get_error(iSsl, bytes));
+            THROW(ReaderError);
+        }
+        aBuffer.SetBytes(aBuffer.Bytes() + bytes);
     }
-    aBuffer.SetBytes(aBuffer.Bytes() + bytes);
+    else {
+        iSocketTcp.Read(aBuffer);
+    }
     if (iVerbose) {
         Log::Print("SocketSsl reading\n");
         Log::Print(aBuffer);
