@@ -79,7 +79,7 @@ ProtocolHttps::ProtocolHttps(Environment& aEnv)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
     , iWriterBuf(iSocket)
-    , iWriterRequest(iSocket)
+    , iWriterRequest(iWriterBuf)
     , iReaderResponse(aEnv, iReaderBuf)
     , iDechunker(iReaderBuf)
 {
