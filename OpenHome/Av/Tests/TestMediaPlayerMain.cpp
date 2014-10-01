@@ -43,7 +43,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     // Create TestMediaPlayer.
     Media::DriverBasic* driver = new Media::DriverBasic(dvStack->Env());
-    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, options.Room().CString(), options.Name().CString(), options.TuneIn().CString(), NULL/*driver*/);
+    TestMediaPlayer* tmp = new TestMediaPlayer(*dvStack, udn, options.Room().CString(), options.Name().CString(), options.TuneIn().CString(), options.Tidal().Value(), NULL/*driver*/);
     driver->SetPipeline(tmp->Pipeline());
     tmp->Run();
     tmp->StopPipeline();

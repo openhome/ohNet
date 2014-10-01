@@ -48,7 +48,7 @@ class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
 public:
-    TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
+    TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, Media::IPullableClock* aPullableClock);
     virtual ~TestMediaPlayer();
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
@@ -85,6 +85,7 @@ private:
     IPowerManagerObserver* iPowerObserver;
     Net::Shell* iShell;
     Net::ShellCommandDebug* iShellDebug;
+    const Brx& iTidalId;
 };
 
 class TestMediaPlayerOptions
@@ -97,8 +98,9 @@ public:
     TestFramework::OptionString& Udn();
     TestFramework::OptionUint& Channel();
     TestFramework::OptionUint& Adapter();
-    TestFramework::OptionString& TuneIn();
     TestFramework::OptionBool& Loopback();
+    TestFramework::OptionString& TuneIn();
+    TestFramework::OptionString& Tidal();
 private:
     TestFramework::OptionParser iParser;
     TestFramework::OptionString iOptionRoom;
@@ -106,8 +108,9 @@ private:
     TestFramework::OptionString iOptionUdn;
     TestFramework::OptionUint iOptionChannel;
     TestFramework::OptionUint iOptionAdapter;
-    TestFramework::OptionString iOptionTuneIn;
     TestFramework::OptionBool iOptionLoopback;
+    TestFramework::OptionString iOptionTuneIn;
+    TestFramework::OptionString iOptionTidal;
 };
 
 // Not very nice, but only to allow reusable test functions.
@@ -118,9 +121,6 @@ public:
     static void SeedRandomNumberGenerator(Environment& aEnv, const Brx& aRoom, TIpAddress aAddress, Net::DviServerUpnp& aServer);    // seed from room + server port
     static void AppendUniqueId(Environment& aEnv, const Brx& aUserUdn, const Brx& aDefaultUdn, Bwh& aOutput);
 };
-
-typedef TestMediaPlayer* (*CreateMediaPlayerFunc)(Net::CpStack& aCpStack, Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, Media::IPullableClock* aPullableClock);
-int ExecuteTestMediaPlayer(int aArgc, char* aArgv[], CreateMediaPlayerFunc aFunc);
 
 } // namespace Test
 } // namespace Av

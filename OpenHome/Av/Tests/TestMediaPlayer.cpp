@@ -17,6 +17,7 @@
 #include <OpenHome/Av/Utils/IconDriverSongcastSender.h>
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
+#include <OpenHome/Private/Parser.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -30,9 +31,10 @@ using namespace OpenHome::TestFramework;
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
-TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, IPullableClock* aPullableClock)
+TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, IPullableClock* aPullableClock)
     : iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
+    , iTidalId(aTidalId)
 {
     Debug::SetLevel(Debug::kEvent);
     Bws<256> friendlyName;
@@ -204,6 +206,14 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+    // only add Tidal if we have credible login details
+    if (iTidalId.Bytes() > 0) {
+        Parser parser(iTidalId);
+        Brn token = parser.Next(':');
+        Brn username = parser.Next(':');
+        Brn password = parser.Remaining();
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, username, password));
+    }
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
@@ -321,16 +331,18 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionUdn("-u", "--udn", Brn(""), "Udn (optional - one will be generated if this is left blank)")
     , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
-    , iOptionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
+    , iOptionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name")
+    , iOptionTidal("", "--tidal", Brn(""), "Tidal login - token:username:password")
 {
     iParser.AddOption(&iOptionRoom);
     iParser.AddOption(&iOptionName);
     iParser.AddOption(&iOptionUdn);
     iParser.AddOption(&iOptionChannel);
     iParser.AddOption(&iOptionAdapter);
-    iParser.AddOption(&iOptionTuneIn);
     iParser.AddOption(&iOptionLoopback);
+    iParser.AddOption(&iOptionTuneIn);
+    iParser.AddOption(&iOptionTidal);
 }
 
 TBool TestMediaPlayerOptions::Parse(int aArgc, char* aArgv[])
@@ -363,14 +375,19 @@ OptionUint& TestMediaPlayerOptions::Adapter()
     return iOptionAdapter;
 }
 
+OptionBool& TestMediaPlayerOptions::Loopback()
+{
+    return iOptionLoopback;
+}
+
 OptionString& TestMediaPlayerOptions::TuneIn()
 {
     return iOptionTuneIn;
 }
 
-OptionBool& TestMediaPlayerOptions::Loopback()
+OptionString& TestMediaPlayerOptions::Tidal()
 {
-    return iOptionLoopback;
+    return iOptionTidal;
 }
 
 
