@@ -53,6 +53,7 @@ private:
     Environment& iEnv;
     SocketTcpClient iSocketTcp;
     SSL* iSsl;
+    TByte* iBioReadBuf;
     TBool iSecure;
     TBool iConnected;
     TBool iVerbose;
@@ -192,8 +193,8 @@ SocketSslImpl::SocketSslImpl(Environment& aEnv, TUint aReadBytes)
     iSsl = SSL_new(SslContext::Get(aEnv));
     SSL_set_info_callback(iSsl, SslInfoCallback);
     const TUint memBufSize = (kMinReadBytes<aReadBytes? aReadBytes : kMinReadBytes);
-    void* buf = malloc((int)memBufSize);
-    BIO* rbio = BIO_new_mem_buf(buf, memBufSize);
+    iBioReadBuf = (TByte*)malloc((int)memBufSize);
+    BIO* rbio = BIO_new_mem_buf(iBioReadBuf, memBufSize);
     BIO_set_callback(rbio, BioCallback);
     BIO_set_callback_arg(rbio, (char*)this);
     BIO* wbio = BIO_new(BIO_s_mem());
@@ -209,6 +210,7 @@ SocketSslImpl::~SocketSslImpl()
 {
     Close();
     SSL_free(iSsl);
+    free(iBioReadBuf);
     SslContext::RemoveRef(iEnv);
 }
 

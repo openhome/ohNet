@@ -136,9 +136,8 @@ int main(int argc, char* argv[])
     SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
     SSL* ssl = SSL_new(ctx);
     SSL_set_info_callback(ssl, SslInfoCallback);
-    static const int memBufSize = 16 * 1024;
-    void* buf = malloc(memBufSize);
-    BIO* rbio = BIO_new_mem_buf(buf, memBufSize);
+    static unsigned char memBuf[16 * 1024] = {0};
+    BIO* rbio = BIO_new_mem_buf(memBuf, sizeof(memBuf));
     BIO_set_callback(rbio, BioCallback);
     BIO_set_callback_arg(rbio, (char*)&socketH);
     BIO* wbio = BIO_new(BIO_s_mem());
