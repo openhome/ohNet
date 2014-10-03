@@ -457,7 +457,7 @@ template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
 
 template <class T> void ConfigManager::DumpToStore(const ConfigVal<T>& aVal)
 {
-    static const TUint kMaxValueBytes = 100;  // randomly chosen
+    static const TUint kMaxValueBytes = 512;  // randomly chosen
     Bws<kMaxValueBytes> buf;
     WriterBuffer writerBuf(buf);
     aVal.Serialise(writerBuf);

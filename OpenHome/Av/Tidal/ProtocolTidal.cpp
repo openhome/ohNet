@@ -4,12 +4,16 @@
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/SocketSsl.h>
+#include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
+
+#include "openssl/bio.h"
+#include "openssl/pem.h"
 
 namespace OpenHome {
 namespace Media {
@@ -22,8 +26,14 @@ class ProtocolTidal : public Protocol
     static const Brn kHost;
     static const TUint kPortHttps = 443;
     static const TUint kPortHttp = 80;
+    static const TUint kMaxUsernameBytes = 128;
+    static const TUint kMaxPasswordBytes = 128;
 public:
-    ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aUsername, const Brx& aPassword);
+    static const Brn kConfigKeyUsername;
+    static const Brn kConfigKeyPassword;
+public:
+    ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, Configuration::IConfigManagerInitialiser& aConfigInitialiser);
+    ~ProtocolTidal();
 private: // from Protocol
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
@@ -41,6 +51,9 @@ private:
     void Logout(const Brx& aSessionId);
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
+    void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType);
 private:
     Mutex iLock;
     SocketSsl iSocket;
@@ -49,10 +62,15 @@ private:
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
     const Bws<32> iToken;
-    const Bws<32> iUsername;
-    const Bws<32> iPassword;
+    Bws<kMaxUsernameBytes> iUsername;
+    Bws<kMaxPasswordBytes> iPassword;
     Uri iUri;
     Bws<1024> iStreamUrl;
+    RSA* iPrivateKey;
+    Configuration::ConfigText* iConfigUsername;
+    Configuration::ConfigText* iConfigPassword;
+    TUint iSubscriberIdUsername;
+    TUint iSubscriberIdPassword;
 };
 
 };  // namespace Media
@@ -60,19 +78,22 @@ private:
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
+using namespace OpenHome::Configuration;
 
 
-Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aUsername, const Brx& aPassword)
+Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigManagerInitialiser& aConfigInitialiser)
 { // static
-    return new ProtocolTidal(aEnv, aToken, aUsername, aPassword);
+    return new ProtocolTidal(aEnv, aToken, aRsaPrivateKey, aConfigInitialiser);
 }
 
 
 // ProtocolTidal
 
 const Brn ProtocolTidal::kHost("api.wimpmusic.com");
+const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
+const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
 
-ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aUsername, const Brx& aPassword)
+ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigManagerInitialiser& aConfigInitialiser)
     : Protocol(aEnv)
     , iLock("PTID")
     , iSocket(aEnv, kReadBufferBytes)
@@ -81,9 +102,25 @@ ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aU
     , iWriterRequest(iSocket)
     , iReaderResponse(aEnv, iReaderBuf)
     , iToken(aToken)
-    , iUsername(aUsername)
-    , iPassword(aPassword)
 {
+    BIO *bio = BIO_new_mem_buf((void*)aRsaPrivateKey.Ptr(), aRsaPrivateKey.Bytes());
+    iPrivateKey = PEM_read_bio_RSAPrivateKey(bio, NULL, 0, NULL);
+    BIO_free(bio);
+
+    const TUint maxEncryptedLen = RSA_size(iPrivateKey);
+    iConfigUsername = new ConfigText(aConfigInitialiser, kConfigKeyUsername, maxEncryptedLen, Brx::Empty());
+    iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::UsernameChanged));
+    iConfigPassword = new ConfigText(aConfigInitialiser, kConfigKeyPassword, maxEncryptedLen, Brx::Empty());
+    iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::PasswordChanged));
+}
+
+ProtocolTidal::~ProtocolTidal()
+{
+    iConfigUsername->Unsubscribe(iSubscriberIdUsername);
+    delete iConfigUsername;
+    iConfigPassword->Unsubscribe(iSubscriberIdPassword);
+    delete iConfigPassword;
+    RSA_free(iPrivateKey);
 }
 
 void ProtocolTidal::Interrupt(TBool aInterrupt)
@@ -204,10 +241,12 @@ TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
         LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
         return false;
     }
-    Bws<256> reqBody(Brn("username="));
+    iLock.Wait();
+    Bws<280> reqBody(Brn("username="));
     reqBody.Append(iUsername);
     reqBody.Append(Brn("&password="));
     reqBody.Append(iPassword);
+    iLock.Signal();
 
     Bws<128> pathAndQuery("/v1/login/username?token=");
     pathAndQuery.Append(iToken);
@@ -334,4 +373,33 @@ Brn ProtocolTidal::ReadValue(IReader& aReader, const Brx& aTag)
     (void)aReader.ReadUntil('\"');
     Brn buf = aReader.ReadUntil('\"');
     return buf;
+}
+
+void ProtocolTidal::UsernameChanged(KeyValuePair<const Brx&>& aKvp)
+{
+    iLock.Wait();
+    Decrypt(aKvp.Value(), iUsername, "username");
+    iLock.Signal();
+}
+
+void ProtocolTidal::PasswordChanged(KeyValuePair<const Brx&>& aKvp)
+{
+    iLock.Wait();
+    Decrypt(aKvp.Value(), iPassword, "password");
+    iLock.Signal();
+}
+
+void ProtocolTidal::Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType)
+{
+    aDecrypted.SetBytes(0);
+    if (aEncrypted.Bytes() == 0) {
+        return;
+    }
+    const int decryptedLen = RSA_private_decrypt(aEncrypted.Bytes(), aEncrypted.Ptr(), const_cast<TByte*>(aDecrypted.Ptr()), iPrivateKey, RSA_PKCS1_OAEP_PADDING);
+    if (decryptedLen < 0) {
+        LOG2(kMedia, kError, "Failed to decrypt Tidal %s\n", aType);
+    }
+    else {
+        aDecrypted.SetBytes((TUint)decryptedLen);
+    }
 }

@@ -6,6 +6,9 @@
 namespace OpenHome {
     class Environment;
     class Brx;
+namespace Configuration {
+    class IConfigManagerInitialiser;
+}
 namespace Media {
 
 class Protocol;
@@ -18,7 +21,7 @@ public:
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
-    static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aUsername, const Brx& aPassword);
+    static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, Configuration::IConfigManagerInitialiser& aConfigInitialiser);
 };
 
 } // namespace Media
