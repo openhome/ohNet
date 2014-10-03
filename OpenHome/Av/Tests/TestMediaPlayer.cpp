@@ -172,21 +172,22 @@ DvDeviceStandard* TestMediaPlayer::Device()
 void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
 {
     const Brn kSupportedProtocols( 
-        "http-get:*:audio/x-flac:*,"   // Flac
-        "http-get:*:audio/wav:*,"      // Wav
-        "http-get:*:audio/wave:*,"     // Wav
-        "http-get:*:audio/x-wav:*,"    // Wav
-        "http-get:*:audio/aiff:*,"     // AIFF
-        "http-get:*:audio/x-aiff:*,"   // AIFF
-        "http-get:*:audio/x-m4a:*,"    // Alac
-        "http-get:*:audio/x-scpls:*,"  // M3u (content processor)
-        "http-get:*:text/xml:*,"       // Opml ??  (content processor)
-        "http-get:*:audio/aac:*,"      // Aac
-        "http-get:*:audio/aacp:*,"     // Aac
-        "http-get:*:audio/mp4:*,"      // Mpeg4 (container)
-        "http-get:*:audio/ogg:*,"      // Vorbis
-        "http-get:*:audio/x-ogg:*,"    // Vorbis
-        "http-get:*:application/ogg:*" // Vorbis
+        "http-get:*:audio/x-flac:*,"    // Flac
+        "http-get:*:audio/wav:*,"       // Wav
+        "http-get:*:audio/wave:*,"      // Wav
+        "http-get:*:audio/x-wav:*,"     // Wav
+        "http-get:*:audio/aiff:*,"      // AIFF
+        "http-get:*:audio/x-aiff:*,"    // AIFF
+        "http-get:*:audio/x-m4a:*,"     // Alac
+        "http-get:*:audio/x-scpls:*,"   // M3u (content processor)
+        "http-get:*:text/xml:*,"        // Opml ??  (content processor)
+        "http-get:*:audio/aac:*,"       // Aac
+        "http-get:*:audio/aacp:*,"      // Aac
+        "http-get:*:audio/mp4:*,"       // Mpeg4 (container)
+        "http-get:*:audio/ogg:*,"       // Vorbis
+        "http-get:*:audio/x-ogg:*,"     // Vorbis
+        "http-get:*:application/ogg:*," // Vorbis
+        "tidalhifi.com:*:*:*,"          // Tidal
         );
     DoRegisterPlugins(aEnv, kSupportedProtocols);
 }
@@ -278,7 +279,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
         RSA* pubKey = PEM_read_bio_RSA_PUBKEY(bio, NULL, 0, NULL);
         BIO_free(bio);
         EncryptAndSetConfigVal(pubKey, configMgr.GetText(Brn("Tidal.Username")), username);
-        EncryptAndSetConfigVal(pubKey, configMgr.GetText(Brn("Tidal.Password")), password);    
+        EncryptAndSetConfigVal(pubKey, configMgr.GetText(Brn("Tidal.Password")), password);
         RSA_free(pubKey);
     }
 
