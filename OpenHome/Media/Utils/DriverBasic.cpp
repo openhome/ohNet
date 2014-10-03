@@ -44,6 +44,7 @@ void DriverBasic::Run()
 
     TUint64 now = OsTimeInUs(iOsCtx);
     iLastTimeUs = now;
+    iNextTimerDuration = kTimerFrequencyMs;
     iPendingJiffies = kTimerFrequencyMs * Jiffies::kPerMs;
     try {
         for (;;) {

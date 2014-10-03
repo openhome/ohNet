@@ -90,7 +90,9 @@ void SslContext::RemoveRef(Environment& aEnv)
     if (--iRefCount == 0) {
         SSL_CTX_free(iCtx);
         iCtx = NULL;
+        CRYPTO_cleanup_all_ex_data();
         ERR_free_strings();
+        ERR_remove_state(0);
         ENGINE_cleanup();
         EVP_cleanup();
     }
