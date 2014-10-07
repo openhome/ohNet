@@ -212,7 +212,6 @@ ConfigText::ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUi
 
 TUint ConfigText::MaxLength() const
 {
-    AutoMutex a(iMutex);
     return iText.MaxBytes();
 }
 

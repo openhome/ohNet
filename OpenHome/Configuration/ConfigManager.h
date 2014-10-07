@@ -90,7 +90,7 @@ class ConfigVal : public IObservable<T>, public ISerialisable
 {
     using typename IObservable<T>::FunctorObserver;
 public:
-    static const TUint kSubscriptionIdInvalid = 0;
+    static const TUint kSubscriptionIdInvalid = 0; // FIXME - move to ConfigManager
 protected:
     ConfigVal(IConfigManagerInitialiser& aManager, const Brx& aKey);
 public:
@@ -206,14 +206,14 @@ public:
     ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
-    void Set(TInt aVal);
+    void Set(TInt aVal);    // THROWS ConfigValueOutOfRange
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigNum aFunctor);
 public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
-    void Deserialise(const Brx& aString);
+    void Deserialise(const Brx& aString);   // THROWS ConfigNotANumber, ConfigValueOutOfRange
 private: // from ConfigVal
     void Write(KvpNum& aKvp);
 private:
@@ -261,14 +261,14 @@ public:
 public:
     ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
-    void Set(TUint aVal);
+    void Set(TUint aVal);   // THROWS ConfigInvalidSelection
 private:
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigChoice aFunctor);
 public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
-    void Deserialise(const Brx& aString);
+    void Deserialise(const Brx& aString);   // THROWS ConfigNotANumber, ConfigInvalidSelection
 private: // from ConfigVal
     void Write(KvpChoice& aKvp);
 private:
@@ -316,14 +316,14 @@ public:
 public:
     ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
-    void Set(const Brx& aText);
+    void Set(const Brx& aText); // THROWS ConfigValueTooLong
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
     TUint Subscribe(FunctorConfigText aFunctor);
 public: // from ConfigVal
     void Serialise(IWriter& aWriter) const;
-    void Deserialise(const Brx& aString);
+    void Deserialise(const Brx& aString);   // THROWS ConfigValueTooLong
 private: // from ConfigVal
     void Write(KvpText& aKvp);
 private:
