@@ -413,6 +413,11 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     iParser.AddOption(&iOptionTidal);
 }
 
+void TestMediaPlayerOptions::AddOption(Option* aOption)
+{
+    iParser.AddOption(aOption);
+}
+
 TBool TestMediaPlayerOptions::Parse(int aArgc, char* aArgv[])
 {
     return iParser.Parse(aArgc, aArgv);

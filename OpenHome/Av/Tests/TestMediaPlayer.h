@@ -52,7 +52,7 @@ public:
     virtual ~TestMediaPlayer();
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
-    void Run();
+    virtual void Run();
     Media::PipelineManager& Pipeline();
     Net::DvDeviceStandard* Device();
 protected:
@@ -92,6 +92,7 @@ class TestMediaPlayerOptions
 {
 public:
     TestMediaPlayerOptions();
+    void AddOption(TestFramework::Option* aOption);
     TBool Parse(int aArgc, char* aArgv[]);
     TestFramework::OptionString& Room();
     TestFramework::OptionString& Name();
