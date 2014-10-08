@@ -311,6 +311,8 @@ class ConfigText : public ConfigVal<const Brx&>
 {
     friend class SuiteConfigManager;
 public:
+    static const TUint kMaxBytes = 512;
+public:
     typedef FunctorGeneric<KeyValuePair<const Brx&>&> FunctorConfigText;
     typedef KeyValuePair<const Brx&> KvpText;
 public:
