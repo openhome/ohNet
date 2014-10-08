@@ -200,6 +200,7 @@ ConfigText::ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUi
     , iText(aMaxLength)
     , iMutex("CVTM")
 {
+    ASSERT(aMaxLength <= kMaxBytes);
     Bwh initialBuf(aMaxLength);
     iConfigManager.FromStore(iKey, initialBuf, aDefault);
 
