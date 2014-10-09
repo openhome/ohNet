@@ -3,10 +3,15 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Private/Ascii.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Configuration;
+
+
+const Brn Source::kSourceNameKeyPrefix("Source.");
+const Brn Source::kSourceNameKeySuffix(".Name");
 
 const Brx& Source::SystemName() const
 {
@@ -73,21 +78,19 @@ void Source::DoActivate()
     iProduct->Activate(*this);
 }
 
-void Source::Initialise(IProduct& aProduct, IConfigManagerInitialiser& aConfigInit, IConfigManagerReader& aConfigManagerReader)
+void Source::Initialise(IProduct& aProduct, IConfigManagerInitialiser& aConfigInit, IConfigManagerReader& aConfigManagerReader, TUint aId)
 {
-    const Brn prefix("Source.");
-    const Brn suffix(".Name");
-    const TUint maxKeyBytes = prefix.Bytes() + kMaxSystemNameBytes + suffix.Bytes();
+    const TUint maxKeyBytes = kSourceNameKeyPrefix.Bytes() + kMaxSourceIndexDigits + kSourceNameKeySuffix.Bytes();
     iProduct = &aProduct;
     Bwh key(maxKeyBytes);
-    key.Replace(prefix);
-    key.Append(iSystemName);
-    key.Append(suffix);
+    key.Replace(kSourceNameKeyPrefix);
+    Ascii::AppendDec(key, aId);
+    key.Append(kSourceNameKeySuffix);
     if (aConfigManagerReader.HasText(key)) {
         iConfigName = &aConfigManagerReader.GetText(key);
         iConfigNameCreated = false;
     } else {
-        iConfigName = new ConfigText(aConfigInit, key, kMaxSystemNameBytes, iName);
+        iConfigName = new ConfigText(aConfigInit, key, maxKeyBytes, iName);
         iConfigNameCreated = true;
     }
     iConfigNameSubscriptionId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &Source::NameChanged));

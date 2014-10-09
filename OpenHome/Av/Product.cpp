@@ -89,7 +89,7 @@ void Product::AddSource(ISource* aSource)
 {
     ASSERT(!iStarted);
     iSources.push_back(aSource);
-    aSource->Initialise(*this, iConfigInit, iConfigReader);
+    aSource->Initialise(*this, iConfigInit, iConfigReader, iSources.size()-1);
 }
 
 void Product::AddAttribute(const TChar* aAttribute)

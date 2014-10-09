@@ -30,12 +30,16 @@ public:
     virtual void SetVisible(TBool aVisible) = 0;
     virtual void PipelineStopped() = 0;
 private:
-    virtual void Initialise(IProduct& aProduct, Configuration::IConfigManagerInitialiser& aConfigInit, Configuration::IConfigManagerReader& aConfigManagerReader) = 0;
+    virtual void Initialise(IProduct& aProduct, Configuration::IConfigManagerInitialiser& aConfigInit, Configuration::IConfigManagerReader& aConfigManagerReader, TUint aId) = 0;
 };
 
 class Source : public ISource/*, protected IInfoProvider*/
 {
+private:
     static const TUint kMaxSourceTypeBytes = 20;
+    static const TUint kMaxSourceIndexDigits = 2; // assume a source count of 0..99 is reasonable
+    static const OpenHome::Brn kSourceNameKeyPrefix;
+    static const OpenHome::Brn kSourceNameKeySuffix;
 protected: // from ISource
     const Brx& SystemName() const;
     const Brx& Type() const;
@@ -49,7 +53,7 @@ protected:
     TBool IsActive() const;
     void DoActivate();
 private: // from ISource
-    void Initialise(IProduct& aProduct, Configuration::IConfigManagerInitialiser& aConfigInit, Configuration::IConfigManagerReader& aConfigManagerReader);
+    void Initialise(IProduct& aProduct, Configuration::IConfigManagerInitialiser& aConfigInit, Configuration::IConfigManagerReader& aConfigManagerReader, TUint aId);
 private:
     void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
 protected:
