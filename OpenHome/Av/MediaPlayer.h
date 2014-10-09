@@ -70,6 +70,7 @@ public:
     virtual Configuration::IConfigManagerReader& ConfigManagerReader() = 0;
     virtual Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
+    virtual Av::Product& Product() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
@@ -100,6 +101,7 @@ public: // from IMediaPlayer
     Configuration::IConfigManagerReader& ConfigManagerReader();
     Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser();
     IPowerManager& PowerManager();
+    Av::Product& Product();
     void Add(Media::UriProvider* aUriProvider);
     void AddAttribute(const TChar* aAttribute);
 private:
@@ -142,7 +144,7 @@ private:
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
-    Product* iProduct;
+    Av::Product* iProduct;
     Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
     Media::IVolume* iRightVolumeHardware;  // XXX volume hardware
     VolumeProfile iVolumeProfile;
