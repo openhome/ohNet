@@ -527,6 +527,7 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamStarted = true;
     iStreamId = aMsg->StreamId();
     iSeek = false; // clear any pending seek - it'd have been against a previous track now
+    iStreamStopped = false; // likewise, if iStreamStopped was set, this was for the previous stream
     iStreamLength = aMsg->TotalBytes();
     iSeekable = aMsg->Seekable();
     iLive = aMsg->Live();
