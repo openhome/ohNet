@@ -74,13 +74,29 @@ JNIEXPORT jbyteArray JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePr
 	const uint8_t* data;
 	uint32_t len;
 	jbyteArray array;
+    jint result;
 	aClass = aClass;
-	
+
 	ServicePropertyGetValueBinary(property, &data, &len);
-	
+    result = ServicePropertyGetValueBinary(property, &data, &len);
+
 	array = (*aEnv)->NewByteArray(aEnv, len);
 	(*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *)data);
-	
+    if (result == 0) {
+        array = (*aEnv)->NewByteArray(aEnv, len);
+        (*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *)data);
+    }
+    else {
+        jclass errorClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/core/PropertyError");
+        if (errorClass == NULL) {
+            printf("Unable to find class org/openhome/net/core/PropertyError\n");
+        }
+        else {
+            (*aEnv)->ThrowNew(aEnv, errorClass, "Value not available");
+        }
+        return NULL;
+    }
+
 	return array;
 }
 

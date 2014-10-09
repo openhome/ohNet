@@ -1112,6 +1112,7 @@ java_classes = \
 	$(objdir)org/openhome/net/core/Property.class \
 	$(objdir)org/openhome/net/core/PropertyBinary.class \
 	$(objdir)org/openhome/net/core/PropertyBool.class \
+	$(objdir)org/openhome/net/core/PropertyError.class \
 	$(objdir)org/openhome/net/core/PropertyInt.class \
 	$(objdir)org/openhome/net/core/PropertyString.class \
 	$(objdir)org/openhome/net/core/PropertyUint.class \
@@ -1251,6 +1252,8 @@ $(objdir)org/openhome/net/core/PropertyBinary.class : $(publicjavadir)org/openho
 	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyBinary.java
 $(objdir)org/openhome/net/core/PropertyBool.class : $(publicjavadir)org/openhome/net/core/PropertyBool.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyBool.java
+$(objdir)org/openhome/net/core/PropertyError.class : $(publicjavadir)org/openhome/net/core/PropertyError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyError.java
 $(objdir)org/openhome/net/core/PropertyInt.class : $(publicjavadir)org/openhome/net/core/PropertyInt.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) -Xbootclasspath:"$(JAVA_HOME)/jre/lib/rt.jar" -target 1.6 -source 1.6 $(publicjavadir)org/openhome/net/core/PropertyInt.java
 $(objdir)org/openhome/net/core/PropertyString.class : $(publicjavadir)org/openhome/net/core/PropertyString.java

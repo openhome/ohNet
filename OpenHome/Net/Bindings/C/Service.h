@@ -362,6 +362,17 @@ DllExport uint32_t STDCALL ServicePropertySetValueBool(ServiceProperty aProperty
 DllExport uint32_t STDCALL ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue);
 
 /**
+ * Set the current value of a string property
+ *
+ * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[in] aValue     Pointer to new value for the property
+ * @param[in] aLen       Length of data pointed to by aValue
+ *
+ * @return    1 if the value of the property has changed; 0 otherwise
+ */
+DllExport uint32_t STDCALL ServicePropertySetValueStringAsBuffer(ServiceProperty aProperty, const char* aValue, uint32_t aLen);
+
+/**
  * Set the current value of a binary property
  *
  * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
