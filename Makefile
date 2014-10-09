@@ -325,8 +325,8 @@ csharpdefines ?=
 publicjavadir = OpenHome/Net/Bindings/Java/
 
 ifeq ($(platform), IntelMac)
-	includes_jni = -I/System/Library/Frameworks/JavaVM.framework/Headers -I/usr/include/malloc
-	link_jvm = /System/Library/Frameworks/JavaVM.framework/JavaVM
+	includes_jni = -I${MACOSX_SDK}/System/Library/Frameworks/JavaVM.framework/Headers -I${MACOSX_SDK}/usr/include/malloc
+	link_jvm = ${MACOSX-SDK}/System/Library/Frameworks/JavaVM.framework/JavaVM
 	javac = /usr/bin/javac
 	jar = /usr/bin/jar
 else
@@ -345,7 +345,7 @@ else
 	jar = $(JAVA_HOME)/bin/jar
 endif
 
-java_cflags = -fexceptions -Wall $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
+java_cflags = -fexceptions -Wall -Wno-self-assign $(version_specific_java_cflags) -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_$(endian)_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) $(platform_cflags)
 jarflags = cf
 dirsep = /
 prefix = /usr/local
