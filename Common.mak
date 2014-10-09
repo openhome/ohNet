@@ -568,6 +568,14 @@ $(objdir)TestSsdpUListen.$(objext) : OpenHome/Net/Tests/TestSsdpUListen.cpp $(he
 $(objdir)TestSsdpUListenMain.$(objext) : OpenHome/Net/Tests/TestSsdpUListenMain.cpp $(headers)
 	$(compiler)TestSsdpUListenMain.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Tests/TestSsdpUListenMain.cpp
 
+TestXmlParser: $(objdir)TestXmlParser.$(exeext) 
+$(objdir)TestXmlParser.$(exeext) :  ohNetCore $(objdir)TestXmlParser.$(objext) $(objdir)TestXmlParserMain.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestXmlParser.$(exeext) $(objdir)TestXmlParserMain.$(objext) $(objdir)TestXmlParser.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestXmlParser.$(objext) : OpenHome/Net/Tests/TestXmlParser.cpp $(headers)
+	$(compiler)TestXmlParser.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Tests/TestXmlParser.cpp
+$(objdir)TestXmlParserMain.$(objext) : OpenHome/Net/Tests/TestXmlParserMain.cpp $(headers)
+	$(compiler)TestXmlParserMain.$(objext) -c $(cppflags) $(includes) OpenHome/Net/Tests/TestXmlParserMain.cpp
+
 TestDeviceList: $(objdir)TestDeviceList.$(exeext) 
 $(objdir)TestDeviceList.$(exeext) :  ohNetCore $(objdir)TestDeviceList.$(objext) $(objdir)TestDeviceListMain.$(objext) $(libprefix)TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestDeviceList.$(exeext) $(objdir)TestDeviceListMain.$(objext) $(objdir)TestDeviceList.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
@@ -789,6 +797,7 @@ tests_core = \
 	$(objdir)TestTimer.$(objext) \
 	$(objdir)TestSsdpMListen.$(objext) \
 	$(objdir)TestSsdpUListen.$(objext) \
+	$(objdir)TestXmlParser.$(objext) \
 	$(objdir)TestDeviceList.$(objext) \
 	$(objdir)TestInvocation.$(objext) \
 	$(objdir)CpUpnpOrgConnectionManager1.$(objext) \
@@ -807,7 +816,7 @@ tests_core = \
 TestsCore: $(tests_core)
 	$(ar)ohNetTestsCore.$(libext) $(tests_core)
 
-TestsNative: TestBuffer TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
+TestsNative: TestBuffer TestThread TestFunctorGeneric TestFifo TestStream TestFile TestQueue TestTextUtils TestMulticast TestNetwork TestEcho TestTimer TestHttpReader TestSsdpMListen TestSsdpUListen TestXmlParser TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLpec TestDvTestBasic TestAdapterChange TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestShell
 
 TestsCs: TestProxyCs TestDvDeviceCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
