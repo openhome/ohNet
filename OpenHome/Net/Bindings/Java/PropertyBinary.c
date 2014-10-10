@@ -16,34 +16,34 @@ extern "C" {
 JNIEXPORT jobject JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropertyCreateBinaryCp
   (JNIEnv *aEnv, jobject aObject, jstring aName, jobject aListener)
 {
-	OhNetCallback callback = &ChangeCallback;
-	const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
-	ServiceProperty property;
-	JniObjRef *ref;
-	jclass statusClass;
-	jmethodID cid;
-	jobject propertyInit;
+    OhNetCallback callback = &ChangeCallback;
+    const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
+    ServiceProperty property;
+    JniObjRef *ref;
+    jclass statusClass;
+    jmethodID cid;
+    jobject propertyInit;
 
-	InitialiseReferences(aEnv, aListener, &ref);
+    InitialiseReferences(aEnv, aListener, &ref);
 
-	statusClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/core/Property$PropertyInitialised");
-	if (statusClass == NULL)
-	{
-		printf("Unable to find class org/openhome/net/core/Property$PropertyInitialised\n");
-		return NULL;
-	}
-	cid = (*aEnv)->GetMethodID(aEnv, statusClass, "<init>", "(Lorg/openhome/net/core/Property;JJ)V");
-	if (cid == NULL) {
-		printf("Unable to find constructor for class org/openhome/net/core/Property$PropertyInitialised\n");
+    statusClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/core/Property$PropertyInitialised");
+    if (statusClass == NULL)
+    {
+        printf("Unable to find class org/openhome/net/core/Property$PropertyInitialised\n");
         return NULL;
-	}
-	
-	property = ServicePropertyCreateBinaryCp(name, callback, ref);
-	propertyInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)property, (jlong)(size_t)ref);
-	
-	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
-	
-	return propertyInit;
+    }
+    cid = (*aEnv)->GetMethodID(aEnv, statusClass, "<init>", "(Lorg/openhome/net/core/Property;JJ)V");
+    if (cid == NULL) {
+        printf("Unable to find constructor for class org/openhome/net/core/Property$PropertyInitialised\n");
+        return NULL;
+    }
+
+    property = ServicePropertyCreateBinaryCp(name, callback, ref);
+    propertyInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)property, (jlong)(size_t)ref);
+
+    (*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
+
+    return propertyInit;
 }
 
 /*
@@ -54,12 +54,12 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePrope
 JNIEXPORT jlong JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropertyCreateBinaryDv
   (JNIEnv *aEnv, jclass aClass, jlong aParameter)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
-	ServiceProperty property = ServicePropertyCreateBinaryDv(param);
-	aEnv = aEnv;
-	aClass = aClass;
-	
-	return (jlong) (size_t)property;
+    ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+    ServiceProperty property = ServicePropertyCreateBinaryDv(param);
+    aEnv = aEnv;
+    aClass = aClass;
+
+    return (jlong) (size_t)property;
 }
 
 /*
@@ -70,18 +70,15 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropert
 JNIEXPORT jbyteArray JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropertyGetValueBinary
   (JNIEnv *aEnv, jclass aClass, jlong aProperty)
 {
-	ServiceProperty property = (ServiceParameter) (size_t)aProperty;
-	const uint8_t* data;
-	uint32_t len;
-	jbyteArray array;
+    ServiceProperty property = (ServiceParameter) (size_t)aProperty;
+    const uint8_t* data;
+    uint32_t len;
+    jbyteArray array;
     jint result;
-	aClass = aClass;
+    aClass = aClass;
 
-	ServicePropertyGetValueBinary(property, &data, &len);
     result = ServicePropertyGetValueBinary(property, &data, &len);
 
-	array = (*aEnv)->NewByteArray(aEnv, len);
-	(*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *)data);
     if (result == 0) {
         array = (*aEnv)->NewByteArray(aEnv, len);
         (*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *)data);
@@ -97,7 +94,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePr
         return NULL;
     }
 
-	return array;
+    return array;
 }
 
 /*
@@ -108,17 +105,17 @@ JNIEXPORT jbyteArray JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePr
 JNIEXPORT jint JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropertySetValueBinary
   (JNIEnv *aEnv, jclass aClass, jlong aProperty, jbyteArray aData, jint aLen)
 {
-	ServiceProperty property = (ServiceProperty) (size_t)aProperty;
-	uint8_t *data = (uint8_t*)malloc(sizeof(uint8_t)*aLen);
-	jint result;
-	aClass = aClass;
-	
-	(*aEnv)->GetByteArrayRegion(aEnv, aData, 0, aLen, (jbyte *)data);
-	
-	result = ServicePropertySetValueBinary(property, data, aLen);
-	free(data);
-	
-	return result;
+    ServiceProperty property = (ServiceProperty) (size_t)aProperty;
+    uint8_t *data = (uint8_t*)malloc(sizeof(uint8_t)*aLen);
+    jint result;
+    aClass = aClass;
+
+    (*aEnv)->GetByteArrayRegion(aEnv, aData, 0, aLen, (jbyte *)data);
+
+    result = ServicePropertySetValueBinary(property, data, aLen);
+    free(data);
+
+    return result;
 }
 
 #ifdef __cplusplus
