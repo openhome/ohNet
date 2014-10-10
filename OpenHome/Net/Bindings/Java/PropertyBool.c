@@ -75,7 +75,6 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_PropertyBool_ServicePropertyVa
     int32_t result;
     aClass = aClass;
 
-    ServicePropertyValueBool(property, &val);
     result = ServicePropertyValueBool(property, &val);
     if (result != 0) {
         jclass errorClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/core/PropertyError");
