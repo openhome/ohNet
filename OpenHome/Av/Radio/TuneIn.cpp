@@ -192,8 +192,9 @@ void RadioPresetsTuneIn::DoRefresh()
             for (;;) {
                 iReadBuffer.ReadUntil('<');
                 buf.Set(iReadBuffer.ReadUntil('>'));
-                if (!buf.BeginsWith(Brn("outline type=\"audio\"")) &&
-                    !buf.BeginsWith(Brn("outline type=\"link\""))) {
+                const TBool isAudio = buf.BeginsWith(Brn("outline type=\"audio\""));
+                const TBool isLink = buf.BeginsWith(Brn("outline type=\"link\""));
+                if (!(isAudio || isLink)) {
                     continue;
                 }
                 Parser parser(buf);
@@ -204,6 +205,13 @@ void RadioPresetsTuneIn::DoRefresh()
                 if (!ReadElement(parser, "text", iPresetTitle) ||
                     !ReadElement(parser, "URL", iPresetUrl)) {
                     continue;
+                }
+                Converter::FromXmlEscaped(iPresetUrl);
+                if (isAudio) {
+                    iPresetUri.Replace(iPresetUrl);
+                    if (iPresetUri.Query().Bytes() > 0) {
+                        iPresetUrl.Append(Brn("&c=ebrowse")); // ensure best quality stream is selected
+                    }
                 }
                 Bws<Ascii::kMaxUintStringBytes> byteRateBuf;
                 if (ValidateKey(parser, "bitrate")) {
@@ -274,7 +282,8 @@ void RadioPresetsTuneIn::DoRefresh()
                 iDidlLite.Append("<res protocolInfo=\"*:*:*:*\" bitrate=\"");
                 iDidlLite.Append(byteRateBuf);
                 iDidlLite.Append("\">");
-                iDidlLite.Append(iPresetUrl);
+                WriterBuffer writer(iDidlLite);
+                Converter::ToXmlEscaped(writer, iPresetUrl);
                 iDidlLite.Append("</res>");
                 //iDidlLite.Append("<upnp:albumArtURI xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\">");
                 iDidlLite.Append("<upnp:albumArtURI>");

@@ -72,6 +72,7 @@ private:
     // Following members provide temp storage used while converting OPML elements to Didl-Lite
     Bws<Media::kTrackMetaDataMaxBytes> iDidlLite;
     Bws<Media::kTrackUriMaxBytes> iPresetUrl;
+    Uri iPresetUri;
     Bws<Media::kTrackUriMaxBytes> iPresetArtUrl;
     Bws<kMaxPresetTitleBytes> iPresetTitle;
     Configuration::ConfigText* iConfigUsername;
