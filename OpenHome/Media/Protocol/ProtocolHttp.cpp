@@ -229,9 +229,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     }
     iLock.Wait();
     ASSERT(!iSeek);
-    if (iStopped) {
+    if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);
     }
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
     if (iContentProcessor != NULL) {
         iContentProcessor->Reset();
