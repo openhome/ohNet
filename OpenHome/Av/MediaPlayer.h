@@ -31,8 +31,8 @@ namespace Media {
 }
 namespace Configuration {
     class ConfigManager;
-    class IConfigManagerReader;
-    class IConfigManagerInitialiser;
+    class IConfigManager;
+    class IConfigInitialiser;
     class IStoreReadWrite;
     class ConfigText;
     class ProviderConfig;
@@ -67,8 +67,8 @@ public:
     virtual IReadStore& ReadStore() = 0;
     virtual Configuration::IStoreReadWrite& ReadWriteStore() = 0;
     virtual Media::IPullableClock* PullableClock() = 0;
-    virtual Configuration::IConfigManagerReader& ConfigManagerReader() = 0;
-    virtual Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser() = 0;
+    virtual Configuration::IConfigManager& ConfigManagerReader() = 0;
+    virtual Configuration::IConfigInitialiser& ConfigManagerInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual Av::Product& Product() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
@@ -98,8 +98,8 @@ public: // from IMediaPlayer
     IReadStore& ReadStore();
     Configuration::IStoreReadWrite& ReadWriteStore();
     Media::IPullableClock* PullableClock();
-    Configuration::IConfigManagerReader& ConfigManagerReader();
-    Configuration::IConfigManagerInitialiser& ConfigManagerInitialiser();
+    Configuration::IConfigManager& ConfigManagerReader();
+    Configuration::IConfigInitialiser& ConfigManagerInitialiser();
     IPowerManager& PowerManager();
     Av::Product& Product();
     void Add(Media::UriProvider* aUriProvider);

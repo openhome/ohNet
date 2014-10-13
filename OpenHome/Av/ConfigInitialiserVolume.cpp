@@ -18,7 +18,7 @@ const Brn ConfigInitialiserVolume::kVolumeLimit("Volume.Limit");
 const Brn ConfigInitialiserVolume::kVolumeStartup("Volume.Startup");
 const Brn ConfigInitialiserVolume::kVolumeStartupEnabled("Volume.Startup.Enabled");
 
-ConfigInitialiserVolume::ConfigInitialiserVolume(IConfigManagerInitialiser& aConfigInit, const IVolumeProfile& aProfile)
+ConfigInitialiserVolume::ConfigInitialiserVolume(IConfigInitialiser& aConfigInit, const IVolumeProfile& aProfile)
 {
     TInt maxBalance = aProfile.MaxBalance();
     TUint maxVolume = aProfile.MaxVolume();

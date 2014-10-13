@@ -35,7 +35,7 @@ typedef struct MimeTuneInPair
     const TChar* iTuneInFormat;
 } MimeTuneInPair;
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, IConfigManagerInitialiser& aConfigInit)
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, IConfigInitialiser& aConfigInit)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)

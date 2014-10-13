@@ -6,12 +6,12 @@
 
 namespace OpenHome {
 namespace Configuration {
-    class IConfigManagerReader;
+    class IConfigManager;
 
 class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguration1, public Av::IProvider
 {
 public:
-    ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManagerReader& aConfigManager);
+    ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigManager);
 private: // from DvProviderAvOpenhomeOrgConfiguration1
     void SetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, const Brx& aValue);
     void GetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseString& aValue);
@@ -26,7 +26,7 @@ private:
     static const Brn kErrorDescValueOutOfRange;
     static const Brn kErrorDescInvalidSelection;
     static const Brn kErrorDescValueTooLong;
-    Configuration::IConfigManagerReader& iConfigManager;
+    Configuration::IConfigManager& iConfigManager;
 };
 
 }  // namespace Configuration

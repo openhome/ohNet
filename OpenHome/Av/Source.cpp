@@ -78,7 +78,7 @@ void Source::DoActivate()
     iProduct->Activate(*this);
 }
 
-void Source::Initialise(IProduct& aProduct, IConfigManagerInitialiser& aConfigInit, IConfigManagerReader& aConfigManagerReader, TUint aId)
+void Source::Initialise(IProduct& aProduct, IConfigInitialiser& aConfigInit, IConfigManager& aConfigManagerReader, TUint aId)
 {
     const TUint maxKeyBytes = kSourceNameKeyPrefix.Bytes() + kMaxSourceIndexDigits + kSourceNameKeySuffix.Bytes();
     iProduct = &aProduct;

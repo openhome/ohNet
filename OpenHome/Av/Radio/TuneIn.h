@@ -19,7 +19,7 @@ namespace OpenHome {
     class Environment;
     class Parser;
 namespace Configuration {
-    class IConfigManagerInitialiser;
+    class IConfigInitialiser;
     class ConfigText;
 }
 namespace Media {
@@ -43,7 +43,7 @@ private:
     static const Brn kPartnerId;
     static const Brn kUsername;
 public:
-    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, Configuration::IConfigManagerInitialiser& aConfigInit);
+    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, Configuration::IConfigInitialiser& aConfigInit);
     ~RadioPresetsTuneIn();
 private:
     void UpdateUsername(const Brx& aUsername);

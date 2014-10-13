@@ -77,7 +77,7 @@ IClockPuller* UriProviderRadio::ClockPuller()
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IConfigManagerInitialiser& aConfigInit)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IConfigInitialiser& aConfigInit)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)

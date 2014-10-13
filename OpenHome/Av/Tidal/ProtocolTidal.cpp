@@ -32,7 +32,7 @@ public:
     static const Brn kConfigKeyUsername;
     static const Brn kConfigKeyPassword;
 public:
-    ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, Configuration::IConfigManagerInitialiser& aConfigInitialiser);
+    ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
 private: // from Protocol
     void Interrupt(TBool aInterrupt);
@@ -81,7 +81,7 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
 
-Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigManagerInitialiser& aConfigInitialiser)
+Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigInitialiser& aConfigInitialiser)
 { // static
     return new ProtocolTidal(aEnv, aToken, aRsaPrivateKey, aConfigInitialiser);
 }
@@ -93,7 +93,7 @@ const Brn ProtocolTidal::kHost("api.wimpmusic.com");
 const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
 const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
 
-ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigManagerInitialiser& aConfigInitialiser)
+ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigInitialiser& aConfigInitialiser)
     : Protocol(aEnv)
     , iLock("PTID")
     , iSocket(aEnv, kReadBufferBytes)

@@ -29,7 +29,7 @@ public:
     static const Brn kVolumeStartup;
     static const Brn kVolumeStartupEnabled;
 public:
-    ConfigInitialiserVolume(Configuration::IConfigManagerInitialiser& aConfigInit, const Media::IVolumeProfile& aProfile);
+    ConfigInitialiserVolume(Configuration::IConfigInitialiser& aConfigInit, const Media::IVolumeProfile& aProfile);
     ~ConfigInitialiserVolume();
 private:
     Configuration::ConfigNum* iBalance;

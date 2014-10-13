@@ -274,7 +274,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
         Brn username = parser.Next(':');
         Brn password = parser.Remaining();
         iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, kPrivKey, iMediaPlayer->ConfigManagerInitialiser()));
-        IConfigManagerReader& configMgr = iMediaPlayer->ConfigManagerReader();
+        IConfigManager& configMgr = iMediaPlayer->ConfigManagerReader();
         BIO* bio = BIO_new_mem_buf((void*)kPubKey, sizeof(kPubKey)-1);
         RSA* pubKey = PEM_read_bio_RSA_PUBKEY(bio, NULL, 0, NULL);
         BIO_free(bio);

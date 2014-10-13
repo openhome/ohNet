@@ -32,8 +32,8 @@ private:
     static const Brn kPowerDownMute;
 public:
     ProviderVolume(Net::DvDevice& aDevice,
-                   Configuration::IConfigManagerInitialiser& aConfigInit, // FIXME - remove this and pass in an IStoreReadWrite instead?
-                   Configuration::IConfigManagerReader& aConfigReader,
+                   Configuration::IConfigInitialiser& aConfigInit, // FIXME - remove this and pass in an IStoreReadWrite instead?
+                   Configuration::IConfigManager& aConfigReader,
                    IPowerManager& aPowerManager,
                    const Media::IVolumeProfile& aVolumeProfile,
                    Media::IVolume& aVolume, Media::IVolumeLimit& aVolumeLimit,

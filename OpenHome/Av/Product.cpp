@@ -20,7 +20,7 @@ const Brn Product::kConfigIdRoomBase("Product.Room");
 const Brn Product::kConfigIdNameBase("Product.Name");
 
 Product::Product(Net::DvDevice& aDevice, IReadStore& aReadStore, IStoreReadWrite& aReadWriteStore,
-                 IConfigManagerReader& aConfigReader, IConfigManagerInitialiser& aConfigInit,
+                 IConfigManager& aConfigReader, IConfigInitialiser& aConfigInit,
                  IPowerManager& aPowerManager)
     : iDevice(aDevice)
     , iReadStore(aReadStore)

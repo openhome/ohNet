@@ -75,7 +75,7 @@ inline MemberTranslatorGeneric<KeyValuePair<Type>&,Object,void (CallType::*)(Key
     return MemberTranslatorGeneric<KeyValuePair<Type>&,Object,MemFunc>(aC,aF);
 }
 
-class IConfigManagerInitialiser;
+class IConfigInitialiser;
 
 class ISerialisable
 {
@@ -92,7 +92,7 @@ class ConfigVal : public IObservable<T>, public ISerialisable
 public:
     static const TUint kSubscriptionIdInvalid = 0; // FIXME - move to ConfigManager
 protected:
-    ConfigVal(IConfigManagerInitialiser& aManager, const Brx& aKey);
+    ConfigVal(IConfigInitialiser& aManager, const Brx& aKey);
 public:
     virtual ~ConfigVal();
     const Brx& Key() const;
@@ -110,7 +110,7 @@ protected:
 private:
     TUint SubscribeNoCallback(FunctorObserver aFunctor);
 protected:
-    IConfigManagerInitialiser& iConfigManager;
+    IConfigInitialiser& iConfigManager;
     Bwh iKey;
 private:
     typedef std::map<TUint,FunctorObserver> Map;
@@ -121,7 +121,7 @@ private:
 };
 
 // ConfigVal
-template <class T> ConfigVal<T>::ConfigVal(IConfigManagerInitialiser& aManager, const Brx& aKey)
+template <class T> ConfigVal<T>::ConfigVal(IConfigInitialiser& aManager, const Brx& aKey)
     : iConfigManager(aManager)
     , iKey(aKey)
     , iObserverLock("CVOL")
@@ -203,7 +203,7 @@ public:
     typedef FunctorGeneric<KeyValuePair<TInt>&> FunctorConfigNum;
     typedef KeyValuePair<TInt> KvpNum;
 public:
-    ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
+    ConfigNum(IConfigInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault);
     TInt Min() const;
     TInt Max() const;
     void Set(TInt aVal);    // THROWS ConfigValueOutOfRange
@@ -259,7 +259,7 @@ public:
     typedef FunctorGeneric<KeyValuePair<TUint>&> FunctorConfigChoice;
     typedef KeyValuePair<TUint> KvpChoice;
 public:
-    ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
+    ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault);
     const std::vector<TUint>& Choices() const;
     void Set(TUint aVal);   // THROWS ConfigInvalidSelection
 private:
@@ -316,7 +316,7 @@ public:
     typedef FunctorGeneric<KeyValuePair<const Brx&>&> FunctorConfigText;
     typedef KeyValuePair<const Brx&> KvpText;
 public:
-    ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
+    ConfigText(IConfigInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault);
     TUint MaxLength() const;
     void Set(const Brx& aText); // THROWS ConfigValueTooLong
 private:
@@ -355,7 +355,7 @@ inline MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,void (CallType::
 /*
  * Interface for reading config vals from a configuration manager.
  */
-class IConfigManagerReader
+class IConfigManager
 {
 public:
     virtual TBool HasNum(const Brx& aKey) const = 0;
@@ -366,7 +366,7 @@ public:
     virtual ConfigText& GetText(const Brx& aKey) const = 0;
     virtual TBool Has(const Brx& aKey) const = 0;
     virtual ISerialisable& Get(const Brx& aKey) const = 0;
-    virtual ~IConfigManagerReader() {}
+    virtual ~IConfigManager() {}
 };
 
 /*
@@ -380,7 +380,7 @@ public:
  * implementer of this should throw ConfigKeyExists. (And any attempt to create
  * a ConfigVal after Open() has been called should also cause an ASSERT.)
  */
-class IConfigManagerInitialiser
+class IConfigInitialiser
 {
 public:
     virtual IStoreReadWrite& Store() = 0;
@@ -390,7 +390,7 @@ public:
     virtual void Add(ConfigText& aText) = 0;
     virtual void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault) = 0;
     virtual void ToStore(const Brx& aKey, const Brx& aValue) = 0;
-    virtual ~IConfigManagerInitialiser() {}
+    virtual ~IConfigInitialiser() {}
 };
 
 /*
@@ -497,8 +497,11 @@ public: // from IWriter
  *
  * Known identifiers are listed elsewhere.
  */
-class ConfigManager : public IConfigManagerReader, public IConfigManagerInitialiser
+class ConfigManager : public IConfigManager, public IConfigInitialiser
 {
+public:
+    static const TUint kMaxKeyLength = 100;
+    static const TUint kSubscriptionIdInvalid = 0;
 private:
     typedef SerialisedMap<ConfigNum> ConfigNumMap;
     typedef SerialisedMap<ConfigChoice> ConfigChoiceMap;
@@ -507,7 +510,7 @@ public:
     ConfigManager(IStoreReadWrite& aStore);
     void Print() const;     // for debugging!
     void DumpToStore();     // for debugging!
-public: // from IConfigManagerReader
+public: // from IConfigManager
     TBool HasNum(const Brx& aKey) const;
     ConfigNum& GetNum(const Brx& aKey) const;
     TBool HasChoice(const Brx& aKey) const;
@@ -516,7 +519,7 @@ public: // from IConfigManagerReader
     ConfigText& GetText(const Brx& aKey) const;
     TBool Has(const Brx& aKey) const;
     ISerialisable& Get(const Brx& aKey) const;
-public: // from IConfigManagerInitialiser
+public: // from IConfigInitialiser
     IStoreReadWrite& Store();
     void Open();
     void Add(ConfigNum& aNum);

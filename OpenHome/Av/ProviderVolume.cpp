@@ -16,8 +16,8 @@ using namespace OpenHome::Net;
 // ProviderFactory
 
 IProvider* ProviderFactory::NewVolume(Product& aProduct, DvDevice& aDevice,
-                                      IConfigManagerInitialiser& aConfigInit,
-                                      IConfigManagerReader& aConfigReader,
+                                      IConfigInitialiser& aConfigInit,
+                                      IConfigManager& aConfigReader,
                                       IPowerManager& aPowerManager,
                                       const IVolumeProfile& aVolumeProfile,
                                       IVolume& aVolume,
@@ -59,8 +59,8 @@ const Brn ProviderVolume::kPowerDownVolume("PowerDown.Volume");
 const Brn ProviderVolume::kPowerDownMute("PowerDown.Mute");
 
 ProviderVolume::ProviderVolume(DvDevice& aDevice,
-                               IConfigManagerInitialiser& aConfigInit,
-                               IConfigManagerReader& aConfigReader,
+                               IConfigInitialiser& aConfigInit,
+                               IConfigManager& aConfigReader,
                                IPowerManager& aPowerManager,
                                const IVolumeProfile& aVolumeProfile,
                                IVolume& aVolume, IVolumeLimit& aVolumeLimit,

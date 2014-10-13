@@ -173,8 +173,8 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iPipeline.AddObserver(*this);
 
     // Sender
-    IConfigManagerInitialiser& configManagerInit = aMediaPlayer.ConfigManagerInitialiser();
-    IConfigManagerReader& configManagerReader = aMediaPlayer.ConfigManagerReader();
+    IConfigInitialiser& configManagerInit = aMediaPlayer.ConfigManagerInitialiser();
+    IConfigManager& configManagerReader = aMediaPlayer.ConfigManagerReader();
     iSender = new Sender(env, device, *iZoneHandler, configManagerInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");

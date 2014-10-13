@@ -126,13 +126,18 @@ void SourceUpnpAv::Play()
     if (iTrack != NULL && iTransportState == Media::EPipelinePlaying) {
         notifyUriProvider = true;
     }
-    iTransportState = Media::EPipelinePlaying;
-    iLock.Signal();
-    if (notifyUriProvider) {
-        iPipeline.RemoveAll();
-        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
-    }
-    iPipeline.Play();
+    //if (iTrack != NULL) {
+        iTransportState = Media::EPipelinePlaying;
+        iLock.Signal();
+        if (notifyUriProvider) {
+            iPipeline.RemoveAll();
+            iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
+        }
+        iPipeline.Play();
+    //}
+    //else {
+    //    iLock.Signal();
+    //}
 }
 
 void SourceUpnpAv::Pause()

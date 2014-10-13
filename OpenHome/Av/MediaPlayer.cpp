@@ -165,12 +165,12 @@ IPullableClock* MediaPlayer::PullableClock()
     return iPullableClock;
 }
 
-IConfigManagerReader& MediaPlayer::ConfigManagerReader()
+IConfigManager& MediaPlayer::ConfigManagerReader()
 {
     return *iConfigManager;
 }
 
-IConfigManagerInitialiser& MediaPlayer::ConfigManagerInitialiser()
+IConfigInitialiser& MediaPlayer::ConfigManagerInitialiser()
 {
     return *iConfigManager;
 }

@@ -10,7 +10,7 @@ using namespace OpenHome::Net;
 
 // ProviderFactory
 
-IProvider* ProviderFactory::NewConfiguration(Product& aProduct, DvDevice& aDevice, IConfigManagerReader& aConfigReader)
+IProvider* ProviderFactory::NewConfiguration(Product& aProduct, DvDevice& aDevice, IConfigManager& aConfigReader)
 { // static
     aProduct.AddAttribute("Configuration");
     return new ProviderConfig(aDevice, aConfigReader);
@@ -25,7 +25,7 @@ const Brn ProviderConfig::kErrorDescValueOutOfRange("Value outwith expected rang
 const Brn ProviderConfig::kErrorDescInvalidSelection("Expected value selected from list of options");
 const Brn ProviderConfig::kErrorDescValueTooLong("Value too long");
 
-ProviderConfig::ProviderConfig(DvDevice& aDevice, Configuration::IConfigManagerReader& aConfigManager)
+ProviderConfig::ProviderConfig(DvDevice& aDevice, Configuration::IConfigManager& aConfigManager)
     : DvProviderAvOpenhomeOrgConfiguration1(aDevice)
     , iConfigManager(aConfigManager)
 {

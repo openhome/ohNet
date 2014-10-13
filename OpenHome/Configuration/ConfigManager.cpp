@@ -13,7 +13,7 @@ using namespace OpenHome::Configuration;
 
 // ConfigNum
 
-ConfigNum::ConfigNum(IConfigManagerInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
+ConfigNum::ConfigNum(IConfigInitialiser& aManager, const Brx& aKey, TInt aMin, TInt aMax, TInt aDefault)
     : ConfigVal(aManager, aKey)
     , iMin(aMin)
     , iMax(aMax)
@@ -107,7 +107,7 @@ void ConfigNum::Write(KeyValuePair<TInt>& aKvp)
 
 // ConfigChoice
 
-ConfigChoice::ConfigChoice(IConfigManagerInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
+ConfigChoice::ConfigChoice(IConfigInitialiser& aManager, const Brx& aKey, const std::vector<TUint>& aChoices, TUint aDefault)
     : ConfigVal(aManager, aKey)
     , iChoices(aChoices)
     , iMutex("CVCM")
@@ -195,7 +195,7 @@ void ConfigChoice::Write(KeyValuePair<TUint>& aKvp)
 
 // ConfigText
 
-ConfigText::ConfigText(IConfigManagerInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
+ConfigText::ConfigText(IConfigInitialiser& aManager, const Brx& aKey, TUint aMaxLength, const Brx& aDefault)
     : ConfigVal(aManager, aKey)
     , iText(aMaxLength)
     , iMutex("CVTM")
@@ -346,6 +346,7 @@ TBool ConfigManager::Has(const Brx& aKey) const
 
 ISerialisable& ConfigManager::Get(const Brx& aKey) const
 {
+    // FIXME - ASSERT if !iOpen?
     if (HasNum(aKey)) {
         return iMapNum.Get(aKey);
     }

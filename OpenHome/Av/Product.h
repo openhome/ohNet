@@ -56,7 +56,7 @@ public:
     static const TUint kMaxSourceXmlBytes = 1024 * 3;
 public:
     Product(Net::DvDevice& aDevice, IReadStore& aReadStore, Configuration::IStoreReadWrite& aReadWriteStore,
-            Configuration::IConfigManagerReader& aConfigReader, Configuration::IConfigManagerInitialiser& aConfigInit,
+            Configuration::IConfigManager& aConfigReader, Configuration::IConfigInitialiser& aConfigInit,
             IPowerManager& aPowerManager);
     ~Product();
     void AddObserver(IProductObserver& aObserver);
@@ -91,8 +91,8 @@ private: // from Media::IInfoProvider
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;
-    Configuration::IConfigManagerReader& iConfigReader;
-    Configuration::IConfigManagerInitialiser& iConfigInit;
+    Configuration::IConfigManager& iConfigReader;
+    Configuration::IConfigInitialiser& iConfigInit;
     mutable Mutex iLock;
     Mutex iLockDetails;
     ProviderProduct* iProviderProduct;
