@@ -16,6 +16,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+const TChar* OpenHome::Media::kStreamPlayNames[] = { "Yes", "No", "Later" };
+
 // AllocatorBase
 
 const Brn AllocatorBase::kQueryMemory = Brn("memory");

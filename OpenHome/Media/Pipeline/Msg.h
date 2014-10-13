@@ -1024,7 +1024,7 @@ enum EStreamPlay
    ,ePlayNo
    ,ePlayLater
 };
-static const TChar* kStreamPlayNames[] = { "Yes", "No", "Later" };
+extern const TChar* kStreamPlayNames[];
 
 class IStreamPlayObserver
 {

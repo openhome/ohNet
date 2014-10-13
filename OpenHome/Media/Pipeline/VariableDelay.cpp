@@ -52,7 +52,7 @@ Msg* VariableDelay::Pull()
                 DoEnqueue(msg);
             }
         }
-        const TUint size = std::min((TUint)iDelayAdjustment, kMaxMsgSilenceDuration);
+        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         msg = iMsgFactory.CreateMsgSilence(size);
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
