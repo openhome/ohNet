@@ -463,25 +463,7 @@ void SuitePlaylist::TearDown()
 void SuitePlaylist::NotifyPipelineState(EPipelineState aState)
 {
 #if 0
-    const TChar* state = NULL;
-    switch (aState)
-    {
-    case EPipelinePlaying:
-        state = "Playing";
-        break;
-    case EPipelinePaused:
-        state = "Paused";
-        break;
-    case EPipelineStopped:
-        state = "Stopped";
-        break;
-    case EPipelineBuffering:
-        state = "Buffering";
-        break;
-    default:
-        ASSERTS();
-    }
-    Log::Print("NotifyPipelineState - %s\n", state);
+    Log::Print("NotifyPipelineState - %s\n", TransportState::FromPipelineState(aState));
 #endif
     iTransportState = aState;
     iTransportStateCount[aState]++;

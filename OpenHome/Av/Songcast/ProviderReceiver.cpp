@@ -6,6 +6,7 @@
 #include <Generated/DvAvOpenhomeOrgReceiver1.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Media/PipelineObserver.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -40,26 +41,7 @@ ProviderReceiver::ProviderReceiver(Net::DvDevice& aDevice, ISourceReceiver& aSou
 
 void ProviderReceiver::NotifyPipelineState(Media::EPipelineState aState)
 {
-    const TChar* state = NULL;
-    switch (aState)
-    {
-    case Media::EPipelinePlaying:
-        state = "Playing";
-        break;
-    case Media::EPipelineStopped:
-        state = "Stopped";
-        break;
-    case Media::EPipelineBuffering:
-        state = "Buffering";
-        break;
-    case Media::EPipelineWaiting:
-        state = "Waiting";
-        break;
-    case Media::EPipelinePaused:
-    default:
-        ASSERTS();
-    }
-    iTransportState.Set(state);
+    iTransportState.Set(Media::TransportState::FromPipelineState(aState));
     SetPropertyTransportState(iTransportState);
 }
 

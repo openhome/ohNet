@@ -213,7 +213,7 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
     default:
         ASSERTS();
     }
-    Log::Print("Pipeline state change: %s\n", state);
+    Log::Print("Pipeline state change: %s\n", TransportState::FromPipelineState(aState));
 #endif
 }
 

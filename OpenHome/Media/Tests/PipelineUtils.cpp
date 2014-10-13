@@ -204,25 +204,7 @@ int PipelineSongcast::Run()
 void TestProtocol::NotifyPipelineState(EPipelineState aState)
 {
 #ifdef LOG_PIPELINE_OBSERVER
-    const char* state = "";
-    switch (aState)
-    {
-    case EPipelinePlaying:
-        state = "playing";
-        break;
-    case EPipelinePaused:
-        state = "paused";
-        break;
-    case EPipelineStopped:
-        state = "stopped";
-        break;
-    case EPipelineBuffering:
-        state = "buffering";
-        break;
-    default:
-        ASSERTS();
-    }
-    Log::Print("Pipeline state change: %s\n", state);
+    Log::Print("Pipeline state change: %s\n", TransportState::FromPipelineState(aState));
 #endif
 }
 

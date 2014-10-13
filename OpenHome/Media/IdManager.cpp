@@ -90,10 +90,12 @@ EStreamPlay IdManager::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
     if (iIndexHead == iIndexTail) {
+        Log("OkToPlay (fail - empty)");
         return ePlayNo;
     }
     const ActiveStream& as = iActiveStreams[iIndexHead];
     if (as.PipelineTrackId() != aTrackId || as.StreamId() != aStreamId) {
+        Log("OkToPlay (fail - wrong track)");
         return ePlayNo;
     }
     iPlaying.Set(as);

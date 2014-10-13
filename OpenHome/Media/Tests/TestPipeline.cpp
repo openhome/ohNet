@@ -479,28 +479,7 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
         iSemFlushed.Signal();
     }
 #ifdef LOG_PIPELINE_OBSERVER
-    const char* state = "";
-    switch (aState)
-    {
-    case EPipelinePlaying:
-        state = "playing";
-        break;
-    case EPipelinePaused:
-        state = "paused";
-        break;
-    case EPipelineStopped:
-        state = "stopped";
-        break;
-    case EPipelineBuffering:
-        state = "buffering";
-        break;
-    case EPipelineWaiting:
-        state = "waiting";
-        break;
-    default:
-        ASSERTS();
-    }
-    Print("Pipeline state change: %s\n", state);
+    Print("Pipeline state change: %s\n", TransportState::FromPipelineState(aState));
 #endif
 }
 

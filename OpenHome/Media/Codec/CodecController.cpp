@@ -187,7 +187,7 @@ void CodecController::CodecThread()
             LOG(kMedia, "CodecThread: recognition complete\n");
             if (iActiveCodec == NULL) {
                 if (iTrackIdPipeline != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
-                    Log::Print("Failed to recognise audio format, flushing stream...\n");
+                    Log::Print("Failed to recognise audio format (iStreamStopped=%u, iExpectedFlushId=%u), flushing stream...\n", iStreamStopped, iExpectedFlushId);
                 }
                 iLock.Wait();
                 if (iExpectedFlushId == MsgFlush::kIdInvalid) {

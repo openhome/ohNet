@@ -188,8 +188,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     if (iLive) {
         // don't want to buffer content from a live stream
         // ...so need to wait on pipeline signalling it is ready to play
+        LOG(kMedia, "ProtocolHttp::Stream live stream waiting to be (re-)started\n");
         Close();
         iSem.Wait();
+        LOG(kMedia, "ProtocolHttp::Stream live stream restart\n");
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
     while (ContinueStreaming(res)) {
@@ -243,6 +245,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
 ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes)
 {
+    LOG(kMedia, "> ProtocolHttp::Get\n");
     Reinitialise(aUri);
 
     if (iUri.Scheme() != Brn("http")) {
@@ -259,15 +262,18 @@ ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 a
 
     ProtocolGetResult res = DoGet(aWriter, aOffset, aBytes);
     Close();
+    LOG(kMedia, "< ProtocolHttp::Get\n");
     return res;
 }
 
 EStreamPlay ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
+    LOG(kMedia, "> ProtocolHttp::OkToPlay(%u, %u)\n", aTrackId, aStreamId);
     const EStreamPlay canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
     if (canPlay != ePlayNo && iLive && iStreamId == aStreamId) {
         iSem.Signal();
     }
+    LOG(kMedia, "< ProtocolHttp::OkToPlay(%u, %u) == %s\n", aTrackId, aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
 }
 
@@ -318,6 +324,7 @@ TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
 
 TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
+    LOG(kMedia, "> ProtocolHttp::TryGet\n");
     iLock.Wait();
     const TBool isCurrent = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     TBool success = false;
@@ -325,6 +332,7 @@ TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TU
         success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
     }
     iLock.Signal();
+    LOG(kMedia, "< ProtocolHttp::TryGet\n");
     return success;
 }
 
