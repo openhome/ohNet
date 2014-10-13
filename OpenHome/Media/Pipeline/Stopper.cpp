@@ -135,6 +135,11 @@ void Stopper::BeginStop(TUint aHaltId)
     iTargetHaltId = aHaltId;
 }
 
+void Stopper::StopNow()
+{
+    HandleStopped();
+}
+
 void Stopper::Quit()
 {
     iQuit = true;
