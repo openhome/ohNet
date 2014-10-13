@@ -73,6 +73,7 @@ private:
     const TUint iRampDuration;
     TBool iEnabled;
     TBool iInStream;
+    TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
     BwsMode iMode;

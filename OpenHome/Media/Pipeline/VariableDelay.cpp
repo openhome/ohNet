@@ -4,6 +4,8 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
+#include <algorithm>
+
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
@@ -21,6 +23,7 @@ VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& 
     , iRampDuration(aRampDuration)
     , iEnabled(false)
     , iInStream(false)
+    , iWaitForAudioBeforeGeneratingSilence(false)
     , iCurrentRampValue(Ramp::kMax)
     , iRemainingRampSize(0)
     , iStreamHandler(NULL)
@@ -36,7 +39,20 @@ Msg* VariableDelay::Pull()
     Msg* msg;
     iLock.Wait();
     if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
-        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
+        if (iWaitForAudioBeforeGeneratingSilence) {
+            iLock.Signal();
+            msg = iUpstreamElement.Pull();
+            iLock.Wait();
+            msg = msg->Process(*this);
+            if (iWaitForAudioBeforeGeneratingSilence) {
+                iLock.Signal();
+                return msg;
+            }
+            else {
+                DoEnqueue(msg);
+            }
+        }
+        const TUint size = std::min((TUint)iDelayAdjustment, kMaxMsgSilenceDuration);
         msg = iMsgFactory.CreateMsgSilence(size);
         iDelayAdjustment -= size;
         if (iDelayAdjustment == 0) {
@@ -144,12 +160,14 @@ Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
     iMode.Replace(aMsg->Mode());
     iDelayJiffies = 0;
     iDelayAdjustment = 0;
+    iWaitForAudioBeforeGeneratingSilence = false;
     return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgSession* aMsg)
 {
     iDelayAdjustment = iDelayJiffies; // FIXME - should be (iDelayJiffies - downstreamAudio)
+    iWaitForAudioBeforeGeneratingSilence = true;
     return aMsg;
 }
 
@@ -268,6 +286,7 @@ Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    iWaitForAudioBeforeGeneratingSilence = false;
     return DoProcessAudioMsg(aMsg);
 }
 
@@ -325,6 +344,7 @@ void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStre
     iLock.Wait();
     if (iEnabled && iMode == aMode) {
         iDelayAdjustment = iDelayJiffies;
+        iWaitForAudioBeforeGeneratingSilence = true;
         switch (iStatus)
         {
         case EStarting:

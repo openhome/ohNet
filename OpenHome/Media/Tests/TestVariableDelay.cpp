@@ -634,14 +634,16 @@ void SuiteVariableDelay::TestNotifyStarvingFromStarting()
     iVariableDelay->NotifyStarving(kMode, iTrackId, iStreamId);
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
     TEST(iVariableDelay->iDelayAdjustment > 0);
+    iNextGeneratedMsg = EMsgAudioPcm;
     while (iVariableDelay->iDelayAdjustment > 0) {
-        iNextGeneratedMsg = ENone;
         PullNext();
         TEST(iLastMsg == EMsgSilence);
+        iNextGeneratedMsg = ENone;
     }
     TEST(iJiffies == kDelay - kDownstreamDelay);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
-    PullNext(EMsgAudioPcm);
+    PullNext();
+    TEST(iLastMsg == EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
 }
 
