@@ -244,6 +244,17 @@ uint32_t STDCALL ServicePropertySetValueString(ServiceProperty aProperty, const 
     return 0;
 }
 
+uint32_t STDCALL ServicePropertySetValueStringAsBuffer(ServiceProperty aProperty, const char* aValue, uint32_t aLen)
+{
+    PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
+    ASSERT(prop != NULL);
+    Brn val((TByte*)aValue, aLen);
+    if (prop->SetValue(val)) {
+        return 1;
+    }
+    return 0;
+}
+
 uint32_t STDCALL ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen)
 {
     PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);

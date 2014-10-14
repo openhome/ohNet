@@ -251,7 +251,7 @@ class ReaderHttpRequest : public ReaderHttpHeader
     static const TUint kMaxUriBytes = 200;
 public:
     ReaderHttpRequest(Environment& aEnv, IReader& aReader);
-    ~ReaderHttpRequest();
+    virtual ~ReaderHttpRequest();
     void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();
@@ -281,7 +281,7 @@ public:
     static const TUint kMaxUriBytes = 200;
 public:
     ReaderHttpResponse(Environment& aEnv, IReader& aReader);
-    ~ReaderHttpResponse();
+    virtual ~ReaderHttpResponse();
     void Read(TUint aTimeoutMs = 0);
     void Flush();
     void Interrupt();

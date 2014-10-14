@@ -55,6 +55,7 @@ public class InitParams
 	private static native void OhNetInitParamsSetSubscriptionDuration(long aParams, int aDurationSecs);
 	private static native void OhNetInitParamsSetPendingSubscriptionTimeout(long aParams, int aTimeoutMs);
 	private static native void OhNetInitParamsSetUseLoopbackNetworkAdapter(long aParams);
+	private static native void OhNetInitParamsSetIncludeLoopbackNetworkAdapter(long aParams);
 	private static native void OhNetInitParamsSetDvMaxUpdateTime(long aParams, int aSecs);
 	private static native void OhNetInitParamsSetDvNumServerThreads(long aParams, int aNumThreads);
 	private static native void OhNetInitParamsSetDvNumPublisherThreads(long aParams, int aNumThreads);
@@ -480,6 +481,16 @@ public class InitParams
 		OhNetInitParamsSetUseLoopbackNetworkAdapter(iHandle);
 	}
 	
+	/**
+	 * Include the loopback network interface in the list of available adapters.
+	 *
+	 * <p>Useful for testing but not expected to be used in production code.
+	 */
+	public void setIncludeLoopbackNetworkAdapter()
+	{
+		OhNetInitParamsSetIncludeLoopbackNetworkAdapter(iHandle);
+	}
+
 	/**
 	 * Set the maximum time in seconds between device announcements for the
 	 * device stack.

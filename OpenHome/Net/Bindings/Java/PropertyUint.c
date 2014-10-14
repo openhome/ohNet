@@ -72,10 +72,19 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_PropertyUint_ServicePropertyV
 {
 	ServiceProperty property = (ServiceProperty) (size_t)aProperty;
     uint32_t val = 0;
-	aEnv = aEnv;
-	aClass = aClass;
-	
-	ServicePropertyValueUint(property, &val);
+    int32_t result;
+    aClass = aClass;
+
+    result = ServicePropertyValueUint(property, &val);
+    if (result != 0) {
+        jclass errorClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/core/PropertyError");
+        if (errorClass == NULL) {
+            printf("Unable to find class org/openhome/net/core/PropertyError\n");
+        } else {
+            (*aEnv)->ThrowNew(aEnv, errorClass, "Value not available");
+        }
+    }
+
     return (jlong)val;
 }
 

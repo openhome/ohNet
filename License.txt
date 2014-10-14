@@ -6,7 +6,6 @@ Unless otherwise stated, all code in this project is licensed under the 2-clause
 Files at the following locations are licensed under separate terms:
   OpenHome/Functor.h
   OpenHome/md5.*
-  OpenHome/Maths.cpp
   OpenHome/sha*.*
   OpenHome/Net/Device/Bonjour/mDNSCore/*
   OpenHome/Net/Bindings/Android/jni/ifaddrs.*

@@ -389,6 +389,12 @@ DllExport void STDCALL OhNetInitParamsSetFreeExternalCallback(OhNetHandleInitPar
 DllExport void STDCALL OhNetInitParamsSetUseLoopbackNetworkAdapter(OhNetHandleInitParams aParams);
 
 /**
+ * Include the loopback network interface in the list of available adapters.
+ * Useful for testing but not expected to be used in production code
+ */
+DllExport void STDCALL OhNetInitParamsSetIncludeLoopbackNetworkAdapter(OhNetHandleInitParams aParams);
+
+/**
  * Set the maximum time between device announcements for the device stack
  */
 DllExport void STDCALL OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, uint32_t aSecs);

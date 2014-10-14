@@ -223,6 +223,12 @@ void STDCALL OhNetInitParamsSetUseLoopbackNetworkAdapter(OhNetHandleInitParams a
     ip->SetUseLoopbackNetworkAdapter();
 }
 
+void STDCALL OhNetInitParamsSetIncludeLoopbackNetworkAdapter(OhNetHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    ip->SetIncludeLoopbackNetworkAdapter();
+}
+
 void STDCALL OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, uint32_t aSecs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);

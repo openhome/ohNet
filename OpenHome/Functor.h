@@ -169,8 +169,20 @@ class FunctorGeneric
 {
 public:
     void operator()(Type aType) const { iThunk(*this, aType); }
+    operator TBool() const { return (iObject!=NULL); }
     typedef TAny (FunctorGeneric::*MemberFunction)();
     static const TUint kFudgeFactor = 2;
+
+    bool operator==(const FunctorGeneric& aOther) const
+    {
+        return ((iObject == aOther.iObject) &&
+                (!memcmp(iCallbackMember, aOther.iCallbackMember, sizeof(iCallbackMember))));
+    }
+
+    bool operator!=(const FunctorGeneric& aOther) const
+    {
+        return !(*this == aOther);
+    }
 
     FunctorGeneric() : iObject(0)
     {

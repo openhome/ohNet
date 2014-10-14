@@ -511,6 +511,12 @@ namespace OpenHome.Net.Core
         public bool UseLoopbackNetworkAdapter { get; set; }
 
         /// <summary>
+        /// Include the loopback network interface in the list of available adapters.
+        /// </summary>
+        /// <remarks>Useful for testing but not expected to be used in production code</remarks>
+        public bool IncludeLoopbackNetworkAdapter { get; set; }
+
+        /// <summary>
         /// Enable use of Bonjour.
         /// </summary>
         /// <remarks>All DvDevice instances with an IResourceManager will be published using Bonjour.
@@ -706,6 +712,12 @@ namespace OpenHome.Net.Core
 #else
         [DllImport("ohNet")]
 #endif
+        static extern void OhNetInitParamsSetIncludeLoopbackNetworkAdapter(IntPtr aParams);
+#if IOS
+        [DllImport("__Internal")]
+#else
+        [DllImport("ohNet")]
+#endif
         static extern uint OhNetInitParamsTcpConnectTimeoutMs(IntPtr aParams);
 #if IOS
         [DllImport("__Internal")]
@@ -841,6 +853,7 @@ namespace OpenHome.Net.Core
             DvUpnpWebServerPort = OhNetInitParamsDvUpnpServerPort(defaultParams);
             DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams);
             UseLoopbackNetworkAdapter = false; // FIXME: No getter?
+            IncludeLoopbackNetworkAdapter = false;
             DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
 
             OhNetInitParamsDestroy(defaultParams);
@@ -909,6 +922,14 @@ namespace OpenHome.Net.Core
             if (UseLoopbackNetworkAdapter)
             {
                 OhNetInitParamsSetUseLoopbackNetworkAdapter(nativeParams);
+            }
+            if (IncludeLoopbackNetworkAdapter)
+            {
+                if (UseLoopbackNetworkAdapter)
+                {
+                    Console.WriteLine("WARNING: IncludeLoopbackNetworkAdapter is incompatible with UseLoopbackNetworkAdapter. Ignoring UseLoopbackNetworkAdapter.");
+                }
+                OhNetInitParamsSetIncludeLoopbackNetworkAdapter(nativeParams);
             }
             return nativeParams;
         }
