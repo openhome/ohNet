@@ -173,14 +173,14 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iPipeline.AddObserver(*this);
 
     // Sender
-    IConfigInitialiser& configManagerInit = aMediaPlayer.ConfigManagerInitialiser();
-    IConfigManager& configManagerReader = aMediaPlayer.ConfigManagerReader();
-    iSender = new Sender(env, device, *iZoneHandler, configManagerInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
+    IConfigInitialiser& configInit = aMediaPlayer.ConfigInitialiser();
+    IConfigManager& configManager = aMediaPlayer.ConfigManager();
+    iSender = new Sender(env, device, *iZoneHandler, configInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     (void)iPipeline.SetSender(*iSender);
     aMediaPlayer.AddAttribute("Sender");
-    iConfigRoom = &configManagerReader.GetText(Product::kConfigIdRoomBase);
+    iConfigRoom = &configManager.GetText(Product::kConfigIdRoomBase);
     iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorConfigText(*this, &SourceReceiver::ConfigRoomChanged));
-    iConfigName = &configManagerReader.GetText(Product::kConfigIdNameBase);
+    iConfigName = &configManager.GetText(Product::kConfigIdNameBase);
     iConfigNameSubscriberId = iConfigName->Subscribe(MakeFunctorConfigText(*this, &SourceReceiver::ConfigNameChanged));
     UpdateSenderName();
 }

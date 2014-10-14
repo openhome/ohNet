@@ -273,8 +273,8 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
         Brn token = parser.Next(':');
         Brn username = parser.Next(':');
         Brn password = parser.Remaining();
-        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, kPrivKey, iMediaPlayer->ConfigManagerInitialiser()));
-        IConfigManager& configMgr = iMediaPlayer->ConfigManagerReader();
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, kPrivKey, iMediaPlayer->ConfigInitialiser()));
+        IConfigManager& configMgr = iMediaPlayer->ConfigManager();
         BIO* bio = BIO_new_mem_buf((void*)kPubKey, sizeof(kPubKey)-1);
         RSA* pubKey = PEM_read_bio_RSA_PUBKEY(bio, NULL, 0, NULL);
         BIO_free(bio);

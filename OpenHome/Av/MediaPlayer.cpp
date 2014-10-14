@@ -46,7 +46,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
     iPipeline = new PipelineManager(*iInfoLogger, *iTrackFactory);
-    iConfigManager = new ConfigManager(iReadWriteStore);
+    iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
@@ -165,12 +165,12 @@ IPullableClock* MediaPlayer::PullableClock()
     return iPullableClock;
 }
 
-IConfigManager& MediaPlayer::ConfigManagerReader()
+IConfigManager& MediaPlayer::ConfigManager()
 {
     return *iConfigManager;
 }
 
-IConfigInitialiser& MediaPlayer::ConfigManagerInitialiser()
+IConfigInitialiser& MediaPlayer::ConfigInitialiser()
 {
     return *iConfigManager;
 }

@@ -89,8 +89,6 @@ template <class T>
 class ConfigVal : public IObservable<T>, public ISerialisable
 {
     using typename IObservable<T>::FunctorObserver;
-public:
-    static const TUint kSubscriptionIdInvalid = 0; // FIXME - move to ConfigManager
 protected:
     ConfigVal(IConfigInitialiser& aManager, const Brx& aKey);
 public:
@@ -358,6 +356,8 @@ inline MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,void (CallType::
 class IConfigManager
 {
 public:
+    static const TUint kSubscriptionIdInvalid = 0;
+public:
     virtual TBool HasNum(const Brx& aKey) const = 0;
     virtual ConfigNum& GetNum(const Brx& aKey) const = 0;
     virtual TBool HasChoice(const Brx& aKey) const = 0;
@@ -382,6 +382,8 @@ public:
  */
 class IConfigInitialiser
 {
+public:
+    //static const TUint kMaxKeyLength = 100;
 public:
     virtual IStoreReadWrite& Store() = 0;
     virtual void Open() = 0;
@@ -499,9 +501,6 @@ public: // from IWriter
  */
 class ConfigManager : public IConfigManager, public IConfigInitialiser
 {
-public:
-    static const TUint kMaxKeyLength = 100;
-    static const TUint kSubscriptionIdInvalid = 0;
 private:
     typedef SerialisedMap<ConfigNum> ConfigNumMap;
     typedef SerialisedMap<ConfigChoice> ConfigChoiceMap;

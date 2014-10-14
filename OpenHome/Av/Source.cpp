@@ -52,7 +52,7 @@ Source::Source(const TChar* aSystemName, const TChar* aType)
     , iVisible(true)
     , iProduct(NULL)
     , iConfigName(NULL)
-    , iConfigNameSubscriptionId(ConfigVal<const Brx&>::kSubscriptionIdInvalid)
+    , iConfigNameSubscriptionId(IConfigManager::kSubscriptionIdInvalid)
     , iConfigNameCreated(false)
 {
 }

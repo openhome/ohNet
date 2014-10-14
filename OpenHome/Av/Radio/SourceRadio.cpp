@@ -46,7 +46,7 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigManagerInitialiser());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigInitialiser());
 }
 
 
