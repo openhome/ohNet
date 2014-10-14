@@ -292,10 +292,9 @@ void Pipeline::Stop(TUint aHaltId)
                running, meaning that we want to allow Stopper to ramp down? */
     if (iBuffering) {
         // FIXME - should maybe tell StarvationMonitor to skip to next track also
-        iState = EStopped;
         iSkipper->RemoveCurrentStream(false);
         iLock.Signal();
-        NotifyStatus();
+        iStopper->StopNow();
         return;
     }
     iStopper->BeginStop(aHaltId);

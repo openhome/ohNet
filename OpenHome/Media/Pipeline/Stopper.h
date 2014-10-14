@@ -40,6 +40,7 @@ public:
     void Play();
     void BeginPause();
     void BeginStop(TUint aHaltId);
+    void StopNow();
     void Quit();
 public: // from IPipelineElementUpstream
     Msg* Pull();
