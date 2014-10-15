@@ -52,7 +52,7 @@ void DviServer::Initialise()
     iCurrentAdapterChangeListenerId = nifList.AddCurrentChangeListener(functor);
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     AutoMutex a(iLock);
-    AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::SubnetListChanged");
+    AutoNetworkAdapterRef ref(iDvStack.Env(), "DviServer::Initialise");
     NetworkAdapter* current = ref.Adapter();
     if (current != NULL) {
         AddServer(*current);
@@ -102,12 +102,12 @@ void DviServer::SubnetListChanged()
     }
     else {
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-        const std::vector<NetworkAdapter*>& nifList = adapterList.List();
+        std::vector<NetworkAdapter*>* nifList = adapterList.CreateNetworkAdapterList();
         TInt i;
         // remove servers whose interface is no longer available
         for (i = (TInt)iServers.size() - 1; i >= 0; i--) {
             DviServer::Server* server = iServers[i];
-            if (FindInterface(server->Interface(), nifList) == -1) {
+            if (FindInterface(server->Interface(), *nifList) == -1) {
                 delete server;
                 iServers.erase(iServers.begin() + i);
             }
@@ -119,6 +119,7 @@ void DviServer::SubnetListChanged()
                 AddServer(*subnet);
             }
         }
+        NetworkAdapterList::DestroyNetworkAdapterList(nifList);
         NetworkAdapterList::DestroySubnetList(subnetList);
     }
 }
