@@ -126,7 +126,7 @@ void SourceUpnpAv::Play()
     if (iTrack != NULL && iTransportState == Media::EPipelinePlaying) {
         notifyUriProvider = true;
     }
-    //if (iTrack != NULL) {
+    if (iTrack != NULL) {
         iTransportState = Media::EPipelinePlaying;
         iLock.Signal();
         if (notifyUriProvider) {
@@ -134,10 +134,10 @@ void SourceUpnpAv::Play()
             iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
         }
         iPipeline.Play();
-    //}
-    //else {
-    //    iLock.Signal();
-    //}
+    }
+    else {
+        iLock.Signal();
+    }
 }
 
 void SourceUpnpAv::Pause()
