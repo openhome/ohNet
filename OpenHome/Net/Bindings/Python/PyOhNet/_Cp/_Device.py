@@ -6,11 +6,11 @@ import os
 import re
 import stat
 import sys
+import types
 import urllib2
 import urlparse
 import xml.etree.ElementTree as ET
 import _GenProxy as GenProxy
-import _GlobalLock as GlobalLock
 
 
 class Device():
@@ -63,7 +63,8 @@ class Device():
                     domainName += field[1:]
                 result.append( {'type':svType, 'url':url, 'domain':domainName, 'name':name, 'version':int( version )} )
         return result
-                
+
+    # noinspection PyUnusedLocal
     def _AddProxy( self, aService ):
         """Generate and add proxy for specified service"""
         # The proxy code is auto-generated (from the service XML) and then
@@ -77,31 +78,35 @@ class Device():
         proxyName = 'CpProxy%s%s%s' % \
             (aService['domain'], aService['name'][0].upper() + aService['name'][1:], aService['version'])
 
-        # configure (and create if necessary) directory for generated proxies
-        head, tail = os.path.split( os.path.dirname( __file__ ))
-        proxyDir = os.path.join( head, '.GeneratedProxies' )
-        if not os.path.exists( proxyDir ):
-            os.mkdir( proxyDir )
-        if proxyDir not in sys.path:
-            sys.path.append( proxyDir )
-
         # generate the proxy from the service XML
         serviceXml = urllib2.urlopen( aService['url'] ).read()
         proxy = GenProxy.GenProxy( aService['type'], serviceXml )
 
-        # write out and import the proxy (protected by system-wide mutex)
-        mutex = GlobalLock.GlobalLock( 'proxyWriteMutex' )
-        mutex.Acquire()
-        proxyPath = os.path.join( proxyDir, proxyName+'.py' )
-        proxy.Write( proxyPath )
-        exec( 'import %s as proxyModule' % proxyName )
-        os.chmod( proxyPath, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO )     # R/W by all (enables overwrite)
-        mutex.Release()
+        # 'import' the generated proxies
+        if proxyName in sys.modules.keys():
+            proxyModule = sys.modules[proxyName]
+        else:
+            proxyModule = types.ModuleType( proxyName )
+            exec proxy.text in proxyModule.__dict__
+            sys.modules[proxyName] = proxyModule
+
+        # # FOR DEBUG - write generated proxies to, and import from file
+        # #             NOTE - no mutex protection on file access, so do NOT use this
+        # #                    technique except when debugging is necessary
+        # head, tail = os.path.split( os.path.dirname( __file__ ))
+        # proxyDir = os.path.join( head, '.GeneratedProxies' )
+        # if not os.path.exists( proxyDir ):
+        #     os.mkdir( proxyDir )
+        # if proxyDir not in sys.path:
+        #     sys.path.append( proxyDir )
+        # proxyPath = os.path.join( proxyDir, proxyName+'.py' )
+        # proxy.Write( proxyPath )
+        # exec( 'import %s as proxyModule' % proxyName )
 
         # add to list of available proxies
         setattr( self, attrName, eval( 'proxyModule.%s( self )' % proxyName ))
         self.proxies.append( attrName )
-    
+
     def _GetUdn( self ):
         udn = ctypes.c_char_p()
         length = ctypes.c_int()
