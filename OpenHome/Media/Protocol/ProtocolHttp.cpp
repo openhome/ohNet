@@ -181,7 +181,9 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
-        // FIXME - error msg
+        if (iContentProcessor != NULL) {
+            iContentProcessor->Reset();
+        }
         Close();
         return res;
     }
