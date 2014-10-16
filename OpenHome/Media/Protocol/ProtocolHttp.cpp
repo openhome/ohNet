@@ -181,7 +181,9 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
     ProtocolStreamResult res = DoStream();
     if (res == EProtocolStreamErrorUnrecoverable) {
-        // FIXME - error msg
+        if (iContentProcessor != NULL) {
+            iContentProcessor->Reset();
+        }
         Close();
         return res;
     }
@@ -230,10 +232,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         }
     }
     iLock.Wait();
-    ASSERT(!iSeek);
-    if (iStopped && iNextFlushId != MsgFlush::kIdInvalid) {
+    if ((iStopped || iSeek) && iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);
     }
+    // clear iStreamId to prevent TrySeek or TryStop returning a valid flush id
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
     if (iContentProcessor != NULL) {
@@ -664,11 +666,9 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 TBool ProtocolHttp::ContinueStreaming(ProtocolStreamResult aResult)
 {
     AutoMutex a(iLock);
-    if (aResult == EProtocolStreamErrorRecoverable || iSeek) {
+    if (aResult == EProtocolStreamErrorRecoverable) {
         return true;
     }
-    // clear iStreamId to prevent TrySeek or TryStop returning a valid flush id
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return false;
 }
 
