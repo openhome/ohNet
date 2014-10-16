@@ -17,6 +17,8 @@ using namespace OpenHome::Av;
 // action, the only valid AVTransportID is 0
 static const TUint kInstanceId = 0;
 
+static const TUint kTransitionNotAvailableCode = 701;
+static const Brn kTransitionNotAvailableMsg("Transition not available");
 static const TUint kInvalidInstanceIdCode = 718;
 static const Brn kInvalidInstanceIdMsg("Invalid InstanceID");
 static const TUint kInvalidSeekModeCode = 710;
@@ -269,6 +271,12 @@ void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    {
+        AutoMutex a(iLock);
+        if (iTransportState == kTransportStateNoMediaPresent) {
+            aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
+        }
+    }
     aInvocation.StartResponse();
     iSourceUpnpAv.Stop();
     aInvocation.EndResponse();
@@ -282,6 +290,12 @@ void ProviderAvTransport::Play(IDvInvocation& aInvocation, TUint aInstanceID, co
     if (aSpeed != kTransportPlaySpeed1) {
         aInvocation.Error(kUnsupportedPlaySpeedCode, kUnsupportedPlaySpeedMsg);
     }
+    {
+        AutoMutex a(iLock);
+        if (iTransportState == kTransportStateNoMediaPresent) {
+            aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
+        }
+    }
     aInvocation.StartResponse();
     iSourceUpnpAv.Play();
     aInvocation.EndResponse();
@@ -291,6 +305,12 @@ void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        if (iTransportState == kTransportStateNoMediaPresent) {
+            aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
+        }
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Pause();
