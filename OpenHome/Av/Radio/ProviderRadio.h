@@ -57,6 +57,9 @@ private:
     Media::BwsTrackMetaData iMetaData;
     std::array<TUint, IPresetDatabaseReader::kMaxPresets> iIdArray;
     Bws<IPresetDatabaseReader::kMaxPresets * sizeof(TUint32)> iIdArrayBuf;
+    // only required locally by certain functions but too large for the stack
+    Media::BwsTrackUri iTempUri;
+    Media::BwsTrackMetaData iTempMetadata;
 };
 
 } // namespace Av
