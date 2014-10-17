@@ -57,6 +57,7 @@ protected:
     void AddToAudioEncoded(MsgAudioEncoded* aMsg);
     void ReleaseAudioEncoded();
     void PullAudio(TUint aBytes);
+    void DiscardAudio(TUint aBytes);
     void Read(Bwx& aBuf, TUint aBytes);
 private:
     void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler);

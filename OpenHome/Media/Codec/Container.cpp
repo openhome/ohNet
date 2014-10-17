@@ -76,6 +76,40 @@ void ContainerBase::PullAudio(TUint aBytes)
     iPulling = false;
 }
 
+void ContainerBase::DiscardAudio(TUint aBytes)
+{
+    if (iPendingMsg != NULL) {
+        return;
+    }
+    iPulling = true;
+    TUint bytesRemaining = aBytes;
+
+    while (bytesRemaining > 0) {
+        Msg* msg = iUpstreamElement->Pull();
+        msg = msg->Process(*this);
+        if (msg != NULL) {
+            ASSERT(iPendingMsg == NULL);
+            iPendingMsg = msg;
+            break;
+        }
+        if (iAudioEncoded != NULL) {
+            if (iAudioEncoded->Bytes() <= bytesRemaining) {
+                bytesRemaining -= iAudioEncoded->Bytes();
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = NULL;
+            }
+            else {
+                MsgAudioEncoded* remainder = iAudioEncoded->Split(bytesRemaining);
+                bytesRemaining = 0;
+                iAudioEncoded->RemoveRef();
+                iAudioEncoded = remainder;
+            }
+        }
+    }
+
+    iPulling = false;
+}
+
 void ContainerBase::Read(Bwx& aBuf, TUint aBytes)
 {
     if (iPendingMsg != NULL) {

@@ -73,14 +73,9 @@ Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
         if (iBuf.Bytes() == kRecogniseBytes) {
             TBool recognised = Recognise(iBuf);
             if (recognised) {
-                // read more audio if req'd; could be splitting a large tag (i.e., one containing album art)
-                PullAudio(iSize);
-                if (iSize < iAudioEncoded->Bytes()) {
-                    MsgAudioEncoded* remainder = iAudioEncoded->Split(iSize);
-                    iAudioEncoded->RemoveRef();
-                    iAudioEncoded = remainder;
-                    // can't return remaining iAudioEncoded here; could have another tag following this one
-                }
+                // discard more MsgAudioEncoded if req'd; could be splitting a large tag (i.e., one containing album art)
+                DiscardAudio(iSize-kRecogniseBytes); // kRecogniseBytes already read above
+                // can't return remaining iAudioEncoded here; could have another tag following this one
                 iTotalSize += iSize;
             }
             else {
