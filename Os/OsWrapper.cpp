@@ -178,6 +178,15 @@ void OpenHome::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddr
     }
 }
 
+void OpenHome::Os::NetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface)
+{
+    int32_t err = OsNetworkSocketSetMulticastIf(aHandle, aInterface);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Os::OsNetworkSocketSetMulticastIf H = %d, RETURN VALUE = %d\n", aHandle, err);
+        THROW(NetworkError);
+    }
+}
+
 std::vector<NetworkAdapter*>* OpenHome::Os::NetworkListAdapters(Environment& aEnv,
                                                                 Net::InitialisationParams::ELoopback aUseLoopback,
                                                                 const TChar* aCookie)

@@ -448,6 +448,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(Environment& aEnv, ISsdpNotifyHandler& 
     , iExiting(false)
     , iRecreateSocket(false)
 {
+    iSocket.SetMulticastIf(aInterface);
     iSocket.SetTtl(aEnv.InitParams()->MsearchTtl());
     try
     {

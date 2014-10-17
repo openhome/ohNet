@@ -761,6 +761,13 @@ void SocketUdp::ReBind(TUint aPort, TIpAddress aInterface)
     Bind(aPort, aInterface);
 }
 
+void SocketUdp::SetMulticastIf(TIpAddress aInterface)
+{
+    LOGF(kNetwork, "> SocketUdp::SetMulticastIf I = %x\n", aInterface);
+    OpenHome::Os::NetworkSocketSetMulticastIf(iHandle, aInterface);
+    LOGF(kNetwork, "< SocketUdp::SetMulticastIf\n");
+}
+
 void SocketUdp::Bind(TUint aPort, TIpAddress aInterface)
 {
     Socket::Bind(Endpoint(aPort, aInterface));

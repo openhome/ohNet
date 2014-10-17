@@ -622,6 +622,18 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
 int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
 
 /**
+ * Set the interface for sending multicast requests from this socket
+ *
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
+ * @param[in] aInterface   IpV4 address (in network byte order) specifying the network
+ *                         interface on which the multicast group should be joined.
+ *                         If this is 0, the default multicast interface will be used.
+ *
+ * @return  0 on success; -1 on failure
+ */
+int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface);
+
+/**
  * Representation of a network interface
  */
 typedef struct OsNetworkAdapter
