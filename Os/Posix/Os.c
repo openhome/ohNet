@@ -1028,12 +1028,16 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     err = setsockopt(handle->iSocket, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
     return err;
 }
-
+ 
 int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
 {
+#if defined(PLATFORM_MACOSX_GNU)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface, sizeof(aInterface));
     return err;
+#else
+    return 0;
+#endif
 }
 
 int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
