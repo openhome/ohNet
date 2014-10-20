@@ -27,11 +27,12 @@ static const Brn kInvalidChannelMsg("Selected channel is invalid");
 
 ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgRadio1(aDevice)
-    , iLock("PRAD")
+    , iLock("PRD1")
     , iSource(aSource)
     , iDbReader(aDbReader)
     , iProtocolInfo(aProtocolInfo)
     , iDbSeq(0)
+    , iTempVarLock("PRD2")
 {
     iDbReader.SetObserver(*this);
 
@@ -160,6 +161,7 @@ void ProviderRadio::Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aV
 
 void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri)
 {
+    AutoMutex a(iTempVarLock);
     if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, iTempUri, iTempMetadata)) {
         iLock.Wait();
         iUri.Replace(Brx::Empty());
@@ -174,7 +176,7 @@ void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& a
 
 void ProviderRadio::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata)
 {
-    AutoMutex a(iLock); // lock used to protect access to iTempMetadata
+    AutoMutex a(iTempVarLock);
     if (aId == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, iTempMetadata)) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
@@ -186,10 +188,12 @@ void ProviderRadio::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationRes
 
 void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aChannelList)
 {
-    AutoMutex a(iLock); // lock used to protect access to iTempMetadata.  Only needed around access to iDbSeq otherwise
+    iLock.Wait();
     const TUint seq = iDbSeq;
+    iLock.Signal();
     Parser parser(aIdList);
     TUint index = 0;
+    AutoMutex a(iTempVarLock);
     const Brn entryStart("<Entry>");
     const Brn entryEnd("</Entry>");
     const Brn idStart("<Id>");
