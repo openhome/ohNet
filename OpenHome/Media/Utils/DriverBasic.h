@@ -10,7 +10,6 @@
 
 namespace OpenHome {
     class Environment;
-    class Timer;
 namespace Media {
 
 class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock
@@ -24,7 +23,6 @@ public:
 private: // from Thread
     void Run();
 private:
-    void TimerCallback();
     void ProcessAudio(MsgPlayable* aMsg);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
@@ -46,7 +44,7 @@ private: // from IPullableClock
     void PullClock(TInt32 aValue);
 private:
     IPipelineElementUpstream* iPipeline;
-    Timer* iTimer;
+    Semaphore iSem;
     OsContext* iOsCtx;
     TUint iSampleRate;
     TUint iJiffiesPerSample;

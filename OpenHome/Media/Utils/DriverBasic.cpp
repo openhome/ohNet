@@ -4,7 +4,6 @@
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/OsWrapper.h>
-#include <OpenHome/Private/Timer.h>
 #include <OpenHome/Private/Env.h>
 
 using namespace OpenHome;
@@ -13,26 +12,24 @@ using namespace OpenHome::Media;
 DriverBasic::DriverBasic(Environment& aEnv)
     : Thread("PipelineAnimator", kPrioritySystemHighest)
     , iPipeline(NULL)
+    , iSem("DRVB", 0)
     , iOsCtx(aEnv.OsCtx())
     , iPlayable(NULL)
     , iPullLock("DBPL")
     , iPullValue(kClockPullDefault)
     , iQuit(false)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &DriverBasic::TimerCallback));
 }
 
 DriverBasic::~DriverBasic()
 {
     Join();
-    delete iTimer;
 }
 
 void DriverBasic::SetPipeline(IPipelineElementUpstream& aPipeline)
 {
     iPipeline = &aPipeline;
     Start();
-    iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
 }
 
 void DriverBasic::Run()
@@ -62,8 +59,12 @@ void DriverBasic::Run()
                 break;
             }
             iLastTimeUs = now;
-            iTimer->FireIn(iNextTimerDuration);
-            Wait();
+            if (iNextTimerDuration != 0) {
+                try {
+                    iSem.Wait(iNextTimerDuration);
+                }
+                catch (Timeout&) {}
+            }
             iNextTimerDuration = kTimerFrequencyMs;
             now = OsTimeInUs(iOsCtx);
             const TUint diffMs = ((TUint)(now - iLastTimeUs + 500)) / 1000;
@@ -96,11 +97,6 @@ void DriverBasic::Run()
             iPlayable->RemoveRef();
         }
     }
-}
-
-void DriverBasic::TimerCallback()
-{
-    Signal();
 }
 
 void DriverBasic::ProcessAudio(MsgPlayable* aMsg)
