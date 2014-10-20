@@ -76,9 +76,7 @@ ProviderRadio::~ProviderRadio()
 void ProviderRadio::SetTransportState(Media::EPipelineState aState)
 {
     Brn state(Media::TransportState::FromPipelineState(aState));
-    iLock.Wait();
     (void)SetPropertyTransportState(state);
-    iLock.Signal();
 }
 
 void ProviderRadio::PresetDatabaseChanged()
@@ -144,12 +142,9 @@ void ProviderRadio::SetChannel(IDvInvocation& aInvocation, const Brx& aUri, cons
 void ProviderRadio::TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue)
 {
     aInvocation.StartResponse();
-    {
-        AutoMutex a(iLock);
-        Brhz state;
-        GetPropertyTransportState(state);
-        aValue.Write(state);
-    }
+    Brhz state;
+    GetPropertyTransportState(state);
+    aValue.Write(state);
     aValue.WriteFlush();
     aInvocation.EndResponse();
 }
@@ -157,26 +152,22 @@ void ProviderRadio::TransportState(IDvInvocation& aInvocation, IDvInvocationResp
 void ProviderRadio::Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
 {
     aInvocation.StartResponse();
-    {
-        AutoMutex a(iLock);
-        TUint id;
-        GetPropertyId(id);
-        aValue.Write(id);
-    }
+    TUint id;
+    GetPropertyId(id);
+    aValue.Write(id);
     aInvocation.EndResponse();
 }
 
 void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri)
 {
-    // FIXME - far too much data on the stack here
-    Media::BwsTrackUri uri;
-    Media::BwsTrackMetaData metadata;
-    if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, uri, metadata)) {
+    if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, iTempUri, iTempMetadata)) {
+        iLock.Wait();
         iUri.Replace(Brx::Empty());
         iMetaData.Replace(Brx::Empty());
+        iLock.Signal();
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
-    SetChannel(aValue, aUri, metadata);
+    SetChannel(aValue, aUri, iTempMetadata);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
@@ -277,13 +268,14 @@ void ProviderRadio::ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationRespon
 
 void ProviderRadio::SetChannel(TUint aPresetId, const Brx& aUri, const Brx& aMetadata)
 {
-    iLock.Wait();
-    iUri.Replace(aUri);
-    iMetaData.Replace(aMetadata);
-    iLock.Signal();
-    (void)SetPropertyId(aPresetId);
-    (void)SetPropertyUri(aUri);
-    (void)SetPropertyMetadata(iMetaData);
+    {
+        AutoMutex a(iLock);
+        iUri.Replace(aUri);
+        iMetaData.Replace(aMetadata);
+        (void)SetPropertyId(aPresetId);
+        (void)SetPropertyUri(aUri);
+        (void)SetPropertyMetadata(iMetaData);
+    }
     iSource.Fetch(aUri, aMetadata);
 }
 

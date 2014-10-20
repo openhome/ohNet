@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
@@ -236,12 +237,13 @@ Msg* Seeker::ProcessAudio(MsgAudio* aMsg)
     if (iFlushEndJiffies != 0 && iFlushEndJiffies < iStreamPosJiffies) {
         ASSERT(iState == EFlushing);
         const TUint splitJiffies = (TUint)(iStreamPosJiffies - iFlushEndJiffies);
-        MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
-        if (split != NULL) {
-            iQueue.EnqueueAtHead(split);
+        if (splitJiffies < aMsg->Jiffies()) {
+            MsgAudio* split = aMsg->Split(aMsg->Jiffies() - splitJiffies);
+            if (split != NULL) {
+                iQueue.EnqueueAtHead(split);
+            }
         }
-        iStreamPosJiffies -= splitJiffies;
-        ASSERT(iStreamPosJiffies == iFlushEndJiffies);
+        iStreamPosJiffies = iFlushEndJiffies;
     }
     if (iFlushEndJiffies == iStreamPosJiffies) {
         ASSERT(iState == EFlushing);
