@@ -403,9 +403,11 @@ Msg* ContainerFront::ProcessMsg(MsgEncodedStream* aMsg)
     iRecognising = true;
     iQuit = false;
     iStreamHandler = aMsg->StreamHandler();
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
-    aMsg->RemoveRef();
-    return msg;
+    // This doesn't need to add itself as an IStreamHandler.
+    // - Inner containers are constructed with this passed as an IStreamHandler
+    // and outer Container makes calls directly to active innner container
+    // (which calls its IStreamHandler, i.e., this).
+    return aMsg;
 }
 
 Msg* ContainerFront::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -573,7 +575,8 @@ void ContainerFront::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStr
 // Container
 
 Container::Container(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement)
-    : iNewStream(false)
+    : iMsgFactory(aMsgFactory)
+    , iNewStream(false)
 {
     iContainerFront = new ContainerFront(aMsgFactory, aUpstreamElement);
 }
@@ -631,7 +634,16 @@ Msg* Container::ProcessMsg(MsgDelay* aMsg)
 Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iNewStream = true;
-    return aMsg;
+    // Discarding aMsg->StreamHandler() here - ContainerFront has taken a ptr
+    // to it.
+    // When any IStreamHandler methods come in via this class, they are passed
+    // directly to active inner container (which, in turn, calls the
+    // IStreamHandler it was constructed with which happens to be
+    // ContainerFront. ContainerFront then calls the ptr it took to
+    // aMsg->StreamHandler()).
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    aMsg->RemoveRef();
+    return msg;
 }
 
 Msg* Container::ProcessMsg(MsgAudioEncoded* aMsg)

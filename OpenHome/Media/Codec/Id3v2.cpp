@@ -62,6 +62,13 @@ TBool Id3v2::Recognise(Brx& aBuf)
     return true;
 }
 
+Msg* Id3v2::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    Msg* msg = ContainerBase::ProcessMsg(aMsg);
+    iTotalSize = 0;
+    return msg;
+}
+
 Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     MsgAudioEncoded* msg = NULL;

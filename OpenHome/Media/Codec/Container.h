@@ -39,11 +39,11 @@ public: // from IRecogniser
 public: // from IPipelineElementUpstream
     virtual Msg* Pull() = 0;
 public: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
+    virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
+    virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    virtual TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0;
+    virtual void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
 };
 
 class ContainerBase : public IContainerBase, private IMsgProcessor, private INonCopyable
@@ -60,19 +60,20 @@ protected:
     void DiscardAudio(TUint aBytes);
     void Read(Bwx& aBuf, TUint aBytes);
 private:
-    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler);
+    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler); // FIXME - don;t pass istreamhandler here
     TBool ReadFromCachedAudio(Bwx& aBuf, TUint aBytes);
 public: // from IRecogniser
     TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
     //TBool Recognise(Brx& aBuf);
 public: // from IPipelineElementUpstream
     Msg* Pull();
+protected: // from IMsgProcessor
+    Msg* ProcessMsg(MsgEncodedStream* aMsg);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg);
     Msg* ProcessMsg(MsgSession* aMsg);
     Msg* ProcessMsg(MsgTrack* aMsg);
     Msg* ProcessMsg(MsgDelay* aMsg);
-    Msg* ProcessMsg(MsgEncodedStream* aMsg);
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
     Msg* ProcessMsg(MsgMetaText* aMsg);
     Msg* ProcessMsg(MsgHalt* aMsg);
@@ -191,9 +192,9 @@ public: // from IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
+    MsgFactory& iMsgFactory;
     ContainerFront* iContainerFront;
     TBool iNewStream;
-
 };
 
 } // namespace Codec
