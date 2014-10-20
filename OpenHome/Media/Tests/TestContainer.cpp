@@ -21,9 +21,12 @@ namespace Codec {
 class ContainerNullBuffered : public ContainerNull
 {
 public:
+    static const TUint kStartOffsetBytes = 5;
+public:
     ContainerNullBuffered();
-private: // from IMsgProcessor
+private: // from ContainerNull
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
 private:
     static const TUint kBufferedAudioBytes = EncodedAudio::kMaxBytes*2;
 };
@@ -97,6 +100,9 @@ public:
     TUint OkToPlayCount();
     TUint SeekCount();
     TUint StopCount();
+    TUint LastSeekTrackId();
+    TUint LastSeekStreamId();
+    TUint64 LastSeekOffset();
 private:
     TUint iPendingFlushId;
     TUint iCurrentFlushId;
@@ -105,6 +111,10 @@ private:
     TUint iOkToPlayCount;
     TUint iSeekCount;
     TUint iStopCount;
+
+    TUint iLastSeekTrackId;
+    TUint iLastSeekStreamId;
+    TUint64 iLastSeekOffset;
 };
 
 class TestContainerMsgProcessor : public IMsgProcessor
@@ -148,23 +158,27 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgWait* aMsg);
     Msg* ProcessMsg(MsgQuit* aMsg);
 protected:
-    void AddBaseTests();
     void PullAndProcess();
     TBool TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, TByte aValue);
     virtual TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
+    virtual TUint ExpectedSeekStartOffset();
 protected: // Tests
     void TestNormalOperation();
     void TestMsgOrdering();
     void TestStreamHandling();
     void TestEndOfStreamQuit();
     void TestNewStream();
-    virtual void TestFlushPending();
+    void TestFlushPending();
+    void TestFlushPendingStreamHandler();
+private:
+    void AddBaseTests();
 protected:
     TestContainerMsgGenerator* iGenerator;
     TestContainerProvider* iProvider;
     Container* iContainer;
     TUint iTrackId;
     TUint iStreamId;
+    IStreamHandler* iStreamHandler;
     TUint iMsgRcvdCount;
     TByte iAudioRcvdCount;
 private:
@@ -190,6 +204,7 @@ private: // from SuiteUnitTest
 private: // from SuiteContainerBase
     TBool TestMsgAudioEncodedContent(MsgAudioEncoded& aMsg, TByte aValue);
     TBool TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte aValue);
+    TUint ExpectedSeekStartOffset();
 private:
     TUint iMsgBytesRcvd;
 };
@@ -238,6 +253,13 @@ Msg* ContainerNullBuffered::ProcessMsg(MsgAudioEncoded* aMsg)
         }
     }
     return msg;
+}
+
+TUint ContainerNullBuffered::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+{
+    TUint64 offset = aOffset + kStartOffsetBytes;
+    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, offset);
+    return iExpectedFlushId;
 }
 
 
@@ -423,6 +445,9 @@ TestContainerProvider::TestContainerProvider()
     , iOkToPlayCount(0)
     , iSeekCount(0)
     , iStopCount(0)
+    , iLastSeekTrackId(0)
+    , iLastSeekStreamId(0)
+    , iLastSeekOffset(0)
 {
 }
 
@@ -447,9 +472,12 @@ EStreamPlay TestContainerProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamI
     return ePlayYes;
 }
 
-TUint TestContainerProvider::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint TestContainerProvider::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
     iSeekCount++;
+    iLastSeekTrackId = aTrackId;
+    iLastSeekStreamId = aStreamId;
+    iLastSeekOffset = aOffset;
     return iCurrentFlushId++;
 }
 
@@ -482,6 +510,21 @@ TUint TestContainerProvider::SeekCount()
 TUint TestContainerProvider::StopCount()
 {
     return iStopCount;
+}
+
+TUint TestContainerProvider::LastSeekTrackId()
+{
+    return iLastSeekTrackId;
+}
+
+TUint TestContainerProvider::LastSeekStreamId()
+{
+    return iLastSeekStreamId;
+}
+
+TUint64 TestContainerProvider::LastSeekOffset()
+{
+    return iLastSeekOffset;
 }
 
 
@@ -558,6 +601,7 @@ Msg* TestContainerMsgProcessor::ProcessMsg(MsgQuit* aMsg)
 SuiteContainerBase::SuiteContainerBase(const TChar* aSuiteName)
     : SuiteUnitTest(aSuiteName)
 {
+    AddBaseTests();
 }
 
 SuiteContainerBase::~SuiteContainerBase()
@@ -574,6 +618,7 @@ void SuiteContainerBase::Setup()
     iContainer = new Container(*iMsgFactory, *iGenerator);
     iTrackId = 0;
     iStreamId = 0;
+    iStreamHandler = NULL;
     iMsgRcvdCount = 0;
     iAudioRcvdCount = 0;
 }
@@ -589,12 +634,13 @@ void SuiteContainerBase::TearDown()
 
 void SuiteContainerBase::AddBaseTests()
 {
-    AddTest(MakeFunctor(*this, &SuiteContainerBuffered::TestNormalOperation));
-    AddTest(MakeFunctor(*this, &SuiteContainerBuffered::TestMsgOrdering));
-    AddTest(MakeFunctor(*this, &SuiteContainerBuffered::TestStreamHandling));
-    AddTest(MakeFunctor(*this, &SuiteContainerBuffered::TestEndOfStreamQuit));
-    AddTest(MakeFunctor(*this, &SuiteContainerBuffered::TestNewStream));
-    AddTest(MakeFunctor(*this, &SuiteContainerBuffered::TestFlushPending));
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestNormalOperation), "TestNormalOperation");
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestMsgOrdering), "TestMsgOrdering");
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestStreamHandling), "TestStreamHandling");
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestEndOfStreamQuit), "TestEndOfStreamQuit");
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestNewStream), "TestNewStream");
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestFlushPending), "TestFlushPending");
+    AddTest(MakeFunctor(*this, &SuiteContainerBase::TestFlushPendingStreamHandler), "TestFlushPendingStreamHandler");
 }
 
 void SuiteContainerBase::PullAndProcess()
@@ -627,6 +673,11 @@ TBool SuiteContainerBase::TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TByte 
         return false;
     }
     return TestMsgAudioEncodedContent(aMsg, aValue);
+}
+
+TUint SuiteContainerBase::ExpectedSeekStartOffset()
+{
+    return 0;
 }
 
 Msg* SuiteContainerBase::ProcessMsg(MsgAudioEncoded* aMsg)
@@ -665,6 +716,7 @@ Msg* SuiteContainerBase::ProcessMsg(MsgDelay* aMsg)
 Msg* SuiteContainerBase::ProcessMsg(MsgEncodedStream* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgEncodedStream);
+    iStreamHandler = aMsg->StreamHandler();
     iStreamId = aMsg->StreamId();
     return aMsg;
 }
@@ -889,6 +941,9 @@ void SuiteContainerBase::TestFlushPending()
     TUint seekRes = iContainer->TrySeek(iTrackId, iStreamId, 0);
     TEST(iProvider->SeekCount() == 1);
     TEST(seekRes != MsgFlush::kIdInvalid);
+    TEST(iProvider->LastSeekTrackId() == iTrackId);
+    TEST(iProvider->LastSeekStreamId() == iStreamId);
+    TEST(iProvider->LastSeekOffset() == ExpectedSeekStartOffset());
 
     // then pull more through - all MsgAudioEncoded up to MsgFlush should be
     // disposed of; increment iAudioRcvdCount/iMsgRcvdCount to account for this
@@ -912,13 +967,91 @@ void SuiteContainerBase::TestFlushPending()
     }
 }
 
+void SuiteContainerBase::TestFlushPendingStreamHandler()
+{
+    // Get a pending flush by doing a TrySeek or TryStop then pump more
+    // MsgAudioEncoded down the pipeline before eventually sending the expected
+    // seek. all MsgAudioEncoded sent during waiting on the pending flush
+    // must be disposed of
+
+    // calculate msg counts for calling seek and stop, and determine end of msgs
+    static const TUint kDiscardedAudio = 3;
+
+    std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgTrack);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgEncodedStream);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    static const TUint kMsgCountSeek = 5;
+
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgFlush);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    static const TUint kMsgCountStop = kMsgCountSeek + 7;
+
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgFlush);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgAudioEncoded);
+    msgOrder.push_back(TestContainerMsgGenerator::EMsgQuit);
+    static const TUint kCountFinish = kMsgCountStop + 8;
+
+    iGenerator->SetMsgOrder(msgOrder);
+
+    // pull msgs until we're halfway through first batch of audio
+    while (iMsgRcvdCount < kMsgCountSeek)
+    {
+        PullAndProcess();
+    }
+
+    // then call a TrySeek so Container awaits a pending flush
+
+    // Call TrySeek()/TryStop() on the IStreamHandler that's been passed down,
+    // instead of directly on iContainer.
+    ASSERT(iStreamHandler != NULL);
+    TUint seekRes = iStreamHandler->TrySeek(iTrackId, iStreamId, 0);
+    TEST(iProvider->SeekCount() == 1);
+    TEST(seekRes != MsgFlush::kIdInvalid);
+    TEST(iProvider->LastSeekTrackId() == iTrackId);
+    TEST(iProvider->LastSeekStreamId() == iStreamId);
+    TEST(iProvider->LastSeekOffset() == ExpectedSeekStartOffset());
+
+    // then pull more through - all MsgAudioEncoded up to MsgFlush should be
+    // disposed of; increment iAudioRcvdCount/iMsgRcvdCount to account for this
+    iAudioRcvdCount += kDiscardedAudio;
+    iMsgRcvdCount += kDiscardedAudio;
+    while (iMsgRcvdCount < kMsgCountStop)
+    {
+        PullAndProcess();
+    }
+
+    // then do a TryStop, as with the TrySeek above
+    TUint stopRes = iStreamHandler->TryStop(iTrackId, iStreamId);
+    TEST(iProvider->StopCount() == 1);
+    TEST(stopRes != MsgFlush::kIdInvalid);
+
+    // pull remainder of msgs through
+    iAudioRcvdCount += kDiscardedAudio;
+    iMsgRcvdCount += kDiscardedAudio;
+    while (iMsgRcvdCount < kCountFinish) {
+        PullAndProcess();
+    }
+}
+
 
 // SuiteContainerUnbuffered
 
 SuiteContainerUnbuffered::SuiteContainerUnbuffered()
     : SuiteContainerBase("SuiteContainerUnbuffered")
 {
-    AddBaseTests();
 }
 
 
@@ -927,7 +1060,6 @@ SuiteContainerUnbuffered::SuiteContainerUnbuffered()
 SuiteContainerBuffered::SuiteContainerBuffered()
     : SuiteContainerBase("SuiteContainerBuffered")
 {
-    AddBaseTests();
 }
 
 void SuiteContainerBuffered::Setup()
@@ -1006,13 +1138,18 @@ TBool SuiteContainerBuffered::TestMsgAudioEncodedValue(MsgAudioEncoded& aMsg, TB
     return TestMsgAudioEncodedContent(aMsg, aValue);
 }
 
+TUint SuiteContainerBuffered::ExpectedSeekStartOffset()
+{
+    return ContainerNullBuffered::kStartOffsetBytes;
+}
+
 
 // SuiteContainerNull
 
 SuiteContainerNull::SuiteContainerNull()
     : SuiteContainerBase("SuiteContainerNull")
 {
-    AddTest(MakeFunctor(*this, &SuiteContainerNull::TestNullContainer));
+    AddTest(MakeFunctor(*this, &SuiteContainerNull::TestNullContainer), "TestNullContainer");
 }
 
 void SuiteContainerNull::Setup()
@@ -1044,6 +1181,7 @@ void SuiteContainerNull::TestNullContainer()
         PullAndProcess();
     }
 }
+
 
 
 void TestContainer()

@@ -27,11 +27,12 @@ static const Brn kInvalidChannelMsg("Selected channel is invalid");
 
 ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgRadio1(aDevice)
-    , iLock("PRAD")
+    , iLock("PRD1")
     , iSource(aSource)
     , iDbReader(aDbReader)
     , iProtocolInfo(aProtocolInfo)
     , iDbSeq(0)
+    , iTempVarLock("PRD2")
 {
     iDbReader.SetObserver(*this);
 
@@ -76,9 +77,7 @@ ProviderRadio::~ProviderRadio()
 void ProviderRadio::SetTransportState(Media::EPipelineState aState)
 {
     Brn state(Media::TransportState::FromPipelineState(aState));
-    iLock.Wait();
     (void)SetPropertyTransportState(state);
-    iLock.Signal();
 }
 
 void ProviderRadio::PresetDatabaseChanged()
@@ -144,12 +143,9 @@ void ProviderRadio::SetChannel(IDvInvocation& aInvocation, const Brx& aUri, cons
 void ProviderRadio::TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue)
 {
     aInvocation.StartResponse();
-    {
-        AutoMutex a(iLock);
-        Brhz state;
-        GetPropertyTransportState(state);
-        aValue.Write(state);
-    }
+    Brhz state;
+    GetPropertyTransportState(state);
+    aValue.Write(state);
     aValue.WriteFlush();
     aInvocation.EndResponse();
 }
@@ -157,38 +153,35 @@ void ProviderRadio::TransportState(IDvInvocation& aInvocation, IDvInvocationResp
 void ProviderRadio::Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue)
 {
     aInvocation.StartResponse();
-    {
-        AutoMutex a(iLock);
-        TUint id;
-        GetPropertyId(id);
-        aValue.Write(id);
-    }
+    TUint id;
+    GetPropertyId(id);
+    aValue.Write(id);
     aInvocation.EndResponse();
 }
 
 void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri)
 {
-    // FIXME - far too much data on the stack here
-    Media::BwsTrackUri uri;
-    Media::BwsTrackMetaData metadata;
-    if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, uri, metadata)) {
+    AutoMutex a(iTempVarLock);
+    if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, iTempUri, iTempMetadata)) {
+        iLock.Wait();
         iUri.Replace(Brx::Empty());
         iMetaData.Replace(Brx::Empty());
+        iLock.Signal();
         aInvocation.Error(kInvalidChannelCode, kInvalidChannelMsg);
     }
-    SetChannel(aValue, aUri, metadata);
+    SetChannel(aValue, aUri, iTempMetadata);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderRadio::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata)
 {
-    Media::BwsTrackMetaData metadata; // FIXME - far too much data on the stack here
-    if (aId == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, metadata)) {
+    AutoMutex a(iTempVarLock);
+    if (aId == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, iTempMetadata)) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
     aInvocation.StartResponse();
-    aMetadata.Write(metadata);
+    aMetadata.Write(iTempMetadata);
     aMetadata.WriteFlush();
     aInvocation.EndResponse();
 }
@@ -200,7 +193,7 @@ void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDv
     iLock.Signal();
     Parser parser(aIdList);
     TUint index = 0;
-    Media::BwsTrackMetaData metadata; // FIXME - heavy stack requirements
+    AutoMutex a(iTempVarLock);
     const Brn entryStart("<Entry>");
     const Brn entryEnd("</Entry>");
     const Brn idStart("<Id>");
@@ -215,7 +208,7 @@ void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDv
     do {
         try {
             TUint id = Ascii::Uint(idBuf);
-            if (iDbReader.TryGetPresetById(id, seq, metadata, index)) {
+            if (iDbReader.TryGetPresetById(id, seq, iTempMetadata, index)) {
                 aChannelList.Write(entryStart);
                 aChannelList.Write(idStart);
                 Bws<Ascii::kMaxUintStringBytes> idBuf2;
@@ -224,7 +217,7 @@ void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDv
                 aChannelList.Write(idEnd);
                 aChannelList.Write(metaStart);
                 WriterInvocationResponseString writer(aChannelList);
-                Converter::ToXmlEscaped(writer, metadata);
+                Converter::ToXmlEscaped(writer, iTempMetadata);
                 aChannelList.Write(metaEnd);
                 aChannelList.Write(entryEnd);
             }
@@ -277,13 +270,14 @@ void ProviderRadio::ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationRespon
 
 void ProviderRadio::SetChannel(TUint aPresetId, const Brx& aUri, const Brx& aMetadata)
 {
-    iLock.Wait();
-    iUri.Replace(aUri);
-    iMetaData.Replace(aMetadata);
-    iLock.Signal();
-    (void)SetPropertyId(aPresetId);
-    (void)SetPropertyUri(aUri);
-    (void)SetPropertyMetadata(iMetaData);
+    {
+        AutoMutex a(iLock);
+        iUri.Replace(aUri);
+        iMetaData.Replace(aMetadata);
+        (void)SetPropertyId(aPresetId);
+        (void)SetPropertyUri(aUri);
+        (void)SetPropertyMetadata(iMetaData);
+    }
     iSource.Fetch(aUri, aMetadata);
 }
 
