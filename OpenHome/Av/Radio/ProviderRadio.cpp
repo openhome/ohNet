@@ -174,24 +174,22 @@ void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& a
 
 void ProviderRadio::Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata)
 {
-    Media::BwsTrackMetaData metadata; // FIXME - far too much data on the stack here
-    if (aId == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, metadata)) {
+    AutoMutex a(iLock); // lock used to protect access to iTempMetadata
+    if (aId == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aId, iTempMetadata)) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
     aInvocation.StartResponse();
-    aMetadata.Write(metadata);
+    aMetadata.Write(iTempMetadata);
     aMetadata.WriteFlush();
     aInvocation.EndResponse();
 }
 
 void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aChannelList)
 {
-    iLock.Wait();
+    AutoMutex a(iLock); // lock used to protect access to iTempMetadata.  Only needed around access to iDbSeq otherwise
     const TUint seq = iDbSeq;
-    iLock.Signal();
     Parser parser(aIdList);
     TUint index = 0;
-    Media::BwsTrackMetaData metadata; // FIXME - heavy stack requirements
     const Brn entryStart("<Entry>");
     const Brn entryEnd("</Entry>");
     const Brn idStart("<Id>");
@@ -206,7 +204,7 @@ void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDv
     do {
         try {
             TUint id = Ascii::Uint(idBuf);
-            if (iDbReader.TryGetPresetById(id, seq, metadata, index)) {
+            if (iDbReader.TryGetPresetById(id, seq, iTempMetadata, index)) {
                 aChannelList.Write(entryStart);
                 aChannelList.Write(idStart);
                 Bws<Ascii::kMaxUintStringBytes> idBuf2;
@@ -215,7 +213,7 @@ void ProviderRadio::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDv
                 aChannelList.Write(idEnd);
                 aChannelList.Write(metaStart);
                 WriterInvocationResponseString writer(aChannelList);
-                Converter::ToXmlEscaped(writer, metadata);
+                Converter::ToXmlEscaped(writer, iTempMetadata);
                 aChannelList.Write(metaEnd);
                 aChannelList.Write(entryEnd);
             }
