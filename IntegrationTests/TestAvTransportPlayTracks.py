@@ -98,7 +98,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
-        if rcvrName.lower() is not 'none':
+        if rcvrName.lower() != 'none':
             if rcvrName.lower() == 'local' and mrName.lower() != 'local' or \
                mrName.lower() == 'local' and rcvrName.lower() != 'local':
                 self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
