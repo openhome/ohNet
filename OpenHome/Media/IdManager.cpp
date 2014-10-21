@@ -78,6 +78,7 @@ void IdManager::Log(
 
 TUint IdManager::NextTrackId()
 {
+    iNextStreamId = kStreamIdInvalid+1;
     return UpdateId(iNextTrackId);
 }
 
@@ -162,19 +163,23 @@ void IdManager::InvalidateAfter(TUint aId)
 
     // find first matching instance
     TUint index = iIndexHead;
+    TUint streamId = kStreamIdInvalid;
     TBool matched = (iPlaying.Id() == aId);
+    if (matched) {
+        streamId = iPlaying.StreamId();
+    }
     while (!matched && index != iIndexTail) {
         if (iActiveStreams[index].Id() == aId) {
             matched = true;
+            streamId = iActiveStreams[index].StreamId();
         }
-        else {
-            UpdateIndex(index);
-        }
+        UpdateIndex(index);
     }
 
     // if matched, advance past any additional streams for the same track
     if (matched) {
-        while (index != iIndexTail && iActiveStreams[index].Id() == aId) {
+        while (index != iIndexTail && iActiveStreams[index].Id() == aId && streamId < iActiveStreams[index].StreamId()) {
+            streamId = iActiveStreams[index].StreamId();
             UpdateIndex(index);
         }
         iIndexTail = index;
