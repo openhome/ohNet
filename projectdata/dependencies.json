@@ -81,9 +81,8 @@
     {   "name": "openssl",
         "type": "external",
         "platform-specific": true,
-        "external-version": "1.0.0d",
-        "internal-version": "0.1.35",
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${external-version}-${internal-version}-${archive-platform}-${debugmode}.tar.bz2"
+        "version": "0.2.41",
+        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
         "type": "internal",
@@ -95,7 +94,7 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.389",
+        "version": "0.0.392",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
