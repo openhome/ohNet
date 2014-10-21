@@ -164,6 +164,9 @@ void UriProviderPlaylist::NotifyTrackInserted(Track& aTrack, TUint aIdBefore, TU
             }
         }
         iIdManager.InvalidateAfter(aIdBefore);
+        if (aIdBefore == iPlayingTrackId) {
+            iLastTrackId = iPlayingTrackId;
+        }
 
         // allow additional loop round the playlist in case the new track is the only one that is playable
         iFirstFailedTrackId = ITrackDatabase::kTrackIdNone;
