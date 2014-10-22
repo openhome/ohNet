@@ -633,7 +633,8 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();
-    LOG(kMedia, "ProtocolHttp response code %d\n", code);
+    Log::Print("ProtocolHttp response code %d\n", code);
+//    LOG(kMedia, "ProtocolHttp response code %d\n", code);
     return code;
 }
 
