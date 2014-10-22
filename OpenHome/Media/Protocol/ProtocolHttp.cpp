@@ -36,6 +36,7 @@ private: // from Protocol
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
+    void Deactivated();
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -175,7 +176,6 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 
     if (iUri.Scheme() != Brn("http")) {
         LOG(kMedia, "ProtocolHttp::Stream scheme not recognised\n");
-        Close();
         return EProtocolErrorNotSupported;
     }
 
@@ -184,7 +184,6 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
         if (iContentProcessor != NULL) {
             iContentProcessor->Reset();
         }
-        Close();
         return res;
     }
     if (iLive) {
@@ -233,6 +232,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
             Thread::Sleep(50);
         }
     }
+
     iLock.Wait();
     if ((iStopped || iSeek) && iNextFlushId != MsgFlush::kIdInvalid) {
         iSupply->OutputFlush(iNextFlushId);
@@ -240,10 +240,7 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     // clear iStreamId to prevent TrySeek or TryStop returning a valid flush id
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iLock.Signal();
-    if (iContentProcessor != NULL) {
-        iContentProcessor->Reset();
-    }
-    Close();
+
     return res;
 }
 
@@ -265,9 +262,19 @@ ProtocolGetResult ProtocolHttp::Get(IWriter& aWriter, const Brx& aUri, TUint64 a
     }
 
     ProtocolGetResult res = DoGet(aWriter, aOffset, aBytes);
+    iTcpClient.Interrupt(false);
     Close();
     LOG(kMedia, "< ProtocolHttp::Get\n");
     return res;
+}
+
+void ProtocolHttp::Deactivated()
+{
+    if (iContentProcessor != NULL) {
+        iContentProcessor->Reset();
+        iContentProcessor = NULL;
+    }
+    Close();
 }
 
 EStreamPlay ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
@@ -546,7 +553,6 @@ ProtocolStreamResult ProtocolHttp::DoSeek(TUint64 aOffset)
 
 ProtocolStreamResult ProtocolHttp::DoLiveStream()
 {
-    Interrupt(false);
     const TUint code = WriteRequest(0);
     iLive = false;
     if (code == 0) {

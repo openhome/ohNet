@@ -125,6 +125,10 @@ private:
      *          EProtocolGetErrorUnrecoverable if the read failed and no other protocol should be tried.
      */
     virtual ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) = 0;
+    /**
+     * Inform a protocol it has been deactivated (i.e. its Stream() function has exited)
+     */
+    virtual void Deactivated();
 protected:
     Environment& iEnv;
     IProtocolManager* iProtocolManager;
