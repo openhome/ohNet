@@ -34,8 +34,6 @@ kAvtNs     = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
 kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
 kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
-print "\n---->", kAudioRoot
-
 
 class TestAvTransportPlayTracks( BASE.BaseTest ):
     """Test playing of tracks using UPnP AV source"""
