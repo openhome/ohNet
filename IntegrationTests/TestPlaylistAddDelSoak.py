@@ -74,10 +74,8 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
             self.log.Info( '' )
             
             self.codecEvt.clear()
-            self.idArrayClear.clear()
             self.dut.playlist.DeleteAllTracks()
             if i>0:
-                self.idArrayClear.wait()
                 self.codecEvt.wait( 3 )
             
             self.codecEvt.clear()
