@@ -5,6 +5,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/SocketSsl.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
@@ -28,11 +29,13 @@ class ProtocolTidal : public Protocol
     static const TUint kPortHttp = 80;
     static const TUint kMaxUsernameBytes = 128;
     static const TUint kMaxPasswordBytes = 128;
+    static const TUint kPrivateKeyBytes = 2048;
+    static const TUint kMaxEncryptedLen = 256;
 public:
     static const Brn kConfigKeyUsername;
     static const Brn kConfigKeyPassword;
 public:
-    ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, Configuration::IConfigInitialiser& aConfigInitialiser);
+    ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
 private: // from Protocol
     void Interrupt(TBool aInterrupt);
@@ -54,6 +57,7 @@ private:
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType);
+    TBool TryCreatePrivateKey();
 private:
     Mutex iLock;
     SocketSsl iSocket;
@@ -62,6 +66,7 @@ private:
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
     const Bws<32> iToken;
+    Configuration::IStoreReadOnly& iReadStore;
     Bws<kMaxUsernameBytes> iUsername;
     Bws<kMaxPasswordBytes> iPassword;
     Uri iUri;
@@ -81,9 +86,9 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
 
-Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigInitialiser& aConfigInitialiser)
+Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, IConfigInitialiser& aConfigInitialiser)
 { // static
-    return new ProtocolTidal(aEnv, aToken, aRsaPrivateKey, aConfigInitialiser);
+    return new ProtocolTidal(aEnv, aToken, aReadStore, aConfigInitialiser);
 }
 
 
@@ -93,7 +98,7 @@ const Brn ProtocolTidal::kHost("api.wimpmusic.com");
 const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
 const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
 
-ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigInitialiser& aConfigInitialiser)
+ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, IConfigInitialiser& aConfigInitialiser)
     : Protocol(aEnv)
     , iLock("PTID")
     , iSocket(aEnv, kReadBufferBytes)
@@ -102,15 +107,12 @@ ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aR
     , iWriterRequest(iSocket)
     , iReaderResponse(aEnv, iReaderBuf)
     , iToken(aToken)
+    , iReadStore(aReadStore)
+    , iPrivateKey(NULL)
 {
-    BIO *bio = BIO_new_mem_buf((void*)aRsaPrivateKey.Ptr(), aRsaPrivateKey.Bytes());
-    iPrivateKey = PEM_read_bio_RSAPrivateKey(bio, NULL, 0, NULL);
-    BIO_free(bio);
-
-    const TUint maxEncryptedLen = RSA_size(iPrivateKey);
-    iConfigUsername = new ConfigText(aConfigInitialiser, kConfigKeyUsername, maxEncryptedLen, Brx::Empty());
+    iConfigUsername = new ConfigText(aConfigInitialiser, kConfigKeyUsername, kMaxEncryptedLen, Brx::Empty());
     iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::UsernameChanged));
-    iConfigPassword = new ConfigText(aConfigInitialiser, kConfigKeyPassword, maxEncryptedLen, Brx::Empty());
+    iConfigPassword = new ConfigText(aConfigInitialiser, kConfigKeyPassword, kMaxEncryptedLen, Brx::Empty());
     iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::PasswordChanged));
 }
 
@@ -391,6 +393,9 @@ void ProtocolTidal::PasswordChanged(KeyValuePair<const Brx&>& aKvp)
 
 void ProtocolTidal::Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType)
 {
+    if (iPrivateKey == NULL && !TryCreatePrivateKey()) {
+        return;
+    }
     aDecrypted.SetBytes(0);
     if (aEncrypted.Bytes() == 0) {
         return;
@@ -402,4 +407,19 @@ void ProtocolTidal::Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar*
     else {
         aDecrypted.SetBytes((TUint)decryptedLen);
     }
+}
+
+TBool ProtocolTidal::TryCreatePrivateKey()
+{
+    Bws<kPrivateKeyBytes> pemKey;
+    try {
+        iReadStore.Read(Brn("RsaPrivateKey"), pemKey);
+    }
+    catch (StoreKeyNotFound&) {
+        return false;
+    }
+    BIO *bio = BIO_new_mem_buf((void*)pemKey.Ptr(), pemKey.Bytes());
+    iPrivateKey = PEM_read_bio_RSAPrivateKey(bio, NULL, 0, NULL);
+    BIO_free(bio);
+    return true;
 }
