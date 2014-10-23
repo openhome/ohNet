@@ -13,6 +13,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 
+#include <vector>
 #include "openssl/bio.h"
 #include "openssl/pem.h"
 
@@ -34,6 +35,7 @@ class ProtocolTidal : public Protocol
 public:
     static const Brn kConfigKeyUsername;
     static const Brn kConfigKeyPassword;
+    static const Brn kConfigKeySoundQuality;
 public:
     ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
@@ -56,6 +58,7 @@ private:
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
     void Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType);
     TBool TryCreatePrivateKey();
 private:
@@ -69,13 +72,16 @@ private:
     Configuration::IStoreReadOnly& iReadStore;
     Bws<kMaxUsernameBytes> iUsername;
     Bws<kMaxPasswordBytes> iPassword;
+    TUint iSoundQuality;
     Uri iUri;
     Bws<1024> iStreamUrl;
     RSA* iPrivateKey;
     Configuration::ConfigText* iConfigUsername;
     Configuration::ConfigText* iConfigPassword;
+    Configuration::ConfigChoice* iConfigQuality;
     TUint iSubscriberIdUsername;
     TUint iSubscriberIdPassword;
+    TUint iSubscriberIdQuality;
 };
 
 };  // namespace Media
@@ -94,9 +100,12 @@ Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Config
 
 // ProtocolTidal
 
-const Brn ProtocolTidal::kHost("api.tidalhifi.com");
+static const TChar* kSoundQualities[3] = {"LOW", "HIGH", "LOSSLESS"};
+
+const Brn ProtocolTidal::kHost("api.wimpmusic.com");
 const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
 const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
+const Brn ProtocolTidal::kConfigKeySoundQuality("Tidal.SoundQuality");
 
 ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, IConfigInitialiser& aConfigInitialiser)
     : Protocol(aEnv)
@@ -114,6 +123,10 @@ ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration
     iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::UsernameChanged));
     iConfigPassword = new ConfigText(aConfigInitialiser, kConfigKeyPassword, kMaxEncryptedLen, Brx::Empty());
     iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::PasswordChanged));
+    const int arr[] = {0, 1, 2};
+    std::vector<TUint> qualities(arr, arr + sizeof(arr)/sizeof(arr[0]));
+    iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 2);
+    iSubscriberIdQuality = iConfigQuality->Subscribe(MakeFunctorConfigChoice(*this, &ProtocolTidal::QualityChanged));
 }
 
 ProtocolTidal::~ProtocolTidal()
@@ -122,6 +135,8 @@ ProtocolTidal::~ProtocolTidal()
     delete iConfigUsername;
     iConfigPassword->Unsubscribe(iSubscriberIdPassword);
     delete iConfigPassword;
+    iConfigQuality->Unsubscribe(iSubscriberIdQuality);
+    delete iConfigQuality;
     RSA_free(iPrivateKey);
 }
 
@@ -298,7 +313,8 @@ TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId,
     pathAndQuery.Append(aSessionId);
     pathAndQuery.Append("&countryCode=");
     pathAndQuery.Append(aCountryCode);
-    pathAndQuery.Append("&soundQuality=LOSSLESS");
+    pathAndQuery.Append("&soundQuality=");
+    pathAndQuery.Append(Brn(kSoundQualities[iSoundQuality]));
     Brn url;
     try {
         WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPortHttp);
@@ -391,6 +407,13 @@ void ProtocolTidal::PasswordChanged(KeyValuePair<const Brx&>& aKvp)
 {
     iLock.Wait();
     Decrypt(aKvp.Value(), iPassword, "password");
+    iLock.Signal();
+}
+
+void ProtocolTidal::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
+{
+    iLock.Wait();
+    iSoundQuality = aKvp.Value();
     iLock.Signal();
 }
 
