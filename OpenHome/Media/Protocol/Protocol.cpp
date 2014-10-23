@@ -69,6 +69,11 @@ void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*
 {
 }
 
+void Protocol::Deactivated()
+{
+}
+
+
 // Protocol::AutoStream
 
 Protocol::AutoStream::AutoStream(Protocol& aProtocol)
@@ -80,6 +85,7 @@ Protocol::AutoStream::AutoStream(Protocol& aProtocol)
 Protocol::AutoStream::~AutoStream()
 {
     iProtocol.iActive = false;
+    iProtocol.Deactivated();
 }
 
 
@@ -112,7 +118,13 @@ TBool ProtocolNetwork::Connect(const OpenHome::Uri& aUri, TUint aDefaultPort)
         return false;
     }
 
-    Open();
+    try {
+        Open();
+    }
+    catch (NetworkError&) {
+        LOG(kMedia, "<ProtocolNetwork::Connect error opening\n");
+        return false;
+    }
     try {        
         iTcpClient.Connect(endpoint, kConnectTimeoutMs);
     }
