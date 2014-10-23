@@ -94,7 +94,7 @@ Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Config
 
 // ProtocolTidal
 
-const Brn ProtocolTidal::kHost("api.wimpmusic.com");
+const Brn ProtocolTidal::kHost("api.tidalhifi.com");
 const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
 const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
 
@@ -228,6 +228,9 @@ TBool ProtocolTidal::Connect(TUint aPort)
         ep.SetAddress(kHost);
         ep.SetPort(aPort);
         iSocket.Connect(ep, kConnectTimeoutMs);
+    }
+    catch (NetworkTimeout&) {
+        return false;
     }
     catch (NetworkError&) {
         return false;
@@ -393,11 +396,11 @@ void ProtocolTidal::PasswordChanged(KeyValuePair<const Brx&>& aKvp)
 
 void ProtocolTidal::Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType)
 {
-    if (iPrivateKey == NULL && !TryCreatePrivateKey()) {
-        return;
-    }
     aDecrypted.SetBytes(0);
     if (aEncrypted.Bytes() == 0) {
+        return;
+    }
+    if (iPrivateKey == NULL && !TryCreatePrivateKey()) {
         return;
     }
     const int decryptedLen = RSA_private_decrypt(aEncrypted.Bytes(), aEncrypted.Ptr(), const_cast<TByte*>(aDecrypted.Ptr()), iPrivateKey, RSA_PKCS1_OAEP_PADDING);
