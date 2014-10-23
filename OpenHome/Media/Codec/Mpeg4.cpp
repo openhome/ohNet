@@ -369,62 +369,67 @@ Mpeg4Start::Mpeg4Start()
 TBool Mpeg4Start::Recognise(Brx& aBuf)
 {
     LOG(kMedia, "Mpeg4Start::Recognise\n");
-    Bws<100> data;
-    Bws<4> codec;
-    iSize = 0;
-    iContainerStripped = false;
+    try {
+        Bws<100> data;
+        Bws<4> codec;
+        iSize = 0;
+        iContainerStripped = false;
 
-    // Read an MPEG4 header until we reach the mdia box.
-    // The mdia box contains children with media info about a track.
+        // Read an MPEG4 header until we reach the mdia box.
+        // The mdia box contains children with media info about a track.
 
-    Mpeg4Box BoxL0(aBuf);
-    BoxL0.Initialise();
-    if (!BoxL0.Match("ftyp")) {
-        LOG(kMedia, "Mpeg4Start no ftyp found at start of file\n");
-        return false;
-    }
-    BoxL0.SkipEntry();
-
-    // data could be stored in different orders in the file but ftyp & moov must come before mdat
-
-    for (;;) {      // keep on reading until start of data found
-        Mpeg4Box BoxL1(aBuf, &BoxL0, NULL, BoxL0.FileOffset());
-        BoxL1.Initialise();
-        if(BoxL1.Match("moov")) {
-            // Search through levels until we find mdia box;
-            // the container for media info.
-            Mpeg4Box BoxL2(aBuf, &BoxL1, "trak");
-            BoxL2.Initialise();
-            Mpeg4Box BoxL3(aBuf, &BoxL2);
-            BoxL3.Initialise();
-            TBool foundMdia = BoxL3.FindBox("mdia");
-            if (foundMdia) {
-                // Should be pointing at mdhd box, for media
-                // data to be extracted from.
-                iSize = BoxL3.FileOffset();
-                LOG(kMedia, "Mpeg4Start::Recognise found mdia, iSize: %u\n", iSize);
-                return true;
-            }
-            else {
-                return false;
-            }
-        } else if(BoxL1.Match("pdin")) {
-            // ignore this one
-        } else if(BoxL1.Match("moof")) {
-            // ignore this one
-        } else if(BoxL1.Match("mfra")) {
-            // ignore this one
-        } else if(BoxL1.Match("free")) {
-            // ignore this one
-        } else if(BoxL1.Match("skip")) {
-            // ignore this one
-        } else if(BoxL1.Match("meta")) {
-            // ignore this one
-        } else {
-            LOG(kMedia, "Mpeg4Start::Recognise invalid atom\n");
+        Mpeg4Box BoxL0(aBuf);
+        BoxL0.Initialise();
+        if (!BoxL0.Match("ftyp")) {
+            LOG(kMedia, "Mpeg4Start no ftyp found at start of file\n");
             return false;
         }
-        BoxL1.SkipEntry();  // skip to next entry
+        BoxL0.SkipEntry();
+
+        // data could be stored in different orders in the file but ftyp & moov must come before mdat
+
+        for (;;) {      // keep on reading until start of data found
+            Mpeg4Box BoxL1(aBuf, &BoxL0, NULL, BoxL0.FileOffset());
+            BoxL1.Initialise();
+            if(BoxL1.Match("moov")) {
+                // Search through levels until we find mdia box;
+                // the container for media info.
+                Mpeg4Box BoxL2(aBuf, &BoxL1, "trak");
+                BoxL2.Initialise();
+                Mpeg4Box BoxL3(aBuf, &BoxL2);
+                BoxL3.Initialise();
+                TBool foundMdia = BoxL3.FindBox("mdia");
+                if (foundMdia) {
+                    // Should be pointing at mdhd box, for media
+                    // data to be extracted from.
+                    iSize = BoxL3.FileOffset();
+                    LOG(kMedia, "Mpeg4Start::Recognise found mdia, iSize: %u\n", iSize);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } else if(BoxL1.Match("pdin")) {
+                // ignore this one
+            } else if(BoxL1.Match("moof")) {
+                // ignore this one
+            } else if(BoxL1.Match("mfra")) {
+                // ignore this one
+            } else if(BoxL1.Match("free")) {
+                // ignore this one
+            } else if(BoxL1.Match("skip")) {
+                // ignore this one
+            } else if(BoxL1.Match("meta")) {
+                // ignore this one
+            } else {
+                LOG(kMedia, "Mpeg4Start::Recognise invalid atom\n");
+                return false;
+            }
+            BoxL1.SkipEntry();  // skip to next entry
+        }
+    }
+    catch (MediaMpeg4FileInvalid&) {
+        return false;
     }
 }
 
