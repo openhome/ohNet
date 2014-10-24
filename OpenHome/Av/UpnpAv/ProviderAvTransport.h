@@ -87,6 +87,7 @@ private:
     Bws<6*1024> iXmlEscapedStateVar;
 
     // These state variables are currently implemented and their values change
+    Brn iExpectedTransportState;
     Brn iTransportState;
     Brn iTransportStatus;
     Brn iCurrentMediaCategory;
