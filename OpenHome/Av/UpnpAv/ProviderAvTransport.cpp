@@ -326,6 +326,12 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
     }
+    {
+        AutoMutex a(iLock);
+        if (iTransportState == kTransportStateStopped || iTransportState == kTransportStatePausedPlayback) {
+            aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
+        }
+    }
     TUint secs = 0;
     if (aUnit == kSeekModeTrackNr) {
         TUint trackNum = UINT_MAX;
