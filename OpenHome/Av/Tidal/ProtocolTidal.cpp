@@ -5,6 +5,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/SocketSsl.h>
 #include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Private/Http.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
@@ -12,6 +13,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 
+#include <vector>
 #include "openssl/bio.h"
 #include "openssl/pem.h"
 
@@ -24,15 +26,17 @@ class ProtocolTidal : public Protocol
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 5000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
     static const Brn kHost;
-    static const TUint kPortHttps = 443;
-    static const TUint kPortHttp = 80;
+    static const TUint kPort = 443;
     static const TUint kMaxUsernameBytes = 128;
     static const TUint kMaxPasswordBytes = 128;
+    static const TUint kPrivateKeyBytes = 2048;
+    static const TUint kMaxEncryptedLen = 256;
 public:
     static const Brn kConfigKeyUsername;
     static const Brn kConfigKeyPassword;
+    static const Brn kConfigKeySoundQuality;
 public:
-    ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, Configuration::IConfigInitialiser& aConfigInitialiser);
+    ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
 private: // from Protocol
     void Interrupt(TBool aInterrupt);
@@ -53,7 +57,9 @@ private:
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
+    void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
     void Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType);
+    TBool TryCreatePrivateKey();
 private:
     Mutex iLock;
     SocketSsl iSocket;
@@ -62,15 +68,19 @@ private:
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
     const Bws<32> iToken;
+    Configuration::IStoreReadOnly& iReadStore;
     Bws<kMaxUsernameBytes> iUsername;
     Bws<kMaxPasswordBytes> iPassword;
+    TUint iSoundQuality;
     Uri iUri;
     Bws<1024> iStreamUrl;
     RSA* iPrivateKey;
     Configuration::ConfigText* iConfigUsername;
     Configuration::ConfigText* iConfigPassword;
+    Configuration::ConfigChoice* iConfigQuality;
     TUint iSubscriberIdUsername;
     TUint iSubscriberIdPassword;
+    TUint iSubscriberIdQuality;
 };
 
 };  // namespace Media
@@ -81,19 +91,22 @@ using namespace OpenHome::Media;
 using namespace OpenHome::Configuration;
 
 
-Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigInitialiser& aConfigInitialiser)
+Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, IConfigInitialiser& aConfigInitialiser)
 { // static
-    return new ProtocolTidal(aEnv, aToken, aRsaPrivateKey, aConfigInitialiser);
+    return new ProtocolTidal(aEnv, aToken, aReadStore, aConfigInitialiser);
 }
 
 
 // ProtocolTidal
 
-const Brn ProtocolTidal::kHost("api.wimpmusic.com");
+static const TChar* kSoundQualities[3] = {"LOW", "HIGH", "LOSSLESS"};
+
+const Brn ProtocolTidal::kHost("api.tidalhifi.com");
 const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
 const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
+const Brn ProtocolTidal::kConfigKeySoundQuality("Tidal.SoundQuality");
 
-ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aRsaPrivateKey, IConfigInitialiser& aConfigInitialiser)
+ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, IConfigInitialiser& aConfigInitialiser)
     : Protocol(aEnv)
     , iLock("PTID")
     , iSocket(aEnv, kReadBufferBytes)
@@ -102,16 +115,17 @@ ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, const Brx& aR
     , iWriterRequest(iSocket)
     , iReaderResponse(aEnv, iReaderBuf)
     , iToken(aToken)
+    , iReadStore(aReadStore)
+    , iPrivateKey(NULL)
 {
-    BIO *bio = BIO_new_mem_buf((void*)aRsaPrivateKey.Ptr(), aRsaPrivateKey.Bytes());
-    iPrivateKey = PEM_read_bio_RSAPrivateKey(bio, NULL, 0, NULL);
-    BIO_free(bio);
-
-    const TUint maxEncryptedLen = RSA_size(iPrivateKey);
-    iConfigUsername = new ConfigText(aConfigInitialiser, kConfigKeyUsername, maxEncryptedLen, Brx::Empty());
+    iConfigUsername = new ConfigText(aConfigInitialiser, kConfigKeyUsername, kMaxEncryptedLen, Brx::Empty());
     iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::UsernameChanged));
-    iConfigPassword = new ConfigText(aConfigInitialiser, kConfigKeyPassword, maxEncryptedLen, Brx::Empty());
+    iConfigPassword = new ConfigText(aConfigInitialiser, kConfigKeyPassword, kMaxEncryptedLen, Brx::Empty());
     iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &ProtocolTidal::PasswordChanged));
+    const int arr[] = {0, 1, 2};
+    std::vector<TUint> qualities(arr, arr + sizeof(arr)/sizeof(arr[0]));
+    iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 2);
+    iSubscriberIdQuality = iConfigQuality->Subscribe(MakeFunctorConfigChoice(*this, &ProtocolTidal::QualityChanged));
 }
 
 ProtocolTidal::~ProtocolTidal()
@@ -120,6 +134,8 @@ ProtocolTidal::~ProtocolTidal()
     delete iConfigUsername;
     iConfigPassword->Unsubscribe(iSubscriberIdPassword);
     delete iConfigPassword;
+    iConfigQuality->Unsubscribe(iSubscriberIdQuality);
+    delete iConfigQuality;
     RSA_free(iPrivateKey);
 }
 
@@ -227,6 +243,9 @@ TBool ProtocolTidal::Connect(TUint aPort)
         ep.SetPort(aPort);
         iSocket.Connect(ep, kConnectTimeoutMs);
     }
+    catch (NetworkTimeout&) {
+        return false;
+    }
     catch (NetworkError&) {
         return false;
     }
@@ -236,8 +255,7 @@ TBool ProtocolTidal::Connect(TUint aPort)
 TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
 {
     TBool success = false;
-    iSocket.SetSecure(true);
-    if (!Connect(kPortHttps)) {
+    if (!Connect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
         return false;
     }
@@ -251,7 +269,7 @@ TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
     Bws<128> pathAndQuery("/v1/login/username?token=");
     pathAndQuery.Append(iToken);
     try {
-        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPortHttps, reqBody.Bytes());
+        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort, reqBody.Bytes());
         iWriterBuf.Write(reqBody);
         iWriterBuf.WriteFlush();
 
@@ -282,8 +300,7 @@ TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
 TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId, const Brx& aCountryCode, Bwx& aStreamUrl)
 {
     TBool success = false;
-    iSocket.SetSecure(false);
-    if (!Connect(kPortHttp)) {
+    if (!Connect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryGetStreamUrl - failed to connect\n");
         return false;
     }
@@ -293,10 +310,11 @@ TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId,
     pathAndQuery.Append(aSessionId);
     pathAndQuery.Append("&countryCode=");
     pathAndQuery.Append(aCountryCode);
-    pathAndQuery.Append("&soundQuality=LOSSLESS");
+    pathAndQuery.Append("&soundQuality=");
+    pathAndQuery.Append(Brn(kSoundQualities[iSoundQuality]));
     Brn url;
     try {
-        WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPortHttp);
+        WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPort);
 
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
@@ -323,15 +341,14 @@ TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId,
 
 void ProtocolTidal::Logout(const Brx& aSessionId)
 {
-    iSocket.SetSecure(false);
-    if (!Connect(kPortHttp)) {
+    if (!Connect(kPort)) {
         Log::Print("Failed to connect\n");
         return;
     }
     Bws<128> pathAndQuery("/v1/logout?sessionId=");
     pathAndQuery.Append(aSessionId);
     try {
-        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPortHttp);
+        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort);
 
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
@@ -389,10 +406,20 @@ void ProtocolTidal::PasswordChanged(KeyValuePair<const Brx&>& aKvp)
     iLock.Signal();
 }
 
+void ProtocolTidal::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
+{
+    iLock.Wait();
+    iSoundQuality = aKvp.Value();
+    iLock.Signal();
+}
+
 void ProtocolTidal::Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar* aType)
 {
     aDecrypted.SetBytes(0);
     if (aEncrypted.Bytes() == 0) {
+        return;
+    }
+    if (iPrivateKey == NULL && !TryCreatePrivateKey()) {
         return;
     }
     const int decryptedLen = RSA_private_decrypt(aEncrypted.Bytes(), aEncrypted.Ptr(), const_cast<TByte*>(aDecrypted.Ptr()), iPrivateKey, RSA_PKCS1_OAEP_PADDING);
@@ -402,4 +429,19 @@ void ProtocolTidal::Decrypt(const Brx& aEncrypted, Bwx& aDecrypted, const TChar*
     else {
         aDecrypted.SetBytes((TUint)decryptedLen);
     }
+}
+
+TBool ProtocolTidal::TryCreatePrivateKey()
+{
+    Bws<kPrivateKeyBytes> pemKey;
+    try {
+        iReadStore.Read(Brn("RsaPrivateKey"), pemKey);
+    }
+    catch (StoreKeyNotFound&) {
+        return false;
+    }
+    BIO *bio = BIO_new_mem_buf((void*)pemKey.Ptr(), pemKey.Bytes());
+    iPrivateKey = PEM_read_bio_RSAPrivateKey(bio, NULL, 0, NULL);
+    BIO_free(bio);
+    return true;
 }

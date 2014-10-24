@@ -18,9 +18,11 @@
 #include <OpenHome/Net/Private/Shell.h>
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Media/Debug.h>
 
 #include "openssl/bio.h"
 #include "openssl/pem.h"
+#include "openssl/rand.h"
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -39,7 +41,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     , iSongcastTimestamper(aDvStack.Env())
     , iTidalId(aTidalId)
 {
-    Debug::SetLevel(Debug::kEvent);
+//    Debug::SetLevel(Debug::kMedia);
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
     friendlyName.Append(':');
@@ -192,51 +194,6 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     DoRegisterPlugins(aEnv, kSupportedProtocols);
 }
 
-// FIXME - DO NOT use this with production code
-/* Should ideally generate a key at runtime instead, avoiding the possibility
-   of someone viewing RO data for any rom image and gaining access to the private
-   key for all of a manufacturer's devices */
-static const Brn kPrivKey(
-    "-----BEGIN RSA PRIVATE KEY-----\n"
-    "MIIEpAIBAAKCAQEAmjVvXIDRvQ7lwY67haxeLtNJTz08+3daJCbMa1KkZygI5XFp\n"
-    "CQLLDdnzCaXSTtqvs4Qew36hsujwOCpPP55SbJlTU0cQRDIINuWz8tpZOvvDjLJz\n"
-    "msP0ZGysypJH8D5Imy4IIUi4iRKPtQIXF0ziFkchTW0xoLQBaRfrqvp5Mp7ivxOu\n"
-    "cqOcaOzeEhHkT77u7OxZabCgW4QKz9Jvn9rfO50Pc3vOOqTrdTWm0Vlmu2yugncO\n"
-    "knfm5RiTlp77d7oPo+9o19zs4eYlOyaM0EkpERSgrvxh6qUE67lEom97TQW9ZuUg\n"
-    "EPPRAtCJpNoL4NTTckGA7qyNoR2UVw6xv3pLnwIDAQABAoIBAQCRVLKy9ySzjIqz\n"
-    "tBS+kgfhEXcRmqESTRVC5N3ad3RBU9Wuhwd6WouLblBCU2i0sBzOjkF/9KPnvOhH\n"
-    "xngReOAtQQLqhRqraoubUTgaM/XMROGyg6u3u91jl5fxAZOSsuAyf1tiIurnI/sT\n"
-    "l/izGN4qKLcWBUa0MXDy3nxYEt6N+QEVN2X+8MugjlgygA7weKamtkSBImJWZMjc\n"
-    "FcOiJe/NWKT3CPoGFeTyVEN/Nu0CbHACM4AHmEZ0q3jGv86UAEaEsMipuYawTNQU\n"
-    "LwqMJX4Kpr4LL7uq2f39Nltx164crZfHLU2kxT7jOZGp2eHEXb5X4HKJDy1yWmq9\n"
-    "c/I758vhAoGBAMthLiG5zmO1LOVBjhLsqQboZTs4G1CYINRXM1jznC7sElSBGvjY\n"
-    "t2ycV6UESur78zuPw9qbogqHGrwPvsjXMW+KHdbQgh85LH+fWS1NDK3d+I+PZPgJ\n"
-    "aTg6wTzX/Q5lL/SykuKha4VtLXxzIOsqiB5ngIbiwAc24/qZKiY9lnM7AoGBAMIb\n"
-    "bbOfr+yUzgtptLy+Y53pQEtw3uzyoByFZKXeOYqDVWbf81990Hghsd2T2SFm727x\n"
-    "Bw0wafAka6Pj0QnxQ0OVr1yiGKJHvRgEiXQGR0PoRIivU3oEbKe00FZGrcd+OgDr\n"
-    "37DNTyXl4Oetha8aE1TxKRWYU438PSkaXFCNXvrtAoGBAMRTa1TjKHjXzB8CyUM7\n"
-    "cW9Zp18jKjsCn65a/xY/E+W3vXoVpxPRID+YLIL/QdLUpFg6z7WXxzSidwxTprf6\n"
-    "A57IlUVowjOh3XLVQCCa4EJ2pBrxMWa+rvO4xBEX7xCWXVS5jVF4wXJrkh0whfZ9\n"
-    "eCjhgRC0kupj8m9Wq3l+ul1BAoGAcAkq2YmrHi+JefbqViLCFswhyyl70mH8Xln0\n"
-    "DPTmW3eQnI9Yxt40rJIuOolywx/JxUwjWM5/5xbudisxZb62p1THYf1BoLEtiKZd\n"
-    "u/U/vwdaP1aLJRtWp7nqolGrTkEiM5PxifgG3gYAOVjjl3zCeb20i/1fBM35czb+\n"
-    "35OppcUCgYABdBgxnK6F3sl5ORk6V74aI3lhLdGyXZ06JX2/kjl47ICcJoYwExKK\n"
-    "CB2RFnTL4wErJ/sBMm5WaWEl6p0eSul746dEXYotSmqfTZguytJ2cDGjsNw337MP\n"
-    "bRNucN3L34/su+MowI8M/eShq4nfKLLw3TWor2EKzS0QGHy3DGrSmg==\n"
-    "-----END RSA PRIVATE KEY-----"
-    );
-
-static const char kPubKey[] =
-    "-----BEGIN PUBLIC KEY-----\n"
-    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmjVvXIDRvQ7lwY67haxe\n"
-    "LtNJTz08+3daJCbMa1KkZygI5XFpCQLLDdnzCaXSTtqvs4Qew36hsujwOCpPP55S\n"
-    "bJlTU0cQRDIINuWz8tpZOvvDjLJzmsP0ZGysypJH8D5Imy4IIUi4iRKPtQIXF0zi\n"
-    "FkchTW0xoLQBaRfrqvp5Mp7ivxOucqOcaOzeEhHkT77u7OxZabCgW4QKz9Jvn9rf\n"
-    "O50Pc3vOOqTrdTWm0Vlmu2yugncOknfm5RiTlp77d7oPo+9o19zs4eYlOyaM0Ekp\n"
-    "ERSgrvxh6qUE67lEom97TQW9ZuUgEPPRAtCJpNoL4NTTckGA7qyNoR2UVw6xv3pL\n"
-    "nwIDAQAB\n"
-    "-----END PUBLIC KEY-----\n";
-
 static void EncryptAndSetConfigVal(RSA* aPublicKey, ConfigText& aConfigText, const Brx& aVal)
 {
     ASSERT(aVal.Bytes() > 0);
@@ -247,6 +204,39 @@ static void EncryptAndSetConfigVal(RSA* aPublicKey, ConfigText& aConfigText, con
     ASSERT(encryptedLen > 0);
     encrypted.SetBytes(encryptedLen);
     aConfigText.Set(encrypted);
+}
+
+static void WriteToStore(IStoreReadWrite& aStore, const Brx& aKey, BIO* aBio)
+{
+    const int len = BIO_pending(aBio);
+    char* val = (char*)calloc(len+1, 1); // +1 for nul terminator
+    ASSERT(val != NULL);
+    BIO_read(aBio, val, len);
+    Brn valBuf(val);
+    aStore.Write(aKey, valBuf);
+    free(val);
+}
+
+static RSA* CreateKey(IStoreReadWrite& aStore)
+{
+    static const char buf[] = "moderate sized string, created to give the illusion of entropy.";
+    RAND_seed(buf, sizeof(buf));
+    BIGNUM *bn = BN_new();
+    ASSERT(BN_set_word(bn, RSA_F4));
+    RSA* rsa = RSA_new();
+    ASSERT(rsa != NULL);
+    ASSERT(RSA_generate_key_ex(rsa, 2048, bn, NULL));
+    BN_free(bn);
+
+    BIO* bio = BIO_new(BIO_s_mem());
+    ASSERT(bio != NULL);
+    ASSERT(1 == PEM_write_bio_RSAPrivateKey(bio, rsa, NULL, NULL, 0, NULL, NULL));
+    WriteToStore(aStore, Brn("RsaPrivateKey"), bio);
+    ASSERT(1 == PEM_write_bio_RSAPublicKey(bio, rsa));
+    WriteToStore(aStore, Brn("RsaPublicKey"), bio);
+    BIO_free(bio);
+
+    return rsa;
 }
 
 void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols)
@@ -273,14 +263,12 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
         Brn token = parser.Next(':');
         Brn username = parser.Next(':');
         Brn password = parser.Remaining();
-        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, kPrivKey, iMediaPlayer->ConfigInitialiser()));
+        RSA* key = CreateKey(*iConfigRamStore);
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, *iConfigRamStore, iMediaPlayer->ConfigInitialiser()));
         IConfigManager& configMgr = iMediaPlayer->ConfigManager();
-        BIO* bio = BIO_new_mem_buf((void*)kPubKey, sizeof(kPubKey)-1);
-        RSA* pubKey = PEM_read_bio_RSA_PUBKEY(bio, NULL, 0, NULL);
-        BIO_free(bio);
-        EncryptAndSetConfigVal(pubKey, configMgr.GetText(Brn("Tidal.Username")), username);
-        EncryptAndSetConfigVal(pubKey, configMgr.GetText(Brn("Tidal.Password")), password);
-        RSA_free(pubKey);
+        EncryptAndSetConfigVal(key, configMgr.GetText(Brn("Tidal.Username")), username);
+        EncryptAndSetConfigVal(key, configMgr.GetText(Brn("Tidal.Password")), password);
+        RSA_free(key);
     }
 
     // Add sources
