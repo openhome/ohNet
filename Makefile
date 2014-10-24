@@ -271,6 +271,7 @@ ifeq ($(platform), Vanilla)
 	endian ?= LITTLE
 	ifeq ($(Qnap-anycpu), 1)
 	    openhome_system = Qnap
+	    nocpp11=yes
 	else
 	    openhome_system = Linux
 	endif
