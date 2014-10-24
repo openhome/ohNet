@@ -279,6 +279,10 @@ void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Stop();
+    {
+        AutoMutex a(iLock);
+        iRelativeTimeSeconds = 0;
+    }
     aInvocation.EndResponse();
 }
 
