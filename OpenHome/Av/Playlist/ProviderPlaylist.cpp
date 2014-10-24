@@ -321,7 +321,7 @@ void ProviderPlaylist::ReadList(IDvInvocation& aInvocation, const Brx& aIdList, 
 
 void ProviderPlaylist::Insert(IDvInvocation& aInvocation, TUint aAfterId, const Brx& aUri, const Brx& aMetadata, IDvInvocationResponseUint& aNewId)
 {
-    TUint newId;
+    TUint newId = 0;
     try {
         iDatabase.Insert(aAfterId, aUri, aMetadata, newId);
     }

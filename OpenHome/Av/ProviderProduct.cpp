@@ -220,7 +220,7 @@ void ProviderProduct::Source(IDvInvocation& aInvocation, TUint aIndex, IDvInvoca
     Bws<ISource::kMaxSystemNameBytes> systemName;
     Bws<ISource::kMaxSourceTypeBytes> type;
     Bws<ISource::kMaxSourceTypeBytes> name;
-    TBool visible;
+    TBool visible = false;
     try {
         iProduct.GetSourceDetails(aIndex, systemName, type, name, visible);
     }
