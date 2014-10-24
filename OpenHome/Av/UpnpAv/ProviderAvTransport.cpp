@@ -312,7 +312,7 @@ void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
     }
     {
         AutoMutex a(iLock);
-        if (iTransportState == kTransportStateNoMediaPresent) {
+        if (iTransportState == kTransportStateNoMediaPresent || iTransportState == kTransportStateStopped) {
             aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
         }
     }
