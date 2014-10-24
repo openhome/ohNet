@@ -61,6 +61,7 @@ ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aE
     , iLock("UpAv")
     , iModerationTimerStarted(false)
     , iExpectedTransportState(Brx::Empty())
+    , iTargetTransportState(Brx::Empty())
     , iTransportState(kTransportStateNoMediaPresent)
     , iTransportStatus(kTransportStatusOk)
     , iCurrentMediaCategory(kCurrentMediaCategoryNoMedia)
@@ -128,10 +129,12 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
         if (aCurrentURI == Brx::Empty()) {
             iExpectedTransportState.Set(Brx::Empty());
             iTransportState.Set(kTransportStateNoMediaPresent);
+            iTargetTransportState.Set(Brx::Empty());
         }
         else if (iTransportState == kTransportStateNoMediaPresent) {
             iExpectedTransportState.Set(Brx::Empty());
             iTransportState.Set(kTransportStateStopped);
+            iTargetTransportState.Set(Brx::Empty());
         }
         else {
             if (iTransportState == kTransportStatePlaying) {
@@ -303,12 +306,14 @@ void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
         }
     }
     aInvocation.StartResponse();
+    {
+        AutoMutex a(iLock);
+        iExpectedTransportState.Set(Brx::Empty());
+        iTargetTransportState.Set(kTransportStateStopped);
+    }
     iSourceUpnpAv.Stop();
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
-        }
         iRelativeTimeSeconds = 0;
     }
     aInvocation.EndResponse();
@@ -329,12 +334,18 @@ void ProviderAvTransport::Play(IDvInvocation& aInvocation, TUint aInstanceID, co
         }
     }
     aInvocation.StartResponse();
-    iSourceUpnpAv.Play();
+    TBool play = true;
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
+        if (iTransportState == kTransportStatePlaying || iTargetTransportState == kTransportStatePlaying) {
+            // Already playing.
+            play = false;
         }
+        iExpectedTransportState.Set(Brx::Empty());
+        iTargetTransportState.Set(kTransportStatePlaying);
+    }
+    if (play) {
+        iSourceUpnpAv.Play();
     }
     aInvocation.EndResponse();
 }
@@ -351,13 +362,12 @@ void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
         }
     }
     aInvocation.StartResponse();
-    iSourceUpnpAv.Pause();
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
-        }
+        iExpectedTransportState.Set(Brx::Empty());
+        iTargetTransportState.Set(kTransportStatePausedPlayback);
     }
+    iSourceUpnpAv.Pause();
     aInvocation.EndResponse();
 }
 
@@ -448,22 +458,30 @@ void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID
 
 void ProviderAvTransport::NotifyPipelineState(EPipelineState aState)
 {
+    // Set iTargetTransportState each time a long-term state is encountered
+    // (i.e., not TRANSITIONING). Ensures that if state goes TRANSITIONING
+    // while playing, it can be known that it will resume playing. Otherwise,
+    // transitioning to a non-playing state.
     iLock.Wait();
     switch (aState)
     {
     case EPipelinePlaying:
         iTransportState.Set(kTransportStatePlaying);
+        iTargetTransportState.Set(kTransportStatePlaying);
         break;
     case EPipelinePaused:
     case EPipelineWaiting:
         iTransportState.Set(kTransportStatePausedPlayback);
+        iTargetTransportState.Set(kTransportStatePausedPlayback);
         break;
     case EPipelineStopped:
         if (iCurrentTrackUri != Brx::Empty()) {
             iTransportState.Set(kTransportStateStopped);
+            iTargetTransportState.Set(kTransportStateStopped);
         }
         else {
             iTransportState.Set(kTransportStateNoMediaPresent); // no track to play
+            iTargetTransportState.Set(Brx::Empty());
         }
         break;
     case EPipelineBuffering:

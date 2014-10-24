@@ -88,6 +88,7 @@ private:
 
     // These state variables are currently implemented and their values change
     Brn iExpectedTransportState;
+    Brn iTargetTransportState;  //used during transitions
     Brn iTransportState;
     Brn iTransportStatus;
     Brn iCurrentMediaCategory;
