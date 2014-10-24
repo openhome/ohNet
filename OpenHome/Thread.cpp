@@ -145,6 +145,7 @@ void Thread::Start()
 void Thread::EntryPoint(void* aArg)
 { // static
     Thread* self = (Thread*)aArg;
+    Os::ThreadInstallSignalHandlers();
     try {
         self->Run();
     }

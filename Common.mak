@@ -116,6 +116,7 @@ objects_core = \
 	$(objdir)OhNetCCombined.$(objext) \
 	$(objdir)OsWrapper.$(objext) \
 	$(objdir)Os.$(objext) \
+	$(objdir)SignalHandlers.$(objext) \
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
 headers = \
@@ -420,6 +421,8 @@ $(objdir)File.$(objext) : Os/$(osdir)/File.cpp $(headers)
 	$(compiler)File.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/File.cpp
 $(objdir)TerminalOs.$(objext) : Os/$(osdir)/TerminalOs.cpp $(headers)
 	$(compiler)TerminalOs.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/TerminalOs.cpp
+$(objdir)SignalHandlers.$(objext) : Os/$(osdir)/SignalHandlers.cpp $(headers)
+	$(compiler)SignalHandlers.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/SignalHandlers.cpp
 
 
 ohNetDll: ohNetCore

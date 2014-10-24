@@ -41,6 +41,7 @@ public:
     inline static void MutexUnlock(THandle aMutex);
     inline static THandle ThreadCreate(OsContext* aContext, const TChar* aName, TUint aPriority,
                                        TUint aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
+    inline static void ThreadInstallSignalHandlers();
     inline static void* ThreadTls(OsContext* aContext);
     inline static void ThreadDestroy(THandle aThread);
     inline static TBool ThreadSupportsPriorities(OsContext* aContext);

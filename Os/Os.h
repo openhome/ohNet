@@ -314,6 +314,14 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
                        uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
 
 /**
+ * Allow platform code to install any per-thread signal handlers or equivalent.
+ *
+ * Called once per call to OsThreadCreate().  Is called in the context of the
+ * newly created thread.
+ */
+void OsThreadInstallSignalHandlers();
+
+/**
  * Return the 'aArg' value passed to the entrypoint for the current thread
  *
  * @param[in] aContext    Returned from OsCreate().

@@ -40,7 +40,7 @@ android_ndk_debug = 0
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags_third_party = $(debug_specific_cflags) /W4 /EHsc /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS
+cflags_third_party = $(debug_specific_cflags) /W4 /EHa /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS
 cflags = $(cflags_third_party) /WX
 cppflags = $(cflags)
 objdirbare = Build\Obj\Windows\$(build_dir)
