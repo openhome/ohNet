@@ -300,6 +300,7 @@ void PipelineManager::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 
 TUint PipelineManager::SeekRestream(const Brx& aMode, TUint aTrackId)
 {
+    iIdManager->InvalidateAll();
     const TUint flushId = iFiller->Flush();
     iFiller->Play(aMode, aTrackId);
     return flushId;
