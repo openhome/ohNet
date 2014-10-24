@@ -107,7 +107,7 @@ LOCAL_SRC_FILES := $(ohroot)OpenHome/Ascii.cpp \
                    $(ohroot)Os/Posix/File.cpp \
                    $(ohroot)Os/Posix/TerminalOs.cpp \
                    $(ohroot)Os/Posix/Os.c \
-                   $(ohroot)Os/Posix/SignalHandlers.c \
+                   $(ohroot)Os/Posix/SignalHandlers.cpp \
                    ifaddrs-android.cpp
 
 include $(BUILD_SHARED_LIBRARY)
