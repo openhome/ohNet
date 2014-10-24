@@ -41,6 +41,9 @@ except:
 
     
 tests = [
+    # Update and build ohMediaPlayer
+    [ 'BuildOhmp'                                                                                            ],
+
     # UPnP AV
     [ 'TestAvTransportService',      'local', 'ALL'                                                          ],
     [ 'TestRenderingControlService', 'local'                                                                 ],
@@ -89,4 +92,4 @@ tests = [
     #    - VolumeXXX   (apart from volume/balance)
 ]
 
-Suite.Suite( tests, logDir, ['config','status'] )
+Suite.Suite( tests, logDir )

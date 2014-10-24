@@ -60,6 +60,7 @@ ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aE
     , iSourceUpnpAv(aSourceUpnpAv)
     , iLock("UpAv")
     , iModerationTimerStarted(false)
+    , iExpectedTransportState(Brx::Empty())
     , iTransportState(kTransportStateNoMediaPresent)
     , iTransportStatus(kTransportStatusOk)
     , iCurrentMediaCategory(kCurrentMediaCategoryNoMedia)
@@ -118,16 +119,30 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
     }
     aInvocation.StartResponse();
     {
+        TBool playing = false;
         iLock.Wait();
         Brn metaData(aCurrentURIMetaData);
         if (metaData.Bytes() > iCurrentTrackMetaData.MaxBytes()) {
             metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
         }
         if (aCurrentURI == Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
             iTransportState.Set(kTransportStateNoMediaPresent);
         }
         else if (iTransportState == kTransportStateNoMediaPresent) {
+            iExpectedTransportState.Set(Brx::Empty());
             iTransportState.Set(kTransportStateStopped);
+        }
+        else {
+            if (iTransportState == kTransportStatePlaying) {
+                playing = true;
+            }
+            else {
+                // Only pick up iTransportState is there isn't a pending iExpectedTransportState
+                if (iExpectedTransportState == Brx::Empty()) {
+                    iExpectedTransportState.Set(iTransportState);
+                }
+            }
         }
         iCurrentTrackUri.Replace(aCurrentURI);
         iCurrentTrackMetaData.Replace(metaData);
@@ -145,6 +160,11 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
         iSourceUpnpAv.SetTrack(aCurrentURI, metaData);  // do outside lock; would cause attempted recursive
                                                         // lock on mutex when IPipelineObserver calls came
                                                         // back in.
+
+        // Resume playing if already playing before new URI came in.
+        if (playing) {
+            iSourceUpnpAv.Play();
+        }
     }
     aInvocation.EndResponse();
 }
@@ -191,7 +211,12 @@ void ProviderAvTransport::GetTransportInfo(IDvInvocation& aInvocation, TUint aIn
     aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
-        aCurrentTransportState.Write(iTransportState);
+        if (iExpectedTransportState != Brx::Empty()) {
+            aCurrentTransportState.Write(iExpectedTransportState);
+        }
+        else {
+            aCurrentTransportState.Write(iTransportState);
+        }
         aCurrentTransportState.WriteFlush();
         aCurrentTransportStatus.Write(iTransportStatus);
         aCurrentTransportStatus.WriteFlush();
@@ -279,6 +304,13 @@ void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Stop();
+    {
+        AutoMutex a(iLock);
+        if (iExpectedTransportState != Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
+        }
+        iRelativeTimeSeconds = 0;
+    }
     aInvocation.EndResponse();
 }
 
@@ -298,6 +330,12 @@ void ProviderAvTransport::Play(IDvInvocation& aInvocation, TUint aInstanceID, co
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Play();
+    {
+        AutoMutex a(iLock);
+        if (iExpectedTransportState != Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
+        }
+    }
     aInvocation.EndResponse();
 }
 
@@ -308,12 +346,18 @@ void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
     }
     {
         AutoMutex a(iLock);
-        if (iTransportState == kTransportStateNoMediaPresent) {
+        if (iTransportState == kTransportStateNoMediaPresent || iTransportState == kTransportStateStopped) {
             aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
         }
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Pause();
+    {
+        AutoMutex a(iLock);
+        if (iExpectedTransportState != Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
+        }
+    }
     aInvocation.EndResponse();
 }
 
@@ -321,6 +365,12 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
 {
     if (aInstanceID != kInstanceId) {
         aInvocation.Error(kInvalidInstanceIdCode, kInvalidInstanceIdMsg);
+    }
+    {
+        AutoMutex a(iLock);
+        if (iTransportState == kTransportStateStopped || iTransportState == kTransportStatePausedPlayback) {
+            aInvocation.Error(kTransitionNotAvailableCode, kTransitionNotAvailableMsg);
+        }
     }
     TUint secs = 0;
     if (aUnit == kSeekModeTrackNr) {
@@ -355,6 +405,12 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
 
     aInvocation.StartResponse();
     iSourceUpnpAv.Seek(secs);
+    {
+        AutoMutex a(iLock);
+        if (iExpectedTransportState != Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
+        }
+    }
     aInvocation.EndResponse();
 }
 
@@ -365,6 +421,12 @@ void ProviderAvTransport::Next(IDvInvocation& aInvocation, TUint aInstanceID)
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Next();
+    {
+        AutoMutex a(iLock);
+        if (iExpectedTransportState != Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
+        }
+    }
     aInvocation.EndResponse();
 }
 
@@ -375,6 +437,12 @@ void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID
     }
     aInvocation.StartResponse();
     iSourceUpnpAv.Prev();
+    {
+        AutoMutex a(iLock);
+        if (iExpectedTransportState != Brx::Empty()) {
+            iExpectedTransportState.Set(Brx::Empty());
+        }
+    }
     aInvocation.EndResponse();
 }
 
