@@ -26,8 +26,7 @@ class ProtocolTidal : public Protocol
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 5000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
     static const Brn kHost;
-    static const TUint kPortHttps = 443;
-    static const TUint kPortHttp = 80;
+    static const TUint kPort = 443;
     static const TUint kMaxUsernameBytes = 128;
     static const TUint kMaxPasswordBytes = 128;
     static const TUint kPrivateKeyBytes = 2048;
@@ -102,7 +101,7 @@ Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Config
 
 static const TChar* kSoundQualities[3] = {"LOW", "HIGH", "LOSSLESS"};
 
-const Brn ProtocolTidal::kHost("api.wimpmusic.com");
+const Brn ProtocolTidal::kHost("api.tidalhifi.com");
 const Brn ProtocolTidal::kConfigKeyUsername("Tidal.Username");
 const Brn ProtocolTidal::kConfigKeyPassword("Tidal.Password");
 const Brn ProtocolTidal::kConfigKeySoundQuality("Tidal.SoundQuality");
@@ -256,8 +255,7 @@ TBool ProtocolTidal::Connect(TUint aPort)
 TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
 {
     TBool success = false;
-    iSocket.SetSecure(true);
-    if (!Connect(kPortHttps)) {
+    if (!Connect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
         return false;
     }
@@ -271,7 +269,7 @@ TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
     Bws<128> pathAndQuery("/v1/login/username?token=");
     pathAndQuery.Append(iToken);
     try {
-        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPortHttps, reqBody.Bytes());
+        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort, reqBody.Bytes());
         iWriterBuf.Write(reqBody);
         iWriterBuf.WriteFlush();
 
@@ -302,8 +300,7 @@ TBool ProtocolTidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
 TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId, const Brx& aCountryCode, Bwx& aStreamUrl)
 {
     TBool success = false;
-    iSocket.SetSecure(false);
-    if (!Connect(kPortHttp)) {
+    if (!Connect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryGetStreamUrl - failed to connect\n");
         return false;
     }
@@ -317,7 +314,7 @@ TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId,
     pathAndQuery.Append(Brn(kSoundQualities[iSoundQuality]));
     Brn url;
     try {
-        WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPortHttp);
+        WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPort);
 
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
@@ -344,15 +341,14 @@ TBool ProtocolTidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId,
 
 void ProtocolTidal::Logout(const Brx& aSessionId)
 {
-    iSocket.SetSecure(false);
-    if (!Connect(kPortHttp)) {
+    if (!Connect(kPort)) {
         Log::Print("Failed to connect\n");
         return;
     }
     Bws<128> pathAndQuery("/v1/logout?sessionId=");
     pathAndQuery.Append(aSessionId);
     try {
-        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPortHttp);
+        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort);
 
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
