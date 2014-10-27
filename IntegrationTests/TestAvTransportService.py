@@ -72,13 +72,13 @@ kStates = \
     ['PAUSED_PLAYBACK', 'Pause',             '',    'PAUSED_PLAYBACK', []],
     ['PAUSED_PLAYBACK', 'Seek',              '701', '',                []],
     ['PAUSED_PLAYBACK', 'Next',              '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_PLAYBACK', 'Previous',          '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_PLAYBACK', 'Previous',          '',    'STOPPED', ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
 
     ['PAUSED_UNKNOWN', 'SetAVTransportURI',  '',    'PAUSED_PLAYBACK', ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
     ['PAUSED_UNKNOWN', 'Stop',               '',    'STOPPED',         ['RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Play',               '',    'PLAYING',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_UNKNOWN', 'Play',               '',    'PLAYING',         ['RelativeTimePosition']],#['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
     ['PAUSED_UNKNOWN', 'Pause',              '',    'PAUSED_PLAYBACK', []],
-    ['PAUSED_UNKNOWN', 'Seek',               '701', '', []],
+    ['PAUSED_UNKNOWN', 'Seek',               '701', '',                []],
     ['PAUSED_UNKNOWN', 'Next',               '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
     ['PAUSED_UNKNOWN', 'Previous',           '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
 ]
@@ -166,7 +166,7 @@ class Clock():
     def Jump( self, aSecs ):
         """Increment count by specified anount"""
         self.mutex.acquire()
-        self.ticks += aSecs
+        self.ticks += aSecs-1   #(round down as seeks to start-of time)
         self.mutex.release()
 
     def Reset( self ):
