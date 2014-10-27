@@ -281,7 +281,17 @@ void Filler::Run()
                 ASSERT(iTrack != NULL);
                 OutputSession();
                 LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
-                (void)iUriStreamer->DoStream(*iTrack);
+                ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
+                if (res == EProtocolErrorNotSupported) {
+                    LOG(kMedia, "Filler::Run Track %u not supported. URI: ", iTrack->Id());
+                    LOG(kMedia, iTrack->Uri());
+                    LOG(kMedia, "\n");
+                }
+                else if (res == EProtocolStreamErrorUnrecoverable) {
+                    LOG(kMedia, "Filler::Run Track %u had unrecoverable error. URI: ", iTrack->Id());
+                    LOG(kMedia, iTrack->Uri());
+                    LOG(kMedia, "\n");
+                }
                 LOG(kMedia, "< iUriStreamer->DoStream(%u)\n", iTrack->Id());
             }
         }

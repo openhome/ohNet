@@ -32,7 +32,7 @@ enum ProtocolGetResult
 class IUriStreamer
 {
 public:
-    virtual TBool DoStream(Track& aTrack) = 0;
+    virtual ProtocolStreamResult DoStream(Track& aTrack) = 0;
     virtual void Interrupt(TBool aInterrupt) = 0;
 };
 
@@ -206,7 +206,7 @@ public:
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
 public: // from IUriStreamer
-    TBool DoStream(Track& aTrack);
+    ProtocolStreamResult DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);

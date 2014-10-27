@@ -47,7 +47,7 @@ public:
     TUint TrackId() const;
     TUint StreamId() const;
 private: // from IUriStreamer
-    TBool DoStream(Track& aTrack);
+    ProtocolStreamResult DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
@@ -251,7 +251,7 @@ TUint DummyUriStreamer::StreamId() const
     return iStreamId;
 }
 
-TBool DummyUriStreamer::DoStream(Track& aTrack)
+ProtocolStreamResult DummyUriStreamer::DoStream(Track& aTrack)
 {
     iPipelineTrackId++;
     iStreamId++;
@@ -259,7 +259,7 @@ TBool DummyUriStreamer::DoStream(Track& aTrack)
     iSupply.OutputStream(aTrack.Uri(), 1LL, false, false, *this, iStreamId);
     iTrackAddedSem.Signal();
     iTrackCompleteSem.Wait();
-    return true;
+    return EProtocolStreamSuccess;
 }
 
 void DummyUriStreamer::Interrupt(TBool /*aInterrupt*/)
