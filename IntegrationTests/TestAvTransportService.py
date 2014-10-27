@@ -47,45 +47,46 @@ kStates = \
     #      the track data (length etc.) which is only found out when playing is
     #      not known
 
-    #  Before          Transition            After               Affected SV List
-    #  ------          ----------            -----               ----------------
-    ['STOPPED',        'SetAVTransportURI',  'STOPPED',         ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','PlaybackStorageMedium','RelativeTimePosition']],
-    ['STOPPED',        'Stop',               'STOPPED',         ['RelativeTimePosition']],
-    ['STOPPED',        'Play',               'PLAYING',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['STOPPED',        'Pause',              'PAUSED_PLAYBACK', []],
-    ['STOPPED',        'Seek',               'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['STOPPED',        'Next',               'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['STOPPED',        'Previous',           'STOPPED',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    # Before           Transition            Err    After              Affected SV List
+    # ------           ----------            ---    -----              ----------------
+    ['STOPPED',        'SetAVTransportURI',  '',    'STOPPED',         ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','PlaybackStorageMedium','RelativeTimePosition']],
+    ['STOPPED',        'Stop',               '',    'STOPPED',         ['RelativeTimePosition']],
+    ['STOPPED',        'Play',               '',    'PLAYING',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['STOPPED',        'Pause',              '',    'PAUSED_PLAYBACK', []],
+    ['STOPPED',        'Seek',               '701', '',                []],
+    ['STOPPED',        'Next',               '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['STOPPED',        'Previous',           '',    'STOPPED',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
 
-    ['PLAYING',        'SetAVTransportURI',  'PLAYING',         ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PLAYING',        'Stop',               'STOPPED',         ['RelativeTimePosition']],
-    ['PLAYING',        'Play',               'PLAYING',         ['RelativeTimePosition']],
-    ['PLAYING',        'Pause',              'PAUSED_PLAYBACK', []],
-    ['PLAYING',        'Seek',               'PLAYING',         ['RelativeTimePosition']],
-    ['PLAYING',        'Next',               'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PLAYING',        'Previous',           'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    # ['PLAYING',        '<EndOfTrack>',       'STOPPED',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    
-    ['PAUSED_PLAYBACK', 'SetAVTransportURI', 'PAUSED_PLAYBACK', ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_PLAYBACK', 'Stop',              'STOPPED',         ['RelativeTimePosition']],
-    ['PAUSED_PLAYBACK', 'Play',              'PLAYING',         ['RelativeTimePosition']],
-    ['PAUSED_PLAYBACK', 'Pause',             'PAUSED_PLAYBACK', []],
-    ['PAUSED_PLAYBACK', 'Seek',              'PAUSED_PLAYBACK', ['RelativeTimePosition']],
-    ['PAUSED_PLAYBACK', 'Next',              'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_PLAYBACK', 'Previous',          'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PLAYING',        'SetAVTransportURI',  '',    'PLAYING',         ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PLAYING',        'Stop',               '',    'STOPPED',         ['RelativeTimePosition']],
+    ['PLAYING',        'Play',               '',    'PLAYING',         ['RelativeTimePosition']],
+    ['PLAYING',        'Pause',              '',    'PAUSED_PLAYBACK', []],
+    ['PLAYING',        'Seek',               '',    'PLAYING',         ['RelativeTimePosition']],
+    ['PLAYING',        'Next',               '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PLAYING',        'Previous',           '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    # ['PLAYING',        '<EndOfTrack>',       '',    'STOPPED',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
 
-    ['PAUSED_UNKNOWN', 'SetAVTransportURI',  'PAUSED_PLAYBACK', ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Stop',               'STOPPED',         ['RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Play',               'PLAYING',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Pause',              'PAUSED_PLAYBACK', []],
-    ['PAUSED_UNKNOWN', 'Seek',               'PAUSED_PLAYBACK', ['RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Next',               'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Previous',           'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_PLAYBACK', 'SetAVTransportURI', '',    'PAUSED_PLAYBACK', ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_PLAYBACK', 'Stop',              '',    'STOPPED',         ['RelativeTimePosition']],
+    ['PAUSED_PLAYBACK', 'Play',              '',    'PLAYING',         ['RelativeTimePosition']],
+    ['PAUSED_PLAYBACK', 'Pause',             '',    'PAUSED_PLAYBACK', []],
+    ['PAUSED_PLAYBACK', 'Seek',              '701', '',                []],
+    ['PAUSED_PLAYBACK', 'Next',              '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_PLAYBACK', 'Previous',          '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+
+    ['PAUSED_UNKNOWN', 'SetAVTransportURI',  '',    'PAUSED_PLAYBACK', ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_UNKNOWN', 'Stop',               '',    'STOPPED',         ['RelativeTimePosition']],
+    ['PAUSED_UNKNOWN', 'Play',               '',    'PLAYING',         ['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_UNKNOWN', 'Pause',              '',    'PAUSED_PLAYBACK', []],
+    ['PAUSED_UNKNOWN', 'Seek',               '701', '', []],
+    ['PAUSED_UNKNOWN', 'Next',               '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_UNKNOWN', 'Previous',           '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
 ]
 kBefore = 0
 kAction = 1
-kAfter  = 2
-kAffSvs = 3
+kErr    = 2
+kAfter  = 3
+kAffSvs = 4
 
 kStaticSvs = \
 {
@@ -163,7 +164,7 @@ class Clock():
         self.mutex.release()
 
     def Jump( self, aSecs ):
-        """Start counting ticks, don't reset tick count"""
+        """Increment count by specified anount"""
         self.mutex.acquire()
         self.ticks += aSecs
         self.mutex.release()
@@ -277,26 +278,35 @@ class TestAvTransportService( BASE.BaseTest ):
 
                 self._SetState( entry[kBefore] )
                 svsBefore = self._GetNonStaticSvs()
-                self._InvokeAction( entry[kAction], params )
-                delay = random.randint( 3, 10 )
-                self.log.Info( self.mrDev, 'Waiting %ds after invoke' % delay )
-                time.sleep( delay )
+                err = self._InvokeAction( entry[kAction], params )
+                if err:
+                    msg = 'AVTransport: %s' % entry[kAction]
+                    if params: msg += ' with param(s) [%s] ' % params
+                    msg += 'gave error <%s>' % err
+                    if entry[kErr] in err:
+                        self.log.Pass( self.mrDev, '%s as expected' % msg )
+                    else:
+                        self.log.Fail( self.mrDev, '%s' % msg )
+                else:
+                    delay = random.randint( 3, 10 )
+                    self.log.Info( self.mrDev, 'Waiting %ds after invoke' % delay )
+                    time.sleep( delay )
 
-                # check state
-                if self.avt.transportState == 'TRANSITIONING':
-                    self.transportEvt.clear()
-                    self.transportEvt.wait( 3 )
-                    if self.avt.transportState=='TRANSITIONING':
-                        self.log.Fail( self.mrDev, 'TRANSITIONING state failed to clear within 3s' )
-                devState = self.avt.transportState
-                self.log.FailUnless( self.mrDev, devState==entry[kAfter], '%s/%s actual/expected state after %s from %s'
-                    % (devState, entry[kAfter], entry[kAction], entry[kBefore]) )
+                    # check state
+                    if self.avt.transportState == 'TRANSITIONING':
+                        self.transportEvt.clear()
+                        self.transportEvt.wait( 3 )
+                        if self.avt.transportState=='TRANSITIONING':
+                            self.log.Fail( self.mrDev, 'TRANSITIONING state failed to clear within 3s' )
+                    devState = self.avt.transportState
+                    self.log.FailUnless( self.mrDev, devState==entry[kAfter], '%s/%s actual/expected state after %s from %s'
+                        % (devState, entry[kAfter], entry[kAction], entry[kBefore]) )
 
-                # check SVs
-                svsAfter = self._GetNonStaticSvs()
-                self._CheckStaticSvs()
-                self._CheckUnaffectedSvs( svsBefore, svsAfter, entry[kAffSvs] )
-                self._CheckAffectedSvs( svsAfter, entry[kAffSvs] )
+                    # check SVs
+                    svsAfter = self._GetNonStaticSvs()
+                    self._CheckStaticSvs()
+                    self._CheckUnaffectedSvs( svsBefore, svsAfter, entry[kAffSvs] )
+                    self._CheckAffectedSvs( svsAfter, entry[kAffSvs] )
 
         # stop playback before exiting
         self._AvtStop()
@@ -353,21 +363,22 @@ class TestAvTransportService( BASE.BaseTest ):
         """Invoke specified action with specified parameters"""
         self.log.Header2( self.mrDev, 'Invoking %s (with params %s) ' % (aAction, aParams) )
         if aAction == 'Next':
-            self._AvtNext()
+            err = self._AvtNext()
         elif aAction == 'Pause':
-            self._AvtPause( aForce=True )
+            err = self._AvtPause( aForce=True )
         elif aAction == 'Play':
-            self._AvtPlay( aForce=True)
+            err = self._AvtPlay( aForce=True)
         elif aAction == 'Previous':
-            self._AvtPrevious()
+            err = self._AvtPrevious()
         elif aAction == 'Seek':
-            self._AvtSeek( aParams )
+            err = self._AvtSeek( aParams )
         elif aAction == 'SetAVTransportURI':
-            self._AvtSetAvtTransportUri( aParams, aForce=True )
+            err = self._AvtSetAvtTransportUri( aParams, aForce=True )
         elif aAction == 'Stop':
-            self._AvtStop( aForce=True )
+            err = self._AvtStop( aForce=True )
         else:
-            self.log.Fail( self.mrDev, 'Unrecognised invoke: %s' % aAction )
+            err = self.log.Fail( self.mrDev, 'Unrecognised invoke: %s' % aAction )
+        return err
 
     #
     # Wrapped invokes which check for status
@@ -376,39 +387,45 @@ class TestAvTransportService( BASE.BaseTest ):
     def _AvtNext( self ):
         """Invoke AVT next, wait for transport state event( if any)"""
         self.transportEvt.clear()
-        self.avt.Next()
+        err = self.avt.Next( aReturnErr=True )
         self.transportEvt.wait( 3 )
+        return err
 
     def _AvtPause( self, aForce=False ):
         """Pause playback using AVT, wait for event"""
         if self.avt.transportState!='PAUSED_PLAYBACK' or aForce:
             self.pausedEvt.clear()
-            self.avt.Pause()
+            err = self.avt.Pause( aReturnErr=True )
             self.pausedEvt.wait( 3 )
+            return err
 
     def _AvtPlay( self, aForce=False ):
         """Start playback using AVT, wait for event"""
         if self.avt.transportState!='PLAYING' or aForce:
             self.playingEvt.clear()
-            self.avt.Play()
+            err = self.avt.Play( aReturnErr=True )
             self.playingEvt.wait( 3 )
+            return err
 
     def _AvtPrevious( self ):
         """Invoke AVT previous, wait for transport state event( if any)"""
         self.transportEvt.clear()
-        self.avt.Next()
+        err = self.avt.Next( aReturnErr=True )
         self.transportEvt.wait( 3 )
+        return err
 
     def _AvtSeek( self, aRelTime ):
         """Invoke AVT seek"""
         self.clock.Jump( aRelTime )
-        self.avt.Seek( aRelTime )
+        err = self.avt.Seek( aRelTime, aReturnErr=True )
+        return err
 
     def _AvtSetAvtTransportUri( self, aTrack, aForce=False ):
         """Set AV Transport URI, wait for confirmation event"""
+        err = None
         if self.avt.currentTrackURI!=aTrack['uri'] or aForce:
             self.uriEvt.clear()
-            self.avt.avt.SetAVTransportURI( InstanceID=0, CurrentURI=aTrack['uri'], CurrentURIMetaData=aTrack['meta'] )
+            err = self.avt.avt.SetAVTransportURI( InstanceID=0, CurrentURI=aTrack['uri'], CurrentURIMetaData=aTrack['meta'], aReturnErr=True )
             self.uriEvt.wait( 3 )
             self.clock.Reset()
         self.setupUri = aTrack['uri']
@@ -417,13 +434,16 @@ class TestAvTransportService( BASE.BaseTest ):
         res = didl.getiterator( kDidlNs+'res' )[0]
         dur = res.attrib['duration']
         self.setupDuration = int( dur[0:2] )*3600 + int( dur[3:5] )*60 + int( dur[6:] )
+        return err
 
     def _AvtStop( self, aForce=False ):
         """Stop playback using AVT, wait for event"""
+        err = None
         if self.avt.transportState!='STOPPED' or aForce:
             self.stoppedEvt.clear()
-            self.avt.Stop()
+            err = self.avt.Stop( aReturnErr=True )
             self.stoppedEvt.wait( 3 )
+        return err
 
     # noinspection PyUnusedLocal
     def _AvtEventCb( self, aService, aSvName, aSvVal, aSvSeq ):
@@ -458,7 +478,7 @@ class TestAvTransportService( BASE.BaseTest ):
             meas = getattr( self.avt, sv[0].lower()+sv[1:] )
             exp = kStaticSvs[sv]
             self.log.FailUnless( self.mrDev, meas==exp,
-                '%s/%s actual/exp`ected value for %s (static)' % (meas, exp, sv) )
+                '%s/%s actual/expected value for %s (static)' % (meas, exp, sv) )
 
     def _CheckUnaffectedSvs( self, aBefore, aAfter, aAffSvs ):
         """Verify SVS which should be unaffected have not changed value"""
