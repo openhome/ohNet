@@ -38,7 +38,7 @@ using namespace OpenHome::Av;
 // ...
 //
 // If Play is invoked during TRANSITIONING, the pipeline could be buffering an
-// already playing track, or moving to a different state from before the
+// already playing track, or moving to a different state than before the
 // transition. To ensure an already playing track isn't restarted, the target
 // state after the transition is stored on Play/Pause/Stop actions or when
 // the pipeline state changes and is checked when Play is invoked.
