@@ -227,3 +227,4 @@ bundle:
 	python bundle_binaries.py --system $(openhome_system) --architecture $(openhome_architecture) --configuration $(openhome_configuration) --managed
 
 ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
+ohNetDll : ohNetDllImpl

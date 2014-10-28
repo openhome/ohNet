@@ -560,8 +560,11 @@ bundle:
 
 ifeq ($(platform),iOS)
 ohNet.net.dll :  $(objdir)ohNet.net.dll
+ohNetDll :
 else ifeq ($(platform),Android)
 ohNet.net.dll : $(objdir)ohNet.net.dll ohNetAndroidNative
+ohNetDll : ohNetDllImpl
 else
 ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
+ohNetDll : ohNetDllImpl
 endif

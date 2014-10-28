@@ -425,7 +425,7 @@ $(objdir)SignalHandlers.$(objext) : Os/$(osdir)/SignalHandlers.cpp $(headers)
 	$(compiler)SignalHandlers.$(objext) -c $(cppflags) $(includes) Os/$(osdir)/SignalHandlers.cpp
 
 
-ohNetDll: ohNetCore
+ohNetDllImpl: ohNetCore
 	$(link_dll) $(linkopts_ohNet) $(linkoutput)$(objdir)$(dllprefix)ohNet.$(dllext) $(objects_core)
 
 
