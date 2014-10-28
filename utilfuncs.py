@@ -281,64 +281,24 @@ def guess_ohnet_location(conf):
         message='Specify --ohnet')
     )
 
-def guess_ohnetmon_location(conf):
-    set_env_verbose(conf, 'INCLUDES_OHNETMON', match_path(
+def guess_location(conf, repo):
+    set_env_verbose(conf, 'INCLUDES_' + repo.upper(), match_path(
         conf,
         [
-            '{options.ohnetmon_include_dir}',
-            '{options.ohnetmon}',
-            'dependencies/{options.dest_platform}/ohNetmon/include',
+            '{options.' + repo.lower() + '_include_dir}',
+            '{options.' + repo.lower() + '}',
+            'dependencies/{options.dest_platform}/' + repo + '/include',
         ],
-        message='Specify --ohnetmon-include-dir or --ohnetmon')
+        message='Specify --' + repo.lower() + '-include-dir or --' + repo.lower())
     )
-    set_env_verbose(conf, 'STLIBPATH_OHNETMON', match_path(
+    set_env_verbose(conf, 'STLIBPATH_' + repo.upper(), match_path(
         conf,
         [
-            '{options.ohnetmon_lib_dir}',
-            '{options.ohnetmon}/build',
-            'dependencies/{options.dest_platform}/ohNetmon/lib',
+            '{options.' + repo.lower() + '_lib_dir}',
+            '{options.' + repo.lower() + '}/build',
+            'dependencies/{options.dest_platform}/' + repo + '/lib',
         ],
-        message='Specify --ohnetmon-lib-dir or --ohnetmon')
-    )
-
-def guess_ohmediaplayer_location(conf):
-    set_env_verbose(conf, 'INCLUDES_OHMEDIAPLAYER', match_path(
-        conf,
-        [
-            '{options.ohmediaplayer_include_dir}',
-            '{options.ohmediaplayer}',
-            'dependencies/{options.dest_platform}/ohMediaPlayer/include',
-        ],
-        message='Specify --ohmediaplayer-include-dir or --ohmediaplayer')
-    )
-    set_env_verbose(conf, 'STLIBPATH_OHMEDIAPLAYER', match_path(
-        conf,
-        [
-            '{options.ohmediaplayer_lib_dir}',
-            '{options.ohmediaplayer}/build',
-            'dependencies/{options.dest_platform}/ohMediaPlayer/lib',
-        ],
-        message='Specify --ohmediaplayer-lib-dir or --ohmediaplayer')
-    )
-
-def guess_ohtopology_location(conf):
-    set_env_verbose(conf, 'INCLUDES_OHTOPOLOGY', match_path(
-        conf,
-        [
-            '{options.ohtopology_include_dir}',
-            '{options.ohtopology}',
-            'dependencies/{options.dest_platform}/ohTopology/include',
-        ],
-        message='Specify --ohtopology-include-dir or --ohtopology')
-    )
-    set_env_verbose(conf, 'STLIBPATH_OHTOPOLOGY', match_path(
-        conf,
-        [
-            '{options.ohtopology_lib_dir}',
-            '{options.ohtopology}/build',
-            'dependencies/{options.dest_platform}/ohTopology/lib',
-        ],
-        message='Specify --ohtopology-lib-dir or --ohtopology')
+        message='Specify --' + repo.lower() + '-lib-dir or --' + repo.lower())
     )
 
 def guess_libosa_location(conf):
