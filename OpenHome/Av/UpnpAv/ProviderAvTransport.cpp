@@ -13,6 +13,37 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::Av;
 
+// UPnP AVTransport spec:
+// http://upnp.org/specs/av/UPnP-av-AVTransport-v1-Service.pdf
+
+
+// iTransportStateOverride exists to support a corner case in SetAVTransportUri.
+// From ~2.4.1.3 (Effect on State of SetAVTransportURI action):
+// ....
+// If the current transport state is “NO MEDIA PRESENT” the transport state
+// changes to “STOPPED”. In all other cases, this action does not change the
+// transport state of the specified instance.
+//
+// To support remaining in the PAUSED state when a new URI is set, the state
+// reported by the pipeline (which is STOPPED) needs to be overridden until
+// an action changes the state.
+
+
+// iTargetTransportState exists to support corner cases in Play.
+// From ~2.4.9 (Play):
+// Start playing the resource of the specified instance, at the specified speed
+// , starting at the current position, according to the current play mode. Keep
+// playing until the resource ends or the transport state is changed via
+// actions Stop or Pause.
+// ...
+//
+// If Play is invoked during TRANSITIONING, the pipeline could be buffering an
+// already playing track, or moving to a different state than before the
+// transition. To ensure an already playing track isn't restarted, the target
+// state after the transition is stored on Play/Pause/Stop actions or when
+// the pipeline state changes and is checked when Play is invoked.
+
+
 // For a MediaRenderer device with no ConnectionManager.PrepareForConnection()
 // action, the only valid AVTransportID is 0
 static const TUint kInstanceId = 0;
@@ -60,7 +91,7 @@ ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aE
     , iSourceUpnpAv(aSourceUpnpAv)
     , iLock("UpAv")
     , iModerationTimerStarted(false)
-    , iExpectedTransportState(Brx::Empty())
+    , iTransportStateOverride(Brx::Empty())
     , iTargetTransportState(Brx::Empty())
     , iTransportState(kTransportStateNoMediaPresent)
     , iTransportStatus(kTransportStatusOk)
@@ -127,12 +158,12 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
             metaData.Set(metaData.Split(0, iCurrentTrackMetaData.MaxBytes()));
         }
         if (aCurrentURI == Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
+            iTransportStateOverride.Set(Brx::Empty());
             iTransportState.Set(kTransportStateNoMediaPresent);
             iTargetTransportState.Set(Brx::Empty());
         }
         else if (iTransportState == kTransportStateNoMediaPresent) {
-            iExpectedTransportState.Set(Brx::Empty());
+            iTransportStateOverride.Set(Brx::Empty());
             iTransportState.Set(kTransportStateStopped);
             iTargetTransportState.Set(Brx::Empty());
         }
@@ -141,9 +172,9 @@ void ProviderAvTransport::SetAVTransportURI(IDvInvocation& aInvocation, TUint aI
                 playing = true;
             }
             else {
-                // Only pick up iTransportState is there isn't a pending iExpectedTransportState
-                if (iExpectedTransportState == Brx::Empty()) {
-                    iExpectedTransportState.Set(iTransportState);
+                // Only pick up iTransportState is there isn't a pending iTransportStateOverride
+                if (iTransportStateOverride.Bytes() == 0) {
+                    iTransportStateOverride.Set(iTransportState);
                 }
             }
         }
@@ -214,8 +245,8 @@ void ProviderAvTransport::GetTransportInfo(IDvInvocation& aInvocation, TUint aIn
     aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            aCurrentTransportState.Write(iExpectedTransportState);
+        if (iTransportStateOverride != Brx::Empty()) {
+            aCurrentTransportState.Write(iTransportStateOverride);
         }
         else {
             aCurrentTransportState.Write(iTransportState);
@@ -308,7 +339,7 @@ void ProviderAvTransport::Stop(IDvInvocation& aInvocation, TUint aInstanceID)
     aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
-        iExpectedTransportState.Set(Brx::Empty());
+        iTransportStateOverride.Set(Brx::Empty());
         iTargetTransportState.Set(kTransportStateStopped);
     }
     iSourceUpnpAv.Stop();
@@ -341,7 +372,7 @@ void ProviderAvTransport::Play(IDvInvocation& aInvocation, TUint aInstanceID, co
             // Already playing.
             play = false;
         }
-        iExpectedTransportState.Set(Brx::Empty());
+        iTransportStateOverride.Set(Brx::Empty());
         iTargetTransportState.Set(kTransportStatePlaying);
     }
     if (play) {
@@ -364,7 +395,7 @@ void ProviderAvTransport::Pause(IDvInvocation& aInvocation, TUint aInstanceID)
     aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
-        iExpectedTransportState.Set(Brx::Empty());
+        iTransportStateOverride.Set(Brx::Empty());
         iTargetTransportState.Set(kTransportStatePausedPlayback);
     }
     iSourceUpnpAv.Pause();
@@ -417,9 +448,7 @@ void ProviderAvTransport::Seek(IDvInvocation& aInvocation, TUint aInstanceID, co
     iSourceUpnpAv.Seek(secs);
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
-        }
+        iTransportStateOverride.Set(Brx::Empty());
     }
     aInvocation.EndResponse();
 }
@@ -433,9 +462,7 @@ void ProviderAvTransport::Next(IDvInvocation& aInvocation, TUint aInstanceID)
     iSourceUpnpAv.Next();
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
-        }
+        iTransportStateOverride.Set(Brx::Empty());
     }
     aInvocation.EndResponse();
 }
@@ -449,9 +476,7 @@ void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID
     iSourceUpnpAv.Prev();
     {
         AutoMutex a(iLock);
-        if (iExpectedTransportState != Brx::Empty()) {
-            iExpectedTransportState.Set(Brx::Empty());
-        }
+        iTransportStateOverride.Set(Brx::Empty());
     }
     aInvocation.EndResponse();
 }

@@ -212,12 +212,17 @@ TUint TestCodecFiller::StreamId()
 void TestCodecFiller::Run()
 {
     Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty());
-    TBool success = iProtocolManager->DoStream(*track);
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
     // send a msgquit here in case of trying to stream an invalid url during tests
     // could cause race conditions if it isn't sent here
     iSupply.OutputQuit();
-    Log::Print("%s\n", (success)?"SUCCESS: Full file streamed.":"FAILURE: Failed to stream entire file.");
+    if (res == EProtocolStreamSuccess) {
+        Log::Print("TestCodecFiller::Run SUCCESS: Full file streamed.\n");
+    }
+    else {
+        Log::Print("TestCodecFiller::Run FAILURE: Failed to stream entire file.\n");
+    }
 }
 
 TUint TestCodecFiller::NextTrackId()

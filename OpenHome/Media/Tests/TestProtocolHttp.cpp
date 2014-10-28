@@ -987,9 +987,9 @@ void SuiteHttpStreamFull::Test()
 {
     // Test if streaming is successful.
     Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
-    TBool boolStream = iProtocolManager->DoStream(*track);
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
-    TEST(boolStream == 1);
+    TEST(res == EProtocolStreamSuccess);
 
     // Test if a single track message is received.
     TEST(iSupply->TrackCount() == 1);
@@ -1018,9 +1018,9 @@ void SuiteHttpReject::Test()
 {
     // Test if streaming is successful.
     Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
-    TBool boolStream = iProtocolManager->DoStream(*track);
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
-    TEST(boolStream == 1);
+    TEST(res == EProtocolStreamErrorUnrecoverable);
 
     // Test if a single track message is received.
     TEST(iSupply->TrackCount() == 1);
@@ -1045,9 +1045,9 @@ void SuiteHttpReconnect::Test()
 {
     // Test if streaming is successful.
     Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
-    TBool boolStream = iProtocolManager->DoStream(*track);
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
-    TEST(boolStream == 1);
+    TEST(res == EProtocolStreamSuccess);
 
     // Test if a single track message is received.
     TEST(iSupply->TrackCount() == 1);
@@ -1076,9 +1076,9 @@ void SuiteHttpStreamLive::Test()
 {
     // Test if streaming is successful.
     Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
-    TBool boolStream = iProtocolManager->DoStream(*track);
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
-    TEST(boolStream == false);
+    TEST(res == EProtocolStreamStopped);
 
     // Test if a single track message is received.
     TEST(iSupply->TrackCount() == 1);
@@ -1107,9 +1107,9 @@ void SuiteHttpLiveReconnect::Test()
 {
     // Test if streaming is successful.
     Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
-    TBool boolStream = iProtocolManager->DoStream(*track);
+    ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
-    TEST(boolStream == false);
+    TEST(res == EProtocolStreamStopped);
 
     // Test if a single track message is received.
     TEST(iSupply->TrackCount() == 1);
@@ -1166,9 +1166,9 @@ SuiteHttpChunked::~SuiteHttpChunked()
 void SuiteHttpChunked::Test()
 {
     Track* track = iTrackFactory->CreateTrack(iServer->ServingUri().AbsoluteUri(), Brx::Empty());
-    const TBool err = iProtocolManager->DoStream(*track);
+    const ProtocolStreamResult res = iProtocolManager->DoStream(*track);
     track->RemoveRef();
-    TEST(!err);
+    TEST(res == EProtocolStreamStopped);
     TEST(iSupply->TrackCount() == 1);
     TEST(iSupply->StreamCount() == 1);
     TEST(iSupply->Live());

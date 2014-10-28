@@ -94,6 +94,7 @@ void TrackDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData
 {
     Track* track;
     TUint idBefore, idAfter;
+    AutoMutex _(iObserverLock);
     {
         AutoMutex a(iLock);
         if (iTrackList.size() == kMaxTracks) {
@@ -109,21 +110,17 @@ void TrackDatabase::Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData
         iSeq++;
         idBefore = aIdAfter;
         idAfter = (index == iTrackList.size()-1? kTrackIdNone : index+1);
-        /* Unusual looking interleaving of locks is deliberate.
-           We want observers to be able to query track db state but don't want observer
-           callbacks to be run out of order.  Interleaving the locks appears to deliver this. */
-        iObserverLock.Wait();
     }
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrackInserted(*track, idBefore, idAfter);
     }
-    iObserverLock.Signal();
 }
 
 void TrackDatabase::DeleteId(TUint aId)
 {
     Track* before = NULL;
     Track* after = NULL;
+    AutoMutex _(iObserverLock);
     {
         AutoMutex a(iLock);
         TUint index = TrackListUtils::IndexFromId(iTrackList, aId);
@@ -138,32 +135,29 @@ void TrackDatabase::DeleteId(TUint aId)
         iTrackList[index]->RemoveRef();
         (void)iTrackList.erase(iTrackList.begin() + index);
         iSeq++;
-        iObserverLock.Wait();
     }
     for (TUint i=0; i<iObservers.size(); i++) {
         iObservers[i]->NotifyTrackDeleted(aId, before, after);
     }
-    iObserverLock.Signal();
     RemoveRefIfNonNull(before);
     RemoveRefIfNonNull(after);
 }
 
 void TrackDatabase::DeleteAll()
 {
+    AutoMutex _(iObserverLock);
     iLock.Wait();
     const TBool changed = (iTrackList.size() > 0);
     if (changed) {
         TrackListUtils::Clear(iTrackList);
         iSeq++;
     }
-    iObserverLock.Wait();
     iLock.Signal();
     if (changed) {
         for (TUint i=0; i<iObservers.size(); i++) {
             iObservers[i]->NotifyAllDeleted();
         }
     }
-    iObserverLock.Signal();
 }
 
 TUint TrackDatabase::TrackCount() const

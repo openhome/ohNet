@@ -87,8 +87,8 @@ private:
     Bws<6*1024> iXmlEscapedStateVar;
 
     // These state variables are currently implemented and their values change
-    Brn iExpectedTransportState;
-    Brn iTargetTransportState;  //used during transitions
+    Brn iTransportStateOverride;    // used when reporting PAUSED state when new track is queued
+    Brn iTargetTransportState;      // used during transitions
     Brn iTransportState;
     Brn iTransportStatus;
     Brn iCurrentMediaCategory;
