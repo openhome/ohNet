@@ -463,6 +463,7 @@ void ProviderAvTransport::Next(IDvInvocation& aInvocation, TUint aInstanceID)
     {
         AutoMutex a(iLock);
         iTransportStateOverride.Set(Brx::Empty());
+        iRelativeTimeSeconds = 0;
     }
     aInvocation.EndResponse();
 }
@@ -477,6 +478,7 @@ void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID
     {
         AutoMutex a(iLock);
         iTransportStateOverride.Set(Brx::Empty());
+        iRelativeTimeSeconds = 0;
     }
     aInvocation.EndResponse();
 }
