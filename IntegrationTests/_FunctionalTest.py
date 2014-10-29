@@ -22,8 +22,13 @@ if _platform in ['Windows', 'cli']:
     ohnetRls = os.path.abspath( os.path.join( deps, 'Windows-x86/ohNet-Windows-x86-Release' ))
     ohnetDbg = os.path.abspath( os.path.join( deps, 'Windows-x86/ohNet-Windows-x86-Debug' ))
 elif _platform == 'Linux':
-    ohnetRls = os.path.abspath( os.path.join( deps, 'Linux-x86/ohNet-Linux-x86-Release' ))
-    ohnetDbg = os.path.abspath( os.path.join( deps, 'Linux-x86/ohNet-Linux-x86-Debug' ))
+    _architecture = platform.architecture()
+    if '32' in _architecture[0]:
+        ohnetRls = os.path.abspath( os.path.join( deps, 'Linux-x86/ohNet-Linux-x86-Release' ))
+        ohnetDbg = os.path.abspath( os.path.join( deps, 'Linux-x86/ohNet-Linux-x86-Debug' ))
+    elif '64' in _architecture[0]:
+        ohnetRls = os.path.abspath( os.path.join( deps, 'Linux-x64/ohNet-Linux-x64-Release' ))
+        ohnetDbg = os.path.abspath( os.path.join( deps, 'Linux-x64/ohNet-Linux-x64-Debug' ))
 elif _platform == 'Darwin':
     ohnetRls = os.path.abspath( os.path.join( deps, 'Mac-x64/ohNet-Mac-x64-Release' ))
     ohnetDbg = os.path.abspath( os.path.join( deps, 'Mac-x64/ohNet-Mac-x64-Debug' ))
