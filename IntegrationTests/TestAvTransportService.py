@@ -502,10 +502,10 @@ class TestAvTransportService( BASE.BaseTest ):
             val[sv] = getattr( self.avt, sv[0:2].lower()+sv[2:] )
         return val
 
-    def _ExpAVTransportURI( self, ):
+    def _ExpAVTransportURI( self ):
         return self.setupUri
 
-    def _ExpAVTransportURIMetaData( self, ):
+    def _ExpAVTransportURIMetaData( self ):
         return self.setupMeta
 
     def _ExpCurrentMediaDuration( self ):
