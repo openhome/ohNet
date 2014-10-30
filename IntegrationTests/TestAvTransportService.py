@@ -254,7 +254,9 @@ class TestAvTransportService( BASE.BaseTest ):
             loopback = True
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestMr', aLoopback=loopback )
             self.mrName = self.soft.name.split( ':' )[0] + ':UPnP AV'
-        
+        else:
+            self.mrName = self.mrName.split( ':' )[0] + ':UPnP AV'
+
         # create UPnP CPs for renderer and server, subscribe to AVT events
         self.mrDev = self.mrName.split( ':' )[0]
         self.upnpMr = MR.MediaRendererDevice( self.mrName, aLoopback=loopback )
