@@ -579,7 +579,8 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
 {
     //iTcpClient.LogVerbose(true);
     Close();
-    if (!Connect(iUri, 80)) {
+    const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+    if (!Connect(iUri, port)) {
         Log::Print("ProtocolHttp::WriteRequest Connection failure\n");
 //        LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;

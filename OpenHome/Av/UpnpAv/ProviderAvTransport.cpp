@@ -245,7 +245,7 @@ void ProviderAvTransport::GetTransportInfo(IDvInvocation& aInvocation, TUint aIn
     aInvocation.StartResponse();
     {
         AutoMutex a(iLock);
-        if (iTransportStateOverride != Brx::Empty()) {
+        if (iTransportStateOverride.Bytes() != 0) {
             aCurrentTransportState.Write(iTransportStateOverride);
         }
         else {
@@ -463,6 +463,7 @@ void ProviderAvTransport::Next(IDvInvocation& aInvocation, TUint aInstanceID)
     {
         AutoMutex a(iLock);
         iTransportStateOverride.Set(Brx::Empty());
+        iRelativeTimeSeconds = 0;
     }
     aInvocation.EndResponse();
 }
@@ -477,6 +478,7 @@ void ProviderAvTransport::Previous(IDvInvocation& aInvocation, TUint aInstanceID
     {
         AutoMutex a(iLock);
         iTransportStateOverride.Set(Brx::Empty());
+        iRelativeTimeSeconds = 0;
     }
     aInvocation.EndResponse();
 }
@@ -590,7 +592,12 @@ void ProviderAvTransport::UpdateEventedState()
     Ascii::AppendDec(iEventedState, kInstanceId);
     iEventedState.Append("\">\n");
 
-    AddStateVariable(Brn("TransportState"), iTransportState);
+    if (iTransportStateOverride.Bytes() != 0) {
+        AddStateVariable(Brn("TransportState"), iTransportStateOverride);
+    }
+    else {
+        AddStateVariable(Brn("TransportState"), iTransportState);
+    }
     AddStateVariable(Brn("TransportStatus"), iTransportStatus);
     AddStateVariable(Brn("CurrentMediaCategory"), iCurrentMediaCategory);
     AddStateVariable(Brn("PlaybackStorageMedium"), iPlaybackStorageMedium);
