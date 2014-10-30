@@ -265,20 +265,22 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
         if (path.Bytes() < 2 || path[0] != '/') {
             THROW(UriError);
         }
+        iTrackUri.Replace(Brx::Empty());
+        iTrackMetadata.Replace(Brx::Empty());
         iZone.Replace(path.Split(1)); // remove leading /
         iZoneHandler->StartMonitoring(iZone);
-        iTrackUri.Replace(Brx::Empty());
     }
     else {
         iZone.Replace(Brx::Empty());
         iTrackUri.Replace(aUri);
+        iTrackMetadata.Replace(aMetadata);
         UriChanged();
     }
-    iTrackMetadata.Replace(aMetadata);
 }
 
 void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
 {
+    // FIXME - use of iZone/iTrackUri not threadsafe
     if (aZone == iZone && aUri != iTrackUri) {
         iUriLock.Wait();
         iPendingTrackUri.Replace(aUri);
