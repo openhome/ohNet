@@ -34,6 +34,7 @@ public:
 private:
     void EnsureActive();
     TBool StartedShuffled();
+    void DoSeekToTrackId(Media::Track* aTrack);
 private: // from ISource
     void Activate();
     void Deactivate();
@@ -150,6 +151,24 @@ TBool SourcePlaylist::StartedShuffled()
     return startShuffled;
 }
 
+void SourcePlaylist::DoSeekToTrackId(Track* aTrack)
+{
+    ASSERT(aTrack != NULL);
+    AutoAllocatedRef r(aTrack);
+    iLock.Wait();
+    if (iShuffler->TryMoveToStart(aTrack->Id())) {
+        iNewPlaylist = false;
+    }
+    iLock.Signal();
+
+    iPipeline.RemoveAll();
+    iPipeline.Begin(iUriProvider->Mode(), aTrack->Id());
+    iPipeline.Play();
+    iLock.Wait();
+    iTransportState = Media::EPipelinePlaying;
+    iLock.Signal();
+}
+
 void SourcePlaylist::Activate()
 {
     iTrackPosSeconds = 0;
@@ -256,25 +275,9 @@ void SourcePlaylist::SeekToTrackId(TUint aId)
 {
     EnsureActive();
 
-    /* We don't use the Track returned from GetTrackById().
-       We just want this call to throw if aId is not valid. */
     Track* track = NULL;
     static_cast<ITrackDatabase*>(iDatabase)->GetTrackById(aId, track);
-    ASSERT(track != NULL);
-    track->RemoveRef();
-
-    iLock.Wait();
-    if (iShuffler->TryMoveToStart(aId)) {
-        iNewPlaylist = false;
-    }
-    iLock.Signal();
-
-    iPipeline.RemoveAll();
-    iPipeline.Begin(iUriProvider->Mode(), aId);
-    iPipeline.Play();
-    iLock.Wait();
-    iTransportState = Media::EPipelinePlaying;
-    iLock.Signal();
+    DoSeekToTrackId(track);
 }
 
 TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
@@ -283,11 +286,7 @@ TBool SourcePlaylist::SeekToTrackIndex(TUint aIndex)
 
     Track* track = static_cast<ITrackDatabaseReader*>(iRepeater)->TrackRefByIndex(aIndex);
     if (track != NULL) {
-        iNewPlaylist = false;
-        AutoAllocatedRef r(track);
-        iPipeline.RemoveAll();
-        iPipeline.Begin(iUriProvider->Mode(), track->Id());
-        iPipeline.Play();
+        DoSeekToTrackId(track);
     }
     return (track!=NULL);
 }
