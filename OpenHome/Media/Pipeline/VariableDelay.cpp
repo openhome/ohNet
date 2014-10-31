@@ -40,6 +40,7 @@ Msg* VariableDelay::Pull()
     iLock.Wait();
     if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
         if (iWaitForAudioBeforeGeneratingSilence) {
+            ASSERT(IsEmpty()); // if not empty, we should process queue before pulling from upstream
             iLock.Signal();
             msg = iUpstreamElement.Pull();
             iLock.Wait();
@@ -108,6 +109,11 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
         break;
     case ERampedDown:
     {
+        if (iDelayAdjustment > 0) {
+            // NotifyStarving() has been called since we last checked iDelayAdjustment in Pull()
+            EnqueueAtHead(msg);
+            return NULL;
+        }
         ASSERT(iDelayAdjustment < 0)
         TUint jiffies = msg->Jiffies();
         if (jiffies > (TUint)(-iDelayAdjustment)) {
