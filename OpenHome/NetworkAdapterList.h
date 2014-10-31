@@ -36,7 +36,6 @@ public:
     virtual ~NetworkAdapterList();
     TBool SingleSubnetModeEnabled() const;
     NetworkAdapter* CurrentAdapter(const char* aCookie) const;
-    const std::vector<NetworkAdapter*>& List() const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;
     static void DestroySubnetList(std::vector<NetworkAdapter*>* aList);
     std::vector<NetworkAdapter*>* CreateNetworkAdapterList() const;

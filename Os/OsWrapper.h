@@ -41,6 +41,7 @@ public:
     inline static void MutexUnlock(THandle aMutex);
     inline static THandle ThreadCreate(OsContext* aContext, const TChar* aName, TUint aPriority,
                                        TUint aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
+    inline static void ThreadInstallSignalHandlers();
     inline static void* ThreadTls(OsContext* aContext);
     inline static void ThreadDestroy(THandle aThread);
     inline static TBool ThreadSupportsPriorities(OsContext* aContext);
@@ -66,6 +67,7 @@ public:
     static void NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl);
     static void NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddrsss);
     static void NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
+    static void NetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface);
     static std::vector<NetworkAdapter*>* NetworkListAdapters(Environment& aEnv, Net::InitialisationParams::ELoopback aUseLoopback, const TChar* aCookie);
     inline static void NetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChanged aCallback, void* aArg);
 };

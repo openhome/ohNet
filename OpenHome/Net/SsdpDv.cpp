@@ -45,7 +45,8 @@ SsdpNotifier::SsdpNotifier(DvStack& aDvStack)
 void SsdpNotifier::Start(TIpAddress aInterface, TUint aConfigId)
 {
     iSocket.ReBind(0, aInterface);
-    iSocket.SetTtl(iDvStack.Env().InitParams()->MsearchTtl()); 
+    iSocket.SetMulticastIf(aInterface);
+    iSocket.SetTtl(iDvStack.Env().InitParams()->MsearchTtl());
     iConfigId = aConfigId;
 }
 

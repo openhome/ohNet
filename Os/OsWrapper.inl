@@ -61,6 +61,8 @@ inline void Os::MutexUnlock(THandle aMutex)
 inline THandle Os::ThreadCreate(OsContext* aContext, const TChar* aName, TUint aPriority,
                                 TUint aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
 { return OsThreadCreate(aContext, aName, aPriority, aStackBytes, aEntryPoint, aArg); }
+inline void Os::ThreadInstallSignalHandlers()
+{ OsThreadInstallSignalHandlers(); }
 inline void* Os::ThreadTls(OsContext* aContext)
 { return OsThreadTls(aContext); }
 inline void Os::ThreadDestroy(THandle aThread)

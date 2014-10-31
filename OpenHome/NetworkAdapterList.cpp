@@ -57,11 +57,6 @@ NetworkAdapter* NetworkAdapterList::CurrentAdapter(const char* aCookie) const
     return iCurrent;
 }
 
-const std::vector<NetworkAdapter*>& NetworkAdapterList::List() const
-{
-    return *iNetworkAdapters;
-}
-
 std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetList() const
 {
     iListLock.Wait();

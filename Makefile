@@ -271,6 +271,7 @@ ifeq ($(platform), Vanilla)
 	endian ?= LITTLE
 	ifeq ($(Qnap-anycpu), 1)
 	    openhome_system = Qnap
+	    nocpp11=yes
 	else
 	    openhome_system = Linux
 	endif
@@ -559,8 +560,11 @@ bundle:
 
 ifeq ($(platform),iOS)
 ohNet.net.dll :  $(objdir)ohNet.net.dll
+ohNetDll :
 else ifeq ($(platform),Android)
 ohNet.net.dll : $(objdir)ohNet.net.dll ohNetAndroidNative
+ohNetDll : ohNetDllImpl
 else
 ohNet.net.dll :  $(objdir)ohNet.net.dll ohNetDll
+ohNetDll : ohNetDllImpl
 endif

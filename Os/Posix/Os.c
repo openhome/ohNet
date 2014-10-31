@@ -1028,6 +1028,17 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     err = setsockopt(handle->iSocket, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
     return err;
 }
+ 
+int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
+{
+#if defined(PLATFORM_MACOSX_GNU)
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface, sizeof(aInterface));
+    return err;
+#else
+    return 0;
+#endif
+}
 
 int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
 {
@@ -1045,9 +1056,6 @@ int32_t OsNetworkListAdapters(OsContext* aContext, OsNetworkAdapter** aAdapters,
     struct ifaddrs* networkIf;
     struct ifaddrs* iter;
     int32_t includeLoopback = 1;
-#ifdef PLATFORM_MACOSX_GNU
-    aUseLoopback = 0;
-#endif
     *aAdapters = NULL;
     if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
         return -1;

@@ -314,6 +314,14 @@ THandle OsThreadCreate(OsContext* aContext, const char* aName, uint32_t aPriorit
                        uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg);
 
 /**
+ * Allow platform code to install any per-thread signal handlers or equivalent.
+ *
+ * Called once per call to OsThreadCreate().  Is called in the context of the
+ * newly created thread.
+ */
+void OsThreadInstallSignalHandlers();
+
+/**
  * Return the 'aArg' value passed to the entrypoint for the current thread
  *
  * @param[in] aContext    Returned from OsCreate().
@@ -620,6 +628,18 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
  * @return  0 on success; -1 on failure
  */
 int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
+
+/**
+ * Set the interface for sending multicast requests from this socket
+ *
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
+ * @param[in] aInterface   IpV4 address (in network byte order) specifying the network
+ *                         interface on which the multicast group should be joined.
+ *                         If this is 0, the default multicast interface will be used.
+ *
+ * @return  0 on success; -1 on failure
+ */
+int32_t OsNetworkSocketSetMulticastIf(THandle aHandle, TIpAddress aInterface);
 
 /**
  * Representation of a network interface

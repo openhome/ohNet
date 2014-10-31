@@ -178,10 +178,10 @@ void DviProtocolUpnp::HandleInterfaceChange()
         }
         else {
             std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-            const std::vector<NetworkAdapter*>& adapters = adapterList.List();
+            std::vector<NetworkAdapter*>* adapters = adapterList.CreateNetworkAdapterList();
             // remove listeners whose interface is no longer available
             while (i<iAdapters.size()) {
-                if (FindAdapter(iAdapters[i]->Interface(), adapters) != -1) {
+                if (FindAdapter(iAdapters[i]->Interface(), *adapters) != -1) {
                     i++;
                 }
                 else {
@@ -199,6 +199,7 @@ void DviProtocolUpnp::HandleInterfaceChange()
                     update = iDevice.Enabled();
                 }
             }
+            NetworkAdapterList::DestroyNetworkAdapterList(adapters);
             NetworkAdapterList::DestroySubnetList(subnetList);
             if (update) {
                 // halt any ssdp broadcasts/responses that are currently in progress

@@ -42,6 +42,8 @@ def buildArgs():
         buildArgs += ' Qnap-anycpu=1'
     if gCore == 1:
         buildArgs += ' platform=' + gPlatform
+    if gNativeTestsOnly == 1:
+        buildArgs += ' native_only=yes'
     return buildArgs
 
 def build(aTarget, aParallel=False):
