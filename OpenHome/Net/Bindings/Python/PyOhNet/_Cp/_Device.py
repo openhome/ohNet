@@ -18,7 +18,7 @@ class Device():
     
     def __init__( self, aHandle ):
         self.lib = PyOhNet.lib
-        self.handle = aHandle
+        self.handle = ctypes.c_void_p( aHandle )
         self.lib.CpDeviceCAddRef( self.handle )
         self.proxies = []
         PyOhNet.devices.append( self )  
