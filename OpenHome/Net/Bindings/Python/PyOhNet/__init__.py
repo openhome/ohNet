@@ -88,7 +88,7 @@ def Initialise( aInitParams=None ):
     """Initialise ohNet library - must be first call to module"""
     # aInitParams is a dict, which can contain the following key/value pairs
     #   - loopack:  True or False
-    params = lib.OhNetInitParamsCreate()
+    params = ctypes.c_void_p( lib.OhNetInitParamsCreate() )
     if aInitParams:
         if aInitParams.has_key( 'loopback' ):
             if aInitParams['loopback'] is not False:
