@@ -71,7 +71,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     iReaderResponse.AddHeader(iHeaderContentLength);
     iRefreshThread = new ThreadFunctor("TuneInRefresh", MakeFunctor(*this, &RadioPresetsTuneIn::RefreshThread));
     iRefreshThread->Start();
-    iRefreshTimer = new Timer(aEnv, MakeFunctor(*this, &RadioPresetsTuneIn::TimerCallback));
+    iRefreshTimer = new Timer(aEnv, MakeFunctor(*this, &RadioPresetsTuneIn::TimerCallback), "RadioPresetsTuneIn");
 
     // Get username from store.
     iConfigUsername = new ConfigText(aConfigInit, kConfigUsernameBase, kMaxUserNameBytes, kConfigUsernameDefault);

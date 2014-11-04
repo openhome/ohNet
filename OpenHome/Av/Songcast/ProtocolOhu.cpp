@@ -25,7 +25,7 @@ ProtocolOhu::ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::
     , iLeaveLock("POHU")
 {
     iPowerObserver = aPowerManager.Register(*this, kPowerPriorityLowest+1);
-    iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired));
+    iTimerLeave = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhu::TimerLeaveExpired), "ProtocolOhuLeave");
 }
 
 ProtocolOhu::~ProtocolOhu()

@@ -36,7 +36,7 @@ ProviderPlaylist::ProviderPlaylist(Net::DvDevice& aDevice, Environment& aEnv, IS
     , iTimerLock("PPL2")
     , iTimerActive(false)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderPlaylist::TimerCallback));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderPlaylist::TimerCallback), "ProviderPlaylist");
     iDatabase.AddObserver(*this);
 
     EnablePropertyTransportState();

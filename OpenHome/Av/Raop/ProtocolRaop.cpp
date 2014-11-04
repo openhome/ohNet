@@ -322,7 +322,7 @@ RaopControl::RaopControl(Environment& aEnv, SocketUdpServer& aServer)
     , iResend(0)
     , iExit(false)
 {
-    iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired));
+    iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &RaopControl::TimerExpired), "RaopControl");
     iThreadControl = new ThreadFunctor("RaopControl", MakeFunctor(*this, &RaopControl::Run), kPriority-1, kSessionStackBytes);
     iThreadControl->Start();
 

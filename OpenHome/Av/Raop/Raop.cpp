@@ -157,7 +157,7 @@ RaopDiscoverySession::RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServe
     iReaderRequest->AddMethod(RtspMethod::kTeardown);
     iReaderRequest->AddMethod(RtspMethod::kPost);
 
-    iDeactivateTimer = new Timer(aEnv, MakeFunctor(*this, &RaopDiscoverySession::DeactivateCallback));
+    iDeactivateTimer = new Timer(aEnv, MakeFunctor(*this, &RaopDiscoverySession::DeactivateCallback), "RaopDiscoverySession");
 }
 
 void RaopDiscoverySession::WriteSeq(TUint aCSeq)
