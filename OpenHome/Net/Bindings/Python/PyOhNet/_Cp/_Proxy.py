@@ -14,8 +14,10 @@ class Proxy():
     @abc.abstractmethod
     def __init__( self, aDomain, aName, aVersion, aDevice ):
         self.lib             = PyOhNet.lib
-        self.handle          = self.lib.CpProxyCreate( aDomain, aName, aVersion, aDevice.handle )
-        self.service         = self.lib.CpProxyService( self.handle )
+        self.lib.CpProxyCreate.restype = ctypes.c_void_p
+        self.handle          = ctypes.c_void_p( self.lib.CpProxyCreate( aDomain, aName, aVersion, aDevice.handle ))
+        self.lib.CpProxyService.restype = ctypes.c_void_p
+        self.service         = ctypes.c_void_p( self.lib.CpProxyService( self.handle ))
         self._propertyAnyCb  = None
         self._propertyInitCb = None
         self.actions         = []

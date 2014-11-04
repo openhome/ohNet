@@ -16,7 +16,8 @@ class Action:
     
     def __init__( self, aName ):
         self.lib = PyOhNet.lib
-        self.handle = self.lib.ServiceActionCreate( aName )
+        self.lib.ServiceActionCreate.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceActionCreate( aName ))
         self.inputParams = []
         self.outputParams = []
         PyOhNet.actions.append( self )
@@ -71,9 +72,10 @@ class Invocation:
         self.callersCb = aCb
         CB = PyOhNet.makeCb( None, ctypes.c_void_p, ctypes.c_void_p )
         asyncCb = CB( self.AsyncComplete )
-        self.handle = self.lib.CpServiceInvocation( aService, aAction.handle, asyncCb, None )
+        self.lib.CpServiceInvocation.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.CpServiceInvocation( aService, aAction.handle, asyncCb, None ))
         gAsyncCbs.append( {'handle':self.handle, 'cb':asyncCb} )    # keep CB in scope until called
-        
+
     def AddInput( self, aArgument ):
         self.lib.CpInvocationAddInput( self.handle, aArgument.handle )
                 
@@ -81,7 +83,7 @@ class Invocation:
         self.lib.CpInvocationAddOutput( self.handle, aArgument.handle )
                 
     def AsyncComplete( self, aDummy, aHandle ):
-        self.callersCb( aHandle )
+        self.callersCb( ctypes.c_void_p( aHandle ))
         
         
 class InvocationResponse:
@@ -95,7 +97,7 @@ class InvocationResponse:
             if cb['handle'] == self.handle:
                 gAsyncCbs.remove( cb )
                 break
-                
+
     def Error( self ):
         code = ctypes.c_int()
         desc = ctypes.c_char_p()
@@ -157,21 +159,24 @@ class ParameterInt( Parameter ):
     
     def __init__( self, aName, aMinValue=kMinInt32, aMaxValue=kMaxInt32, aStep=1 ):
         Parameter.__init__( self, aName, 'Int' )
-        self.handle = self.lib.ServiceParameterCreateInt( aName, aMinValue, aMaxValue, aStep )
+        self.lib.ServiceParameterCreateInt.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateInt( aName, aMinValue, aMaxValue, aStep ))
 
 
 class ParameterUint( Parameter ):
     
     def __init__( self, aName, aMinValue=0, aMaxValue=kMaxUint, aStep=1 ):
         Parameter.__init__( self, aName, 'Uint' )
-        self.handle = self.lib.ServiceParameterCreateUint( aName, aMinValue, aMaxValue, aStep )
+        self.lib.ServiceParameterCreateUint.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateUint( aName, aMinValue, aMaxValue, aStep ))
 
         
 class ParameterBool( Parameter ):
     
     def __init__( self, aName ):
         Parameter.__init__( self, aName, 'Bool' )
-        self.handle = self.lib.ServiceParameterCreateBool( aName )
+        self.lib.ServiceParameterCreateBool.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBool( aName ))
 
 
 class ParameterString( Parameter ):
@@ -183,22 +188,25 @@ class ParameterString( Parameter ):
         numAllowedValues = len( aAllowedValues )
         allowed = (ctypes.c_char_p * numAllowedValues)()
         for i in range( numAllowedValues ):
-            allowed[i] = aAllowedValues[i] 
-        self.handle = self.lib.ServiceParameterCreateString( aName, allowed, numAllowedValues )
+            allowed[i] = aAllowedValues[i]
+        self.lib.ServiceParameterCreateString.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateString( aName, allowed, numAllowedValues ))
         
 
 class ParameterBinary( Parameter ):
     
     def __init__( self, aName ):        
         Parameter.__init__( self, aName, 'Binary' )
-        self.handle = self.lib.ServiceParameterCreateBinary( aName )        
+        self.lib.ServiceParameterCreateBinary.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateBinary( aName ))
         
 
 class ParameterRelated( Parameter ):
     
     def __init__( self, aName, aProperty ):        
         Parameter.__init__( self, aName, 'Related' )
-        self.handle = self.lib.ServiceParameterCreateRelated( aName, aProperty.handle )
+        self.lib.ServiceParameterCreateRelated.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.ServiceParameterCreateRelated( aName, aProperty.handle ))
 
 #
 # ==== Arguments ====
@@ -218,10 +226,12 @@ class ArgumentInt( Argument ):
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
-            self.handle = self.lib.ActionArgumentCreateIntInput( aParameter.handle, aValue )
+            self.lib.ActionArgumentCreateIntInput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateIntInput( aParameter.handle, aValue ))
         else:
-            self.handle = self.lib.ActionArgumentCreateIntOutput( aParameter.handle )
-        
+            self.lib.ActionArgumentCreateIntOutput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateIntOutput( aParameter.handle ))
+
     def Value( self ):
         return self.lib.ActionArgumentValueInt( self.handle )
 
@@ -231,10 +241,12 @@ class ArgumentUint( Argument ):
     def __init__( self, aParameter, aValue=None ):
         Argument.__init__( self )
         if aValue:
-            self.handle = self.lib.ActionArgumentCreateUintInput( aParameter.handle, aValue )
+            self.lib.ActionArgumentCreateUintInput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateUintInput( aParameter.handle, aValue ))
         else:
-            self.handle = self.lib.ActionArgumentCreateUintOutput( aParameter.handle )
-        
+            self.lib.ActionArgumentCreateUintOutput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateUintOutput( aParameter.handle ))
+
     def Value( self ):
         return self.lib.ActionArgumentValueUint( self.handle )
 
@@ -248,10 +260,12 @@ class ArgumentBool( Argument ):
                 val = 0
             else:
                 val = 1
-            self.handle = self.lib.ActionArgumentCreateBoolInput( aParameter.handle, val )
+            self.lib.ActionArgumentCreateBoolInput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateBoolInput( aParameter.handle, val ))
         else:
-            self.handle = self.lib.ActionArgumentCreateBoolOutput( aParameter.handle )
-        
+            self.lib.ActionArgumentCreateBoolOutput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateBoolOutput( aParameter.handle ))
+
     def Value( self ):
         val = self.lib.ActionArgumentValueBool( self.handle )
         return val!=0
@@ -263,15 +277,17 @@ class ArgumentString( Argument ):
         Argument.__init__( self )
         if aValue:
             val = ctypes.c_char_p( aValue )
-            self.handle = self.lib.ActionArgumentCreateStringInput( aParameter.handle, val )
+            self.lib.ActionArgumentCreateStringInput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateStringInput( aParameter.handle, val ))
         else:
-            self.handle = self.lib.ActionArgumentCreateStringOutput( aParameter.handle )
-        
+            self.lib.ActionArgumentCreateStringOutput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateStringOutput( aParameter.handle ))
+
     def Value( self ):
         strn = ctypes.c_char_p()
         length = ctypes.c_int()
-        val = self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
-        return val.value
+        self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
+        return strn.value
 
 
 class ArgumentBinary( Argument ):
@@ -281,12 +297,14 @@ class ArgumentBinary( Argument ):
         if aValue:
             val = aValue
             length = len( val )
-            self.handle = self.lib.ActionArgumentCreateBinaryInput( aParameter.handle, val, length )
+            self.lib.ActionArgumentCreateBinaryInput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateBinaryInput( aParameter.handle, val, length ))
         else:
-            self.handle = self.lib.ActionArgumentCreateBinaryOutput( aParameter.handle )
-        
+            self.lib.ActionArgumentCreateBinaryOutput.restype = ctypes.c_void_p
+            self.handle = ctypes.c_void_p( self.lib.ActionArgumentCreateBinaryOutput( aParameter.handle ))
+
     def Value( self ):
         strn = ctypes.c_char_p()
         length = ctypes.c_int()
-        val = self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
-        return val.value
+        self.lib.ActionArgumentGetValueString( self.handle, ctypes.byref( strn ), ctypes.byref( length ))
+        return strn.value

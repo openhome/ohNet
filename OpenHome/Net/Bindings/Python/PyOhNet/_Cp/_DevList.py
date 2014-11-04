@@ -126,8 +126,9 @@ class DeviceListUpnpRoot( DeviceList ):
         
     def __init__( self, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
-        self.handle = self.lib.CpDeviceListCreateUpnpRoot(
-            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None )
+        self.lib.CpDeviceListCreateUpnpRoot.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpRoot(
+            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
 
         
 class DeviceListUpnpAll( DeviceList ):
@@ -135,8 +136,9 @@ class DeviceListUpnpAll( DeviceList ):
 
     def __init__( self, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
-        self.handle = self.lib.CpDeviceListCreateUpnpAll(
-            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None )
+        self.lib.CpDeviceListCreateUpnpAll.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpAll(
+            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
 
 
 class DeviceListUpnpDeviceType( DeviceList ):
@@ -144,9 +146,10 @@ class DeviceListUpnpDeviceType( DeviceList ):
     
     def __init__( self, aDomain, aType, aVersion, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
-        self.handle = self.lib.CpDeviceListCreateUpnpDeviceType(
+        self.lib.CpDeviceListCreateUpnpDeviceType.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpDeviceType(
             ctypes.c_char_p( aDomain ), ctypes.c_char_p( aType ), aVersion,
-            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None )
+            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
 
 
 class DeviceListUpnpServiceType( DeviceList ):
@@ -154,9 +157,10 @@ class DeviceListUpnpServiceType( DeviceList ):
 
     def __init__( self, aDomain, aType, aVersion, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
-        self.handle = self.lib.CpDeviceListCreateUpnpServiceType(
+        self.lib.CpDeviceListCreateUpnpServiceType.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpServiceType(
             ctypes.c_char_p( aDomain ), ctypes.c_char_p( aType ), aVersion,
-            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None )
+            self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
 
 
 class DeviceListUpnpUuid( DeviceList ):
@@ -164,5 +168,6 @@ class DeviceListUpnpUuid( DeviceList ):
 
     def __init__( self, aUuid, aAddedCb=None, aRemovedCb=None ):            
         DeviceList.__init__( self, aAddedCb, aRemovedCb )
-        self.handle = self.lib.CpDeviceListCreateUpnpUuid(
-            ctypes.c_char_p( aUuid ), self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None )
+        self.lib.CpDeviceListCreateUpnpUuid.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.CpDeviceListCreateUpnpUuid(
+            ctypes.c_char_p( aUuid ), self._PrimaryAddedCb, None, self._PrimaryRemovedCb, None ))
