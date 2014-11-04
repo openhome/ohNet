@@ -42,9 +42,10 @@ TInt Time::TimeToWaitFor(Environment& aEnv, TUint aTime)
 
 // Timer
 
-Timer::Timer(Environment& aEnv, Functor aFunctor)
+Timer::Timer(Environment& aEnv, Functor aFunctor, const TChar* aId)
     : iMgr(aEnv.TimerManager())
     , iFunctor(aFunctor)
+    , iId(aId)
 {
 }
 
@@ -78,6 +79,11 @@ void Timer::Cancel()
     LOG(kTimer, "<Timer::Cancel()\n");
 }
 
+const TChar* Timer::Id() const
+{
+    return iId;
+}
+
 TBool Timer::IsInManagerThread(OpenHome::Environment& aEnv)
 { // static
     return IsInManagerThread(aEnv.TimerManager());
@@ -106,6 +112,9 @@ TimerManager::TimerManager(Environment& aEnv)
     , iStopped("MTS2", 0)
     , iCallbackMutex("TMCB")
     , iThreadHandle(NULL)
+    , iBusyStartTimeMs(0)
+    , iLastRunTimeMs(0)
+    , iCallbacksPerTick(0)
 {
     LOG(kTimer, ">TimerManager::TimerManager()\n");
     iThread = new ThreadFunctor("TimerManager", MakeFunctor(*this, &TimerManager::Run), kPriorityHigh);
@@ -197,7 +206,24 @@ void TimerManager::HeadChanged(QueueSortedEntry& aEntry)
 
 void TimerManager::Fire()
 {
-    TUint now = Os::TimeInMs(iEnv.OsCtx());
+    const TUint now = Os::TimeInMs(iEnv.OsCtx());
+    if (iLastRunTimeMs > now) { // wrapped
+        iLastRunTimeMs = 0;
+        iCallbacksPerTick = 0;
+    }
+    else if (iLastRunTimeMs == now) {
+    }
+    else if (iLastRunTimeMs - now > kMaxTimerGranularityMs) {
+        iBusyStartTimeMs = now;
+        iCallbacksPerTick = 0;
+    }
+    if (iBusyStartTimeMs == 0 || iBusyStartTimeMs > now) { // Clock has wrapped.  Reset our busy counter for the sake of simplicity
+        iBusyStartTimeMs = now;
+    }
+    else if (now - iBusyStartTimeMs > kMaxBusyTimeMs) {
+        iCallbackList.Log();
+        ASSERTS();
+    }
     iMutexNow.Wait();
     iRemoving = true;
     iNow.iTime = now + 1; // will go after all the entries before or at now
@@ -221,6 +247,11 @@ void TimerManager::Fire()
         if(&head == &iNow) {
             LOG(kTimer, "-TimerManager::Fire() done signalling\n");
             break;
+        }
+        iCallbackList.Add(head);
+        if (++iCallbacksPerTick > kMaxCallbacksPerTick) {
+            iCallbackList.Log();
+            ASSERTS();
         }
         head.iFunctor(); // run the timer's callback
         LOG(kTimer, "-TimerManager::Fire() signaling consumer\n");
@@ -263,3 +294,70 @@ void TimerManager::Run()
     iStopped.Signal();
 }
 
+
+// TimerManager::Callback
+
+TimerManager::Callback::Callback()
+    : iPtr(NULL)
+    , iId(NULL)
+{
+}
+
+void TimerManager::Callback::Set(void* aPtr, const TChar* aId)
+{
+    iPtr = &aPtr;
+    iId = aId;
+}
+
+void TimerManager::Callback::Log() const
+{
+    Log::Print("Timer: %s (%p)\n", iId, iPtr);
+}
+
+
+// TimerManager::CallbackList
+
+TimerManager::CallbackList::CallbackList()
+    : iHead(0)
+    , iTail(0)
+{
+    (void)memset(iList, 0, sizeof(iList));
+}
+
+void TimerManager::CallbackList::Add(Timer& aTimer)
+{
+    iList[iTail].Set(&aTimer, aTimer.Id());
+    IncIndex(iTail);
+    if (iTail == iHead) {
+        IncIndex(iHead);
+    }
+}
+
+void TimerManager::CallbackList::Log() const
+{
+    Log::Print("Suspicious (implausible) activity in TimerManager.  Recent timers are:\n");
+    if (iHead == iTail) {
+        ASSERT(iHead == 0); // i.e. no timers have ever run
+        return;
+    }
+    TUint tail = iTail;
+    do {
+        DecIndex(tail);
+        iList[tail].Log();
+    } while (tail != iHead);
+}
+
+void TimerManager::CallbackList::IncIndex(TUint aIndex)
+{ // static
+    if (++aIndex == kElements) {
+        aIndex = 0;
+    }
+}
+
+void TimerManager::CallbackList::DecIndex(TUint& aIndex)
+{ // static
+    if (aIndex == 0) {
+        aIndex = kElements-1;
+    }
+    --aIndex;
+}

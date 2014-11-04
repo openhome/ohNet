@@ -104,7 +104,7 @@ void DeviceListTI::TestSync()
 
 void DeviceListTI::Poll()
 {
-    Timer timer(iEnv, MakeFunctor(*this, &DeviceListTI::TimerExpired));
+    Timer timer(iEnv, MakeFunctor(*this, &DeviceListTI::TimerExpired), "TestInvocation");
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceListTI::GetProtocolInfoComplete);
     Brh tmp;
     const TUint count = (TUint)iList.size();

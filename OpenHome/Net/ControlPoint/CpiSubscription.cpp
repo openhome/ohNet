@@ -172,7 +172,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iInterruptHandler(NULL)
     , iSuspended(false)
 {
-    iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew));
+    iTimer = new Timer(iEnv, MakeFunctor(*this, &CpiSubscription::Renew), "CpiSubscription");
     iDevice.AddRef();
     iRejectFutureOperations = false;
     iEnv.AddObject(this);
@@ -583,7 +583,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
         // wait 1 minute then proceed
         // we'll have leaked some subscriptions but this'll be logged later during shutdown
         iCleanShutdown = true;
-        Timer timer(iCpStack.Env(), MakeFunctor(*this, &CpiSubscriptionManager::ShutdownHasHung));
+        Timer timer(iCpStack.Env(), MakeFunctor(*this, &CpiSubscriptionManager::ShutdownHasHung), "SubscriptionManagerShutdown");
         timer.FireIn(60*1000);
         iShutdownSem.Wait();
         if (iCleanShutdown) {

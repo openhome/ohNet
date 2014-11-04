@@ -124,7 +124,7 @@ void DeviceList::InvokeSync()
 
 void DeviceList::PollInvoke()
 {
-    Timer timer(*gEnv, MakeFunctor(*this, &DeviceList::TimerExpired));
+    Timer timer(*gEnv, MakeFunctor(*this, &DeviceList::TimerExpired), "TestProxyC");
     for (TUint i=0; i<iList.size(); i++) {
         CpDeviceC device = iList[i];
         TUint countBefore = gActionCount;

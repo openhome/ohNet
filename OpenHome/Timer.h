@@ -35,10 +35,11 @@ class Timer : public QueueSortedEntryTimer
 {
     friend class TimerManager;
 public:
-    Timer(Environment& aEnv, Functor aFunctor);
+    Timer(Environment& aEnv, Functor aFunctor, const TChar* aId);
     void FireIn(TUint aTime); // Relative (milliseconds from now)
     void FireAt(TUint aTime); // Absolute (at specified millisecond)
     void Cancel();
+    const TChar* Id() const;
     ~Timer();
     static TBool IsInManagerThread(Environment& aEnv);
 private:
@@ -46,6 +47,7 @@ private:
 private:
     TimerManager& iMgr;
     Functor iFunctor;
+    const TChar* iId;
 };
 
 class TimerManager : public QueueSorted<Timer>
@@ -57,6 +59,32 @@ public:
     ~TimerManager();
     void CallbackLock();
     void CallbackUnlock();
+private:
+    class Callback
+    {
+    public:
+        Callback();
+        void Set(void* aPtr, const TChar* aId);
+        void Log() const;
+    private:
+        void* iPtr;
+        const TChar* iId;
+    };
+    class CallbackList
+    {
+        static const TUint kElements = 100;
+    public:
+        CallbackList();
+        void Add(Timer& aTimer);
+        void Log() const;
+    private:
+        static void IncIndex(TUint aIndex);
+        static void DecIndex(TUint& aIndex);
+    private:
+        Callback iList[kElements];
+        TUint iHead;
+        TUint iTail;
+    };
 private:
     void Run();
     void Fire();
@@ -76,6 +104,13 @@ private:
     Semaphore iStopped;
     Mutex iCallbackMutex;
     Thread* iThreadHandle;
+    static const TUint kMaxBusyTimeMs = 1000 * 60 * 30; // 30 minutes
+    static const TUint kMaxTimerGranularityMs = 10;
+    static const TUint kMaxCallbacksPerTick = 1000;
+    TUint iBusyStartTimeMs;
+    TUint iLastRunTimeMs;
+    TUint iCallbacksPerTick;
+    CallbackList iCallbackList;
 };
 
 } // namespace OpenHome

@@ -29,7 +29,7 @@ SsdpNotifierScheduler::SsdpNotifierScheduler(DvStack& aDvStack, ISsdpNotifyListe
     , iListener(aListener)
 {
     Functor functor = MakeFunctor(*this, &SsdpNotifierScheduler::SendNextMsg);
-    iTimer = new Timer(iDvStack.Env(), functor);
+    iTimer = new Timer(iDvStack.Env(), functor, "SsdpNotifierScheduler");
 }
 
 void SsdpNotifierScheduler::Start(TUint aDuration, TUint aMsgCount)

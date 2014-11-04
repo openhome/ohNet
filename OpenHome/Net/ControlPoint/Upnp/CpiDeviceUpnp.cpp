@@ -45,7 +45,7 @@ CpiDeviceUpnp::CpiDeviceUpnp(CpStack& aCpStack, const Brx& aUdn, const Brx& aLoc
     Environment& env = aCpStack.Env();
     iHostUdpIsLowQuality = env.InitParams()->IsHostUdpLowQuality();
     iDevice = new CpiDevice(aCpStack, aUdn, *this, *this, this);
-    iTimer = new Timer(env, MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
+    iTimer = new Timer(env, MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired), "CpiDeviceUpnp");
     UpdateMaxAge(aMaxAgeSecs);
     iInvocable = new Invocable(*this);
 }
@@ -485,8 +485,8 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(CpStack& aCpStack, FunctorCpiDevice aAdded,
     NetworkAdapterList& ifList = aCpStack.Env().NetworkAdapterList();
     AutoNetworkAdapterRef ref(iEnv, "CpiDeviceListUpnp ctor");
     const NetworkAdapter* current = ref.Adapter();
-    iRefreshTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
-    iResumedTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete));
+    iRefreshTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete), "DeviceListRefresh");
+    iResumedTimer = new Timer(iEnv, MakeFunctor(*this, &CpiDeviceListUpnp::ResumedTimerComplete), "DeviceListResume");
     iRefreshRepeatCount = 0;
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
     iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));

@@ -197,7 +197,7 @@ void OpenHome::TestFramework::RandomiseUdn(Environment& aEnv, Bwh& aUdn)
 Blocker::Blocker(Environment& aEnv)
     : iSem("SBLK", 0)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &Blocker::TimerExpired));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &Blocker::TimerExpired), "Blocker");
 }
 
 Blocker::~Blocker()

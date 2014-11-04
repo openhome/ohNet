@@ -68,7 +68,7 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
         }
     }
     NetworkAdapterList::DestroySubnetList(subnetList);
-    iAliveTimer = new Timer(iDvStack.Env(), MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications));
+    iAliveTimer = new Timer(iDvStack.Env(), MakeFunctor(*this, &DviProtocolUpnp::SendAliveNotifications), "DviProtocolUpnp");
     iLock.Signal();
 }
 

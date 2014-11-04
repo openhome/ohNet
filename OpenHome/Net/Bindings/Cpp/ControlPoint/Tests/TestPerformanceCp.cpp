@@ -55,7 +55,7 @@ PerformanceTests::PerformanceTests(uint32_t aTimeoutSecs)
     , iDeviceList(NULL)
     , iDevice(NULL)
 {
-    iTimer = new Timer(*gEnv, MakeFunctor(*this, &PerformanceTests::TimerExpired));
+    iTimer = new Timer(*gEnv, MakeFunctor(*this, &PerformanceTests::TimerExpired), "TestPerformanceCp");
 }
 
 PerformanceTests::~PerformanceTests()

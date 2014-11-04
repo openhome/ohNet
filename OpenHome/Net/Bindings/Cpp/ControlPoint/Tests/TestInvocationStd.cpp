@@ -99,7 +99,7 @@ void DeviceList::TestSync()
 
 void DeviceList::Poll()
 {
-    Timer timer(*gEnv, MakeFunctor(*this, &DeviceList::TimerExpired));
+    Timer timer(*gEnv, MakeFunctor(*this, &DeviceList::TimerExpired), "TestInvocationStd");
     FunctorAsync callback = MakeFunctorAsync(*this, &DeviceList::GetProtocolInfoComplete);
     const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {

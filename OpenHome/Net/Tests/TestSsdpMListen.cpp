@@ -206,7 +206,7 @@ SuiteListen::SuiteListen(Environment& aEnv, TUint aDurationSeconds, TUint aInter
     , iDuration(1000 * aDurationSeconds)
     , iInterfaceIndex(aInterfaceIndex)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &SuiteListen::TimerExpired));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &SuiteListen::TimerExpired), "SuiteListen");
 }
 
 SuiteListen::~SuiteListen()

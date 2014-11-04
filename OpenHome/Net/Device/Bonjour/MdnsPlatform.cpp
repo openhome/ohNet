@@ -144,7 +144,7 @@ MdnsPlatform::MdnsPlatform(Environment& aEnv, const TChar* aHost)
     , iTimerDisabled(false)
 {
     LOG(kBonjour, "Bonjour             Constructor\n");
-    iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired));
+    iTimer = new Timer(iEnv, MakeFunctor(*this, &MdnsPlatform::TimerExpired), "MdnsPlatform");
     iThreadListen = new ThreadFunctor("Bonjour", MakeFunctor(*this, &MdnsPlatform::Listen));
     iNextServiceIndex = 0;
     iMdns = new mDNS();

@@ -305,7 +305,7 @@ ReaderHttpRequest::ReaderHttpRequest(Environment& aEnv, IReader& aReader)
     : ReaderHttpHeader(aEnv)
     , iReader(aReader)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &ReaderHttpRequest::ReadTimeout), "ReaderHttpRequest");
 }
 
 ReaderHttpRequest::~ReaderHttpRequest()
@@ -443,7 +443,7 @@ ReaderHttpResponse::ReaderHttpResponse(Environment& aEnv, IReader& aReader)
     : ReaderHttpHeader(aEnv)
     , iReader(aReader)
 {
-    iTimer = new Timer(aEnv, MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout));
+    iTimer = new Timer(aEnv, MakeFunctor(*this, &ReaderHttpResponse::ReadTimeout), "ReaderHttpResponse");
 }
 
 ReaderHttpResponse::~ReaderHttpResponse()
