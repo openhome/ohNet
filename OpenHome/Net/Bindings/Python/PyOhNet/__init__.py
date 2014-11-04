@@ -48,7 +48,7 @@ if not os.path.isfile( __library ):
 if not os.path.isfile( __library ):
     raise OhNetError( 'Cannot find  %s' % __library )
 
-try:    
+try:
     if __platform in ['Windows', 'cli']:
         lib = ctypes.windll.LoadLibrary( __library )
     else:
@@ -88,6 +88,7 @@ def Initialise( aInitParams=None ):
     """Initialise ohNet library - must be first call to module"""
     # aInitParams is a dict, which can contain the following key/value pairs
     #   - loopack:  True or False
+    lib.OhNetInitParamsCreate.restype = ctypes.c_void_p
     params = ctypes.c_void_p( lib.OhNetInitParamsCreate() )
     if aInitParams:
         if aInitParams.has_key( 'loopback' ):
@@ -99,7 +100,6 @@ def Initialise( aInitParams=None ):
 def SetDebugLevel( aDebugLevel=kDebugLevel['None'] ):
     """Configure debug logging for underlying ohNet library"""
     lib.OhNetDebugSetLevel( aDebugLevel )
-
 
 def Start( aMode='cp', aInterface=None ):
     """Start ohNet (optionally specifying interface by adapter, IP or subnet)"""

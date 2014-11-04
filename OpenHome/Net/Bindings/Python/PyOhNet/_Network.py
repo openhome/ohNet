@@ -85,7 +85,8 @@ class AdapterList():
     def __init__( self ):
         self.lib = PyOhNet.lib
         self.handle = None
-        self.handle = self.lib.OhNetSubnetListCreate()
+        self.lib.OhNetSubnetListCreate.restype = ctypes.c_void_p
+        self.handle = ctypes.c_void_p( self.lib.OhNetSubnetListCreate() )
         PyOhNet.adapterLists.append( self )
         
     def Shutdown( self ):
@@ -107,7 +108,8 @@ class AdapterList():
         adapters = []
         if self.handle:
             for i in range( self.size ):
-                adapters.append( Adapter( self.lib.OhNetNetworkAdapterAt( self.handle, i )))
+                self.lib.OhNetNetworkAdapterAt.restype = ctypes.c_void_p
+                adapters.append( Adapter( ctypes.c_void_p( self.lib.OhNetNetworkAdapterAt( self.handle, i ))))
         return adapters
 
     #
