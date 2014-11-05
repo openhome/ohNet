@@ -11,6 +11,12 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
+static const TChar* kStatus[] = { "Starting"
+                                 ,"Running"
+                                 ,"RampingDown"
+                                 ,"RampedDown"
+                                 ,"RampingUp" };
+
 VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
@@ -186,6 +192,8 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
+    Log::Print("VariableDelay::ProcessMsg(MsgDelay*): delay=%u, iDownstreamDelay=%u, iDelayJiffies=%u, iStatus=%s\n",
+               delayJiffies, iDownstreamDelay, iDelayJiffies, kStatus[iStatus]);
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
     }
