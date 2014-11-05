@@ -63,11 +63,13 @@ class Config:
                                 
         def Setup( self, aDut ):
             """Setup preconditions on the dut"""
-            idEvt        = threading.Event()
-            idArrayEvt   = threading.Event()
-            durationEvt  = threading.Event()
-            pausedEvent  = threading.Event()
-            playingEvent = threading.Event()
+            idEvt       = threading.Event()
+            idArrayEvt  = threading.Event()
+            durationEvt = threading.Event()
+            pausedEvt   = threading.Event()
+            playingEvt  = threading.Event()
+            stoppedEvt  = threading.Event()
+            seekedEvt   = threading.Event()
 
             # noinspection PyUnusedLocal
             def _PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
@@ -77,20 +79,29 @@ class Config:
                     idEvt.set()
                 elif aSvName == 'TransportState':
                     if aSvVal == 'Playing':
-                        playingEvent.set()
+                        playingEvt.set()
                     elif aSvVal == 'Paused':
-                        pausedEvent.set()
+                        pausedEvt.set()
+                    elif aSvVal == 'Stopped':
+                        stoppedEvt.set()
 
             # noinspection PyUnusedLocal
             def _InfoEventCb( aService, aSvName, aSvVal, aSvSeq ):
                 if aSvName == 'Duration' and aSvVal not in [0,'0']:
                     durationEvt.set()
             
+            # noinspection PyUnusedLocal
+            def _TimeEventCb( aService, aSvName, aSvVal, aSvSeq ):
+                if aSvName == 'Seconds':
+                    if self.secs == int( aSvVal ):
+                        seekedEvt.set()
+
             # Add playlist
             self.log.Info( self.dev, 'Adding playlist of %d tracks' % self.plLen )
             aDut.playlist.DeleteAllTracks()
             aDut.playlist.AddSubscriber( _PlaylistEventCb )
             aDut.info.AddSubscriber( _InfoEventCb )
+            aDut.time.AddSubscriber( _TimeEventCb )
             idArrayToken = aDut.playlist.idArrayToken
             aDut.playlist.AddPlaylist( self.playlist )
             idArrayEvt.clear()
@@ -120,9 +131,11 @@ class Config:
                 self.log.FailUnless( self.dev, aDut.playlist.id == aDut.playlist.idArray[self.track],
                                      '[%d] Selected track %s (got ID %s)' % (self.id, self.track,aDut.playlist.id) )
 
-                # Setup transport state
+                # Setup transport state / track secs
                 if self.state == 'Stopped':
+                    stoppedEvt.clear()
                     aDut.playlist.Stop()
+                    stoppedEvt.wait( 2 )
                 elif self.state in ['Playing', 'Paused']:
                     if self.secs == '@T':
                         durationEvt.wait( 5 )
@@ -133,13 +146,21 @@ class Config:
                         else:
                             self.duration = aDut.info.duration
                         self.secs = random.randint( 5, self.duration-5 )
-                        playingEvent.clear()
+                        playingEvt.clear()
+                        seekedEvt.clear()
                         aDut.playlist.SeekSecondAbsolute( self.secs )
-                        playingEvent.wait( 2 )
+                        playingEvt.wait( 2 )
+                        seekedEvt.wait( 2 )
+                        self.log.FailUnless( self.dev, seekedEvt.is_set(),
+                            '[%d] Current track secs %d' % (self.id, aDut.time.seconds) )
+
                     if self.state == 'Paused':
-                        pausedEvent.clear()
+                        pausedEvt.clear()
                         aDut.playlist.Pause()
-                        pausedEvent.wait( 2 )
+                        pausedEvt.wait( 2 )
+
+                self.log.FailUnless( self.dev, aDut.playlist.transportState==self.state,
+                                     '[%d] Transport State %s' % (self.id, aDut.playlist.transportState) )
 
             # Setup shuffle/repeat
             aDut.playlist.repeat = self.repeat
@@ -148,6 +169,7 @@ class Config:
             # clean up local subscriptions
             aDut.playlist.RemoveSubscriber( _PlaylistEventCb )                
             aDut.info.RemoveSubscriber( _InfoEventCb )                
+            aDut.time.RemoveSubscriber( _TimeEventCb )
 
         def _SubstMacros( self, aArg ):
             """Substitute parameter macros with actual values.
@@ -338,7 +360,7 @@ class Config:
             self._DoCheck( actualShuffle, aShuffle, 'Shuffle Mode', aAfter )
             
             self.log.CheckLimits( self.dev, 'GELE', actualSecs, aSecs-2, aSecs+1,
-                'Expected track seconds %ds after invoke' % aAfter )
+                '[%d] Expected track seconds %ds after invoke' % (self.id, aAfter) )
             
             if aDut.playlist.id == 0:
                 self._DoCheck( aDut.playlist.id, aTrack, 'Eop index', aAfter )
@@ -347,7 +369,7 @@ class Config:
                     actualTrack = aDut.playlist.PlaylistIndex( aDut.playlist.id )
                     self._DoCheck( actualTrack, aTrack, 'Track Index', aAfter)
                 except:
-                    self.log.Fail( self.dev, '[%d] Unknown track ID %d' % (aDut.playlist.id, self.id) )
+                    self.log.Fail( self.dev, '[%d] Unknown track ID %d' % (self.id, aDut.playlist.id) )
             self.log.Info( '', '' )
         
         def _DoCheck( self, aActual, aExpected, aTest, aAfter ):
