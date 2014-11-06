@@ -134,7 +134,7 @@ void SuiteRsa::Test()
 	BIGNUM *bn = BN_new();
 	TEST(BN_set_word(bn, RSA_F4));
     RSA* rsa = RSA_new();
-	TEST(RSA_generate_key_ex(rsa, 2048, bn, NULL) != NULL);
+	TEST(RSA_generate_key_ex(rsa, 2048, bn, NULL) != 0);
     BN_free(bn);
 
     // check they could be written to file
