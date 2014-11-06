@@ -64,7 +64,6 @@ class Config:
         def Setup( self, aDut ):
             """Setup preconditions on the dut"""
             idEvt       = threading.Event()
-            idArrayEvt  = threading.Event()
             durationEvt = threading.Event()
             pausedEvt   = threading.Event()
             playingEvt  = threading.Event()
@@ -73,9 +72,7 @@ class Config:
 
             # noinspection PyUnusedLocal
             def _PlaylistEventCb( aService, aSvName, aSvVal, aSvSeq ):
-                if aSvName == 'IdArray':
-                    idArrayEvt.set()
-                elif aSvName == 'Id':
+                if aSvName == 'Id':
                     idEvt.set()
                 elif aSvName == 'TransportState':
                     if aSvVal == 'Playing':
@@ -104,12 +101,9 @@ class Config:
             aDut.time.AddSubscriber( _TimeEventCb )
             idArrayToken = aDut.playlist.idArrayToken
             aDut.playlist.AddPlaylist( self.playlist )
-            idArrayEvt.clear()
-            time.sleep( 1 )     # let any 'playlist-add-race' events clear
 
             # Check playlist add as expected
             if self.plLen > 0:
-                idArrayEvt.wait( 1 )
                 self.log.FailUnless( self.dev, aDut.playlist.IdArrayChanged( idArrayToken ),
                     '[%d] ID array updated when playlist changed' % self.id )
                 self.idArray = aDut.playlist.idArray

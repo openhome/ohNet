@@ -106,25 +106,10 @@ class Config:
 
         def _SetupPlaylist( self, aDut ):
             """Setup playlist on DUT"""
-            idArrayEvt = threading.Event()
-
-            # noinspection PyUnusedLocal
-            def _EventCb( aService, aSvName, aSvVal, aSvSeq ):
-                if aSvName == 'IdArray':
-                    idArrayEvt.set()
-                    
             self.log.Info( self.dev, 'Adding playlist of %d tracks' % self.plLen )
-            aDut.playlist.AddSubscriber( _EventCb )
-            idArrayEvt.clear()
             aDut.playlist.AddPlaylist( self.playlist )
             if self.plLen > 0:
-                idArrayEvt.wait( 3 )
                 measPlLen = len( aDut.playlist.idArray )
-                if self.plLen != measPlLen:     # allow for later evented playlist
-                    idArrayEvt.clear()
-                    idArrayEvt.wait( 3 )
-                    measPlLen = len( aDut.playlist.idArray )
-            aDut.playlist.RemoveSubscriber( _EventCb )
             self.log.FailUnless( self.dev, self.plLen==measPlLen,
                 'Added %d tracks (requested %d)' % ( measPlLen, self.plLen) )
 
