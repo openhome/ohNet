@@ -579,6 +579,7 @@ def build(bld):
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
+                'OpenHome/Tests/TestSsl.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -797,6 +798,11 @@ def build(bld):
             source='OpenHome/Tests/TestPowerManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPowerManager',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Tests/TestSslMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            target='TestSsl',
             install_path=None)
     bld.program(
             source='OpenHome/Tests/TestHttps.cpp',

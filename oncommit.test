@@ -42,6 +42,7 @@ tests = '''
     TestUdpServer
     TestConfigManager
     TestPowerManager
+    TestSsl
     TestWaiter
     TestUriProviderRepeater
     '''

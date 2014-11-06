@@ -45,6 +45,7 @@ SIMPLE_TEST_DECLARATION(TestVariableDelay);
 SIMPLE_TEST_DECLARATION(TestWaiter);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
+ENV_TEST_DECLARATION(TestSsl);
 
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
@@ -81,6 +82,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestMsg", ShellTestMsg));
     shellTests.push_back(ShellTest("TestPipeline", ShellTestPipeline));
     shellTests.push_back(ShellTest("TestPowerManager", ShellTestPowerManager));
+    shellTests.push_back(ShellTest("TestSsl", ShellTestSsl));
     shellTests.push_back(ShellTest("TestPreDriver", ShellTestPreDriver));
     shellTests.push_back(ShellTest("TestProtocolHttp", ShellTestProtocolHttp));
     shellTests.push_back(ShellTest("TestRamper", ShellTestRamper));
