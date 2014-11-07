@@ -37,7 +37,8 @@ using namespace OpenHome::TestFramework;
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, IPullableClock* aPullableClock)
-    : iDisabled("test", 0)
+    : iSemShutdown("TMPS", 0)
+    , iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
     , iTidalId(aTidalId)
 {
@@ -132,6 +133,7 @@ void TestMediaPlayer::StopPipeline()
         waitCount--;
     }
     iMediaPlayer->Quit();
+    iSemShutdown.Signal();
 }
 
 void TestMediaPlayer::AddAttribute(const TChar* aAttribute)
@@ -155,6 +157,22 @@ void TestMediaPlayer::Run()
     Log::Print("\n");
     while (getchar() != 'q')    // getchar catches stdin, getch does not.....
         ;
+
+    //IPowerManager& powerManager = iMediaPlayer->PowerManager();
+    //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure
+    iConfigRamStore->Print();
+}
+
+void TestMediaPlayer::RunWithSemaphore()
+{
+    RegisterPlugins(iMediaPlayer->Env());
+    iMediaPlayer->Start();
+    iDevice->SetEnabled();
+    iDeviceUpnpAv->SetEnabled();
+
+    iConfigRamStore->Print();
+
+    iSemShutdown.Wait();
 
     //IPowerManager& powerManager = iMediaPlayer->PowerManager();
     //powerManager.PowerDown(); // FIXME - this should probably be replaced by a normal shutdown procedure

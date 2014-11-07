@@ -53,6 +53,7 @@ public:
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
     virtual void Run();
+    virtual void RunWithSemaphore();
     Media::PipelineManager& Pipeline();
     Net::DvDeviceStandard* Device();
 protected:
@@ -79,6 +80,7 @@ protected:
     Net::DvDevice* iDeviceUpnpAv;
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
+    Semaphore iSemShutdown;
 private:
     Semaphore iDisabled;
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
