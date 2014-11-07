@@ -37,8 +37,8 @@ using namespace OpenHome::TestFramework;
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, IPullableClock* aPullableClock)
-    : iDisabled("test", 0)
-    , iSemShutdown("TMPS", 0)
+    : iSemShutdown("TMPS", 0)
+    , iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
     , iTidalId(aTidalId)
 {
