@@ -29,8 +29,6 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         self.server         = None
         self.soft           = None
         self.codecEvt       = threading.Event()
-        self.idArrayClear   = threading.Event()
-        self.idArrayContent = threading.Event()
 
     def Test( self, args ):
         dutName      = None
@@ -64,7 +62,6 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         
         # create renderer add subscribe to events
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
-        self.dut.playlist.AddSubscriber( self._PlaylistEventCb )
         self.dut.info.AddSubscriber( self._InfoEventCb )
 
         # Repeatedly Add / Remove playlist
@@ -79,10 +76,8 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
                 self.codecEvt.wait( 3 )
             
             self.codecEvt.clear()
-            self.idArrayContent.clear()
             self.dut.playlist.AddPlaylist( playlist )
             self.dut.playlist.SeekIndex( 0 )
-            self.idArrayContent.wait()
             if i>0:
                 self.codecEvt.wait( 3 )
 
@@ -95,15 +90,6 @@ class TestPlaylistAddDelSoak( BASE.BaseTest ):
         if self.soft:
             self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
-
-    # noinspection PyUnusedLocal
-    def _PlaylistEventCb( self, service, svName, svVal, svSeq ):
-        """Callback from Playlist Service UPnP events"""
-        if svName == 'IdArray':
-            if svVal == '':
-                self.idArrayClear.set()
-            else:
-                self.idArrayContent.set()
 
     # noinspection PyUnusedLocal
     def _InfoEventCb( self, service, svName, svVal, svSeq ):

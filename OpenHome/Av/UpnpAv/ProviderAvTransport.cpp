@@ -119,7 +119,7 @@ ProviderAvTransport::ProviderAvTransport(Net::DvDevice& aDevice, Environment& aE
     , iRelativeCounterPosition(kCounterNotImplemented)
     , iAbsoluteCounterPosition(kCounterNotImplemented)
 {
-    iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderAvTransport::ModerationTimerExpired));
+    iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &ProviderAvTransport::ModerationTimerExpired), "ProviderAvTransport");
 
     EnablePropertyLastChange();
     

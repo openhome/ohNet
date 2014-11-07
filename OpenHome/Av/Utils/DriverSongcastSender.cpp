@@ -147,7 +147,7 @@ DriverSongcastSender::DriverSongcastSender(IPipelineElementUpstream& aPipeline, 
     iOhmSender = new OhmSender(iEnv, *iDevice, *iOhmSenderDriver, *iZoneHandler, udn, aChannel, kSongcastLatencyMs, false/*unicast*/, kSenderIconFileName);
     iOhmSender->SetEnabled(true);
     iDevice->SetEnabled();
-    iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback));
+    iTimer = new Timer(iEnv, MakeFunctor(*this, &DriverSongcastSender::TimerCallback), "DriverSongcastSender");
     Start();
     iTimer->FireIn(1); // first callback has special case behaviour so it doesn't really matter how soon we run
 }

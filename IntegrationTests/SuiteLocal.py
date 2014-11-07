@@ -44,11 +44,6 @@ tests = [
     # Update and build ohMediaPlayer
     [ 'BuildOhmp'                                                                                            ],
 
-    # UPnP AV
-    [ 'TestAvTransportService',      'local', 'ALL'                                                          ],
-    [ 'TestRenderingControlService', 'local'                                                                 ],
-    [ 'TestAvTransportPlayTracks',   'local', 'local', ms,       avtList,  8,    1,         'false'          ],
-
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',   0                                                     ],
     [ 'TestPlaylistModes',           'local', 'all',   0                                                     ],
@@ -65,7 +60,12 @@ tests = [
     [ 'TestAirplayFunctions',        'local', dacp                                                           ],
     [ 'TestAirplayDropout',          'local', dacp,    apTrack,  '3600'                                      ],
 
-    # Songcast
+    # UPnP AV
+    [ 'TestAvTransportService',      'local', 'ALL'                                                          ],
+    [ 'TestRenderingControlService', 'local'                                                                 ],
+    [ 'TestAvTransportPlayTracks',   'local', 'local', ms,       avtList,  8,    1,         'false'          ],
+
+# Songcast
     [ 'TestSongcastPlayback',        'local', 'local', 'local',  'all',   12345                              ],
     [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'stop'                      ],
     [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'source'                    ],

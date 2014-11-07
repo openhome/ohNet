@@ -111,6 +111,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             mrName = self.soft1.name.split( ':' )[0] + ':UPnP AV'
             mpName = self.soft1.name
         else:
+            mrName = mrName.split( ':' )[0] + ':UPnP AV'
             mpName = mrName.split( ':' )[0] + ':SoftPlayer'
 
         # get playlist from server

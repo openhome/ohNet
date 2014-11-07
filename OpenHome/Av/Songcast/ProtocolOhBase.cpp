@@ -38,10 +38,10 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
     iEnv.NetworkAdapterList().RemoveCurrentChangeListener(iNacnId);
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
-    iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired));
+    iTimerRepair = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::TimerRepairExpired), "ProtocolOhBaseRepair");
     iRepairFrames.reserve(kMaxRepairBacklogFrames);
-    iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendJoin));
-    iTimerListen = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendListen));
+    iTimerJoin = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendJoin), "ProtocolOhBaseJoin");
+    iTimerListen = new Timer(aEnv, MakeFunctor(*this, &ProtocolOhBase::SendListen), "ProtocolOhBaseListen");
 
     static const TChar* kOhmCookie = "Songcast";
     NetworkAdapter* current = aEnv.NetworkAdapterList().CurrentAdapter(kOhmCookie);

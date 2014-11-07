@@ -11,6 +11,12 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
+static const TChar* kStatus[] = { "Starting"
+                                 ,"Running"
+                                 ,"RampingDown"
+                                 ,"RampedDown"
+                                 ,"RampingUp" };
+
 VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
@@ -40,6 +46,7 @@ Msg* VariableDelay::Pull()
     iLock.Wait();
     if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
         if (iWaitForAudioBeforeGeneratingSilence) {
+            ASSERT(IsEmpty()); // if not empty, we should process queue before pulling from upstream
             iLock.Signal();
             msg = iUpstreamElement.Pull();
             iLock.Wait();
@@ -108,6 +115,11 @@ MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
         break;
     case ERampedDown:
     {
+        if (iDelayAdjustment > 0) {
+            // NotifyStarving() has been called since we last checked iDelayAdjustment in Pull()
+            EnqueueAtHead(msg);
+            return NULL;
+        }
         ASSERT(iDelayAdjustment < 0)
         TUint jiffies = msg->Jiffies();
         if (jiffies > (TUint)(-iDelayAdjustment)) {
@@ -180,6 +192,8 @@ Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
+    Log::Print("VariableDelay::ProcessMsg(MsgDelay*): delay=%u, iDownstreamDelay=%u, iDelayJiffies=%u, iStatus=%s\n",
+               delayJiffies, iDownstreamDelay, iDelayJiffies, kStatus[iStatus]);
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
     }

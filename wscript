@@ -13,7 +13,7 @@ import os.path, sys
 sys.path[0:0] = [os.path.join('dependencies', 'AnyPlatform', 'ohWafHelpers')]
 
 from filetasks import gather_files, build_tree, copy_task
-from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_ohnetmon_location, guess_libplatform_location, guess_libosa_location, is_core_platform
+from utilfuncs import invoke_test, guess_dest_platform, configure_toolchain, guess_ohnet_location, guess_location, guess_libplatform_location, guess_libosa_location, is_core_platform
 
 def options(opt):
     opt.load('msvc')
@@ -57,7 +57,7 @@ def configure(conf):
 
     configure_toolchain(conf)
     guess_ohnet_location(conf)
-    guess_ohnetmon_location(conf)
+    guess_location(conf, 'ohNetmon')
 
     conf.env.dest_platform = conf.options.dest_platform
     conf.env.testharness_dir = os.path.abspath(conf.options.testharness_dir)
@@ -579,6 +579,7 @@ def build(bld):
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
+                'OpenHome/Tests/TestSsl.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -797,6 +798,11 @@ def build(bld):
             source='OpenHome/Tests/TestPowerManagerMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestPowerManager',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Tests/TestSslMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            target='TestSsl',
             install_path=None)
     bld.program(
             source='OpenHome/Tests/TestHttps.cpp',

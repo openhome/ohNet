@@ -433,9 +433,9 @@ OhmSender::OhmSender(Environment& aEnv, Net::DvDeviceStandard& aDevice, IOhmSend
     iDriver.SetLatency(iLatency);
     LOG(kSongcast, "OHM SENDER DRIVER LATENCY %d\n", iLatency);
        
-    iTimerAliveJoin = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired));
-    iTimerAliveAudio = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired));
-    iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerExpiryExpired));
+    iTimerAliveJoin = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired), "OhmSenderAliveJoin");
+    iTimerAliveAudio = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired), "OhmSenderAliveAudio");
+    iTimerExpiry = new Timer(aEnv, MakeFunctor(*this, &OhmSender::TimerExpiryExpired), "OhmSenderExpiry");
 
     iThreadMulticast = new ThreadFunctor("OhmSenderM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadMulticast->Start();
