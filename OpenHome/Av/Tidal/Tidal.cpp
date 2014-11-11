@@ -133,7 +133,9 @@ TBool Tidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
-            LOG(kError, "Http error - %d - in response to Tidal login\n", code);
+            LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
+            LOG(kError, iReaderBuf.Snaffle());
+            LOG(kError, "\n");
             THROW(ReaderError);
         }
 
