@@ -240,6 +240,7 @@ Credentials::~Credentials()
     for (auto it=iCredentials.begin(); it!=iCredentials.end(); ++it) {
         delete *it;
     }
+    RSA_free((RSA*)iKey);
 }
 
 void Credentials::Add(ICredentialConsumer* aConsumer)
