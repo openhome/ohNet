@@ -126,7 +126,9 @@ headers = \
 	$(inc_build)/OpenHome/FunctorMsg.h \
 	$(inc_build)/OpenHome/FunctorNetworkAdapter.h \
 	$(inc_build)/OpenHome/MimeTypes.h \
+	$(inc_build)/OpenHome/Defines.h \
 	$(inc_build)/OpenHome/OhNetDefines.h \
+	$(inc_build)/OpenHome/Types.h \
 	$(inc_build)/OpenHome/OhNetTypes.h \
 	$(inc_build)/OpenHome/Os.h \
 	$(inc_build)/OpenHome/OsTypes.h \

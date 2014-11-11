@@ -21,4 +21,10 @@
 # define INLINE inline
 #endif
 
+#ifdef _MSC_VER
+# if _MSC_VER <= 1600 // <= VS 2010 (VC10)
+#  pragma warning (disable: 4481) // allow use of C++11 override specifier
+# endif
+#endif
+
 #endif /* HEADER_OPENHOME_DEFINES */
