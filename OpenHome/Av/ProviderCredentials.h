@@ -6,8 +6,10 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Core/DvInvocationResponse.h>
 
-#if _MSC_VER <= 1600 // <= VS 2010 (VC10)
-# pragma warning (disable: 4481)
+#ifdef _MSC_VER
+# if _MSC_VER <= 1600 // <= VS 2010 (VC10)
+#  pragma warning (disable: 4481)
+# endif
 #endif
 
 namespace OpenHome {

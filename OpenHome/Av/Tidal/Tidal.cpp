@@ -21,9 +21,9 @@ const Brn Tidal::kHost("api.tidalhifi.com");
 const Brn Tidal::kId("tidalhifi.com");
 const Brn Tidal::kConfigKeySoundQuality("tidalhifi.com.SoundQuality");
 
-Tidal::Tidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser)
+Tidal::Tidal(Environment& aEnv, const Brx& aToken, Av::Credentials& /*aCredentialsManager*/, Configuration::IConfigInitialiser& aConfigInitialiser)
     : iLock("TIDL")
-    , iCredentialsManager(aCredentialsManager)
+    //, iCredentialsManager(aCredentialsManager)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
     , iWriterBuf(iSocket)

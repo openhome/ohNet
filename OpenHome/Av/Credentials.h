@@ -66,7 +66,7 @@ class Credentials : public ICredentials, private ICredentialObserver
     static const TUint kModerationTimeMs = 500;
 public:
     Credentials(Environment& aEnv, Net::DvDevice& aDevice, Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits = 2048);
-    ~Credentials();
+    virtual ~Credentials();
     void Add(ICredentialConsumer* aConsumer);
     void SetStatus(const Brx& aId, const Brx& aState);
     void SetStatusLocked(const Brx& aId, const Brx& aState); // call from CredentialsChanged() only

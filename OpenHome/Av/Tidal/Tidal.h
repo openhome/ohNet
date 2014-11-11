@@ -49,7 +49,7 @@ private:
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private:
     Mutex iLock;
-    Credentials& iCredentialsManager;
+    //Credentials& iCredentialsManager;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;
     Sws<kWriteBufferBytes> iWriterBuf;
