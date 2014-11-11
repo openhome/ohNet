@@ -175,6 +175,7 @@ upnp_services = [
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Info1.xml', 'av.openhome.org', 'Info', '1', 'AvOpenhomeOrgInfo1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Volume1.xml', 'av.openhome.org', 'Volume', '1', 'AvOpenhomeOrgVolume1'),
         GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Configuration1.xml', 'av.openhome.org', 'Configuration', '1', 'AvOpenhomeOrgConfiguration1'),
+        GeneratedFile('OpenHome/Av/ServiceXml/OpenHome/Credentials1.xml', 'av.openhome.org', 'Credentials', '1', 'AvOpenhomeOrgCredentials1'),
     ]
 
 def build(bld):
@@ -278,6 +279,9 @@ def build(bld):
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
                 'OpenHome/PowerManager.cpp',
+                'OpenHome/Av/Credentials.cpp',
+                'Generated/DvAvOpenhomeOrgCredentials1.cpp',
+                'OpenHome/Av/ProviderCredentials.cpp',
             ],
             use=['OHNET', 'OPENSSL', 'OHNETMON', 'ohPipeline'],
             target='ohMediaPlayer')
@@ -290,6 +294,7 @@ def build(bld):
                 'OpenHome/Av/Playlist/SourcePlaylist.cpp',
                 'OpenHome/Av/Playlist/TrackDatabase.cpp',
                 'OpenHome/Av/Playlist/UriProviderPlaylist.cpp',
+                'OpenHome/Av/Tidal/Tidal.cpp',
                 'OpenHome/Av/Tidal/ProtocolTidal.cpp'
             ],
             use=['OHNET', 'ohMediaPlayer'],
@@ -580,6 +585,8 @@ def build(bld):
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
                 'OpenHome/Tests/TestPowerManager.cpp',
                 'OpenHome/Tests/TestSsl.cpp',
+                'OpenHome/Av/Tests/TestCredentials.cpp',
+                'Generated/CpAvOpenhomeOrgCredentials1.cpp',
             ],
             use=['ohMediaPlayer', 'CodecFlac', 'CodecWav', 'CodecAlac', 'CodecAifc', 'CodecAiff', 'CodecAac', 'CodecAdts', 'CodecVorbis'],
             target='ohMediaPlayerTestUtils')
@@ -805,6 +812,11 @@ def build(bld):
             target='TestSsl',
             install_path=None)
     bld.program(
+            source='OpenHome/Av/Tests/TestCredentialsMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'OPENSSL'],
+            target='TestCredentials',
+            install_path=None)
+    bld.program(
             source='OpenHome/Tests/TestHttps.cpp',
             use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
             target='TestHttps',
@@ -813,11 +825,6 @@ def build(bld):
     #        source='OpenHome/Tests/TestHttpsBsd.cpp',
     #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
     #        target='TestHttpsBsd',
-    #        install_path=None)
-    #bld.program(
-    #        source='OpenHome/Av/Tidal/TestTidal.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
-    #        target='TestTidal',
     #        install_path=None)
 
 

@@ -54,6 +54,7 @@ class ProviderInfo;
 class ProviderVolume;
 class KvpStore;
 class NetworkMonitor;
+class Credentials;
 
 class IMediaPlayer
 {
@@ -71,6 +72,7 @@ public:
     virtual Configuration::IConfigInitialiser& ConfigInitialiser() = 0;
     virtual IPowerManager& PowerManager() = 0;
     virtual Av::Product& Product() = 0;
+    virtual Credentials& CredentialsManager() = 0;
     virtual void Add(Media::UriProvider* aUriProvider) = 0;
     virtual void AddAttribute(const TChar* aAttribute) = 0;
 };
@@ -82,7 +84,8 @@ public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
-                Media::IPullableClock* aPullableClock);
+                Media::IPullableClock* aPullableClock,
+                const Brx& aEntropy);
     ~MediaPlayer();
     void Quit();
     void Add(Media::Codec::CodecBase* aCodec);
@@ -102,6 +105,7 @@ public: // from IMediaPlayer
     Configuration::IConfigInitialiser& ConfigInitialiser();
     IPowerManager& PowerManager();
     Av::Product& Product();
+    Credentials& CredentialsManager();
     void Add(Media::UriProvider* aUriProvider);
     void AddAttribute(const TChar* aAttribute);
 private:
@@ -145,6 +149,7 @@ private:
     Configuration::ConfigText* iConfigProductRoom;
     Configuration::ConfigText* iConfigProductName;
     Av::Product* iProduct;
+    Credentials* iCredentials;
     Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
     Media::IVolume* iRightVolumeHardware;  // XXX volume hardware
     VolumeProfile iVolumeProfile;

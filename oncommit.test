@@ -45,6 +45,7 @@ tests = '''
     #TestSsl
     TestWaiter
     TestUriProviderRepeater
+    #TestCredentials
     '''
 
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))

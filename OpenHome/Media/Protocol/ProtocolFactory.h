@@ -10,6 +10,9 @@ namespace Configuration {
     class IStoreReadOnly;
     class IConfigInitialiser;
 }
+namespace Av {
+    class Credentials;
+}
 namespace Media {
 
 class Protocol;
@@ -22,7 +25,7 @@ public:
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
     static Protocol* NewRtsp(Environment& aEnv, const Brx& aGuid);
-    static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, Configuration::IStoreReadOnly& aReadStore, Configuration::IConfigInitialiser& aConfigInitialiser);
+    static Protocol* NewTidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
 };
 
 } // namespace Media

@@ -46,6 +46,8 @@ SIMPLE_TEST_DECLARATION(TestWaiter);
 ENV_TEST_DECLARATION(TestUdpServer);
 ENV_TEST_DECLARATION(TestPowerManager);
 ENV_TEST_DECLARATION(TestSsl);
+CP_DV_TEST_DECLARATION(TestCredentials);
+CP_DV_TEST_DECLARATION(TestUpnpErrors);
 
 
 extern void TestCodec(OpenHome::Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFiles aFiles, const std::vector<Brn>& aArgs);
@@ -55,12 +57,6 @@ extern AudioFileCollection* TestCodecFiles();
 static void ShellTestCodec(CpStack& aCpStack, DvStack& /*aDvStack*/, const std::vector<Brn>& aArgs)
 {
     TestCodec(aCpStack.Env(), CreateTestCodecPipeline, TestCodecFiles, aArgs);
-}
-
-extern void TestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack);
-static void ShellTestUpnpErrors(CpStack& aCpStack, DvStack& aDvStack, const std::vector<Brn>& /*aArgs*/)
-{
-    TestUpnpErrors(aCpStack, aDvStack);
 }
 
 
@@ -105,6 +101,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestCodec", ShellTestCodec));
     shellTests.push_back(ShellTest("TestUdpServer", ShellTestUdpServer));
     shellTests.push_back(ShellTest("TestUpnpErrors", ShellTestUpnpErrors));
+    shellTests.push_back(ShellTest("TestCredentials", ShellTestCredentials));
 
     OpenHome::Media::ExecuteTestShell(aInitParams, shellTests);
 }
