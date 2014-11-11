@@ -6,7 +6,7 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Configuration/ConfigManager.h>
-#include <OpenHome/Av/providerCredentials.h>
+#include <OpenHome/Av/ProviderCredentials.h>
 
 #include <vector>
 #include "openssl/bio.h"
@@ -182,7 +182,9 @@ void Credential::PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
     else {
         const int decryptedLen = RSA_private_decrypt(iPasswordEncrypted.Bytes(), iPasswordEncrypted.Ptr(), const_cast<TByte*>(iPassword.Ptr()), iRsa, RSA_PKCS1_OAEP_PADDING);
         if (decryptedLen < 0) {
-            LOG(kError, "Failed to decrypt password for %s\n", Id());
+            LOG(kError, "Failed to decrypt password for ");
+            LOG(kError, Id());
+            LOG(kError, "\n");
             iPassword.SetBytes(0);
         }
         else {

@@ -13,6 +13,7 @@
 #include <OpenHome/Net/Private/Error.h>
 #include <OpenHome/Private/Thread.h>
 
+#include <limits.h>
 #include "openssl/bio.h"
 #include "openssl/pem.h"
 
