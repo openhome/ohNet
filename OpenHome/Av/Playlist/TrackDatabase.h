@@ -71,21 +71,21 @@ public:
     TrackDatabase(Media::TrackFactory& aTrackFactory);
     ~TrackDatabase();
 private: // from ITrackDatabase
-    void AddObserver(ITrackDatabaseObserver& aObserver);
-    void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const;
-    void GetTrackById(TUint aId, Media::Track*& aTrack) const;
-    void GetTrackById(TUint aId, TUint aSeq, Media::Track*& aTrack, TUint& aIndex) const;
-    void Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData, TUint& aIdInserted);
-    void DeleteId(TUint aId);
-    void DeleteAll();
-    TUint TrackCount() const;
+    void AddObserver(ITrackDatabaseObserver& aObserver) override;
+    void GetIdArray(std::array<TUint32, kMaxTracks>& aIdArray, TUint& aSeq) const override;
+    void GetTrackById(TUint aId, Media::Track*& aTrack) const override;
+    void GetTrackById(TUint aId, TUint aSeq, Media::Track*& aTrack, TUint& aIndex) const override;
+    void Insert(TUint aIdAfter, const Brx& aUri, const Brx& aMetaData, TUint& aIdInserted) override;
+    void DeleteId(TUint aId) override;
+    void DeleteAll() override;
+    TUint TrackCount() const override;
 private: // from ITrackDatabaseReader
-    void SetObserver(ITrackDatabaseObserver& aObserver);
-    Media::Track* TrackRef(TUint aId);
-    Media::Track* NextTrackRef(TUint aId);
-    Media::Track* PrevTrackRef(TUint aId);
-    Media::Track* TrackRefByIndex(TUint aIndex);
-    Media::Track* TrackRefByIndexSorted(TUint aIndex);
+    void SetObserver(ITrackDatabaseObserver& aObserver) override;
+    Media::Track* TrackRef(TUint aId) override;
+    Media::Track* NextTrackRef(TUint aId) override;
+    Media::Track* PrevTrackRef(TUint aId) override;
+    Media::Track* TrackRefByIndex(TUint aIndex) override;
+    Media::Track* TrackRefByIndexSorted(TUint aIndex) override;
 private:
     void GetTrackByIdLocked(TUint aId, Media::Track*& aTrack) const;
     TBool TryGetTrackById(TUint aId, Media::Track*& aTrack, TUint aStartIndex, TUint aEndIndex, TUint& aFoundIndex) const;
@@ -109,16 +109,16 @@ public:
     void Reshuffle();
     TBool TryMoveToStart(TUint aId); // moves aId to follow iPrevTrackId iff Enabled()
 private: // from ITrackDatabaseReader
-    void SetObserver(ITrackDatabaseObserver& aObserver);
-    Media::Track* TrackRef(TUint aId);
-    Media::Track* NextTrackRef(TUint aId);
-    Media::Track* PrevTrackRef(TUint aId);
-    Media::Track* TrackRefByIndex(TUint aIndex);
-    Media::Track* TrackRefByIndexSorted(TUint aIndex);
+    void SetObserver(ITrackDatabaseObserver& aObserver) override;
+    Media::Track* TrackRef(TUint aId) override;
+    Media::Track* NextTrackRef(TUint aId) override;
+    Media::Track* PrevTrackRef(TUint aId) override;
+    Media::Track* TrackRefByIndex(TUint aIndex) override;
+    Media::Track* TrackRefByIndexSorted(TUint aIndex) override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private:
     void DoReshuffle(const TChar* aLogPrefix);
     void MoveToStartOfUnplayed(Media::Track* aTrack, const TChar* aLogPrefix);
@@ -138,18 +138,18 @@ class Repeater : public IRepeater, public ITrackDatabaseReader, public ITrackDat
 public:
     Repeater(ITrackDatabaseReader& aReader);
 private: // from IRepeater
-    void SetRepeat(TBool aRepeat);
+    void SetRepeat(TBool aRepeat) override;
 private: // from ITrackDatabaseReader
-    void SetObserver(ITrackDatabaseObserver& aObserver);
-    Media::Track* TrackRef(TUint aId);
-    Media::Track* NextTrackRef(TUint aId);
-    Media::Track* PrevTrackRef(TUint aId);
-    Media::Track* TrackRefByIndex(TUint aIndex);
-    Media::Track* TrackRefByIndexSorted(TUint aIndex);
+    void SetObserver(ITrackDatabaseObserver& aObserver) override;
+    Media::Track* TrackRef(TUint aId) override;
+    Media::Track* NextTrackRef(TUint aId) override;
+    Media::Track* PrevTrackRef(TUint aId) override;
+    Media::Track* TrackRefByIndex(TUint aIndex) override;
+    Media::Track* TrackRefByIndexSorted(TUint aIndex) override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private:
     Mutex iLock;
     ITrackDatabaseReader& iReader;

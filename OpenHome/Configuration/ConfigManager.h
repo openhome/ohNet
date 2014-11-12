@@ -96,7 +96,7 @@ public:
     const Brx& Key() const;
 public: // from IObservable
     virtual TUint Subscribe(FunctorObserver aFunctor) = 0;
-    void Unsubscribe(TUint aId);
+    void Unsubscribe(TUint aId) override;
 public: // from ISerialisable
     virtual void Serialise(IWriter& aWriter) const = 0;
     virtual void Deserialise(const Brx& aString) = 0;
@@ -208,12 +208,12 @@ public:
 private:
     TBool IsValid(TInt aVal) const;
 public: // from ConfigVal
-    TUint Subscribe(FunctorConfigNum aFunctor);
+    TUint Subscribe(FunctorConfigNum aFunctor) override;
 public: // from ConfigVal
-    void Serialise(IWriter& aWriter) const;
-    void Deserialise(const Brx& aString);   // THROWS ConfigNotANumber, ConfigValueOutOfRange
+    void Serialise(IWriter& aWriter) const override;
+    void Deserialise(const Brx& aString) override;   // THROWS ConfigNotANumber, ConfigValueOutOfRange
 private: // from ConfigVal
-    void Write(KvpNum& aKvp);
+    void Write(KvpNum& aKvp) override;
 private:
     inline TBool operator==(const ConfigNum& aNum) const;
 private:
@@ -263,12 +263,12 @@ public:
 private:
     TBool IsValid(TUint aVal) const;
 public: // from ConfigVal
-    TUint Subscribe(FunctorConfigChoice aFunctor);
+    TUint Subscribe(FunctorConfigChoice aFunctor) override;
 public: // from ConfigVal
-    void Serialise(IWriter& aWriter) const;
-    void Deserialise(const Brx& aString);   // THROWS ConfigNotANumber, ConfigInvalidSelection
+    void Serialise(IWriter& aWriter) const override;
+    void Deserialise(const Brx& aString) override;   // THROWS ConfigNotANumber, ConfigInvalidSelection
 private: // from ConfigVal
-    void Write(KvpChoice& aKvp);
+    void Write(KvpChoice& aKvp) override;
 private:
     inline TBool operator==(const ConfigChoice& aChoice) const;
 private:
@@ -320,12 +320,12 @@ public:
 private:
     TBool IsValid(const Brx& aVal) const;
 public: // from ConfigVal
-    TUint Subscribe(FunctorConfigText aFunctor);
+    TUint Subscribe(FunctorConfigText aFunctor) override;
 public: // from ConfigVal
-    void Serialise(IWriter& aWriter) const;
-    void Deserialise(const Brx& aString);   // THROWS ConfigValueTooLong
+    void Serialise(IWriter& aWriter) const override;
+    void Deserialise(const Brx& aString) override;   // THROWS ConfigValueTooLong
 private: // from ConfigVal
-    void Write(KvpText& aKvp);
+    void Write(KvpText& aKvp) override;
 private:
     inline TBool operator==(const ConfigText& aText) const;
 private:
@@ -487,9 +487,9 @@ template <class T> typename SerialisedMap<T>::Iterator SerialisedMap<T>::End() c
 class WriterPrinter : public IWriter
 {
 public: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
+    void Write(TByte aValue) override;
+    void Write(const Brx& aBuffer) override;
+    void WriteFlush() override;
 };
 
 /*
@@ -510,22 +510,22 @@ public:
     void Print() const;     // for debugging!
     void DumpToStore();     // for debugging!
 public: // from IConfigManager
-    TBool HasNum(const Brx& aKey) const;
-    ConfigNum& GetNum(const Brx& aKey) const;
-    TBool HasChoice(const Brx& aKey) const;
-    ConfigChoice& GetChoice(const Brx& aKey) const;
-    TBool HasText(const Brx& aKey) const;
-    ConfigText& GetText(const Brx& aKey) const;
-    TBool Has(const Brx& aKey) const;
-    ISerialisable& Get(const Brx& aKey) const;
+    TBool HasNum(const Brx& aKey) const override;
+    ConfigNum& GetNum(const Brx& aKey) const override;
+    TBool HasChoice(const Brx& aKey) const override;
+    ConfigChoice& GetChoice(const Brx& aKey) const override;
+    TBool HasText(const Brx& aKey) const override;
+    ConfigText& GetText(const Brx& aKey) const override;
+    TBool Has(const Brx& aKey) const override;
+    ISerialisable& Get(const Brx& aKey) const override;
 public: // from IConfigInitialiser
-    IStoreReadWrite& Store();
-    void Open();
-    void Add(ConfigNum& aNum);
-    void Add(ConfigChoice& aChoice);
-    void Add(ConfigText& aText);
-    void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault);
-    void ToStore(const Brx& aKey, const Brx& aValue);
+    IStoreReadWrite& Store() override;
+    void Open() override;
+    void Add(ConfigNum& aNum) override;
+    void Add(ConfigChoice& aChoice) override;
+    void Add(ConfigText& aText) override;
+    void FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault) override;
+    void ToStore(const Brx& aKey, const Brx& aValue) override;
 private:
     void AddNum(const Brx& aKey, ConfigNum& aNum);
     void AddChoice(const Brx& aKey, ConfigChoice& aChoice);

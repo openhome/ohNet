@@ -56,7 +56,7 @@ public:
     ~PowerManager();
     void PowerDown();
 public: // from IPowerManager
-    IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority);
+    IPowerManagerObserver* Register(IPowerHandler& aHandler, TUint aPriority) override;
 private:
     void Deregister(TUint aId);
 private:
@@ -126,8 +126,8 @@ public:
     TInt Get() const;
     void Set(TInt aValue); // owning class knows limits
 private: // from StoreVal
-    void PowerUp();
-    void PowerDown();
+    void PowerUp() override;
+    void PowerDown() override;
 private:
     void Write();
 private:
@@ -145,8 +145,8 @@ public:
     void Get(Bwx& aVal) const;
     void Set(const Brx& aValue);
 private: // from StoreVal
-    void PowerUp();
-    void PowerDown();
+    void PowerUp() override;
+    void PowerDown() override;
 private:
     void Write();
 private:

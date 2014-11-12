@@ -36,10 +36,10 @@ public:
     TBool TryLogout(const Brx& aSessionId);
     void Interrupt(TBool aInterrupt);
 private: // from ICredentialConsumer
-    const Brx& Id() const;
-    void CredentialsChanged(const Brx& aUsername, const Brx& aPassword);
-    void Login(Bwx& aToken);
-    void Logout(const Brx& aToken);
+    const Brx& Id() const override;
+    void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
+    void Login(Bwx& aToken) override;
+    void Logout(const Brx& aToken) override;
 private:
     TBool TryConnect(TUint aPort);
     TBool TryLogin(Bwx& aSessionId, Bwx& aCountryCode);

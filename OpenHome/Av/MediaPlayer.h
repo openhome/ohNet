@@ -93,47 +93,47 @@ public:
     void Add(ISource* aSource);
     void Start();
 public: // from IMediaPlayer
-    Environment& Env();
-    Net::DvStack& DvStack();
-    Net::DvDeviceStandard& Device();
-    Media::PipelineManager& Pipeline();
-    Media::TrackFactory& TrackFactory();
-    IReadStore& ReadStore();
-    Configuration::IStoreReadWrite& ReadWriteStore();
-    Media::IPullableClock* PullableClock();
-    Configuration::IConfigManager& ConfigManager();
-    Configuration::IConfigInitialiser& ConfigInitialiser();
-    IPowerManager& PowerManager();
-    Av::Product& Product();
-    Credentials& CredentialsManager();
-    void Add(Media::UriProvider* aUriProvider);
-    void AddAttribute(const TChar* aAttribute);
+    Environment& Env() override;
+    Net::DvStack& DvStack() override;
+    Net::DvDeviceStandard& Device() override;
+    Media::PipelineManager& Pipeline() override;
+    Media::TrackFactory& TrackFactory() override;
+    IReadStore& ReadStore() override;
+    Configuration::IStoreReadWrite& ReadWriteStore() override;
+    Media::IPullableClock* PullableClock() override;
+    Configuration::IConfigManager& ConfigManager() override;
+    Configuration::IConfigInitialiser& ConfigInitialiser() override;
+    IPowerManager& PowerManager() override;
+    Av::Product& Product() override;
+    Credentials& CredentialsManager() override;
+    void Add(Media::UriProvider* aUriProvider) override;
+    void AddAttribute(const TChar* aAttribute) override;
 private:
     // FIXME - dummy implementations until Volume* classes are finalised
     class VolumeProfile : public Media::IVolumeProfile
     {
     public: // from IVolumeProfile
-        TUint MaxVolume() const;
-        TUint VolumeUnity() const;
-        TUint VolumeSteps() const;
-        TUint VolumeMilliDbPerStep() const;
-        TInt MaxBalance() const;
+        TUint MaxVolume() const override;
+        TUint VolumeUnity() const override;
+        TUint VolumeSteps() const override;
+        TUint VolumeMilliDbPerStep() const override;
+        TInt MaxBalance() const override;
     };
     class VolumePrinter : public Media::IVolume
     {
     public: // from IVolume
-        void SetVolume(TUint aVolume);
+        void SetVolume(TUint aVolume) override;
     };
     class BalancePrinter : public Media::IBalance
     {
     public: // from IBalance
-        void SetBalance(TInt aBalance);
+        void SetBalance(TInt aBalance) override;
     };
     class MutePrinter : public Media::IMute
     {
     public: // from IMute
-        void Mute();
-        void Unmute();
+        void Mute() override;
+        void Unmute() override;
     };
 private:
     Net::DvStack& iDvStack;

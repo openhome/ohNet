@@ -66,13 +66,13 @@ public:
     DummySourceUpnpAv(Net::DvStack& aDvStack, const Brx& aUdn);
     ~DummySourceUpnpAv();
 private: // from ISourceUpnpAv
-    void SetTrack(const Brx& aUri, const Brx& aMetaData);
-    void Play();
-    void Pause();
-    void Stop();
-    void Next();
-    void Prev();
-    void Seek(TUint aSecondsAbsolute);
+    void SetTrack(const Brx& aUri, const Brx& aMetaData) override;
+    void Play() override;
+    void Pause() override;
+    void Stop() override;
+    void Next() override;
+    void Prev() override;
+    void Seek(TUint aSecondsAbsolute) override;
 private:
     Net::DvDevice* iDevice;
     ProviderAvTransport* iProviderAvTransport;
@@ -102,7 +102,7 @@ public:
     SuiteAvTransport(CpDevice& aDevice);
 private: // from Suite
     ~SuiteAvTransport();
-    void Test();
+    void Test() override;
 private:
     CpProxyUpnpOrgAVTransport1* iProxy;
 };
@@ -113,7 +113,7 @@ public:
     SuiteConnectionManager(CpDevice& aDevice);
 private: // from Suite
     ~SuiteConnectionManager();
-    void Test();
+    void Test() override;
 private:
     CpProxyUpnpOrgConnectionManager1* iProxy;
 };
@@ -124,7 +124,7 @@ public:
     SuiteRenderingControl(CpDevice& aDevice);
 private: // from Suite
     ~SuiteRenderingControl();
-    void Test();
+    void Test() override;
 private:
     CpProxyUpnpOrgRenderingControl1* iProxy;
 };

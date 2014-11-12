@@ -20,7 +20,7 @@ class DefaultTimestamper : public IOhmTimestamper, private INonCopyable // trivi
 public:
     DefaultTimestamper(Environment& aEnv);
 private: // from IOhmTimestamper
-    TUint Timestamp(TUint aFrame);
+    TUint Timestamp(TUint aFrame) override;
 private:
     Environment& iEnv;
 };

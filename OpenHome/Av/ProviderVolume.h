@@ -40,35 +40,35 @@ public:
                    Media::IBalance& aBalance, Media::IMute& aMute);
     ~ProviderVolume();
     void SetVolumeLimit(TUint aVolumeLimit);  // alternative method of setting volume limit, instead of directly via ConfigVal
-private: // from DvProviderAvOpenhomeOrgVolume1 (and only ever invoked from base class)
-    virtual void Characteristics(Net::IDvInvocation& aInvocation
-                               , Net::IDvInvocationResponseUint& aVolumeMax
-                               , Net::IDvInvocationResponseUint& aVolumeUnity
-                               , Net::IDvInvocationResponseUint& aVolumeSteps
-                               , Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep
-                               , Net::IDvInvocationResponseUint& aBalanceMax
-                               , Net::IDvInvocationResponseUint& aFadeMax
-    );
+private: // from DvProviderAvOpenhomeOrgVolume1
+    void Characteristics(Net::IDvInvocation& aInvocation
+                       , Net::IDvInvocationResponseUint& aVolumeMax
+                       , Net::IDvInvocationResponseUint& aVolumeUnity
+                       , Net::IDvInvocationResponseUint& aVolumeSteps
+                       , Net::IDvInvocationResponseUint& aVolumeMilliDbPerStep
+                       , Net::IDvInvocationResponseUint& aBalanceMax
+                       , Net::IDvInvocationResponseUint& aFadeMax
+    ) override;
 
-    void SetVolume(Net::IDvInvocation& aInvocation, TUint aValue);
-    void VolumeInc(Net::IDvInvocation& aInvocation);
-    void VolumeDec(Net::IDvInvocation& aInvocation);
-    void Volume(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
+    void SetVolume(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void VolumeInc(Net::IDvInvocation& aInvocation) override;
+    void VolumeDec(Net::IDvInvocation& aInvocation) override;
+    void Volume(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 
-    void SetBalance(Net::IDvInvocation& aInvocation, TInt aValue);
-    void BalanceInc(Net::IDvInvocation& aInvocation);
-    void BalanceDec(Net::IDvInvocation& aInvocation);
-    void Balance(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseInt& aValue);
+    void SetBalance(Net::IDvInvocation& aInvocation, TInt aValue) override;
+    void BalanceInc(Net::IDvInvocation& aInvocation) override;
+    void BalanceDec(Net::IDvInvocation& aInvocation) override;
+    void Balance(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseInt& aValue) override;
 
-    void SetFade(Net::IDvInvocation& aInvocation, TInt aValue);
-    void FadeInc(Net::IDvInvocation& aInvocation);
-    void FadeDec(Net::IDvInvocation& aInvocation);
-    void Fade(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseInt& aValue);
+    void SetFade(Net::IDvInvocation& aInvocation, TInt aValue) override;
+    void FadeInc(Net::IDvInvocation& aInvocation) override;
+    void FadeDec(Net::IDvInvocation& aInvocation) override;
+    void Fade(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseInt& aValue) override;
 
-    void SetMute(Net::IDvInvocation& aInvocation, TBool aValue);
-    void Mute(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue);
+    void SetMute(Net::IDvInvocation& aInvocation, TBool aValue) override;
+    void Mute(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
 
-    void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
+    void VolumeLimit(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 private:
     void HelperSetVolume(Net::IDvInvocation& aInvocation, TUint aVolumeCurrent, TUint aVolumeNew);
     void HelperSetBalance(Net::IDvInvocation& aInvocation, TInt aBalance);

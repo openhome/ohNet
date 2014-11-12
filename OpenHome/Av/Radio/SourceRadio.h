@@ -40,22 +40,22 @@ public:
     SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigInitialiser& aConfigInit);
     ~SourceRadio();
 private: // from ISource
-    void Activate();
-    void Deactivate();
-        void PipelineStopped();
+    void Activate() override;
+    void Deactivate() override;
+    void PipelineStopped() override;
 private: // from ISourceRadio
-    void Fetch(const Brx& aUri, const Brx& aMetaData);
-    void Play();
-    void Pause();
-    void Stop();
-    void SeekAbsolute(TUint aSeconds);
-    void SeekRelative(TUint aSeconds);
+    void Fetch(const Brx& aUri, const Brx& aMetaData) override;
+    void Play() override;
+    void Pause() override;
+    void Stop() override;
+    void SeekAbsolute(TUint aSeconds) override;
+    void SeekRelative(TUint aSeconds) override;
 private: // from IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     Mutex iLock;
     Media::PipelineManager& iPipeline;

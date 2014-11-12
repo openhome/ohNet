@@ -14,8 +14,8 @@ class SuiteMsgUdp : public SuiteUnitTest, public INonCopyable
 public:
     SuiteMsgUdp(Environment& aEnv, TIpAddress aInterface);
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestRead();
 private:
@@ -80,8 +80,8 @@ class SuiteSocketUdpServer : public SuiteUnitTest, public INonCopyable
 public:
     SuiteSocketUdpServer(Environment& aEnv, TIpAddress aInterface);
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     static void PrintBufInfo(const char* aMsg, Brx& aBuf);
     void GenerateNextMsg(Bwx& aBuf);
@@ -550,8 +550,8 @@ class SuiteUdpServerManager : public SuiteUnitTest, public INonCopyable
 public:
     SuiteUdpServerManager(Environment& aEnv, TIpAddress aInterface);
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestEmpty();
     void TestCreateOneServer();

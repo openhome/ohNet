@@ -18,26 +18,26 @@ public:
     ProviderProduct(Net::DvDevice& aDevice, Av::Product& aProduct);
     ~ProviderProduct();
 private: // from DvProviderAvOpenhomeOrgProduct1
-    void Manufacturer(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseString& aInfo, Net::IDvInvocationResponseString& aUrl, Net::IDvInvocationResponseString& aImageUri);
-    void Model(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseString& aInfo, Net::IDvInvocationResponseString& aUrl, Net::IDvInvocationResponseString& aImageUri);
-    void Product(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aRoom, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseString& aInfo, Net::IDvInvocationResponseString& aUrl, Net::IDvInvocationResponseString& aImageUri);
-    void Standby(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue);
-    void SetStandby(Net::IDvInvocation& aInvocation, TBool aValue);
-    void SourceCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
-    void SourceXml(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-    void SourceIndex(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
-    void SetSourceIndex(Net::IDvInvocation& aInvocation, TUint aValue);
-    void SetSourceIndexByName(Net::IDvInvocation& aInvocation, const Brx& aValue);
-    void Source(Net::IDvInvocation& aInvocation, TUint aIndex, Net::IDvInvocationResponseString& aSystemName, Net::IDvInvocationResponseString& aType, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseBool& aVisible);
-    void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-    void SourceXmlChangeCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue);
+    void Manufacturer(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseString& aInfo, Net::IDvInvocationResponseString& aUrl, Net::IDvInvocationResponseString& aImageUri) override;
+    void Model(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseString& aInfo, Net::IDvInvocationResponseString& aUrl, Net::IDvInvocationResponseString& aImageUri) override;
+    void Product(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aRoom, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseString& aInfo, Net::IDvInvocationResponseString& aUrl, Net::IDvInvocationResponseString& aImageUri) override;
+    void Standby(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
+    void SetStandby(Net::IDvInvocation& aInvocation, TBool aValue) override;
+    void SourceCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+    void SourceXml(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void SourceIndex(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
+    void SetSourceIndex(Net::IDvInvocation& aInvocation, TUint aValue) override;
+    void SetSourceIndexByName(Net::IDvInvocation& aInvocation, const Brx& aValue) override;
+    void Source(Net::IDvInvocation& aInvocation, TUint aIndex, Net::IDvInvocationResponseString& aSystemName, Net::IDvInvocationResponseString& aType, Net::IDvInvocationResponseString& aName, Net::IDvInvocationResponseBool& aVisible) override;
+    void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void SourceXmlChangeCount(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseUint& aValue) override;
 private: // from IProductObserver
-    void Started();
-    void RoomChanged();
-    void NameChanged();
-    void StandbyChanged();
-    void SourceIndexChanged();
-    void SourceXmlChanged();
+    void Started() override;
+    void RoomChanged() override;
+    void NameChanged() override;
+    void StandbyChanged() override;
+    void SourceIndexChanged() override;
+    void SourceXmlChanged() override;
 private:
     Av::Product& iProduct;
     Mutex iLock;

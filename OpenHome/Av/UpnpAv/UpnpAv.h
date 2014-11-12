@@ -44,23 +44,23 @@ public:
 private:
     void EnsureActive();
 private: // from Source
-    void Activate();
-    void Deactivate();
-    void PipelineStopped();
+    void Activate() override;
+    void Deactivate() override;
+    void PipelineStopped() override;
 private: // from ISourceUpnpAv
-    void SetTrack(const Brx& aUri, const Brx& aMetaData);
-    void Play();
-    void Pause();
-    void Stop();
-    void Next();
-    void Prev();
-    void Seek(TUint aSecondsAbsolute);
+    void SetTrack(const Brx& aUri, const Brx& aMetaData) override;
+    void Play() override;
+    void Pause() override;
+    void Stop() override;
+    void Next() override;
+    void Prev() override;
+    void Seek(TUint aSecondsAbsolute) override;
 private: // from IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     Mutex iLock;
     Mutex iActivationLock;

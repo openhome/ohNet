@@ -14,11 +14,11 @@ public:
     CodecRaop();
     ~CodecRaop();
 private: // from CodecBase
-    TBool Recognise();
-    void StreamInitialise();
-    void Process();
-    TBool TrySeek(TUint aStreamId, TUint64 aSample);
-    void StreamCompleted();
+    TBool Recognise() override;
+    void StreamInitialise() override;
+    void Process() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
+    void StreamCompleted() override;
 };
 
 } // namespace Av

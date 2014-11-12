@@ -27,15 +27,15 @@ public:
     ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode, IPowerManager& aPowerManager);
     ~ProtocolOhu();
 private: // from ProtocolOhBase
-    Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
+    Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
 private: // from Media::Protocol
-    void Interrupt(TBool aInterrupt);
+    void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 private: // from IPowerHandler
-    void PowerUp();
-    void PowerDown();
+    void PowerUp() override;
+    void PowerDown() override;
 private:
     void HandleAudio(const OhmHeader& aHeader);
     void HandleTrack(const OhmHeader& aHeader);

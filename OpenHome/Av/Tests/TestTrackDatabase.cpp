@@ -22,12 +22,12 @@ class SuiteTrackDatabase : public SuiteUnitTest, private ITrackDatabaseObserver
 public:
     SuiteTrackDatabase();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private:
     void InsertInitialTrack();
     void InsertFailsWhenIdAfterInvalid();
@@ -69,12 +69,12 @@ class SuiteTrackReader : public SuiteUnitTest, private ITrackDatabaseObserver
 public:
     SuiteTrackReader();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private:
     void TrackRefValidId();
     void TrackRefInvalidId();
@@ -100,12 +100,12 @@ class SuiteShuffler : public SuiteUnitTest, private ITrackDatabaseObserver
 public:
     SuiteShuffler();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private:
     void TrackRefShuffleOff();
     void TrackRefShuffleOn();
@@ -134,12 +134,12 @@ class SuiteRepeater : public SuiteUnitTest, private ITrackDatabaseObserver
 public:
     SuiteRepeater();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private:
     void TrackRefRepeatOff();
     void TrackRefRepeatOn();

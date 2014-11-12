@@ -27,9 +27,9 @@ public:
     void Close();
     void Interrupt(TBool aInterrupt);
 public: // from IReaderSource
-    void Read(Bwx& aBuffer);
-    void ReadFlush();
-    void ReadInterrupt();
+    void Read(Bwx& aBuffer) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     Environment& iEnv;
     SocketUdpBase* iRxSocket;
@@ -50,9 +50,9 @@ public:
     void Send(const Brx& aBuffer);
     void Close();
 public: // from IReaderSource
-    void Read(Bwx& aBuffer);
-    void ReadFlush();
-    void ReadInterrupt();
+    void Read(Bwx& aBuffer) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     Environment& iEnv;
     SocketUdpMulticast* iRxSocket;

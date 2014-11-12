@@ -25,7 +25,7 @@ public:
     UriProviderRaop(Environment& aEnv, Media::TrackFactory& aTrackFactory);
     ~UriProviderRaop();
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller();
+    Media::IClockPuller* ClockPuller() override;
 private:
     Media::ClockPullerLogging* iClockPuller;
 };

@@ -69,10 +69,10 @@ public:
     const Brx& Password() const { return iPassword; }
     const Brx& Status() const { return iStatus; }
 public: // from ICredentialConsumer
-    const Brx& Id() const;
-    void CredentialsChanged(const Brx& aUsername, const Brx& aPassword);
-    void Login(Bwx& aToken);
-    void Logout(const Brx& aToken);
+    const Brx& Id() const override;
+    void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
+    void Login(Bwx& aToken) override;
+    void Logout(const Brx& aToken) override;
 private:
     Credentials& iCredentials;
     Bws<ICredentials::kMaxUsernameBytes> iUsername;
@@ -88,7 +88,7 @@ public:
     SuiteCredentials(CpStack& aCpStack, DvStack& aDvStack);
     ~SuiteCredentials();
 private: // from Suite
-    void Test();
+    void Test() override;
 private:
     void SeqChanged();
 private:

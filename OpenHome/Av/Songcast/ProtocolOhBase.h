@@ -41,12 +41,12 @@ protected:
 private:
     virtual Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) = 0;
 protected: // from Media::Protocol
-    void Interrupt(TBool aInterrupt);
+    void Interrupt(TBool aInterrupt) override;
 private: // from Media::Protocol
-    Media::ProtocolStreamResult Stream(const Brx& aUri);
-    Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
+    Media::ProtocolStreamResult Stream(const Brx& aUri) override;
+    Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
 private:
     void CurrentSubnetChanged();
     void RepairReset();
@@ -55,10 +55,10 @@ private:
     TBool Repair(OhmMsgAudioBlob& aMsg);
     void OutputAudio(OhmMsgAudioBlob& aMsg);
 private: // from IOhmMsgProcessor
-    void Process(OhmMsgAudio& aMsg);
-    void Process(OhmMsgAudioBlob& aMsg);
-    void Process(OhmMsgTrack& aMsg);
-    void Process(OhmMsgMetatext& aMsg);
+    void Process(OhmMsgAudio& aMsg) override;
+    void Process(OhmMsgAudioBlob& aMsg) override;
+    void Process(OhmMsgTrack& aMsg) override;
+    void Process(OhmMsgMetatext& aMsg) override;
 protected:
     static const TUint kMaxFrameBytes = 16*1024;
     static const TUint kTimerListenTimeoutMs = 10000;

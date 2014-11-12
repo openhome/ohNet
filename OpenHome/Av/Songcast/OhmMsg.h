@@ -97,8 +97,8 @@ public:
 
     void SetResent(TBool aValue);
 public: // from OhmMsg
-    void Process(IOhmMsgProcessor& aProcessor);
-    void Externalise(IWriter& aWriter);
+    void Process(IOhmMsgProcessor& aProcessor) override;
+    void Externalise(IWriter& aWriter) override;
 private:
     OhmMsgAudio(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);
@@ -133,8 +133,8 @@ public:
     TUint Frame() const { return iFrame; }
     void ExternaliseAsBlob(IWriter& aWriter);
 public: // from OhmMsg
-    void Process(IOhmMsgProcessor& aProcessor);
-    void Externalise(IWriter& aWriter);
+    void Process(IOhmMsgProcessor& aProcessor) override;
+    void Externalise(IWriter& aWriter) override;
 private:
     OhmMsgAudioBlob(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);
@@ -157,8 +157,8 @@ public:
     const Brx& Uri() const;
     const Brx& Metadata() const;
 public: // from OhmMsg
-    void Process(IOhmMsgProcessor& aProcessor);
-    void Externalise(IWriter& aWriter);
+    void Process(IOhmMsgProcessor& aProcessor) override;
+    void Externalise(IWriter& aWriter) override;
 private:
     OhmMsgTrack(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);    
@@ -180,8 +180,8 @@ public:
     TUint Sequence() const;
     const Brx& Metatext() const;
 public: // from OhmMsg
-    void Process(IOhmMsgProcessor& aProcessor);
-    void Externalise(IWriter& aWriter);
+    void Process(IOhmMsgProcessor& aProcessor) override;
+    void Externalise(IWriter& aWriter) override;
 private:
     OhmMsgMetatext(OhmMsgFactory& aFactory);
     void Create(IReader& aReader, const OhmHeader& aHeader);    
@@ -214,24 +214,24 @@ public:
     OhmMsgFactory(TUint aAudioCount, TUint aAudioBlobCount, TUint aTrackCount, TUint aMetatextCount);
     ~OhmMsgFactory();
 public: // from IOhmMsgFactory
-    OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader);
-    OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader);
-    OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader);
-    OhmMsgAudio* CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader);
-    OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader);
-    OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader);
-    OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio);
-    OhmMsgTrack* CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata);
-    OhmMsgMetatext* CreateMetatext(TUint aSequence, const Brx& aMetatext);
+    OhmMsg* Create(IReader& aReader, const OhmHeader& aHeader) override;
+    OhmMsgAudio* CreateAudio(IReader& aReader, const OhmHeader& aHeader) override;
+    OhmMsgAudioBlob* CreateAudioBlob(IReader& aReader, const OhmHeader& aHeader) override;
+    OhmMsgAudio* CreateAudioFromBlob(IReader& aReader, const OhmHeader& aHeader) override;
+    OhmMsgTrack* CreateTrack(IReader& aReader, const OhmHeader& aHeader) override;
+    OhmMsgMetatext* CreateMetatext(IReader& aReader, const OhmHeader& aHeader) override;
+    OhmMsgAudio* CreateAudio(TBool aHalt, TBool aLossless, TBool aTimestamped, TBool aResent, TUint aSamples, TUint aFrame, TUint aNetworkTimestamp, TUint aMediaLatency, TUint aMediaTimestamp, TUint64 aSampleStart, TUint64 aSamplesTotal, TUint aSampleRate, TUint aBitRate, TUint aVolumeOffset, TUint aBitDepth, TUint aChannels, const Brx& aCodec, const Brx& aAudio) override;
+    OhmMsgTrack* CreateTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata) override;
+    OhmMsgMetatext* CreateMetatext(TUint aSequence, const Brx& aMetatext) override;
 private:
     void Lock();
     void Unlock();
     void Destroy(OhmMsg& aMsg);
 private: // from IOhmMsgProcessor
-    void Process(OhmMsgAudio& aMsg);
-    void Process(OhmMsgAudioBlob& aMsg);
-    void Process(OhmMsgTrack& aMsg);
-    void Process(OhmMsgMetatext& aMsg);
+    void Process(OhmMsgAudio& aMsg) override;
+    void Process(OhmMsgAudioBlob& aMsg) override;
+    void Process(OhmMsgTrack& aMsg) override;
+    void Process(OhmMsgMetatext& aMsg) override;
 private:
     Fifo<OhmMsgAudio*> iFifoAudio;
     Fifo<OhmMsgAudioBlob*> iFifoAudioBlob;

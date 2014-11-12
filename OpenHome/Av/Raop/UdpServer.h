@@ -49,9 +49,9 @@ public:
     void SetRecvTimeout(TUint aMs);
     void SetTtl(TUint aTtl);
 public: // from IReaderSource
-    void Read(Bwx& aBuffer);
-    void ReadFlush();
-    void ReadInterrupt();
+    void Read(Bwx& aBuffer) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     static void CopyMsgToBuf(MsgUdp& aMsg, Bwx& aBuf, Endpoint& aEndpoint);
     void ServerThread();

@@ -30,11 +30,11 @@ public:
     void SetStatusBlocked();
     void NotifyAudioPlaying(TBool aPlaying);
 private: // from Net::DvProviderAvOpenhomeOrgSender1
-    void PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-    void Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-    void Audio(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue);
-    void Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
-    void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue);
+    void PresentationUrl(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void Metadata(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void Audio(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseBool& aValue) override;
+    void Status(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
+    void Attributes(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aValue) override;
 private:
     void UpdateMetadata();
 private:

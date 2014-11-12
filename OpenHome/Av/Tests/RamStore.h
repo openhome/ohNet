@@ -18,7 +18,7 @@ class RamStore : public IStaticDataSource
 public:
     virtual ~RamStore();
 private: // from IStaticDataSource
-    void LoadStaticData(IStoreLoaderStatic& aLoader);
+    void LoadStaticData(IStoreLoaderStatic& aLoader) override;
 };
 
 } // namespace Av

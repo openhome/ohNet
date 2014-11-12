@@ -43,33 +43,33 @@ public:
     ProviderAvTransport(Net::DvDevice& aDevice, Environment& aEnv, ISourceUpnpAv& aSourceUpnpAv);
     ~ProviderAvTransport();
 private: // from DvProviderUpnpOrgAvTransport1
-    void SetAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData);
+    void SetAVTransportURI(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData) override;
     void GetMediaInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aNrTracks,
                       IDvInvocationResponseString& aMediaDuration, IDvInvocationResponseString& aCurrentURI,
                       IDvInvocationResponseString& aCurrentURIMetaData, IDvInvocationResponseString& aNextURI,
                       IDvInvocationResponseString& aNextURIMetaData, IDvInvocationResponseString& aPlayMedium,
-                      IDvInvocationResponseString& aRecordMedium, IDvInvocationResponseString& aWriteStatus);
+                      IDvInvocationResponseString& aRecordMedium, IDvInvocationResponseString& aWriteStatus) override;
     void GetTransportInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aCurrentTransportState,
-                          IDvInvocationResponseString& aCurrentTransportStatus, IDvInvocationResponseString& aCurrentSpeed);
+                          IDvInvocationResponseString& aCurrentTransportStatus, IDvInvocationResponseString& aCurrentSpeed) override;
     void GetPositionInfo(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseUint& aTrack,
                          IDvInvocationResponseString& aTrackDuration, IDvInvocationResponseString& aTrackMetaData,
                          IDvInvocationResponseString& aTrackURI, IDvInvocationResponseString& aRelTime, IDvInvocationResponseString& aAbsTime,
-                         IDvInvocationResponseInt& aRelCount, IDvInvocationResponseInt& aAbsCount);
+                         IDvInvocationResponseInt& aRelCount, IDvInvocationResponseInt& aAbsCount) override;
     void GetDeviceCapabilities(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMedia, 
-                               IDvInvocationResponseString& aRecMedia, IDvInvocationResponseString& aRecQualityModes);
-    void GetTransportSettings(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMode, IDvInvocationResponseString& aRecQualityMode);
-    void Stop(IDvInvocation& aInvocation, TUint aInstanceID);
-    void Play(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed);
-    void Pause(IDvInvocation& aInvocation, TUint aInstanceID);
-    void Seek(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget);
-    void Next(IDvInvocation& aInvocation, TUint aInstanceID);
-    void Previous(IDvInvocation& aInvocation, TUint aInstanceID);
+                               IDvInvocationResponseString& aRecMedia, IDvInvocationResponseString& aRecQualityModes) override;
+    void GetTransportSettings(IDvInvocation& aInvocation, TUint aInstanceID, IDvInvocationResponseString& aPlayMode, IDvInvocationResponseString& aRecQualityMode) override;
+    void Stop(IDvInvocation& aInvocation, TUint aInstanceID) override;
+    void Play(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aSpeed) override;
+    void Pause(IDvInvocation& aInvocation, TUint aInstanceID) override;
+    void Seek(IDvInvocation& aInvocation, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget) override;
+    void Next(IDvInvocation& aInvocation, TUint aInstanceID) override;
+    void Previous(IDvInvocation& aInvocation, TUint aInstanceID) override;
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private:
     void QueueStateUpdate();
     void ModerationTimerExpired();

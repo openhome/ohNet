@@ -72,14 +72,14 @@ public:
     void SetStatusLocked(const Brx& aId, const Brx& aState); // call from CredentialsChanged() only
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
-    void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword); // password must be encrypted
-    void Clear(const Brx& aId);
-    void Enable(const Brx& aId, TBool aEnable);
-    void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus);
-    void Login(const Brx& aId, Bwx& aToken);
-    void Logout(const Brx& aId, const Brx& aToken);
+    void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted
+    void Clear(const Brx& aId) override;
+    void Enable(const Brx& aId, TBool aEnable) override;
+    void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus) override;
+    void Login(const Brx& aId, Bwx& aToken) override;
+    void Logout(const Brx& aId, const Brx& aToken) override;
 private: // from ICredentialObserver
-    void CredentialChanged();
+    void CredentialChanged() override;
 private:
     Credential* Find(const Brx& aId) const;
     void CreateKey(Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, TUint aKeyBits);

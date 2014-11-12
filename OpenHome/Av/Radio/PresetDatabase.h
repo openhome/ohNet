@@ -56,20 +56,20 @@ public:
     ~PresetDatabase();
     void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData, TUint& aId);
 public: // from IPresetDatabaseReader
-    void SetObserver(IPresetDatabaseObserver& aObserver);
-    void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const;
-    void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const;
-    TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const;
-    TBool TryGetPresetById(TUint aId, Bwx& aUri, Bwx& aMetaData) const;
-    TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const;
-    TBool TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const;
+    void SetObserver(IPresetDatabaseObserver& aObserver) override;
+    void GetIdArray(std::array<TUint32, kMaxPresets>& aIdArray, TUint& aSeq) const override;
+    void GetPreset(TUint aIndex, TUint& aId, Bwx& aMetaData) const override;
+    TBool TryGetPresetById(TUint aId, Bwx& aMetaData) const override;
+    TBool TryGetPresetById(TUint aId, Bwx& aUri, Bwx& aMetaData) const override;
+    TBool TryGetPresetById(TUint aId, TUint aSeq, Bwx& aMetaData, TUint& aIndex) const override;
+    TBool TryGetPresetByMetaData(const Brx& aMetaData, TUint& aId) const override;
 public: // from IPresetDatabaseWriter
-    TUint MaxNumPresets() const;
-    void BeginSetPresets();
-    void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData);
-    void ReadPreset(TUint aIndex, Bwx& aUri, Bwx& aMetaData); // required to enable writers to check for near duplicates
-    void ClearPreset(TUint aIndex);
-    void EndSetPresets();
+    TUint MaxNumPresets() const override;
+    void BeginSetPresets() override;
+    void SetPreset(TUint aIndex, const Brx& aUri, const Brx& aMetaData) override;
+    void ReadPreset(TUint aIndex, Bwx& aUri, Bwx& aMetaData) override; // required to enable writers to check for near duplicates
+    void ClearPreset(TUint aIndex) override;
+    void EndSetPresets() override;
 private:
     class Preset
     {

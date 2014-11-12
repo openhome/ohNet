@@ -21,12 +21,12 @@ class ProcessorPcmBufPackedDualMono : public Media::ProcessorPcmBuf
 public:
     ProcessorPcmBufPackedDualMono();
 private: // from IPcmProcessor
-    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels);
-    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels);
-    void ProcessSample8(const TByte* aSample, TUint aNumChannels);
-    void ProcessSample16(const TByte* aSample, TUint aNumChannels);
-    void ProcessSample24(const TByte* aSample, TUint aNumChannels);
+    TBool ProcessFragment8(const Brx& aData, TUint aNumChannels) override;
+    TBool ProcessFragment16(const Brx& aData, TUint aNumChannels) override;
+    TBool ProcessFragment24(const Brx& aData, TUint aNumChannels) override;
+    void ProcessSample8(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample16(const TByte* aSample, TUint aNumChannels) override;
+    void ProcessSample24(const TByte* aSample, TUint aNumChannels) override;
 };
 
 
@@ -40,29 +40,29 @@ public:
     DriverSongcastSender(Media::IPipelineElementUpstream& aPipeline, TUint aMaxMsgSizeJiffies, Net::DvStack& aDvStack, const Brx& aName, TUint aChannel);
     ~DriverSongcastSender();
 private: // from Thread
-    void Run();
+    void Run() override;
 private:
     void TimerCallback();
     void SendAudio(Media::MsgPlayable* aMsg);
     void DeviceDisabled();
 private: // from Media::IMsgProcessor
-    Media::Msg* ProcessMsg(Media::MsgMode* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgSession* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgTrack* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgDelay* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgMetaText* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgHalt* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgFlush* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgWait* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgSilence* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg);
-    Media::Msg* ProcessMsg(Media::MsgQuit* aMsg);
+    Media::Msg* ProcessMsg(Media::MsgMode* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgSession* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgTrack* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgDelay* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgEncodedStream* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgAudioEncoded* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgMetaText* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgHalt* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgFlush* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgWait* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgDecodedStream* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgAudioPcm* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgSilence* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgPlayable* aMsg) override;
+    Media::Msg* ProcessMsg(Media::MsgQuit* aMsg) override;
 private: // from Net::IResourceManager
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private:
     Media::IPipelineElementUpstream& iPipeline;
     TUint iMaxMsgSizeJiffies;

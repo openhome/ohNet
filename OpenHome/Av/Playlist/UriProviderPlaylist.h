@@ -26,25 +26,25 @@ public:
     UriProviderPlaylist(ITrackDatabaseReader& aDatabase, Media::PipelineManager& aPipeline, ITrackDatabaseObserver& aObserver);
     ~UriProviderPlaylist();
 private: // from UriProvider
-    void Begin(TUint aTrackId);
-    void BeginLater(TUint aTrackId);
-    Media::EStreamPlay GetNext(Media::Track*& aTrack);
-    TUint CurrentTrackId() const;
-    TBool MoveNext();
-    TBool MovePrevious();
+    void Begin(TUint aTrackId) override;
+    void BeginLater(TUint aTrackId) override;
+    Media::EStreamPlay GetNext(Media::Track*& aTrack) override;
+    TUint CurrentTrackId() const override;
+    TBool MoveNext() override;
+    TBool MovePrevious() override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private: // from Media::IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private: // from Media::ITrackObserver
-    void NotifyTrackPlay(Media::Track& aTrack);
-    void NotifyTrackFail(Media::Track& aTrack);
+    void NotifyTrackPlay(Media::Track& aTrack) override;
+    void NotifyTrackFail(Media::Track& aTrack) override;
 private:
     void DoBegin(TUint aTrackId, Media::EStreamPlay aPendingCanPlay);
     TUint CurrentTrackIdLocked() const;

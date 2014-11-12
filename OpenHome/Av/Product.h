@@ -84,10 +84,10 @@ private:
     void ProductRoomChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void ProductNameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
 private: // from IProduct
-    void Activate(ISource& aSource);
-    void NotifySourceNameChanged(ISource& aSource);
+    void Activate(ISource& aSource) override;
+    void NotifySourceNameChanged(ISource& aSource) override;
 private: // from Media::IInfoProvider
-    void QueryInfo(const Brx& aQuery, IWriter& aWriter);
+    void QueryInfo(const Brx& aQuery, IWriter& aWriter) override;
 private:
     Net::DvDevice& iDevice; // do we need to store this?
     IReadStore& iReadStore;

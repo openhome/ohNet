@@ -41,19 +41,19 @@ private:
     static const OpenHome::Brn kSourceNameKeyPrefix;
     static const OpenHome::Brn kSourceNameKeySuffix;
 protected: // from ISource
-    const Brx& SystemName() const;
-    const Brx& Type() const;
-    const Brx& Name() const;
-    TBool IsVisible() const;
-    void Deactivate();
-    void SetVisible(TBool aVisible);
+    const Brx& SystemName() const override;
+    const Brx& Type() const override;
+    const Brx& Name() const override;
+    TBool IsVisible() const override;
+    void Deactivate() override;
+    void SetVisible(TBool aVisible) override;
 protected:
     Source(const TChar* aSystemName, const TChar* aType);
     ~Source();
     TBool IsActive() const;
     void DoActivate();
 private: // from ISource
-    void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId);
+    void Initialise(IProduct& aProduct, Configuration::IConfigInitialiser& aConfigInit, Configuration::IConfigManager& aConfigManagerReader, TUint aId) override;
 private:
     void NameChanged(Configuration::KeyValuePair<const Brx&>& aName);
 protected:

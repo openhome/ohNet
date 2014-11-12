@@ -25,7 +25,7 @@ public:
     UriProviderRadio(IMediaPlayer& aMediaPlayer);
     ~UriProviderRadio();
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller();
+    Media::IClockPuller* ClockPuller() override;
 private:
     Media::ClockPullerUtilisation* iClockPuller;
 };
