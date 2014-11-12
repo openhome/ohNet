@@ -178,7 +178,9 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId, const B
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
-            LOG(kError, "Http error - %d - in response to Tidal GetStreamUrl\n", code);
+            LOG(kError, "Http error - %d - in response to Tidal GetStreamUrl.  Some/all of response is:\n", code);
+            LOG(kError, iReaderBuf.Snaffle());
+            LOG(kError, "\n");
             THROW(ReaderError);
         }
 
@@ -213,7 +215,9 @@ void Tidal::Logout(const Brx& aToken)
         iReaderResponse.Read();
         const TUint code = iReaderResponse.Status().Code();
         if (code < 200 || code >= 300) {
-            LOG(kError, "Http error - %d - in response to Tidal logout\n", code);
+            LOG(kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
+            LOG(kError, iReaderBuf.Snaffle());
+            LOG(kError, "\n");
             THROW(ReaderError);
         }
         success = true;
