@@ -51,6 +51,13 @@ void Supply::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable,
     iDownStreamElement.Push(msg);
 }
 
+void Supply::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+{
+    // FIXME - no metatext available
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aUri, Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler, aPcmStream);
+    iDownStreamElement.Push(msg);
+}
+
 void Supply::OutputData(const Brx& aData)
 {
     if (aData.Bytes() == 0) {

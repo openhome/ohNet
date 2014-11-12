@@ -16,7 +16,7 @@ public:
     ~CodecAiffBase();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);

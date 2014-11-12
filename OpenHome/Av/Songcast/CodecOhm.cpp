@@ -32,8 +32,11 @@ TBool CodecOhm::SupportsMimeType(const Brx& /*aMimeType*/)
     return false;
 }
 
-TBool CodecOhm::Recognise()
+TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     try {
         OhmHeader header;
         header.Internalise(*this);

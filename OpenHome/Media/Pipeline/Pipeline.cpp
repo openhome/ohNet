@@ -358,6 +358,11 @@ void Pipeline::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekabl
     iSupply->OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
 }
 
+void Pipeline::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+{
+    iSupply->OutputPcmStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId, aPcmStream);
+}
+
 void Pipeline::OutputData(const Brx& aData)
 {
     iSupply->OutputData(aData);

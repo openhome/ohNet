@@ -35,7 +35,7 @@ public:
     ~CodecVorbis();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -218,10 +218,13 @@ TBool CodecVorbis::SupportsMimeType(const Brx& aMimeType)
     return false;
 }
 
-TBool CodecVorbis::Recognise()
+TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     LOG(kCodec, "CodecVorbis::Recognise\n");
 
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     iSamplesTotal = 0;
     TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
 

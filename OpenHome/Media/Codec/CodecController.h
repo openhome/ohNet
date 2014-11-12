@@ -183,6 +183,26 @@ public:
      */
     virtual void OutputMetaText(const Brx& aMetaText) = 0;
 };
+
+class EncodedStreamInfo
+{
+    friend class CodecController;
+public:
+    TBool RawPcm() const;
+    TUint BitDepth() const;
+    TUint SampleRate() const;
+    TUint NumChannels() const;
+    EMediaDataEndian Endian() const;
+private:
+    EncodedStreamInfo();
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian);
+private:
+    TBool iRawPcm;
+    TUint iBitDepth;
+    TUint iSampleRate;
+    TUint iNumChannels;
+    EMediaDataEndian iEndian;
+};
     
 /**
  * Base class for all codecs.
@@ -211,9 +231,11 @@ public:
      * also be made available to other codecs (if recognition fails) or this codec again
      * during processing (if recognition succeeds).
      *
+     * @param[in] aStreamInfo    Details Info describing the current encoded stream
+     *
      * @return     true if this codec can decode the audio stream; false otherwise.
      */
-    virtual TBool Recognise() = 0;
+    virtual TBool Recognise(const EncodedStreamInfo& aStreamInfo) = 0;
     /**
      * Notify a codec that decoding of a stream is about to begin.
      *
@@ -343,6 +365,8 @@ private:
 
     TBool iSeekable;
     TBool iLive;
+    TBool iRawPcm;
+    PcmStreamInfo iPcmStream;
     IStreamHandler* iStreamHandler;
     TUint iStreamId;
     TUint iSampleRate;

@@ -30,9 +30,12 @@ CodecRaop::~CodecRaop()
     LOG(kCodec, "CodecRaop::~CodecRaop\n");
 }
 
-TBool CodecRaop::Recognise()
+TBool CodecRaop::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     LOG(kCodec, "CodecRaop::Recognise\n");
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     Bws<4> buf;
     iController->Read(buf, buf.MaxBytes());
 

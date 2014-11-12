@@ -16,7 +16,7 @@ public:
     CodecAac();
     ~CodecAac();
 private: // from CodecBase
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -59,10 +59,13 @@ CodecAac::~CodecAac()
     LOG(kCodec, "CodecAac::~CodecAac\n");
 }
 
-TBool CodecAac::Recognise()
+TBool CodecAac::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     LOG(kCodec, "CodecAac::Recognise\n");
 
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     iRecogBuf.SetBytes(0);
     iController->Read(iRecogBuf, iRecogBuf.MaxBytes());
     Bws<4> codec;

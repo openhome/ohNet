@@ -118,7 +118,8 @@ private:
 
 enum EMediaDataEndian
 {
-    EMediaDataLittleEndian
+    EMediaDataEndianInvalid
+   ,EMediaDataLittleEndian
    ,EMediaDataBigEndian
 };
 
@@ -345,6 +346,23 @@ private:
 
 class IStreamHandler;
 
+class PcmStreamInfo
+{
+public:
+    PcmStreamInfo();
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian);
+    void Clear();
+    TUint BitDepth() const;
+    TUint SampleRate() const;
+    TUint NumChannels() const;
+    EMediaDataEndian Endian() const;
+private:
+    TUint iBitDepth;
+    TUint iSampleRate;
+    TUint iNumChannels;
+    EMediaDataEndian iEndian;
+};
+
 class MsgEncodedStream : public Msg
 {
     friend class MsgFactory;
@@ -360,8 +378,11 @@ public:
     TBool Seekable() const;
     TBool Live() const;
     IStreamHandler* StreamHandler() const;
+    TBool RawPcm() const;
+    const PcmStreamInfo& PcmStream() const;
 private:
     void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    void Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
@@ -372,7 +393,9 @@ private:
     TUint iStreamId;
     TBool iSeekable;
     TBool iLive;
+    TBool iRawPcm;
     IStreamHandler* iStreamHandler;
+    PcmStreamInfo iPcmStreamInfo;
 };
 
 class MsgAudioEncoded : public Msg
@@ -955,6 +978,20 @@ public:
      */
     virtual void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) = 0;
     /**
+     * Inform the pipeline that a new (raw PCM) audio stream is starting
+     *
+     * @param[in] aUri             Uri of the stream
+     * @param[in] aTotalBytes      Length in bytes of the stream
+     * @param[in] aSeekable        Whether the stream supports Seek requests
+     * @param[in] aLive            Whether the stream is being broadcast live (and won't support seeking)
+     * @param[in] aStreamHandler   Stream handler.  Used to allow pipeline elements to communicate upstream.
+     * @param[in] aStreamId        Identifier for the pending stream.  Unique within a single track only.
+     * @param[in] aBitDepth        Number of bits per sample per channel.
+     * @param[in] aSampleRate      Number of samples per second.
+     * @param[in] aNumChannels     Number of channels.
+     */
+    virtual void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) = 0;
+    /**
      * Push a block of encoded audio into the pipeline.
      *
      * Data is copied into the pipeline.  The caller is free to reuse its buffer.
@@ -1211,6 +1248,7 @@ public:
     MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
+    MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);
     MsgAudioEncoded* CreateMsgAudioEncoded(const Brx& aData);
     MsgMetaText* CreateMsgMetaText(const Brx& aMetaText);
     MsgHalt* CreateMsgHalt(TUint aId = MsgHalt::kIdNone);

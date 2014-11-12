@@ -14,7 +14,7 @@ public:
     CodecRaop();
     ~CodecRaop();
 private: // from CodecBase
-    TBool Recognise() override;
+    TBool Recognise(const Media::Codec::EncodedStreamInfo& aStreamInfo) override;
     void StreamInitialise() override;
     void Process() override;
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
