@@ -362,7 +362,7 @@ void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRat
     ASSERT(aData.Bytes() % iByteDepth == 0);
     iSubsampleCount = aData.Bytes() / iByteDepth;
     ASSERT(aData.Bytes() <= kMaxBytes);
-    if (aEndian == EMediaDataBigEndian || aBitDepth == 8) {
+    if (aEndian == EMediaDataEndianBig || aBitDepth == 8) {
         (void)memcpy(iData, aData.Ptr(), aData.Bytes());
     }
     else if (aBitDepth == 16) {

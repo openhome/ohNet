@@ -136,7 +136,7 @@ void CodecWav::Process()
         Brn split = iReadBuf.Split(iReadBuf.Bytes()-remainder);
         iReadBuf.SetBytes(iReadBuf.Bytes()-remainder);
 
-        iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
+        iTrackOffset += iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataEndianLittle, iTrackOffset);
         iAudioBytesRemaining -= iReadBuf.Bytes();
 
         if (iReadBuf.Bytes() < bytes) { // stream ended unexpectedly

@@ -57,7 +57,7 @@ void CodecAiffBase::StreamInitialise()
     iTrackStart = 0;
     iTrackOffset = 0;
     iTrackLengthJiffies = 0;
-    iEndian = EMediaDataBigEndian;
+    iEndian = EMediaDataEndianBig;
     iReadBuf.SetBytes(0);
 
     ProcessHeader(); // Could throw CodecStreamEnded/CodecStreamCorrupt.

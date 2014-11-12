@@ -265,7 +265,7 @@ SuitePipeline::SuitePipeline()
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(*iPipeline, *iTrackFactory);
-    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
+    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle));
     iPipeline->Start();
     iPipelineEnd = iAggregator;
 }

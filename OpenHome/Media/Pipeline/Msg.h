@@ -119,8 +119,8 @@ private:
 enum EMediaDataEndian
 {
     EMediaDataEndianInvalid
-   ,EMediaDataLittleEndian
-   ,EMediaDataBigEndian
+   ,EMediaDataEndianLittle
+   ,EMediaDataEndianBig
 };
 
 /**

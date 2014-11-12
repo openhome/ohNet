@@ -298,7 +298,7 @@ MsgPlayable* SuiteAggregator::CreateAudio()
                                                                to force the Aggregator to do some work */
     const TUint bytes = Jiffies:: BytesFromJiffies(jiffies, Jiffies::JiffiesPerSample(iSampleRate), iNumChannels, iBitDepth/8);
     Brn encodedAudioBuf(iAudioSrc, bytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     MsgPlayable* playable = audio->CreatePlayable();
     return playable;

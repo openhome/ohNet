@@ -884,7 +884,7 @@ SuiteCodecControllerPcmSize::SuiteCodecControllerPcmSize()
 void SuiteCodecControllerPcmSize::Setup()
 {
     SuiteCodecControllerBase::Setup();
-    iController->AddCodec(new HelperCodecPassThrough(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataBigEndian));
+    iController->AddCodec(new HelperCodecPassThrough(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataEndianBig));
     iController->Start();
 }
 
