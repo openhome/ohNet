@@ -80,6 +80,7 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
 
 void CodecPcm::StreamInitialise()
 {
+    iReadBuf.SetBytes(0);
     const TUint64 lenBytes = iController->StreamLength();
     const TUint bytesPerSample = (iBitDepth * iNumChannels) / 8;
     const TUint64 numSamples = lenBytes / bytesPerSample;
@@ -91,9 +92,14 @@ void CodecPcm::StreamInitialise()
 
 void CodecPcm::Process()
 {
-    iReadBuf.SetBytes(0);
-    iController->Read(iReadBuf, iReadBuf.MaxBytes());
+    iController->Read(iReadBuf, iReadBuf.MaxBytes() - iReadBuf.Bytes());
+    const TUint pendingBytes = iReadBuf.Bytes() % ((iBitDepth)/8 * iNumChannels);
+    Bws<24> pending;
+    if (pendingBytes != 0) {
+        pending.Append(iReadBuf.Split(iReadBuf.Bytes() - pendingBytes));
+    }
     iTrackOffset = iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
+    iReadBuf.Replace(pending);
 }
 
 TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
