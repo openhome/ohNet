@@ -96,9 +96,13 @@ void CodecPcm::Process()
     const TUint pendingBytes = iReadBuf.Bytes() % ((iBitDepth)/8 * iNumChannels);
     Bws<24> pending;
     if (pendingBytes != 0) {
-        pending.Append(iReadBuf.Split(iReadBuf.Bytes() - pendingBytes));
+        const TUint bytes = iReadBuf.Bytes() - pendingBytes;
+        pending.Append(iReadBuf.Split(bytes));
+        iReadBuf.SetBytes(bytes);
     }
-    iTrackOffset = iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
+    if (iReadBuf.Bytes() > 0) {
+        iTrackOffset = iController->OutputAudioPcm(iReadBuf, iNumChannels, iSampleRate, iBitDepth, iEndian, iTrackOffset);
+    }
     iReadBuf.Replace(pending);
 }
 
