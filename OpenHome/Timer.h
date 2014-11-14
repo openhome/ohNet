@@ -78,7 +78,7 @@ private:
         void Add(Timer& aTimer);
         void Log() const;
     private:
-        static void IncIndex(TUint aIndex);
+        static void IncIndex(TUint& aIndex);
         static void DecIndex(TUint& aIndex);
     private:
         Callback iList[kElements];

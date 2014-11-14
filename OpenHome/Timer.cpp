@@ -347,7 +347,7 @@ void TimerManager::CallbackList::Log() const
     } while (tail != iHead);
 }
 
-void TimerManager::CallbackList::IncIndex(TUint aIndex)
+void TimerManager::CallbackList::IncIndex(TUint& aIndex)
 { // static
     if (++aIndex == kElements) {
         aIndex = 0;
