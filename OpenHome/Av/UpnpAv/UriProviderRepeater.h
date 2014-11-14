@@ -18,15 +18,15 @@ public:
     Media::Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
     void SetTrack(Media::Track* aTrack);
 private: // from UriProvider
-    void Begin(TUint aTrackId);
-    void BeginLater(TUint aTrackId);
-    Media::EStreamPlay GetNext(Media::Track*& aTrack);
-    TUint CurrentTrackId() const;
-    TBool MoveNext();
-    TBool MovePrevious();
+    void Begin(TUint aTrackId) override;
+    void BeginLater(TUint aTrackId) override;
+    Media::EStreamPlay GetNext(Media::Track*& aTrack) override;
+    TUint CurrentTrackId() const override;
+    TBool MoveNext() override;
+    TBool MovePrevious() override;
 private: // from Media::ITrackObserver
-    void NotifyTrackPlay(Media::Track& aTrack);
-    void NotifyTrackFail(Media::Track& aTrack);
+    void NotifyTrackPlay(Media::Track& aTrack) override;
+    void NotifyTrackFail(Media::Track& aTrack) override;
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
     TBool MoveCursor();

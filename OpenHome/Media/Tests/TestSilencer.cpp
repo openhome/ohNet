@@ -232,7 +232,7 @@ MsgPlayable* SuiteSilencer::CreateAudio()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataLittleEndian, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, iNumChannels, iSampleRate, iBitDepth, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     MsgPlayable* playable = audio->CreatePlayable();
     return playable;

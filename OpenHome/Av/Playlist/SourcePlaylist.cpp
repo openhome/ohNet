@@ -36,30 +36,30 @@ private:
     TBool StartedShuffled();
     void DoSeekToTrackId(Media::Track* aTrack);
 private: // from ISource
-    void Activate();
-    void Deactivate();
-    void PipelineStopped();
+    void Activate() override;
+    void Deactivate() override;
+    void PipelineStopped() override;
 private: // from ISourcePlaylist
-    void Play();
-    void Pause();
-    void Stop();
-    void Next();
-    void Prev();
-    void SeekAbsolute(TUint aSeconds);
-    void SeekRelative(TInt aSeconds);
-    void SeekToTrackId(TUint aId);
-    TBool SeekToTrackIndex(TUint aIndex);
-    void SetShuffle(TBool aShuffle);
+    void Play() override;
+    void Pause() override;
+    void Stop() override;
+    void Next() override;
+    void Prev() override;
+    void SeekAbsolute(TUint aSeconds) override;
+    void SeekRelative(TInt aSeconds) override;
+    void SeekToTrackId(TUint aId) override;
+    TBool SeekToTrackIndex(TUint aIndex) override;
+    void SetShuffle(TBool aShuffle) override;
 private: // from ITrackDatabaseObserver
-    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter);
-    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter);
-    void NotifyAllDeleted();
+    void NotifyTrackInserted(Media::Track& aTrack, TUint aIdBefore, TUint aIdAfter) override;
+    void NotifyTrackDeleted(TUint aId, Media::Track* aBefore, Media::Track* aAfter) override;
+    void NotifyAllDeleted() override;
 private: // from Media::IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     Mutex iLock;
     Mutex iActivationLock;

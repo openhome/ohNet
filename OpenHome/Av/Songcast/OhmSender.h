@@ -30,13 +30,13 @@ public:
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
     void SendAudio(const TByte* aData, TUint aBytes, TBool aHalt = false);
 private: // from IOhmSenderDriver
-    void SetEnabled(TBool aValue);
-    void SetActive(TBool aValue);
-    void SetEndpoint(const Endpoint& aEndpoint, TIpAddress aAdapter);
-    void SetTtl(TUint aValue);
-    void SetLatency(TUint aValue);
-    void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal);
-    void Resend(const Brx& aFrames);
+    void SetEnabled(TBool aValue) override;
+    void SetActive(TBool aValue) override;
+    void SetEndpoint(const Endpoint& aEndpoint, TIpAddress aAdapter) override;
+    void SetTtl(TUint aValue) override;
+    void SetLatency(TUint aValue) override;
+    void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal) override;
+    void Resend(const Brx& aFrames) override;
 private:
     void ResetLocked();
     void Resend(OhmMsgAudio& aMsg);

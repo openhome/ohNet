@@ -20,13 +20,13 @@ protected:
     SuiteContent(const TChar* aName);
     ~SuiteContent();
 protected: // from IProtocolSet
-    ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolStreamResult Stream(const Brx& aUri) override;
 private: // from IProtocolReader
-    Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
-    void ReadFlush();
-    void ReadInterrupt();
-    Brn ReadRemaining();
+    Brn Read(TUint aBytes) override;
+    Brn ReadUntil(TByte aSeparator) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+    Brn ReadRemaining() override;
 protected:
     static const TUint kReadBufferSize = 1024 * 8;
     ContentProcessor* iProcessor;
@@ -46,7 +46,7 @@ class SuitePls : public SuiteContent
 public:
     SuitePls();
 private: // from Suite
-    void Test();
+    void Test() override;
 private:
     void TestRecognise();
     void TestParse();
@@ -57,7 +57,7 @@ class SuiteM3u : public SuiteContent
 public:
     SuiteM3u();
 private: // from Suite
-    void Test();
+    void Test() override;
 private:
     void TestRecognise();
     void TestParse();
@@ -68,12 +68,12 @@ class SuiteOpml : public SuiteContent
 public:
     SuiteOpml();
 private: // from Suite
-    void Test();
+    void Test() override;
 private:
     void TestRecognise();
     void TestParse();
 private: // from IProtocolSet
-    ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolStreamResult Stream(const Brx& aUri) override;
 private:
     TUint iNumFails;
 }; 
@@ -83,12 +83,12 @@ class SuiteAsx : public SuiteContent
 public:
     SuiteAsx();
 private: // from Suite
-    void Test();
+    void Test() override;
 private:
     void TestRecognise();
     void TestParse();
 private: // from IProtocolSet
-    ProtocolStreamResult Stream(const Brx& aUri);
+    ProtocolStreamResult Stream(const Brx& aUri) override;
 private:
     TUint iNumFails;
 };

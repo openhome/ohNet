@@ -33,7 +33,7 @@ public:
     UriProviderSongcast(IMediaPlayer& aMediaPlayer);
     ~UriProviderSongcast();
 private: // from UriProvider
-    Media::IClockPuller* ClockPuller();
+    Media::IClockPuller* ClockPuller() override;
 private:
     Media::ClockPullerUtilisation* iClockPuller;
 };
@@ -45,22 +45,22 @@ public:
     SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
-    void Activate();
-    void Deactivate();
-    void PipelineStopped();
+    void Activate() override;
+    void Deactivate() override;
+    void PipelineStopped() override;
 private: // from ISourceReceiver
-    void Play();
-    void Stop();
-    void SetSender(const Brx& aUri, const Brx& aMetadata);
+    void Play() override;
+    void Stop() override;
+    void SetSender(const Brx& aUri, const Brx& aMetadata) override;
 private: // from IZoneListener
-    void ZoneUriChanged(const Brx& aZone, const Brx& aUri);
-    void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata);
+    void ZoneUriChanged(const Brx& aZone, const Brx& aUri) override;
+    void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata) override;
 private: // from Media::IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 private:
     void EnsureActive();
     void UriChanged();

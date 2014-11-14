@@ -19,14 +19,14 @@ class ProviderTime : public DvProviderAvOpenhomeOrgTime1, private IPipelineObser
 public:
     ProviderTime(DvDevice& aDevice, PipelineManager& aPipelineManager);
     ~ProviderTime();
-private: // from DvProviderAvOpenhomeOrgTime1 (and only ever invoked from base class)
-    void Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aSeconds);
+private: // from DvProviderAvOpenhomeOrgTime1
+    void Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aSeconds) override;
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private:
     PipelineManager& iPipelineManager;
     Mutex iLock;

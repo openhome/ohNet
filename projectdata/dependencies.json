@@ -2,7 +2,7 @@
     {   "name": "ohNet",
         "type": "openhome",
         "platform-specific": true,
-        "version": "1.1.1382",
+        "version": "1.1.1390",
         "archive-suffix": "-${debugmode}",
         "main-dir": "${dest}${name}-${platform}-${debugmode}",
         "configure-args": [
@@ -27,7 +27,7 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.26",
+        "version":          "0.1.31",
         "type":             "internal",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
@@ -94,7 +94,7 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.414",
+        "version": "0.0.416",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"

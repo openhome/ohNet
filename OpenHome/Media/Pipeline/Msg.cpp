@@ -362,7 +362,7 @@ void DecodedAudio::Construct(const Brx& aData, TUint aChannels, TUint aSampleRat
     ASSERT(aData.Bytes() % iByteDepth == 0);
     iSubsampleCount = aData.Bytes() / iByteDepth;
     ASSERT(aData.Bytes() <= kMaxBytes);
-    if (aEndian == EMediaDataBigEndian || aBitDepth == 8) {
+    if (aEndian == EMediaDataEndianBig || aBitDepth == 8) {
         (void)memcpy(iData, aData.Ptr(), aData.Bytes());
     }
     else if (aBitDepth == 16) {
@@ -871,6 +871,48 @@ Msg* MsgDelay::Process(IMsgProcessor& aProcessor)
 }
 
 
+// PcmStreamInfo
+
+PcmStreamInfo::PcmStreamInfo()
+{
+    Clear();
+}
+
+void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian)
+{
+    iBitDepth = aBitDepth;
+    iSampleRate = aSampleRate;
+    iNumChannels = aNumChannels;
+    iEndian = aEndian;
+}
+
+void PcmStreamInfo::Clear()
+{
+    iBitDepth = iSampleRate = iNumChannels = UINT_MAX;
+    iEndian = EMediaDataEndianInvalid;
+}
+
+TUint PcmStreamInfo::BitDepth() const
+{
+    return iBitDepth;
+}
+
+TUint PcmStreamInfo::SampleRate() const
+{
+    return iSampleRate;
+}
+
+TUint PcmStreamInfo::NumChannels() const
+{
+    return iNumChannels;
+}
+
+EMediaDataEndian PcmStreamInfo::Endian() const
+{
+    return iEndian;
+}
+
+
 // MsgEncodedStream
 
 MsgEncodedStream::MsgEncodedStream(AllocatorBase& aAllocator)
@@ -913,6 +955,17 @@ IStreamHandler* MsgEncodedStream::StreamHandler() const
     return iStreamHandler;
 }
 
+TBool MsgEncodedStream::RawPcm() const
+{
+    return iRawPcm;
+}
+
+const PcmStreamInfo& MsgEncodedStream::PcmStream() const
+{
+    ASSERT(iRawPcm);
+    return iPcmStreamInfo;
+}
+
 void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler)
 {
     iUri.Replace(aUri);
@@ -922,6 +975,21 @@ void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64
     iSeekable = aSeekable;
     iLive = aLive;
     iStreamHandler = aStreamHandler;
+    iRawPcm = false;
+    iPcmStreamInfo.Clear();
+}
+
+void MsgEncodedStream::Initialise(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream)
+{
+    iUri.Replace(aUri);
+    iMetaText.Replace(aMetaText);
+    iTotalBytes = aTotalBytes;
+    iStreamId = aStreamId;
+    iSeekable = aSeekable;
+    iLive = aLive;
+    iStreamHandler = aStreamHandler;
+    iRawPcm = true;
+    iPcmStreamInfo = aPcmStream;
 }
 
 void MsgEncodedStream::Clear()
@@ -933,7 +1001,9 @@ void MsgEncodedStream::Clear()
     iStreamId = UINT_MAX;
     iSeekable = false;
     iLive = false;
+    iRawPcm = false;
     iStreamHandler = NULL;
+    iPcmStreamInfo.Clear();
 #endif
 }
 
@@ -2487,6 +2557,13 @@ MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx&
 {
     MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
     msg->Initialise(aUri, aMetaText, aTotalBytes, aStreamId, aSeekable, aLive, aStreamHandler);
+    return msg;
+}
+
+MsgEncodedStream* MsgFactory::CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream)
+{
+    MsgEncodedStream* msg = iAllocatorMsgEncodedStream.Allocate();
+    msg->Initialise(aUri, aMetaText, aTotalBytes, aStreamId, aSeekable, aLive, aStreamHandler, aPcmStream);
     return msg;
 }
 

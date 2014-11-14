@@ -350,7 +350,7 @@ Msg* SuiteTrackInspector::Pull()
         TByte encodedAudioData[kDataBytes];
         (void)memset(encodedAudioData, 0xff, kDataBytes);
         Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-        MsgAudio* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
+        MsgAudio* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataEndianLittle, iTrackOffset);
         iTrackOffset += audio->Jiffies();
         return audio;
     }

@@ -18,12 +18,12 @@ public:
     ProviderConnectionManager(Net::DvDevice& aDevice, const Brx& aSinkProtocolInfo);
     ~ProviderConnectionManager();
 private: // from DvProviderUpnpOrgConnectionManager1
-    void GetProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aSource, IDvInvocationResponseString& aSink);
-    void GetCurrentConnectionIDs(IDvInvocation& aInvocation, IDvInvocationResponseString& aConnectionIDs);
+    void GetProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aSource, IDvInvocationResponseString& aSink) override;
+    void GetCurrentConnectionIDs(IDvInvocation& aInvocation, IDvInvocationResponseString& aConnectionIDs) override;
     void GetCurrentConnectionInfo(IDvInvocation& aInvocation, TInt aConnectionID, IDvInvocationResponseInt& aRcsID,
                                   IDvInvocationResponseInt& aAVTransportID, IDvInvocationResponseString& aProtocolInfo,
                                   IDvInvocationResponseString& aPeerConnectionManager, IDvInvocationResponseInt& aPeerConnectionID,
-                                  IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus);
+                                  IDvInvocationResponseString& aDirection, IDvInvocationResponseString& aStatus) override;
 private:
     Brn iSinkProtocolInfo;
 };

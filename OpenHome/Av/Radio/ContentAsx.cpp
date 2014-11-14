@@ -49,8 +49,8 @@ namespace Av {
 class ContentAsx : public Media::ContentProcessor
 {
 private: // from ContentProcessor
-    TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
-    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes);
+    TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData) override;
+    Media::ProtocolStreamResult Stream(Media::IProtocolReader& aReader, TUint64 aTotalBytes) override;
     void Reset();
 private:
     enum FormatVersion

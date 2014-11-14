@@ -40,13 +40,13 @@ public:
     void Interrupt(TBool aInterrupt);
     void LogVerbose(TBool aVerbose);
 public: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
+    void Write(TByte aValue) override;
+    void Write(const Brx& aBuffer) override;
+    void WriteFlush() override;
 public: // from IReaderSource
-    void Read(Bwx& aBuffer);
-    void ReadFlush();
-    void ReadInterrupt();
+    void Read(Bwx& aBuffer) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     static long BioCallback(BIO *b, int oper, const char *argp, int argi, long argl, long retvalue);
 private:

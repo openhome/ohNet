@@ -32,8 +32,11 @@ TBool CodecOhm::SupportsMimeType(const Brx& /*aMimeType*/)
     return false;
 }
 
-TBool CodecOhm::Recognise()
+TBool CodecOhm::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     try {
         OhmHeader header;
         header.Internalise(*this);
@@ -87,7 +90,7 @@ void CodecOhm::Process()
             const TUint rxTimestamp = (msg->RxTimestamped()? msg->RxTimestamp() : 0);
             const TUint networkTimestamp = (msg->Timestamped()? msg->NetworkTimestamp() : 0);
             const TUint mediaTimestamp = (msg->Timestamped()? msg->MediaTimestamp() : 0);
-            iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataBigEndian, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
+            iController->OutputAudioPcm(msg->Audio(), msg->Channels(), sampleRate, msg->BitDepth(), EMediaDataEndianBig, jiffiesStart, rxTimestamp, msg->MediaLatency(), networkTimestamp, mediaTimestamp);
         }
     }
 

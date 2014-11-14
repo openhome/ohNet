@@ -72,19 +72,19 @@ public:
     DummySourceUpnpAv(DvStack& aDvStack, PipelineManager& aPipelineManager, UriProviderSingleTrack& aUriProvider);
     ~DummySourceUpnpAv();
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private: // from ISourceUpnpAv
-    void SetTrack(const Brx& aUri, const Brx& aMetaData);
-    void Play();
-    void Pause();
-    void Stop();
-    void Next();
-    void Prev();
-    void Seek(TUint aSecondsAbsolute);
+    void SetTrack(const Brx& aUri, const Brx& aMetaData) override;
+    void Play() override;
+    void Pause() override;
+    void Stop() override;
+    void Next() override;
+    void Prev() override;
+    void Seek(TUint aSecondsAbsolute) override;
 private:
     PipelineManager& iPipeline;
     UriProviderSingleTrack& iUriProvider;

@@ -29,8 +29,11 @@ TBool CodecAiffBase::SupportsMimeType(const Brx& aMimeType)
 }
 
 
-TBool CodecAiffBase::Recognise()
+TBool CodecAiffBase::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     Bws<12> buf;
     iController->Read(buf, buf.MaxBytes());
     const TChar* ptr = reinterpret_cast<const TChar*>(buf.Ptr());
@@ -54,7 +57,7 @@ void CodecAiffBase::StreamInitialise()
     iTrackStart = 0;
     iTrackOffset = 0;
     iTrackLengthJiffies = 0;
-    iEndian = EMediaDataBigEndian;
+    iEndian = EMediaDataEndianBig;
     iReadBuf.SetBytes(0);
 
     ProcessHeader(); // Could throw CodecStreamEnded/CodecStreamCorrupt.

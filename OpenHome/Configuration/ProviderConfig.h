@@ -13,8 +13,8 @@ class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguratio
 public:
     ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigManager);
 private: // from DvProviderAvOpenhomeOrgConfiguration1
-    void SetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, const Brx& aValue);
-    void GetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseString& aValue);
+    void SetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, const Brx& aValue) override;
+    void GetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseString& aValue) override;
 private:
     static const TUint kErrorCodeInvalidKey = 800;
     static const TUint kErrorCodeNotANumber = 801;

@@ -39,7 +39,7 @@ public:
     CodecAdts();
     ~CodecAdts();
 private: // from CodecBase
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     //TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -174,9 +174,12 @@ TBool Adts::ReadHeader(Brn aHeader)
     return true;
 }
 
-TBool CodecAdts::Recognise()
+TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     LOG(kCodec, "CodecAdts::Recognise\n");
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     const TUint kAdtsConsecutiveFrames = 5; // limit this to allow recognition within 1 data message
     iRecogBuf.SetBytes(0);
     iController->Read(iRecogBuf, iRecogBuf.MaxBytes());

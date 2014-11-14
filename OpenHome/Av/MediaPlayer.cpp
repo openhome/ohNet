@@ -22,6 +22,7 @@
 #include <OpenHome/Configuration/IStore.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/ProviderConfig.h>
+#include <OpenHome/Av/Credentials.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -34,7 +35,8 @@ using namespace OpenHome::Net;
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
-                         IPullableClock* aPullableClock)
+                         IPullableClock* aPullableClock,
+                         const Brx& aEntropy)
     : iDvStack(aDvStack)
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
@@ -51,6 +53,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?
     iConfigProductName = new ConfigText(*iConfigManager, Product::kConfigIdNameBase /* + Brx::Empty() */, Product::kMaxNameBytes, Brn("SoftPlayer")); // FIXME - assign appropriate product name
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
+    iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
     //iMuteManager = new MuteManager();
     iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
     iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
@@ -70,6 +73,7 @@ MediaPlayer::~MediaPlayer()
 {
     ASSERT(!iDevice.Enabled());
     delete iPipeline;
+    delete iCredentials;
     delete iProduct;
     delete iNetworkMonitor;
     delete iProviderConfig;
@@ -183,6 +187,11 @@ IPowerManager& MediaPlayer::PowerManager()
 Product& MediaPlayer::Product()
 {
     return *iProduct;
+}
+
+Credentials& MediaPlayer::CredentialsManager()
+{
+    return *iCredentials;
 }
 
 void MediaPlayer::Add(UriProvider* aUriProvider)

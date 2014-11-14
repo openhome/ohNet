@@ -16,16 +16,16 @@ public:
     CodecOhm(OhmMsgFactory& aMsgFactory);
     ~CodecOhm();
 private: // from CodecBase
-    TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
-    void StreamInitialise();
-    void Process();
-    TBool TrySeek(TUint aStreamId, TUint64 aSample);
+    TBool SupportsMimeType(const Brx& aMimeType) override;
+    TBool Recognise(const Media::Codec::EncodedStreamInfo& aStreamInfo) override;
+    void StreamInitialise() override;
+    void Process() override;
+    TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
 private: // from IReader
-    Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
-    void ReadFlush();
-    void ReadInterrupt();
+    Brn Read(TUint aBytes) override;
+    Brn ReadUntil(TByte aSeparator) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
 private:
     void OutputDelay();
 private:

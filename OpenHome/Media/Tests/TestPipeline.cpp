@@ -126,7 +126,7 @@ public:
 private: // from CodecBase
     void StreamInitialise();
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
 private:
@@ -265,7 +265,7 @@ SuitePipeline::SuitePipeline()
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(*iPipeline, *iTrackFactory);
-    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian));
+    iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle));
     iPipeline->Start();
     iPipelineEnd = iAggregator;
 }
@@ -690,7 +690,7 @@ TBool DummyCodec::SupportsMimeType(const Brx& /*aMimeType*/)
     return false;
 }
 
-TBool DummyCodec::Recognise()
+TBool DummyCodec::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
 {
     return true;
 }

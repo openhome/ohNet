@@ -49,7 +49,7 @@ public:
     void SetSenderMetadata(const Brx& aMetadata);
     void SetPreset(TUint aPreset);
 private: // from Thread
-    void Run();
+    void Run() override;
 private:
     void CurrentSubnetChanged();
     void InitialiseSockets(TIpAddress aInterface);

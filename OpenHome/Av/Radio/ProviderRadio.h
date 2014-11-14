@@ -25,24 +25,24 @@ public:
     ~ProviderRadio();
     void SetTransportState(Media::EPipelineState aState);
 private: // from IPresetDatabaseObserver
-    void PresetDatabaseChanged();
+    void PresetDatabaseChanged() override;
 private: // from DvProviderAvOpenhomeOrgRadio1
-    void Play(IDvInvocation& aInvocation);
-    void Pause(IDvInvocation& aInvocation);
-    void Stop(IDvInvocation& aInvocation);
-    void SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue);
-    void SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue);
-    void Channel(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
-    void SetChannel(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata);
-    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
-    void Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
-    void SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri);
-    void Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata);
-    void ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aChannelList);
-    void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray);
-    void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue);
-    void ChannelsMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue);
-    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
+    void Play(IDvInvocation& aInvocation) override;
+    void Pause(IDvInvocation& aInvocation) override;
+    void Stop(IDvInvocation& aInvocation) override;
+    void SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue) override;
+    void SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue) override;
+    void Channel(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata) override;
+    void SetChannel(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata) override;
+    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
+    void Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue) override;
+    void SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri) override;
+    void Read(IDvInvocation& aInvocation, TUint aId, IDvInvocationResponseString& aMetadata) override;
+    void ReadList(IDvInvocation& aInvocation, const Brx& aIdList, IDvInvocationResponseString& aChannelList) override;
+    void IdArray(IDvInvocation& aInvocation, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aArray) override;
+    void IdArrayChanged(IDvInvocation& aInvocation, TUint aToken, IDvInvocationResponseBool& aValue) override;
+    void ChannelsMax(IDvInvocation& aInvocation, IDvInvocationResponseUint& aValue) override;
+    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
 private:
     void SetChannel(TUint aPresetId, const Brx& aUri, const Brx& aMetadata);
     void UpdateIdArray();

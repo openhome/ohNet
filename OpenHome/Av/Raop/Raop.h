@@ -151,17 +151,17 @@ public:
     RaopDiscoverySession(Environment& aEnv, RaopDiscoveryServer& aDiscovery, RaopDevice& aRaopDevice, TUint aInstance);
     ~RaopDiscoverySession();
 private: // from SocketTcpSession
-    void Run();
+    void Run() override;
 public: // from IRaopDiscovery
-    const Brx &Aeskey();
-    const Brx &Aesiv();
-    const Brx &Fmtp();
-    TBool Active();
-    void KeepAlive();
-    void Deactivate();
-    TUint AesSid();
-    void Close();
-    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
+    const Brx& Aeskey() override;
+    const Brx& Aesiv() override;
+    const Brx& Fmtp() override;
+    TBool Active() override;
+    void KeepAlive() override;
+    void Deactivate() override;
+    TUint AesSid() override;
+    void Close() override;
+    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) override;
 private:
     void WriteSeq(TUint aCSeq);
     void WriteFply(Brn aData);
@@ -212,23 +212,23 @@ public:
     const NetworkAdapter& Adapter() const;
     void AddObserver(IRaopServerObserver& aObserver); // FIXME - can probably do away with this and just pass a single IRaopServerObserver in at construction (i.e., a ref to the RaopDiscovery class, as this will only call that)
     void PowerDown();
-public: // from IRaopDiscovery
-    const Brx &Aeskey();
-    const Brx &Aesiv();
-    const Brx &Fmtp();
-    TBool Active();
-    void Deactivate();
     void Enable();
     void Disable();
-    void KeepAlive();
-    TUint AesSid();
-    void Close();
-    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
     void AddObserver(IRaopObserver& aObserver);
+public: // from IRaopDiscovery
+    const Brx& Aeskey() override;
+    const Brx& Aesiv() override;
+    const Brx& Fmtp() override;
+    TBool Active() override;
+    void Deactivate() override;
+    void KeepAlive() override;
+    TUint AesSid() override;
+    void Close() override;
+    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) override;
 public: // from IRaopObserver
-    void NotifySessionStart(TUint aControlPort, TUint aTimingPort);
-    void NotifySessionEnd();
-    void NotifySessionWait();
+    void NotifySessionStart(TUint aControlPort, TUint aTimingPort) override;
+    void NotifySessionEnd() override;
+    void NotifySessionWait() override;
 private:
     RaopDiscoverySession& ActiveSession();
     void HandleInterfaceChange();
@@ -258,22 +258,22 @@ public:
     void Disable();
     void AddObserver(IRaopObserver& aObserver);
 public: // from IRaopDiscovery
-    TBool Active();
-    void Deactivate();
-    TUint AesSid();
-    const Brx& Aeskey();
-    const Brx& Aesiv();
-    const Brx& Fmtp();
-    void KeepAlive();
-    void Close();
-    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming);
+    TBool Active() override;
+    void Deactivate() override;
+    TUint AesSid() override;
+    const Brx& Aeskey() override;
+    const Brx& Aesiv() override;
+    const Brx& Fmtp() override;
+    void KeepAlive() override;
+    void Close() override;
+    void SetListeningPorts(TUint aAudio, TUint aControl, TUint aTiming) override;
 public: // from IRaopObserver
-    void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort);
-    void NotifySessionEnd(const NetworkAdapter& aNif);
-    void NotifySessionWait(const NetworkAdapter& aNif);
+    void NotifySessionStart(const NetworkAdapter& aNif, TUint aControlPort, TUint aTimingPort) override;
+    void NotifySessionEnd(const NetworkAdapter& aNif) override;
+    void NotifySessionWait(const NetworkAdapter& aNif) override;
 private: // from IPowerHandler
-    void PowerUp();
-    void PowerDown();
+    void PowerUp() override;
+    void PowerDown() override;
 private:
     void HandleInterfaceChange();
     void AddAdapter(NetworkAdapter& aNif);

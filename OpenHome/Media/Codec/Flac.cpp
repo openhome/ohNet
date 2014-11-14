@@ -20,7 +20,7 @@ public:
     ~CodecFlac();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -151,8 +151,11 @@ TBool CodecFlac::SupportsMimeType(const Brx& aMimeType)
     return false;
 }
 
-TBool CodecFlac::Recognise()
+TBool CodecFlac::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     Bws<42> buf;
     iController->Read(buf, buf.MaxBytes());
     const TChar* ptr = reinterpret_cast<const TChar*>(buf.Ptr());
@@ -401,7 +404,7 @@ FLAC__StreamDecoderWriteStatus CodecFlac::CallbackWrite(const FLAC__StreamDecode
         const TUint bytes = samples * (bitDepth/8) * channels;
         Brn encodedAudio(iBuf, bytes);
         iTrackOffset += iController->OutputAudioPcm(encodedAudio, channels, sampleRate,
-                                                    bitDepth, EMediaDataBigEndian, iTrackOffset);
+                                                    bitDepth, EMediaDataEndianBig, iTrackOffset);
         samplesToWrite -= samples;
         startI = endI;
     }

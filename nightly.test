@@ -42,11 +42,9 @@ tests = '''
     TestUdpServer
     TestConfigManager
     TestPowerManager
-    #TestSsl
     TestWaiter
     TestUriProviderRepeater
     '''
-
 w = StaticWebServer(os.path.join('dependencies', 'AnyPlatform', 'TestTones'))
 w.start()
 
@@ -58,3 +56,12 @@ try:
 finally:
     w.stop()
 
+
+# Suppress valgrind's checks for referencing uninitialised data
+# Following tests use openssl which (deliberately!) makes heavy use of this
+suiteRunner = MakeSuiteRunner(context, True)
+tests = '''
+    TestSsl
+    #TestCredentials
+    '''
+suiteRunner.run(tests)

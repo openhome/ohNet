@@ -16,6 +16,56 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 using namespace OpenHome::Media::Codec;
 
+
+// class EncodedStreamInfo
+
+TBool EncodedStreamInfo::RawPcm() const
+{
+    return iRawPcm;
+}
+
+TUint EncodedStreamInfo::BitDepth() const
+{
+    ASSERT(iRawPcm);
+    return iBitDepth;
+}
+
+TUint EncodedStreamInfo::SampleRate() const
+{
+    ASSERT(iRawPcm);
+    return iSampleRate;
+}
+
+TUint EncodedStreamInfo::NumChannels() const
+{
+    ASSERT(iRawPcm);
+    return iNumChannels;
+}
+
+EMediaDataEndian EncodedStreamInfo::Endian() const
+{
+    return iEndian;
+}
+
+EncodedStreamInfo::EncodedStreamInfo()
+    : iRawPcm(false)
+    , iBitDepth(UINT_MAX)
+    , iSampleRate(UINT_MAX)
+    , iNumChannels(UINT_MAX)
+    , iEndian(EMediaDataEndianInvalid)
+{
+}
+
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian)
+{
+    iRawPcm = true;
+    iBitDepth = aBitDepth;
+    iSampleRate = aSampleRate;
+    iNumChannels = aNumChannels;
+    iEndian = aEndian;
+}
+
+
 // CodecBase
 
 CodecBase::~CodecBase()
@@ -56,6 +106,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iAudioEncoded(NULL)
     , iSeekable(false)
     , iLive(false)
+    , iRawPcm(false)
     , iStreamHandler(NULL)
     , iStreamId(0)
     , iSampleRate(0)
@@ -154,13 +205,18 @@ void CodecController::CodecThread()
             iQueueTrackData = true;
             iStreamStarted = iStreamEnded = false;
             iRecognising = true;
+            EncodedStreamInfo streamInfo;
+            if (iRawPcm) {
+                streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(), iPcmStream.Endian());
+            }
+
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackIdPipeline, iStreamId);
 
             for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
                 TBool recognised = false;
                 try {
-                    recognised = codec->Recognise();
+                    recognised = codec->Recognise(streamInfo);
                 }
                 catch (CodecStreamStart&) {}
                 catch (CodecStreamEnded&) {}
@@ -534,6 +590,13 @@ Msg* CodecController::ProcessMsg(MsgEncodedStream* aMsg)
     iStreamHandler = aMsg->StreamHandler();
     iLock.Signal();
     MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    iRawPcm = aMsg->RawPcm();
+    if (iRawPcm) {
+        iPcmStream = aMsg->PcmStream();
+    }
+    else {
+        iPcmStream.Clear();
+    }
     aMsg->RemoveRef();
     return msg;
 }

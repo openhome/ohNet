@@ -70,9 +70,9 @@ public:
     KvpStore(IStaticDataSource& aStaticData);
     virtual ~KvpStore();
 private: // from IReadStore
-    TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue);
+    TBool TryReadStoreStaticItem(const Brx& aKey, Brn& aValue) override;
 private: // from IStoreLoaderStatic
-    void AddStaticItem(const Brx& aKey, const TChar* aValue);
+    void AddStaticItem(const Brx& aKey, const TChar* aValue) override;
 private:
     class KvpPair
     {

@@ -63,17 +63,18 @@ private:
 private: // from Thread
     void Run();
 private: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
-    void OutputSession();
-    void OutputTrack(Track& aTrack, TUint aTrackId);
-    void OutputDelay(TUint aJiffies);
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId);
-    void OutputData(const Brx& aData);
-    void OutputMetadata(const Brx& aMetadata);
-    void OutputFlush(TUint aFlushId);
-    void OutputWait();
-    void OutputHalt(TUint aHaltId);
-    void OutputQuit();
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
+    void OutputSession() override;
+    void OutputTrack(Track& aTrack, TUint aTrackId) override;
+    void OutputDelay(TUint aJiffies) override;
+    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
+    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
+    void OutputData(const Brx& aData) override;
+    void OutputMetadata(const Brx& aMetadata) override;
+    void OutputFlush(TUint aFlushId) override;
+    void OutputWait() override;
+    void OutputHalt(TUint aHaltId) override;
+    void OutputQuit() override;
 private:
     class NullTrackStreamHandler : public IStreamHandler
     {

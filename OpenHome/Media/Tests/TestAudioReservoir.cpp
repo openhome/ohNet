@@ -364,7 +364,7 @@ MsgAudio* SuiteAudioReservoir::CreateAudio()
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xff, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataLittleEndian, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 16, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -523,7 +523,7 @@ void SuiteReservoirHistory::Test()
             pcmMsgs = kPcmMsgCount;
         }
         else {
-            audio = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataLittleEndian, trackOffset);
+            audio = iMsgFactory->CreateMsgAudioPcm(audioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, trackOffset);
             pcmMsgs--;
         }
         trackOffset += audio->Jiffies();

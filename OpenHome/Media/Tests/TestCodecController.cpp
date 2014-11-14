@@ -27,7 +27,7 @@ public:
     HelperCodecPassThrough(TUint aReadBytes, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndianness);
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -208,7 +208,7 @@ TBool HelperCodecPassThrough::SupportsMimeType(const Brx& /*aMimeType*/)
     return false;
 }
 
-TBool HelperCodecPassThrough::Recognise()
+TBool HelperCodecPassThrough::Recognise(const EncodedStreamInfo& /*aStreamInfo*/)
 {
     return true;    // always recognise
 }
@@ -884,7 +884,7 @@ SuiteCodecControllerPcmSize::SuiteCodecControllerPcmSize()
 void SuiteCodecControllerPcmSize::Setup()
 {
     SuiteCodecControllerBase::Setup();
-    iController->AddCodec(new HelperCodecPassThrough(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataBigEndian));
+    iController->AddCodec(new HelperCodecPassThrough(kAudioBytesPerMsg, kNumChannels, kSampleRate, kBitsPerSample, EMediaDataEndianBig));
     iController->Start();
 }
 

@@ -26,11 +26,11 @@ public:
 protected:
     virtual void RegisterPlugins(Environment& aEnv);
 private: // from Media::IPipelineObserver
-    void NotifyPipelineState(Media::EPipelineState aState);
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(Media::EPipelineState aState) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
 protected:
     Media::PipelineManager* iPipeline;
 private:

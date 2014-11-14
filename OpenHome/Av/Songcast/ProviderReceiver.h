@@ -29,12 +29,12 @@ public:
     ProviderReceiver(Net::DvDevice& aDevice, ISourceReceiver& aSource, const TChar* aProtocolInfo);
     void NotifyPipelineState(Media::EPipelineState aState);
 private: // from DvProviderAvOpenhomeOrgReceiver1
-    void Play(IDvInvocation& aInvocation);
-    void Stop(IDvInvocation& aInvocation);
-    void SetSender(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata);
-    void Sender(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
-    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
-    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue);
+    void Play(IDvInvocation& aInvocation) override;
+    void Stop(IDvInvocation& aInvocation) override;
+    void SetSender(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata) override;
+    void Sender(IDvInvocation& aInvocation, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata) override;
+    void ProtocolInfo(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
+    void TransportState(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
 private:
     Mutex iLock;
     ISourceReceiver& iSource;

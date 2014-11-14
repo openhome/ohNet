@@ -49,16 +49,16 @@ public:
     ClockPullerUtilisation(Environment& aEnv, IPullableClock& aPullableClock);
     ~ClockPullerUtilisation();
 private: // from IClockPuller
-    void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
-    void NotifySizeDecodedReservoir(TUint aJiffies);
-    void StopDecodedReservoir();
-    void StartStarvationMonitor(TUint aCapacityJiffies);
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
-    void NotifySizeStarvationMonitor(TUint aJiffies);
-    void StopStarvationMonitor();
+    void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
+    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
+    void NotifySizeDecodedReservoir(TUint aJiffies) override;
+    void StopDecodedReservoir() override;
+    void StartStarvationMonitor(TUint aCapacityJiffies) override;
+    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) override;
+    void NotifySizeStarvationMonitor(TUint aJiffies) override;
+    void StopStarvationMonitor() override;
 private: // from IUtilisationHistoryObserver
-    void NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples);
+    void NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples) override;
 private:
     IPullableClock& iPullableClock;
     Mutex iLock;

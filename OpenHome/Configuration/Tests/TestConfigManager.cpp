@@ -21,8 +21,8 @@ protected:
     SuiteCVNotify(const TChar* aName);
     virtual ~SuiteCVNotify() = 0;
 protected: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 protected:
     virtual void NotifyChanged(KeyValuePair<T>& aKvp);
 protected:
@@ -37,8 +37,8 @@ class SuiteCVSubscriptions : public SuiteCVNotify<TInt>
 public:
     SuiteCVSubscriptions();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestNoSubscriptions();
     void TestAddRemoveSubscription();
@@ -53,9 +53,9 @@ class TestHelperWriter : public IWriter, public INonCopyable
 public:
     TestHelperWriter(Bwx& aBuf);
 public: // from IWriter
-    void Write(TByte aValue);
-    void Write(const Brx& aBuffer);
-    void WriteFlush();
+    void Write(TByte aValue) override;
+    void Write(const Brx& aBuffer) override;
+    void WriteFlush() override;
 private:
     Bwx& iBuf;
 };
@@ -65,10 +65,10 @@ class SuiteConfigNum : public SuiteCVNotify<TInt>
 public:
     SuiteConfigNum();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:  // from SuiteCVNotify
-    void NotifyChanged(ConfigNum::KvpNum& aKvp);
+    void NotifyChanged(ConfigNum::KvpNum& aKvp) override;
 private:
     TInt IntFromStore(const Brx& aKey);
     void TestInternalFunctorNotCalledAtConstruction();
@@ -106,10 +106,10 @@ class SuiteConfigChoice : public SuiteCVNotify<TUint>
 public:
     SuiteConfigChoice();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:  // from SuiteCVNotify
-    void NotifyChanged(ConfigChoice::KvpChoice& aKvp);
+    void NotifyChanged(ConfigChoice::KvpChoice& aKvp) override;
 private:
     TUint UintFromStore(const Brx& aKey);
     void TestInternalFunctorNotCalledAtConstruction();
@@ -145,10 +145,10 @@ class SuiteConfigText : public SuiteCVNotify<const Brx&>
 public:
     SuiteConfigText();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:  // from SuiteCVNotify
-    void NotifyChanged(ConfigText::KvpText& aKvp);
+    void NotifyChanged(ConfigText::KvpText& aKvp) override;
 private:
     void TestInternalFunctorNotCalledAtConstruction();
     void TestKeyStored();
@@ -176,8 +176,8 @@ class SuiteSerialisedMap : public SuiteUnitTest
 public:
     SuiteSerialisedMap();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestMapKeyPersists();
 private:
@@ -189,8 +189,8 @@ class SuiteConfigManager : public SuiteUnitTest
 public:
     SuiteConfigManager();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void NotifyChangedNum(TInt aVal);
     void NotifyChangedChoice(TUint aVal);
@@ -241,8 +241,8 @@ class SuiteRamStore : public SuiteUnitTest
 public:
     SuiteRamStore();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestRead();
     void TestWrite();

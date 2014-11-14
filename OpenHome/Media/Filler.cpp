@@ -341,6 +341,16 @@ void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable,
     }
 }
 
+void Filler::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+{
+    if (!iQuit) {
+        iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
+        iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
+                                        subsequent streams should be played immediately */
+        iSupply.OutputPcmStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId, aPcmStream);
+    }
+}
+
 void Filler::OutputData(const Brx& aData)
 {
     if (!iQuit) {

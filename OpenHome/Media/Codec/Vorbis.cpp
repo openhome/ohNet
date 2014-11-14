@@ -35,7 +35,7 @@ public:
     ~CodecVorbis();
 private: // from CodecBase
     TBool SupportsMimeType(const Brx& aMimeType);
-    TBool Recognise();
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
     void StreamInitialise();
     void Process();
     TBool TrySeek(TUint aStreamId, TUint64 aSample);
@@ -218,10 +218,13 @@ TBool CodecVorbis::SupportsMimeType(const Brx& aMimeType)
     return false;
 }
 
-TBool CodecVorbis::Recognise()
+TBool CodecVorbis::Recognise(const EncodedStreamInfo& aStreamInfo)
 {
     LOG(kCodec, "CodecVorbis::Recognise\n");
 
+    if (aStreamInfo.RawPcm()) {
+        return false;
+    }
     iSamplesTotal = 0;
     TBool isVorbis = (ov_test_callbacks(iDataSource, &iVf, NULL, 0, iCallbacks) == 0);
 
@@ -454,7 +457,7 @@ void CodecVorbis::Process()
                 // buffered PCM from previous stream.
                 if (iOutBuf.Bytes() > 0) {
                     iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                        iBitDepth, EMediaDataBigEndian, iTrackOffset);
+                        iBitDepth, EMediaDataEndianBig, iTrackOffset);
                     iOutBuf.SetBytes(0);
                     LOG(kCodec, "CodecVorbis::Process output (new bitstream detected) - total samples = %llu\n", iTotalSamplesOutput);
                 }
@@ -488,7 +491,7 @@ void CodecVorbis::Process()
             LOG(kCodec, "CodecVorbis::Process read - bytes %d, iPrevBytes %d\n", bytes, iPrevBytes);
             if (iOutBuf.MaxBytes() - iOutBuf.Bytes() < (TUint)((iBitDepth/8) * iChannels)) {
                 iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                    iBitDepth, EMediaDataBigEndian, iTrackOffset);
+                    iBitDepth, EMediaDataEndianBig, iTrackOffset);
                 iOutBuf.SetBytes(0);
                 LOG(kCodec, "CodecVorbis::Process output - total samples = %llu\n", iTotalSamplesOutput);
             }
@@ -512,7 +515,7 @@ void CodecVorbis::FlushOutput()
     if (iStreamEnded || iNewStreamStarted) {
         if (iOutBuf.Bytes() > 0) {
             iTrackOffset += iController->OutputAudioPcm(iOutBuf, iChannels, iSampleRate,
-                iBitDepth, EMediaDataBigEndian, iTrackOffset);
+                iBitDepth, EMediaDataEndianBig, iTrackOffset);
             iOutBuf.SetBytes(0);
         }
         if (iNewStreamStarted) {

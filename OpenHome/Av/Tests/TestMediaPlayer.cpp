@@ -19,10 +19,10 @@
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Av/Credentials.h>
 
 #include "openssl/bio.h"
 #include "openssl/pem.h"
-#include "openssl/rand.h"
 
 using namespace OpenHome;
 using namespace OpenHome::Av;
@@ -37,8 +37,8 @@ using namespace OpenHome::TestFramework;
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, IPullableClock* aPullableClock)
-    : iDisabled("test", 0)
-    , iSemShutdown("TMPS", 0)
+    : iSemShutdown("TMPS", 0)
+    , iDisabled("test", 0)
     , iSongcastTimestamper(aDvStack.Env())
     , iTidalId(aTidalId)
 {
@@ -91,7 +91,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
 
     // create MediaPlayer
-    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, aPullableClock);
+    iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, aPullableClock, aUdn);
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 
@@ -224,39 +224,6 @@ static void EncryptAndSetConfigVal(RSA* aPublicKey, ConfigText& aConfigText, con
     aConfigText.Set(encrypted);
 }
 
-static void WriteToStore(IStoreReadWrite& aStore, const Brx& aKey, BIO* aBio)
-{
-    const int len = BIO_pending(aBio);
-    char* val = (char*)calloc(len+1, 1); // +1 for nul terminator
-    ASSERT(val != NULL);
-    BIO_read(aBio, val, len);
-    Brn valBuf(val);
-    aStore.Write(aKey, valBuf);
-    free(val);
-}
-
-static RSA* CreateKey(IStoreReadWrite& aStore)
-{
-    static const char buf[] = "moderate sized string, created to give the illusion of entropy.";
-    RAND_seed(buf, sizeof(buf));
-    BIGNUM *bn = BN_new();
-    ASSERT(BN_set_word(bn, RSA_F4));
-    RSA* rsa = RSA_new();
-    ASSERT(rsa != NULL);
-    ASSERT(RSA_generate_key_ex(rsa, 2048, bn, NULL));
-    BN_free(bn);
-
-    BIO* bio = BIO_new(BIO_s_mem());
-    ASSERT(bio != NULL);
-    ASSERT(1 == PEM_write_bio_RSAPrivateKey(bio, rsa, NULL, NULL, 0, NULL, NULL));
-    WriteToStore(aStore, Brn("RsaPrivateKey"), bio);
-    ASSERT(1 == PEM_write_bio_RSAPublicKey(bio, rsa));
-    WriteToStore(aStore, Brn("RsaPublicKey"), bio);
-    BIO_free(bio);
-
-    return rsa;
-}
-
 void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols)
 {
     // Add codecs
@@ -266,6 +233,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewAlac());
     iMediaPlayer->Add(Codec::CodecFactory::NewAdts());
     iMediaPlayer->Add(Codec::CodecFactory::NewFlac());
+    iMediaPlayer->Add(Codec::CodecFactory::NewPcm());
     iMediaPlayer->Add(Codec::CodecFactory::NewVorbis());
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
@@ -281,12 +249,18 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
         Brn token = parser.Next(':');
         Brn username = parser.Next(':');
         Brn password = parser.Remaining();
-        RSA* key = CreateKey(*iConfigRamStore);
-        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, *iConfigRamStore, iMediaPlayer->ConfigInitialiser()));
+        Bws<512> key;
+        Credentials& credentials = iMediaPlayer->CredentialsManager();
+        credentials.GetPublicKey(key);
+        BIO *bio = BIO_new_mem_buf((void*)key.Ptr(), key.Bytes());
+        RSA* rsa = PEM_read_bio_RSAPublicKey (bio, NULL, NULL, NULL);
+        BIO_free(bio);
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, credentials, iMediaPlayer->ConfigInitialiser()));
         IConfigManager& configMgr = iMediaPlayer->ConfigManager();
-        EncryptAndSetConfigVal(key, configMgr.GetText(Brn("Tidal.Username")), username);
-        EncryptAndSetConfigVal(key, configMgr.GetText(Brn("Tidal.Password")), password);
-        RSA_free(key);
+        configMgr.GetText(Brn("tidalhifi.com.Username")).Set(username);
+        EncryptAndSetConfigVal(rsa, configMgr.GetText(Brn("tidalhifi.com.Password")), password);
+        RSA_free(rsa);
+        iMediaPlayer->AddAttribute("Credentials");
     }
 
     // Add sources

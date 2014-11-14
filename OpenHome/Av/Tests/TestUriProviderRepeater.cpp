@@ -20,8 +20,8 @@ class SuiteUriProviderRepeater : public SuiteUnitTest
 public:
     SuiteUriProviderRepeater();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private:
     void TestPlayNow();
     void TestPlayLater();

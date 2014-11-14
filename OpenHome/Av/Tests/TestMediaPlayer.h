@@ -60,10 +60,10 @@ protected:
     virtual void RegisterPlugins(Environment& aEnv);
     void DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols);
 private: // from Net::IResourceManager
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, Net::IResourceWriter& aResourceWriter) override;
 private: // from IPowerHandler
-    void PowerUp();
-    void PowerDown();
+    void PowerUp() override;
+    void PowerDown() override;
 private:
     static TUint Hash(const Brx& aBuf);
     static void GenerateMacAddr(Environment& aEnv, TUint aSeed, Bwx& aMacAddr);
