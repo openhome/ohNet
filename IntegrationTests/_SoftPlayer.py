@@ -24,11 +24,13 @@ class SoftPlayer( BASE.Component ):
     """Class to wrap SoftPlayer executable (TestMediaPlayer.exe)"""
     
     def __init__( self, 
-                  aRoom         = None,     # defaults to 'SoftPlayer'
-                  aModel        = None,     # defaults to 'SoftPlayer'
-                  aTuneIn       = None,     # defaults to 'linnproducts'
-                  aLoopback     = False,    # defaults to False
-                  aSenderChannel= None ):   # defaults to a random value
+                  aRoom          = None,     # defaults to 'SoftPlayer'
+                  aModel         = None,     # defaults to 'SoftPlayer'
+                  aTuneIn        = None,     # defaults to 'linnproducts'
+                  aLoopback      = False,    # defaults to False
+                  aTidalUser     = None,     # defaults to Tidal disabled
+                  aTidalPwd      = None,     # defaults to Tidal disabled
+                  aSenderChannel = None ):   # defaults to a random value
         """Start the SoftPlayer - all parameters are optional and will default
         as described above. These 'configuration' options cannot be changed on
         a running SoftPlayer, so have to be initialised at creation"""
@@ -71,6 +73,8 @@ class SoftPlayer( BASE.Component ):
             cmd.extend( ['-t', aTuneIn] )
         if aSenderChannel:
             cmd.extend( ['-c', '%d' % aSenderChannel] )
+        if aTidalUser and aTidalPwd:
+            cmd.extend( ['--tidal', 'tFqyFzmAjgcFSIWv:%s:%s' % (aTidalUser, aTidalPwd)] )
         self.log.Info( '', 'SoftPlayer command: %s' % cmd )
             
         self.proc = subprocess.Popen( cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -147,7 +151,7 @@ class SoftPlayer( BASE.Component ):
     
 if __name__ == '__main__':
 
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2' )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalUser='linndevuk3', aTidalPwd='tidal' )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
