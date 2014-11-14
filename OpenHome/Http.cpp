@@ -205,57 +205,53 @@ HttpStatus::HttpStatus(TUint aCode, const Brn aReason) : iCode(aCode), iReason(a
 {
 }
 
-class HttpStatusMaker : public HttpStatus
-{
-public:
-    HttpStatusMaker(TUint aCode, const Brn aReason) : HttpStatus(aCode, aReason) {}
-};
 
 // Informational codes
-const HttpStatus HttpStatus::kContinue = HttpStatusMaker(100, Brn("Continue"));
-const HttpStatus HttpStatus::kSwitchingProtocols = HttpStatusMaker(101, Brn("Switching Protocols"));
+const HttpStatus HttpStatus::kContinue(100, Brn("Continue"));
+const HttpStatus HttpStatus::kSwitchingProtocols(101, Brn("Switching Protocols"));
 // Success codes
-const HttpStatus HttpStatus::kOk = HttpStatusMaker(200, Brn("OK"));
-const HttpStatus HttpStatus::kCreated = HttpStatusMaker(201, Brn("Created"));
-const HttpStatus HttpStatus::kAccepted = HttpStatusMaker(202, Brn("Accepted"));
-const HttpStatus HttpStatus::kNonAuthoritativeInformation = HttpStatusMaker(203, Brn("Non-Authoritative Information"));
-const HttpStatus HttpStatus::kNoContent = HttpStatusMaker(204, Brn("No Content"));
-const HttpStatus HttpStatus::kResetContent = HttpStatusMaker(205, Brn("Reset Content"));
-const HttpStatus HttpStatus::kPartialContent = HttpStatusMaker(206, Brn("Partial Content"));
+const HttpStatus HttpStatus::kOk(200, Brn("OK"));
+const HttpStatus HttpStatus::kCreated(201, Brn("Created"));
+const HttpStatus HttpStatus::kAccepted(202, Brn("Accepted"));
+const HttpStatus HttpStatus::kNonAuthoritativeInformation(203, Brn("Non-Authoritative Information"));
+const HttpStatus HttpStatus::kNoContent(204, Brn("No Content"));
+const HttpStatus HttpStatus::kResetContent(205, Brn("Reset Content"));
+const HttpStatus HttpStatus::kPartialContent(206, Brn("Partial Content"));
 // Redirection codes
-const HttpStatus HttpStatus::kMultipleChoices = HttpStatusMaker(300, Brn("Multiple Choices"));
-const HttpStatus HttpStatus::kMovedPermanently = HttpStatusMaker(301, Brn("Moved Permanently"));
-const HttpStatus HttpStatus::kFound = HttpStatusMaker(302, Brn("Found"));
-const HttpStatus HttpStatus::kSeeOther = HttpStatusMaker(303, Brn("See Other"));
-const HttpStatus HttpStatus::kNotModified = HttpStatusMaker(304, Brn("Not Modified"));
-const HttpStatus HttpStatus::kUseProxy = HttpStatusMaker(305, Brn("Use Proxy"));
-const HttpStatus HttpStatus::kTemporaryRedirect = HttpStatusMaker(307, Brn("Temporary Redirect"));
+const HttpStatus HttpStatus::kMultipleChoices(300, Brn("Multiple Choices"));
+const HttpStatus HttpStatus::kMovedPermanently(301, Brn("Moved Permanently"));
+const HttpStatus HttpStatus::kFound(302, Brn("Found"));
+const HttpStatus HttpStatus::kSeeOther(303, Brn("See Other"));
+const HttpStatus HttpStatus::kNotModified(304, Brn("Not Modified"));
+const HttpStatus HttpStatus::kUseProxy(305, Brn("Use Proxy"));
+const HttpStatus HttpStatus::kTemporaryRedirect(307, Brn("Temporary Redirect"));
 // Client error codes
-const HttpStatus HttpStatus::kBadRequest = HttpStatusMaker(400, Brn("Bad Request"));
-const HttpStatus HttpStatus::kUnauthorized = HttpStatusMaker(401, Brn("Unauthorized"));
-const HttpStatus HttpStatus::kPaymentRequired = HttpStatusMaker(402, Brn("Payment Required"));
-const HttpStatus HttpStatus::kForbidden = HttpStatusMaker(403, Brn("Forbidden"));
-const HttpStatus HttpStatus::kNotFound = HttpStatusMaker(404, Brn("Not Found"));
-const HttpStatus HttpStatus::kMethodNotAllowed = HttpStatusMaker(405, Brn("Method Not Allowed"));
-const HttpStatus HttpStatus::kNotAcceptable = HttpStatusMaker(406, Brn("Not Acceptable"));
-const HttpStatus HttpStatus::kProxyAuthenticationRequired = HttpStatusMaker(407, Brn("Proxy Authentication Required"));
-const HttpStatus HttpStatus::kRequestTimeout = HttpStatusMaker(408, Brn("Request Timeout"));
-const HttpStatus HttpStatus::kConflict = HttpStatusMaker(409, Brn("Conflict"));
-const HttpStatus HttpStatus::kGone = HttpStatusMaker(410, Brn("Gone"));
-const HttpStatus HttpStatus::kLengthRequired = HttpStatusMaker(411, Brn("Length Required"));
-const HttpStatus HttpStatus::kPreconditionFailed = HttpStatusMaker(412, Brn("Precondition Failed"));
-const HttpStatus HttpStatus::kRequestEntityTooLarge = HttpStatusMaker(413, Brn("Request Entity Too Large"));
-const HttpStatus HttpStatus::kRequestUriTooLarge = HttpStatusMaker(414, Brn("Request URI Too Large"));
-const HttpStatus HttpStatus::kUnsupportedMediaType = HttpStatusMaker(415, Brn("Unsupported Media Type"));
-const HttpStatus HttpStatus::kRequestedRangeNotSatisfiable = HttpStatusMaker(416, Brn("Request Range Not Satisfiable"));
-const HttpStatus HttpStatus::kExpectationFailure = HttpStatusMaker(417, Brn("Expectation Failure"));
+const HttpStatus HttpStatus::kBadRequest(400, Brn("Bad Request"));
+const HttpStatus HttpStatus::kUnauthorized(401, Brn("Unauthorized"));
+const HttpStatus HttpStatus::kPaymentRequired(402, Brn("Payment Required"));
+const HttpStatus HttpStatus::kForbidden(403, Brn("Forbidden"));
+const HttpStatus HttpStatus::kNotFound(404, Brn("Not Found"));
+const HttpStatus HttpStatus::kMethodNotAllowed(405, Brn("Method Not Allowed"));
+const HttpStatus HttpStatus::kNotAcceptable(406, Brn("Not Acceptable"));
+const HttpStatus HttpStatus::kProxyAuthenticationRequired(407, Brn("Proxy Authentication Required"));
+const HttpStatus HttpStatus::kRequestTimeout(408, Brn("Request Timeout"));
+const HttpStatus HttpStatus::kConflict(409, Brn("Conflict"));
+const HttpStatus HttpStatus::kGone(410, Brn("Gone"));
+const HttpStatus HttpStatus::kLengthRequired(411, Brn("Length Required"));
+const HttpStatus HttpStatus::kPreconditionFailed(412, Brn("Precondition Failed"));
+const HttpStatus HttpStatus::kRequestEntityTooLarge(413, Brn("Request Entity Too Large"));
+const HttpStatus HttpStatus::kRequestUriTooLarge(414, Brn("Request URI Too Large"));
+const HttpStatus HttpStatus::kUnsupportedMediaType(415, Brn("Unsupported Media Type"));
+const HttpStatus HttpStatus::kRequestedRangeNotSatisfiable(416, Brn("Request Range Not Satisfiable"));
+const HttpStatus HttpStatus::kExpectationFailure(417, Brn("Expectation Failure"));
 // Server error codes
-const HttpStatus HttpStatus::kInternalServerError = HttpStatusMaker(500, Brn("Internal Server Error"));
-const HttpStatus HttpStatus::kNotImplemented = HttpStatusMaker(501, Brn("Not Implemented"));
-const HttpStatus HttpStatus::kBadGateway = HttpStatusMaker(502, Brn("Bad Gateway"));
-const HttpStatus HttpStatus::kServiceUnavailable = HttpStatusMaker(503, Brn("Service Unavailable"));
-const HttpStatus HttpStatus::kGatewayTimeout = HttpStatusMaker(504, Brn("Gateway Timeout"));
-const HttpStatus HttpStatus::kHttpVersionNotSupported = HttpStatusMaker(505, Brn("HTTP Version Not Supported"));
+const HttpStatus HttpStatus::kInternalServerError(500, Brn("Internal Server Error"));
+const HttpStatus HttpStatus::kNotImplemented(501, Brn("Not Implemented"));
+const HttpStatus HttpStatus::kBadGateway(502, Brn("Bad Gateway"));
+const HttpStatus HttpStatus::kServiceUnavailable(503, Brn("Service Unavailable"));
+const HttpStatus HttpStatus::kGatewayTimeout(504, Brn("Gateway Timeout"));
+const HttpStatus HttpStatus::kHttpVersionNotSupported(505, Brn("HTTP Version Not Supported"));
+
 
 // ReaderHttpHeader
 
