@@ -24,6 +24,8 @@ import sys
 ms      = None
 logDir  = None
 dacp    = None
+tidalU  = 'linndevuk3'
+tidalP  = 'tidal'
 avtList = 'Playlists  ~Encodings-FreeCodecs'
 mpList  = 'Playlists  ~Mixed-FreeCodecs'
 apTrack = 'Stereo1kHz-441-16-0dB-72m'
@@ -42,43 +44,46 @@ except:
     
 tests = [
     # Update and build ohMediaPlayer
-    [ 'BuildOhmp'                                                                                            ],
+    [ 'BuildOhmp'                                                                                           ],
 
     # OH Playlist Service
-    [ 'TestPlaylistHandling',        'local', 'all',   0                                                     ],
-    [ 'TestPlaylistModes',           'local', 'all',   0                                                     ],
-    [ 'TestPlaylistPlayback',        'local', 'all',   0                                                     ],
-    [ 'TestPlaylistAddDelSoak',      'local', ms,      mpList,   100                                         ],
-    [ 'TestPlaylistPlayTracks',      'local', 'local', ms,       mpList,   8,    'off',     'on',    'false' ],
-    [ 'TestPlaylistDropout',         'local', 'local', 'local',  '3600'                                      ],
+    [ 'TestPlaylistHandling',        'local', 'all',   0                                                    ],
+    [ 'TestPlaylistModes',           'local', 'all',   0                                                    ],
+    [ 'TestPlaylistPlayback',        'local', 'all',   0                                                    ],
+    [ 'TestPlaylistAddDelSoak',      'local', ms,      mpList,  100                                         ],
+    [ 'TestPlaylistPlayTracks',      'local', 'local', ms,      mpList,   8,    'off',     'on',    'false' ],
+    [ 'TestPlaylistDropout',         'local', 'local', 'local', '3600'                                      ],
 
     # OH Radio Service
-    [ 'TestRadioService',            'local', 'all'                                                          ],
-    [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2',  20,       'on', 1                           ],
+    [ 'TestRadioService',            'local', 'all'                                                         ],
+    [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2', 20,       'on', 1                           ],
+
+    # Tidal
+    [ 'TestTidalDropout',            'local', '3600',  tidalU,  tidalP                                      ],
 
     # Airplay
-    [ 'TestAirplayFunctions',        'local', dacp                                                           ],
-    [ 'TestAirplayDropout',          'local', dacp,    apTrack,  '3600'                                      ],
+    [ 'TestAirplayFunctions',        'local', dacp                                                          ],
+    [ 'TestAirplayDropout',          'local', dacp,    apTrack, '3600'                                      ],
 
     # UPnP AV
-    [ 'TestAvTransportService',      'local', 'ALL'                                                          ],
-    [ 'TestRenderingControlService', 'local'                                                                 ],
-    [ 'TestAvTransportPlayTracks',   'local', 'local', ms,       avtList,  8,    1,         'false'          ],
+    [ 'TestAvTransportService',      'local', 'ALL'                                                         ],
+    [ 'TestRenderingControlService', 'local'                                                                ],
+    [ 'TestAvTransportPlayTracks',   'local', 'local', ms,      avtList,  8,    1,         'false'          ],
 
-# Songcast
-    [ 'TestSongcastPlayback',        'local', 'local', 'local',  'all',   12345                              ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'stop'                      ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'source'                    ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'sender'                    ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local',  'local', 'all', 'standby'                   ],
-    [ 'TestSongcastDropout',         'local', 'local', 600,                                                  ],
+    # Songcast
+    [ 'TestSongcastPlayback',        'local', 'local', 'local', 'all',   12345                              ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'stop'                      ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'source'                    ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'sender'                    ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'standby'                   ],
+    [ 'TestSongcastDropout',         'local', 'local', 600,                                                 ],
 
     # Volume
-    [ 'TestVolumeControl',           'local'                                                                 ],
+    [ 'TestVolumeControl',           'local'                                                                ],
 
     # Misc
-    [ 'TestAudioConx',               'local', 'all'                                                          ],
-    [ 'TestStandbyCycleSoak',        'local',  100                                                           ]
+    [ 'TestAudioConx',               'local', 'all'                                                         ],
+    [ 'TestStandbyCycleSoak',        'local',  100                                                          ]
     
     # N/A to SoftPlayer(s)
     #    - AutoPlay
