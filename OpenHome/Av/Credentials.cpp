@@ -59,7 +59,6 @@ private:
     Bws<ICredentials::kMaxStatusBytes> iStatus;
     TBool iEnabled;
     TBool iModerationTimerStarted;
-    TBool iPendingChange;
 };
 
 } // namespace Av
