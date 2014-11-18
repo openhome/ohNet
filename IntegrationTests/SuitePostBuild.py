@@ -29,13 +29,13 @@ except:
     
 tests = [
     # UPnP AV
-    [ 'TestAvTransportPlayTracks', 'local', 'local', 'None', 'None', 8,   1           ],
+    [ 'TestAvTransportPlayTracks', 'local', 'local', 'None', 'None', 8,   1 ],
 
     # OH Playlist Service
-    [ 'TestPlaylistPlayTracks',    'local', 'local', 'None', 'None', 5,   'off', 'on' ],
+    [ 'TestLocalPlayTracks',       'local', 'local', 5,      'off',  'on'   ],
 
     # OH Radio Service (user ohmp4 is all locally served channels)
-    [ 'TestRadioPlayChannels',     'local', 'local', 'ohmp4', 7,      'on'             ]
+    [ 'TestRadioPlayChannels',     'local', 'local', 'ohmp4', 7,     'on'   ]
 ]
 
 Suite.Suite( tests, logDir )

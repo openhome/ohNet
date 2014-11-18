@@ -1,32 +1,22 @@
 #!/usr/bin/env python
-"""TestPlaylistPlayTracks - test Playing of playlists of tracks.
+"""BasePlayTracks - base class to test Playing of playlists of tracks.
 
-Parameters:
-    arg#1 - Sender DUT ['local' for internal SoftPlayer on loopback]
-    arg#2 - Receiver DUT ['local' for internal SoftPlayer on loopback] (None->not present)
-    arg#3 - Media server to source media from (None->test served audio)
-    arg#4 - Playlist name (None->test served audio)
-    arg#5 - Time to play before skipping to next (None = play all)
-    arg#6 - Repeat mode [on/off] (optional - default off)
-    arg#7 - Shuffle mode [on/off] - (optional - default off)
-    arg#8 - Set False to prevent use of loopback adapter for local SoftPlayers (optional - default True)
+Derived classes MUST
 
-Test test which plays tracks from a playlist sequentially. The tracks may be
-played for their entirety or any specified length of time. Repeat and shuffle
-modes may be selected
+    - define self.tracks - the list of tracks to test (URI/Meta tuples)
+    - call Test() method with following params
+        - Sender DUT ['local' for internal SoftPlayer on loopback]
+        - Receiver DUT ['local' for internal SoftPlayer on loopback] (None->not present)
+        - Time to play before skipping to next (None = play all)
+        - Repeat mode [on/off]
+        - Shuffle mode [on/off]
+        - Docstring to print on parameter parse errors
 """
 
-# Differences from DS test:
-#    - removed songcast sender mode param - set in softplayer at startup
-#    - removed abort threshold param (usage obsolete)
-
 import _FunctionalTest
-import BaseTest                       as BASE
-import Upnp.ControlPoints.Volkano     as Volkano
-import Upnp.ControlPoints.MediaServer as Server
-import Utils.Common                   as Common
-import Utils.Network.HttpServer       as HttpServer
-import _SoftPlayer                    as SoftPlayer
+import BaseTest                   as BASE
+import Upnp.ControlPoints.Volkano as Volkano
+import _SoftPlayer                as SoftPlayer
 import LogThread
 import os
 import random
@@ -34,23 +24,20 @@ import sys
 import threading
 import time
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
 
-
-class TestPlaylistPlayTracks( BASE.BaseTest ):
-    """Test playing of tracks"""
+class BasePlayTracks( BASE.BaseTest ):
+    """Base class for XxxPlayTracks tests"""
 
     def __init__( self ):
         """Constructor - initialise base class"""
         BASE.BaseTest.__init__( self )
+        self.doc              = 'Define docstring in derived class'
         self.sender           = None
         self.senderDev        = None
         self.softSender       = None
         self.receiver         = None
-        self.rcvrDev          = None
+        self.receiverDev      = None
         self.softRcvr         = None
-        self.server           = None
         self.playTimer        = None
         self.nextTimer        = None
         self.stateTimer       = None
@@ -76,43 +63,32 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         """Play tracks, using Media services for control"""
         senderName   = ''
         receiverName = ''
-        serverName   = ''
-        playlistName = ''
+        softOptions  = None
         loopback     = False
-        useLoopback  = 'True'
 
         try:
             senderName   = args[1]
             receiverName = args[2]
-            serverName   = args[3]
-            playlistName = args[4]
-            if args[5] != 'None':
-                self.playTime = int( args[5] )
+            if args[3] != 'None':
+                self.playTime = int( args[3] )
+            if len( args ) > 4:
+                self.repeat = args[4]
+            if len( args ) > 5:
+                self.shuffle = args[5]
             if len( args ) > 6:
-                self.repeat = args[6]
-            if len( args ) > 7:
-                self.shuffle = args[7]
-            if len( args ) > 8:
-                if args[8].lower() == 'false':
-                    useLoopback = False
+                softOptions = args[6]
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
-            
+
         if receiverName.lower() == 'none':
             receiverName = None
             
-        if serverName.lower() == 'none':
-            serverName = None
-        else:
-            if useLoopback:
-                self.log.Abort( '', 'Cannot use external Media Server with local loopback' )
-
         if receiverName is not None:
             if receiverName.lower() == 'local' and senderName.lower() != 'local' or \
                senderName.lower() == 'local' and receiverName.lower() != 'local':
                 self.log.Abort( '', 'Local loopback can only apply to ALL or NONE devices' )
-        if senderName.lower() == 'local' and useLoopback:
+        if senderName.lower() == 'local':
             loopback = True
 
         if self.repeat.lower() not in ('off', 'on'):
@@ -121,22 +97,12 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         if self.shuffle.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
             
-        # get playlist from server
-        if serverName:
-            self.server = Server.MediaServer( serverName )
-            if not self.server.device:
-                self.log.Abort( serverName, 'Not available' )
-            self.tracks = self.server.GetPlaylist( playlistName )
-            self.server.Shutdown()
-            self.server = None
-        else:
-            self.server = HttpServer.HttpServer( kAudioRoot )
-            self.server.Start()
-            self.tracks = Common.GetTracks( kTrackList, self.server )
-
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
-            self.softSender = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
+            options = {'aRoom':'TestSender', 'aLoopback':loopback}
+            if softOptions:
+                options.update( softOptions )
+            self.softSender = SoftPlayer.SoftPlayer( **options )
             senderName = self.softSender.name
         if receiverName is not None and receiverName.lower() == 'local':
             self.softRcvr = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
@@ -150,7 +116,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         
         # create Receiver Device, put onto random source and connect to sender
         if receiverName:
-            self.rcvrDev = receiverName.split( ':' )[0]
+            self.receiverDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True, aLoopback=loopback )
             self.receiver.product.sourceIndex = random.randint( 0, self.receiver.product.sourceCount-1 )
             time.sleep( 3 )
@@ -197,9 +163,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.nextTimer.cancel()
         if self.stateTimer:
             self.stateTimer.cancel()
-        if self.server:
-            self.server.Shutdown()
-        if self.sender: 
+        if self.sender:
             self.sender.Shutdown()
         if self.receiver: 
             self.receiver.Shutdown() 
@@ -207,8 +171,6 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.softSender.Shutdown()
         if self.softRcvr:
             self.softRcvr.Shutdown()
-        if self.server:
-            self.server.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     # noinspection PyUnusedLocal
@@ -323,13 +285,13 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             itemTitle = item[0].upper()+item[1:]
             senderVal = eval( 'self.sender.info.polled%s' % itemTitle )
             receiverVal = eval( 'self.receiver.info.polled%s' % itemTitle )
-            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal,
+            self.log.FailUnless( self.receiverDev, senderVal==receiverVal,
                 '(%s/%s) POLLED Sender/Receiver value for %s' %
                 (str( senderVal ), str( receiverVal ), item[0].upper()+item[1:] ))
 
             senderVal = eval( 'self.sender.info.%s' % item )
             receiverVal = eval( 'self.receiver.info.%s' % item )
-            self.log.FailUnless( self.rcvrDev, senderVal==receiverVal,
+            self.log.FailUnless( self.receiverDev, senderVal==receiverVal,
                 '(%s/%s) EVENTED Sender/Receiver value for %s' %
                 (str( senderVal ), str( receiverVal ), itemTitle) )
 
@@ -358,10 +320,10 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         senderState = self.sender.playlist.transportState
         receiverState = self.receiver.receiver.transportState
         if receiverState == 'Playing':
-            self.log.FailUnless( self.rcvrDev, senderState=='Playing',
+            self.log.FailUnless( self.receiverDev, senderState=='Playing',
                 '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
         elif receiverState == 'Waiting':  
-            self.log.FailIf( self.rcvrDev, senderState=='Playing',
+            self.log.FailIf( self.receiverDev, senderState=='Playing',
                 '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
                 
     def _SetupPlayTimer( self ):
@@ -372,7 +334,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         self.senderDuration.clear()
         self.expectedPlayTime = self.sender.info.duration
         if self.expectedPlayTime == 0:
-            self.senderDuration.wait( 2 )
+            self.senderDuration.wait( 3 )
             if self.senderDuration.is_set():
                 self.expectedPlayTime = self.sender.info.duration
             else:
@@ -417,7 +379,7 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             self.log.CheckLimits( self.senderDev, 'GELE', self.senderPlayTime, loLim, hiLim,
                 'reported (by Sender) play time')
             if self.receiver:
-                self.log.CheckLimits( self.rcvrDev, 'GELE', self.receiverPlayTime, loLim, hiLim,
+                self.log.CheckLimits( self.receiverDev, 'GELE', self.receiverPlayTime, loLim, hiLim,
                     'reported (by Receiver) play time')
             self.log.CheckLimits( '', 'GELE', int( round( time.time()-self.startTime, 0 )),
                 loLim, hiLim, 'measured (by test) play time')
@@ -429,15 +391,15 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
         fail        = False
         totalTracks = len( self.sender.playlist.idArray )
         numTracks   = random.randint( 0, totalTracks )
-        ids         = random.sample( self.sender.playlist.idArray, numTracks )       
+        ids         = random.sample( self.sender.playlist.idArray, numTracks )
         if random.randint( 0, 1 ):
             numTracks += 1
             totalTracks += 1
             ids.append( 9876543 )
-            
-        self.log.Info( self.senderDev, 'Checking ReadList on %d random tracks from %d' % 
+
+        self.log.Info( self.senderDev, 'Checking ReadList on %d random tracks from %d' %
             (numTracks, totalTracks) )
-        
+
         readTracks = self.sender.playlist.TracksInfo( ids )
         for tId in readTracks.keys():
             readUri  = readTracks[tId][0]
@@ -447,21 +409,19 @@ class TestPlaylistPlayTracks( BASE.BaseTest ):
             except:
                 (expUri, expMeta)  = ('', '')
             expMeta = expMeta.decode( 'utf-8' )
+            if readUri is None: readUri = ''
+            if readMeta is None: readMeta = ''
 
             if readUri != expUri:
                 fail = True
-                self.log.Fail( self.senderDev, 'Actual/Expected URI read from DS %s | %s' % 
-                               (readUri, expUri) )
+                self.log.Fail( self.senderDev, 'Actual/Expected URI read from DS %s | %s' % (readUri, expUri) )
             if readMeta != expMeta:
                 fail = True
-                self.log.Pass( self.senderDev, 'Actual/Expected META read from DS %s' % (readMeta) )
-                self.log.Warn( self.senderDev, 'Actual/Expected META read from DS %s' % (expMeta) )
                 self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % (readMeta, expMeta) )
         if not fail:
             self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
 
-            
-if __name__ == '__main__':
-    
-    BASE.Run( sys.argv )
-    
+
+def Run( aArgs ):
+    """Pass the Run() call up to the base class"""
+    BASE.Run( aArgs )
