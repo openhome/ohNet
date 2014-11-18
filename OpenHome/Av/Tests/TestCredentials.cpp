@@ -71,6 +71,7 @@ public:
 public: // from ICredentialConsumer
     const Brx& Id() const override;
     void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
+    void UpdateStatus() override;
     void Login(Bwx& aToken) override;
     void Logout(const Brx& aToken) override;
 private:
@@ -140,8 +141,15 @@ void DummyCredential::CredentialsChanged(const Brx& aUsername, const Brx& aPassw
 {
     iUsername.Replace(aUsername);
     iPassword.Replace(aPassword);
-    if (aUsername == kUsernameInvalid) {
-        iCredentials.SetStatusLocked(Id(), kStatusUsernameInvalid);
+}
+
+void DummyCredential::UpdateStatus()
+{
+    if (iUsername == kUsernameInvalid) {
+        iCredentials.SetStatus(Id(), kStatusUsernameInvalid);
+    }
+    else {
+        iCredentials.SetStatus(Id(), Brx::Empty());
     }
 }
 
@@ -208,11 +216,16 @@ void SuiteCredentials::Test()
     iProxy->SyncGetIds(ids);
     TEST(ids == iDummy->Id());
     Brh key;
-    iProxy->SyncGetPublicKey(key);
+    for (;;) {
+        iProxy->SyncGetPublicKey(key);
+        if (key.Bytes() > 0) {
+            break;
+        }
+        Thread::Sleep(10); // lazy approach to waiting for key to be generated
+    }
     TEST(key.BeginsWith(Brn("-----BEGIN RSA PUBLIC KEY")));
     TUint seq = UINT_MAX;
     iProxy->SyncGetSequenceNumber(seq);
-    TEST(seq == 0);
 
     // check that Set/Clear/SetEnabled are passed through
     iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
