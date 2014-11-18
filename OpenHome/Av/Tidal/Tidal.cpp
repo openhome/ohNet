@@ -6,6 +6,7 @@
 #include <OpenHome/SocketSsl.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Private/Http.h>
+#include <OpenHome/Private/Stream.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Debug.h>
@@ -21,9 +22,9 @@ const Brn Tidal::kHost("api.tidalhifi.com");
 const Brn Tidal::kId("tidalhifi.com");
 const Brn Tidal::kConfigKeySoundQuality("tidalhifi.com.SoundQuality");
 
-Tidal::Tidal(Environment& aEnv, const Brx& aToken, Av::Credentials& /*aCredentialsManager*/, Configuration::IConfigInitialiser& aConfigInitialiser)
+Tidal::Tidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser)
     : iLock("TIDL")
-    //, iCredentialsManager(aCredentialsManager)
+    , iCredentialsManager(aCredentialsManager)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
     , iWriterBuf(iSocket)
@@ -31,6 +32,7 @@ Tidal::Tidal(Environment& aEnv, const Brx& aToken, Av::Credentials& /*aCredentia
     , iReaderResponse(aEnv, iReaderBuf)
     , iToken(aToken)
 {
+    iReaderResponse.AddHeader(iHeaderContentLength);
     const int arr[] = {0, 1, 2};
     std::vector<TUint> qualities(arr, arr + sizeof(arr)/sizeof(arr[0]));
     iConfigQuality = new ConfigChoice(aConfigInitialiser, kConfigKeySoundQuality, qualities, 2);
@@ -77,17 +79,25 @@ const Brx& Tidal::Id() const
 
 void Tidal::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
-    // lock
+    iLock.Wait();
     iUsername.Replace(aUsername);
     iPassword.Replace(aPassword);
-    // login, report status
+    iLock.Signal();
+}
+
+void Tidal::UpdateStatus()
+{
+    Bws<64> sessionId;
+    Bws<8> countryCode;
+    if (TryLogin(sessionId, countryCode)) {
+        (void)TryLogout(sessionId);
+    }
 }
 
 void Tidal::Login(Bwx& aToken)
 {
     aToken.SetBytes(0);
-    Bws<8> countryCode;
-    if (!TryLogin(aToken, countryCode)) {
+    if (!TryLogin(aToken)) {
         THROW(CredentialsLoginFailed);
     }
 }
@@ -110,6 +120,18 @@ TBool Tidal::TryConnect(TUint aPort)
 }
 
 TBool Tidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
+{
+    Bws<256> resp;
+    if (!TryLogin(resp)) {
+        return false;
+    }
+    ReaderBuffer reader(resp);
+    aSessionId.Replace(ReadValue(reader, Brn("sessionId")));
+    aCountryCode.Replace(ReadValue(reader, Brn("countryCode")));
+    return true;
+}
+
+TBool Tidal::TryLogin(Bwx& aResponse)
 {
     TBool success = false;
     if (!TryConnect(kPort)) {
@@ -136,11 +158,19 @@ TBool Tidal::TryLogin(Bwx& aSessionId, Bwx& aCountryCode)
             LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
             LOG(kError, iReaderBuf.Snaffle());
             LOG(kError, "\n");
+            const TUint len = iHeaderContentLength.ContentLength();
+            if (len > 0) {
+                aResponse.Replace(iReaderBuf.Read(len));
+                iCredentialsManager.SetStatus(kId, aResponse);
+            }
+            else {
+                iCredentialsManager.SetStatus(kId, Brn("NetworkError"));
+            }
             THROW(ReaderError);
         }
 
-        aSessionId.Replace(ReadValue(iReaderBuf, Brn("sessionId")));
-        aCountryCode.Replace(ReadValue(iReaderBuf, Brn("countryCode")));
+        iCredentialsManager.SetStatus(kId, Brx::Empty());
+        aResponse.Replace(iReaderBuf.Read(iHeaderContentLength.ContentLength()));
         success = true;
     }
     catch (HttpError&) {

@@ -38,23 +38,26 @@ public:
 private: // from ICredentialConsumer
     const Brx& Id() const override;
     void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
+    void UpdateStatus() override;
     void Login(Bwx& aToken) override;
     void Logout(const Brx& aToken) override;
 private:
     TBool TryConnect(TUint aPort);
     TBool TryLogin(Bwx& aSessionId, Bwx& aCountryCode);
+    TBool TryLogin(Bwx& aResponse);
     TBool TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId, const Brx& aCountryCode, Bwx& aStreamUrl);
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private:
     Mutex iLock;
-    //Credentials& iCredentialsManager;
+    Credentials& iCredentialsManager;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;
     Sws<kWriteBufferBytes> iWriterBuf;
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
+    HttpHeaderContentLength iHeaderContentLength;
     const Bws<32> iToken;
     Bws<kMaxUsernameBytes> iUsername;
     Bws<kMaxPasswordBytes> iPassword;

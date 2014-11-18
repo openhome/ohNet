@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
+#include <OpenHome/Private/Fifo.h>
 
 #include <vector>
 
@@ -14,6 +15,7 @@ EXCEPTION(CredentialsLogoutFailed);
 namespace OpenHome {
     class Environment;
     class Timer;
+    class ThreadFunctor;
 namespace Net {
     class DvDevice;
 }
@@ -29,6 +31,7 @@ public:
     virtual ~ICredentialConsumer() {}
     virtual const Brx& Id() const = 0;
     virtual void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) = 0; // password is decrypted
+    virtual void UpdateStatus() = 0;
     virtual void Login(Bwx& aToken) = 0;
     virtual void Logout(const Brx& aToken) = 0;
 };
@@ -64,12 +67,12 @@ class Credentials : public ICredentials, private ICredentialObserver
     static const Brn kKeyRsaPrivate;
     static const Brn kKeyRsaPublic;
     static const TUint kModerationTimeMs = 500;
+    static const TUint kNumFifoElements = 10;
 public:
     Credentials(Environment& aEnv, Net::DvDevice& aDevice, Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits = 2048);
     virtual ~Credentials();
     void Add(ICredentialConsumer* aConsumer);
     void SetStatus(const Brx& aId, const Brx& aState);
-    void SetStatusLocked(const Brx& aId, const Brx& aState); // call from CredentialsChanged() only
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
     void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted
@@ -84,6 +87,20 @@ private:
     Credential* Find(const Brx& aId) const;
     void CreateKey(Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, TUint aKeyBits);
     void ModerationTimerCallback();
+    void CredentialsThread();
+private:
+    class KeyParams
+    {
+    public:
+        KeyParams(Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, TUint aKeyBits);
+        Configuration::IStoreReadWrite& Store() const;
+        const Brx& Entropy() const;
+        TUint KeyBits() const;
+    private:
+        Configuration::IStoreReadWrite& iStore;
+        Bwh iEntropy;
+        TUint iKeyBits;
+    };
 private:
     Environment& iEnv;
     Configuration::IConfigInitialiser& iConfigInitialiser;
@@ -94,6 +111,10 @@ private:
     Timer* iModerationTimer;
     TBool iModerationTimerStarted;
     Bws<2048> iKeyBuf;
+    KeyParams iKeyParams;
+    ThreadFunctor* iThread;
+    Fifo<Credential*> iFifo;
+    TBool iStarted;
 };
 
 } // namespace Av
