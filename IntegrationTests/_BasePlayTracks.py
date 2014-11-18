@@ -4,13 +4,14 @@
 Derived classes MUST
 
     - define self.tracks - the list of tracks to test (URI/Meta tuples)
+    - define self.doc - docstring to print on parameter parse failure
     - call Test() method with following params
         - Sender DUT ['local' for internal SoftPlayer on loopback]
         - Receiver DUT ['local' for internal SoftPlayer on loopback] (None->not present)
         - Time to play before skipping to next (None = play all)
         - Repeat mode [on/off]
         - Shuffle mode [on/off]
-        - Docstring to print on parameter parse errors
+        - (optional) dict of options to pass to sender SoftPlayer
 """
 
 import _FunctionalTest
