@@ -190,7 +190,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
 {
     TUint error = false;
     TInt16 frameSize = 0;
-    TInt32 sampleRate = 0;
+    TUint32 sampleRate = 0;
     TInt16 numChannels = 0;
     TInt16 numOutSamples = 0;
     TBool bDownSample = false;
@@ -231,7 +231,7 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
 #ifndef DISABLE_SBR
     /* open SBR-handle if SBR-Bitstream has been detected in core decoder */
     if ((!sbrDecoderInfo) && streamSBR[0].nrElements) {
-      int lpFilter = 0;      
+      int lpFilter = 0;
 
       sbrDecoderInfo = openSBR (sampleRate, frameSize, bDownSample, lpFilter);
     }
@@ -268,8 +268,10 @@ void CodecAacBase::DecodeFrame(TBool aParseOnly)
     }
     /* end sbr decoder */
 
-
-    iOutputSampleRate = sampleRate;
+    if (sampleRate != iOutputSampleRate) {
+        iOutputSampleRate = sampleRate;
+        iController->OutputDecodedStream(iBitrateAverage, iBitDepth, iOutputSampleRate, iChannels, kCodecAac, iTrackLengthJiffies, 0, false);
+    }
     numOutSamples = frameSize;
 
     //LOG(kCodec, "iSampleRate = %u, iOutputSampleRate = %u\n", iSampleRate, iOutputSampleRate);
@@ -314,7 +316,7 @@ void CodecAacBase::ProcessHeader()
 {
     TUint error = false;
     //LOG(kCodec, "CodecAac::ProcessHeader()\n");
- 
+
     /* initialize time data buffer */
     for (int i=0; i < 4*SAMPLES_PER_FRAME; i++) {
         timeData[i] = 0;
