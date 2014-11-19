@@ -151,7 +151,15 @@ class SoftPlayer( BASE.Component ):
     
 if __name__ == '__main__':
 
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalUser='linndevuk3', aTidalPwd='tidal' )
+    # read tidal account details from non-published file
+    import json
+    p = os.path.normpath( '//10.2.7.70/klueso/accounts.json' )
+    f = open( p, 'rt' )
+    accts = json.load( f )
+    f.close()
+
+    # start softplayer, wait for exit
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalUser=accts['tidal']['user'], aTidalPwd=accts['tidal']['password'] )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
