@@ -62,6 +62,6 @@ finally:
 suiteRunner = MakeSuiteRunner(context, True)
 tests = '''
     TestSsl
-    #TestCredentials
+    TestCredentials
     '''
 suiteRunner.run(tests)
