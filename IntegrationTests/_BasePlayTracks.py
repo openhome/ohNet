@@ -26,6 +26,11 @@ import threading
 import time
 
 
+def Run( aArgs ):
+    """Pass the Run() call up to the base class"""
+    BASE.Run( aArgs )
+
+
 class BasePlayTracks( BASE.BaseTest ):
     """Base class for XxxPlayTracks tests"""
 
@@ -421,8 +426,3 @@ class BasePlayTracks( BASE.BaseTest ):
                 self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % (readMeta, expMeta) )
         if not fail:
             self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
-
-
-def Run( aArgs ):
-    """Pass the Run() call up to the base class"""
-    BASE.Run( aArgs )

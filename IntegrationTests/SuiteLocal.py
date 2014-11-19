@@ -51,8 +51,10 @@ tests = [
     [ 'TestPlaylistModes',           'local', 'all',   0                                        ],
     [ 'TestPlaylistPlayback',        'local', 'all',   0                                        ],
     [ 'TestPlaylistAddDelSoak',      'local',  ms,     mpList,  100                             ],
+    [ 'TestLocalPlayTracks',         'local', 'local', 8,       'off',   'on'                   ],
     [ 'TestUpnpMsPlayTracks',        'local', 'local', 8,       'off',   'on',  ms,     mpList  ],
-    [ 'TestPlaylistDropout',         'local', 'local', 'local', '3600'                          ],
+    [ 'TestLocalDropout',            'local', 'local', 'local', '1800'                          ],
+    [ 'TestUpnpMsDropout',           'local', 'local', 'local', '1800',  ms,    mpList          ],
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                             ],
@@ -77,7 +79,6 @@ tests = [
     [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'source'        ],
     [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'sender'        ],
     [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'standby'       ],
-    [ 'TestSongcastDropout',         'local', 'local', 600,                                     ],
 
     # Volume
     [ 'TestVolumeControl',           'local'                                                    ],

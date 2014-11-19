@@ -1,26 +1,22 @@
 #!/usr/bin/env python
-"""TestPlaylistDropout - test for audio dropout in playlists
+"""BaseDropout - base class fro testing for audio dropout
 
-Parameters:
-    arg#1 - Sender ['local' for internal SoftPlayer on loopback]
-    arg#2 - Receiver/Repeater ['local' for internal SoftPlayer on loopback] - optional (None = not present)
-    arg#3 - Receiver/Slave ['local' for internal SoftPlayer on loopback] - optional (None = not present)
-    arg#4 - Test duration (secs) or 'forever'
-    
-This verifies playlist audio output by the DUT does not suffer from audio dropout.
-""" 
+Derived classes MUST
 
-# Differences from DS test:
-#    - cut-down variant - only monitors events, no monitoring of actual audio
-#    - uses different test tone set
-#    - removed songcast mode param (as N/A)
+    - define self.tracks - the list of tracks to test (URI/Meta tuples)
+    - define self.doc - docstring to print on parameter parse failure
+    - call Test() method with following params
+        - Sender
+        - Receiver #1 (repeater) - 'None' if not present
+        - Receiver #2 (slave) - 'None' if not present
+        - Test duration (secs) or 'forever'
+
+    For all players can use 'local' for internal SoftPlayer on loopback
+"""
 
 import _FunctionalTest
 import BaseTest                       as BASE
 import Upnp.ControlPoints.Volkano     as Volkano
-import Upnp.ControlPoints.MediaServer as Server
-import Utils.Network.HttpServer       as HttpServer
-import Utils.Common                   as Common
 import _SoftPlayer                    as SoftPlayer
 import LogThread
 import os
@@ -28,22 +24,25 @@ import sys
 import threading
 import time
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
+
+def Run( aArgs ):
+    """Pass the Run() call up to the base class"""
+    BASE.Run( aArgs )
 
 
-class TestPlaylistDropout( BASE.BaseTest ):
-    """Class to check for dropout in audio output"""
-    
+class BaseDropout( BASE.BaseTest ):
+    """Base class for XxxDropout tests"""
+
     def __init__( self ):
         """Constructor for AudioDropout test"""
+        self.doc             = 'Define docstring in derived class'
+        self.tracks          = []
         self.sender          = None
         self.senderDev       = None
         self.receiver        = None
-        self.rcvrDev         = None
+        self.receiverDev     = None
         self.slave           = None
         self.slaveDev        = None
-        self.server          = None
         self.soft1           = None
         self.soft2           = None
         self.soft3           = None
@@ -64,6 +63,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         slaveName    = ''
         duration     = 0
         loopback     = False
+        softOptions  = None
 
         # parse command line arguments
         try:
@@ -71,8 +71,10 @@ class TestPlaylistDropout( BASE.BaseTest ):
             receiverName = args[2]
             slaveName    = args[3]
             duration     = args[4].lower()
+            if len( args ) > 5:
+                softOptions = args[5]
         except:
-            print '\n', __doc__, '\n'
+            print '\n', self.doc, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
         if senderName.lower() == 'local':
@@ -95,14 +97,12 @@ class TestPlaylistDropout( BASE.BaseTest ):
         if duration != 'forever':
             duration = int( duration )
 
-        # start audio server
-        self.server = HttpServer.HttpServer( kAudioRoot )
-        self.server.Start()        
-        tracks = Common.GetTracks( kTrackList, self.server )
-
         # create and configure sender
         if senderName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aLoopback=loopback )
+            options = {'aRoom':'TestSender', 'aLoopback':loopback}
+            if softOptions:
+                options.update( softOptions )
+            self.soft1 = SoftPlayer.SoftPlayer( **options )
             senderName = self.soft1.name
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
@@ -112,7 +112,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
         self.sender.playlist.repeat = 'on'
         self.sender.playlist.shuffle = 'on'
         self.sender.playlist.DeleteAllTracks()
-        self.sender.playlist.AddPlaylist( tracks )
+        self.sender.playlist.AddPlaylist( self.tracks )
         self.sender.playlist.SeekIndex( 0 )
         self.senderPlaying.wait( 10 )
         if self.sender.playlist.transportState != 'Playing':
@@ -123,7 +123,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
             if receiverName.lower() == 'local':
                 self.soft2 = SoftPlayer.SoftPlayer( aRoom='TestRcvr', aLoopback=loopback )
                 receiverName = self.soft2.name
-            self.rcvrDev = receiverName.split( ':' )[0]
+            self.receiverDev = receiverName.split( ':' )[0]
             self.receiver = Volkano.VolkanoDevice( receiverName, aIsDut=True, aLoopback=loopback )
             self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
@@ -132,7 +132,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
                 self.receiver.receiver.Play()
                 self.receiverPlaying.wait( 5 )
                 if self.receiver.receiver.transportState != 'Playing':
-                    self.log.Abort( self.rcvrDev, 'Receiver failed to start playback' )
+                    self.log.Abort( self.receiverDev, 'Receiver failed to start playback' )
             
         # create and connect slave (if specified)
         if slaveName:
@@ -157,25 +157,17 @@ class TestPlaylistDropout( BASE.BaseTest ):
             self.exitTimer = LogThread.Timer( duration, self._DurationCb )
             self.exitTimer.start()
         self.durationDone.wait()
-        
-        # Cleanup
-        self.sender.playlist.RemoveSubscriber( self._SenderPlaylistCb )
-        self.sender.playlist.Stop()                 
-        if self.receiver:
-            self.receiver.receiver.RemoveSubscriber( self._ReceiverReceiverCb )
-        if self.slave:
-            self.slave.receiver.RemoveSubscriber( self._SlaveReceiverCb )        
+        self.monitor = False
 
     def Cleanup( self ):
         """Perform cleanup on test exit"""
-        if self.sender:    
+        if self.sender:
+            self.sender.playlist.Stop()
             self.sender.Shutdown()
         if self.receiver:
             self.receiver.Shutdown()
         if self.slave:
             self.slave.Shutdown()
-        if self.server:
-            self.server.Shutdown()
         if self.soft1:
             self.soft1.Shutdown()
         if self.soft2:
@@ -202,7 +194,7 @@ class TestPlaylistDropout( BASE.BaseTest ):
                 self.receiverPlaying.set()
             else:
                 if self.monitor:
-                    self.log.Fail( self.rcvrDev, "Receiver dropout detected -> state is %s" % svVal )
+                    self.log.Fail( self.receiverDev, "Receiver dropout detected -> state is %s" % svVal )
         elif svName == 'Uri':
             self.receiverUri.set()
             
@@ -221,9 +213,3 @@ class TestPlaylistDropout( BASE.BaseTest ):
     def _DurationCb( self ):
         """Callback from duration timer"""
         self.durationDone.set()
-
-            
-if __name__ == '__main__':
-    
-    BASE.Run( sys.argv )
-        
