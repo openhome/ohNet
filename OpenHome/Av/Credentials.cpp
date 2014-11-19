@@ -238,7 +238,8 @@ const Brn Credentials::kKeyRsaPrivate("RsaPrivateKey");
 const Brn Credentials::kKeyRsaPublic("RsaPublicKey");
 
 Credentials::Credentials(Environment& aEnv, Net::DvDevice& aDevice, IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits)
-    : iEnv(aEnv)
+    : iLock("CRED")
+    , iEnv(aEnv)
     , iConfigInitialiser(aConfigInitialiser)
     , iModerationTimerStarted(false)
     , iKeyParams(aStore, aEntropy, aKeyBits)
@@ -265,9 +266,12 @@ Credentials::~Credentials()
 
 void Credentials::Add(ICredentialConsumer* aConsumer)
 {
-    ASSERT(!iStarted);
+    AutoMutex _(iLock);
     Credential* credential = new Credential(iEnv, aConsumer, *this, iConfigInitialiser, iFifo);
     iCredentials.push_back(credential);
+    if (iStarted) {
+        credential->SetKey((RSA*)iKey);
+    }
     iProvider->AddId(credential->Id());
 }
 
@@ -387,10 +391,12 @@ void Credentials::CredentialsThread()
 {
     // create private key
     CreateKey(iKeyParams.Store(), iKeyParams.Entropy(), iKeyParams.KeyBits());
+    iLock.Wait();
     iStarted = true;
     for (auto it=iCredentials.begin(); it!=iCredentials.end(); ++it) {
         (*it)->SetKey((RSA*)iKey);
     }
+    iLock.Signal();
     iKeyParams.Store().Read(kKeyRsaPublic, iKeyBuf);
     iProvider->SetPublicKey(iKeyBuf);
 

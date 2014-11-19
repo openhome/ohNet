@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Private/Thread.h>
 
 #include <vector>
 
@@ -102,6 +103,7 @@ private:
         TUint iKeyBits;
     };
 private:
+    Mutex iLock;
     Environment& iEnv;
     Configuration::IConfigInitialiser& iConfigInitialiser;
     ProviderCredentials* iProvider;
