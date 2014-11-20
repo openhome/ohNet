@@ -51,7 +51,7 @@ except:
 
     
 tests = [
-    Update and build ohMediaPlayer
+    # Update and build ohMediaPlayer
     [ 'BuildOhmp'                                                                                ],
 
     # OH Playlist Service
