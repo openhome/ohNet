@@ -7,8 +7,9 @@ Parameters:
     arg#3 - Time to play before skipping to next (None = play all)
     arg#4 - Repeat mode [on/off]
     arg#5 - Shuffle mode [on/off]
-    arg#6 - Tidal username (only required for 'local' sender)
-    arg#7 - Tidal password (only required for 'local' sender)
+    arg#6 - Tidal ID (only required for 'local' sender)
+    arg#7 - Tidal username (only required for 'local' sender)
+    arg#8 - Tidal password (only required for 'local' sender)
 
 Test test which plays Tidal served tracks from a playlist sequentially. The tracks
 may be played for their entirety or any specified length of time. Repeat and shuffle
@@ -55,7 +56,7 @@ class TestTidalPlayTracks( BASE.BasePlayTracks ):
         """Check playback of Tidal served tracks"""
         try:
             if args[1].lower() == 'local':
-                args[6] = {'aTidalUser':args[6], 'aTidalPwd':args[7]}
+                args[6] = {'aTidalId':args[6], 'aTidalUser':args[7], 'aTidalPwd':args[8]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
