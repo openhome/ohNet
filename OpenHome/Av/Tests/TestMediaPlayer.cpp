@@ -251,7 +251,11 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
         Brn password = parser.Remaining();
         Bws<512> key;
         Credentials& credentials = iMediaPlayer->CredentialsManager();
-        credentials.GetPublicKey(key);
+        // nasty bodge.  Wait for a key to be generated to allow us to set Tidal credentials
+        while (key.Bytes() == 0) {
+            credentials.GetPublicKey(key);
+            Thread::Sleep(10);
+        }
         BIO *bio = BIO_new_mem_buf((void*)key.Ptr(), key.Bytes());
         RSA* rsa = PEM_read_bio_RSAPublicKey (bio, NULL, NULL, NULL);
         BIO_free(bio);
