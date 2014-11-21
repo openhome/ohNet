@@ -473,11 +473,9 @@ class TestPlaylistHandling( BASE.BaseTest ):
         if dutName.lower() == 'local':
             loopback = True
             self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=loopback )
-###            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aLoopback=False )
             dutName = self.soft.name
         self.dutDev = dutName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=loopback )
-###        self.dut = Volkano.VolkanoDevice( dutName, aIsDut=True, aLoopback=False )
         self.dut.product.sourceIndex = 0
 
         # start audio server

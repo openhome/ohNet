@@ -89,14 +89,10 @@ class SoftPlayer( BASE.Component ):
         try:
             self.proc.stdin.write( 'q\n' )
             self.proc.stdin.close()
-            self.log.Debug( '%s Waiting for proc' % self.dev )
             self.proc.wait()
-            self.log.Debug( '%s Proc done' % self.dev )
         except:
             self.log.Info( self.dev, 'Problem shutting down' )
-        self.log.Debug( '%s Waiting for thread' % self.dev )
         self.logThread.join()
-        self.log.Debug( '%s Thread done' % self.dev )
         time.sleep( 1 )             # Let it shut down
         
     def __Log( self ):
