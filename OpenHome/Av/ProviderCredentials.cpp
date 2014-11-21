@@ -13,8 +13,6 @@ static const TUint kIdNotFoundCode = 800;
 static const Brn kIdNotFoundMsg("Id not found");
 static const TUint kLoginFailedCode = 801;
 static const Brn kLoginFailedMsg("Login failed");
-static const TUint kLogoutFailedCode = 802;
-static const Brn kLogoutFailedMsg("Logout failed");
 
 ProviderCredentials::ProviderCredentials(DvDevice& aDevice, ICredentials& aCredentials)
     : DvProviderAvOpenhomeOrgCredentials1(aDevice)
