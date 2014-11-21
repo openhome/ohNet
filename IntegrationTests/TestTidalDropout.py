@@ -6,8 +6,9 @@ Parameters:
     arg#2 - Receiver/Repeater DUT (None = not present)
     arg#3 - Receiver/SlaveDUT  (None = not present)
     arg#4 - Test duration (secs) or 'forever'
-    arg#5 - Tidal username (only required for 'local' sender)
-    arg#6 - Tidal password (only required for 'local' sender)
+    arg#5 - Tidal ID (only required for 'local' sender)
+    arg#6 - Tidal username (only required for 'local' sender)
+    arg#7 - Tidal password (only required for 'local' sender)
 local' for internal SoftPlayer on loopback for DUTs
 
 Verifies TIDAL served audio played by the DUT does not suffer from audio dropout.
@@ -54,7 +55,7 @@ class TestTidalDropout( BASE.BaseDropout ):
         """Test dropout on of TIDAL served tracks"""
         try:
             if args[1].lower() == 'local':
-                args[5] = {'aTidalUser':args[5], 'aTidalPwd':args[6]}
+                args[5] = {'aTidalId':args[5], 'aTidalUser':args[6], 'aTidalPwd':args[7]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )

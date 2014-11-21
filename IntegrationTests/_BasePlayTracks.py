@@ -75,7 +75,7 @@ class BasePlayTracks( BASE.BaseTest ):
         try:
             senderName   = args[1]
             receiverName = args[2]
-            if args[3] != 'None':
+            if args[3].lower() != 'None':
                 self.playTime = int( args[3] )
             if len( args ) > 4:
                 self.repeat = args[4]
@@ -135,7 +135,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.sender.playlist.repeat = self.repeat
         self.sender.playlist.shuffle = self.shuffle
         self.sender.playlist.AddPlaylist( self.tracks )
-        time.sleep( 2 )
+        time.sleep( 3 )
         
         # check the playlist ReadList operation
         self._CheckReadList()
@@ -217,8 +217,9 @@ class BasePlayTracks( BASE.BaseTest ):
                 self.nextTimer.cancel()
                 self.nextTimer = None
             # Run on seperate thread so Playback events not blocked
-            thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal),self.sender.playlist.id] )
-            thread.start()
+            if svVal != 0:
+                thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal),self.sender.playlist.id] )
+                thread.start()
 
     def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""

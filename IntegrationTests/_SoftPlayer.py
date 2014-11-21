@@ -28,6 +28,7 @@ class SoftPlayer( BASE.Component ):
                   aModel         = None,     # defaults to 'SoftPlayer'
                   aTuneIn        = None,     # defaults to 'linnproducts'
                   aLoopback      = False,    # defaults to False
+                  aTidalId       = None,     # defaults to Tidal disabled
                   aTidalUser     = None,     # defaults to Tidal disabled
                   aTidalPwd      = None,     # defaults to Tidal disabled
                   aSenderChannel = None ):   # defaults to a random value
@@ -74,7 +75,7 @@ class SoftPlayer( BASE.Component ):
         if aSenderChannel:
             cmd.extend( ['-c', '%d' % aSenderChannel] )
         if aTidalUser and aTidalPwd:
-            cmd.extend( ['--tidal', 'tFqyFzmAjgcFSIWv:%s:%s' % (aTidalUser, aTidalPwd)] )
+            cmd.extend( ['--tidal', '%s:%s:%s' % (aTidalId, aTidalUser, aTidalPwd)] )
         self.log.Info( '', 'SoftPlayer command: %s' % cmd )
             
         self.proc = subprocess.Popen( cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -92,7 +93,7 @@ class SoftPlayer( BASE.Component ):
         except:
             self.log.Info( self.dev, 'Problem shutting down' )
         self.logThread.join()
-        time.sleep( 1 )             # Let it shut down 
+        time.sleep( 1 )             # Let it shut down
         
     def __Log( self ):
         """Log data received from stdout on SoftPlayer"""
@@ -159,7 +160,7 @@ if __name__ == '__main__':
     f.close()
 
     # start softplayer, wait for exit
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalUser=accts['tidal']['user'], aTidalPwd=accts['tidal']['password'] )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalId=accts['tidal']['id'], aTidalUser=accts['tidal']['user'], aTidalPwd=accts['tidal']['password'] )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
