@@ -51,6 +51,7 @@ private:
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private:
     Mutex iLock;
+    Mutex iReLoginLock;
     Credentials& iCredentialsManager;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;

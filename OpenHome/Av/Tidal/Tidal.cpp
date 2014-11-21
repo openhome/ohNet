@@ -25,7 +25,8 @@ const Brn Tidal::kId("tidalhifi.com");
 const Brn Tidal::kConfigKeySoundQuality("tidalhifi.com.SoundQuality");
 
 Tidal::Tidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser)
-    : iLock("TIDL")
+    : iLock("TDL1")
+    , iReLoginLock("TDL2")
     , iCredentialsManager(aCredentialsManager)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
@@ -60,6 +61,7 @@ TBool Tidal::TryLogin(Bwx& aSessionId)
 
 TBool Tidal::TryReLogin(const Brx& aCurrentToken, Bwx& aNewToken)
 {
+    AutoMutex _(iReLoginLock);
     iLock.Wait();
     if (iSessionId.Bytes() == 0 || aCurrentToken == iSessionId) {
         iLock.Signal();
