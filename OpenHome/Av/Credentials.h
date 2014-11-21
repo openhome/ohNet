@@ -11,7 +11,6 @@
 
 EXCEPTION(CredentialsIdNotFound);
 EXCEPTION(CredentialsLoginFailed);
-EXCEPTION(CredentialsLogoutFailed);
 
 namespace OpenHome {
     class Environment;
@@ -34,7 +33,7 @@ public:
     virtual void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) = 0; // password is decrypted
     virtual void UpdateStatus() = 0;
     virtual void Login(Bwx& aToken) = 0;
-    virtual void Logout(const Brx& aToken) = 0;
+    virtual void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) = 0;
 };
 
 class ICredentials
@@ -43,15 +42,16 @@ public:
     static const TUint kMaxUsernameBytes = 64;
     static const TUint kMaxPasswordBytes = 64;
     static const TUint kMaxPasswordEncryptedBytes = 256;
-    static const TUint kMaxStatusBytes = 128;
+    static const TUint kMaxStatusBytes = 512;
+    static const TUint kMaxDataBytes = 128;
     static const TUint kMaxTokenBytes = 128;
 public:
     virtual void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) = 0;
     virtual void Clear(const Brx& aId) = 0;
     virtual void Enable(const Brx& aId, TBool aEnable) = 0;
-    virtual void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus) = 0;
+    virtual void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData) = 0;
     virtual void Login(const Brx& aId, Bwx& aToken) = 0;
-    virtual void Logout(const Brx& aId, const Brx& aToken) = 0;
+    virtual void ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken) = 0;
 };
 
 class ICredentialObserver
@@ -73,15 +73,15 @@ public:
     Credentials(Environment& aEnv, Net::DvDevice& aDevice, Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits = 2048);
     virtual ~Credentials();
     void Add(ICredentialConsumer* aConsumer);
-    void SetStatus(const Brx& aId, const Brx& aState);
+    void SetState(const Brx& aId, const Brx& aStatus, const Brx& aData);
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
     void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted
     void Clear(const Brx& aId) override;
     void Enable(const Brx& aId, TBool aEnable) override;
-    void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus) override;
+    void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData) override;
     void Login(const Brx& aId, Bwx& aToken) override;
-    void Logout(const Brx& aId, const Brx& aToken) override;
+    void ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken) override;
 private: // from ICredentialObserver
     void CredentialChanged() override;
 private:
