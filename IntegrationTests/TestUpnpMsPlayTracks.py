@@ -46,7 +46,7 @@ class TestUpnpMsPlayTracks( BASE.BasePlayTracks ):
         self.tracks = server.GetPlaylist( playlistName )
         server.Shutdown()
 
-        BASE.BasePlayTracks.Test( self, args )
+        BASE.BasePlayTracks.Test( self, args[:6] )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""

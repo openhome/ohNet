@@ -53,7 +53,7 @@ class TestUpnpMsDropout( BASE.BaseDropout ):
         self.tracks = server.GetPlaylist( playlistName )
         server.Shutdown()
 
-        BASE.BaseDropout.Test( self, args )
+        BASE.BaseDropout.Test( self, args[:5] )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
