@@ -62,8 +62,8 @@ tests = [
     [ 'TestPlaylistAddDelSoak',      'local',  ms,     mpList,  100                                      ],
     [ 'TestLocalPlayTracks',         'local', 'local', 8,       'off',   'on'                            ],
     [ 'TestUpnpMsPlayTracks',        'local', 'local', 8,       'off',   'on',   ms,     mpList          ],
-    [ 'TestLocalDropout',            'local', 'local', 'local', '1800'                                   ],
-    [ 'TestUpnpMsDropout',           'local', 'local', 'local', '1800',  ms,     mpList                  ],
+    [ 'TestLocalDropout',            'local', 'local', 'local', 1800                                     ],
+    [ 'TestUpnpMsDropout',           'local', 'local', 'local', 1800,    ms,     mpList                  ],
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                      ],
@@ -71,7 +71,7 @@ tests = [
 
     # Tidal
     [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'on',   tidalI, tidalU, tidalP  ],
-    [ 'TestTidalDropout',            'local', 'local', 'local', '3600',  tidalI, tidalU, tidalP          ],
+    [ 'TestTidalDropout',            'local', 'local', 'local', 3600,    tidalI, tidalU, tidalP          ],
 
     # Airplay
     [ 'TestAirplayFunctions',        'local', dacp                                                       ],

@@ -94,7 +94,7 @@ class BaseDropout( BASE.BaseTest ):
         if slaveName.lower() == 'none':
            slaveName = None
             
-        if duration != 'forever':
+        if str( duration ).lower() != 'forever':
             duration = int( duration )
 
         # create and configure sender
