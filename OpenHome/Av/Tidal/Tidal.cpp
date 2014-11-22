@@ -51,6 +51,7 @@ Tidal::~Tidal()
 TBool Tidal::TryLogin(Bwx& aSessionId)
 {
     if (!TryLogin()) {
+        aSessionId.SetBytes(0);
         return false;
     }
     iLock.Wait();
@@ -126,8 +127,9 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
 
 TBool Tidal::TryLogout(const Brx& aSessionId)
 {
-    iLock.Wait();
-    iLock.Signal();
+    if (aSessionId.Bytes() == 0) {
+        return true;
+    }
     TBool success = false;
     if (!TryConnect(kPort)) {
         LOG2(kError, kMedia, "Tidal: failed to connect\n");
@@ -147,7 +149,9 @@ TBool Tidal::TryLogout(const Brx& aSessionId)
             THROW(ReaderError);
         }
         success = true;
+        iLock.Wait();
         iSessionId.SetBytes(0);
+        iLock.Signal();
     }
     catch (WriterError&) {
         LOG2(kMedia, kError, "WriterError from Tidal logout\n");

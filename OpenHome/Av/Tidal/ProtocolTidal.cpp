@@ -407,7 +407,7 @@ ProtocolStreamResult ProtocolTidal::ProcessContent()
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();
     auto res = iContentProcessor->Stream(*this, iTotalBytes);
-    if (res == EProtocolStreamErrorRecoverable) {
+    if (res == EProtocolStreamErrorRecoverable && !(iSeek || iStopped)) {
         if (iTidal->TryReLogin(iSessionId, iSessionId) &&
             iTidal->TryGetStreamUrl(iTrackId, iStreamUrl)) {
             iUri.Replace(iStreamUrl);
