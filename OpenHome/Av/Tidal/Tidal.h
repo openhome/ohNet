@@ -32,7 +32,9 @@ public:
 public:
     Tidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~Tidal();
-    TBool TryGetStreamUrl(const Brx& aTrackId, Bwx& aSessionId, Bwx& aStreamUrl);
+    TBool TryLogin(Bwx& aSessionId);
+    TBool TryReLogin(const Brx& aCurrentToken, Bwx& aNewToken);
+    TBool TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl);
     TBool TryLogout(const Brx& aSessionId);
     void Interrupt(TBool aInterrupt);
 private: // from ICredentialConsumer
@@ -40,17 +42,16 @@ private: // from ICredentialConsumer
     void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
     void UpdateStatus() override;
     void Login(Bwx& aToken) override;
-    void Logout(const Brx& aToken) override;
+    void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) override;
 private:
     TBool TryConnect(TUint aPort);
-    TBool TryLogin(Bwx& aSessionId, Bwx& aCountryCode);
-    TBool TryLogin(Bwx& aResponse);
-    TBool TryGetStreamUrl(const Brx& aTrackId, const Brx& aSessionId, const Brx& aCountryCode, Bwx& aStreamUrl);
+    TBool TryLogin();
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
 private:
     Mutex iLock;
+    Mutex iReLoginLock;
     Credentials& iCredentialsManager;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;
@@ -62,6 +63,8 @@ private:
     Bws<kMaxUsernameBytes> iUsername;
     Bws<kMaxPasswordBytes> iPassword;
     TUint iSoundQuality;
+    Bws<64> iSessionId;
+    Bws<8> iCountryCode;
     Bws<1024> iStreamUrl;
     Configuration::ConfigChoice* iConfigQuality;
     TUint iSubscriberIdQuality;

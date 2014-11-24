@@ -170,12 +170,9 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
 {
     Reinitialise(aUri);
 
-    Log::Print("ProtocolHttp::Stream ");
-    Log::Print(iUri.AbsoluteUri());
-    Log::Print("\n");
-//    LOG(kMedia, "ProtocolHttp::Stream ");
-//    LOG(kMedia, iUri.AbsoluteUri());
-//    LOG(kMedia, "\n");
+    LOG(kMedia, "ProtocolHttp::Stream ");
+    LOG(kMedia, iUri.AbsoluteUri());
+    LOG(kMedia, "\n");
 
     if (iUri.Scheme() != Brn("http")) {
         LOG(kMedia, "ProtocolHttp::Stream scheme not recognised\n");
@@ -192,12 +189,10 @@ ProtocolStreamResult ProtocolHttp::Stream(const Brx& aUri)
     if (iLive) {
         // don't want to buffer content from a live stream
         // ...so need to wait on pipeline signalling it is ready to play
-        Log::Print("ProtocolHttp::Stream live stream waiting to be (re-)started\n");
-//        LOG(kMedia, "ProtocolHttp::Stream live stream waiting to be (re-)started\n");
+        LOG(kMedia, "ProtocolHttp::Stream live stream waiting to be (re-)started\n");
         Close();
         iSem.Wait();
-        Log::Print("ProtocolHttp::Stream live stream restart\n");
-//        LOG(kMedia, "ProtocolHttp::Stream live stream restart\n");
+        LOG(kMedia, "ProtocolHttp::Stream live stream restart\n");
         res = EProtocolStreamErrorRecoverable; // bodge to drop into the loop below
     }
     while (ContinueStreaming(res)) {
@@ -436,20 +431,17 @@ ProtocolStreamResult ProtocolHttp::DoStream()
         iLive = false;
     }
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
-        Log::Print("ProtocolHttp::DoStream Failed\n");
-//        LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
+        LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
         return EProtocolStreamErrorUnrecoverable;
     }
     if (code == HttpStatus::kPartialContent.Code()) {
         if (iTotalBytes > 0) {
             iSeekable = true;
         }
-        Log::Print("ProtocolHttp::DoStream 'Partial Content' seekable=%d (%lld bytes)\n", iSeekable, iTotalBytes);
-//        LOG(kMedia, "ProtocolHttp::DoStream 'Partial Content' seekable=%d (%lld bytes)\n", iSeekable, iTotalBytes);
+        LOG(kMedia, "ProtocolHttp::DoStream 'Partial Content' seekable=%d (%lld bytes)\n", iSeekable, iTotalBytes);
     }
     else { // code == HttpStatus::kOk.Code()
-        Log::Print("ProtocolHttp::DoStream 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
-//        LOG(kMedia, "ProtocolHttp::DoStream 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
+        LOG(kMedia, "ProtocolHttp::DoStream 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
     }
     if (iHeaderIcyMetadata.Received()) {
         ASSERT(iTotalBytes == 0); // if non-live streams contain icy data, we'll need to adjust totalBytes passed to content processor
@@ -567,8 +559,7 @@ ProtocolStreamResult ProtocolHttp::DoLiveStream()
 
 void ProtocolHttp::StartStream()
 {
-    Log::Print("ProtocolHttp::StartStream\n");
-//    LOG(kMedia, "ProtocolHttp::StartStream\n");
+    LOG(kMedia, "ProtocolHttp::StartStream\n");
 
     iStreamId = iIdProvider->NextStreamId();
     iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, iLive, *this, iStreamId);
@@ -581,8 +572,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
     Close();
     const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
     if (!Connect(iUri, port)) {
-        Log::Print("ProtocolHttp::WriteRequest Connection failure\n");
-//        LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest Connection failure\n");
         return 0;
     }
 
@@ -607,8 +597,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         suppressIcyHeader = true;;
     }
     try {
-        Log::Print("ProtocolHttp::WriteRequest send request\n");
-//        LOG(kMedia, "ProtocolHttp::WriteRequest send request\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
         const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
         Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
@@ -621,8 +610,7 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         iWriterRequest.WriteFlush();
     }
     catch(WriterError&) {
-        Log::Print("ProtocolHttp::WriteRequest writer error\n");
-//        LOG(kMedia, "ProtocolHttp::WriteRequest writer error\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest writer error\n");
         return 0;
     }
 
@@ -633,25 +621,21 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         //iTcpClient.LogVerbose(false);
     }
     catch(HttpError&) {
-        Log::Print("ProtocolHttp::WriteRequest http error\n");
-//        LOG(kMedia, "ProtocolHttp::WriteRequest http error\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest http error\n");
         return 0;
     }
     catch(ReaderError&) {
-        Log::Print("ProtocolHttp::WriteRequest reader error\n");
-//        LOG(kMedia, "ProtocolHttp::WriteRequest reader error\n");
+        LOG(kMedia, "ProtocolHttp::WriteRequest reader error\n");
         return 0;
     }
     const TUint code = iReaderResponse.Status().Code();
-    Log::Print("ProtocolHttp::WriteRequest response code %d\n", code);
-//    LOG(kMedia, "ProtocolHttp::WriteRequest response code %d\n", code);
+    LOG(kMedia, "ProtocolHttp::WriteRequest response code %d\n", code);
     return code;
 }
 
 ProtocolStreamResult ProtocolHttp::ProcessContent()
 {
-    Log::Print("ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
-//    LOG(kMedia, "ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
+    LOG(kMedia, "ProtocolHttp::ProcessContent %lld\n", iTotalBytes);
 
     if (iContentProcessor == NULL && !iStarted) {
         try {

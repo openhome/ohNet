@@ -15,7 +15,7 @@
 namespace OpenHome {
 namespace Av {
 
-class ProtocolTidal : public Media::Protocol
+class ProtocolTidal : public Media::ProtocolNetwork, private Media::IProtocolReader
 {
 public:
     ProtocolTidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
@@ -24,17 +24,45 @@ private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
+    void Deactivated() override;
 private: // from Media::IStreamHandler
     Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
     TUint TryStop(TUint aTrackId, TUint aStreamId) override;
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+private: // from IProtocolReader
+    Brn Read(TUint aBytes);
+    Brn ReadUntil(TByte aSeparator);
+    void ReadFlush();
+    void ReadInterrupt();
+    Brn ReadRemaining();
 private:
-    static TBool TryGetTrackId(const Brx& aQuery, Brn& aTrackId);
+    static TBool TryGetTrackId(const Brx& aQuery, Bwx& aTrackId);
+    Media::ProtocolStreamResult DoStream();
+    Media::ProtocolStreamResult DoSeek(TUint64 aOffset);
+    TUint WriteRequest(TUint64 aOffset);
+    Media::ProtocolStreamResult ProcessContent();
+    TBool ContinueStreaming(Media::ProtocolStreamResult aResult);
 private:
     Tidal* iTidal;
     Uri iUri;
+    Bws<12> iTrackId;
     Bws<1024> iStreamUrl;
+    Bws<64> iSessionId;
+    WriterHttpRequest iWriterRequest;
+    ReaderHttpResponse iReaderResponse;
+    HttpHeaderContentType iHeaderContentType;
+    HttpHeaderContentLength iHeaderContentLength;
+    TUint64 iTotalBytes;
+    TUint iStreamId;
+    TBool iSeekable;
+    TBool iSeek;
+    TBool iStarted;
+    TBool iStopped;
+    TUint64 iSeekPos;
+    TUint64 iOffset;
+    Media::ContentProcessor* iContentProcessor;
+    TUint iNextFlushId;
 };
 
 };  // namespace Av
@@ -55,8 +83,15 @@ Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Av::Cr
 // ProtocolTidal
 
 ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser)
-    : Protocol(aEnv)
+    : ProtocolNetwork(aEnv)
+    , iWriterRequest(iWriterBuf)
+    , iReaderResponse(aEnv, iReaderBuf)
+    , iTotalBytes(0)
+    , iSeekable(false)
 {
+    iReaderResponse.AddHeader(iHeaderContentType);
+    iReaderResponse.AddHeader(iHeaderContentLength);
+
     iTidal = new Tidal(aEnv, aToken, aCredentialsManager, aConfigInitialiser);
     aCredentialsManager.Add(iTidal);
 }
@@ -72,8 +107,14 @@ void ProtocolTidal::Interrupt(TBool aInterrupt)
 
 ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
 {
+    iTotalBytes = iSeekPos = iOffset = 0;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iSeekable = iSeek = iStarted = iStopped = false;
+    iContentProcessor = NULL;
+    iNextFlushId = MsgFlush::kIdInvalid;
     iTidal->Interrupt(false);
     iUri.Replace(aUri);
+
     if (iUri.Scheme() != Brn("tidal")) {
         LOG(kMedia, "ProtocolTidal::Stream scheme not recognised\n");
         return EProtocolErrorNotSupported;
@@ -81,17 +122,66 @@ ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
     LOG(kMedia, "ProtocolTidal::Stream(");
     LOG(kMedia, aUri);
     LOG(kMedia, ")\n");
-    Brn trackId;
-    if (!TryGetTrackId(iUri.Query(), trackId)) {
+    if (!TryGetTrackId(iUri.Query(), iTrackId)) {
         return EProtocolStreamErrorUnrecoverable;
     }
 
-    Bws<64> sessionId;
     ProtocolStreamResult res = EProtocolStreamErrorUnrecoverable;
-    if (iTidal->TryGetStreamUrl(trackId, sessionId, iStreamUrl)) {
-        res = iProtocolManager->Stream(iStreamUrl);
-        (void)iTidal->TryLogout(sessionId);
+    if (iSessionId.Bytes() == 0 && !iTidal->TryLogin(iSessionId)) {
+        return EProtocolStreamErrorUnrecoverable;
     }
+    if (!iTidal->TryGetStreamUrl(iTrackId, iStreamUrl)) {
+        // any error might be due to our session having expired
+        // attempt logout, login, getStreamUrl to see if that fixes things
+        (void)iTidal->TryLogout(iSessionId);
+        if (!iTidal->TryLogin(iSessionId) || !iTidal->TryGetStreamUrl(iTrackId, iStreamUrl)) {
+            return EProtocolStreamErrorUnrecoverable;
+        }
+    }
+    iUri.Replace(iStreamUrl);
+
+    res = DoStream();
+    if (res == EProtocolStreamErrorUnrecoverable) {
+        return res;
+    }
+    while (ContinueStreaming(res)) {
+        if (iStopped) {
+            res = EProtocolStreamStopped;
+            break;
+        }
+        Close();
+        if (iSeek) {
+            iLock.Wait();
+            iSupply->OutputFlush(iNextFlushId);
+            iNextFlushId = MsgFlush::kIdInvalid;
+            iOffset = iSeekPos;
+            iSeek = false;
+            iLock.Signal();
+            res = DoSeek(iOffset);
+        }
+        else {
+            // FIXME - if stream is non-seekable, set ErrorUnrecoverable as soon as Connect succeeds
+            /* FIXME - reconnects should use extra http headers to check that content hasn't changed
+               since our first attempt at reading it.  Any change should result in ErrorUnrecoverable */
+            TUint code = WriteRequest(iOffset);
+            if (code != 0) {
+                iTotalBytes = iHeaderContentLength.ContentLength();
+                res = ProcessContent();
+            }
+        }
+        if (res == EProtocolStreamErrorRecoverable) {
+            Thread::Sleep(50);
+        }
+    }
+
+    iLock.Wait();
+    if ((iStopped || iSeek) && iNextFlushId != MsgFlush::kIdInvalid) {
+        iSupply->OutputFlush(iNextFlushId);
+    }
+    // clear iStreamId to prevent TrySeek or TryStop returning a valid flush id
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
+    iLock.Signal();
+
     return res;
 }
 
@@ -100,31 +190,109 @@ ProtocolGetResult ProtocolTidal::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, 
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolTidal::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void ProtocolTidal::Deactivated()
 {
-    ASSERTS();
-    return ePlayNo;
+    if (iContentProcessor != NULL) {
+        iContentProcessor->Reset();
+        iContentProcessor = NULL;
+    }
+    Close();
 }
 
-TUint ProtocolTidal::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+EStreamPlay ProtocolTidal::OkToPlay(TUint aTrackId, TUint aStreamId)
 {
-    ASSERTS();
-    return MsgFlush::kIdInvalid;
+    LOG(kMedia, "ProtocolTidal::OkToPlay(%u, %u)\n", aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aTrackId, aStreamId);
 }
 
-TUint ProtocolTidal::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint ProtocolTidal::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
 {
-    ASSERTS();
-    return MsgFlush::kIdInvalid;
+    LOG(kMedia, "ProtocolTidal::TrySeek\n");
+
+    iLock.Wait();
+    const TBool streamIsValid = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    if (streamIsValid) {
+        iSeek = true;
+        iSeekPos = aOffset;
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
+            /* If a valid flushId is set then We've previously promised to send a Flush but haven't
+               got round to it yet.  Re-use the same id for any other requests that come in before
+               our main thread gets a chance to issue a Flush */
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+        }
+    }
+    iLock.Signal();
+    if (!streamIsValid) {
+        return MsgFlush::kIdInvalid;
+    }
+    iTcpClient.Interrupt(true);
+    return iNextFlushId;
 }
 
-TBool ProtocolTidal::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TUint ProtocolTidal::TryStop(TUint aTrackId, TUint aStreamId)
 {
-    ASSERTS();
-    return false;
+    iLock.Wait();
+    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    if (stop) {
+        if (iNextFlushId == MsgFlush::kIdInvalid) {
+            /* If a valid flushId is set then We've previously promised to send a Flush but haven't
+               got round to it yet.  Re-use the same id for any other requests that come in before
+               our main thread gets a chance to issue a Flush */
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+        }
+        iStopped = true;
+        iTcpClient.Interrupt(true);
+    }
+    iLock.Signal();
+    return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolTidal::TryGetTrackId(const Brx& aQuery, Brn& aTrackId)
+TBool ProtocolTidal::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+{
+    LOG(kMedia, "> ProtocolTidal::TryGet\n");
+    iLock.Wait();
+    const TBool isCurrent = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    TBool success = false;
+    if (isCurrent) {
+        success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
+    }
+    iLock.Signal();
+    LOG(kMedia, "< ProtocolTidal::TryGet\n");
+    return success;
+}
+
+Brn ProtocolTidal::Read(TUint aBytes)
+{
+    Brn buf = iReaderBuf.Read(aBytes);
+    iOffset += buf.Bytes();
+    return buf;
+}
+
+Brn ProtocolTidal::ReadUntil(TByte aSeparator)
+{
+    Brn buf = iReaderBuf.ReadUntil(aSeparator);
+    iOffset += buf.Bytes();
+    return buf;
+}
+
+void ProtocolTidal::ReadFlush()
+{
+    iReaderBuf.ReadFlush();
+}
+
+void ProtocolTidal::ReadInterrupt()
+{
+    iReaderBuf.ReadInterrupt();
+}
+
+Brn ProtocolTidal::ReadRemaining()
+{
+    Brn buf = iReaderBuf.Snaffle();
+    iOffset += buf.Bytes();
+    return buf;
+}
+
+TBool ProtocolTidal::TryGetTrackId(const Brx& aQuery, Bwx& aTrackId)
 { // static
     Parser parser(aQuery);
     (void)parser.Next('?');
@@ -150,10 +318,115 @@ TBool ProtocolTidal::TryGetTrackId(const Brx& aQuery, Brn& aTrackId)
         LOG2(kMedia, kError, "TryGetTrackId failed - no track id tag\n");
         return false;
     }
-    aTrackId.Set(parser.Remaining());
+    aTrackId.Replace(parser.Remaining());
     if (aTrackId.Bytes() == 0) {
         LOG2(kMedia, kError, "TryGetTrackId failed - no track id value\n");
         return false;
     }
     return true;
+}
+
+TBool ProtocolTidal::ContinueStreaming(ProtocolStreamResult aResult)
+{
+    AutoMutex a(iLock);
+    if (aResult == EProtocolStreamErrorRecoverable) {
+        return true;
+    }
+    return false;
+}
+
+ProtocolStreamResult ProtocolTidal::DoStream()
+{
+    TUint code = WriteRequest(0);
+    iSeekable = false;
+    iTotalBytes = iHeaderContentLength.ContentLength();
+
+    if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
+        LOG(kMedia, "ProtocolTidal::DoStream Failed\n");
+        return EProtocolStreamErrorUnrecoverable;
+    }
+    if (code == HttpStatus::kPartialContent.Code()) {
+        if (iTotalBytes > 0) {
+            iSeekable = true;
+        }
+        LOG(kMedia, "ProtocolTidal::DoStream 'Partial Content' seekable=%d (%lld bytes)\n", iSeekable, iTotalBytes);
+    }
+    else { // code == HttpStatus::kOk.Code()
+        LOG(kMedia, "ProtocolTidal::DoStream 'OK' non-seekable (%lld bytes)\n", iTotalBytes);
+    }
+
+    return ProcessContent();
+}
+
+TUint ProtocolTidal::WriteRequest(TUint64 aOffset)
+{
+    Close();
+    const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+    if (!Connect(iUri, port)) {
+        LOG(kMedia, "ProtocolTidal::WriteRequest Connection failure\n");
+        return 0;
+    }
+
+    try {
+        LOG(kMedia, "ProtocolTidal::WriteRequest send request\n");
+        iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
+        const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
+        Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
+        Http::WriteHeaderConnectionClose(iWriterRequest);
+        Http::WriteHeaderRangeFirstOnly(iWriterRequest, aOffset);
+        iWriterRequest.WriteFlush();
+    }
+    catch(WriterError&) {
+        LOG(kMedia, "ProtocolTidal::WriteRequest WriterError\n");
+        return 0;
+    }
+
+    try {
+        LOG(kMedia, "ProtocolTidal::WriteRequest read response\n");
+        iReaderResponse.Read();
+    }
+    catch(HttpError&) {
+        LOG(kMedia, "ProtocolTidal::WriteRequest HttpError\n");
+        return 0;
+    }
+    catch(ReaderError&) {
+        LOG(kMedia, "ProtocolTidal::WriteRequest EeaderError\n");
+        return 0;
+    }
+    const TUint code = iReaderResponse.Status().Code();
+    LOG(kMedia, "ProtocolTidal::WriteRequest response code %d\n", code);
+    return code;
+}
+
+ProtocolStreamResult ProtocolTidal::ProcessContent()
+{
+    if (!iStarted) {
+        iStreamId = iIdProvider->NextStreamId();
+        iSupply->OutputStream(iUri.AbsoluteUri(), iTotalBytes, iSeekable, false, *this, iStreamId);
+        iStarted = true;
+    }
+    iContentProcessor = iProtocolManager->GetAudioProcessor();
+    auto res = iContentProcessor->Stream(*this, iTotalBytes);
+    if (res == EProtocolStreamErrorRecoverable && !(iSeek || iStopped)) {
+        if (iTidal->TryReLogin(iSessionId, iSessionId) &&
+            iTidal->TryGetStreamUrl(iTrackId, iStreamUrl)) {
+            iUri.Replace(iStreamUrl);
+        }
+    }
+    return res;
+}
+
+ProtocolStreamResult ProtocolTidal::DoSeek(TUint64 aOffset)
+{
+    Interrupt(false);
+    const TUint code = WriteRequest(aOffset);
+    if (code == 0) {
+        return EProtocolStreamErrorRecoverable;
+    }
+    iTotalBytes = iHeaderContentLength.ContentLength();
+    if (code != HttpStatus::kPartialContent.Code()) {
+        return EProtocolStreamErrorUnrecoverable;
+    }
+
+    return ProcessContent();
 }

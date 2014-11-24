@@ -32,10 +32,10 @@ public:
     void Set(const Brx& aUsername, const Brx& aPassword);
     void Clear();
     void Enable(TBool aEnable);
-    void Get(Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus);
-    void SetStatus(const Brx& aStatus);
+    void Get(Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData);
+    void SetState(const Brx& aStatus, const Brx& aData);
     void Login(Bwx& aToken);
-    void Logout(const Brx& aToken);
+    void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken);
 private:
     void UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
     void PasswordChanged(Configuration::KeyValuePair<const Brx&>& aKvp);
@@ -57,6 +57,7 @@ private:
     Bws<ICredentials::kMaxPasswordBytes> iPassword;
     Bws<ICredentials::kMaxPasswordEncryptedBytes> iPasswordEncrypted;
     Bws<ICredentials::kMaxStatusBytes> iStatus;
+    Bws<ICredentials::kMaxDataBytes> iData;
     TBool iEnabled;
     TBool iModerationTimerStarted;
 };
@@ -138,22 +139,24 @@ void Credential::Enable(TBool aEnable)
     ReportChangesLocked();
 }
 
-void Credential::Get(Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus)
+void Credential::Get(Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData)
 {
     AutoMutex _(iLock);
     aUsername.Replace(iUsername);
     aPassword.Replace(iPasswordEncrypted);
     aEnabled = iEnabled;
     aStatus.Replace(iStatus);
+    aData.Replace(iData);
 }
 
-void Credential::SetStatus(const Brx& aStatus)
+void Credential::SetState(const Brx& aStatus, const Brx& aData)
 {
     AutoMutex _(iLock);
-    if (iStatus == aStatus) {
+    if (iStatus == aStatus && iData == aData) {
         return;
     }
     iStatus.Replace(aStatus);
+    iData.Replace(aData);
     iObserver.CredentialChanged();
 }
 
@@ -162,9 +165,9 @@ void Credential::Login(Bwx& aToken)
     iConsumer->Login(aToken);
 }
 
-void Credential::Logout(const Brx& aToken)
+void Credential::ReLogin(const Brx& aCurrentToken, Bwx& aNewToken)
 {
-    iConsumer->Logout(aToken);
+    iConsumer->ReLogin(aCurrentToken, aNewToken);
 }
 
 void Credential::UsernameChanged(Configuration::KeyValuePair<const Brx&>& aKvp)
@@ -275,10 +278,10 @@ void Credentials::Add(ICredentialConsumer* aConsumer)
     iProvider->AddId(credential->Id());
 }
 
-void Credentials::SetStatus(const Brx& aId, const Brx& aState)
+void Credentials::SetState(const Brx& aId, const Brx& aStatus, const Brx& aData)
 {
     Credential* credential = Find(aId);
-    credential->SetStatus(aState);
+    credential->SetState(aStatus, aData);
 }
 
 void Credentials::GetPublicKey(Bwx& aKey)
@@ -304,10 +307,10 @@ void Credentials::Enable(const Brx& aId, TBool aEnable)
     credential->Enable(aEnable);
 }
 
-void Credentials::Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus)
+void Credentials::Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData)
 {
     Credential* credential = Find(aId);
-    credential->Get(aUsername, aPassword, aEnabled, aStatus);
+    credential->Get(aUsername, aPassword, aEnabled, aStatus, aData);
 }
 
 void Credentials::Login(const Brx& aId, Bwx& aToken)
@@ -316,10 +319,10 @@ void Credentials::Login(const Brx& aId, Bwx& aToken)
     credential->Login(aToken);
 }
 
-void Credentials::Logout(const Brx& aId, const Brx& aToken)
+void Credentials::ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken)
 {
     Credential* credential = Find(aId);
-    credential->Logout(aToken);
+    credential->ReLogin(aCurrentToken, aNewToken);
 }
 
 void Credentials::CredentialChanged()

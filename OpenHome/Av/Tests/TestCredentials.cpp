@@ -63,17 +63,21 @@ class DummyCredential : public ICredentialConsumer
 public:
     static const Brn kUsernameInvalid;
     static const Brn kStatusUsernameInvalid;
+    static const Brn kDataUsernameInvalid;
+    static const Brn kTokenInitial;
+    static const Brn kTokenUpdated;
 public:
     DummyCredential(Credentials& aCredentials, Semaphore& aCredChanged, Semaphore& aStatusChanged);
     const Brx& Username() const { return iUsername; }
     const Brx& Password() const { return iPassword; }
     const Brx& Status() const { return iStatus; }
+    const Brx& Token() const { return iToken; }
 public: // from ICredentialConsumer
     const Brx& Id() const override;
     void CredentialsChanged(const Brx& aUsername, const Brx& aPassword) override;
     void UpdateStatus() override;
     void Login(Bwx& aToken) override;
-    void Logout(const Brx& aToken) override;
+    void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) override;
 private:
     Credentials& iCredentials;
     Semaphore& iCredChanged;
@@ -81,6 +85,7 @@ private:
     Bws<ICredentials::kMaxUsernameBytes> iUsername;
     Bws<ICredentials::kMaxPasswordBytes> iPassword;
     Bws<ICredentials::kMaxStatusBytes> iStatus;
+    Bws<ICredentials::kMaxTokenBytes> iToken;
 };
 
 
@@ -129,11 +134,15 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 
 const Brn DummyCredential::kUsernameInvalid("UsernameInvalid");
 const Brn DummyCredential::kStatusUsernameInvalid("Invalid username");
+const Brn DummyCredential::kDataUsernameInvalid("Invalid username data");
+const Brn DummyCredential::kTokenInitial("Token1");
+const Brn DummyCredential::kTokenUpdated("Token2");
 
 DummyCredential::DummyCredential(Credentials& aCredentials, Semaphore& aCredChanged, Semaphore& aStatusChanged)
     : iCredentials(aCredentials)
     , iCredChanged(aCredChanged)
     , iStatusChanged(aStatusChanged)
+    , iToken(kTokenInitial)
 {
 }
 
@@ -153,22 +162,25 @@ void DummyCredential::CredentialsChanged(const Brx& aUsername, const Brx& aPassw
 void DummyCredential::UpdateStatus()
 {
     if (iUsername == kUsernameInvalid) {
-        iCredentials.SetStatus(Id(), kStatusUsernameInvalid);
+        iCredentials.SetState(Id(), kStatusUsernameInvalid, kDataUsernameInvalid);
     }
     else {
-        iCredentials.SetStatus(Id(), Brx::Empty());
+        iCredentials.SetState(Id(), Brx::Empty(), Brx::Empty());
     }
     iStatusChanged.Signal();
 }
 
-void DummyCredential::Login(Bwx& /*aToken*/)
+void DummyCredential::Login(Bwx& aToken)
 {
-    THROW(CredentialsLoginFailed);
+    aToken.Replace(iToken);
 }
 
-void DummyCredential::Logout(const Brx& /*aToken*/)
+void DummyCredential::ReLogin(const Brx& aCurrentToken, Bwx& aNewToken)
 {
-    THROW(CredentialsLogoutFailed);
+    if (aCurrentToken == iToken) {
+        iToken.Replace(kTokenUpdated);
+    }
+    aNewToken.Replace(iToken);
 }
 
     
@@ -216,12 +228,12 @@ void SuiteCredentials::Test()
     TEST_THROWS_PROXYERROR(iProxy->SyncSet(id, Brn("username"), Brn("password")), 800);
     TEST_THROWS_PROXYERROR(iProxy->SyncClear(id), 800);
     TEST_THROWS_PROXYERROR(iProxy->SyncSetEnabled(id, false), 800);
-    Brh username, password, status;
+    Brh username, password, status, data;
     TBool enabled;
-    TEST_THROWS_PROXYERROR(iProxy->SyncGet(id, username, password, enabled, status), 800);
+    TEST_THROWS_PROXYERROR(iProxy->SyncGet(id, username, password, enabled, status, data), 800);
     Brh token;
     TEST_THROWS_PROXYERROR(iProxy->SyncLogin(id, token), 800);
-    TEST_THROWS_PROXYERROR(iProxy->SyncLogout(id, Brn("token")), 800);
+    TEST_THROWS_PROXYERROR(iProxy->SyncReLogin(id, Brn("token"), token), 800);
 
     // check getters for state variables
     Brh ids;
@@ -240,11 +252,12 @@ void SuiteCredentials::Test()
     iProxy->SyncGetSequenceNumber(seq);
 
     // check that Set/Clear/SetEnabled are passed through
-    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
+    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
     TEST(username.Bytes() == 0);
     TEST(password.Bytes() == 0);
     TEST(enabled);
     TEST(status.Bytes() == 0);
+    TEST(data.Bytes() == 0);
 
     const Brn kUsername("username");
     const Brn kPasswordDec("password");
@@ -265,21 +278,23 @@ void SuiteCredentials::Test()
     TUint oldSeq = seq;
     iProxy->SyncGetSequenceNumber(seq);
     TEST(seq > oldSeq);
-    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
+    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
     TEST(username == kUsername);
     TEST(password == passwordEnc);
     TEST(enabled);
     TEST(status.Bytes() == 0);
+    TEST(data.Bytes() == 0);
     TEST(iDummy->Username() == kUsername);
     TEST(iDummy->Password() == kPasswordDec);
 
     iProxy->SyncSetEnabled(iDummy->Id(), false);
     iCredChanged.Wait();
-    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
+    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
     TEST(username == kUsername);
     TEST(password == passwordEnc);
     TEST(!enabled);
     TEST(status.Bytes() == 0);
+    TEST(data.Bytes() == 0);
     TEST(iDummy->Username().Bytes() == 0);
     TEST(iDummy->Password().Bytes() == 0);
     TEST(!iStatusChanged.Clear());
@@ -287,11 +302,12 @@ void SuiteCredentials::Test()
     iProxy->SyncSetEnabled(iDummy->Id(), true);
     iCredChanged.Wait();
     TEST(!iStatusChanged.Clear());
-    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
+    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
     TEST(username == kUsername);
     TEST(password == passwordEnc);
     TEST(enabled);
     TEST(status.Bytes() == 0);
+    TEST(data.Bytes() == 0);
     TEST(iDummy->Username() == kUsername);
     TEST(iDummy->Password() == kPasswordDec);
     TEST(!iStatusChanged.Clear());
@@ -299,28 +315,41 @@ void SuiteCredentials::Test()
     iProxy->SyncSet(iDummy->Id(), DummyCredential::kUsernameInvalid, passwordEnc);
     iCredChanged.Wait();
     iStatusChanged.Wait();
-    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
+    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
     TEST(username == DummyCredential::kUsernameInvalid);
     TEST(password == passwordEnc);
     TEST(enabled);
     TEST(status == DummyCredential::kStatusUsernameInvalid);
+    TEST(data == DummyCredential::kDataUsernameInvalid);
     TEST(iDummy->Username() == DummyCredential::kUsernameInvalid);
     TEST(iDummy->Password() == kPasswordDec);
 
     iProxy->SyncClear(iDummy->Id());
     iCredChanged.Wait();
     iStatusChanged.Wait();
-    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status);
+    iProxy->SyncGet(iDummy->Id(), username, password, enabled, status, data);
     TEST(username.Bytes() == 0);
     TEST(password.Bytes() == 0);
     TEST(enabled);
     TEST(status.Bytes() == 0);
+    TEST(data.Bytes() == 0);
     TEST(iDummy->Username().Bytes() == 0);
     TEST(iDummy->Password().Bytes() == 0);
 
-    // check error reporting from Login/Logout
-    TEST_THROWS_PROXYERROR(iProxy->SyncLogin(iDummy->Id(), token), 801);
-    TEST_THROWS_PROXYERROR(iProxy->SyncLogout(iDummy->Id(), Brn("token")), 802);
+    // Login/ReLogin
+    TEST(iDummy->Token() == DummyCredential::kTokenInitial);
+    iProxy->SyncLogin(iDummy->Id(), token);
+    TEST(iDummy->Token() == DummyCredential::kTokenInitial);
+    TEST(token == iDummy->Token());
+    iProxy->SyncReLogin(iDummy->Id(), Brn("bogus"), token);
+    TEST(iDummy->Token() == DummyCredential::kTokenInitial);
+    TEST(token == iDummy->Token());
+    iProxy->SyncReLogin(iDummy->Id(), token, token);
+    TEST(iDummy->Token() == DummyCredential::kTokenUpdated);
+    TEST(token == iDummy->Token());
+    iProxy->SyncLogin(iDummy->Id(), token);
+    TEST(iDummy->Token() == DummyCredential::kTokenUpdated);
+    TEST(token == iDummy->Token());
 }
 
 void SuiteCredentials::SeqChanged()

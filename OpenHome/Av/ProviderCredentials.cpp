@@ -13,8 +13,6 @@ static const TUint kIdNotFoundCode = 800;
 static const Brn kIdNotFoundMsg("Id not found");
 static const TUint kLoginFailedCode = 801;
 static const Brn kLoginFailedMsg("Login failed");
-static const TUint kLogoutFailedCode = 802;
-static const Brn kLogoutFailedMsg("Logout failed");
 
 ProviderCredentials::ProviderCredentials(DvDevice& aDevice, ICredentials& aCredentials)
     : DvProviderAvOpenhomeOrgCredentials1(aDevice)
@@ -29,7 +27,7 @@ ProviderCredentials::ProviderCredentials(DvDevice& aDevice, ICredentials& aCrede
     EnableActionSetEnabled();
     EnableActionGet();
     EnableActionLogin();
-    EnableActionLogout();
+    EnableActionReLogin();
     EnableActionGetIds();
     EnableActionGetPublicKey();
     EnableActionGetSequenceNumber();
@@ -98,14 +96,15 @@ void ProviderCredentials::SetEnabled(IDvInvocation& aInvocation, const Brx& aId,
     aInvocation.EndResponse();
 }
 
-void ProviderCredentials::Get(IDvInvocation& aInvocation, const Brx& aId, IDvInvocationResponseString& aUsername, IDvInvocationResponseString& aPassword, IDvInvocationResponseBool& aEnabled, IDvInvocationResponseString& aStatus)
+void ProviderCredentials::Get(IDvInvocation& aInvocation, const Brx& aId, IDvInvocationResponseString& aUsername, IDvInvocationResponseString& aPassword, IDvInvocationResponseBool& aEnabled, IDvInvocationResponseString& aStatus, IDvInvocationResponseString& aData)
 {
     Bws<ICredentials::kMaxUsernameBytes> userName;
     Bws<ICredentials::kMaxPasswordEncryptedBytes> password;
     TBool enabled = false;
     Bws<ICredentials::kMaxStatusBytes> status;
+    Bws<ICredentials::kMaxDataBytes> data;
     try {
-        iCredentialsManager.Get(aId, userName, password, enabled, status);
+        iCredentialsManager.Get(aId, userName, password, enabled, status, data);
     }
     catch (CredentialsIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
@@ -118,6 +117,8 @@ void ProviderCredentials::Get(IDvInvocation& aInvocation, const Brx& aId, IDvInv
     aEnabled.Write(enabled);
     aStatus.Write(status);
     aStatus.WriteFlush();
+    aData.Write(data);
+    aData.WriteFlush();
     aInvocation.EndResponse();
 }
 
@@ -139,18 +140,21 @@ void ProviderCredentials::Login(IDvInvocation& aInvocation, const Brx& aId, IDvI
     aInvocation.EndResponse();
 }
 
-void ProviderCredentials::Logout(Net::IDvInvocation& aInvocation, const Brx& aId, const Brx& aToken)
+void ProviderCredentials::ReLogin(IDvInvocation& aInvocation, const Brx& aId, const Brx& aCurrentToken, IDvInvocationResponseString& aNewToken)
 {
+    Bws<ICredentials::kMaxTokenBytes> token;
     try {
-        iCredentialsManager.Logout(aId, aToken);
+        iCredentialsManager.ReLogin(aId, aCurrentToken, token);
     }
     catch (CredentialsIdNotFound&) {
         aInvocation.Error(kIdNotFoundCode, kIdNotFoundMsg);
     }
-    catch (CredentialsLogoutFailed&) {
-        aInvocation.Error(kLogoutFailedCode, kLogoutFailedMsg);
+    catch (CredentialsLoginFailed&) {
+        aInvocation.Error(kLoginFailedCode, kLoginFailedMsg);
     }
     aInvocation.StartResponse();
+    aNewToken.Write(token);
+    aNewToken.WriteFlush();
     aInvocation.EndResponse();
 }
 
