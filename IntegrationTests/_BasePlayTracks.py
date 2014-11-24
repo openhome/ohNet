@@ -75,7 +75,7 @@ class BasePlayTracks( BASE.BaseTest ):
         try:
             senderName   = args[1]
             receiverName = args[2]
-            if args[3].lower() != 'None':
+            if str( args[3] ).lower() != 'None':
                 self.playTime = int( args[3] )
             if len( args ) > 4:
                 self.repeat = args[4]
