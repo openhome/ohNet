@@ -641,7 +641,13 @@ Msg* Container::ProcessMsg(MsgEncodedStream* aMsg)
     // IStreamHandler it was constructed with which happens to be
     // ContainerFront. ContainerFront then calls the ptr it took to
     // aMsg->StreamHandler()).
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    MsgEncodedStream* msg = NULL;
+    if (aMsg->RawPcm()) {
+        msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this, aMsg->PcmStream());
+    }
+    else {
+        msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    }
     aMsg->RemoveRef();
     return msg;
 }
