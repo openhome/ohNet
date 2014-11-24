@@ -374,7 +374,13 @@ Msg* Rewinder::ProcessMsg(MsgDelay* aMsg)
 Msg* Rewinder::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iStreamHandler = aMsg->StreamHandler();
-    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    MsgEncodedStream* msg = NULL;
+    if (aMsg->RawPcm()) {
+        msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this, aMsg->PcmStream());
+    }
+    else {
+        msg = iMsgFactory.CreateMsgEncodedStream(aMsg->Uri(), aMsg->MetaText(), aMsg->TotalBytes(), aMsg->StreamId(), aMsg->Seekable(), aMsg->Live(), this);
+    }
     aMsg->RemoveRef();
     TryBuffer(msg);
     iBuffering = true;
