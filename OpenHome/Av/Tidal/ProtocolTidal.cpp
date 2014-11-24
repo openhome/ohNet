@@ -102,7 +102,16 @@ ProtocolTidal::~ProtocolTidal()
 
 void ProtocolTidal::Interrupt(TBool aInterrupt)
 {
-    iTidal->Interrupt(aInterrupt);
+    iLock.Wait();
+    if (iActive) {
+        LOG(kMedia, "ProtocolTidal::Interrupt(%u)\n", aInterrupt);
+        if (aInterrupt) {
+            iStopped = true;
+        }
+        iTcpClient.Interrupt(aInterrupt);
+        iTidal->Interrupt(aInterrupt);
+    }
+    iLock.Signal();
 }
 
 ProtocolStreamResult ProtocolTidal::Stream(const Brx& aUri)
