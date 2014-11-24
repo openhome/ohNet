@@ -458,7 +458,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-//    Debug::SetLevel(Debug::kPipeline | Debug::kMedia);
+    Debug::SetLevel(Debug::kError);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
