@@ -41,7 +41,7 @@ class ICredentials
 public:
     static const TUint kMaxUsernameBytes = 64;
     static const TUint kMaxPasswordBytes = 64;
-    static const TUint kMaxPasswordEncryptedBytes = 256;
+    static const TUint kMaxPasswordEncryptedBytes = 512;
     static const TUint kMaxStatusBytes = 512;
     static const TUint kMaxDataBytes = 128;
     static const TUint kMaxTokenBytes = 128;

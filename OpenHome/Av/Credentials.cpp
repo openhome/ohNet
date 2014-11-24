@@ -22,7 +22,6 @@ class Credential
 {
     friend class Credentials;
 
-    static const TUint kMaxEncryptedLen = 256;
     static const TUint kEventModerationMs = 500;
 public:
     Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Configuration::IConfigInitialiser& aConfigInitialiser, Fifo<Credential*>& aFifoCredentialsChanged);
@@ -84,12 +83,12 @@ Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICrede
     Bws<64> key(aConsumer->Id());
     key.Append('.');
     key.Append(Brn("Username"));
-    iConfigUsername = new ConfigText(aConfigInitialiser, key, kMaxEncryptedLen, Brx::Empty());
+    iConfigUsername = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
     iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &Credential::UsernameChanged));
     key.Replace(aConsumer->Id());
     key.Append('.');
     key.Append(Brn("Password"));
-    iConfigPassword = new ConfigText(aConfigInitialiser, key, kMaxEncryptedLen, Brx::Empty());
+    iConfigPassword = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
     iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &Credential::PasswordChanged));
 }
 
