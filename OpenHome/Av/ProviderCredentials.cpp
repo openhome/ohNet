@@ -96,7 +96,7 @@ void ProviderCredentials::SetEnabled(IDvInvocation& aInvocation, const Brx& aId,
     aInvocation.EndResponse();
 }
 
-void ProviderCredentials::Get(IDvInvocation& aInvocation, const Brx& aId, IDvInvocationResponseString& aUsername, IDvInvocationResponseString& aPassword, IDvInvocationResponseBool& aEnabled, IDvInvocationResponseString& aStatus, IDvInvocationResponseString& aData)
+void ProviderCredentials::Get(IDvInvocation& aInvocation, const Brx& aId, IDvInvocationResponseString& aUsername, IDvInvocationResponseBinary& aPassword, IDvInvocationResponseBool& aEnabled, IDvInvocationResponseString& aStatus, IDvInvocationResponseString& aData)
 {
     Bws<ICredentials::kMaxUsernameBytes> userName;
     Bws<ICredentials::kMaxPasswordEncryptedBytes> password;
