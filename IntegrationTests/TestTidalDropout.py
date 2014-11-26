@@ -6,9 +6,10 @@ Parameters:
     arg#2 - Receiver/Repeater DUT (None = not present)
     arg#3 - Receiver/SlaveDUT  (None = not present)
     arg#4 - Test duration (secs) or 'forever'
-    arg#5 - Tidal ID (only required for 'local' sender)
-    arg#6 - Tidal username (only required for 'local' sender)
-    arg#7 - Tidal password (only required for 'local' sender)
+    arg#5 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
+    arg#6 - Tidal ID
+    arg#7 - Tidal username (only required for 'local' sender)
+    arg#8 - Tidal password (only required for 'local' sender)
 local' for internal SoftPlayer on loopback for DUTs
 
 Verifies TIDAL served audio played by the DUT does not suffer from audio dropout.
@@ -50,17 +51,28 @@ class TestTidalDropout( BASE.BaseDropout ):
         """Constructor - initialise base class"""
         BASE.BaseDropout.__init__( self )
         self.doc = __doc__
+        self.tidalId = ''
 
     def Test( self, args ):
         """Test dropout on of TIDAL served tracks"""
+        numTracks = 0
         try:
+            numTracks    = int( args[5] )
+            self.tidalId = args[6]
             if args[1].lower() == 'local':
-                args[5] = {'aTidalId':args[5], 'aTidalUser':args[6], 'aTidalPwd':args[7]}
+                args[5] = {'aTidalId':args[6], 'aTidalUser':args[7], 'aTidalPwd':args[8]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
-        self.tracks = kTidalTracks
+        if numTracks:
+            import Instruments.Network.Tidal as Tidal
+            tidal = Tidal.Tidal( self.tidalId, 'GB' )
+            self.tracks = tidal.RandomTracks( numTracks )
+            self.log.Pass( '', 'Testing with list of %d randomly selected' % numTracks )
+        else:
+            self.tracks = kTidalTracks
+            self.log.Pass( '', 'Testing with list of 20 hard-coded tracks')
         BASE.BaseDropout.Test( self, args )
 
     def Cleanup( self ):
