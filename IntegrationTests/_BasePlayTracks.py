@@ -330,8 +330,13 @@ class BasePlayTracks( BASE.BaseTest ):
                 
     def _SetupPlayTimer( self ):
         """Setup timer to callback after specified play time"""
+        start = time.time()
+        time.sleep( 0.2 )   # sometimes events ID before buffering state
         self.senderStarted.wait()
-        self.senderPlaying.wait()
+        self.senderPlaying.wait( 10 )
+        delay = time.time()-start
+        if delay > 1:
+            self.log.Warn( self.senderDev, 'Slow startup of track playback (%.2fs)' % delay )
         self.startTime = time.time()
         self.senderDuration.clear()
         self.expectedPlayTime = self.sender.time.duration
