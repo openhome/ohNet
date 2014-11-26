@@ -143,7 +143,6 @@ class BasePlayTracks( BASE.BaseTest ):
         # subscribe to sender and receiver events
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
         self.sender.time.AddSubscriber( self._SenderTimeCb )
-        self.sender.info.AddSubscriber( self._SenderInfoCb )
         if receiverName:
             self.receiver.time.AddSubscriber( self._ReceiverTimeCb )
             self.receiver.receiver.AddSubscriber( self._ReceiverReceiverCb )
@@ -188,11 +187,7 @@ class BasePlayTracks( BASE.BaseTest ):
                 # false (=0) results for play time as this event for next track
                 # has already occurred
                 self.senderPlayTime = int( svVal )
-
-    # noinspection PyUnusedLocal
-    def _SenderInfoCb( self, service, svName, svVal, svSeq ):
-        """Callback from Time Service UPnP events on sender device"""
-        if svName == 'Duration':
+        elif svName == 'Duration':
             if svVal != 0:
                 self.senderDuration.set()
 
@@ -335,15 +330,20 @@ class BasePlayTracks( BASE.BaseTest ):
                 
     def _SetupPlayTimer( self ):
         """Setup timer to callback after specified play time"""
+        start = time.time()
+        time.sleep( 0.2 )   # sometimes events ID before buffering state
         self.senderStarted.wait()
-        self.senderPlaying.wait()
+        self.senderPlaying.wait( 10 )
+        delay = time.time()-start
+        if delay > 1:
+            self.log.Warn( self.senderDev, 'Slow startup of track playback (%.2fs)' % delay )
         self.startTime = time.time()
         self.senderDuration.clear()
-        self.expectedPlayTime = self.sender.info.duration
+        self.expectedPlayTime = self.sender.time.duration
         if self.expectedPlayTime == 0:
             self.senderDuration.wait( 3 )
             if self.senderDuration.is_set():
-                self.expectedPlayTime = self.sender.info.duration
+                self.expectedPlayTime = self.sender.time.duration
             else:
                 self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
         if self.playTime is not None and self.playTime < self.expectedPlayTime:
@@ -375,6 +375,7 @@ class BasePlayTracks( BASE.BaseTest ):
         # to receipt of an Id event from the Playlist service). This is to 
         # handle cases where the same track is played twice in a row, which
         # causes NO id event to be sent.
+        self.nextTimer = None
         self.log.Info( self.senderDev, 'Next track timer triggered track change as no Id event Rx' ) 
         self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
 
