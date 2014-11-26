@@ -7,9 +7,10 @@ Parameters:
     arg#3 - Time to play before skipping to next (None = play all)
     arg#4 - Repeat mode [on/off]
     arg#5 - Shuffle mode [on/off]
-    arg#6 - Tidal ID (only required for 'local' sender)
-    arg#7 - Tidal username (only required for 'local' sender)
-    arg#8 - Tidal password (only required for 'local' sender)
+    arg#6 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
+    arg#7 - Tidal ID
+    arg#8 - Tidal username (only required for 'local' sender)
+    arg#9 - Tidal password (only required for 'local' sender)
 
 Test test which plays Tidal served tracks from a playlist sequentially. The tracks
 may be played for their entirety or any specified length of time. Repeat and shuffle
@@ -50,25 +51,37 @@ class TestTidalPlayTracks( BASE.BasePlayTracks ):
     def __init__( self ):
         """Constructor - initialise base class"""
         BASE.BasePlayTracks.__init__( self )
-        self.doc = __doc__
+        self.doc     = __doc__
+        self.tidalId = ''
 
     def Test( self, args ):
         """Check playback of Tidal served tracks"""
+        numTracks = 0
         try:
+            numTracks    = int( args[6] )
+            self.tidalId = args[7]
             if args[1].lower() == 'local':
-                args[6] = {'aTidalId':args[6], 'aTidalUser':args[7], 'aTidalPwd':args[8]}
+                args[6] = {'aTidalId':args[7], 'aTidalUser':args[8], 'aTidalPwd':args[9]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
 
-        self.tracks = kTidalTracks
+        if numTracks:
+            import Instruments.Network.Tidal as Tidal
+            tidal = Tidal.Tidal( self.tidalId, 'GB' )
+            self.tracks = tidal.RandomTracks( numTracks )
+            self.log.Pass( '', 'Testing with list of %d randomly selected' % numTracks )
+        else:
+            self.tracks = kTidalTracks
+            self.log.Pass( '', 'Testing with list of 20 hard-coded tracks')
+
         BASE.BasePlayTracks.Test( self, args )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
         BASE.BasePlayTracks.Cleanup( self )
 
-            
+
 if __name__ == '__main__':
     
     BASE.Run( sys.argv )
