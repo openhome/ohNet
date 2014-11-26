@@ -187,7 +187,15 @@ void Tidal::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 void Tidal::UpdateStatus()
 {
     (void)TryLogout(iSessionId);
-    (void)TryLogin();
+    iLock.Wait();
+    const TBool noCredentials = (iUsername.Bytes() == 0 && iPassword.Bytes() == 0);
+    iLock.Signal();
+    if (noCredentials) {
+        iCredentialsManager.SetState(kId, Brx::Empty(), Brx::Empty());
+    }
+    else {
+        (void)TryLogin();
+    }
 }
 
 void Tidal::Login(Bwx& aToken)
