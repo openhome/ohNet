@@ -119,6 +119,13 @@ def configure_toolchain(conf):
 
         if conf.options.dest_platform in ['Linux-x86']:
             conf.env.append_value('VALGRIND_ENABLE', ['1'])
+            conf.env.append_value('CXXFLAGS', ['-march=i386', '-m32'])
+            conf.env.append_value('CFLAGS', ['-march=i386', '-m32'])
+            conf.env.append_value('LINKFLAGS', ['-march=i386', '-m32'])
+        if conf.options.dest_platform == 'Linux-x64':
+            conf.env.append_value('CXXFLAGS', ['-march=x86-64', '-m64'])
+            conf.env.append_value('CFLAGS', ['-march=x86-64', '-m64'])
+            conf.env.append_value('LINKFLAGS', ['-march=x86-64', '-m64'])
         if conf.options.dest_platform in ['Linux-x86', 'Linux-x64', 'Linux-ARM', 'Linux-ppc32']:
             conf.env.append_value('LINKFLAGS', ['-pthread'])
             conf.env.append_value('CXXFLAGS',['-Wno-psabi', '-fPIC'])
