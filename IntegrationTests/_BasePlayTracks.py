@@ -48,7 +48,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.nextTimer        = None
         self.stateTimer       = None
         self.checkInfoTimer   = None
-        self.timestamp        = time.time()
+        self.lastIdTime       = time.time()
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
@@ -218,18 +218,27 @@ class BasePlayTracks( BASE.BaseTest ):
 
     def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""
-        now = time.time()
-        if now-self.timestamp < 2:
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % self.numTrack )
-        self.timestamp = now
+        checkResults = True
+        currIdTime = time.time()
+        self.numTrack += 1
 
-        if aId>0:
+        if currIdTime-self.lastIdTime < 2:
+            # less than 2s between ID events - assume previous track skipped
+            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+            checkResults = False
+            if not self.senderStopped.isSet():
+                plIndex = self.sender.playlist.PlaylistIndex( aPlId )
+                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+        self.lastIdTime = currIdTime
+
+        if aId>0 and checkResults:
+            # Previous track played -> check its results
             self.trackChangeMutex.acquire()
             if self.checkInfoTimer:
                 self.checkInfoTimer.cancel()
             self._CheckPlayTime()
             if not self.senderStopped.isSet():
-                self.numTrack += 1
                 if self.repeat=='off' and self.numTrack>len( self.tracks ):
                     self.senderStopped.wait( 3 )
                     if not self.senderStopped.isSet():
