@@ -25,6 +25,8 @@ import sys
 import threading
 import time
 
+kNotPlayedThreshold = 5     # time in secs between ID events below which assume 'failed to play'
+
 
 def Run( aArgs ):
     """Pass the Run() call up to the base class"""
@@ -102,7 +104,10 @@ class BasePlayTracks( BASE.BaseTest ):
             
         if self.shuffle.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
-            
+
+        if self.playTime <= kNotPlayedThreshold:
+            self.log.Abort( '', 'Minimum value for time-to-play is %ds' % (kNotPlayedThreshold+1) )
+
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
             options = {'aRoom':'TestSender', 'aLoopback':loopback}
@@ -157,7 +162,7 @@ class BasePlayTracks( BASE.BaseTest ):
             self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
             self.senderStopped.clear()
             self.senderStopped.wait()
-                
+
     def Cleanup( self ):
         """Perform post-test cleanup"""
         if self.checkInfoTimer:
@@ -222,8 +227,8 @@ class BasePlayTracks( BASE.BaseTest ):
         currIdTime = time.time()
         self.numTrack += 1
 
-        if currIdTime-self.lastIdTime < 2:
-            # less than 2s between ID events - assume previous track skipped
+        if currIdTime-self.lastIdTime < kNotPlayedThreshold:
+            # less than Ns between ID events - assume previous track skipped
             self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
             checkResults = False
             if not self.senderStopped.isSet():
