@@ -215,6 +215,10 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes, TBool aHalt)
         iSampleStart += samples;
         return;
     }
+    if (iSampleRate == 0 || (samples == 0 && !aHalt)) {
+        // nothing to usefully communicate to receivers
+        return;
+    }
     TUint multiplier = 48000 * 256;
     if ((iSampleRate % 441) == 0) {
         multiplier = 44100 * 256;
