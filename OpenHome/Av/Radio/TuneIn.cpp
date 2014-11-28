@@ -214,7 +214,7 @@ void RadioPresetsTuneIn::DoRefresh()
                     }
                 }
                 Bws<Ascii::kMaxUintStringBytes> byteRateBuf;
-                if (ValidateKey(parser, "bitrate")) {
+                if (ValidateKey(parser, "bitrate", false)) {
                     (void)parser.Next('\"');
                     Brn value = parser.Next('\"');
                     TUint byteRate = Ascii::Uint(value);
@@ -338,19 +338,21 @@ void RadioPresetsTuneIn::DoRefresh()
 
 TBool RadioPresetsTuneIn::ReadElement(Parser& aParser, const TChar* aKey, Bwx& aValue)
 {
-    if (!ValidateKey(aParser, aKey)) {
+    if (!ValidateKey(aParser, aKey, true)) {
         return false;
     }
     return ReadValue(aParser, aKey, aValue);
 }
 
-TBool RadioPresetsTuneIn::ValidateKey(Parser& aParser, const TChar* aKey)
+TBool RadioPresetsTuneIn::ValidateKey(Parser& aParser, const TChar* aKey, TBool aLogErrors)
 {
     Brn key = aParser.Next('=');
     if (key != Brn(aKey)) {
-        LOG2(kError, kProducts, "Unexpected order of OPML elements.  Expected \"%s\", got ", aKey);
-        LOG2(kError, kProducts, key);
-        LOG2(kError, kProducts, "\n");
+        if (aLogErrors) {
+            LOG2(kError, kProducts, "Unexpected order of OPML elements.  Expected \"%s\", got ", aKey);
+            LOG2(kError, kProducts, key);
+            LOG2(kError, kProducts, "\n");
+        }
         return false;
     }
     return true;
