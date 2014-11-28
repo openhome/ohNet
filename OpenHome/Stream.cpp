@@ -126,6 +126,12 @@ Brn Srx::Snaffle()
     return rem;
 }
 
+Brn Srx::Buffer()
+{
+    Brn buf(Ptr(), iBytes);
+    return buf;
+}
+
 
 // Srd
 

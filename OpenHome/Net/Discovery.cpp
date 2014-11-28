@@ -69,7 +69,8 @@ SsdpListenerMulticast::SsdpListenerMulticast(Environment& aEnv, TIpAddress aInte
     {
         iSocket.SetRecvBufBytes(kRecvBufBytes);
     }
-    catch ( NetworkError ) {}
+    catch (NetworkError&) {
+    }
     aEnv.AddResumeObserver(*this);
 
     iReaderRequest.AddHeader(iHeaderHost);
@@ -129,8 +130,13 @@ void SsdpListenerMulticast::Run()
                 }
             }
         }
-        catch (HttpError&) {
-            LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError\n");
+        catch (HttpError& ex) {
+            Endpoint::EndpointBuf epb;
+            iSocket.Sender().AppendEndpoint(epb);
+            epb.PtrZ();
+            LOG2(kSsdpMulticast, kError, "SSDP Multicast      HttpError (sender=%s) from %s:%u.  Received:\n", (const char*)epb.Ptr(), ex.File(), ex.Line());
+            LOG2(kSsdpMulticast, kError, iBuffer.Buffer());
+            LOG2(kSsdpMulticast, kError, "\n");
         }
         catch (WriterError&) {
             LOG2(kSsdpMulticast, kError, "SSDP Multicast      WriterError\n");

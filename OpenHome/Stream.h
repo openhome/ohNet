@@ -62,6 +62,7 @@ public: // from IReader
 public:
     Brn Peek(TUint aBytes); // may return <aBytes at end of stream
     Brn Snaffle();
+    Brn Buffer(); // debug support only.  Your production code is broken if it relies on this!
 protected:
     Srx(TUint aMaxBytes, IReaderSource& aSource);
 protected:
