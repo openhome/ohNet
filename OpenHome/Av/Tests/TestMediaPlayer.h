@@ -81,11 +81,11 @@ protected:
     RamStore* iRamStore;
     Configuration::ConfigRamStore* iConfigRamStore;
     Semaphore iSemShutdown;
+		Net::Shell* iShell; 
 private:
     Semaphore iDisabled;
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
     IPowerManagerObserver* iPowerObserver;
-    Net::Shell* iShell;
     Net::ShellCommandDebug* iShellDebug;
     const Brx& iTidalId;
 };

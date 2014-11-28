@@ -25,6 +25,8 @@ import sys
 import threading
 import time
 
+kNotPlayedThreshold = 5     # time in secs between ID events below which assume 'failed to play'
+
 
 def Run( aArgs ):
     """Pass the Run() call up to the base class"""
@@ -48,7 +50,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.nextTimer        = None
         self.stateTimer       = None
         self.checkInfoTimer   = None
-        self.timestamp        = time.time()
+        self.lastIdTime       = time.time()
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
@@ -102,7 +104,10 @@ class BasePlayTracks( BASE.BaseTest ):
             
         if self.shuffle.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
-            
+
+        if self.playTime <= kNotPlayedThreshold:
+            self.log.Abort( '', 'Minimum value for time-to-play is %ds' % (kNotPlayedThreshold+1) )
+
         # start local softplayer(s) as required
         if senderName.lower() == 'local':
             options = {'aRoom':'TestSender', 'aLoopback':loopback}
@@ -157,7 +162,7 @@ class BasePlayTracks( BASE.BaseTest ):
             self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
             self.senderStopped.clear()
             self.senderStopped.wait()
-                
+
     def Cleanup( self ):
         """Perform post-test cleanup"""
         if self.checkInfoTimer:
@@ -218,18 +223,27 @@ class BasePlayTracks( BASE.BaseTest ):
 
     def _TrackChanged( self, aId, aPlId ):
         """Track changed - check results and setup timer for next track"""
-        now = time.time()
-        if now-self.timestamp < 2:
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % self.numTrack )
-        self.timestamp = now
+        checkResults = True
+        currIdTime = time.time()
+        self.numTrack += 1
 
-        if aId>0:
+        if currIdTime-self.lastIdTime < kNotPlayedThreshold:
+            # less than Ns between ID events - assume previous track skipped
+            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+            checkResults = False
+            if not self.senderStopped.isSet():
+                plIndex = self.sender.playlist.PlaylistIndex( aPlId )
+                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+        self.lastIdTime = currIdTime
+
+        if aId>0 and checkResults:
+            # Previous track played -> check its results
             self.trackChangeMutex.acquire()
             if self.checkInfoTimer:
                 self.checkInfoTimer.cancel()
             self._CheckPlayTime()
             if not self.senderStopped.isSet():
-                self.numTrack += 1
                 if self.repeat=='off' and self.numTrack>len( self.tracks ):
                     self.senderStopped.wait( 3 )
                     if not self.senderStopped.isSet():
