@@ -19,6 +19,7 @@
 #include <OpenHome/Net/Private/ShellCommandDebug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Credentials.h>
 
 #include "openssl/bio.h"
@@ -458,7 +459,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-    Debug::SetLevel(Debug::kError);
+    Debug::SetLevel(Debug::kError | Debug::kSongcast);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
