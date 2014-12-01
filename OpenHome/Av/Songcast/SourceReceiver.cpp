@@ -14,6 +14,7 @@
 #include <OpenHome/Av/Songcast/ProtocolOhm.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>
@@ -79,6 +80,7 @@ private:
     UriProviderSongcast* iUriProvider;
     OhmMsgFactory* iOhmMsgFactory;
     Sender* iSender;
+    Media::Logger* iLoggerSender;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
     Bws<ZoneHandler::kMaxZoneBytes> iZone;
     Media::BwsTrackUri iTrackUri;
@@ -176,7 +178,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     IConfigInitialiser& configInit = aMediaPlayer.ConfigInitialiser();
     IConfigManager& configManager = aMediaPlayer.ConfigManager();
     iSender = new Sender(env, device, *iZoneHandler, configInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
-    (void)iPipeline.SetSender(*iSender);
+    iLoggerSender = new Logger("Sender", *iSender);
+    iLoggerSender->SetEnabled(false);
+    (void)iPipeline.SetSender(*iLoggerSender);
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManager.GetText(Product::kConfigIdRoomBase);
     iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorConfigText(*this, &SourceReceiver::ConfigRoomChanged));
@@ -189,6 +193,7 @@ SourceReceiver::~SourceReceiver()
 {
     iConfigRoom->Unsubscribe(iConfigRoomSubscriberId);
     iConfigName->Unsubscribe(iConfigNameSubscriberId);
+    delete iLoggerSender;
     delete iSender;
     delete iOhmMsgFactory;
     iZoneHandler->RemoveListener(*this);
