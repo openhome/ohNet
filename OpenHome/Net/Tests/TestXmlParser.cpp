@@ -56,6 +56,34 @@ void SuiteXmlParserBasic::Test()
 
     TEST(XmlParserBasic::FindAttribute("person", "name", remaining) == Brn("beta"));
     TEST(XmlParserBasic::FindAttribute("person", "age",  remaining) == Brn("34"));
+
+
+    // Retrieving full tags
+
+    Brn personTag(
+        "<person name=\"alpha\" age=\"21\">"        \
+            "<thing>hidden goodies</thing>"         \
+        "</person>");                              \
+
+    Brn innerTag(
+            "<inner>"                                       \
+                "<person name=\"alpha\" age=\"21\">"        \
+                    "<thing>"                               \
+                        "hidden goodies"                    \
+                    "</thing>"                              \
+                "</person>"                                 \
+                "<person name=\"beta\" age=\"34\"/>"        \
+            "</inner>");
+
+
+    TEST(XmlParserBasic::Element(Brn("person"), xmlBuffer) == personTag);
+    TEST(XmlParserBasic::Element(Brn("person"), xmlBuffer, remaining) == personTag);
+    TEST(XmlParserBasic::Element("person", xmlBuffer) == personTag);
+    TEST(XmlParserBasic::Element("person", xmlBuffer, remaining) == personTag);
+
+    TEST(XmlParserBasic::Element(Brn("thing"), xmlBuffer, remaining) == Brn("<thing>hidden goodies</thing>"));
+    TEST(XmlParserBasic::Element(Brn("inner"), xmlBuffer, remaining) == innerTag);
+    TEST(XmlParserBasic::Element(Brn("inner"), xmlBuffer) == innerTag);
 }
 
 void TestXmlParser()

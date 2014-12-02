@@ -3,6 +3,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Parser.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -131,7 +132,7 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
         parser.Set(item.Split(start, len));
         aName.Set(parser.NextWhiteSpace());
         aAttributes.Set(parser.Remaining());
-        
+
         if (Ascii::Contains(aName, ':')) { // collect the namespace
             parser.Set(aName);
             aNamespace.Set(parser.Next(':'));
@@ -174,15 +175,15 @@ Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const 
         NextTag(doc, name, attributes, ns, index, remaining, tagType);
         if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (tagType != eTagClose) {
-            	Parser parser(attributes);
-            	while (!parser.Finished()) {
-            		Brn att = parser.Next('=');
-            		Brn ws = parser.Next('\"');
-            		Brn value = parser.Next('\"');
-            		if (att == aAttribute) {
-            			return (value);
-            		}
-            	}
+                Parser parser(attributes);
+                while (!parser.Finished()) {
+                    Brn att = parser.Next('=');
+                    Brn ws = parser.Next('\"');
+                    Brn value = parser.Next('\"');
+                    if (att == aAttribute) {
+                        return (value);
+                    }
+                }
             }
         }
         if (remaining.Bytes() == 0) {
@@ -191,3 +192,86 @@ Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const 
         doc.Set(remaining);
     }
 }
+
+
+Brn XmlParserBasic::Element(const TChar* aTag, const Brx& aDocument)
+{
+    Brn tag(aTag);
+    Brn ignore;
+    return XmlParserBasic::Element(tag, aDocument, ignore);
+}
+
+Brn XmlParserBasic::Element(const TChar* aTag, const Brx& aDocument, Brn& aRemaining)
+{
+    Brn tag(aTag);
+    return XmlParserBasic::Element(tag, aDocument, aRemaining);
+}
+
+
+Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument)
+{
+    Brn ignore;
+    return XmlParserBasic::Element(aTag, aDocument, ignore);
+}
+
+
+Brn XmlParserBasic::Element(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
+{
+    EParserState state = eSearchOpen;
+    TInt ignoreClose = 0;
+    Brn namesp;
+    Brn name;
+    Brn attributes;
+    Brn ns;
+    TUint index;
+    TUint startIndex = 0;
+    Brn docTrimmed(Ascii::Trim(aDocument));
+    Brn doc(docTrimmed);
+    Brn remaining(docTrimmed);
+    Brn retStart;
+    ETagType tagType;
+    for (;;) {
+        NextTag(doc, name, attributes, ns, index, remaining, tagType);
+        if (Ascii::CaseInsensitiveEquals(name, aTag)) {
+            if (state == eSearchOpen) {
+                if (tagType == eTagClose) {
+                    if (--ignoreClose < 0)
+                        THROW(XmlError);
+                }
+                else if (tagType == eTagOpenClose) {
+                    return Brn(Brx::Empty());
+                }
+                namesp.Set(ns);
+                retStart.Set(remaining);
+                state = eSearchClose;
+            }
+            else { // eSearchClose
+                if (tagType == eTagOpen) {
+                    ++ignoreClose;
+                }
+                else if (tagType == eTagClose) {
+                    if (ignoreClose == 0) {
+                        if (namesp != ns) {
+                            THROW(XmlError);
+                        }
+                        aRemaining.Set(remaining);
+
+                        const TUint retBytes = (TUint)(aRemaining.Ptr() - docTrimmed.Ptr()) - startIndex;
+                        Brn ret(docTrimmed.Split(startIndex, retBytes));
+                        return ret;
+                    }
+                    ignoreClose--;
+                }
+            }
+        }
+        if (remaining.Bytes() == 0) {
+            THROW(XmlError);
+        }
+        if (state != eSearchClose)
+        {
+            startIndex += (TUint)(remaining.Ptr()-doc.Ptr());
+        }
+        doc.Set(remaining);
+    }
+}
+
