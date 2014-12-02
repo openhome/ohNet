@@ -349,7 +349,9 @@ void SourceReceiver::EnsureActive()
 
 void SourceReceiver::UriChanged()
 {
-    LOG(kSongcast, "SourceReceiver::UriChanged()\n");
+    LOG(kSongcast, "SourceReceiver::UriChanged().  IsActive=%u, Playing=%u, url=", IsActive(), iPlaying);
+    LOG(kSongcast, iTrackUri);
+    LOG(kSongcast, "\n");
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
     if (track == NULL) {
         iTrackId = Track::kIdNone;
