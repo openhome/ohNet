@@ -20,6 +20,8 @@
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Media/ClockPullerUtilisation.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Av/Debug.h>
 
 namespace OpenHome {
 namespace Media {
@@ -204,6 +206,7 @@ SourceReceiver::~SourceReceiver()
 
 void SourceReceiver::Activate()
 {
+    LOG(kSongcast, "SourceReceiver::Activate()\n");
     iActive = true;
     if (iNoPipelinePrefetchOnActivation) {
         iPipeline.RemoveAll();
@@ -215,6 +218,7 @@ void SourceReceiver::Activate()
 
 void SourceReceiver::Deactivate()
 {
+    LOG(kSongcast, "SourceReceiver::Deactivate()\n");
     iProviderReceiver->NotifyPipelineState(EPipelineStopped);
     iZoneHandler->ClearCurrentSenderUri();
     iPlaying = false;
@@ -230,6 +234,7 @@ void SourceReceiver::PipelineStopped()
 
 void SourceReceiver::Play()
 {
+    LOG(kSongcast, "SourceReceiver::Play()\n");
     EnsureActive();
     AutoMutex a(iLock);
     iPlaying = true;
@@ -241,6 +246,7 @@ void SourceReceiver::Play()
 
 void SourceReceiver::Stop()
 {
+    LOG(kSongcast, "SourceReceiver::Stop()\n");
     iLock.Wait();
     iPlaying = false;
     iPipeline.Stop();
@@ -249,6 +255,9 @@ void SourceReceiver::Stop()
 
 void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 {
+    LOG(kSongcast, "SourceReceiver::SetSender(");
+    LOG(kSongcast, aUri);
+    LOG(kSongcast, ")\n");
     EnsureActive();
     AutoMutex a(iLock);
     if (aUri.Bytes() > 0) {
@@ -285,6 +294,11 @@ void SourceReceiver::SetSender(const Brx& aUri, const Brx& aMetadata)
 
 void SourceReceiver::ZoneUriChanged(const Brx& aZone, const Brx& aUri)
 {
+    LOG(kSongcast, "SourceReceiver::ZoneUriChanged(");
+    LOG(kSongcast, aZone);
+    LOG(kSongcast, ", ");
+    LOG(kSongcast, aUri);
+    LOG(kSongcast, ")\n");
     // FIXME - use of iZone/iTrackUri not threadsafe
     if (aZone == iZone && aUri != iTrackUri) {
         iUriLock.Wait();
@@ -335,6 +349,7 @@ void SourceReceiver::EnsureActive()
 
 void SourceReceiver::UriChanged()
 {
+    LOG(kSongcast, "SourceReceiver::UriChanged()\n");
     Track* track = iUriProvider->SetTrack(iTrackUri, iTrackMetadata);
     if (track == NULL) {
         iTrackId = Track::kIdNone;
