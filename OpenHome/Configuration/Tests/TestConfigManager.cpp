@@ -43,7 +43,7 @@ private:
     void TestNoSubscriptions();
     void TestAddRemoveSubscription();
     void TestAddRemoveMultipleSubscriptions();
-    void TestRemoveInvalidKey();
+    void TestUnsubscribeInvalidId();
 private:
     ConfigVal<TInt>* iConfigVal;
 };
@@ -298,7 +298,7 @@ SuiteCVSubscriptions::SuiteCVSubscriptions()
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestNoSubscriptions), "TestNoSubscriptions");
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveSubscription), "TestAddRemoveSubscription");
     AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions), "TestAddRemoveMultipleSubscriptions");
-    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestRemoveInvalidKey), "TestRemoveInvalidKey");
+    AddTest(MakeFunctor(*this, &SuiteCVSubscriptions::TestUnsubscribeInvalidId), "TestUnsubscribeInvalidId");
 }
 
 void SuiteCVSubscriptions::Setup()
@@ -349,10 +349,11 @@ void SuiteCVSubscriptions::TestAddRemoveMultipleSubscriptions()
     iConfigVal = NULL;
 }
 
-void SuiteCVSubscriptions::TestRemoveInvalidKey()
+void SuiteCVSubscriptions::TestUnsubscribeInvalidId()
 {
     // test that trying to unsubscribe using an invalid id does nothing
-    iConfigVal->Unsubscribe(0);
+    iConfigVal->Unsubscribe(ConfigManager::kSubscriptionIdInvalid);
+    iConfigVal->Unsubscribe(999);
 }
 
 
