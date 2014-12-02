@@ -82,6 +82,8 @@ private:
     TBool iRunning;
     TBool iRepairing;
     TBool iStreamMsgDue;
+    TBool iMetatextMsgDue;
+    Bws<Media::MsgMetaText::kMaxBytes> iPendingMetatext;
     OhmMsgAudioBlob* iRepairFirst;
     std::vector<OhmMsgAudioBlob*> iRepairFrames;
     Timer* iTimerRepair;

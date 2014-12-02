@@ -160,6 +160,8 @@ private:
     void TestTruncatedStream();
     void TestTrackTrack();
     void TestTrackEncodedStreamTrack();
+    void TestTrackMetatext();
+    void TestTrackEncodedStreamMetatext();
     void TestSeek();
 private:
     Semaphore* iSemSeek;
@@ -515,6 +517,8 @@ SuiteCodecControllerStream::SuiteCodecControllerStream()
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestRecognitionFail), "TestRecognitionFail");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackTrack), "TestTrackTrack");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackEncodedStreamTrack), "TestTrackEncodedStreamTrack");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackMetatext), "TestTrackMetatext");
+    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackEncodedStreamMetatext), "TestTrackEncodedStreamMetatext");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStreamInRecognition), "TestTruncatedStreamInRecognition");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestNoDataAfterRecognition), "TestNoDataAfterRecognition");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStream), "TestTruncatedStream");
@@ -770,6 +774,24 @@ void SuiteCodecControllerStream::TestTrackEncodedStreamTrack()
 
     iSemStop->Wait();
     TEST(iStopCount == 1);
+}
+
+void SuiteCodecControllerStream::TestTrackMetatext()
+{
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(iMsgFactory->CreateMsgMetaText(Brn("dummy")));
+    PullNext(EMsgMetaText);
+}
+
+void SuiteCodecControllerStream::TestTrackEncodedStreamMetatext()
+{
+    Queue(CreateTrack());
+    PullNext(EMsgTrack);
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
+    Queue(iMsgFactory->CreateMsgMetaText(Brn("dummy")));
+    PullNext(EMsgMetaText);
 }
 
 void SuiteCodecControllerStream::TestSeek()

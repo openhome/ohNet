@@ -617,12 +617,7 @@ Msg* CodecController::ProcessMsg(MsgAudioEncoded* aMsg)
 
 Msg* CodecController::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (iRecognising || !QueueTrackData()) {
-        aMsg->RemoveRef();
-    }
-    else {
-        Queue(aMsg);
-    }
+    Queue(aMsg);
     return NULL;
 }
 
