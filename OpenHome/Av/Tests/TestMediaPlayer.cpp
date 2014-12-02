@@ -353,7 +353,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
     , iOptionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name")
-    , iOptionTidal("", "--tidal", Brn(""), "Tidal login - token:username:password")
+    , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
 {
     iParser.AddOption(&iOptionRoom);
     iParser.AddOption(&iOptionName);
