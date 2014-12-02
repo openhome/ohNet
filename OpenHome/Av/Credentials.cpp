@@ -24,9 +24,9 @@ class Credential
 
     static const TUint kEventModerationMs = 500;
 public:
-    Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged);
+    Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~Credential();
-    void SetKey(RSA* aKey, Configuration::IConfigInitialiser& aConfigInitialiser);
+    void SetKey(RSA* aKey);
     const Brx& Id() const;
     void Set(const Brx& aUsername, const Brx& aPassword);
     void Clear();
@@ -70,18 +70,26 @@ using namespace OpenHome::Configuration;
 
 // Credential
 
-Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged)
+Credential::Credential(Environment& aEnv, ICredentialConsumer* aConsumer, ICredentialObserver& aObserver, Fifo<Credential*>& aFifoCredentialsChanged, Configuration::IConfigInitialiser& aConfigInitialiser)
     : iLock("CRED")
     , iConsumer(aConsumer)
     , iObserver(aObserver)
     , iRsa(NULL)
     , iFifoCredentialsChanged(aFifoCredentialsChanged)
-    , iConfigUsername(NULL)
-    , iConfigPassword(NULL)
+    , iSubscriberIdUsername(IConfigManager::kSubscriptionIdInvalid)
+    , iSubscriberIdPassword(IConfigManager::kSubscriptionIdInvalid)
     , iEnabled(true)
     , iModerationTimerStarted(false)
 {
     iModerationTimer = new Timer(aEnv, MakeFunctor(*this, &Credential::ModerationTimerCallback), "Credential");
+    Bws<64> key(aConsumer->Id());
+    key.Append('.');
+    key.Append(Brn("Username"));
+    iConfigUsername = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
+    key.Replace(iConsumer->Id());
+    key.Append('.');
+    key.Append(Brn("Password"));
+    iConfigPassword = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
 }
 
 Credential::~Credential()
@@ -98,18 +106,10 @@ Credential::~Credential()
     delete iConsumer;
 }
 
-void Credential::SetKey(RSA* aKey, Configuration::IConfigInitialiser& aConfigInitialiser)
+void Credential::SetKey(RSA* aKey)
 {
     iRsa = aKey;
-    Bws<64> key(iConsumer->Id());
-    key.Append('.');
-    key.Append(Brn("Username"));
-    iConfigUsername = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
     iSubscriberIdUsername = iConfigUsername->Subscribe(MakeFunctorConfigText(*this, &Credential::UsernameChanged));
-    key.Replace(iConsumer->Id());
-    key.Append('.');
-    key.Append(Brn("Password"));
-    iConfigPassword = new ConfigText(aConfigInitialiser, key, ICredentials::kMaxPasswordEncryptedBytes, Brx::Empty());
     iSubscriberIdPassword = iConfigPassword->Subscribe(MakeFunctorConfigText(*this, &Credential::PasswordChanged));
 }
 
@@ -276,10 +276,10 @@ Credentials::~Credentials()
 void Credentials::Add(ICredentialConsumer* aConsumer)
 {
     AutoMutex _(iLock);
-    Credential* credential = new Credential(iEnv, aConsumer, *this, iFifo);
+    Credential* credential = new Credential(iEnv, aConsumer, *this, iFifo, iConfigInitialiser);
     iCredentials.push_back(credential);
     if (iStarted) {
-        credential->SetKey((RSA*)iKey, iConfigInitialiser);
+        credential->SetKey((RSA*)iKey);
     }
     iProvider->AddId(credential->Id());
 }
@@ -403,7 +403,7 @@ void Credentials::CredentialsThread()
     iLock.Wait();
     iStarted = true;
     for (auto it=iCredentials.begin(); it!=iCredentials.end(); ++it) {
-        (*it)->SetKey((RSA*)iKey, iConfigInitialiser);
+        (*it)->SetKey((RSA*)iKey);
     }
     iLock.Signal();
     iKeyParams.Store().Read(kKeyRsaPublic, iKeyBuf);

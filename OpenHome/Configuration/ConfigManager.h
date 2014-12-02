@@ -124,7 +124,7 @@ template <class T> ConfigVal<T>::ConfigVal(IConfigInitialiser& aManager, const B
     , iKey(aKey)
     , iObserverLock("CVOL")
     , iWriteObserverId(0)
-    , iNextObserverId(1)
+    , iNextObserverId(IConfigManager::kSubscriptionIdInvalid+1)
 {
 }
 
