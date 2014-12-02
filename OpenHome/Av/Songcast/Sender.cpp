@@ -165,14 +165,14 @@ Msg* Sender::ProcessMsg(MsgWait* aMsg)
 Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERT(iTrack != NULL);
-    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
-    iSampleRate = streamInfo.SampleRate();
-    iBitDepth = streamInfo.BitDepth();
-    iNumChannels = streamInfo.NumChannels();
 
     // send any pending audio in case the stream msg indicates a discontinuity in the track (probably after a seek?)
     SendPendingAudio();
 
+    const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
+    iSampleRate = streamInfo.SampleRate();
+    iBitDepth = streamInfo.BitDepth();
+    iNumChannels = streamInfo.NumChannels();
     const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::JiffiesPerSample(streamInfo.SampleRate());
     iOhmSender->SetTrack(iTrack->Uri(), iTrack->MetaData(), samplesTotal, streamInfo.SampleStart());
     iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), iNumChannels, iBitDepth, streamInfo.Lossless(), streamInfo.CodecName());
@@ -182,12 +182,14 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 
 Msg* Sender::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    ASSERT(iSampleRate != 0);
     ProcessAudio(aMsg);
     return NULL;
 }
 
 Msg* Sender::ProcessMsg(MsgSilence* aMsg)
 {
+    ASSERT(iSampleRate != 0);
     ProcessAudio(aMsg);
     return NULL;
 }

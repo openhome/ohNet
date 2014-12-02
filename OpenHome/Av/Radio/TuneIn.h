@@ -53,7 +53,7 @@ private:
     void RefreshThread();
     void DoRefresh();
     TBool ReadElement(Parser& aParser, const TChar* aKey, Bwx& aValue);
-    TBool ValidateKey(Parser& aParser, const TChar* aKey);
+    TBool ValidateKey(Parser& aParser, const TChar* aKey, TBool aLogErrors);
     TBool ReadValue(Parser& aParser, const TChar* aKey, Bwx& aValue);
 private:
     Mutex iLock;

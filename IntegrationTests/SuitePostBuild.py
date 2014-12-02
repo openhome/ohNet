@@ -32,7 +32,7 @@ tests = [
     [ 'TestAvTransportPlayTracks', 'local', 'local', 'None', 'None', 8,   1 ],
 
     # OH Playlist Service
-    [ 'TestLocalPlayTracks',       'local', 'local', 5,      'off',  'on'   ],
+    [ 'TestLocalPlayTracks',       'local', 'local', 6,      'off',  'on'   ],
 
     # OH Radio Service (user ohmp4 is all locally served channels)
     [ 'TestRadioPlayChannels',     'local', 'local', 'ohmp4', 7,     'on'   ]
