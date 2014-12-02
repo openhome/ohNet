@@ -85,6 +85,29 @@ public:
     virtual ~ISerialisable() {}
 };
 
+class ConfigNum;
+class ConfigChoice;
+class ConfigText;
+
+/*
+ * Interface for reading config vals from a configuration manager.
+ */
+class IConfigManager
+{
+public:
+    static const TUint kSubscriptionIdInvalid = 0;
+public:
+    virtual TBool HasNum(const Brx& aKey) const = 0;
+    virtual ConfigNum& GetNum(const Brx& aKey) const = 0;
+    virtual TBool HasChoice(const Brx& aKey) const = 0;
+    virtual ConfigChoice& GetChoice(const Brx& aKey) const = 0;
+    virtual TBool HasText(const Brx& aKey) const = 0;
+    virtual ConfigText& GetText(const Brx& aKey) const = 0;
+    virtual TBool Has(const Brx& aKey) const = 0;
+    virtual ISerialisable& Get(const Brx& aKey) const = 0;
+    virtual ~IConfigManager() {}
+};
+
 template <class T>
 class ConfigVal : public IObservable<T>, public ISerialisable
 {
@@ -349,25 +372,6 @@ inline MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,void (CallType::
     typedef void(CallType::*MemFunc)(KeyValuePair<const Brx&>&);
     return MemberTranslatorGeneric<KeyValuePair<const Brx&>&,Object,MemFunc>(aC,aF);
 }
-
-/*
- * Interface for reading config vals from a configuration manager.
- */
-class IConfigManager
-{
-public:
-    static const TUint kSubscriptionIdInvalid = 0;
-public:
-    virtual TBool HasNum(const Brx& aKey) const = 0;
-    virtual ConfigNum& GetNum(const Brx& aKey) const = 0;
-    virtual TBool HasChoice(const Brx& aKey) const = 0;
-    virtual ConfigChoice& GetChoice(const Brx& aKey) const = 0;
-    virtual TBool HasText(const Brx& aKey) const = 0;
-    virtual ConfigText& GetText(const Brx& aKey) const = 0;
-    virtual TBool Has(const Brx& aKey) const = 0;
-    virtual ISerialisable& Get(const Brx& aKey) const = 0;
-    virtual ~IConfigManager() {}
-};
 
 /*
  * Interface for adding values to a configuration manager.
