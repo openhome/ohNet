@@ -5,6 +5,7 @@
 #include <OpenHome/Media/IdManager.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Private/Debug.h>
 
 #include <limits.h>
 
@@ -107,6 +108,9 @@ void PipelineManager::AddObserver(ITrackObserver& aObserver)
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Begin(");
+    LOG(kPipeline, aMode);
+    LOG(kPipeline, ", %u)\n", aTrackId);
     iLock.Wait();
     iMode.Replace(aMode);
     iTrackId = aTrackId;
@@ -117,24 +121,28 @@ void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 void PipelineManager::Play()
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Play()\n");
     iPipeline->Play();
 }
 
 void PipelineManager::Pause()
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Pause()\n");
     iPipeline->Pause();
 }
 
 void PipelineManager::Wait(TUint aFlushId)
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Wait(%u)\n", aFlushId);
     iPipeline->Wait(aFlushId);
 }
 
 void PipelineManager::Stop()
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Stop()\n");
     const TUint haltId = iFiller->Stop();
     iPipeline->Stop(haltId);
     iIdManager->InvalidatePending(); /* don't use InvalidateAll - iPipeline->Stop() will
@@ -171,6 +179,7 @@ void PipelineManager::StopPrefetch(const Brx& aMode, TUint aTrackId)
 void PipelineManager::RemoveAll()
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::RemoveAll()\n");
     /*TUint haltId = */iFiller->Stop();
     iLock.Wait();
     iPipeline->RemoveCurrentStream();
@@ -181,12 +190,14 @@ void PipelineManager::RemoveAll()
 TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Seek(%u, %u, %u)\n", aTrackId, aStreamId, aSecondsAbsolute);
     return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);
 }
 
 TBool PipelineManager::Next()
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Next()\n");
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }
@@ -202,6 +213,7 @@ TBool PipelineManager::Next()
 TBool PipelineManager::Prev()
 {
     AutoMutex _(iPublicLock);
+    LOG(kPipeline, "PipelineManager::Prev()\n");
     if (iMode.Bytes() == 0) {
         return false; // nothing playing or ready to be played so nothing we can advance relative to
     }

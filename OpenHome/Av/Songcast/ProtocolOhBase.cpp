@@ -33,6 +33,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iRunning(false)
     , iRepairing(false)
     , iStreamMsgDue(true)
+    , iMetatextMsgDue(false)
     , iRepairFirst(NULL)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
@@ -142,6 +143,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     RepairReset();
     iFrame = 0;
     iStreamMsgDue = true;
+    iMetatextMsgDue = false;
     iMutexTransport.Signal();
 
     return res;
@@ -373,7 +375,13 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iIdProvider->NextStreamId());
         audio->RemoveRef();
         iStreamMsgDue = false;
+        if (iMetatextMsgDue) {
+            iSupply->OutputMetadata(iPendingMetatext);
+            iPendingMetatext.Replace(Brx::Empty());
+            iMetatextMsgDue = false;
+        }
     }
+    ASSERT(!iMetatextMsgDue);
     ASSERT(bytesBefore == iFrameBuf.Bytes());
     iSupply->OutputData(iFrameBuf);
     aMsg.RemoveRef();
@@ -418,6 +426,7 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 {
     iTrackUri.Replace(aMsg.Uri());
     iStreamMsgDue = true;
+    iMetatextMsgDue = false; // discard any metatext we haven't yet passed on.  It'll describe the previous track
     Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata());
     iSupply->OutputTrack(*track, iIdProvider->NextTrackId());
     track->RemoveRef();
@@ -427,6 +436,13 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 
 void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
 {
-    iSupply->OutputMetadata(aMsg.Metatext());
+    if (iStreamMsgDue) {
+        // Pipeline expects a stream before any metatext.  Buffer metatext until we can output a stream.
+        iMetatextMsgDue = true;
+        iPendingMetatext.Replace(aMsg.Metatext());
+    }
+    else {
+        iSupply->OutputMetadata(aMsg.Metatext());
+    }
     aMsg.RemoveRef();
 }

@@ -22,9 +22,6 @@
 #include <OpenHome/Av/Debug.h>
 #include <OpenHome/Av/Credentials.h>
 
-#include "openssl/bio.h"
-#include "openssl/pem.h"
-
 using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Av::Test;
@@ -213,18 +210,6 @@ void TestMediaPlayer::RegisterPlugins(Environment& aEnv)
     DoRegisterPlugins(aEnv, kSupportedProtocols);
 }
 
-static void EncryptAndSetConfigVal(RSA* aPublicKey, ConfigText& aConfigText, const Brx& aVal)
-{
-    ASSERT(aVal.Bytes() > 0);
-    Bws<256> src(aVal);
-    src.PtrZ();
-    Bws<256> encrypted;
-    int encryptedLen = RSA_public_encrypt(src.Bytes(), src.Ptr(), const_cast<TByte*>(encrypted.Ptr()), aPublicKey, RSA_PKCS1_OAEP_PADDING);
-    ASSERT(encryptedLen > 0);
-    encrypted.SetBytes(encryptedLen);
-    aConfigText.Set(encrypted);
-}
-
 void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupportedProtocols)
 {
     // Add codecs
@@ -246,25 +231,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
     // only add Tidal if we have credible login details
     if (iTidalId.Bytes() > 0) {
-        Parser parser(iTidalId);
-        Brn token = parser.Next(':');
-        Brn username = parser.Next(':');
-        Brn password = parser.Remaining();
-        Bws<512> key;
-        Credentials& credentials = iMediaPlayer->CredentialsManager();
-        // nasty bodge.  Wait for a key to be generated to allow us to set Tidal credentials
-        while (key.Bytes() == 0) {
-            credentials.GetPublicKey(key);
-            Thread::Sleep(10);
-        }
-        BIO *bio = BIO_new_mem_buf((void*)key.Ptr(), key.Bytes());
-        RSA* rsa = PEM_read_bio_RSAPublicKey (bio, NULL, NULL, NULL);
-        BIO_free(bio);
-        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, token, credentials, iMediaPlayer->ConfigInitialiser()));
-        IConfigManager& configMgr = iMediaPlayer->ConfigManager();
-        configMgr.GetText(Brn("tidalhifi.com.Username")).Set(username);
-        EncryptAndSetConfigVal(rsa, configMgr.GetText(Brn("tidalhifi.com.Password")), password);
-        RSA_free(rsa);
+        iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
         iMediaPlayer->AddAttribute("Credentials");
     }
 
@@ -386,7 +353,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
     , iOptionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name")
-    , iOptionTidal("", "--tidal", Brn(""), "Tidal login - token:username:password")
+    , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
 {
     iParser.AddOption(&iOptionRoom);
     iParser.AddOption(&iOptionName);
@@ -459,7 +426,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-    Debug::SetLevel(Debug::kError | Debug::kSongcast);
+    Debug::SetLevel(Debug::kError | Debug::kSongcast | Debug::kPipeline);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
