@@ -107,7 +107,9 @@ class BaseDropout( BASE.BaseTest ):
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.playlist.AddSubscriber( self._SenderPlaylistCb )
-                
+        self.SenderSetup()
+        time.sleep( 3 )
+
         # load sender's playlist and start playback
         self.sender.playlist.repeat = 'on'
         self.sender.playlist.shuffle = 'on'
@@ -175,6 +177,10 @@ class BaseDropout( BASE.BaseTest ):
         if self.soft3:
             self.soft3.Shutdown()
         BASE.BaseTest.Cleanup( self )
+
+    def SenderSetup( self ):
+        """Template to allow additional setup in derived class if required"""
+        pass
 
     # noinspection PyUnusedLocal
     def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):

@@ -29,8 +29,6 @@ class SoftPlayer( BASE.Component ):
                   aTuneIn        = None,     # defaults to 'linnproducts'
                   aLoopback      = False,    # defaults to False
                   aTidalId       = None,     # defaults to Tidal disabled
-                  aTidalUser     = None,     # defaults to Tidal disabled
-                  aTidalPwd      = None,     # defaults to Tidal disabled
                   aSenderChannel = None ):   # defaults to a random value
         """Start the SoftPlayer - all parameters are optional and will default
         as described above. These 'configuration' options cannot be changed on
@@ -74,8 +72,8 @@ class SoftPlayer( BASE.Component ):
             cmd.extend( ['-t', aTuneIn] )
         if aSenderChannel:
             cmd.extend( ['-c', '%d' % aSenderChannel] )
-        if aTidalUser and aTidalPwd:
-            cmd.extend( ['--tidal', '%s:%s:%s' % (aTidalId, aTidalUser, aTidalPwd)] )
+        if aTidalId:
+            cmd.extend( ['--tidal', '%s' % aTidalId] )
         self.log.Info( '', 'SoftPlayer command: %s' % cmd )
             
         self.proc = subprocess.Popen( cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -160,7 +158,7 @@ if __name__ == '__main__':
     f.close()
 
     # start softplayer, wait for exit
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalId=accts['tidal']['id'], aTidalUser=accts['tidal']['user'], aTidalPwd=accts['tidal']['password'] )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalId=accts['tidal']['id'] )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'

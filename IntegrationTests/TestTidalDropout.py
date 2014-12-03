@@ -8,8 +8,8 @@ Parameters:
     arg#4 - Test duration (secs) or 'forever'
     arg#5 - Number of tracks to test with (use 0 for fixed list of 20 hard-coded tracks)
     arg#6 - Tidal ID
-    arg#7 - Tidal username (only required for 'local' sender)
-    arg#8 - Tidal password (only required for 'local' sender)
+    arg#7 - Tidal username
+    arg#8 - Tidal password
 local' for internal SoftPlayer on loopback for DUTs
 
 Verifies TIDAL served audio played by the DUT does not suffer from audio dropout.
@@ -21,6 +21,7 @@ import _BaseDropout    as BASE
 import os
 import sys
 
+kTidalCreds  = 'tidalhifi.com'
 kTidalTracks = [
     ('tidal://track?version=1&trackId=33198915', '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Trains</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:albumArtURI xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">http://images.tidalhifi.com/im/im?w=250&amp;h=250&amp;albumid=33198909</upnp:albumArtURI><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Prog Rock Greats</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Porcupine Tree</upnp:artist><res>tidal://track?version=1&amp;trackId=33198915</res></item></DIDL-Lite>'),
     ('tidal://track?version=1&trackId=33198923', '<DIDL-Lite xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">Back Street Luv</dc:title><upnp:class xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">object.item.audioItem.musicTrack</upnp:class><upnp:albumArtURI xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">http://images.tidalhifi.com/im/im?w=250&amp;h=250&amp;albumid=33198909</upnp:albumArtURI><upnp:album xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Prog Rock Greats</upnp:album><upnp:artist xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/">Curved Air</upnp:artist><res>tidal://track?version=1&amp;trackId=33198923</res></item></DIDL-Lite>'),
@@ -51,16 +52,19 @@ class TestTidalDropout( BASE.BaseDropout ):
         """Constructor - initialise base class"""
         BASE.BaseDropout.__init__( self )
         self.doc = __doc__
-        self.tidalId = ''
+        self.tidalId   = ''
+        self.tidalUser = ''
+        self.tidalPwd  = ''
 
     def Test( self, args ):
         """Test dropout on of TIDAL served tracks"""
         numTracks = 0
         try:
             numTracks    = int( args[5] )
-            self.tidalId = args[6]
-            if args[1].lower() == 'local':
-                args[5] = {'aTidalId':args[6], 'aTidalUser':args[7], 'aTidalPwd':args[8]}
+            self.tidalId   = args[6]
+            self.tidalUser = args[7]
+            self.tidalPwd  = args[8]
+            args[5] = {'aTidalId':args[6]}
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -75,8 +79,15 @@ class TestTidalDropout( BASE.BaseDropout ):
             self.log.Pass( '', 'Testing with list of 20 hard-coded tracks')
         BASE.BaseDropout.Test( self, args )
 
+    def SenderSetup( self ):
+        """Login to and enable TIDAL"""
+        self.sender.credentials.Set( kTidalCreds, self.tidalUser, self.tidalPwd )
+        self.sender.credentials.SetEnabled( kTidalCreds, True )
+
     def Cleanup( self ):
-        """Perform post-test cleanup"""
+        """Perform post-test cleanup, logout of TIDAL"""
+        if self.sender:
+            self.sender.credentials.Clear( kTidalCreds )
         BASE.BaseDropout.Cleanup( self )
 
             

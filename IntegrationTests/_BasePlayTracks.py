@@ -123,6 +123,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.senderDev = senderName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( senderName, aIsDut=True, aLoopback=loopback )
         self.sender.product.sourceIndex = random.randint( 1, self.sender.product.sourceCount-1 )
+        self.SenderSetup()
         time.sleep( 3 )
         
         # create Receiver Device, put onto random source and connect to sender
@@ -182,6 +183,10 @@ class BasePlayTracks( BASE.BaseTest ):
         if self.softRcvr:
             self.softRcvr.Shutdown()
         BASE.BaseTest.Cleanup( self )
+
+    def SenderSetup( self ):
+        """Template to allow additional setup in derived class if required"""
+        pass
 
     # noinspection PyUnusedLocal
     def _SenderTimeCb( self, service, svName, svVal, svSeq ):
