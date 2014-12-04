@@ -67,10 +67,10 @@ void SuiteHttpReader::Test1()
     TEST_THROWS(httpReader.ReadInterrupt(), AssertionFailed);
 
 
-    TEST(httpReader.Connect(Uri(Brn("http://www.linn.co.uk"))));
+    TEST(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))));
 
     // only one connection allowed
-    TEST_THROWS(httpReader.Connect(Uri(Brn("http://www.linn.co.uk"))), AssertionFailed);
+    TEST_THROWS(httpReader.Connect(Uri(Brn("http://www.google.co.uk"))), AssertionFailed);
 
 
     for(;;)
