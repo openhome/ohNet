@@ -20,6 +20,8 @@ import _FunctionalTest
 import _BaseDropout    as BASE
 import os
 import sys
+import time
+import threading
 
 kTidalCreds  = 'tidalhifi.com'
 kTidalTracks = [
@@ -55,6 +57,7 @@ class TestTidalDropout( BASE.BaseDropout ):
         self.tidalId   = ''
         self.tidalUser = ''
         self.tidalPwd  = ''
+        self.seqNum    = threading.Event()
 
     def Test( self, args ):
         """Test dropout on of TIDAL served tracks"""
@@ -79,18 +82,34 @@ class TestTidalDropout( BASE.BaseDropout ):
             self.log.Pass( '', 'Testing with list of 20 hard-coded tracks')
         BASE.BaseDropout.Test( self, args )
 
-    def SenderSetup( self ):
-        """Login to and enable TIDAL"""
-        self.sender.credentials.Set( kTidalCreds, self.tidalUser, self.tidalPwd )
-        self.sender.credentials.SetEnabled( kTidalCreds, True )
-
     def Cleanup( self ):
         """Perform post-test cleanup, logout of TIDAL"""
         if self.sender:
             self.sender.credentials.Clear( kTidalCreds )
         BASE.BaseDropout.Cleanup( self )
 
-            
+    def SenderSetup( self ):
+        """Login to and enable TIDAL"""
+        self.sender.credentials.AddSubscriber( self._CredentialsCb )
+        self.seqNum.clear()
+        self.sender.credentials.Set( kTidalCreds, self.tidalUser, self.tidalPwd )
+        self.seqNum.wait( 10 )
+        time.sleep( 1 )
+        err = self.sender.credentials.Status( kTidalCreds )
+        if err:
+            self.log.Abort( 'Tidal', '%s' % err )
+        else:
+            self.sender.credentials.SetEnabled( kTidalCreds, True )
+            self.log.Pass( self.senderDev, 'Logged into TIDAL' )
+        self.sender.credentials.RemoveSubscriber( self._CredentialsCb )
+
+    # noinspection PyUnusedLocal
+    def _CredentialsCb( self, aService, aSvName, aSvVal, aSvSeq ):
+        """Callback from Sender's Credentials service events"""
+        if aSvName == 'SequenceNumber':
+            self.seqNum.set()
+
+
 if __name__ == '__main__':
     
     BASE.Run( sys.argv )
