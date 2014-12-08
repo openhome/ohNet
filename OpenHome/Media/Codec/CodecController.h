@@ -193,15 +193,17 @@ public:
     TUint SampleRate() const;
     TUint NumChannels() const;
     EMediaDataEndian Endian() const;
+    TUint64 StartSample() const;
 private:
     EncodedStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample);
 private:
     TBool iRawPcm;
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
     EMediaDataEndian iEndian;
+    TUint64 iStartSample;
 };
     
 /**

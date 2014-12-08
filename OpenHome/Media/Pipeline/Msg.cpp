@@ -878,12 +878,13 @@ PcmStreamInfo::PcmStreamInfo()
     Clear();
 }
 
-void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian)
+void PcmStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample)
 {
     iBitDepth = aBitDepth;
     iSampleRate = aSampleRate;
     iNumChannels = aNumChannels;
     iEndian = aEndian;
+    iStartSample = aStartSample;
 }
 
 void PcmStreamInfo::Clear()
@@ -910,6 +911,11 @@ TUint PcmStreamInfo::NumChannels() const
 EMediaDataEndian PcmStreamInfo::Endian() const
 {
     return iEndian;
+}
+
+TUint64 PcmStreamInfo::StartSample() const
+{
+    return iStartSample;
 }
 
 

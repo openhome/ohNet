@@ -47,22 +47,29 @@ EMediaDataEndian EncodedStreamInfo::Endian() const
     return iEndian;
 }
 
+TUint64 EncodedStreamInfo::StartSample() const
+{
+    return iStartSample;
+}
+
 EncodedStreamInfo::EncodedStreamInfo()
     : iRawPcm(false)
     , iBitDepth(UINT_MAX)
     , iSampleRate(UINT_MAX)
     , iNumChannels(UINT_MAX)
     , iEndian(EMediaDataEndianInvalid)
+    , iStartSample(0)
 {
 }
 
-void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian)
+void EncodedStreamInfo::Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample)
 {
     iRawPcm = true;
     iBitDepth = aBitDepth;
     iSampleRate = aSampleRate;
     iNumChannels = aNumChannels;
     iEndian = aEndian;
+    iStartSample = aStartSample;
 }
 
 
@@ -207,7 +214,7 @@ void CodecController::CodecThread()
             iRecognising = true;
             EncodedStreamInfo streamInfo;
             if (iRawPcm) {
-                streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(), iPcmStream.Endian());
+                streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(), iPcmStream.Endian(), iPcmStream.StartSample());
             }
 
             LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackIdPipeline, iStreamId);

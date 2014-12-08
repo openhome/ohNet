@@ -75,6 +75,7 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
     iSampleRate = aStreamInfo.SampleRate();
     iNumChannels = aStreamInfo.NumChannels();
     iEndian = aStreamInfo.Endian();
+    iTrackOffset = aStreamInfo.StartSample();
     return true;
 }
 
@@ -86,7 +87,6 @@ void CodecPcm::StreamInitialise()
     const TUint64 numSamples = lenBytes / bytesPerSample;
     iBitRate = iBitDepth * iNumChannels * iSampleRate;
     iTrackLengthJiffies = numSamples * Jiffies::JiffiesPerSample(iSampleRate);
-    iTrackOffset = 0;
     SendMsgDecodedStream(0);
 }
 
