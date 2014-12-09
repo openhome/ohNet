@@ -207,10 +207,15 @@ typedef struct MD5state_st
 #define MD5_LBLOCK	(MD5_CBLOCK/4)
 #define MD5_DIGEST_LENGTH 16
 
-int MD5_Init(MD5_CTX *c);
-int MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
-int MD5_Final(unsigned char *md, MD5_CTX *c);
-void MD5_Transform(MD5_CTX *c, const unsigned char *b);
+#define MD5_Init OpenHome_MD5_Init
+#define MD5_Update OpenHome_MD5_Update
+#define MD5_Final OpenHome_MD5_Final
+#define MD5_Transform OpenHome_MD5_Transform
+
+int OpenHome_MD5_Init(MD5_CTX *c);
+int OpenHome_MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
+int OpenHome_MD5_Final(unsigned char *md, MD5_CTX *c);
+void OpenHome_MD5_Transform(MD5_CTX *c, const unsigned char *b);
 
 // From md5_locl.h
 
@@ -936,7 +941,7 @@ int HASH_FINAL (unsigned char *md, HASH_CTX *c)
 #define INIT_DATA_C (unsigned long)0x98badcfeL
 #define INIT_DATA_D (unsigned long)0x10325476L
 
-int MD5_Init(MD5_CTX *c)
+int OpenHome_MD5_Init(MD5_CTX *c)
 	{
 	c->A=INIT_DATA_A;
 	c->B=INIT_DATA_B;
