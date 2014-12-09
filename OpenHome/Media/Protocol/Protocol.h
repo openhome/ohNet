@@ -197,7 +197,7 @@ private:
     TBool iInTag;
 };
 
-class ProtocolManager : public IUriStreamer, private IProtocolManager, private INonCopyable
+class ProtocolManager : public IUriStreamer, public ISupply, private IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
@@ -208,6 +208,19 @@ public:
 public: // from IUriStreamer
     ProtocolStreamResult DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
+public: // from ISupply
+    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
+    void OutputSession() override;
+    void OutputTrack(Track& aTrack, TUint aTrackId) override;
+    void OutputDelay(TUint aJiffies) override;
+    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
+    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
+    void OutputData(const Brx& aData) override;
+    void OutputMetadata(const Brx& aMetadata) override;
+    void OutputFlush(TUint aFlushId) override;
+    void OutputWait() override;
+    void OutputHalt(TUint aHaltId) override;
+    void OutputQuit() override;
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;

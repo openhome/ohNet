@@ -303,7 +303,7 @@ void ProtocolManager::Add(Protocol* aProtocol)
 {
     LOG(kMedia, "ProtocolManager::Add(Protocol*)\n");
     iProtocols.push_back(aProtocol);
-    aProtocol->Initialise(*this, iIdProvider, iSupply, iFlushIdProvider);
+    aProtocol->Initialise(*this, iIdProvider, *this, iFlushIdProvider);
 }
 
 void ProtocolManager::Add(ContentProcessor* aProcessor)
@@ -321,6 +321,69 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
     for (auto it=iProtocols.begin(); it!=iProtocols.end(); ++it) {
         (*it)->Interrupt(aInterrupt);
     }
+}
+
+void ProtocolManager::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
+{
+    iSupply.OutputMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
+}
+
+void ProtocolManager::OutputSession()
+{
+    iSupply.OutputSession();
+}
+
+void ProtocolManager::OutputTrack(Track& aTrack, TUint aTrackId)
+{
+    iLock.Wait();
+    iTrackId = aTrackId;
+    iLock.Signal();
+    iSupply.OutputTrack(aTrack, aTrackId);
+}
+
+void ProtocolManager::OutputDelay(TUint aJiffies)
+{
+    iSupply.OutputDelay(aJiffies);
+}
+
+void ProtocolManager::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+{
+    iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
+}
+
+void ProtocolManager::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+{
+    iSupply.OutputPcmStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId, aPcmStream);
+}
+
+void ProtocolManager::OutputData(const Brx& aData)
+{
+    iSupply.OutputData(aData);
+}
+
+void ProtocolManager::OutputMetadata(const Brx& aMetadata)
+{
+    iSupply.OutputMetadata(aMetadata);
+}
+
+void ProtocolManager::OutputFlush(TUint aFlushId)
+{
+    iSupply.OutputFlush(aFlushId);
+}
+
+void ProtocolManager::OutputWait()
+{
+    iSupply.OutputWait();
+}
+
+void ProtocolManager::OutputHalt(TUint aHaltId)
+{
+    iSupply.OutputHalt(aHaltId);
+}
+
+void ProtocolManager::OutputQuit()
+{
+    iSupply.OutputQuit();
 }
 
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)

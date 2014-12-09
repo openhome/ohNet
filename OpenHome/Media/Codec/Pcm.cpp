@@ -26,6 +26,7 @@ private: // from CodecBase
     TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
 private:
     void SendMsgDecodedStream(TUint64 aStartSample);
+    TUint64 ToJiffies(TUint64 aSample);
 private:
     Bws<DecodedAudio::kMaxBytes> iReadBuf;
     TUint iBitDepth;
@@ -33,6 +34,7 @@ private:
     TUint iNumChannels;
     EMediaDataEndian iEndian;
     TUint iBitRate;
+    TUint64 iStartSample;
     TUint64 iTrackOffset;
     TUint64 iTrackLengthJiffies;
 };
@@ -75,6 +77,7 @@ TBool CodecPcm::Recognise(const EncodedStreamInfo& aStreamInfo)
     iSampleRate = aStreamInfo.SampleRate();
     iNumChannels = aStreamInfo.NumChannels();
     iEndian = aStreamInfo.Endian();
+    iStartSample = aStreamInfo.StartSample();
     return true;
 }
 
@@ -86,8 +89,8 @@ void CodecPcm::StreamInitialise()
     const TUint64 numSamples = lenBytes / bytesPerSample;
     iBitRate = iBitDepth * iNumChannels * iSampleRate;
     iTrackLengthJiffies = numSamples * Jiffies::JiffiesPerSample(iSampleRate);
-    iTrackOffset = 0;
-    SendMsgDecodedStream(0);
+    iTrackOffset = ToJiffies(iStartSample);
+    SendMsgDecodedStream(iStartSample);
 }
 
 void CodecPcm::Process()
@@ -112,7 +115,7 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
     if (!iController->TrySeek(aStreamId, bytePos)) {
         return false;
     }
-    iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
+    iTrackOffset = ToJiffies(aSample);
     SendMsgDecodedStream(aSample);
     return true;
 }
@@ -120,4 +123,9 @@ TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
 void CodecPcm::SendMsgDecodedStream(TUint64 aStartSample)
 {
     iController->OutputDecodedStream(iBitRate, iBitDepth, iSampleRate, iNumChannels, kCodecName, iTrackLengthJiffies, aStartSample, true);
+}
+
+TUint64 CodecPcm::ToJiffies(TUint64 aSample)
+{
+    return ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;
 }

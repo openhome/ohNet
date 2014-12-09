@@ -17,7 +17,7 @@
     {   "name": "ohWafHelpers",
         "type": "openhome",
         "platform-specific": false,
-        "version": "0.0.64",
+        "version": "0.0.66",
         "archive-filename": "${name}-${version}.tar.gz"
     },
     {   "name": "TestTones",
@@ -34,7 +34,7 @@
     },
     {   "name": "libplatform",
         "type": "internal",
-        "version": "0.0.103",
+        "version": "0.0.109",
         "archive-suffix": "-${debugmode}",
         "platform-ignore": {
             "Core-armv5": false,

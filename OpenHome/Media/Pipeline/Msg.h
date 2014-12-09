@@ -350,17 +350,19 @@ class PcmStreamInfo
 {
 public:
     PcmStreamInfo();
-    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian);
+    void Set(TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, EMediaDataEndian aEndian, TUint64 aStartSample = 0);
     void Clear();
     TUint BitDepth() const;
     TUint SampleRate() const;
     TUint NumChannels() const;
     EMediaDataEndian Endian() const;
+    TUint64 StartSample() const;
 private:
     TUint iBitDepth;
     TUint iSampleRate;
     TUint iNumChannels;
     EMediaDataEndian iEndian;
+    TUint64 iStartSample;
 };
 
 class MsgEncodedStream : public Msg
