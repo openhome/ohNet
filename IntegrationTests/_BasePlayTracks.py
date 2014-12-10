@@ -7,7 +7,7 @@ Derived classes MUST
     - define self.doc - docstring to print on parameter parse failure
     - call Test() method with following params
         - Sender DUT ['local' for internal SoftPlayer on loopback]
-        - Receiver DUT ['local' for internal SoftPlayer on loopback] (None->not present)
+        - Receiver DUT ['local' for internal SoftPlayer on loop
         - Time to play before skipping to next (None = play all)
         - Repeat mode [on/off]
         - Shuffle mode [on/off]
@@ -50,7 +50,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.nextTimer        = None
         self.stateTimer       = None
         self.checkInfoTimer   = None
-        self.lastIdTime       = time.time()
+        self.lastIdTime        = time.time()
         self.tracks           = []
         self.repeat           = 'off'
         self.shuffle          = 'off'
@@ -64,6 +64,8 @@ class BasePlayTracks( BASE.BaseTest ):
         self.senderStarted    = threading.Event()
         self.senderStopped    = threading.Event()
         self.senderDuration   = threading.Event()
+        self.idUpdated        = threading.Event()
+        self.multiEv1         = threading.Event()
         self.trackChangeMutex = threading.Lock()
         random.seed()
 
@@ -77,7 +79,7 @@ class BasePlayTracks( BASE.BaseTest ):
         try:
             senderName   = args[1]
             receiverName = args[2]
-            if str( args[3] ).lower() != 'None':
+            if str( args[3] ).lower() != 'none':
                 self.playTime = int( args[3] )
             if len( args ) > 4:
                 self.repeat = args[4]
@@ -91,7 +93,7 @@ class BasePlayTracks( BASE.BaseTest ):
 
         if receiverName.lower() == 'none':
             receiverName = None
-            
+
         if receiverName is not None:
             if receiverName.lower() == 'local' and senderName.lower() != 'local' or \
                senderName.lower() == 'local' and receiverName.lower() != 'local':
@@ -101,7 +103,7 @@ class BasePlayTracks( BASE.BaseTest ):
 
         if self.repeat.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid repeat mode %s' % self.repeat )
-            
+
         if self.shuffle.lower() not in ('off', 'on'):
             self.log.Abort( '', 'Invalid shuffle mode %s' % self.shuffle )
 
@@ -125,7 +127,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.sender.product.sourceIndex = random.randint( 1, self.sender.product.sourceCount-1 )
         self.SenderSetup()
         time.sleep( 3 )
-        
+
         # create Receiver Device, put onto random source and connect to sender
         if receiverName:
             self.receiverDev = receiverName.split( ':' )[0]
@@ -134,15 +136,15 @@ class BasePlayTracks( BASE.BaseTest ):
             time.sleep( 3 )
             self.receiver.receiver.SetSender( self.sender.sender.uri, self.sender.sender.metadata )
             self.receiver.receiver.Play()
-        
+
         # add and verify playlist and set playback mode
-        self.senderStopped.clear()        
+        self.senderStopped.clear()
         self.sender.playlist.DeleteAllTracks()
         self.sender.playlist.repeat = self.repeat
         self.sender.playlist.shuffle = self.shuffle
         self.sender.playlist.AddPlaylist( self.tracks )
         time.sleep( 3 )
-        
+
         # check the playlist ReadList operation
         self._CheckReadList()
 
@@ -155,14 +157,12 @@ class BasePlayTracks( BASE.BaseTest ):
 
         # start playback
         self.log.Info( self.senderDev, 'Starting on source %s' % self.sender.product.sourceIndex )
-        self.sender.playlist.SeekIndex( 0 )
-        self.senderPlaying.wait( 10 )
-        if not self.senderStarted.is_set():
-            self.log.Fail( self.senderDev, 'Playback never started' )
-        else:
-            self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
-            self.senderStopped.clear()
-            self.senderStopped.wait()
+        # self.sender.playlist.Play()
+        self.sender.playlist.SeekIndex( 0 )         # <<<============ should be Play but doesn't work
+        thread = LogThread.Thread( target=self._TrackChanged )
+        thread.start()
+        self.senderStopped.clear()
+        self.senderStopped.wait()
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
@@ -176,100 +176,90 @@ class BasePlayTracks( BASE.BaseTest ):
             self.stateTimer.cancel()
         if self.sender:
             self.sender.Shutdown()
-        if self.receiver: 
-            self.receiver.Shutdown() 
-        if self.softSender:
-            self.softSender.Shutdown()
-        if self.softRcvr:
-            self.softRcvr.Shutdown()
+        if self.receiver:
+            self.receiver.Shutdown()
         BASE.BaseTest.Cleanup( self )
+
+    #
+    # 'Virtual' methods which can be defined in derived classes
+    #
 
     def SenderSetup( self ):
         """Template to allow additional setup in derived class if required"""
         pass
 
-    # noinspection PyUnusedLocal
-    def _SenderTimeCb( self, service, svName, svVal, svSeq ):
-        """Callback from Time Service UPnP events on sender device"""
-        if svName == 'Seconds':
-            if svVal not in [0,'0']:
-                # Ignore 0 reading to work around race at track change giving
-                # false (=0) results for play time as this event for next track
-                # has already occurred
-                self.senderPlayTime = int( svVal )
-        elif svName == 'Duration':
-            if svVal != 0:
-                self.senderDuration.set()
+    #
+    # Track change handling
+    #
 
-    # noinspection PyUnusedLocal
-    def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):
-        """Callback from Playlist Service UPnP events on sender device"""
-        if svName == 'TransportState':
-            self.senderPlaying.clear()
-            if self.stateTimer:   # add hysteresis to transport state comparison
-                self.stateTimer.cancel()
-                self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
-                self.stateTimer.start()
-            if svVal == 'Stopped':
-                self.senderStopped.set()
-            elif svVal == 'Playing':
-                self.senderPlaying.set()
-                self.senderStarted.set()
-        elif svName == 'Id':
-            if self.nextTimer:
-                # cancel timer which is required to trigger the TrackChanged
-                # code if NO Id event is received (same track plays 2x in a row)
-                self.nextTimer.cancel()
-                self.nextTimer = None
-            # Run on seperate thread so Playback events not blocked
-            if svVal != 0:
-                thread = LogThread.Thread( target=self._TrackChanged, args=[int(svVal),self.sender.playlist.id] )
-                thread.start()
-
-    def _TrackChanged( self, aId, aPlId ):
+    def _TrackChanged( self ):
         """Track changed - check results and setup timer for next track"""
-        checkResults = True
-        currIdTime = time.time()
         self.numTrack += 1
-
-        if currIdTime-self.lastIdTime < kNotPlayedThreshold:
-            # less than Ns between ID events - assume previous track skipped
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
-            checkResults = False
-            if not self.senderStopped.isSet():
-                plIndex = self.sender.playlist.PlaylistIndex( aPlId )
-                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
-                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
-        self.lastIdTime = currIdTime
-
-        if aId>0 and checkResults:
-            # Previous track played -> check its results
-            self.trackChangeMutex.acquire()
+        self.trackChangeMutex.acquire()
+        self._CheckPrevPlay()
+        if not self.senderStopped.is_set():
             if self.checkInfoTimer:
                 self.checkInfoTimer.cancel()
-            self._CheckPlayTime()
+#            self._CheckPrevPlay()
+            self._CheckEop()
             if not self.senderStopped.isSet():
-                if self.repeat=='off' and self.numTrack>len( self.tracks ):
-                    self.senderStopped.wait( 3 )
-                    if not self.senderStopped.isSet():
-                        self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
-                        self.senderStopped.set()    # force test exit
-
-            if not self.senderStopped.isSet():
-                plIndex = self.sender.playlist.PlaylistIndex( aPlId )
-                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
-                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+                self._LogTrackHeader( self.sender.playlist.id )
                 self._SetupPlayTimer()
-                self.checkInfoTimer = LogThread.Timer( 3, self._CheckInfo, args=[aId] )
+                self.checkInfoTimer = LogThread.Timer( 3, self._CheckInfo, args=[self.sender.playlist.id] )
                 self.checkInfoTimer.start()
-            self.trackChangeMutex.release()
+        self.trackChangeMutex.release()
+
+    def _SetupPlayTimer( self ):
+        """Setup timer to callback after specified play time"""
+        self._WaitForSenderPlay()
+        if self.sender.playlist.transportState == 'Playing':
+            self.startTime = time.time()
+            self.expectedPlayTime = self._SenderPlayTime()
+
+            if self.playTime is not None and self.playTime < self.expectedPlayTime:
+                self.expectedPlayTime = self.playTime
+                if self.playTime == 0:
+                    self._PlayTimerCb()
+                else:
+                    self._StartPlayTimer()
+
+    #
+    # Checks
+    #
+
+    def _CheckEop( self ):
+        """Check End-Of-Playlist handled correctly"""
+        if self.repeat=='off' and self.numTrack>len( self.tracks ):
+            if not self.senderStopped.isSet():
+                self.senderStopped.wait( 3 )
+                if not self.senderStopped.isSet():
+                    self.log.Fail( self.senderDev, 'No stop on end-of-playlist' )
+                    self.senderStopped.set()    # force test exit
 
     def _CheckInfo( self, aId ):
-        """Check sender and receiver info is as expected"""
+        """Check sender and receiver info"""
         self.checkInfoTimer = None
         self._CheckSenderInfo( aId )
         if self.receiver:
             self._CheckReceiverInfo()
+
+    def _CheckPrevPlay( self ):
+        """Check playback/time of track just completed"""
+        currIdTime = time.time()
+        if currIdTime-self.lastIdTime < kNotPlayedThreshold:
+            # less than Ns between ID events - assume previous track skipped
+            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+        elif self.expectedPlayTime:
+            loLim = self.expectedPlayTime-1
+            hiLim = self.expectedPlayTime+1
+            self.log.CheckLimits( self.senderDev, 'GELE', self.senderPlayTime, loLim, hiLim,
+                'reported (by Sender) play time')
+            if self.receiver:
+                self.log.CheckLimits( self.receiverDev, 'GELE', self.receiverPlayTime, loLim, hiLim,
+                    'reported (by Receiver) play time')
+            self.log.CheckLimits( '', 'GELE', int( round( time.time()-self.startTime, 0 )),
+                loLim, hiLim, 'measured (by test) play time')
+        self.lastIdTime = currIdTime
 
     def _CheckSenderInfo( self, aId ):
         """Check sender info is as expected"""
@@ -316,101 +306,6 @@ class BasePlayTracks( BASE.BaseTest ):
                 '(%s/%s) EVENTED Sender/Receiver value for %s' %
                 (str( senderVal ), str( receiverVal ), itemTitle) )
 
-    # noinspection PyUnusedLocal
-    def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
-        """Callback from Time Service UPnP events on receiver device"""
-        if svName == 'Seconds':
-            if svVal not in [0,'0']:
-                # Ignore 0 reading to work around race at track change giving
-                # false (=0) results for play time as this event for next track
-                # has already occurred
-                self.receiverPlayTime = int( svVal )
-
-    # noinspection PyUnusedLocal
-    def _ReceiverReceiverCb( self, service, svName, svVal, svSeq ):
-        """Callback from Receiver Service UPnP events on receiver device"""
-        if svName == 'TransportState':
-            # add hysteresis to transport state comparison
-            if self.stateTimer:
-                self.stateTimer.cancel()
-            self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
-            self.stateTimer.start()
-            
-    def _ReceiverStateCb( self ):
-        """Timer callback from receiver transport state event"""
-        senderState = self.sender.playlist.transportState
-        receiverState = self.receiver.receiver.transportState
-        if receiverState == 'Playing':
-            self.log.FailUnless( self.receiverDev, senderState=='Playing',
-                '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
-        elif receiverState == 'Waiting':  
-            self.log.FailIf( self.receiverDev, senderState=='Playing',
-                '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
-                
-    def _SetupPlayTimer( self ):
-        """Setup timer to callback after specified play time"""
-        start = time.time()
-        time.sleep( 0.2 )   # sometimes events ID before buffering state
-        self.senderStarted.wait()
-        self.senderPlaying.wait( 10 )
-        delay = time.time()-start
-        if delay > 1:
-            self.log.Warn( self.senderDev, 'Slow startup of track playback (%.2fs)' % delay )
-        self.startTime = time.time()
-        self.senderDuration.clear()
-        self.expectedPlayTime = self.sender.time.duration
-        if self.expectedPlayTime == 0:
-            self.senderDuration.wait( 3 )
-            if self.senderDuration.is_set():
-                self.expectedPlayTime = self.sender.time.duration
-            else:
-                self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
-        if self.playTime is not None and self.playTime < self.expectedPlayTime:
-            self.expectedPlayTime = self.playTime
-            if self.playTime == 0:
-                self._PlayTimerCb()
-            else:
-                if self.playTimer:
-                    self.playTimer.cancel()
-                self.playTimer = LogThread.Timer(
-                    self.playTime-(time.time()-self.startTime), self._PlayTimerCb )
-                self.playTimer.start()
-
-    def _PlayTimerCb( self ):
-        """Callback from playtime timer - skips to next track"""
-        self.sender.playlist.Next()
-        # The 'next' timer is needed to stimulate track change code when there
-        # has been no track change (same track played twice in a row). It will
-        # be cancelled before expiry if an Id event (new track) is received
-        # from the Playlist service 
-        if not self.nextTimer:
-            self.nextTimer = LogThread.Timer( 1, self._NextTimerCb )
-            self.nextTimer.start()
-        
-    def _NextTimerCb( self ):
-        """Next Timer CB - called on expiry of the 'NextTimer'"""
-        # Next timer will call into this 1s after a track change has been
-        # forced by the 'Next' action (unless the timer has been cancelled due
-        # to receipt of an Id event from the Playlist service). This is to 
-        # handle cases where the same track is played twice in a row, which
-        # causes NO id event to be sent.
-        self.nextTimer = None
-        self.log.Info( self.senderDev, 'Next track timer triggered track change as no Id event Rx' ) 
-        self._TrackChanged( self.sender.playlist.id, self.sender.playlist.id )
-
-    def _CheckPlayTime( self ):
-        """Verify track played for expected duration (see Trac #1527)"""
-        if self.expectedPlayTime:
-            loLim = self.expectedPlayTime-1
-            hiLim = self.expectedPlayTime+1
-            self.log.CheckLimits( self.senderDev, 'GELE', self.senderPlayTime, loLim, hiLim,
-                'reported (by Sender) play time')
-            if self.receiver:
-                self.log.CheckLimits( self.receiverDev, 'GELE', self.receiverPlayTime, loLim, hiLim,
-                    'reported (by Receiver) play time')
-            self.log.CheckLimits( '', 'GELE', int( round( time.time()-self.startTime, 0 )),
-                loLim, hiLim, 'measured (by test) play time')
-            
     def _CheckReadList( self ):
         """Check operation of the Playlist ReadList action"""
         # Test ReadList using a random population sample from the entire current
@@ -447,3 +342,168 @@ class BasePlayTracks( BASE.BaseTest ):
                 self.log.Fail( self.senderDev, 'Actual/Expected META read from DS %s | %s' % (readMeta, expMeta) )
         if not fail:
             self.log.Pass( self.senderDev, 'All Playlist ReadList tracks OK' )
+
+    #
+    # Timer callbacks
+    #
+
+    def _PlayTimerCb( self ):
+        """Callback from playtime timer - skips to next track"""
+        self.sender.playlist.Next()
+        # The 'next' timer is needed to stimulate track change code when there
+        # has been no track change (same track played twice in a row). It will
+        # be cancelled before expiry if an Id event (new track) is received
+        # from the Playlist service
+        if not self.nextTimer:
+            self.nextTimer = LogThread.Timer( 1, self._NextTimerCb )
+            self.nextTimer.start()
+
+    def _NextTimerCb( self ):
+        """Next Timer CB - called on expiry of the 'NextTimer'"""
+        # Next timer will call into this 1s after a track change has been
+        # forced by the 'Next' action (unless the timer has been cancelled due
+        # to receipt of an Id event from the Playlist service). This is to
+        # handle cases where the same track is played twice in a row, which
+        # causes NO id event to be sent.
+        self.nextTimer = None
+        self.log.Info( self.senderDev, 'Next track timer triggered track change as no Id event Rx' )
+        self._TrackChanged()
+
+    #
+    # Sender Event callbacks
+    #
+
+    # noinspection PyUnusedLocal
+    def _SenderTimeCb( self, service, svName, svVal, svSeq ):
+        """Callback from Time Service UPnP events on sender device"""
+        if svName == 'Seconds':
+            if svVal not in [0,'0']:
+                # Ignore 0 reading to work around race at track change giving
+                # false (=0) results for play time as this event for next track
+                # has already occurred
+                self.senderPlayTime = int( svVal )
+        elif svName == 'Duration':
+            if svVal != 0:
+                self.senderDuration.set()
+
+    # noinspection PyUnusedLocal
+    def _SenderPlaylistCb( self, service, svName, svVal, svSeq ):
+        """Callback from Playlist Service UPnP events on sender device"""
+        if svName == 'TransportState':
+            self.senderPlaying.clear()
+            if self.stateTimer:   # add hysteresis to transport state comparison
+                self.stateTimer.cancel()
+                self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
+                self.stateTimer.start()
+            if svVal == 'Stopped':
+                self.senderStopped.set()
+            elif svVal == 'Playing':
+                if self.playTimer:
+                    self.log.Info( self.senderDev, 'Re-start Play Timer' )
+                    self._StartPlayTimer()
+                    self.startTime = time.time()
+                self.senderPlaying.set()
+                self.senderStarted.set()
+                self.multiEv1.set()
+        elif svName == 'Id':
+            if self.nextTimer:
+                # cancel timer which is required to trigger the TrackChanged
+                # code if NO Id event is received (same track plays 2x in a row)
+                self.nextTimer.cancel()
+                self.nextTimer = None
+            # Run on seperate thread so Playback events not blocked
+            if svVal != 0:
+                thread = LogThread.Thread( target=self._TrackChanged )
+                thread.start()
+            self.idUpdated.set()
+            self.multiEv1.set()
+
+    #
+    # Receiver Event callbacks
+    #
+
+    # noinspection PyUnusedLocal
+    def _ReceiverTimeCb( self, service, svName, svVal, svSeq ):
+        """Callback from Time Service UPnP events on receiver device"""
+        if svName == 'Seconds':
+            if svVal not in [0,'0']:
+                # Ignore 0 reading to work around race at track change giving
+                # false (=0) results for play time as this event for next track
+                # has already occurred
+                self.receiverPlayTime = int( svVal )
+
+    # noinspection PyUnusedLocal
+    def _ReceiverReceiverCb( self, service, svName, svVal, svSeq ):
+        """Callback from Receiver Service UPnP events on receiver device"""
+        if svName == 'TransportState':
+            # add hysteresis to transport state comparison
+            if self.stateTimer:
+                self.stateTimer.cancel()
+            self.stateTimer = LogThread.Timer( 3, self._ReceiverStateCb )
+            self.stateTimer.start()
+
+    def _ReceiverStateCb( self ):
+        """Timer callback from receiver transport state event"""
+        senderState = self.sender.playlist.transportState
+        receiverState = self.receiver.receiver.transportState
+        if receiverState == 'Playing':
+            self.log.FailUnless( self.receiverDev, senderState=='Playing',
+                '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
+        elif receiverState == 'Waiting':
+            self.log.FailIf( self.receiverDev, senderState=='Playing',
+                '(%s/%s) sender/receiver Transport State' % (senderState, receiverState) )
+
+    #
+    # Utilities
+    #
+
+    def _LogTrackHeader( self, aPlId ):
+        """Log the header for the next track"""
+        if self.repeat=='off' and self.numTrack<=len( self.tracks ):
+            if not self.senderStopped.isSet():
+                plIndex = self.sender.playlist.PlaylistIndex( aPlId )
+                self.log.Header1( '', 'Track %d (Playlist #%d) Rpt->%s Shfl->%s' % \
+                    (self.numTrack, plIndex+1, self.repeat, self.shuffle) )
+
+
+    def _SenderPlayTime( self ):
+        """Return track duration reported by sender (with a retry...)"""
+        self.senderDuration.clear()
+        duration = self.sender.time.duration
+        if duration == 0:
+            self.senderDuration.wait( 3 )
+            if self.senderDuration.is_set():
+                duration = self.sender.time.duration
+        if duration == 0:
+            self.log.Fail( self.senderDev, 'No evented duration for track %d' % self.numTrack )
+        return duration
+
+    def _WaitForSenderPlay( self ):
+        """Wait for sender playback, warn on slow startup"""
+        timeout = False
+        start = time.time()
+        self.idUpdated.clear()
+        self.multiEv1.clear()
+
+        if self.sender.playlist.transportState != 'Playing':
+            self.multiEv1.wait( 10 )        # wait for 'Playing', new track ID or timeout
+            if not self.multiEv1.is_set():
+                timeout = True
+
+        if timeout:
+            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+            self.sender.playlist.Next()
+        elif self.idUpdated.is_set():
+            pass
+        elif self.sender.playlist.transportState == 'Playing':
+            delay = time.time()-start
+            if delay > 1:
+                self.log.Warn( self.senderDev, 'Slow startup of track playback (%.2fs)' % delay )
+
+    def _StartPlayTimer( self ):
+        """Start timer used to control playback time"""
+        if self.playTimer:
+            self.playTimer.cancel()
+        self.playTimer = LogThread.Timer( self.playTime, self._PlayTimerCb )
+        self.playTimer.start()
+        self.log.Info( self.senderDev, 'Start Play Timer' )
