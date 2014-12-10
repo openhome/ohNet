@@ -224,7 +224,17 @@ void SocketSslImpl::SetSecure(TBool aSecure)
 void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 {
     iSocketTcp.Open(iEnv);
-    iSocketTcp.Connect(aEndpoint, aTimeoutMs);
+    try {
+        iSocketTcp.Connect(aEndpoint, aTimeoutMs);
+    }
+    catch (NetworkError&) {
+        iSocketTcp.Close();
+        throw;
+    }
+    catch (NetworkTimeout&) {
+        iSocketTcp.Close();
+        throw;
+    }
     if (iSecure && 1 != SSL_connect(iSsl)) {
         iSocketTcp.Close();
         THROW(NetworkError);
