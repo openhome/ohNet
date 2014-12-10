@@ -377,3 +377,16 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
     }
     return retvalue;
 }
+
+
+// AutoSocketSsl
+
+AutoSocketSsl::AutoSocketSsl(SocketSsl& aSocket)
+    : iSocket(aSocket)
+{
+}
+
+AutoSocketSsl::~AutoSocketSsl()
+{
+    iSocket.Close();
+}

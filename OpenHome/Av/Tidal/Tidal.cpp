@@ -86,6 +86,7 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         LOG2(kMedia, kError, "ProtocolTidal::TryGetStreamUrl - failed to connect\n");
         return false;
     }
+    AutoSocketSsl _(iSocket);
     iLock.Wait();
     Bws<128> pathAndQuery("/v1/tracks/");
     pathAndQuery.Append(aTrackId);
@@ -121,7 +122,6 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     catch (WriterError&) {
         LOG2(kMedia, kError, "WriterError in ProtocolTidal::TryGetStreamUrl\n");
     }
-    iSocket.Close();
     return success;
 }
 
@@ -135,6 +135,7 @@ TBool Tidal::TryLogout(const Brx& aSessionId)
         LOG2(kError, kMedia, "Tidal: failed to connect\n");
         return false;
     }
+    AutoSocketSsl _(iSocket);
     Bws<128> pathAndQuery("/v1/logout?sessionId=");
     pathAndQuery.Append(aSessionId);
     try {
@@ -162,7 +163,6 @@ TBool Tidal::TryLogout(const Brx& aSessionId)
     catch (HttpError&) {
         LOG2(kMedia, kError, "HttpError from Tidal logout\n");
     }
-    iSocket.Close();
     return success;
 }
 
@@ -239,6 +239,7 @@ TBool Tidal::TryLogin()
         LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
         return false;
     }
+    AutoSocketSsl _(iSocket);
     iLock.Wait();
     Bws<280> reqBody(Brn("username="));
     reqBody.Append(iUsername);
@@ -287,7 +288,6 @@ TBool Tidal::TryLogin()
     catch (WriterError&) {
         LOG2(kMedia, kError, "WriterError in ProtocolTidal::TryLogin\n");
     }
-    iSocket.Close();
     return success;
 }
 
