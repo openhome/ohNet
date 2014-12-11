@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Standard.h>
 
 namespace OpenHome {
 
@@ -31,6 +32,15 @@ public: // from IReaderSource
     void ReadInterrupt() override;
 private:
     SocketSslImpl* iImpl;
+};
+
+class AutoSocketSsl : private INonCopyable
+{
+public:
+    AutoSocketSsl(SocketSsl& aSocket);
+    ~AutoSocketSsl();
+private:
+    SocketSsl& iSocket;
 };
 
 } // namespace OpenHome
