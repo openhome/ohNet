@@ -54,9 +54,11 @@ class TestTidalPlayTracks( BASE.BasePlayTracks ):
     def __init__( self ):
         """Constructor - initialise base class"""
         BASE.BasePlayTracks.__init__( self )
-        self.doc     = __doc__
-        self.tidalId = ''
-        self.seqNum  = threading.Event()
+        self.doc       = __doc__
+        self.tidalId   = ''
+        self.tidalUser = ''
+        self.tidalPwd  = ''
+        self.seqNum    = threading.Event()
 
     def Test( self, args ):
         """Check playback of Tidal served tracks"""
