@@ -4337,31 +4337,34 @@ mDNSexport mDNSs32 mDNS_Execute(mDNS *const m)
 		if (m->NumFailedProbes && m->timenow - m->ProbeFailTime >= mDNSPlatformOneSecond * 10) m->NumFailedProbes = 0;
 		
 		// 3. Purge our cache of stale old records
-		if (m->rrcache_size && m->timenow - m->NextCacheCheck >= 0)
+		if (m->timenow - m->NextCacheCheck >= 0)
 			{
 			mDNSu32 numchecked = 0;
 			m->NextCacheCheck = m->timenow + 0x3FFFFFFF;
-			for (slot = 0; slot < CACHE_HASH_SLOTS; slot++)
+			if (m->rrcache_size)
 				{
-				if (m->timenow - m->rrcache_nextcheck[slot] >= 0)
+				for (slot = 0; slot < CACHE_HASH_SLOTS; slot++)
 					{
-					CacheGroup **cp = &m->rrcache_hash[slot];
-					m->rrcache_nextcheck[slot] = m->timenow + 0x3FFFFFFF;
-					while (*cp)
+					if (m->timenow - m->rrcache_nextcheck[slot] >= 0)
 						{
-						debugf("m->NextCacheCheck %4d Slot %3d %##s", numchecked, slot, *cp ? (*cp)->name : (domainname*)"\x04NULL");
-						numchecked++;
-						CheckCacheExpiration(m, slot, *cp);
-						if ((*cp)->members) cp=&(*cp)->next;
-						else ReleaseCacheGroup(m, cp);
+						CacheGroup **cp = &m->rrcache_hash[slot];
+						m->rrcache_nextcheck[slot] = m->timenow + 0x3FFFFFFF;
+						while (*cp)
+							{
+							debugf("m->NextCacheCheck %4d Slot %3d %##s", numchecked, slot, *cp ? (*cp)->name : (domainname*)"\x04NULL");
+							numchecked++;
+							CheckCacheExpiration(m, slot, *cp);
+							if ((*cp)->members) cp=&(*cp)->next;
+							else ReleaseCacheGroup(m, cp);
+							}
 						}
+					// Even if we didn't need to actually check this slot yet, still need to
+					// factor its nextcheck time into our overall NextCacheCheck value
+					if (m->NextCacheCheck - m->rrcache_nextcheck[slot] > 0)
+						m->NextCacheCheck = m->rrcache_nextcheck[slot];
 					}
-				// Even if we didn't need to actually check this slot yet, still need to
-				// factor its nextcheck time into our overall NextCacheCheck value
-				if (m->NextCacheCheck - m->rrcache_nextcheck[slot] > 0)
-					m->NextCacheCheck = m->rrcache_nextcheck[slot];
+				debugf("m->NextCacheCheck %4d checked, next in %d", numchecked, m->NextCacheCheck - m->timenow);
 				}
-			debugf("m->NextCacheCheck %4d checked, next in %d", numchecked, m->NextCacheCheck - m->timenow);
 			}
 	
 		if (m->timenow - m->NextScheduledSPS >= 0)
