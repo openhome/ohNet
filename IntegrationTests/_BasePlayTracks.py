@@ -176,6 +176,7 @@ class BasePlayTracks( BASE.BaseTest ):
             self.stateTimer.cancel()
         if self.sender:
             self.sender.Shutdown()
+            self.sender = None
         if self.receiver:
             self.receiver.Shutdown()
         BASE.BaseTest.Cleanup( self )
@@ -200,28 +201,27 @@ class BasePlayTracks( BASE.BaseTest ):
         if not self.senderStopped.is_set():
             if self.checkInfoTimer:
                 self.checkInfoTimer.cancel()
-#            self._CheckPrevPlay()
             self._CheckEop()
             if not self.senderStopped.isSet():
                 self._LogTrackHeader( self.sender.playlist.id )
                 self._SetupPlayTimer()
-                self.checkInfoTimer = LogThread.Timer( 3, self._CheckInfo, args=[self.sender.playlist.id] )
-                self.checkInfoTimer.start()
+                self._StartCheckInfoTimer()
         self.trackChangeMutex.release()
 
     def _SetupPlayTimer( self ):
         """Setup timer to callback after specified play time"""
         self._WaitForSenderPlay()
-        if self.sender.playlist.transportState == 'Playing':
-            self.startTime = time.time()
-            self.expectedPlayTime = self._SenderPlayTime()
+        if self.sender:
+            if self.sender.playlist.transportState == 'Playing':
+                self.startTime = time.time()
+                self.expectedPlayTime = self._SenderPlayTime()
 
-            if self.playTime is not None and self.playTime < self.expectedPlayTime:
-                self.expectedPlayTime = self.playTime
-                if self.playTime == 0:
-                    self._PlayTimerCb()
-                else:
-                    self._StartPlayTimer()
+                if self.playTime is not None and self.playTime < self.expectedPlayTime:
+                    self.expectedPlayTime = self.playTime
+                    if self.playTime == 0:
+                        self._PlayTimerCb()
+                    else:
+                        self._StartPlayTimer()
 
     #
     # Checks
@@ -248,7 +248,7 @@ class BasePlayTracks( BASE.BaseTest ):
         currIdTime = time.time()
         if currIdTime-self.lastIdTime < kNotPlayedThreshold:
             # less than Ns between ID events - assume previous track skipped
-            self.log.Fail( self.senderDev, 'Track %d did NOT play' % (self.numTrack-1) )
+            self.log.Fail( self.senderDev, 'Track %d did NOT play' % self.numTrack )
         elif self.expectedPlayTime:
             loLim = self.expectedPlayTime-1
             hiLim = self.expectedPlayTime+1
@@ -349,6 +349,7 @@ class BasePlayTracks( BASE.BaseTest ):
 
     def _PlayTimerCb( self ):
         """Callback from playtime timer - skips to next track"""
+        self.playTimer = None
         self.sender.playlist.Next()
         # The 'next' timer is needed to stimulate track change code when there
         # has been no track change (same track played twice in a row). It will
@@ -400,8 +401,9 @@ class BasePlayTracks( BASE.BaseTest ):
             elif svVal == 'Playing':
                 if self.playTimer:
                     self.log.Info( self.senderDev, 'Re-start Play Timer' )
-                    self._StartPlayTimer()
                     self.startTime = time.time()
+                    self._StartPlayTimer()
+                    self._StartCheckInfoTimer()
                 self.senderPlaying.set()
                 self.senderStarted.set()
                 self.multiEv1.set()
@@ -485,6 +487,7 @@ class BasePlayTracks( BASE.BaseTest ):
         self.idUpdated.clear()
         self.multiEv1.clear()
 
+        time.sleep( 0.1 )       # allow for delay in buffering event between tracks
         if self.sender.playlist.transportState != 'Playing':
             self.multiEv1.wait( 10 )        # wait for 'Playing', new track ID or timeout
             if not self.multiEv1.is_set():
@@ -504,6 +507,16 @@ class BasePlayTracks( BASE.BaseTest ):
         """Start timer used to control playback time"""
         if self.playTimer:
             self.playTimer.cancel()
-        self.playTimer = LogThread.Timer( self.playTime, self._PlayTimerCb )
+            self.playTimer = None
+        timed = self.playTime - ( time.time() - self.startTime )
+        self.playTimer = LogThread.Timer( timed, self._PlayTimerCb )
         self.playTimer.start()
-        self.log.Info( self.senderDev, 'Start Play Timer' )
+        self.log.Info( self.senderDev, 'Start Play Timer for %4.2fs' % timed )
+
+    def _StartCheckInfoTimer( self ):
+        """Start timer used to delay checking of playback info"""
+        if self.checkInfoTimer:
+            self.checkInfoTimer.cancel()
+        self.checkInfoTimer = LogThread.Timer( 3, self._CheckInfo, args=[self.sender.playlist.id] )
+        self.checkInfoTimer.start()
+        self.log.Info( self.senderDev, 'Start CheckInfo Timer' )
