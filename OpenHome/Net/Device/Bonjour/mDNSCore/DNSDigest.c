@@ -207,10 +207,15 @@ typedef struct MD5state_st
 #define MD5_LBLOCK	(MD5_CBLOCK/4)
 #define MD5_DIGEST_LENGTH 16
 
-int MD5_Init(MD5_CTX *c);
-int MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
-int MD5_Final(unsigned char *md, MD5_CTX *c);
-void MD5_Transform(MD5_CTX *c, const unsigned char *b);
+#define MD5_Init OpenHome_MD5_Init
+#define MD5_Update OpenHome_MD5_Update
+#define MD5_Final OpenHome_MD5_Final
+#define MD5_Transform OpenHome_MD5_Transform
+
+int OpenHome_MD5_Init(MD5_CTX *c);
+int OpenHome_MD5_Update(MD5_CTX *c, const void *data, unsigned long len);
+int OpenHome_MD5_Final(unsigned char *md, MD5_CTX *c);
+void OpenHome_MD5_Transform(MD5_CTX *c, const unsigned char *b);
 
 // From md5_locl.h
 
@@ -220,15 +225,15 @@ void MD5_Transform(MD5_CTX *c, const unsigned char *b);
 
 #ifdef MD5_ASM
 # if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__)
-#  define md5_block_host_order md5_block_asm_host_order
+#  define OpenHome_md5_block_host_order OpenHome_md5_block_asm_host_order
 # elif defined(__sparc) && defined(OPENSSL_SYS_ULTRASPARC)
-   void md5_block_asm_data_order_aligned (MD5_CTX *c, const mDNSu32 *p,int num);
-#  define HASH_BLOCK_DATA_ORDER_ALIGNED md5_block_asm_data_order_aligned
+   void OpenHome_md5_block_asm_data_order_aligned (MD5_CTX *c, const mDNSu32 *p,int num);
+#  define HASH_BLOCK_DATA_ORDER_ALIGNED OpenHome_md5_block_asm_data_order_aligned
 # endif
 #endif
 
-void md5_block_host_order (MD5_CTX *c, const void *p,int num);
-void md5_block_data_order (MD5_CTX *c, const void *p,int num);
+void OpenHome_md5_block_host_order (MD5_CTX *c, const void *p,int num);
+void OpenHome_md5_block_data_order (MD5_CTX *c, const void *p,int num);
 
 #if defined(__i386) || defined(__i386__) || defined(_M_IX86) || defined(__INTEL__)
 /*
@@ -252,7 +257,7 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
  *
  *				<appro@fy.chalmers.se>
  */
-#define md5_block_data_order md5_block_host_order
+#define OpenHome_md5_block_data_order OpenHome_md5_block_host_order
 #endif
 
 #define DATA_ORDER_IS_LITTLE_ENDIAN
@@ -274,9 +279,9 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
 	ll=(c)->C; HOST_l2c(ll,(s));	\
 	ll=(c)->D; HOST_l2c(ll,(s));	\
 	} while (0)
-#define HASH_BLOCK_HOST_ORDER	md5_block_host_order
-#if !defined(L_ENDIAN) || defined(md5_block_data_order)
-#define	HASH_BLOCK_DATA_ORDER	md5_block_data_order
+#define HASH_BLOCK_HOST_ORDER	OpenHome_md5_block_host_order
+#if !defined(L_ENDIAN) || defined(OpenHome_md5_block_data_order)
+#define	HASH_BLOCK_DATA_ORDER	OpenHome_md5_block_data_order
 /*
  * Little-endians (Intel and Alpha) feel better without this.
  * It looks like memcpy does better job than generic
@@ -362,8 +367,8 @@ void md5_block_data_order (MD5_CTX *c, const void *p,int num);
  *	#define HASH_UPDATE		MD5_Update
  *	#define HASH_TRANSFORM		MD5_Transform
  *	#define HASH_FINAL		MD5_Final
- *	#define HASH_BLOCK_HOST_ORDER	md5_block_host_order
- *	#define HASH_BLOCK_DATA_ORDER	md5_block_data_order
+ *	#define HASH_BLOCK_HOST_ORDER	OpenHome_md5_block_host_order
+ *	#define HASH_BLOCK_DATA_ORDER	OpenHome_md5_block_data_order
  *
  *					<appro@fy.chalmers.se>
  */
@@ -936,7 +941,7 @@ int HASH_FINAL (unsigned char *md, HASH_CTX *c)
 #define INIT_DATA_C (unsigned long)0x98badcfeL
 #define INIT_DATA_D (unsigned long)0x10325476L
 
-int MD5_Init(MD5_CTX *c)
+int OpenHome_MD5_Init(MD5_CTX *c)
 	{
 	c->A=INIT_DATA_A;
 	c->B=INIT_DATA_B;
@@ -948,8 +953,8 @@ int MD5_Init(MD5_CTX *c)
 	return 1;
 	}
 
-#ifndef md5_block_host_order
-void md5_block_host_order (MD5_CTX *c, const void *data, int num)
+#ifndef OpenHome_md5_block_host_order
+void OpenHome_md5_block_host_order (MD5_CTX *c, const void *data, int num)
 	{
 	const mDNSu32 *X=(const mDNSu32 *)data;
 	register unsigned MD32_REG_T A,B,C,D;
@@ -1038,11 +1043,11 @@ void md5_block_host_order (MD5_CTX *c, const void *data, int num)
 	}
 #endif
 
-#ifndef md5_block_data_order
+#ifndef OpenHome_md5_block_data_order
 #ifdef X
 #undef X
 #endif
-void md5_block_data_order (MD5_CTX *c, const void *data_, int num)
+void OpenHome_md5_block_data_order (MD5_CTX *c, const void *data_, int num)
 	{
 	const unsigned char *data=data_;
 	register unsigned MD32_REG_T A,B,C,D,l;
