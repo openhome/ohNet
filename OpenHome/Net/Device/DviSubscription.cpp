@@ -170,7 +170,6 @@ void DviSubscription::WriteChanges()
         writer = CreateWriter();
         if (writer != NULL) {
             writer->PropertyWriteEnd();
-            writer->Release();
         }
     }
     catch(NetworkTimeout&) {
@@ -183,6 +182,9 @@ void DviSubscription::WriteChanges()
     catch(HttpError&) {}
     catch(WriterError&) {}
     catch(ReaderError&) {}
+    if (writer != NULL) {
+        writer->Release();
+    }
 }
 
 IPropertyWriter* DviSubscription::CreateWriter()
