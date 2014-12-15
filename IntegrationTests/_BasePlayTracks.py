@@ -350,7 +350,6 @@ class BasePlayTracks( BASE.BaseTest ):
     def _PlayTimerCb( self ):
         """Callback from playtime timer - skips to next track"""
         self.playTimer = None
-        self.sender.playlist.Next()
         # The 'next' timer is needed to stimulate track change code when there
         # has been no track change (same track played twice in a row). It will
         # be cancelled before expiry if an Id event (new track) is received
@@ -358,6 +357,7 @@ class BasePlayTracks( BASE.BaseTest ):
         if not self.nextTimer:
             self.nextTimer = LogThread.Timer( 1, self._NextTimerCb )
             self.nextTimer.start()
+        self.sender.playlist.Next()
 
     def _NextTimerCb( self ):
         """Next Timer CB - called on expiry of the 'NextTimer'"""
