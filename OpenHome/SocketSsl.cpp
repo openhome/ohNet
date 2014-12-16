@@ -224,8 +224,19 @@ void SocketSslImpl::SetSecure(TBool aSecure)
 void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
 {
     iSocketTcp.Open(iEnv);
-    iSocketTcp.Connect(aEndpoint, aTimeoutMs);
+    try {
+        iSocketTcp.Connect(aEndpoint, aTimeoutMs);
+    }
+    catch (NetworkError&) {
+        iSocketTcp.Close();
+        throw;
+    }
+    catch (NetworkTimeout&) {
+        iSocketTcp.Close();
+        throw;
+    }
     if (iSecure && 1 != SSL_connect(iSsl)) {
+        SSL_clear(iSsl);
         iSocketTcp.Close();
         THROW(NetworkError);
     }
@@ -238,6 +249,7 @@ void SocketSslImpl::Close()
         if (iSecure) {
             (void)SSL_shutdown(iSsl);
         }
+        SSL_clear(iSsl);
         iSocketTcp.Close();
         iConnected = false;
     }
@@ -366,4 +378,17 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
         break;
     }
     return retvalue;
+}
+
+
+// AutoSocketSsl
+
+AutoSocketSsl::AutoSocketSsl(SocketSsl& aSocket)
+    : iSocket(aSocket)
+{
+}
+
+AutoSocketSsl::~AutoSocketSsl()
+{
+    iSocket.Close();
 }

@@ -21,6 +21,8 @@ import _FunctionalTest
 import _BasePlayTracks                as BASE
 import Upnp.ControlPoints.MediaServer as Server
 import sys
+import threading
+import time
 
 kTidalCreds  = 'tidalhifi.com'
 kTidalTracks = [
@@ -54,6 +56,7 @@ class TestTidalPlayTracks( BASE.BasePlayTracks ):
         BASE.BasePlayTracks.__init__( self )
         self.doc     = __doc__
         self.tidalId = ''
+        self.seqNum  = threading.Event()
 
     def Test( self, args ):
         """Check playback of Tidal served tracks"""
@@ -79,16 +82,32 @@ class TestTidalPlayTracks( BASE.BasePlayTracks ):
 
         BASE.BasePlayTracks.Test( self, args )
 
-    def SenderSetup( self ):
-        """Login to and enable TIDAL"""
-        self.sender.credentials.Set( kTidalCreds, self.tidalUser, self.tidalPwd )
-        self.sender.credentials.SetEnabled( kTidalCreds, True )
-
     def Cleanup( self ):
         """Perform post-test cleanup, logout of TIDAL"""
         if self.sender:
             self.sender.credentials.Clear( kTidalCreds )
         BASE.BasePlayTracks.Cleanup( self )
+
+    def SenderSetup( self ):
+        """Login to and enable TIDAL"""
+        self.sender.credentials.AddSubscriber( self._CredentialsCb )
+        self.seqNum.clear()
+        self.sender.credentials.Set( kTidalCreds, self.tidalUser, self.tidalPwd )
+        self.seqNum.wait( 10 )
+        time.sleep( 1 )
+        err = self.sender.credentials.Status( kTidalCreds )
+        if err:
+            self.log.Abort( 'Tidal', '%s' % err )
+        else:
+            self.sender.credentials.SetEnabled( kTidalCreds, True )
+            self.log.Pass( self.senderDev, 'Logged into TIDAL' )
+        self.sender.credentials.RemoveSubscriber( self._CredentialsCb )
+
+    # noinspection PyUnusedLocal
+    def _CredentialsCb( self, aService, aSvName, aSvVal, aSvSeq ):
+        """Callback from Sender's Credentials service events"""
+        if aSvName == 'SequenceNumber':
+            self.seqNum.set()
 
 
 if __name__ == '__main__':

@@ -86,6 +86,7 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
         LOG2(kMedia, kError, "ProtocolTidal::TryGetStreamUrl - failed to connect\n");
         return false;
     }
+    AutoSocketSsl _(iSocket);
     iLock.Wait();
     Bws<128> pathAndQuery("/v1/tracks/");
     pathAndQuery.Append(aTrackId);
@@ -121,7 +122,6 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     catch (WriterError&) {
         LOG2(kMedia, kError, "WriterError in ProtocolTidal::TryGetStreamUrl\n");
     }
-    iSocket.Close();
     return success;
 }
 
@@ -135,6 +135,7 @@ TBool Tidal::TryLogout(const Brx& aSessionId)
         LOG2(kError, kMedia, "Tidal: failed to connect\n");
         return false;
     }
+    AutoSocketSsl _(iSocket);
     Bws<128> pathAndQuery("/v1/logout?sessionId=");
     pathAndQuery.Append(aSessionId);
     try {
@@ -162,7 +163,6 @@ TBool Tidal::TryLogout(const Brx& aSessionId)
     catch (HttpError&) {
         LOG2(kMedia, kError, "HttpError from Tidal logout\n");
     }
-    iSocket.Close();
     return success;
 }
 
@@ -231,14 +231,18 @@ TBool Tidal::TryConnect(TUint aPort)
 
 TBool Tidal::TryLogin()
 {
+    TBool updatedStatus = false;
+    Bws<50> error;
     iLock.Wait();
     iSessionId.SetBytes(0);
     iLock.Signal();
     TBool success = false;
     if (!TryConnect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
+        iCredentialsManager.SetState(kId, Brn("Login Error (Connection Failed): Please Try Again."), Brx::Empty());
         return false;
     }
+    AutoSocketSsl _(iSocket);
     iLock.Wait();
     Bws<280> reqBody(Brn("username="));
     reqBody.Append(iUsername);
@@ -254,6 +258,7 @@ TBool Tidal::TryLogin()
         iWriterBuf.WriteFlush();
 
         iReaderResponse.Read();
+        updatedStatus = true;
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
             Bws<ICredentials::kMaxStatusBytes> status;
@@ -263,7 +268,8 @@ TBool Tidal::TryLogin()
                 iCredentialsManager.SetState(kId, status, Brx::Empty());
             }
             else {
-                iCredentialsManager.SetState(kId, Brn("NetworkError"), Brx::Empty());
+                error.AppendPrintf("Login Error (Response Code %d): Please Try Again.", code);
+                iCredentialsManager.SetState(kId, error, Brx::Empty());
             }
             LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
             LOG(kError, status);
@@ -279,15 +285,20 @@ TBool Tidal::TryLogin()
         success = true;
     }
     catch (HttpError&) {
+        error.Append("Login Error (Http Failure): Please Try Again.");
         LOG2(kMedia, kError, "HttpError in ProtocolTidal::TryLogin\n");
     }
     catch (ReaderError&) {
+        error.Append("Login Error (Read Failure): Please Try Again.");
         LOG2(kMedia, kError, "ReaderError in ProtocolTidal::TryLogin\n");
     }
     catch (WriterError&) {
+        error.Append("Login Error (Write Failure): Please Try Again.");
         LOG2(kMedia, kError, "WriterError in ProtocolTidal::TryLogin\n");
     }
-    iSocket.Close();
+    if (!updatedStatus) {
+        iCredentialsManager.SetState(kId, error, Brx::Empty());
+    }
     return success;
 }
 

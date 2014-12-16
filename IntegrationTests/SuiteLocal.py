@@ -34,9 +34,9 @@ p = os.path.normpath( '//10.2.7.70/klueso/accounts.json' )
 f = open( p, 'rt' )
 accts = json.load( f )
 f.close()
-tidalI  = accts['tidal']['id']
-tidalU  = accts['tidal']['user']
-tidalP  = accts['tidal']['password']
+tidalI  = accts['tidal']['id'].encode( 'ascii' )
+tidalU  = accts['tidal']['user'].encode( 'ascii' )
+tidalP  = accts['tidal']['password'].encode( 'ascii' )
 
 # parse parameters
 try:
