@@ -35,6 +35,7 @@ private: // from IPipelineElementUpstream
 private: // from IStopperObserver
     void PipelinePaused();
     void PipelineStopped();
+    void PipelinePlaying();
 private: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
     TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
@@ -114,6 +115,7 @@ private:
     TUint iNextStreamId;
     TUint iPausedCount;
     TUint iStoppedCount;
+    TUint iPlayingCount;
     TUint iOkToPlayCount;
     EStreamPlay iNextCanPlay;
     Semaphore iSemHalted;
@@ -164,7 +166,7 @@ void SuiteStopper::Setup()
     iNextTrackId = 1;
     iNextStreamId = 1;
     iJiffies = 0;
-    iPausedCount = iStoppedCount = iOkToPlayCount = 0;
+    iPausedCount = iStoppedCount = iPlayingCount = iOkToPlayCount = 0;
     iNextCanPlay = ePlayYes;
     iSemHalted.Clear();
 }
@@ -194,6 +196,11 @@ void SuiteStopper::PipelinePaused()
 void SuiteStopper::PipelineStopped()
 {
     iStoppedCount++;
+}
+
+void SuiteStopper::PipelinePlaying()
+{
+    iPlayingCount++;
 }
 
 EStreamPlay SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -468,6 +475,7 @@ void SuiteStopper::TestPlayFromStoppedNoRampUp()
     }
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
 }
 
 void SuiteStopper::TestPauseRamps()
@@ -490,6 +498,7 @@ void SuiteStopper::TestPauseRamps()
     }
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
     TEST(iJiffies == kRampDuration);
     iJiffies = 0;
     iRampingUp = true;
@@ -504,6 +513,7 @@ void SuiteStopper::TestPauseRamps()
     }
     TEST(iPausedCount == 1);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 4);
     TEST(iJiffies == kRampDuration);
 }
 
@@ -524,6 +534,7 @@ void SuiteStopper::TestInterruptRamps()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
 
     iStopper->Play();
     iRampingDown = false;
@@ -533,6 +544,7 @@ void SuiteStopper::TestInterruptRamps()
     TEST(!iRampingUp);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 3);
 
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
@@ -570,6 +582,7 @@ void SuiteStopper::TestPauseFromStoppedIgnored()
     iStopper->BeginPause();
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 0);
 }
 
 void SuiteStopper::TestOkToPlayCalledOnceForLiveStream()
@@ -624,6 +637,7 @@ void SuiteStopper::TestStopFromPlay()
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
     TEST(iJiffies == kRampDuration);
 
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -638,10 +652,12 @@ void SuiteStopper::TestStopFromPlay()
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
     iPendingMsgs.push_back(iMsgFactory->CreateMsgHalt(5));
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 1);
+    TEST(iPlayingCount == 2);
     TEST(iStopper->iQueue.IsEmpty());
     iPendingMsgs.push_back(CreateTrack());
     TestHalted();
@@ -665,6 +681,7 @@ void SuiteStopper::TestPlayStopPlayInterruptsRampDown()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
 
     iStopper->Play();
     iRampingDown = false;
@@ -676,6 +693,7 @@ void SuiteStopper::TestPlayStopPlayInterruptsRampDown()
     PullNext(EMsgAudioPcm);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 3);
 }
 
 void SuiteStopper::TestPlayNoFlushes()
@@ -711,6 +729,7 @@ void SuiteStopper::TestPlayNoFlushes()
 
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
 }
 
 void SuiteStopper::TestPlayLaterStops()
@@ -726,6 +745,7 @@ void SuiteStopper::TestPlayLaterStops()
     PullNext(EMsgHalt);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 1);
+    TEST(iPlayingCount == 1);
     TestHalted();
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);

@@ -28,6 +28,7 @@ class IStopperObserver
 public:
     virtual void PipelinePaused() = 0;
     virtual void PipelineStopped() = 0;
+    virtual void PipelinePlaying() = 0;
 };
 
 class Stopper : public IPipelineElementUpstream, private IMsgProcessor

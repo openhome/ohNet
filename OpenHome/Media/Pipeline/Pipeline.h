@@ -114,6 +114,7 @@ private:
 private: // from IStopperObserver
     void PipelinePaused();
     void PipelineStopped();
+    void PipelinePlaying();
 //    void PipelineHalted(TUint aHaltId);
 private: // from IPipelinePropertyObserver
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
