@@ -13,7 +13,7 @@ class TestTidal : private ICredentialsState
 {
 public:
     TestTidal(Environment& aEnv, const Brx& aToken);
-    ~TestTidal();
+    virtual ~TestTidal();
     void Start(const Brx& aUsername, const Brx& aPassword);
     void Test();
 private: // from ICredentialsState
