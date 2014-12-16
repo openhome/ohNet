@@ -832,6 +832,11 @@ def build(bld):
     #        use=['OHNET', 'ohMediaPlayer', 'OPENSSL'],
     #        target='TestHttpsBsd',
     #        install_path=None)
+    bld.program(
+            source='OpenHome/Av/Tidal/TestTidal.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
+            target='TestTidal',
+            install_path=None)
 
 
 # Bundles

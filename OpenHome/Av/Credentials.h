@@ -54,6 +54,12 @@ public:
     virtual void ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken) = 0;
 };
 
+class ICredentialsState
+{
+public:
+    virtual void SetState(const Brx& aId, const Brx& aStatus, const Brx& aData) = 0;
+};
+
 class ICredentialObserver
 {
 public:
@@ -63,7 +69,7 @@ public:
 class ProviderCredentials;
 class Credential;
 
-class Credentials : public ICredentials, private ICredentialObserver
+class Credentials : public ICredentials, public ICredentialsState, private ICredentialObserver
 {
     static const Brn kKeyRsaPrivate;
     static const Brn kKeyRsaPublic;
@@ -73,7 +79,6 @@ public:
     Credentials(Environment& aEnv, Net::DvDevice& aDevice, Configuration::IStoreReadWrite& aStore, const Brx& aEntropy, Configuration::IConfigInitialiser& aConfigInitialiser, TUint aKeyBits = 2048);
     virtual ~Credentials();
     void Add(ICredentialConsumer* aConsumer);
-    void SetState(const Brx& aId, const Brx& aStatus, const Brx& aData);
     void GetPublicKey(Bwx& aKey); // test use only
 private: // from ICredentials
     void Set(const Brx& aId, const Brx& aUsername, const Brx& aPassword) override; // password must be encrypted
@@ -82,6 +87,8 @@ private: // from ICredentials
     void Get(const Brx& aId, Bwx& aUsername, Bwx& aPassword, TBool& aEnabled, Bwx& aStatus, Bwx& aData) override;
     void Login(const Brx& aId, Bwx& aToken) override;
     void ReLogin(const Brx& aId, const Brx& aCurrentToken, Bwx& aNewToken) override;
+public: // from ICredentialsState
+    void SetState(const Brx& aId, const Brx& aStatus, const Brx& aData) override;
 private: // from ICredentialObserver
     void CredentialChanged() override;
 private:

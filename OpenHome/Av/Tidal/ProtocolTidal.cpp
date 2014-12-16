@@ -18,7 +18,7 @@ namespace Av {
 class ProtocolTidal : public Media::ProtocolNetwork, private Media::IProtocolReader
 {
 public:
-    ProtocolTidal(Environment& aEnv, const Brx& aToken, Av::Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
+    ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
 private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
