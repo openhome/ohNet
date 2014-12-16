@@ -236,6 +236,7 @@ void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
         throw;
     }
     if (iSecure && 1 != SSL_connect(iSsl)) {
+        SSL_clear(iSsl);
         iSocketTcp.Close();
         THROW(NetworkError);
     }
@@ -248,6 +249,7 @@ void SocketSslImpl::Close()
         if (iSecure) {
             (void)SSL_shutdown(iSsl);
         }
+        SSL_clear(iSsl);
         iSocketTcp.Close();
         iConnected = false;
     }

@@ -262,20 +262,20 @@ void Pipeline::DoPlay(TBool aQuit)
         iLock.Signal();
         return; // already playing so ignore this additional request
     }
+    iState = EPlaying;
+    iLock.Signal();
+
     if (aQuit) {
         iStopper->Quit();
     }
     else {
         iStopper->Play();
     }
-    iState = EPlaying;
-    iLock.Signal();
     NotifyStatus();
 }
 
 void Pipeline::Pause()
 {
-    AutoMutex a(iLock);
     iStopper->BeginPause();
 }
 
@@ -410,6 +410,14 @@ void Pipeline::PipelineStopped()
 {
     iLock.Wait();
     iState = EStopped;
+    iLock.Signal();
+    NotifyStatus();
+}
+
+void Pipeline::PipelinePlaying()
+{
+    iLock.Wait();
+    iState = EPlaying;
     iLock.Signal();
     NotifyStatus();
 }
