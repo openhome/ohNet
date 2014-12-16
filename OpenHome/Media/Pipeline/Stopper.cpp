@@ -65,6 +65,7 @@ void Stopper::Play()
         break;
     }
     iTargetHaltId = MsgHalt::kIdInvalid;
+    iObserver.PipelinePlaying();
 }
 
 void Stopper::BeginPause()
@@ -301,6 +302,7 @@ void Stopper::OkToPlay()
     switch (canPlay)
     {
     case ePlayYes:
+        iObserver.PipelinePlaying();
         break;
     case ePlayNo:
         /*TUint flushId = */iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
@@ -319,6 +321,7 @@ void Stopper::OkToPlay()
         iStreamPlayObserver->NotifyStreamPlayStatus(iTrackId, iStreamId, canPlay);
     }
     iCheckedStreamPlayable = true;
+
 }
 
 Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
