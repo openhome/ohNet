@@ -482,12 +482,12 @@ class BasePlayTracks( BASE.BaseTest ):
 
     def _WaitForSenderPlay( self ):
         """Wait for sender playback, warn on slow startup"""
+        time.sleep( 0.1 )       # allow for delay in buffering event between tracks
         timeout = False
         start = time.time()
         self.idUpdated.clear()
         self.multiEv1.clear()
 
-        time.sleep( 0.1 )       # allow for delay in buffering event between tracks
         if self.sender.playlist.transportState != 'Playing':
             self.multiEv1.wait( 10 )        # wait for 'Playing', new track ID or timeout
             if not self.multiEv1.is_set():
