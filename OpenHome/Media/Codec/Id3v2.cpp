@@ -52,7 +52,7 @@ TBool Id3v2::Recognise(Brx& aBuf)
             return false;
         }
     }
-    
+
     iSize = ((aBuf[6] << 21) | (aBuf[7] << 14) | (aBuf[8] << 7) | aBuf[9]);
     iSize += 10; // for header
     if(hasFooter) {
@@ -80,9 +80,11 @@ Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
         if (iBuf.Bytes() == kRecogniseBytes) {
             TBool recognised = Recognise(iBuf);
             if (recognised) {
-                // discard more MsgAudioEncoded if req'd; could be splitting a large tag (i.e., one containing album art)
-                DiscardAudio(iSize-kRecogniseBytes); // kRecogniseBytes already read above
-                // can't return remaining iAudioEncoded here; could have another tag following this one
+                // Discard audio data; could be splitting a large tag (i.e., one containing album art).
+                // Already read kRecogniseBytes above, but Read() doesn't discard audio, so discard
+                // iSize here.
+                DiscardAudio(iSize);
+                // Can't return remaining iAudioEncoded here; could have another tag following this one.
                 iTotalSize += iSize;
             }
             else {
@@ -91,7 +93,7 @@ Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
             }
         }
         else {
-            // didn't read a full buffer, so must be at end of stream
+            // Didn't read a full buffer, so must be at end of stream.
             msg = iAudioEncoded;
             iAudioEncoded = NULL;
         }
