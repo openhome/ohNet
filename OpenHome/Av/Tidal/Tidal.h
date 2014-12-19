@@ -19,6 +19,7 @@ namespace Av {
 
 class Tidal : public ICredentialConsumer
 {
+    friend class TestTidal;
     static const TUint kReadBufferBytes = 4 * 1024;
     static const TUint kWriteBufferBytes = 1024;
     static const TUint kConnectTimeoutMs = 5000; // FIXME - should read this + ProtocolNetwork's equivalent from a single client-changable location
@@ -30,7 +31,7 @@ class Tidal : public ICredentialConsumer
 public:
     static const Brn kConfigKeySoundQuality;
 public:
-    Tidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
+    Tidal(Environment& aEnv, const Brx& aToken, ICredentialsState& aCredentialsState, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~Tidal();
     TBool TryLogin(Bwx& aSessionId);
     TBool TryReLogin(const Brx& aCurrentToken, Bwx& aNewToken);
@@ -52,7 +53,7 @@ private:
 private:
     Mutex iLock;
     Mutex iReLoginLock;
-    Credentials& iCredentialsManager;
+    ICredentialsState& iCredentialsState;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;
     Sws<kWriteBufferBytes> iWriterBuf;
