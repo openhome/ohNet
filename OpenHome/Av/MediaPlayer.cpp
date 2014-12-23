@@ -35,6 +35,7 @@ using namespace OpenHome::Net;
 MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStaticDataSource& aStaticDataSource,
                          IStoreReadWrite& aReadWriteStore,
+                         PipelineInitParams* aPipelineInitParams,
                          IPullableClock* aPullableClock,
                          const Brx& aEntropy)
     : iDvStack(aDvStack)
@@ -47,7 +48,7 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iInfoLogger = new AllocatorInfoLogger();
     iKvpStore = new KvpStore(aStaticDataSource);
     iTrackFactory = new Media::TrackFactory(*iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(*iInfoLogger, *iTrackFactory);
+    iPipeline = new PipelineManager(aPipelineInitParams, *iInfoLogger, *iTrackFactory);
     iConfigManager = new Configuration::ConfigManager(iReadWriteStore);
     iPowerManager = new OpenHome::PowerManager();
     iConfigProductRoom = new ConfigText(*iConfigManager, Product::kConfigIdRoomBase /* + Brx::Empty() */, Product::kMaxRoomBytes, Brn("Main Room")); // FIXME - should this be localised?

@@ -100,6 +100,7 @@ private: // from ISeekRestreamer
 private:
     AllocatorInfoLogger iInfoAggregator;
     Supplier* iSupplier;
+    PipelineInitParams* iInitParams;
     Pipeline* iPipeline;
     Aggregator* iAggregator;
     TrackFactory* iTrackFactory;
@@ -261,7 +262,8 @@ SuitePipeline::SuitePipeline()
     , iSemQuit("TPSQ", 0)
     , iQuitReceived(false)
 {
-    iPipeline = new Pipeline(iInfoAggregator, *this, *this, *this);
+    iInitParams = PipelineInitParams::New();
+    iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
     iSupplier = new Supplier(*iPipeline, *iTrackFactory);
@@ -330,8 +332,8 @@ void SuitePipeline::Test()
     iSupplier->Block();
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelineBuffering);
-    TEST((iJiffies >= Pipeline::kStarvationMonitorStarvationThreshold) &&
-         (iJiffies <=  Pipeline::kStarvationMonitorStarvationThreshold + iLastMsgJiffies + kDriverMaxAudioJiffies));
+    TEST((iJiffies >= iInitParams->StarvationMonitorMinJiffies()) &&
+         (iJiffies <= iInitParams->StarvationMonitorMinJiffies() + iLastMsgJiffies + kDriverMaxAudioJiffies));
 
     // Push audio again.  Check that it ramps up in Pipeline::kStarvationMonitorRampUpDuration.
     Print("\nRecover from starvation\n");
@@ -339,7 +341,7 @@ void SuitePipeline::Test()
     iSupplier->Unblock();
     PullUntilEnd(ERampUp);
     TEST(iPipelineState == EPipelinePlaying);
-    TestJiffies(Pipeline::kStarvationMonitorRampUpDuration);
+    TestJiffies(iInitParams->RampShortJiffies());
 
     // Set 1s delay.  Check for ramp down in Pipeline::kVariableDelayRampDuration then 1s silence then ramp up.
     // FIXME - can't set VariableDelay via Pipeline
@@ -353,7 +355,7 @@ void SuitePipeline::Test()
     iPipeline->Pause();
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelinePaused);
-    TestJiffies(Pipeline::kStopperRampDuration);
+    TestJiffies(iInitParams->RampLongJiffies());
 
     // Resume.  Check for ramp up in Pipeline::kStopperRampDuration.
     Print("\nResume\n");
@@ -361,7 +363,7 @@ void SuitePipeline::Test()
     iPipeline->Play();
     PullUntilEnd(ERampUp);
     TEST(iPipelineState == EPipelinePlaying);
-    TestJiffies(Pipeline::kStopperRampDuration);
+    TestJiffies(iInitParams->RampLongJiffies());
 
     // Wait. Check for ramp down in Pipeline::kWaiterRampDuration.
     // Send down expected MsgFlush, then check for ramp up in
@@ -372,13 +374,13 @@ void SuitePipeline::Test()
     iPipeline->Wait(kFlushId);
     PullUntilEnd(ERampDownDeferred);
     TEST(iPipelineState == EPipelineWaiting);
-    TestJiffies(Pipeline::kWaiterRampDuration);
+    TestJiffies(iInitParams->RampShortJiffies());
     // push flush, then ramp back up
     iJiffies = 0;
     iSupplier->SendFlush(kFlushId);
     PullUntilEnd(ERampUp);
     TEST(iPipelineState == EPipelinePlaying);
-    TestJiffies(Pipeline::kWaiterRampDuration);
+    TestJiffies(iInitParams->RampShortJiffies());
 
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
@@ -389,7 +391,7 @@ void SuitePipeline::Test()
     iSupplier->Exit(kHaltId);
     iSemFlushed.Wait();
     TEST(iPipelineState == EPipelineStopped);
-    TestJiffies(Pipeline::kStopperRampDuration);
+    TestJiffies(iInitParams->RampLongJiffies());
 
     // Quit happens when iPipeline is deleted in d'tor.
     Print("\nQuit\n");
