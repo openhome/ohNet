@@ -451,11 +451,6 @@ ProtocolStreamResult ProtocolHttp::DoStream()
 
     iDechunker.SetChunked(iHeaderTransferEncoding.IsChunked());
 
-    if (!iStarted && iLive) {
-        StartStream();
-        return EProtocolStreamErrorRecoverable;
-    }
-
     return ProcessContent();
 }
 

@@ -60,7 +60,7 @@ protected:
     void DiscardAudio(TUint aBytes);
     void Read(Bwx& aBuf, TUint aBytes);
 private:
-    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler); // FIXME - don;t pass istreamhandler here
+    void Construct(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IStreamHandler& aStreamHandler); // FIXME - don't pass istreamhandler here
     TBool ReadFromCachedAudio(Bwx& aBuf, TUint aBytes);
 public: // from IRecogniser
     TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
