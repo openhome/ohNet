@@ -68,6 +68,7 @@ private:
     };
 private:
     void TestJiffies(TUint aTarget);
+    void PullNextAudio();
     void PullUntilEnd(EState aState);
     void PullUntilQuit();
 private: // from IPipelineObserver
@@ -114,6 +115,7 @@ private:
     TUint iFirstSubsample;
     TUint iLastSubsample;
     EPipelineState iPipelineState;
+    TUint iStateChangeCount;
     Semaphore iSemFlushed;
     Semaphore iSemQuit;
     TBool iQuitReceived;
@@ -258,6 +260,7 @@ SuitePipeline::SuitePipeline()
     , iFirstSubsample(0)
     , iLastSubsample(0)
     , iPipelineState(EPipelineStopped)
+    , iStateChangeCount(0)
     , iSemFlushed("TPSF", 0)
     , iSemQuit("TPSQ", 0)
     , iQuitReceived(false)
@@ -382,6 +385,81 @@ void SuitePipeline::Test()
     TEST(iPipelineState == EPipelinePlaying);
     TestJiffies(iInitParams->RampShortJiffies());
 
+
+    // Test pause with partial ramp down before play is called.
+    Print("\nPause->Play with partial ramp down\n");
+    static const TUint kSubsampleRampedUpFull = 0x7f7f7f;
+    static const TUint kSubsampleRampedDownFull = 0;
+    static const TUint kMaxMsgs = 50;
+    TUint initialStateChangeCount = iStateChangeCount;
+    iJiffies = 0;
+    iPipeline->Pause();
+    // Ensure ramping starts.
+    TBool rampingDown = false;
+    for (TUint i=0; i<kMaxMsgs; i++) {
+        PullNextAudio();
+        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
+        if (iFirstSubsample == iLastSubsample) {
+            TEST(iFirstSubsample == kSubsampleRampedUpFull);
+        }
+        else {
+            rampingDown = true;
+            break;
+        }
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
+    }
+    TEST(rampingDown);
+    TEST(iFirstSubsample > iLastSubsample);
+    // Now, play pipeline again.
+    // Check ramping up starts before ramping down reaches end.
+    iPipeline->Play();
+    TBool rampingUp = false;
+    for (TUint i=0; i<kMaxMsgs; i++) {
+        PullNextAudio();
+        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
+        if (iFirstSubsample < iLastSubsample) {
+            rampingUp = true;
+            break;
+        }
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs);
+    }
+    TEST(rampingUp);
+    TEST(iLastSubsample > kSubsampleRampedDownFull);
+    // Check ramping up from partial ramp down completes.
+    TBool finishedRamping = false;
+    for (TUint i=0; i<kMaxMsgs; i++) {
+        PullNextAudio();
+        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
+        if (iFirstSubsample == iLastSubsample) {
+            finishedRamping = true;
+            break;
+        }
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs); // ensure StarvationMonitor doesn't kick in
+    }
+    TEST(finishedRamping);
+    TEST(iFirstSubsample == kSubsampleRampedUpFull);
+
+    TEST(iPipelineState == EPipelinePlaying);
+    TEST(iStateChangeCount == initialStateChangeCount+1); // shouldn't have changed from EPipelinePlaying, but may have received another notification
+
+
+    // Test pause followed by play with no audio pulled in between.
+    Print("\nPause->Play with no ramp down\n");
+    initialStateChangeCount = iStateChangeCount;
+    iJiffies = 0;
+    iPipeline->Pause();
+    iPipeline->Play();
+    const TUint kTestMsgs = 50;
+    // Pull kTestMsgs and check there is no ramping.
+    for (TUint i=0; i<kTestMsgs; i++) {
+        PullNextAudio();
+        TEST(iFirstSubsample == iLastSubsample);
+        Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs); // ensure StarvationMonitor doesn't kick in
+    }
+    TEST(iPipelineState == EPipelinePlaying);
+    TEST(iStateChangeCount == initialStateChangeCount+1); // // shouldn't have changed from EPipelinePlaying, but may have received another notification
+
+
     // Stop.  Check for ramp down in Pipeline::kStopperRampDuration.
     Print("\nStop\n");
     iJiffies = 0;
@@ -404,6 +482,18 @@ void SuitePipeline::TestJiffies(TUint aTarget)
     // ...so we'll read a bit more data than expected when checking ramp durations
     TEST(aTarget <= iJiffies);
     TEST(iJiffies - aTarget <= kDriverMaxAudioJiffies);
+}
+
+void SuitePipeline::PullNextAudio()
+{
+    TBool done = false;
+    while (!done) {
+        Msg* msg = iPipelineEnd->Pull();
+        (void)msg->Process(*this);
+        if (iLastMsgWasAudio) {
+            done = true;
+        }
+    }
 }
 
 void SuitePipeline::PullUntilEnd(EState aState)
@@ -477,6 +567,7 @@ void SuitePipeline::PullUntilQuit()
 void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 {
     iPipelineState = aState;
+    iStateChangeCount++;
     if (aState == EPipelineStopped) {
         iSemFlushed.Signal();
     }
