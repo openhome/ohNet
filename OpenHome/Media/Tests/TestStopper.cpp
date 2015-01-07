@@ -24,6 +24,9 @@ class SuiteStopper : public SuiteUnitTest, private IPipelineElementUpstream, pri
     static const TUint kExpectedSeekSeconds = 51;
     static const TUint kSampleRate = 44100;
     static const TUint kNumChannels = 2;
+    static const TUint kBitDepth = 24;
+    static const TUint kDataBytes = 960;
+    static const TUint kJiffiesPerMsg;
 public:
     SuiteStopper();
     ~SuiteStopper();
@@ -96,6 +99,8 @@ private:
     void TestPlayStopPlayInterruptsRampDown();
     void TestPlayNoFlushes();
     void TestPlayLaterStops();
+    void TestPlayPausePlayWithRamp();
+    void TestPlayPausePlayNoRamp();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -126,6 +131,8 @@ private:
 } // namespace OpenHome
 
 
+const TUint SuiteStopper::kJiffiesPerMsg = kDataBytes/kNumChannels/(kBitDepth/8) * Jiffies::JiffiesPerSample(kSampleRate);
+
 SuiteStopper::SuiteStopper()
     : SuiteUnitTest("Stopper")
     , iSemHalted("TSTP", 0)
@@ -146,6 +153,8 @@ SuiteStopper::SuiteStopper()
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayStopPlayInterruptsRampDown), "TestPlayStopPlayInterruptsRampDown");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayNoFlushes), "TestPlayNoFlushes");
     AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayLaterStops), "TestPlayLaterStops");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayPausePlayWithRamp), "TestPlayPausePlayWithRamp");
+    AddTest(MakeFunctor(*this, &SuiteStopper::TestPlayPausePlayNoRamp), "TestPlayPausePlayNoRamp");
 }
 
 SuiteStopper::~SuiteStopper()
@@ -396,11 +405,10 @@ Msg* SuiteStopper::CreateDecodedStream()
 
 Msg* SuiteStopper::CreateAudio()
 {
-    static const TUint kDataBytes = 960;
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0x7f, kDataBytes);
     Brn encodedAudioBuf(encodedAudioData, kDataBytes);
-    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, 24, EMediaDataEndianLittle, iTrackOffset);
+    MsgAudioPcm* audio = iMsgFactory->CreateMsgAudioPcm(encodedAudioBuf, kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffset);
     iTrackOffset += audio->Jiffies();
     return audio;
 }
@@ -749,6 +757,83 @@ void SuiteStopper::TestPlayLaterStops()
     TestHalted();
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
+}
+
+void SuiteStopper::TestPlayPausePlayWithRamp()
+{
+    static const TUint kMsgPullCount = 3;
+    iStopper->Play();
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    iJiffies = 0;
+    iStopper->BeginPause();
+    iRampingDown = true;
+    for (TUint i=0; i<kMsgPullCount; i++) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(iRampingDown); // should still be ramping down
+    TEST(iLastSubsample < 0x7f7f7f);
+    TEST(iLastSubsample > 0);
+    TEST(iPausedCount == 0);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 2);
+    TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
+
+    // Call Play(). Should immediately ramp up without completing ramp down.
+    iJiffies = 0;
+    iStopper->Play();
+    iRampingDown = false;
+    iRampingUp = true;
+    for (TUint i=0; i<kMsgPullCount; i++) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(!iRampingUp);
+    TEST(iLastSubsample == 0x7f7f7e); // FIXME - see #830
+    TEST(iPausedCount == 0);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 3);
+    TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
+}
+
+void SuiteStopper::TestPlayPausePlayNoRamp()
+{
+    static const TUint kMsgPullCount = 3;
+    iStopper->Play();
+    iPendingMsgs.push_back(CreateTrack());
+    PullNext(EMsgTrack);
+    iPendingMsgs.push_back(CreateEncodedStream());
+    iPendingMsgs.push_back(CreateDecodedStream());
+    PullNext(EMsgDecodedStream);
+
+    iPendingMsgs.push_back(CreateAudio());
+    PullNext(EMsgAudioPcm);
+    iJiffies = 0;
+    // Call BeginPause() followed immediately by Play().
+    // No ramping should occur.
+    iStopper->BeginPause();
+    iStopper->Play();
+    iRampingDown = false;
+    iRampingUp = false;
+    // Pull a few msgs to check no ramping has occurred.
+    for (TUint i=0; i<kMsgPullCount; i++) {
+        iPendingMsgs.push_back(CreateAudio());
+        PullNext(EMsgAudioPcm);
+    }
+    TEST(!iRampingDown);
+    TEST(!iRampingUp);
+    TEST(iLastSubsample == 0x7f7f7f);
+    TEST(iPausedCount == 0);
+    TEST(iStoppedCount == 0);
+    TEST(iPlayingCount == 3);
+    TEST(iJiffies == kJiffiesPerMsg*kMsgPullCount);
 }
 
 
