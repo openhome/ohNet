@@ -532,7 +532,7 @@ void SuitePipeline::TestRampingDownStarts(TUint aMaxMsgs)
     TBool rampingDown = false;
     for (TUint i=0; i<aMaxMsgs; i++) {
         PullNextAudio();
-        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
+        //Log::Print("SuitePipeline::TestRampingDownStarts iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
         if (iFirstSubsample == iLastSubsample) {
             TEST(iFirstSubsample == kSubsampleRampedUpFull);
         }
@@ -551,7 +551,7 @@ void SuitePipeline::TestRampingUpStartsFromPartialRampDown(TUint aMaxMsgs)
     TBool rampingUp = false;
     for (TUint i=0; i<aMaxMsgs; i++) {
         PullNextAudio();
-        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
+        //Log::Print("SuitePipeline::TestRampingUpStartsFromPartialRampDown iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
         if (iFirstSubsample < iLastSubsample) {
             rampingUp = true;
             break;
@@ -567,7 +567,7 @@ void SuitePipeline::TestRampsUp(TUint aMaxMsgs)
     TBool finishedRamping = false;
     for (TUint i=0; i<aMaxMsgs; i++) {
         PullNextAudio();
-        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
+        //Log::Print("SuitePipeline::TestRampsUp iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
         if (iFirstSubsample == iLastSubsample) {
             finishedRamping = true;
             break;
