@@ -328,7 +328,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
 {
     if (iState == ERampingDown || iState == ERampingUp) {
         MsgAudio* split;
-        if (aMsg->Jiffies() > iRemainingRampSize) {
+        if (aMsg->Jiffies() > iRemainingRampSize && iRemainingRampSize > 0) {
             split = aMsg->Split(iRemainingRampSize);
             if (split != NULL) {
                 iQueue.EnqueueAtHead(split);
@@ -336,7 +336,9 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
         }
         split = NULL;
         const Ramp::EDirection direction = (iState == ERampingDown? Ramp::EDown : Ramp::EUp);
-        iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        if (iRemainingRampSize > 0) {
+            iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, direction, split);
+        }
         if (split != NULL) {
             iQueue.EnqueueAtHead(split);
         }
