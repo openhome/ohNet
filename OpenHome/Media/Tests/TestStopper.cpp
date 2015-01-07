@@ -779,8 +779,6 @@ void SuiteStopper::TestPlayPausePlayWithRamp()
         PullNext(EMsgAudioPcm);
     }
     TEST(iRampingDown); // should still be ramping down
-    TEST(iLastSubsample < 0x7f7f7f);
-    TEST(iLastSubsample > 0);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 2);
@@ -796,7 +794,6 @@ void SuiteStopper::TestPlayPausePlayWithRamp()
         PullNext(EMsgAudioPcm);
     }
     TEST(!iRampingUp);
-    TEST(iLastSubsample == 0x7f7f7e); // FIXME - see #830
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 3);
@@ -829,7 +826,6 @@ void SuiteStopper::TestPlayPausePlayNoRamp()
     }
     TEST(!iRampingDown);
     TEST(!iRampingUp);
-    TEST(iLastSubsample == 0x7f7f7f);
     TEST(iPausedCount == 0);
     TEST(iStoppedCount == 0);
     TEST(iPlayingCount == 3);
