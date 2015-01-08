@@ -20,7 +20,6 @@ public:
     Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement);
     virtual ~Supply();
 public: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
     void OutputSession() override;
     void OutputTrack(Track& aTrack, TUint aTrackId) override;
     void OutputDelay(TUint aJiffies) override;
@@ -30,8 +29,6 @@ public: // from ISupply
     void OutputMetadata(const Brx& aMetadata) override;
     void OutputFlush(TUint aFlushId) override;
     void OutputWait() override;
-    void OutputHalt(TUint aHaltId) override;
-    void OutputQuit() override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementDownstream& iDownStreamElement;

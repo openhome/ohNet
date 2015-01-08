@@ -14,16 +14,16 @@ using namespace OpenHome::Media;
 
 // PipelineManager
 
-PipelineManager::PipelineManager(IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
+PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, TrackFactory& aTrackFactory)
     : iLock("PLM1")
     , iPublicLock("PLM2")
     , iPipelineState(EPipelineStopped)
     , iPipelineStoppedSem("PLM3", 1)
 {
-    iPipeline = new Pipeline(aInfoAggregator, *this, iPrefetchObserver, *this);
+    iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
-    iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
+    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
+    iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
 

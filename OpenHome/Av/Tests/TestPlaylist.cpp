@@ -19,6 +19,7 @@
 #include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 
 #include <array>
 #include <limits.h>
@@ -410,7 +411,8 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
-    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, NULL, udn);
+    iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
+                                   NULL, udn, Brn("Main Room"), Brn("Softplayer"));
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors

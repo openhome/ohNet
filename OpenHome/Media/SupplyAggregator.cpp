@@ -1,0 +1,162 @@
+#include <OpenHome/Media/SupplyAggregator.h>
+#include <OpenHome/Types.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Printer.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
+
+using namespace OpenHome;
+using namespace OpenHome::Media;
+
+// SupplyAggregator
+
+SupplyAggregator::SupplyAggregator(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement)
+    : iMsgFactory(aMsgFactory)
+    , iAudioEncoded(NULL)
+    , iDownStreamElement(aDownStreamElement)
+{
+}
+
+SupplyAggregator::~SupplyAggregator()
+{
+    if (iAudioEncoded != NULL) {
+        iAudioEncoded->RemoveRef();
+    }
+}
+
+void SupplyAggregator::OutputSession()
+{
+    MsgSession* msg = iMsgFactory.CreateMsgSession();
+    Output(msg);
+}
+
+void SupplyAggregator::OutputTrack(Track& aTrack, TUint aTrackId)
+{
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);
+    Output(msg);
+}
+
+void SupplyAggregator::OutputDelay(TUint aJiffies)
+{
+    MsgDelay* msg = iMsgFactory.CreateMsgDelay(aJiffies);
+    Output(msg);
+}
+
+void SupplyAggregator::OutputMetadata(const Brx& aMetadata)
+{
+    MsgMetaText* msg = iMsgFactory.CreateMsgMetaText(aMetadata);
+    Output(msg);
+}
+
+void SupplyAggregator::OutputFlush(TUint aFlushId)
+{
+    MsgFlush* msg = iMsgFactory.CreateMsgFlush(aFlushId);
+    Output(msg);
+}
+
+void SupplyAggregator::OutputWait()
+{
+    MsgWait* msg = iMsgFactory.CreateMsgWait();
+    Output(msg);
+}
+
+void SupplyAggregator::Output(Msg* aMsg)
+{
+    if (iAudioEncoded != NULL) {
+        OutputEncodedAudio();
+    }
+    iDownStreamElement.Push(aMsg);
+}
+
+void SupplyAggregator::OutputEncodedAudio()
+{
+    iDownStreamElement.Push(iAudioEncoded);
+    iAudioEncoded = NULL;
+}
+
+
+// SupplyAggregatorBytes
+
+SupplyAggregatorBytes::SupplyAggregatorBytes(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement)
+    : SupplyAggregator(aMsgFactory, aDownStreamElement)
+{
+}
+void SupplyAggregatorBytes::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+{
+    // FIXME - no metatext available
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aUri, Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler);
+    Output(msg);
+}
+
+void SupplyAggregatorBytes::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+{
+    // FIXME - no metatext available
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aUri, Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler, aPcmStream);
+    Output(msg);
+}
+
+void SupplyAggregatorBytes::OutputData(const Brx& aData)
+{
+    if (aData.Bytes() == 0) {
+        return;
+    }
+    if (iAudioEncoded == NULL) {
+        iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(aData);
+    }
+    else {
+        const TUint consumed = iAudioEncoded->Append(aData);
+        if (consumed < aData.Bytes()) {
+            OutputEncodedAudio();
+            Brn remaining = aData.Split(consumed);
+            iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(remaining);
+        }
+    }
+}
+
+
+// SupplyAggregatorJiffies
+
+SupplyAggregatorJiffies::SupplyAggregatorJiffies(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement)
+    : SupplyAggregator(aMsgFactory, aDownStreamElement)
+    , iDataMaxBytes(0)
+{
+}
+
+void SupplyAggregatorJiffies::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool /*aLive*/, IStreamHandler& /*aStreamHandler*/, TUint /*aStreamId*/)
+{
+    ASSERTS(); // can only aggregate by jiffies for PCM streams
+}
+
+void SupplyAggregatorJiffies::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+{
+    // FIXME - no metatext available
+    TUint ignore = kMaxPcmDataJiffies;
+    const TUint jiffiesPerSample = Jiffies::JiffiesPerSample(aPcmStream.SampleRate());
+    iDataMaxBytes = Jiffies::BytesFromJiffies(ignore, jiffiesPerSample, aPcmStream.NumChannels(), aPcmStream.BitDepth() / 8);
+    MsgEncodedStream* msg = iMsgFactory.CreateMsgEncodedStream(aUri, Brx::Empty(), aTotalBytes, aStreamId, aSeekable, aLive, &aStreamHandler, aPcmStream);
+    Output(msg);
+}
+
+void SupplyAggregatorJiffies::OutputData(const Brx& aData)
+{
+    if (aData.Bytes() == 0) {
+        return;
+    }
+
+    /* Don't try to split data precisely at kMaxPcmDataJiffies boundaries
+       If we're passed in data that takes us over this threshold, accept as much as we can,
+       passing it on immediately */
+    if (iAudioEncoded == NULL) {
+        iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(aData);
+    }
+    else {
+        const TUint consumed = iAudioEncoded->Append(aData);
+        if (consumed < aData.Bytes()) {
+            OutputEncodedAudio();
+            Brn remaining = aData.Split(consumed);
+            iAudioEncoded = iMsgFactory.CreateMsgAudioEncoded(remaining);
+        }
+    }
+    if (iAudioEncoded->Bytes() >= iDataMaxBytes) {
+        OutputEncodedAudio();
+    }
+}

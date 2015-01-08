@@ -11,6 +11,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Av/Tidal/Tidal.h>
+#include <OpenHome/Media/Supply.h>
         
 namespace OpenHome {
 namespace Av {
@@ -21,6 +22,7 @@ public:
     ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, Configuration::IConfigInitialiser& aConfigInitialiser);
     ~ProtocolTidal();
 private: // from Media::Protocol
+    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream);
     void Interrupt(TBool aInterrupt) override;
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
@@ -45,6 +47,7 @@ private:
     TBool ContinueStreaming(Media::ProtocolStreamResult aResult);
 private:
     Tidal* iTidal;
+    Media::Supply* iSupply;
     Uri iUri;
     Bws<12> iTrackId;
     Bws<1024> iStreamUrl;
@@ -84,6 +87,7 @@ Protocol* ProtocolFactory::NewTidal(Environment& aEnv, const Brx& aToken, Av::Cr
 
 ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& aCredentialsManager, IConfigInitialiser& aConfigInitialiser)
     : ProtocolNetwork(aEnv)
+    , iSupply(NULL)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(aEnv, iReaderBuf)
     , iTotalBytes(0)
@@ -98,6 +102,12 @@ ProtocolTidal::ProtocolTidal(Environment& aEnv, const Brx& aToken, Credentials& 
 
 ProtocolTidal::~ProtocolTidal()
 {
+    delete iSupply;
+}
+
+void ProtocolTidal::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
 void ProtocolTidal::Interrupt(TBool aInterrupt)

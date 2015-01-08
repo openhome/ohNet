@@ -1,8 +1,8 @@
+
 #include <OpenHome/Private/TestFramework.h>
 
 #include <OpenHome/Media/Protocol/ProtocolFactory.h>
 #include <OpenHome/Media/Protocol/ProtocolTone.h>
-#include <OpenHome/Media/Pipeline/Supply.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
@@ -162,7 +162,6 @@ private:
     AllocatorInfoLogger* iAllocatorInfoLogger;
     MsgFactory* iMsgFactory;
     EncodedAudioReservoir* iEncodedAudioReservoir;
-    Supply* iSupply;
     Codec::Container* iContainer;
     Codec::CodecController* iCodecController;
 
@@ -504,13 +503,12 @@ void SuiteGeneratorAny::Setup()
                              kMsgCountHalt, kMsgCountFlush, kMsgCountWait, kMsgCountMode,
                              kMsgCountSession, kMsgCountDelay, kMsgCountQuit);
     iEncodedAudioReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
-    iSupply = new Supply(*iMsgFactory, *iEncodedAudioReservoir);
     iContainer = new Codec::Container(*iMsgFactory, *iEncodedAudioReservoir);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iContainer, /*IPipelineElementDownstream*/ *this);
     iCodecController->AddCodec(Codec::CodecFactory::NewWav());
     iCodecController->Start();
 
-    iProtocolManager = new ProtocolManager(*iSupply, /*IPipelineIdProvider*/ *this, /*IFlushIdProvider*/ *this);
+    iProtocolManager = new ProtocolManager(*iEncodedAudioReservoir, *iMsgFactory, *this, *this);
     iProtocolManager->Add(ProtocolFactory::NewTone(*gEnv));  // (dummy) environment not really needed
 
     // only single test track (tone:// URL) in existence at any given time
@@ -522,7 +520,6 @@ void SuiteGeneratorAny::TearDown()
     delete iCodecController;
     delete iContainer;
     delete iEncodedAudioReservoir;
-    delete iSupply;
     delete iProtocolManager;
     delete iTrackFactory;
     delete iMsgFactory;
@@ -1049,7 +1046,7 @@ void SuiteGeneratorAny::TestWaveform(const TChar* aWaveform, const ToneParams& a
     Track& trk = *iTrackFactory->CreateTrack(toneUrl, Brx::Empty());
     iProtocolManager->DoStream(trk);
     trk.RemoveRef();
-    iSupply->OutputQuit();  // ensure no audio remains in pipeline
+    iEncodedAudioReservoir->Push(iMsgFactory->CreateMsgQuit());
     iSemaphore.Wait();
 }
 

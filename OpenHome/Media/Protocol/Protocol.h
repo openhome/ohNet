@@ -70,7 +70,7 @@ public:
     virtual ~Protocol();
     ProtocolGetResult DoGet(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
     ProtocolStreamResult TryStream(const Brx& aUri);
-    void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider);
+    void Initialise(IProtocolManager& aProtocolManager, IPipelineIdProvider& aIdProvider, MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream, IFlushIdProvider& aFlushIdProvider);
     TBool Active() const;
     /**
      * Interrupt any stream that is currently in-progress, or cancel a previous interruption.
@@ -89,6 +89,7 @@ private: // from IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
+    virtual void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) = 0;
     /**
      * Stream a track.
      *
@@ -133,7 +134,6 @@ protected:
     Environment& iEnv;
     IProtocolManager* iProtocolManager;
     IPipelineIdProvider* iIdProvider;
-    ISupply* iSupply;
     IFlushIdProvider* iFlushIdProvider;
     TBool iActive;
 private:
@@ -197,30 +197,19 @@ private:
     TBool iInTag;
 };
 
-class ProtocolManager : public IUriStreamer, public ISupply, private IProtocolManager, private INonCopyable
+class ProtocolManager : public IUriStreamer, public IPipelineElementDownstream, private IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
-    ProtocolManager(ISupply& aSupply, IPipelineIdProvider& aIdProvider, IFlushIdProvider& aFlushIdProvider);
+    ProtocolManager(IPipelineElementDownstream& aDownstream, MsgFactory& aMsgFactory, IPipelineIdProvider& aIdProvider, IFlushIdProvider& aFlushIdProvider);
     virtual ~ProtocolManager();
     void Add(Protocol* aProtocol);
     void Add(ContentProcessor* aProcessor);
 public: // from IUriStreamer
     ProtocolStreamResult DoStream(Track& aTrack);
     void Interrupt(TBool aInterrupt);
-public: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
-    void OutputSession() override;
-    void OutputTrack(Track& aTrack, TUint aTrackId) override;
-    void OutputDelay(TUint aJiffies) override;
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
-    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
-    void OutputData(const Brx& aData) override;
-    void OutputMetadata(const Brx& aMetadata) override;
-    void OutputFlush(TUint aFlushId) override;
-    void OutputWait() override;
-    void OutputHalt(TUint aHaltId) override;
-    void OutputQuit() override;
+public: // from IPipelineElementDownstream
+    void Push(Msg* aMsg) override;
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;
@@ -228,9 +217,10 @@ private: // from IProtocolManager
     TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
     TBool IsCurrentTrack(TUint aTrackId) const;
 private:
+    IPipelineElementDownstream& iDownstream;
+    MsgFactory& iMsgFactory;
     IPipelineIdProvider& iIdProvider;
     IFlushIdProvider& iFlushIdProvider;
-    ISupply& iSupply;
     mutable Mutex iLock;
     std::vector<Protocol*> iProtocols;
     std::vector<ContentProcessor*> iContentProcessors;

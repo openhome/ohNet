@@ -203,20 +203,30 @@ EncodedAudio::EncodedAudio(AllocatorBase& aAllocator)
 
 const TByte* EncodedAudio::Ptr(TUint aBytes) const
 {
-    ASSERT(aBytes < iBytes);
-    return &iData[aBytes];
+    ASSERT(aBytes < iData.Bytes());
+    return iData.Ptr() + aBytes;
 }
 
 TUint EncodedAudio::Bytes() const
 {
-    return iBytes;
+    return iData.Bytes();
+}
+
+TUint EncodedAudio::Append(const Brx& aData)
+{
+    const TUint avail = iData.MaxBytes() - iData.Bytes();
+    if (avail < aData.Bytes()) {
+        Brn data(aData.Ptr(), avail);
+        iData.Append(data);
+        return avail;
+    }
+    iData.Append(aData);
+    return aData.Bytes();
 }
 
 void EncodedAudio::Construct(const Brx& aData)
 {
-    ASSERT(aData.Bytes() <= kMaxBytes);
-    (void)memcpy(iData, aData.Ptr(), aData.Bytes());
-    iBytes = aData.Bytes();
+    ASSERT(Append(aData) == aData.Bytes());
 }
 
 void EncodedAudio::Clear()
@@ -225,9 +235,9 @@ void EncodedAudio::Clear()
     // fill in all members with recognisable 'bad' values to make ref counting bugs more obvious
     static const TByte deadByte = 0xde;
     static const TUint deadUint = 0xdead;
-    memset(&iData[0], deadByte, sizeof(iData));
-    iBytes = deadUint;
+    memset(const_cast<TByte*>(iData.Ptr()), deadByte, iData.Bytes());
 #endif // DEFINE_DEBUG
+    iData.SetBytes(0);
 }
 
     
@@ -1060,6 +1070,14 @@ void MsgAudioEncoded::Add(MsgAudioEncoded* aMsg)
         next = next->iNextAudio;
     }
     end->iNextAudio = aMsg;
+}
+
+TUint MsgAudioEncoded::Append(const Brx& aData)
+{
+    ASSERT(iNextAudio == NULL);
+    const TUint consumed = iAudioData->Append(aData);
+    iSize += consumed;
+    return consumed;
 }
 
 TUint MsgAudioEncoded::Bytes() const

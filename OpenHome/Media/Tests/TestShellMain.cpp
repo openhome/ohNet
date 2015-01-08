@@ -38,6 +38,7 @@ SIMPLE_TEST_DECLARATION(TestStarvationMonitor);
 SIMPLE_TEST_DECLARATION(TestStopper);
 SIMPLE_TEST_DECLARATION(TestStore);
 SIMPLE_TEST_DECLARATION(TestSupply);
+SIMPLE_TEST_DECLARATION(TestSupplyAggregator);
 SIMPLE_TEST_DECLARATION(TestTrackDatabase);
 SIMPLE_TEST_DECLARATION(TestTrackInspector);
 SIMPLE_TEST_DECLARATION(TestUriProviderRepeater);
@@ -92,6 +93,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     shellTests.push_back(ShellTest("TestStopper", ShellTestStopper));
     shellTests.push_back(ShellTest("TestStore", ShellTestStore));
     shellTests.push_back(ShellTest("TestSupply", ShellTestSupply));
+    shellTests.push_back(ShellTest("TestSupplyAggregator", ShellTestSupplyAggregator));
     shellTests.push_back(ShellTest("TestTrackDatabase", ShellTestTrackDatabase));
     shellTests.push_back(ShellTest("TestTrackInspector", ShellTestTrackInspector));
     shellTests.push_back(ShellTest("TestUriProviderRepeater", ShellTestUriProviderRepeater));

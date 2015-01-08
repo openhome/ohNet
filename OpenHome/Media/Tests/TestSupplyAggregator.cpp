@@ -1,5 +1,5 @@
 #include <OpenHome/Private/TestFramework.h>
-#include <OpenHome/Media/Supply.h>
+#include <OpenHome/Media/SupplyAggregator.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
@@ -12,6 +12,7 @@ using namespace OpenHome::Media;
 
 namespace OpenHome {
 namespace Media {
+namespace TestSupplyAggregator {
 
 class DummyStreamHandler : public IStreamHandler
 {
@@ -23,7 +24,7 @@ private: // from IStreamHandler
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 };
 
-class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
+class SuiteSupplyAggregator : public Suite, private IPipelineElementDownstream, private IMsgProcessor
 {
     #define kUri "http://www.openhome.org/dir/file.ext"
     static const TUint kTrackId    = 1;
@@ -38,9 +39,11 @@ class SuiteSupply : public Suite, private IPipelineElementDownstream, private IM
     static const TBool kIsRealTime = true;
     static const TUint kDelayJiffies = 12345;
 public:
-    SuiteSupply();
-    ~SuiteSupply();
+    SuiteSupplyAggregator();
+    ~SuiteSupplyAggregator();
     void Test();
+private:
+    void OutputNextNonAudioMsg();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // from IMsgProcessor
@@ -62,22 +65,15 @@ private: // from IMsgProcessor
 private:
     enum EMsgType
     {
-        ENone
-       ,EMsgAudioEncoded
-       ,EMsgAudioPcm
-       ,EMsgSilence
-       ,EMsgPlayable
-       ,EMsgDecodedStream
-       ,EMsgMode
+        EMsgAudioEncoded
        ,EMsgSession
        ,EMsgTrack
        ,EMsgDelay
        ,EMsgEncodedStream
        ,EMsgMetaText
-       ,EMsgHalt
        ,EMsgFlush
        ,EMsgWait
-       ,EMsgQuit
+       ,EMsgNone
     };
 private:
     MsgAudio* CreateAudio();
@@ -85,14 +81,23 @@ private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
-    Supply* iSupply;
+    SupplyAggregator* iSupply;
     DummyStreamHandler iDummyStreamHandler;
     EMsgType iLastMsg;
+    EMsgType iGenMsgType;
     TUint iMsgPushCount;
+    Bws<EncodedAudio::kMaxBytes> iAudio;
+    TBool iExpectFullAudioMsg;
+    TBool iExpectAudioStream;
+    TBool iTestAudioData;
+    TChar iLastAudioByte;
 };
 
+} // namespace TestSupplyAggregator
 } // namespace Media
 } // namespace OpenHome
+
+using namespace OpenHome::Media::TestSupplyAggregator;
 
 
 // DummyStreamHandler
@@ -126,68 +131,120 @@ void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/
 }
 
 
-// SuiteSupply
+// SuiteSupplyAggregator
 
-SuiteSupply::SuiteSupply()
+SuiteSupplyAggregator::SuiteSupplyAggregator()
     : Suite("Supply tests")
-    , iLastMsg(ENone)
+    , iLastMsg(EMsgNone)
     , iMsgPushCount(0)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iSupply = new Supply(*iMsgFactory, *this);
+    iSupply = new SupplyAggregatorBytes(*iMsgFactory, *this);
 }
 
-SuiteSupply::~SuiteSupply()
+SuiteSupplyAggregator::~SuiteSupplyAggregator()
 {
     delete iSupply;
     delete iMsgFactory;
     delete iTrackFactory;
 }
 
-void SuiteSupply::Test()
+void SuiteSupplyAggregator::Test()
 {
+    // test msgs passed through
     TUint expectedMsgCount = 0;
-    iSupply->OutputSession();
+    iGenMsgType = EMsgSession;
+    do {
+        OutputNextNonAudioMsg();
+        TEST(++expectedMsgCount == iMsgPushCount);
+    } while (iGenMsgType != EMsgNone);
+
+    // test data is buffered
+    iExpectFullAudioMsg = true;
+    iExpectAudioStream = false;
+    iTestAudioData = true;
+    do {
+        iSupply->OutputData(Brn(kTestData));
+    } while (expectedMsgCount == iMsgPushCount);
     TEST(++expectedMsgCount == iMsgPushCount);
-    Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
-    iSupply->OutputTrack(*track, kTrackId);
-    track->RemoveRef();
-    TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputDelay(kDelayJiffies);
-    TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
-    TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputData(Brn(kTestData));
-    TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputMetadata(Brn(kMetaData));
-    TEST(++expectedMsgCount == iMsgPushCount);
-    iSupply->OutputFlush(1);
-    TEST(++expectedMsgCount == iMsgPushCount);
+
+    // any other msg flushes buffered data.  No duplicate/missing data in second msg
+    iExpectFullAudioMsg = false;
+    iExpectAudioStream = true;
     iSupply->OutputWait();
-    TEST(++expectedMsgCount == iMsgPushCount);
+    TEST(iMsgPushCount == expectedMsgCount+2);
+    expectedMsgCount = iMsgPushCount;
+
+    // all other msgs flush buffered data
+    iExpectAudioStream = false;
+    iTestAudioData = false;
+    iGenMsgType = EMsgSession;
+    do {
+        iSupply->OutputData(Brn(kTestData));
+        OutputNextNonAudioMsg();
+        if (iMsgPushCount != expectedMsgCount+2) {
+            Print("Expected %u, got %u.  iGenMsgType=%u\n", expectedMsgCount+2, iMsgPushCount, iGenMsgType);
+        }
+        TEST(iMsgPushCount == expectedMsgCount+2);
+        expectedMsgCount = iMsgPushCount;
+    } while (iGenMsgType != EMsgNone);
 }
 
-void SuiteSupply::Push(Msg* aMsg)
+void SuiteSupplyAggregator::OutputNextNonAudioMsg()
+{
+    switch (iGenMsgType)
+    {
+    case EMsgSession:
+        iSupply->OutputSession();
+        break;
+    case EMsgTrack:
+    {
+        Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
+        iSupply->OutputTrack(*track, kTrackId);
+        track->RemoveRef();
+    }
+        break;
+    case EMsgDelay:
+        iSupply->OutputDelay(kDelayJiffies);
+        break;
+    case EMsgEncodedStream:
+        iSupply->OutputStream(Brn(kUri), kTotalBytes, kSeekable, kLive, iDummyStreamHandler, kStreamId);
+        break;
+    case EMsgMetaText:
+        iSupply->OutputMetadata(Brn(kMetaData));
+        break;
+    case EMsgFlush:
+        iSupply->OutputFlush(1);
+        break;
+    case EMsgWait:
+        iSupply->OutputWait();
+        break;
+    default:
+        ASSERTS();
+    }
+    iGenMsgType = (EMsgType)((TUint)iGenMsgType + 1);
+}
+
+void SuiteSupplyAggregator::Push(Msg* aMsg)
 {
     aMsg->Process(*this)->RemoveRef();
     iMsgPushCount++;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgMode* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgMode* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgMode;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgSession* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgSession* aMsg)
 {
     iLastMsg = EMsgSession;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     TEST(aMsg->Track().Uri() == Brn(kUri));
@@ -195,14 +252,14 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgDelay* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgDelay* aMsg)
 {
     iLastMsg = EMsgDelay;
     TEST(aMsg->DelayJiffies() == kDelayJiffies);
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgEncodedStream* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgEncodedStream* aMsg)
 {
     iLastMsg = EMsgEncodedStream;
     TEST(aMsg->Uri()           == Brn(kUri));
@@ -216,82 +273,102 @@ Msg* SuiteSupply::ProcessMsg(MsgEncodedStream* aMsg)
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgAudioEncoded* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     iLastMsg = EMsgAudioEncoded;
-    TEST(aMsg->Bytes() == sizeof(kTestData)-1);
-    TByte audioEnc[64];
-    aMsg->CopyTo(audioEnc);
-    TEST(memcmp(kTestData, audioEnc, sizeof(kTestData)-1) == 0);
+    if (iExpectFullAudioMsg) {
+        TEST(aMsg->Bytes() == EncodedAudio::kMaxBytes);
+    }
+    iAudio.SetBytes(aMsg->Bytes());
+    aMsg->CopyTo(const_cast<TByte*>(iAudio.Ptr()));
+    if (iExpectAudioStream) {
+        // test first byte follows on from last msg
+        if (iLastAudioByte < '9') {
+            if (iAudio[0] != iLastAudioByte+1) {
+                Print("Expected %u, got %u\n", iLastAudioByte+1, iAudio[0]);
+            }
+            TEST_QUIETLY(iAudio[0] == iLastAudioByte+1);
+        }
+        else {
+            TEST_QUIETLY(iAudio[0] == '0');
+        }
+    }
+    if (iTestAudioData) {
+        TChar c = iAudio[0];
+        for (TUint i=1; i<iAudio.Bytes(); i++) {
+            if (c < '9') {
+                TEST_QUIETLY(iAudio[i] == c+1);
+            }
+            else {
+                TEST_QUIETLY(iAudio[i] == '0');
+            }
+            c = iAudio[i];
+        }
+    }
+    iLastAudioByte = iAudio[iAudio.Bytes()-1];
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgMetaText* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgMetaText* aMsg)
 {
     iLastMsg = EMsgMetaText;
     TEST(aMsg->MetaText() == Brn(kMetaData));
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgHalt* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgHalt* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgHalt;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgFlush* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgFlush* aMsg)
 {
     iLastMsg = EMsgFlush;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgWait* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgWait* aMsg)
 {
     iLastMsg = EMsgWait;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgDecodedStream* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgDecodedStream;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgAudioPcm* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgAudioPcm* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgAudioPcm;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgSilence* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgSilence* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgSilence;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgPlayable* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgPlayable* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgPlayable;
     return aMsg;
 }
 
-Msg* SuiteSupply::ProcessMsg(MsgQuit* aMsg)
+Msg* SuiteSupplyAggregator::ProcessMsg(MsgQuit* aMsg)
 {
     ASSERTS(); // don't expect this type of msg at the start of the pipeline
-    iLastMsg = EMsgQuit;
     return aMsg;
 }
 
 
 
-void TestSupply()
+void TestSupplyAggregator()
 {
     Runner runner("Supply tests\n");
-    runner.Add(new SuiteSupply());
+    runner.Add(new SuiteSupplyAggregator());
     runner.Run();
 }

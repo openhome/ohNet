@@ -628,6 +628,29 @@ void SuiteMsgAudioEncoded::Test()
     msg->RemoveRef();
     msg3->RemoveRef();
 
+    // Append adds full buffer when space available
+    memset(data, 0, sizeof(data));
+    buf.Set(data, sizeof(data));
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    memset(data, 1, sizeof(data));
+    TUint consumed = msg->Append(buf);
+    TEST(consumed == buf.Bytes());
+    msg->CopyTo(output);
+    TEST(output[buf.Bytes() - 1] == 0);
+    TEST(output[buf.Bytes()] == 1);
+    msg->RemoveRef();
+
+    // Append truncates buffer when insufficient space
+    TByte data3[1023];
+    memset(data3, 9, sizeof(data3));
+    buf.Set(data3, sizeof(data3));
+    msg = iMsgFactory->CreateMsgAudioEncoded(buf);
+    do {
+        consumed = msg->Append(buf);
+    } while (consumed == buf.Bytes());
+    TEST(consumed == EncodedAudio::kMaxBytes % buf.Bytes());
+    msg->RemoveRef();
+
     // clean shutdown implies no leaked msgs
 }
 

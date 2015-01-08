@@ -16,6 +16,7 @@
 #include <OpenHome/Av/Radio/ContentProcessorFactory.h>
 #include <OpenHome/Av/Radio/PresetDatabase.h>
 #include <OpenHome/Av/Debug.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 
 #include <ctype.h>
 #include <limits.h>
@@ -37,7 +38,7 @@ TestRadio::TestRadio(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderChan
 {
     static const TUint kMaxDriverJiffies = Jiffies::kPerMs * 5;
     iTrackFactory = new TrackFactory(iInfoLogger, kTrackCount);
-    iPipeline = new PipelineManager(iInfoLogger, *iTrackFactory);
+    iPipeline = new PipelineManager(PipelineInitParams::New(), iInfoLogger, *iTrackFactory);
     iPipeline->AddObserver(*this);
     iEnv = &aDvStack.Env();
 

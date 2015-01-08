@@ -16,6 +16,7 @@ namespace Net {
 }
 namespace Media {
     class PipelineManager;
+    class PipelineInitParams;
     class IMuteManager;
     class IVolume;  // XXX dummy volume hardware
     class IVolumeManagerLimits;
@@ -84,8 +85,11 @@ public:
     MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                 IStaticDataSource& aStaticDataSource,
                 Configuration::IStoreReadWrite& aReadWriteStore,
+                Media::PipelineInitParams* aPipelineInitParams,
                 Media::IPullableClock* aPullableClock,
-                const Brx& aEntropy);
+                const Brx& aEntropy,
+                const Brx& aDefaultRoom,
+                const Brx& aDefaultName);
     ~MediaPlayer();
     void Quit();
     void Add(Media::Codec::CodecBase* aCodec);

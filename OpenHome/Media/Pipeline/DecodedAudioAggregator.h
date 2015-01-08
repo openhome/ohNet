@@ -10,7 +10,7 @@ namespace Media {
 
 class DecodedAudioAggregator : public IPipelineElementDownstream, private IStreamHandler, private IMsgProcessor, private INonCopyable
 {
-private:
+public:
     static const TUint kMaxBytes = DecodedAudio::kMaxBytes;
     static const TUint kMaxMs = 5;  // buffer MsgAudioPcm until we have this many ms
                                     // (unless we hit DecodedAudio::kMaxBytes first).

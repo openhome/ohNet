@@ -199,7 +199,7 @@ public:
 
 // Pipeline classes.
 
-class TestHttpSupplier : public ISupply
+class TestHttpSupplier : public IPipelineElementDownstream, protected IMsgProcessor
 {
 public:
     TestHttpSupplier(TUint aDataSize);
@@ -211,19 +211,24 @@ public:
     TUint TrackCount();
     TUint StreamCount();
     TUint DataTotal();
-public: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
-    void OutputSession() override;
-    void OutputTrack(Track& aTrack, TUint aTrackId) override;
-    void OutputDelay(TUint aJiffies) override;
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
-    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
-    void OutputData(const Brx& aData) override;
-    void OutputMetadata(const Brx& aMetadata) override;
-    void OutputFlush(TUint aFlushId) override;
-    void OutputWait() override;
-    void OutputHalt(TUint aHaltId) override;
-    void OutputQuit() override;
+private: // from IPipelineElementDownstream
+    void Push(Msg* aMsg) override;
+protected: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     TUint iDataSize;
     TUint iTrackId;
@@ -239,10 +244,11 @@ class TestHttpSupplyChunked : public TestHttpSupplier
 {
 public:
     TestHttpSupplyChunked();
-public: // from ISupply
-    void OutputData(const Brx& aData) override;
+protected: // from IMsgProcessor
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
 private:
     TUint iExpectedNextByte;
+    TByte iOutput[EncodedAudio::kMaxBytes];
 };
 
 class TestHttpPipelineProvider : public IPipelineIdProvider
@@ -295,6 +301,7 @@ protected:
     TestHttpServer* iServer;
     TestHttpSession* iHttpSession;
     TestHttpSupplier* iSupply;
+    MsgFactory* iMsgFactory;
     ProtocolManager* iProtocolManager;
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -352,6 +359,7 @@ private:
     TestHttpSupplyChunked* iSupply;
     TestHttpPipelineProvider* iProvider;
     TestHttpFlushIdProvider* iFlushId;
+    MsgFactory* iMsgFactory;
     ProtocolManager* iProtocolManager;
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -766,7 +774,9 @@ TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
 {
 }
 
-TestHttpSupplier::~TestHttpSupplier() {}
+TestHttpSupplier::~TestHttpSupplier()
+{
+}
 
 TUint TestHttpSupplier::TrackId()
 {
@@ -798,73 +808,102 @@ TUint TestHttpSupplier::DataTotal()
     return iDataTotal;
 }
 
-void TestHttpSupplier::OutputMode(const Brx& /*aMode*/, TBool /*aSupportsLatency*/, TBool /*aRealTime*/, IClockPuller* /*aClockPuller*/)
+void TestHttpSupplier::Push(Msg* aMsg)
 {
+    (void)aMsg->Process(*this);
+    aMsg->RemoveRef();
 }
 
-void TestHttpSupplier::OutputSession()
+Msg* TestHttpSupplier::ProcessMsg(MsgMode* aMsg)
 {
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputTrack(Track& /*aTrack*/, TUint aTrackId)
+Msg* TestHttpSupplier::ProcessMsg(MsgSession* aMsg)
 {
-    //Log::Print("TestHttpSupplier::OutputTrack %u\n", aTrackId);
-    iTrackId = aTrackId;
+    return aMsg;
+}
+
+Msg* TestHttpSupplier::ProcessMsg(MsgTrack* aMsg)
+{
+    iTrackId = aMsg->IdPipeline();
     iTrackCount++;
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputDelay(TUint /*aJiffies*/)
+Msg* TestHttpSupplier::ProcessMsg(MsgDelay* aMsg)
 {
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+Msg* TestHttpSupplier::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    //Log::Print("TestHttpSupplier::OutputStream\n");
-    iLive = aLive;
-    iStreamId = aStreamId;
-    iStreamHandler = &aStreamHandler;
-    (void)aStreamHandler.OkToPlay(iTrackId, iStreamId);
+    iLive = aMsg->Live();
+    iStreamId = aMsg->StreamId();
+    iStreamHandler = aMsg->StreamHandler();
+    (void)iStreamHandler->OkToPlay(iTrackId, iStreamId);
     iStreamCount++;
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputPcmStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool /*aLive*/, IStreamHandler& /*aStreamHandler*/, TUint /*aStreamId*/, const PcmStreamInfo& /*aPcmStream*/)
+Msg* TestHttpSupplier::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    ASSERTS();
-}
-
-void TestHttpSupplier::OutputData(const Brx& aData)
-{
-    //Log::Print("TestHttpSupplier::OutputData\n");
-    iDataTotal += aData.Bytes();
+    iDataTotal += aMsg->Bytes();
     if (iLive && iDataTotal >= iDataSize) {
         // We are only simulating a live stream, so want to tell
         // client to stop when data has run out.
         iStreamHandler->TryStop(iTrackId, iStreamId);
     }
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputMetadata(const Brx& /*aMetadata*/)
+Msg* TestHttpSupplier::ProcessMsg(MsgMetaText* aMsg)
 {
-    //Log::Print("TestHttpSupplier::OutputMetadata\n");
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputFlush(TUint /*aFlushId*/)
+Msg* TestHttpSupplier::ProcessMsg(MsgHalt* aMsg)
 {
-    //Log::Print("TestHttpSupplier::OutputFlush\n");
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputWait()
+Msg* TestHttpSupplier::ProcessMsg(MsgFlush* aMsg)
 {
-    //Log::Print("TestHttpSupplier::OutputWait\n");
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputHalt(TUint /*aHaltId*/)
+Msg* TestHttpSupplier::ProcessMsg(MsgWait* aMsg)
 {
+    return aMsg;
 }
 
-void TestHttpSupplier::OutputQuit()
+Msg* TestHttpSupplier::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    //Log::Print("TestHttpSupplier::OutputQuit\n");
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* TestHttpSupplier::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* TestHttpSupplier::ProcessMsg(MsgSilence* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* TestHttpSupplier::ProcessMsg(MsgPlayable* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* TestHttpSupplier::ProcessMsg(MsgQuit* aMsg)
+{
+    return aMsg;
 }
 
 
@@ -876,14 +915,16 @@ TestHttpSupplyChunked::TestHttpSupplyChunked()
 {
 }
 
-void TestHttpSupplyChunked::OutputData(const Brx& aData)
+Msg* TestHttpSupplyChunked::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    TestHttpSupplier::OutputData(aData);
-    const TUint bytes = aData.Bytes();
+    TestHttpSupplier::ProcessMsg(aMsg);
+    const TUint bytes = aMsg->Bytes();
+    aMsg->CopyTo(iOutput);
     for (TUint i=0; i<bytes; i++) {
-        TEST_QUIETLY(aData[i] == iExpectedNextByte);
+        TEST_QUIETLY(iOutput[i] == iExpectedNextByte);
         iExpectedNextByte = (iExpectedNextByte + 1) % 256;
     }
+    return aMsg;
 }
 
 
@@ -965,7 +1006,9 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
-    iProtocolManager = new ProtocolManager(*iSupply, *iProvider, *iFlushId);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
+
+    iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
     iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv));
 
     iTrackFactory= new TrackFactory(iInfoAggregator, 1);
@@ -977,6 +1020,7 @@ SuiteHttp::~SuiteHttp()
     delete iProtocolManager;
     delete iProvider;
     delete iSupply;
+    delete iMsgFactory;
     delete iServer;
     delete iFlushId;
 }
@@ -1153,7 +1197,9 @@ SuiteHttpChunked::SuiteHttpChunked()
     iProvider = new TestHttpPipelineProvider();
     iFlushId = new TestHttpFlushIdProvider();
 
-    iProtocolManager = new ProtocolManager(*iSupply, *iProvider, *iFlushId);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
+
+    iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
     iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv));
 
     iTrackFactory= new TrackFactory(iInfoAggregator, 1);
@@ -1165,6 +1211,7 @@ SuiteHttpChunked::~SuiteHttpChunked()
     delete iProtocolManager;
     delete iProvider;
     delete iSupply;
+    delete iMsgFactory;
     delete iServer;
     delete iFlushId;
 }

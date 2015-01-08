@@ -53,6 +53,7 @@ private:
     Environment& iEnv;
     SocketTcpClient iSocketTcp;
     SSL* iSsl;
+    TUint iMemBufSize;
     TByte* iBioReadBuf;
     TBool iSecure;
     TBool iConnected;
@@ -188,24 +189,13 @@ static void SslInfoCallback(const SSL* ssl, int flag, int ret)
 
 SocketSslImpl::SocketSslImpl(Environment& aEnv, TUint aReadBytes)
     : iEnv(aEnv)
+    , iSsl(NULL)
     , iSecure(true)
     , iConnected(false)
     , iVerbose(false)
 {
-    iSsl = SSL_new(SslContext::Get(aEnv));
-    SSL_set_info_callback(iSsl, SslInfoCallback);
-    const TUint memBufSize = (kMinReadBytes<aReadBytes? aReadBytes : kMinReadBytes);
-    iBioReadBuf = (TByte*)malloc((int)memBufSize);
-    BIO* rbio = BIO_new_mem_buf(iBioReadBuf, memBufSize);
-    BIO_set_callback(rbio, BioCallback);
-    BIO_set_callback_arg(rbio, (char*)this);
-    BIO* wbio = BIO_new(BIO_s_mem());
-    BIO_set_callback(wbio, BioCallback);
-    BIO_set_callback_arg(wbio, (char*)this);
-
-    SSL_set_bio(iSsl, rbio, wbio); // ownership of bios passes to iSsl
-    SSL_set_connect_state(iSsl);
-    SSL_set_mode(iSsl, SSL_MODE_AUTO_RETRY);
+    iMemBufSize = (kMinReadBytes<aReadBytes? aReadBytes : kMinReadBytes);
+    iBioReadBuf = (TByte*)malloc((int)iMemBufSize);
 }
 
 SocketSslImpl::~SocketSslImpl()
@@ -235,21 +225,42 @@ void SocketSslImpl::Connect(const Endpoint& aEndpoint, TUint aTimeoutMs)
         iSocketTcp.Close();
         throw;
     }
-    if (iSecure && 1 != SSL_connect(iSsl)) {
-        SSL_clear(iSsl);
-        iSocketTcp.Close();
-        THROW(NetworkError);
+    if (iSecure) {
+        ASSERT(iSsl == NULL);
+        iSsl = SSL_new(SslContext::Get(iEnv));
+        SSL_set_info_callback(iSsl, SslInfoCallback);
+        BIO* rbio = BIO_new_mem_buf(iBioReadBuf, iMemBufSize);
+        BIO_set_callback(rbio, BioCallback);
+        BIO_set_callback_arg(rbio, (char*)this);
+        BIO* wbio = BIO_new(BIO_s_mem());
+        BIO_set_callback(wbio, BioCallback);
+        BIO_set_callback_arg(wbio, (char*)this);
+
+        SSL_set_bio(iSsl, rbio, wbio); // ownership of bios passes to iSsl
+        SSL_set_connect_state(iSsl);
+        SSL_set_mode(iSsl, SSL_MODE_AUTO_RETRY);
+
+        if (1 != SSL_connect(iSsl)) {
+            SSL_free(iSsl);
+            iSsl = NULL;
+            iSocketTcp.Close();
+            THROW(NetworkError);
+        }
     }
     iConnected = true;
 }
 
 void SocketSslImpl::Close()
 {
-    if (iConnected) {
-        if (iSecure) {
+    if (!iConnected) {
+        ASSERT(iSsl == NULL);
+    }
+    else {
+        if (iSsl != NULL) {
             (void)SSL_shutdown(iSsl);
+            SSL_free(iSsl);
+            iSsl = NULL;
         }
-        SSL_clear(iSsl);
         iSocketTcp.Close();
         iConnected = false;
     }
