@@ -318,6 +318,10 @@ FLAC__StreamDecoderReadStatus CodecFlac::CallbackRead(const FLAC__StreamDecoder*
         *aBytes = 0;
         return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
     }
+    catch (CodecStreamStopped&) {
+        *aBytes = 0;
+        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+    }
 }
 
 FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder* /*aDecoder*/, TUint64 aOffsetBytes)

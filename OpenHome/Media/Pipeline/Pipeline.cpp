@@ -373,10 +373,10 @@ void Pipeline::Play()
 
 void Pipeline::DoPlay(TBool aQuit)
 {
+    TBool notifyStatus = true;
     iLock.Wait();
     if (iState == EPlaying) {
-        iLock.Signal();
-        return; // already playing so ignore this additional request
+        notifyStatus = false;
     }
     iState = EPlaying;
     iLock.Signal();
@@ -387,7 +387,9 @@ void Pipeline::DoPlay(TBool aQuit)
     else {
         iStopper->Play();
     }
-    NotifyStatus();
+    if (notifyStatus) {
+        NotifyStatus();
+    }
 }
 
 void Pipeline::Pause()

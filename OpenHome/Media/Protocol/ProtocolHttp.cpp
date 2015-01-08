@@ -440,11 +440,6 @@ ProtocolStreamResult ProtocolHttp::DoStream()
     iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
     iLive = (iReaderResponse.Version() == Http::eHttp11 && iTotalBytes == 0);
-    if (iHeaderContentType.Received() && (iHeaderContentType.Type() == Brn("audio/x-mpegurl") ||
-                                          iHeaderContentType.Type() == Brn("video/x-ms-asf"))) { // FIXME - we'll end up slowly duplicating ContentProcessor mime type checks this way
-        // if the stream has a known Content-Type we assume it is a url pointing towards a radio stream, rather than the radio stream itself
-        iLive = false;
-    }
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
         LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
         return EProtocolStreamErrorUnrecoverable;
@@ -675,6 +670,9 @@ ProtocolStreamResult ProtocolHttp::ProcessContent()
 
     if (!iStarted) {
         StartStream();
+        if (iLive) {
+            return EProtocolStreamErrorRecoverable;
+        }
     }
     iContentProcessor = iProtocolManager->GetAudioProcessor();
     return iContentProcessor->Stream(*this, iTotalBytes);
