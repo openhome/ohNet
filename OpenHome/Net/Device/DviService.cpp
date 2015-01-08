@@ -141,6 +141,7 @@ void DviService::Enable()
 {
     iLock.Wait();
     iDisabled = false;
+    AssertPropertiesInitialised();
     iDisabledSem.Signal();
     iLock.Signal();
 }
@@ -238,7 +239,6 @@ void DviService::PublishPropertyUpdates()
 {
     iLock.Wait();
     for (TUint i=0; i<iSubscriptions.size(); i++) {
-        ASSERT(PropertiesInitialised());
         iDvStack.SubscriptionManager().QueueUpdate(*(iSubscriptions[i]));
     }
     iLock.Signal();
@@ -270,11 +270,16 @@ void DviService::RemoveSubscription(const Brx& aSid)
     iLock.Signal();
 }
 
-TBool DviService::PropertiesInitialised() const
+TBool DviService::AssertPropertiesInitialised() const
 {
     for (TUint i=0; i<iProperties.size(); i++) {
         if (iProperties[i]->SequenceNumber() == 0) {
-            return false;
+            Log::Print("ERROR: uninitialised property.  Provider: ");
+            Log::Print(ServiceType().Name());
+            Log::Print(", property: ");
+            Log::Print(iProperties[i]->Parameter().Name());
+            Log::Print("\n");
+            ASSERTS();
         }
     }
     return true;

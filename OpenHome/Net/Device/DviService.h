@@ -98,7 +98,7 @@ public:
 private:
     ~DviService();
     void InvocationCompleted();
-    TBool PropertiesInitialised() const;
+    TBool AssertPropertiesInitialised() const;
 private: // from IStackObject
     void ListObjectDetails() const;
 private:
