@@ -31,6 +31,7 @@ Protocol* ProtocolFactory::NewTone(Environment& aEnv)
 ProtocolTone::ProtocolTone(Environment& aEnv)
     : Protocol(aEnv)
     , iLock("PRTN")
+    , iSupply(NULL)
     , iToneGenerators()
 {
     iToneGenerators.push_back(new ToneGeneratorSilence());
@@ -50,6 +51,12 @@ ProtocolTone::~ProtocolTone()
         delete iToneGenerators.back();
         iToneGenerators.pop_back();
     }
+    delete iSupply;
+}
+
+void ProtocolTone::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
 TUint ProtocolTone::TryStop(TUint aTrackId, TUint aStreamId)

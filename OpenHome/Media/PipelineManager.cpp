@@ -22,8 +22,8 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
 {
     iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
-    iProtocolManager = new ProtocolManager(*iFiller, *iIdManager, *iPipeline);
+    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
+    iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }
 

@@ -107,13 +107,13 @@ public:
     EncodedAudio(AllocatorBase& aAllocator);
     const TByte* Ptr(TUint aBytes) const;
     TUint Bytes() const;
+    TUint Append(const Brx& aData);
 private:
     void Construct(const Brx& aData);
 private: // from Allocated
     void Clear();
 private:
-    TByte iData[kMaxBytes];
-    TUint iBytes;
+    Bws<kMaxBytes> iData;
 };
 
 enum EMediaDataEndian
@@ -407,6 +407,7 @@ public:
     MsgAudioEncoded(AllocatorBase& aAllocator);
     MsgAudioEncoded* Split(TUint aBytes); // returns block after aBytes
     void Add(MsgAudioEncoded* aMsg); // combines MsgAudioEncoded instances so they report larger sizes etc
+    TUint Append(const Brx& aData); // Appends a Data to existing msg.  Returns index into aData where copying terminated.
     TUint Bytes() const;
     void CopyTo(TByte* aPtr);
     MsgAudioEncoded* Clone();
@@ -940,15 +941,6 @@ class ISupply
 public:
     virtual ~ISupply() {}
     /**
-     * Inform the pipeline of a change of UriProvider
-     *
-     * @param[in] aMode            Identifier for the new UriProvider
-     * @param[in] aSupportsLatency Whether any following tracks support having their latency varied.
-     * @param[in] aRealTime        Deprecated.
-     * @param[in] aClockPuller     Clock puller.  May be NULL.
-     */
-    virtual void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) = 0;
-    /**
      * Inform the pipeline about a discontinuity in audio.
      */
     virtual void OutputSession() = 0;
@@ -1028,26 +1020,6 @@ public:
      * called.
      */
     virtual void OutputWait() = 0;
-    /**
-     * Push a Halt command into the pipeline.
-     *
-     * This informs the pipeline that a mode (1..n tracks from a single UriProvider) has
-     * ended and there may now be a break in audio.
-     * Halt commands are issues by pipeline code when required.  Client code is not expected
-     * to call this.
-     *
-     * @param[in] aHaltId          Identifier for this command.  Must be unique or MsgHalt::kIdNone.
-     */
-    virtual void OutputHalt(TUint aHaltId) = 0;
-    /**
-     * Push a Quit command into the pipeline.
-     *
-     * This will be the last message passed down the pipeline.  No code should attempt to
-     * pull on any pipeline element after it receives a Quit.
-     * Quit commands are issues by pipeline code when required.  Client code is not expected
-     * to call this.
-     */
-    virtual void OutputQuit() = 0;
 };
 
 class IFlushIdProvider

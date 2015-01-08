@@ -176,13 +176,14 @@ TUint TestCodecFlushIdProvider::NextFlushId()
 
 // TestCodecFiller
 
-TestCodecFiller::TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator)
+TestCodecFiller::TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& aDownstream, MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator)
     : Thread("TCFL")
-    , iSupply(aSupply)
+    , iPipeline(aDownstream)
+    , iMsgFactory(aMsgFactory)
     , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
-    iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
+    iProtocolManager = new ProtocolManager(aDownstream, aMsgFactory, *this, aFlushIdProvider);
     iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
@@ -216,7 +217,7 @@ void TestCodecFiller::Run()
     track->RemoveRef();
     // send a msgquit here in case of trying to stream an invalid url during tests
     // could cause race conditions if it isn't sent here
-    iSupply.OutputQuit();
+    iPipeline.Push(iMsgFactory.CreateMsgQuit());
     if (res == EProtocolStreamSuccess) {
         Log::Print("TestCodecFiller::Run SUCCESS: Full file streamed.\n");
     }
@@ -274,15 +275,13 @@ TestCodecMinimalPipeline::TestCodecMinimalPipeline(Environment& aEnv, IMsgProces
     iReservoir = new EncodedAudioReservoir(kEncodedReservoirSizeBytes, kEncodedReservoirMaxStreams, kEncodedReservoirMaxStreams);
     iContainer = new Container(*iMsgFactory, *iReservoir);
     iController = new CodecController(*iMsgFactory, *iContainer, *iElementDownstream);
-    iSupply = new Supply(*iMsgFactory, *iReservoir);
-    iFiller = new TestCodecFiller(aEnv, *iSupply, *iFlushIdProvider, *iInfoAggregator);
+    iFiller = new TestCodecFiller(aEnv, *iReservoir, *iMsgFactory, *iFlushIdProvider, *iInfoAggregator);
 }
 
 TestCodecMinimalPipeline::~TestCodecMinimalPipeline()
 {
     delete iFiller;
     delete iFlushIdProvider;
-    delete iSupply;
     delete iController;
     delete iContainer;
     delete iMsgFactory;

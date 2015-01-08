@@ -10,6 +10,7 @@
 #include <OpenHome/Av/Songcast/OhmSocket.h>
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Media/Supply.h>
 
 #include <vector>
 
@@ -43,6 +44,7 @@ private:
 protected: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from Media::Protocol
+    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream);
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
@@ -65,6 +67,7 @@ protected:
 protected:
     Environment& iEnv;
     IOhmMsgFactory& iMsgFactory;
+    Media::Supply* iSupply;
     OhmSocket iSocket;
     Srs<kMaxFrameBytes> iReadBuffer;
     Endpoint iEndpoint;

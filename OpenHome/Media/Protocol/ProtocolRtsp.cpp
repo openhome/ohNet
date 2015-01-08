@@ -18,8 +18,19 @@ Protocol* ProtocolFactory::NewRtsp(Environment& aEnv, const Brx& aGuid)
 ProtocolRtsp::ProtocolRtsp(Environment& aEnv, const Brx& aGuid)
     : ProtocolNetwork(aEnv)
     , iEnv(aEnv)
+    , iSupply(NULL)
     , iRtspClient(iEnv, iReaderBuf, iWriterBuf, aGuid)
 {
+}
+
+ProtocolRtsp::~ProtocolRtsp()
+{
+    delete iSupply;
+}
+
+void ProtocolRtsp::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new SupplyAggregatorBytes(aMsgFactory, aDownstream);
 }
 
 void ProtocolRtsp::OutputStream() {

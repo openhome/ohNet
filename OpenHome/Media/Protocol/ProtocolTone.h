@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Protocol/Protocol.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
+#include <OpenHome/Media/Supply.h>
 
 EXCEPTION(ToneUriParseError);
 
@@ -148,6 +149,7 @@ private:
     void HexDump(const TByte *aBase, TUint aSize) const;
 #endif  // DEFINE_DEBUG
 private: // from Protocol
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
@@ -155,6 +157,7 @@ private:  // from IStreamHandler
     TUint TryStop(TUint aTrackId, TUint aStreamId);
 private:
     Mutex iLock;
+    Supply* iSupply;
     std::vector<ToneGenerator*> iToneGenerators;
     // 1[ms] x 192000[Hz] x 8[channels] x 24[bit/channel] x 1/8[B/bit] = 4,608[B]
     Bws<4608> iAudioBuf;

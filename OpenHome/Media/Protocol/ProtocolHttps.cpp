@@ -8,6 +8,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/Supply.h>
 
 #include <algorithm>
 
@@ -22,7 +23,9 @@ class ProtocolHttps : public Protocol, private IProtocolReader
     static const TUint kDefaultPort = 443;
 public:
     ProtocolHttps(Environment& aEnv);
+    ~ProtocolHttps();
 private: // from Protocol
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
@@ -44,6 +47,7 @@ private:
     ProtocolGetResult DoGet(IWriter& aWriter, TUint64 aOffset, TUint aBytes);
 private:
     Mutex iLock;
+    Supply* iSupply;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;
     Sws<kWriteBufferBytes> iWriterBuf;
@@ -76,6 +80,7 @@ Protocol* ProtocolFactory::NewHttps(Environment& aEnv)
 ProtocolHttps::ProtocolHttps(Environment& aEnv)
     : Protocol(aEnv)
     , iLock("PHTS")
+    , iSupply(NULL)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
     , iWriterBuf(iSocket)
@@ -85,6 +90,16 @@ ProtocolHttps::ProtocolHttps(Environment& aEnv)
 {
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
+}
+
+ProtocolHttps::~ProtocolHttps()
+{
+    delete iSupply;
+}
+
+void ProtocolHttps::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
 void ProtocolHttps::Interrupt(TBool aInterrupt)

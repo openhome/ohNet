@@ -9,6 +9,7 @@
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Media/Supply.h>
 
 #include <algorithm>
 
@@ -32,7 +33,9 @@ class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
     static const TUint kIcyMetadataBytes = 255 * 16;
 public:
     ProtocolHttp(Environment& aEnv);
+    ~ProtocolHttp();
 private: // from Protocol
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
@@ -60,6 +63,7 @@ private:
     TBool ContinueStreaming(ProtocolStreamResult aResult);
     void ExtractMetadata();
 private:
+    Supply* iSupply;
     WriterHttpRequest iWriterRequest;
     ReaderHttpResponse iReaderResponse;
     ReaderHttpChunked iDechunker;
@@ -139,6 +143,7 @@ static const Brn kUserAgentString("Linn DS"); // FIXME
 
 ProtocolHttp::ProtocolHttp(Environment& aEnv)
     : ProtocolNetwork(aEnv)
+    , iSupply(NULL)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(aEnv, iReaderBuf)
     , iDechunker(iReaderBuf)
@@ -151,6 +156,16 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     iReaderResponse.AddHeader(iHeaderLocation);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
     iReaderResponse.AddHeader(iHeaderIcyMetadata);
+}
+
+ProtocolHttp::~ProtocolHttp()
+{
+    delete iSupply;
+}
+
+void ProtocolHttp::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
 void ProtocolHttp::Interrupt(TBool aInterrupt)

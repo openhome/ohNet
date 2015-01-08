@@ -8,9 +8,14 @@ using namespace OpenHome::Media;
 
 // ContentAudio
 
-ContentAudio::ContentAudio(ISupply& aSupply)
-    : iSupply(aSupply)
+ContentAudio::ContentAudio(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
 {
+    iSupply = new Supply(aMsgFactory, aDownstream);
+}
+
+ContentAudio::~ContentAudio()
+{
+    delete iSupply;
 }
 
 TBool ContentAudio::Recognise(const Brx& /*aUri*/, const Brx& /*aMimeType*/, const Brx& /*aData*/)
@@ -32,7 +37,7 @@ ProtocolStreamResult ContentAudio::Stream(IProtocolReader& aReader, TUint64 aTot
                 bytes = (TUint)aTotalBytes;
             }
             Brn buf = aReader.Read(bytes);
-            iSupply.OutputData(buf);
+            iSupply->OutputData(buf);
             if (finite) {
                 aTotalBytes -= buf.Bytes();
                 if (aTotalBytes == 0) {
@@ -44,7 +49,7 @@ ProtocolStreamResult ContentAudio::Stream(IProtocolReader& aReader, TUint64 aTot
     catch (ReaderError&) {
         res = EProtocolStreamErrorRecoverable;
         Brn buf = aReader.ReadRemaining();
-        iSupply.OutputData(buf);
+        iSupply->OutputData(buf);
         if (finite) {
             aTotalBytes -= buf.Bytes();
         }

@@ -47,12 +47,13 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(ISupply& aSupply, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
+Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider, MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
     : Thread("Filler", kPriorityVeryHigh-3)
     , iLock("FILL")
-    , iSupply(aSupply)
+    , iPipeline(aPipeline)
     , iPipelineIdTracker(aIdTracker)
     , iFlushIdProvider(aFlushIdProvider)
+    , iMsgFactory(aMsgFactory)
     , iActiveUriProvider(NULL)
     , iUriStreamer(NULL)
     , iTrack(NULL)
@@ -214,7 +215,7 @@ void Filler::Run()
                 const TBool sendHalt = iSendHalt;
                 iSendHalt = false;
                 if (iNextFlushId != MsgFlush::kIdInvalid) {
-                    iSupply.OutputFlush(iNextFlushId);
+                    iPipeline.Push(iMsgFactory.CreateMsgFlush(iNextFlushId));
                     iNextFlushId = MsgFlush::kIdInvalid;
                 }
                 iLock.Signal();
@@ -222,7 +223,7 @@ void Filler::Run()
                     break;
                 }
                 if (sendHalt) {
-                    iSupply.OutputHalt(iNextHaltId);
+                    iPipeline.Push(iMsgFactory.CreateMsgHalt(iNextHaltId));
                 }
                 Wait();
             }
@@ -251,13 +252,13 @@ void Filler::Run()
                 will call OutputTrack, causing Stopper to later call iStreamPlayObserver */
             iPrefetchTrackId = kPrefetchTrackIdInvalid;
             if (iTrackPlayStatus == ePlayNo) {
-                OutputMode(Brn("null"), false, true, NULL);
-                OutputSession();
+                iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, NULL));
+                iPipeline.Push(iMsgFactory.CreateMsgSession());
                 iChangedMode = true;
-                iSupply.OutputTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId);
+                iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
-                iSupply.OutputStream(Brx::Empty(), 0, false /* not seekable */, true /* live */, iNullTrackStreamHandler, NullTrackStreamHandler::kNullTrackStreamId);
-                OutputDelay(iDefaultDelay);
+                iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
+                iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                 iSendHalt = false;
                 iStopped = true;
                 iLock.Signal();
@@ -271,15 +272,15 @@ void Filler::Run()
                     ASSERT(!supportsLatency || realTime); /* VariableDelay handling of NotifyStarving would be
                                                              hard/impossible if the Gorger was allowed to buffer
                                                              content between the two VariableDelays */
-                    OutputMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller());
+                    iPipeline.Push(iMsgFactory.CreateMsgMode(iActiveUriProvider->Mode(), supportsLatency, realTime, iActiveUriProvider->ClockPuller()));
                     if (!supportsLatency) {
-                        OutputDelay(iDefaultDelay);
+                        iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                     }
                     iChangedMode = false;
                 }
                 iLock.Signal();
                 ASSERT(iTrack != NULL);
-                OutputSession();
+                iPipeline.Push(iMsgFactory.CreateMsgSession());
                 LOG(kMedia, "> iUriStreamer->DoStream(%u)\n", iTrack->Id());
                 ProtocolStreamResult res = iUriStreamer->DoStream(*iTrack);
                 if (res == EProtocolErrorNotSupported) {
@@ -299,96 +300,97 @@ void Filler::Run()
     catch (ThreadKill&) {
     }
     iQuit = true;
-    iSupply.OutputQuit();
+    iPipeline.Push(iMsgFactory.CreateMsgQuit());
 }
 
-void Filler::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
+void Filler::Push(Msg* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
-    }
+    (void)aMsg->Process(*this);
+    iPipeline.Push(aMsg);
 }
 
-void Filler::OutputSession()
+Msg* Filler::ProcessMsg(MsgMode* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputSession();
-    }
+    return aMsg;
 }
 
-void Filler::OutputTrack(Track& aTrack, TUint aTrackId)
+Msg* Filler::ProcessMsg(MsgSession* aMsg)
 {
-    if (!iQuit) {
-        iTrackId = aTrackId;
-        iSupply.OutputTrack(aTrack, aTrackId);
-    }
+    return aMsg;
 }
 
-void Filler::OutputDelay(TUint aJiffies)
+Msg* Filler::ProcessMsg(MsgTrack* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputDelay(aJiffies);
-    }
+    iTrackId = aMsg->IdPipeline();
+    return aMsg;
 }
 
-void Filler::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
+Msg* Filler::ProcessMsg(MsgDelay* aMsg)
 {
-    if (!iQuit) {
-        iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
-        iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
-                                        subsequent streams should be played immediately */
-        iSupply.OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
-    }
+    return aMsg;
 }
 
-void Filler::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
+Msg* Filler::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    if (!iQuit) {
-        iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aStreamId, (iTrackPlayStatus==ePlayYes));
-        iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
-                                        subsequent streams should be played immediately */
-        iSupply.OutputPcmStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId, aPcmStream);
-    }
+    iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aMsg->StreamId(), (iTrackPlayStatus==ePlayYes));
+    iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
+                                    subsequent streams should be played immediately */
+    return aMsg;
 }
 
-void Filler::OutputData(const Brx& aData)
+Msg* Filler::ProcessMsg(MsgAudioEncoded* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputData(aData);
-    }
+    return aMsg;
 }
 
-void Filler::OutputMetadata(const Brx& aMetadata)
+Msg* Filler::ProcessMsg(MsgMetaText* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputMetadata(aMetadata);
-    }
+    return aMsg;
 }
 
-void Filler::OutputFlush(TUint aFlushId)
+Msg* Filler::ProcessMsg(MsgHalt* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputFlush(aFlushId);
-    }
+    return aMsg;
 }
 
-void Filler::OutputWait()
+Msg* Filler::ProcessMsg(MsgFlush* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputWait();
-    }
+    return aMsg;
 }
 
-void Filler::OutputHalt(TUint aHaltId)
+Msg* Filler::ProcessMsg(MsgWait* aMsg)
 {
-    if (!iQuit) {
-        iSupply.OutputHalt(aHaltId);
-    }
+    return aMsg;
 }
 
-void Filler::OutputQuit()
+Msg* Filler::ProcessMsg(MsgDecodedStream* aMsg)
 {
     ASSERTS();
+    return aMsg;
+}
+
+Msg* Filler::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* Filler::ProcessMsg(MsgSilence* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* Filler::ProcessMsg(MsgPlayable* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* Filler::ProcessMsg(MsgQuit* aMsg)
+{
+    ASSERTS();
+    return aMsg;
 }
 
 

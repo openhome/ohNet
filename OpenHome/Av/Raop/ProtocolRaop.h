@@ -5,6 +5,7 @@
 #include <OpenHome/Private/Env.h>
 #include <OpenHome/Private/Network.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Media/SupplyAggregator.h>
 
 #include  <openssl/rsa.h>
 #include  <openssl/aes.h>
@@ -102,6 +103,7 @@ public:
     void NotifySessionEnd();
     void NotifySessionWait();
 private: // from Protocol
+    void Initialise(Media::MsgFactory& aMsgFactory, Media::IPipelineElementDownstream& aDownstream);
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
@@ -121,6 +123,7 @@ private:
     UdpServerManager& iServerManager;
     RaopAudio iRaopAudio;
     RaopControl iRaopControl;
+    Media::SupplyAggregatorBytes* iSupply;
 
     Bws<kMaxReadBufferBytes> iResentData;
 

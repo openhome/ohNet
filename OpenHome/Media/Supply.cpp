@@ -1,4 +1,4 @@
-#include <OpenHome/Media/Pipeline/Supply.h>
+#include <OpenHome/Media/Supply.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
@@ -18,12 +18,6 @@ Supply::Supply(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamE
 
 Supply::~Supply()
 {
-}
-
-void Supply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
-{
-    MsgMode* msg = iMsgFactory.CreateMsgMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
-    iDownStreamElement.Push(msg);
 }
 
 void Supply::OutputSession()
@@ -82,17 +76,5 @@ void Supply::OutputFlush(TUint aFlushId)
 void Supply::OutputWait()
 {
     MsgWait* msg = iMsgFactory.CreateMsgWait();
-    iDownStreamElement.Push(msg);
-}
-
-void Supply::OutputHalt(TUint aHaltId)
-{
-    MsgHalt* msg = iMsgFactory.CreateMsgHalt(aHaltId);
-    iDownStreamElement.Push(msg);
-}
-
-void Supply::OutputQuit()
-{
-    MsgQuit* msg = iMsgFactory.CreateMsgQuit();
     iDownStreamElement.Push(msg);
 }

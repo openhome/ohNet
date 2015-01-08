@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Uri.h>
 #include <OpenHome/Private/File.h>
 #include <OpenHome/Media/Debug.h>
+#include <OpenHome/Media/Supply.h>
 
 #include <stdlib.h>
 
@@ -19,7 +20,9 @@ class ProtocolFile : public Protocol, private IProtocolReader
 {
 public:
     ProtocolFile(Environment& aEnv);
-private: // from Protocol   
+    ~ProtocolFile();
+private: // from Protocol
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
     void Interrupt(TBool aInterrupt);
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
@@ -36,6 +39,7 @@ private: // from IProtocolReader
 private:
     static const TUint kReadBufBytes = 9 * 1024;
     Mutex iLock;
+    Supply* iSupply;
     OpenHome::Uri iUri;
     FileStream iFileStream;
     Srs<kReadBufBytes> iReaderBuf;
@@ -64,9 +68,20 @@ Protocol* ProtocolFactory::NewFile(Environment& aEnv)
 
 ProtocolFile::ProtocolFile(Environment& aEnv)
     : Protocol(aEnv)
+    , iSupply(NULL)
     , iLock("PRTF")
     , iReaderBuf(iFileStream)
 {
+}
+
+ProtocolFile::~ProtocolFile()
+{
+    delete iSupply;
+}
+
+void ProtocolFile::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
 void ProtocolFile::Interrupt(TBool aInterrupt)

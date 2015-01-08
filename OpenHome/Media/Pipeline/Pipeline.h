@@ -5,7 +5,6 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Media/PipelineObserver.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
-#include <OpenHome/Media/Pipeline/Supply.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -34,7 +33,7 @@ namespace Media {
 class PipelineInitParams
 {
     static const TUint kEncodedReservoirSizeBytes       = 1536 * 1024;
-    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 1536; // some clock pulling algorithms will prefer this is larger than kGorgerDuration
+    static const TUint kDecodedReservoirSize            = Jiffies::kPerMs * 1536; // some clock pulling algorithms will prefer this is larger than kGorgerSizeDefault
     static const TUint kGorgerSizeDefault               = Jiffies::kPerMs * 1024;
     static const TUint kStarvationMonitorMaxSizeDefault = Jiffies::kPerMs * 50;
     static const TUint kStarvationMonitorMinSizeDefault = Jiffies::kPerMs * 20;
@@ -79,7 +78,7 @@ private:
     TUint iRampEmergencyJiffies;
 };
 
-class Pipeline : public ISupply, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
+class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
 
@@ -112,42 +111,30 @@ public:
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
-public: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
-    void OutputSession() override;
-    void OutputTrack(Track& aTrack, TUint aTrackId) override;
-    void OutputDelay(TUint aJiffies) override;
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
-    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
-    void OutputData(const Brx& aData) override;
-    void OutputMetadata(const Brx& aMetadata) override;
-    void OutputFlush(TUint aFlushId) override;
-    void OutputWait() override;
-    void OutputHalt(TUint aHaltId) override;
-    void OutputQuit() override;
+public: // from IPipelineElementDownstream
+    void Push(Msg* aMsg) override;
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // from IFlushIdProvider
-    TUint NextFlushId();
+    TUint NextFlushId() override;
 private: // from IWaiterObserver
-    void PipelineWaiting(TBool aWaiting);
+    void PipelineWaiting(TBool aWaiting) override;
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
+    void RemoveStream(TUint aTrackId, TUint aStreamId) override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();
 private: // from IStopperObserver
-    void PipelinePaused();
-    void PipelineStopped();
-    void PipelinePlaying();
-//    void PipelineHalted(TUint aHaltId);
+    void PipelinePaused() override;
+    void PipelineStopped() override;
+    void PipelinePlaying() override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private: // from IStarvationMonitorObserver
-    void NotifyStarvationMonitorBuffering(TBool aBuffering);
+    void NotifyStarvationMonitorBuffering(TBool aBuffering) override;
 private:
     enum EStatus
     {
@@ -161,8 +148,6 @@ private:
     IPipelineObserver& iObserver;
     Mutex iLock;
     MsgFactory* iMsgFactory;
-    Supply* iSupply;
-    Logger* iLoggerSupply;
     EncodedAudioReservoir* iEncodedAudioReservoir;
     Logger* iLoggerEncodedAudioReservoir;
     Codec::Container* iContainer;

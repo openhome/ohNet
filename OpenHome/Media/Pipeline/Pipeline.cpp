@@ -1,7 +1,6 @@
 #include <OpenHome/Media/Pipeline/Pipeline.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
-#include <OpenHome/Media/Pipeline/Supply.h>
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
@@ -155,7 +154,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 {
     const TUint perStreamMsgCount = aInitParams->MaxStreamsPerReservoir() * kReservoirCount;
     const TUint encodedAudioCount = ((aInitParams->EncodedReservoirBytes() + EncodedAudio::kMaxBytes - 1) / EncodedAudio::kMaxBytes) + 200; // +200 mainly allows for additional buffering in Rewinder
-                                                                                                                                           // this may only be required on platforms that don't guarantee priority based thread scheduling
+                                                                                                                                            // this may only be required on platforms that don't guarantee priority based thread scheduling
     const TUint msgEncodedAudioCount = encodedAudioCount + 100; // +100 allows for Split()ing by Container and CodecController
     const TUint decodedReservoirSize = aInitParams->DecodedReservoirJiffies() + aInitParams->GorgeDurationJiffies() + aInitParams->StarvationMonitorMaxJiffies();
     const TUint decodedAudioCount = (decodedReservoirSize / DecodedAudioAggregator::kMaxJiffies) + 100; // +100 allows for some smaller msgs and some buffering in non-reservoir elements
@@ -172,9 +171,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(aInitParams->EncodedReservoirBytes(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
     iLoggerEncodedAudioReservoir = new Logger(*iEncodedAudioReservoir, "Encoded Audio Reservoir");
-    // construct push logger slightly out of sequence
-    iLoggerSupply = new Logger("Supply", *iEncodedAudioReservoir);
-    iSupply = new Supply(*iMsgFactory, *iLoggerSupply);
 
     // construct decoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iDecodedAudioReservoir = new DecodedAudioReservoir(aInitParams->DecodedReservoirJiffies(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
@@ -229,7 +225,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
         iPipelineEnd = iPreDriver;
     }
 
-    //iLoggerSupply->SetEnabled(true);
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
@@ -250,7 +245,6 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerStarvationMonitor->SetEnabled(true);
     //iLoggerPreDriver->SetEnabled(true);
 
-    //iLoggerSupply->SetFilter(Logger::EMsgAll);
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
@@ -317,8 +311,6 @@ Pipeline::~Pipeline()
     delete iContainer;
     delete iLoggerEncodedAudioReservoir;
     delete iEncodedAudioReservoir;
-    delete iLoggerSupply;
-    delete iSupply;
     delete iMsgFactory;
     delete iInitParams;
 }
@@ -457,64 +449,9 @@ TUint Pipeline::SenderMinLatencyMs() const
     return kSenderMinLatency / Jiffies::kPerMs;
 }
 
-void Pipeline::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller)
+void Pipeline::Push(Msg* aMsg)
 {
-    iSupply->OutputMode(aMode, aSupportsLatency, aRealTime, aClockPuller);
-}
-
-void Pipeline::OutputSession()
-{
-    iSupply->OutputSession();
-}
-
-void Pipeline::OutputTrack(Track& aTrack, TUint aTrackId)
-{
-    iSupply->OutputTrack(aTrack, aTrackId);
-}
-
-void Pipeline::OutputDelay(TUint aJiffies)
-{
-    iSupply->OutputDelay(aJiffies);
-}
-
-void Pipeline::OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId)
-{
-    iSupply->OutputStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId);
-}
-
-void Pipeline::OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream)
-{
-    iSupply->OutputPcmStream(aUri, aTotalBytes, aSeekable, aLive, aStreamHandler, aStreamId, aPcmStream);
-}
-
-void Pipeline::OutputData(const Brx& aData)
-{
-    iSupply->OutputData(aData);
-}
-
-void Pipeline::OutputMetadata(const Brx& aMetadata)
-{
-    iSupply->OutputMetadata(aMetadata);
-}
-
-void Pipeline::OutputFlush(TUint aFlushId)
-{
-    iSupply->OutputFlush(aFlushId);
-}
-
-void Pipeline::OutputWait()
-{
-    iSupply->OutputWait();
-}
-
-void Pipeline::OutputHalt(TUint aHaltId)
-{
-    iSupply->OutputHalt(aHaltId);
-}
-
-void Pipeline::OutputQuit()
-{
-    iSupply->OutputQuit();
+    iEncodedAudioReservoir->Push(aMsg);
 }
 
 Msg* Pipeline::Pull()

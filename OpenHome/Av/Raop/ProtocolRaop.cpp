@@ -6,6 +6,7 @@
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Media/Debug.h>
 #include <OpenHome/Av/Raop/Raop.h>
+#include <OpenHome/Media/SupplyAggregator.h>
 
 EXCEPTION(ResendTimeout);
 EXCEPTION(ResendInvalid);
@@ -25,6 +26,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpSer
     , iServerManager(aServerManager)
     , iRaopAudio(iServerManager.Find(aAudioId))
     , iRaopControl(aEnv, iServerManager.Find(aControlId))
+    , iSupply(NULL)
     , iLockRaop("PRAL")
     , iSem("PRAS", 0)
 {
@@ -32,6 +34,7 @@ ProtocolRaop::ProtocolRaop(Environment& aEnv, IRaopDiscovery& aDiscovery, UdpSer
 
 ProtocolRaop::~ProtocolRaop()
 {
+    delete iSupply;
 }
 
 void ProtocolRaop::DoInterrupt()
@@ -40,6 +43,11 @@ void ProtocolRaop::DoInterrupt()
 
     iRaopAudio.DoInterrupt();
     iRaopControl.DoInterrupt();
+}
+
+void ProtocolRaop::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new SupplyAggregatorBytes(aMsgFactory, aDownstream);
 }
 
 ProtocolStreamResult ProtocolRaop::Stream(const Brx& aUri)

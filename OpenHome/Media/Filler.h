@@ -40,11 +40,11 @@ private:
     TBool iRealTime;
 };
 
-class Filler : private Thread, public ISupply
+class Filler : private Thread, public IPipelineElementDownstream, private IMsgProcessor
 {
     static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(ISupply& aSupply, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
+    Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider, MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);
@@ -62,19 +62,24 @@ private:
     TUint StopLocked();
 private: // from Thread
     void Run();
-private: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
-    void OutputSession() override;
-    void OutputTrack(Track& aTrack, TUint aTrackId) override;
-    void OutputDelay(TUint aJiffies) override;
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
-    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
-    void OutputData(const Brx& aData) override;
-    void OutputMetadata(const Brx& aMetadata) override;
-    void OutputFlush(TUint aFlushId) override;
-    void OutputWait() override;
-    void OutputHalt(TUint aHaltId) override;
-    void OutputQuit() override;
+private: // from IPipelineElementDownstream
+    void Push(Msg* aMsg) override;
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     class NullTrackStreamHandler : public IStreamHandler
     {
@@ -90,9 +95,10 @@ private:
     };
 private:
     mutable Mutex iLock;
-    ISupply& iSupply;
+    IPipelineElementDownstream& iPipeline;
     IPipelineIdTracker& iPipelineIdTracker;
     IFlushIdProvider& iFlushIdProvider;
+    MsgFactory& iMsgFactory;
     std::vector<UriProvider*> iUriProviders;
     UriProvider* iActiveUriProvider;
     IUriStreamer* iUriStreamer;

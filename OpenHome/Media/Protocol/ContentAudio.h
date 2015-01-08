@@ -5,19 +5,24 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Stream.h>
+#include <OpenHome/Media/Supply.h>
 
 namespace OpenHome {
 namespace Media {
 
+class MsgFactory;
+class IPipelineElementDownstream;
+
 class ContentAudio : public ContentProcessor
 {
 public:
-    ContentAudio(ISupply& aSupply);
+    ContentAudio(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
+    ~ContentAudio();
 private: // from ContentProcessor
     TBool Recognise(const Brx& aUri, const Brx& aMimeType, const Brx& aData);
     ProtocolStreamResult Stream(IProtocolReader& aReader, TUint64 aTotalBytes);
 private:
-    ISupply& iSupply;
+    Supply* iSupply;
 };
 
 } // namespace Media

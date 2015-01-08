@@ -23,6 +23,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
+    , iSupply(NULL)
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
     , iMode(aMode)
@@ -57,6 +58,7 @@ ProtocolOhBase::~ProtocolOhBase()
     delete iTimerRepair;
     delete iTimerJoin;
     delete iTimerListen;
+    delete iSupply;
 }
 
 void ProtocolOhBase::Add(OhmMsg* aMsg)
@@ -122,6 +124,11 @@ void ProtocolOhBase::Send(TUint aType)
 void ProtocolOhBase::Interrupt(TBool aInterrupt)
 {
     iSocket.Interrupt(aInterrupt);
+}
+
+void ProtocolOhBase::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream)
+{
+    iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
 ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)

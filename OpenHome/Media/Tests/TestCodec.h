@@ -11,7 +11,6 @@ namespace OpenHome {
 namespace Media {
     class EncodedAudioReservoir;
     class ProtocolManager;
-    class Supply;
 
 namespace Codec {
     class Container;
@@ -95,7 +94,7 @@ class TestCodecFiller : public Thread, private IPipelineIdProvider
 private:
     static const TUint kInvalidPipelineId = 0;
 public:
-    TestCodecFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator);
+    TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& aDownstream, MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator);
     ~TestCodecFiller();
     void Start(const Brx& aUrl);
     TUint TrackId();
@@ -109,7 +108,8 @@ private: // from IPipelineIdProvider
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
-    ISupply& iSupply;
+    IPipelineElementDownstream& iPipeline;
+    MsgFactory& iMsgFactory;
     Brn iUrl;
     TUint iNextTrackId;
     TUint iNextStreamId;
@@ -151,7 +151,6 @@ private:
     MsgFactory* iMsgFactory;
     TestCodecPipelineElementDownstream* iElementDownstream;
     EncodedAudioReservoir* iReservoir;
-    Supply* iSupply;
     TestCodecFlushIdProvider* iFlushIdProvider;
     TestCodecFiller* iFiller;
 };

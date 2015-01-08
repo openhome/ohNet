@@ -4,6 +4,7 @@
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Private/Thread.h>
+#include <OpenHome/Media/Supply.h>
 
 #include <limits.h>
 #include <vector>
@@ -42,7 +43,7 @@ private:
 class DummyUriStreamer : public IUriStreamer, private IStreamHandler, private INonCopyable
 {
 public:
-    DummyUriStreamer(ISupply& aSupply, Semaphore& aTrackAddedSem, Semaphore& aTrackCompleteSem);
+    DummyUriStreamer(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement, Semaphore& aTrackAddedSem, Semaphore& aTrackCompleteSem);
     virtual ~DummyUriStreamer();
     TUint TrackId() const;
     TUint StreamId() const;
@@ -56,14 +57,14 @@ private: // from IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
-    ISupply& iSupply;
+    Supply iSupply;
     Semaphore& iTrackAddedSem;
     Semaphore& iTrackCompleteSem;
     TUint iPipelineTrackId;
     TUint iStreamId;
 };
 
-class DummySupply : public ISupply
+class DummySupply : public IPipelineElementDownstream, private IMsgProcessor
 {
 public:
     DummySupply();
@@ -76,19 +77,24 @@ public:
     TBool LastIsRealTime() const;
     TUint LastDelayJiffies() const;
     TUint SessionCount() const;
-private: // from ISupply
-    void OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller) override;
-    void OutputSession() override;
-    void OutputTrack(Track& aTrack, TUint aTrackId) override;
-    void OutputDelay(TUint aJiffies) override;
-    void OutputStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId) override;
-    void OutputPcmStream(const Brx& aUri, TUint64 aTotalBytes, TBool aSeekable, TBool aLive, IStreamHandler& aStreamHandler, TUint aStreamId, const PcmStreamInfo& aPcmStream) override;
-    void OutputData(const Brx& aData) override;
-    void OutputMetadata(const Brx& aMetadata) override;
-    void OutputFlush(TUint aFlushId) override;
-    void OutputWait() override;
-    void OutputHalt(TUint aHaltId) override;
-    void OutputQuit() override;
+private: // from IPipelineElementDownstream
+    void Push(Msg* aMsg) override;
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     BwsMode iLastMode;
     TBool iLastSupportsLatency;
@@ -120,6 +126,7 @@ private:
     Semaphore iTrackCompleteSem;
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
+    MsgFactory* iMsgFactory;
     Filler* iFiller;
     DummyUriProvider* iUriProvider;
     DummyUriStreamer* iUriStreamer;
@@ -229,8 +236,8 @@ TBool DummyUriProvider::MovePrevious()
 
 // DummyUriStreamer
 
-DummyUriStreamer::DummyUriStreamer(ISupply& aSupply, Semaphore& aTrackAddedSem, Semaphore& aTrackCompleteSem)
-    : iSupply(aSupply)
+DummyUriStreamer::DummyUriStreamer(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement, Semaphore& aTrackAddedSem, Semaphore& aTrackCompleteSem)
+    : iSupply(aMsgFactory, aDownStreamElement)
     , iTrackAddedSem(aTrackAddedSem)
     , iTrackCompleteSem(aTrackCompleteSem)
     , iPipelineTrackId(0)
@@ -347,65 +354,101 @@ TUint DummySupply::SessionCount() const
     return iSessionCount;
 }
 
-void DummySupply::OutputMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* /*aClockPuller*/)
+void DummySupply::Push(Msg* aMsg)
 {
-    iLastMode.Replace(aMode);
-    iLastSupportsLatency = aSupportsLatency;
-    iLastRealTime = aRealTime;
+    (void)aMsg->Process(*this);
+    aMsg->RemoveRef();
 }
 
-void DummySupply::OutputSession()
+Msg* DummySupply::ProcessMsg(MsgMode* aMsg)
+{
+    iLastMode.Replace(aMsg->Mode());
+    iLastSupportsLatency = aMsg->SupportsLatency();
+    iLastRealTime = aMsg->IsRealTime();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgSession* aMsg)
 {
     iSessionCount++;
+    return aMsg;
 }
 
-void DummySupply::OutputTrack(Track& aTrack, TUint aTrackId)
+Msg* DummySupply::ProcessMsg(MsgTrack* aMsg)
 {
-    iLastTrackUri.Replace(aTrack.Uri());
-    iLastTrackId = aTrackId;
+    iLastTrackUri.Replace(aMsg->Track().Uri());
+    iLastTrackId = aMsg->IdPipeline();
+    return aMsg;
 }
 
-void DummySupply::OutputDelay(TUint aJiffies)
+Msg* DummySupply::ProcessMsg(MsgDelay* aMsg)
 {
-    iLastDelayJiffies = aJiffies;
+    iLastDelayJiffies = aMsg->DelayJiffies();
+    return aMsg;
 }
 
-void DummySupply::OutputStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool /*aLive*/, IStreamHandler& /*aStreamHandler*/, TUint aStreamId)
+Msg* DummySupply::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iLastStreamId = aStreamId;
+    iLastStreamId = aMsg->StreamId();
+    return aMsg;
 }
 
-void DummySupply::OutputPcmStream(const Brx& /*aUri*/, TUint64 /*aTotalBytes*/, TBool /*aSeekable*/, TBool /*aLive*/, IStreamHandler& /*aStreamHandler*/, TUint /*aStreamId*/, const PcmStreamInfo& /*aPcmStream*/)
-{
-    ASSERTS();
-}
-
-void DummySupply::OutputData(const Brx& /*aData*/)
-{
-    ASSERTS();
-}
-
-void DummySupply::OutputMetadata(const Brx& /*aMetadata*/)
+Msg* DummySupply::ProcessMsg(MsgAudioEncoded* aMsg)
 {
     ASSERTS();
+    return aMsg;
 }
 
-void DummySupply::OutputFlush(TUint /*aFlushId*/)
+Msg* DummySupply::ProcessMsg(MsgMetaText* aMsg)
 {
     ASSERTS();
+    return aMsg;
 }
 
-void DummySupply::OutputWait()
+Msg* DummySupply::ProcessMsg(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgFlush* aMsg)
 {
     ASSERTS();
+    return aMsg;
 }
 
-void DummySupply::OutputHalt(TUint /*aHaltId*/)
+Msg* DummySupply::ProcessMsg(MsgWait* aMsg)
 {
+    ASSERTS();
+    return aMsg;
 }
 
-void DummySupply::OutputQuit()
+Msg* DummySupply::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgSilence* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgPlayable* aMsg)
+{
+    ASSERTS();
+    return aMsg;
+}
+
+Msg* DummySupply::ProcessMsg(MsgQuit* aMsg)
+{
+    return aMsg;
 }
 
 
@@ -418,10 +461,11 @@ SuiteFiller::SuiteFiller()
     , iNextFlushId(1)
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *this, *iTrackFactory, *this, kDefaultLatency);
+    iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
-    iUriStreamer = new DummyUriStreamer(*iFiller, iTrackAddedSem, iTrackCompleteSem);
+    iUriStreamer = new DummyUriStreamer(*iMsgFactory, *iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);
     iFiller->Start(*iUriStreamer);
 }
@@ -433,6 +477,7 @@ SuiteFiller::~SuiteFiller()
     delete iFiller;
     delete iUriProvider;
     delete iDummySupply;
+    delete iMsgFactory;
     delete iTrackFactory;
 }
 

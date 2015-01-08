@@ -22,7 +22,7 @@ namespace Media {
 class Supplier : public Thread, private IStreamHandler
 {
 public:
-    Supplier(ISupply& aSupply, TrackFactory& aTrackFactory);
+    Supplier(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream, TrackFactory& aTrackFactory);
     ~Supplier();
     void Block();
     void Unblock();
@@ -37,7 +37,8 @@ private: // from IStreamHandler
     TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
     void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
 private:
-    ISupply& iSupply;
+    MsgFactory& iMsgFactory;
+    IPipelineElementDownstream& iDownstream;
     TrackFactory& iTrackFactory;
     Mutex iLock;
     Semaphore iBlocker;
@@ -148,9 +149,10 @@ private:
 
 // Supplier
 
-Supplier::Supplier(ISupply& aSupply, TrackFactory& aTrackFactory)
+Supplier::Supplier(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream, TrackFactory& aTrackFactory)
     : Thread("TSUP")
-    , iSupply(aSupply)
+    , iMsgFactory(aMsgFactory)
+    , iDownstream(aDownstream)
     , iTrackFactory(aTrackFactory)
     , iLock("TSUP")
     , iBlocker("TSUP", 0)
@@ -198,25 +200,25 @@ void Supplier::Run()
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
-    iSupply.OutputTrack(*track, 1);
+    iDownstream.Push(iMsgFactory.CreateMsgTrack(*track, 1));
     track->RemoveRef();
-    iSupply.OutputStream(Brx::Empty(), 1LL<<32, false, false, *this, 1);
+    iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 1, false, false, this));
     while (!iQuit) {
         CheckForKill();
         if (iBlock) {
             iBlocker.Wait();
         }
         if (iFlushId != MsgFlush::kIdInvalid) {
-            iSupply.OutputFlush(iFlushId);
+            iDownstream.Push(iMsgFactory.CreateMsgFlush(iFlushId));
             iFlushId = MsgFlush::kIdInvalid;
         }
         else {
-            iSupply.OutputData(encodedAudioBuf);
+            iDownstream.Push(iMsgFactory.CreateMsgAudioEncoded(encodedAudioBuf));
         }
         Thread::Sleep(2); // small delay to avoid this thread hogging all cpu on platforms without priorities
     }
-    iSupply.OutputHalt(iHaltId);
-    iSupply.OutputQuit();
+    iDownstream.Push(iMsgFactory.CreateMsgHalt(iHaltId));
+    iDownstream.Push(iMsgFactory.CreateMsgQuit());
 }
 
 EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
@@ -266,7 +268,7 @@ SuitePipeline::SuitePipeline()
     iPipeline = new Pipeline(iInitParams, iInfoAggregator, *this, *this, *this);
     iAggregator = new Aggregator(*iPipeline, kDriverMaxAudioJiffies);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iSupplier = new Supplier(*iPipeline, *iTrackFactory);
+    iSupplier = new Supplier(iPipeline->Factory(), *iPipeline, *iTrackFactory);
     iPipeline->AddCodec(new DummyCodec(kNumChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle));
     iPipeline->Start();
     iPipelineEnd = iAggregator;
