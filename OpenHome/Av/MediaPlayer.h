@@ -87,6 +87,11 @@ public:
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
                 Media::IPullableClock* aPullableClock,
+                Media::IVolumeProfile& aVolumeProfile,
+                Media::IVolume& aVolume,
+                Media::IVolumeLimit& aVolumeLimit,
+                Media::IBalance& aBalance,
+                Media::IMute& aMute,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -113,33 +118,6 @@ public: // from IMediaPlayer
     void Add(Media::UriProvider* aUriProvider) override;
     void AddAttribute(const TChar* aAttribute) override;
 private:
-    // FIXME - dummy implementations until Volume* classes are finalised
-    class VolumeProfile : public Media::IVolumeProfile
-    {
-    public: // from IVolumeProfile
-        TUint MaxVolume() const override;
-        TUint VolumeUnity() const override;
-        TUint VolumeSteps() const override;
-        TUint VolumeMilliDbPerStep() const override;
-        TInt MaxBalance() const override;
-    };
-    class VolumePrinter : public Media::IVolume
-    {
-    public: // from IVolume
-        void SetVolume(TUint aVolume) override;
-    };
-    class BalancePrinter : public Media::IBalance
-    {
-    public: // from IBalance
-        void SetBalance(TInt aBalance) override;
-    };
-    class MutePrinter : public Media::IMute
-    {
-    public: // from IMute
-        void Mute() override;
-        void Unmute() override;
-    };
-private:
     Net::DvStack& iDvStack;
     Net::DvDeviceStandard& iDevice;
     Media::AllocatorInfoLogger* iInfoLogger;
@@ -154,13 +132,6 @@ private:
     Configuration::ConfigText* iConfigProductName;
     Av::Product* iProduct;
     Credentials* iCredentials;
-    Media::IVolume* iLeftVolumeHardware;   // XXX dummy ...
-    Media::IVolume* iRightVolumeHardware;  // XXX volume hardware
-    VolumeProfile iVolumeProfile;
-    VolumePrinter iVolume; // FIXME - replace with real implementations
-    Media::VolumeLimitNull iVolumeLimit;
-    BalancePrinter iBalance;
-    MutePrinter iMute;
     ProviderTime* iProviderTime;
     ProviderInfo* iProviderInfo;
     ConfigInitialiserVolume* iConfigInitVolume;

@@ -20,6 +20,7 @@
 #include <OpenHome/Configuration/Tests/ConfigRamStore.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Pipeline/Pipeline.h>
+#include <OpenHome/Media/Tests/VolumeUtils.h>
 
 #include <array>
 #include <limits.h>
@@ -124,6 +125,11 @@ private:
 private:
     Semaphore iDeviceDisabled;
     Semaphore iTrackChanged;
+    VolumeProfileDummy iVolumeProfileDummy;
+    VolumePrinter iVolumePrinter;
+    VolumeLimitNull iVolumeLimit;
+    BalancePrinter iBalancePrinter;
+    MutePrinter iMutePrinter;
     CpStack& iCpStack;
     DvStack& iDvStack;
     DvDeviceStandard* iDevice;
@@ -412,7 +418,8 @@ void SuitePlaylist::Setup()
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   NULL, udn, Brn("Main Room"), Brn("Softplayer"));
+                                   NULL, iVolumeProfileDummy, iVolumePrinter, iVolumeLimit, iBalancePrinter, iMutePrinter,
+                                   udn, Brn("Main Room"), Brn("Softplayer"));
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
