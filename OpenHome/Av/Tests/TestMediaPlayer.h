@@ -86,11 +86,7 @@ protected:
 private:
     Semaphore iDisabled;
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
-    Media::VolumeProfileDummy iVolumeProfileDummy;
-    Media::VolumePrinter iVolumePrinter;
-    Media::VolumeLimitNull iVolumeLimit;
-    Media::BalancePrinter iBalancePrinter;
-    Media::MutePrinter iMutePrinter;
+    Media::VolumePrinter iVolume;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
     const Brx& iTidalId;

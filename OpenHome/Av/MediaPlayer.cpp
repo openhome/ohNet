@@ -37,11 +37,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
                          IPullableClock* aPullableClock,
-                         IVolumeProfile& aVolumeProfile,
-                         IVolume& aVolume,
-                         IVolumeLimit& aVolumeLimit,
-                         IBalance& aBalance,
-                         IMute& aMute,
+                         IVolume& aVolumeLeft,
+                         IVolume& aVolumeRight,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
                          const Brx& aDefaultName)
@@ -49,6 +46,9 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
     , iPullableClock(aPullableClock)
+    , iVolumeLeft(aVolumeLeft)
+    , iVolumeRight(aVolumeRight)
+    , iVolumeProfile(100, 80, 100, 1024, 15)
     , iConfigProductRoom(NULL)
     , iConfigProductName(NULL)
 {
@@ -67,8 +67,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct->AddAttribute("Time");
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
-    iConfigInitVolume = new ConfigInitialiserVolume(*iConfigManager, aVolumeProfile);
-    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iConfigManager, *iPowerManager, aVolumeProfile, aVolume, aVolumeLimit, aBalance, aMute);
+    iConfigInitVolume = new ConfigInitialiserVolume(*iConfigManager, iVolumeProfile);
+    //iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iConfigManager, *iPowerManager, aVolumeProfile, aVolume, aVolumeLimit, aBalance, aMute);
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name

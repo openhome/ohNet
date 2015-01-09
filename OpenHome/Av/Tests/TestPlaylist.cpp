@@ -125,11 +125,7 @@ private:
 private:
     Semaphore iDeviceDisabled;
     Semaphore iTrackChanged;
-    VolumeProfileDummy iVolumeProfileDummy;
-    VolumePrinter iVolumePrinter;
-    VolumeLimitNull iVolumeLimit;
-    BalancePrinter iBalancePrinter;
-    MutePrinter iMutePrinter;
+    VolumePrinter iVolume;
     CpStack& iCpStack;
     DvStack& iDvStack;
     DvDeviceStandard* iDevice;
@@ -418,8 +414,7 @@ void SuitePlaylist::Setup()
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   NULL, iVolumeProfileDummy, iVolumePrinter, iVolumeLimit, iBalancePrinter, iMutePrinter,
-                                   udn, Brn("Main Room"), Brn("Softplayer"));
+                                   NULL, iVolume, iVolume, udn, Brn("Main Room"), Brn("Softplayer"));
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors

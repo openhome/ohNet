@@ -377,6 +377,24 @@ private:
     Bws<8> iLabel;
 };
 
+class VolumeProfile : public IVolumeProfile
+{
+public:
+    VolumeProfile(TUint aMaxVolume, TUint aVolumeUnity, TUint aVolumeSteps, TUint aMilliDbPerStep, TInt aMaxBalance);
+public: // from IVolumeProfile
+    TUint MaxVolume() const override;
+    TUint VolumeUnity() const override;
+    TUint VolumeSteps() const override;
+    TUint VolumeMilliDbPerStep() const override;
+    TInt MaxBalance() const override;
+private:
+    TUint iMaxVolume;
+    TUint iVolumeUnity;
+    TUint iVolumeSteps;
+    TUint iMilliDbPerStep;
+    TInt  iMaxBalance;
+};
+
 } // namespace Media
 } // namespace OpenHome
 

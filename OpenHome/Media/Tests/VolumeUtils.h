@@ -8,16 +8,6 @@
 namespace OpenHome {
 namespace Media {
 
-class VolumeProfileDummy : public IVolumeProfile
-{
-public: // from IVolumeProfile
-    TUint MaxVolume() const override;
-    TUint VolumeUnity() const override;
-    TUint VolumeSteps() const override;
-    TUint VolumeMilliDbPerStep() const override;
-    TInt MaxBalance() const override;
-};
-
 class VolumePrinter : public IVolume
 {
 public: // from IVolume

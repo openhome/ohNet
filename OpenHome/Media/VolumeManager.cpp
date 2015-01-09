@@ -439,3 +439,38 @@ void VolumeSinkLogger::SetVolume(TUint aValue)
 {
     Log::Print("\n[VolSinkLog:");  Log::Print(iLabel);  Log::Print("] vol = %u\n", aValue);
 }
+
+VolumeProfile::VolumeProfile(TUint aMaxVolume, TUint aVolumeUnity, TUint aVolumeSteps, TUint aMilliDbPerStep, TInt aMaxBalance)
+: iMaxVolume(aMaxVolume)
+, iVolumeUnity(aVolumeUnity)
+, iVolumeSteps(aVolumeSteps)
+, iMilliDbPerStep(aMilliDbPerStep)
+, iMaxBalance(aMaxBalance)
+{
+}
+
+TUint VolumeProfile::MaxVolume() const
+{
+    return iMaxVolume;
+}
+
+TUint VolumeProfile::VolumeUnity() const
+{
+    return iVolumeUnity;
+}
+
+TUint VolumeProfile::VolumeSteps() const
+{
+    return iVolumeSteps;
+}
+
+TUint VolumeProfile::VolumeMilliDbPerStep() const
+{
+    return iMilliDbPerStep;
+}
+
+TInt VolumeProfile::MaxBalance() const
+{
+    return iMaxBalance;
+}
+

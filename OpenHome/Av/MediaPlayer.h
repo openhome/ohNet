@@ -87,11 +87,8 @@ public:
                 Configuration::IStoreReadWrite& aReadWriteStore,
                 Media::PipelineInitParams* aPipelineInitParams,
                 Media::IPullableClock* aPullableClock,
-                Media::IVolumeProfile& aVolumeProfile,
-                Media::IVolume& aVolume,
-                Media::IVolumeLimit& aVolumeLimit,
-                Media::IBalance& aBalance,
-                Media::IMute& aMute,
+                Media::IVolume& aVolumeLeft,
+                Media::IVolume& aVolumeRight,
                 const Brx& aEntropy,
                 const Brx& aDefaultRoom,
                 const Brx& aDefaultName);
@@ -126,6 +123,9 @@ private:
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
     Media::IPullableClock* iPullableClock;
+    Media::IVolume& iVolumeLeft;
+    Media::IVolume& iVolumeRight;
+    Media::VolumeProfile iVolumeProfile;
     Configuration::ConfigManager* iConfigManager;
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;
