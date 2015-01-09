@@ -68,8 +68,8 @@ Protocol* ProtocolFactory::NewFile(Environment& aEnv)
 
 ProtocolFile::ProtocolFile(Environment& aEnv)
     : Protocol(aEnv)
-    , iSupply(NULL)
     , iLock("PRTF")
+    , iSupply(NULL)
     , iReaderBuf(iFileStream)
 {
 }
