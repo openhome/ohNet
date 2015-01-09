@@ -179,6 +179,10 @@ class BasePlayTracks( BASE.BaseTest ):
             self.sender = None
         if self.receiver:
             self.receiver.Shutdown()
+        if self.softSender:
+            self.softSender.Shutdown()
+        if self.softRcvr:
+            self.softRcvr.Shutdown()
         BASE.BaseTest.Cleanup( self )
 
     #
