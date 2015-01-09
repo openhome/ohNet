@@ -234,7 +234,6 @@ void EncodedAudio::Clear()
 #ifdef DEFINE_DEBUG
     // fill in all members with recognisable 'bad' values to make ref counting bugs more obvious
     static const TByte deadByte = 0xde;
-    static const TUint deadUint = 0xdead;
     memset(const_cast<TByte*>(iData.Ptr()), deadByte, iData.Bytes());
 #endif // DEFINE_DEBUG
     iData.SetBytes(0);
