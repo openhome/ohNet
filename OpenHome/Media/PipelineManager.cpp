@@ -22,7 +22,9 @@ PipelineManager::PipelineManager(PipelineInitParams* aInitParams, IInfoAggregato
 {
     iPipeline = new Pipeline(aInitParams, aInfoAggregator, *this, iPrefetchObserver, *this);
     iIdManager = new IdManager(*iPipeline);
-    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory, iPrefetchObserver, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
+    TUint min, max;
+    iPipeline->GetThreadPriorityRange(min, max);
+    iFiller = new Filler(*iPipeline, *iIdManager, *iPipeline, iPipeline->Factory(), aTrackFactory, iPrefetchObserver, min-1, iPipeline->SenderMinLatencyMs() * Jiffies::kPerMs);
     iProtocolManager = new ProtocolManager(*iFiller, iPipeline->Factory(), *iIdManager, *iPipeline);
     iFiller->Start(*iProtocolManager);
 }

@@ -259,7 +259,7 @@ void SuiteCodecControllerBase::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     // Need so many (Msg)AudioEncoded because kMaxMsgBytes is currently 960, and msgs are queued in advance of being pulled for these tests.
     iMsgFactory = new MsgFactory(iInfoAggregator, 400, 400, 100, 100, 10, 50, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
-    iController = new CodecController(*iMsgFactory, *this, *this);
+    iController = new CodecController(*iMsgFactory, *this, *this, kPriorityNormal);
     iSemPending = new Semaphore("TCSP", 0);
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);

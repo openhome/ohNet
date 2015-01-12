@@ -100,7 +100,7 @@ void CodecBase::Construct(ICodecController& aController)
 
 // CodecController
 
-CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement)
+CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, TUint aThreadPriority)
     : iMsgFactory(aMsgFactory)
     , iRewinder(aMsgFactory, aUpstreamElement)
     , iDownstreamElement(aDownstreamElement)
@@ -122,7 +122,7 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iTrackId(UINT_MAX)
     , iTrackIdPipeline(UINT_MAX)
 {
-    iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), kPriorityVeryHigh-2);
+    iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
     //iLoggerRewinder->SetEnabled(true);
     //iLoggerRewinder->SetFilter(Logger::EMsgAll);

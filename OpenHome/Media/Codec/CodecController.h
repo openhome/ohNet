@@ -286,7 +286,7 @@ protected:
 class CodecController : public ISeeker, private ICodecController, private IMsgProcessor, private IStreamHandler, private INonCopyable
 {
 public:
-    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement);
+    CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, IPipelineElementDownstream& aDownstreamElement, TUint aThreadPriority);
     virtual ~CodecController();
     void AddCodec(CodecBase* aCodec);
     void Start();

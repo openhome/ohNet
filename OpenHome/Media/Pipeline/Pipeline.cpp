@@ -42,6 +42,7 @@ PipelineInitParams::PipelineInitParams()
     , iRampLongJiffies(kLongRampDurationDefault)
     , iRampShortJiffies(kShortRampDurationDefault)
     , iRampEmergencyJiffies(kEmergencyRampDurationDefault)
+    , iThreadPriorityMax(kThreadPriorityMax)
 {
 }
 
@@ -94,6 +95,11 @@ void PipelineInitParams::SetEmergencyRamp(TUint aJiffies)
     iRampEmergencyJiffies = aJiffies;
 }
 
+void PipelineInitParams::SetThreadPriorityMax(TUint aPriority)
+{
+    iThreadPriorityMax = aPriority;
+}
+
 TUint PipelineInitParams::EncodedReservoirBytes() const
 {
     return iEncodedReservoirBytes;
@@ -139,6 +145,11 @@ TUint PipelineInitParams::RampEmergencyJiffies() const
     return iRampEmergencyJiffies;
 }
 
+TUint PipelineInitParams::ThreadPriorityMax() const
+{
+    return iThreadPriorityMax;
+}
+
 
 // Pipeline
 
@@ -166,7 +177,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                                  perStreamMsgCount, perStreamMsgCount, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
                                  kMsgCountMode, perStreamMsgCount, perStreamMsgCount, kMsgCountQuit);
-
+    TUint threadPriority = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(aInitParams->EncodedReservoirBytes(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
@@ -186,7 +197,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
 
     // construct push logger slightly out of sequence
     iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioAggregator);
-    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController);
+    iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, threadPriority);
+    threadPriority++;
 
     iSeeker = new Seeker(*iMsgFactory, *iLoggerDecodedAudioReservoir, *iCodecController, aSeekRestreamer, aInitParams->RampShortJiffies());
     iLoggerSeeker = new Logger(*iSeeker, "Seeker");
@@ -203,7 +215,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerStopper = new Logger(*iStopper, "Stopper");
     iRamper = new Ramper(*iLoggerStopper, aInitParams->RampLongJiffies());
     iLoggerRamper = new Logger(*iRamper, "Ramper");
-    iGorger = new Gorger(*iMsgFactory, *iLoggerRamper, aInitParams->GorgeDurationJiffies());
+    iGorger = new Gorger(*iMsgFactory, *iLoggerRamper, threadPriority, aInitParams->GorgeDurationJiffies());
+    threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iReporter = new Reporter(*iLoggerGorger, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
@@ -213,12 +226,13 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
     iPruner = new Pruner(*iLoggerVariableDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
-    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this,
+    iStarvationMonitor = new StarvationMonitor(*iMsgFactory, *iLoggerPruner, *this, threadPriority,
                                                aInitParams->StarvationMonitorMaxJiffies(), aInitParams->StarvationMonitorMinJiffies(),
                                                aInitParams->RampShortJiffies(), aInitParams->MaxStreamsPerReservoir());
     iLoggerStarvationMonitor = new Logger(*iStarvationMonitor, "Starvation Monitor");
     iPreDriver = new PreDriver(*iLoggerStarvationMonitor);
     iLoggerPreDriver = new Logger(*iPreDriver, "PreDriver");
+    ASSERT(threadPriority == aInitParams->ThreadPriorityMax());
 
     iPipelineEnd = iLoggerPreDriver;
     if (iPipelineEnd == NULL) {
@@ -449,6 +463,12 @@ IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSen
 TUint Pipeline::SenderMinLatencyMs() const
 {
     return kSenderMinLatency / Jiffies::kPerMs;
+}
+
+void Pipeline::GetThreadPriorityRange(TUint& aMin, TUint& aMax) const
+{
+    aMax = iInitParams->ThreadPriorityMax();
+    aMin = aMax - kThreadCount;
 }
 
 void Pipeline::Push(Msg* aMsg)

@@ -114,7 +114,7 @@ SuiteStarvationMonitor::SuiteStarvationMonitor()
     , iBuffering(false)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, kDecodedAudioCount, kMsgAudioPcmCount, kMsgSilenceCount, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
-    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
+    iSm = new StarvationMonitor(*iMsgFactory, *this, *this, kPriorityNormal, kRegularSize, kStarvationThreshold, kRampUpSize, kMaxStreamCount);
 }
 
 SuiteStarvationMonitor::~SuiteStarvationMonitor()

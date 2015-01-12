@@ -41,6 +41,7 @@ class PipelineInitParams
     static const TUint kLongRampDurationDefault         = Jiffies::kPerMs * 500;
     static const TUint kShortRampDurationDefault        = Jiffies::kPerMs * 50;
     static const TUint kEmergencyRampDurationDefault    = Jiffies::kPerMs * 20;
+    static const TUint kThreadPriorityMax               = kPriorityHighest - 1;
 public:
     static PipelineInitParams* New();
     virtual ~PipelineInitParams();
@@ -54,6 +55,7 @@ public:
     void SetLongRamp(TUint aJiffies);
     void SetShortRamp(TUint aJiffies);
     void SetEmergencyRamp(TUint aJiffies);
+    void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
     // getters
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
@@ -64,6 +66,7 @@ public:
     TUint RampLongJiffies() const;
     TUint RampShortJiffies() const;
     TUint RampEmergencyJiffies() const;
+    TUint ThreadPriorityMax() const;
 private:
     PipelineInitParams();
 private:
@@ -76,6 +79,7 @@ private:
     TUint iRampLongJiffies;
     TUint iRampShortJiffies;
     TUint iRampEmergencyJiffies;
+    TUint iThreadPriorityMax;
 };
 
 class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
@@ -94,6 +98,7 @@ class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstr
     static const TUint kMsgCountWait            = 16;
     static const TUint kMsgCountMode            = 20;
     static const TUint kMsgCountQuit            = 1;
+    static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
     Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer);
     virtual ~Pipeline();
@@ -111,6 +116,7 @@ public:
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
+    void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 public: // from IPipelineElementUpstream
