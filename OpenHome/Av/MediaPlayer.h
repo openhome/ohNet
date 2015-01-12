@@ -123,9 +123,10 @@ private:
     Media::TrackFactory* iTrackFactory;
     Configuration::IStoreReadWrite& iReadWriteStore;
     Media::IPullableClock* iPullableClock;
-    Media::IVolume& iVolumeLeft;
-    Media::IVolume& iVolumeRight;
+    Media::VolumeLimitNull iVolumeLimit;
+    Media::VolumeBalanceStereo iVolumeBalanceStereo;
     Media::VolumeProfile iVolumeProfile;
+    Media::MuteNull iMute;
     Configuration::ConfigManager* iConfigManager;
     OpenHome::PowerManager* iPowerManager;
     Configuration::ConfigText* iConfigProductRoom;

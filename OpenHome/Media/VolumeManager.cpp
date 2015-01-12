@@ -17,6 +17,7 @@ void VolumeLimitNull::SetVolumeLimit(TUint /*aValue*/)
 }
 
 
+
 // VolumeLimiterUser
 VolumeLimiterUser::VolumeLimiterUser(IVolume& aVolume, TUint aLimit)
     : iVolume(aVolume)
@@ -294,6 +295,46 @@ TInt VolumeBalanceUserDefault::RightOffset(TInt aValue) const
     ASSERT((MinimumUserBalance() <= aValue) && (aValue <= MaximumUserBalance()));
     // factor two allows integer representation in declaration
     return (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() + aValue]) / 2;
+}
+
+// VolumeBalanceStereo
+VolumeBalanceStereo::VolumeBalanceStereo(IVolume& aLeftChannel, IVolume& aRightChannel)
+: iLeftChannel(aLeftChannel)
+, iRightChannel(aRightChannel)
+, iCurrentVolume(0)
+, iCurrentBalance(0)
+{
+    Update();
+}
+
+void VolumeBalanceStereo::Update()
+{
+    TUint leftVol = iCurrentVolume;
+    TUint rightVol = iCurrentVolume;
+
+    if ( iCurrentBalance > 0 )
+    {
+        leftVol = (leftVol * (15-iCurrentBalance)) / 15;
+    }
+    else // iCurrentVolume < 0
+    {
+        rightVol = (rightVol * (15+iCurrentBalance)) / 15;
+    }
+
+    iLeftChannel.SetVolume(leftVol);
+    iRightChannel.SetVolume(rightVol);
+}
+
+void VolumeBalanceStereo::SetVolume(TUint aVolume)
+{
+    iCurrentVolume = aVolume;
+    Update();
+}
+
+void VolumeBalanceStereo::SetBalance(TInt aBalance)
+{
+    iCurrentBalance = aBalance;
+    Update();
 }
 
 // VolumeLimiterDefault

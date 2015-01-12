@@ -45,6 +45,7 @@ public:
     virtual ~IVolumeProfile() {}
 };
 
+// Internal volume is expressed as an interger on the range [0..100], where 80 represents unity gain.
 class IVolume
 {
 public:
@@ -75,6 +76,23 @@ public: // from IVolumeLimit
 };
 
 
+
+class VolumeBalanceStereo : public IVolume, public IBalance
+{
+public:
+    VolumeBalanceStereo(IVolume& aLeftChannel, IVolume& aRightChannel);
+public: // IVolume
+    void SetVolume(TUint aVolume) override;
+public: // IBalance
+    void SetBalance(TInt aBalance) override;
+private:
+    void Update();
+private:
+    IVolume& iLeftChannel;
+    IVolume& iRightChannel;
+    TUint iCurrentVolume;
+    TInt iCurrentBalance;
+};
 
 //
 // generic class declarations
