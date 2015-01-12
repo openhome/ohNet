@@ -5,7 +5,7 @@ Parameters:
     arg#1 - AVT Renderer/Sender (UPnP AV Name) ['local' for internal SoftPlayer on loopback]
     arg#2 - Receiver ['local' for internal SoftPlayer on loopback] - optional (None = not present)
     arg#3 - Media server to source media from (None->test served audio)
-    arg#4 - Playlist name (None->test served audio)
+    arg#4 - Playlist name (None/Full/Short->test served audio [defaults to full])
     arg#5 - Time to play before skipping to next (None = play all)
     arg#6 - Test loops (optional - default 1)
     arg#7 - Set False to prevent use of loopback adapter for local SoftPlayers (optional - default True)
@@ -30,9 +30,10 @@ import threading
 import time
 import xml.etree.ElementTree as ET
 
-kAvtNs     = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
+kAvtNs          = '{urn:schemas-upnp-org:metadata-1-0/AVT/}'
+kAudioRoot      = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
+kTrackListFull  = os.path.join( kAudioRoot, 'TrackList.xml' )
+kTrackListShort = os.path.join( kAudioRoot, 'TrackListShort.xml' )
 
 
 class TestAvTransportPlayTracks( BASE.BaseTest ):
@@ -123,9 +124,13 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
             self.server.Shutdown()
             self.server = None
         else:
+            if playlistName.lower() == 'short':
+                trackList = kTrackListShort
+            else:
+                trackList = kTrackListFull
             self.server = HttpServer.HttpServer( kAudioRoot )
             self.server.Start()
-            self.playlist = Common.GetTracks( kTrackList, self.server )
+            self.playlist = Common.GetTracks( trackList, self.server )
         self.numTracks = len( self.playlist )
 
         # create sender

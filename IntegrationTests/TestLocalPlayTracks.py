@@ -7,6 +7,7 @@ Parameters:
     arg#3 - Time to play before skipping to next (None = play all)
     arg#4 - Repeat mode [on/off]
     arg#5 - Shuffle mode [on/off]
+    arg#6 - [optional] set to 'short' for short track list
 
 Test test which plays locally served tracks from a playlist sequentially. The tracks
 may be played for their entirety or any specified length of time. Repeat and shuffle
@@ -20,8 +21,9 @@ import Utils.Network.HttpServer as HttpServer
 import os
 import sys
 
-kAudioRoot = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
-kTrackList = os.path.join( kAudioRoot, 'TrackList.xml' )
+kAudioRoot      = os.path.join( _FunctionalTest.audioDir, 'LRTones/' )
+kTrackListFull  = os.path.join( kAudioRoot, 'TrackList.xml' )
+kTrackListShort = os.path.join( kAudioRoot, 'TrackListShort.xml' )
 
 
 class TestLocalPlayTracks( BASE.BasePlayTracks ):
@@ -35,10 +37,15 @@ class TestLocalPlayTracks( BASE.BasePlayTracks ):
 
     def Test( self, args ):
         """Check playback of locally served tracks"""
+        trackList = kTrackListFull
+        if len( args ) > 6:
+            if args[6].lower() == 'short':
+                trackList = kTrackListShort
+
         self.server = HttpServer.HttpServer( kAudioRoot )
         self.server.Start()
-        self.tracks = Common.GetTracks( kTrackList, self.server )
-        BASE.BasePlayTracks.Test( self, args )
+        self.tracks = Common.GetTracks( trackList, self.server )
+        BASE.BasePlayTracks.Test( self, args[:6] )
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
