@@ -44,7 +44,9 @@ class Filler : private Thread, public IPipelineElementDownstream, private IMsgPr
 {
     static const TUint kPrefetchTrackIdInvalid = UINT_MAX;
 public:
-    Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider, MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay);
+    Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aPipelineIdTracker, IFlushIdProvider& aFlushIdProvider,
+           MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
+           TUint aThreadPriority, TUint aDefaultDelay);
     ~Filler();
     void Add(UriProvider& aUriProvider);
     void Start(IUriStreamer& aUriStreamer);

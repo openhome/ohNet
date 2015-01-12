@@ -47,8 +47,10 @@ UriProvider::~UriProvider()
 
 // Filler
 
-Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider, MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver, TUint aDefaultDelay)
-    : Thread("Filler", kPriorityVeryHigh-3)
+Filler::Filler(IPipelineElementDownstream& aPipeline, IPipelineIdTracker& aIdTracker, IFlushIdProvider& aFlushIdProvider,
+               MsgFactory& aMsgFactory, TrackFactory& aTrackFactory, IStreamPlayObserver& aStreamPlayObserver,
+               TUint aThreadPriority, TUint aDefaultDelay)
+    : Thread("Filler", aThreadPriority)
     , iLock("FILL")
     , iPipeline(aPipeline)
     , iPipelineIdTracker(aIdTracker)

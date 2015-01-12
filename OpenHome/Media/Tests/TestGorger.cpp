@@ -121,7 +121,7 @@ void SuiteGorger::Setup()
 {
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 1, 0, 0, 2, 2, 2, 2, 2, 2, 1, 3, 1, 1, 1);
-    iGorger = new Gorger(*iMsgFactory, *this, kGorgeSize);
+    iGorger = new Gorger(*iMsgFactory, *this, kPriorityNormal, kGorgeSize);
     iLastPulledMsg = ENone;
     iTrackOffset = 0;
     iNextTrackId = 1;

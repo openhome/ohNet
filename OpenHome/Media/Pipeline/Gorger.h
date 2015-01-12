@@ -22,7 +22,7 @@ class Gorger : private MsgReservoir, public IPipelineElementUpstream, private IS
 {
     friend class SuiteGorger;
 public:
-    Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aGorgeSize);
+    Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aThreadPriority, TUint aGorgeSize);
     ~Gorger();
     TUint SizeInJiffies() const;
 public: // from IPipelineElementUpstream
