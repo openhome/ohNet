@@ -325,7 +325,87 @@ void ProtocolManager::Interrupt(TBool aInterrupt)
 
 void ProtocolManager::Push(Msg* aMsg)
 {
-    iDownstream.Push(aMsg);
+    Msg* msg = aMsg->Process(*this);
+    iDownstream.Push(msg);
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgMode* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgSession* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgTrack* aMsg)
+{
+    {
+        AutoMutex a(iLock);
+        iTrackId = aMsg->IdPipeline();
+    }
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgDelay* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgEncodedStream* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgAudioEncoded* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgMetaText* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgHalt* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgFlush* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgWait* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgDecodedStream* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgAudioPcm* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgSilence* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgPlayable* aMsg)
+{
+    return aMsg;
+}
+
+Msg* ProtocolManager::ProcessMsg(MsgQuit* aMsg)
+{
+    return aMsg;
 }
 
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)
