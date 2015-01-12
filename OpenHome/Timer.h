@@ -88,6 +88,7 @@ private:
 private:
     void Run();
     void Fire();
+    void FireAt(Timer& aTimer, TUint aTime);
     Thread* MgrThread() const;
     virtual void HeadChanged(QueueSortedEntry& aEntry);
     virtual TInt Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2);
@@ -99,6 +100,7 @@ private:
     ThreadFunctor* iThread;
     Semaphore iSemaphore;
     Mutex iMutex;
+    Mutex iMutexTimer;
     TUint iNextTimer;
     TBool iStop;
     Semaphore iStopped;

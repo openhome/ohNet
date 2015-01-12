@@ -59,9 +59,7 @@ void Timer::FireIn(TUint aTime)
 void Timer::FireAt(TUint aTime)
 {
     LOG(kTimer, ">Timer::FireAt(%d)\n", aTime);
-    iMgr.Remove(*this);
-    iTime = aTime;
-    iMgr.Add(*this);
+    iMgr.FireAt(*this, aTime);
     LOG(kTimer, "<Timer::FireAt(%d)\n", aTime);
 }
 
@@ -103,10 +101,11 @@ Timer::~Timer()
 
 TimerManager::TimerManager(Environment& aEnv)
     : iEnv(aEnv)
-    , iMutexNow("NOWM")
+    , iMutexNow("TIM1")
     , iRemoving(false)
     , iSemaphore("TIMM", 0)
-    , iMutex("TIMM")
+    , iMutex("TIM2")
+    , iMutexTimer("TIM3")
     , iNextTimer(0)
     , iStop(false)
     , iStopped("MTS2", 0)
@@ -257,6 +256,14 @@ void TimerManager::Fire()
         LOG(kTimer, "-TimerManager::Fire() signaling consumer\n");
     }
     CallbackUnlock();
+}
+
+void TimerManager::FireAt(Timer& aTimer, TUint aTime)
+{
+    AutoMutex mutex(iMutexTimer);
+    Remove(aTimer);
+    aTimer.iTime = aTime;
+    Add(aTimer);
 }
 
 Thread* TimerManager::MgrThread() const
