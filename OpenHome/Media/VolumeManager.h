@@ -59,6 +59,9 @@ public:
     virtual void SetVolumeLimit(TUint aVolumeLimit) = 0;
 };
 
+// Internal balance is expressed as a signed integer on [-15..+15], with negative balance implying
+// a shift to the left, positive balance implying a shift to the right.
+
 class IBalance
 {
 public:
@@ -76,6 +79,14 @@ public: // from IVolumeLimit
 };
 
 
+/* VolumeBalanceStereo
+    Accepts standard volumes [0..100]
+    Accepts standard balances [-15..+15]
+    Implements balance as follows:
+        balance 0: both channels get regular volume
+        balance < 0: right channel scaled by (-balance/15)
+        balance > 0: left channel scaled by (balance/15)
+*/
 
 class VolumeBalanceStereo : public IVolume, public IBalance
 {
