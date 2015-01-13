@@ -137,7 +137,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
 
                 # log 'now playing' info, set and wait for playback timer
                 if self.sender.radio.transportState == 'Playing':
-                    self.checkTimer = LogThread.Timer( 3, self._CheckTimerCb )
+                    self.checkTimer = LogThread.Timer( 4, self._CheckTimerCb )
                     self.checkTimer.start()
                     if playTime:
                         self.playTimerExpired.clear()
