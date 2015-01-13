@@ -23,6 +23,11 @@ SupplyAggregator::~SupplyAggregator()
     }
 }
 
+void SupplyAggregator::Flush()
+{
+    OutputEncodedAudio();
+}
+
 void SupplyAggregator::OutputSession()
 {
     MsgSession* msg = iMsgFactory.CreateMsgSession();
@@ -159,4 +164,17 @@ void SupplyAggregatorJiffies::OutputData(const Brx& aData)
     if (iAudioEncoded->Bytes() >= iDataMaxBytes) {
         OutputEncodedAudio();
     }
+}
+
+
+// AutoSupplyFlush
+
+AutoSupplyFlush::AutoSupplyFlush(SupplyAggregator& aSupply)
+    : iSupply(aSupply)
+{
+}
+
+AutoSupplyFlush::~AutoSupplyFlush()
+{
+    iSupply.Flush();
 }

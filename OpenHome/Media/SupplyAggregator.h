@@ -14,6 +14,7 @@ class SupplyAggregator : public ISupply, private INonCopyable
 public:
     SupplyAggregator(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownStreamElement);
     virtual ~SupplyAggregator();
+    void Flush();
 public: // from ISupply
     void OutputSession() override;
     void OutputTrack(Track& aTrack, TUint aTrackId) override;
@@ -52,6 +53,15 @@ public: // from ISupply
     void OutputData(const Brx& aData) override;
 private:
     TUint iDataMaxBytes;
+};
+
+class AutoSupplyFlush : private INonCopyable
+{
+public:
+    AutoSupplyFlush(SupplyAggregator& aSupply);
+    ~AutoSupplyFlush();
+private:
+    SupplyAggregator& iSupply;
 };
 
 } // namespace Media
