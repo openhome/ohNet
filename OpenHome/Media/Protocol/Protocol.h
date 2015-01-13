@@ -197,7 +197,7 @@ private:
     TBool iInTag;
 };
 
-class ProtocolManager : public IUriStreamer, public IPipelineElementDownstream, private IProtocolManager, private INonCopyable
+class ProtocolManager : public IUriStreamer, public IPipelineElementDownstream, private IMsgProcessor, private IProtocolManager, private INonCopyable
 {
     static const TUint kMaxUriBytes = 1024;
 public:
@@ -210,6 +210,22 @@ public: // from IUriStreamer
     void Interrupt(TBool aInterrupt);
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
+private: // from IMsgProcessor
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IProtocolManager
     ProtocolStreamResult Stream(const Brx& aUri);
     ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;

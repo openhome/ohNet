@@ -463,7 +463,7 @@ SuiteFiller::SuiteFiller()
     iTrackFactory = new TrackFactory(iInfoAggregator, 4);
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iDummySupply = new DummySupply();
-    iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, kDefaultLatency);
+    iFiller = new Filler(*iDummySupply, *this, *this, *iMsgFactory, *iTrackFactory, *this, kPriorityNormal, kDefaultLatency);
     iUriProvider = new DummyUriProvider(*iTrackFactory);
     iUriStreamer = new DummyUriStreamer(*iMsgFactory, *iFiller, iTrackAddedSem, iTrackCompleteSem);
     iFiller->Add(*iUriProvider);

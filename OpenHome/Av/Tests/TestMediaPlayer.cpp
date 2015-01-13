@@ -91,7 +91,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   aPullableClock, aUdn, Brn("Main Room"), Brn("Softplayer"));
+                                   aPullableClock, iVolume, iVolume, aUdn, Brn("Main Room"), Brn("Softplayer"));
     iPipelineObserver = new LoggingPipelineObserver();
     iMediaPlayer->Pipeline().AddObserver(*iPipelineObserver);
 

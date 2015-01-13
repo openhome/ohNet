@@ -37,6 +37,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
                          IStoreReadWrite& aReadWriteStore,
                          PipelineInitParams* aPipelineInitParams,
                          IPullableClock* aPullableClock,
+                         IVolume& aVolumeLeft,
+                         IVolume& aVolumeRight,
                          const Brx& aEntropy,
                          const Brx& aDefaultRoom,
                          const Brx& aDefaultName)
@@ -44,6 +46,8 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     , iDevice(aDevice)
     , iReadWriteStore(aReadWriteStore)
     , iPullableClock(aPullableClock)
+    , iVolumeBalanceStereo(aVolumeLeft, aVolumeRight)
+    , iVolumeProfile(100, 80, 100, 1024, 15)
     , iConfigProductRoom(NULL)
     , iConfigProductName(NULL)
 {
@@ -58,16 +62,12 @@ MediaPlayer::MediaPlayer(Net::DvStack& aDvStack, Net::DvDeviceStandard& aDevice,
     iProduct = new Av::Product(aDevice, *iKvpStore, iReadWriteStore, *iConfigManager, *iConfigManager, *iPowerManager);
     iCredentials = new Credentials(aDvStack.Env(), aDevice, aReadWriteStore, aEntropy, *iConfigManager);
     iProduct->AddAttribute("Credentials");
-    //iMuteManager = new MuteManager();
-    iLeftVolumeHardware = new VolumeSinkLogger("L");   // XXX dummy ...
-    iRightVolumeHardware = new VolumeSinkLogger("R");  // XXX volume hardware
-    //iVolumeManager = new VolumeManagerDefault(*iLeftVolumeHardware, *iRightVolumeHardware, iReadWriteStore, *iPowerManager);
     iProviderTime = new ProviderTime(aDevice, *iPipeline);
     iProduct->AddAttribute("Time");
     iProviderInfo = new ProviderInfo(aDevice, *iPipeline);
     iProduct->AddAttribute("Info");
     iConfigInitVolume = new ConfigInitialiserVolume(*iConfigManager, iVolumeProfile);
-    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iConfigManager, *iPowerManager, iVolumeProfile, iVolume, iVolumeLimit, iBalance, iMute);
+    iProviderVolume = ProviderFactory::NewVolume(*iProduct, aDevice, *iConfigManager, *iConfigManager, *iPowerManager, iVolumeProfile, iVolumeBalanceStereo, iVolumeLimit, iVolumeBalanceStereo, iMute);
     iProviderConfig = new ProviderConfig(aDevice, *iConfigManager);
     iProduct->AddAttribute("Configuration");
     iNetworkMonitor = new NetworkMonitor(aDvStack.Env(), aDevice, iDevice.Udn());  // XXX name
@@ -85,10 +85,6 @@ MediaPlayer::~MediaPlayer()
     delete iProviderInfo;
     delete iProviderVolume;
     delete iConfigInitVolume;
-    //delete iMuteManager;
-    //delete iVolumeManager;
-    delete iLeftVolumeHardware;   // XXX dummy ...
-    delete iRightVolumeHardware;  // XXX volume hardware
     delete iConfigProductRoom;
     delete iConfigProductName;
     delete iPowerManager;
@@ -203,47 +199,3 @@ void MediaPlayer::Add(UriProvider* aUriProvider)
     iPipeline->Add(aUriProvider);
 }
 
-TUint MediaPlayer::VolumeProfile::MaxVolume() const
-{
-    return 100;
-}
-
-TUint MediaPlayer::VolumeProfile::VolumeUnity() const
-{
-    return 80;
-}
-
-TUint MediaPlayer::VolumeProfile::VolumeSteps() const
-{
-    return MaxVolume();  // [0..100] in steps of 1
-}
-
-TUint MediaPlayer::VolumeProfile::VolumeMilliDbPerStep() const
-{
-    return 1024;
-}
-
-TInt MediaPlayer::VolumeProfile::MaxBalance() const
-{
-    return 15;
-}
-
-void MediaPlayer::VolumePrinter::SetVolume(TUint aVolume)
-{
-    Log::Print("Volume: %u\n", aVolume);
-}
-
-void MediaPlayer::BalancePrinter::SetBalance(TInt aBalance)
-{
-    Log::Print("Balance: %d\n", aBalance);
-}
-
-void MediaPlayer::MutePrinter::Mute()
-{
-    Log::Print("Volume: muted\n");
-}
-
-void MediaPlayer::MutePrinter::Unmute()
-{
-    Log::Print("Volume: unmuted\n");
-}

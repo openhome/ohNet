@@ -9,7 +9,7 @@ using namespace OpenHome::Media;
 
 // Gorger
 
-Gorger::Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aGorgeSize)
+Gorger::Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aThreadPriority, TUint aGorgeSize)
     : iMsgFactory(aMsgFactory)
     , iUpstreamElement(aUpstreamElement)
     , iGorgeSize(aGorgeSize)
@@ -21,7 +21,7 @@ Gorger::Gorger(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iGorgeOnHaltOut(false)
     , iQuit(false)
 {
-    iThread = new ThreadFunctor("Gorger", MakeFunctor(*this, &Gorger::PullerThread), kPriorityVeryHigh-1); // FIXME - review thread priorities
+    iThread = new ThreadFunctor("Gorger", MakeFunctor(*this, &Gorger::PullerThread), aThreadPriority);
     iThread->Start();
 }
 

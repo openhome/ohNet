@@ -45,6 +45,7 @@ public:
     virtual ~IVolumeProfile() {}
 };
 
+// Internal volume is expressed as an interger on the range [0..100], where 80 represents unity gain.
 class IVolume
 {
 public:
@@ -57,6 +58,9 @@ class IVolumeLimit
 public:
     virtual void SetVolumeLimit(TUint aVolumeLimit) = 0;
 };
+
+// Internal balance is expressed as a signed integer on [-15..+15], with negative balance implying
+// a shift to the left, positive balance implying a shift to the right.
 
 class IBalance
 {
@@ -75,6 +79,31 @@ public: // from IVolumeLimit
 };
 
 
+/* VolumeBalanceStereo
+    Accepts standard volumes [0..100]
+    Accepts standard balances [-15..+15]
+    Implements balance as follows:
+        balance 0: both channels get regular volume
+        balance < 0: right channel scaled by (-balance/15)
+        balance > 0: left channel scaled by (balance/15)
+*/
+
+class VolumeBalanceStereo : public IVolume, public IBalance
+{
+public:
+    VolumeBalanceStereo(IVolume& aLeftChannel, IVolume& aRightChannel);
+public: // IVolume
+    void SetVolume(TUint aVolume) override;
+public: // IBalance
+    void SetBalance(TInt aBalance) override;
+private:
+    void Update();
+private:
+    IVolume& iLeftChannel;
+    IVolume& iRightChannel;
+    TUint iCurrentVolume;
+    TInt iCurrentBalance;
+};
 
 //
 // generic class declarations
@@ -375,6 +404,24 @@ public:  // from IVolume
     void SetVolume(TUint aValue);  // non-propagating
 private:
     Bws<8> iLabel;
+};
+
+class VolumeProfile : public IVolumeProfile
+{
+public:
+    VolumeProfile(TUint aMaxVolume, TUint aVolumeUnity, TUint aVolumeSteps, TUint aMilliDbPerStep, TInt aMaxBalance);
+public: // from IVolumeProfile
+    TUint MaxVolume() const override;
+    TUint VolumeUnity() const override;
+    TUint VolumeSteps() const override;
+    TUint VolumeMilliDbPerStep() const override;
+    TInt MaxBalance() const override;
+private:
+    TUint iMaxVolume;
+    TUint iVolumeUnity;
+    TUint iVolumeSteps;
+    TUint iMilliDbPerStep;
+    TInt  iMaxBalance;
 };
 
 } // namespace Media
