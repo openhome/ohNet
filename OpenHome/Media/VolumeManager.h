@@ -88,7 +88,7 @@ public: // from IVolumeLimit
         balance > 0: left channel scaled by (balance/15)
 */
 
-class VolumeBalanceStereo : public IVolume, public IBalance
+class VolumeBalanceStereo : public IVolume, public IBalance, public INonCopyable
 {
 public:
     VolumeBalanceStereo(IVolume& aLeftChannel, IVolume& aRightChannel);
