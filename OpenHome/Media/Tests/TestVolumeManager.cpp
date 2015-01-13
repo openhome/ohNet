@@ -183,6 +183,56 @@ void SuiteVolumeManager::Test()
     TEST(UintFromStoreInt(VolumeUser::kStartupVolumeKey) == 40);
 }
 
+class VolumeRecorder : public IVolume
+{
+public:
+    TUint Volume() const { return iVolume; }
+public:  // IVolume
+    void SetVolume(TUint aVolume) override { iVolume = aVolume; }
+private:
+    TUint iVolume;
+};
+
+class SuiteVolumeBalanceStereo : public Suite
+{
+public:
+    SuiteVolumeBalanceStereo();
+    void Test();
+private:
+    TBool Check(TUint aVolume, TInt aBalance, TUint aExpectedVolumeLeft, TUint aExpectedVolumeRight);
+private:
+    VolumeRecorder iLeft;
+    VolumeRecorder iRight;
+    VolumeBalanceStereo iVolumeBalanceStero;
+};
+
+SuiteVolumeBalanceStereo::SuiteVolumeBalanceStereo()
+: Suite("VolumeBalanceStereo")
+, iVolumeBalanceStero(iLeft, iRight)
+{
+}
+
+TBool SuiteVolumeBalanceStereo::Check(TUint aVolume, TInt aBalance, TUint aExpectedVolumeLeft, TUint aExpectedVolumeRight)
+{
+    iVolumeBalanceStero.SetVolume(aVolume);
+    iVolumeBalanceStero.SetBalance(aBalance);
+    return (iLeft.Volume() == aExpectedVolumeLeft && iRight.Volume() == aExpectedVolumeRight);
+}
+
+void SuiteVolumeBalanceStereo::Test()
+{
+    //         INPUT      EXPECTED
+    //         vol  bal    l    r
+    TEST(Check( 80,   0,  80,  80));
+    TEST(Check(100,   0, 100, 100));
+    TEST(Check(100,  15,   0, 100));
+    TEST(Check(100, -15, 100,   0));
+    TEST(Check(100,   5,  66, 100));
+    TEST(Check(100,  -5, 100,  66));
+    TEST(Check(100,  10,  33, 100));
+    TEST(Check(100, -10, 100,  33));
+}
+
 //
 // sequential execution of test suites
 //
@@ -191,5 +241,6 @@ void TestVolumeManager()
 {
     Runner runner("Volume subsystem tests\n");
     runner.Add(new SuiteVolumeManager());
+    runner.Add(new SuiteVolumeBalanceStereo());
     runner.Run();
 }

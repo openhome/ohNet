@@ -20,6 +20,7 @@
 #include "RamStore.h"
 #include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include <OpenHome/PowerManager.h>
+#include <OpenHome/Media/Tests/VolumeUtils.h>
 
 namespace OpenHome {
     class PowerManager;
@@ -85,6 +86,7 @@ protected:
 private:
     Semaphore iDisabled;
     DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
+    Media::VolumePrinter iVolume;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
     const Brx& iTidalId;

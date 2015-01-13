@@ -17,6 +17,7 @@ void VolumeLimitNull::SetVolumeLimit(TUint /*aValue*/)
 }
 
 
+
 // VolumeLimiterUser
 VolumeLimiterUser::VolumeLimiterUser(IVolume& aVolume, TUint aLimit)
     : iVolume(aVolume)
@@ -296,6 +297,46 @@ TInt VolumeBalanceUserDefault::RightOffset(TInt aValue) const
     return (static_cast<TInt>(VolumeUserDefault::SystemVolumeFactor()) * kBalanceOffsets[MaximumUserBalance() + aValue]) / 2;
 }
 
+// VolumeBalanceStereo
+VolumeBalanceStereo::VolumeBalanceStereo(IVolume& aLeftChannel, IVolume& aRightChannel)
+: iLeftChannel(aLeftChannel)
+, iRightChannel(aRightChannel)
+, iCurrentVolume(0)
+, iCurrentBalance(0)
+{
+    Update();
+}
+
+void VolumeBalanceStereo::Update()
+{
+    TUint leftVol = iCurrentVolume;
+    TUint rightVol = iCurrentVolume;
+
+    if ( iCurrentBalance > 0 )
+    {
+        leftVol = (leftVol * (15-iCurrentBalance)) / 15;
+    }
+    else // iCurrentVolume < 0
+    {
+        rightVol = (rightVol * (15+iCurrentBalance)) / 15;
+    }
+
+    iLeftChannel.SetVolume(leftVol);
+    iRightChannel.SetVolume(rightVol);
+}
+
+void VolumeBalanceStereo::SetVolume(TUint aVolume)
+{
+    iCurrentVolume = aVolume;
+    Update();
+}
+
+void VolumeBalanceStereo::SetBalance(TInt aBalance)
+{
+    iCurrentBalance = aBalance;
+    Update();
+}
+
 // VolumeLimiterDefault
 TUint VolumeLimiterDefault::MaxLimitSystemVolume()  // static
 {
@@ -439,3 +480,38 @@ void VolumeSinkLogger::SetVolume(TUint aValue)
 {
     Log::Print("\n[VolSinkLog:");  Log::Print(iLabel);  Log::Print("] vol = %u\n", aValue);
 }
+
+VolumeProfile::VolumeProfile(TUint aMaxVolume, TUint aVolumeUnity, TUint aVolumeSteps, TUint aMilliDbPerStep, TInt aMaxBalance)
+: iMaxVolume(aMaxVolume)
+, iVolumeUnity(aVolumeUnity)
+, iVolumeSteps(aVolumeSteps)
+, iMilliDbPerStep(aMilliDbPerStep)
+, iMaxBalance(aMaxBalance)
+{
+}
+
+TUint VolumeProfile::MaxVolume() const
+{
+    return iMaxVolume;
+}
+
+TUint VolumeProfile::VolumeUnity() const
+{
+    return iVolumeUnity;
+}
+
+TUint VolumeProfile::VolumeSteps() const
+{
+    return iVolumeSteps;
+}
+
+TUint VolumeProfile::VolumeMilliDbPerStep() const
+{
+    return iMilliDbPerStep;
+}
+
+TInt VolumeProfile::MaxBalance() const
+{
+    return iMaxBalance;
+}
+
