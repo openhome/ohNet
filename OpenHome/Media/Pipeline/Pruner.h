@@ -10,8 +10,9 @@ namespace Media {
 
 /*
 Element which removes msgs which aren't needed downstream:
-    MsgEncodedStream
+    MsgSession
     MsgDelay
+    MsgEncodedStream
     MsgMetaText
     MsgWait
     All content for tracks that don't contain any audio
