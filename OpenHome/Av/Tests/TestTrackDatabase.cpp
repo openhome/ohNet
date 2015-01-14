@@ -281,11 +281,10 @@ void SuiteTrackDatabase::GetIdArrayDbPartiallyFull()
     iTrackDatabase->GetIdArray(iIdArray, seq);
     std::array<TUint32, kTrackCount> trackIds;
     trackIds.fill((TUint)ITrackDatabase::kTrackIdNone);
-    std::array<TUint32, kTrackCount>::iterator it;
     for (i=0; i<kTrackCount; i++) {
         const TUint id = iIdArray[i];
         TEST_QUIETLY(id != ITrackDatabase::kTrackIdNone);
-        it = std::find(trackIds.begin(), trackIds.end(), id);
+        auto it = std::find(trackIds.begin(), trackIds.end(), id);
         TEST(it == trackIds.end()); // check that each track id is unique
         trackIds[i] = id;
     }
@@ -782,7 +781,6 @@ void SuiteShuffler::NextTrackRefShuffleOn()
     for (TUint i=0; i<kNumTracks; i++) {
         availableIds[i] = iIds[i];
     }
-    std::array<TUint, kNumTracks>::iterator it;
     iShuffler->SetShuffle(true);
 
     TBool shuffled = false;
@@ -794,7 +792,7 @@ void SuiteShuffler::NextTrackRefShuffleOn()
         if (id != iIds[i]) {
             shuffled = true;
         }
-        it = std::find(availableIds.begin(), availableIds.end(), id);
+        auto it = std::find(availableIds.begin(), availableIds.end(), id);
         TEST(it != availableIds.end()); // i.e. check we haven't been given this track before
         *it = ITrackDatabase::kTrackIdNone;
         track->RemoveRef();
@@ -827,7 +825,6 @@ void SuiteShuffler::PrevTrackRefShuffleOn()
     for (TUint i=0; i<kNumTracks; i++) {
         availableIds[i] = iIds[i];
     }
-    std::array<TUint, kNumTracks>::iterator it;
     iShuffler->SetShuffle(true);
 
     // find id of last shuffled track
@@ -835,7 +832,7 @@ void SuiteShuffler::PrevTrackRefShuffleOn()
 
     TBool shuffled = false;
     for (TInt i=kNumTracks-1; i>=0; i--) {
-        it = std::find(availableIds.begin(), availableIds.end(), id);
+        auto it = std::find(availableIds.begin(), availableIds.end(), id);
         TEST(it != availableIds.end()); // i.e. check we haven't been given this track before
         *it = ITrackDatabase::kTrackIdNone;
         Track* track = iReader->PrevTrackRef(id);
@@ -874,7 +871,6 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
     for (TUint i=0; i<kNumTracks; i++) {
         availableIds[i] = iIds[i];
     }
-    std::array<TUint, kNumTracks>::iterator it;
     iShuffler->SetShuffle(true);
     TBool shuffled = false;
 
@@ -884,7 +880,7 @@ void SuiteShuffler::TrackRefByIndexShuffleOn()
         if (track->Id() != iIds[i]) {
             shuffled = true;
         }
-        it = std::find(availableIds.begin(), availableIds.end(), track->Id());
+        auto it = std::find(availableIds.begin(), availableIds.end(), track->Id());
         TEST(it != availableIds.end()); // i.e. check we haven't been given this track before
         *it = ITrackDatabase::kTrackIdNone;
         track->RemoveRef();

@@ -295,7 +295,7 @@ TBool ProtocolOhBase::Repair(OhmMsgAudioBlob& aMsg)
     }
     // ... no, so it has to go somewhere in the middle of the backlog, so iterate through and inject it at the right place (if there is space)
     TUint count = iRepairFrames.size();
-    for (std::vector<OhmMsgAudioBlob*>::iterator it = iRepairFrames.begin(); it != iRepairFrames.end(); ++it) {
+    for (auto it = iRepairFrames.begin(); it != iRepairFrames.end(); ++it) {
         diff = frame - (*it)->Frame();
         if (diff > 0) {
             continue;

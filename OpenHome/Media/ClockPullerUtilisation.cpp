@@ -52,7 +52,7 @@ void UtilisationHistory::Add(TUint aJiffies)
                 ASSERT(iTotal == 0);
                 /* following is equivalent to std::accumulate except that the return
                    value (iTotal) has wider type than iHistory's elements */
-                for (std::vector<TInt>::iterator it = iHistory.begin(); it != iHistory.end(); ++it) {
+                for (auto it = iHistory.begin(); it != iHistory.end(); ++it) {
                     iTotal += *it;
                 }
                 iExpectedTotal = (iTotal * iHistory.capacity()) / kElementsForInitialAverage;

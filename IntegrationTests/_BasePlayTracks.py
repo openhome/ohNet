@@ -166,6 +166,7 @@ class BasePlayTracks( BASE.BaseTest ):
 
     def Cleanup( self ):
         """Perform post-test cleanup"""
+        self.trackChangeMutex.acquire()     # prevent races during shutdown
         if self.checkInfoTimer:
             self.checkInfoTimer.cancel()
         if self.playTimer:
