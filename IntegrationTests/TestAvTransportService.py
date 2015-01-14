@@ -75,8 +75,8 @@ kStates = \
     ['PAUSED_PLAYBACK', 'Previous',          '',    'STOPPED', ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
 
     ['PAUSED_UNKNOWN', 'SetAVTransportURI',  '',    'PAUSED_PLAYBACK', ['AVTransportURI','AVTransportURIMetaData','NumberOfTracks','CurrentTrack','CurrentTrackMetaData','CurrentTrackURI','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Stop',               '',    'STOPPED',         ['RelativeTimePosition']],
-    ['PAUSED_UNKNOWN', 'Play',               '',    'PLAYING',         ['RelativeTimePosition']],#['CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
+    ['PAUSED_UNKNOWN', 'Stop',               '',    'STOPPED',         ['RelativeTimePosition','CurrentTrackDuration','CurrentMediaDuration']],
+    ['PAUSED_UNKNOWN', 'Play',               '',    'PLAYING',         ['RelativeTimePosition','CurrentTrackDuration','CurrentMediaDuration']], #'RelativeTimePosition']],
     ['PAUSED_UNKNOWN', 'Pause',              '',    'PAUSED_PLAYBACK', []],
     ['PAUSED_UNKNOWN', 'Seek',               '701', '',                []],
     ['PAUSED_UNKNOWN', 'Next',               '',    'STOPPED',         ['CurrentTrackURI','AVTransportURI','CurrentTrack','NumberOfTracks','CurrentTrackMetaData','AVTransportURIMetaData','CurrentTrackDuration','CurrentMediaDuration','RelativeTimePosition']],
