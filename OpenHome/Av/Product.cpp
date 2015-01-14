@@ -78,7 +78,7 @@ void Product::Start()
 
 void Product::Stop()
 {
-    std::vector<ISource*>::iterator it = iSources.begin();
+    auto it = iSources.begin();
     while (it != iSources.end()) {
         (*it)->PipelineStopped();
         it++;
