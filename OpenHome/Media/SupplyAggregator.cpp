@@ -25,7 +25,9 @@ SupplyAggregator::~SupplyAggregator()
 
 void SupplyAggregator::Flush()
 {
-    OutputEncodedAudio();
+    if (iAudioEncoded != NULL) {
+        OutputEncodedAudio();
+    }
 }
 
 void SupplyAggregator::OutputSession()
