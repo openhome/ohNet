@@ -50,7 +50,7 @@ class ClockPullerUtilisationPerStreamLeft : public IClockPuller, protected IUtil
 public:
     ClockPullerUtilisationPerStreamLeft(Environment& aEnv, IPullableClock& aPullableClock);
     ~ClockPullerUtilisationPerStreamLeft();
-private: // from IClockPuller
+protected: // from IClockPuller
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
     void NotifySizeDecodedReservoir(TUint aJiffies) override;
@@ -87,7 +87,6 @@ private:
     UtilisationHistory* iUtilisationRight;
     TUint iStarvationMonitorUpdateFrequency;
 };
-
 
 } // namespace Media
 } // namespace OpenHome

@@ -30,6 +30,18 @@ namespace Media {
 }
 namespace Av {
 
+class ClockPullerOhu : public Media::ClockPullerUtilisationPerStreamLeft
+{
+public:
+    ClockPullerOhu(Environment& aEnv, Media::IPullableClock& aPullableClock);
+private: // from Media::IClockPuller
+    void NotifySizeDecodedReservoir(TUint aJiffies) override;
+    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
+    void StopStarvationMonitor() override;
+private:
+    TBool iStarvationMonitorRunning;
+};
+
 class UriProviderSongcast : public Media::UriProviderSingleTrack
 {
 public:
@@ -38,7 +50,7 @@ public:
 private: // from UriProvider
     Media::IClockPuller* ClockPuller() override;
 private:
-    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
+    ClockPullerOhu* iClockPuller;
 };
 
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
@@ -118,6 +130,33 @@ ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper&
 }
 
 
+// ClockPullerOhu
+
+ClockPullerOhu::ClockPullerOhu(Environment& aEnv, IPullableClock& aPullableClock)
+    : ClockPullerUtilisationPerStreamLeft(aEnv, aPullableClock)
+{
+}
+
+void ClockPullerOhu::NotifySizeDecodedReservoir(TUint aJiffies)
+{
+    if (iStarvationMonitorRunning) {
+        ClockPullerUtilisationPerStreamLeft::NotifySizeDecodedReservoir(aJiffies);
+    }
+}
+
+void ClockPullerOhu::StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency)
+{
+    iStarvationMonitorRunning = true;
+    ClockPullerUtilisationPerStreamLeft::StartStarvationMonitor(aCapacityJiffies, aNotificationFrequency);
+}
+
+void ClockPullerOhu::StopStarvationMonitor()
+{
+    iStarvationMonitorRunning = false;
+    ClockPullerUtilisationPerStreamLeft::StopStarvationMonitor();
+}
+
+
 // UriProviderSongcast
 
 UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
@@ -128,7 +167,7 @@ UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
         iClockPuller = NULL;
     }
     else {
-        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *pullable);
+        iClockPuller = new ClockPullerOhu(aMediaPlayer.Env(), *pullable);
     }
 }
 
