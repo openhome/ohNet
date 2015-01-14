@@ -38,7 +38,7 @@ public:
 private: // from UriProvider
     Media::IClockPuller* ClockPuller() override;
 private:
-    Media::ClockPullerUtilisation* iClockPuller;
+    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
 };
 
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
@@ -128,7 +128,7 @@ UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
         iClockPuller = NULL;
     }
     else {
-        iClockPuller = new ClockPullerUtilisation(aMediaPlayer.Env(), *pullable);
+        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *pullable);
     }
 }
 

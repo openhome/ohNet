@@ -132,7 +132,7 @@ private: // from IClockPuller
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
     void StopDecodedReservoir();
-    void StartStarvationMonitor(TUint aCapacityJiffies);
+    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency);
     void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
     void NotifySizeStarvationMonitor(TUint aJiffies);
     void StopStarvationMonitor();
@@ -669,7 +669,7 @@ void SuiteReservoirHistory::StopDecodedReservoir()
     ASSERTS(); // test only generates a single MsgMode so this shouldn't be called
 }
 
-void SuiteReservoirHistory::StartStarvationMonitor(TUint /*aCapacityJiffies*/)
+void SuiteReservoirHistory::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
 {
     ASSERTS();
 }

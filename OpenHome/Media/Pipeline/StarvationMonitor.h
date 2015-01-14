@@ -66,7 +66,7 @@ private: // test helpers
     TBool PullWouldBlock() const;
 private:
     static const TUint kMaxAudioPullSize = Jiffies::kPerMs * 5;
-    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond;
+    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond / 10;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;

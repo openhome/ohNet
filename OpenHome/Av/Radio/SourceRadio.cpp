@@ -27,7 +27,7 @@ public:
 private: // from UriProvider
     Media::IClockPuller* ClockPuller() override;
 private:
-    Media::ClockPullerUtilisation* iClockPuller;
+    Media::ClockPullerUtilisationPerStreamLeft* iClockPuller;
 };
 
 } // namespace Av
@@ -60,7 +60,7 @@ UriProviderRadio::UriProviderRadio(IMediaPlayer& aMediaPlayer)
         iClockPuller = NULL;
     }
     else {
-        iClockPuller = new ClockPullerUtilisation(aMediaPlayer.Env(), *pullable);
+        iClockPuller = new ClockPullerUtilisationPerStreamLeft(aMediaPlayer.Env(), *pullable);
     }
 }
 

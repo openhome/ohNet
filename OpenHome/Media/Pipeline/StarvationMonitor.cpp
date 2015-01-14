@@ -261,6 +261,9 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
         iClockPuller->StopStarvationMonitor();
     }
     iClockPuller = aMsg->ClockPuller();
+    if (iClockPuller != NULL) {
+        iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+    }
     return aMsg;
 }
 
