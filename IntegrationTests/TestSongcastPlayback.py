@@ -3,8 +3,8 @@
 
 Parameters:
     arg#1 - DUT #1 ['local' for internal SoftPlayer on loopback]
-    arg#1 - DUT #2 ['local' for internal SoftPlayer on loopback]
-    arg#1 - DUT #3 ['local' for internal SoftPlayer on loopback]
+    arg#2 - DUT #2 ['local' for internal SoftPlayer on loopback]
+    arg#3 - DUT #3 ['local' for internal SoftPlayer on loopback]
     arg#4 - test mode 
               - all          for all configs sequentially
               - random       for all configs randomly

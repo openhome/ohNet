@@ -420,6 +420,7 @@ void SuitePipeline::Test()
     // Pull kTestMsgs and check there is no ramping.
     for (TUint i=0; i<kTestMsgs; i++) {
         PullNextAudio();
+        Log::Print("iFirstSubsample: %x, iLastSubsample: %x\n", iFirstSubsample, iLastSubsample);
         TEST(iFirstSubsample == iLastSubsample);
         Thread::Sleep(iLastMsgJiffies / Jiffies::kPerMs); // ensure StarvationMonitor doesn't kick in
     }

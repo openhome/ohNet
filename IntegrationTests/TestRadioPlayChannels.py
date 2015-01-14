@@ -137,7 +137,7 @@ class TestRadioPlayChannels( BASE.BaseTest ):
 
                 # log 'now playing' info, set and wait for playback timer
                 if self.sender.radio.transportState == 'Playing':
-                    self.checkTimer = LogThread.Timer( 3, self._CheckTimerCb )
+                    self.checkTimer = LogThread.Timer( 4, self._CheckTimerCb )
                     self.checkTimer.start()
                     if playTime:
                         self.playTimerExpired.clear()
@@ -288,10 +288,10 @@ class TestRadioPlayChannels( BASE.BaseTest ):
             if not self.isPlaying.isSet():
                 self.log.Pass( self.senderDev, 'FAILED playback of %s (as expected)' % aTitle )
             else:
-                self.log.Fail( self.senderDev, 'STARTED playback of %s (unexpectedly)' % aTitle )
+                self.log.Warn( self.senderDev, 'STARTED playback of %s (unexpectedly)' % aTitle )
         else:
             if not self.isPlaying.isSet():
-                self.log.Fail( self.senderDev, 'FAILED to start playback of %s' % aTitle )
+                self.log.Warn( self.senderDev, 'FAILED to start playback of %s' % aTitle )
             else:
                 self.log.Pass( self.senderDev, 'STARTED playback of %s' % aTitle )
 

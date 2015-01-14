@@ -70,7 +70,7 @@ class BaseDropout( BASE.BaseTest ):
             senderName   = args[1]
             receiverName = args[2]
             slaveName    = args[3]
-            duration     = args[4].lower()
+            duration     = int( args[4] )
             if len( args ) > 5:
                 softOptions = args[5]
         except:
