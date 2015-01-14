@@ -445,8 +445,7 @@ SuiteCodecStream::SuiteCodecStream(std::vector<AudioFileDescriptor>& aFiles, Env
     , iFileNum(0)
     , iCreatePipeline(aFunc)
 {
-    std::vector<AudioFileDescriptor>::iterator it;
-    for (it = iFiles.begin(); it != iFiles.end(); ++it) {
+    for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecStream::TestJiffies));
     }
 }
@@ -535,8 +534,7 @@ SuiteCodecSeek::SuiteCodecSeek(std::vector<AudioFileDescriptor>& aFiles, Environ
     , iFileNumBack(0)
     , iFileNumForward(0)
 {
-    std::vector<AudioFileDescriptor>::iterator it;
-    for (it = iFiles.begin(); it != iFiles.end(); ++it) {
+    for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToStart));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingToEnd));
         AddTest(MakeFunctor(*this, &SuiteCodecSeek::TestSeekingBackwards));
@@ -659,8 +657,7 @@ SuiteCodecSeekFromStart::SuiteCodecSeekFromStart(std::vector<AudioFileDescriptor
     , iFileNumMiddle(0)
     , iFileNumEnd(0)
 {
-    std::vector<AudioFileDescriptor>::iterator it;
-    for (it = iFiles.begin(); it != iFiles.end(); ++it) {
+    for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingToMiddle));
         AddTest(MakeFunctor(*this, &SuiteCodecSeekFromStart::TestSeekingToEnd));
     }
@@ -736,8 +733,7 @@ SuiteCodecZeroCrossings::SuiteCodecZeroCrossings(std::vector<AudioFileDescriptor
     , iUnacceptableCrossingDeltas(0)
     , iCodec(AudioFileDescriptor::kCodecUnknown)
 {
-    std::vector<AudioFileDescriptor>::iterator it;
-    for (it = iFiles.begin(); it != iFiles.end(); ++it) {
+    for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecZeroCrossings::TestZeroCrossings));
     }
 }
@@ -887,8 +883,7 @@ void SuiteCodecZeroCrossings::TestZeroCrossings()
 SuiteCodecInvalidType::SuiteCodecInvalidType(std::vector<AudioFileDescriptor>& aFiles, Environment& aEnv, CreateTestCodecPipelineFunc aFunc, const Uri& aUri)
     : SuiteCodecStream("Codec invalid type tests", aFiles, aEnv, aFunc, aUri)
 {
-    std::vector<AudioFileDescriptor>::iterator it;
-    for (it = iFiles.begin(); it != iFiles.end(); ++it) {
+    for (auto it = iFiles.begin(); it != iFiles.end(); ++it) {
         AddTest(MakeFunctor(*this, &SuiteCodecInvalidType::TestInvalidType));
     }
 }
@@ -976,7 +971,7 @@ void TestCodec(Environment& aEnv, CreateTestCodecPipelineFunc aFunc, GetTestFile
     AudioFileCollection* files = (*aFileFunc)();
     std::vector<AudioFileDescriptor> stdFiles(files->RequiredFiles());
     if (testFull) {
-        for(std::vector<AudioFileDescriptor>::iterator it = files->ExtraFiles().begin(); it != files->ExtraFiles().end(); ++it) {
+        for(auto it = files->ExtraFiles().begin(); it != files->ExtraFiles().end(); ++it) {
             stdFiles.push_back(*it);
         }
     }

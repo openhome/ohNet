@@ -183,12 +183,21 @@ void SuiteSupplyAggregator::Test()
     do {
         iSupply->OutputData(Brn(kTestData));
         OutputNextNonAudioMsg();
-        if (iMsgPushCount != expectedMsgCount+2) {
-            Print("Expected %u, got %u.  iGenMsgType=%u\n", expectedMsgCount+2, iMsgPushCount, iGenMsgType);
-        }
         TEST(iMsgPushCount == expectedMsgCount+2);
         expectedMsgCount = iMsgPushCount;
     } while (iGenMsgType != EMsgNone);
+
+    // buffered audio can be Flush()ed
+    iSupply->OutputData(Brn(kTestData));
+    TEST(iMsgPushCount == expectedMsgCount);
+    iSupply->Flush();
+    TEST(iMsgPushCount == ++expectedMsgCount);
+    {
+        AutoSupplyFlush _(*iSupply);
+        iSupply->OutputData(Brn(kTestData));
+        TEST(iMsgPushCount == expectedMsgCount);
+    }
+    TEST(iMsgPushCount == ++expectedMsgCount);
 }
 
 void SuiteSupplyAggregator::OutputNextNonAudioMsg()

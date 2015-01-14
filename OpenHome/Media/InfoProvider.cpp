@@ -30,7 +30,7 @@ void InfoAggregator::Register(IInfoProvider& aProvider, std::vector<Brn>& aSuppo
     iInfoProviders.push_back(&aProvider);
     for (TUint i=0; i<(TUint)aSupportedQueries.size(); i++) {
         Brn query(aSupportedQueries[i]);
-        QueryMap::iterator it = iQueries.find(query);
+        auto it = iQueries.find(query);
         if (it == iQueries.end()) {
             iQueries.insert(std::pair<Brn,Brn>(query, query));
         }
@@ -53,7 +53,7 @@ void InfoAggregator::DisplayHelp(IWriter& aResponse)
 {
     aResponse.Write(Brn("info [query]\n"));
     aResponse.Write(Brn("  supported queries are:\n"));
-    QueryMap::iterator it = iQueries.begin();
+    auto it = iQueries.begin();
     while (it != iQueries.end()) {
         aResponse.Write(Brn("    "));
         aResponse.Write(it->second);
