@@ -35,7 +35,7 @@ public:
                       TUint aThreadPriority, TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     enum EStatus
     {

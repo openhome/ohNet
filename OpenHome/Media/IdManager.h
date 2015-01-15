@@ -28,9 +28,9 @@ private:
     TUint UpdateId(TUint& aId);
     void Log(const TChar* aPrefix);
 private: // from IIdManager
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
 private:
     class ActiveStream : public INonCopyable
     {

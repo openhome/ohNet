@@ -30,7 +30,7 @@ public:
     Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver);
     virtual ~Reporter();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;

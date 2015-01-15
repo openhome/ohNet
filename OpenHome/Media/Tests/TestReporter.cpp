@@ -32,12 +32,12 @@ public:
     ~SuiteReporter();
     void Test();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private:
     enum EMsgType
     {

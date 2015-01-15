@@ -44,7 +44,7 @@ public:
     void StopNow();
     void Quit();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;

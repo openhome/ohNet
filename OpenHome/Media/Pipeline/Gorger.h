@@ -26,7 +26,7 @@ public:
     ~Gorger();
     TUint SizeInJiffies() const;
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     void PullerThread();
     void Enqueue(Msg* aMsg);

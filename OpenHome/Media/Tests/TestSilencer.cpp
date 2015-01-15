@@ -30,7 +30,7 @@ private:
     void TestSilenceDurationIsCorrect();
     void TestPassesMsgsAfterSilenceGeneration();
 private: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     enum EMsgType
     {

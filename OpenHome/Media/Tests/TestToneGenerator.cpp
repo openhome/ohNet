@@ -99,19 +99,19 @@ protected:
     void TestWaveform(const TChar* aWaveform, const ToneParams& aToneParams);
 
 protected:  // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 
 private:  // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint, TUint);
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint, TUint) override;
 
 private:  // from IFlushIdProvider
     TUint NextFlushId();
 
 private:  // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
+    void Push(Msg* aMsg) override;
 
 protected:  // from IMsgProcessor
     // duration test is universal, but for content see derived classes

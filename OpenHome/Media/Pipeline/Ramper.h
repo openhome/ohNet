@@ -20,7 +20,7 @@ public:
     Ramper(IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration);
     virtual ~Ramper();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     Msg* ProcessAudio(MsgAudio* aMsg);
 private: // IMsgProcessor

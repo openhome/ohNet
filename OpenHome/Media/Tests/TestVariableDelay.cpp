@@ -34,16 +34,16 @@ public:
     SuiteVariableDelay();
     ~SuiteVariableDelay();
 private: // from SuiteUnitTest
-    void Setup();
-    void TearDown();
+    void Setup() override;
+    void TearDown() override;
 private: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;

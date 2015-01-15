@@ -178,11 +178,11 @@ public:
     ~SuiteDecodedStream();
     void Test();
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;

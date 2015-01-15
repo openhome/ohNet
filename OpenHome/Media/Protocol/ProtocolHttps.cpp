@@ -25,21 +25,21 @@ public:
     ProtocolHttps(Environment& aEnv);
     ~ProtocolHttps();
 private: // from Protocol
-    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream);
-    void Interrupt(TBool aInterrupt);
-    ProtocolStreamResult Stream(const Brx& aUri);
-    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
+    void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
+    void Interrupt(TBool aInterrupt) override;
+    ProtocolStreamResult Stream(const Brx& aUri) override;
+    ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolReader
-    Brn Read(TUint aBytes);
-    Brn ReadUntil(TByte aSeparator);
-    void ReadFlush();
-    void ReadInterrupt();
-    Brn ReadRemaining();
+    Brn Read(TUint aBytes) override;
+    Brn ReadUntil(TByte aSeparator) override;
+    void ReadFlush() override;
+    void ReadInterrupt() override;
+    Brn ReadRemaining() override;
 private:
     void Reinitialise(const Brx& aUri);
     TBool Connect();

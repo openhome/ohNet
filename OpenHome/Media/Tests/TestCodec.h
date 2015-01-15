@@ -102,9 +102,9 @@ public:
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
@@ -121,7 +121,7 @@ public:
     TestCodecPipelineElementDownstream(IMsgProcessor& aMsgProcessor);
     virtual ~TestCodecPipelineElementDownstream();
 public: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
+    void Push(Msg* aMsg) override;
 private:
     IMsgProcessor& iMsgProcessor;
 };

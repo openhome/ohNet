@@ -257,9 +257,9 @@ public:
     TestHttpPipelineProvider();
     virtual ~TestHttpPipelineProvider();
 public: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
 private:
     TUint iNextTrackId;
     TUint iNextStreamId;

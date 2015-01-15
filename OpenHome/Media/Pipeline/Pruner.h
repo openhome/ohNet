@@ -24,7 +24,7 @@ public:
     Pruner(IPipelineElementUpstream& aUpstreamElement);
     virtual ~Pruner();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     Msg* TryQueue(Msg* aMsg);
     Msg* TryQueueCancelWaiting(Msg* aMsg);

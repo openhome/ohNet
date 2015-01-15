@@ -65,7 +65,7 @@ public:
     Msg* NextMsg();
     EMsgType LastMsgType();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     MsgAudioEncoded* GenerateAudioMsg();
     Msg* GenerateMsg(EMsgType aType);
@@ -86,16 +86,16 @@ class TestContainerProvider : public IPipelineIdProvider, public IFlushIdProvide
 public:
     TestContainerProvider();
 public: // from IFlushIdProvider
-    TUint NextFlushId();
+    TUint NextFlushId() override;
 public: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
 public: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 public:
     TUint OkToPlayCount();
     TUint SeekCount();

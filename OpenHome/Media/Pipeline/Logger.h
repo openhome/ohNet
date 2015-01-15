@@ -43,9 +43,9 @@ public:
     void SetEnabled(TBool aEnabled);
     void SetFilter(TUint aMsgTypes);
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 public: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
+    void Push(Msg* aMsg) override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;

@@ -89,11 +89,11 @@ private:
         static const TUint kNullTrackId = 0;
         static const TUint kNullTrackStreamId = 1;
     private: // from IStreamHandler
-        EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-        TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-        TUint TryStop(TUint aTrackId, TUint aStreamId);
-        TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-        void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+        EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+        TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+        TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+        TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+        void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
     };
 private:
     mutable Mutex iLock;

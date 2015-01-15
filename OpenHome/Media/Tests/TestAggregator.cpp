@@ -31,7 +31,7 @@ private:
     void TestChangeBitDepth();
     void TestChangeNumChannels();
 private: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     MsgPlayable* CreateAudio();
     void PullMsg();

@@ -66,7 +66,7 @@ public: // from IRecogniser
     TBool Recognise(Brx& aBuf) = 0;   // need to reset inner container in this method
     //TBool Recognise(Brx& aBuf);
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
 private: // from IMsgProcessor
@@ -85,11 +85,11 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 protected:
     MsgAudioEncoded* iAudioEncoded;
     IStreamHandler* iStreamHandler;
@@ -122,7 +122,7 @@ public:
     ~ContainerFront();
     void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -140,11 +140,11 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
@@ -168,7 +168,7 @@ public:
     virtual ~Container();
     void AddContainer(ContainerBase* aContainer);
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -186,11 +186,11 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 public: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 private:
     MsgFactory& iMsgFactory;
     ContainerFront* iContainerFront;
