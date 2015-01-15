@@ -80,8 +80,8 @@ kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/mp4:*,'          +\
                     'http-get:*:audio/ogg:*,'          +\
                     'http-get:*:audio/x-ogg:*,'        +\
-                    'http-get:*:application/ogg:*'     +\
-                    'tidalhifi.com:*:*:*'
+                    'http-get:*:application/ogg:*,'    +\
+                    'tidalhifi.com:*:*:*,'
 
 kChannelsMax      = 100
 kLocalChannels    = [ # For the purposes of this test it doesn't matter if these work or not
