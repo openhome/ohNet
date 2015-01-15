@@ -53,7 +53,7 @@ except:
     
 tests = [
     # Update and build ohMediaPlayer
-    [ 'BuildOhmp'                                                                                              ],
+    [ 'BuildOhmp',                   'debug'                                                                   ],
 
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',   0                                                       ],
