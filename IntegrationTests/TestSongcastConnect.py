@@ -355,10 +355,10 @@ class TestSongcastConnect( BASE.BaseTest ):
         """Log header block for test scenario"""
         self.log.Info( '' )
         self.log.Info( '', '-----------------------------------------------------' )
-        self.log.Info( ''  'Test Scenario %s, disconnect method: %s' % (self.msg, self.disconx) )
+        self.log.Info( '', 'Test Scenario %s, disconnect method: %s' % (self.msg, self.disconx) )
         self.log.Info( '', '-----------------------------------------------------' )
         self.log.Info( '' )
-        
+
     def __ClearSources( self ):
         """Clear senders and set source to playlist on all DUTs"""
         # setting all senders to '' was giving obscure lock-ups in the DS. No

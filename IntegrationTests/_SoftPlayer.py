@@ -100,9 +100,14 @@ class SoftPlayer( BASE.Component ):
         # running - handle log messages until shutdown called
         while not self.shutdown:
             msg = self.proc.stdout.readline()
-            if 'Unhandled' in msg:
+            if 'AssertionFailed' in msg:
                 exception = True
-                
+
+            stat = self.proc.poll()
+            if stat:
+                self.log.Fail( self.dev, 'Unexpected exit [code %d]' % stat )
+                exception = True
+
             if not exception:
                 lower = msg.lower()
                 if 'failed' in lower or 'warning' in lower:

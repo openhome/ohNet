@@ -5,13 +5,15 @@
         <itunes>
             <guid>0x328084CE247B12D3</guid>
             <library>Grahams Library</library>
+            <address>10.15.1.133</address>
         </itunes>
     </computer>
 
-    <computer name="pc707">
+    <computer name="PC707">
         <itunes>
-            <guid>0x65F74C872DA2941D</guid>
+            <guid>0x72B8CB5960D05C88</guid>
             <library>Linns Library</library>
+            <address>10.15.1.102</address>
         </itunes>
     </computer>
 
