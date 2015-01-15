@@ -32,20 +32,20 @@ private:
     void Enqueue(Msg* aMsg);
     void SetGorging(TBool aGorging);
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgMode* aMsg);
-    void ProcessMsgIn(MsgTrack* aMsg);
-    void ProcessMsgIn(MsgSession* aMsg);
-    void ProcessMsgIn(MsgHalt* aMsg);
-    void ProcessMsgIn(MsgQuit* aMsg);
-    void ProcessMsgIn(MsgDecodedStream* aMsg);
-    Msg* ProcessMsgOut(MsgHalt* aMsg);
-    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
+    void ProcessMsgIn(MsgMode* aMsg) override;
+    void ProcessMsgIn(MsgTrack* aMsg) override;
+    void ProcessMsgIn(MsgSession* aMsg) override;
+    void ProcessMsgIn(MsgHalt* aMsg) override;
+    void ProcessMsgIn(MsgQuit* aMsg) override;
+    void ProcessMsgIn(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsgOut(MsgHalt* aMsg) override;
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId);
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;

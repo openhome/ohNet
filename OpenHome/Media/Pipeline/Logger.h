@@ -47,21 +47,21 @@ public: // from IPipelineElementUpstream
 public: // from IPipelineElementDownstream
     void Push(Msg* aMsg);
 private: // IMsgProcessor
-    Msg* ProcessMsg(MsgMode* aMsg);
-    Msg* ProcessMsg(MsgSession* aMsg);
-    Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgDelay* aMsg);
-    Msg* ProcessMsg(MsgEncodedStream* aMsg);
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgMetaText* aMsg);
-    Msg* ProcessMsg(MsgHalt* aMsg);
-    Msg* ProcessMsg(MsgFlush* aMsg);
-    Msg* ProcessMsg(MsgWait* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
-    Msg* ProcessMsg(MsgQuit* aMsg);
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     void LogRamp(const Media::Ramp& aRamp);
     TBool IsEnabled(EMsgType aType) const;

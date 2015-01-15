@@ -17,13 +17,13 @@ public:
     ~UriProviderSingleTrack();
     Track* SetTrack(const Brx& aUri, const Brx& aMetaData);
     void SetTrack(Track* aTrack);
-private: // from UriProvider
-    void Begin(TUint aTrackId);
-    void BeginLater(TUint aTrackId);
-    EStreamPlay GetNext(Track*& aTrack);
-    TUint CurrentTrackId() const;
-    TBool MoveNext();
-    TBool MovePrevious();
+protected: // from UriProvider
+    void Begin(TUint aTrackId) override;
+    void BeginLater(TUint aTrackId) override;
+    EStreamPlay GetNext(Track*& aTrack) override;
+    TUint CurrentTrackId() const override;
+    TBool MoveNext() override;
+    TBool MovePrevious() override;
 private:
     void DoBegin(TUint aTrackId, TBool aLater);
     TBool MoveCursor();

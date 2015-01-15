@@ -115,24 +115,24 @@ private:  // from IPipelineElementDownstream
 
 protected:  // from IMsgProcessor
     // duration test is universal, but for content see derived classes
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
     // allow testing of potentially incomplete final waveform
-    Msg* ProcessMsg(MsgQuit* aMsg);
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 
 private:  // from IMsgProcessor
-    Msg* ProcessMsg(MsgMode* aMsg);
-    Msg* ProcessMsg(MsgSession* aMsg);
-    Msg* ProcessMsg(MsgTrack* aMsg);
-    Msg* ProcessMsg(MsgDelay* aMsg);
-    Msg* ProcessMsg(MsgEncodedStream* aMsg);
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    Msg* ProcessMsg(MsgMetaText* aMsg);
-    Msg* ProcessMsg(MsgHalt* aMsg);
-    Msg* ProcessMsg(MsgFlush* aMsg);
-    Msg* ProcessMsg(MsgWait* aMsg);
-    Msg* ProcessMsg(MsgDecodedStream* aMsg);
-    Msg* ProcessMsg(MsgSilence* aMsg);
-    Msg* ProcessMsg(MsgPlayable* aMsg);
+    Msg* ProcessMsg(MsgMode* aMsg) override;
+    Msg* ProcessMsg(MsgSession* aMsg) override;
+    Msg* ProcessMsg(MsgTrack* aMsg) override;
+    Msg* ProcessMsg(MsgDelay* aMsg) override;
+    Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
+    Msg* ProcessMsg(MsgMetaText* aMsg) override;
+    Msg* ProcessMsg(MsgHalt* aMsg) override;
+    Msg* ProcessMsg(MsgFlush* aMsg) override;
+    Msg* ProcessMsg(MsgWait* aMsg) override;
+    Msg* ProcessMsg(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsg(MsgSilence* aMsg) override;
+    Msg* ProcessMsg(MsgPlayable* aMsg) override;
 
 private:
     // as per Pipeline.h
@@ -204,7 +204,7 @@ private:
     void Test_16bit_44100_60Hz_2ch_5s();
 
 private:  // indirectly from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 };
 
 class SuiteGeneratorSquare : public SuiteGeneratorAny
@@ -239,8 +239,8 @@ private:
     void Test_16bit_44100_44100Hz_2ch_1s();
     void Test_16bit_44100_48000Hz_2ch_1s();
 private:  // indirectly from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
-    Msg* ProcessMsg(MsgQuit* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsg(MsgQuit* aMsg) override;
 
 private:
     TUint iCntSignalMin;
@@ -256,7 +256,7 @@ protected:  // indirectly from SuiteUnitTest
 private:
     void Test_val5_8bit_44100_20Hz_2ch_1s();
 private:  // indirectly from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioPcm* aMsg);
+    Msg* ProcessMsg(MsgAudioPcm* aMsg) override;
 private:
     TByte iExpectedSubsample;
 };

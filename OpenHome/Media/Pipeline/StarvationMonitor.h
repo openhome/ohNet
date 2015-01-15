@@ -51,16 +51,16 @@ private:
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgHalt* aMsg);
-    void ProcessMsgIn(MsgFlush* aMsg);
-    void ProcessMsgIn(MsgWait* aMsg);
-    void ProcessMsgIn(MsgQuit* aMsg);
-    Msg* ProcessMsgOut(MsgMode* aMsg);
-    Msg* ProcessMsgOut(MsgTrack* aMsg);
-    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
-    Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
-    Msg* ProcessMsgOut(MsgSilence* aMsg);
-    Msg* ProcessMsgOut(MsgHalt* aMsg);
+    void ProcessMsgIn(MsgHalt* aMsg) override;
+    void ProcessMsgIn(MsgFlush* aMsg) override;
+    void ProcessMsgIn(MsgWait* aMsg) override;
+    void ProcessMsgIn(MsgQuit* aMsg) override;
+    Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsgOut(MsgSilence* aMsg) override;
+    Msg* ProcessMsgOut(MsgHalt* aMsg) override;
 private: // test helpers
     TBool EnqueueWouldBlock() const;
     TBool PullWouldBlock() const;
