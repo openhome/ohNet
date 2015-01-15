@@ -149,6 +149,7 @@ void ProviderPlaylist::Stop(IDvInvocation& aInvocation)
 
 void ProviderPlaylist::Next(IDvInvocation& aInvocation)
 {
+	ASSERTS();
     iSource.Next();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
