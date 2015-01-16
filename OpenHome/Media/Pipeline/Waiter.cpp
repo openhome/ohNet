@@ -178,9 +178,7 @@ Msg* Waiter::ProcessMsg(MsgQuit* aMsg)
 void Waiter::DoWait()
 {
     iState = EFlushing;
-    while (!iQueue.IsEmpty()) {
-        iQueue.Dequeue()->RemoveRef();
-    }
+    iQueue.Clear();
     iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
                                                     that any subsequent break in audio is expected */
     iQueue.Enqueue(iMsgFactory.CreateMsgWait()); /* inform downstream elements (Songcast Sender)

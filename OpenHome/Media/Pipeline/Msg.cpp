@@ -2004,6 +2004,13 @@ Msg* MsgQueue::Dequeue()
 {
     iSem.Wait();
     iLock.Wait();
+    Msg* head = DequeueLocked();
+    iLock.Signal();
+    return head;
+}
+
+Msg* MsgQueue::DequeueLocked()
+{
     ASSERT(iHead != NULL);
     Msg* head = iHead;
     iHead = iHead->iNextMsg;
@@ -2012,7 +2019,6 @@ Msg* MsgQueue::Dequeue()
         iTail = NULL;
     }
     iNumMsgs--;
-    iLock.Signal();
     return head;
 }
 
@@ -2036,6 +2042,16 @@ TBool MsgQueue::IsEmpty() const
     const TBool empty = (iHead == NULL);
     iLock.Signal();
     return empty;
+}
+
+void MsgQueue::Clear()
+{
+    iLock.Wait();
+    while (iHead != NULL) {
+        Msg* msg = DequeueLocked();
+        msg->RemoveRef();
+    }
+    iLock.Signal();
 }
 
 TUint MsgQueue::NumMsgs() const

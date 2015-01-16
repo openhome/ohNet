@@ -61,9 +61,7 @@ Msg* Pruner::TryQueueCancelWaiting(Msg* aMsg)
 Msg* Pruner::ProcessMsg(MsgMode* aMsg)
 {
     if (iWaitingForAudio) {
-        while (!iQueue.IsEmpty()) {
-            iQueue.Dequeue()->RemoveRef();
-        }
+        iQueue.Clear();
     }
     iWaitingForAudio = true;
     if (iPendingMode != NULL) {
@@ -84,9 +82,7 @@ Msg* Pruner::ProcessMsg(MsgTrack* aMsg)
     if (iWaitingForAudio) {
         /* The last track contains no audio data.  Discard any queued msgs rather than risk
            them adding to an ever-growing queue in a downstream component which buffers audio (StarvationMonitor) */
-        while (!iQueue.IsEmpty()) {
-            iQueue.Dequeue()->RemoveRef();
-        }
+        iQueue.Clear();
     }
     iWaitingForAudio = true;
     return TryQueue(aMsg);

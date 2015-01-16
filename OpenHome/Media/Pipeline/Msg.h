@@ -809,9 +809,11 @@ public:
     Msg* Dequeue();
     void EnqueueAtHead(Msg* aMsg);
     TBool IsEmpty() const;
+    void Clear();
     TUint NumMsgs() const; // test/debug use only
 private:
     void CheckMsgNotQueued(Msg* aMsg) const;
+    Msg* DequeueLocked();
 private:
     mutable Mutex iLock;
     Semaphore iSem;
