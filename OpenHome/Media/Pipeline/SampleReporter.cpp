@@ -1,6 +1,5 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Media/Pipeline/SampleReporter.h>
-#include <OpenHome/Private/Printer.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Media;

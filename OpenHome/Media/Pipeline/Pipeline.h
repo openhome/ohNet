@@ -19,6 +19,7 @@
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
+#include <OpenHome/Media/Pipeline/SampleReporter.h>
 #include <OpenHome/Media/Pipeline/Splitter.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
@@ -182,6 +183,8 @@ private:
     Logger* iLoggerGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
+    SampleReporter* iSampleReporter;
+    Logger* iLoggerSampleReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;
     VariableDelay* iVariableDelay2;

@@ -220,7 +220,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iReporter = new Reporter(*iLoggerGorger, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
-    iSplitter = new Splitter(*iLoggerReporter);
+    iSampleReporter = new SampleReporter(*iLoggerReporter);
+    iLoggerSampleReporter = new Logger(*iSampleReporter, "SampleReporter");
+    iSplitter = new Splitter(*iLoggerSampleReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
     iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerSplitter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
@@ -253,6 +255,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerRamper->SetEnabled(true);
     //iLoggerGorger->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
+    //iLoggerSampleReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
@@ -273,6 +276,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerRamper->SetFilter(Logger::EMsgAll);
     //iLoggerGorger->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
+    //iLoggerSampleReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
@@ -297,6 +301,8 @@ Pipeline::~Pipeline()
     delete iPruner;
     delete iLoggerSplitter;
     delete iSplitter;
+    delete iLoggerSampleReporter;
+    delete iSampleReporter;
     delete iLoggerReporter;
     delete iReporter;
     delete iLoggerGorger;
