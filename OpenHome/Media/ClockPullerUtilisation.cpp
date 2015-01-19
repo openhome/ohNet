@@ -79,7 +79,7 @@ void UtilisationHistory::Add(TUint aJiffies)
 
         TInt diff = (TInt)(iTotal - iExpectedTotal);
         if (/*iDeviationCount == 0 && */(TUint)std::abs(diff) > kMaxAllowedTotalsDeviation) {
-            iObserver.NotifyClockDrift(diff, iSamples);
+            iObserver.NotifyClockDrift(this, diff, iSamples);
             Reset();
         }
     }
@@ -120,26 +120,26 @@ void UtilisationHistory::Smooth(TUint& aJiffies, TInt aIndexToSkip)
 }
 
 
-// ClockPullerUtilisation
+// ClockPullerUtilisationPerStreamLeft
 
-ClockPullerUtilisation::ClockPullerUtilisation(Environment& aEnv, IPullableClock& aPullableClock)
+ClockPullerUtilisationPerStreamLeft::ClockPullerUtilisationPerStreamLeft(Environment& aEnv, IPullableClock& aPullableClock)
     : iPullableClock(aPullableClock)
     , iLock("CPLL")
 {
     iUtilisationLeft = new UtilisationHistory(aEnv, *this);
 }
 
-ClockPullerUtilisation::~ClockPullerUtilisation()
+ClockPullerUtilisationPerStreamLeft::~ClockPullerUtilisationPerStreamLeft()
 {
     delete iUtilisationLeft;
 }
 
-void ClockPullerUtilisation::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
+void ClockPullerUtilisationPerStreamLeft::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
 {
     iDecodedReservoirUpdateFrequency = aNotificationFrequency;
 }
 
-void ClockPullerUtilisation::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+void ClockPullerUtilisationPerStreamLeft::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
 {
     AutoMutex a(iLock);
     iStreamLeft.SetTrack(aTrackId);
@@ -147,44 +147,89 @@ void ClockPullerUtilisation::NewStreamDecodedReservoir(TUint aTrackId, TUint aSt
     iUtilisationLeft->Reset();
 }
 
-void ClockPullerUtilisation::NotifySizeDecodedReservoir(TUint aJiffies)
+void ClockPullerUtilisationPerStreamLeft::NotifySizeDecodedReservoir(TUint aJiffies)
 {
-    if (iStreamLeft == iStreamRight) {
-        iUtilisationLeft->Add(aJiffies);
-    }
+    TryAdd(*iUtilisationLeft, aJiffies);
 }
 
-void ClockPullerUtilisation::StopDecodedReservoir()
+void ClockPullerUtilisationPerStreamLeft::StopDecodedReservoir()
 {
 }
 
-void ClockPullerUtilisation::StartStarvationMonitor(TUint /*aCapacityJiffies*/)
+void ClockPullerUtilisationPerStreamLeft::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
 {
 }
 
-void ClockPullerUtilisation::NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId)
+void ClockPullerUtilisationPerStreamLeft::NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId)
 {
     iStreamRight.SetTrack(aTrackId);
     iStreamRight.SetStream(aStreamId);
 }
 
-void ClockPullerUtilisation::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
+void ClockPullerUtilisationPerStreamLeft::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
 {
 }
 
-void ClockPullerUtilisation::StopStarvationMonitor()
+void ClockPullerUtilisationPerStreamLeft::StopStarvationMonitor()
 {
 }
 
-void ClockPullerUtilisation::NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples)
+void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples)
 {
-    Log::Print("NotifyClockDrift: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aNumSamples * (iDecodedReservoirUpdateFrequency / Jiffies::kPerMs));
+    ASSERT(aHistory == iUtilisationLeft);
+    NotifyClockDrift(aDriftJiffies, aNumSamples, iDecodedReservoirUpdateFrequency);
+}
+
+void ClockPullerUtilisationPerStreamLeft::TryAdd(UtilisationHistory& aHistory, TUint aJiffies)
+{
+    if (iStreamLeft == iStreamRight) {
+        aHistory.Add(aJiffies);
+    }
+}
+
+void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples, TUint aUpdateFrequency)
+{
+    Log::Print("NotifyClockDrift: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aNumSamples * (aUpdateFrequency / Jiffies::kPerMs));
     TInt64 drift = (TInt64)(aDriftJiffies * 100) << 29LL;
-    const TInt64 pull = (drift) / ((TInt64)aNumSamples * iDecodedReservoirUpdateFrequency);
+    const TInt64 pull = (drift) / ((TInt64)aNumSamples * aUpdateFrequency);
     if (pull > INT_MAX || pull < INT_MIN) {
         Log::Print("Rejected pull of %llx (%d%%)\n", pull, pull/(1<<29));
     }
     else {
         iPullableClock.PullClock((TInt32)pull);
+    }
+}
+
+
+// ClockPullerUtilisationPerStreamFull
+
+ClockPullerUtilisationPerStreamFull::ClockPullerUtilisationPerStreamFull(Environment& aEnv, IPullableClock& aPullableClock)
+    : ClockPullerUtilisationPerStreamLeft(aEnv, aPullableClock)
+{
+    iUtilisationRight = new UtilisationHistory(aEnv, *this);
+}
+
+ClockPullerUtilisationPerStreamFull::~ClockPullerUtilisationPerStreamFull()
+{
+    delete iUtilisationRight;
+}
+
+void ClockPullerUtilisationPerStreamFull::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
+{
+    iStarvationMonitorUpdateFrequency = aNotificationFrequency;
+}
+
+void ClockPullerUtilisationPerStreamFull::NotifySizeStarvationMonitor(TUint aJiffies)
+{
+    TryAdd(*iUtilisationRight, aJiffies);
+}
+
+void ClockPullerUtilisationPerStreamFull::NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples)
+{
+    if (aHistory == iUtilisationRight) {
+        ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(aDriftJiffies, aNumSamples, iStarvationMonitorUpdateFrequency);
+    }
+    else {
+        ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(aHistory, aDriftJiffies, aNumSamples);
     }
 }

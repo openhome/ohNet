@@ -25,11 +25,11 @@ public:
     ~DummyFiller();
     void Start(const Brx& aUrl);
 private: // from Thread
-    void Run();
+    void Run() override;
 private: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
 private:
     Pipeline& iPipeline;
     ProtocolManager* iProtocolManager;

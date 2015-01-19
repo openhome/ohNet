@@ -25,13 +25,13 @@ public:
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
-    TUint NextTrackId();
-    TUint NextStreamId();
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId);
-    void InvalidateAt(TUint aId);
-    void InvalidateAfter(TUint aId);
-    void InvalidatePending();
-    void InvalidateAll();
+    TUint NextTrackId() override;
+    TUint NextStreamId() override;
+    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    void InvalidateAt(TUint aId) override;
+    void InvalidateAfter(TUint aId) override;
+    void InvalidatePending() override;
+    void InvalidateAll() override;
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;

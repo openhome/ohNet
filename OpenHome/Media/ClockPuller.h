@@ -18,7 +18,7 @@ public:
     virtual void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) = 0;
     virtual void NotifySizeDecodedReservoir(TUint aJiffies) = 0;
     virtual void StopDecodedReservoir() = 0;
-    virtual void StartStarvationMonitor(TUint aCapacityJiffies) = 0;
+    virtual void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) = 0;
     virtual void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) = 0;
     virtual void NotifySizeStarvationMonitor(TUint aJiffies) = 0;
     virtual void StopStarvationMonitor() = 0;

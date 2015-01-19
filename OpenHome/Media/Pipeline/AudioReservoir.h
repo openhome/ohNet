@@ -23,9 +23,9 @@ class AudioReservoir : protected MsgReservoir, public IPipelineElementUpstream, 
 public:
     ~AudioReservoir();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 public: // from IPipelineElementDownstream
-    void Push(Msg* aMsg);
+    void Push(Msg* aMsg) override;
 protected:
     AudioReservoir();
     void BlockIfFull();

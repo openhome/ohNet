@@ -59,7 +59,7 @@ private: // from IClockPuller
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
     void StopDecodedReservoir();
-    void StartStarvationMonitor(TUint aCapacityJiffies);
+    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency);
     void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
     void NotifySizeStarvationMonitor(TUint aJiffies);
     void StopStarvationMonitor();

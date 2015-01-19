@@ -35,7 +35,7 @@ public:
                       TUint aThreadPriority, TUint aNormalSize, TUint aStarvationThreshold, TUint aRampUpSize, TUint aMaxStreamCount);
     ~StarvationMonitor();
 public: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     enum EStatus
     {
@@ -51,22 +51,22 @@ private:
     void Ramp(MsgAudio* aMsg, Ramp::EDirection aDirection);
     void UpdateStatus(EStatus aStatus);
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgHalt* aMsg);
-    void ProcessMsgIn(MsgFlush* aMsg);
-    void ProcessMsgIn(MsgWait* aMsg);
-    void ProcessMsgIn(MsgQuit* aMsg);
-    Msg* ProcessMsgOut(MsgMode* aMsg);
-    Msg* ProcessMsgOut(MsgTrack* aMsg);
-    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
-    Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
-    Msg* ProcessMsgOut(MsgSilence* aMsg);
-    Msg* ProcessMsgOut(MsgHalt* aMsg);
+    void ProcessMsgIn(MsgHalt* aMsg) override;
+    void ProcessMsgIn(MsgFlush* aMsg) override;
+    void ProcessMsgIn(MsgWait* aMsg) override;
+    void ProcessMsgIn(MsgQuit* aMsg) override;
+    Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsgOut(MsgSilence* aMsg) override;
+    Msg* ProcessMsgOut(MsgHalt* aMsg) override;
 private: // test helpers
     TBool EnqueueWouldBlock() const;
     TBool PullWouldBlock() const;
 private:
     static const TUint kMaxAudioPullSize = Jiffies::kPerMs * 5;
-    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond;
+    static const TUint kUtilisationSamplePeriodJiffies = Jiffies::kPerSecond / 10;
     MsgFactory& iMsgFactory;
     IPipelineElementUpstream& iUpstreamElement;
     IStarvationMonitorObserver& iObserver;

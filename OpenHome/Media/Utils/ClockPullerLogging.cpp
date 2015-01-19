@@ -138,7 +138,7 @@ void ClockPullerLogging::StopDecodedReservoir()
     iActiveCount--;
 }
 
-void ClockPullerLogging::StartStarvationMonitor(TUint /*aCapacityJiffies*/)
+void ClockPullerLogging::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
 {
     AutoMutex a(iLock);
     iActiveCount++;

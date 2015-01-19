@@ -99,7 +99,7 @@ public:
 public: // from IRecogniser
     TBool Recognise(Brx& aBuf);
 private: // from IMsgProcessor
-    Msg* ProcessMsg(MsgAudioEncoded* aMsg);
+    Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
 private:
     TUint iSize;
     TBool iContainerStripped;
