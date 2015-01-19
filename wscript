@@ -214,6 +214,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Pruner.cpp',
                 'OpenHome/Media/Pipeline/Ramper.cpp',
                 'OpenHome/Media/Pipeline/Reporter.cpp',
+                'OpenHome/Media/Pipeline/SampleReporter.cpp',
                 'OpenHome/Media/Pipeline/Rewinder.cpp',
                 'OpenHome/Media/Pipeline/Seeker.cpp',
                 'OpenHome/Media/Pipeline/Skipper.cpp',
@@ -558,6 +559,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
                 'OpenHome/Media/Tests/TestRamper.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
+                'OpenHome/Media/Tests/TestSampleReporter.cpp',
                 'OpenHome/Media/Tests/TestPreDriver.cpp',
                 'OpenHome/Media/Tests/TestGorger.cpp',
                 'OpenHome/Media/Tests/TestPruner.cpp',
@@ -669,6 +671,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestReporterMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestReporter',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestSampleReporterMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestSampleReporter',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestPreDriverMain.cpp',
