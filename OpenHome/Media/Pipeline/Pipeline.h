@@ -114,6 +114,8 @@ public:
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
+    ISampleReporter& SampleReporter() const;
+    ITrackInjector& TrackInjector() const;
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
@@ -183,7 +185,7 @@ private:
     Logger* iLoggerGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
-    SampleReporter* iSampleReporter;
+    Media::SampleReporter* iSampleReporter;
     Logger* iLoggerSampleReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;

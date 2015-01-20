@@ -6,8 +6,10 @@ using namespace OpenHome::Media;
 
 // SampleReporter
 
-SampleReporter::SampleReporter(IPipelineElementUpstream& aUpstreamElement)
+SampleReporter::SampleReporter(IPipelineElementUpstream& aUpstreamElement, MsgFactory& aMsgFactory)
     : iUpstreamElement(aUpstreamElement)
+    , iMsgFactory(aMsgFactory)
+    , iMsgPending(NULL)
     , iChannels(0)
     , iSampleRate(0)
     , iSubSamples(0)
@@ -16,8 +18,24 @@ SampleReporter::SampleReporter(IPipelineElementUpstream& aUpstreamElement)
 {
 }
 
+SampleReporter::~SampleReporter()
+{
+    AutoMutex a(iLock);
+    if (iMsgPending != NULL) {
+        iMsgPending->RemoveRef();
+    }
+}
+
 Msg* SampleReporter::Pull()
 {
+    {
+        AutoMutex a(iLock);
+        if (iMsgPending != NULL) {
+            Msg* msg = iMsgPending;
+            iMsgPending = NULL;
+            return msg;
+        }
+    }
     Msg* msg = iUpstreamElement.Pull();
     (void)msg->Process(*this);
     return msg;
@@ -38,6 +56,14 @@ TUint SampleReporter::SubSamplesDiff(TUint aPrevSubSamples)
     iOverflowCount = 0;
     // NOTE: this calculation is only valid up to ~2 billion subsamples.
     return iSubSamples - aPrevSubSamples;
+}
+
+void SampleReporter::InjectTrack(Track& aTrack, TUint aTrackId)
+{
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);
+    AutoMutex a(iLock);
+    ASSERT(iMsgPending == NULL);
+    iMsgPending = msg;
 }
 
 Msg* SampleReporter::ProcessMsg(MsgMode* aMsg)
@@ -115,10 +141,11 @@ Msg* SampleReporter::ProcessMsg(MsgAudioPcm* aMsg)
     ASSERT(iSampleRate != 0);
     TUint samples = aMsg->Jiffies()/Jiffies::JiffiesPerSample(iSampleRate);
     AutoMutex a(iLock);
-    if (samples < iSubSamples) {
+    TUint subSamplesPrev = iSubSamples;
+    iSubSamples += samples*iChannels;
+    if (iSubSamples < subSamplesPrev) {
         iOverflowCount++;
     }
-    iSubSamples += samples*iChannels;
     return aMsg;
 }
 

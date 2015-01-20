@@ -65,6 +65,10 @@ private:
     void TestNumChannelsChange();
     void TestInvalidSampleRate();
     void TestInvalidNumChannels();
+    void TestSampleAtOverflowLimit();
+    void TestSampleOverflow();
+    void TestSampleMultipleOverflows();
+    void TestInjectTrack();
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
@@ -110,7 +114,7 @@ void SuiteSampleReporter::Setup()
     iBitRate = kBitDepth * iSampleRate;
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReporter = new SampleReporter(*this);
+    iReporter = new SampleReporter(*this, *iMsgFactory);
 }
 
 void SuiteSampleReporter::TearDown()
@@ -292,6 +296,9 @@ void SuiteSampleReporter::TestMsgModeResets()
 
 void SuiteSampleReporter::TestSubSamples()
 {
+    // FIXME - vary number of samples in msgs to catch overflow issue
+    // Will need to have an iDataBytes value, instead of kDataBytes, that can
+    // be varied
     TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
     TUint samplesExpected = samplesExpectedPerMsg;
 

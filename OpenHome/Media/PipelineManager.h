@@ -3,6 +3,7 @@
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Media/Pipeline/SampleReporter.h>
 #include <OpenHome/Private/Thread.h>
 
 #include <vector>
@@ -104,6 +105,20 @@ public:
      */
     void RemoveObserver(IPipelineObserver& aObserver);
     void AddObserver(ITrackObserver& aObserver);
+    /**
+     * Retrieve a sample reporter.
+     *
+     * @return  ISampleReporter that reports the number of samples that have
+     *          passed by it since the last MsgMode.
+     */
+    ISampleReporter& SampleReporter() const;
+    /**
+     * Retrieve a track injector.
+     *
+     * @return  ITrackInjector that can insert a MsgTrack into the right-hand
+     *          side of the pipeline, before the Reporter.
+     */
+    ITrackInjector& TrackInjector() const;
     /**
      * Instruct the pipeline what should be streamed next.
      *
