@@ -512,7 +512,7 @@ private:
 public:
     ConfigManager(IStoreReadWrite& aStore);
     void Print() const;     // for debugging!
-    void DumpToStore();     // for debugging!
+    //void DumpToStore();     // for debugging!
 public: // from IConfigManager
     TBool HasNum(const Brx& aKey) const override;
     ConfigNum& GetNum(const Brx& aKey) const override;

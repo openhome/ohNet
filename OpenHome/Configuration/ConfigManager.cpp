@@ -302,12 +302,12 @@ void ConfigManager::Print() const
     Log::Print("]\n");
 }
 
-void ConfigManager::DumpToStore()
-{
-    DumpToStore(iMapNum);
-    DumpToStore(iMapChoice);
-    DumpToStore(iMapText);
-}
+//void ConfigManager::DumpToStore()
+//{
+//    DumpToStore(iMapNum);
+//    DumpToStore(iMapChoice);
+//    DumpToStore(iMapText);
+//}
 
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {

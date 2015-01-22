@@ -1641,31 +1641,31 @@ void SuiteConfigManager::TestWrite()
     TEST(buf == kText2);
 }
 
-void SuiteConfigManager::TestDumpToStore()
-{
-    // test that calling DumpToStore() causes all values to be written to store.
-
-    Bws<kMaxTextBytes> buf;
-
-    // check no ConfigValues are currently in store - not necessary as covered by other tests.
-    TEST_THROWS(iStore->Read(kKeyNum1, buf), StoreKeyNotFound);
-    TEST_THROWS(iStore->Read(kKeyChoice1, buf), StoreKeyNotFound);
-    TEST_THROWS(iStore->Read(kKeyText1, buf), StoreKeyNotFound);
-
-    iConfigManager->DumpToStore();
-
-    // check values are now in store
-    iStore->Read(kKeyNum1, buf);
-    TInt valNum = Ascii::Int(buf);
-    TEST(valNum == kMinNum);
-
-    iStore->Read(kKeyChoice1, buf);
-    TUint valChoice = Ascii::Uint(buf);
-    TEST(valChoice == kChoiceDefault);
-
-    iStore->Read(kKeyText1, buf);
-    TEST(buf == kText1);
-}
+//void SuiteConfigManager::TestDumpToStore()
+//{
+//    // test that calling DumpToStore() causes all values to be written to store.
+//
+//    Bws<kMaxTextBytes> buf;
+//
+//    // check no ConfigValues are currently in store - not necessary as covered by other tests.
+//    TEST_THROWS(iStore->Read(kKeyNum1, buf), StoreKeyNotFound);
+//    TEST_THROWS(iStore->Read(kKeyChoice1, buf), StoreKeyNotFound);
+//    TEST_THROWS(iStore->Read(kKeyText1, buf), StoreKeyNotFound);
+//
+//    iConfigManager->DumpToStore();
+//
+//    // check values are now in store
+//    iStore->Read(kKeyNum1, buf);
+//    TInt valNum = Ascii::Int(buf);
+//    TEST(valNum == kMinNum);
+//
+//    iStore->Read(kKeyChoice1, buf);
+//    TUint valChoice = Ascii::Uint(buf);
+//    TEST(valChoice == kChoiceDefault);
+//
+//    iStore->Read(kKeyText1, buf);
+//    TEST(buf == kText1);
+//}
 
 
 // SuiteRamStore
