@@ -112,9 +112,9 @@ ISpotifyReporter& PipelineManager::SpotifyReporter() const
     return iPipeline->SpotifyReporter();
 }
 
-ITrackUpdateObserver& PipelineManager::TrackUpdateObserver() const
+ITrackChangeObserver& PipelineManager::TrackChangeObserver() const
 {
-    return iPipeline->TrackUpdateObserver();
+    return iPipeline->TrackChangeObserver();
 }
 
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)

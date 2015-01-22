@@ -115,12 +115,12 @@ public:
     /**
      * Retrieve a track change observer.
      *
-     * @return  ITrackUpdateObserver that can be notified out-of-band that the
+     * @return  ITrackChangeObserver that can be notified out-of-band that the
      *          current track has changed, allowing IPipelinePropertyObservers
      *          to be updated without requiring a MsgTrack to be passed down
      *          the pipeline.
      */
-    ITrackUpdateObserver& TrackUpdateObserver() const;
+    ITrackChangeObserver& TrackChangeObserver() const;
     /**
      * Instruct the pipeline what should be streamed next.
      *

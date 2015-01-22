@@ -115,7 +115,7 @@ public:
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
-    ITrackUpdateObserver& TrackUpdateObserver() const;
+    ITrackChangeObserver& TrackChangeObserver() const;
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;

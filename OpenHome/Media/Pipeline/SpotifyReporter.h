@@ -17,17 +17,17 @@ public:
     virtual ~ISpotifyReporter() {}
 };
 
-class ITrackUpdateObserver // FIXME - rename to ITrackChangeObserver?
+class ITrackChangeObserver
 {
 public:
     virtual void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) = 0;
-    virtual ~ITrackUpdateObserver() {}
+    virtual ~ITrackChangeObserver() {}
 };
 
 /*
  * Element to report number of samples seen since last MsgMode.
  */
-class SpotifyReporter : public IPipelineElementUpstream, public ISpotifyReporter, public ITrackUpdateObserver, public IPipelinePropertyObserver, private IMsgProcessor, private INonCopyable
+class SpotifyReporter : public IPipelineElementUpstream, public ISpotifyReporter, public ITrackChangeObserver, public IPipelinePropertyObserver, private IMsgProcessor, private INonCopyable
 {
 private:
     static const Brn kInterceptMode;
@@ -38,7 +38,7 @@ public: // from IPipelineElementUpstream
 public: // from ISpotifyReporter
     TUint64 SubSamples() override;
     TUint64 SubSamplesDiff(TUint64 aPrevSamples) override;
-private: // from ITrackUpdateObserver
+private: // from ITrackChangeObserver
     void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) override;
 private: // from IPipelinePropertyObserver
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
