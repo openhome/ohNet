@@ -579,6 +579,7 @@ public:
     TUint64 TrackOffset() const; // offset of the start of this msg from the start of its track.  FIXME no tests for this yet
     MsgPlayable* CreatePlayable(); // removes ref, transfer ownership of DecodedAudio
     void Aggregate(MsgAudioPcm& aMsg); // append aMsg to the end of this msg, removes ref on aMsg
+    TBool TryGetTimestamps(TUint& aNetwork, TUint& aRx);
 public: // from MsgAudio
     MsgAudio* Clone(); // create new MsgAudio, take ref to DecodedAudio, copy size/offset
 private:
@@ -594,11 +595,11 @@ private:
     DecodedAudio* iAudioData;
     Allocator<MsgPlayablePcm>* iAllocatorPlayable;
     TUint64 iTrackOffset;
+    TBool iTimestamped;
     TUint iReceiveTimestamp;
     TUint iMediaLatency;
     TUint iNetworkTimestamp;
     TUint iMediaTimestamp;
-    TUint iFlags;
 };
 
 class MsgPlayableSilence;
@@ -809,9 +810,11 @@ public:
     Msg* Dequeue();
     void EnqueueAtHead(Msg* aMsg);
     TBool IsEmpty() const;
+    void Clear();
     TUint NumMsgs() const; // test/debug use only
 private:
     void CheckMsgNotQueued(Msg* aMsg) const;
+    Msg* DequeueLocked();
 private:
     mutable Mutex iLock;
     Semaphore iSem;

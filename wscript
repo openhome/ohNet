@@ -221,6 +221,7 @@ def build(bld):
                 'OpenHome/Media/Pipeline/Splitter.cpp',
                 'OpenHome/Media/Pipeline/StarvationMonitor.cpp',
                 'OpenHome/Media/Pipeline/Stopper.cpp',
+                'OpenHome/Media/Pipeline/TimestampInspector.cpp',
                 'OpenHome/Media/Pipeline/TrackInspector.cpp',
                 'OpenHome/Media/Pipeline/VariableDelay.cpp',
                 'OpenHome/Media/Pipeline/Waiter.cpp',
@@ -557,6 +558,7 @@ def build(bld):
                 'OpenHome/Media/Tests/TestAudioReservoir.cpp',
                 'OpenHome/Media/Tests/TestVariableDelay.cpp',
                 'OpenHome/Media/Tests/TestTrackInspector.cpp',
+                'OpenHome/Media/Tests/TestTimestampInspector.cpp',
                 'OpenHome/Media/Tests/TestRamper.cpp',
                 'OpenHome/Media/Tests/TestReporter.cpp',
                 'OpenHome/Media/Tests/TestSpotifyReporter.cpp',
@@ -661,6 +663,11 @@ def build(bld):
             source='OpenHome/Media/Tests/TestTrackInspectorMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
             target='TestTrackInspector',
+            install_path=None)
+    bld.program(
+            source='OpenHome/Media/Tests/TestTimestampInspectorMain.cpp',
+            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
+            target='TestTimestampInspector',
             install_path=None)
     bld.program(
             source='OpenHome/Media/Tests/TestRamperMain.cpp',

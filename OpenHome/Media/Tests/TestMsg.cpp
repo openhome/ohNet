@@ -2218,6 +2218,19 @@ void SuiteMsgQueue::Test()
     TEST(queue->IsEmpty());
 #endif
 
+    // Clear() removes all items
+    msg = iMsgFactory->CreateMsgHalt();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgFlush(1);
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgWait();
+    queue->Enqueue(msg);
+    msg = iMsgFactory->CreateMsgQuit();
+    queue->Enqueue(msg);
+    TEST(!queue->IsEmpty());
+    queue->Clear();
+    TEST(queue->IsEmpty());
+
     // FIXME - no check yet that reading from an empty queue blocks
 
     delete queue;
