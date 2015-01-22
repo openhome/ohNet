@@ -1361,7 +1361,7 @@ SuiteConfigManager::SuiteConfigManager()
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadStoreValExists), "TestReadStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestReadNoStoreValExists), "TestReadNoStoreValExists");
     SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestWrite), "TestWrite");
-    SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestDumpToStore), "TestDumpToStore");
+    //SuiteUnitTest::AddTest(MakeFunctor(*this, &SuiteConfigManager::TestDumpToStore), "TestDumpToStore");
 }
 
 void SuiteConfigManager::Setup()
