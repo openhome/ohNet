@@ -107,14 +107,14 @@ void PipelineManager::AddObserver(ITrackObserver& aObserver)
     iPipeline->AddObserver(aObserver);
 }
 
-ISampleReporter& PipelineManager::SampleReporter() const
+ISpotifyReporter& PipelineManager::SpotifyReporter() const
 {
-    return iPipeline->SampleReporter();
+    return iPipeline->SpotifyReporter();
 }
 
-ITrackInjector& PipelineManager::TrackInjector() const
+ITrackUpdateObserver& PipelineManager::TrackUpdateObserver() const
 {
-    return iPipeline->TrackInjector();
+    return iPipeline->TrackUpdateObserver();
 }
 
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
