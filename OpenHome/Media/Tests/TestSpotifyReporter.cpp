@@ -18,6 +18,7 @@ namespace Media {
 
 class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
 {
+public: // from IPipelinePropertyObserver
     void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
