@@ -1498,6 +1498,16 @@ void MsgAudioPcm::Aggregate(MsgAudioPcm& aMsg)
     aMsg.RemoveRef();
 }
 
+TBool MsgAudioPcm::TryGetTimestamps(TUint& aNetwork, TUint& aRx)
+{
+    if (iTimestamped) {
+        aNetwork = iNetworkTimestamp;
+        aRx = iReceiveTimestamp;
+        return true;
+    }
+    return false;
+}
+
 MsgAudio* MsgAudioPcm::Clone()
 {
     MsgAudio* clone = MsgAudio::Clone();
@@ -1517,15 +1527,16 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, 
     iSize = iAudioData->JiffiesFromBytes(iAudioData->Bytes());
     ASSERT(iSize > 0);
     iOffset = 0;
+    iTimestamped = false;
 }
 
 void MsgAudioPcm::SetTimestamps(TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
 {
+    iTimestamped = true;
     iReceiveTimestamp = aRxTimestamp;
     iMediaLatency = aLatency;
     iNetworkTimestamp = aNetworkTimestamp;
     iMediaTimestamp = aMediaTimestamp;
-    iFlags = 0; // FIXME
 }
 
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
@@ -1546,7 +1557,7 @@ void MsgAudioPcm::Clear()
 {
     MsgAudio::Clear();
     iAudioData->RemoveRef();
-    iFlags = 0xffffffff;
+    iTimestamped = false;
 }
 
 Msg* MsgAudioPcm::Process(IMsgProcessor& aProcessor)
