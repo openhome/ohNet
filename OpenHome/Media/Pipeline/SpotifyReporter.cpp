@@ -86,7 +86,7 @@ void SpotifyReporter::NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds)
         TUint64 seconds = subSamples/iChannels/iSampleRate;
 
         iLock.Signal();
-        ASSERT(seconds <= std::numeric_limits<TInt>::max());
+        ASSERT(seconds <= std::numeric_limits<TUint>::max());
         TUint secondsCast = static_cast<TUint>(seconds);
         iPropertyObserver.NotifyTime(secondsCast, durationSeconds);
     }
