@@ -18,17 +18,17 @@ public:
     DecodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCount, TUint aMaxStreamCount);
     TUint SizeInJiffies() const;
 private: // from MsgReservoir
-    void ProcessMsgIn(MsgSession* aMsg);
-    void ProcessMsgIn(MsgDecodedStream* aMsg);
-    void ProcessMsgIn(MsgAudioPcm* aMsg);
-    void ProcessMsgIn(MsgSilence* aMsg);
-    Msg* ProcessMsgOut(MsgMode* aMsg);
-    Msg* ProcessMsgOut(MsgTrack* aMsg);
-    Msg* ProcessMsgOut(MsgDecodedStream* aMsg);
-    Msg* ProcessMsgOut(MsgAudioPcm* aMsg);
-    Msg* ProcessMsgOut(MsgSilence* aMsg);
+    void ProcessMsgIn(MsgSession* aMsg) override;
+    void ProcessMsgIn(MsgDecodedStream* aMsg) override;
+    void ProcessMsgIn(MsgAudioPcm* aMsg) override;
+    void ProcessMsgIn(MsgSilence* aMsg) override;
+    Msg* ProcessMsgOut(MsgMode* aMsg) override;
+    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
+    Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
+    Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
+    Msg* ProcessMsgOut(MsgSilence* aMsg) override;
 private: // from AudioReservoir
-    TBool IsFull() const;
+    TBool IsFull() const override;
 private:
     void DoProcessMsgIn();
     Msg* DoProcessMsgOut(MsgAudio* aMsg);

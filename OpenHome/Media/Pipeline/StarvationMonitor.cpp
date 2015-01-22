@@ -221,9 +221,15 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
             iStreamHandler->NotifyStarving(iMode, iTrackId, iStreamId);
         }
         iObserver.NotifyStarvationMonitorBuffering(true);
+        if (iClockPuller != NULL) {
+            iClockPuller->StopStarvationMonitor();
+        }
     }
     else if (iStatus == EBuffering) {
         iObserver.NotifyStarvationMonitorBuffering(false);
+        if (iClockPuller != NULL) {
+            iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+        }
     }
     iStatus = aStatus;
 }
@@ -261,6 +267,9 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
         iClockPuller->StopStarvationMonitor();
     }
     iClockPuller = aMsg->ClockPuller();
+    if (iClockPuller != NULL) {
+        iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
+    }
     return aMsg;
 }
 

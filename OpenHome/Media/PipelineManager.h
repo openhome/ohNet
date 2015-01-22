@@ -216,20 +216,20 @@ public:
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
 private: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private: // from IPipelineIdManager
-    void InvalidateAt(TUint aId);
-    void InvalidateAfter(TUint aId);
-    void InvalidatePending();
-    void InvalidateAll();
+    void InvalidateAt(TUint aId) override;
+    void InvalidateAfter(TUint aId) override;
+    void InvalidatePending() override;
+    void InvalidateAll() override;
 private: // from IPipelineObserver
-    void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
-    void NotifyMetaText(const Brx& aText);
-    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
-    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
+    void NotifyPipelineState(EPipelineState aState) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
 private: // from ISeekRestreamer
-    TUint SeekRestream(const Brx& aMode, TUint aTrackId);
+    TUint SeekRestream(const Brx& aMode, TUint aTrackId) override;
 private:
     class PrefetchObserver : public IStreamPlayObserver
     {

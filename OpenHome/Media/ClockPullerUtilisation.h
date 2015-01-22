@@ -11,10 +11,12 @@ namespace OpenHome {
     class Environment;
 namespace Media {
 
+class UtilisationHistory;
+
 class IUtilisationHistoryObserver
 {
 public:
-    virtual void NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples) = 0;
+    virtual void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) = 0;
 };
 
 class UtilisationHistory : private INonCopyable
@@ -43,22 +45,25 @@ private:
 
 // Intended for sources which have a reasonable latency
 // ...so can perform all calculations based on state of DecodedAudioReservoir only
-class ClockPullerUtilisation : public IClockPuller, private IUtilisationHistoryObserver
+class ClockPullerUtilisationPerStreamLeft : public IClockPuller, protected IUtilisationHistoryObserver
 {
 public:
-    ClockPullerUtilisation(Environment& aEnv, IPullableClock& aPullableClock);
-    ~ClockPullerUtilisation();
-private: // from IClockPuller
+    ClockPullerUtilisationPerStreamLeft(Environment& aEnv, IPullableClock& aPullableClock);
+    ~ClockPullerUtilisationPerStreamLeft();
+protected: // from IClockPuller
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
     void NotifySizeDecodedReservoir(TUint aJiffies) override;
     void StopDecodedReservoir() override;
-    void StartStarvationMonitor(TUint aCapacityJiffies) override;
+    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
     void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) override;
     void NotifySizeStarvationMonitor(TUint aJiffies) override;
     void StopStarvationMonitor() override;
-private: // from IUtilisationHistoryObserver
-    void NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples) override;
+protected: // from IUtilisationHistoryObserver
+    void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;
+protected:
+    void TryAdd(UtilisationHistory& aHistory, TUint aJiffies);
+    void NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples, TUint aUpdateFrequency);
 private:
     IPullableClock& iPullableClock;
     Mutex iLock;
@@ -66,6 +71,21 @@ private:
     StreamId iStreamRight;
     UtilisationHistory* iUtilisationLeft;
     TUint iDecodedReservoirUpdateFrequency;
+};
+
+class ClockPullerUtilisationPerStreamFull : public ClockPullerUtilisationPerStreamLeft
+{
+public:
+    ClockPullerUtilisationPerStreamFull(Environment& aEnv, IPullableClock& aPullableClock);
+    ~ClockPullerUtilisationPerStreamFull();
+private: // from IClockPuller
+    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
+    void NotifySizeStarvationMonitor(TUint aJiffies) override;
+private: // from IUtilisationHistoryObserver
+    void NotifyClockDrift(UtilisationHistory* aHistory, TInt aDriftJiffies, TUint aNumSamples) override;
+private:
+    UtilisationHistory* iUtilisationRight;
+    TUint iStarvationMonitorUpdateFrequency;
 };
 
 } // namespace Media

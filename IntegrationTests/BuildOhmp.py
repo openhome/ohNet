@@ -33,9 +33,15 @@ class BuildOhmp( BASE.BaseTest ):
 
     def Test( self, aArgs ):
         """Perform update and build"""
+        buildOpts = '--steps="default,-integration_test" --incremental-fetch'
+
+        if len( aArgs ) > 1:
+            if aArgs[1].lower() == 'debug':
+                buildOpts += ' --debug'
+
         ohmpPath = os.path.normpath( os.path.split( os.getcwd() )[0] )
         self.__Execute( 'git pull', ohmpPath, 'Updating source to latest' )
-        self.__Execute( '%s\\go.bat build --steps="default,-integration_test" --incremental-fetch' % ohmpPath, ohmpPath, 'Executing build' )
+        self.__Execute( '%s\\go.bat build %s' % (ohmpPath, buildOpts), ohmpPath, 'Executing build' )
 
     def __Execute( self, aCmd, aCwd, aMsg ):
         """Execute the command in defined CWD, logging to FunctionalTest logger"""

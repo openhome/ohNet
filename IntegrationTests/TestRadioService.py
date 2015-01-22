@@ -64,7 +64,8 @@ kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/mp4:*,'          +\
                     'http-get:*:audio/ogg:*,'          +\
                     'http-get:*:audio/x-ogg:*,'        +\
-                    'http-get:*:application/ogg:*'   
+                    'http-get:*:application/ogg:*'     +\
+                    'tidalhifi.com:*:*:*'
 kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/wav:*,'          +\
                     'http-get:*:audio/wave:*,'         +\
@@ -79,10 +80,11 @@ kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/mp4:*,'          +\
                     'http-get:*:audio/ogg:*,'          +\
                     'http-get:*:audio/x-ogg:*,'        +\
-                    'http-get:*:application/ogg:*'   
+                    'http-get:*:application/ogg:*,'    +\
+                    'tidalhifi.com:*:*:*,'
+
 kChannelsMax      = 100
-kLocalChannels    = [ # Although these channels will actually serve, for the
-                      # purposes of this test it doesn't matter if they work or not
+kLocalChannels    = [ # For the purposes of this test it doesn't matter if these work or not
                      {'uri' : 'http://10.2.8.201:8000/mp3-128k-stereo',
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 128k Stereo</dc:title><res>http://10.2.8.201:8000/mp3-128k-stereo</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'},
                      {'uri' : 'http://10.2.8.201:8000/mp3-32k-mono',

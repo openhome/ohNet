@@ -205,7 +205,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             self.log.Info( 'AirPlay playback with %s' % title )
             self.log.Info( '' )
             self.dacp.PlayTrack( title )
-            self._MonitorPlayback( 10 )
+            self._MonitorPlayback( 5 )
         self.dacp.Pause()
 
     def _CheckVolume( self ):
@@ -236,33 +236,10 @@ class TestAirplayFunctions( BASE.BaseTest ):
 
     def _MonitorPlayback( self, aSecs ):
         """Check AirPlay playback over specified period"""
-        self.dut.time.AddSubscriber( self.__TimeEvtCb )
-        self.timeEvent.clear()
-        self.timeEvent.wait( 5 )
-        if not self.timeEvent.is_set():
-            self.log.Fail( self.dutDev, 'Airplay playback did not start within 5s' )
-        else:
+        for i in range( aSecs ):
+            time.sleep( 1 )
             info = self.dacp.nowPlaying
-            dutStartTime = self.dut.time.seconds
-            apStartTime = int( info['remains'] )
-            self.timedOut = False
-            t = LogThread.Timer( aSecs, self.__TimedOutCb )
-            t.start()
-            while not self.timedOut:
-                self.timeEvent.clear()
-                self.timeEvent.wait( 2 )
-                if not self.timeEvent.is_set():
-                    self.log.Fail( self.dutDev, 'No time update for 2s during Airplay playback' )
-                else:
-                    info = self.dacp.nowPlaying
-                    self.log.Info( self.dacp.dev, info )
-            dutPlayTime = self.dut.time.seconds-dutStartTime
-            apPlayTime = apStartTime-int( info['remains'] )
-            self.log.CheckLimits( self.dutDev, 'GELE', dutPlayTime, aSecs, aSecs+1,
-                '%d/%d actual/expected DUT measured playback time' % (dutPlayTime, aSecs) )
-            self.log.CheckLimits( self.dutDev, 'GELE', apPlayTime, aSecs, aSecs+1,
-                '%d/%d actual/expected AirPlay measured playback time' % (apPlayTime, aSecs) )
-        self.dut.time.RemoveSubscriber( self.__TimeEvtCb )
+            self.log.Info( self.dacp.dev, info )
 
     # noinspection PyUnusedLocal
     def __ProductEvtCb( self, service, svName, svVal, svSeq ):

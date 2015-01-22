@@ -48,10 +48,10 @@ private:
     void TrackLiveStreamReportsPlayWaitReportsNothing();
     void TwoObserversNotified();
 private: // from ITrackObserver
-    void NotifyTrackPlay(Track& aTrack);
-    void NotifyTrackFail(Track& aTrack);
+    void NotifyTrackPlay(Track& aTrack) override;
+    void NotifyTrackFail(Track& aTrack) override;
 private: // from IPipelineElementUpstream
-    Msg* Pull();
+    Msg* Pull() override;
 private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
