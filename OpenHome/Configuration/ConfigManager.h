@@ -2,6 +2,7 @@
 #define HEADER_CONFIGMANAGER
 
 #include <OpenHome/Types.h>
+#include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Functor.h>
 #include <OpenHome/Private/Stream.h>
@@ -503,7 +504,7 @@ public: // from IWriter
  *
  * Known identifiers are listed elsewhere.
  */
-class ConfigManager : public IConfigManager, public IConfigInitialiser
+class ConfigManager : public IConfigManager, public IConfigInitialiser, private INonCopyable
 {
 private:
     typedef SerialisedMap<ConfigNum> ConfigNumMap;
@@ -512,7 +513,7 @@ private:
 public:
     ConfigManager(IStoreReadWrite& aStore);
     void Print() const;     // for debugging!
-    //void DumpToStore();     // for debugging!
+    void DumpToStore();     // for debugging!
 public: // from IConfigManager
     TBool HasNum(const Brx& aKey) const override;
     ConfigNum& GetNum(const Brx& aKey) const override;
@@ -538,8 +539,21 @@ private:
     template <class T> void Add(SerialisedMap<T>& aMap, const Brx& aKey, T& aVal);
     template <class T> void Print(const ConfigVal<T>& aVal) const;
     template <class T> void Print(const SerialisedMap<T>& aMap) const;
-    template <class T> void DumpToStore(const ConfigVal<T>& aVal);
-    template <class T> void DumpToStore(const SerialisedMap<T>& aMap);
+private:
+    class StoreDumper : public INonCopyable
+    {
+    public:
+        StoreDumper(IConfigInitialiser& aConfigInit);
+        void DumpToStore(const SerialisedMap<ConfigNum>& aMap);
+        void DumpToStore(const SerialisedMap<ConfigChoice>& aMap);
+        void DumpToStore(const SerialisedMap<ConfigText>& aMap);
+    private:
+        void NotifyChangedNum(ConfigNum::KvpNum& aKvp);
+        void NotifyChangedChoice(ConfigChoice::KvpChoice& aKvp);
+        void NotifyChangedText(ConfigText::KvpText& aKvp);
+    private:
+        IConfigInitialiser& iConfigInit;
+    };
 private:
     IStoreReadWrite& iStore;
     ConfigNumMap iMapNum;

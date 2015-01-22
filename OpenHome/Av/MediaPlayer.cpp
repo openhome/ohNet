@@ -124,7 +124,7 @@ void MediaPlayer::Start()
 {
     iConfigManager->Open();
     iConfigManager->Print();
-    //iConfigManager->DumpToStore();  // debugging
+    iConfigManager->DumpToStore();  // debugging
     iPipeline->Start();
     iProduct->Start();
 }
