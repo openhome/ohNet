@@ -302,12 +302,12 @@ void ConfigManager::Print() const
     Log::Print("]\n");
 }
 
-void ConfigManager::DumpToStore()
-{
-    DumpToStore(iMapNum);
-    DumpToStore(iMapChoice);
-    DumpToStore(iMapText);
-}
+//void ConfigManager::DumpToStore()
+//{
+//    DumpToStore(iMapNum);
+//    DumpToStore(iMapChoice);
+//    DumpToStore(iMapText);
+//}
 
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
@@ -461,8 +461,10 @@ template <class T> void ConfigManager::DumpToStore(const ConfigVal<T>& aVal)
     static const TUint kMaxValueBytes = 512;  // randomly chosen
     Bws<kMaxValueBytes> buf;
     WriterBuffer writerBuf(buf);
-    aVal.Serialise(writerBuf);
-    ToStore(aVal.Key(), buf);
+    aVal.Serialise(writerBuf); // FIXME - must use ToStore() instead of Serialise - is currently writing ASCII to store for numbers instead of a 4 byte value
+
+    // FIXME - currently doesn't write anything to store
+    //ToStore(aVal.Key(), buf);
 }
 
 template <class T> void ConfigManager::DumpToStore(const SerialisedMap<T>& aMap)

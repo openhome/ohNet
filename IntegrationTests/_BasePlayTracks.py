@@ -505,7 +505,7 @@ class BasePlayTracks( BASE.BaseTest ):
             pass
         elif self.sender.playlist.transportState == 'Playing':
             delay = time.time()-start
-            if delay > 1:
+            if delay > 3:
                 self.log.Warn( self.senderDev, 'Slow startup of track playback (%.2fs)' % delay )
 
     def _StartPlayTimer( self ):

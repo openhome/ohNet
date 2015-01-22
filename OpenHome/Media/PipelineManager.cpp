@@ -107,6 +107,16 @@ void PipelineManager::AddObserver(ITrackObserver& aObserver)
     iPipeline->AddObserver(aObserver);
 }
 
+ISampleReporter& PipelineManager::SampleReporter() const
+{
+    return iPipeline->SampleReporter();
+}
+
+ITrackInjector& PipelineManager::TrackInjector() const
+{
+    return iPipeline->TrackInjector();
+}
+
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);

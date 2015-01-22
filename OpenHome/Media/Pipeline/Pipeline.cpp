@@ -221,7 +221,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iGorger = new Gorger(*iMsgFactory, *iLoggerRamper, threadPriority, aInitParams->GorgeDurationJiffies());
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
-    iReporter = new Reporter(*iLoggerGorger, *this);
+    iSampleReporter = new Media::SampleReporter(*iLoggerGorger, *iMsgFactory);
+    iLoggerSampleReporter = new Logger(*iSampleReporter, "SampleReporter");
+    iReporter = new Reporter(*iLoggerSampleReporter, *this);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
@@ -256,6 +258,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerStopper->SetEnabled(true);
     //iLoggerRamper->SetEnabled(true);
     //iLoggerGorger->SetEnabled(true);
+    //iLoggerSampleReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
@@ -277,6 +280,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerRamper->SetFilter(Logger::EMsgAll);
     //iLoggerGorger->SetFilter(Logger::EMsgAll);
+    //iLoggerSampleReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
@@ -304,6 +308,8 @@ Pipeline::~Pipeline()
     delete iSplitter;
     delete iLoggerReporter;
     delete iReporter;
+    delete iLoggerSampleReporter;
+    delete iSampleReporter;
     delete iLoggerGorger;
     delete iGorger;
     delete iLoggerRamper;
@@ -455,6 +461,16 @@ TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 void Pipeline::AddObserver(ITrackObserver& aObserver)
 {
     iTrackInspector->AddObserver(aObserver);
+}
+
+ISampleReporter& Pipeline::SampleReporter() const
+{
+    return *iSampleReporter;
+}
+
+ITrackInjector& Pipeline::TrackInjector() const
+{
+    return *iSampleReporter;
 }
 
 TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
