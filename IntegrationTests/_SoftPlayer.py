@@ -39,7 +39,10 @@ class SoftPlayer( BASE.Component ):
         self.shutdown   = False
         self.room       = None
         self.model      = None
-        hostId          = int( self.testConfig.softplayer.adapter )
+
+        hostId = None
+        if self.testConfig.softplayer.adapter is not None:
+            hostId = int( self.testConfig.softplayer.adapter )
 
         random.seed()
         uniqueId = '%06d' % random.randint( 0, 999999 )
@@ -69,7 +72,7 @@ class SoftPlayer( BASE.Component ):
         cmd  = [exePath, '-r', self.room, '-n', self.model]
         if aLoopback:
             cmd.extend( ['-l'] )
-        else:
+        elif hostId:
             cmd.extend( ['-a', '%d' % hostId] )
         if aTuneIn:
             cmd.extend( ['-t', aTuneIn] )
