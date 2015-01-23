@@ -3,8 +3,7 @@
  
 Parameters:
     arg#1 - DUT ['local' for internal SoftPlayer (NOT on loopback)]
-    arg#2 - iTunes server (PC name)
-    
+
 NOTES
     - allow delay after setting DACP speaker (or iTunes (ver >= 11) may hang)
             
@@ -18,6 +17,7 @@ source handling operates correctly.
 
 import _FunctionalTest
 import BaseTest                       as BASE
+import _Config                        as Config
 import Upnp.ControlPoints.Volkano     as Volkano
 import Instruments.Network.DacpClient as DacpClient
 import _SoftPlayer                    as SoftPlayer
@@ -28,7 +28,6 @@ import threading
 import time
 
 kItunesCtr = 'Music'
-kVolTrack  = 'Stereo1kHz-441-16-0dB-72m'
 
 
 class TestAirplayFunctions( BASE.BaseTest ):
@@ -44,17 +43,19 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.soft       = None
         self.tracks     = None
         self.timedOut   = False
+        self.testConfig = Config.Config()
         self.timeEvent  = threading.Event()
         self.srcChanged = threading.Event()
 
     def Test( self, args ):
         """Net Aux test"""
-        itunesServer = None
+        itunesGuid = self.testConfig.itunes.guid
+        itunesLib  = self.testConfig.itunes.library
+        itunesAddr = self.testConfig.itunes.address
 
         # parse command line arguments
         try:
             self.dutName = args[1]
-            itunesServer = args[2]
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -65,7 +66,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
             time.sleep( 10 )     # allow time for iTunes to discover device
 
         # setup self.dacp (iTunes) control
-        self.dacp = DacpClient.DacpClient( itunesServer )
+        self.dacp = DacpClient.DacpClient( itunesGuid, itunesLib, itunesAddr )
         if self.dutName not in self.dacp.speakers:
             self.log.Abort( self.dacp.dev, '%s not available as iTunes speaker' % self.dutName )
         self.dacp.speaker = 'My Computer'
@@ -108,7 +109,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
     def _CheckSelect( self ):
         """Check auto-selection of Net Aux source"""
         self.dacp.speaker = 'My Computer'
-        self.dacp.PlayTrack( kVolTrack )
+        self.dacp.PlayTrack( self.testConfig.itunes.track1k )
         time.sleep( 5 )
          
         # Airplay connect/disconnect 
@@ -162,7 +163,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
         self.srcChanged.clear()
-        self.dacp.PlayTrack( kVolTrack )
+        self.dacp.PlayTrack( self.testConfig.itunes.track1k )
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
         self.log.FailUnless( self.dutDev, name=='Playlist',
@@ -220,7 +221,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         # time.sleep( 5 )
         self.dacp.speaker = self.dutName
         time.sleep( 5 )
-        self.dacp.PlayTrack( kVolTrack )
+        self.dacp.PlayTrack( self.testConfig.itunes.track1k )
         self.srcChanged.wait( 5 )
         self.dacp.volume = 100
         time.sleep( 5 )
