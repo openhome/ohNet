@@ -214,9 +214,7 @@ void Seeker::DoSeek()
         HandleSeekFail();
     }
     else {
-        while (!iQueue.IsEmpty()) {
-            iQueue.Dequeue()->RemoveRef();
-        }
+        iQueue.Clear();
         iQueue.Enqueue(iMsgFactory.CreateMsgHalt()); /* inform downstream parties (StarvationMonitor)
                                                         that any subsequent break in audio is expected */
     }

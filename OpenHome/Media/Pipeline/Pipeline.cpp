@@ -190,13 +190,16 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerDecodedAudioAggregator = new Logger("Decoded Audio Aggregator", *iDecodedAudioReservoir);
     iDecodedAudioAggregator = new DecodedAudioAggregator(*iLoggerDecodedAudioAggregator, *iMsgFactory);
 
+    iLoggerTimestampInspector = new Logger("Timestamp Inspector", *iDecodedAudioAggregator);
+    iTimestampInspector = new TimestampInspector(*iMsgFactory, *iLoggerTimestampInspector);
+
     iContainer = new Codec::Container(*iMsgFactory, *iLoggerEncodedAudioReservoir);
     iContainer->AddContainer(new Codec::Id3v2());
     iContainer->AddContainer(new Codec::Mpeg4Start());
     iLoggerContainer = new Logger(*iContainer, "Codec Container");
 
     // construct push logger slightly out of sequence
-    iLoggerCodecController = new Logger("Codec Controller", *iDecodedAudioAggregator);
+    iLoggerCodecController = new Logger("Codec Controller", *iTimestampInspector);
     iCodecController = new Codec::CodecController(*iMsgFactory, *iLoggerContainer, *iLoggerCodecController, threadPriority);
     threadPriority++;
 
@@ -218,7 +221,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iGorger = new Gorger(*iMsgFactory, *iLoggerRamper, threadPriority, aInitParams->GorgeDurationJiffies());
     threadPriority++;
     iLoggerGorger = new Logger(*iGorger, "Gorger");
-    iReporter = new Reporter(*iLoggerGorger, *this);
+    iSpotifyReporter = new Media::SpotifyReporter(*iLoggerGorger, *this);
+    iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
+    iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iSplitter = new Splitter(*iLoggerReporter);
     iLoggerSplitter = new Logger(*iSplitter, "Splitter");
@@ -242,6 +247,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerEncodedAudioReservoir->SetEnabled(true);
     //iLoggerContainer->SetEnabled(true);
     //iLoggerCodecController->SetEnabled(true);
+    //iLoggerTimestampInspector->SetEnabled(true);
     //iLoggerDecodedAudioAggregator->SetEnabled(true);
     //iLoggerDecodedAudioReservoir->SetEnabled(true);
     //iLoggerSeeker->SetEnabled(true);
@@ -252,6 +258,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerStopper->SetEnabled(true);
     //iLoggerRamper->SetEnabled(true);
     //iLoggerGorger->SetEnabled(true);
+    //iLoggerSpotifyReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
     //iLoggerSplitter->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
@@ -262,6 +269,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerEncodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerContainer->SetFilter(Logger::EMsgAll);
     //iLoggerCodecController->SetFilter(Logger::EMsgAll);
+    //iLoggerTimestampInspector->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioAggregator->SetFilter(Logger::EMsgAll);
     //iLoggerDecodedAudioReservoir->SetFilter(Logger::EMsgAll);
     //iLoggerSeeker->SetFilter(Logger::EMsgAll);
@@ -272,6 +280,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerStopper->SetFilter(Logger::EMsgAll);
     //iLoggerRamper->SetFilter(Logger::EMsgAll);
     //iLoggerGorger->SetFilter(Logger::EMsgAll);
+    //iLoggerSpotifyReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
     //iLoggerSplitter->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
@@ -299,6 +308,8 @@ Pipeline::~Pipeline()
     delete iSplitter;
     delete iLoggerReporter;
     delete iReporter;
+    delete iLoggerSpotifyReporter;
+    delete iSpotifyReporter;
     delete iLoggerGorger;
     delete iGorger;
     delete iLoggerRamper;
@@ -319,6 +330,8 @@ Pipeline::~Pipeline()
     delete iDecodedAudioReservoir;
     delete iLoggerDecodedAudioAggregator;
     delete iDecodedAudioAggregator;
+    delete iLoggerTimestampInspector;
+    delete iTimestampInspector;
     delete iLoggerCodecController;
     delete iCodecController;
     delete iLoggerContainer;
@@ -448,6 +461,16 @@ TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
 void Pipeline::AddObserver(ITrackObserver& aObserver)
 {
     iTrackInspector->AddObserver(aObserver);
+}
+
+ISpotifyReporter& Pipeline::SpotifyReporter() const
+{
+    return *iSpotifyReporter;
+}
+
+ITrackChangeObserver& Pipeline::TrackChangeObserver() const
+{
+    return *iSpotifyReporter;
 }
 
 TBool Pipeline::SupportsMimeType(const Brx& aMimeType)

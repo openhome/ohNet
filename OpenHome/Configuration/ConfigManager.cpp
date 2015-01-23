@@ -304,9 +304,10 @@ void ConfigManager::Print() const
 
 void ConfigManager::DumpToStore()
 {
-    DumpToStore(iMapNum);
-    DumpToStore(iMapChoice);
-    DumpToStore(iMapText);
+    StoreDumper dumper(*this);
+    dumper.DumpToStore(iMapNum);
+    dumper.DumpToStore(iMapChoice);
+    dumper.DumpToStore(iMapText);
 }
 
 TBool ConfigManager::HasNum(const Brx& aKey) const
@@ -456,19 +457,63 @@ template <class T> void ConfigManager::Print(const SerialisedMap<T>& aMap) const
     }
 }
 
-template <class T> void ConfigManager::DumpToStore(const ConfigVal<T>& aVal)
+
+// ConfigManager::StoreDumper
+
+ConfigManager::StoreDumper::StoreDumper(IConfigInitialiser& aConfigInit)
+    : iConfigInit(aConfigInit)
 {
-    static const TUint kMaxValueBytes = 512;  // randomly chosen
-    Bws<kMaxValueBytes> buf;
-    WriterBuffer writerBuf(buf);
-    aVal.Serialise(writerBuf);
-    ToStore(aVal.Key(), buf);
 }
 
-template <class T> void ConfigManager::DumpToStore(const SerialisedMap<T>& aMap)
+void ConfigManager::StoreDumper::DumpToStore(const SerialisedMap<ConfigNum>& aMap)
 {
-    typename SerialisedMap<T>::Iterator it;
+    SerialisedMap<ConfigNum>::Iterator it;
     for (it = aMap.Begin(); it != aMap.End(); ++it) {
-        DumpToStore(*it->second);
+        ConfigNum& configVal = *it->second;
+        TUint id = configVal.Subscribe(MakeFunctorConfigNum(*this, &ConfigManager::StoreDumper::NotifyChangedNum));
+        configVal.Unsubscribe(id);
     }
+}
+
+void ConfigManager::StoreDumper::DumpToStore(const SerialisedMap<ConfigChoice>& aMap)
+{
+    SerialisedMap<ConfigChoice>::Iterator it;
+    for (it = aMap.Begin(); it != aMap.End(); ++it) {
+        ConfigChoice& configVal = *it->second;
+        TUint id = configVal.Subscribe(MakeFunctorConfigChoice(*this, &ConfigManager::StoreDumper::NotifyChangedChoice));
+        configVal.Unsubscribe(id);
+    }
+}
+
+void ConfigManager::StoreDumper::DumpToStore(const SerialisedMap<ConfigText>& aMap)
+{
+    SerialisedMap<ConfigText>::Iterator it;
+    for (it = aMap.Begin(); it != aMap.End(); ++it) {
+        ConfigText& configVal = *it->second;
+        TUint id = configVal.Subscribe(MakeFunctorConfigText(*this, &ConfigManager::StoreDumper::NotifyChangedText));
+        configVal.Unsubscribe(id);
+    }
+}
+
+void ConfigManager::StoreDumper::NotifyChangedNum(ConfigNum::KvpNum& aKvp)
+{
+    Bws<sizeof(TInt)> valBuf;
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aKvp.Value());
+    iConfigInit.ToStore(aKvp.Key(), valBuf);
+}
+
+void ConfigManager::StoreDumper::NotifyChangedChoice(ConfigChoice::KvpChoice& aKvp)
+{
+    Bws<sizeof(TUint)> valBuf;
+    WriterBuffer writerBuf(valBuf);
+    WriterBinary writerBin(writerBuf);
+    writerBin.WriteUint32Be(aKvp.Value());
+    iConfigInit.ToStore(aKvp.Key(), valBuf);
+}
+
+void ConfigManager::StoreDumper::NotifyChangedText(ConfigText::KvpText& aKvp)
+{
+    iConfigInit.ToStore(aKvp.Key(), aKvp.Value());
 }

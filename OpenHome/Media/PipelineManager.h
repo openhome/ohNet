@@ -3,6 +3,7 @@
 
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/PipelineObserver.h>
+#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Private/Thread.h>
 
 #include <vector>
@@ -104,6 +105,22 @@ public:
      */
     void RemoveObserver(IPipelineObserver& aObserver);
     void AddObserver(ITrackObserver& aObserver);
+    /**
+     * Retrieve a sample reporter.
+     *
+     * @return  ISpotifyReporter that reports the number of samples that have
+     *          passed by it since the last MsgMode.
+     */
+    ISpotifyReporter& SpotifyReporter() const;
+    /**
+     * Retrieve a track change observer.
+     *
+     * @return  ITrackChangeObserver that can be notified out-of-band that the
+     *          current track has changed, allowing IPipelinePropertyObservers
+     *          to be updated without requiring a MsgTrack to be passed down
+     *          the pipeline.
+     */
+    ITrackChangeObserver& TrackChangeObserver() const;
     /**
      * Instruct the pipeline what should be streamed next.
      *

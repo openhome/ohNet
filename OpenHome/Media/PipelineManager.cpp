@@ -107,6 +107,16 @@ void PipelineManager::AddObserver(ITrackObserver& aObserver)
     iPipeline->AddObserver(aObserver);
 }
 
+ISpotifyReporter& PipelineManager::SpotifyReporter() const
+{
+    return iPipeline->SpotifyReporter();
+}
+
+ITrackChangeObserver& PipelineManager::TrackChangeObserver() const
+{
+    return iPipeline->TrackChangeObserver();
+}
+
 void PipelineManager::Begin(const Brx& aMode, TUint aTrackId)
 {
     AutoMutex _(iPublicLock);

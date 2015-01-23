@@ -8,6 +8,7 @@
 #include <OpenHome/Media/Pipeline/EncodedAudioReservoir.h>
 #include <OpenHome/Media/Codec/Container.h>
 #include <OpenHome/Media/Codec/CodecController.h>
+#include <OpenHome/Media/Pipeline/TimestampInspector.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioAggregator.h>
 #include <OpenHome/Media/Pipeline/DecodedAudioReservoir.h>
 #include <OpenHome/Media/Pipeline/Seeker.h>
@@ -19,6 +20,7 @@
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
+#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Splitter.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
@@ -113,6 +115,8 @@ public:
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
+    ISpotifyReporter& SpotifyReporter() const;
+    ITrackChangeObserver& TrackChangeObserver() const;
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
@@ -160,6 +164,8 @@ private:
     Logger* iLoggerContainer;
     Codec::CodecController* iCodecController;
     Logger* iLoggerCodecController;
+    TimestampInspector* iTimestampInspector;
+    Logger* iLoggerTimestampInspector;
     DecodedAudioAggregator* iDecodedAudioAggregator;
     Logger* iLoggerDecodedAudioAggregator;
     DecodedAudioReservoir* iDecodedAudioReservoir;
@@ -182,6 +188,8 @@ private:
     Logger* iLoggerGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
+    Media::SpotifyReporter* iSpotifyReporter;
+    Logger* iLoggerSpotifyReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;
     VariableDelay* iVariableDelay2;
