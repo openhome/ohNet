@@ -53,7 +53,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IStarvationMonitorObserver
     void NotifyStarvationMonitorBuffering(TBool aBuffering) override;
-private: // from IClockPuller
+private:
     void NotifySize(TUint aJiffies);
     void Stop();
 private:

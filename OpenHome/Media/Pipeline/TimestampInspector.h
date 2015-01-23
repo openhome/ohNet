@@ -19,7 +19,7 @@ public:
     TimestampInspector(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
     ~TimestampInspector();
 private:
-    void NewStream();
+    void NewSession();
     void StreamInterrupted();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;

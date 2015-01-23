@@ -134,6 +134,18 @@ ClockPullerUtilisationPerStreamLeft::~ClockPullerUtilisationPerStreamLeft()
     delete iUtilisationLeft;
 }
 
+void ClockPullerUtilisationPerStreamLeft::StartTimestamp()
+{
+}
+
+void ClockPullerUtilisationPerStreamLeft::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void ClockPullerUtilisationPerStreamLeft::StopTimestamp()
+{
+}
+
 void ClockPullerUtilisationPerStreamLeft::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
 {
     iDecodedReservoirUpdateFrequency = aNotificationFrequency;

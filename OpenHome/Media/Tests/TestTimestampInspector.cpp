@@ -18,6 +18,9 @@ namespace Media {
 class DummyClockPuller : public IClockPuller
 {
 private: // from IClockPuller
+    void StartTimestamp() override;
+    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+    void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
     void NotifySizeDecodedReservoir(TUint aJiffies) override;
@@ -47,6 +50,7 @@ private:
        ,EMsgMode
        ,EMsgSession
        ,EMsgTrack
+       ,EMsgEncodedStream
        ,EMsgDelay
        ,EMsgMetaText
        ,EMsgHalt
@@ -68,8 +72,8 @@ private:
     void TimestampVariationRestartsLocking();
     void NonTimestampedMsgAtStartOfLocking();
     void NewDecodedStreamIfAudioDiscarded();
+    void NewSessionWhileLocking();
     void NewStreamWhileLocking();
-    // FIXME - timestamps that cause wrapping in diff calculations?
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
@@ -115,6 +119,19 @@ private:
 using namespace OpenHome;
 using namespace OpenHome::Media;
 
+
+void DummyClockPuller::StartTimestamp()
+{
+}
+
+void DummyClockPuller::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void DummyClockPuller::StopTimestamp()
+{
+}
+
 void DummyClockPuller::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
 {
 }
@@ -159,12 +176,13 @@ SuiteTimestampInspector::SuiteTimestampInspector()
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::TimestampVariationRestartsLocking), "TimestampVariationRestartsLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NonTimestampedMsgAtStartOfLocking), "NonTimestampedMsgAtStartOfLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewDecodedStreamIfAudioDiscarded), "NewDecodedStreamIfAudioDiscarded");
+    AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewSessionWhileLocking), "NewSessionWhileLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewStreamWhileLocking), "NewStreamWhileLocking");
 }
 
 void SuiteTimestampInspector::Setup()
 {
-    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1);
+    iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 5, 6, 1, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *this);
     iLastMsg = EMsgNone;
@@ -207,6 +225,9 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         track->RemoveRef();
     }
         break;
+    case EMsgEncodedStream:
+        msg = iMsgFactory->CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, iNextStreamId, false, true, NULL);
+        break;
     case EMsgDelay:
         msg = iMsgFactory->CreateMsgDelay(Jiffies::kPerSecond);
         break;
@@ -223,7 +244,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
         msg = iMsgFactory->CreateMsgWait();
         break;
     case EMsgDecodedStream:
-        msg = iMsgFactory->CreateMsgDecodedStream(++iNextStreamId, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("NULL"), 0, 0, true, true, false, NULL);
+        msg = iMsgFactory->CreateMsgDecodedStream(iNextStreamId++, kBitrate, kBitDepth, kSampleRate, kChannels, Brn("NULL"), 0, 0, true, true, false, NULL);
         break;
     case EMsgAudioPcm:
     {
@@ -255,7 +276,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
 
 void SuiteTimestampInspector::StartStream()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDecodedStream };
+    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgEncodedStream, EMsgDecodedStream };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     for (size_t i=0; i<numElems; i++) {
         PushMsg(types[i]);
@@ -264,8 +285,9 @@ void SuiteTimestampInspector::StartStream()
 
 void SuiteTimestampInspector::NonAudioMsgsPassThrough()
 {
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDelay, EMsgMetaText,
-                         EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream, EMsgQuit };
+    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgEncodedStream, EMsgDelay,
+                         EMsgMetaText, EMsgHalt, EMsgFlush, EMsgWait, EMsgDecodedStream,
+                         EMsgQuit };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     TUint prevTxCount = iMsgTxCount;
     for (size_t i=0; i<numElems; i++) {
@@ -384,10 +406,10 @@ void SuiteTimestampInspector::NewDecodedStreamIfAudioDiscarded()
     TEST(iTrackOffsetTx == iTrackOffsetRx);
 }
 
-void SuiteTimestampInspector::NewStreamWhileLocking()
+void SuiteTimestampInspector::NewSessionWhileLocking()
 {
     iTimestampNextAudioMsg = true;
-    EMsgType types[] = { EMsgMode, EMsgSession, EMsgTrack, EMsgDecodedStream };
+    EMsgType types[] = { EMsgMode, EMsgSession };
     const size_t numElems = sizeof(types) / sizeof(types[0]);
     for (size_t i=0; i<numElems; i++) {
         StartStream();
@@ -398,6 +420,23 @@ void SuiteTimestampInspector::NewStreamWhileLocking()
         PushMsg(types[i]);
         TEST(iTimestampInspector->iCheckForTimestamp);
         TEST(!iTimestampInspector->iStreamIsTimestamped);
+    }
+}
+
+void SuiteTimestampInspector::NewStreamWhileLocking()
+{
+    iTimestampNextAudioMsg = true;
+    EMsgType types[] = { EMsgTrack, EMsgEncodedStream, EMsgDecodedStream };
+    const size_t numElems = sizeof(types) / sizeof(types[0]);
+    for (size_t i=0; i<numElems; i++) {
+        StartStream();
+        PushMsg(EMsgAudioPcm);
+        TEST(!iTimestampInspector->iCheckForTimestamp);
+        TEST(iTimestampInspector->iStreamIsTimestamped);
+        TEST(!iTimestampInspector->iLockedToStream);
+        PushMsg(types[i]);
+        TEST(!iTimestampInspector->iCheckForTimestamp);
+        TEST(iTimestampInspector->iStreamIsTimestamped);
     }
 }
 
@@ -434,7 +473,7 @@ Msg* SuiteTimestampInspector::ProcessMsg(MsgDelay* aMsg)
 
 Msg* SuiteTimestampInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    ASSERTS();
+    iLastMsg = EMsgEncodedStream;
     return aMsg;
 }
 

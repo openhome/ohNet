@@ -110,6 +110,18 @@ ClockPullerLogging::ClockPullerLogging(Environment& aEnv)
 {
 }
 
+void ClockPullerLogging::StartTimestamp()
+{
+}
+
+void ClockPullerLogging::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void ClockPullerLogging::StopTimestamp()
+{
+}
+
 void ClockPullerLogging::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
 {
     AutoMutex a(iLock);

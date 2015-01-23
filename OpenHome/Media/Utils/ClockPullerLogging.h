@@ -55,6 +55,9 @@ class ClockPullerLogging : public IClockPuller
 public:
     ClockPullerLogging(Environment& aEnv);
 private: // from IClockPuller
+    void StartTimestamp() override;
+    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+    void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);

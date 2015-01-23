@@ -14,6 +14,9 @@ class IClockPuller
 {
 public:
     virtual ~IClockPuller() {}
+    virtual void StartTimestamp() = 0;
+    virtual void NotifyTimestamp(TInt aDrift, TUint aNetwork) = 0;
+    virtual void StopTimestamp() = 0;
     virtual void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) = 0;
     virtual void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) = 0;
     virtual void NotifySizeDecodedReservoir(TUint aJiffies) = 0;

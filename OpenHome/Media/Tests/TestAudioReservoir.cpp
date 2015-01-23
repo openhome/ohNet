@@ -128,6 +128,9 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IClockPuller
+    void StartTimestamp() override;
+    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+    void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
     void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
@@ -636,6 +639,18 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
 {
     ASSERTS(); // only MsgAudioPcm and MsgSilence expected in this test
     return NULL;
+}
+
+void SuiteReservoirHistory::StartTimestamp()
+{
+}
+
+void SuiteReservoirHistory::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void SuiteReservoirHistory::StopTimestamp()
+{
 }
 
 void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency)
