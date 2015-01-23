@@ -16,6 +16,7 @@ public:
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;
+    virtual ~IPipelinePropertyObserver() {}
 };
 
 /*

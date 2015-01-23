@@ -1,7 +1,8 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/SuiteUnitTest.h>
-#include <OpenHome/Media/Pipeline/SampleReporter.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Reporter.h>
+#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/InfoProvider.h>
 #include <OpenHome/Media/Utils/AllocatorInfoLogger.h>
 
@@ -15,7 +16,16 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class SuiteSampleReporter : public SuiteUnitTest, public IPipelineElementUpstream
+class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
+{
+public: // from IPipelinePropertyObserver
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyMetaText(const Brx& aText) override;
+    void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
+    void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
+};
+
+class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
 {
 #define KTrackUri "http://host:port/path/file.ext"
     static const TUint kTrackId       = 2;
@@ -24,10 +34,10 @@ class SuiteSampleReporter : public SuiteUnitTest, public IPipelineElementUpstrea
 #define kCodecName "Dummy codec"
     static const TUint64 kTrackLength = Jiffies::kPerSecond * 60;
     static const TBool kLossless      = true;
-#define kMetaText "SuiteSampleReporter sample metatext"
+#define kMetaText "SuiteSpotifyReporter sample metatext"
     static const TUint kDataBytes = 3 * 1024;   // bytes per MsgAudioPcm
 public:
-    SuiteSampleReporter();
+    SuiteSpotifyReporter();
 public: // from SuiteUnitTest
     void Setup() override;
     void TearDown() override;
@@ -73,7 +83,8 @@ private:
     MsgFactory* iMsgFactory;
     TrackFactory* iTrackFactory;
     AllocatorInfoLogger iInfoAggregator;
-    SampleReporter* iReporter;
+    HelperPipelinePropertyObserver* iPropertyObserver;
+    SpotifyReporter* iReporter;
     EMsgType iNextGeneratedMsg;
     Msg* iLastMsg;
     TUint64 iTrackOffset;
@@ -88,23 +99,46 @@ private:
 } // namespace OpenHome
 
 
-// SuiteSampleReporter
+// HelperPipelinePropertyObserver
 
-SuiteSampleReporter::SuiteSampleReporter()
-    : SuiteUnitTest("SuiteSampleReporter")
+void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
 {
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestMsgsPassedThroughNoSamplesInPipeline), "TestMsgsPassedThroughNoSamplesInPipeline");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestMsgsPassedThroughSamplesInPipeline), "TestMsgsPassedThroughSamplesInPipeline");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestMsgModeResets), "TestMsgModeResets");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestSubSamples), "TestSubSamples");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestSubSamplesDiff), "TestSubSamplesDiff");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestSampleRateChange), "TestSampleRateChange");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestNumChannelsChange), "TestNumChannelsChange");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestInvalidSampleRate), "TestInvalidSampleRate");
-    AddTest(MakeFunctor(*this, &SuiteSampleReporter::TestInvalidNumChannels), "TestInvalidNumChannels");
+
 }
 
-void SuiteSampleReporter::Setup()
+void HelperPipelinePropertyObserver::NotifyMetaText(const Brx& /*aText*/)
+{
+
+}
+
+void HelperPipelinePropertyObserver::NotifyTime(TUint /*aSeconds*/, TUint /*aTrackDurationSeconds*/)
+{
+
+}
+
+void HelperPipelinePropertyObserver::NotifyStreamInfo(const DecodedStreamInfo& /*aStreamInfo*/)
+{
+
+}
+
+
+// SuiteSpotifyReporter
+
+SuiteSpotifyReporter::SuiteSpotifyReporter()
+    : SuiteUnitTest("SuiteSpotifyReporter")
+{
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgsPassedThroughNoSamplesInPipeline), "TestMsgsPassedThroughNoSamplesInPipeline");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline), "TestMsgsPassedThroughSamplesInPipeline");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestMsgModeResets), "TestMsgModeResets");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSubSamples), "TestSubSamples");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSubSamplesDiff), "TestSubSamplesDiff");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestSampleRateChange), "TestSampleRateChange");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestNumChannelsChange), "TestNumChannelsChange");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidSampleRate), "TestInvalidSampleRate");
+    AddTest(MakeFunctor(*this, &SuiteSpotifyReporter::TestInvalidNumChannels), "TestInvalidNumChannels");
+}
+
+void SuiteSpotifyReporter::Setup()
 {
     iNextGeneratedMsg = ENone;
     iLastMsg = NULL;
@@ -114,17 +148,19 @@ void SuiteSampleReporter::Setup()
     iBitRate = kBitDepth * iSampleRate;
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 1);
-    iReporter = new SampleReporter(*this, *iMsgFactory);
+    iPropertyObserver = new HelperPipelinePropertyObserver();
+    iReporter = new SpotifyReporter(*this, *iPropertyObserver);
 }
 
-void SuiteSampleReporter::TearDown()
+void SuiteSpotifyReporter::TearDown()
 {
     delete iReporter;
-    delete iMsgFactory;
+    delete iPropertyObserver;
     delete iTrackFactory;
+    delete iMsgFactory;
 }
 
-Msg* SuiteSampleReporter::Pull()
+Msg* SuiteSpotifyReporter::Pull()
 {
     switch (iNextGeneratedMsg)
     {
@@ -178,7 +214,7 @@ Msg* SuiteSampleReporter::Pull()
     }
 }
 
-MsgAudio* SuiteSampleReporter::CreateAudio()
+MsgAudio* SuiteSpotifyReporter::CreateAudio()
 {
     TByte encodedAudioData[kDataBytes];
     (void)memset(encodedAudioData, 0xff, kDataBytes);
@@ -188,10 +224,10 @@ MsgAudio* SuiteSampleReporter::CreateAudio()
     return audio;
 }
 
-void SuiteSampleReporter::TestMsgsCauseAssertion()
+void SuiteSpotifyReporter::TestMsgsCauseAssertion()
 {
     // Don't expect to see certain msgs at the point in pipeline where
-    // SampleReporter is placed.
+    // SpotifyReporter is placed.
     EMsgType unexpectedTypes[] = {
         EMsgEncodedStream,
         EMsgAudioEncoded,
@@ -205,11 +241,11 @@ void SuiteSampleReporter::TestMsgsCauseAssertion()
     }
 }
 
-void SuiteSampleReporter::TestMsgsPassedThroughNoSamplesInPipeline()
+void SuiteSpotifyReporter::TestMsgsPassedThroughNoSamplesInPipeline()
 {
     // All msgs should pass through unchanged. However, only MsgMode,
     // MsgDecodedStream and MsgAudioPcm should change the state of the
-    // SampleReporter, so test the others.
+    // SpotifyReporter, so test the others.
 
     EMsgType types[] = {
         EMsgSession,
@@ -230,7 +266,7 @@ void SuiteSampleReporter::TestMsgsPassedThroughNoSamplesInPipeline()
     }
 }
 
-void SuiteSampleReporter::TestMsgsPassedThroughSamplesInPipeline()
+void SuiteSpotifyReporter::TestMsgsPassedThroughSamplesInPipeline()
 {
     TUint samplesExpected = kDataBytes/kByteDepth;
     // First, put some audio into pipeline.
@@ -248,7 +284,7 @@ void SuiteSampleReporter::TestMsgsPassedThroughSamplesInPipeline()
     TEST(iReporter->SubSamples() == samplesExpected);
     TEST(iReporter->SubSamplesDiff(0) == samplesExpected);
 
-    // Now, test msg types that should have no effect on state of SampleReporter.
+    // Now, test msg types that should have no effect on state of SpotifyReporter.
     EMsgType passThroughTypes[] = {
         EMsgSession,
         EMsgTrack,
@@ -268,7 +304,7 @@ void SuiteSampleReporter::TestMsgsPassedThroughSamplesInPipeline()
     }
 }
 
-void SuiteSampleReporter::TestMsgModeResets()
+void SuiteSpotifyReporter::TestMsgModeResets()
 {
     TUint samplesExpected = kDataBytes/kByteDepth;
     // First, put some audio into pipeline.
@@ -294,7 +330,7 @@ void SuiteSampleReporter::TestMsgModeResets()
     TEST(iReporter->SubSamplesDiff(0) == 0);
 }
 
-void SuiteSampleReporter::TestSubSamples()
+void SuiteSpotifyReporter::TestSubSamples()
 {
     // FIXME - vary number of samples in msgs to catch overflow issue
     // Will need to have an iDataBytes value, instead of kDataBytes, that can
@@ -330,7 +366,7 @@ void SuiteSampleReporter::TestSubSamples()
     }
 }
 
-void SuiteSampleReporter::TestSubSamplesDiff()
+void SuiteSpotifyReporter::TestSubSamplesDiff()
 {
     TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
     TUint samplesExpected = samplesExpectedPerMsg;
@@ -363,7 +399,7 @@ void SuiteSampleReporter::TestSubSamplesDiff()
     }
 }
 
-void SuiteSampleReporter::TestSampleRateChange()
+void SuiteSpotifyReporter::TestSampleRateChange()
 {
     TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
     TUint samplesExpected = samplesExpectedPerMsg;
@@ -418,7 +454,7 @@ void SuiteSampleReporter::TestSampleRateChange()
     }
 }
 
-void SuiteSampleReporter::TestNumChannelsChange()
+void SuiteSpotifyReporter::TestNumChannelsChange()
 {
     TUint samplesExpectedPerMsg = kDataBytes/kByteDepth;
     TUint samplesExpected = samplesExpectedPerMsg;
@@ -472,7 +508,7 @@ void SuiteSampleReporter::TestNumChannelsChange()
     }
 }
 
-void SuiteSampleReporter::TestInvalidSampleRate()
+void SuiteSpotifyReporter::TestInvalidSampleRate()
 {
     iSampleRate = 0;
     iBitRate = kBitDepth * iSampleRate;
@@ -490,7 +526,7 @@ void SuiteSampleReporter::TestInvalidSampleRate()
     iLastMsg->RemoveRef();  // avoid memory leaks
 }
 
-void SuiteSampleReporter::TestInvalidNumChannels()
+void SuiteSpotifyReporter::TestInvalidNumChannels()
 {
     iNumChannels = 0;
 
@@ -508,9 +544,9 @@ void SuiteSampleReporter::TestInvalidNumChannels()
 }
 
 
-void TestSampleReporter()
+void TestSpotifyReporter()
 {
-    Runner runner("SampleReporter tests\n");
-    runner.Add(new SuiteSampleReporter());
+    Runner runner("SpotifyReporter tests\n");
+    runner.Add(new SuiteSpotifyReporter());
     runner.Run();
 }

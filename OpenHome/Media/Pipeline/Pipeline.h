@@ -20,7 +20,7 @@
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
-#include <OpenHome/Media/Pipeline/SampleReporter.h>
+#include <OpenHome/Media/Pipeline/SpotifyReporter.h>
 #include <OpenHome/Media/Pipeline/Splitter.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
@@ -115,8 +115,8 @@ public:
     void RemoveCurrentStream();
     TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
-    ISampleReporter& SampleReporter() const;
-    ITrackInjector& TrackInjector() const;
+    ISpotifyReporter& SpotifyReporter() const;
+    ITrackChangeObserver& TrackChangeObserver() const;
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
     IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
     TUint SenderMinLatencyMs() const;
@@ -188,8 +188,8 @@ private:
     Logger* iLoggerGorger;
     Reporter* iReporter;
     Logger* iLoggerReporter;
-    Media::SampleReporter* iSampleReporter;
-    Logger* iLoggerSampleReporter;
+    Media::SpotifyReporter* iSpotifyReporter;
+    Logger* iLoggerSpotifyReporter;
     Splitter* iSplitter;
     Logger* iLoggerSplitter;
     VariableDelay* iVariableDelay2;
