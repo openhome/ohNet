@@ -74,8 +74,8 @@ tests = [
     [ 'TestTidalDropout',            'local', 'local', 'local', 3600,    20,    tidalI, tidalU, tidalP         ],
 
     # Airplay
-    [ 'TestAirplayFunctions',        'local', dacp                                                             ],
-    [ 'TestAirplayDropout',          'local', dacp,    apTrack, '3600'                                         ],
+    [ 'TestAirplayFunctions',        'local'                                                                   ],
+    [ 'TestAirplayDropout',          'local', '3600'                                                           ],
 
     # UPnP AV
     [ 'TestAvTransportService',      'local', 'ALL'                                                            ],

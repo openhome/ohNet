@@ -3,14 +3,13 @@
 
 Parameters:
     arg#1 - DUT ['local' for internal SoftPlayer on loopback]
-    arg#2 - iTunes server to source media (PC name)
-    arg#3 - iTunes track for playback
-    arg#4 - Test duration (secs) or 'forever'
+    arg#2 - Test duration (secs) or 'forever'
     
 Verifies AirPlay audio output by the DUT does not suffer from audio dropout
 """ 
 import _FunctionalTest
 import BaseTest                         as BASE
+import _Config                          as Config
 import Upnp.ControlPoints.Volkano       as Volkano
 import Instruments.Network.DacpClient   as DacpClient
 import _SoftPlayer                      as SoftPlayer
@@ -37,21 +36,22 @@ class TestAirplayDropout( BASE.BaseTest ):
         self.tick         = None
         self.timer        = None
         self.songcaster   = aSongcaster
+        self.testConfig   = Config.Config()
         self.finished     = threading.Event()
 
     def Test( self, args ):
         """Net Aux Audio Dropout test"""
         dutName      = ''
-        iTunesServer = ''
-        track        = ''
         duration     = '0'
         loopback     = False
+        itunesGuid   = self.testConfig.itunes.guid
+        itunesLib    = self.testConfig.itunes.library
+        itunesAddr   = self.testConfig.itunes.address
+        itunesTrack  = self.testConfig.itunes.track1k
 
         try:
             dutName      = args[1]
-            iTunesServer = args[2]
-            track        = args[3]
-            duration     = args[4].lower()
+            duration     = args[2].lower()
         except:
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( args )) )
@@ -70,7 +70,7 @@ class TestAirplayDropout( BASE.BaseTest ):
             self.dut.volume.volume = 65
 
         # setup dacp (iTunes) control
-        self.dacp = DacpClient.DacpClient( iTunesServer )
+        self.dacp = DacpClient.DacpClient( itunesGuid, itunesLib, itunesAddr )
         if dutName not in self.dacp.speakers:
             self.log.Abort( self.dacp.dev, '%s not available as iTunes speaker' % dutName )
         
@@ -89,7 +89,7 @@ class TestAirplayDropout( BASE.BaseTest ):
             self.dacp.speaker = 'My Computer'
         else:
             self.dacp.speaker = dutName
-        self.dacp.PlayTrack( track )
+        self.dacp.PlayTrack( itunesTrack )
         self.dacp.repeat  = True
         time.sleep( 5 )
                     

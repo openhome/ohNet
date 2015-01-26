@@ -5,6 +5,7 @@ from integration tests, and to capture SoftPlayer output to test logs
 """
 
 import _FunctionalTest
+import _Config   as Config
 import Component as BASE
 import os
 import platform
@@ -34,9 +35,14 @@ class SoftPlayer( BASE.Component ):
         as described above. These 'configuration' options cannot be changed on
         a running SoftPlayer, so have to be initialised at creation"""
         BASE.Component.__init__( self )
-        self.shutdown = False
-        self.room     = None
-        self.model    = None
+        self.testConfig = Config.Config()
+        self.shutdown   = False
+        self.room       = None
+        self.model      = None
+
+        hostId = None
+        if self.testConfig.softplayer.adapter is not None:
+            hostId = int( self.testConfig.softplayer.adapter )
 
         random.seed()
         uniqueId = '%06d' % random.randint( 0, 999999 )
@@ -66,8 +72,8 @@ class SoftPlayer( BASE.Component ):
         cmd  = [exePath, '-r', self.room, '-n', self.model]
         if aLoopback:
             cmd.extend( ['-l'] )
-        else:
-            cmd.extend( ['-a', '%d' % self.__GetHost( )] )
+        elif hostId:
+            cmd.extend( ['-a', '%d' % hostId] )
         if aTuneIn:
             cmd.extend( ['-t', aTuneIn] )
         if aSenderChannel:
@@ -127,26 +133,6 @@ class SoftPlayer( BASE.Component ):
                 self.log.Fail( self.dev, '%s' % msg )
             msg = self.proc.stdout.readline()
         self.log.Info( self.dev, 'SoftPlayer logger shut down' )
-
-    @staticmethod
-    def __GetHost():
-        """Retrieve host adapter to use for player"""
-        host = 0
-        configFile = os.path.join( os.path.dirname( __file__ ), 'Config.xml' )
-        if os.path.exists( configFile ):
-            config = None
-            computerName = platform.node().split( '.' )[0]
-            xml = ET.parse( configFile )
-            computers = xml.getiterator( 'computer' )
-            for computer in computers:
-                if computer.attrib['name'] == computerName:
-                    config = computer
-                    break
-            if config is not None:
-                adapter = config.find( 'adapter' )
-                if adapter is not None:
-                    host = int( adapter.text )
-        return host
 
     def __GetName( self ):
         return self.room + ':' + self.model
