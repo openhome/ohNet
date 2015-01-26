@@ -22,11 +22,12 @@ ClockPullerSongcast::ClockPullerSongcast(Environment& aEnv, Media::IPullableCloc
     , iRunning(false)
     , iStoreNetworkTimestamp(false)
     , iNextHistoryIndex(0)
-    , iSampleRate(0)
-    , iTimestampTotalDrift(0)
     , iNetworkTimestampStart(0)
     , iNetworkTimestampLast(0)
     , iNetworkTimeOverflowCount(0)
+    , iSampleRate(0)
+    , iTimestampTotalDrift(0)
+    , iTimestampMaxAllowedDrift(UINT_MAX)
 {
     iHistoryLeft = new UtilisationHistory(aEnv, *this);
     iHistoryRight = new UtilisationHistory(aEnv, *this);
