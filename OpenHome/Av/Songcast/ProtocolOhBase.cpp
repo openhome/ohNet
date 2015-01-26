@@ -19,7 +19,7 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
+ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
@@ -402,7 +402,9 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
-    aMsg.SetRxTimestamp(iTimestamper.Timestamp(aMsg.Frame()));
+    if (iTimestamper != NULL) {
+        aMsg.SetRxTimestamp(iTimestamper->Timestamp(aMsg.Frame()));
+    }
 
     AutoMutex a(iMutexTransport);
     if (!iRunning) {

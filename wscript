@@ -332,7 +332,6 @@ def build(bld):
                 'OpenHome/Av/Songcast/ProtocolOhu.cpp',
                 'OpenHome/Av/Songcast/ProtocolOhm.cpp',
                 'OpenHome/Av/Songcast/CodecOhm.cpp',
-                'OpenHome/Av/Songcast/OhmTimestamp.cpp',
                 'Generated/DvAvOpenhomeOrgReceiver1.cpp',
                 'OpenHome/Av/Songcast/ProviderReceiver.cpp',
                 'OpenHome/Av/Songcast/ZoneHandler.cpp',

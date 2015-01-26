@@ -17,14 +17,13 @@ namespace Media {
 namespace Av {
 
 class IOhmMsgFactory;
-class IOhmTimestamper;
 
 class ProtocolOhu : public ProtocolOhBase, public IPowerHandler
 {
     static const TUint kTimerLeaveTimeoutMs = 50;
     static const TUint kMaxSlaveCount = 4;
 public:
-    ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode, IPowerManager& aPowerManager);
+    ProtocolOhu(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, const Brx& aMode, IPowerManager& aPowerManager);
     ~ProtocolOhu();
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;

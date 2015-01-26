@@ -31,7 +31,7 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kTimerJoinTimeoutMs = 300;
     static const TUint kTtl = 2;
 protected:
-    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
+    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
     ~ProtocolOhBase();
     void Add(OhmMsg* aMsg);
     void ResendSeen();
@@ -77,7 +77,7 @@ protected:
 private:
     Mutex iMutexTransport;
     Media::TrackFactory& iTrackFactory;
-    IOhmTimestamper& iTimestamper;
+    IOhmTimestamper* iTimestamper;
     Brn iSupportedScheme;
     TUint iNacnId;
     Uri iUri; // only used inside Stream() but too large to put on the stack

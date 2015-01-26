@@ -12,7 +12,6 @@ namespace Net {
 }
 namespace Av {
     class OhmMsgFactory;
-    class DefaultTimestamper;
 }
 namespace Media {
 class ProtocolManager;

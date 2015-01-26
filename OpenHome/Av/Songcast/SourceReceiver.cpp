@@ -45,7 +45,7 @@ class SourceReceiver : public Source, private ISourceReceiver, private IZoneList
 {
     static const TChar* kProtocolInfo;
 public:
-    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
+    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
     void Activate() override;
@@ -112,7 +112,7 @@ using namespace OpenHome::Configuration;
 
 // SourceFactory
 
-ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
+ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
 { // static
     return new SourceReceiver(aMediaPlayer, aTimestamper, aSenderIconFileName);
 }
@@ -147,7 +147,7 @@ IClockPuller* UriProviderSongcast::ClockPuller()
 
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
-SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
+SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
     : Source("Songcast", "Receiver")
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -172,7 +172,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory));
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, iUriProvider->Mode()));
-    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
+    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
 
