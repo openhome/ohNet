@@ -50,6 +50,7 @@ private:
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
+    static void FormUrlEncode(IWriter& aWriter, const Brx& aSrc);
 private:
     Mutex iLock;
     Mutex iReLoginLock;
