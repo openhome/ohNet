@@ -12,7 +12,7 @@
 
 #include <limits.h>
 
-EXCEPTION(MsgInvalidSampleRate);
+EXCEPTION(SampleRateInvalid);
 
 namespace OpenHome {
 namespace Media {
@@ -137,6 +137,10 @@ public:
     static TBool IsValidSampleRate(TUint aSampleRate);
     static TUint JiffiesPerSample(TUint aSampleRate);
     static TUint BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint aNumChannels, TUint aBytesPerSubsample);
+    static TUint ToSongcastTime(TUint aJiffies, TUint aSampleRate);
+    static TUint FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate);
+private:
+    static TUint SongcastTicksPerSecond(TUint aSampleRate);
 private:
     //Number of jiffies per sample
     static const TUint kJiffies7350   = kPerSecond / 7350;
@@ -155,6 +159,9 @@ private:
     static const TUint kJiffies96000  = kPerSecond / 96000;
     static const TUint kJiffies176400 = kPerSecond / 176400;
     static const TUint kJiffies192000 = kPerSecond / 192000;
+
+    static const TUint kSongcastTicksPerSec44k = 44100 * 256;
+    static const TUint kSongcastTicksPerSec48k = 48000 * 256;
 };
 
 class DecodedAudio : public Allocated

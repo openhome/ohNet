@@ -129,6 +129,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IClockPuller
     void StartTimestamp() override;
+    void NotifyTimestampSampleRate(TUint aSampleRate) override;
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
     void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
@@ -642,6 +643,10 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
 }
 
 void SuiteReservoirHistory::StartTimestamp()
+{
+}
+
+void SuiteReservoirHistory::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
 {
 }
 

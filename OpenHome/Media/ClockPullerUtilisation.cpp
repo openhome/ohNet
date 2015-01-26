@@ -138,6 +138,10 @@ void ClockPullerUtilisationPerStreamLeft::StartTimestamp()
 {
 }
 
+void ClockPullerUtilisationPerStreamLeft::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
+{
+}
+
 void ClockPullerUtilisationPerStreamLeft::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
 {
 }
@@ -201,15 +205,8 @@ void ClockPullerUtilisationPerStreamLeft::TryAdd(UtilisationHistory& aHistory, T
 
 void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples, TUint aUpdateFrequency)
 {
-    Log::Print("NotifyClockDrift: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aNumSamples * (aUpdateFrequency / Jiffies::kPerMs));
-    TInt64 drift = (TInt64)(aDriftJiffies * 100) << 29LL;
-    const TInt64 pull = (drift) / ((TInt64)aNumSamples * aUpdateFrequency);
-    if (pull > INT_MAX || pull < INT_MIN) {
-        Log::Print("Rejected pull of %llx (%d%%)\n", pull, pull/(1<<29));
-    }
-    else {
-        iPullableClock.PullClock((TInt32)pull);
-    }
+    const TUint64 periodJiffies = aNumSamples * static_cast<TUint64>(aUpdateFrequency);
+    ClockPullerUtils::PullClock(iPullableClock, aDriftJiffies, periodJiffies);
 }
 
 

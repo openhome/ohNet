@@ -114,6 +114,10 @@ void ClockPullerLogging::StartTimestamp()
 {
 }
 
+void ClockPullerLogging::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
+{
+}
+
 void ClockPullerLogging::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
 {
 }

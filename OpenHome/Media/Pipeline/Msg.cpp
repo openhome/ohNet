@@ -247,7 +247,7 @@ TBool Jiffies::IsValidSampleRate(TUint aSampleRate)
     try {
         JiffiesPerSample(aSampleRate); // only want to check if sample rate is supported
     }
-    catch (MsgInvalidSampleRate) {
+    catch (SampleRateInvalid&) {
         return false;
     }
     return true;
@@ -290,7 +290,7 @@ TUint Jiffies::JiffiesPerSample(TUint aSampleRate)
     case 192000:
         return kJiffies192000;
     default:
-        THROW(MsgInvalidSampleRate);
+        THROW(SampleRateInvalid);
     }
 }
 
@@ -301,6 +301,45 @@ TUint Jiffies::BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint 
     const TUint numSubsamples = numSamples * aNumChannels;
     const TUint bytes = numSubsamples * aBytesPerSubsample;
     return bytes;
+}
+
+TUint Jiffies::ToSongcastTime(TUint aJiffies, TUint aSampleRate)
+{ // static
+    return static_cast<TUint>((static_cast<TUint64>(aJiffies) * SongcastTicksPerSecond(aSampleRate)) / kPerSecond);
+}
+
+TUint Jiffies::FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate)
+{ // static
+    return static_cast<TUint>((aSongcastTime * kPerSecond) / SongcastTicksPerSecond(aSampleRate));
+}
+
+TUint Jiffies::SongcastTicksPerSecond(TUint aSampleRate)
+{ // static
+    switch (aSampleRate)
+    {
+    case 7350:
+    case 11025:
+    case 14700:
+    case 22050:
+    case 29400:
+    case 44100:
+    case 88200:
+    case 176400:
+        return kSongcastTicksPerSec44k;
+
+    case 8000:
+    case 12000:
+    case 16000:
+    case 24000:
+    case 32000:
+    case 48000:
+    case 96000:
+    case 192000:
+        return kSongcastTicksPerSec48k;
+
+    default:
+        THROW(SampleRateInvalid);
+    }
 }
 
 

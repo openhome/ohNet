@@ -132,6 +132,11 @@ Msg* TimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
     }
     iDecodedStream = aMsg;
     iDecodedStream->AddRef();
+    const TUint sampleRate = iDecodedStream->StreamInfo().SampleRate();
+    iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
+    if (iStreamIsTimestamped && iClockPuller != NULL) {
+        iClockPuller->NotifyTimestampSampleRate(sampleRate);
+    }
     return aMsg;
 }
 
@@ -140,9 +145,9 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
     if (iCheckForTimestamp) {
         TUint ignore;
         iStreamIsTimestamped = aMsg->TryGetTimestamps(ignore, ignore);
-        if (iStreamIsTimestamped) {
-            ASSERT(iClockPuller != NULL);
+        if (iStreamIsTimestamped && iClockPuller != NULL) {
             iClockPuller->StartTimestamp();
+            iClockPuller->NotifyTimestampSampleRate(iDecodedStream->StreamInfo().SampleRate());
         }
         iLockedToStream = !iStreamIsTimestamped;
         iCalculateTimestampDelta = iStreamIsTimestamped;
@@ -185,8 +190,7 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
             }
             return NULL;
         }
-        if (timestamped) {
-            ASSERT(iClockPuller != NULL);
+        if (timestamped && iClockPuller != NULL) {
             const TInt drift = iTimestampDelta - static_cast<TInt>(rxTimestamp - networkTimestamp);
             iClockPuller->NotifyTimestamp(drift, networkTimestamp);
         }

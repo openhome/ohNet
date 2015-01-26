@@ -48,6 +48,7 @@ private:
     TBool iStreamIsTimestamped;
     TBool iLockedToStream;
     TBool iCalculateTimestampDelta;
+    TUint iLockingMaxDeviation;
     TUint iMsgsTillLock;
     TInt iTimestampDelta;
     TUint64 iDiscardedJiffies;

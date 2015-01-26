@@ -15,22 +15,6 @@ using namespace OpenHome::Media;
 namespace OpenHome {
 namespace Media {
 
-class DummyClockPuller : public IClockPuller
-{
-private: // from IClockPuller
-    void StartTimestamp() override;
-    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
-    void StopTimestamp() override;
-    void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
-    void NotifySizeDecodedReservoir(TUint aJiffies) override;
-    void StopDecodedReservoir() override;
-    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) override;
-    void NotifySizeStarvationMonitor(TUint aJiffies) override;
-    void StopStarvationMonitor() override;
-};
-
 class SuiteTimestampInspector : public SuiteUnitTest, private IPipelineElementDownstream, private IMsgProcessor
 {
     static const TUint kBitrate = 256;
@@ -74,6 +58,7 @@ private:
     void NewDecodedStreamIfAudioDiscarded();
     void NewSessionWhileLocking();
     void NewStreamWhileLocking();
+    void InterruptedStreamRestartsLocking();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IMsgProcessor
@@ -106,7 +91,7 @@ private:
     TByte iAudioData[884]; // 884 => 5ms @ 44.1, 16-bit, stereo
     TUint64 iTrackOffsetTx;
     TUint64 iTrackOffsetRx;
-    DummyClockPuller iClockPuller;
+    ClockPullerNull iClockPuller;
     TBool iTimestampNextAudioMsg;
     TBool iUseClockPuller;
     TUint iNextNetworkTimestamp;
@@ -118,51 +103,6 @@ private:
 
 using namespace OpenHome;
 using namespace OpenHome::Media;
-
-
-void DummyClockPuller::StartTimestamp()
-{
-}
-
-void DummyClockPuller::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
-{
-}
-
-void DummyClockPuller::StopTimestamp()
-{
-}
-
-void DummyClockPuller::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
-{
-}
-
-void DummyClockPuller::NewStreamDecodedReservoir(TUint /*aTrackId*/, TUint /*aStreamId*/)
-{
-}
-
-void DummyClockPuller::NotifySizeDecodedReservoir(TUint /*aJiffies*/)
-{
-}
-
-void DummyClockPuller::StopDecodedReservoir()
-{
-}
-
-void DummyClockPuller::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
-{
-}
-
-void DummyClockPuller::NewStreamStarvationMonitor(TUint /*aTrackId*/, TUint /*aStreamId*/)
-{
-}
-
-void DummyClockPuller::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
-{
-}
-
-void DummyClockPuller::StopStarvationMonitor()
-{
-}
 
 
 SuiteTimestampInspector::SuiteTimestampInspector()
@@ -178,6 +118,7 @@ SuiteTimestampInspector::SuiteTimestampInspector()
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewDecodedStreamIfAudioDiscarded), "NewDecodedStreamIfAudioDiscarded");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewSessionWhileLocking), "NewSessionWhileLocking");
     AddTest(MakeFunctor(*this, &SuiteTimestampInspector::NewStreamWhileLocking), "NewStreamWhileLocking");
+    AddTest(MakeFunctor(*this, &SuiteTimestampInspector::InterruptedStreamRestartsLocking), "InterruptedStreamRestartsLocking");
 }
 
 void SuiteTimestampInspector::Setup()
@@ -437,6 +378,25 @@ void SuiteTimestampInspector::NewStreamWhileLocking()
         PushMsg(types[i]);
         TEST(!iTimestampInspector->iCheckForTimestamp);
         TEST(iTimestampInspector->iStreamIsTimestamped);
+    }
+}
+
+void SuiteTimestampInspector::InterruptedStreamRestartsLocking()
+{
+    iTimestampNextAudioMsg = true;
+    EMsgType types[] = { EMsgHalt, EMsgFlush, EMsgWait };
+    const size_t numElems = sizeof(types) / sizeof(types[0]);
+    for (size_t i=0; i<numElems; i++) {
+        StartStream();
+        PushMsg(EMsgAudioPcm);
+        TEST(iTimestampInspector->iStreamIsTimestamped);
+        TEST(!iTimestampInspector->iLockedToStream);
+        do {
+            PushMsg(EMsgAudioPcm);
+        } while (!iTimestampInspector->iLockedToStream);
+        PushMsg(types[i]);
+        TEST(iTimestampInspector->iStreamIsTimestamped);
+        TEST(!iTimestampInspector->iLockedToStream);
     }
 }
 
