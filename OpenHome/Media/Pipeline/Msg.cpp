@@ -1541,7 +1541,7 @@ TBool MsgAudioPcm::TryGetTimestamps(TUint& aNetwork, TUint& aRx)
 {
     if (iTimestamped) {
         aNetwork = iNetworkTimestamp;
-        aRx = iReceiveTimestamp;
+        aRx = iRxTimestamp;
         return true;
     }
     return false;
@@ -1569,13 +1569,11 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, 
     iTimestamped = false;
 }
 
-void MsgAudioPcm::SetTimestamps(TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+void MsgAudioPcm::SetTimestamps(TUint aRx, TUint aNetwork)
 {
     iTimestamped = true;
-    iReceiveTimestamp = aRxTimestamp;
-    iMediaLatency = aLatency;
-    iNetworkTimestamp = aNetworkTimestamp;
-    iMediaTimestamp = aMediaTimestamp;
+    iRxTimestamp = aRx;
+    iNetworkTimestamp = aNetwork;
 }
 
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
@@ -2711,10 +2709,10 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
     return msg;
 }
 
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
     MsgAudioPcm* msg = CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
-    msg->SetTimestamps(aRxTimestamp, aLatency, aNetworkTimestamp, aMediaTimestamp);
+    msg->SetTimestamps(aRxTimestamp, aNetworkTimestamp);
     return msg;
 }
 

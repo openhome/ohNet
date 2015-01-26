@@ -145,13 +145,11 @@ public:
      * @param[in] aEndian        Endianness of audio data.
      * @param[in] aTrackOffset   Offset (in jiffies) into the stream at the start of aData.
      * @param[in] aRxTimestamp   Time when encoded frame was received by this device.
-     * @param[in] aLatency           Deprecated.  Ignored by pipeline.
      * @param[in] aNetworkTimestamp  Time when the previous encoded frame was sent over the network
-     * @param[in] aMediaTimestamp    Deprecated.  Ignored by pipeline.
      *
      * @return     Number of jiffies of audio contained in aData.
      */
-    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp) = 0;
+    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
     /**
      * Output a Wait command to the pipeline.
      *
@@ -311,7 +309,7 @@ private: // ICodecController
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
     void OutputDelay(TUint aJiffies);
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp);
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     void OutputWait();
     void OutputHalt();
     void OutputSession();

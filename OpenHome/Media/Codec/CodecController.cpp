@@ -500,9 +500,9 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
 }
 
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset,
-                                        TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+                                        TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
-    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aLatency, aNetworkTimestamp, aMediaTimestamp);
+    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aNetworkTimestamp);
     TUint jiffies= audio->Jiffies();
     Queue(audio);
     return jiffies;

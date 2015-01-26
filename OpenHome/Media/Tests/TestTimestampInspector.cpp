@@ -195,7 +195,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
             msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffsetTx);
         }
         else {
-            msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffsetTx, iNextRxTimestamp, 0 /* latency unused by this test */, iNextNetworkTimestamp, 0 /* mediaTimestamp unused by this test */);
+            msgPcm = iMsgFactory->CreateMsgAudioPcm(audioBuf, kChannels, kSampleRate, kBitDepth, EMediaDataEndianLittle, iTrackOffsetTx, iNextRxTimestamp, iNextNetworkTimestamp);
             iNextRxTimestamp += kTimestampIncrement;
             iNextNetworkTimestamp += kTimestampIncrement;
         }
