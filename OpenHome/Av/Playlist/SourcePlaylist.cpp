@@ -197,6 +197,10 @@ void SourcePlaylist::PipelineStopped()
 void SourcePlaylist::Play()
 {
     EnsureActive();
+    if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
+        iPipeline.Stop();
+        return;
+    }
 
     if (!StartedShuffled()) {
         if (iTransportState == Media::EPipelinePlaying) {
@@ -213,6 +217,10 @@ void SourcePlaylist::Play()
 void SourcePlaylist::Pause()
 {
     EnsureActive();
+    if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
+        iPipeline.Stop();
+        return;
+    }
 
     iLock.Wait();
     iTransportState = Media::EPipelinePaused;
