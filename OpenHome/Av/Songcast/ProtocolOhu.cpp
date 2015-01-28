@@ -251,18 +251,20 @@ void ProtocolOhu::Interrupt(TBool aInterrupt)
     ProtocolOhBase::Interrupt(aInterrupt);
 }
 
-TUint ProtocolOhu::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint ProtocolOhu::TryStop(TUint aTrackId, TUint aStreamId)
 {
     LOG(kSongcast, "OHU: TryStop()\n");
-    // omit tests of aTrackId, aStreamId.  Any request to Stop() should probably result in us breaking the stream
-    iLeaveLock.Wait();
-    if (iActive) {
-        iNextFlushId = iFlushIdProvider->NextFlushId();
-        iStopped = true;
-        iLeaving = true;
-        iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
+    if (iProtocolManager->IsCurrentTrack(aTrackId) &&
+        iStreamId == aStreamId && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
+        iLeaveLock.Wait();
+        if (iActive) {
+            iNextFlushId = iFlushIdProvider->NextFlushId();
+            iStopped = true;
+            iLeaving = true;
+            iTimerLeave->FireIn(kTimerLeaveTimeoutMs);
+        }
+        iLeaveLock.Signal();
     }
-    iLeaveLock.Signal();
     return iNextFlushId;
 }
 

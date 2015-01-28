@@ -74,6 +74,7 @@ protected:
     Timer* iTimerJoin;
     Timer* iTimerListen;
     Media::BwsMode iMode;
+    TUint iStreamId;
 private:
     Mutex iMutexTransport;
     Media::TrackFactory& iTrackFactory;

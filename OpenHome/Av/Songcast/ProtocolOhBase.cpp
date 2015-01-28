@@ -27,6 +27,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
     , iMode(aMode)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iMutexTransport("POHB")
     , iTrackFactory(aTrackFactory)
     , iTimestamper(aTimestamper)
@@ -151,6 +152,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iFrame = 0;
     iStreamMsgDue = true;
     iMetatextMsgDue = false;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
 
     return res;
@@ -379,7 +381,8 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         header.Internalise(reader);
         OhmMsgAudio* audio = iMsgFactory.CreateAudioFromBlob(reader, header);
         const TUint64 totalBytes = audio->SamplesTotal() * audio->Channels() * audio->BitDepth()/8;
-        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iIdProvider->NextStreamId());
+        iStreamId = iIdProvider->NextStreamId();
+        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId);
         audio->RemoveRef();
         iStreamMsgDue = false;
         if (iMetatextMsgDue) {
