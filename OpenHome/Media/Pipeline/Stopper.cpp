@@ -305,6 +305,7 @@ void Stopper::OkToPlay()
         iObserver.PipelinePlaying();
         break;
     case ePlayNo:
+        LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, idPipeline=%u, streamId=%u.\n", iTrackId, iTrackIdPipeline, iStreamId);
         /*TUint flushId = */iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
         SetState(EFlushing);
         iFlushStream = true;
