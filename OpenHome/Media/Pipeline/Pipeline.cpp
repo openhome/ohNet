@@ -14,7 +14,6 @@
 #include <OpenHome/Media/Pipeline/Stopper.h>
 #include <OpenHome/Media/Pipeline/Ramper.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
-#include <OpenHome/Media/Pipeline/Splitter.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
@@ -225,9 +224,9 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
     iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
-    iSplitter = new Splitter(*iLoggerReporter);
-    iLoggerSplitter = new Logger(*iSplitter, "Splitter");
-    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerSplitter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
+    iRouter = new Router(*iLoggerReporter);
+    iLoggerRouter = new Logger(*iRouter, "Router");
+    iVariableDelay2 = new VariableDelay(*iMsgFactory, *iLoggerRouter, aInitParams->StarvationMonitorMaxJiffies(), aInitParams->RampEmergencyJiffies());
     iLoggerVariableDelay2 = new Logger(*iVariableDelay2, "VariableDelay2");
     iPruner = new Pruner(*iLoggerVariableDelay2);
     iLoggerPruner = new Logger(*iPruner, "Pruner");
@@ -260,7 +259,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerGorger->SetEnabled(true);
     //iLoggerSpotifyReporter->SetEnabled(true);
     //iLoggerReporter->SetEnabled(true);
-    //iLoggerSplitter->SetEnabled(true);
+    //iLoggerRouter->SetEnabled(true);
     //iLoggerVariableDelay2->SetEnabled(true);
     //iLoggerPruner->SetEnabled(true);
     //iLoggerStarvationMonitor->SetEnabled(true);
@@ -282,7 +281,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     //iLoggerGorger->SetFilter(Logger::EMsgAll);
     //iLoggerSpotifyReporter->SetFilter(Logger::EMsgAll);
     //iLoggerReporter->SetFilter(Logger::EMsgAll);
-    //iLoggerSplitter->SetFilter(Logger::EMsgAll);
+    //iLoggerRouter->SetFilter(Logger::EMsgAll);
     //iLoggerVariableDelay2->SetFilter(Logger::EMsgAll);
     //iLoggerPruner->SetFilter(Logger::EMsgAll);
     //iLoggerStarvationMonitor->SetFilter(Logger::EMsgAll);
@@ -304,8 +303,8 @@ Pipeline::~Pipeline()
     delete iVariableDelay2;
     delete iLoggerPruner;
     delete iPruner;
-    delete iLoggerSplitter;
-    delete iSplitter;
+    delete iLoggerRouter;
+    delete iRouter;
     delete iLoggerReporter;
     delete iReporter;
     delete iLoggerSpotifyReporter;
@@ -478,9 +477,9 @@ TBool Pipeline::SupportsMimeType(const Brx& aMimeType)
     return iCodecController->SupportsMimeType(aMimeType);
 }
 
-IPipelineElementDownstream* Pipeline::SetSender(IPipelineElementDownstream& aSender)
+IPipelineElementUpstream& Pipeline::InsertElements(IPipelineElementUpstream& aTail)
 {
-    return iSplitter->SetPipelineBranch(aSender);
+    return iRouter->InsertElements(aTail);
 }
 
 TUint Pipeline::SenderMinLatencyMs() const

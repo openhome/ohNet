@@ -239,9 +239,9 @@ TBool PipelineManager::SupportsMimeType(const Brx& aMimeType)
     return iPipeline->SupportsMimeType(aMimeType);
 }
 
-IPipelineElementDownstream* PipelineManager::SetSender(IPipelineElementDownstream& aSender)
+IPipelineElementUpstream& PipelineManager::InsertElements(IPipelineElementUpstream& aTail)
 {
-    return iPipeline->SetSender(aSender);
+    return iPipeline->InsertElements(aTail);
 }
 
 TUint PipelineManager::SenderMinLatencyMs() const

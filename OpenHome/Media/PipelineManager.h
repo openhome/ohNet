@@ -215,7 +215,7 @@ public:
      */
     TBool Prev();
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
-    IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
+    IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
 private: // from IPipelineElementUpstream
     Msg* Pull() override;

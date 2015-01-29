@@ -24,7 +24,7 @@ const Brn AllocatorBase::kQueryMemory = Brn("memory");
 
 AllocatorBase::~AllocatorBase()
 {
-    //Log::Print("~AllocatorBase for %s, freeing...", iName);
+    Log::Print("> ~AllocatorBase for %s\n", iName);
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);
@@ -32,7 +32,7 @@ AllocatorBase::~AllocatorBase()
         //Log::Print("(%p)", ptr);
         delete ptr;
     }
-    //Log::Print("\n");
+    Log::Print("< ~AllocatorBase for %s\n", iName);
 }
 
 void AllocatorBase::Free(Allocated* aPtr)
