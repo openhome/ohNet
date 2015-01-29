@@ -354,6 +354,9 @@ ContainerFront::~ContainerFront()
     for (size_t i=0; i<iContainers.size(); i++) {
         delete iContainers[i];
     }
+    if (iAudioEncoded != NULL) {
+        iAudioEncoded->RemoveRef();
+    }
 }
 
 Msg* ContainerFront::Pull()
@@ -476,8 +479,7 @@ Msg* ContainerFront::ProcessMsg(MsgHalt* aMsg)
 
 Msg* ContainerFront::ProcessMsg(MsgFlush* aMsg)
 {
-    if (iAudioEncoded)
-    {
+    if (iAudioEncoded) {
         iAudioEncoded->RemoveRef();
         iAudioEncoded = NULL;
     }
