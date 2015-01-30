@@ -92,8 +92,8 @@ private:
     void TestWaitDuringRampingDown();
     void TestWaitDuringRampingUp();
 
-    void TestMsgTrackDuringWaitAsserts();
-    void TestMsgTrackDuringRampingDownAsserts();
+    void TestMsgDecodedStreamDuringWaitAsserts();
+    void TestMsgDecodedStreamDuringRampingDownAsserts();
     void TestMsgDecodedStreamCancelsWaiting();
 
     void TestWaitingStateOnMsgWait();
@@ -134,9 +134,9 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringWait), "TestWaitDuringWait");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingDown), "TestWaitDuringRampingDown");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUp), "TestWaitDuringRampingUp");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringWaitAsserts), "TestMsgTrackDuringWaitAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingDownAsserts), "TestMsgTrackDuringRampingDownAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgEncodedStreamDuringRampingUpAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamDuringWaitAsserts), "TestMsgDecodedStreamkDuringWaitAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamDuringRampingDownAsserts), "TestMsgDecodedStreamDuringRampingDownAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgDecodedStreamCancelsWaiting");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitingStateOnMsgWait), "TestWaitingStateOnMsgWait");
 }
 
@@ -811,7 +811,7 @@ void SuiteWaiter::TestWaitDuringRampingUp()
     PullNext(EMsgWait);
 }
 
-void SuiteWaiter::TestMsgTrackDuringWaitAsserts()
+void SuiteWaiter::TestMsgDecodedStreamDuringWaitAsserts()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -843,11 +843,11 @@ void SuiteWaiter::TestMsgTrackDuringWaitAsserts()
     PullNext(EMsgWait);
 
     // No MsgTrack is expected, so should ASSERT()
-    iPendingMsgs.push_back(CreateTrack());
-    TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
+    iPendingMsgs.push_back(CreateDecodedStream());
+    TEST_THROWS(PullNext(EMsgDecodedStream), AssertionFailed);
 }
 
-void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
+void SuiteWaiter::TestMsgDecodedStreamDuringRampingDownAsserts()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -865,8 +865,8 @@ void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
     iWaiter->Wait(kWaitFlushId, kRampDown);
 
     // No MsgTrack is expected, so should ASSERT()
-    iPendingMsgs.push_back(CreateTrack());
-    TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
+    iPendingMsgs.push_back(CreateDecodedStream());
+    TEST_THROWS(PullNext(EMsgDecodedStream), AssertionFailed);
 }
 
 void SuiteWaiter::TestMsgDecodedStreamCancelsWaiting()
