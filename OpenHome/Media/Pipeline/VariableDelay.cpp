@@ -46,18 +46,26 @@ Msg* VariableDelay::Pull()
     iLock.Wait();
     if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
         if (iWaitForAudioBeforeGeneratingSilence) {
-            ASSERT(IsEmpty()); // if not empty, we should process queue before pulling from upstream
-            iLock.Signal();
-            msg = iUpstreamElement.Pull();
-            iLock.Wait();
-            msg = msg->Process(*this);
-            if (iWaitForAudioBeforeGeneratingSilence) {
-                iLock.Signal();
-                return msg;
-            }
-            else {
-                DoEnqueue(msg);
-            }
+            do {
+                if (!IsEmpty()) {
+                    msg = DoDequeue();
+                }
+                else {
+                    iLock.Signal();
+                    msg = iUpstreamElement.Pull();
+                    iLock.Wait();
+                }
+                msg = msg->Process(*this);
+                if (msg != NULL) {
+                    if (iWaitForAudioBeforeGeneratingSilence) {
+                        iLock.Signal();
+                        return msg;
+                    }
+                    else {
+                        DoEnqueue(msg);
+                    }
+                }
+            } while (msg == NULL);
         }
         const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         msg = iMsgFactory.CreateMsgSilence(size);

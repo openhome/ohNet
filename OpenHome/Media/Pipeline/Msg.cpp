@@ -2147,6 +2147,7 @@ MsgReservoir::~MsgReservoir()
 
 void MsgReservoir::DoEnqueue(Msg* aMsg)
 {
+    ASSERT(aMsg != NULL);
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.Enqueue(msg);
