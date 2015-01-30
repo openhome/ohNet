@@ -165,6 +165,46 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     }
 }
 
+void VariableDelay::HandleStarving(const Brx& aMode)
+{
+    AutoMutex _(iLock);
+    if (iEnabled && iMode == aMode) {
+        iDelayAdjustment = iDelayJiffies;
+        if (iDelayAdjustment == 0) {
+            return;
+        }
+        iWaitForAudioBeforeGeneratingSilence = true;
+        switch (iStatus)
+        {
+        case EStarting:
+            break;
+        case ERunning:
+            iStatus = ERampingDown;
+            iRampDirection = Ramp::EDown;
+            iCurrentRampValue = Ramp::kMax;
+            iRemainingRampSize = iRampDuration;
+            break;
+        case ERampingDown:
+            break;
+        case ERampedDown:
+            break;
+        case ERampingUp:
+            iRampDirection = Ramp::EDown;
+            // retain current value of iCurrentRampValue
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            if (iRemainingRampSize == 0) {
+                iStatus = ERampedDown;
+            }
+            else {
+                iStatus = ERampingDown;
+            }
+            break;
+        default:
+            ASSERTS();
+        }
+    }
+}
+
 Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 {
     iEnabled = aMsg->SupportsLatency();
@@ -355,41 +395,7 @@ TBool VariableDelay::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, T
 
 void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
 {
-    iLock.Wait();
-    if (iEnabled && iMode == aMode) {
-        iDelayAdjustment = iDelayJiffies;
-        iWaitForAudioBeforeGeneratingSilence = true;
-        switch (iStatus)
-        {
-        case EStarting:
-            break;
-        case ERunning:
-            iStatus = ERampingDown;
-            iRampDirection = Ramp::EDown;
-            iCurrentRampValue = Ramp::kMax;
-            iRemainingRampSize = iRampDuration;
-            break;
-        case ERampingDown:
-            break;
-        case ERampedDown:
-            break;
-        case ERampingUp:
-            iRampDirection = Ramp::EDown;
-            // retain current value of iCurrentRampValue
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
-            if (iRemainingRampSize == 0) {
-                iStatus = ERampedDown;
-            }
-            else {
-                iStatus = ERampingDown;
-            }
-            break;
-        default:
-            ASSERTS();
-        }
-    }
-    iLock.Signal();
-
+    HandleStarving(aMode);
     if (iStreamHandler != NULL) {
         iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
     }

@@ -30,6 +30,7 @@ public: // from IPipelineElementUpstream
 private:
     MsgAudio* DoProcessAudioMsg(MsgAudio* aMsg);
     void RampMsg(MsgAudio* aMsg);
+    void HandleStarving(const Brx& aMode);
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
