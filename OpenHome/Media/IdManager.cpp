@@ -78,7 +78,6 @@ void IdManager::Log(
 
 TUint IdManager::NextTrackId()
 {
-    iNextStreamId = kStreamIdInvalid+1;
     return UpdateId(iNextTrackId);
 }
 
