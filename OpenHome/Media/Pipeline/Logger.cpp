@@ -58,6 +58,7 @@ Msg* Logger::Pull()
 
 void Logger::Push(Msg* aMsg)
 {
+    ASSERT(aMsg != NULL);
     (void)aMsg->Process(*this);
     iDownstreamElement->Push(aMsg);
 }
