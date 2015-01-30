@@ -8,6 +8,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <string.h>
 #include <climits>
@@ -24,7 +26,7 @@ const Brn AllocatorBase::kQueryMemory = Brn("memory");
 
 AllocatorBase::~AllocatorBase()
 {
-    Log::Print("> ~AllocatorBase for %s\n", iName);
+    LOG(kPipeline, "> ~AllocatorBase for %s\n", iName);
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);
@@ -32,7 +34,7 @@ AllocatorBase::~AllocatorBase()
         //Log::Print("(%p)", ptr);
         delete ptr;
     }
-    Log::Print("< ~AllocatorBase for %s\n", iName);
+    LOG(kPipeline, "< ~AllocatorBase for %s\n", iName);
 }
 
 void AllocatorBase::Free(Allocated* aPtr)
