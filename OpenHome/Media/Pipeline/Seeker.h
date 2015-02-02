@@ -25,7 +25,7 @@ class Seeker : public IPipelineElementUpstream, private IMsgProcessor, private I
 public:
     Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, ISeeker& aSeeker, ISeekRestreamer& aRestreamer, TUint aRampDuration);
     virtual ~Seeker();
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
+    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor

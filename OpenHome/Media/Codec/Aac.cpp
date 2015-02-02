@@ -244,7 +244,7 @@ void CodecAac::StreamCompleted()
 
 TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    LOG(kCodec, "CodecAac::Seek(%u, %llu)\n", aStreamId, aSample);
+    LOG(kCodec, "CodecAac::TrySeek(%u, %llu)\n", aStreamId, aSample);
     TUint64 startSample;
 
     TUint64 sampleInSeekTable = aSample;

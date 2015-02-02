@@ -173,7 +173,7 @@ void SourceUpnpAv::Prev()
 void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
 {
     if (IsActive()) {
-        (void)iPipeline.Seek(UINT_MAX/*FIXME*/, iStreamId, aSecondsAbsolute);
+        (void)iPipeline.Seek(iStreamId, aSecondsAbsolute);
     }
 }
 

@@ -35,10 +35,10 @@ Seeker::~Seeker()
     }
 }
 
-TBool Seeker::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
+TBool Seeker::Seek(TUint aStreamId, TUint aSecondsAbsolute, TBool aRampDown)
 {
     AutoMutex a(iLock);
-    if (iState != ERunning || iPipelineTrackId != aTrackId || iStreamId != aStreamId || !iStreamIsSeekable) {
+    if (iState != ERunning || iStreamId != aStreamId || !iStreamIsSeekable) {
         return false;
     }
 

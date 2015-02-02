@@ -451,10 +451,10 @@ void Pipeline::RemoveCurrentStream()
     iSkipper->RemoveCurrentStream(rampDown);
 }
 
-TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+TBool Pipeline::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     const TBool rampDown = (iState == EPlaying);
-    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, rampDown);
+    return iSeeker->Seek(aStreamId, aSecondsAbsolute, rampDown);
 }
 
 void Pipeline::AddObserver(ITrackObserver& aObserver)

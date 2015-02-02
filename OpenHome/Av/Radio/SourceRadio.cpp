@@ -189,7 +189,7 @@ void SourceRadio::Stop()
 void SourceRadio::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        (void)iPipeline.Seek(UINT_MAX/*FIXME*/, iStreamId, aSeconds);
+        (void)iPipeline.Seek(iStreamId, aSeconds);
     }
 }
 

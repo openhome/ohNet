@@ -91,7 +91,6 @@ private:
     UpnpAv* iUpnpAv;
     TBool iActive;
     IPipelineObserver* iDownstreamObserver;
-    TUint iTrackId;
     TUint iStreamId;
 };
 
@@ -167,7 +166,6 @@ void DummySourceUpnpAv::NotifyPipelineState(EPipelineState aState)
 
 void DummySourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
-    iTrackId = aIdPipeline;
     iStreamId = UINT_MAX;
     if (iActive) {
         iDownstreamObserver->NotifyTrack(aTrack, aMode);
@@ -242,7 +240,7 @@ void DummySourceUpnpAv::Prev()
 void DummySourceUpnpAv::Seek(TUint aSecondsAbsolute)
 {
     if (iActive) {
-        iPipeline.Seek(iTrackId, iStreamId, aSecondsAbsolute);
+        iPipeline.Seek(iStreamId, aSecondsAbsolute);
     }
 }
 

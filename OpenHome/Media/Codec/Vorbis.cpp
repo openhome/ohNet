@@ -306,7 +306,7 @@ void CodecVorbis::WriteFlush()
 
 TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    LOG(kCodec, "CodecVorbis::Seek(%u, %llu)\n", aStreamId, aSample);
+    LOG(kCodec, "CodecVorbis::TrySeek(%u, %llu)\n", aStreamId, aSample);
 
     // convert to approximate byte position in file
     TUint64 bytes = aSample * iController->StreamLength()/iSamplesTotal;

@@ -260,7 +260,7 @@ void SourcePlaylist::Prev()
 void SourcePlaylist::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        if (iPipeline.Seek(UINT_MAX/*FIXME*/, iStreamId, aSeconds)) {
+        if (iPipeline.Seek(iStreamId, aSeconds)) {
             iPipeline.Play();
         }
     }

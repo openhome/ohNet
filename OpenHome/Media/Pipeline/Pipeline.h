@@ -113,7 +113,7 @@ public:
     void Wait(TUint aFlushId);
     void Stop(TUint aHaltId);
     void RemoveCurrentStream();
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
     ITrackChangeObserver& TrackChangeObserver() const;

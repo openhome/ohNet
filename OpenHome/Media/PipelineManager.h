@@ -185,13 +185,12 @@ public:
     /**
      * Seek to a specified point inside the current track.
      *
-     * @param[in] aPipelineTrackId Track identifier.
      * @param[in] aStreamId        Stream identifier.
      * @param[in] aSecondsAbsolute Number of seconds into the track to seek to.
      *
      * @return  true if the seek succeeded; false otherwise.
      */
-    TBool Seek(TUint aPipelineTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
     /**
      * Move immediately to the next track from the current UriProvider (or Source).
      *

@@ -199,11 +199,11 @@ void PipelineManager::RemoveAll()
     iIdManager->InvalidateAll();
 }
 
-TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     AutoMutex _(iPublicLock);
-    LOG(kPipeline, "PipelineManager::Seek(%u, %u, %u)\n", aTrackId, aStreamId, aSecondsAbsolute);
-    return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);
+    LOG(kPipeline, "PipelineManager::Seek(%u, %u)\n", aStreamId, aSecondsAbsolute);
+    return iPipeline->Seek(aStreamId, aSecondsAbsolute);
 }
 
 TBool PipelineManager::Next()
