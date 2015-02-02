@@ -86,7 +86,6 @@ private:
     TUint iMsgTxCount;
     TUint iMsgRxCount;
     TUint iMsgAudioRxCount;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TByte iAudioData[884]; // 884 => 5ms @ 44.1, 16-bit, stereo
     TUint64 iTrackOffsetTx;
@@ -128,7 +127,6 @@ void SuiteTimestampInspector::Setup()
     iTimestampInspector = new TimestampInspector(*iMsgFactory, *this);
     iLastMsg = EMsgNone;
     iMsgTxCount = iMsgRxCount = iMsgAudioRxCount= 0;
-    iNextTrackId = 100;
     iNextStreamId = 1;
     (void)memset(iAudioData, 0x7f, sizeof(iAudioData));
     iTrackOffsetTx = iTrackOffsetRx = 0;
@@ -162,7 +160,7 @@ void SuiteTimestampInspector::PushMsg(EMsgType aType)
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-        msg = iMsgFactory->CreateMsgTrack(*track, ++iNextTrackId);
+        msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
     }
         break;

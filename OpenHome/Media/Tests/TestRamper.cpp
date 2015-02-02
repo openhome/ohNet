@@ -87,7 +87,6 @@ private:
     TUint iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint64 iSampleStart;
     TBool iLive;
@@ -120,7 +119,6 @@ void SuiteRamper::Setup()
     iJiffies = 0;
     iRamping = false;
     iLastSubsample = 0xffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iSampleStart = 0;
     iLive = false;
@@ -279,7 +277,7 @@ void SuiteRamper::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteRamper::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

@@ -869,17 +869,16 @@ Media::Track& MsgTrack::Track() const
     return *iTrack;
 }
 
-void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline)
+void MsgTrack::Initialise(Media::Track& aTrack)
 {
     iTrack = &aTrack;
     iTrack->AddRef();
-    iIdPipeline = aIdPipeline;}
+}
 
 void MsgTrack::Clear()
 {
     iTrack->RemoveRef();
     iTrack = NULL;
-    iIdPipeline = UINT_MAX;
 }
 
 Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
@@ -2598,10 +2597,10 @@ MsgSession* MsgFactory::CreateMsgSession()
     return iAllocatorMsgSession.Allocate();
 }
 
-MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline)
+MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
-    msg->Initialise(aTrack, aIdPipeline);
+    msg->Initialise(aTrack);
     return msg;
 }
 

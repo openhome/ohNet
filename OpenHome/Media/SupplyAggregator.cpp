@@ -36,9 +36,9 @@ void SupplyAggregator::OutputSession()
     Output(msg);
 }
 
-void SupplyAggregator::OutputTrack(Track& aTrack, TUint aTrackId)
+void SupplyAggregator::OutputTrack(Track& aTrack)
 {
-    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack);
     Output(msg);
 }
 

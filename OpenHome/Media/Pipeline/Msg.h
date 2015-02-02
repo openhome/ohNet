@@ -326,13 +326,12 @@ public:
     MsgTrack(AllocatorBase& aAllocator);
     Media::Track& Track() const;
 private:
-    void Initialise(Media::Track& aTrack, TUint aIdPipeline);
+    void Initialise(Media::Track& aTrack);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Media::Track* iTrack;
-    TUint iIdPipeline;
 };
 
 class MsgDelay : public Msg
@@ -940,9 +939,8 @@ public:
      * Inform the pipeline that a new track is starting.
      *
      * @param[in] aTrack           Track about to be played.
-     * @param[in] aTrackId         Unique identifier for this particular play of this track.
      */
-    virtual void OutputTrack(Track& aTrack, TUint aTrackId) = 0;
+    virtual void OutputTrack(Track& aTrack) = 0;
     /**
      * Apply a delay to subsequent audio in this stream.
      *
@@ -1044,7 +1042,6 @@ public:
     static const TUint kStreamIdInvalid = 0;
 public:
     virtual ~IPipelineIdProvider() {}
-    virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;
     virtual EStreamPlay OkToPlay(TUint aStreamId) = 0;
 };
@@ -1206,7 +1203,7 @@ public:
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgSession* CreateMsgSession();
-    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
+    MsgTrack* CreateMsgTrack(Media::Track& aTrack);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);

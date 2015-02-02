@@ -32,7 +32,6 @@ using namespace OpenHome::Av;
 DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator, IPowerManager& /*aPowerManager*/)
     : Thread("SPHt")
     , iPipeline(aPipeline)
-    , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iTrackFactory = new TrackFactory(aInfoAggregator, 10);
@@ -63,11 +62,6 @@ void DummyFiller::Run()
     track->RemoveRef();
     iPipeline.OutputQuit();
 
-}
-
-TUint DummyFiller::NextTrackId()
-{
-    return iNextTrackId++;
 }
 
 TUint DummyFiller::NextStreamId()

@@ -100,7 +100,6 @@ private:
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
 };
 
@@ -138,7 +137,6 @@ void SuiteSkipper::Setup()
     iJiffies = 0;
     iRamping = false;
     iLastSubsample = 0xffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
 }
 
@@ -325,7 +323,7 @@ void SuiteSkipper::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteSkipper::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

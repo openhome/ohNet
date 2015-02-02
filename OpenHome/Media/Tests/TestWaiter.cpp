@@ -110,7 +110,6 @@ private:
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iWaitingCount;
     TUint iWaitingTrueCount;
@@ -150,7 +149,6 @@ void SuiteWaiter::Setup()
     iTrackOffset = 0;
     iJiffies = 0;
     iLastSubsample = 0xffffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iWaitingCount = iWaitingTrueCount = iWaitingFalseCount = 0;
 }
@@ -351,7 +349,7 @@ void SuiteWaiter::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteWaiter::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

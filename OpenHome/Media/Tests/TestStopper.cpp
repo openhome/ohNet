@@ -115,7 +115,6 @@ private:
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iPausedCount;
     TUint iStoppedCount;
@@ -171,7 +170,6 @@ void SuiteStopper::Setup()
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
     iLastSubsample = 0xffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iJiffies = 0;
     iPausedCount = iStoppedCount = iPlayingCount = iOkToPlayCount = 0;
@@ -386,7 +384,7 @@ void SuiteStopper::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteStopper::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

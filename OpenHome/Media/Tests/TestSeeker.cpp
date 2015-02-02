@@ -110,7 +110,6 @@ private:
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     ISeekObserver* iSeekObserver;
     TUint iSeekHandle;
@@ -162,7 +161,6 @@ void SuiteSeeker::Setup()
     iSeekable = true;
     iGenerateAudio = false;
     iLastSubsample = 0xffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iJiffies = 0;
     iSeekObserver = NULL;
@@ -384,7 +382,7 @@ void SuiteSeeker::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteSeeker::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

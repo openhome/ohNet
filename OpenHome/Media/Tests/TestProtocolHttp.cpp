@@ -255,11 +255,9 @@ public:
     TestHttpPipelineProvider();
     virtual ~TestHttpPipelineProvider();
 public: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
-    TUint iNextTrackId;
     TUint iNextStreamId;
     static const TUint kInvalidPipelineId = 0;
 };
@@ -922,19 +920,12 @@ Msg* TestHttpSupplyChunked::ProcessMsg(MsgAudioEncoded* aMsg)
 // TestHttpPipelineProvider
 
 TestHttpPipelineProvider::TestHttpPipelineProvider()
-    : iNextTrackId(kInvalidPipelineId+1)
-    , iNextStreamId(kInvalidPipelineId+1)
+    : iNextStreamId(kInvalidPipelineId+1)
 {
 }
 
 TestHttpPipelineProvider::~TestHttpPipelineProvider()
 {
-}
-
-TUint TestHttpPipelineProvider::NextTrackId()
-{
-    //Log::Print("TestHttpPipelineProvider::NextTrackId\n");
-    return iNextTrackId++;
 }
 
 TUint TestHttpPipelineProvider::NextStreamId()

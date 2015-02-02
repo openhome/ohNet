@@ -415,7 +415,7 @@ Msg* ProtocolManager::ProcessMsg(MsgQuit* aMsg)
 
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)
 {
-    Push(iMsgFactory.CreateMsgTrack(aTrack, iIdProvider.NextTrackId()));
+    Push(iMsgFactory.CreateMsgTrack(aTrack));
     ProtocolStreamResult res = Stream(aTrack.Uri());
     return res;
 }

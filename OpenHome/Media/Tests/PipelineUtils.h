@@ -25,7 +25,6 @@ public:
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint aStreamId) override;
     void InvalidateAt(TUint aId) override;
@@ -36,7 +35,6 @@ private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     Brn iUrl;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     static const TUint kInvalidPipelineId = 0;
 };

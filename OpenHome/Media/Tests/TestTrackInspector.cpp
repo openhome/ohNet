@@ -61,7 +61,6 @@ private:
     TUint iFailCount;
     Track* iLastNotifiedTrack;
     EMsgType iNextGeneratedMsg;
-    TUint iNextTrackId;
     TBool iLiveStream;
     std::vector<TUint> iTrackIds;
 };
@@ -97,7 +96,6 @@ void SuiteTrackInspector::Setup()
     iPlayCount = 0;
     iFailCount = 0;
     iLastNotifiedTrack = NULL;
-    iNextTrackId = 0;
     iLiveStream = false;
     iTrackIds.clear();
 }
@@ -361,10 +359,9 @@ Msg* SuiteTrackInspector::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         iTrackIds.push_back(track->Id());
         track->RemoveRef();
-        iNextTrackId++;
         return msg;
     }
     case EMsgHalt:

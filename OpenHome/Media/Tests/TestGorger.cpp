@@ -90,7 +90,6 @@ private:
     EMsgType iLastPulledMsg;
     std::list<Msg*> iPendingMsgs;
     TUint64 iTrackOffset;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iStarvationNotifications;
 };
@@ -124,7 +123,6 @@ void SuiteGorger::Setup()
     iGorger = new Gorger(*iMsgFactory, *this, kPriorityNormal, kGorgeSize);
     iLastPulledMsg = ENone;
     iTrackOffset = 0;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iStarvationNotifications = 0;
 }
@@ -280,7 +278,7 @@ void SuiteGorger::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteGorger::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

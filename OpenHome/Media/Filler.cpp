@@ -257,7 +257,7 @@ void Filler::Run()
                 iPipeline.Push(iMsgFactory.CreateMsgMode(Brn("null"), false, true, NULL));
                 iPipeline.Push(iMsgFactory.CreateMsgSession());
                 iChangedMode = true;
-                iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId));
+                iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack));
                 iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));

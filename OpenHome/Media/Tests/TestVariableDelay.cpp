@@ -190,7 +190,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         return msg;
     }

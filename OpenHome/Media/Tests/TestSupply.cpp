@@ -26,7 +26,6 @@ private: // from IStreamHandler
 class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
 {
     #define kUri "http://www.openhome.org/dir/file.ext"
-    static const TUint kTrackId    = 1;
     static const TUint kTotalBytes = 32000000;
     static const TBool kSeekable   = true;
     static const TBool kLive       = false;
@@ -151,7 +150,7 @@ void SuiteSupply::Test()
     iSupply->OutputSession();
     TEST(++expectedMsgCount == iMsgPushCount);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
-    iSupply->OutputTrack(*track, kTrackId);
+    iSupply->OutputTrack(*track);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputDelay(kDelayJiffies);

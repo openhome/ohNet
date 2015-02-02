@@ -28,7 +28,6 @@ private:
     TUint UpdateId(TUint& aId);
     void Log(const TChar* aPrefix);
 private: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint aStreamId) override;
 private:

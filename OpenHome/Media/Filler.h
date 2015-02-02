@@ -86,7 +86,6 @@ private:
     class NullTrackStreamHandler : public IStreamHandler
     {
     public:
-        static const TUint kNullTrackId = 0;
         static const TUint kNullTrackStreamId = 0;
     private: // from IStreamHandler
         EStreamPlay OkToPlay(TUint aStreamId) override;

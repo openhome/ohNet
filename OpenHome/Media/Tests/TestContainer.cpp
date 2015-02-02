@@ -88,7 +88,6 @@ public:
 public: // from IFlushIdProvider
     TUint NextFlushId() override;
 public: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
 public: // from IStreamHandler
     EStreamPlay OkToPlay(TUint aStreamId) override;
@@ -105,7 +104,6 @@ public:
 private:
     TUint iPendingFlushId;
     TUint iCurrentFlushId;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iOkToPlayCount;
     TUint iSeekCount;
@@ -391,7 +389,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case EMsgTrack:
         {
         Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
-        msg = iMsgFactory.CreateMsgTrack(*track, iPipelineIdProvider.NextTrackId());
+        msg = iMsgFactory.CreateMsgTrack(*track);
         track->RemoveRef();
         }
         iLastMsgType = EMsgTrack;
@@ -437,7 +435,6 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
 TestContainerProvider::TestContainerProvider()
     : iPendingFlushId(MsgFlush::kIdInvalid+1)
     , iCurrentFlushId(iPendingFlushId)
-    , iNextTrackId(1)
     , iNextStreamId(1)
     , iOkToPlayCount(0)
     , iSeekCount(0)
@@ -450,11 +447,6 @@ TestContainerProvider::TestContainerProvider()
 TUint TestContainerProvider::NextFlushId()
 {
     return iPendingFlushId++;
-}
-
-TUint TestContainerProvider::NextTrackId()
-{
-    return iNextTrackId++;
 }
 
 TUint TestContainerProvider::NextStreamId()

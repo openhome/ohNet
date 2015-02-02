@@ -18,7 +18,6 @@ namespace Media {
 class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPipelinePropertyObserver
 {
 #define KTrackUri "http://host:port/path/file.ext"
-    static const TUint kTrackId       = 2;
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
     static const TUint kBitRate       = kBitDepth * kSampleRate;
@@ -244,7 +243,7 @@ Msg* SuiteReporter::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         return msg;
     }

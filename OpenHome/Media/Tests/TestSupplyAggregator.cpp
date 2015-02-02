@@ -27,7 +27,6 @@ private: // from IStreamHandler
 class SuiteSupplyAggregator : public Suite, private IPipelineElementDownstream, private IMsgProcessor
 {
     #define kUri "http://www.openhome.org/dir/file.ext"
-    static const TUint kTrackId    = 1;
     static const TUint kTotalBytes = 32000000;
     static const TBool kSeekable   = true;
     static const TBool kLive       = false;
@@ -210,7 +209,7 @@ void SuiteSupplyAggregator::OutputNextNonAudioMsg()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
-        iSupply->OutputTrack(*track, kTrackId);
+        iSupply->OutputTrack(*track);
         track->RemoveRef();
     }
         break;

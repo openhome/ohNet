@@ -1542,8 +1542,7 @@ void SuiteTrack::Test()
     Brn uri("http://host:port/folder/file.ext");
     Brn metadata("metadata#1");
     Track* track = iTrackFactory->CreateTrack(uri, metadata);
-    TUint id = 3;
-    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, id);
+    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     TEST(msg != NULL);
     TEST(msg->Track().Uri() == uri);
@@ -1563,8 +1562,7 @@ void SuiteTrack::Test()
     uri.Set("http://newhost:newport/newfolder/newfile.newext");
     metadata.Set("metadata#2");
     track = iTrackFactory->CreateTrack(uri, metadata);
-    id = 6209;
-    msg = iMsgFactory->CreateMsgTrack(*track, id);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     TEST(msg != NULL);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
@@ -1887,7 +1885,7 @@ void SuiteMsgProcessor::Test()
     msg->RemoveRef();
 
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
@@ -2064,7 +2062,7 @@ void SuiteMsgQueue::Test()
 
     // queue can be emptied then reused
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
@@ -2275,7 +2273,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();

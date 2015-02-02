@@ -107,7 +107,6 @@ private:
     Semaphore* iSemReceived;
     Mutex* iLockReceived;
     EMsgType iLastReceivedMsg;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TBool iSeekable;
 };
@@ -140,7 +139,7 @@ void SuiteDecodedAudioAggregator::Setup()
     iSemStop = new Semaphore("TCSS", 0);
     iLockReceived = new Mutex("TCMR");
     iStreamId = UINT_MAX;
-    iNextTrackId = iNextStreamId = 0;
+    iNextStreamId = 0;
     iTrackOffsetBytes = 0;
     iTrackOffset = 0;
     iJiffies = 0;
@@ -344,7 +343,7 @@ void SuiteDecodedAudioAggregator::PullNext(EMsgType aExpectedMsg, TUint64 aExpec
 Msg* SuiteDecodedAudioAggregator::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, ++iNextTrackId);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

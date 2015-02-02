@@ -207,7 +207,7 @@ void Supplier::Run()
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
-    iDownstream.Push(iMsgFactory.CreateMsgTrack(*track, 1));
+    iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
     track->RemoveRef();
     iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 1, false, false, this));
     while (!iQuit) {

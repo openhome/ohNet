@@ -157,13 +157,7 @@ void SuiteIdsAreUnique::Test()
     std::vector<TUint> ids;
     IPipelineIdProvider* idProvider = static_cast<IPipelineIdProvider*>(iIdManager);
     for (TUint i=0; i<kTestIterations; i++) {
-        TUint trackId = idProvider->NextTrackId();
-        TEST(std::find(ids.begin(), ids.end(), trackId) == ids.end());
-        ids.push_back(trackId);
-    }
-    ids.clear();
-    for (TUint i=0; i<kTestIterations; i++) {
-        TUint streamId = idProvider->NextTrackId();
+        TUint streamId = idProvider->NextStreamId();
         TEST(std::find(ids.begin(), ids.end(), streamId) == ids.end());
         ids.push_back(streamId);
     }

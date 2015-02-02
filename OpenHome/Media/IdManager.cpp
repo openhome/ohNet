@@ -17,7 +17,6 @@ using namespace OpenHome::Media;
 IdManager::IdManager(IStopper& aStopper)
     : iLock("IDPR")
     , iStopper(aStopper)
-    , iNextTrackId(kTrackIdInvalid+1)
     , iNextStreamId(kStreamIdInvalid+1)
     , iIndexHead(0)
     , iIndexTail(0)
@@ -74,11 +73,6 @@ void IdManager::Log(
         }
     }
 #endif
-}
-
-TUint IdManager::NextTrackId()
-{
-    return UpdateId(iNextTrackId);
 }
 
 TUint IdManager::NextStreamId()

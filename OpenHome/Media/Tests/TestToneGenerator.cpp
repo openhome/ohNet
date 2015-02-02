@@ -103,7 +103,6 @@ protected:  // from SuiteUnitTest
     void TearDown() override;
 
 private:  // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint) override;
 
@@ -166,7 +165,6 @@ private:
     Codec::CodecController* iCodecController;
 
     TUint iNextFlushId;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     bool iQuit;
     Semaphore iSemaphore;
@@ -453,7 +451,6 @@ void SuiteSyntaxError::Test()
 SuiteGeneratorAny::SuiteGeneratorAny(const TChar* aName)
     : SuiteUnitTest(aName)
     , iNextFlushId(1)
-    , iNextTrackId(1)
     , iNextStreamId(1)
     , iQuit(false)
     , iSemaphore("TONE", 0)
@@ -529,11 +526,6 @@ void SuiteGeneratorAny::TearDown()
 TUint SuiteGeneratorAny::NextFlushId()
 {
     return iNextFlushId++;
-}
-
-TUint SuiteGeneratorAny::NextTrackId()
-{
-    return iNextTrackId++;
 }
 
 TUint SuiteGeneratorAny::NextStreamId()

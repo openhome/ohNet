@@ -101,7 +101,6 @@ public:
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
     EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
@@ -110,7 +109,6 @@ private:
     IPipelineElementDownstream& iPipeline;
     MsgFactory& iMsgFactory;
     Brn iUrl;
-    TUint iNextTrackId;
     TUint iNextStreamId;
 };
 

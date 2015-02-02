@@ -28,7 +28,6 @@ public: // from IPipelinePropertyObserver
 class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
 {
 #define KTrackUri "http://host:port/path/file.ext"
-    static const TUint kTrackId       = 2;
     static const TUint kBitDepth      = 16;
     static const TUint kByteDepth = kBitDepth/8;
 #define kCodecName "Dummy codec"
@@ -173,7 +172,7 @@ Msg* SuiteSpotifyReporter::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         iLastMsg = msg;
         return iLastMsg;

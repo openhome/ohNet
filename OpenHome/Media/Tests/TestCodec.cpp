@@ -180,7 +180,6 @@ TestCodecFiller::TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& 
     : Thread("TCFL")
     , iPipeline(aDownstream)
     , iMsgFactory(aMsgFactory)
-    , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aDownstream, aMsgFactory, *this, aFlushIdProvider);
@@ -219,11 +218,6 @@ void TestCodecFiller::Run()
     else {
         Log::Print("TestCodecFiller::Run FAILURE: Failed to stream entire file.\n");
     }
-}
-
-TUint TestCodecFiller::NextTrackId()
-{
-    return iNextTrackId++;
 }
 
 TUint TestCodecFiller::NextStreamId()

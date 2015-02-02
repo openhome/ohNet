@@ -131,7 +131,6 @@ private:
     Mutex* iLockPending;
     Mutex* iLockReceived;
     EMsgType iLastReceivedMsg;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TBool iSeekable;
 };
@@ -265,7 +264,7 @@ void SuiteCodecControllerBase::Setup()
     iLockPending = new Mutex("TCMP");
     iLockReceived = new Mutex("TCMR");
     iStreamId = UINT_MAX;
-    iNextTrackId = iNextStreamId = 0;
+    iNextStreamId = 0;
     iTotalBytes = iTrackOffsetBytes = 0;
     iTrackOffset = 0;
     iJiffies = 0;
@@ -490,7 +489,7 @@ void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg, TUint64 aExpected
 Msg* SuiteCodecControllerBase::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, ++iNextTrackId);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

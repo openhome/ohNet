@@ -13,7 +13,6 @@ using namespace OpenHome::Net;
 
 DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
-    , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
@@ -39,11 +38,6 @@ void DummyFiller::Run()
     Track* track = iTrackFactory->CreateTrack(iUrl, Brx::Empty());
     iProtocolManager->DoStream(*track, Brx::Empty());
     track->RemoveRef();
-}
-
-TUint DummyFiller::NextTrackId()
-{
-    return iNextTrackId++;
 }
 
 TUint DummyFiller::NextStreamId()
