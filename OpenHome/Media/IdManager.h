@@ -51,7 +51,6 @@ private:
 private:
     Mutex iLock;
     IStopper& iStopper;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     ActiveStream iActiveStreams[kMaxActiveStreams];
     TUint iIndexHead;
