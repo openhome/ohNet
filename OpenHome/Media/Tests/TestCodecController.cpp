@@ -120,7 +120,6 @@ protected:
     TUint64 iJiffies;
     TUint64 iMsgOffset;
     TUint iStopCount;
-    TUint iTrackId;
     TUint iStreamId;
 private:
     AllocatorInfoLogger iInfoAggregator;
@@ -265,7 +264,7 @@ void SuiteCodecControllerBase::Setup()
     iSemStop = new Semaphore("TCSS", 0);
     iLockPending = new Mutex("TCMP");
     iLockReceived = new Mutex("TCMR");
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iNextTrackId = iNextStreamId = 0;
     iTotalBytes = iTrackOffsetBytes = 0;
     iTrackOffset = 0;
@@ -366,7 +365,6 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iLastReceivedMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -834,7 +832,7 @@ void SuiteCodecControllerStream::TestSeek()
     ISeeker& seeker = *iController;
     TUint handle = ISeeker::kHandleError;
     TUint seekSeconds = 1;
-    seeker.StartSeek(iTrackId, iStreamId, seekSeconds, *this, handle); // seek to 1s
+    seeker.StartSeek(iStreamId, seekSeconds, *this, handle); // seek to 1s
 
     // Send some more msgs down to cause CodecController to unblock and start the seek.
     // These will be discarded.

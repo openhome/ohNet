@@ -21,7 +21,6 @@ Seeker::Seeker(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEleme
     , iTargetFlushId(MsgFlush::kIdInvalid)
     , iTargetTrackId(Track::kIdNone)
     , iTrackId(Track::kIdNone)
-    , iPipelineTrackId(IPipelineIdProvider::kTrackIdInvalid)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekConsecutiveFailureCount(0)
     , iMsgStream(NULL)
@@ -88,7 +87,6 @@ Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
     iTrackId = aMsg->Track().Id();
-    iPipelineTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -209,7 +207,7 @@ void Seeker::DoSeek()
 {
     iState = EFlushing; /* set this before calling StartSeek as its possible NotifySeekComplete
                            could be called from another thread before StartSeek returns. */
-    iSeeker.StartSeek(iPipelineTrackId, iStreamId, iSeekSeconds, *this, iSeekHandle);
+    iSeeker.StartSeek(iStreamId, iSeekSeconds, *this, iSeekHandle);
     if (iSeekHandle == ISeeker::kHandleError) {
         HandleSeekFail();
     }

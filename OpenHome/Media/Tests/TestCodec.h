@@ -97,7 +97,6 @@ public:
     TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& aDownstream, MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator);
     ~TestCodecFiller();
     void Start(const Brx& aUrl);
-    TUint TrackId();
     TUint StreamId();
 private: // from Thread
     void Run();

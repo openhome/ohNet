@@ -153,10 +153,10 @@ void CodecController::Start()
     iDecoderThread->Start();
 }
 
-void CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
+void CodecController::StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (iTrackIdPipeline != aTrackId || aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
+    if (aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
         aHandle = ISeeker::kHandleError;
         return;
     }

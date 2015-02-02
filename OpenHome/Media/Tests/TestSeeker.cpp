@@ -32,7 +32,7 @@ private: // from SuiteUnitTest
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from ISeeker
-    void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle) override;
+    void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle) override;
 private: // from ISeekRestreamer
     TUint SeekRestream(const Brx& aMode, TUint aTrackId) override;
 private: // from IStreamHandler
@@ -202,7 +202,7 @@ EStreamPlay SuiteSeeker::OkToPlay(TUint /*aStreamId*/)
     return ePlayNo;
 }
 
-void SuiteSeeker::StartSeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
+void SuiteSeeker::StartSeek(TUint /*aStreamId*/, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     iSeekSeconds = aSecondsAbsolute;
     iSeekObserver = &aObserver;

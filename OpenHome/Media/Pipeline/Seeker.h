@@ -78,7 +78,6 @@ private:
     TUint iTargetTrackId;
     BwsMode iMode;
     TUint iTrackId;
-    TUint iPipelineTrackId;
     TUint iStreamId;
     TBool iStreamIsSeekable;
     TUint64 iStreamPosJiffies;

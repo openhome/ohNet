@@ -200,11 +200,6 @@ void TestCodecFiller::Start(const Brx& aUrl)
     Thread::Start();
 }
 
-TUint TestCodecFiller::TrackId()
-{
-    return iNextTrackId-1;
-}
-
 TUint TestCodecFiller::StreamId()
 {
     return iNextStreamId-1;
@@ -305,7 +300,7 @@ TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute)
 {
     ISeeker* seeker = static_cast<ISeeker*>(iController);
     TUint handle;
-    seeker->StartSeek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute, *this, handle);
+    seeker->StartSeek(iFiller->StreamId(), aSecondsAbsolute, *this, handle);
     return (handle != ISeeker::kHandleError);
 }
 
