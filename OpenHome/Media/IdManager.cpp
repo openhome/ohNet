@@ -111,7 +111,7 @@ void IdManager::InvalidateAt(TUint aId)
     TBool matched = false;
     if (iPlaying.Id() == aId) {
         matched = true;
-        iStopper.RemoveStream(UINT_MAX, iPlaying.StreamId()); // FIXME
+        iStopper.RemoveStream(iPlaying.StreamId());
         iPlaying.Clear();
     }
     TBool updateHead = matched;
@@ -198,7 +198,7 @@ void IdManager::InvalidateAll()
 {
     AutoMutex a(iLock);
     if (!iPlaying.IsClear()) {
-        iStopper.RemoveStream(UINT_MAX, iPlaying.StreamId()); // FIXME
+        iStopper.RemoveStream(iPlaying.StreamId());
         iPlaying.Clear();
     }
     iIndexTail = iIndexHead;

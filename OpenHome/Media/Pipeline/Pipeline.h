@@ -130,7 +130,7 @@ private: // from IFlushIdProvider
 private: // from IWaiterObserver
     void PipelineWaiting(TBool aWaiting) override;
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId) override;
+    void RemoveStream(TUint aStreamId) override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();

@@ -544,9 +544,9 @@ void Pipeline::PipelineWaiting(TBool aWaiting)
     NotifyStatus();
 }
 
-void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)
+void Pipeline::RemoveStream(TUint aStreamId)
 {
-    (void)iSkipper->TryRemoveStream(aTrackId, aStreamId, !iBuffering);
+    (void)iSkipper->TryRemoveStream(aStreamId, !iBuffering);
 }
 
 void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode)

@@ -1181,7 +1181,7 @@ class IStopper
 {
 public:
     virtual ~IStopper() {}
-    virtual void RemoveStream(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void RemoveStream(TUint aStreamId) = 0;
 };
 
 class IPipelineElementUpstream

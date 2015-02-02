@@ -85,10 +85,9 @@ private:
     void TestRemoveStreamRampNewTrackResets();
     void TestRemoveStreamRampNewStreamResets();
     void TestRemoveStreamNoRampFewMsgsPass();
-    void TestTryRemoveInvalidTrack();
     void TestTryRemoveInvalidStream();
-    void TestTryRemoveRampValidTrackAndStream();
-    void TestTryRemoveNoRampValidTrackAndStream();
+    void TestTryRemoveRampValidStream();
+    void TestTryRemoveNoRampValidStream();
 private:
     AllocatorInfoLogger iInfoAggregator;
     TrackFactory* iTrackFactory;
@@ -96,7 +95,6 @@ private:
     Skipper* iSkipper;
     EMsgType iLastPulledMsg;
     TBool iRamping;
-    TUint iTrackId;
     TUint iStreamId;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
@@ -121,10 +119,9 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewTrackResets), "TestRemoveStreamRampNewTrackResets");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewStreamResets), "TestRemoveStreamRampNewStreamResets");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass), "TestRemoveStreamNoRampFewMsgsPass");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveInvalidTrack), "TestTryRemoveInvalidTrack");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveInvalidStream), "TestTryRemoveInvalidStream");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveRampValidTrackAndStream), "TestTryRemoveRampValidTrackAndStream");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveNoRampValidTrackAndStream), "TestTryRemoveNoRampValidTrackAndStream");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveRampValidStream), "TestTryRemoveRampValidStream");
+    AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveNoRampValidStream), "TestTryRemoveNoRampValidStream");
 }
 
 SuiteSkipper::~SuiteSkipper()
@@ -136,7 +133,7 @@ void SuiteSkipper::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iSkipper = new Skipper(*iMsgFactory, *this, kRampDuration);
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iJiffies = 0;
     iRamping = false;
@@ -209,7 +206,6 @@ Msg* SuiteSkipper::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteSkipper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -574,20 +570,6 @@ void SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass()
     PullNext(EMsgTrack);
 }
 
-void SuiteSkipper::TestTryRemoveInvalidTrack()
-{
-    iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(CreateEncodedStream());
-    iPendingMsgs.push_back(CreateDecodedStream());
-    for (TUint i=0; i<3; i++) {
-        PullNext();
-    }
-
-    TEST(!iSkipper->TryRemoveStream(iTrackId+1, iStreamId, true));
-    iPendingMsgs.push_back(CreateAudio());
-    PullNext(EMsgAudioPcm);
-}
-
 void SuiteSkipper::TestTryRemoveInvalidStream()
 {
     iPendingMsgs.push_back(CreateTrack());
@@ -597,12 +579,12 @@ void SuiteSkipper::TestTryRemoveInvalidStream()
         PullNext();
     }
 
-    TEST(!iSkipper->TryRemoveStream(iTrackId, iStreamId+1, true));
+    TEST(!iSkipper->TryRemoveStream(iStreamId+1, true));
     iPendingMsgs.push_back(CreateAudio());
     PullNext(EMsgAudioPcm);
 }
 
-void SuiteSkipper::TestTryRemoveRampValidTrackAndStream()
+void SuiteSkipper::TestTryRemoveRampValidStream()
 {
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -614,7 +596,7 @@ void SuiteSkipper::TestTryRemoveRampValidTrackAndStream()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    TEST(iSkipper->TryRemoveStream(iTrackId, iStreamId, true));
+    TEST(iSkipper->TryRemoveStream(iStreamId, true));
     iRamping = true;
     
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));
@@ -654,7 +636,7 @@ void SuiteSkipper::TestTryRemoveRampValidTrackAndStream()
     PullNext(EMsgTrack);
 }
 
-void SuiteSkipper::TestTryRemoveNoRampValidTrackAndStream()
+void SuiteSkipper::TestTryRemoveNoRampValidStream()
 {
     iPendingMsgs.push_back(CreateTrack());
     iPendingMsgs.push_back(CreateEncodedStream());
@@ -666,7 +648,7 @@ void SuiteSkipper::TestTryRemoveNoRampValidTrackAndStream()
     }
     TEST(iLastPulledMsg == EMsgAudioPcm);
 
-    TEST(iSkipper->TryRemoveStream(iTrackId, iStreamId, false));
+    TEST(iSkipper->TryRemoveStream(iStreamId, false));
     iRamping = false;
     
     iPendingMsgs.push_back(iMsgFactory->CreateMsgMetaText(Brx::Empty()));

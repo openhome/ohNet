@@ -17,7 +17,6 @@ Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kMax)
     , iTargetFlushId(MsgFlush::kIdInvalid)
-    , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iStreamHandler(NULL)
 {
@@ -34,10 +33,10 @@ void Skipper::RemoveCurrentStream(TBool aRampDown)
     iLock.Signal();
 }
 
-TBool Skipper::TryRemoveStream(TUint aTrackId, TUint aStreamId, TBool aRampDown)
+TBool Skipper::TryRemoveStream(TUint aStreamId, TBool aRampDown)
 {
     AutoMutex a(iLock);
-    if (iTrackId == aTrackId && iStreamId == aStreamId) {
+    if (iStreamId == aStreamId) {
         return TryRemoveCurrentStream(aRampDown);
     }
     return false;
@@ -68,7 +67,6 @@ Msg* Skipper::ProcessMsg(MsgSession* aMsg)
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
     NewStream();
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

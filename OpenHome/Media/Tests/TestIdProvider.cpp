@@ -19,7 +19,7 @@ public:
     ~SuiteIdsAreUnique();
     void Test();
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
+    void RemoveStream(TUint aStreamId);
 private:
     IdManager* iIdManager;
 };
@@ -32,7 +32,7 @@ class SuiteSingleStream : public SuiteUnitTest, private IStopper
 public:
     SuiteSingleStream();
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
+    void RemoveStream(TUint aStreamId);
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -55,7 +55,7 @@ public:
     ~SuitePlayLater();
     void Test();
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
+    void RemoveStream(TUint aStreamId);
 };
 
 class SuiteMaxStreams : public Suite, private IStopper
@@ -68,7 +68,7 @@ public:
     ~SuiteMaxStreams();
     void Test();
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
+    void RemoveStream(TUint aStreamId);
 };
 
 class SuiteMultiStreams : public SuiteUnitTest, private IStopper
@@ -85,7 +85,7 @@ class SuiteMultiStreams : public SuiteUnitTest, private IStopper
 public:
     SuiteMultiStreams();
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId);
+    void RemoveStream(TUint aStreamId);
 private: // from SuiteUnitTest
     void Setup();
     void TearDown();
@@ -169,7 +169,7 @@ void SuiteIdsAreUnique::Test()
     }
 }
 
-void SuiteIdsAreUnique::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteIdsAreUnique::RemoveStream(TUint /*aStreamId*/)
 {
     ASSERTS();
 }
@@ -190,7 +190,7 @@ SuiteSingleStream::SuiteSingleStream()
     AddTest(MakeFunctor(*this, &SuiteSingleStream::InvalidateAfterNoMatch));
 }
 
-void SuiteSingleStream::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteSingleStream::RemoveStream(TUint /*aStreamId*/)
 {
     ASSERTS();
 }
@@ -269,7 +269,7 @@ void SuitePlayLater::Test()
     delete pipelineIdProvider;
 }
 
-void SuitePlayLater::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuitePlayLater::RemoveStream(TUint /*aStreamId*/)
 {
     ASSERTS();
 }
@@ -315,7 +315,7 @@ void SuiteMaxStreams::Test()
     delete pipelineIdProvider;
 }
 
-void SuiteMaxStreams::RemoveStream(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteMaxStreams::RemoveStream(TUint /*aStreamId*/)
 {
     ASSERTS();
 }
@@ -341,7 +341,7 @@ SuiteMultiStreams::SuiteMultiStreams()
     AddTest(MakeFunctor(*this, &SuiteMultiStreams::InvalidateAll));
 }
 
-void SuiteMultiStreams::RemoveStream(TUint /*aTrackId*/, TUint aStreamId)
+void SuiteMultiStreams::RemoveStream(TUint aStreamId)
 {
     iRemoveStreamId = aStreamId;
 }
