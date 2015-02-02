@@ -112,7 +112,6 @@ private:
     TUint64 iTrackOffset;
     TBool iNextModeSupportsLatency;
     TUint iNextDelayAbsoluteJiffies;
-    TUint iTrackId;
     TUint iStreamId;
     TUint iNextStreamId;
 };
@@ -162,7 +161,7 @@ void SuiteVariableDelay::Setup()
     iTrackOffset = 0;
     iNextModeSupportsLatency = true;
     iNextDelayAbsoluteJiffies = 0;
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iNextStreamId = 0;
 }
 
@@ -270,7 +269,6 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

@@ -120,7 +120,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamLength(0)
     , iStreamPos(0)
     , iTrackId(UINT_MAX)
-    , iTrackIdPipeline(UINT_MAX)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
@@ -217,7 +216,7 @@ void CodecController::CodecThread()
                 streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(), iPcmStream.Endian(), iPcmStream.StartSample());
             }
 
-            LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackIdPipeline, iStreamId);
+            LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);
 
             for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
@@ -249,7 +248,7 @@ void CodecController::CodecThread()
             }
             LOG(kMedia, "CodecThread: recognition complete\n");
             if (iActiveCodec == NULL) {
-                if (iTrackIdPipeline != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
+                if (iStreamId != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
                     Log::Print("Failed to recognise audio format (iStreamStopped=%u, iExpectedFlushId=%u), flushing stream...\n", iStreamStopped, iExpectedFlushId);
                 }
                 iLock.Wait();
@@ -563,7 +562,6 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
     iLock.Wait();
     iTrackId = aMsg->Track().Id();
-    iTrackIdPipeline = aMsg->IdPipeline();
     iLock.Signal();
     return aMsg;
 }

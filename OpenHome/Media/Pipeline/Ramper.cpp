@@ -8,7 +8,6 @@ using namespace OpenHome::Media;
 
 Ramper::Ramper(IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration)
     : iUpstreamElement(aUpstreamElement)
-    , iTrackId(IPipelineIdProvider::kTrackIdInvalid)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iRamping(false)
     , iRampDuration(aRampDuration)
@@ -69,7 +68,6 @@ Msg* Ramper::ProcessMsg(MsgSession* aMsg)
 
 Msg* Ramper::ProcessMsg(MsgTrack* aMsg)
 {
-    iTrackId = aMsg->IdPipeline();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }

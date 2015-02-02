@@ -110,7 +110,6 @@ private:
     TBool iRampingDown;
     TBool iRampingUp;
     TBool iLiveStream;
-    TUint iTrackId;
     TUint iStreamId;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
@@ -167,7 +166,7 @@ SuiteStopper::~SuiteStopper()
 void SuiteStopper::Setup()
 {
     iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
@@ -257,7 +256,6 @@ Msg* SuiteStopper::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

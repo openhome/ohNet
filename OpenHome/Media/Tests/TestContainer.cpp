@@ -174,7 +174,6 @@ protected:
     TestContainerMsgGenerator* iGenerator;
     TestContainerProvider* iProvider;
     Container* iContainer;
-    TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TUint iMsgRcvdCount;
@@ -607,7 +606,6 @@ void SuiteContainerBase::Setup()
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
     iContainer = new Container(*iMsgFactory, *iGenerator);
-    iTrackId = 0;
     iStreamId = 0;
     iStreamHandler = NULL;
     iMsgRcvdCount = 0;
@@ -694,7 +692,6 @@ Msg* SuiteContainerBase::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgTrack);
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

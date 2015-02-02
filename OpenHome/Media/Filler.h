@@ -87,7 +87,7 @@ private:
     {
     public:
         static const TUint kNullTrackId = 0;
-        static const TUint kNullTrackStreamId = 1;
+        static const TUint kNullTrackStreamId = 0;
     private: // from IStreamHandler
         EStreamPlay OkToPlay(TUint aStreamId) override;
         TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
@@ -105,7 +105,6 @@ private:
     UriProvider* iActiveUriProvider;
     IUriStreamer* iUriStreamer;
     Track* iTrack;
-    TUint iTrackId;
     TBool iStopped;
     TBool iSendHalt;
     TBool iQuit;

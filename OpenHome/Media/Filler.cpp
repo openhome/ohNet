@@ -323,7 +323,6 @@ Msg* Filler::ProcessMsg(MsgSession* aMsg)
 
 Msg* Filler::ProcessMsg(MsgTrack* aMsg)
 {
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

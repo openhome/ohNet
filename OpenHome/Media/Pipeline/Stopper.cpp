@@ -18,7 +18,6 @@ Stopper::Stopper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iRampDuration(aRampDuration)
     , iTargetHaltId(MsgHalt::kIdInvalid)
     , iTrackId(0)
-    , iTrackIdPipeline(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
     , iQuit(false)
@@ -198,7 +197,6 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 
     NewStream();
     iTrackId = aMsg->Track().Id();
-    iTrackIdPipeline = aMsg->IdPipeline();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
@@ -305,7 +303,7 @@ void Stopper::OkToPlay()
         iObserver.PipelinePlaying();
         break;
     case ePlayNo:
-        LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, idPipeline=%u, streamId=%u.\n", iTrackId, iTrackIdPipeline, iStreamId);
+        LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, streamId=%u.\n", iTrackId, iStreamId);
         /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
         SetState(EFlushing);
         iFlushStream = true;

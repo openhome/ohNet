@@ -205,7 +205,6 @@ public:
     TestHttpSupplier(TUint aDataSize);
     virtual ~TestHttpSupplier();
 public:
-    TUint TrackId();
     TUint StreamId();
     TBool Live();
     TUint TrackCount();
@@ -231,7 +230,6 @@ protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     TUint iDataSize;
-    TUint iTrackId;
     TUint iStreamId;
     TBool iLive;
     TUint iTrackCount;
@@ -764,7 +762,6 @@ TestHttpSession* SessionFactory::Create(ESession aSession)
 
 TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
     : iDataSize(aDataSize)
-    , iTrackId(0)
     , iStreamId(0)
     , iLive(false)
     , iTrackCount(0)
@@ -776,11 +773,6 @@ TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
 
 TestHttpSupplier::~TestHttpSupplier()
 {
-}
-
-TUint TestHttpSupplier::TrackId()
-{
-    return iTrackId;
 }
 
 TUint TestHttpSupplier::StreamId()
@@ -826,7 +818,6 @@ Msg* TestHttpSupplier::ProcessMsg(MsgSession* aMsg)
 
 Msg* TestHttpSupplier::ProcessMsg(MsgTrack* aMsg)
 {
-    iTrackId = aMsg->IdPipeline();
     iTrackCount++;
     return aMsg;
 }

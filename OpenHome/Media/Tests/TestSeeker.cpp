@@ -103,7 +103,6 @@ private:
     TBool iRampingUp;
     TBool iSeekable;
     TBool iGenerateAudio;
-    TUint iTrackId;
     TUint iStreamId;
     TUint64 iStreamSampleStart;
     TUint iMsgAudioSize;
@@ -155,7 +154,7 @@ void SuiteSeeker::Setup()
     iSeeker = new Seeker(*iMsgFactory, *this, *this, *this, kRampDuration);
     iSeekResponseThread = new ThreadFunctor("SeekResponse", MakeFunctor(*this, &SuiteSeeker::SeekResponseThread));
     iSeekResponseThread->Start();
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iStreamSampleStart = UINT_MAX;
     iMsgAudioSize = 0;
     iTrackOffset = 0;
@@ -254,7 +253,6 @@ Msg* SuiteSeeker::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteSeeker::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

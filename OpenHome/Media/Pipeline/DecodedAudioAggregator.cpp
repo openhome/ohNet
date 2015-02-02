@@ -13,7 +13,6 @@ DecodedAudioAggregator::DecodedAudioAggregator(IPipelineElementDownstream& aDown
     , iMsgFactory(aMsgFactory)
     , iStreamHandler(NULL)
     , iDecodedAudio(NULL)
-    , iTrackId(IPipelineIdProvider::kTrackIdInvalid)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iChannels(0)
     , iSampleRate(0)
@@ -93,7 +92,6 @@ Msg* DecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
 {
     OutputAggregatedAudio();
     AutoMutex a(iLock);
-    iTrackId = aMsg->IdPipeline();
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }

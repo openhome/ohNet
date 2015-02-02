@@ -55,7 +55,6 @@ private:
     MsgFactory& iMsgFactory;
     IStreamHandler* iStreamHandler;
     MsgAudioPcm* iDecodedAudio;
-    TUint iTrackId;
     TUint iStreamId;
     TUint iChannels;
     TUint iSampleRate;

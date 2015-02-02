@@ -103,7 +103,6 @@ protected:
     TUint iTrySeekCount;
     TUint64 iLastSeekOffset;
     TUint iTryStopCount;
-    TUint iTrackId;
     TUint iStreamId;
     TUint iNextStreamId;
 };
@@ -204,7 +203,6 @@ void SuiteRewinder::Init(TUint aEncodedAudioCount, TUint aMsgAudioEncodedCount)
     iTrySeekCount = 0;
     iLastSeekOffset = 0;
     iTryStopCount = 0;
-    iTrackId = 0;
     iStreamId = 0;
     iNextStreamId = IPipelineIdProvider::kStreamIdInvalid+1;
     InitMsgOrder();
@@ -275,7 +273,6 @@ Msg* SuiteRewinder::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iLastMsgType == EMsgTrack);
     iRcvdMsgType = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

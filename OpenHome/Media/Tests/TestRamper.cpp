@@ -82,7 +82,6 @@ private:
     Ramper* iRamper;
     EMsgType iLastPulledMsg;
     TBool iRamping;
-    TUint iTrackId;
     TUint iStreamId;
     TUint64 iTrackOffset;
     TUint iJiffies;
@@ -116,7 +115,7 @@ void SuiteRamper::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iRamper = new Ramper(*this, kRampDuration);
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iJiffies = 0;
     iRamping = false;
@@ -161,7 +160,6 @@ Msg* SuiteRamper::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteRamper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
