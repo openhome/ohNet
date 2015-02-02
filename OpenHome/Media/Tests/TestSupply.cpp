@@ -191,7 +191,6 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     TEST(aMsg->Track().Uri() == Brn(kUri));
-    TEST(aMsg->IdPipeline() == kTrackId);
     return aMsg;
 }
 

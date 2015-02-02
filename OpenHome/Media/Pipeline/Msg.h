@@ -325,7 +325,6 @@ public:
 public:
     MsgTrack(AllocatorBase& aAllocator);
     Media::Track& Track() const;
-    TUint IdPipeline() const;
 private:
     void Initialise(Media::Track& aTrack, TUint aIdPipeline);
 private: // from Msg

@@ -1549,7 +1549,6 @@ void SuiteTrack::Test()
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TUint trackId = msg->Track().Id();
-    TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1558,7 +1557,6 @@ void SuiteTrack::Test()
     TEST(track->Uri() != uri);
     TEST(track->MetaData() != metadata);
     TEST(track->Id() != trackId);
-    TEST(msg->IdPipeline() != id);
 #endif
 
     // create second Track msg, check its uri/id can be retrieved
@@ -1572,7 +1570,6 @@ void SuiteTrack::Test()
     TEST(msg->Track().MetaData() == metadata);
     TEST(msg->Track().Id() != trackId);
     trackId = msg->Track().Id();
-    TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
     TEST(track->Uri() == uri);
     TEST(track->MetaData() == metadata);

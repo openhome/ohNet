@@ -869,11 +869,6 @@ Media::Track& MsgTrack::Track() const
     return *iTrack;
 }
 
-TUint MsgTrack::IdPipeline() const
-{
-    return iIdPipeline;
-}
-
 void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline)
 {
     iTrack = &aTrack;
