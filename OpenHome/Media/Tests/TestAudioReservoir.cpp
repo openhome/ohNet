@@ -133,11 +133,11 @@ private: // from IClockPuller
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
     void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
+    void NewStreamDecodedReservoir(TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
     void StopDecodedReservoir();
     void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
+    void NewStreamStarvationMonitor(TUint aStreamId);
     void NotifySizeStarvationMonitor(TUint aJiffies);
     void StopStarvationMonitor();
 private:
@@ -150,7 +150,6 @@ private:
     TUint iHistoryPointCount;
     TBool iStopAudioGeneration;
     TByte iBuf[DecodedAudio::kMaxBytes];
-    TUint iTrackId;
     TUint iStreamId;
     TBool iStartCalled;
     TBool iNewStreamCalled;
@@ -486,7 +485,6 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iDequeuedJiffies(0)
     , iHistoryPointCount(0)
     , iStopAudioGeneration(false)
-    , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
@@ -511,7 +509,6 @@ void SuiteReservoirHistory::Test()
     iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this));
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
     MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0);
-    iTrackId = msgTrack->IdPipeline();
     track->RemoveRef();
     iReservoir->Push(msgTrack);
     MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, NULL);
@@ -665,9 +662,8 @@ void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies, TUint 
     iStartCalled = true;
 }
 
-void SuiteReservoirHistory::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+void SuiteReservoirHistory::NewStreamDecodedReservoir(TUint aStreamId)
 {
-    TEST(aTrackId == iTrackId);
     TEST(aStreamId == iStreamId);
     iNewStreamCalled = true;
 }
@@ -694,7 +690,7 @@ void SuiteReservoirHistory::StartStarvationMonitor(TUint /*aCapacityJiffies*/, T
     ASSERTS();
 }
 
-void SuiteReservoirHistory::NewStreamStarvationMonitor(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteReservoirHistory::NewStreamStarvationMonitor(TUint /*aStreamId*/)
 {
     ASSERTS();
 }

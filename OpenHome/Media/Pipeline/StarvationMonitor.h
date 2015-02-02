@@ -90,7 +90,6 @@ private:
     TUint64 iJiffiesUntilNextHistoryPoint;
     IStreamHandler* iStreamHandler;
     BwsMode iMode;
-    TUint iTrackId;
     TUint iStreamId;
 };
 

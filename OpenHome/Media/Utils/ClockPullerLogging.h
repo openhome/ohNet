@@ -60,17 +60,17 @@ private: // from IClockPuller
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
     void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
+    void NewStreamDecodedReservoir(TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
     void StopDecodedReservoir();
     void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
+    void NewStreamStarvationMonitor(TUint aStreamId);
     void NotifySizeStarvationMonitor(TUint aJiffies);
     void StopStarvationMonitor();
 private:
     Mutex iLock;
-    StreamId iStreamLeft;
-    StreamId iStreamRight;
+    TUint iStreamIdLeft;
+    TUint iStreamIdRight;
     UtilisationHistoryLogging iUtilisationLeft;
     UtilisationHistoryLogging iUtilisationRight;
     TUint iActiveCount;

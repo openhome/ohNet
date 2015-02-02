@@ -15,11 +15,11 @@ public:
     virtual void NotifyTimestamp(TInt aDrift, TUint aNetwork) = 0;
     virtual void StopTimestamp() = 0;
     virtual void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) = 0;
-    virtual void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void NewStreamDecodedReservoir(TUint aStreamId) = 0;
     virtual void NotifySizeDecodedReservoir(TUint aJiffies) = 0;
     virtual void StopDecodedReservoir() = 0;
     virtual void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) = 0;
-    virtual void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void NewStreamStarvationMonitor(TUint aStreamId) = 0;
     virtual void NotifySizeStarvationMonitor(TUint aJiffies) = 0;
     virtual void StopStarvationMonitor() = 0;
 };
@@ -51,11 +51,11 @@ private: // from IClockPuller
     void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
     void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
+    void NewStreamDecodedReservoir(TUint aStreamId) override;
     void NotifySizeDecodedReservoir(TUint aJiffies) override;
     void StopDecodedReservoir() override;
     void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) override;
+    void NewStreamStarvationMonitor(TUint aStreamId) override;
     void NotifySizeStarvationMonitor(TUint aJiffies) override;
     void StopStarvationMonitor() override;
 };

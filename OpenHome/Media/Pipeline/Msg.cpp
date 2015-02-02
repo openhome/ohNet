@@ -1984,32 +1984,6 @@ Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 }
 
 
-// StreamId
-
-StreamId::StreamId()
-    : iTrackId(IPipelineIdProvider::kTrackIdInvalid)
-    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
-{
-}
-
-void StreamId::SetTrack(TUint aId)
-{
-    iTrackId = aId;
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-}
-
-void StreamId::SetStream(TUint aId)
-{
-    ASSERT(iTrackId != IPipelineIdProvider::kTrackIdInvalid);
-    iStreamId = aId;
-}
-
-TBool StreamId::operator ==(const StreamId& aId) const
-{
-    return (iTrackId == aId.iTrackId && iStreamId == aId.iStreamId);
-}
-
-
 // MsgQueue
 
 MsgQueue::MsgQueue()

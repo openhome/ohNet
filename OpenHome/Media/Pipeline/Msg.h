@@ -791,21 +791,6 @@ public:
     virtual void EndBlock() = 0;
 };
 
-class StreamId
-{
-public:
-    StreamId();
-    void SetTrack(TUint aId);
-    void SetStream(TUint aId);
-    TBool operator ==(const StreamId& aId) const;
-    TBool operator !=(const StreamId& aId) const { return !(*this==aId); }
-    TUint IdPipeline() const { return iTrackId; }
-    TUint IdStream() const { return iStreamId; }
-private:
-    TUint iTrackId;
-    TUint iStreamId;
-};
-
 class MsgQueue
 {
 public:

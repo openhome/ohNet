@@ -44,7 +44,7 @@ void ClockPullerNull::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint /*
 {
 }
 
-void ClockPullerNull::NewStreamDecodedReservoir(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void ClockPullerNull::NewStreamDecodedReservoir(TUint /*aStreamId*/)
 {
 }
 
@@ -60,7 +60,7 @@ void ClockPullerNull::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUint /
 {
 }
 
-void ClockPullerNull::NewStreamStarvationMonitor(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void ClockPullerNull::NewStreamStarvationMonitor(TUint /*aStreamId*/)
 {
 }
 
