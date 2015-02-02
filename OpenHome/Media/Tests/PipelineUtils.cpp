@@ -208,14 +208,14 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline)
+void TestProtocol::NotifyTrack(const Brx& aUri, const Brx& aMode)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aUri);
     Log::Print("; mode=");
     Log::Print(aMode);
-    Log::Print("; idPipeline=%u}\n", aIdPipeline);
+    Log::Print("\n");
 #endif
 }
 

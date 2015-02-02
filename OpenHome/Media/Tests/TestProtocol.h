@@ -50,7 +50,7 @@ protected:
     virtual void RegisterPlugins();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

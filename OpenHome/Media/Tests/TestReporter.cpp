@@ -34,7 +34,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -68,7 +68,6 @@ private:
     TUint iTimeUpdates;
     TUint iAudioFormatUpdates;
     Bws<1024> iTrackUri;
-    TUint iTrackIdPipeline;
     Bws<1024> iMetaText;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
@@ -118,7 +117,6 @@ void SuiteReporter::Test()
     expectedTrackUpdates++;
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iTrackUri == Brn(KTrackUri));
-    TEST(iTrackIdPipeline == kTrackId);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
@@ -277,11 +275,10 @@ MsgAudio* SuiteReporter::CreateAudio()
     return audio;
 }
 
-void SuiteReporter::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
+void SuiteReporter::NotifyTrack(Track& aTrack, const Brx& /*aMode*/)
 {
     iTrackUpdates++;
     iTrackUri.Replace(aTrack.Uri());
-    iTrackIdPipeline = aIdPipeline;
 }
 
 void SuiteReporter::NotifyMetaText(const Brx& aText)

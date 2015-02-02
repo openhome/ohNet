@@ -226,7 +226,7 @@ private: // from IPipelineIdManager
     void InvalidateAll() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;

@@ -91,7 +91,6 @@ SourceRaop::SourceRaop(IMediaPlayer& aMediaPlayer, UriProviderSingleTrack& aUriP
     , iSessionActive(false)
     , iTrack(NULL)
     , iTrackPosSeconds(0)
-    , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
@@ -316,7 +315,7 @@ void SourceRaop::NotifyPipelineState(Media::EPipelineState aState)
     iLock.Signal();
 }
 
-void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
+void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/)
 {
     iLock.Wait();
     if (iTrack != NULL) {
@@ -324,7 +323,6 @@ void SourceRaop::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TUint a
     }
     iTrack = &aTrack;
     iTrack->AddRef();
-    iPipelineTrackId = aIdPipeline;
     iLock.Signal();
 }
 

@@ -79,7 +79,7 @@ private:
     void TestRampsUp(TUint aMaxMsgs);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -598,7 +598,7 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Print("Pipeline report property: TRACK {uri=");
@@ -609,7 +609,7 @@ void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeli
     Print(aMode);
     Print("; providerId=");
     Print(aTrack.ProviderId());
-    Print("; idPipeline=%u}\n", aIdPipeline);
+    Print("\n");
 #endif
 }
 

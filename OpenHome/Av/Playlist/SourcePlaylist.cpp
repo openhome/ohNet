@@ -56,7 +56,7 @@ private: // from ITrackDatabaseObserver
     void NotifyAllDeleted() override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
@@ -70,7 +70,6 @@ private:
     Media::UriProvider* iUriProvider;
     ProviderPlaylist* iProviderPlaylist;
     TUint iTrackPosSeconds;
-    TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState; // FIXME - this appears to be set but never used
     TUint iTrackId;
@@ -103,7 +102,6 @@ SourcePlaylist::SourcePlaylist(Environment& aEnv, Net::DvDevice& aDevice, Media:
     , iActivationLock("SPL2")
     , iPipeline(aPipeline)
     , iTrackPosSeconds(0)
-    , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
     , iTrackId(ITrackDatabase::kTrackIdNone)
@@ -262,7 +260,7 @@ void SourcePlaylist::Prev()
 void SourcePlaylist::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        if (iPipeline.Seek(iPipelineTrackId, iStreamId, aSeconds)) {
+        if (iPipeline.Seek(UINT_MAX/*FIXME*/, iStreamId, aSeconds)) {
             iPipeline.Play();
         }
     }
@@ -358,12 +356,11 @@ void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
     }
 }
 
-void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode)
 {
     if (aMode == iUriProvider->Mode()) {
         iProviderPlaylist->NotifyTrack(aTrack.Id());
         iLock.Wait();
-        iPipelineTrackId = aIdPipeline;
         iTrackId = aTrack.Id();
         iTrackPosSeconds = 0;
         iLock.Signal();

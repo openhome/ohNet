@@ -134,7 +134,7 @@ void ProviderInfo::NotifyPipelineState(EPipelineState /*aState*/)
     // NOP -- playing, paused, stopped, buffering
 }
 
-void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/)
 {
     TUint n = 0;
     AutoMutex mutex(iLock);

@@ -39,7 +39,6 @@ SourceUpnpAv::SourceUpnpAv(Environment& aEnv, Net::DvDevice& aDevice, PipelineMa
     , iPipeline(aPipeline)
     , iUriProvider(aUriProvider)
     , iTrack(NULL)
-    , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
     , iPipelineTransportState(Media::EPipelineStopped)
@@ -174,7 +173,7 @@ void SourceUpnpAv::Prev()
 void SourceUpnpAv::Seek(TUint aSecondsAbsolute)
 {
     if (IsActive()) {
-        (void)iPipeline.Seek(iPipelineTrackId, iStreamId, aSecondsAbsolute);
+        (void)iPipeline.Seek(UINT_MAX/*FIXME*/, iStreamId, aSecondsAbsolute);
     }
 }
 
@@ -191,14 +190,13 @@ void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
     iLock.Wait();
-    iPipelineTrackId = aIdPipeline;
     iStreamId = UINT_MAX;
     iLock.Signal();
     if (IsActive()) {
-        iDownstreamObserver->NotifyTrack(aTrack, aMode, aIdPipeline);
+        iDownstreamObserver->NotifyTrack(aTrack, aMode);
         iDownstreamObserver->NotifyPipelineState(iPipelineTransportState);
     }
     else {

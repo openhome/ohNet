@@ -17,7 +17,6 @@ const Brn SpotifyReporter::kInterceptMode("Spotify");
 SpotifyReporter::SpotifyReporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver)
     : iUpstreamElement(aUpstreamElement)
     , iPropertyObserver(aObserver)
-    , iPipelineTrackId(0)
     , iTrackDurationMs(0)
     , iTrackOffsetSubSamples(0)
     , iReporterSubSampleStart(0)
@@ -61,13 +60,13 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvi
     // track, but the rest of the pipeline would not.
     // As a hack, reuse the pipeline ID of the last MsgTrack that was seen.
     Track* track = aTrackFactory.CreateTrack(Brn("spotify://"), aMetadata);
-    iPropertyObserver.NotifyTrack(*track, kInterceptMode, iPipelineTrackId);
+    iPropertyObserver.NotifyTrack(*track, kInterceptMode);
     track->RemoveRef();
 }
 
-void SpotifyReporter::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void SpotifyReporter::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
-    iPropertyObserver.NotifyTrack(aTrack, aMode, aIdPipeline);
+    iPropertyObserver.NotifyTrack(aTrack, aMode);
 }
 
 void SpotifyReporter::NotifyMetaText(const Brx& aText)
@@ -110,7 +109,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgMode* aMsg)
     else {
         iInterceptMode = false;
     }
-    iPipelineTrackId = 0;
     iTrackOffsetSubSamples = 0;
     iReporterSubSampleStart = 0;
     iChannels = 0;
@@ -126,8 +124,6 @@ Msg* SpotifyReporter::ProcessMsg(MsgSession* aMsg)
 
 Msg* SpotifyReporter::ProcessMsg(MsgTrack* aMsg)
 {
-    AutoMutex a(iLock);
-    iPipelineTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
