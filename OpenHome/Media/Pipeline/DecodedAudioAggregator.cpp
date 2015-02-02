@@ -32,48 +32,48 @@ void DecodedAudioAggregator::Push(Msg* aMsg)
     }
 }
 
-EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay DecodedAudioAggregator::OkToPlay(TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+        return iStreamHandler->OkToPlay(aStreamId);
     }
     else {
         return ePlayNo;
     }
 }
 
-TUint DecodedAudioAggregator::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint DecodedAudioAggregator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS(); // expect Seek requests to go from Seeker to CodecController, bypassing this (and other) downstream element(s).
     return MsgFlush::kIdInvalid;
 }
 
-TUint DecodedAudioAggregator::TryStop(TUint aTrackId, TUint aStreamId)
+TUint DecodedAudioAggregator::TryStop(TUint aStreamId)
 {
     AutoMutex a(iLock);
-    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+    if (aStreamId == iStreamId) {
         ReleaseAggregatedAudio();
     }
     if (iStreamHandler != NULL) {
-        TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+        TUint flushId = iStreamHandler->TryStop(aStreamId);
         iExpectedFlushId = flushId;
         return flushId;
     }
     return MsgFlush::kIdInvalid;
 }
 
-TBool DecodedAudioAggregator::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool DecodedAudioAggregator::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
     }
     return false;
 }
 
-void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void DecodedAudioAggregator::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }
 

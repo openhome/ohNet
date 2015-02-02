@@ -58,11 +58,11 @@ private: // from IPipelineElementUpstream
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -146,7 +146,7 @@ private: // from SuiteCodecControllerBase
     void Setup();
     void TearDown();
 private: // from SuiteCodecControllerBase
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
 private: // from ISeekObserver
     void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
@@ -318,36 +318,36 @@ void SuiteCodecControllerBase::Push(Msg* aMsg)
     iSemReceived->Signal();
 }
 
-EStreamPlay SuiteCodecControllerBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteCodecControllerBase::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteCodecControllerBase::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteCodecControllerBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteCodecControllerBase::TryStop(TUint aTrackId, TUint aStreamId)
+TUint SuiteCodecControllerBase::TryStop(TUint aStreamId)
 {
     iStopCount++;
     iSemStop->Signal();
-    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+    if (aStreamId == iStreamId) {
         return kExpectedFlushId;
     }
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteCodecControllerBase::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteCodecControllerBase::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -541,9 +541,8 @@ void SuiteCodecControllerStream::TearDown()
     SuiteCodecControllerBase::TearDown();
 }
 
-TUint SuiteCodecControllerStream::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 /*aOffset*/)
+TUint SuiteCodecControllerStream::TrySeek(TUint aStreamId, TUint64 /*aOffset*/)
 {
-    TEST(aTrackId == iTrackId);
     TEST(aStreamId == aStreamId);
     return kExpectedFlushId;
 }

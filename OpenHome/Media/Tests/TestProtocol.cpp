@@ -75,7 +75,7 @@ TUint DummyFiller::NextStreamId()
     return iNextStreamId++;
 }
 
-EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay DummyFiller::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }

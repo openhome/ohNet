@@ -218,7 +218,7 @@ void StarvationMonitor::UpdateStatus(EStatus aStatus)
 #endif
     if (aStatus == EBuffering) {
         if (iStreamHandler != NULL) {
-            iStreamHandler->NotifyStarving(iMode, iTrackId, iStreamId);
+            iStreamHandler->NotifyStarving(iMode, iStreamId);
         }
         iObserver.NotifyStarvationMonitorBuffering(true);
         if (iClockPuller != NULL) {

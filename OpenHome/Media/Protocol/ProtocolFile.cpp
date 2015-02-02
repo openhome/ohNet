@@ -27,9 +27,9 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private: // from IStreamHandler
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
+    TUint TryStop(TUint aStreamId);
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes);
 private: // from IProtocolReader
     Brn Read(TUint aBytes);
     Brn ReadUntil(TByte aSeparator);
@@ -179,10 +179,10 @@ ProtocolGetResult ProtocolFile::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/, T
     return EProtocolGetErrorNotSupported;
 }
 
-TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint ProtocolFile::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     iLock.Wait();
-    const TBool streamIsValid = (iFileOpen && iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool streamIsValid = (iFileOpen && iProtocolManager->IsCurrentStream(aStreamId));
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = (TUint32)aOffset;
@@ -196,10 +196,10 @@ TUint ProtocolFile::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     return iNextFlushId;
 }
 
-TUint ProtocolFile::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolFile::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStop = true;
@@ -212,7 +212,7 @@ TUint ProtocolFile::TryStop(TUint aTrackId, TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolFile::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool ProtocolFile::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
 }

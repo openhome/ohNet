@@ -64,11 +64,11 @@ private: // from SuiteUnitTest
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -228,32 +228,32 @@ Msg* SuiteRewinder::Pull()
     return iLastMsg;
 }
 
-EStreamPlay SuiteRewinder::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteRewinder::OkToPlay(TUint /*aStreamId*/)
 {
     iOkToPlayCount++;
     return ePlayYes;
 }
 
-TUint SuiteRewinder::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 aOffset)
+TUint SuiteRewinder::TrySeek(TUint /*aStreamId*/, TUint64 aOffset)
 {
     iTrySeekCount++;
     iLastSeekOffset = aOffset;
     return ++iCurrentFlushId;
 }
 
-TUint SuiteRewinder::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint SuiteRewinder::TryStop(TUint /*aStreamId*/)
 {
     iTryStopCount++;
     return ++iCurrentFlushId;
 }
 
-TBool SuiteRewinder::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteRewinder::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteRewinder::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteRewinder::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -532,83 +532,83 @@ void SuiteRewinder::TestUpstreamRequestPassThrough()
 
     // TrySeek should be passed through, regardless of buffering state
     // non-current track
-    seekRes = iStreamHandler->TrySeek(1,0,1);
+    seekRes = iStreamHandler->TrySeek(0,1);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 1);
     // non-current stream
-    seekRes = iStreamHandler->TrySeek(0,1,2);
+    seekRes = iStreamHandler->TrySeek(1,2);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 2);
     // non-current track and stream
-    seekRes = iStreamHandler->TrySeek(1,1,3);
+    seekRes = iStreamHandler->TrySeek(1,3);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 3);
 
     // non-current track
-    stopRes = iStreamHandler->TryStop(1,0);
+    stopRes = iStreamHandler->TryStop(0);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
     // non-current stream
-    stopRes = iStreamHandler->TryStop(0,1);
+    stopRes = iStreamHandler->TryStop(1);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
     // non-current track or stream
-    stopRes = iStreamHandler->TryStop(1,1);
+    stopRes = iStreamHandler->TryStop(1);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
 
     // OkToPlay should always be passed through
-    playRes = iStreamHandler->OkToPlay(0,0);
+    playRes = iStreamHandler->OkToPlay(0);
     TEST(playRes == ePlayYes);
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
 
     // now call Stop and repeat calls - ALL calls should be passed through afterwards
     iRewinder->Stop();
     // TrySeek on current track should succeed when no longer buffering
-    seekRes = iStreamHandler->TrySeek(0,0,0);
+    seekRes = iStreamHandler->TrySeek(0,0);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 0);
     // TrySeek should be passed through while buffering if not current track or stream
     // non-current track
-    seekRes = iStreamHandler->TrySeek(1,0,1);
+    seekRes = iStreamHandler->TrySeek(0,1);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 1);
     // non-current stream
-    seekRes = iStreamHandler->TrySeek(0,1,2);
+    seekRes = iStreamHandler->TrySeek(1,2);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 2);
     // non-current track or stream
-    seekRes = iStreamHandler->TrySeek(1,1,3);
+    seekRes = iStreamHandler->TrySeek(1,3);
     TEST(seekRes == iCurrentFlushId);
     TEST(iTrySeekCount == expectedSeekCount++);
     TEST(iLastSeekOffset == 3);
 
     // TryStop should have same behaviour as TrySeek when no longer buffering
     // TryStop on current track should succeed when no longer buffering
-    stopRes = iStreamHandler->TryStop(0,0);
+    stopRes = iStreamHandler->TryStop(0);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
     // non-current track
-    stopRes = iStreamHandler->TryStop(1,0);
+    stopRes = iStreamHandler->TryStop(0);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
     // non-current stream
-    stopRes = iStreamHandler->TryStop(0,1);
+    stopRes = iStreamHandler->TryStop(1);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
     // non-current track or stream
-    stopRes = iStreamHandler->TryStop(1,1);
+    stopRes = iStreamHandler->TryStop(1);
     TEST(stopRes == iCurrentFlushId);
     TEST(iTryStopCount == expectedStopCount++);
 
     // OkToPlay should always be passed through
-    playRes = iStreamHandler->OkToPlay(0,0);
+    playRes = iStreamHandler->OkToPlay(0);
     TEST(playRes == ePlayYes);
     TEST(iOkToPlayCount == expectedOkToPlayCount++);
 }

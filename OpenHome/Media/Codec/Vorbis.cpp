@@ -315,7 +315,7 @@ TBool CodecVorbis::TrySeek(TUint aStreamId, TUint64 aSample)
     }
 
     LOG(kCodec, "CodecVorbis::Seek to sample: %lld, byte: %llu\n", aSample, bytes);
-    TBool canSeek = iController->TrySeek(aStreamId, bytes);
+    TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iTotalSamplesOutput = aSample;
         iTrackOffset = (aSample * Jiffies::kPerSecond) / iSampleRate;

@@ -31,11 +31,11 @@ public:
 private: // from Thread
     void Run() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementDownstream& iDownstream;
@@ -228,29 +228,29 @@ void Supplier::Run()
     iDownstream.Push(iMsgFactory.CreateMsgQuit());
 }
 
-EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay Supplier::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }
 
-TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Supplier::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint Supplier::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint Supplier::TryStop(TUint /*aStreamId*/)
 {
     return MsgFlush::kIdInvalid;
 }
 
-TBool Supplier::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool Supplier::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 

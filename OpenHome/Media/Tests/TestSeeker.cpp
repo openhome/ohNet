@@ -36,11 +36,11 @@ private: // from ISeeker
 private: // from ISeekRestreamer
     TUint SeekRestream(const Brx& aMode, TUint aTrackId) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -200,7 +200,7 @@ Msg* SuiteSeeker::Pull()
     return msg;
 }
 
-EStreamPlay SuiteSeeker::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteSeeker::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
@@ -219,27 +219,27 @@ TUint SuiteSeeker::SeekRestream(const Brx& /*aMode*/, TUint /*aTrackId*/)
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteSeeker::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteSeeker::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteSeeker::TryStop(TUint aTrackId, TUint aStreamId)
+TUint SuiteSeeker::TryStop(TUint aStreamId)
 {
-    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+    if (aStreamId == iStreamId) {
         return kExpectedFlushId;
     }
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteSeeker::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteSeeker::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteSeeker::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteSeeker::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 

@@ -48,23 +48,23 @@ TBool Protocol::Active() const
     return iActive;
 }
 
-EStreamPlay Protocol::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay Protocol::OkToPlay(TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aStreamId);
 }
 
-TUint Protocol::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Protocol::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool Protocol::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool Protocol::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
 }
 
-void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void Protocol::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -341,10 +341,6 @@ Msg* ProtocolManager::ProcessMsg(MsgSession* aMsg)
 
 Msg* ProtocolManager::ProcessMsg(MsgTrack* aMsg)
 {
-    {
-        AutoMutex a(iLock);
-        iTrackId = aMsg->IdPipeline();
-    }
     return aMsg;
 }
 
@@ -355,6 +351,9 @@ Msg* ProtocolManager::ProcessMsg(MsgDelay* aMsg)
 
 Msg* ProtocolManager::ProcessMsg(MsgEncodedStream* aMsg)
 {
+    iLock.Wait();
+    iStreamId = aMsg->StreamId();
+    iLock.Signal();
     return aMsg;
 }
 
@@ -370,6 +369,7 @@ Msg* ProtocolManager::ProcessMsg(MsgMetaText* aMsg)
 
 Msg* ProtocolManager::ProcessMsg(MsgHalt* aMsg)
 {
+    ASSERTS();
     return aMsg;
 }
 
@@ -385,35 +385,37 @@ Msg* ProtocolManager::ProcessMsg(MsgWait* aMsg)
 
 Msg* ProtocolManager::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    ASSERTS();
     return aMsg;
 }
 
 Msg* ProtocolManager::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    ASSERTS();
     return aMsg;
 }
 
 Msg* ProtocolManager::ProcessMsg(MsgSilence* aMsg)
 {
+    ASSERTS();
     return aMsg;
 }
 
 Msg* ProtocolManager::ProcessMsg(MsgPlayable* aMsg)
 {
+    ASSERTS();
     return aMsg;
 }
 
 Msg* ProtocolManager::ProcessMsg(MsgQuit* aMsg)
 {
+    ASSERTS();
     return aMsg;
 }
 
 ProtocolStreamResult ProtocolManager::DoStream(Track& aTrack)
 {
-    iLock.Wait();
-    iTrackId = iIdProvider.NextTrackId();
-    iLock.Signal();
-    Push(iMsgFactory.CreateMsgTrack(aTrack, iTrackId));
+    Push(iMsgFactory.CreateMsgTrack(aTrack, iIdProvider.NextTrackId()));
     ProtocolStreamResult res = Stream(aTrack.Uri());
     return res;
 }
@@ -470,10 +472,8 @@ TBool ProtocolManager::Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, T
     return (res == EProtocolGetSuccess);
 }
 
-TBool ProtocolManager::IsCurrentTrack(TUint aTrackId) const
+TBool ProtocolManager::IsCurrentStream(TUint aStreamId) const
 {
-    iLock.Wait();
-    const TBool ok = (iTrackId == aTrackId);
-    iLock.Signal();
-    return ok;
+    AutoMutex _(iLock);
+    return (iStreamId == aStreamId);
 }

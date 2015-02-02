@@ -163,9 +163,9 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolOhBase::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aStreamId);
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()

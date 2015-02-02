@@ -269,13 +269,13 @@ void ProtocolRaop::OutputAudio(const Brn &aPacket, TBool aFirst)
     }
 }
 
-TUint ProtocolRaop::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolRaop::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ProtocolRaop::TryStop\n");
     TBool stop = false;
     iLockRaop.Wait();
     if (!iStopped && iActive) {
-        stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+        stop = iProtocolManager->IsCurrentStream(aStreamId);
         if (stop) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
             iStopped = true;

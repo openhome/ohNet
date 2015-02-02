@@ -59,10 +59,10 @@ void ProtocolTone::Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstrea
     iSupply = new Supply(aMsgFactory, aDownstream);
 }
 
-TUint ProtocolTone::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolTone::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStop = true;
@@ -71,7 +71,7 @@ TUint ProtocolTone::TryStop(TUint aTrackId, TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-// TUint ProtocolTone::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) { }
+// TUint ProtocolTone::TrySeek(TUint aStreamId, TUint64 aOffset) { }
 
 ToneParams::ToneParams()
     : iBitsPerSample(0)

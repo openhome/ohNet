@@ -97,7 +97,7 @@ TBool CodecAiffBase::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     const TUint byteDepth = iBitDepth/8;
     const TUint64 bytePos = aSample * iNumChannels * byteDepth;
-    if (!iController->TrySeek(aStreamId, iTrackStart + bytePos)) {
+    if (!iController->TrySeekTo(aStreamId, iTrackStart + bytePos)) {
         return false;
     }
     iTrackOffset = ((TUint64)aSample * Jiffies::kPerSecond) / iSampleRate;

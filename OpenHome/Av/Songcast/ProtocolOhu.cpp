@@ -251,11 +251,10 @@ void ProtocolOhu::Interrupt(TBool aInterrupt)
     ProtocolOhBase::Interrupt(aInterrupt);
 }
 
-TUint ProtocolOhu::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolOhu::TryStop(TUint aStreamId)
 {
     LOG(kSongcast, "OHU: TryStop()\n");
-    if (iProtocolManager->IsCurrentTrack(aTrackId) &&
-        iStreamId == aStreamId && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
+    if (iProtocolManager->IsCurrentStream(aStreamId) && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
         iLeaveLock.Wait();
         if (iActive) {
             iNextFlushId = iFlushIdProvider->NextFlushId();
@@ -268,7 +267,7 @@ TUint ProtocolOhu::TryStop(TUint aTrackId, TUint aStreamId)
     return iNextFlushId;
 }
 
-void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void ProtocolOhu::NotifyStarving(const Brx& aMode, TUint /*aStreamId*/)
 {
     if (aMode == iMode) {
         iStarving = true;

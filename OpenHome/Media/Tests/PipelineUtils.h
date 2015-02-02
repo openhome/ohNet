@@ -27,7 +27,7 @@ private: // from Thread
 private: // from IPipelineIdProvider
     TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
     void InvalidateAt(TUint aId) override;
     void InvalidateAfter(TUint aId) override;
     void InvalidatePending() override;

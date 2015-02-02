@@ -30,8 +30,8 @@ private: // from ProtocolOhBase
 private: // from Media::Protocol
     void Interrupt(TBool aInterrupt) override;
 private: // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    TUint TryStop(TUint aStreamId) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IPowerHandler
     void PowerUp() override;
     void PowerDown() override;

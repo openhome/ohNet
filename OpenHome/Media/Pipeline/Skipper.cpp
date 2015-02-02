@@ -172,7 +172,7 @@ void Skipper::StartFlushing(TBool aSendHalt)
                                                         that any subsequent break in audio is expected */
     }
     iState = eFlushing;
-    iTargetFlushId = (iStreamHandler==NULL? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iTrackId, iStreamId));
+    iTargetFlushId = (iStreamHandler==NULL? MsgFlush::kIdInvalid : iStreamHandler->TryStop(iStreamId));
 }
 
 Msg* Skipper::ProcessFlushable(Msg* aMsg)

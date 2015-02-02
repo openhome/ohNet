@@ -282,7 +282,7 @@ Msg* Stopper::ProcessMsg(MsgPlayable* /*aMsg*/)
 Msg* Stopper::ProcessMsg(MsgQuit* aMsg)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
+        iStreamHandler->TryStop(iStreamId);
     }
     return aMsg;
 }
@@ -298,7 +298,7 @@ Msg* Stopper::ProcessFlushable(Msg* aMsg)
 
 void Stopper::OkToPlay()
 {
-    EStreamPlay canPlay = iStreamHandler->OkToPlay(iTrackIdPipeline, iStreamId);
+    EStreamPlay canPlay = iStreamHandler->OkToPlay(iStreamId);
     switch (canPlay)
     {
     case ePlayYes:
@@ -306,7 +306,7 @@ void Stopper::OkToPlay()
         break;
     case ePlayNo:
         LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, idPipeline=%u, streamId=%u.\n", iTrackId, iTrackIdPipeline, iStreamId);
-        /*TUint flushId = */iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
+        /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
         SetState(EFlushing);
         iFlushStream = true;
         iHaltPending = true;
@@ -351,7 +351,7 @@ Msg* Stopper::ProcessAudio(MsgAudio* aMsg)
                     iObserver.PipelinePaused();
                 }
                 else {
-                    (void)iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
+                    (void)iStreamHandler->TryStop(iStreamId);
                     SetState(ERunning);
                     iFlushStream = true;
                 }

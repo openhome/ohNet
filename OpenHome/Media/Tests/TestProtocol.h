@@ -28,7 +28,7 @@ private: // from Thread
 private: // from IPipelineIdProvider
     TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
     Pipeline& iPipeline;
     ProtocolManager* iProtocolManager;

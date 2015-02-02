@@ -236,7 +236,7 @@ TUint TestCodecFiller::NextStreamId()
     return iNextStreamId++;
 }
 
-EStreamPlay TestCodecFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay TestCodecFiller::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }

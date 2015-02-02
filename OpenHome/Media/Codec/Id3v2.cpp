@@ -102,9 +102,9 @@ Msg* Id3v2::ProcessMsg(MsgAudioEncoded* aMsg)
     return msg;
 }
 
-TUint Id3v2::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint Id3v2::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     TUint64 offset = aOffset + iTotalSize;
-    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, offset);
+    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
     return iExpectedFlushId;
 }

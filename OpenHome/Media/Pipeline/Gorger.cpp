@@ -162,35 +162,35 @@ Msg* Gorger::ProcessMsgOut(MsgHalt* aMsg)
     return aMsg;
 }
 
-EStreamPlay Gorger::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay Gorger::OkToPlay(TUint /*aStreamId*/)
 {
     // Not expected to be called.  Content at this stage of the pipeline is guaranteed to be played.
     ASSERTS();
     return ePlayNo;
 }
 
-TUint Gorger::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Gorger::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     // Not expected to be called.  Content at this stage of the pipeline is guaranteed to be played.
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint Gorger::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint Gorger::TryStop(TUint /*aStreamId*/)
 {
     // Not expected to be called.  Content at this stage of the pipeline is guaranteed to be played.
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool Gorger::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool Gorger::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     // Not expected to be called.  Content at this stage of the pipeline is guaranteed to be played.
     ASSERTS();
     return false;
 }
 
-void Gorger::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void Gorger::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     iLock.Wait();
     if (aMode == iMode && iCanGorge) {
@@ -198,6 +198,6 @@ void Gorger::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
     }
     iLock.Signal();
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

@@ -29,11 +29,11 @@ private: // from SuiteUnitTest
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -99,7 +99,6 @@ private:
     TUint64 iJiffies;
     TUint64 iMsgOffset;
     TUint iStopCount;
-    TUint iTrackId;
     TUint iStreamId;
 
     AllocatorInfoLogger iInfoAggregator;
@@ -140,7 +139,7 @@ void SuiteDecodedAudioAggregator::Setup()
     iSemReceived = new Semaphore("TCSR", 0);
     iSemStop = new Semaphore("TCSS", 0);
     iLockReceived = new Mutex("TCMR");
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iNextTrackId = iNextStreamId = 0;
     iTrackOffsetBytes = 0;
     iTrackOffset = 0;
@@ -175,36 +174,36 @@ void SuiteDecodedAudioAggregator::Push(Msg* aMsg)
     iSemReceived->Signal();
 }
 
-EStreamPlay SuiteDecodedAudioAggregator::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteDecodedAudioAggregator::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteDecodedAudioAggregator::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteDecodedAudioAggregator::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteDecodedAudioAggregator::TryStop(TUint aTrackId, TUint aStreamId)
+TUint SuiteDecodedAudioAggregator::TryStop(TUint aStreamId)
 {
     iStopCount++;
     iSemStop->Signal();
-    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+    if (aStreamId == iStreamId) {
         return kExpectedFlushId;
     }
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteDecodedAudioAggregator::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteDecodedAudioAggregator::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteDecodedAudioAggregator::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteDecodedAudioAggregator::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -223,7 +222,6 @@ Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteDecodedAudioAggregator::ProcessMsg(MsgTrack* aMsg)
 {
     iLastReceivedMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 

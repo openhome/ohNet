@@ -369,42 +369,42 @@ Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-EStreamPlay VariableDelay::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->OkToPlay(aTrackId, aStreamId);
+        iStreamHandler->OkToPlay(aStreamId);
     }
     return ePlayNo;
 }
 
-TUint VariableDelay::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+        return iStreamHandler->TrySeek(aStreamId, aOffset);
     }
     return MsgFlush::kIdInvalid;
 }
 
-TUint VariableDelay::TryStop(TUint aTrackId, TUint aStreamId)
+TUint VariableDelay::TryStop(TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->TryStop(aTrackId, aStreamId);
+        iStreamHandler->TryStop(aStreamId);
     }
     return MsgFlush::kIdInvalid;
 }
 
-TBool VariableDelay::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool VariableDelay::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
     }
     return false;
 }
 
-void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     HandleStarving(aMode);
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

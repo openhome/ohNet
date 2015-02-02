@@ -105,7 +105,7 @@ protected:  // from SuiteUnitTest
 private:  // from IPipelineIdProvider
     TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint, TUint) override;
+    EStreamPlay OkToPlay(TUint) override;
 
 private:  // from IFlushIdProvider
     TUint NextFlushId();
@@ -541,7 +541,7 @@ TUint SuiteGeneratorAny::NextStreamId()
     return iNextStreamId++;
 }
 
-EStreamPlay SuiteGeneratorAny::OkToPlay(TUint, TUint)
+EStreamPlay SuiteGeneratorAny::OkToPlay(TUint)
 {
     ASSERTS();
     return ePlayNo;

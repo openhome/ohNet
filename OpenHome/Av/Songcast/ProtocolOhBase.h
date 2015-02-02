@@ -48,7 +48,7 @@ private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    Media::EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
     void CurrentSubnetChanged();
     void RepairReset();

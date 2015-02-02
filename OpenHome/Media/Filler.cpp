@@ -258,7 +258,7 @@ void Filler::Run()
                 iPipeline.Push(iMsgFactory.CreateMsgSession());
                 iChangedMode = true;
                 iPipeline.Push(iMsgFactory.CreateMsgTrack(*iNullTrack, NullTrackStreamHandler::kNullTrackId));
-                iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackId, NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
+                iPipelineIdTracker.AddStream(iNullTrack->Id(), NullTrackStreamHandler::kNullTrackStreamId, false /* play later */);
                 iPipeline.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 0, NullTrackStreamHandler::kNullTrackStreamId, false /* not seekable */, true /* live */, &iNullTrackStreamHandler));
                 iPipeline.Push(iMsgFactory.CreateMsgDelay(iDefaultDelay));
                 iSendHalt = false;
@@ -334,7 +334,7 @@ Msg* Filler::ProcessMsg(MsgDelay* aMsg)
 
 Msg* Filler::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    iPipelineIdTracker.AddStream(iTrack->Id(), iTrackId, aMsg->StreamId(), (iTrackPlayStatus==ePlayYes));
+    iPipelineIdTracker.AddStream(iTrack->Id(), aMsg->StreamId(), (iTrackPlayStatus==ePlayYes));
     iTrackPlayStatus = ePlayYes; /* first stream in a track should take play status from UriProvider;
                                     subsequent streams should be played immediately */
     return aMsg;
@@ -398,26 +398,26 @@ Msg* Filler::ProcessMsg(MsgQuit* aMsg)
 
 // Filler::NullTrackStreamHandler
 
-EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay Filler::NullTrackStreamHandler::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayLater;
 }
 
-TUint Filler::NullTrackStreamHandler::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Filler::NullTrackStreamHandler::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     return MsgFlush::kIdInvalid;
 }
 
-TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint Filler::NullTrackStreamHandler::TryStop(TUint /*aStreamId*/)
 {
     return MsgFlush::kIdInvalid;
 }
 
-TBool Filler::NullTrackStreamHandler::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool Filler::NullTrackStreamHandler::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     return false;
 }
 
-void Filler::NullTrackStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void Filler::NullTrackStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
