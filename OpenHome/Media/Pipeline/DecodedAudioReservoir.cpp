@@ -18,7 +18,6 @@ DecodedAudioReservoir::DecodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCo
     , iMaxStreamCount(aMaxStreamCount)
     , iJiffiesUntilNextUsageReport(kUtilisationSamplePeriodJiffies)
     , iThreadExcludeBlock(NULL)
-    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
 {
 }
 
@@ -71,21 +70,13 @@ Msg* DecodedAudioReservoir::ProcessMsgOut(MsgMode* aMsg)
     if (iClockPuller != NULL) {
         iClockPuller->StartDecodedReservoir(iMaxJiffies, kUtilisationSamplePeriodJiffies);
     }
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    return aMsg;
-}
-
-Msg* DecodedAudioReservoir::ProcessMsgOut(MsgEncodedStream* aMsg)
-{
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
 
 Msg* DecodedAudioReservoir::ProcessMsgOut(MsgDecodedStream* aMsg)
 {
-    iStreamId = aMsg->StreamInfo().StreamId();
     if (iClockPuller != NULL) {
-        iClockPuller->NewStreamDecodedReservoir(iStreamId);
+        iClockPuller->NewStreamDecodedReservoir(aMsg->StreamInfo().StreamId());
     }
     iJiffiesUntilNextUsageReport = kUtilisationSamplePeriodJiffies;
     return aMsg;
