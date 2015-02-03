@@ -68,7 +68,6 @@ Msg* Ramper::ProcessMsg(MsgSession* aMsg)
 
 Msg* Ramper::ProcessMsg(MsgTrack* aMsg)
 {
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
 
@@ -119,6 +118,11 @@ Msg* Ramper::ProcessMsg(MsgDecodedStream* aMsg)
         iRamping = true;
         iCurrentRampValue = Ramp::kMin;
         iRemainingRampSize = iRampDuration;
+    }
+    else {
+        iRamping = false;
+        iCurrentRampValue = Ramp::kMax;
+        iRemainingRampSize = 0;
     }
     return aMsg;
 }
