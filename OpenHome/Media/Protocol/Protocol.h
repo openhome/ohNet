@@ -241,7 +241,6 @@ private:
     std::vector<Protocol*> iProtocols;
     std::vector<ContentProcessor*> iContentProcessors;
     ContentProcessor* iAudioProcessor;
-    TUint iTrackId;
     TUint iStreamId;
 };
 
