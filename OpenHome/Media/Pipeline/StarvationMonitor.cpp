@@ -31,7 +31,7 @@ StarvationMonitor::StarvationMonitor(MsgFactory& aMsgFactory, IPipelineElementUp
     , iExit(false)
     , iJiffiesUntilNextHistoryPoint(kUtilisationSamplePeriodJiffies)
     , iStreamHandler(NULL)
-    , iStreamId(UINT_MAX)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
 {
     ASSERT(iStarvationThreshold < iNormalMax);
     UpdateStatus(EBuffering);
@@ -260,7 +260,7 @@ void StarvationMonitor::ProcessMsgIn(MsgQuit* /*aMsg*/)
 Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
 {
     iMode.Replace(aMsg->Mode());
-    iStreamId = UINT_MAX;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     if (iClockPuller != NULL) {
         iClockPuller->StopStarvationMonitor();
     }
@@ -268,13 +268,6 @@ Msg* StarvationMonitor::ProcessMsgOut(MsgMode* aMsg)
     if (iClockPuller != NULL) {
         iClockPuller->StartStarvationMonitor(iNormalMax, kUtilisationSamplePeriodJiffies);
     }
-    return aMsg;
-}
-
-Msg* StarvationMonitor::ProcessMsgOut(MsgTrack* aMsg)
-{
-    iStreamHandler = NULL;
-    iStreamId = UINT_MAX;
     return aMsg;
 }
 
