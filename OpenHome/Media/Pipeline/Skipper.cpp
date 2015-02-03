@@ -17,7 +17,7 @@ Skipper::Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamEle
     , iRemainingRampSize(0)
     , iCurrentRampValue(Ramp::kMax)
     , iTargetFlushId(MsgFlush::kIdInvalid)
-    , iStreamId(UINT_MAX)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iStreamHandler(NULL)
 {
 }
@@ -56,6 +56,7 @@ Msg* Skipper::Pull()
 
 Msg* Skipper::ProcessMsg(MsgMode* aMsg)
 {
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     return aMsg;
 }
 
@@ -66,7 +67,6 @@ Msg* Skipper::ProcessMsg(MsgSession* aMsg)
 
 Msg* Skipper::ProcessMsg(MsgTrack* aMsg)
 {
-    NewStream();
     return aMsg;
 }
 
