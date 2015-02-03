@@ -25,7 +25,7 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#ifndef PLATFORM_MACOSX_GNU
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 # include <linux/netlink.h>
 # include <linux/rtnetlink.h>
 #endif /* !PLATFORM_MACOSX_GNU */
@@ -55,7 +55,7 @@
     __result; }))
 
 
-#ifdef PLATFORM_MACOSX_GNU
+#if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD)
 # define TEMP_FAILURE_RETRY(expression)        \
     (__extension__                             \
     ({ long int __result;                      \
@@ -64,7 +64,9 @@
     while (__result == -1L && errno == EINTR); \
     __result; }))
 # define MAX_FILE_DESCRIPTOR FD_SETSIZE
+#ifndef PLATFORM_FREEBSD
 # define MSG_NOSIGNAL 0
+#endif
 #else
 # define MAX_FILE_DESCRIPTOR __FD_SETSIZE
 #endif
@@ -1031,7 +1033,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
  
 int32_t OsNetworkSocketSetMulticastIf(THandle aHandle,  TIpAddress aInterface)
 {
-#if defined(PLATFORM_MACOSX_GNU)
+#if defined(PLATFORM_MACOSX_GNU) || defined(PLATFORM_FREEBSD)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_IF, &aInterface, sizeof(aInterface));
     return err;
@@ -1255,7 +1257,7 @@ static void DestroyInterfaceChangedObserver_MacDesktop(OsContext* aContext)
 
 #endif /* PLATFOTM_MACOSX_GNU && ! PLATFORM_IOS */
 
-#ifndef PLATFORM_MACOSX_GNU
+#if !defined(PLATFORM_MACOSX_GNU) && !defined(PLATFORM_FREEBSD)
 
 void adapterChangeObserverThread(void* aPtr)
 {
@@ -1369,6 +1371,7 @@ static void DestroyInterfaceChangedObserver(OsContext* aContext)
 # ifndef PLATFORM_IOS
     DestroyInterfaceChangedObserver_MacDesktop(aContext);
 # endif /* !PLATFORM_IOS */
+#elif PLATFORM_FREEBSD
 #else /* !PLATFOTM_MACOSX_GNU */
     DestroyInterfaceChangedObserver_Linux(aContext);
 #endif /* PLATFOTM_MACOSX_GNU */
@@ -1381,10 +1384,8 @@ void OsNetworkSetInterfaceChangedObserver(OsContext* aContext, InterfaceListChan
 # ifndef PLATFORM_IOS
     SetInterfaceChangedObserver_MacDesktop(aContext, aCallback, aArg);
 # endif /* !PLATFORM_IOS */
+#elif PLATFORM_FREEBSD
 #else /* !PLATFOTM_MACOSX_GNU */
     SetInterfaceChangedObserver_Linux(aContext, aCallback, aArg);
 #endif /* PLATFOTM_MACOSX_GNU */
 }
-
-
-
