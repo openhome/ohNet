@@ -11,6 +11,7 @@ namespace Media {
 /*
 Element which removes msgs which aren't needed downstream:
     MsgSession
+    MsgTrack
     MsgDelay
     MsgEncodedStream
     MsgMetaText
