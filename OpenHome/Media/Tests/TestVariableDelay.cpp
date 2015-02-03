@@ -742,6 +742,7 @@ void SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode()
 void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
 {
     PullNext(EMsgMode);
+    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     static const TUint kDelay = 150 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;
