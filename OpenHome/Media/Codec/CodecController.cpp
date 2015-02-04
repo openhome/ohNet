@@ -555,7 +555,6 @@ Msg* CodecController::ProcessMsg(MsgSession* aMsg)
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
-        iStreamEnded = true;
         aMsg->RemoveRef();
         return NULL;
     }

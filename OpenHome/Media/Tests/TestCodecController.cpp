@@ -157,7 +157,6 @@ private:
     void TestNoDataAfterRecognition();
     void TestTruncatedStream();
     void TestTrackTrack();
-    void TestTrackEncodedStreamTrack();
     void TestTrackMetatext();
     void TestTrackEncodedStreamMetatext();
     void TestSeek();
@@ -513,7 +512,6 @@ SuiteCodecControllerStream::SuiteCodecControllerStream()
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestStreamSuccessful), "TestStreamSuccessful");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestRecognitionFail), "TestRecognitionFail");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackTrack), "TestTrackTrack");
-    AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackEncodedStreamTrack), "TestTrackEncodedStreamTrack");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackMetatext), "TestTrackMetatext");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTrackEncodedStreamMetatext), "TestTrackEncodedStreamMetatext");
     AddTest(MakeFunctor(*this, &SuiteCodecControllerStream::TestTruncatedStreamInRecognition), "TestTruncatedStreamInRecognition");
@@ -697,9 +695,9 @@ void SuiteCodecControllerStream::TestTruncatedStreamInRecognition()
 
     Queue(CreateAudio(true, kMaxMsgBytes));
 
-    // Flush remaining audio from stream out by sending a new MsgTrack.
-    Queue(CreateTrack());
-    PullNext(EMsgTrack);
+    // Flush remaining audio from stream out by sending a new MsgEncodedStream.
+    Queue(CreateEncodedStream());
+    PullNext(EMsgEncodedStream);
 
     iSemStop->Wait(kSemWaitMs);
     TEST(iStopCount == 1);
@@ -755,21 +753,6 @@ void SuiteCodecControllerStream::TestTrackTrack()
 
     Queue(CreateTrack());
     PullNext(EMsgTrack);
-}
-
-void SuiteCodecControllerStream::TestTrackEncodedStreamTrack()
-{
-    Queue(CreateTrack());
-    PullNext(EMsgTrack);
-
-    Queue(CreateEncodedStream());
-    PullNext(EMsgEncodedStream);
-
-    Queue(CreateTrack());
-    PullNext(EMsgTrack);
-
-    iSemStop->Wait();
-    TEST(iStopCount == 1);
 }
 
 void SuiteCodecControllerStream::TestTrackMetatext()
