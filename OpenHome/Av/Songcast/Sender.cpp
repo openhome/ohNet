@@ -23,8 +23,7 @@ const Brn Sender::kConfigIdMode("Sender.Mode");
 const Brn Sender::kConfigIdPreset("Sender.Preset");
 
 Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& aZoneHandler, IConfigInitialiser& aConfigInit, const Brx& aName, TUint aMinLatencyMs, const Brx& aIconFileName)
-    : iTrack(NULL)
-    , iSampleRate(0)
+    : iSampleRate(0)
     , iBitDepth(0)
     , iNumChannels(0)
     , iMinLatencyMs(aMinLatencyMs)
@@ -57,9 +56,6 @@ Sender::Sender(Environment& aEnv, Net::DvDeviceStandard& aDevice, ZoneHandler& a
 
 Sender::~Sender()
 {
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-    }
     delete iOhmSender;
     delete iOhmSenderDriver;
     iConfigEnabled->Unsubscribe(iListenerIdConfigEnabled);
@@ -104,11 +100,9 @@ Msg* Sender::ProcessMsg(MsgSession* aMsg)
 
 Msg* Sender::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iTrack != NULL) {
-        iTrack->RemoveRef();
-    }
-    iTrack = &aMsg->Track();
-    iTrack->AddRef();
+    SendPendingAudio();
+    Track& track = aMsg->Track();
+    iOhmSender->SetTrack(track.Uri(), track.MetaData());
     return aMsg;
 }
 
@@ -164,8 +158,6 @@ Msg* Sender::ProcessMsg(MsgWait* aMsg)
 
 Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    ASSERT(iTrack != NULL);
-
     // send any pending audio in case the stream msg indicates a discontinuity in the track (probably after a seek?)
     SendPendingAudio();
 
@@ -173,8 +165,8 @@ Msg* Sender::ProcessMsg(MsgDecodedStream* aMsg)
     iSampleRate = streamInfo.SampleRate();
     iBitDepth = streamInfo.BitDepth();
     iNumChannels = streamInfo.NumChannels();
-    const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::JiffiesPerSample(streamInfo.SampleRate());
-    iOhmSender->SetTrack(iTrack->Uri(), iTrack->MetaData(), samplesTotal, streamInfo.SampleStart());
+    const TUint64 samplesTotal = streamInfo.TrackLength() / Jiffies::JiffiesPerSample(iSampleRate);
+    iOhmSender->SetTrackPosition(samplesTotal, streamInfo.SampleStart());
     iOhmSenderDriver->SetAudioFormat(iSampleRate, streamInfo.BitRate(), iNumChannels, iBitDepth, streamInfo.Lossless(), streamInfo.CodecName());
 
     return aMsg;
