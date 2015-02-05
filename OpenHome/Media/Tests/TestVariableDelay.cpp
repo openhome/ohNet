@@ -495,8 +495,9 @@ void SuiteVariableDelay::TestDelayFromStarting()
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
 
     iJiffies = 0;
+    iNextGeneratedMsg = EMsgAudioPcm;
     while (iJiffies < kDelay - kDownstreamDelay) {
-        PullNext(EMsgSilence);
+        PullNext();
     }
     TEST(iJiffies == kDelay - kDownstreamDelay);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);

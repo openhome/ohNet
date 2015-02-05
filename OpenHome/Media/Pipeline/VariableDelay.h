@@ -28,9 +28,11 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull();
 private:
+    Msg* NextMsgLocked();
     MsgAudio* DoProcessAudioMsg(MsgAudio* aMsg);
     void RampMsg(MsgAudio* aMsg);
     void HandleStarving(const Brx& aMode);
+    void ResetStatusAndRamp();
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -73,7 +75,6 @@ private:
     const TUint iDownstreamDelay;
     const TUint iRampDuration;
     TBool iEnabled;
-    TBool iInStream;
     TBool iWaitForAudioBeforeGeneratingSilence;
     TUint iCurrentRampValue;
     TUint iRemainingRampSize;
