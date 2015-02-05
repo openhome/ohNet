@@ -182,6 +182,17 @@ Msg* Stopper::ProcessMsg(MsgSession* aMsg)
 
 Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
 {
+    iTrackId = aMsg->Track().Id();
+    return aMsg;
+}
+
+Msg* Stopper::ProcessMsg(MsgDelay* aMsg)
+{
+    return aMsg;
+}
+
+Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
+{
     /* IdManager expects OkToPlay to be called for every stream that is added to it.
        This isn't the case if CodecController fails to recognise the format of a stream.
        Catch this here by using iCheckedStreamPlayable to spot when we haven't tried to
@@ -195,19 +206,6 @@ Msg* Stopper::ProcessMsg(MsgTrack* aMsg)
         }
     }
 
-    NewStream();
-    iTrackId = aMsg->Track().Id();
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-    return aMsg;
-}
-
-Msg* Stopper::ProcessMsg(MsgDelay* aMsg)
-{
-    return aMsg;
-}
-
-Msg* Stopper::ProcessMsg(MsgEncodedStream* aMsg)
-{
     NewStream();
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
