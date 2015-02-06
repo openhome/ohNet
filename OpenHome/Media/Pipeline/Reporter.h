@@ -4,6 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Standard.h>
+#include <OpenHome/Private/Thread.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
 namespace OpenHome {
@@ -27,8 +28,9 @@ Is passive - it reports on Msgs but doesn't create/destroy/edit them.
 class Reporter : public IPipelineElementUpstream, private IMsgProcessor, private INonCopyable
 {
     static const Brn kNullMetaText;
+    static const TUint kTrackNotifyDelayMs = 10;
 public:
-    Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver);
+    Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, TUint aObserverThreadPriority);
     virtual ~Reporter();
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
@@ -49,13 +51,21 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
+    void ObserverThread();
+private:
+    Mutex iLock;
     IPipelineElementUpstream& iUpstreamElement;
     IPipelinePropertyObserver& iObserver;
-    TBool iTimeInvalid;
+    ThreadFunctor* iThread;
+    MsgTrack* iMsgTrack;
+    MsgDecodedStream* iMsgDecodedStreamInfo;
+    MsgMetaText* iMsgMetaText;
     TUint iSeconds;
     TUint iJiffies; // Fraction of a second
     TUint iTrackDurationSeconds;
     BwsMode iMode;
+    BwsMode iModeTrack;
+    TBool iNotifyTime;
 };
 
 } // namespace Media

@@ -4,8 +4,7 @@ extern void TestReporter();
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
+    auto lib = new OpenHome::Net::Library(aInitParams);
     TestReporter();
-    delete aInitParams;
-    Net::UpnpLibrary::Close();
+    delete lib;
 }
