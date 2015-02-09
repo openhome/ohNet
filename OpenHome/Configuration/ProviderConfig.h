@@ -3,16 +3,30 @@
 
 #include <Generated/DvAvOpenhomeOrgConfiguration1.h>
 #include <OpenHome/Av/ProviderFactory.h>
+#include <OpenHome/Configuration/ConfigManager.h>
+#include <OpenHome/Av/Json.h>
 
 namespace OpenHome {
 namespace Configuration {
     class IConfigManager;
+
+class KeyWriterJson : public IKeyWriter, private INonCopyable
+{
+public:
+    KeyWriterJson(IWriter& aWriter);
+public: // from IKeyWriter
+    void WriteKeys(const std::vector<const Brx*>& aKeys);
+private:
+    IWriter& iWriter;
+    Av::JsonStringSanitiser iJsonSanitiser;
+};
 
 class ProviderConfig : public OpenHome::Net::DvProviderAvOpenhomeOrgConfiguration1, public Av::IProvider
 {
 public:
     ProviderConfig(Net::DvDevice& aDevice, Configuration::IConfigManager& aConfigManager);
 private: // from DvProviderAvOpenhomeOrgConfiguration1
+    void GetKeys(Net::IDvInvocation& aInvocation, Net::IDvInvocationResponseString& aKeyList) override;
     void SetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, const Brx& aValue) override;
     void GetValue(Net::IDvInvocation& aInvocation, const Brx& aKey, Net::IDvInvocationResponseString& aValue) override;
 private:
