@@ -9,7 +9,6 @@ Verifies AirPlay audio output by the DUT does not suffer from audio dropout
 """ 
 import _FunctionalTest
 import BaseTest                         as BASE
-import _Config                          as Config
 import Upnp.ControlPoints.Volkano       as Volkano
 import Instruments.Network.DacpClient   as DacpClient
 import _SoftPlayer                      as SoftPlayer
@@ -36,7 +35,6 @@ class TestAirplayDropout( BASE.BaseTest ):
         self.tick         = None
         self.timer        = None
         self.songcaster   = aSongcaster
-        self.testConfig   = Config.Config()
         self.finished     = threading.Event()
 
     def Test( self, args ):
@@ -44,10 +42,10 @@ class TestAirplayDropout( BASE.BaseTest ):
         dutName      = ''
         duration     = '0'
         loopback     = False
-        itunesGuid   = self.testConfig.itunes.guid
-        itunesLib    = self.testConfig.itunes.library
-        itunesAddr   = self.testConfig.itunes.address
-        itunesTrack  = self.testConfig.itunes.track1k
+        itunesGuid   = self.config.Get( 'itunes.guid' )
+        itunesLib    = self.config.Get( 'itunes.library' )
+        itunesAddr   = self.config.Get( 'itunes.address' )
+        itunesTrack  = self.config.Get( 'itunes.track1k' )
 
         try:
             dutName      = args[1]
