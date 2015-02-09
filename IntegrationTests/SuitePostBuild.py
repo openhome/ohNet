@@ -7,7 +7,7 @@ Parameters:
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s)
 
- - Network interface to use for testing defined in local Config.xml
+ - Network interface to use for testing defined in test configuration XML
  - SoftPlayer instance(s) created/destroyed as required
 """
 import _FunctionalTest

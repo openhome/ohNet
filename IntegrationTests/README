@@ -12,8 +12,17 @@ Required Dependencies
     Access to UPnP media server with necessary files/playlists (for tests using
         UPnP media server to serve the test data [audio] files)
 
-    Where more than one network interface available, the one to use defined as
-    environment variable FUNCTEST_IFACE (takes either IP or MAC address)
+    Configuration file
+    ------------------
+
+        XML file required to specify various setup specifics:
+            - .testconfig.xml
+            - in %HOMEPATH% directory (Windows)
+            - in $HOME directory (Unix/OSX)
+            - over-ride file name and location with FUNCTEST_CONFIG environment variable
+
+        This should be kept local as may contain 'sensitive' information
+        Example in Appendix A
 
 
 Test and Suite Execution
@@ -34,3 +43,47 @@ Test and Suite Execution
 
     NOTE/
         Examples of parameters can be seen in SuiteXXX.py test suites
+
+
+
+
+Appendix A - example .testconfig.xml
+
+<!-- Configuration file for integration test execution on PCxxx
+
+This is a LOCAL file and MUST NOT be committed to any public repo as it
+contains sensitive data such as streaming services IDs/users/passwords
+-->
+
+<configuration>
+	<network>192.168.1.45</network>
+
+	<softplayer>
+	    <adapter>1</adapter>
+	</softplayer>
+
+	<mediaserver>
+		<asset>FuncTest</asset>
+	</mediaserver>
+
+	<itunes>
+		<guid>0x72BACB5960D05C88</guid>
+		<library>Xxx Library</library>
+		<address>192.168.1.45</address>
+		<track1k>Stereo1kHz-441-16-0dB-72m</track1k>
+	</itunes>
+
+	<tidal>
+		<id>123</id>
+		<user>user</user>
+		<password>1234<password>
+	</tidal>
+
+	<playlist>
+		<asset>
+			<encodings>Playlists  ~Encodings-ALLCodecs</encodings>
+			<mixed>Playlists  ~Mixed-ALLCodecs</mixed>
+			<albums>Playlists  ~5TrackAlbums</albums>
+		</asset>
+	</playlist>
+</configuration>
