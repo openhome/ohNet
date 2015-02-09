@@ -17,17 +17,16 @@ using namespace OpenHome::Media;
 IdManager::IdManager(IStopper& aStopper)
     : iLock("IDPR")
     , iStopper(aStopper)
-    , iNextTrackId(kTrackIdInvalid+1)
     , iNextStreamId(kStreamIdInvalid+1)
     , iIndexHead(0)
     , iIndexTail(0)
 {
 }
 
-void IdManager::AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
+void IdManager::AddStream(TUint aId, TUint aStreamId, TBool aPlayNow)
 {
     iLock.Wait();
-    iActiveStreams[iIndexTail].Set(aId, aPipelineTrackId, aStreamId, aPlayNow);
+    iActiveStreams[iIndexTail].Set(aId, aStreamId, aPlayNow);
     UpdateIndex(iIndexTail);
     ASSERT(iIndexHead != iIndexTail); // OkToPlay can't tell the difference between a full and empty list
                                       // ...so we assume the list contains at most kMaxActiveStreams-1 elements
@@ -68,7 +67,7 @@ void IdManager::Log(
     TUint index = iIndexHead;
     while (index != iIndexTail) {
         ActiveStream& as = iActiveStreams[index];
-        Log::Print("    trackId:%u idPipeline:%u streamId:%u, playNow=%u\n", as.Id(), as.PipelineTrackId(), as.StreamId(), as.PlayNow());
+        Log::Print("    trackId:%u streamId:%u, playNow=%u\n", as.Id(), as.StreamId(), as.PlayNow());
         if (++index == kMaxActiveStreams) {
             index = 0;
         }
@@ -76,18 +75,12 @@ void IdManager::Log(
 #endif
 }
 
-TUint IdManager::NextTrackId()
-{
-    iNextStreamId = kStreamIdInvalid+1;
-    return UpdateId(iNextTrackId);
-}
-
 TUint IdManager::NextStreamId()
 {
     return UpdateId(iNextStreamId);
 }
 
-EStreamPlay IdManager::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay IdManager::OkToPlay(TUint aStreamId)
 {
     AutoMutex a(iLock);
     if (iIndexHead == iIndexTail) {
@@ -95,8 +88,8 @@ EStreamPlay IdManager::OkToPlay(TUint aTrackId, TUint aStreamId)
         return ePlayNo;
     }
     const ActiveStream& as = iActiveStreams[iIndexHead];
-    if (as.PipelineTrackId() != aTrackId || as.StreamId() != aStreamId) {
-        Log("OkToPlay (fail - wrong track)");
+    if (as.StreamId() != aStreamId) {
+        Log("OkToPlay (fail - wrong stream)");
         return ePlayNo;
     }
     iPlaying.Set(as);
@@ -112,7 +105,7 @@ void IdManager::InvalidateAt(TUint aId)
     TBool matched = false;
     if (iPlaying.Id() == aId) {
         matched = true;
-        iStopper.RemoveStream(iPlaying.PipelineTrackId(), iPlaying.StreamId());
+        iStopper.RemoveStream(iPlaying.StreamId());
         iPlaying.Clear();
     }
     TBool updateHead = matched;
@@ -199,7 +192,7 @@ void IdManager::InvalidateAll()
 {
     AutoMutex a(iLock);
     if (!iPlaying.IsClear()) {
-        iStopper.RemoveStream(iPlaying.PipelineTrackId(), iPlaying.StreamId());
+        iStopper.RemoveStream(iPlaying.StreamId());
         iPlaying.Clear();
     }
     iIndexTail = iIndexHead;
@@ -214,10 +207,9 @@ IdManager::ActiveStream::ActiveStream()
     Clear();
 }
 
-void IdManager::ActiveStream::Set(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow)
+void IdManager::ActiveStream::Set(TUint aId, TUint aStreamId, TBool aPlayNow)
 {
     iId = aId;
-    iPipelineTrackId = aPipelineTrackId;
     iStreamId = aStreamId;
     iPlayNow = aPlayNow;
     iClear = false;
@@ -225,13 +217,12 @@ void IdManager::ActiveStream::Set(TUint aId, TUint aPipelineTrackId, TUint aStre
 
 void IdManager::ActiveStream::Set(const ActiveStream& aActiveStream)
 {
-    Set(aActiveStream.Id(), aActiveStream.PipelineTrackId(), aActiveStream.StreamId(), aActiveStream.PlayNow());
+    Set(aActiveStream.Id(), aActiveStream.StreamId(), aActiveStream.PlayNow());
 }
 
 void IdManager::ActiveStream::Clear()
 {
     iId = UINT_MAX;
-    iPipelineTrackId = UINT_MAX;
     iStreamId = UINT_MAX;
     iPlayNow = false;
     iClear = true;

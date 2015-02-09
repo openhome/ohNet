@@ -31,7 +31,7 @@ class ProtocolOhBase : public Media::Protocol, private IOhmMsgProcessor
     static const TUint kTimerJoinTimeoutMs = 300;
     static const TUint kTtl = 2;
 protected:
-    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
+    ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode);
     ~ProtocolOhBase();
     void Add(OhmMsg* aMsg);
     void ResendSeen();
@@ -48,7 +48,7 @@ private: // from Media::Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    Media::EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    Media::EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
     void CurrentSubnetChanged();
     void RepairReset();
@@ -74,10 +74,11 @@ protected:
     Timer* iTimerJoin;
     Timer* iTimerListen;
     Media::BwsMode iMode;
+    TUint iStreamId;
 private:
     Mutex iMutexTransport;
     Media::TrackFactory& iTrackFactory;
-    IOhmTimestamper& iTimestamper;
+    IOhmTimestamper* iTimestamper;
     Brn iSupportedScheme;
     TUint iNacnId;
     Uri iUri; // only used inside Stream() but too large to put on the stack

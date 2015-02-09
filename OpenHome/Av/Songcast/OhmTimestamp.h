@@ -15,16 +15,6 @@ public:
     virtual TUint Timestamp(TUint aFrame) = 0;
 };
 
-class DefaultTimestamper : public IOhmTimestamper, private INonCopyable // trivial implementation that just returns the current time
-{
-public:
-    DefaultTimestamper(Environment& aEnv);
-private: // from IOhmTimestamper
-    TUint Timestamp(TUint aFrame) override;
-private:
-    Environment& iEnv;
-};
-
 } // namespace Av
 } // namespace OpenHome
 

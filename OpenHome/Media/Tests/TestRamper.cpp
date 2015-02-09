@@ -82,13 +82,11 @@ private:
     Ramper* iRamper;
     EMsgType iLastPulledMsg;
     TBool iRamping;
-    TUint iTrackId;
     TUint iStreamId;
     TUint64 iTrackOffset;
     TUint iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint64 iSampleStart;
     TBool iLive;
@@ -116,12 +114,11 @@ void SuiteRamper::Setup()
     iTrackFactory = new TrackFactory(iInfoAggregator, 5);
     iMsgFactory = new MsgFactory(iInfoAggregator, 0, 0, 50, 52, 10, 1, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1);
     iRamper = new Ramper(*this, kRampDuration);
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iJiffies = 0;
     iRamping = false;
     iLastSubsample = 0xffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iSampleStart = 0;
     iLive = false;
@@ -161,7 +158,6 @@ Msg* SuiteRamper::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteRamper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -281,7 +277,7 @@ void SuiteRamper::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteRamper::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

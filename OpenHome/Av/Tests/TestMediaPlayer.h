@@ -18,7 +18,6 @@
 #include <OpenHome/Av/SourceFactory.h>
 #include <OpenHome/Av/KvpStore.h>
 #include "RamStore.h"
-#include <OpenHome/Av/Songcast/OhmTimestamp.h>
 #include <OpenHome/PowerManager.h>
 #include <OpenHome/Media/Tests/VolumeUtils.h>
 
@@ -85,7 +84,6 @@ protected:
 		Net::Shell* iShell; 
 private:
     Semaphore iDisabled;
-    DefaultTimestamper iSongcastTimestamper; // FIXME - will want to replace this with access to a driver on embedded platforms
     Media::VolumePrinter iVolume;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;

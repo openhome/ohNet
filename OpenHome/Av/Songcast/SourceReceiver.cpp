@@ -8,6 +8,7 @@
 #include <OpenHome/Av/MediaPlayer.h>
 #include <OpenHome/Media/PipelineManager.h>
 #include <OpenHome/Media/UriProviderSingleTrack.h>
+#include <OpenHome/Av/Songcast/ClockPullerSongcast.h>
 #include <OpenHome/Media/Codec/CodecFactory.h>
 #include <OpenHome/Av/Songcast/CodecOhm.h>
 #include <OpenHome/Av/Songcast/ProtocolOhu.h>
@@ -16,10 +17,10 @@
 #include <OpenHome/Media/Pipeline/Msg.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Av/Songcast/OhmMsg.h>
+#include <OpenHome/Av/Songcast/Splitter.h>
 #include <OpenHome/Av/Songcast/Sender.h>
 #include <OpenHome/Av/Product.h>
 #include <OpenHome/Configuration/ConfigManager.h>
-#include <OpenHome/Media/ClockPullerUtilisation.h>
 #include <OpenHome/Private/Debug.h>
 #include <OpenHome/Av/Debug.h>
 
@@ -30,18 +31,6 @@ namespace Media {
 }
 namespace Av {
 
-class ClockPullerOhu : public Media::ClockPullerUtilisationPerStreamLeft
-{
-public:
-    ClockPullerOhu(Environment& aEnv, Media::IPullableClock& aPullableClock);
-private: // from Media::IClockPuller
-    void NotifySizeDecodedReservoir(TUint aJiffies) override;
-    void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void StopStarvationMonitor() override;
-private:
-    TBool iStarvationMonitorRunning;
-};
-
 class UriProviderSongcast : public Media::UriProviderSingleTrack
 {
 public:
@@ -50,14 +39,14 @@ public:
 private: // from UriProvider
     Media::IClockPuller* ClockPuller() override;
 private:
-    ClockPullerOhu* iClockPuller;
+    ClockPullerSongcast* iClockPuller;
 };
 
 class SourceReceiver : public Source, private ISourceReceiver, private IZoneListener, private Media::IPipelineObserver
 {
     static const TChar* kProtocolInfo;
 public:
-    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName);
+    SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName);
     ~SourceReceiver();
 private: // from ISource
     void Activate() override;
@@ -72,7 +61,7 @@ private: // from IZoneListener
     void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata) override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
@@ -95,6 +84,8 @@ private:
     OhmMsgFactory* iOhmMsgFactory;
     Sender* iSender;
     Media::Logger* iLoggerSender;
+    Splitter* iSplitter;
+    Media::Logger* iLoggerSplitter;
     Uri iUri; // allocated here as stack requirements are too high for an automatic variable
     Bws<ZoneHandler::kMaxZoneBytes> iZone;
     Media::BwsTrackUri iTrackUri;
@@ -124,36 +115,9 @@ using namespace OpenHome::Configuration;
 
 // SourceFactory
 
-ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
+ISource* SourceFactory::NewReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
 { // static
     return new SourceReceiver(aMediaPlayer, aTimestamper, aSenderIconFileName);
-}
-
-
-// ClockPullerOhu
-
-ClockPullerOhu::ClockPullerOhu(Environment& aEnv, IPullableClock& aPullableClock)
-    : ClockPullerUtilisationPerStreamLeft(aEnv, aPullableClock)
-{
-}
-
-void ClockPullerOhu::NotifySizeDecodedReservoir(TUint aJiffies)
-{
-    if (iStarvationMonitorRunning) {
-        ClockPullerUtilisationPerStreamLeft::NotifySizeDecodedReservoir(aJiffies);
-    }
-}
-
-void ClockPullerOhu::StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency)
-{
-    iStarvationMonitorRunning = true;
-    ClockPullerUtilisationPerStreamLeft::StartStarvationMonitor(aCapacityJiffies, aNotificationFrequency);
-}
-
-void ClockPullerOhu::StopStarvationMonitor()
-{
-    iStarvationMonitorRunning = false;
-    ClockPullerUtilisationPerStreamLeft::StopStarvationMonitor();
 }
 
 
@@ -167,7 +131,7 @@ UriProviderSongcast::UriProviderSongcast(IMediaPlayer& aMediaPlayer)
         iClockPuller = NULL;
     }
     else {
-        iClockPuller = new ClockPullerOhu(aMediaPlayer.Env(), *pullable);
+        iClockPuller = new ClockPullerSongcast(aMediaPlayer.Env(), *pullable);
     }
 }
 
@@ -186,7 +150,7 @@ IClockPuller* UriProviderSongcast::ClockPuller()
 
 const TChar* SourceReceiver::kProtocolInfo = "ohz:*:*:*,ohm:*:*:*,ohu:*.*.*";
 
-SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTimestamper, const Brx& aSenderIconFileName)
+SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper* aTimestamper, const Brx& aSenderIconFileName)
     : Source("Songcast", "Receiver")
     , iLock("SRX1")
     , iActivationLock("SRX2")
@@ -211,7 +175,7 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iPipeline.Add(new CodecOhm(*iOhmMsgFactory));
     TrackFactory& trackFactory = aMediaPlayer.TrackFactory();
     iPipeline.Add(new ProtocolOhm(env, *iOhmMsgFactory, trackFactory, aTimestamper, iUriProvider->Mode()));
-    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, aTimestamper, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
+    iPipeline.Add(new ProtocolOhu(env, *iOhmMsgFactory, trackFactory, iUriProvider->Mode(), aMediaPlayer.PowerManager()));
     iZoneHandler->AddListener(*this);
     iPipeline.AddObserver(*this);
 
@@ -221,7 +185,9 @@ SourceReceiver::SourceReceiver(IMediaPlayer& aMediaPlayer, IOhmTimestamper& aTim
     iSender = new Sender(env, device, *iZoneHandler, configInit, Brx::Empty(), iPipeline.SenderMinLatencyMs(), aSenderIconFileName);
     iLoggerSender = new Logger("Sender", *iSender);
     iLoggerSender->SetEnabled(false);
-    (void)iPipeline.SetSender(*iLoggerSender);
+    iSplitter = new Splitter(*iLoggerSender, iUriProvider->Mode());
+    iLoggerSplitter = new Logger(*iSplitter, "Splitter");
+    iSplitter->SetUpstream(iPipeline.InsertElements(*iLoggerSplitter));
     aMediaPlayer.AddAttribute("Sender");
     iConfigRoom = &configManager.GetText(Product::kConfigIdRoomBase);
     iConfigRoomSubscriberId = iConfigRoom->Subscribe(MakeFunctorConfigText(*this, &SourceReceiver::ConfigRoomChanged));
@@ -234,6 +200,8 @@ SourceReceiver::~SourceReceiver()
 {
     iConfigRoom->Unsubscribe(iConfigRoomSubscriberId);
     iConfigName->Unsubscribe(iConfigNameSubscriberId);
+    delete iLoggerSplitter;
+    delete iSplitter;
     delete iLoggerSender;
     delete iSender;
     delete iOhmMsgFactory;
@@ -360,7 +328,7 @@ void SourceReceiver::NotifyPipelineState(EPipelineState aState)
     iSender->NotifyPipelineState(aState);
 }
 
-void SourceReceiver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void SourceReceiver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
 {
 }
 

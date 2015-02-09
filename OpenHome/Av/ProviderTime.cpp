@@ -53,7 +53,7 @@ void ProviderTime::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void ProviderTime::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void ProviderTime::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
 {
     TUint n = 0;
 

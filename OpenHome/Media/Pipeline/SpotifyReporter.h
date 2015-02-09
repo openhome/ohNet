@@ -41,7 +41,7 @@ public: // from ISpotifyReporter
 private: // from ITrackChangeObserver
     void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -67,7 +67,6 @@ private:
 private:
     IPipelineElementUpstream& iUpstreamElement;
     IPipelinePropertyObserver& iPropertyObserver;
-    TUint iPipelineTrackId;
     TUint iTrackDurationMs;
     TUint64 iTrackOffsetSubSamples;
     TUint64 iReporterSubSampleStart;

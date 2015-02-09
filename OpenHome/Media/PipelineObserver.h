@@ -47,10 +47,8 @@ public:
      *
      * @param[in] aTrack           Uri and metadata for the track.
      * @param[in] aMode            Identifier for the UriProvider which owns aTrack.
-     * @param[in] aIdPipeline      Unique identifier for this particular occurence of
-     *                             aTrack in the pipeline.
      */
-    virtual void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) = 0;
+    virtual void NotifyTrack(Track& aTrack, const Brx& aMode) = 0;
     /**
      * Metatext associated with the current track has changed.
      *
@@ -90,7 +88,7 @@ class NullPipelineObserver : public IPipelineObserver
 {
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -103,7 +101,7 @@ public:
     void Enable(TBool aEnable);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

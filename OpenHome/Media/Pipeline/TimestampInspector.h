@@ -19,7 +19,7 @@ public:
     TimestampInspector(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstreamElement);
     ~TimestampInspector();
 private:
-    void NewStream();
+    void NewSession();
     void StreamInterrupted();
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
@@ -48,6 +48,7 @@ private:
     TBool iStreamIsTimestamped;
     TBool iLockedToStream;
     TBool iCalculateTimestampDelta;
+    TUint iLockingMaxDeviation;
     TUint iMsgsTillLock;
     TInt iTimestampDelta;
     TUint64 iDiscardedJiffies;

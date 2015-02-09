@@ -134,16 +134,31 @@ ClockPullerUtilisationPerStreamLeft::~ClockPullerUtilisationPerStreamLeft()
     delete iUtilisationLeft;
 }
 
+void ClockPullerUtilisationPerStreamLeft::StartTimestamp()
+{
+}
+
+void ClockPullerUtilisationPerStreamLeft::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
+{
+}
+
+void ClockPullerUtilisationPerStreamLeft::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void ClockPullerUtilisationPerStreamLeft::StopTimestamp()
+{
+}
+
 void ClockPullerUtilisationPerStreamLeft::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint aNotificationFrequency)
 {
     iDecodedReservoirUpdateFrequency = aNotificationFrequency;
 }
 
-void ClockPullerUtilisationPerStreamLeft::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+void ClockPullerUtilisationPerStreamLeft::NewStreamDecodedReservoir(TUint aStreamId)
 {
     AutoMutex a(iLock);
-    iStreamLeft.SetTrack(aTrackId);
-    iStreamLeft.SetStream(aStreamId);
+    iStreamIdLeft = aStreamId;
     iUtilisationLeft->Reset();
 }
 
@@ -160,10 +175,9 @@ void ClockPullerUtilisationPerStreamLeft::StartStarvationMonitor(TUint /*aCapaci
 {
 }
 
-void ClockPullerUtilisationPerStreamLeft::NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId)
+void ClockPullerUtilisationPerStreamLeft::NewStreamStarvationMonitor(TUint aStreamId)
 {
-    iStreamRight.SetTrack(aTrackId);
-    iStreamRight.SetStream(aStreamId);
+    iStreamIdRight = aStreamId;
 }
 
 void ClockPullerUtilisationPerStreamLeft::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
@@ -182,22 +196,15 @@ void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(UtilisationHistory* a
 
 void ClockPullerUtilisationPerStreamLeft::TryAdd(UtilisationHistory& aHistory, TUint aJiffies)
 {
-    if (iStreamLeft == iStreamRight) {
+    if (iStreamIdLeft == iStreamIdRight) {
         aHistory.Add(aJiffies);
     }
 }
 
 void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(TInt aDriftJiffies, TUint aNumSamples, TUint aUpdateFrequency)
 {
-    Log::Print("NotifyClockDrift: %dms in %ums\n", aDriftJiffies/(TInt)Jiffies::kPerMs, aNumSamples * (aUpdateFrequency / Jiffies::kPerMs));
-    TInt64 drift = (TInt64)(aDriftJiffies * 100) << 29LL;
-    const TInt64 pull = (drift) / ((TInt64)aNumSamples * aUpdateFrequency);
-    if (pull > INT_MAX || pull < INT_MIN) {
-        Log::Print("Rejected pull of %llx (%d%%)\n", pull, pull/(1<<29));
-    }
-    else {
-        iPullableClock.PullClock((TInt32)pull);
-    }
+    const TUint64 periodJiffies = aNumSamples * static_cast<TUint64>(aUpdateFrequency);
+    ClockPullerUtils::PullClock(iPullableClock, aDriftJiffies, periodJiffies);
 }
 
 

@@ -2,6 +2,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
+#include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Private/Printer.h>
 
 #include <cstdlib>
@@ -32,8 +33,11 @@ TimestampInspector::~TimestampInspector()
     }
 }
 
-void TimestampInspector::NewStream()
+void TimestampInspector::NewSession()
 {
+    if (iClockPuller != NULL && iStreamIsTimestamped) {
+        iClockPuller->StopTimestamp();
+    }
     iCheckForTimestamp = (iClockPuller != NULL);
     iStreamIsTimestamped = false;
     iLockedToStream = false;
@@ -63,20 +67,22 @@ void TimestampInspector::Push(Msg* aMsg)
 
 Msg* TimestampInspector::ProcessMsg(MsgMode* aMsg)
 {
+    if (iClockPuller != NULL && iStreamIsTimestamped) {
+        iClockPuller->StopTimestamp();
+    }
     iClockPuller = aMsg->ClockPuller();
-    NewStream();
+    NewSession();
     return aMsg;
 }
 
 Msg* TimestampInspector::ProcessMsg(MsgSession* aMsg)
 {
-    NewStream();
+    NewSession();
     return aMsg;
 }
 
 Msg* TimestampInspector::ProcessMsg(MsgTrack* aMsg)
 {
-    NewStream();
     return aMsg;
 }
 
@@ -87,7 +93,6 @@ Msg* TimestampInspector::ProcessMsg(MsgDelay* aMsg)
 
 Msg* TimestampInspector::ProcessMsg(MsgEncodedStream* aMsg)
 {
-    NewStream();
     return aMsg;
 }
 
@@ -122,12 +127,16 @@ Msg* TimestampInspector::ProcessMsg(MsgWait* aMsg)
 
 Msg* TimestampInspector::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    NewStream();
     if (iDecodedStream != NULL) {
         iDecodedStream->RemoveRef();
     }
     iDecodedStream = aMsg;
     iDecodedStream->AddRef();
+    const TUint sampleRate = iDecodedStream->StreamInfo().SampleRate();
+    iLockingMaxDeviation = Jiffies::ToSongcastTime(kLockingMaxDeviation, sampleRate);
+    if (iStreamIsTimestamped && iClockPuller != NULL) {
+        iClockPuller->NotifyTimestampSampleRate(sampleRate);
+    }
     return aMsg;
 }
 
@@ -136,6 +145,10 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
     if (iCheckForTimestamp) {
         TUint ignore;
         iStreamIsTimestamped = aMsg->TryGetTimestamps(ignore, ignore);
+        if (iStreamIsTimestamped && iClockPuller != NULL) {
+            iClockPuller->StartTimestamp();
+            iClockPuller->NotifyTimestampSampleRate(iDecodedStream->StreamInfo().SampleRate());
+        }
         iLockedToStream = !iStreamIsTimestamped;
         iCalculateTimestampDelta = iStreamIsTimestamped;
         iCheckForTimestamp = false;
@@ -177,8 +190,9 @@ Msg* TimestampInspector::ProcessMsg(MsgAudioPcm* aMsg)
             }
             return NULL;
         }
-        if (timestamped) {
-            // report network timestamp + delta (diff from rx time vs expected) to clock puller
+        if (timestamped && iClockPuller != NULL) {
+            const TInt drift = iTimestampDelta - static_cast<TInt>(rxTimestamp - networkTimestamp);
+            iClockPuller->NotifyTimestamp(drift, networkTimestamp);
         }
         // fall through
     }

@@ -75,7 +75,7 @@ public:
      * @return     true if the request succeeded (the next call to Read() will return data from aBytePos);
      *             false if the request failed.
      */
-    virtual TBool TrySeek(TUint aStreamId, TUint64 aBytePos) = 0;
+    virtual TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos) = 0;
     /**
      * Query the length (in bytes) of the current stream.
      *
@@ -145,13 +145,11 @@ public:
      * @param[in] aEndian        Endianness of audio data.
      * @param[in] aTrackOffset   Offset (in jiffies) into the stream at the start of aData.
      * @param[in] aRxTimestamp   Time when encoded frame was received by this device.
-     * @param[in] aLatency           Deprecated.  Ignored by pipeline.
      * @param[in] aNetworkTimestamp  Time when the previous encoded frame was sent over the network
-     * @param[in] aMediaTimestamp    Deprecated.  Ignored by pipeline.
      *
      * @return     Number of jiffies of audio contained in aData.
      */
-    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp) = 0;
+    virtual TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp) = 0;
     /**
      * Output a Wait command to the pipeline.
      *
@@ -260,9 +258,9 @@ public:
      * Seek to a given sample position in the stream.
      *
      * The codec should translate the specified sample position into a byte offset then call
-     * iController->TrySeek().  The controller can be called many times for a single seek
+     * iController->TrySeekTo().  The controller can be called many times for a single seek
      * request if necessary.
-     * @param[in] aStreamId      Stream identifier.  Passed to iController->TrySeek().
+     * @param[in] aStreamId      Stream identifier.  Passed to iController->TrySeekTo().
      * @param[in] aSample        Decoded sample position (zero-based) to seek to.
      *
      * @return     true if the seek succeeded; false otherwise.
@@ -300,18 +298,18 @@ private:
     void ReleaseAudioEncoded();
     TBool DoRead(Bwx& aBuf, TUint aBytes);
 private: // ISeeker
-    void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
+    void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle);
 private: // ICodecController
     void Read(Bwx& aBuf, TUint aBytes);
     void ReadNextMsg(Bwx& aBuf);
     TBool Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes); // Read an arbitrary amount of data from current stream, out-of-band from pipeline
-    TBool TrySeek(TUint aStreamId, TUint64 aBytePos);
+    TBool TrySeekTo(TUint aStreamId, TUint64 aBytePos);
     TUint64 StreamLength() const;
     TUint64 StreamPos() const;
     void OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint aSampleRate, TUint aNumChannels, const Brx& aCodecName, TUint64 aTrackLength, TUint64 aSampleStart, TBool aLossless);
     void OutputDelay(TUint aJiffies);
     TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset);
-    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp);
+    TUint64 OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp);
     void OutputWait();
     void OutputHalt();
     void OutputSession();
@@ -333,11 +331,11 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     static const TUint kMaxRecogniseBytes = 6 * 1024;
     MsgFactory& iMsgFactory;
@@ -375,7 +373,6 @@ private:
     TUint64 iStreamLength;
     TUint64 iStreamPos;
     TUint iTrackId;
-    TUint iTrackIdPipeline;
 };
 
 } // namespace Codec

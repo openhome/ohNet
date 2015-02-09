@@ -120,7 +120,6 @@ CodecController::CodecController(MsgFactory& aMsgFactory, IPipelineElementUpstre
     , iStreamLength(0)
     , iStreamPos(0)
     , iTrackId(UINT_MAX)
-    , iTrackIdPipeline(UINT_MAX)
 {
     iDecoderThread = new ThreadFunctor("CodecController", MakeFunctor(*this, &CodecController::CodecThread), aThreadPriority);
     iLoggerRewinder = new Logger(iRewinder, "Rewinder");
@@ -153,10 +152,10 @@ void CodecController::Start()
     iDecoderThread->Start();
 }
 
-void CodecController::StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
+void CodecController::StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle)
 {
     AutoMutex a(iLock);
-    if (iTrackIdPipeline != aTrackId || aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
+    if (aStreamId != iStreamId || iActiveCodec == NULL || !iSeekable) {
         aHandle = ISeeker::kHandleError;
         return;
     }
@@ -217,7 +216,7 @@ void CodecController::CodecThread()
                 streamInfo.Set(iPcmStream.BitDepth(), iPcmStream.SampleRate(), iPcmStream.NumChannels(), iPcmStream.Endian(), iPcmStream.StartSample());
             }
 
-            LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackIdPipeline, iStreamId);
+            LOG(kMedia, "CodecThread: start recognition.  iTrackId=%u, iStreamId=%u\n", iTrackId, iStreamId);
 
             for (size_t i=0; i<iCodecs.size() && !iQuit && !iStreamStopped; i++) {
                 CodecBase* codec = iCodecs[i];
@@ -249,12 +248,12 @@ void CodecController::CodecThread()
             }
             LOG(kMedia, "CodecThread: recognition complete\n");
             if (iActiveCodec == NULL) {
-                if (iTrackIdPipeline != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
+                if (iStreamId != 0) { // FIXME - hard-coded assumption about Filler's NullTrack
                     Log::Print("Failed to recognise audio format (iStreamStopped=%u, iExpectedFlushId=%u), flushing stream...\n", iStreamStopped, iExpectedFlushId);
                 }
                 iLock.Wait();
                 if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-                    iExpectedFlushId = iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
+                    iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
                     if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                         iConsumeExpectedFlush = true;
                     }
@@ -298,7 +297,7 @@ void CodecController::CodecThread()
         if (!iStreamStarted && !iStreamEnded) {
             iLock.Wait();
             if (iExpectedFlushId == MsgFlush::kIdInvalid) {
-                iExpectedFlushId = iStreamHandler->TryStop(iTrackIdPipeline, iStreamId);
+                iExpectedFlushId = iStreamHandler->TryStop(iStreamId);
                 if (iExpectedFlushId != MsgFlush::kIdInvalid) {
                     iConsumeExpectedFlush = true;
                 }
@@ -436,14 +435,14 @@ void CodecController::ReadNextMsg(Bwx& aBuf)
 TBool CodecController::Read(IWriter& aWriter, TUint64 aOffset, TUint aBytes)
 {
     if (!iStreamEnded && !iQuit) {
-        return iStreamHandler->TryGet(aWriter, iTrackIdPipeline, iStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, iStreamId, aOffset, aBytes);
     }
     return false;
 }
 
-TBool CodecController::TrySeek(TUint aStreamId, TUint64 aBytePos)
+TBool CodecController::TrySeekTo(TUint aStreamId, TUint64 aBytePos)
 {
-    TUint flushId = iStreamHandler->TrySeek(iTrackIdPipeline, aStreamId, aBytePos);
+    TUint flushId = iStreamHandler->TrySeek(aStreamId, aBytePos);
     if (flushId != MsgFlush::kIdInvalid) {
         ReleaseAudioEncoded();
         iExpectedFlushId = flushId;
@@ -468,7 +467,7 @@ void CodecController::OutputDecodedStream(TUint aBitRate, TUint aBitDepth, TUint
     if (!Jiffies::IsValidSampleRate(aSampleRate)) {
         THROW(CodecStreamCorrupt);
     }
-    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler   );
+    MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(iStreamId, aBitRate, aBitDepth, aSampleRate, aNumChannels, aCodecName, aTrackLength, aSampleStart, aLossless, iSeekable, iLive, iStreamHandler);
     iLock.Wait();
     iSampleRate = aSampleRate;
     if (iExpectedFlushId == MsgFlush::kIdInvalid) {
@@ -500,9 +499,9 @@ TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint
 }
 
 TUint64 CodecController::OutputAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset,
-                                        TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+                                        TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
-    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aLatency, aNetworkTimestamp, aMediaTimestamp);
+    MsgAudioPcm* audio = iMsgFactory.CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset, aRxTimestamp, aNetworkTimestamp);
     TUint jiffies= audio->Jiffies();
     Queue(audio);
     return jiffies;
@@ -563,7 +562,6 @@ Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 
     iLock.Wait();
     iTrackId = aMsg->Track().Id();
-    iTrackIdPipeline = aMsg->IdPipeline();
     iLock.Signal();
     return aMsg;
 }
@@ -701,49 +699,49 @@ Msg* CodecController::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-EStreamPlay CodecController::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay CodecController::OkToPlay(TUint aStreamId)
 {
-    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    return iStreamHandler->OkToPlay(aStreamId);
 }
 
-TUint CodecController::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint CodecController::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS(); // expect Seek requests to come to this class' public API, not from downstream
     return MsgFlush::kIdInvalid;
 }
 
-TUint CodecController::TryStop(TUint aTrackId, TUint aStreamId)
+TUint CodecController::TryStop(TUint aStreamId)
 {
     AutoMutex a(iLock);
-    if (iTrackIdPipeline == aTrackId && iStreamId == aStreamId) {
+    if (iStreamId == aStreamId) {
         iStreamStopped = true;
     }
     if (iStreamHandler == NULL) {
         LOG(kMedia, "CodecController::TryStop returning MsgFlush::kIdInvalid (no stream handler)\n");
         return MsgFlush::kIdInvalid;
     }
-    const TUint flushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+    const TUint flushId = iStreamHandler->TryStop(aStreamId);
     if (flushId != MsgFlush::kIdInvalid) {
         iExpectedFlushId = flushId;
         iConsumeExpectedFlush = false;
     }
-    LOG(kMedia, "CodecController::TryStop(%u, %u) returning %u.  iTrackId=%u, iStreamId=%u, iStreamStopped=%u\n",
-                aTrackId, aStreamId, flushId, iTrackIdPipeline, iStreamId, iStreamStopped);
+    LOG(kMedia, "CodecController::TryStop(%u) returning %u.  iStreamId=%u, iStreamStopped=%u\n",
+                aStreamId, flushId, iStreamId, iStreamStopped);
 
     return flushId;
 }
 
-TBool CodecController::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool CodecController::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();  // expect Get requests to come to this class' public API, not from downstream
                 // i.e., nothing downstream of the codec should be requesting arbitrary data
     return false;
 }
 
-void CodecController::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void CodecController::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     AutoMutex a(iLock);
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

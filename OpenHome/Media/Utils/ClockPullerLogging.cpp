@@ -110,24 +110,39 @@ ClockPullerLogging::ClockPullerLogging(Environment& aEnv)
 {
 }
 
+void ClockPullerLogging::StartTimestamp()
+{
+}
+
+void ClockPullerLogging::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
+{
+}
+
+void ClockPullerLogging::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void ClockPullerLogging::StopTimestamp()
+{
+}
+
 void ClockPullerLogging::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUint /*aNotificationFrequency*/)
 {
     AutoMutex a(iLock);
     iActiveCount++;
 }
 
-void ClockPullerLogging::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+void ClockPullerLogging::NewStreamDecodedReservoir(TUint aStreamId)
 {
     AutoMutex a(iLock);
-    iStreamLeft.SetTrack(aTrackId);
-    iStreamLeft.SetStream(aStreamId);
+    iStreamIdLeft = aStreamId;
     iUtilisationLeft.Clear();
     iUtilisationRight.Clear();
 }
 
 void ClockPullerLogging::NotifySizeDecodedReservoir(TUint aJiffies)
 {
-    if (iStreamLeft == iStreamRight) {
+    if (iStreamIdLeft == iStreamIdRight) {
         iUtilisationLeft.Add(aJiffies);
     }
 }
@@ -144,10 +159,9 @@ void ClockPullerLogging::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUin
     iActiveCount++;
 }
 
-void ClockPullerLogging::NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId)
+void ClockPullerLogging::NewStreamStarvationMonitor(TUint aStreamId)
 {
-    iStreamRight.SetTrack(aTrackId);
-    iStreamRight.SetStream(aStreamId);
+    iStreamIdRight = aStreamId;
 }
 
 void ClockPullerLogging::NotifySizeStarvationMonitor(TUint /*aJiffies*/)

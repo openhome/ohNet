@@ -26,9 +26,9 @@ void Supply::OutputSession()
     iDownStreamElement.Push(msg);
 }
 
-void Supply::OutputTrack(Track& aTrack, TUint aTrackId)
+void Supply::OutputTrack(Track& aTrack)
 {
-    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack, aTrackId);
+    MsgTrack* msg = iMsgFactory.CreateMsgTrack(aTrack);
     iDownStreamElement.Push(msg);
 }
 

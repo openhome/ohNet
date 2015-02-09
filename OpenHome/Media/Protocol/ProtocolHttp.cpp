@@ -41,10 +41,10 @@ private: // from Protocol
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
     void Deactivated() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolReader
     Brn Read(TUint aBytes) override;
     Brn ReadUntil(TByte aSeparator) override;
@@ -290,23 +290,23 @@ void ProtocolHttp::Deactivated()
     Close();
 }
 
-EStreamPlay ProtocolHttp::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolHttp::OkToPlay(TUint aStreamId)
 {
-    LOG(kMedia, "> ProtocolHttp::OkToPlay(%u, %u)\n", aTrackId, aStreamId);
-    const EStreamPlay canPlay = iIdProvider->OkToPlay(aTrackId, aStreamId);
+    LOG(kMedia, "> ProtocolHttp::OkToPlay(%u)\n", aStreamId);
+    const EStreamPlay canPlay = iIdProvider->OkToPlay(aStreamId);
     if (canPlay != ePlayNo && iLive && iStreamId == aStreamId) {
         iSem.Signal();
     }
-    LOG(kMedia, "< ProtocolHttp::OkToPlay(%u, %u) == %s\n", aTrackId, aStreamId, kStreamPlayNames[canPlay]);
+    LOG(kMedia, "< ProtocolHttp::OkToPlay(%u) == %s\n", aStreamId, kStreamPlayNames[canPlay]);
     return canPlay;
 }
 
-TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ProtocolHttp::TrySeek\n");
 
     iLock.Wait();
-    const TBool streamIsValid = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool streamIsValid = iProtocolManager->IsCurrentStream(aStreamId);
     if (streamIsValid) {
         iSeek = true;
         iSeekPos = aOffset;
@@ -325,10 +325,10 @@ TUint ProtocolHttp::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     return iNextFlushId;
 }
 
-TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolHttp::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -346,13 +346,12 @@ TUint ProtocolHttp::TryStop(TUint aTrackId, TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     LOG(kMedia, "> ProtocolHttp::TryGet\n");
     iLock.Wait();
-    const TBool isCurrent = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     TBool success = false;
-    if (isCurrent) {
+    if (iProtocolManager->IsCurrentStream(aStreamId)) {
         success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
     }
     iLock.Signal();

@@ -124,18 +124,14 @@ void ProviderPlaylist::NotifyAllDeleted()
 
 void ProviderPlaylist::Play(IDvInvocation& aInvocation)
 {
-    if (iDatabase.TrackCount() > 0) {
-        iSource.Play();
-    }
+    iSource.Play();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }
 
 void ProviderPlaylist::Pause(IDvInvocation& aInvocation)
 {
-    if (iDatabase.TrackCount() > 0) {
-        iSource.Pause();
-    }
+    iSource.Pause();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
 }

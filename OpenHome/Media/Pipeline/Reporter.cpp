@@ -47,7 +47,7 @@ Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 {
     iSeconds = 0;
     iJiffies = 0;
-    iObserver.NotifyTrack(aMsg->Track(), iMode, aMsg->IdPipeline());
+    iObserver.NotifyTrack(aMsg->Track(), iMode);
     return aMsg;
 }
 

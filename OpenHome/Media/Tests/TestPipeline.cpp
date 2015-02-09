@@ -31,11 +31,11 @@ public:
 private: // from Thread
     void Run() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     MsgFactory& iMsgFactory;
     IPipelineElementDownstream& iDownstream;
@@ -79,7 +79,7 @@ private:
     void TestRampsUp(TUint aMaxMsgs);
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);
@@ -207,7 +207,7 @@ void Supplier::Run()
     Brn encodedAudioBuf(encodedAudioData, sizeof(encodedAudioData));
 
     Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
-    iDownstream.Push(iMsgFactory.CreateMsgTrack(*track, 1));
+    iDownstream.Push(iMsgFactory.CreateMsgTrack(*track));
     track->RemoveRef();
     iDownstream.Push(iMsgFactory.CreateMsgEncodedStream(Brx::Empty(), Brx::Empty(), 1LL<<32, 1, false, false, this));
     while (!iQuit) {
@@ -228,29 +228,29 @@ void Supplier::Run()
     iDownstream.Push(iMsgFactory.CreateMsgQuit());
 }
 
-EStreamPlay Supplier::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay Supplier::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }
 
-TUint Supplier::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint Supplier::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint Supplier::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint Supplier::TryStop(TUint /*aStreamId*/)
 {
     return MsgFlush::kIdInvalid;
 }
 
-TBool Supplier::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool Supplier::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void Supplier::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -598,7 +598,7 @@ void SuitePipeline::NotifyPipelineState(EPipelineState aState)
 // on the state of LOG_PIPELINE_OBSERVER
 # pragma warning(disable:4100)
 #endif
-void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Print("Pipeline report property: TRACK {uri=");
@@ -609,7 +609,7 @@ void SuitePipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeli
     Print(aMode);
     Print("; providerId=");
     Print(aTrack.ProviderId());
-    Print("; idPipeline=%u}\n", aIdPipeline);
+    Print("\n");
 #endif
 }
 

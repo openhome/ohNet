@@ -46,18 +46,26 @@ Msg* VariableDelay::Pull()
     iLock.Wait();
     if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
         if (iWaitForAudioBeforeGeneratingSilence) {
-            ASSERT(IsEmpty()); // if not empty, we should process queue before pulling from upstream
-            iLock.Signal();
-            msg = iUpstreamElement.Pull();
-            iLock.Wait();
-            msg = msg->Process(*this);
-            if (iWaitForAudioBeforeGeneratingSilence) {
-                iLock.Signal();
-                return msg;
-            }
-            else {
-                DoEnqueue(msg);
-            }
+            do {
+                if (!IsEmpty()) {
+                    msg = DoDequeue();
+                }
+                else {
+                    iLock.Signal();
+                    msg = iUpstreamElement.Pull();
+                    iLock.Wait();
+                }
+                msg = msg->Process(*this);
+                if (msg != NULL) {
+                    if (iWaitForAudioBeforeGeneratingSilence) {
+                        iLock.Signal();
+                        return msg;
+                    }
+                    else {
+                        DoEnqueue(msg);
+                    }
+                }
+            } while (msg == NULL);
         }
         const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
         msg = iMsgFactory.CreateMsgSilence(size);
@@ -162,6 +170,46 @@ void VariableDelay::RampMsg(MsgAudio* aMsg)
     iCurrentRampValue = aMsg->SetRamp(iCurrentRampValue, iRemainingRampSize, iRampDirection, split);
     if (split != NULL) {
         DoEnqueue(split);
+    }
+}
+
+void VariableDelay::HandleStarving(const Brx& aMode)
+{
+    AutoMutex _(iLock);
+    if (iEnabled && iMode == aMode) {
+        iDelayAdjustment = iDelayJiffies;
+        if (iDelayAdjustment == 0) {
+            return;
+        }
+        iWaitForAudioBeforeGeneratingSilence = true;
+        switch (iStatus)
+        {
+        case EStarting:
+            break;
+        case ERunning:
+            iStatus = ERampingDown;
+            iRampDirection = Ramp::EDown;
+            iCurrentRampValue = Ramp::kMax;
+            iRemainingRampSize = iRampDuration;
+            break;
+        case ERampingDown:
+            break;
+        case ERampedDown:
+            break;
+        case ERampingUp:
+            iRampDirection = Ramp::EDown;
+            // retain current value of iCurrentRampValue
+            iRemainingRampSize = iRampDuration - iRemainingRampSize;
+            if (iRemainingRampSize == 0) {
+                iStatus = ERampedDown;
+            }
+            else {
+                iStatus = ERampingDown;
+            }
+            break;
+        default:
+            ASSERTS();
+        }
     }
 }
 
@@ -321,76 +369,42 @@ Msg* VariableDelay::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-EStreamPlay VariableDelay::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay VariableDelay::OkToPlay(TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->OkToPlay(aTrackId, aStreamId);
+        iStreamHandler->OkToPlay(aStreamId);
     }
     return ePlayNo;
 }
 
-TUint VariableDelay::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint VariableDelay::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+        return iStreamHandler->TrySeek(aStreamId, aOffset);
     }
     return MsgFlush::kIdInvalid;
 }
 
-TUint VariableDelay::TryStop(TUint aTrackId, TUint aStreamId)
+TUint VariableDelay::TryStop(TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->TryStop(aTrackId, aStreamId);
+        iStreamHandler->TryStop(aStreamId);
     }
     return MsgFlush::kIdInvalid;
 }
 
-TBool VariableDelay::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool VariableDelay::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     if (iStreamHandler != NULL) {
-        return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
     }
     return false;
 }
 
-void VariableDelay::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void VariableDelay::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
-    iLock.Wait();
-    if (iEnabled && iMode == aMode) {
-        iDelayAdjustment = iDelayJiffies;
-        iWaitForAudioBeforeGeneratingSilence = true;
-        switch (iStatus)
-        {
-        case EStarting:
-            break;
-        case ERunning:
-            iStatus = ERampingDown;
-            iRampDirection = Ramp::EDown;
-            iCurrentRampValue = Ramp::kMax;
-            iRemainingRampSize = iRampDuration;
-            break;
-        case ERampingDown:
-            break;
-        case ERampedDown:
-            break;
-        case ERampingUp:
-            iRampDirection = Ramp::EDown;
-            // retain current value of iCurrentRampValue
-            iRemainingRampSize = iRampDuration - iRemainingRampSize;
-            if (iRemainingRampSize == 0) {
-                iStatus = ERampedDown;
-            }
-            else {
-                iStatus = ERampingDown;
-            }
-            break;
-        default:
-            ASSERTS();
-        }
-    }
-    iLock.Signal();
-
+    HandleStarving(aMode);
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

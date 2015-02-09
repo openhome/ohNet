@@ -38,7 +38,6 @@ const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, IPullableClock* aPullableClock)
     : iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
-    , iSongcastTimestamper(aDvStack.Env())
     , iTidalId(aTidalId)
 {
 //    Debug::SetLevel(Debug::kMedia);
@@ -250,7 +249,7 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iDevice->GetAttribute("Upnp.FriendlyName", &friendlyName);
     iMediaPlayer->Add(SourceFactory::NewRaop(*iMediaPlayer, hostName.PtrZ(), friendlyName, macAddr));
 
-    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, iSongcastTimestamper, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
+    iMediaPlayer->Add(SourceFactory::NewReceiver(*iMediaPlayer, NULL, kSongcastSenderIconFileName)); // FIXME - will want to replace timestamper with access to a driver on embedded platforms
 }
 
 

@@ -9,6 +9,7 @@
 #include <OpenHome/Private/Stream.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Uri.h>
+#include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Media/Debug.h>
 
 #include <algorithm>
@@ -245,9 +246,10 @@ TBool Tidal::TryLogin()
     AutoSocketSsl _(iSocket);
     iLock.Wait();
     Bws<280> reqBody(Brn("username="));
-    reqBody.Append(iUsername);
+    WriterBuffer writer(reqBody);
+    FormUrlEncode(writer, iUsername);
     reqBody.Append(Brn("&password="));
-    reqBody.Append(iPassword);
+    FormUrlEncode(writer, iPassword);
     iLock.Signal();
 
     Bws<128> pathAndQuery("/v1/login/username?token=");
@@ -258,7 +260,6 @@ TBool Tidal::TryLogin()
         iWriterBuf.WriteFlush();
 
         iReaderResponse.Read();
-        updatedStatus = true;
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
             Bws<ICredentials::kMaxStatusBytes> status;
@@ -271,6 +272,7 @@ TBool Tidal::TryLogin()
                 error.AppendPrintf("Login Error (Response Code %d): Please Try Again.", code);
                 iCredentialsState.SetState(kId, error, Brx::Empty());
             }
+            updatedStatus = true;
             LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
             LOG(kError, status);
             LOG(kError, "\n");
@@ -282,6 +284,7 @@ TBool Tidal::TryLogin()
         iCountryCode.Replace(ReadValue(iReaderBuf, Brn("countryCode")));
         iLock.Signal();
         iCredentialsState.SetState(kId, Brx::Empty(), iCountryCode);
+        updatedStatus = true;
         success = true;
     }
     catch (HttpError&) {
@@ -333,4 +336,23 @@ void Tidal::QualityChanged(Configuration::KeyValuePair<TUint>& aKvp)
     iLock.Wait();
     iSoundQuality = aKvp.Value();
     iLock.Signal();
+}
+
+void Tidal::FormUrlEncode(IWriter& aWriter, const Brx& aSrc)
+{ // static
+    const TUint bytes = aSrc.Bytes();
+    for (TUint i=0; i<bytes; i++) {
+        TChar ch = aSrc[i];
+        if (Ascii::IsAlphabetic(ch) || Ascii::IsDigit(ch)) {
+            aWriter.Write(ch);
+        }
+        else if (ch == ' ') {
+            aWriter.Write('+');
+        }
+        else {
+            aWriter.Write('%');
+            WriterAscii writerAscii(aWriter);
+            writerAscii.WriteHex(static_cast<TByte>(ch));
+        }
+    }
 }

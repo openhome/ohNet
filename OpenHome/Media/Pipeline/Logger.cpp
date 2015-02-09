@@ -58,6 +58,7 @@ Msg* Logger::Pull()
 
 void Logger::Push(Msg* aMsg)
 {
+    ASSERT(aMsg != NULL);
     (void)aMsg->Process(*this);
     iDownstreamElement->Push(aMsg);
 }
@@ -91,7 +92,7 @@ Msg* Logger::ProcessMsg(MsgTrack* aMsg)
 #else
         Log::Print("(omitted)");
 #endif
-        Log::Print(", id: %u, pipelineId: %u}\n", aMsg->Track().Id(), aMsg->IdPipeline());
+        Log::Print(", id: %u}\n", aMsg->Track().Id());
     }
     return aMsg;
 }

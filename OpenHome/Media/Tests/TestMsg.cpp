@@ -178,11 +178,11 @@ public:
     ~SuiteDecodedStream();
     void Test();
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     MsgFactory* iMsgFactory;
     AllocatorInfoLogger iInfoAggregator;
@@ -1542,14 +1542,12 @@ void SuiteTrack::Test()
     Brn uri("http://host:port/folder/file.ext");
     Brn metadata("metadata#1");
     Track* track = iTrackFactory->CreateTrack(uri, metadata);
-    TUint id = 3;
-    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, id);
+    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     TEST(msg != NULL);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TUint trackId = msg->Track().Id();
-    TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
 
 #ifdef DEFINE_DEBUG
@@ -1558,21 +1556,18 @@ void SuiteTrack::Test()
     TEST(track->Uri() != uri);
     TEST(track->MetaData() != metadata);
     TEST(track->Id() != trackId);
-    TEST(msg->IdPipeline() != id);
 #endif
 
     // create second Track msg, check its uri/id can be retrieved
     uri.Set("http://newhost:newport/newfolder/newfile.newext");
     metadata.Set("metadata#2");
     track = iTrackFactory->CreateTrack(uri, metadata);
-    id = 6209;
-    msg = iMsgFactory->CreateMsgTrack(*track, id);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     TEST(msg != NULL);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TEST(msg->Track().Id() != trackId);
     trackId = msg->Track().Id();
-    TEST(msg->IdPipeline() == id);
     msg->RemoveRef();
     TEST(track->Uri() == uri);
     TEST(track->MetaData() == metadata);
@@ -1798,31 +1793,31 @@ void SuiteDecodedStream::Test()
         msg->RemoveRef();
 }
 
-EStreamPlay SuiteDecodedStream::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteDecodedStream::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteDecodedStream::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteDecodedStream::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteDecodedStream::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint SuiteDecodedStream::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteDecodedStream::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteDecodedStream::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteDecodedStream::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
     ASSERTS();
 }
@@ -1890,7 +1885,7 @@ void SuiteMsgProcessor::Test()
     msg->RemoveRef();
 
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     TEST(msg == msg->Process(processor));
     TEST(processor.LastMsgType() == ProcessorMsgType::EMsgTrack);
@@ -2067,7 +2062,7 @@ void SuiteMsgQueue::Test()
 
     // queue can be emptied then reused
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     queue->Enqueue(msg);
     TEST(!queue->IsEmpty());
@@ -2278,7 +2273,7 @@ void SuiteMsgReservoir::Test()
     TEST(queue->LastOut() == TestMsgReservoir::ENone);
 
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    msg = iMsgFactory->CreateMsgTrack(*track, 0);
+    msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     queue->Enqueue(msg);
     jiffies = queue->Jiffies();

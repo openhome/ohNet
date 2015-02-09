@@ -44,7 +44,7 @@ void NullPipelineObserver::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void NullPipelineObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void NullPipelineObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
 {
 }
 
@@ -103,7 +103,7 @@ void LoggingPipelineObserver::NotifyPipelineState(EPipelineState aState)
     Log::Print("Pipeline state change: %s\n", state);
 }
 
-void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
     if (!iEnable) {
         return;
@@ -114,7 +114,7 @@ void LoggingPipelineObserver::NotifyTrack(Track& aTrack, const Brx& aMode, TUint
     //Log::Print(aTrack.MetaData());
     Log::Print("; mode=");
     Log::Print(aMode);
-    Log::Print("; trackId=%u; idPipeline=%u}\n", aTrack.Id(), aIdPipeline);
+    Log::Print("; trackId=%u}\n", aTrack.Id());
 }
 
 void LoggingPipelineObserver::NotifyMetaText(const Brx& aText)

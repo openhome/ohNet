@@ -30,10 +30,10 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri) override;
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
 private: // from IProtocolReader
     Brn Read(TUint aBytes) override;
     Brn ReadUntil(TByte aSeparator) override;
@@ -159,20 +159,20 @@ ProtocolGetResult ProtocolHttps::Get(IWriter& aWriter, const Brx& aUri, TUint64 
     return res;
 }
 
-EStreamPlay ProtocolHttps::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolHttps::OkToPlay(TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aStreamId);
 }
 
-TUint ProtocolHttps::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint ProtocolHttps::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     return MsgFlush::kIdInvalid;
 }
 
-TUint ProtocolHttps::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolHttps::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -187,12 +187,11 @@ TUint ProtocolHttps::TryStop(TUint aTrackId, TUint aStreamId)
     return (stop? iNextFlushId : MsgFlush::kIdInvalid);
 }
 
-TBool ProtocolHttps::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool ProtocolHttps::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     AutoMutex a(iLock);
-    const TBool isCurrent = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
     TBool success = false;
-    if (isCurrent) {
+    if (iProtocolManager->IsCurrentStream(aStreamId)) {
         success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
     }
     return success;

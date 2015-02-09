@@ -19,7 +19,7 @@ namespace Media {
 class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
 {
 public: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -28,7 +28,6 @@ public: // from IPipelinePropertyObserver
 class SuiteSpotifyReporter : public SuiteUnitTest, public IPipelineElementUpstream
 {
 #define KTrackUri "http://host:port/path/file.ext"
-    static const TUint kTrackId       = 2;
     static const TUint kBitDepth      = 16;
     static const TUint kByteDepth = kBitDepth/8;
 #define kCodecName "Dummy codec"
@@ -101,7 +100,7 @@ private:
 
 // HelperPipelinePropertyObserver
 
-void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
 {
 
 }
@@ -173,7 +172,7 @@ Msg* SuiteSpotifyReporter::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         iLastMsg = msg;
         return iLastMsg;

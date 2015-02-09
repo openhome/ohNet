@@ -41,7 +41,7 @@ using namespace OpenHome::Media;
 
 // ProtocolOhm
 
-ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode)
+ProtocolOhm::ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const Brx& aMode)
     : ProtocolOhBase(aEnv, aMsgFactory, aTrackFactory, aTimestamper, "ohm", aMode)
 {
 }
@@ -153,11 +153,12 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-TUint ProtocolOhm::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint ProtocolOhm::TryStop(TUint aStreamId)
 {
-    // omit tests of aTrackId, aStreamId.  Any request to Stop() should probably result in us breaking the stream
-    iNextFlushId = iFlushIdProvider->NextFlushId();
-    iStopped = true;
-    iSocket.ReadInterrupt();
+    if (iProtocolManager->IsCurrentStream(aStreamId) && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
+        iNextFlushId = iFlushIdProvider->NextFlushId();
+        iStopped = true;
+        iSocket.ReadInterrupt();
+    }
     return iNextFlushId;
 }

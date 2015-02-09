@@ -21,7 +21,7 @@
 #include <OpenHome/Media/Pipeline/Gorger.h>
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Media/Pipeline/SpotifyReporter.h>
-#include <OpenHome/Media/Pipeline/Splitter.h>
+#include <OpenHome/Media/Pipeline/Router.h>
 #include <OpenHome/Media/Pipeline/Pruner.h>
 #include <OpenHome/Media/Pipeline/Logger.h>
 #include <OpenHome/Media/Pipeline/StarvationMonitor.h>
@@ -113,12 +113,12 @@ public:
     void Wait(TUint aFlushId);
     void Stop(TUint aHaltId);
     void RemoveCurrentStream();
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
     ITrackChangeObserver& TrackChangeObserver() const;
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
-    IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
+    IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
     void GetThreadPriorityRange(TUint& aMin, TUint& aMax) const;
 public: // from IPipelineElementDownstream
@@ -130,7 +130,7 @@ private: // from IFlushIdProvider
 private: // from IWaiterObserver
     void PipelineWaiting(TBool aWaiting) override;
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId) override;
+    void RemoveStream(TUint aStreamId) override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();
@@ -139,7 +139,7 @@ private: // from IStopperObserver
     void PipelineStopped() override;
     void PipelinePlaying() override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -190,8 +190,8 @@ private:
     Logger* iLoggerReporter;
     Media::SpotifyReporter* iSpotifyReporter;
     Logger* iLoggerSpotifyReporter;
-    Splitter* iSplitter;
-    Logger* iLoggerSplitter;
+    Router* iRouter;
+    Logger* iLoggerRouter;
     VariableDelay* iVariableDelay2;
     Logger* iLoggerVariableDelay2;
     Pruner* iPruner;

@@ -30,11 +30,11 @@ private: // from SuiteUnitTest
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     enum EMsgType
     {
@@ -90,7 +90,6 @@ private:
     EMsgType iLastPulledMsg;
     std::list<Msg*> iPendingMsgs;
     TUint64 iTrackOffset;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iStarvationNotifications;
 };
@@ -124,7 +123,6 @@ void SuiteGorger::Setup()
     iGorger = new Gorger(*iMsgFactory, *this, kPriorityNormal, kGorgeSize);
     iLastPulledMsg = ENone;
     iTrackOffset = 0;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iStarvationNotifications = 0;
 }
@@ -150,31 +148,31 @@ Msg* SuiteGorger::Pull()
     return msg;
 }
 
-EStreamPlay SuiteGorger::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteGorger::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteGorger::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteGorger::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteGorger::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint SuiteGorger::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteGorger::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteGorger::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteGorger::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
     iStarvationNotifications++;
 }
@@ -280,7 +278,7 @@ void SuiteGorger::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteGorger::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }
@@ -450,7 +448,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     PullNext(EMsgDecodedStream);
     TEST(!iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
-    iGorger->NotifyStarving(kModeRealTime, 1, 1);
+    iGorger->NotifyStarving(kModeRealTime, 1);
     TEST(!iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
     TEST(iStarvationNotifications == 1);
@@ -473,7 +471,7 @@ void SuiteGorger::TestStarvationEnablesGorging()
     } while (--numAudioMsgs > 0);
     TEST(iGorger->iCanGorge);
     TEST(!iGorger->iGorging);
-    iGorger->NotifyStarving(kModeGorgable, 2, 2);
+    iGorger->NotifyStarving(kModeGorgable, 2);
     TEST(iGorger->iCanGorge);
     TEST(iGorger->iGorging);
     TEST(iStarvationNotifications == 2);

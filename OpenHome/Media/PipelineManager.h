@@ -185,13 +185,12 @@ public:
     /**
      * Seek to a specified point inside the current track.
      *
-     * @param[in] aPipelineTrackId Track identifier.
      * @param[in] aStreamId        Stream identifier.
      * @param[in] aSecondsAbsolute Number of seconds into the track to seek to.
      *
      * @return  true if the seek succeeded; false otherwise.
      */
-    TBool Seek(TUint aPipelineTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
     /**
      * Move immediately to the next track from the current UriProvider (or Source).
      *
@@ -215,7 +214,7 @@ public:
      */
     TBool Prev();
     TBool SupportsMimeType(const Brx& aMimeType); // can only usefully be called after codecs have been added
-    IPipelineElementDownstream* SetSender(IPipelineElementDownstream& aSender);
+    IPipelineElementUpstream& InsertElements(IPipelineElementUpstream& aTail);
     TUint SenderMinLatencyMs() const;
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
@@ -226,7 +225,7 @@ private: // from IPipelineIdManager
     void InvalidateAll() override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;

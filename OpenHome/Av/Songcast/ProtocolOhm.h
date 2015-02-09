@@ -18,11 +18,11 @@ class IOhmTimestamper;
 class ProtocolOhm : public ProtocolOhBase
 {
 public:
-    ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const Brx& aMode);
+    ProtocolOhm(Environment& aEnv, IOhmMsgFactory& aMsgFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const Brx& aMode);
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
 private: // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TUint TryStop(TUint aStreamId) override;
 private:
     TUint iNextFlushId;
     TBool iStopped;

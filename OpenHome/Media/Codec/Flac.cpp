@@ -326,7 +326,7 @@ FLAC__StreamDecoderReadStatus CodecFlac::CallbackRead(const FLAC__StreamDecoder*
 
 FLAC__StreamDecoderSeekStatus CodecFlac::CallbackSeek(const FLAC__StreamDecoder* /*aDecoder*/, TUint64 aOffsetBytes)
 {
-    if (!iController->TrySeek(iStreamId, aOffsetBytes)) {
+    if (!iController->TrySeekTo(iStreamId, aOffsetBytes)) {
         return FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED;
     }
     return FLAC__STREAM_DECODER_SEEK_STATUS_OK;

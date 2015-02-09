@@ -39,11 +39,11 @@ private: // from SuiteUnitTest
 private: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -112,7 +112,6 @@ private:
     TUint64 iTrackOffset;
     TBool iNextModeSupportsLatency;
     TUint iNextDelayAbsoluteJiffies;
-    TUint iTrackId;
     TUint iStreamId;
     TUint iNextStreamId;
 };
@@ -162,7 +161,7 @@ void SuiteVariableDelay::Setup()
     iTrackOffset = 0;
     iNextModeSupportsLatency = true;
     iNextDelayAbsoluteJiffies = 0;
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iNextStreamId = 0;
 }
 
@@ -191,7 +190,7 @@ Msg* SuiteVariableDelay::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         return msg;
     }
@@ -227,31 +226,31 @@ MsgAudio* SuiteVariableDelay::CreateAudio()
     return audio;
 }
 
-EStreamPlay SuiteVariableDelay::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteVariableDelay::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteVariableDelay::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteVariableDelay::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteVariableDelay::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint SuiteVariableDelay::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteVariableDelay::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteVariableDelay::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteVariableDelay::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteVariableDelay::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -270,7 +269,6 @@ Msg* SuiteVariableDelay::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteVariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -631,7 +629,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromStarting()
     iNextDelayAbsoluteJiffies = kDelay;
     PullNext(EMsgDelay);
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
-    iVariableDelay->NotifyStarving(kMode, iTrackId, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId);
     TEST(iVariableDelay->iStatus == VariableDelay::EStarting);
     TEST(iVariableDelay->iDelayAdjustment > 0);
     iNextGeneratedMsg = EMsgAudioPcm;
@@ -651,7 +649,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromRunning()
 {
     TestDelayFromRunning();
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
-    iVariableDelay->NotifyStarving(kMode, iTrackId, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId);
 
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     iJiffies = 0;
@@ -678,7 +676,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromRampingDown()
     PullNext(EMsgAudioPcm);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     const TUint remainingRamp = iVariableDelay->iRemainingRampSize;
-    iVariableDelay->NotifyStarving(kMode, iTrackId, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     TEST(iVariableDelay->iRemainingRampSize == remainingRamp);
     do {
@@ -712,7 +710,7 @@ void SuiteVariableDelay::TestNotifyStarvingFromRampingUp()
     PullNext(EMsgAudioPcm);
 
     const TUint completedRamp = iVariableDelay->iRampDuration - iVariableDelay->iRemainingRampSize;
-    iVariableDelay->NotifyStarving(kMode, iTrackId, iStreamId);
+    iVariableDelay->NotifyStarving(kMode, iStreamId);
     TEST(iVariableDelay->iStatus == VariableDelay::ERampingDown);
     TEST(iVariableDelay->iRemainingRampSize == completedRamp);
     const TUint remainingRamp = iVariableDelay->iRemainingRampSize;
@@ -732,7 +730,7 @@ void SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode()
     TEST(iVariableDelay->iDelayJiffies > 0);
     TEST(iVariableDelay->iDelayAdjustment == 0);
 
-    iVariableDelay->NotifyStarving(Brn("DifferentMode"), iTrackId, iStreamId);
+    iVariableDelay->NotifyStarving(Brn("DifferentMode"), iStreamId);
     TEST(iVariableDelay->iStatus == VariableDelay::ERunning);
     TEST(iVariableDelay->iDelayJiffies > 0);
     TEST(iVariableDelay->iDelayAdjustment == 0);
@@ -744,6 +742,7 @@ void SuiteVariableDelay::TestNotifyStarvingIgnoredForOtherMode()
 void SuiteVariableDelay::TestNoSilenceInjectedBeforeDecodedStream()
 {
     PullNext(EMsgMode);
+    PullNext(EMsgSession);
     PullNext(EMsgTrack);
     static const TUint kDelay = 150 * Jiffies::kPerMs;
     iNextDelayAbsoluteJiffies = kDelay;

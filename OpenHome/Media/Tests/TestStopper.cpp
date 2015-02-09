@@ -40,11 +40,11 @@ private: // from IStopperObserver
     void PipelineStopped() override;
     void PipelinePlaying() override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -110,13 +110,11 @@ private:
     TBool iRampingDown;
     TBool iRampingUp;
     TBool iLiveStream;
-    TUint iTrackId;
     TUint iStreamId;
     TUint64 iTrackOffset;
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iPausedCount;
     TUint iStoppedCount;
@@ -167,12 +165,11 @@ SuiteStopper::~SuiteStopper()
 void SuiteStopper::Setup()
 {
     iStopper = new Stopper(*iMsgFactory, *this, *this, kRampDuration);
-    iTrackId = iStreamId = UINT_MAX;
+    iStreamId = UINT_MAX;
     iTrackOffset = 0;
     iRampingDown = iRampingUp = false;
     iLiveStream = false;
     iLastSubsample = 0xffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iJiffies = 0;
     iPausedCount = iStoppedCount = iPlayingCount = iOkToPlayCount = 0;
@@ -212,33 +209,33 @@ void SuiteStopper::PipelinePlaying()
     iPlayingCount++;
 }
 
-EStreamPlay SuiteStopper::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteStopper::OkToPlay(TUint /*aStreamId*/)
 {
     iOkToPlayCount++;
     return iNextCanPlay;
 }
 
-TUint SuiteStopper::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteStopper::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteStopper::TryStop(TUint aTrackId, TUint aStreamId)
+TUint SuiteStopper::TryStop(TUint aStreamId)
 {
-    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+    if (aStreamId == iStreamId) {
         return kExpectedFlushId;
     }
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteStopper::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteStopper::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteStopper::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -257,7 +254,6 @@ Msg* SuiteStopper::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteStopper::ProcessMsg(MsgTrack* aMsg)
 {
     iLastPulledMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -388,7 +384,7 @@ void SuiteStopper::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteStopper::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }

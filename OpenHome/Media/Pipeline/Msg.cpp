@@ -8,6 +8,8 @@
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Arch.h>
 #include <OpenHome/Private/Printer.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Media/Debug.h>
 
 #include <string.h>
 #include <climits>
@@ -24,7 +26,7 @@ const Brn AllocatorBase::kQueryMemory = Brn("memory");
 
 AllocatorBase::~AllocatorBase()
 {
-    //Log::Print("~AllocatorBase for %s, freeing...", iName);
+    LOG(kPipeline, "> ~AllocatorBase for %s\n", iName);
     const TUint slots = iFree.Slots();
     for (TUint i=0; i<slots; i++) {
         //Log::Print("  %u", i);
@@ -32,7 +34,7 @@ AllocatorBase::~AllocatorBase()
         //Log::Print("(%p)", ptr);
         delete ptr;
     }
-    //Log::Print("\n");
+    LOG(kPipeline, "< ~AllocatorBase for %s\n", iName);
 }
 
 void AllocatorBase::Free(Allocated* aPtr)
@@ -247,7 +249,7 @@ TBool Jiffies::IsValidSampleRate(TUint aSampleRate)
     try {
         JiffiesPerSample(aSampleRate); // only want to check if sample rate is supported
     }
-    catch (MsgInvalidSampleRate) {
+    catch (SampleRateInvalid&) {
         return false;
     }
     return true;
@@ -290,7 +292,8 @@ TUint Jiffies::JiffiesPerSample(TUint aSampleRate)
     case 192000:
         return kJiffies192000;
     default:
-        THROW(MsgInvalidSampleRate);
+        LOG(kError, "JiffiesPerSample - invalid sample rate: %u\n", aSampleRate);
+        THROW(SampleRateInvalid);
     }
 }
 
@@ -301,6 +304,45 @@ TUint Jiffies::BytesFromJiffies(TUint& aJiffies, TUint aJiffiesPerSample, TUint 
     const TUint numSubsamples = numSamples * aNumChannels;
     const TUint bytes = numSubsamples * aBytesPerSubsample;
     return bytes;
+}
+
+TUint Jiffies::ToSongcastTime(TUint aJiffies, TUint aSampleRate)
+{ // static
+    return static_cast<TUint>((static_cast<TUint64>(aJiffies) * SongcastTicksPerSecond(aSampleRate)) / kPerSecond);
+}
+
+TUint Jiffies::FromSongcastTime(TUint64 aSongcastTime, TUint aSampleRate)
+{ // static
+    return static_cast<TUint>((aSongcastTime * kPerSecond) / SongcastTicksPerSecond(aSampleRate));
+}
+
+TUint Jiffies::SongcastTicksPerSecond(TUint aSampleRate)
+{ // static
+    switch (aSampleRate)
+    {
+    case 7350:
+    case 11025:
+    case 14700:
+    case 22050:
+    case 29400:
+    case 44100:
+    case 88200:
+    case 176400:
+        return kSongcastTicksPerSec44k;
+
+    case 8000:
+    case 12000:
+    case 16000:
+    case 24000:
+    case 32000:
+    case 48000:
+    case 96000:
+    case 192000:
+        return kSongcastTicksPerSec48k;
+
+    default:
+        THROW(SampleRateInvalid);
+    }
 }
 
 
@@ -828,22 +870,16 @@ Media::Track& MsgTrack::Track() const
     return *iTrack;
 }
 
-TUint MsgTrack::IdPipeline() const
-{
-    return iIdPipeline;
-}
-
-void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline)
+void MsgTrack::Initialise(Media::Track& aTrack)
 {
     iTrack = &aTrack;
     iTrack->AddRef();
-    iIdPipeline = aIdPipeline;}
+}
 
 void MsgTrack::Clear()
 {
     iTrack->RemoveRef();
     iTrack = NULL;
-    iIdPipeline = UINT_MAX;
 }
 
 Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
@@ -1502,7 +1538,7 @@ TBool MsgAudioPcm::TryGetTimestamps(TUint& aNetwork, TUint& aRx)
 {
     if (iTimestamped) {
         aNetwork = iNetworkTimestamp;
-        aRx = iReceiveTimestamp;
+        aRx = iRxTimestamp;
         return true;
     }
     return false;
@@ -1530,13 +1566,11 @@ void MsgAudioPcm::Initialise(DecodedAudio* aDecodedAudio, TUint64 aTrackOffset, 
     iTimestamped = false;
 }
 
-void MsgAudioPcm::SetTimestamps(TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+void MsgAudioPcm::SetTimestamps(TUint aRx, TUint aNetwork)
 {
     iTimestamped = true;
-    iReceiveTimestamp = aRxTimestamp;
-    iMediaLatency = aLatency;
-    iNetworkTimestamp = aNetworkTimestamp;
-    iMediaTimestamp = aMediaTimestamp;
+    iRxTimestamp = aRx;
+    iNetworkTimestamp = aNetwork;
 }
 
 void MsgAudioPcm::SplitCompleted(MsgAudio& aRemaining)
@@ -1945,32 +1979,6 @@ Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 }
 
 
-// StreamId
-
-StreamId::StreamId()
-    : iTrackId(IPipelineIdProvider::kTrackIdInvalid)
-    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
-{
-}
-
-void StreamId::SetTrack(TUint aId)
-{
-    iTrackId = aId;
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-}
-
-void StreamId::SetStream(TUint aId)
-{
-    ASSERT(iTrackId != IPipelineIdProvider::kTrackIdInvalid);
-    iStreamId = aId;
-}
-
-TBool StreamId::operator ==(const StreamId& aId) const
-{
-    return (iTrackId == aId.iTrackId && iStreamId == aId.iStreamId);
-}
-
-
 // MsgQueue
 
 MsgQueue::MsgQueue()
@@ -2108,6 +2116,7 @@ MsgReservoir::~MsgReservoir()
 
 void MsgReservoir::DoEnqueue(Msg* aMsg)
 {
+    ASSERT(aMsg != NULL);
     ProcessorQueueIn procIn(*this);
     Msg* msg = aMsg->Process(procIn);
     iQueue.Enqueue(msg);
@@ -2589,10 +2598,10 @@ MsgSession* MsgFactory::CreateMsgSession()
     return iAllocatorMsgSession.Allocate();
 }
 
-MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline)
+MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
-    msg->Initialise(aTrack, aIdPipeline);
+    msg->Initialise(aTrack);
     return msg;
 }
 
@@ -2672,10 +2681,10 @@ MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TU
     return msg;
 }
 
-MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aLatency, TUint aNetworkTimestamp, TUint aMediaTimestamp)
+MsgAudioPcm* MsgFactory::CreateMsgAudioPcm(const Brx& aData, TUint aChannels, TUint aSampleRate, TUint aBitDepth, EMediaDataEndian aEndian, TUint64 aTrackOffset, TUint aRxTimestamp, TUint aNetworkTimestamp)
 {
     MsgAudioPcm* msg = CreateMsgAudioPcm(aData, aChannels, aSampleRate, aBitDepth, aEndian, aTrackOffset);
-    msg->SetTimestamps(aRxTimestamp, aLatency, aNetworkTimestamp, aMediaTimestamp);
+    msg->SetTimestamps(aRxTimestamp, aNetworkTimestamp);
     return msg;
 }
 

@@ -41,7 +41,6 @@ private: // IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     IPipelineElementUpstream& iUpstreamElement;
-    TUint iTrackId;
     TUint iStreamId;
     TBool iRamping;
     const TUint iRampDuration;

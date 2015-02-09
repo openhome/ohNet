@@ -112,7 +112,7 @@ void CodecPcm::Process()
 TBool CodecPcm::TrySeek(TUint aStreamId, TUint64 aSample)
 {
     const TUint64 bytePos = aSample * iNumChannels * (iBitDepth/8);
-    if (!iController->TrySeek(aStreamId, bytePos)) {
+    if (!iController->TrySeekTo(aStreamId, bytePos)) {
         return false;
     }
     iTrackOffset = ToJiffies(aSample);

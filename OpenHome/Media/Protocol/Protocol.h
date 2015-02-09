@@ -49,7 +49,7 @@ public:
     virtual ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const = 0;
     virtual ContentProcessor* GetAudioProcessor() const = 0;
     virtual TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) = 0;
-    virtual TBool IsCurrentTrack(TUint aTrackId) const = 0;
+    virtual TBool IsCurrentStream(TUint aStreamId) const = 0;
 };
 
 class IProtocolReader : public IReader
@@ -84,10 +84,10 @@ public:
 protected:
     Protocol(Environment& aEnv);
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private:
     virtual void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) = 0;
     /**
@@ -227,11 +227,11 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IProtocolManager
-    ProtocolStreamResult Stream(const Brx& aUri);
-    ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const;
-    ContentProcessor* GetAudioProcessor() const;
-    TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
-    TBool IsCurrentTrack(TUint aTrackId) const;
+    ProtocolStreamResult Stream(const Brx& aUri) override;
+    ContentProcessor* GetContentProcessor(const Brx& aUri, const Brx& aMimeType, const Brx& aData) const override;
+    ContentProcessor* GetAudioProcessor() const override;
+    TBool Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
+    TBool IsCurrentStream(TUint aStreamId) const override;
 private:
     IPipelineElementDownstream& iDownstream;
     MsgFactory& iMsgFactory;
@@ -241,7 +241,7 @@ private:
     std::vector<Protocol*> iProtocols;
     std::vector<ContentProcessor*> iContentProcessors;
     ContentProcessor* iAudioProcessor;
-    TUint iTrackId;
+    TUint iStreamId;
 };
 
 } // namespace Media

@@ -128,12 +128,16 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgPlayable* aMsg) override;
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IClockPuller
+    void StartTimestamp() override;
+    void NotifyTimestampSampleRate(TUint aSampleRate) override;
+    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+    void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId);
+    void NewStreamDecodedReservoir(TUint aStreamId);
     void NotifySizeDecodedReservoir(TUint aJiffies);
     void StopDecodedReservoir();
     void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency);
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId);
+    void NewStreamStarvationMonitor(TUint aStreamId);
     void NotifySizeStarvationMonitor(TUint aJiffies);
     void StopStarvationMonitor();
 private:
@@ -146,7 +150,6 @@ private:
     TUint iHistoryPointCount;
     TBool iStopAudioGeneration;
     TByte iBuf[DecodedAudio::kMaxBytes];
-    TUint iTrackId;
     TUint iStreamId;
     TBool iStartCalled;
     TBool iNewStreamCalled;
@@ -328,7 +331,7 @@ TBool SuiteAudioReservoir::EnqueueMsg(EMsgType aType)
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-        msg = iMsgFactory->CreateMsgTrack(*track, 0);
+        msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
     }
         break;
@@ -482,7 +485,6 @@ SuiteReservoirHistory::SuiteReservoirHistory()
     , iDequeuedJiffies(0)
     , iHistoryPointCount(0)
     , iStopAudioGeneration(false)
-    , iTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
 {
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 200, 200, 20, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
@@ -506,8 +508,7 @@ void SuiteReservoirHistory::Test()
     iStartCalled = iNewStreamCalled = iNotifySizeCalled = false;
     iReservoir->Push(iMsgFactory->CreateMsgMode(Brn("ClockPullTest"), false, true, this));
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track, 0);
-    iTrackId = msgTrack->IdPipeline();
+    MsgTrack* msgTrack = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     iReservoir->Push(msgTrack);
     MsgDecodedStream* msgStream = iMsgFactory->CreateMsgDecodedStream(100, 12, 16, 44100, 2, Brn("dummy"), 1LL<<40, 0, false, false, false, NULL);
@@ -638,6 +639,22 @@ Msg* SuiteReservoirHistory::ProcessMsg(MsgQuit* /*aMsg*/)
     return NULL;
 }
 
+void SuiteReservoirHistory::StartTimestamp()
+{
+}
+
+void SuiteReservoirHistory::NotifyTimestampSampleRate(TUint /*aSampleRate*/)
+{
+}
+
+void SuiteReservoirHistory::NotifyTimestamp(TInt /*aDelta*/, TUint /*aNetwork*/)
+{
+}
+
+void SuiteReservoirHistory::StopTimestamp()
+{
+}
+
 void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency)
 {
     TEST(aCapacityJiffies == kReservoirSize);
@@ -645,9 +662,8 @@ void SuiteReservoirHistory::StartDecodedReservoir(TUint aCapacityJiffies, TUint 
     iStartCalled = true;
 }
 
-void SuiteReservoirHistory::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+void SuiteReservoirHistory::NewStreamDecodedReservoir(TUint aStreamId)
 {
-    TEST(aTrackId == iTrackId);
     TEST(aStreamId == iStreamId);
     iNewStreamCalled = true;
 }
@@ -674,7 +690,7 @@ void SuiteReservoirHistory::StartStarvationMonitor(TUint /*aCapacityJiffies*/, T
     ASSERTS();
 }
 
-void SuiteReservoirHistory::NewStreamStarvationMonitor(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteReservoirHistory::NewStreamStarvationMonitor(TUint /*aStreamId*/)
 {
     ASSERTS();
 }

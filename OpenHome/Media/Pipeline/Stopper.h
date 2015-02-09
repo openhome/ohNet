@@ -94,7 +94,6 @@ private:
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetHaltId;
     TUint iTrackId;
-    TUint iTrackIdPipeline;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TBool iCheckedStreamPlayable;

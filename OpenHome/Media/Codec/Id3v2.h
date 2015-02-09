@@ -18,7 +18,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgEncodedStream* aMsg) override;
     Msg* ProcessMsg(MsgAudioEncoded* aMsg) override;
 private: // from IStreamHandler
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
 private:
     static const TUint kRecogniseBytes = 10;
     TUint iSize;

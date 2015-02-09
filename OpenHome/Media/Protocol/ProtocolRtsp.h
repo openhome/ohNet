@@ -24,7 +24,7 @@ private: // from Protocol
     ProtocolStreamResult DoStream();
     void OutputStream();
 private: // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TUint TryStop(TUint aStreamId);
 private:
     Environment& iEnv;
     SupplyAggregatorBytes* iSupply;

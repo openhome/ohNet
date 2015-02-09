@@ -84,7 +84,6 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iUriProvider(aUriProvider)
     , iTrack(NULL)
     , iTrackPosSeconds(0)
-    , iPipelineTrackId(UINT_MAX)
     , iStreamId(UINT_MAX)
     , iTransportState(Media::EPipelineStopped)
 {
@@ -190,7 +189,7 @@ void SourceRadio::Stop()
 void SourceRadio::SeekAbsolute(TUint aSeconds)
 {
     if (IsActive()) {
-        (void)iPipeline.Seek(iPipelineTrackId, iStreamId, aSeconds);
+        (void)iPipeline.Seek(iStreamId, aSeconds);
     }
 }
 
@@ -206,14 +205,11 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceRadio::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint aIdPipeline)
+void SourceRadio::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
 {
     if (!IsActive()) {
         return;
     }
-    iLock.Wait();
-    iPipelineTrackId = aIdPipeline;
-    iLock.Signal();
 }
 
 void SourceRadio::NotifyMetaText(const Brx& /*aText*/)

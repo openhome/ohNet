@@ -86,14 +86,13 @@ private:
     class NullTrackStreamHandler : public IStreamHandler
     {
     public:
-        static const TUint kNullTrackId = 0;
-        static const TUint kNullTrackStreamId = 1;
+        static const TUint kNullTrackStreamId = 0;
     private: // from IStreamHandler
-        EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-        TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-        TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-        TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-        void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+        EStreamPlay OkToPlay(TUint aStreamId) override;
+        TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+        TUint TryStop(TUint aStreamId) override;
+        TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+        void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
     };
 private:
     mutable Mutex iLock;
@@ -105,7 +104,6 @@ private:
     UriProvider* iActiveUriProvider;
     IUriStreamer* iUriStreamer;
     Track* iTrack;
-    TUint iTrackId;
     TBool iStopped;
     TBool iSendHalt;
     TBool iQuit;

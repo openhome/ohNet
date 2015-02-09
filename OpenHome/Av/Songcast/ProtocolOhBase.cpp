@@ -19,7 +19,7 @@ using namespace OpenHome;
 using namespace OpenHome::Av;
 using namespace OpenHome::Media;
 
-ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper& aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
+ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Media::TrackFactory& aTrackFactory, IOhmTimestamper* aTimestamper, const TChar* aSupportedScheme, const Brx& aMode)
     : Protocol(aEnv)
     , iEnv(aEnv)
     , iMsgFactory(aFactory)
@@ -27,6 +27,7 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSocket(aEnv)
     , iReadBuffer(iSocket)
     , iMode(aMode)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iMutexTransport("POHB")
     , iTrackFactory(aTrackFactory)
     , iTimestamper(aTimestamper)
@@ -151,6 +152,7 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iFrame = 0;
     iStreamMsgDue = true;
     iMetatextMsgDue = false;
+    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
 
     return res;
@@ -161,9 +163,9 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolOhBase::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aStreamId);
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()
@@ -379,7 +381,8 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
         header.Internalise(reader);
         OhmMsgAudio* audio = iMsgFactory.CreateAudioFromBlob(reader, header);
         const TUint64 totalBytes = audio->SamplesTotal() * audio->Channels() * audio->BitDepth()/8;
-        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iIdProvider->NextStreamId());
+        iStreamId = iIdProvider->NextStreamId();
+        iSupply->OutputStream(iTrackUri, totalBytes, false/*seekable*/, false/*live*/, *this, iStreamId);
         audio->RemoveRef();
         iStreamMsgDue = false;
         if (iMetatextMsgDue) {
@@ -402,7 +405,9 @@ void ProtocolOhBase::Process(OhmMsgAudio& /*aMsg*/)
 
 void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 {
-    aMsg.SetRxTimestamp(iTimestamper.Timestamp(aMsg.Frame()));
+    if (iTimestamper != NULL) {
+        aMsg.SetRxTimestamp(iTimestamper->Timestamp(aMsg.Frame()));
+    }
 
     AutoMutex a(iMutexTransport);
     if (!iRunning) {
@@ -435,7 +440,7 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
     iStreamMsgDue = true;
     iMetatextMsgDue = false; // discard any metatext we haven't yet passed on.  It'll describe the previous track
     Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata());
-    iSupply->OutputTrack(*track, iIdProvider->NextTrackId());
+    iSupply->OutputTrack(*track);
     track->RemoveRef();
     aMsg.RemoveRef();
     // FIXME - also need OutputStream (which is complicated by repair vector)

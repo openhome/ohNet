@@ -51,12 +51,16 @@ public:
     ClockPullerUtilisationPerStreamLeft(Environment& aEnv, IPullableClock& aPullableClock);
     ~ClockPullerUtilisationPerStreamLeft();
 protected: // from IClockPuller
+    void StartTimestamp() override;
+    void NotifyTimestampSampleRate(TUint aSampleRate) override;
+    void NotifyTimestamp(TInt aDrift, TUint aNetwork) override;
+    void StopTimestamp() override;
     void StartDecodedReservoir(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId) override;
+    void NewStreamDecodedReservoir(TUint aStreamId) override;
     void NotifySizeDecodedReservoir(TUint aJiffies) override;
     void StopDecodedReservoir() override;
     void StartStarvationMonitor(TUint aCapacityJiffies, TUint aNotificationFrequency) override;
-    void NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId) override;
+    void NewStreamStarvationMonitor(TUint aStreamId) override;
     void NotifySizeStarvationMonitor(TUint aJiffies) override;
     void StopStarvationMonitor() override;
 protected: // from IUtilisationHistoryObserver
@@ -67,8 +71,8 @@ protected:
 private:
     IPullableClock& iPullableClock;
     Mutex iLock;
-    StreamId iStreamLeft;
-    StreamId iStreamRight;
+    TUint iStreamIdLeft;
+    TUint iStreamIdRight;
     UtilisationHistory* iUtilisationLeft;
     TUint iDecodedReservoirUpdateFrequency;
 };
