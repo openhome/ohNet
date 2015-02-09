@@ -16,17 +16,16 @@ namespace Media {
 class DummyStreamHandler : public IStreamHandler
 {
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 };
 
 class SuiteSupply : public Suite, private IPipelineElementDownstream, private IMsgProcessor
 {
     #define kUri "http://www.openhome.org/dir/file.ext"
-    static const TUint kTrackId    = 1;
     static const TUint kTotalBytes = 32000000;
     static const TBool kSeekable   = true;
     static const TBool kLive       = false;
@@ -97,31 +96,31 @@ private:
 
 // DummyStreamHandler
 
-EStreamPlay DummyStreamHandler::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay DummyStreamHandler::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint DummyStreamHandler::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint DummyStreamHandler::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint DummyStreamHandler::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint DummyStreamHandler::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool DummyStreamHandler::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool DummyStreamHandler::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void DummyStreamHandler::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -151,7 +150,7 @@ void SuiteSupply::Test()
     iSupply->OutputSession();
     TEST(++expectedMsgCount == iMsgPushCount);
     Track* track = iTrackFactory->CreateTrack(Brn(kUri), Brx::Empty());
-    iSupply->OutputTrack(*track, kTrackId);
+    iSupply->OutputTrack(*track);
     track->RemoveRef();
     TEST(++expectedMsgCount == iMsgPushCount);
     iSupply->OutputDelay(kDelayJiffies);
@@ -191,7 +190,6 @@ Msg* SuiteSupply::ProcessMsg(MsgTrack* aMsg)
 {
     iLastMsg = EMsgTrack;
     TEST(aMsg->Track().Uri() == Brn(kUri));
-    TEST(aMsg->IdPipeline() == kTrackId);
     return aMsg;
 }
 

@@ -97,21 +97,18 @@ public:
     TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& aDownstream, MsgFactory& aMsgFactory, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator);
     ~TestCodecFiller();
     void Start(const Brx& aUrl);
-    TUint TrackId();
     TUint StreamId();
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     IPipelineElementDownstream& iPipeline;
     MsgFactory& iMsgFactory;
     Brn iUrl;
-    TUint iNextTrackId;
     TUint iNextStreamId;
 };
 

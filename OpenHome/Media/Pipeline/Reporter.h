@@ -12,7 +12,7 @@ namespace Media {
 class IPipelinePropertyObserver
 {
 public:
-    virtual void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) = 0;
+    virtual void NotifyTrack(Track& aTrack, const Brx& aMode) = 0;
     virtual void NotifyMetaText(const Brx& aText) = 0;
     virtual void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) = 0;
     virtual void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) = 0;

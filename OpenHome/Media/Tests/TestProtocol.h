@@ -26,15 +26,13 @@ public:
 private: // from Thread
     void Run() override;
 private: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
     Pipeline& iPipeline;
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     Brn iUrl;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     static const TUint kInvalidPipelineId = 0;
 };
@@ -50,7 +48,7 @@ protected:
     virtual void RegisterPlugins();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(Track& aTrack, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

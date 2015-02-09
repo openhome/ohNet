@@ -13,7 +13,6 @@ using namespace OpenHome::Net;
 
 DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator)
     : Thread("SPHt")
-    , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
@@ -41,17 +40,12 @@ void DummyFiller::Run()
     track->RemoveRef();
 }
 
-TUint DummyFiller::NextTrackId()
-{
-    return iNextTrackId++;
-}
-
 TUint DummyFiller::NextStreamId()
 {
     return iNextStreamId++;
 }
 
-EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay DummyFiller::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }
@@ -208,14 +202,14 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline)
+void TestProtocol::NotifyTrack(const Brx& aUri, const Brx& aMode)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
     Log::Print(aUri);
     Log::Print("; mode=");
     Log::Print(aMode);
-    Log::Print("; idPipeline=%u}\n", aIdPipeline);
+    Log::Print("\n");
 #endif
 }
 

@@ -325,15 +325,13 @@ public:
 public:
     MsgTrack(AllocatorBase& aAllocator);
     Media::Track& Track() const;
-    TUint IdPipeline() const;
 private:
-    void Initialise(Media::Track& aTrack, TUint aIdPipeline);
+    void Initialise(Media::Track& aTrack);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Media::Track* iTrack;
-    TUint iIdPipeline;
 };
 
 class MsgDelay : public Msg
@@ -791,21 +789,6 @@ public:
     virtual void EndBlock() = 0;
 };
 
-class StreamId
-{
-public:
-    StreamId();
-    void SetTrack(TUint aId);
-    void SetStream(TUint aId);
-    TBool operator ==(const StreamId& aId) const;
-    TBool operator !=(const StreamId& aId) const { return !(*this==aId); }
-    TUint IdPipeline() const { return iTrackId; }
-    TUint IdStream() const { return iStreamId; }
-private:
-    TUint iTrackId;
-    TUint iStreamId;
-};
-
 class MsgQueue
 {
 public:
@@ -956,9 +939,8 @@ public:
      * Inform the pipeline that a new track is starting.
      *
      * @param[in] aTrack           Track about to be played.
-     * @param[in] aTrackId         Unique identifier for this particular play of this track.
      */
-    virtual void OutputTrack(Track& aTrack, TUint aTrackId) = 0;
+    virtual void OutputTrack(Track& aTrack) = 0;
     /**
      * Apply a delay to subsequent audio in this stream.
      *
@@ -1060,9 +1042,8 @@ public:
     static const TUint kStreamIdInvalid = 0;
 public:
     virtual ~IPipelineIdProvider() {}
-    virtual TUint NextTrackId() = 0;
     virtual TUint NextStreamId() = 0;
-    virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    virtual EStreamPlay OkToPlay(TUint aStreamId) = 0;
 };
 
 class IPipelineIdManager
@@ -1079,7 +1060,7 @@ class IPipelineIdTracker
 {
 public:
     virtual ~IPipelineIdTracker() {}
-    virtual void AddStream(TUint aId, TUint aPipelineTrackId, TUint aStreamId, TBool aPlayNow) = 0;
+    virtual void AddStream(TUint aId, TUint aStreamId, TBool aPlayNow) = 0;
 };
 
 /**
@@ -1092,15 +1073,14 @@ public:
     /**
      * Request permission to play a stream.
      *
-     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
-     * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
+     * @param[in] aStreamId        Unique stream identifier.
      *
      * @return  Whether the stream can be played.  One of
      *            ePlayYes   - play the stream immediately.
      *            ePlayNo    - do not play the stream.  Discard its contents immediately.
      *            ePlayLater - play the stream later.  Do not play yet but also do not discard.
      */
-    virtual EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) = 0;
+    virtual EStreamPlay OkToPlay(TUint aStreamId) = 0;
     /**
      * Attempt to seek inside the currently playing stream.
      *
@@ -1108,7 +1088,6 @@ public:
      * Note that this may fail if the stream is non-seekable or the entire stream is
      * already in the pipeline
      *
-     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
      * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
      * @param[in] aOffset          Byte offset into the stream.
      *
@@ -1116,21 +1095,20 @@ public:
      *          Any other value indicates success.  The code which issues the seek request
      *          should discard data until it pulls a MsgFlush with this id.
      */
-    virtual TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) = 0;
+    virtual TUint TrySeek(TUint aStreamId, TUint64 aOffset) = 0;
     /**
      * Attempt to stop delivery of the currently playing stream.
      *
      * This may be called from a different thread.  The implementor is responsible for any synchronisation.
      * Note that this may report failure if the entire stream is already in the pipeline.
      *
-     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
      * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
      *
      * @return  Flush id.  MsgFlush::kIdInvalid if the stop request failed.
      *          Any other value indicates success.  The code which issues the seek request
      *          should discard data until it pulls a MsgFlush with this id.
      */
-    virtual TUint TryStop(TUint aTrackId, TUint aStreamId) = 0;
+    virtual TUint TryStop(TUint aStreamId) = 0;
     /**
      * Read a block of data out of band, without affecting the state of the current stream.
      *
@@ -1139,14 +1117,13 @@ public:
      * during format recognition for a new stream; more frequent use would be questionable.)
      *
      * @param[in] aWriter          Interface used to return the requested data.
-     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
      * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
      * @param[in] aOffset          Byte offset to start reading from
      * @param[in] aBytes           Number of bytes to read
      *
      * @return  true if exactly aBytes were read; false otherwise
      */
-    virtual TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
+    virtual TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) = 0; // return false if we failed to get aBytes
     /**
      * Inform interested parties of an unexpected break in audio.
      *
@@ -1155,10 +1132,9 @@ public:
      *
      * @param[in] aMode            Reported by the MsgMode which preceded the stream which dropped out.
      *                             i.e. identifier for the UriProvider associated with this stream
-     * @param[in] aTrackId         Unique track identifier (PipelineTrackId in some APIs).
      * @param[in] aStreamId        Stream identifier, unique in the context of the current track only.
      */
-    virtual void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) = 0;
+    virtual void NotifyStarving(const Brx& aMode, TUint aStreamId) = 0;
 };
 
 class ISeekObserver
@@ -1172,7 +1148,7 @@ class ISeeker
 public:
     static const TUint kHandleError = UINT_MAX;
 public:
-    virtual void StartSeek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle) = 0; // aHandle will be set to value that is later passed to NotifySeekComplete.  Or kHandleError.
+    virtual void StartSeek(TUint aStreamId, TUint aSecondsAbsolute, ISeekObserver& aObserver, TUint& aHandle) = 0; // aHandle will be set to value that is later passed to NotifySeekComplete.  Or kHandleError.
 };
 
 class ISeekRestreamer
@@ -1186,7 +1162,7 @@ class IStopper
 {
 public:
     virtual ~IStopper() {}
-    virtual void RemoveStream(TUint aTrackId, TUint aStreamId) = 0;
+    virtual void RemoveStream(TUint aStreamId) = 0;
 };
 
 class IPipelineElementUpstream
@@ -1227,7 +1203,7 @@ public:
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgSession* CreateMsgSession();
-    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline);
+    MsgTrack* CreateMsgTrack(Media::Track& aTrack);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);

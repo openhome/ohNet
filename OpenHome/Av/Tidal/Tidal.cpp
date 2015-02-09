@@ -260,7 +260,6 @@ TBool Tidal::TryLogin()
         iWriterBuf.WriteFlush();
 
         iReaderResponse.Read();
-        updatedStatus = true;
         const TUint code = iReaderResponse.Status().Code();
         if (code != 200) {
             Bws<ICredentials::kMaxStatusBytes> status;
@@ -273,6 +272,7 @@ TBool Tidal::TryLogin()
                 error.AppendPrintf("Login Error (Response Code %d): Please Try Again.", code);
                 iCredentialsState.SetState(kId, error, Brx::Empty());
             }
+            updatedStatus = true;
             LOG(kError, "Http error - %d - in response to Tidal login.  Some/all of response is:\n", code);
             LOG(kError, status);
             LOG(kError, "\n");
@@ -284,6 +284,7 @@ TBool Tidal::TryLogin()
         iCountryCode.Replace(ReadValue(iReaderBuf, Brn("countryCode")));
         iLock.Signal();
         iCredentialsState.SetState(kId, Brx::Empty(), iCountryCode);
+        updatedStatus = true;
         success = true;
     }
     catch (HttpError&) {

@@ -205,7 +205,6 @@ public:
     TestHttpSupplier(TUint aDataSize);
     virtual ~TestHttpSupplier();
 public:
-    TUint TrackId();
     TUint StreamId();
     TBool Live();
     TUint TrackCount();
@@ -231,7 +230,6 @@ protected: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     TUint iDataSize;
-    TUint iTrackId;
     TUint iStreamId;
     TBool iLive;
     TUint iTrackCount;
@@ -257,11 +255,9 @@ public:
     TestHttpPipelineProvider();
     virtual ~TestHttpPipelineProvider();
 public: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
 private:
-    TUint iNextTrackId;
     TUint iNextStreamId;
     static const TUint kInvalidPipelineId = 0;
 };
@@ -764,7 +760,6 @@ TestHttpSession* SessionFactory::Create(ESession aSession)
 
 TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
     : iDataSize(aDataSize)
-    , iTrackId(0)
     , iStreamId(0)
     , iLive(false)
     , iTrackCount(0)
@@ -776,11 +771,6 @@ TestHttpSupplier::TestHttpSupplier(TUint aDataSize)
 
 TestHttpSupplier::~TestHttpSupplier()
 {
-}
-
-TUint TestHttpSupplier::TrackId()
-{
-    return iTrackId;
 }
 
 TUint TestHttpSupplier::StreamId()
@@ -826,7 +816,6 @@ Msg* TestHttpSupplier::ProcessMsg(MsgSession* aMsg)
 
 Msg* TestHttpSupplier::ProcessMsg(MsgTrack* aMsg)
 {
-    iTrackId = aMsg->IdPipeline();
     iTrackCount++;
     return aMsg;
 }
@@ -841,7 +830,7 @@ Msg* TestHttpSupplier::ProcessMsg(MsgEncodedStream* aMsg)
     iLive = aMsg->Live();
     iStreamId = aMsg->StreamId();
     iStreamHandler = aMsg->StreamHandler();
-    (void)iStreamHandler->OkToPlay(iTrackId, iStreamId);
+    (void)iStreamHandler->OkToPlay(iStreamId);
     iStreamCount++;
     return aMsg;
 }
@@ -852,7 +841,7 @@ Msg* TestHttpSupplier::ProcessMsg(MsgAudioEncoded* aMsg)
     if (iLive && iDataTotal >= iDataSize) {
         // We are only simulating a live stream, so want to tell
         // client to stop when data has run out.
-        iStreamHandler->TryStop(iTrackId, iStreamId);
+        iStreamHandler->TryStop(iStreamId);
     }
     return aMsg;
 }
@@ -931,19 +920,12 @@ Msg* TestHttpSupplyChunked::ProcessMsg(MsgAudioEncoded* aMsg)
 // TestHttpPipelineProvider
 
 TestHttpPipelineProvider::TestHttpPipelineProvider()
-    : iNextTrackId(kInvalidPipelineId+1)
-    , iNextStreamId(kInvalidPipelineId+1)
+    : iNextStreamId(kInvalidPipelineId+1)
 {
 }
 
 TestHttpPipelineProvider::~TestHttpPipelineProvider()
 {
-}
-
-TUint TestHttpPipelineProvider::NextTrackId()
-{
-    //Log::Print("TestHttpPipelineProvider::NextTrackId\n");
-    return iNextTrackId++;
 }
 
 TUint TestHttpPipelineProvider::NextStreamId()
@@ -952,7 +934,7 @@ TUint TestHttpPipelineProvider::NextStreamId()
     return iNextStreamId++;
 }
 
-EStreamPlay TestHttpPipelineProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay TestHttpPipelineProvider::OkToPlay(TUint /*aStreamId*/)
 {
     //Log::Print("TestHttpPipelineProvider::OkToPlay\n");
     return ePlayYes;

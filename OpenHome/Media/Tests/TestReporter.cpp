@@ -18,7 +18,6 @@ namespace Media {
 class SuiteReporter : public Suite, public IPipelineElementUpstream, private IPipelinePropertyObserver
 {
 #define KTrackUri "http://host:port/path/file.ext"
-    static const TUint kTrackId       = 2;
     static const TUint kBitDepth      = 24;
     static const TUint kSampleRate    = 44100;
     static const TUint kBitRate       = kBitDepth * kSampleRate;
@@ -34,7 +33,7 @@ public:
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -68,7 +67,6 @@ private:
     TUint iTimeUpdates;
     TUint iAudioFormatUpdates;
     Bws<1024> iTrackUri;
-    TUint iTrackIdPipeline;
     Bws<1024> iMetaText;
     TUint iSeconds;
     TUint iTrackDurationSeconds;
@@ -118,7 +116,6 @@ void SuiteReporter::Test()
     expectedTrackUpdates++;
     TEST(iTrackUpdates == expectedTrackUpdates);
     TEST(iTrackUri == Brn(KTrackUri));
-    TEST(iTrackIdPipeline == kTrackId);
     TEST(iMetaTextUpdates == expectedMetaTextUpdates);
     TEST(iTimeUpdates == expectedTimeUpdates);
     TEST(iAudioFormatUpdates == expectedAudioFormatUpdates);
@@ -246,7 +243,7 @@ Msg* SuiteReporter::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brn(KTrackUri), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, kTrackId);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
         return msg;
     }
@@ -277,11 +274,10 @@ MsgAudio* SuiteReporter::CreateAudio()
     return audio;
 }
 
-void SuiteReporter::NotifyTrack(Track& aTrack, const Brx& /*aMode*/, TUint aIdPipeline)
+void SuiteReporter::NotifyTrack(Track& aTrack, const Brx& /*aMode*/)
 {
     iTrackUpdates++;
     iTrackUri.Replace(aTrack.Uri());
-    iTrackIdPipeline = aIdPipeline;
 }
 
 void SuiteReporter::NotifyMetaText(const Brx& aText)

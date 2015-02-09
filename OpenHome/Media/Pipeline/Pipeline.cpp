@@ -451,10 +451,10 @@ void Pipeline::RemoveCurrentStream()
     iSkipper->RemoveCurrentStream(rampDown);
 }
 
-TBool Pipeline::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+TBool Pipeline::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     const TBool rampDown = (iState == EPlaying);
-    return iSeeker->Seek(aTrackId, aStreamId, aSecondsAbsolute, rampDown);
+    return iSeeker->Seek(aStreamId, aSecondsAbsolute, rampDown);
 }
 
 void Pipeline::AddObserver(ITrackObserver& aObserver)
@@ -544,14 +544,14 @@ void Pipeline::PipelineWaiting(TBool aWaiting)
     NotifyStatus();
 }
 
-void Pipeline::RemoveStream(TUint aTrackId, TUint aStreamId)
+void Pipeline::RemoveStream(TUint aStreamId)
 {
-    (void)iSkipper->TryRemoveStream(aTrackId, aStreamId, !iBuffering);
+    (void)iSkipper->TryRemoveStream(aStreamId, !iBuffering);
 }
 
-void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
-    iObserver.NotifyTrack(aTrack, aMode, aIdPipeline);
+    iObserver.NotifyTrack(aTrack, aMode);
 }
 
 void Pipeline::NotifyMetaText(const Brx& aText)

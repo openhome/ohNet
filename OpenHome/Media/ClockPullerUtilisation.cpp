@@ -155,11 +155,10 @@ void ClockPullerUtilisationPerStreamLeft::StartDecodedReservoir(TUint /*aCapacit
     iDecodedReservoirUpdateFrequency = aNotificationFrequency;
 }
 
-void ClockPullerUtilisationPerStreamLeft::NewStreamDecodedReservoir(TUint aTrackId, TUint aStreamId)
+void ClockPullerUtilisationPerStreamLeft::NewStreamDecodedReservoir(TUint aStreamId)
 {
     AutoMutex a(iLock);
-    iStreamLeft.SetTrack(aTrackId);
-    iStreamLeft.SetStream(aStreamId);
+    iStreamIdLeft = aStreamId;
     iUtilisationLeft->Reset();
 }
 
@@ -176,10 +175,9 @@ void ClockPullerUtilisationPerStreamLeft::StartStarvationMonitor(TUint /*aCapaci
 {
 }
 
-void ClockPullerUtilisationPerStreamLeft::NewStreamStarvationMonitor(TUint aTrackId, TUint aStreamId)
+void ClockPullerUtilisationPerStreamLeft::NewStreamStarvationMonitor(TUint aStreamId)
 {
-    iStreamRight.SetTrack(aTrackId);
-    iStreamRight.SetStream(aStreamId);
+    iStreamIdRight = aStreamId;
 }
 
 void ClockPullerUtilisationPerStreamLeft::NotifySizeStarvationMonitor(TUint /*aJiffies*/)
@@ -198,7 +196,7 @@ void ClockPullerUtilisationPerStreamLeft::NotifyClockDrift(UtilisationHistory* a
 
 void ClockPullerUtilisationPerStreamLeft::TryAdd(UtilisationHistory& aHistory, TUint aJiffies)
 {
-    if (iStreamLeft == iStreamRight) {
+    if (iStreamIdLeft == iStreamIdRight) {
         aHistory.Add(aJiffies);
     }
 }

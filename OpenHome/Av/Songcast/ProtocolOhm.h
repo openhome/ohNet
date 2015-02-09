@@ -22,7 +22,7 @@ public:
 private: // from ProtocolOhBase
     Media::ProtocolStreamResult Play(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint) override;
 private: // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TUint TryStop(TUint aStreamId) override;
 private:
     TUint iNextFlushId;
     TBool iStopped;

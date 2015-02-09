@@ -32,7 +32,6 @@ using namespace OpenHome::Av;
 DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvider& aFlushIdProvider, IInfoAggregator& aInfoAggregator, IPowerManager& /*aPowerManager*/)
     : Thread("SPHt")
     , iPipeline(aPipeline)
-    , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iTrackFactory = new TrackFactory(aInfoAggregator, 10);
@@ -65,17 +64,12 @@ void DummyFiller::Run()
 
 }
 
-TUint DummyFiller::NextTrackId()
-{
-    return iNextTrackId++;
-}
-
 TUint DummyFiller::NextStreamId()
 {
     return iNextStreamId++;
 }
 
-EStreamPlay DummyFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay DummyFiller::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }
@@ -199,7 +193,7 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
@@ -208,7 +202,7 @@ void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipelin
     Log::Print(aTrack.MetaData());
     Log::Print("; mode=");
     Log::Print(aMode);
-    Log::Print("; trackId=%u; idPipeline=%u}\n", aTrack.Id(), aIdPipeline);
+    Log::Print("; trackId=%u}\n", aTrack.Id());
 #endif
 }
 

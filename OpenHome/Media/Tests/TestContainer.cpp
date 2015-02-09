@@ -26,7 +26,7 @@ public:
     ContainerNullBuffered();
 private: // from ContainerNull
     Msg* ProcessMsg(MsgAudioEncoded* aMsg);
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
 private:
     static const TUint kBufferedAudioBytes = EncodedAudio::kMaxBytes*2;
 };
@@ -88,31 +88,27 @@ public:
 public: // from IFlushIdProvider
     TUint NextFlushId() override;
 public: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
 public: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 public:
     TUint OkToPlayCount();
     TUint SeekCount();
     TUint StopCount();
-    TUint LastSeekTrackId();
     TUint LastSeekStreamId();
     TUint64 LastSeekOffset();
 private:
     TUint iPendingFlushId;
     TUint iCurrentFlushId;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iOkToPlayCount;
     TUint iSeekCount;
     TUint iStopCount;
 
-    TUint iLastSeekTrackId;
     TUint iLastSeekStreamId;
     TUint64 iLastSeekOffset;
 };
@@ -176,7 +172,6 @@ protected:
     TestContainerMsgGenerator* iGenerator;
     TestContainerProvider* iProvider;
     Container* iContainer;
-    TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
     TUint iMsgRcvdCount;
@@ -255,10 +250,10 @@ Msg* ContainerNullBuffered::ProcessMsg(MsgAudioEncoded* aMsg)
     return msg;
 }
 
-TUint ContainerNullBuffered::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint ContainerNullBuffered::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     TUint64 offset = aOffset + kStartOffsetBytes;
-    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, offset);
+    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, offset);
     return iExpectedFlushId;
 }
 
@@ -394,7 +389,7 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
     case EMsgTrack:
         {
         Track* track = iTrackFactory.CreateTrack(Brx::Empty(), Brx::Empty());
-        msg = iMsgFactory.CreateMsgTrack(*track, iPipelineIdProvider.NextTrackId());
+        msg = iMsgFactory.CreateMsgTrack(*track);
         track->RemoveRef();
         }
         iLastMsgType = EMsgTrack;
@@ -440,12 +435,10 @@ Msg* TestContainerMsgGenerator::GenerateMsg(EMsgType aType)
 TestContainerProvider::TestContainerProvider()
     : iPendingFlushId(MsgFlush::kIdInvalid+1)
     , iCurrentFlushId(iPendingFlushId)
-    , iNextTrackId(1)
     , iNextStreamId(1)
     , iOkToPlayCount(0)
     , iSeekCount(0)
     , iStopCount(0)
-    , iLastSeekTrackId(0)
     , iLastSeekStreamId(0)
     , iLastSeekOffset(0)
 {
@@ -456,44 +449,38 @@ TUint TestContainerProvider::NextFlushId()
     return iPendingFlushId++;
 }
 
-TUint TestContainerProvider::NextTrackId()
-{
-    return iNextTrackId++;
-}
-
 TUint TestContainerProvider::NextStreamId()
 {
     return iNextStreamId++;
 }
 
-EStreamPlay TestContainerProvider::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay TestContainerProvider::OkToPlay(TUint /*aStreamId*/)
 {
     iOkToPlayCount++;
     return ePlayYes;
 }
 
-TUint TestContainerProvider::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint TestContainerProvider::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     iSeekCount++;
-    iLastSeekTrackId = aTrackId;
     iLastSeekStreamId = aStreamId;
     iLastSeekOffset = aOffset;
     return iCurrentFlushId++;
 }
 
-TUint TestContainerProvider::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint TestContainerProvider::TryStop(TUint /*aStreamId*/)
 {
     iStopCount++;
     return iCurrentFlushId++;
 }
 
-TBool TestContainerProvider::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool TestContainerProvider::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void TestContainerProvider::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void TestContainerProvider::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -510,11 +497,6 @@ TUint TestContainerProvider::SeekCount()
 TUint TestContainerProvider::StopCount()
 {
     return iStopCount;
-}
-
-TUint TestContainerProvider::LastSeekTrackId()
-{
-    return iLastSeekTrackId;
 }
 
 TUint TestContainerProvider::LastSeekStreamId()
@@ -616,7 +598,6 @@ void SuiteContainerBase::Setup()
     std::vector<TestContainerMsgGenerator::EMsgType> msgOrder;
     iGenerator = new TestContainerMsgGenerator(*iMsgFactory, *iTrackFactory, *iProvider, *iProvider, *iProvider);
     iContainer = new Container(*iMsgFactory, *iGenerator);
-    iTrackId = 0;
     iStreamId = 0;
     iStreamHandler = NULL;
     iMsgRcvdCount = 0;
@@ -703,7 +684,6 @@ Msg* SuiteContainerBase::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteContainerBase::ProcessMsg(MsgTrack* aMsg)
 {
     TEST(iGenerator->LastMsgType() == TestContainerMsgGenerator::EMsgTrack);
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -821,13 +801,13 @@ void SuiteContainerBase::TestStreamHandling()
         PullAndProcess();
     }
 
-    EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iTrackId, iStreamId);
+    EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iStreamId);
     TEST(iOkToPlayRes == ePlayYes);
     TEST(iProvider->OkToPlayCount() == 1);
-    TUint iSeekRes = iContainer->TrySeek(iTrackId, iStreamId, 0);
+    TUint iSeekRes = iContainer->TrySeek(iStreamId, 0);
     TEST(iSeekRes != MsgFlush::kIdInvalid);
     TEST(iProvider->SeekCount() == 1);
-    TUint iStopRes = iContainer->TryStop(iTrackId, iStreamId);
+    TUint iStopRes = iContainer->TryStop(iStreamId);
     TEST(iStopRes != MsgFlush::kIdInvalid);
     TEST(iProvider->StopCount() == 1);
 
@@ -857,13 +837,13 @@ void SuiteContainerBase::TestEndOfStreamQuit()
     }
 
     // OkToPlay/TrySeek should fail after a MsgQuit has been pulled; TryStop should work as before
-    EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iTrackId, iStreamId);
+    EStreamPlay iOkToPlayRes = iContainer->OkToPlay(iStreamId);
     TEST(iOkToPlayRes == ePlayNo);
     TEST(iProvider->OkToPlayCount() == 0);
-    TUint iSeekRes = iContainer->TrySeek(iTrackId, iStreamId, 0);
+    TUint iSeekRes = iContainer->TrySeek(iStreamId, 0);
     TEST(iSeekRes == MsgFlush::kIdInvalid);
     TEST(iProvider->SeekCount() == 0);
-    TUint iStopRes = iContainer->TryStop(iTrackId, iStreamId);
+    TUint iStopRes = iContainer->TryStop(iStreamId);
     TEST(iStopRes != MsgFlush::kIdInvalid);
     TEST(iProvider->StopCount() == 1);
 }
@@ -938,10 +918,9 @@ void SuiteContainerBase::TestFlushPending()
     }
 
     // then call a TrySeek so Container awaits a pending flush
-    TUint seekRes = iContainer->TrySeek(iTrackId, iStreamId, 0);
+    TUint seekRes = iContainer->TrySeek(iStreamId, 0);
     TEST(iProvider->SeekCount() == 1);
     TEST(seekRes != MsgFlush::kIdInvalid);
-    TEST(iProvider->LastSeekTrackId() == iTrackId);
     TEST(iProvider->LastSeekStreamId() == iStreamId);
     TEST(iProvider->LastSeekOffset() == ExpectedSeekStartOffset());
 
@@ -955,7 +934,7 @@ void SuiteContainerBase::TestFlushPending()
     }
 
     // then do a TryStop, as with the TrySeek above
-    TUint stopRes = iContainer->TryStop(iTrackId, iStreamId);
+    TUint stopRes = iContainer->TryStop(iStreamId);
     TEST(iProvider->StopCount() == 1);
     TEST(stopRes != MsgFlush::kIdInvalid);
 
@@ -1017,10 +996,9 @@ void SuiteContainerBase::TestFlushPendingStreamHandler()
     // Call TrySeek()/TryStop() on the IStreamHandler that's been passed down,
     // instead of directly on iContainer.
     ASSERT(iStreamHandler != NULL);
-    TUint seekRes = iStreamHandler->TrySeek(iTrackId, iStreamId, 0);
+    TUint seekRes = iStreamHandler->TrySeek(iStreamId, 0);
     TEST(iProvider->SeekCount() == 1);
     TEST(seekRes != MsgFlush::kIdInvalid);
-    TEST(iProvider->LastSeekTrackId() == iTrackId);
     TEST(iProvider->LastSeekStreamId() == iStreamId);
     TEST(iProvider->LastSeekOffset() == ExpectedSeekStartOffset());
 
@@ -1034,7 +1012,7 @@ void SuiteContainerBase::TestFlushPendingStreamHandler()
     }
 
     // then do a TryStop, as with the TrySeek above
-    TUint stopRes = iStreamHandler->TryStop(iTrackId, iStreamId);
+    TUint stopRes = iStreamHandler->TryStop(iStreamId);
     TEST(iProvider->StopCount() == 1);
     TEST(stopRes != MsgFlush::kIdInvalid);
 

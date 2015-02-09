@@ -292,6 +292,7 @@ TUint Jiffies::JiffiesPerSample(TUint aSampleRate)
     case 192000:
         return kJiffies192000;
     default:
+        LOG(kError, "JiffiesPerSample - invalid sample rate: %u\n", aSampleRate);
         THROW(SampleRateInvalid);
     }
 }
@@ -869,22 +870,16 @@ Media::Track& MsgTrack::Track() const
     return *iTrack;
 }
 
-TUint MsgTrack::IdPipeline() const
-{
-    return iIdPipeline;
-}
-
-void MsgTrack::Initialise(Media::Track& aTrack, TUint aIdPipeline)
+void MsgTrack::Initialise(Media::Track& aTrack)
 {
     iTrack = &aTrack;
     iTrack->AddRef();
-    iIdPipeline = aIdPipeline;}
+}
 
 void MsgTrack::Clear()
 {
     iTrack->RemoveRef();
     iTrack = NULL;
-    iIdPipeline = UINT_MAX;
 }
 
 Msg* MsgTrack::Process(IMsgProcessor& aProcessor)
@@ -1984,32 +1979,6 @@ Msg* MsgQuit::Process(IMsgProcessor& aProcessor)
 }
 
 
-// StreamId
-
-StreamId::StreamId()
-    : iTrackId(IPipelineIdProvider::kTrackIdInvalid)
-    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
-{
-}
-
-void StreamId::SetTrack(TUint aId)
-{
-    iTrackId = aId;
-    iStreamId = IPipelineIdProvider::kStreamIdInvalid;
-}
-
-void StreamId::SetStream(TUint aId)
-{
-    ASSERT(iTrackId != IPipelineIdProvider::kTrackIdInvalid);
-    iStreamId = aId;
-}
-
-TBool StreamId::operator ==(const StreamId& aId) const
-{
-    return (iTrackId == aId.iTrackId && iStreamId == aId.iStreamId);
-}
-
-
 // MsgQueue
 
 MsgQueue::MsgQueue()
@@ -2629,10 +2598,10 @@ MsgSession* MsgFactory::CreateMsgSession()
     return iAllocatorMsgSession.Allocate();
 }
 
-MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack, TUint aIdPipeline)
+MsgTrack* MsgFactory::CreateMsgTrack(Media::Track& aTrack)
 {
     MsgTrack* msg = iAllocatorMsgTrack.Allocate();
-    msg->Initialise(aTrack, aIdPipeline);
+    msg->Initialise(aTrack);
     return msg;
 }
 

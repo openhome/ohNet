@@ -154,7 +154,7 @@ private: // from Protocol
     ProtocolStreamResult Stream(const Brx& aUri);
     ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes);
 private:  // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId);
+    TUint TryStop(TUint aStreamId);
 private:
     Mutex iLock;
     Supply* iSupply;

@@ -199,11 +199,11 @@ void PipelineManager::RemoveAll()
     iIdManager->InvalidateAll();
 }
 
-TBool PipelineManager::Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute)
+TBool PipelineManager::Seek(TUint aStreamId, TUint aSecondsAbsolute)
 {
     AutoMutex _(iPublicLock);
-    LOG(kPipeline, "PipelineManager::Seek(%u, %u, %u)\n", aTrackId, aStreamId, aSecondsAbsolute);
-    return iPipeline->Seek(aTrackId, aStreamId, aSecondsAbsolute);
+    LOG(kPipeline, "PipelineManager::Seek(%u, %u)\n", aStreamId, aSecondsAbsolute);
+    return iPipeline->Seek(aStreamId, aSecondsAbsolute);
 }
 
 TBool PipelineManager::Next()
@@ -290,14 +290,14 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline)
+void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode)
 {
     iLock.Wait();
     iMode.Replace(aMode);
     iTrackId = aTrack.Id();
     iLock.Signal();
     for (TUint i=0; i<iObservers.size(); i++) {
-        iObservers[i]->NotifyTrack(aTrack, aMode, aIdPipeline);
+        iObservers[i]->NotifyTrack(aTrack, aMode);
     }
 }
 

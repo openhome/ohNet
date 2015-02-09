@@ -41,7 +41,6 @@ private:
     const TUint iMaxStreamCount;
     TUint64 iJiffiesUntilNextUsageReport;
     Thread* iThreadExcludeBlock;
-    TUint iTrackId;
     TUint iStreamId;
 };
 

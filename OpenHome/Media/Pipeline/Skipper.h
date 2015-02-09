@@ -24,7 +24,7 @@ public:
     Skipper(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aRampDuration);
     virtual ~Skipper();
     void RemoveCurrentStream(TBool aRampDown);
-    TBool TryRemoveStream(TUint aTrackId, TUint aStreamId, TBool aRampDown);
+    TBool TryRemoveStream(TUint aStreamId, TBool aRampDown);
 public: // from IPipelineElementUpstream
     Msg* Pull() override;
 private: // from IMsgProcessor
@@ -67,7 +67,6 @@ private:
     TUint iCurrentRampValue;
     MsgQueue iQueue; // empty unless we have to split a msg during a ramp
     TUint iTargetFlushId;
-    TUint iTrackId;
     TUint iStreamId;
     IStreamHandler* iStreamHandler;
 };

@@ -77,10 +77,6 @@ Msg* Waiter::ProcessMsg(MsgSession* aMsg)
 
 Msg* Waiter::ProcessMsg(MsgTrack* aMsg)
 {
-    if (iState == EFlushing || iState == ERampingDown) {
-        aMsg->RemoveRef();
-        ASSERTS();
-    }
     return aMsg;
 }
 

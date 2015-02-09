@@ -113,7 +113,7 @@ public:
     void Wait(TUint aFlushId);
     void Stop(TUint aHaltId);
     void RemoveCurrentStream();
-    TBool Seek(TUint aTrackId, TUint aStreamId, TUint aSecondsAbsolute);
+    TBool Seek(TUint aStreamId, TUint aSecondsAbsolute);
     void AddObserver(ITrackObserver& aObserver);
     ISpotifyReporter& SpotifyReporter() const;
     ITrackChangeObserver& TrackChangeObserver() const;
@@ -130,7 +130,7 @@ private: // from IFlushIdProvider
 private: // from IWaiterObserver
     void PipelineWaiting(TBool aWaiting) override;
 private: // from IStopper
-    void RemoveStream(TUint aTrackId, TUint aStreamId) override;
+    void RemoveStream(TUint aStreamId) override;
 private:
     void DoPlay(TBool aQuit);
     void NotifyStatus();
@@ -139,7 +139,7 @@ private: // from IStopperObserver
     void PipelineStopped() override;
     void PipelinePlaying() override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;

@@ -163,9 +163,9 @@ ProtocolGetResult ProtocolOhBase::Get(IWriter& /*aWriter*/, const Brx& /*aUri*/,
     return EProtocolGetErrorNotSupported;
 }
 
-EStreamPlay ProtocolOhBase::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ProtocolOhBase::OkToPlay(TUint aStreamId)
 {
-    return iIdProvider->OkToPlay(aTrackId, aStreamId);
+    return iIdProvider->OkToPlay(aStreamId);
 }
 
 void ProtocolOhBase::CurrentSubnetChanged()
@@ -440,7 +440,7 @@ void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
     iStreamMsgDue = true;
     iMetatextMsgDue = false; // discard any metatext we haven't yet passed on.  It'll describe the previous track
     Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata());
-    iSupply->OutputTrack(*track, iIdProvider->NextTrackId());
+    iSupply->OutputTrack(*track);
     track->RemoveRef();
     aMsg.RemoveRef();
     // FIXME - also need OutputStream (which is complicated by repair vector)

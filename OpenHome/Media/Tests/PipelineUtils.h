@@ -25,9 +25,8 @@ public:
 private: // from Thread
     void Run();
 private: // from IPipelineIdProvider
-    TUint NextTrackId() override;
     TUint NextStreamId() override;
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
     void InvalidateAt(TUint aId) override;
     void InvalidateAfter(TUint aId) override;
     void InvalidatePending() override;
@@ -36,7 +35,6 @@ private:
     ProtocolManager* iProtocolManager;
     TrackFactory* iTrackFactory;
     Brn iUrl;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     static const TUint kInvalidPipelineId = 0;
 };
@@ -53,7 +51,7 @@ public:
     TUint GetMaxDriverJiffies() const;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState);
-    void NotifyTrack(const Brx& aUri, const Brx& aMode, TUint aIdPipeline);
+    void NotifyTrack(const Brx& aUri, const Brx& aMode);
     void NotifyMetaText(const Brx& aText);
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds);
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo);

@@ -466,33 +466,33 @@ void Rewinder::Stop()
     iBuffering = false;
 }
 
-EStreamPlay Rewinder::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay Rewinder::OkToPlay(TUint aStreamId)
 {
-    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    return iStreamHandler->OkToPlay(aStreamId);
 }
 
-TUint Rewinder::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
-{
-    AutoMutex a(iLock);
-    return iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
-}
-
-TUint Rewinder::TryStop(TUint aTrackId, TUint aStreamId)
+TUint Rewinder::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     AutoMutex a(iLock);
-    return iStreamHandler->TryStop(aTrackId, aStreamId);
+    return iStreamHandler->TrySeek(aStreamId, aOffset);
 }
 
-TBool Rewinder::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TUint Rewinder::TryStop(TUint aStreamId)
 {
     AutoMutex a(iLock);
-    return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+    return iStreamHandler->TryStop(aStreamId);
 }
 
-void Rewinder::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+TBool Rewinder::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+{
+    AutoMutex a(iLock);
+    return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
+}
+
+void Rewinder::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     AutoMutex a(iLock);
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }

@@ -57,7 +57,7 @@ private: // from ISourceUpnpAv
     void Seek(TUint aSecondsAbsolute) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
@@ -72,7 +72,6 @@ private:
     ProviderConnectionManager* iProviderConnectionManager;
     ProviderRenderingControl* iProviderRenderingControl;
     Media::IPipelineObserver* iDownstreamObserver;
-    TUint iPipelineTrackId;
     TUint iStreamId;
     Media::EPipelineState iTransportState;
     Media::EPipelineState iPipelineTransportState;

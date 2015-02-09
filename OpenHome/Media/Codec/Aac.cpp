@@ -244,7 +244,7 @@ void CodecAac::StreamCompleted()
 
 TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
 {
-    LOG(kCodec, "CodecAac::Seek(%u, %llu)\n", aStreamId, aSample);
+    LOG(kCodec, "CodecAac::TrySeek(%u, %llu)\n", aStreamId, aSample);
     TUint64 startSample;
 
     TUint64 sampleInSeekTable = aSample;
@@ -255,7 +255,7 @@ TBool CodecAac::TrySeek(TUint aStreamId, TUint64 aSample)
 
     TUint64 bytes = iMp4->GetSeekTable().Offset(sampleInSeekTable, startSample);     // find file offset relating to given audio sample
     LOG(kCodec, "CodecAac::Seek to sample: %llu, byte: %llu\n", startSample, bytes);
-    TBool canSeek = iController->TrySeek(aStreamId, bytes);
+    TBool canSeek = iController->TrySeekTo(aStreamId, bytes);
     if (canSeek) {
         iTotalSamplesOutput = aSample;
         iCurrentSample = startSample;

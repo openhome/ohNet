@@ -107,7 +107,7 @@ private: // from Protocol
     Media::ProtocolStreamResult Stream(const Brx& aUri) override;
     Media::ProtocolGetResult Get(IWriter& aWriter, const Brx& aUri, TUint64 aOffset, TUint aBytes) override;
 private: // from IStreamHandler
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
+    TUint TryStop(TUint aStreamId) override;
 private:
     void StartStream();
     void OutputAudio(const Brn &aPacket, TBool aFirst);

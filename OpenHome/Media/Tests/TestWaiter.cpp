@@ -33,11 +33,11 @@ private: // from IPipelineElementUpstream
 private: // from IWaiterObserver
     void PipelineWaiting(TBool aWaiting) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -92,8 +92,8 @@ private:
     void TestWaitDuringRampingDown();
     void TestWaitDuringRampingUp();
 
-    void TestMsgTrackDuringWaitAsserts();
-    void TestMsgTrackDuringRampingDownAsserts();
+    void TestMsgDecodedStreamDuringWaitAsserts();
+    void TestMsgDecodedStreamDuringRampingDownAsserts();
     void TestMsgDecodedStreamCancelsWaiting();
 
     void TestWaitingStateOnMsgWait();
@@ -110,7 +110,6 @@ private:
     TUint64 iJiffies;
     std::list<Msg*> iPendingMsgs;
     TUint iLastSubsample;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TUint iWaitingCount;
     TUint iWaitingTrueCount;
@@ -134,9 +133,9 @@ SuiteWaiter::SuiteWaiter()
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringWait), "TestWaitDuringWait");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingDown), "TestWaitDuringRampingDown");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitDuringRampingUp), "TestWaitDuringRampingUp");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringWaitAsserts), "TestMsgTrackDuringWaitAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgTrackDuringRampingDownAsserts), "TestMsgTrackDuringRampingDownAsserts");
-    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgEncodedStreamDuringRampingUpAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamDuringWaitAsserts), "TestMsgDecodedStreamkDuringWaitAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamDuringRampingDownAsserts), "TestMsgDecodedStreamDuringRampingDownAsserts");
+    AddTest(MakeFunctor(*this, &SuiteWaiter::TestMsgDecodedStreamCancelsWaiting), "TestMsgDecodedStreamCancelsWaiting");
     AddTest(MakeFunctor(*this, &SuiteWaiter::TestWaitingStateOnMsgWait), "TestWaitingStateOnMsgWait");
 }
 
@@ -150,7 +149,6 @@ void SuiteWaiter::Setup()
     iTrackOffset = 0;
     iJiffies = 0;
     iLastSubsample = 0xffffffff;
-    iNextTrackId = 1;
     iNextStreamId = 1;
     iWaitingCount = iWaitingTrueCount = iWaitingFalseCount = 0;
 }
@@ -185,31 +183,31 @@ void SuiteWaiter::PipelineWaiting(TBool aWaiting)
     }
 }
 
-EStreamPlay SuiteWaiter::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteWaiter::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteWaiter::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteWaiter::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteWaiter::TryStop(TUint /*aTrackId*/, TUint /*aStreamId*/)
+TUint SuiteWaiter::TryStop(TUint /*aStreamId*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteWaiter::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteWaiter::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteWaiter::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteWaiter::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -351,7 +349,7 @@ void SuiteWaiter::PullNext(EMsgType aExpectedMsg)
 Msg* SuiteWaiter::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId++);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }
@@ -811,7 +809,7 @@ void SuiteWaiter::TestWaitDuringRampingUp()
     PullNext(EMsgWait);
 }
 
-void SuiteWaiter::TestMsgTrackDuringWaitAsserts()
+void SuiteWaiter::TestMsgDecodedStreamDuringWaitAsserts()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -843,11 +841,11 @@ void SuiteWaiter::TestMsgTrackDuringWaitAsserts()
     PullNext(EMsgWait);
 
     // No MsgTrack is expected, so should ASSERT()
-    iPendingMsgs.push_back(CreateTrack());
-    TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
+    iPendingMsgs.push_back(CreateDecodedStream());
+    TEST_THROWS(PullNext(EMsgDecodedStream), AssertionFailed);
 }
 
-void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
+void SuiteWaiter::TestMsgDecodedStreamDuringRampingDownAsserts()
 {
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
@@ -865,8 +863,8 @@ void SuiteWaiter::TestMsgTrackDuringRampingDownAsserts()
     iWaiter->Wait(kWaitFlushId, kRampDown);
 
     // No MsgTrack is expected, so should ASSERT()
-    iPendingMsgs.push_back(CreateTrack());
-    TEST_THROWS(PullNext(EMsgTrack), AssertionFailed);
+    iPendingMsgs.push_back(CreateDecodedStream());
+    TEST_THROWS(PullNext(EMsgDecodedStream), AssertionFailed);
 }
 
 void SuiteWaiter::TestMsgDecodedStreamCancelsWaiting()

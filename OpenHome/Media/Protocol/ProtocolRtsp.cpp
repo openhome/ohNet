@@ -234,10 +234,10 @@ ProtocolStreamResult ProtocolRtsp::DoStream()
     return EProtocolStreamErrorRecoverable;
 }
 
-TUint ProtocolRtsp::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolRtsp::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = (iProtocolManager->IsCurrentTrack(aTrackId) && iStreamId == aStreamId);
+    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
     if (stop) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;

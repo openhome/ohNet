@@ -180,7 +180,6 @@ TestCodecFiller::TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& 
     : Thread("TCFL")
     , iPipeline(aDownstream)
     , iMsgFactory(aMsgFactory)
-    , iNextTrackId(kInvalidPipelineId+1)
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aDownstream, aMsgFactory, *this, aFlushIdProvider);
@@ -198,11 +197,6 @@ void TestCodecFiller::Start(const Brx& aUrl)
 {
     iUrl.Set(aUrl);
     Thread::Start();
-}
-
-TUint TestCodecFiller::TrackId()
-{
-    return iNextTrackId-1;
 }
 
 TUint TestCodecFiller::StreamId()
@@ -226,17 +220,12 @@ void TestCodecFiller::Run()
     }
 }
 
-TUint TestCodecFiller::NextTrackId()
-{
-    return iNextTrackId++;
-}
-
 TUint TestCodecFiller::NextStreamId()
 {
     return iNextStreamId++;
 }
 
-EStreamPlay TestCodecFiller::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay TestCodecFiller::OkToPlay(TUint /*aStreamId*/)
 {
     return ePlayYes;
 }
@@ -305,7 +294,7 @@ TBool TestCodecMinimalPipeline::SeekCurrentTrack(TUint aSecondsAbsolute)
 {
     ISeeker* seeker = static_cast<ISeeker*>(iController);
     TUint handle;
-    seeker->StartSeek(iFiller->TrackId(), iFiller->StreamId(), aSecondsAbsolute, *this, handle);
+    seeker->StartSeek(iFiller->StreamId(), aSecondsAbsolute, *this, handle);
     return (handle != ISeeker::kHandleError);
 }
 

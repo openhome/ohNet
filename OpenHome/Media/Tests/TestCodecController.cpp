@@ -58,11 +58,11 @@ private: // from IPipelineElementUpstream
 private: // from IPipelineElementDownstream
     void Push(Msg* aMsg) override;
 private: // from IStreamHandler
-    EStreamPlay OkToPlay(TUint aTrackId, TUint aStreamId) override;
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset) override;
-    TUint TryStop(TUint aTrackId, TUint aStreamId) override;
-    TBool TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
-    void NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId) override;
+    EStreamPlay OkToPlay(TUint aStreamId) override;
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset) override;
+    TUint TryStop(TUint aStreamId) override;
+    TBool TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes) override;
+    void NotifyStarving(const Brx& aMode, TUint aStreamId) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -120,7 +120,6 @@ protected:
     TUint64 iJiffies;
     TUint64 iMsgOffset;
     TUint iStopCount;
-    TUint iTrackId;
     TUint iStreamId;
 private:
     AllocatorInfoLogger iInfoAggregator;
@@ -132,7 +131,6 @@ private:
     Mutex* iLockPending;
     Mutex* iLockReceived;
     EMsgType iLastReceivedMsg;
-    TUint iNextTrackId;
     TUint iNextStreamId;
     TBool iSeekable;
 };
@@ -146,7 +144,7 @@ private: // from SuiteCodecControllerBase
     void Setup();
     void TearDown();
 private: // from SuiteCodecControllerBase
-    TUint TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset);
+    TUint TrySeek(TUint aStreamId, TUint64 aOffset);
 private: // from ISeekObserver
     void NotifySeekComplete(TUint aHandle, TUint aFlushId);
 private:
@@ -265,8 +263,8 @@ void SuiteCodecControllerBase::Setup()
     iSemStop = new Semaphore("TCSS", 0);
     iLockPending = new Mutex("TCMP");
     iLockReceived = new Mutex("TCMR");
-    iTrackId = iStreamId = UINT_MAX;
-    iNextTrackId = iNextStreamId = 0;
+    iStreamId = UINT_MAX;
+    iNextStreamId = 0;
     iTotalBytes = iTrackOffsetBytes = 0;
     iTrackOffset = 0;
     iJiffies = 0;
@@ -318,36 +316,36 @@ void SuiteCodecControllerBase::Push(Msg* aMsg)
     iSemReceived->Signal();
 }
 
-EStreamPlay SuiteCodecControllerBase::OkToPlay(TUint /*aTrackId*/, TUint /*aStreamId*/)
+EStreamPlay SuiteCodecControllerBase::OkToPlay(TUint /*aStreamId*/)
 {
     ASSERTS();
     return ePlayNo;
 }
 
-TUint SuiteCodecControllerBase::TrySeek(TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/)
+TUint SuiteCodecControllerBase::TrySeek(TUint /*aStreamId*/, TUint64 /*aOffset*/)
 {
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TUint SuiteCodecControllerBase::TryStop(TUint aTrackId, TUint aStreamId)
+TUint SuiteCodecControllerBase::TryStop(TUint aStreamId)
 {
     iStopCount++;
     iSemStop->Signal();
-    if (aTrackId == iTrackId && aStreamId == iStreamId) {
+    if (aStreamId == iStreamId) {
         return kExpectedFlushId;
     }
     ASSERTS();
     return MsgFlush::kIdInvalid;
 }
 
-TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, TUint /*aTrackId*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
+TBool SuiteCodecControllerBase::TryGet(IWriter& /*aWriter*/, TUint /*aStreamId*/, TUint64 /*aOffset*/, TUint /*aBytes*/)
 {
     ASSERTS();
     return false;
 }
 
-void SuiteCodecControllerBase::NotifyStarving(const Brx& /*aMode*/, TUint /*aTrackId*/, TUint /*aStreamId*/)
+void SuiteCodecControllerBase::NotifyStarving(const Brx& /*aMode*/, TUint /*aStreamId*/)
 {
 }
 
@@ -366,7 +364,6 @@ Msg* SuiteCodecControllerBase::ProcessMsg(MsgSession* aMsg)
 Msg* SuiteCodecControllerBase::ProcessMsg(MsgTrack* aMsg)
 {
     iLastReceivedMsg = EMsgTrack;
-    iTrackId = aMsg->IdPipeline();
     return aMsg;
 }
 
@@ -492,7 +489,7 @@ void SuiteCodecControllerBase::PullNext(EMsgType aExpectedMsg, TUint64 aExpected
 Msg* SuiteCodecControllerBase::CreateTrack()
 {
     Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-    Msg* msg = iMsgFactory->CreateMsgTrack(*track, ++iNextTrackId);
+    Msg* msg = iMsgFactory->CreateMsgTrack(*track);
     track->RemoveRef();
     return msg;
 }
@@ -541,9 +538,8 @@ void SuiteCodecControllerStream::TearDown()
     SuiteCodecControllerBase::TearDown();
 }
 
-TUint SuiteCodecControllerStream::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 /*aOffset*/)
+TUint SuiteCodecControllerStream::TrySeek(TUint aStreamId, TUint64 /*aOffset*/)
 {
-    TEST(aTrackId == iTrackId);
     TEST(aStreamId == aStreamId);
     return kExpectedFlushId;
 }
@@ -835,7 +831,7 @@ void SuiteCodecControllerStream::TestSeek()
     ISeeker& seeker = *iController;
     TUint handle = ISeeker::kHandleError;
     TUint seekSeconds = 1;
-    seeker.StartSeek(iTrackId, iStreamId, seekSeconds, *this, handle); // seek to 1s
+    seeker.StartSeek(iStreamId, seekSeconds, *this, handle); // seek to 1s
 
     // Send some more msgs down to cause CodecController to unblock and start the seek.
     // These will be discarded.

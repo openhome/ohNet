@@ -183,37 +183,37 @@ Msg* ContainerBase::Pull()
     return msg;
 }
 
-EStreamPlay ContainerBase::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ContainerBase::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "ContainerBase::OkToPlay\n");
-    return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+    return iStreamHandler->OkToPlay(aStreamId);
 }
 
-TUint ContainerBase::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint ContainerBase::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ContainerBase::TrySeek\n");
     // seek to absolute offset in stream by default; containers subclassing this can override
-    iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+    iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, aOffset);
     return iExpectedFlushId;
 }
 
-TUint ContainerBase::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ContainerBase::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ContainerBase::TryStop\n");
-    iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+    iExpectedFlushId = iStreamHandler->TryStop(aStreamId);
     return iExpectedFlushId;
 }
 
-TBool ContainerBase::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool ContainerBase::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     LOG(kMedia, "ContainerBase::TryGet\n");
-    return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+    return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
 }
 
-void ContainerBase::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void ContainerBase::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }
 
@@ -524,22 +524,22 @@ Msg* ContainerFront::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-EStreamPlay ContainerFront::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay ContainerFront::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "ContainerFront::OkToPlay\n");
     if (!iQuit) {
-        return iStreamHandler->OkToPlay(aTrackId, aStreamId);
+        return iStreamHandler->OkToPlay(aStreamId);
     }
     else {
         return ePlayNo;
     }
 }
 
-TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint ContainerFront::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "ContainerFront::TrySeek\n");
     if (!iQuit) {
-        iExpectedFlushId = iStreamHandler->TrySeek(aTrackId, aStreamId, aOffset);
+        iExpectedFlushId = iStreamHandler->TrySeek(aStreamId, aOffset);
         return iExpectedFlushId;
     }
     else {
@@ -547,29 +547,29 @@ TUint ContainerFront::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
     }
 }
 
-TUint ContainerFront::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ContainerFront::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "ContainerFront::TryStop\n");
     if (iStreamHandler != NULL) {
-        iExpectedFlushId = iStreamHandler->TryStop(aTrackId, aStreamId);
+        iExpectedFlushId = iStreamHandler->TryStop(aStreamId);
         return iExpectedFlushId;
     }
     return MsgFlush::kIdInvalid;
 }
 
-TBool ContainerFront::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool ContainerFront::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     LOG(kMedia, "ContainerFront::TryGet\n");
     if (!iQuit) {
-        return iStreamHandler->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+        return iStreamHandler->TryGet(aWriter, aStreamId, aOffset, aBytes);
     }
     return false;
 }
 
-void ContainerFront::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void ContainerFront::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iStreamHandler != NULL) {
-        iStreamHandler->NotifyStarving(aMode, aTrackId, aStreamId);
+        iStreamHandler->NotifyStarving(aMode, aStreamId);
     }
 }
 
@@ -708,33 +708,33 @@ Msg* Container::ProcessMsg(MsgQuit* aMsg)
     return aMsg;
 }
 
-EStreamPlay Container::OkToPlay(TUint aTrackId, TUint aStreamId)
+EStreamPlay Container::OkToPlay(TUint aStreamId)
 {
     LOG(kMedia, "Container::OkToPlay\n");
-    return iContainerFront->iActiveContainer->OkToPlay(aTrackId, aStreamId);
+    return iContainerFront->iActiveContainer->OkToPlay(aStreamId);
 }
 
-TUint Container::TrySeek(TUint aTrackId, TUint aStreamId, TUint64 aOffset)
+TUint Container::TrySeek(TUint aStreamId, TUint64 aOffset)
 {
     LOG(kMedia, "Container::TrySeek\n");
-    return iContainerFront->iActiveContainer->TrySeek(aTrackId, aStreamId, aOffset);
+    return iContainerFront->iActiveContainer->TrySeek(aStreamId, aOffset);
 }
 
-TUint Container::TryStop(TUint aTrackId, TUint aStreamId)
+TUint Container::TryStop(TUint aStreamId)
 {
     LOG(kMedia, "Container::TryStop\n");
-    return iContainerFront->iActiveContainer->TryStop(aTrackId, aStreamId);
+    return iContainerFront->iActiveContainer->TryStop(aStreamId);
 }
 
-TBool Container::TryGet(IWriter& aWriter, TUint aTrackId, TUint aStreamId, TUint64 aOffset, TUint aBytes)
+TBool Container::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, TUint aBytes)
 {
     LOG(kMedia, "Container::TryGet\n");
-    return iContainerFront->iActiveContainer->TryGet(aWriter, aTrackId, aStreamId, aOffset, aBytes);
+    return iContainerFront->iActiveContainer->TryGet(aWriter, aStreamId, aOffset, aBytes);
 }
 
-void Container::NotifyStarving(const Brx& aMode, TUint aTrackId, TUint aStreamId)
+void Container::NotifyStarving(const Brx& aMode, TUint aStreamId)
 {
     if (iContainerFront != NULL) {
-        iContainerFront->NotifyStarving(aMode, aTrackId, aStreamId);
+        iContainerFront->NotifyStarving(aMode, aStreamId);
     }
 }

@@ -74,7 +74,6 @@ private:
     AllocatorInfoLogger iInfoAggregator;
     Pruner* iPruner;
     EMsgType iLastPulledMsg;
-    TUint iNextTrackId;
     TUint iPulledTrackId;
     std::vector<EMsgType> iPendingMsgs;
 };
@@ -101,7 +100,6 @@ void SuitePruner::Setup()
     iMsgFactory = new MsgFactory(iInfoAggregator, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 2, 1, 1, 1);
     iTrackFactory = new TrackFactory(iInfoAggregator, 3);
     iPruner = new Pruner(*this);
-    iNextTrackId = 0;
     iPulledTrackId = UINT_MAX/2;
 }
 
@@ -311,9 +309,8 @@ Msg* SuitePruner::Pull()
     case EMsgTrack:
     {
         Track* track = iTrackFactory->CreateTrack(Brx::Empty(), Brx::Empty());
-        Msg* msg = iMsgFactory->CreateMsgTrack(*track, iNextTrackId);
+        Msg* msg = iMsgFactory->CreateMsgTrack(*track);
         track->RemoveRef();
-        iNextTrackId++;
         return msg;
     }
     case EMsgDelay:

@@ -61,7 +61,7 @@ private: // from IZoneListener
     void NotifyPresetInfo(TUint aPreset, const Brx& aMetadata) override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TUint aIdPipeline) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
@@ -328,7 +328,7 @@ void SourceReceiver::NotifyPipelineState(EPipelineState aState)
     iSender->NotifyPipelineState(aState);
 }
 
-void SourceReceiver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TUint /*aIdPipeline*/)
+void SourceReceiver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
 {
 }
 

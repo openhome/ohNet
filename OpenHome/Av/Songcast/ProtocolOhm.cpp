@@ -153,10 +153,9 @@ ProtocolStreamResult ProtocolOhm::Play(TIpAddress aInterface, TUint aTtl, const 
     return iStopped? EProtocolStreamStopped : EProtocolStreamErrorUnrecoverable;
 }
 
-TUint ProtocolOhm::TryStop(TUint aTrackId, TUint aStreamId)
+TUint ProtocolOhm::TryStop(TUint aStreamId)
 {
-    if (iProtocolManager->IsCurrentTrack(aTrackId) &&
-        iStreamId == aStreamId && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
+    if (iProtocolManager->IsCurrentStream(aStreamId) && iStreamId != IPipelineIdProvider::kStreamIdInvalid) {
         iNextFlushId = iFlushIdProvider->NextFlushId();
         iStopped = true;
         iSocket.ReadInterrupt();

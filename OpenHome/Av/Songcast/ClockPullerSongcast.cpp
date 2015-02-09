@@ -148,7 +148,7 @@ void ClockPullerSongcast::StartDecodedReservoir(TUint /*aCapacityJiffies*/, TUin
     iHistoryLeft->Reset();
 }
 
-void ClockPullerSongcast::NewStreamDecodedReservoir(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void ClockPullerSongcast::NewStreamDecodedReservoir(TUint /*aStreamId*/)
 {
 }
 
@@ -170,7 +170,7 @@ void ClockPullerSongcast::StartStarvationMonitor(TUint /*aCapacityJiffies*/, TUi
     iHistoryRight->Reset();
 }
 
-void ClockPullerSongcast::NewStreamStarvationMonitor(TUint /*aTrackId*/, TUint /*aStreamId*/)
+void ClockPullerSongcast::NewStreamStarvationMonitor(TUint /*aStreamId*/)
 {
 }
 
