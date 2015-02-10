@@ -14,10 +14,22 @@ FileStream::FileStream()
 {
 }
 
+FileStream::FileStream(const TChar* aFilename, FileMode aFileMode)
+    : iFile(IFile::Open(aFilename, aFileMode))
+    , iLock("FSTR")
+    , iInterrupt(false)
+    , iSize(Bytes())
+    , iPos(Tell())
+{
+}
+
+
 void FileStream::OpenFile(const TChar* aFilename, FileMode aFileMode)
 {
-    ASSERT(iFile != NULL);
+    ASSERT(iFile == NULL);
     iFile = IFile::Open(aFilename, aFileMode);
+    iSize = Bytes();
+    iPos = Tell();
 }
 
 void FileStream::SetFile(IFile* aFile)
@@ -32,6 +44,7 @@ void FileStream::SetFile(IFile* aFile)
 
 void FileStream::CloseFile()
 {
+    ASSERT(iFile != NULL);
     iLock.Wait();
     delete iFile;
     iFile = NULL;
