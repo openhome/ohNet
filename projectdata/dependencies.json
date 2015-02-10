@@ -27,8 +27,8 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.31",
-        "type":             "internal",
+        "version":          "0.1.32",
+        "type":             "openhome",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
     },
