@@ -149,7 +149,8 @@ if __name__ == '__main__':
     f.close()
 
     # start softplayer, wait for exit
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalId=accts['tidal']['id'] )
+    tuneinUser = Config.Config().Get( 'tunein.user.o2' )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn=tuneinUser, aTidalId=accts['tidal']['id'] )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'

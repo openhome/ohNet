@@ -32,6 +32,7 @@ except:
 
 
 config    = Config.Config()
+tunein    = config.Get( 'tunein.user.o2' )
 plEnc     = config.Get( 'playlist.asset.enc-free' )
 plMix     = config.Get( 'playlist.asset.mixed-free' )
 server    = config.Get( 'mediaserver.asset' )
@@ -55,7 +56,7 @@ tests = [
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                                       ],
-    [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2', 20,      'on',   1                                        ],
+    [ 'TestRadioPlayChannels',       'local', 'local', tunein,  20,      'on',   1                                        ],
 
     # Tidal
     [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off',  100,      tidalId,   tidalUser, tidalPwd ],
