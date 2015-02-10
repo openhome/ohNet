@@ -8,20 +8,12 @@ Parameters:
               - fixed     check reporting of fixed data
               - presets   check setup/reporting of preset channels and ID lists
               - manual    check setup/reporting of manually configured channels
-              
+              - updated   for update of Radiotime preset list
+
 Suite of tests to check the operation of the Radio service. Checks all aspects
 of this service EXCEPT actual playback of the radio channels (which is tested
 in the TestRadioPlayback test script)
-
-Relies on LinnEngRadio Icecast radio server at 10.2.8.201
-""" 
-
-# Uses the following TuneIn account for sourciing radio information. The presets
-# contained have been selected to test all aspects of the radio functionality
-# whilst working on the basis of only free codec support (so ohMediaPlayer can
-# be tested 
-#     - linn-test-presets-1 / password:klueso
-
+"""
 import _FunctionalTest
 import BaseTest                   as BASE
 import Upnp.ControlPoints.Volkano as Volkano
@@ -33,38 +25,36 @@ import threading
 import urllib
 import xml.etree.ElementTree as ET
 
-kTuneInUser       = 'linn-test-presets-1'
 kTuneInUrl        = 'http://opml.radiotime.com/'
-kTuneInPartner    = 'ah2rjr68'
 kTuneInBrowseAll  = 'Browse.ashx?c=presets&formats=mp3,wma,aac,wmvideo,ogg'
 kTuneInBrowseFree = 'Browse.ashx?c=presets&formats=aac,ogg'
-kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'       +\
-                    'http-get:*:audio/wav:*,'          +\
-                    'http-get:*:audio/wave:*,'         +\
-                    'http-get:*:audio/x-wav:*,'        +\
-                    'http-get:*:audio/mpeg:*,'         +\
-                    'http-get:*:audio/x-mpeg:*,'       +\
-                    'http-get:*:audio/mp1:*,'          +\
-                    'http-get:*:audio/aiff:*,'         +\
-                    'http-get:*:audio/x-aiff:*,'       +\
-                    'http-get:*:audio/x-m4a:*,'        +\
-                    'http-get:*:audio/x-ms-wma:*,'     +\
-                    'rtsp-rtp-udp:*:audio/x-ms-wma:*,' +\
-                    'http-get:*:audio/x-scpls:*,'      +\
-                    'http-get:*:audio/x-mpegurl:*,'    +\
-                    'http-get:*:audio/x-ms-asf:*,'     +\
-                    'http-get:*:audio/x-ms-wax:*,'     +\
-                    'http-get:*:audio/x-ms-wvx:*,'     +\
-                    'http-get:*:video/x-ms-asf:*,'     +\
-                    'http-get:*:video/x-ms-wax:*,'     +\
-                    'http-get:*:video/x-ms-wvx:*,'     +\
-                    'http-get:*:text/xml:*,'           +\
-                    'http-get:*:audio/aac:*,'          +\
-                    'http-get:*:audio/aacp:*,'         +\
-                    'http-get:*:audio/mp4:*,'          +\
-                    'http-get:*:audio/ogg:*,'          +\
-                    'http-get:*:audio/x-ogg:*,'        +\
-                    'http-get:*:application/ogg:*'     +\
+kProtocolInfoAll  = 'http-get:*:audio/x-flac:*,'         +\
+                    'http-get:*:audio/wav:*,'            +\
+                    'http-get:*:audio/wave:*,'           +\
+                    'http-get:*:audio/x-wav:*,'          +\
+                    'http-get:*:audio/mpeg:*,'           +\
+                    'http-get:*:audio/x-mpeg:*,'         +\
+                    'http-get:*:audio/mp1:*,'            +\
+                    'http-get:*:audio/aiff:*,'           +\
+                    'http-get:*:audio/x-aiff:*,'         +\
+                    'http-get:*:audio/x-m4a:*,'          +\
+                    'http-get:*:audio/x-ms-wma:*,'       +\
+                    'rtsp-rtp-udp:*:audio/x-ms-wma:*,'   +\
+                    'http-get:*:audio/x-scpls:*,'        +\
+                    'http-get:*:audio/x-mpegurl:*,'      +\
+                    'http-get:*:audio/x-ms-asf:*,'       +\
+                    'http-get:*:audio/x-ms-wax:*,'       +\
+                    'http-get:*:audio/x-ms-wvx:*,'       +\
+                    'http-get:*:video/x-ms-asf:*,'       +\
+                    'http-get:*:video/x-ms-wax:*,'       +\
+                    'http-get:*:video/x-ms-wvx:*,'       +\
+                    'http-get:*:text/xml:*,'             +\
+                    'http-get:*:audio/aac:*,'            +\
+                    'http-get:*:audio/aacp:*,'           +\
+                    'http-get:*:audio/mp4:*,'            +\
+                    'http-get:*:audio/ogg:*,'            +\
+                    'http-get:*:audio/x-ogg:*,'          +\
+                    'http-get:*:application/ogg:*,'      +\
                     'tidalhifi.com:*:*:*'
 kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/wav:*,'          +\
@@ -84,10 +74,10 @@ kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'tidalhifi.com:*:*:*,'
 
 kChannelsMax      = 100
-kLocalChannels    = [ # For the purposes of this test it doesn't matter if these work or not
-                     {'uri' : 'http://10.2.8.201:8000/mp3-128k-stereo',
+kManualChannels   = [ # For the purposes of this test it doesn't matter if these work or not
+                     {'uri' : 'http://192.168.10.201:8000/mp3-128k-stereo',
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 128k Stereo</dc:title><res>http://10.2.8.201:8000/mp3-128k-stereo</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'},
-                     {'uri' : 'http://10.2.8.201:8000/mp3-32k-mono',
+                     {'uri' : 'http://192.168.10.201:8000/mp3-32k-mono',
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
 
 
@@ -119,12 +109,13 @@ class TestRadioService( BASE.BaseTest ):
             print '\n', __doc__, '\n'
             self.log.Abort( '', 'Invalid arguments %s' % (str( aArgs )) )
 
-        if mode not in ['all', 'fixed', 'presets', 'manual']:
+        if mode not in ['all', 'fixed', 'presets', 'manual', 'updated']:
             self.log.Abort( '', 'Invalid test mode:- %s' % mode )
 
         if radioName.lower() == 'local':
             loopback = True
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=kTuneInUser, aLoopback=loopback )
+            tuneinUser = self.config.Get( 'tunein.user.l1' )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=tuneinUser, aLoopback=loopback )
             radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True, aLoopback=loopback )
@@ -136,6 +127,8 @@ class TestRadioService( BASE.BaseTest ):
             self.TestPresets()
         if mode in ['all','manual']:
             self.TestManual()
+        # if mode in ['all','updated']:             needs config service
+        #     self.TestUpdated()
         time.sleep( 3 )     # needed to ensure clean shutdown of SoftPlayer
             
     def Cleanup( self ):
@@ -210,7 +203,10 @@ class TestRadioService( BASE.BaseTest ):
             browse = kTuneInBrowseFree
         else:
             browse = kTuneInBrowseAll
-        tiId   = '&username=%s&partnerId=%s' % (kTuneInUser, kTuneInPartner)
+
+        partner = self.config.Get( 'tunein.partnerid' )
+        user = self.config.Get( 'tunein.user.l1' )
+        tiId = '&username=%s&partnerId=%s' % (user, partner)
         resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + tiId )
         dflt = self._GetFromOpmlDefault( resp )
         resp = self._UrlQuery( kTuneInUrl + browse + tiId )
@@ -283,7 +279,7 @@ class TestRadioService( BASE.BaseTest ):
         self.dut.radio.SetChannel( 'uri', 'meta' )
         self.uriUpdated.wait( 5 )
         
-        for channel in kLocalChannels:
+        for channel in kManualChannels:
             self.uriUpdated.clear()
             self.metaUpdated.clear()
             self.dut.radio.SetChannel( channel['uri'], channel['meta'] )
@@ -312,7 +308,43 @@ class TestRadioService( BASE.BaseTest ):
             self.log.FailUnless( self.dutDev, self.dut.radio.polledId==0,
                 'Actual/Expected POLLED channel ID %d/0' % self.dut.radio.polledId )
         self.dut.radio.RemoveSubscriber( _RadioEvtCb )
-    
+
+    def TestUpdated( self ):
+        """Verify TuneIn updates are detected by DS"""
+        idArrayUpdated = threading.Event()
+
+        # noinspection PyUnusedLocal
+        def _IdArrayEvtCb( aService, aSvName, aSvVal, aSvSeq ):
+            if aSvName == 'IdArray':
+                idArrayUpdated.set()
+
+        self.log.Header2( self.dutDev, 'Testing detection of TuneIn updates' )
+        self.dut.radio.AddSubscriber( _IdArrayEvtCb )
+        idArrayUpdated.clear()
+        self.dut.config.Set( 'TuneIn Radio', 'Username', 'bollocks' )
+        idArrayUpdated.wait( 10 )
+
+        idArrayUpdated.clear()
+        partner = self.config.Get( 'tunein.partnerid' )
+        hdr     = 'http://opml.radiotime.com/'
+        user    = '&partnerId=%s&username=bollocks&password=bollocks' % partner
+        self._UrlQuery( hdr + 'Preset.ashx?c=add&id=s32500' + user )
+
+        for i in range( 36 ):
+            if not idArrayUpdated.isSet():
+                self.log.Info( self.dutDev, 'Waiting for IdArray update....%d' % (900-(10*i)) )
+                time.sleep( 10 )
+            else:
+                break
+
+        if idArrayUpdated.isSet():
+            self.log.Pass( self.dutDev, 'ID updated OK after change to TuneIn presets' )
+        else:
+            self.log.Fail( self.dutDev, 'NO ID update after change to TuneIn presets' )
+
+        self._UrlQuery( hdr + 'Preset.ashx?c=remove&id=s32500' + user )
+        self.dut.radio.RemoveSubscriber( _IdArrayEvtCb )
+
 
 if __name__ == '__main__':
     
