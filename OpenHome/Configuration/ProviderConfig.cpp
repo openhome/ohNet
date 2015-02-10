@@ -1,5 +1,4 @@
 #include <OpenHome/Configuration/ProviderConfig.h>
-#include <OpenHome/Configuration/ConfigManager.h>
 #include <OpenHome/Av/Product.h>
 
 using namespace OpenHome;
@@ -17,6 +16,34 @@ IProvider* ProviderFactory::NewConfiguration(Product& aProduct, DvDevice& aDevic
 }
 
 
+// KeyWriterJson
+
+KeyWriterJson::KeyWriterJson(IWriter& aWriter)
+    : iWriter(aWriter)
+    , iJsonSanitiser(iWriter)
+{
+}
+
+void KeyWriterJson::WriteKeys(const std::vector<const Brx*>& aKeys)
+{
+    iWriter.Write('[');
+    auto it = aKeys.cbegin();
+    for (;;) {
+        iJsonSanitiser.Write(**it);
+        ++it;
+
+        if (it != aKeys.cend()) {
+            iWriter.Write(Brn(", "));
+        }
+        else {
+            break;
+        }
+    }
+    iWriter.Write(']');
+    iWriter.WriteFlush();
+}
+
+
 // ProviderConfig
 
 const Brn ProviderConfig::kErrorDescInvalidKey("Invalid key");
@@ -29,8 +56,17 @@ ProviderConfig::ProviderConfig(DvDevice& aDevice, Configuration::IConfigManager&
     : DvProviderAvOpenhomeOrgConfiguration1(aDevice)
     , iConfigManager(aConfigManager)
 {
+    EnableActionGetKeys();
     EnableActionSetValue();
     EnableActionGetValue();
+}
+
+void ProviderConfig::GetKeys(IDvInvocation& aInvocation, IDvInvocationResponseString& aKeyList)
+{
+    KeyWriterJson keyWriter(aKeyList);
+    aInvocation.StartResponse();
+    iConfigManager.WriteKeys(keyWriter);
+    aInvocation.EndResponse();
 }
 
 void ProviderConfig::SetValue(IDvInvocation& aInvocation, const Brx& aKey, const Brx& aValue)

@@ -90,6 +90,13 @@ class ConfigNum;
 class ConfigChoice;
 class ConfigText;
 
+class IKeyWriter
+{
+public:
+    virtual void WriteKeys(const std::vector<const Brx*>& aKeys) = 0;
+    virtual ~IKeyWriter() {}
+};
+
 /*
  * Interface for reading config vals from a configuration manager.
  */
@@ -98,6 +105,7 @@ class IConfigManager
 public:
     static const TUint kSubscriptionIdInvalid = 0;
 public:
+    virtual void WriteKeys(IKeyWriter& aWriter) const = 0;
     virtual TBool HasNum(const Brx& aKey) const = 0;
     virtual ConfigNum& GetNum(const Brx& aKey) const = 0;
     virtual TBool HasChoice(const Brx& aKey) const = 0;
@@ -515,6 +523,7 @@ public:
     void Print() const;     // for debugging!
     void DumpToStore();     // for debugging!
 public: // from IConfigManager
+    void WriteKeys(IKeyWriter& aWriter) const override;
     TBool HasNum(const Brx& aKey) const override;
     ConfigNum& GetNum(const Brx& aKey) const override;
     TBool HasChoice(const Brx& aKey) const override;
@@ -540,7 +549,7 @@ private:
     template <class T> void Print(const ConfigVal<T>& aVal) const;
     template <class T> void Print(const SerialisedMap<T>& aMap) const;
 private:
-    class StoreDumper : public INonCopyable
+    class StoreDumper : private INonCopyable
     {
     public:
         StoreDumper(IConfigInitialiser& aConfigInit);
@@ -559,8 +568,9 @@ private:
     ConfigNumMap iMapNum;
     ConfigChoiceMap iMapChoice;
     ConfigTextMap iMapText;
+    std::vector<const Brx*> iKeyListOrdered;
     TBool iOpen;
-    Mutex iLock;
+    mutable Mutex iLock;
 };
 
 } // namespace Configuration
