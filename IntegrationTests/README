@@ -59,7 +59,7 @@ contains sensitive data such as streaming services IDs/users/passwords
 	<network>192.168.1.45</network>
 
 	<softplayer>
-	    <adapter>1</adapter>
+	    <adapter>0</adapter>
 	</softplayer>
 
 	<mediaserver>
@@ -76,7 +76,7 @@ contains sensitive data such as streaming services IDs/users/passwords
 	<tidal>
 		<id>123</id>
 		<user>user</user>
-		<password>1234<password>
+		<password>1234</password>
 	</tidal>
 
 	<playlist>
