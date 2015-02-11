@@ -6,6 +6,16 @@
     </specVersion>
     <actionList>
         <action>
+            <name>GetKeys</name>
+            <argumentList>
+                <argument>
+                    <name>KeyList</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
             <name>SetValue</name>
             <argumentList>
                 <argument>

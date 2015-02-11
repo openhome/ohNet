@@ -5,8 +5,8 @@ from integration tests, and to capture SoftPlayer output to test logs
 """
 
 import _FunctionalTest
-import _Config   as Config
 import Component as BASE
+import Config
 import os
 import platform
 import random
@@ -40,9 +40,9 @@ class SoftPlayer( BASE.Component ):
         self.room       = None
         self.model      = None
 
-        hostId = None
-        if self.testConfig.softplayer.adapter is not None:
-            hostId = int( self.testConfig.softplayer.adapter )
+        hostId = self.testConfig.Get( 'softplayer.adapter' )
+        if hostId is not None:
+            hostId = int( hostId )
 
         random.seed()
         uniqueId = '%06d' % random.randint( 0, 999999 )
@@ -149,7 +149,8 @@ if __name__ == '__main__':
     f.close()
 
     # start softplayer, wait for exit
-    s = SoftPlayer( aRoom='TestDev', aTuneIn='ohmp2', aTidalId=accts['tidal']['id'] )
+    tuneinUser = Config.Config().Get( 'tunein.user.o2' )
+    s = SoftPlayer( aRoom='TestDev', aTuneIn=tuneinUser, aTidalId=accts['tidal']['id'] )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'

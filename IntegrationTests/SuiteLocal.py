@@ -2,99 +2,88 @@
                 individual tests)  SoftPlayer(s) as DUT(s)
 
 Parameters:
-    arg#1 - UPnP Media Server to use for tests
-    arg#2 - DACP (iTunes) server PC
-    arg#3 - [Optional] log directory
+    arg#1 - [Optional] log directory
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s).
 Loopback adapter is used where practical (so all cases except for Airplay and
 where external media server is required - ohNet does not allow mix of local
 loopback and standard adapter devices within single process space)
 
- - Network interface to use for testing defined in local Config.xml
+ - Network interface to use for testing defined in test configuration XML
  - SoftPlayer instance(s) created/destryed as required
  - iTunes server must be available (for Airplay testing)
  - UPnP media server with reqd. playlists must be available (for playlist soaks) 
 """
 import _FunctionalTest
 import BaseSuite as Suite
-import json
+import Config
 import os
 import sys
  
-ms      = None
 logDir  = None
-dacp    = None
-avtList = 'Playlists  ~Encodings-FreeCodecs'
-mpList  = 'Playlists  ~Mixed-FreeCodecs'
-apTrack = 'Stereo1kHz-441-16-0dB-72m'
-
-# read tidal account details from non-published file
-p = os.path.normpath( '//10.2.7.70/klueso/accounts.json' )
-f = open( p, 'rt' )
-accts = json.load( f )
-f.close()
-tidalI  = accts['tidal']['id'].encode( 'ascii' )
-tidalU  = accts['tidal']['user'].encode( 'ascii' )
-tidalP  = accts['tidal']['password'].encode( 'ascii' )
-
-# parse parameters
 try:
-    ms = sys.argv[1]
-    dacp = sys.argv[2]
-    if len( sys.argv ) > 3:
-        logDir = sys.argv[3]
+    if len( sys.argv ) > 1:
+        logDir = sys.argv[1]
 except:
     print '\n', __doc__, '\n'
     print '\n\nInvalid arguments %s' % (str( sys.argv ))
     # noinspection PyProtectedMember
     os._exit( -1 )
 
-    
+
+config    = Config.Config()
+tunein    = config.Get( 'tunein.user.o2' )
+plEnc     = config.Get( 'playlist.asset.enc-free' )
+plMix     = config.Get( 'playlist.asset.mixed-free' )
+server    = config.Get( 'mediaserver.asset' )
+tidalId   = config.Get( 'tidal.id' )
+tidalUser = config.Get( 'tidal.user' )
+tidalPwd  = config.Get( 'tidal.password' )
+
 tests = [
     # Update and build ohMediaPlayer
-    [ 'BuildOhmp',                   'debug'                                                                   ],
+    [ 'BuildOhmp',                   'debug'                                                                              ],
 
     # OH Playlist Service
-    [ 'TestPlaylistHandling',        'local', 'all',   0                                                       ],
-    [ 'TestPlaylistModes',           'local', 'all',   0                                                       ],
-    [ 'TestPlaylistPlayback',        'local', 'all',   0                                                       ],
-    [ 'TestPlaylistAddDelSoak',      'local',  ms,     mpList,  100                                            ],
-    [ 'TestLocalPlayTracks',         'local', 'local', 8,       'off',   'on'                                  ],
-    [ 'TestUpnpMsPlayTracks',        'local', 'local', 8,       'off',   'on',  ms,     mpList                 ],
-    [ 'TestLocalDropout',            'local', 'local', 'local', 1800                                           ],
-    [ 'TestUpnpMsDropout',           'local', 'local', 'local', 1800,    ms,    mpList                         ],
+    [ 'TestPlaylistHandling',        'local', 'all',   0                                                                  ],
+    [ 'TestPlaylistModes',           'local', 'all',   0                                                                  ],
+    [ 'TestPlaylistPlayback',        'local', 'all',   0                                                                  ],
+    [ 'TestPlaylistAddDelSoak',      'local',  server, plEnc,   100                                                       ],
+    [ 'TestLocalPlayTracks',         'local', 'local', 8,       'off',   'on'                                             ],
+    [ 'TestUpnpMsPlayTracks',        'local', 'local', 8,       'off',   'on',   server,   plEnc                          ],
+    [ 'TestLocalDropout',            'local', 'local', 'local', 1800                                                      ],
+    [ 'TestUpnpMsDropout',           'local', 'local', 'local', 1800,    server, plEnc                                    ],
 
     # OH Radio Service
-    [ 'TestRadioService',            'local', 'all'                                                            ],
-    [ 'TestRadioPlayChannels',       'local', 'local', 'ohmp2', 20,      'on',  1                              ],
+    [ 'TestRadioService',            'local', 'all'                                                                       ],
+    [ 'TestRadioPlayChannels',       'local', 'local', tunein,  20,      'on',   1                                        ],
 
     # Tidal
-    [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off', 100,    tidalI, tidalU, tidalP ],
-    [ 'TestTidalDropout',            'local', 'local', 'local', 3600,    20,    tidalI, tidalU, tidalP         ],
+    [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off',  100,      tidalId,   tidalUser, tidalPwd ],
+    [ 'TestTidalDropout',            'local', 'local', 'local', 3600,    20,     tidalId,  tidalUser, tidalPwd            ],
 
     # Airplay
-    [ 'TestAirplayFunctions',        'local'                                                                   ],
-    [ 'TestAirplayDropout',          'local', '3600'                                                           ],
+    [ 'TestAirplayFunctions',        'local'                                                                              ],
+    [ 'TestAirplayDropout',          'local', '3600'                                                                      ],
 
     # UPnP AV
-    [ 'TestAvTransportService',      'local', 'ALL'                                                            ],
-    [ 'TestRenderingControlService', 'local'                                                                   ],
-    [ 'TestAvTransportPlayTracks',   'local', 'local', ms,      avtList, 8,     1,      'false'                ],
+    [ 'TestAvTransportService',      'local', 'ALL'                                                                       ],
+    [ 'TestRenderingControlService', 'local'                                                                              ],
+    [ 'TestAvTransportPlayTracks',   'local', 'local', server,  plMix,   8,      1,        'false'                        ],
 
     # Songcast
-    [ 'TestSongcastPlayback',        'local', 'local', 'local', 'all',   12345                                 ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'stop'                         ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'source'                       ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'sender'                       ],
-    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all', 'standby'                      ],
+    [ 'TestSongcastPlayback',        'local', 'local', 'local', 'all',   12345                                            ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all',  'stop'                                   ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all',  'source'                                 ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all',  'sender'                                 ],
+    [ 'TestSongcastConnect',         'local', 'local', 'local', 'local', 'all',  'standby'                                ],
 
     # Volume
-    [ 'TestVolumeControl',           'local'                                                                   ],
+    [ 'TestVolumeControl',           'local'                                                                              ],
 
     # Misc
-    [ 'TestAudioConx',               'local', 'all'                                                            ],
-    [ 'TestStandbyCycleSoak',        'local',  100                                                             ]
+    [ 'TestAudioConx',               'local', 'all'                                                                       ],
+    [ 'TestStandbyCycleSoak',        'local',  100                                                                        ]
     
     # N/A to SoftPlayer(s)
     #    - AutoPlay

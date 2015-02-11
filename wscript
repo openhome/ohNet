@@ -281,6 +281,7 @@ def build(bld):
                 'OpenHome/Av/Source.cpp',
                 'OpenHome/Av/MediaPlayer.cpp',
                 'Generated/DvAvOpenhomeOrgConfiguration1.cpp',
+                'OpenHome/Av/Json.cpp',
                 'OpenHome/Configuration/ProviderConfig.cpp',
                 'OpenHome/PowerManager.cpp',
                 'OpenHome/Av/Credentials.cpp',

@@ -310,6 +310,13 @@ void ConfigManager::DumpToStore()
     dumper.DumpToStore(iMapText);
 }
 
+void ConfigManager::WriteKeys(IKeyWriter& aWriter) const
+{
+    AutoMutex a(iLock);
+    ASSERT(iOpen);
+    aWriter.WriteKeys(iKeyListOrdered);
+}
+
 TBool ConfigManager::HasNum(const Brx& aKey) const
 {
     return iMapNum.Has(aKey);
@@ -371,22 +378,27 @@ IStoreReadWrite& ConfigManager::Store()
 void ConfigManager::Open()
 {
     AutoMutex a(iLock);
+    // All keys should have been added, so sort key list.
+    std::sort(iKeyListOrdered.begin(), iKeyListOrdered.end(), BufferPtrCmp());
     iOpen = true;
 }
 
 void ConfigManager::Add(ConfigNum& aNum)
 {
     AddNum(aNum.Key(), aNum);
+    iKeyListOrdered.push_back(&aNum.Key());
 }
 
 void ConfigManager::Add(ConfigChoice& aChoice)
 {
     AddChoice(aChoice.Key(), aChoice);
+    iKeyListOrdered.push_back(&aChoice.Key());
 }
 
 void ConfigManager::Add(ConfigText& aText)
 {
     AddText(aText.Key(), aText);
+    iKeyListOrdered.push_back(&aText.Key());
 }
 
 void ConfigManager::FromStore(const Brx& aKey, Bwx& aDest, const Brx& aDefault)

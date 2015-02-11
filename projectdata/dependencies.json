@@ -27,8 +27,8 @@
         "dest": "dependencies/AnyPlatform/TestTones/"
     },
     {   "name":             "testharness",
-        "version":          "0.1.31",
-        "type":             "internal",
+        "version":          "0.1.32",
+        "type":             "openhome",
         "archive-filename": "${name}-${version}.tar.gz",
         "dest":             "dependencies/AnyPlatform/"
     },
@@ -79,10 +79,10 @@
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name": "openssl",
-        "type": "external",
+        "type": "openhome",
         "platform-specific": true,
-        "version": "0.2.50",
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${version}-${archive-platform}-${debugmode}.tar.bz2"
+        "version": "0.2.52",
+        "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
         "type": "internal",
@@ -94,7 +94,7 @@
     {
         "name": "FunctionalTest",
         "type": "internal",
-        "version": "0.0.468",
+        "version": "0.0.480",
         "platform-specific": false,
         "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/FunctionalTest/FunctionalTest-${version}.zip",
         "dest": "dependencies/AnyPlatform/FunctionalTest"
