@@ -9,10 +9,10 @@ FileAnsii::FileAnsii(const TChar* aFilename, FileMode aFileMode)
     switch (aFileMode)
     {
         case eFileReadOnly:
-            iFilePtr = fopen(aFilename, "r");
+            iFilePtr = fopen(aFilename, "rb");
             break;
         case eFileReadWrite:
-            iFilePtr = fopen(aFilename, "w");
+            iFilePtr = fopen(aFilename, "wb");
             break;
         default:
             iFilePtr = NULL;
