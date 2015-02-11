@@ -17,7 +17,6 @@ source handling operates correctly.
 
 import _FunctionalTest
 import BaseTest                       as BASE
-import _Config                        as Config
 import Upnp.ControlPoints.Volkano     as Volkano
 import Instruments.Network.DacpClient as DacpClient
 import _SoftPlayer                    as SoftPlayer
@@ -43,15 +42,14 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.soft       = None
         self.tracks     = None
         self.timedOut   = False
-        self.testConfig = Config.Config()
         self.timeEvent  = threading.Event()
         self.srcChanged = threading.Event()
 
     def Test( self, args ):
         """Net Aux test"""
-        itunesGuid = self.testConfig.itunes.guid
-        itunesLib  = self.testConfig.itunes.library
-        itunesAddr = self.testConfig.itunes.address
+        itunesGuid = self.config.Get( 'itunes.guid' )
+        itunesLib  = self.config.Get( 'itunes.library' )
+        itunesAddr = self.config.Get( 'itunes.address' )
 
         # parse command line arguments
         try:
@@ -109,7 +107,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
     def _CheckSelect( self ):
         """Check auto-selection of Net Aux source"""
         self.dacp.speaker = 'My Computer'
-        self.dacp.PlayTrack( self.testConfig.itunes.track1k )
+        self.dacp.PlayTrack( self.config.Get( 'itunes.track1k' ))
         time.sleep( 5 )
          
         # Airplay connect/disconnect 
@@ -163,7 +161,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         self.dut.product.sourceIndexByName = 'Playlist'
         self.srcChanged.wait( 5 )
         self.srcChanged.clear()
-        self.dacp.PlayTrack( self.testConfig.itunes.track1k )
+        self.dacp.PlayTrack( self.config.Get( 'itunes.track1k' ))
         self.srcChanged.wait( 5 )
         name = self.dut.product.SourceSystemName( self.dut.product.sourceIndex )
         self.log.FailUnless( self.dutDev, name=='Playlist',
@@ -221,7 +219,7 @@ class TestAirplayFunctions( BASE.BaseTest ):
         # time.sleep( 5 )
         self.dacp.speaker = self.dutName
         time.sleep( 5 )
-        self.dacp.PlayTrack( self.testConfig.itunes.track1k )
+        self.dacp.PlayTrack( self.config.Get( 'itunes.track1k' ))
         self.srcChanged.wait( 5 )
         self.dacp.volume = 100
         time.sleep( 5 )

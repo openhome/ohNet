@@ -7,15 +7,18 @@ Parameters:
 
 This suite of tests verifies ohMediaPlayer functionality using SoftPlayer(s)
 
- - Network interface to use for testing defined in local Config.xml
+ - Network interface to use for testing defined in test configuration XML
  - SoftPlayer instance(s) created/destroyed as required
 """
 import _FunctionalTest
 import BaseSuite as Suite
+import Config
 import os
 import sys
- 
+
 logDir = None
+config = Config.Config()
+tunein = config.Get( 'tunein.user.o4' )
 
 try:
     if len( sys.argv ) > 1:
@@ -34,8 +37,8 @@ tests = [
     # OH Playlist Service
     [ 'TestLocalPlayTracks',       'local', 'local', 6,      'off',   'on', 'short' ],
 
-    # OH Radio Service (user ohmp4 is all locally served channels)
-    [ 'TestRadioPlayChannels',     'local', 'local', 'ohmp4', 7,      'on'          ]
+    # OH Radio Service (all locally served channels)
+    [ 'TestRadioPlayChannels',     'local', 'local', tunein, 7,       'on'          ]
 ]
 
 Suite.Suite( tests, logDir )
