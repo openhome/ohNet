@@ -11,11 +11,11 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
-static const TChar* kStatus[] = { "Starting"
+/*static const TChar* kStatus[] = { "Starting"
                                  ,"Running"
                                  ,"RampingDown"
                                  ,"RampedDown"
-                                 ,"RampingUp" };
+                                 ,"RampingUp" };*/
 
 VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
