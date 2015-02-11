@@ -172,8 +172,6 @@ private:
 class OhmMsgMetatext : public OhmMsg
 {
     friend class OhmMsgFactory;
-public:
-    static const TUint kMaxMetatextBytes = 1 * 1024;
 private:
     static const TUint kHeaderBytes = 8;
 public:
@@ -188,7 +186,7 @@ private:
     void Create(TUint aSequence, const Brx& aMetatext);
 private:
     TUint iSequence;
-    Bws<kMaxMetatextBytes> iMetatext;
+    Bws<Ohm::kMaxTrackMetatextBytes> iMetatext;
 };
 
 class IOhmMsgFactory

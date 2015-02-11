@@ -42,7 +42,7 @@ private:
     Bws<kTrackUriMaxBytes> iTrackUri;
     Bws<kTrackMetaDataMaxBytes> iMetaData;
     Bws<DecodedStreamInfo::kMaxCodecNameBytes> iCodecName;
-    Bws<MsgEncodedStream::kMaxMetaTextBytes> iMetaText;
+    Bws<MsgMetaText::kMaxBytes> iMetaText;
 };
 
 } // namespace Av

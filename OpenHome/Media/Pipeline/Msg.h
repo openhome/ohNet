@@ -372,12 +372,28 @@ private:
     TUint64 iStartSample;
 };
 
+class MsgMetaText : public Msg
+{
+    friend class MsgFactory;
+public:
+    static const TUint kMaxBytes = 4 * 1024;
+public:
+    MsgMetaText(AllocatorBase& aAllocator);
+    const Brx& MetaText() const;
+private:
+    void Initialise(const Brx& aMetaText);
+private: // from Msg
+    void Clear();
+    Msg* Process(IMsgProcessor& aProcessor);
+private:
+    Bws<kMaxBytes> iMetaText;
+};
+
 class MsgEncodedStream : public Msg
 {
     friend class MsgFactory;
 public:
     static const TUint kMaxUriBytes = 1024;
-    static const TUint kMaxMetaTextBytes = 1024;
 public:
     MsgEncodedStream(AllocatorBase& aAllocator);
     const Brx& Uri() const;
@@ -397,7 +413,7 @@ private: // from Msg
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Bws<kMaxUriBytes> iUri;
-    Bws<kMaxMetaTextBytes> iMetaText;
+    Bws<MsgMetaText::kMaxBytes> iMetaText;
     TUint64 iTotalBytes;
     TUint iStreamId;
     TBool iSeekable;
@@ -430,23 +446,6 @@ private:
     TUint iSize; // Bytes
     TUint iOffset; // Bytes
     EncodedAudio* iAudioData;
-};
-
-class MsgMetaText : public Msg
-{
-    friend class MsgFactory;
-public:
-    static const TUint kMaxBytes = 1024;
-public:
-    MsgMetaText(AllocatorBase& aAllocator);
-    const Brx& MetaText() const;
-private:
-    void Initialise(const Brx& aMetaText);
-private: // from Msg
-    void Clear();
-    Msg* Process(IMsgProcessor& aProcessor);
-private:
-    Bws<kMaxBytes> iMetaText;
 };
 
 /**
