@@ -56,7 +56,6 @@ private: // from MsgReservoir
     void ProcessMsgIn(MsgWait* aMsg) override;
     void ProcessMsgIn(MsgQuit* aMsg) override;
     Msg* ProcessMsgOut(MsgMode* aMsg) override;
-    Msg* ProcessMsgOut(MsgTrack* aMsg) override;
     Msg* ProcessMsgOut(MsgDecodedStream* aMsg) override;
     Msg* ProcessMsgOut(MsgAudioPcm* aMsg) override;
     Msg* ProcessMsgOut(MsgSilence* aMsg) override;

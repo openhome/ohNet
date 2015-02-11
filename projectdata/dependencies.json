@@ -79,10 +79,10 @@
         "dest":             "dependencies/AnyPlatform/${name}/"
     },
     {   "name": "openssl",
-        "type": "external",
+        "type": "openhome",
         "platform-specific": true,
-        "version": "0.2.50",
-        "archive-path": "http://core.linn.co.uk/~artifacts/artifacts/openssl/openssl-${version}-${archive-platform}-${debugmode}.tar.bz2"
+        "version": "0.2.52",
+        "archive-filename": "${name}-${version}-${archive-platform}-${debugmode}.tar.bz2"
     },
     {   "name": "ohNetmon",
         "type": "internal",

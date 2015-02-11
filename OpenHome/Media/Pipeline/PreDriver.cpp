@@ -45,9 +45,9 @@ Msg* PreDriver::ProcessMsg(MsgSession* /*aMsg*/)
     return NULL;
 }
 
-Msg* PreDriver::ProcessMsg(MsgTrack* aMsg)
+Msg* PreDriver::ProcessMsg(MsgTrack* /*aMsg*/)
 {
-    aMsg->RemoveRef();
+    ASSERTS();
     return NULL;
 }
 

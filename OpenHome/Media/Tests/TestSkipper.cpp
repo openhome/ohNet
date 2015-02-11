@@ -82,7 +82,6 @@ private:
     void TestRemoveStreamRampHaltDeliveredOnRampDown();
     void TestRemoveStreamRampAllMsgsPassDuringRamp();
     void TestRemoveStreamRampFewMsgsPassAfterRamp();
-    void TestRemoveStreamRampNewTrackResets();
     void TestRemoveStreamRampNewStreamResets();
     void TestRemoveStreamNoRampFewMsgsPass();
     void TestTryRemoveInvalidStream();
@@ -115,7 +114,6 @@ SuiteSkipper::SuiteSkipper()
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampHaltDeliveredOnRampDown), "TestRemoveStreamRampHaltDeliveredOnRampDown");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampAllMsgsPassDuringRamp), "TestRemoveStreamRampAllMsgsPassDuringRamp");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp), "TestRemoveStreamRampFewMsgsPassAfterRamp");
-    AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewTrackResets), "TestRemoveStreamRampNewTrackResets");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamRampNewStreamResets), "TestRemoveStreamRampNewStreamResets");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestRemoveStreamNoRampFewMsgsPass), "TestRemoveStreamNoRampFewMsgsPass");
     AddTest(MakeFunctor(*this, &SuiteSkipper::TestTryRemoveInvalidStream), "TestTryRemoveInvalidStream");
@@ -489,29 +487,6 @@ void SuiteSkipper::TestRemoveStreamRampFewMsgsPassAfterRamp()
     PullNext(EMsgQuit);
     iPendingMsgs.push_back(CreateTrack());
     PullNext(EMsgTrack);
-}
-
-void SuiteSkipper::TestRemoveStreamRampNewTrackResets()
-{
-    iPendingMsgs.push_back(CreateTrack());
-    iPendingMsgs.push_back(CreateEncodedStream());
-    iPendingMsgs.push_back(CreateDecodedStream());
-    iPendingMsgs.push_back(CreateAudio());
-
-    for (TUint i=0; i<4; i++) {
-        PullNext();
-    }
-    TEST(iLastPulledMsg == EMsgAudioPcm);
-
-    iSkipper->RemoveCurrentStream(true);
-    iRamping = true;
-    iPendingMsgs.push_back(CreateAudio());
-    PullNext(EMsgAudioPcm);
-    iPendingMsgs.push_back(CreateTrack());
-    PullNext(EMsgTrack);
-    iRamping = false;
-    iPendingMsgs.push_back(CreateAudio());
-    PullNext(EMsgAudioPcm);
 }
 
 void SuiteSkipper::TestRemoveStreamRampNewStreamResets()

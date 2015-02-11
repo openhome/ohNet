@@ -60,13 +60,13 @@ void SpotifyReporter::TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvi
     // track, but the rest of the pipeline would not.
     // As a hack, reuse the pipeline ID of the last MsgTrack that was seen.
     Track* track = aTrackFactory.CreateTrack(Brn("spotify://"), aMetadata);
-    iPropertyObserver.NotifyTrack(*track, kInterceptMode);
+    iPropertyObserver.NotifyTrack(*track, kInterceptMode, true);
     track->RemoveRef();
 }
 
-void SpotifyReporter::NotifyTrack(Track& aTrack, const Brx& aMode)
+void SpotifyReporter::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
-    iPropertyObserver.NotifyTrack(aTrack, aMode);
+    iPropertyObserver.NotifyTrack(aTrack, aMode, aStartOfStream);
 }
 
 void SpotifyReporter::NotifyMetaText(const Brx& aText)

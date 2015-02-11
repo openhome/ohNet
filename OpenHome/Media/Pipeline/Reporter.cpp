@@ -1,6 +1,7 @@
 #include <OpenHome/Media/Pipeline/Reporter.h>
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Thread.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Media/Pipeline/Msg.h>
 
@@ -11,18 +12,34 @@ using namespace OpenHome::Media;
 
 const Brn Reporter::kNullMetaText("");
 
-Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver)
-    : iUpstreamElement(aUpstreamElement)
+Reporter::Reporter(IPipelineElementUpstream& aUpstreamElement, IPipelinePropertyObserver& aObserver, TUint aObserverThreadPriority)
+    : iLock("RPTR")
+    , iUpstreamElement(aUpstreamElement)
     , iObserver(aObserver)
-    , iTimeInvalid(true)
+    , iMsgTrack(NULL)
+    , iMsgDecodedStreamInfo(NULL)
+    , iMsgMetaText(NULL)
     , iSeconds(0)
     , iJiffies(0)
     , iTrackDurationSeconds(0)
+    , iNotifyTime(false)
 {
+    iThread = new ThreadFunctor("ReporterObserver", MakeFunctor(*this, &Reporter::ObserverThread), aObserverThreadPriority);
+    iThread->Start();
 }
 
 Reporter::~Reporter()
 {
+    delete iThread;
+    if (iMsgTrack != NULL) {
+        iMsgTrack->RemoveRef();
+    }
+    if (iMsgDecodedStreamInfo != NULL) {
+        iMsgDecodedStreamInfo->RemoveRef();
+    }
+    if (iMsgMetaText != NULL) {
+        iMsgMetaText->RemoveRef();
+    }
 }
 
 Msg* Reporter::Pull()
@@ -45,9 +62,14 @@ Msg* Reporter::ProcessMsg(MsgSession* aMsg)
 
 Msg* Reporter::ProcessMsg(MsgTrack* aMsg)
 {
-    iSeconds = 0;
-    iJiffies = 0;
-    iObserver.NotifyTrack(aMsg->Track(), iMode);
+    AutoMutex _(iLock);
+    if (iMsgTrack != NULL) {
+        iMsgTrack->RemoveRef();
+    }
+    iMsgTrack = aMsg;
+    iMsgTrack->AddRef();
+    iModeTrack.Replace(iMode);
+    iThread->Signal();
     return aMsg;
 }
 
@@ -70,7 +92,13 @@ Msg* Reporter::ProcessMsg(MsgAudioEncoded* /*aMsg*/)
 
 Msg* Reporter::ProcessMsg(MsgMetaText* aMsg)
 {
-    iObserver.NotifyMetaText(aMsg->MetaText());
+    AutoMutex _(iLock);
+    if (iMsgMetaText != NULL) {
+        iMsgMetaText->RemoveRef();
+    }
+    iMsgMetaText = aMsg;
+    iMsgMetaText->AddRef();
+    iThread->Signal();
     return aMsg;
 }
 
@@ -92,36 +120,35 @@ Msg* Reporter::ProcessMsg(MsgWait* aMsg)
 
 Msg* Reporter::ProcessMsg(MsgDecodedStream* aMsg)
 {
+    AutoMutex _(iLock);
     const DecodedStreamInfo& streamInfo = aMsg->StreamInfo();
-    iTimeInvalid = true;
     iTrackDurationSeconds = (TUint)(streamInfo.TrackLength() / Jiffies::kPerSecond);
     TUint64 jiffies = (streamInfo.SampleStart() * Jiffies::kPerSecond) / streamInfo.SampleRate();
     iSeconds = (TUint)(jiffies / Jiffies::kPerSecond);
     iJiffies = jiffies % Jiffies::kPerSecond;
-    iObserver.NotifyStreamInfo(streamInfo);
+    if (iMsgDecodedStreamInfo != NULL) {
+        iMsgDecodedStreamInfo->RemoveRef();
+    }
+    iMsgDecodedStreamInfo = aMsg;
+    iMsgDecodedStreamInfo->AddRef();
+    iNotifyTime = true;
+    iThread->Signal();
     return aMsg;
 }
 
 Msg* Reporter::ProcessMsg(MsgAudioPcm* aMsg)
 {
+    AutoMutex _(iLock);
     TBool reportChange = false;
-    if (iTimeInvalid) {
-        const TUint64 offset = aMsg->TrackOffset() + aMsg->Jiffies();
-        iSeconds = (TUint)(offset / Jiffies::kPerSecond);
-        iJiffies = offset % Jiffies::kPerSecond;
-        iTimeInvalid = false;
+    iJiffies += aMsg->Jiffies();
+    while (iJiffies > Jiffies::kPerSecond) {
         reportChange = true;
-    }
-    else {
-        iJiffies += aMsg->Jiffies();
-        while (iJiffies > Jiffies::kPerSecond) {
-            reportChange = true;
-            iSeconds++;
-            iJiffies -= Jiffies::kPerSecond;
-        }
+        iSeconds++;
+        iJiffies -= Jiffies::kPerSecond;
     }
     if (reportChange) {
-        iObserver.NotifyTime(iSeconds, iTrackDurationSeconds);
+        iNotifyTime= true;
+        iThread->Signal();
     }
     return aMsg;
 }
@@ -140,4 +167,45 @@ Msg* Reporter::ProcessMsg(MsgPlayable* /*aMsg*/)
 Msg* Reporter::ProcessMsg(MsgQuit* aMsg)
 {
     return aMsg;
+}
+
+void Reporter::ObserverThread()
+{
+    for (;;) {
+        iThread->Wait();
+        iLock.Wait();
+        if (iMsgTrack != NULL) {
+            MsgTrack* msg = iMsgTrack;
+            iMsgTrack = NULL;
+            iLock.Signal();
+            iObserver.NotifyTrack(msg->Track(), iModeTrack, msg->StartOfStream());
+            msg->RemoveRef();
+            iLock.Wait();
+        }
+        if (iMsgDecodedStreamInfo != NULL) {
+            MsgDecodedStream* msg = iMsgDecodedStreamInfo;
+            iMsgDecodedStreamInfo = NULL;
+            iLock.Signal();
+            iObserver.NotifyStreamInfo(msg->StreamInfo());
+            msg->RemoveRef();
+            iLock.Wait();
+        }
+        if (iMsgMetaText != NULL) {
+            MsgMetaText* msg = iMsgMetaText;
+            iMsgMetaText = NULL;
+            iLock.Signal();
+            iObserver.NotifyMetaText(msg->MetaText());
+            msg->RemoveRef();
+            iLock.Wait();
+        }
+        if (iNotifyTime) {
+            const TUint seconds = iSeconds;
+            const TUint trackDurationSeconds = iTrackDurationSeconds;
+            iNotifyTime = false;
+            iLock.Signal();
+            iObserver.NotifyTime(seconds, trackDurationSeconds);
+            iLock.Wait();
+        }
+        iLock.Signal();
+    }
 }

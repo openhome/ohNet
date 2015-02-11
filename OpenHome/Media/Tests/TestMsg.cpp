@@ -1542,11 +1542,13 @@ void SuiteTrack::Test()
     Brn uri("http://host:port/folder/file.ext");
     Brn metadata("metadata#1");
     Track* track = iTrackFactory->CreateTrack(uri, metadata);
-    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track);
+    TBool startOfStream = true;
+    MsgTrack* msg = iMsgFactory->CreateMsgTrack(*track, startOfStream);
     track->RemoveRef();
     TEST(msg != NULL);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
+    TEST(msg->StartOfStream() == startOfStream);
     TUint trackId = msg->Track().Id();
     msg->RemoveRef();
 
@@ -1556,17 +1558,20 @@ void SuiteTrack::Test()
     TEST(track->Uri() != uri);
     TEST(track->MetaData() != metadata);
     TEST(track->Id() != trackId);
+    TEST(msg->StartOfStream() != startOfStream);
 #endif
 
     // create second Track msg, check its uri/id can be retrieved
     uri.Set("http://newhost:newport/newfolder/newfile.newext");
     metadata.Set("metadata#2");
+    startOfStream = false;
     track = iTrackFactory->CreateTrack(uri, metadata);
-    msg = iMsgFactory->CreateMsgTrack(*track);
+    msg = iMsgFactory->CreateMsgTrack(*track, startOfStream);
     TEST(msg != NULL);
     TEST(msg->Track().Uri() == uri);
     TEST(msg->Track().MetaData() == metadata);
     TEST(msg->Track().Id() != trackId);
+    TEST(msg->StartOfStream() == startOfStream);
     trackId = msg->Track().Id();
     msg->RemoveRef();
     TEST(track->Uri() == uri);

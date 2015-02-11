@@ -56,7 +56,7 @@ private: // from ITrackDatabaseObserver
     void NotifyAllDeleted() override;
 private: // from Media::IPipelineObserver
     void NotifyPipelineState(Media::EPipelineState aState) override;
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const Media::DecodedStreamInfo& aStreamInfo) override;
@@ -356,7 +356,7 @@ void SourcePlaylist::NotifyPipelineState(Media::EPipelineState aState)
     }
 }
 
-void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode)
+void SourcePlaylist::NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool /*aStartOfStream*/)
 {
     if (aMode == iUriProvider->Mode()) {
         iProviderPlaylist->NotifyTrack(aTrack.Id());

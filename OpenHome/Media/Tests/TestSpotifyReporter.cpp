@@ -19,7 +19,7 @@ namespace Media {
 class HelperPipelinePropertyObserver : public IPipelinePropertyObserver
 {
 public: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -100,7 +100,7 @@ private:
 
 // HelperPipelinePropertyObserver
 
-void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
+void HelperPipelinePropertyObserver::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
 
 }

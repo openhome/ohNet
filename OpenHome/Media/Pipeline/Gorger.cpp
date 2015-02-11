@@ -97,18 +97,18 @@ void Gorger::ProcessMsgIn(MsgMode* aMsg)
     iLock.Signal();
 }
 
-void Gorger::ProcessMsgIn(MsgTrack* /*aMsg*/)
-{
-    iLock.Wait();
-    SetGorging(false);
-    iGorgeOnHaltOut = false;
-    iLock.Signal();
-}
-
 void Gorger::ProcessMsgIn(MsgSession* /*aMsg*/)
 {
     iLock.Wait();
     SetGorging(false);
+    iLock.Signal();
+}
+
+void Gorger::ProcessMsgIn(MsgEncodedStream* /*aMsg*/)
+{
+    iLock.Wait();
+    SetGorging(false);
+    iGorgeOnHaltOut = false;
     iLock.Signal();
 }
 

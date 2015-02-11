@@ -152,7 +152,9 @@ TUint PipelineInitParams::ThreadPriorityMax() const
 
 // Pipeline
 
-Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer)
+Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator,
+                   IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver,
+                   ISeekRestreamer& aSeekRestreamer)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")
@@ -176,7 +178,8 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
                                  perStreamMsgCount, perStreamMsgCount, kMsgCountMetaText,
                                  kMsgCountHalt, kMsgCountFlush, kMsgCountWait,
                                  kMsgCountMode, perStreamMsgCount, perStreamMsgCount, kMsgCountQuit);
-    TUint threadPriority = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
+    const TUint threadPriorityBase = aInitParams->ThreadPriorityMax() - kThreadCount + 1;
+    TUint threadPriority = threadPriorityBase;
     
     // construct encoded reservoir out of sequence.  It doesn't pull from the left so doesn't need to know its preceeding element
     iEncodedAudioReservoir = new EncodedAudioReservoir(aInitParams->EncodedReservoirBytes(), aInitParams->MaxStreamsPerReservoir(), aInitParams->MaxStreamsPerReservoir());
@@ -222,7 +225,7 @@ Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggreg
     iLoggerGorger = new Logger(*iGorger, "Gorger");
     iSpotifyReporter = new Media::SpotifyReporter(*iLoggerGorger, *this);
     iLoggerSpotifyReporter = new Logger(*iSpotifyReporter, "SpotifyReporter");
-    iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter);
+    iReporter = new Reporter(*iLoggerSpotifyReporter, *iSpotifyReporter, threadPriorityBase-1);
     iLoggerReporter = new Logger(*iReporter, "Reporter");
     iRouter = new Router(*iLoggerReporter);
     iLoggerRouter = new Logger(*iRouter, "Router");
@@ -549,9 +552,9 @@ void Pipeline::RemoveStream(TUint aStreamId)
     (void)iSkipper->TryRemoveStream(aStreamId, !iBuffering);
 }
 
-void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode)
+void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
-    iObserver.NotifyTrack(aTrack, aMode);
+    iObserver.NotifyTrack(aTrack, aMode, aStartOfStream);
 }
 
 void Pipeline::NotifyMetaText(const Brx& aText)

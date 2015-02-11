@@ -325,13 +325,15 @@ public:
 public:
     MsgTrack(AllocatorBase& aAllocator);
     Media::Track& Track() const;
+    TBool StartOfStream() const;
 private:
-    void Initialise(Media::Track& aTrack);
+    void Initialise(Media::Track& aTrack, TBool aStartOfStream);
 private: // from Msg
     void Clear();
     Msg* Process(IMsgProcessor& aProcessor);
 private:
     Media::Track* iTrack;
+    TBool iStartOfStream;
 };
 
 class MsgDelay : public Msg
@@ -1203,7 +1205,7 @@ public:
     //
     MsgMode* CreateMsgMode(const Brx& aMode, TBool aSupportsLatency, TBool aRealTime, IClockPuller* aClockPuller);
     MsgSession* CreateMsgSession();
-    MsgTrack* CreateMsgTrack(Media::Track& aTrack);
+    MsgTrack* CreateMsgTrack(Media::Track& aTrack, TBool aStartOfStream = true);
     MsgDelay* CreateMsgDelay(TUint aDelayJiffies);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler);
     MsgEncodedStream* CreateMsgEncodedStream(const Brx& aUri, const Brx& aMetaText, TUint64 aTotalBytes, TUint aStreamId, TBool aSeekable, TBool aLive, IStreamHandler* aStreamHandler, const PcmStreamInfo& aPcmStream);

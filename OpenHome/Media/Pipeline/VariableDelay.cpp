@@ -11,11 +11,11 @@ using namespace OpenHome::Media;
 
 // VariableDelay
 
-static const TChar* kStatus[] = { "Starting"
+/*static const TChar* kStatus[] = { "Starting"
                                  ,"Running"
                                  ,"RampingDown"
                                  ,"RampedDown"
-                                 ,"RampingUp" };
+                                 ,"RampingUp" };*/
 
 VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& aUpstreamElement, TUint aDownstreamDelay, TUint aRampDuration)
     : iMsgFactory(aMsgFactory)
@@ -23,17 +23,13 @@ VariableDelay::VariableDelay(MsgFactory& aMsgFactory, IPipelineElementUpstream& 
     , iDelayJiffies(0)
     , iLock("VDLY")
     , iDelayAdjustment(0)
-    , iStatus(EStarting)
-    , iRampDirection(Ramp::ENone)
     , iDownstreamDelay(aDownstreamDelay)
     , iRampDuration(aRampDuration)
     , iEnabled(false)
-    , iInStream(false)
     , iWaitForAudioBeforeGeneratingSilence(false)
-    , iCurrentRampValue(Ramp::kMax)
-    , iRemainingRampSize(0)
     , iStreamHandler(NULL)
 {
+    ResetStatusAndRamp();
 }
 
 VariableDelay::~VariableDelay()
@@ -42,20 +38,12 @@ VariableDelay::~VariableDelay()
 
 Msg* VariableDelay::Pull()
 {
-    Msg* msg;
+    Msg* msg = NULL;
     iLock.Wait();
-    if (iInStream && iStatus != ERampingDown && iDelayAdjustment > 0) {
+    if (iStatus != ERampingDown && iDelayAdjustment > 0) {
         if (iWaitForAudioBeforeGeneratingSilence) {
             do {
-                if (!IsEmpty()) {
-                    msg = DoDequeue();
-                }
-                else {
-                    iLock.Signal();
-                    msg = iUpstreamElement.Pull();
-                    iLock.Wait();
-                }
-                msg = msg->Process(*this);
+                msg = NextMsgLocked();
                 if (msg != NULL) {
                     if (iWaitForAudioBeforeGeneratingSilence) {
                         iLock.Signal();
@@ -66,37 +54,47 @@ Msg* VariableDelay::Pull()
                     }
                 }
             } while (msg == NULL);
+            msg = NULL; // DoEnqueue() above passed ownership of msg back to reservoir
         }
-        const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
-        msg = iMsgFactory.CreateMsgSilence(size);
-        iDelayAdjustment -= size;
-        if (iDelayAdjustment == 0) {
-            iStatus = (iStatus==ERampedDown? ERampingUp : ERunning);
-            iRampDirection = Ramp::EUp;
-            iCurrentRampValue = Ramp::kMin;
-            iRemainingRampSize = iRampDuration;
+        // msg(s) pulled above may have altered iDelayAdjustment (e.g. MsgMode sets it to zero)
+        if (iDelayAdjustment > 0) {
+            const TUint size = ((TUint)iDelayAdjustment > kMaxMsgSilenceDuration? kMaxMsgSilenceDuration : (TUint)iDelayAdjustment);
+            msg = iMsgFactory.CreateMsgSilence(size);
+            iDelayAdjustment -= size;
+            if (iDelayAdjustment == 0) {
+                iStatus = (iStatus==ERampedDown? ERampingUp : ERunning);
+                iRampDirection = Ramp::EUp;
+                iCurrentRampValue = Ramp::kMin;
+                iRemainingRampSize = iRampDuration;
+            }
         }
     }
-    else {
+    if (msg == NULL) {
         do {
-            if (!IsEmpty()) {
-                msg = DoDequeue();
-            }
-            else {
-                iLock.Signal();
-                msg = iUpstreamElement.Pull();
-                iLock.Wait();
-            }
-            msg = msg->Process(*this);
+            msg = NextMsgLocked();
         } while (msg == NULL);
     }
     iLock.Signal();
     return msg;
 }
 
+Msg* VariableDelay::NextMsgLocked()
+{
+    Msg* msg;
+    if (!IsEmpty()) {
+        msg = DoDequeue();
+    }
+    else {
+        iLock.Signal();
+        msg = iUpstreamElement.Pull();
+        iLock.Wait();
+    }
+    msg = msg->Process(*this);
+    return msg;
+}
+
 MsgAudio* VariableDelay::DoProcessAudioMsg(MsgAudio* aMsg)
 {
-    ASSERT(iInStream);
     MsgAudio* msg = aMsg;
     switch (iStatus)
     {
@@ -213,14 +211,22 @@ void VariableDelay::HandleStarving(const Brx& aMode)
     }
 }
 
+void VariableDelay::ResetStatusAndRamp()
+{
+    iStatus = EStarting;
+    iRampDirection = Ramp::ENone;
+    iCurrentRampValue = Ramp::kMax;
+    iRemainingRampSize = iRampDuration;
+}
+
 Msg* VariableDelay::ProcessMsg(MsgMode* aMsg)
 {
     iEnabled = aMsg->SupportsLatency();
-    iInStream = false;
     iMode.Replace(aMsg->Mode());
     iDelayJiffies = 0;
     iDelayAdjustment = 0;
-    iWaitForAudioBeforeGeneratingSilence = false;
+    iWaitForAudioBeforeGeneratingSilence = true;
+    ResetStatusAndRamp();
     return aMsg;
 }
 
@@ -233,15 +239,14 @@ Msg* VariableDelay::ProcessMsg(MsgSession* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgTrack* aMsg)
 {
-    iInStream = false;
     return aMsg;
 }
 
 Msg* VariableDelay::ProcessMsg(MsgDelay* aMsg)
 {
     TUint delayJiffies = aMsg->DelayJiffies();
-    Log::Print("VariableDelay::ProcessMsg(MsgDelay*): delay=%u, iDownstreamDelay=%u, iDelayJiffies=%u, iStatus=%s\n",
-               delayJiffies, iDownstreamDelay, iDelayJiffies, kStatus[iStatus]);
+    /*Log::Print("VariableDelay::ProcessMsg(MsgDelay*): delay=%u, iDownstreamDelay=%u, iDelayJiffies=%u, iStatus=%s\n",
+               delayJiffies, iDownstreamDelay, iDelayJiffies, kStatus[iStatus]);*/
     if (iDownstreamDelay >= delayJiffies) {
         return aMsg;
     }
@@ -331,13 +336,9 @@ Msg* VariableDelay::ProcessMsg(MsgWait* aMsg)
 
 Msg* VariableDelay::ProcessMsg(MsgDecodedStream* aMsg)
 {
-    iInStream = true;
     const DecodedStreamInfo& stream = aMsg->StreamInfo();
     iStreamHandler = stream.StreamHandler();
-    iStatus = EStarting;
-    iRampDirection = Ramp::ENone;
-    iCurrentRampValue = Ramp::kMax;
-    iRemainingRampSize = iRampDuration;
+    ResetStatusAndRamp();
     MsgDecodedStream* msg = iMsgFactory.CreateMsgDecodedStream(stream.StreamId(), stream.BitRate(), stream.BitDepth(),
                                                                stream.SampleRate(), stream.NumChannels(), stream.CodecName(), 
                                                                stream.TrackLength(), stream.SampleStart(), stream.Lossless(), 

@@ -88,7 +88,8 @@ public:
     void SetLatency(TUint aValue);
     void SetMulticast(TBool aValue);
     void SetEnabled(TBool aValue);
-    void SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart);
+    void SetTrack(const Brx& aUri, const Brx& aMetadata);
+    void SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart);
     void SetMetatext(const Brx& aValue);
     void SetPreset(TUint aValue);
     void NotifyAudioPlaying(TBool aPlaying);

@@ -632,12 +632,11 @@ void OhmSender::Stop()
     }
 }
 
-void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart)
+void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata)
 {
     AutoMutex mutex(iMutexActive);
 
     iClientControllingTrackMetadata = true;
-    iDriver.SetTrackPosition(aSamplesTotal, aSampleStart);
     iSequenceTrack++;
     iSequenceMetatext = 0;
     iTrackUri.Replace(aUri);
@@ -647,6 +646,12 @@ void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamples
     if (iActive) {
         SendTrack();
     }
+}
+
+void OhmSender::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart)
+{
+    AutoMutex mutex(iMutexActive);
+    iDriver.SetTrackPosition(aSamplesTotal, aSampleStart);
 }
 
 void OhmSender::SetMetatext(const Brx& aValue)

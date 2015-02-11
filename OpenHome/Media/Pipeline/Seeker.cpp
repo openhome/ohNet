@@ -85,7 +85,6 @@ Msg* Seeker::ProcessMsg(MsgSession* aMsg)
 
 Msg* Seeker::ProcessMsg(MsgTrack* aMsg)
 {
-    NewStream();
     iTrackId = aMsg->Track().Id();
     return aMsg;
 }

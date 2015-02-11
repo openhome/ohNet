@@ -290,14 +290,14 @@ void PipelineManager::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode)
+void PipelineManager::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iLock.Wait();
     iMode.Replace(aMode);
     iTrackId = aTrack.Id();
     iLock.Signal();
     for (TUint i=0; i<iObservers.size(); i++) {
-        iObservers[i]->NotifyTrack(aTrack, aMode);
+        iObservers[i]->NotifyTrack(aTrack, aMode, aStartOfStream);
     }
 }
 
