@@ -178,7 +178,7 @@ void Reporter::ObserverThread()
             MsgTrack* msg = iMsgTrack;
             iMsgTrack = NULL;
             iLock.Signal();
-            iObserver.NotifyTrack(msg->Track(), iModeTrack);
+            iObserver.NotifyTrack(msg->Track(), iModeTrack, msg->StartOfStream());
             msg->RemoveRef();
             iLock.Wait();
         }

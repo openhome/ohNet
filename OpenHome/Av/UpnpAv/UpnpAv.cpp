@@ -190,13 +190,13 @@ void SourceUpnpAv::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode)
+void SourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iLock.Wait();
     iStreamId = UINT_MAX;
     iLock.Signal();
     if (IsActive()) {
-        iDownstreamObserver->NotifyTrack(aTrack, aMode);
+        iDownstreamObserver->NotifyTrack(aTrack, aMode, aStartOfStream);
         iDownstreamObserver->NotifyPipelineState(iPipelineTransportState);
     }
     else {

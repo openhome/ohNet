@@ -73,7 +73,7 @@ public:
     ~DummySourceUpnpAv();
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;
@@ -164,11 +164,11 @@ void DummySourceUpnpAv::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void DummySourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode)
+void DummySourceUpnpAv::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
     iStreamId = UINT_MAX;
     if (iActive) {
-        iDownstreamObserver->NotifyTrack(aTrack, aMode);
+        iDownstreamObserver->NotifyTrack(aTrack, aMode, aStartOfStream);
     }
 }
 

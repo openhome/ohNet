@@ -552,9 +552,9 @@ void Pipeline::RemoveStream(TUint aStreamId)
     (void)iSkipper->TryRemoveStream(aStreamId, !iBuffering);
 }
 
-void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode)
+void Pipeline::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
-    iObserver.NotifyTrack(aTrack, aMode);
+    iObserver.NotifyTrack(aTrack, aMode, aStartOfStream);
 }
 
 void Pipeline::NotifyMetaText(const Brx& aText)

@@ -42,12 +42,17 @@ ProviderInfo::~ProviderInfo()
 {
 }
 
-void ProviderInfo::ClearStreamInfo(const Brx& aTrackUri, const Brx& aMetaData)
+void ProviderInfo::SetTrackInfo(const Brx& aTrackUri, const Brx& aMetaData)
 {
     iTrackUri.Replace(aTrackUri);
     SetPropertyUri(iTrackUri);
     iMetaData.Replace(aMetaData);
     SetPropertyMetadata(iMetaData);
+}
+
+void ProviderInfo::ClearStreamInfo(const Brx& aTrackUri, const Brx& aMetaData)
+{
+    SetTrackInfo(aTrackUri, aMetaData);
     SetPropertyDetailsCount(0);
     SetPropertyDuration(0);
     SetPropertyBitRate(0);
@@ -134,14 +139,19 @@ void ProviderInfo::NotifyPipelineState(EPipelineState /*aState*/)
     // NOP -- playing, paused, stopped, buffering
 }
 
-void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/)
+void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool aStartOfStream)
 {
     TUint n = 0;
     AutoMutex mutex(iLock);
     PropertiesLock();
     GetPropertyTrackCount(n);
     SetPropertyTrackCount(n + 1);
-    ClearStreamInfo(aTrack.Uri(), aTrack.MetaData());
+    if (aStartOfStream) {
+        ClearStreamInfo(aTrack.Uri(), aTrack.MetaData());
+    }
+    else {
+        SetTrackInfo(aTrack.Uri(), aTrack.MetaData());
+    }
     PropertiesUnlock();
 }
 

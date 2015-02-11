@@ -128,7 +128,7 @@ void TestRadio::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestRadio::NotifyTrack(Track& aTrack, const Brx& aMode)
+void TestRadio::NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");
@@ -137,7 +137,7 @@ void TestRadio::NotifyTrack(Track& aTrack, const Brx& aMode)
     Log::Print(aTrack.MetaData());
     Log::Print("; mode=");
     Log::Print(aMode);
-    Log::Print("; trackId=%u}\n", aTrack.Id());
+    Log::Print("; trackId=%u; startOfStream=%u}\n", aTrack.Id(), aStartOfStream);
 #endif
 }
 

@@ -23,7 +23,7 @@ private: // from DvProviderAvOpenhomeOrgTime1
     void Time(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aSeconds) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;

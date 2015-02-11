@@ -23,6 +23,7 @@ public:
     ProviderInfo(DvDevice& aDevice, PipelineManager& aPipelineManager);
     ~ProviderInfo();
 private:
+    void SetTrackInfo(const Brx& aTrackUri, const Brx& aMetaData);
     void ClearStreamInfo(const Brx& aTrackUri, const Brx& aMetaData);
 private: // from DvProviderAvOpenhomeOrgInfo1
     void Counters(IDvInvocation& aInvocation, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount) override;
@@ -31,7 +32,7 @@ private: // from DvProviderAvOpenhomeOrgInfo1
     void Metatext(IDvInvocation& aInvocation, IDvInvocationResponseString& aValue) override;
 private: // from IPipelineObserver
     void NotifyPipelineState(EPipelineState aState) override;
-    void NotifyTrack(Media::Track& aTrack, const Brx& aMode) override;
+    void NotifyTrack(Media::Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;

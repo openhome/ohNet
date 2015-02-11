@@ -193,7 +193,7 @@ void TestProtocol::NotifyPipelineState(EPipelineState aState)
 #endif
 }
 
-void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode)
+void TestProtocol::NotifyTrack(Track& aTrack, const Brx& aMode, TBool /*aStartOfStream*/)
 {
 #ifdef LOG_PIPELINE_OBSERVER
     Log::Print("Pipeline report property: TRACK {uri=");

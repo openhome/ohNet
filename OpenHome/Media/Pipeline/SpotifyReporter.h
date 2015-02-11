@@ -41,7 +41,7 @@ public: // from ISpotifyReporter
 private: // from ITrackChangeObserver
     void TrackChanged(TrackFactory& aTrackFactory, IPipelineIdProvider& aIdProvider, const Brx& aMetadata, TUint aStartMs) override;
 private: // from IPipelinePropertyObserver
-    void NotifyTrack(Track& aTrack, const Brx& aMode) override;
+    void NotifyTrack(Track& aTrack, const Brx& aMode, TBool aStartOfStream) override;
     void NotifyMetaText(const Brx& aText) override;
     void NotifyTime(TUint aSeconds, TUint aTrackDurationSeconds) override;
     void NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo) override;

@@ -205,7 +205,7 @@ void SourceRadio::NotifyPipelineState(EPipelineState aState)
     }
 }
 
-void SourceRadio::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/)
+void SourceRadio::NotifyTrack(Track& /*aTrack*/, const Brx& /*aMode*/, TBool /*aStartOfStream*/)
 {
     if (!IsActive()) {
         return;

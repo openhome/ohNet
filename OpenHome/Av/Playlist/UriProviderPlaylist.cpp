@@ -222,7 +222,7 @@ void UriProviderPlaylist::NotifyPipelineState(EPipelineState /*aState*/)
 {
 }
 
-void UriProviderPlaylist::NotifyTrack(Track& aTrack, const Brx& aMode)
+void UriProviderPlaylist::NotifyTrack(Track& aTrack, const Brx& aMode, TBool /*aStartOfStream*/)
 {
     if (aMode == Mode()) {
         iLock.Wait();
