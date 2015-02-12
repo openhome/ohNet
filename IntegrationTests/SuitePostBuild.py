@@ -16,9 +16,8 @@ import Config
 import os
 import sys
 
+config = None
 logDir = None
-config = Config.Config()
-tunein = config.Get( 'tunein.user.o4' )
 
 try:
     if len( sys.argv ) > 1:
@@ -29,7 +28,15 @@ except:
     # noinspection PyProtectedMember
     os._exit( -1 )
 
-    
+try:
+    config = Config.Config()
+except:
+    import time
+    time.sleep( 2 )
+    # noinspection PyProtectedMember
+    os._exit( -1 )
+tunein = config.Get( 'tunein.user.o4' )
+
 tests = [
     # UPnP AV
     [ 'TestAvTransportPlayTracks', 'local', 'local', 'None', 'short', 8,    1       ],

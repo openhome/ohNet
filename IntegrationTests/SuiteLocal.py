@@ -20,7 +20,9 @@ import Config
 import os
 import sys
  
-logDir  = None
+config = None
+logDir = None
+
 try:
     if len( sys.argv ) > 1:
         logDir = sys.argv[1]
@@ -30,8 +32,13 @@ except:
     # noinspection PyProtectedMember
     os._exit( -1 )
 
-
-config    = Config.Config()
+try:
+    config = Config.Config()
+except:
+    import time
+    time.sleep( 2 )
+    # noinspection PyProtectedMember
+    os._exit( -1 )
 tunein    = config.Get( 'tunein.user.o2' )
 plEnc     = config.Get( 'playlist.asset.enc-free' )
 plMix     = config.Get( 'playlist.asset.mixed-free' )
