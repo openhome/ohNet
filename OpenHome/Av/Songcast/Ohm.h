@@ -4,7 +4,7 @@
 #include <OpenHome/Types.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Private/Stream.h>
-#include <OpenHome/media/Pipeline/Msg.h>
+#include <OpenHome/Media/Pipeline/Msg.h>
 
 EXCEPTION(OhmError);
 EXCEPTION(OhzError);
