@@ -295,24 +295,26 @@ Msg* Stopper::ProcessFlushable(Msg* aMsg)
 void Stopper::OkToPlay()
 {
     EStreamPlay canPlay = iStreamHandler->OkToPlay(iStreamId);
-    switch (canPlay)
-    {
-    case ePlayYes:
-        iObserver.PipelinePlaying();
-        break;
-    case ePlayNo:
-        LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, streamId=%u.\n", iTrackId, iStreamId);
-        /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
-        SetState(EFlushing);
-        iFlushStream = true;
-        iHaltPending = true;
-        break;
-    case ePlayLater:
-        HandleStopped();
-        iHaltPending = true;
-        break;
-    default:
-        ASSERTS();
+    if (!iQuit) {
+        switch (canPlay)
+        {
+        case ePlayYes:
+            iObserver.PipelinePlaying();
+            break;
+        case ePlayNo:
+            LOG(kPipeline, "Stopper - OkToPlay returned ePlayNo.  trackId=%u, streamId=%u.\n", iTrackId, iStreamId);
+            /*TUint flushId = */iStreamHandler->TryStop(iStreamId);
+            SetState(EFlushing);
+            iFlushStream = true;
+            iHaltPending = true;
+            break;
+        case ePlayLater:
+            HandleStopped();
+            iHaltPending = true;
+            break;
+        default:
+            ASSERTS();
+        }
     }
     if (iStreamPlayObserver != NULL) {
         iStreamPlayObserver->NotifyStreamPlayStatus(iTrackId, iStreamId, canPlay);
