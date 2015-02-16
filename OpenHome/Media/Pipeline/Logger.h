@@ -15,6 +15,7 @@ Can be inserted [0..n] times through the pipeline, depending on your debugging n
 
 class Logger : public IPipelineElementUpstream, public IPipelineElementDownstream, private IMsgProcessor, private INonCopyable
 {
+    static const TUint kMaxLogBytes = 10 * 1024;
 public:
     enum EMsgType
     {
@@ -72,6 +73,7 @@ private:
     TBool iEnabled;
     TInt iFilter;
     Semaphore iShutdownSem;
+    Bws<kMaxLogBytes> iBuf;
 };
 
 } // namespace Media
