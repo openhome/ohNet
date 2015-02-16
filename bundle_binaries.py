@@ -59,6 +59,8 @@ ALL_TARGETS = {
         BuildTarget("Mac",     "x64",   "Debug"):   BuildInfo(builddir="Build/Obj/Mac-x64/Debug"),
         BuildTarget("Mac",     "x86",   "Release"): BuildInfo(builddir="Build/Obj/Mac-x86/Release"),
         BuildTarget("Mac",     "x64",   "Release"): BuildInfo(builddir="Build/Obj/Mac-x64/Release"),
+	BuildTarget("FreeBSD",   "x86",    "Debug"):   BuildInfo(builddir="Build/Obj/Posix/Debug"),
+	BuildTarget("FreeBSD",   "x86",    "Release"): BuildInfo(builddir="Build/Obj/Posix/Release"),
 
         BuildTarget("iOs",     "x86",   "Debug"):   BuildInfo(builddir="Build/Obj/iOs-x86/Debug"),
         BuildTarget("iOs",     "armv6", "Debug"):   BuildInfo(builddir="Build/Obj/iOs-armv6/Debug"),
