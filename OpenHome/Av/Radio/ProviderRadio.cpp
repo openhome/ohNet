@@ -28,11 +28,12 @@ static const Brn kInvalidChannelMsg("Selected channel is invalid");
 ProviderRadio::ProviderRadio(Net::DvDevice& aDevice, ISourceRadio& aSource, IPresetDatabaseReader& aDbReader, const Brx& aProtocolInfo)
     : DvProviderAvOpenhomeOrgRadio1(aDevice)
     , iLock("PRD1")
+    , iActionLock("PRD2")
     , iSource(aSource)
     , iDbReader(aDbReader)
     , iProtocolInfo(aProtocolInfo)
     , iDbSeq(0)
-    , iTempVarLock("PRD2")
+    , iTempVarLock("PRD3")
 {
     iDbReader.SetObserver(*this);
 
@@ -87,6 +88,7 @@ void ProviderRadio::PresetDatabaseChanged()
 
 void ProviderRadio::Play(IDvInvocation& aInvocation)
 {
+    AutoMutex _(iActionLock);
     iSource.Play();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -94,6 +96,7 @@ void ProviderRadio::Play(IDvInvocation& aInvocation)
 
 void ProviderRadio::Pause(IDvInvocation& aInvocation)
 {
+    AutoMutex _(iActionLock);
     iSource.Pause();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -101,6 +104,7 @@ void ProviderRadio::Pause(IDvInvocation& aInvocation)
 
 void ProviderRadio::Stop(IDvInvocation& aInvocation)
 {
+    AutoMutex _(iActionLock);
     iSource.Stop();
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -108,6 +112,7 @@ void ProviderRadio::Stop(IDvInvocation& aInvocation)
 
 void ProviderRadio::SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue)
 {
+    AutoMutex _(iActionLock);
     iSource.SeekAbsolute(aValue);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -115,6 +120,7 @@ void ProviderRadio::SeekSecondAbsolute(IDvInvocation& aInvocation, TUint aValue)
 
 void ProviderRadio::SeekSecondRelative(IDvInvocation& aInvocation, TInt aValue)
 {
+    AutoMutex _(iActionLock);
     iSource.SeekRelative(aValue);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -135,6 +141,7 @@ void ProviderRadio::Channel(IDvInvocation& aInvocation, IDvInvocationResponseStr
 
 void ProviderRadio::SetChannel(IDvInvocation& aInvocation, const Brx& aUri, const Brx& aMetadata)
 {
+    AutoMutex _(iActionLock);
     SetChannel(IPresetDatabaseReader::kPresetIdNone, aUri, aMetadata);
     aInvocation.StartResponse();
     aInvocation.EndResponse();
@@ -161,6 +168,7 @@ void ProviderRadio::Id(IDvInvocation& aInvocation, IDvInvocationResponseUint& aV
 
 void ProviderRadio::SetId(IDvInvocation& aInvocation, TUint aValue, const Brx& aUri)
 {
+    AutoMutex _(iActionLock);
     AutoMutex a(iTempVarLock);
     if (aValue == IPresetDatabaseReader::kPresetIdNone || !iDbReader.TryGetPresetById(aValue, iTempUri, iTempMetadata)) {
         iLock.Wait();

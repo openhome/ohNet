@@ -66,7 +66,7 @@ private:
     Media::Track* iTrack;
     TUint iTrackPosSeconds;
     TUint iStreamId;
-    Media::EPipelineState iTransportState;
+    TBool iLive;
 };
 
 } // namespace Av

@@ -85,7 +85,7 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
     , iTrack(NULL)
     , iTrackPosSeconds(0)
     , iStreamId(UINT_MAX)
-    , iTransportState(Media::EPipelineStopped)
+    , iLive(false)
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
@@ -122,7 +122,6 @@ void SourceRadio::Activate()
 void SourceRadio::Deactivate()
 {
     iLock.Wait();
-    iTransportState = EPipelineStopped;
     iProviderRadio->SetTransportState(EPipelineStopped);
     iLock.Signal();
     Source::Deactivate();
@@ -135,33 +134,29 @@ void SourceRadio::PipelineStopped()
 
 void SourceRadio::Fetch(const Brx& aUri, const Brx& aMetaData)
 {
+    AutoMutex _(iLock);
     if (!IsActive()) {
         DoActivate();
     }
     if (iTrack == NULL || iTrack->Uri() != aUri) {
-        iPipeline.RemoveAll();
         if (iTrack != NULL) {
             iTrack->RemoveRef();
         }
         iTrack = iUriProvider.SetTrack(aUri, aMetaData);
-        iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
-        if (iTransportState == Media::EPipelinePlaying) {
-            iPipeline.Play();
-        }
+        iPipeline.StopPrefetch(iUriProvider.Mode(), iTrack->Id());
     }
 }
 
 void SourceRadio::Play()
 {
+    AutoMutex _(iLock);
     if (!IsActive()) {
         DoActivate();
     }
     if (iTrack == NULL) {
         return;
     }
-    iLock.Wait();
-    iTransportState = Media::EPipelinePlaying;
-    iLock.Signal();
+    iPipeline.RemoveAll();
     iPipeline.Begin(iUriProvider.Mode(), iTrack->Id());
     iPipeline.Play();
 }
@@ -169,19 +164,18 @@ void SourceRadio::Play()
 void SourceRadio::Pause()
 {
     if (IsActive()) {
-        iLock.Wait();
-        iTransportState = Media::EPipelinePaused;
-        iLock.Signal();
-        iPipeline.Pause();
+        if (iLive) {
+            iPipeline.Stop();
+        }
+        else {
+            iPipeline.Pause();
+        }
     }
 }
 
 void SourceRadio::Stop()
 {
     if (IsActive()) {
-        iLock.Wait();
-        iTransportState = Media::EPipelineStopped;
-        iLock.Signal();
         iPipeline.Stop();
     }
 }
@@ -227,5 +221,6 @@ void SourceRadio::NotifyStreamInfo(const DecodedStreamInfo& aStreamInfo)
 {
     iLock.Wait();
     iStreamId = aStreamInfo.StreamId();
+    iLive = aStreamInfo.Live();
     iLock.Signal();
 }

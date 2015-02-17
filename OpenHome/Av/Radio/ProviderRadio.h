@@ -49,6 +49,7 @@ private:
     void UpdateIdArrayProperty();
 private:
     mutable Mutex iLock;
+    Mutex iActionLock; // serialise actions that a control point may want to call sequentially (required by Kinsky)
     ISourceRadio& iSource;
     IPresetDatabaseReader& iDbReader;
     Brn iProtocolInfo;
