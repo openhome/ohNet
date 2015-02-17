@@ -280,6 +280,16 @@ void Converter::FromXmlEscaped(Bwx& aValue)
     aValue.SetBytes(j);
 }
 
+TUint64 Converter::BeUint64At(const Brx& aBuf, TUint aIndex)
+{
+    TUint64 val = 0;
+    for (TInt i=sizeof(val)-1; i>=0; i--) {
+        TUint64 byte = aBuf[aIndex++];
+        val += byte << (i*8);
+    }
+    return val;
+}
+
 TUint32 Converter::BeUint32At(const Brx& aBuf, TUint aIndex)
 {
     TUint b[4];
