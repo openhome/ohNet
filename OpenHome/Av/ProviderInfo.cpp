@@ -151,6 +151,7 @@ void ProviderInfo::NotifyTrack(Media::Track& aTrack, const Brx& /*aMode*/, TBool
     }
     else {
         SetTrackInfo(aTrack.Uri(), aTrack.MetaData());
+        SetPropertyDetailsCount(1); // for strict volkano1 compatability
     }
     PropertiesUnlock();
 }
