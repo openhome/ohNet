@@ -34,8 +34,14 @@ ProtocolOhBase::ProtocolOhBase(Environment& aEnv, IOhmMsgFactory& aFactory, Medi
     , iSupportedScheme(aSupportedScheme)
     , iRunning(false)
     , iRepairing(false)
+    , iTrackMsgDue(false)
     , iStreamMsgDue(true)
     , iMetatextMsgDue(false)
+    , iSeqTrackValid(false)
+    , iSeqMetatextValid(false)
+    , iSeqTrack(UINT_MAX)
+    , iSeqMetatext(UINT_MAX)
+    , iLastSampleStart(0)
     , iRepairFirst(NULL)
 {
     iNacnId = iEnv.NetworkAdapterList().AddCurrentChangeListener(MakeFunctor(*this, &ProtocolOhBase::CurrentSubnetChanged), false);
@@ -150,8 +156,14 @@ ProtocolStreamResult ProtocolOhBase::Stream(const Brx& aUri)
     iMutexTransport.Wait();
     RepairReset();
     iFrame = 0;
+    iTrackMsgDue = false;
     iStreamMsgDue = true;
     iMetatextMsgDue = false;
+    iSeqTrackValid = false;
+    iSeqMetatextValid = false;
+    iSeqTrack = UINT_MAX;
+    iSeqMetatext = UINT_MAX;
+    iLastSampleStart = 0;
     iStreamId = IPipelineIdProvider::kStreamIdInvalid;
     iMutexTransport.Signal();
 
@@ -365,6 +377,18 @@ void ProtocolOhBase::TimerRepairExpired()
 void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
 {
     iMutexTransport.Signal();
+    TBool startOfStream = false;
+    if (aMsg.SampleStart() < iLastSampleStart) {
+        startOfStream = true;
+        iStreamMsgDue = true;
+    }
+    if (startOfStream || iTrackMsgDue) {
+        Track* track = iTrackFactory.CreateTrack(iTrackUri, iTrackMetadata);
+        iSupply->OutputTrack(*track, startOfStream);
+        track->RemoveRef();
+        iTrackMsgDue = false;
+    }
+    iLastSampleStart = aMsg.SampleStart();
     iFrameBuf.SetBytes(0);
     WriterBuffer writer(iFrameBuf);
     aMsg.ExternaliseAsBlob(writer);
@@ -436,25 +460,29 @@ void ProtocolOhBase::Process(OhmMsgAudioBlob& aMsg)
 
 void ProtocolOhBase::Process(OhmMsgTrack& aMsg)
 {
-    iTrackUri.Replace(aMsg.Uri());
-    iStreamMsgDue = true;
-    iMetatextMsgDue = false; // discard any metatext we haven't yet passed on.  It'll describe the previous track
-    Track* track = iTrackFactory.CreateTrack(aMsg.Uri(), aMsg.Metadata());
-    iSupply->OutputTrack(*track);
-    track->RemoveRef();
+    if (!iSeqTrackValid || iSeqTrack != aMsg.Sequence()) {
+        iSeqTrackValid = true;
+        iSeqTrack = aMsg.Sequence();
+        iTrackUri.Replace(aMsg.Uri());
+        iTrackMetadata.Replace(aMsg.Metadata());
+        iTrackMsgDue = true;
+    }
     aMsg.RemoveRef();
-    // FIXME - also need OutputStream (which is complicated by repair vector)
 }
 
 void ProtocolOhBase::Process(OhmMsgMetatext& aMsg)
 {
-    if (iStreamMsgDue) {
-        // Pipeline expects a stream before any metatext.  Buffer metatext until we can output a stream.
-        iMetatextMsgDue = true;
-        iPendingMetatext.Replace(aMsg.Metatext());
-    }
-    else {
-        iSupply->OutputMetadata(aMsg.Metatext());
+    if (!iSeqMetatextValid || iSeqMetatext != aMsg.Sequence()) {
+        iSeqMetatextValid = true;
+        iSeqMetatext = aMsg.Sequence();
+        if (iTrackMsgDue) {
+            // Pipeline expects a stream before any metatext.  Buffer metatext until we can output a stream.
+            iMetatextMsgDue = true;
+            iPendingMetatext.Replace(aMsg.Metatext());
+        }
+        else {
+            iSupply->OutputMetadata(aMsg.Metatext());
+        }
     }
     aMsg.RemoveRef();
 }

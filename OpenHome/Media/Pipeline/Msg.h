@@ -940,8 +940,9 @@ public:
      * Inform the pipeline that a new track is starting.
      *
      * @param[in] aTrack           Track about to be played.
+     * @param[in] aStartOfStream   false if this is called after OutputData.
      */
-    virtual void OutputTrack(Track& aTrack) = 0;
+    virtual void OutputTrack(Track& aTrack, TBool aStartOfStream = true) = 0;
     /**
      * Apply a delay to subsequent audio in this stream.
      *

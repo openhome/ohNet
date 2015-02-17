@@ -349,6 +349,7 @@ void OhmMsgAudioBlob::Create(IReader& aReader, const OhmHeader& aHeader)
 
     iBlob.Replace(aReader.Read(aHeader.MsgBytes()));
     iFrame = Converter::BeUint32At(iBlob, 4);
+    iSampleStart = Converter::BeUint64At(iBlob, 20);
 }
 
 void OhmMsgAudioBlob::Create(OhmMsgAudio& aMsg, IReader& aReader, const OhmHeader& aHeader)

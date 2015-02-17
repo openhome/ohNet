@@ -85,15 +85,22 @@ private:
     TUint iFrame;
     TBool iRunning;
     TBool iRepairing;
+    TBool iTrackMsgDue;
     TBool iStreamMsgDue;
     TBool iMetatextMsgDue;
+    TBool iSeqTrackValid;
+    TBool iSeqMetatextValid;
     Bws<Media::MsgMetaText::kMaxBytes> iPendingMetatext;
+    TUint iSeqTrack;
+    TUint iSeqMetatext;
+    TUint64 iLastSampleStart;
     OhmMsgAudioBlob* iRepairFirst;
     std::vector<OhmMsgAudioBlob*> iRepairFrames;
     Timer* iTimerRepair;
     Bws<Media::EncodedAudio::kMaxBytes> iFrameBuf;
     TUint iAddr; // FIXME - should listen for subnet changes and update this value
     Media::BwsTrackUri iTrackUri;
+    Media::BwsTrackMetaData iTrackMetadata;
 };
 
 } // namespace Av

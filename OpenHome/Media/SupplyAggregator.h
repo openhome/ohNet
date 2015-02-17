@@ -17,7 +17,7 @@ public:
     void Flush();
 public: // from ISupply
     void OutputSession() override;
-    void OutputTrack(Track& aTrack) override;
+    void OutputTrack(Track& aTrack, TBool aStartOfStream = true) override;
     void OutputDelay(TUint aJiffies) override;
     void OutputMetadata(const Brx& aMetadata) override;
     void OutputFlush(TUint aFlushId) override;
