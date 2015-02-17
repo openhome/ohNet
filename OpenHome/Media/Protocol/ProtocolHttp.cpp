@@ -61,6 +61,7 @@ private:
     TUint WriteRequest(TUint64 aOffset);
     ProtocolStreamResult ProcessContent();
     TBool ContinueStreaming(ProtocolStreamResult aResult);
+    TBool IsCurrentStream(TUint aStreamId) const;
     void ExtractMetadata();
 private:
     Supply* iSupply;
@@ -148,6 +149,7 @@ ProtocolHttp::ProtocolHttp(Environment& aEnv)
     , iReaderResponse(aEnv, iReaderBuf)
     , iDechunker(iReaderBuf)
     , iTotalBytes(0)
+    , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekable(false)
     , iSem("PRTH", 0)
 {
@@ -306,8 +308,8 @@ TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
     LOG(kMedia, "ProtocolHttp::TrySeek\n");
 
     iLock.Wait();
-    const TBool streamIsValid = iProtocolManager->IsCurrentStream(aStreamId);
-    if (streamIsValid) {
+    const TBool streamIsCurrent = IsCurrentStream(aStreamId);
+    if (streamIsCurrent) {
         iSeek = true;
         iSeekPos = aOffset;
         if (iNextFlushId == MsgFlush::kIdInvalid) {
@@ -318,7 +320,7 @@ TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
         }
     }
     iLock.Signal();
-    if (!streamIsValid) {
+    if (!streamIsCurrent) {
         return MsgFlush::kIdInvalid;
     }
     iTcpClient.Interrupt(true);
@@ -328,7 +330,7 @@ TUint ProtocolHttp::TrySeek(TUint aStreamId, TUint64 aOffset)
 TUint ProtocolHttp::TryStop(TUint aStreamId)
 {
     iLock.Wait();
-    const TBool stop = iProtocolManager->IsCurrentStream(aStreamId);
+    const TBool stop = IsCurrentStream(aStreamId);
     if (stop) {
         if (iNextFlushId == MsgFlush::kIdInvalid) {
             /* If a valid flushId is set then We've previously promised to send a Flush but haven't
@@ -351,7 +353,7 @@ TBool ProtocolHttp::TryGet(IWriter& aWriter, TUint aStreamId, TUint64 aOffset, T
     LOG(kMedia, "> ProtocolHttp::TryGet\n");
     iLock.Wait();
     TBool success = false;
-    if (iProtocolManager->IsCurrentStream(aStreamId)) {
+    if (IsCurrentStream(aStreamId)) {
         success = iProtocolManager->Get(aWriter, iUri.AbsoluteUri(), aOffset, aBytes);
     }
     iLock.Signal();
@@ -438,7 +440,7 @@ ProtocolStreamResult ProtocolHttp::DoStream()
 
     iSeekable = false;
     iTotalBytes = iHeaderContentLength.ContentLength();
-    iLive = (iReaderResponse.Version() == Http::eHttp11 && iTotalBytes == 0);
+    iLive = (iTotalBytes == 0);
     if (code != HttpStatus::kPartialContent.Code() && code != HttpStatus::kOk.Code()) {
         LOG(kMedia, "ProtocolHttp::DoStream Failed\n");
         return EProtocolStreamErrorUnrecoverable;
@@ -684,6 +686,14 @@ TBool ProtocolHttp::ContinueStreaming(ProtocolStreamResult aResult)
         return true;
     }
     return false;
+}
+
+TBool ProtocolHttp::IsCurrentStream(TUint aStreamId) const
+{
+    if (iStreamId != aStreamId || aStreamId == IPipelineIdProvider::kStreamIdInvalid) {
+        return false;
+    }
+    return true;
 }
 
 void ProtocolHttp::ExtractMetadata()
