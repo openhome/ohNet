@@ -31,7 +31,7 @@ class Environment;
  * Auto ptr for NetworkAdapter references.
  * @ingroup Core
  */
-class AutoNetworkAdapterRef
+class DllExportClass AutoNetworkAdapterRef
 {
 public:
     AutoNetworkAdapterRef(Environment& aEnv, const char* aCookie); // creates ref to stack's current adapter
@@ -48,7 +48,7 @@ private:
  * Represents a single network interface
  * @ingroup Core
  */
-class NetworkAdapter : private IStackObject
+class DllExportClass NetworkAdapter : private IStackObject
 {
 public:
     /**
@@ -151,7 +151,7 @@ class DefaultLogger;
  * specific to a particular stack include either 'Cp' or 'Dv'
  * @ingroup Core
  */
-class InitialisationParams
+class DllExportClass InitialisationParams
 {
 public:
     enum ELoopback

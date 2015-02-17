@@ -33,13 +33,13 @@ public:
     static IFile* Open(const TChar* aFilename, FileMode aFileMode);
 public:
     virtual ~IFile() {}
-    virtual void Read(Bwx& aBuffer) = 0; // Appends aBuffer.MaxBytes() - aBuffer.Bytes()
-    virtual void Read(Bwx& aBuffer, TUint aBytes) = 0; // Appends aBytes.  Asserts if less than this available
-    virtual void Write(const Brx& aBuffer) = 0;
-    virtual void Write(const Brx& aBuffer, TUint32 aBytes) = 0;
-    virtual void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart) = 0;
-    virtual TUint32 Tell() const = 0;
-    virtual TUint32 Bytes() const = 0;
+    virtual void Read(Bwx& aBuffer) = 0;                        // Fills remaining bytes in aBuffer, or throws FileReadError
+    virtual void Read(Bwx& aBuffer, TUint aBytes) = 0;          // Appends aBytes or throws FileReadError
+    virtual void Write(const Brx& aBuffer) = 0;                 // Writes all buffer bytes, or throws FileWriteError
+    virtual void Write(const Brx& aBuffer, TUint32 aBytes) = 0; // Writes aBytes, or throws FileWriteError
+    virtual void Seek(TInt32 aBytes, SeekWhence aWhence = eSeekFromStart) = 0; // Seeks, or throws FileSeekError
+    virtual TUint32 Tell() const = 0;                           // Current position in file
+    virtual TUint32 Bytes() const = 0;                          // Size of file
 };
 
 class FileAnsii : public IFile
@@ -81,6 +81,7 @@ class FileStream : public IWriter, public IReaderSource
 {
 public:
     FileStream();
+    FileStream(const TChar* aFilename, FileMode aFileMode);
     void OpenFile(const TChar* aFilename, FileMode aFileMode);
     void SetFile(IFile* aFile);
     void CloseFile();

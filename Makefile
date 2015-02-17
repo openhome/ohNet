@@ -60,6 +60,13 @@ else ifeq ($(Android-anycpu), 1)
     platform = Android
     detected_openhome_system = Android
     detected_openhome_architecture = anycpu
+else ifeq ($(freebsd), 1)
+    platform = FreeBSD
+    detected_openhome_system = FreeBSD
+    detected_openhome_architecture = x86
+    compiler = gcc -o $(objdir)
+    link = ${CROSS_COMPILE}g++ $(platform_linkflags)
+    ar = ${CROSS_COMPILE}ar rc $(objdir)
 else
   # At present, platform == Vanilla is used for Kirkwood, x86 and x64 Posix builds.
   platform ?= Vanilla
@@ -259,6 +266,16 @@ ifeq ($(platform), Linux-ppc32)
     linkopts_ohNet = -Wl,-soname,libohNet.so
     osbuilddir = Posix
     osdir = Posix
+endif
+
+ifeq ($(platform), FreeBSD)
+    platform_cflags = $(version_specific_cflags) -fPIC -DPLATFORM_FREEBSD
+    platform_linkflags = $(version_specific_linkflags) -pthread
+    linkopts_ohNet = -Wl,-soname,libohNet.so
+    osbuilddir = Posix
+    objdir = Build/Obj/$(osbuilddir)/$(build_dir)/
+    osdir = Posix
+    endian ?= LITTLE
 endif
 
 ifeq ($(platform), Vanilla)
