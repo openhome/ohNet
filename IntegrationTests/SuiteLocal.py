@@ -49,7 +49,8 @@ tidalPwd  = config.Get( 'tidal.password' )
 
 tests = [
     # Update and build ohMediaPlayer
-    [ 'BuildOhmp',                   'debug'                                                                              ],
+#    [ 'BuildOhmp',                   'debug'                                                                              ],
+    [ 'BuildOhmp'                                                                                                         ],
 
     # OH Playlist Service
     [ 'TestPlaylistHandling',        'local', 'all',   0                                                                  ],
