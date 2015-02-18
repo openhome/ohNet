@@ -152,9 +152,8 @@ TUint PipelineInitParams::ThreadPriorityMax() const
 
 // Pipeline
 
-Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator,
-                   IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver,
-                   ISeekRestreamer& aSeekRestreamer)
+Pipeline::Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver,
+                   IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IPipelineDriver& /*aPipelineDriver*/)
     : iInitParams(aInitParams)
     , iObserver(aObserver)
     , iLock("PLMG")

@@ -50,7 +50,7 @@ class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
 public:
     TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
                     const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aUserAgent,
-                    Media::IPullableClock* aPullableClock);
+                    Media::IPullableClock* aPullableClock, Media::IPipelineDriver& aPipelineDriver);
     virtual ~TestMediaPlayer();
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver

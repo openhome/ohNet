@@ -227,3 +227,8 @@ void DriverBasic::PullClock(TInt32 aValue)
     iPullValue += aValue;
     Log::Print("DriverBasic::PullClock now at %u%%\n", iPullValue / (1<<29));
 }
+
+TUint DriverBasic::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
+{
+    return 0;
+}

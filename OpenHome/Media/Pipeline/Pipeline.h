@@ -84,6 +84,25 @@ private:
     TUint iThreadPriorityMax;
 };
 
+/**
+ * Should be implemented by the object that animates (calls Pull() on) Pipeline.
+ */
+class IPipelineDriver
+{
+public:
+    virtual ~IPipelineDriver() {}
+    /**
+     * Report any post-pipeline delay.
+     *
+     * @param[in] aSampleRateFrom   Previous sample rate (in Hz).  0 implies pipeline startup.
+     * @param[in] aSampleRateTo     New sample rate (in Hz).
+     *
+     * @return     Delay applied beyond the pipeline in Jiffies.
+     *             See Jiffies class for time conversion utilities.
+     */
+    virtual TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) = 0;
+};
+
 class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstream, public IFlushIdProvider, public IWaiterObserver, public IStopper, private IStopperObserver, private IPipelinePropertyObserver, private IStarvationMonitorObserver
 {
     friend class SuitePipeline; // test code
@@ -102,7 +121,7 @@ class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstr
     static const TUint kMsgCountQuit            = 1;
     static const TUint kThreadCount             = 3; // CodecController, Gorger, StarvationMonitor
 public:
-    Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer);
+    Pipeline(PipelineInitParams* aInitParams, IInfoAggregator& aInfoAggregator, IPipelineObserver& aObserver, IStreamPlayObserver& aStreamPlayObserver, ISeekRestreamer& aSeekRestreamer, IPipelineDriver& aPipelineDriver);
     virtual ~Pipeline();
     void AddCodec(Codec::CodecBase* aCodec);
     void Start();
