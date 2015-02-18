@@ -37,7 +37,7 @@ DummyFiller::DummyFiller(Environment& aEnv, Pipeline& aPipeline, IFlushIdProvide
     iTrackFactory = new TrackFactory(aInfoAggregator, 10);
 
     iProtocolManager = new ProtocolManager(aPipeline, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
     iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewTone(aEnv));
     iProtocolManager->Add(ProtocolFactory::NewRtsp(aEnv, Brn("GUID-TestProtocol-0123456789")));

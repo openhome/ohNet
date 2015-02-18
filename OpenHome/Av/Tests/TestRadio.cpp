@@ -95,11 +95,11 @@ void TestRadio::RegisterPlugins(Environment& aEnv)
     iPipeline->Add(Codec::CodecFactory::NewWav());
 
     // Add protocol modules
-    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
-    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
-    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
-    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
-    iPipeline->Add(ProtocolFactory::NewHttp(aEnv));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
+    iPipeline->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
     iPipeline->Add(ProtocolFactory::NewRtsp(aEnv, Brn("notarealguid")));
 
     // Add content processors

@@ -35,11 +35,14 @@ using namespace OpenHome::TestFramework;
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
-TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const Brx& aTuneInPartnerId, const Brx& aTidalId, IPullableClock* aPullableClock)
+TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName,
+                                 const Brx& aTuneInPartnerId, const Brx& aTidalId, const Brx& aUserAgent,
+                                 IPullableClock* aPullableClock)
     : iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
     , iTuneInPartnerId(aTuneInPartnerId)
     , iTidalId(aTidalId)
+    , iUserAgent(aUserAgent)
 {
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
@@ -224,11 +227,11 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
 
     // Add protocol modules (Radio source can require several stacked Http instances)
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
-    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
+    iMediaPlayer->Add(ProtocolFactory::NewHttp(aEnv, iUserAgent));
     // only add Tidal if we have credible login details
     if (iTidalId.Bytes() > 0) {
         iMediaPlayer->Add(ProtocolFactory::NewTidal(aEnv, iTidalId, iMediaPlayer->CredentialsManager(), iMediaPlayer->ConfigInitialiser()));
@@ -359,6 +362,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
     , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
+    , iOptionUserAgent("", "--useragent", Brn(""), "User Agent (for HTTP requests)")
 {
     iParser.AddOption(&iOptionRoom);
     iParser.AddOption(&iOptionName);
@@ -368,6 +372,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     iParser.AddOption(&iOptionLoopback);
     iParser.AddOption(&iOptionTuneIn);
     iParser.AddOption(&iOptionTidal);
+    iParser.AddOption(&iOptionUserAgent);
 }
 
 void TestMediaPlayerOptions::AddOption(Option* aOption)
@@ -418,6 +423,11 @@ OptionString& TestMediaPlayerOptions::TuneIn()
 OptionString& TestMediaPlayerOptions::Tidal()
 {
     return iOptionTidal;
+}
+
+OptionString& TestMediaPlayerOptions::UserAgent()
+{
+    return iOptionUserAgent;
 }
 
 

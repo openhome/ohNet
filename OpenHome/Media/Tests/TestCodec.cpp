@@ -183,7 +183,7 @@ TestCodecFiller::TestCodecFiller(Environment& aEnv, IPipelineElementDownstream& 
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aDownstream, aMsgFactory, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }
 

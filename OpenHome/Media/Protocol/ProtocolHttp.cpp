@@ -31,8 +31,9 @@ private:
 class ProtocolHttp : public ProtocolNetwork, private IProtocolReader
 {
     static const TUint kIcyMetadataBytes = 255 * 16;
+    static const TUint kMaxUserAgentBytes = 64;
 public:
-    ProtocolHttp(Environment& aEnv);
+    ProtocolHttp(Environment& aEnv, const Brx& aUserAgent);
     ~ProtocolHttp();
 private: // from Protocol
     void Initialise(MsgFactory& aMsgFactory, IPipelineElementDownstream& aDownstream) override;
@@ -73,6 +74,7 @@ private:
     HttpHeaderLocation iHeaderLocation;
     HttpHeaderTransferEncoding iHeaderTransferEncoding;
     HeaderIcyMetadata iHeaderIcyMetadata;
+    Bws<kMaxUserAgentBytes> iUserAgent;
     Bws<kIcyMetadataBytes> iIcyMetadata;
     Bws<kIcyMetadataBytes> iNewIcyMetadata; // only used in a single function but too large to comfortably declare on the stack
     OpenHome::Uri iUri;
@@ -100,9 +102,9 @@ using namespace OpenHome;
 using namespace OpenHome::Media;
 
 
-Protocol* ProtocolFactory::NewHttp(Environment& aEnv)
+Protocol* ProtocolFactory::NewHttp(Environment& aEnv, const Brx& aUserAgent)
 { // static
-    return new ProtocolHttp(aEnv);
+    return new ProtocolHttp(aEnv, aUserAgent);
 }
 
 
@@ -140,14 +142,13 @@ void HeaderIcyMetadata::Process(const Brx& aValue)
 
 // ProtocolHttp
 
-static const Brn kUserAgentString("Linn DS"); // FIXME
-
-ProtocolHttp::ProtocolHttp(Environment& aEnv)
+ProtocolHttp::ProtocolHttp(Environment& aEnv, const Brx& aUserAgent)
     : ProtocolNetwork(aEnv)
     , iSupply(NULL)
     , iWriterRequest(iWriterBuf)
     , iReaderResponse(aEnv, iReaderBuf)
     , iDechunker(iReaderBuf)
+    , iUserAgent(aUserAgent)
     , iTotalBytes(0)
     , iStreamId(IPipelineIdProvider::kStreamIdInvalid)
     , iSeekable(false)
@@ -607,7 +608,9 @@ TUint ProtocolHttp::WriteRequest(TUint64 aOffset)
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
         const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
         Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
-        iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
+        if (iUserAgent.Bytes() > 0) {
+            iWriterRequest.WriteHeader(Http::kHeaderUserAgent, iUserAgent);
+        }
         Http::WriteHeaderConnectionClose(iWriterRequest);
         if (!suppressIcyHeader) {
             HeaderIcyMetadata::Write(iWriterRequest);

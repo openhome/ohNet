@@ -991,7 +991,7 @@ SuiteHttp::SuiteHttp(const TChar* aSuiteName, SessionFactory::ESession aSession)
     iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
-    iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv, Brx::Empty()));
 
     iTrackFactory= new TrackFactory(iInfoAggregator, 1);
 }
@@ -1182,7 +1182,7 @@ SuiteHttpChunked::SuiteHttpChunked()
     iMsgFactory = new MsgFactory(iInfoAggregator, 100, 100, 1, 1, 1, 1, 1, 1, 10, 10, 10, 1, 10, 1, 1, 10, 1, 1);
 
     iProtocolManager = new ProtocolManager(*iSupply, *iMsgFactory, *iProvider, *iFlushId);
-    iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(*gEnv, Brx::Empty()));
 
     iTrackFactory= new TrackFactory(iInfoAggregator, 1);
 }

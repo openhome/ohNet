@@ -16,7 +16,7 @@ DummyFiller::DummyFiller(Environment& aEnv, ISupply& aSupply, IFlushIdProvider& 
     , iNextStreamId(kInvalidPipelineId+1)
 {
     iProtocolManager = new ProtocolManager(aSupply, *this, aFlushIdProvider);
-    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv));
+    iProtocolManager->Add(ProtocolFactory::NewHttp(aEnv, Brx::Empty()));
     iProtocolManager->Add(ProtocolFactory::NewFile(aEnv));
     iTrackFactory = new TrackFactory(aInfoAggregator, 1);
 }

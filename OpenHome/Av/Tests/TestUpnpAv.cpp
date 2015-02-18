@@ -259,7 +259,7 @@ TestUpnpAv::TestUpnpAv(DvStack& aDvStack, const Brx& aSenderUdn, TUint aSenderCh
     iPipeline->Add(Codec::CodecFactory::NewVorbis());
     iPipeline->Add(Codec::CodecFactory::NewWav());
     iPipeline->Add(Codec::CodecFactory::NewWma());
-    iPipeline->Add(ProtocolFactory::NewHttp(aDvStack.Env()));
+    iPipeline->Add(ProtocolFactory::NewHttp(aDvStack.Env(), Brx::Empty()));
     iDriver = new DriverSongcastSender(*iPipeline, kMaxDriverJiffies, aDvStack, aSenderUdn, aSenderChannel);
     iUriProvider = new UriProviderSingleTrack("UpnpAv", false, false, *iTrackFactory);
     iPipeline->Add(iUriProvider);

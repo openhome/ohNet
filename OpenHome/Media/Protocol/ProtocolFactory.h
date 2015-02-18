@@ -20,7 +20,7 @@ class Protocol;
 class ProtocolFactory
 {
 public:
-    static Protocol* NewHttp(Environment& aEnv);
+    static Protocol* NewHttp(Environment& aEnv, const Brx& aUserAgent); // UA is optional so can be empty
     static Protocol* NewHttps(Environment& aEnv);
     static Protocol* NewFile(Environment& aEnv);
     static Protocol* NewTone(Environment& aEnv);
