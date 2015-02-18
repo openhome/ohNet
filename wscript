@@ -595,7 +595,6 @@ def build(bld):
                 'OpenHome/Av/Tests/TestPlaylist.cpp',
                 'Generated/CpAvOpenhomeOrgPlaylist1.cpp',
                 'OpenHome/Av/Tests/TestMediaPlayer.cpp',
-                'OpenHome/Av/Tests/TestRadio.cpp',
                 'OpenHome/Av/Tests/TestUriProviderRepeater.cpp',
                 'OpenHome/Configuration/Tests/ConfigRamStore.cpp',
                 'OpenHome/Configuration/Tests/TestConfigManager.cpp',
@@ -792,11 +791,6 @@ def build(bld):
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRaop'],
             target='TestUdpServer',
             install_path=None)
-    #bld.program(
-    #        source='OpenHome/Av/Tests/TestUpnpAv.cpp',
-    #        use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils'],
-    #        target='TestUpnpAv',
-    #        install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUpnpErrorsMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceUpnpAv'],
@@ -811,11 +805,6 @@ def build(bld):
             source='OpenHome/Av/Tests/TestPlaylistMain.cpp',
             use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourcePlaylist'],
             target='TestPlaylist',
-            install_path=None)
-    bld.program(
-            source='OpenHome/Av/Tests/TestRadioMain.cpp',
-            use=['OHNET', 'ohMediaPlayer', 'ohMediaPlayerTestUtils', 'SourceRadio', 'SourceSongcast'],
-            target='TestRadio',
             install_path=None)
     bld.program(
             source='OpenHome/Av/Tests/TestUriProviderRepeaterMain.cpp',

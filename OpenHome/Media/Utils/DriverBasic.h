@@ -7,12 +7,13 @@
 #include <OpenHome/Media/ClockPuller.h>
 #include <OpenHome/Media/Utils/ProcessorPcmUtils.h>
 #include <OpenHome/Net/Core/DvDevice.h>
+#include <OpenHome/Media/Pipeline/Pipeline.h>
 
 namespace OpenHome {
     class Environment;
 namespace Media {
 
-class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock
+class DriverBasic : public Thread, private IMsgProcessor, public IPullableClock, public IPipelineDriver
 {
     static const TUint kTimerFrequencyMs = 5;
     static const TInt64 kClockPullDefault = (1 << 29) * 100LL;
@@ -42,6 +43,8 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private: // from IPullableClock
     void PullClock(TInt32 aValue);
+private: // from IPipelineDriver
+    TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private:
     IPipelineElementUpstream* iPipeline;
     Semaphore iSem;

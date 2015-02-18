@@ -46,11 +46,12 @@ private:
     void Output(const TChar* aKey, const TChar* aValue);
 };
 
-class DummyDriver : public Thread, private IMsgProcessor
+class DummyDriver : public Thread, public IPipelineDriver, private IMsgProcessor
 {
 public:
-    DummyDriver(IPipelineElementUpstream& aPipeline);
+    DummyDriver();
     ~DummyDriver();
+    void SetPipeline(IPipelineElementUpstream& aPipeline);
     void PullTrack(Functor aTrackCompleted);
     void PullUntilNewTrack(Functor aTrackChanged, TInt aSampleVal);
     void Mark();
@@ -59,6 +60,8 @@ private: // from Thread
     void Run() override;
 private:
     void TrackCompleted();
+private: // from IPipelineDriver
+    TUint PipelineDriverDelayJiffies(TUint aSampleRateFrom, TUint aSampleRateTo) override;
 private: // from IMsgProcessor
     Msg* ProcessMsg(MsgMode* aMsg) override;
     Msg* ProcessMsg(MsgSession* aMsg) override;
@@ -77,7 +80,7 @@ private: // from IMsgProcessor
     Msg* ProcessMsg(MsgQuit* aMsg) override;
 private:
     Mutex iLock;
-    IPipelineElementUpstream& iPipeline;
+    IPipelineElementUpstream* iPipeline;
     Functor iTrackCompleted;
     Functor iTrackChanged;
     TUint iJiffiesPerSample;
@@ -180,10 +183,10 @@ void DummyAsyncOutput::Output(const TChar* /*aKey*/, const TChar* /*aValue*/)
 
 // DummyDriver
 
-DummyDriver::DummyDriver(IPipelineElementUpstream& aPipeline)
+DummyDriver::DummyDriver()
     : Thread("DummyDriver")
     , iLock("DMYD")
-    , iPipeline(aPipeline)
+    , iPipeline(NULL)
     , iJiffiesPerSample(0)
     , iBitDepth(0)
     , iNumChannels(0)
@@ -198,6 +201,11 @@ DummyDriver::~DummyDriver()
 {
     Kill();
     Join();
+}
+
+void DummyDriver::SetPipeline(IPipelineElementUpstream& aPipeline)
+{
+    iPipeline = &aPipeline;
 }
 
 void DummyDriver::PullTrack(Functor aTrackCompleted)
@@ -241,7 +249,7 @@ void DummyDriver::Run()
                under valgrind and Playing/Buffering counts increase, breaking tests */
     //TUint count = 0;
     do {
-        Msg* msg = iPipeline.Pull();
+        Msg* msg = iPipeline->Pull();
         msg = msg->Process(*this);
         msg->RemoveRef();
         //if (++count % 4 == 0) {
@@ -255,6 +263,11 @@ void DummyDriver::TrackCompleted()
     if (iTrackCompleted) {
         iTrackCompleted();
     }
+}
+
+TUint DummyDriver::PipelineDriverDelayJiffies(TUint /*aSampleRateFrom*/, TUint /*aSampleRateTo*/)
+{
+    return 0;
 }
 
 Msg* DummyDriver::ProcessMsg(MsgMode* /*aMsg*/)
@@ -413,8 +426,9 @@ void SuitePlaylist::Setup()
 
     iRamStore = new RamStore();
     iConfigRamStore = new ConfigRamStore();
+    iDriver = new DummyDriver();
     iMediaPlayer = new MediaPlayer(iDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
-                                   NULL, iVolume, iVolume, udn, Brn("Main Room"), Brn("Softplayer"));
+                                   *iDriver, NULL, iVolume, iVolume, udn, Brn("Main Room"), Brn("Softplayer"));
     iMediaPlayer->Add(Codec::CodecFactory::NewWav());
     iMediaPlayer->Add(ProtocolFactory::NewTone(env));
     // No content processors
@@ -422,7 +436,7 @@ void SuitePlaylist::Setup()
     iMediaPlayer->Pipeline().AddObserver(*this);
     iMediaPlayer->Start();
 
-    iDriver = new DummyDriver(iMediaPlayer->Pipeline());
+    iDriver->SetPipeline(iMediaPlayer->Pipeline());
 
     iDevice->SetEnabled();
     CpDeviceDv* cpDevice = CpDeviceDv::New(iCpStack, *iDevice);
