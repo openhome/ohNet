@@ -179,12 +179,15 @@ class TestRadioPlayChannels( BASE.BaseTest ):
     def _SetupSender( self, aName, aTuneInUser, aLoopback ):
         """Create sender, select radio, setup TuneIn account, subscribe to events"""
         if aName.lower() == 'local':
-            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneIn=aTuneInUser, aLoopback=aLoopback )
+            tuneInId=self.config.Get( 'tunein.partnerid' )
+            self.soft1 = SoftPlayer.SoftPlayer( aRoom='TestSender', aTuneInId=tuneInId, aLoopback=aLoopback )
             aName = self.soft1.name
+
         self.senderDev = aName.split( ':' )[0]
         self.sender = Volkano.VolkanoDevice( aName, aIsDut=True, aLoopback=aLoopback )
+        self.sender.config.SetValue( 'Radio.TuneInUserName', aTuneInUser )
         self.sender.product.sourceIndexByName = 'Radio'
-        
+
         self.idArrayUpdated.clear()
         self.sender.radio.AddSubscriber( self._RadioEventCb )
         self.sender.info.AddSubscriber( self._InfoEventCb )
