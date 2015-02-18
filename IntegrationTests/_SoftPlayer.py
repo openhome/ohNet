@@ -27,7 +27,7 @@ class SoftPlayer( BASE.Component ):
     def __init__( self, 
                   aRoom          = None,     # defaults to 'SoftPlayer'
                   aModel         = None,     # defaults to 'SoftPlayer'
-                  aTuneIn        = None,     # defaults to 'linnproducts'
+                  aTuneInId      = None,     # defaults to ''
                   aLoopback      = False,    # defaults to False
                   aTidalId       = None,     # defaults to Tidal disabled
                   aSenderChannel = None ):   # defaults to a random value
@@ -74,8 +74,8 @@ class SoftPlayer( BASE.Component ):
             cmd.extend( ['-l'] )
         elif hostId:
             cmd.extend( ['-a', '%d' % hostId] )
-        if aTuneIn:
-            cmd.extend( ['-t', aTuneIn] )
+        if aTuneInId:
+            cmd.extend( ['-t', aTuneInId] )
         if aSenderChannel:
             cmd.extend( ['-c', '%d' % aSenderChannel] )
         if aTidalId:
@@ -149,8 +149,8 @@ if __name__ == '__main__':
     f.close()
 
     # start softplayer, wait for exit
-    tuneinUser = Config.Config().Get( 'tunein.user.o2' )
-    s = SoftPlayer( aRoom='TestDev', aTuneIn=tuneinUser, aTidalId=accts['tidal']['id'] )
+    tuneinId = Config.Config().Get( 'tunein.partnerid' )
+    s = SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aTidalId=accts['tidal']['id'] )
     if _platform in ['Windows', 'cli']:
         import msvcrt
         print '\nPress ANY KEY to EXIT'
