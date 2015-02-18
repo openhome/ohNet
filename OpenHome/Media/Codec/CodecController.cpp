@@ -333,9 +333,7 @@ Msg* CodecController::PullMsg()
     }
     iLock.Signal();
     Msg* msg = iLoggerRewinder->Pull();
-    {
-        msg = msg->Process(*this);
-    }
+    msg = msg->Process(*this);
     return msg;
 }
 
@@ -555,6 +553,9 @@ Msg* CodecController::ProcessMsg(MsgSession* aMsg)
 Msg* CodecController::ProcessMsg(MsgTrack* aMsg)
 {
     if (iRecognising) {
+        if (aMsg->StartOfStream()) {
+            iStreamEnded = true;
+        }
         aMsg->RemoveRef();
         return NULL;
     }
