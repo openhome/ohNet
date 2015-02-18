@@ -37,7 +37,7 @@ class IReadStore;
 class SourceRadio : public Source, private ISourceRadio, private Media::IPipelineObserver
 {
 public:
-    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, Configuration::IConfigInitialiser& aConfigInit);
+    SourceRadio(Environment& aEnv, Net::DvDevice& aDevice, Media::PipelineManager& aPipeline, Media::UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, const Brx& aTuneInPartnerId, Configuration::IConfigInitialiser& aConfigInit);
     ~SourceRadio();
 private: // from ISource
     void Activate() override;

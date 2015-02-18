@@ -46,7 +46,14 @@ ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupport
 { // static
     UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
     aMediaPlayer.Add(radioUriProvider);
-    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aMediaPlayer.ConfigInitialiser());
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, Brx::Empty(), aMediaPlayer.ConfigInitialiser());
+}
+
+ISource* SourceFactory::NewRadio(IMediaPlayer& aMediaPlayer, const Brx& aSupportedProtocols, const Brx& aTuneInPartnerId)
+{ // static
+    UriProviderSingleTrack* radioUriProvider = new UriProviderRadio(aMediaPlayer);
+    aMediaPlayer.Add(radioUriProvider);
+    return new SourceRadio(aMediaPlayer.Env(), aMediaPlayer.Device(), aMediaPlayer.Pipeline(), *radioUriProvider, aSupportedProtocols, aTuneInPartnerId, aMediaPlayer.ConfigInitialiser());
 }
 
 
@@ -77,7 +84,7 @@ IClockPuller* UriProviderRadio::ClockPuller()
 
 // SourceRadio
 
-SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, IConfigInitialiser& aConfigInit)
+SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& aPipeline, UriProviderSingleTrack& aUriProvider, const Brx& aProtocolInfo, const Brx& aTuneInPartnerId, IConfigInitialiser& aConfigInit)
     : Source("Radio", "Radio")
     , iLock("SRAD")
     , iPipeline(aPipeline)
@@ -89,7 +96,12 @@ SourceRadio::SourceRadio(Environment& aEnv, DvDevice& aDevice, PipelineManager& 
 {
     iPresetDatabase = new PresetDatabase();
     iProviderRadio = new ProviderRadio(aDevice, *this, *iPresetDatabase, aProtocolInfo);
-    iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, *iPresetDatabase, aConfigInit);
+    if (aTuneInPartnerId.Bytes() == 0) {
+        iTuneIn = NULL;
+    }
+    else {
+        iTuneIn = new RadioPresetsTuneIn(aEnv, aPipeline, aTuneInPartnerId, *iPresetDatabase, aConfigInit);
+    }
     iPipeline.Add(ContentProcessorFactory::NewM3u());
     iPipeline.Add(ContentProcessorFactory::NewM3u());
     iPipeline.Add(ContentProcessorFactory::NewPls());

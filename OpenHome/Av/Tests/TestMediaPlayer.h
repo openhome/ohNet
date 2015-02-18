@@ -48,7 +48,7 @@ class TestMediaPlayer : private Net::IResourceManager, public IPowerHandler
     static const Brn kSongcastSenderIconFileName;
     static const TUint kTrackCount = 1200;
 public:
-    TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, Media::IPullableClock* aPullableClock);
+    TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const Brx& aTuneInPartnerId, const Brx& aTidalId, Media::IPullableClock* aPullableClock);
     virtual ~TestMediaPlayer();
     void StopPipeline();
     void AddAttribute(const TChar* aAttribute); // FIXME - only required by Songcasting driver
@@ -87,6 +87,7 @@ private:
     Media::VolumePrinter iVolume;
     IPowerManagerObserver* iPowerObserver;
     Net::ShellCommandDebug* iShellDebug;
+    const Brx& iTuneInPartnerId;
     const Brx& iTidalId;
 };
 

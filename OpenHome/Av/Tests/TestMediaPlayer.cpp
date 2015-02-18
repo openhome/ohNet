@@ -35,12 +35,12 @@ using namespace OpenHome::TestFramework;
 
 const Brn TestMediaPlayer::kSongcastSenderIconFileName("SongcastSenderIcon");
 
-TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const TChar* aTuneInUserName, const Brx& aTidalId, IPullableClock* aPullableClock)
+TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const TChar* aRoom, const TChar* aProductName, const Brx& aTuneInPartnerId, const Brx& aTidalId, IPullableClock* aPullableClock)
     : iSemShutdown("TMPS", 0)
     , iDisabled("test", 0)
+    , iTuneInPartnerId(aTuneInPartnerId)
     , iTidalId(aTidalId)
 {
-//    Debug::SetLevel(Debug::kMedia);
     Bws<256> friendlyName;
     friendlyName.Append(aRoom);
     friendlyName.Append(':');
@@ -86,7 +86,6 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // FIXME - available store keys should be listed somewhere
     iConfigRamStore->Write(Brn("Product.Room"), Brn(aRoom));
     iConfigRamStore->Write(Brn("Product.Name"), Brn(aProductName));
-    iConfigRamStore->Write(Brn("Radio.TuneInUserName"), Brn(aTuneInUserName));
 
     // create MediaPlayer
     iMediaPlayer = new MediaPlayer(aDvStack, *iDevice, *iRamStore, *iConfigRamStore, PipelineInitParams::New(),
@@ -238,7 +237,12 @@ void TestMediaPlayer::DoRegisterPlugins(Environment& aEnv, const Brx& aSupported
 
     // Add sources
     iMediaPlayer->Add(SourceFactory::NewPlaylist(*iMediaPlayer, aSupportedProtocols));
-    iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
+    if (iTuneInPartnerId.Bytes() == 0) {
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols));
+    }
+    else {
+        iMediaPlayer->Add(SourceFactory::NewRadio(*iMediaPlayer, aSupportedProtocols, iTuneInPartnerId));
+    }
     iMediaPlayer->Add(SourceFactory::NewUpnpAv(*iMediaPlayer, *iDeviceUpnpAv, aSupportedProtocols));
 
     Bwh hostName(iDevice->Udn().Bytes()+1); // space for null terminator
@@ -353,7 +357,7 @@ TestMediaPlayerOptions::TestMediaPlayerOptions()
     , iOptionChannel("-c", "--channel", 0, "[0..65535] sender channel")
     , iOptionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use")
     , iOptionLoopback("-l", "--loopback", "Use loopback adapter")
-    , iOptionTuneIn("-t", "--tunein", Brn("linnproducts"), "TuneIn user name")
+    , iOptionTuneIn("-t", "--tunein", Brn(""), "TuneIn partner id")
     , iOptionTidal("", "--tidal", Brn(""), "Tidal token")
 {
     iParser.AddOption(&iOptionRoom);

@@ -26,7 +26,7 @@ const Brn RadioPresetsTuneIn::kConfigUsernameBase("Radio.TuneInUserName");
 const Brn RadioPresetsTuneIn::kConfigUsernameDefault("linnproducts");
 const Brn RadioPresetsTuneIn::kTuneInPresetsRequest("http://opml.radiotime.com/Browse.ashx?&c=presets&options=recurse:tuneShows");
 //const Brn RadioPresetsTuneIn::kFormats("&formats=mp3,wma,aac,wmvideo,ogg");
-const Brn RadioPresetsTuneIn::kPartnerId("&partnerId=ah2rjr68");
+const Brn RadioPresetsTuneIn::kPartnerId("&partnerId=");
 const Brn RadioPresetsTuneIn::kUsername("&username=");
 
 typedef struct MimeTuneInPair
@@ -35,7 +35,7 @@ typedef struct MimeTuneInPair
     const TChar* iTuneInFormat;
 } MimeTuneInPair;
 
-RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, IConfigInitialiser& aConfigInit)
+RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter, IConfigInitialiser& aConfigInit)
     : iLock("RPTI")
     , iEnv(aEnv)
     , iDbWriter(aDbWriter)
@@ -44,6 +44,7 @@ RadioPresetsTuneIn::RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager
     , iReadBuffer(iSocket)
     , iReaderResponse(aEnv, iReadBuffer)
     , iSupportedFormats("&formats=")
+    , iPartnerId(aPartnerId)
 {
     const MimeTuneInPair kTypes[] = {{"audio/mpeg", "mp3"}
                                     ,{"audio/x-ms-wma", "wma"}
@@ -95,6 +96,7 @@ void RadioPresetsTuneIn::UpdateUsername(const Brx& aUsername)
     uriBuf.Append(kTuneInPresetsRequest);
     uriBuf.Append(iSupportedFormats);
     uriBuf.Append(kPartnerId);
+    uriBuf.Append(iPartnerId);
     uriBuf.Append(kUsername);
     uriBuf.Append(aUsername);
     iRequestUri.Replace(uriBuf);

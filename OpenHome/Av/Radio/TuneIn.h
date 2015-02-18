@@ -33,6 +33,7 @@ private:
     static const TUint kReadBufBytes = Media::kTrackMetaDataMaxBytes + 1024;
     static const TUint kWriteBufBytes = 1024;
     static const TUint kMaxUserNameBytes = 64;
+    static const TUint kMaxPartnerIdBytes = 64;
     static const TUint kReadResponseTimeoutMs = 30 * 1000; // 30 seconds
     static const TUint kRefreshRateMs = 5 * 60 * 1000; // 5 minutes
     static const TUint kMaxPresetTitleBytes = 256;
@@ -43,7 +44,7 @@ private:
     static const Brn kPartnerId;
     static const Brn kUsername;
 public:
-    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, IPresetDatabaseWriter& aDbWriter, Configuration::IConfigInitialiser& aConfigInit);
+    RadioPresetsTuneIn(Environment& aEnv, Media::PipelineManager& aPipeline, const Brx& aPartnerId, IPresetDatabaseWriter& aDbWriter, Configuration::IConfigInitialiser& aConfigInit);
     ~RadioPresetsTuneIn();
 private:
     void UpdateUsername(const Brx& aUsername);
@@ -80,6 +81,7 @@ private:
     std::vector<TUint> iAllocatedPresets;
     Media::BwsTrackUri iDbUri; // only required in a single function but too large for the stack
     Bws<2*1024> iDbMetaData;
+    const Bws<kMaxPartnerIdBytes> iPartnerId;
 };
 
 } // namespace Av
