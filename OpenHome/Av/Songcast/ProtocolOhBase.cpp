@@ -394,12 +394,6 @@ void ProtocolOhBase::OutputAudio(OhmMsgAudioBlob& aMsg)
     aMsg.ExternaliseAsBlob(writer);
     const TUint bytesBefore = iFrameBuf.Bytes();
     if (iStreamMsgDue) {
-        /* FIXME - we really need to be able to check trackLength, sampleRate, bitDepth
-                   for every audio msg to infer stream changes.
-                   Should probably just deal in OhmMsgAudio instances to enable this. */
-        /* FIXME - it might not actually matter if we miss some track changes.  We need at least
-                   one encodedStream notification to get into the correct codec.  After this, the
-                   codec can (probably) send DecodedStream msgs at appropriate times */
         ReaderBuffer reader(iFrameBuf);
         OhmHeader header;
         header.Internalise(reader);
