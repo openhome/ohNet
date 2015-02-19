@@ -72,7 +72,6 @@ kProtocolInfoFree = 'http-get:*:audio/x-flac:*,'       +\
                     'http-get:*:audio/x-ogg:*,'        +\
                     'http-get:*:application/ogg:*,'    +\
                     'tidalhifi.com:*:*:*,'
-
 kChannelsMax      = 100
 kManualChannels   = [ # For the purposes of this test it doesn't matter if these work or not
                      {'uri' : 'http://192.168.10.201:8000/mp3-128k-stereo',
@@ -81,7 +80,6 @@ kManualChannels   = [ # For the purposes of this test it doesn't matter if these
                       'meta': '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/"><item><dc:title>MP3 32k Mono</dc:title><res>http://10.2.8.201:8000/mp3-32k-mono</res><upnp:class>object.item.audioItem</upnp:class></item></DIDL-Lite>'}]
 
 
-# noinspection PyUnusedLocal
 class TestRadioService( BASE.BaseTest ):
     
     def __init__( self ):
@@ -90,12 +88,7 @@ class TestRadioService( BASE.BaseTest ):
         self.dut            = None
         self.soft           = None
         self.dutDev         = ''
-        self.configUpdate   = threading.Event()
-        self.presetsUpdate  = threading.Event()
-        self.uriUpdated     = threading.Event()
-        self.metaUpdated    = threading.Event()
-        self.idArrayUpdated = threading.Event()
-        
+
     def Test( self, aArgs ):
         """Test functionality of Radio service"""
         radioName = ''
@@ -114,8 +107,8 @@ class TestRadioService( BASE.BaseTest ):
 
         if radioName.lower() == 'local':
             loopback = True
-            tuneinUser = self.config.Get( 'tunein.user.l1' )
-            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneIn=tuneinUser, aLoopback=loopback )
+            tuneinId = self.config.Get( 'tunein.partnerid' )
+            self.soft = SoftPlayer.SoftPlayer( aRoom='TestDev', aTuneInId=tuneinId, aLoopback=loopback )
             radioName = self.soft.name
         self.dutDev = radioName.split( ':' )[0]
         self.dut = Volkano.VolkanoDevice( radioName, aIsDut=True, aLoopback=loopback )
@@ -127,8 +120,8 @@ class TestRadioService( BASE.BaseTest ):
             self.TestPresets()
         if mode in ['all','manual']:
             self.TestManual()
-        # if mode in ['all','updated']:             needs config service
-        #     self.TestUpdated()
+        if mode in ['all','updated']:
+            self.TestUpdated()
         time.sleep( 3 )     # needed to ensure clean shutdown of SoftPlayer
             
     def Cleanup( self ):
@@ -138,18 +131,19 @@ class TestRadioService( BASE.BaseTest ):
         if self.soft:
             self.soft.Shutdown()
         BASE.BaseTest.Cleanup( self )
+
+    #
+    # Fixed parameter testing
+    #
         
     def TestFixedParams( self ):
         """Verify the 'fixed' parameter values are returned correctly"""
-        self.log.Info( '' )
-        self.log.Info( self.dutDev, 'Testing fixed parameters' )
-        self.log.Info( '' )
-        
         if self.soft:
             expProtocolInfo = kProtocolInfoFree
         else:
             expProtocolInfo = kProtocolInfoAll
             
+        self.log.Header2( self.dutDev, 'Testing fixed parameters' )
         self.log.FailUnless( self.dutDev, self.dut.radio.polledProtocolInfo==expProtocolInfo,
             'Actual/Expected POLLED ProtocolInfo %s/%s' %
             (self.dut.radio.polledProtocolInfo,expProtocolInfo) )
@@ -162,42 +156,69 @@ class TestRadioService( BASE.BaseTest ):
         self.log.FailUnless( self.dutDev, self.dut.radio.channelsMax==kChannelsMax,
             'Actual/Expected EVENTED ChannelsMax %s/%s' %
             (self.dut.radio.channelsMax,kChannelsMax) )
-    
+
+    #
+    # Preset testing
+    #
+
     def TestPresets( self ):
         """Verify preset lists from TuneIn are handled correctly"""
-        self.log.Info( '' )
-        self.log.Info( self.dutDev, 'Testing handling of presets supplied by TuneIn' )
-        self.log.Info( '' )
-        
-        dsPresets = self.dut.radio.AllChannels()
-        rtPresets = self._GetTuneInPresets()
+        presetsUpdate = threading.Event()
 
-        for i in range( len( dsPresets )):
-            if i >= len( rtPresets ):
-                self.log.Fail( self.dutDev, '[%d] No TuneIn preset' % i )
-            else:
+        # noinspection PyUnusedLocal
+        def _PresetsEvtCb( aService, aSvName, aSvVal, aSvSeq ):
+            if aSvName == 'IdArray':
+                presetsUpdate.set()
+
+        self.log.Header2( self.dutDev, 'Testing setup and reporting of TuneIn presets' )
+        self.dut.config.SetValue( 'Radio.TuneInUserName', 'no-one' )
+        time.sleep( 2 )
+        self.dut.radio.AddSubscriber( _PresetsEvtCb )
+        for user in (self.config.Get( 'tunein.user.l1' ),       # 0 < channels < 100
+                     self.config.Get( 'tunein.user.l2' ),       # 0 channels
+                     self.config.Get( 'tunein.user.l3' )):      # > 100 channels
+            self.log.Header2( self.dutDev, 'Testing with %s' % user )
+            presetsUpdate.clear()
+            self._SetCheckUser( user )
+            presetsUpdate.wait( 45 )
+            self.log.FailUnless( self.dutDev, presetsUpdate.isSet(),
+                'Presets updated after switching user to %s' % user )
+
+            dsPresets = self.dut.radio.AllChannels()
+            rtPresets = self._GetTuneInPresets( user )
+
+            for i in range( len( dsPresets )):
                 if dsPresets[i][0]:
                     dsUri = Common.GetUriFromDidl( dsPresets[i][1] )
-                    dsTitle = Common.GetTitleFromDidl( dsPresets[i][1] ).decode( 'utf8 ' )
+                    dsTitle = Common.GetTitleFromDidl( dsPresets[i][1] )
                     rtTitle = rtPresets[i][1]
-                    
+
                     if 'notcompatible' not in rtPresets[i][0]:
                         # check URI only, not CGI params
                         self.log.FailUnless( self.dutDev, dsUri.split('&')[0]==rtPresets[i][0].split('&')[0],
-                            '[%d] DS/TuneIn URI: %s %s' % (i,dsUri,rtPresets[i][0]) ) 
+                            '[%d] DS/TuneIn URI: %s %s' % (i,dsUri,rtPresets[i][0]) )
                         # titles can vary in genre, as stations with multiple genres seem to
                         # return one of the available genres, randomly selected, so subsequent
                         # identical queries MAY contain different genres in the station title.
                         # Hence ignore title string after '(' to ignore genre
                         self.log.FailUnless( self.dutDev, dsTitle.split('(')[0]==rtTitle.split('(')[0],
-                            '[%d] DS/TuneIn Title:%s/%s' % (i,dsTitle,rtTitle) )
+                            '[%d] DS/TuneIn Title: %s/%s' % (i,dsTitle,rtTitle) )
                 else:
                     self.log.FailUnless( self.dutDev, rtPresets[i][0]=='',
-                        '[%d] TuneIn URI for empty entry: %s' % (i,rtPresets[i][0]) ) 
+                        '[%d] TuneIn URI for empty entry: %s' % (i,rtPresets[i][0]) )
                     self.log.FailUnless( self.dutDev, rtPresets[i][1]=='',
-                        '[%d] TuneIn Title for empty entry: %s' % (i,rtPresets[i][1]) ) 
-            
-    def _GetTuneInPresets( self ):
+                        '[%d] TuneIn Title for empty entry: %s' % (i,rtPresets[i][1]) )
+        self.dut.radio.RemoveSubscriber( _PresetsEvtCb )
+
+    def _SetCheckUser( self, aUser ):
+        """Set TuneIn user and check set"""
+        self.dut.config.SetValue( 'Radio.TuneInUserName', aUser )
+        time.sleep( 3 )
+        newUser = self.dut.config.GetValue( 'Radio.TuneInUserName' )
+        self.log.FailUnless( self.dutDev, newUser==aUser,
+            '(%s/%s) Actual/Expected EVENTED user' % (newUser, aUser) )
+
+    def _GetTuneInPresets( self, aUser ):
         """Read preset channel info directly from TuneIn"""
         if self.soft:
             browse = kTuneInBrowseFree
@@ -205,8 +226,7 @@ class TestRadioService( BASE.BaseTest ):
             browse = kTuneInBrowseAll
 
         partner = self.config.Get( 'tunein.partnerid' )
-        user = self.config.Get( 'tunein.user.l1' )
-        tiId = '&username=%s&partnerId=%s' % (user, partner)
+        tiId = '&username=%s&partnerId=%s' % (aUser, partner)
         resp = self._UrlQuery( kTuneInUrl + 'Preset.ashx?c=listFolders' + tiId )
         dflt = self._GetFromOpmlDefault( resp )
         resp = self._UrlQuery( kTuneInUrl + browse + tiId )
@@ -214,81 +234,40 @@ class TestRadioService( BASE.BaseTest ):
         if uri:
             resp = self._UrlQuery( uri )
         return self._GetPresetsFromOpml( resp )
-        
-    @staticmethod
-    def _UrlQuery( aUrl ):
-        """Perform query on specified URL, return response"""
-        handle = urllib.urlopen( aUrl )
-        resp = handle.read( 65535 )
-        handle.close()
-        return resp
-    
-    @staticmethod
-    def _GetFromOpmlDefault( aOpml ):
-        default = ''
-        opml = ET.fromstring( aOpml )
-        outlines = opml.getiterator( 'outline' )
-        for outline in outlines:
-            if outline.get( 'is_default' ):
-                default = outline.get( 'text' )
-                break
-        return default
-    
-    @staticmethod
-    def _GetFromOpmlUri( aOpml, aUri ):
-        uri = ''
-        opml = ET.fromstring( aOpml )
-        outlines = opml.getiterator( 'outline' )
-        for outline in outlines:
-            if outline.get( 'text' ) == aUri:
-                uri = outline.get( 'URL' )
-                break
-        return uri
-    
-    def _GetPresetsFromOpml( self, aOpml ):
-        """Extract presets from RT OPML response to Browse"""
-        preset  = []
-        entries = self.dut.radio.channelsMax
-        for i in range( entries ):
-            preset.append( ('','') )
-        opml = ET.fromstring( aOpml )
-        outlines = opml.getiterator( 'outline' )
-        for outline in outlines:
-            if outline.get( 'is_preset' ):
-                uri = outline.get( 'URL' )
-                title = outline.get( 'text' )
-                num = int( outline.get( 'preset_number' ))
-                if num <= entries:
-                    preset[num-1] = (uri, title)
-        return preset
-    
+
+    #
+    # Manual radio channel select testing
+    #
+
     def TestManual( self ):
         """Verify manually inserted radio channels"""
-        
+        uriUpdated  = threading.Event()
+        metaUpdated = threading.Event()
+
+        # noinspection PyUnusedLocal
         def _RadioEvtCb( aService, aSvName, aSvVal, aSvSeq ):
             if aSvName == 'Uri':
-                self.uriUpdated.set()
+                uriUpdated.set()
             elif aSvName == 'Metadata':
-                self.metaUpdated.set()
-            
-        self.log.Info( '' )
-        self.log.Info( self.dutDev, 'Testing setup and reporting of manual channels' )
-        self.log.Info( '' )
+                metaUpdated.set()
+
+        self.log.Header2( self.dutDev, 'Testing setup and reporting of manual channels' )
         self.dut.radio.AddSubscriber( _RadioEvtCb )
-        self.uriUpdated.clear()
+        uriUpdated.clear()
         self.dut.radio.SetChannel( 'uri', 'meta' )
-        self.uriUpdated.wait( 5 )
+        uriUpdated.wait( 5 )
         
         for channel in kManualChannels:
-            self.uriUpdated.clear()
-            self.metaUpdated.clear()
+            self.log.Header2( self.dutDev, 'Checking with %s' % channel['uri'] )
+            uriUpdated.clear()
+            metaUpdated.clear()
             self.dut.radio.SetChannel( channel['uri'], channel['meta'] )
-            self.uriUpdated.wait( 3 )
-            self.metaUpdated.wait( 1 )
+            uriUpdated.wait( 3 )
+            metaUpdated.wait( 1 )
             
-            if not self.uriUpdated.isSet():
+            if not uriUpdated.isSet():
                 self.log.Fail( self.dutDev, 'No URI event after channel manually updated' )
-            if not self.metaUpdated.isSet():
+            if not metaUpdated.isSet():
                 self.log.Fail( self.dutDev, 'No Metadata event after channel manually updated' )
             
             self.log.FailUnless( self.dutDev, self.dut.radio.uri==channel['uri'],
@@ -309,8 +288,13 @@ class TestRadioService( BASE.BaseTest ):
                 'Actual/Expected POLLED channel ID %d/0' % self.dut.radio.polledId )
         self.dut.radio.RemoveSubscriber( _RadioEvtCb )
 
+    #
+    # TuneIn list update testing
+    #
+
     def TestUpdated( self ):
         """Verify TuneIn updates are detected by DS"""
+        username = self.config.Get( 'tunein.user.new' )
         idArrayUpdated = threading.Event()
 
         # noinspection PyUnusedLocal
@@ -321,18 +305,23 @@ class TestRadioService( BASE.BaseTest ):
         self.log.Header2( self.dutDev, 'Testing detection of TuneIn updates' )
         self.dut.radio.AddSubscriber( _IdArrayEvtCb )
         idArrayUpdated.clear()
-        self.dut.config.Set( 'TuneIn Radio', 'Username', 'bollocks' )
-        idArrayUpdated.wait( 10 )
+        self.dut.config.SetValue( 'Radio.TuneInUserName', username )
+        time.sleep( 1 )
+        self.dut.product.sourceIndexByName = 'Playlist'
+        time.sleep( 1 )
+        self.dut.product.sourceIndexByName = 'Radio'
+        idArrayUpdated.wait( 30 )
 
         idArrayUpdated.clear()
         partner = self.config.Get( 'tunein.partnerid' )
-        hdr     = 'http://opml.radiotime.com/'
-        user    = '&partnerId=%s&username=bollocks&password=bollocks' % partner
+        hdr     = kTuneInUrl
+        user    = '&partnerId=%s&username=%s&password=%s' % (partner, username, username)
         self._UrlQuery( hdr + 'Preset.ashx?c=add&id=s32500' + user )
+        self.log.Info( self.dutDev, 'Updated preset list' )
 
         for i in range( 36 ):
             if not idArrayUpdated.isSet():
-                self.log.Info( self.dutDev, 'Waiting for IdArray update....%d' % (900-(10*i)) )
+                self.log.Info( self.dutDev, 'Waiting for IdArray update....%d' % (360-(10*i)) )
                 time.sleep( 10 )
             else:
                 break
@@ -344,6 +333,57 @@ class TestRadioService( BASE.BaseTest ):
 
         self._UrlQuery( hdr + 'Preset.ashx?c=remove&id=s32500' + user )
         self.dut.radio.RemoveSubscriber( _IdArrayEvtCb )
+
+    #
+    # TuneIn comms / OPML decoding
+    #
+
+    @staticmethod
+    def _UrlQuery( aUrl ):
+        """Perform query on specified URL, return response"""
+        handle = urllib.urlopen( aUrl )
+        resp = handle.read( 65535 )
+        handle.close()
+        return resp
+
+    @staticmethod
+    def _GetFromOpmlDefault( aOpml ):
+        default = ''
+        opml = ET.fromstring( aOpml )
+        outlines = opml.getiterator( 'outline' )
+        for outline in outlines:
+            if outline.get( 'is_default' ):
+                default = outline.get( 'text' ).encode( 'utf8' )
+                break
+        return default
+
+    @staticmethod
+    def _GetFromOpmlUri( aOpml, aUri ):
+        uri = ''
+        opml = ET.fromstring( aOpml )
+        outlines = opml.getiterator( 'outline' )
+        for outline in outlines:
+            if outline.get( 'text' ) == aUri:
+                uri = outline.get( 'URL' )
+                break
+        return uri
+
+    def _GetPresetsFromOpml( self, aOpml ):
+        """Extract presets from RT OPML response to Browse"""
+        preset  = []
+        entries = self.dut.radio.channelsMax
+        for i in range( entries ):
+            preset.append( ('','') )
+        opml = ET.fromstring( aOpml )
+        outlines = opml.getiterator( 'outline' )
+        for outline in outlines:
+            if outline.get( 'is_preset' ):
+                uri = outline.get( 'URL' )
+                title = outline.get( 'text' ).encode( 'utf8' )
+                num = int( outline.get( 'preset_number' ))
+                if num <= entries:
+                    preset[num-1] = (uri, title)
+        return preset
 
 
 if __name__ == '__main__':
