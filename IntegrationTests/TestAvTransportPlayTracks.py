@@ -255,7 +255,7 @@ class TestAvTransportPlayTracks( BASE.BaseTest ):
     def _StartTimerCb( self ):
         """Called on start timer expiry - implies PLAYING state has not been reached"""
         if self.mr.avt.transportState != 'PLAYING':
-            self.log.Fail( self.mrDev, 'Track failed to start playback (%s)' % self.title )
+            self.log.Fail( self.mrDev, 'State %s, expected PLAYING (%s)' % (self.mr.avt.transportState, self.title) )
             self._HandleStop()
 
     def _CheckTimerCb( self ):
