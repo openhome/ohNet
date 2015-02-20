@@ -69,7 +69,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // Disable device -> change name -> re-enable device.
     Bws<256> rendererName(aRoom);
     rendererName.Append(":");
-    rendererName.Append("MediaRenderer");
+    rendererName.Append(SourceUpnpAv::kSourceName);
     iDeviceUpnpAv = new DvDeviceStandard(aDvStack, buf);
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
@@ -441,7 +441,7 @@ OpenHome::Net::Library* TestMediaPlayerInit::CreateLibrary(TBool aLoopback, TUin
         initParams->SetUseLoopbackNetworkAdapter();
     }
 
-    Debug::SetLevel(Debug::kError | Debug::kSongcast | Debug::kPipeline);
+    Debug::SetLevel(Debug::kSongcast | Debug::kPipeline);
     Net::Library* lib = new Net::Library(initParams);
     //Net::DvStack* dvStack = lib->StartDv();
     std::vector<NetworkAdapter*>* subnetList = lib->CreateSubnetList();
