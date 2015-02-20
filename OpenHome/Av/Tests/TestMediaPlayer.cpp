@@ -69,7 +69,7 @@ TestMediaPlayer::TestMediaPlayer(Net::DvStack& aDvStack, const Brx& aUdn, const 
     // Disable device -> change name -> re-enable device.
     Bws<256> rendererName(aRoom);
     rendererName.Append(":");
-    rendererName.Append(SourceUpnpAv::kSourceName);
+    rendererName.Append("MediaRenderer");
     iDeviceUpnpAv = new DvDeviceStandard(aDvStack, buf);
     iDeviceUpnpAv->SetAttribute("Upnp.Domain", "upnp.org");
     iDeviceUpnpAv->SetAttribute("Upnp.Type", "MediaRenderer");
