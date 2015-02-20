@@ -194,7 +194,9 @@ void SourcePlaylist::PipelineStopped()
 
 void SourcePlaylist::Play()
 {
-    EnsureActive();
+    if (!IsActive()) {
+        DoActivate();
+    }
     if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
         iPipeline.Stop();
         return;
@@ -214,7 +216,9 @@ void SourcePlaylist::Play()
 
 void SourcePlaylist::Pause()
 {
-    EnsureActive();
+    if (!IsActive()) {
+        DoActivate();
+    }
     if (static_cast<ITrackDatabase*>(iDatabase)->TrackCount() == 0) {
         iPipeline.Stop();
         return;
