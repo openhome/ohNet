@@ -775,13 +775,12 @@ void Mpeg4MediaInfo::Process()
                     TUint sampleSize;
 
                     iSampleSizeTable.Initialise(entries);
-                    Bwx* sampleSizeTable = new Bwh(entries*4);
-                    BoxL6.Read(*sampleSizeTable, entries*4);
+                    Bwh sampleSizeTable(entries*4);
+                    BoxL6.Read(sampleSizeTable, entries*4);
                     for(TUint i = 0; i < entries; i++) {
-                        sampleSize = Converter::BeUint32At(*sampleSizeTable, i*4);
+                        sampleSize = Converter::BeUint32At(sampleSizeTable, i*4);
                         iSampleSizeTable.AddSampleSize(sampleSize);
                     }
-                    delete sampleSizeTable;
                 }
                 BoxL6.SkipEntry();
             }
