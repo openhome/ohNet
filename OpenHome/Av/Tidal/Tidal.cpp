@@ -27,7 +27,6 @@ const Brn Tidal::kConfigKeySoundQuality("tidalhifi.com.SoundQuality");
 
 Tidal::Tidal(Environment& aEnv, const Brx& aToken, ICredentialsState& aCredentialsState, Configuration::IConfigInitialiser& aConfigInitialiser)
     : iLock("TDL1")
-    , iReLoginLock("TDL2")
     , iCredentialsState(aCredentialsState)
     , iSocket(aEnv, kReadBufferBytes)
     , iReaderBuf(iSocket)
@@ -51,45 +50,34 @@ Tidal::~Tidal()
 
 TBool Tidal::TryLogin(Bwx& aSessionId)
 {
-    if (!TryLogin()) {
-        aSessionId.SetBytes(0);
-        return false;
-    }
-    iLock.Wait();
-    aSessionId.Replace(iSessionId);
-    iLock.Signal();
-    return true;
+    AutoMutex _(iLock);
+    return TryLoginLocked(aSessionId);
 }
 
 TBool Tidal::TryReLogin(const Brx& aCurrentToken, Bwx& aNewToken)
 {
-    AutoMutex _(iReLoginLock);
-    iLock.Wait();
+    AutoMutex _(iLock);
     if (iSessionId.Bytes() == 0 || aCurrentToken == iSessionId) {
-        (void)TryLogout(aCurrentToken);
-        iLock.Signal();
-        if (TryLogin()) {
-            iLock.Wait();
+        (void)TryLogoutLocked(aCurrentToken);
+        if (TryLoginLocked()) {
             aNewToken.Replace(iSessionId);
-            iLock.Signal();
             return true;
         }
         return false;
     }
     aNewToken.Replace(iSessionId);
-    iLock.Signal();
     return true;
 }
 
 TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
 {
+    AutoMutex _(iLock);
     TBool success = false;
     if (!TryConnect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryGetStreamUrl - failed to connect\n");
         return false;
     }
-    AutoSocketSsl _(iSocket);
-    iLock.Wait();
+    AutoSocketSsl __(iSocket);
     Bws<128> pathAndQuery("/v1/tracks/");
     pathAndQuery.Append(aTrackId);
     pathAndQuery.Append("/streamurl?sessionId=");
@@ -98,7 +86,6 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
     pathAndQuery.Append(iCountryCode);
     pathAndQuery.Append("&soundQuality=");
     pathAndQuery.Append(Brn(kSoundQualities[iSoundQuality]));
-    iLock.Signal();
     Brn url;
     try {
         WriteRequestHeaders(Http::kMethodGet, pathAndQuery, kPort);
@@ -129,43 +116,8 @@ TBool Tidal::TryGetStreamUrl(const Brx& aTrackId, Bwx& aStreamUrl)
 
 TBool Tidal::TryLogout(const Brx& aSessionId)
 {
-    if (aSessionId.Bytes() == 0) {
-        return true;
-    }
-    TBool success = false;
-    if (!TryConnect(kPort)) {
-        LOG2(kError, kMedia, "Tidal: failed to connect\n");
-        return false;
-    }
-    AutoSocketSsl _(iSocket);
-    Bws<128> pathAndQuery("/v1/logout?sessionId=");
-    pathAndQuery.Append(aSessionId);
-    try {
-        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort);
-
-        iReaderResponse.Read();
-        const TUint code = iReaderResponse.Status().Code();
-        if (code < 200 || code >= 300) {
-            LOG(kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
-            LOG(kError, iReaderBuf.Snaffle());
-            LOG(kError, "\n");
-            THROW(ReaderError);
-        }
-        success = true;
-        iLock.Wait();
-        iSessionId.SetBytes(0);
-        iLock.Signal();
-    }
-    catch (WriterError&) {
-        LOG2(kMedia, kError, "WriterError from Tidal logout\n");
-    }
-    catch (ReaderError&) {
-        LOG2(kMedia, kError, "ReaderError from Tidal logout\n");
-    }
-    catch (HttpError&) {
-        LOG2(kMedia, kError, "HttpError from Tidal logout\n");
-    }
-    return success;
+    AutoMutex _(iLock);
+    return TryLogoutLocked(aSessionId);
 }
 
 void Tidal::Interrupt(TBool aInterrupt)
@@ -180,36 +132,32 @@ const Brx& Tidal::Id() const
 
 void Tidal::CredentialsChanged(const Brx& aUsername, const Brx& aPassword)
 {
-    iLock.Wait();
+    AutoMutex _(iLock);
     iUsername.Replace(aUsername);
     iPassword.Replace(aPassword);
-    iLock.Signal();
 }
 
 void Tidal::UpdateStatus()
 {
-    (void)TryLogout(iSessionId);
-    iLock.Wait();
+    AutoMutex _(iLock);
+    (void)TryLogoutLocked(iSessionId);
     const TBool noCredentials = (iUsername.Bytes() == 0 && iPassword.Bytes() == 0);
-    iLock.Signal();
     if (noCredentials) {
         iCredentialsState.SetState(kId, Brx::Empty(), Brx::Empty());
     }
     else {
-        (void)TryLogin();
+        (void)TryLoginLocked();
     }
 }
 
 void Tidal::Login(Bwx& aToken)
 {
-    {
-        AutoMutex _(iLock);
-        if (iSessionId.Bytes() > 0) {
-            aToken.Replace(iSessionId);
-            return;
-        }
+    AutoMutex _(iLock);
+    if (iSessionId.Bytes() > 0) {
+        aToken.Replace(iSessionId);
+        return;
     }
-    if (!TryLogin(aToken)) {
+    if (!TryLoginLocked(aToken)) {
         THROW(CredentialsLoginFailed);
     }
 }
@@ -238,13 +186,21 @@ TBool Tidal::TryConnect(TUint aPort)
     return true;
 }
 
-TBool Tidal::TryLogin()
+TBool Tidal::TryLoginLocked(Bwx& aSessionId)
+{
+    if (!TryLoginLocked()) {
+        aSessionId.SetBytes(0);
+        return false;
+    }
+    aSessionId.Replace(iSessionId);
+    return true;
+}
+
+TBool Tidal::TryLoginLocked()
 {
     TBool updatedStatus = false;
     Bws<50> error;
-    iLock.Wait();
     iSessionId.SetBytes(0);
-    iLock.Signal();
     TBool success = false;
     if (!TryConnect(kPort)) {
         LOG2(kMedia, kError, "ProtocolTidal::TryLogin - failed to connect\n");
@@ -252,13 +208,11 @@ TBool Tidal::TryLogin()
         return false;
     }
     AutoSocketSsl _(iSocket);
-    iLock.Wait();
     Bws<280> reqBody(Brn("username="));
     WriterBuffer writer(reqBody);
     FormUrlEncode(writer, iUsername);
     reqBody.Append(Brn("&password="));
     FormUrlEncode(writer, iPassword);
-    iLock.Signal();
 
     Bws<128> pathAndQuery("/v1/login/username?token=");
     pathAndQuery.Append(iToken);
@@ -287,10 +241,8 @@ TBool Tidal::TryLogin()
             THROW(ReaderError);
         }
 
-        iLock.Wait();
         iSessionId.Replace(ReadValue(iReaderBuf, Brn("sessionId")));
         iCountryCode.Replace(ReadValue(iReaderBuf, Brn("countryCode")));
-        iLock.Signal();
         iCredentialsState.SetState(kId, Brx::Empty(), iCountryCode);
         updatedStatus = true;
         success = true;
@@ -309,6 +261,45 @@ TBool Tidal::TryLogin()
     }
     if (!updatedStatus) {
         iCredentialsState.SetState(kId, error, Brx::Empty());
+    }
+    return success;
+}
+
+TBool Tidal::TryLogoutLocked(const Brx& aSessionId)
+{
+    if (aSessionId.Bytes() == 0) {
+        return true;
+    }
+    TBool success = false;
+    if (!TryConnect(kPort)) {
+        LOG2(kError, kMedia, "Tidal: failed to connect\n");
+        return false;
+    }
+    AutoSocketSsl _(iSocket);
+    Bws<128> pathAndQuery("/v1/logout?sessionId=");
+    pathAndQuery.Append(aSessionId);
+    try {
+        WriteRequestHeaders(Http::kMethodPost, pathAndQuery, kPort);
+
+        iReaderResponse.Read();
+        const TUint code = iReaderResponse.Status().Code();
+        if (code < 200 || code >= 300) {
+            LOG(kError, "Http error - %d - in response to Tidal logout.  Some/all of response is:\n", code);
+            LOG(kError, iReaderBuf.Snaffle());
+            LOG(kError, "\n");
+            THROW(ReaderError);
+        }
+        success = true;
+        iSessionId.SetBytes(0);
+    }
+    catch (WriterError&) {
+        LOG2(kMedia, kError, "WriterError from Tidal logout\n");
+    }
+    catch (ReaderError&) {
+        LOG2(kMedia, kError, "ReaderError from Tidal logout\n");
+    }
+    catch (HttpError&) {
+        LOG2(kMedia, kError, "HttpError from Tidal logout\n");
     }
     return success;
 }

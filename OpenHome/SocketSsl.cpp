@@ -200,8 +200,11 @@ SocketSslImpl::SocketSslImpl(Environment& aEnv, TUint aReadBytes)
 
 SocketSslImpl::~SocketSslImpl()
 {
-    Close();
-    SSL_free(iSsl);
+    try {
+        Close();
+    }
+    catch (NetworkError&) {
+    }
     free(iBioReadBuf);
     SslContext::RemoveRef(iEnv);
 }
@@ -261,8 +264,8 @@ void SocketSslImpl::Close()
             SSL_free(iSsl);
             iSsl = NULL;
         }
+        iConnected = false; // following line can throw if socket isn't open
         iSocketTcp.Close();
-        iConnected = false;
     }
 }
 
@@ -363,6 +366,9 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
         }
         catch (ReaderError&) {
         }
+        catch (...) {
+            ASSERTS();
+        }
         retvalue = argi - remaining;
         if (retvalue < argi) {
             LOG(kSsl, "SSL: Wanted %d bytes, read %d\n", argi, (int)retvalue);
@@ -379,6 +385,9 @@ long SocketSslImpl::BioCallback(BIO *b, int oper, const char *argp, int argi, lo
         }
         catch (WriterError&) {
             retvalue = -1;
+        }
+        catch (...) {
+            ASSERTS();
         }
         if (retvalue < argi) {
             LOG2(kSsl, kError, "SSL: Wanted %d bytes, wrote %d\n", argi, (int)retvalue);
