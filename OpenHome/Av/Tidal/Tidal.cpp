@@ -66,6 +66,7 @@ TBool Tidal::TryReLogin(const Brx& aCurrentToken, Bwx& aNewToken)
     AutoMutex _(iReLoginLock);
     iLock.Wait();
     if (iSessionId.Bytes() == 0 || aCurrentToken == iSessionId) {
+        (void)TryLogout(aCurrentToken);
         iLock.Signal();
         if (TryLogin()) {
             iLock.Wait();
@@ -201,6 +202,13 @@ void Tidal::UpdateStatus()
 
 void Tidal::Login(Bwx& aToken)
 {
+    {
+        AutoMutex _(iLock);
+        if (iSessionId.Bytes() > 0) {
+            aToken.Replace(iSessionId);
+            return;
+        }
+    }
     if (!TryLogin(aToken)) {
         THROW(CredentialsLoginFailed);
     }
