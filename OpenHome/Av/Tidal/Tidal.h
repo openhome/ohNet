@@ -46,14 +46,15 @@ private: // from ICredentialConsumer
     void ReLogin(const Brx& aCurrentToken, Bwx& aNewToken) override;
 private:
     TBool TryConnect(TUint aPort);
-    TBool TryLogin();
+    TBool TryLoginLocked();
+    TBool TryLoginLocked(Bwx& aSessionId);
+    TBool TryLogoutLocked(const Brx& aSessionId);
     void WriteRequestHeaders(const Brx& aMethod, const Brx& aPathAndQuery, TUint aPort, TUint aContentLength = 0);
     static Brn ReadValue(IReader& aReader, const Brx& aTag);
     void QualityChanged(Configuration::KeyValuePair<TUint>& aKvp);
     static void FormUrlEncode(IWriter& aWriter, const Brx& aSrc);
 private:
     Mutex iLock;
-    Mutex iReLoginLock;
     ICredentialsState& iCredentialsState;
     SocketSsl iSocket;
     Srs<kReadBufferBytes> iReaderBuf;
