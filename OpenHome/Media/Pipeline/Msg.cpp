@@ -2114,6 +2114,7 @@ MsgReservoir::MsgReservoir()
     , iSessionCount(0)
     , iEncodedStreamCount(0)
     , iDecodedStreamCount(0)
+    , iEncodedAudioCount(0)
 {
 }
 
@@ -2179,6 +2180,12 @@ TUint MsgReservoir::DecodedStreamCount() const
 {
     AutoMutex a(iLock);
     return iDecodedStreamCount;
+}
+
+TUint MsgReservoir::EncodedAudioCount() const
+{
+    AutoMutex a(iLock);
+    return iEncodedAudioCount;
 }
 
 void MsgReservoir::Add(TUint& aValue, TUint aAdded)
@@ -2368,6 +2375,9 @@ Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueIn::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iEncodedAudioCount++;
+    iQueue.iLock.Signal();
     iQueue.Add(iQueue.iEncodedBytes, aMsg->Bytes());
     iQueue.ProcessMsgIn(aMsg);
     return aMsg;
@@ -2473,6 +2483,9 @@ Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgEncodedStream* aMsg)
 
 Msg* MsgReservoir::ProcessorQueueOut::ProcessMsg(MsgAudioEncoded* aMsg)
 {
+    iQueue.iLock.Wait();
+    iQueue.iEncodedAudioCount--;
+    iQueue.iLock.Signal();
     iQueue.Remove(iQueue.iEncodedBytes, aMsg->Bytes());
     return iQueue.ProcessMsgOut(aMsg);
 }

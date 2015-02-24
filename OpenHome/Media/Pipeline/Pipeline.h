@@ -44,6 +44,7 @@ class PipelineInitParams
     static const TUint kShortRampDurationDefault        = Jiffies::kPerMs * 50;
     static const TUint kEmergencyRampDurationDefault    = Jiffies::kPerMs * 20;
     static const TUint kThreadPriorityMax               = kPriorityHighest - 1;
+    static const TUint kMaxLatencyDefault               = Jiffies::kPerMs * 2000;
 public:
     static PipelineInitParams* New();
     virtual ~PipelineInitParams();
@@ -58,6 +59,7 @@ public:
     void SetShortRamp(TUint aJiffies);
     void SetEmergencyRamp(TUint aJiffies);
     void SetThreadPriorityMax(TUint aPriority); // highest priority used by pipeline
+    void SetMaxLatency(TUint aJiffies);
     // getters
     TUint EncodedReservoirBytes() const;
     TUint DecodedReservoirJiffies() const;
@@ -69,6 +71,7 @@ public:
     TUint RampShortJiffies() const;
     TUint RampEmergencyJiffies() const;
     TUint ThreadPriorityMax() const;
+    TUint MaxLatencyJiffies() const;
 private:
     PipelineInitParams();
 private:
@@ -82,6 +85,7 @@ private:
     TUint iRampShortJiffies;
     TUint iRampEmergencyJiffies;
     TUint iThreadPriorityMax;
+    TUint iMaxLatencyJiffies;
 };
 
 /**
@@ -109,6 +113,8 @@ class Pipeline : public IPipelineElementDownstream, public IPipelineElementUpstr
 
     static const TUint kSenderMinLatency        = Jiffies::kPerMs * 150;
     static const TUint kReservoirCount          = 4; // Encoded + Decoded + StarvationMonitor + spare
+    static const TUint kSongcastFrameJiffies    = Jiffies::kPerMs * 5; // effectively hard-coded by volkano1
+    static const TUint kRewinderMaxMsgs         = 100;
 
     static const TUint kMsgCountSilence         = 410; // 2secs @ 5ms per msg + 10 spare
     static const TUint kMsgCountPlayablePcm     = 10;

@@ -6,8 +6,8 @@ using namespace OpenHome::Media;
 
 // EncodedAudioReservoir
 
-EncodedAudioReservoir::EncodedAudioReservoir(TUint aMaxSize, TUint aMaxSessionCount, TUint aMaxStreamCount)
-    : iMaxBytes(aMaxSize)
+EncodedAudioReservoir::EncodedAudioReservoir(TUint aMsgCount, TUint aMaxSessionCount, TUint aMaxStreamCount)
+    : iMsgCount(aMsgCount)
     , iMaxSessionCount(aMaxSessionCount)
     , iMaxStreamCount(aMaxStreamCount)
 {
@@ -20,7 +20,9 @@ TUint EncodedAudioReservoir::SizeInBytes() const
 
 TBool EncodedAudioReservoir::IsFull() const
 {
-    return (EncodedBytes() > iMaxBytes || EncodedStreamCount() >= iMaxStreamCount || SessionCount() >= iMaxSessionCount);
+    return (EncodedAudioCount() > iMsgCount         ||
+            EncodedStreamCount() >= iMaxStreamCount ||
+            SessionCount() >= iMaxSessionCount);
 }
 
 void EncodedAudioReservoir::ProcessMsgIn(MsgSession* /*aMsg*/)

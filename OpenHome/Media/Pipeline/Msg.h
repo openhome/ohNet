@@ -826,6 +826,7 @@ protected:
     TUint SessionCount() const;
     TUint EncodedStreamCount() const;
     TUint DecodedStreamCount() const;
+    TUint EncodedAudioCount() const;
 private:
     void Add(TUint& aValue, TUint aAdded);
     void Remove(TUint& aValue, TUint aRemoved);
@@ -913,6 +914,7 @@ private:
     TUint iSessionCount;
     TUint iEncodedStreamCount;
     TUint iDecodedStreamCount;
+    TUint iEncodedAudioCount;
 };
 
 // removes ref on destruction.  Does NOT claim ref on construction.
