@@ -44,7 +44,7 @@ TUint64 SpotifyReporter::SubSamples()
 TUint64 SpotifyReporter::SubSamplesDiff(TUint64 aPrevSubSamples)
 {
     AutoMutex a(iLock);
-    ASSERT(iSubSamples > aPrevSubSamples);
+    ASSERT(iSubSamples >= aPrevSubSamples);
     return iSubSamples - aPrevSubSamples;
 }
 
@@ -187,7 +187,7 @@ Msg* SpotifyReporter::ProcessMsg(MsgAudioPcm* aMsg)
     AutoMutex a(iLock);
     TUint64 subSamplesPrev = iSubSamples;
     iSubSamples += samples*iChannels;
-    ASSERT(iSubSamples > subSamplesPrev); // Overflow not handled.
+    ASSERT(iSubSamples >= subSamplesPrev); // Overflow not handled.
     return aMsg;
 }
 
