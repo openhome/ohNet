@@ -86,6 +86,7 @@ private:
     TBool Connect(const OpenHome::Uri& aUri, TUint aDefaultPort);
     void Open();
     TUint WriteRequest(TUint64 aOffset);
+    void ReadNextLine();
     void ReloadVariantPlaylist();
     void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
 private:
@@ -302,10 +303,8 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                 ReloadVariantPlaylist();
             }
 
-
             if (iNextLine == Brx::Empty()) {
-                iNextLine = iDechunker.ReadUntil('\n');
-                iOffset += iNextLine.Bytes()+1;  // Separator has been trimmed.
+                ReadNextLine();
             }
             if (expectUri) {
                 segmentUri = iNextLine;    // FIXME - strip '\r' from line?
@@ -465,6 +464,13 @@ TUint HlsM3uReader::WriteRequest(TUint64 /*aOffset*/)
     return code;
 }
 
+void HlsM3uReader::ReadNextLine()
+{
+    // May throw ReaderError.
+    iNextLine = iDechunker.ReadUntil('\n');
+    iOffset += iNextLine.Bytes()+1;  // Separator has been trimmed.
+}
+
 void HlsM3uReader::ReloadVariantPlaylist()
 {
     // Timer should be started BEFORE refreshing playlist.
@@ -503,9 +509,7 @@ void HlsM3uReader::ReloadVariantPlaylist()
     TUint64 skipSegments = 0;
     try {
         while (iOffset < iTotalBytes) {
-            // FIXME - move next 2 lines to helper function.
-            iNextLine = iDechunker.ReadUntil('\n');
-            iOffset += iNextLine.Bytes()+1;  // Separator has been trimmed.
+            ReadNextLine();
             Parser p(iNextLine);
             Brn tag = p.Next(':');
 
