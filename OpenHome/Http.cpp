@@ -1298,7 +1298,7 @@ void HttpReader::ReadInterrupt()
 
 TUint HttpReader::WriteRequest(const Uri& aUri)
 {
-    TUint port = aUri.Port();
+    TInt port = aUri.Port();
     if (port == Uri::kPortNotSpecified)
     {
         port = kHttpPort;
