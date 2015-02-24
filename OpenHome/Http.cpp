@@ -1157,62 +1157,37 @@ void WriterHttpChunked::WriteFlush()
 
 
 HttpReader::HttpReader(Environment& aEnv)
-    :iEnv(aEnv)
-    ,iReadBuffer(iTcpClient)
-    ,iReaderResponse(aEnv, iReader)
-    ,iWriteBuffer(iTcpClient)
-    ,iWriterRequest(iWriteBuffer)
-    ,iReader(iReadBuffer)
-    ,iSocketIsOpen(false)
-    ,iConnected(false)
+    : iEnv(aEnv)
+    , iReadBuffer(iTcpClient)
+    , iReaderResponse(aEnv, iReader)
+    , iWriteBuffer(iTcpClient)
+    , iWriterRequest(iWriteBuffer)
+    , iReader(iReadBuffer)
+    , iSocketIsOpen(false)
+    , iConnected(false)
+    , iTotalBytes(0)
 {
     iReaderResponse.AddHeader(iHeaderContentLength);
     iReaderResponse.AddHeader(iHeaderLocation);
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 }
 
-
 HttpReader::~HttpReader()
 {
-    if (iSocketIsOpen)
-    {
-        CloseSocket();
+    if (iSocketIsOpen) {
+        Close();
     }
 }
-
 
 TBool HttpReader::Connect(const Uri& aUri)
 {
     ASSERT(!iConnected);
     Endpoint endpoint;
 
-    try
-    {
-        endpoint.SetAddress(aUri.Host());
-
-        TInt port = aUri.Port();
-        if (port == Uri::kPortNotSpecified)
-        {
-            port = kHttpPort;
-        }
-        endpoint.SetPort(port);
-    }
-    catch (NetworkError&)
-    {
-        LOG(kHttp, "<HttpReader::AccessUri error setting address and port\n");
-        return(false);
-    }
-
-    TBool connected = Connect(endpoint);
-    if (!connected)
-    {
-        return(false);
-    }
-
-    TBool headerRcvd = ProcessInitialHttpHeader(aUri, endpoint.Port());
+    TBool headerRcvd = ConnectAndProcessHeader(aUri);
     if (!headerRcvd)
     {
-        CloseSocket();
+        Close();
         return(false);
     }
 
@@ -1221,12 +1196,34 @@ TBool HttpReader::Connect(const Uri& aUri)
     return(true);
 }
 
+void HttpReader::Close()
+{
+    LOG(kHttp, "HttpReader::Close\n");
+
+    if (iSocketIsOpen) {
+        iSocketIsOpen = false;
+        iConnected = false;
+        iTcpClient.Close();
+    }
+}
+
+void HttpReader::Interrupt(TBool aInterrupt)
+{
+    LOG(kHttp, "HttpReader::Interrupt(%u)\n", aInterrupt);
+    iTcpClient.Interrupt(aInterrupt);
+}
+
+TUint HttpReader::ContentLength() const
+{
+    ASSERT(iConnected);
+    return iTotalBytes;
+}
 
 TBool HttpReader::Connect(Endpoint aEndpoint)
 {
     LOG(kHttp, ">HttpReader::Connect\n");
 
-    OpenSocket();
+    Open();
     try
     {
         LOG(kHttp, "-HttpReader::Connect connecting...\n");
@@ -1234,7 +1231,7 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
     }
     catch (NetworkTimeout&)
     {
-        CloseSocket();
+        Close();
         LOG(kHttp, "<HttpReader::Connect connection failed!\n");
         return(false);
     }
@@ -1243,8 +1240,7 @@ TBool HttpReader::Connect(Endpoint aEndpoint)
     return(true);
 }
 
-
-void HttpReader::OpenSocket()
+void HttpReader::Open()
 {
     LOG(kHttp, "HttpReader::OpenSocket\n");
 
@@ -1253,17 +1249,11 @@ void HttpReader::OpenSocket()
     iSocketIsOpen = true;
 }
 
-
-void HttpReader::CloseSocket()
+Brn HttpReader::ReadRemaining()
 {
-    LOG(kHttp, "HttpReader::CloseSocket\n");
-
-    if (iSocketIsOpen) {
-        iSocketIsOpen = false;
-        iTcpClient.Close();
-    }
+    ASSERT(iConnected);
+    return iReader.ReadRemaining();
 }
-
 
 Brn HttpReader::Read(TUint aBytes)
 {
@@ -1271,13 +1261,11 @@ Brn HttpReader::Read(TUint aBytes)
     return(iReader.Read(aBytes));
 }
 
-
 Brn HttpReader::ReadUntil(TByte aSeparator)
 {
     ASSERT(iConnected);
     return(iReader.ReadUntil(aSeparator));
 }
-
 
 void HttpReader::ReadFlush()
 {
@@ -1285,21 +1273,40 @@ void HttpReader::ReadFlush()
     iReader.ReadFlush();
 }
 
-
 void HttpReader::ReadInterrupt()
 {
     ASSERT(iConnected);
     iReader.ReadInterrupt();
 }
 
-
-TUint HttpReader::WriteRequest(const Uri& aUri, TUint aPort)
+TUint HttpReader::WriteRequest(const Uri& aUri)
 {
+    TUint port = aUri.Port();
+    if (port == Uri::kPortNotSpecified)
+    {
+        port = kHttpPort;
+    }
+
+    Close();
+    Endpoint ep;
+    try {
+        ep.Replace(Endpoint(port, aUri.Host()));
+    }
+    catch (NetworkError&) {
+        LOG(kHttp, "HttpReader::WriteRequest error setting address and port\n");
+        return 0;
+    }
+    if (!Connect(ep)) {
+        LOG(kHttp, "HttpReader::WriteRequest connection failure\n");
+        return 0;
+    }
+
     try
     {
         LOG(kHttp, "HttpReader::WriteRequest send request\n");
         iWriterRequest.WriteMethod(Http::kMethodGet, aUri.PathAndQuery(), Http::eHttp11);
-        Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), aPort);
+        Http::WriteHeaderHostAndPort(iWriterRequest, aUri.Host(), port);
+        //iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
     }
@@ -1331,15 +1338,14 @@ TUint HttpReader::WriteRequest(const Uri& aUri, TUint aPort)
     return code;
 }
 
-
-TBool HttpReader::ProcessInitialHttpHeader(const Uri& aUri, TUint aPort)
+TBool HttpReader::ConnectAndProcessHeader(const Uri& aUri)
 {
     Uri uri(aUri);
 
     iReader.SetChunked(false);
     for (;;)
     { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
-        TUint code = WriteRequest(uri, aPort);
+        TUint code = WriteRequest(uri);
 
         if (code == 0)
         {
@@ -1369,10 +1375,9 @@ TBool HttpReader::ProcessInitialHttpHeader(const Uri& aUri, TUint aPort)
             {
                 iReader.SetChunked(true);
             }
+            iTotalBytes = iHeaderContentLength.ContentLength();
             break;
         }
     }
     return(true);
 }
-
-

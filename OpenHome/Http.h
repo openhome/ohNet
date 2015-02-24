@@ -523,19 +523,20 @@ public:
     ~HttpReader();
 
     TBool Connect(const Uri& aUri);
-
-    // IReader
-    virtual Brn Read(TUint aBytes);
-    virtual Brn ReadUntil(TByte aSeparator);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
-
+    void Close();
+    void Interrupt(TBool aInterrupt);
+    TUint ContentLength() const;
+    Brn ReadRemaining();
+public: // from IReader
+    Brn Read(TUint aBytes) override;
+    virtual Brn ReadUntil(TByte aSeparator) override;
+    virtual void ReadFlush() override;
+    virtual void ReadInterrupt() override;
 private:
-    TUint WriteRequest(const Uri& aUri, TUint aPort);
-    TBool ProcessInitialHttpHeader(const Uri& aUri, TUint aPort);
+    TUint WriteRequest(const Uri& aUri);
+    TBool ConnectAndProcessHeader(const Uri& aUri);
     TBool Connect(Endpoint aEndpoint);
-    void OpenSocket();
-    void CloseSocket();
+    void Open();
 
 private:
     Environment& iEnv;
@@ -550,6 +551,7 @@ private:
     ReaderHttpChunked iReader;
     TBool iSocketIsOpen;
     TBool iConnected;
+    TUint iTotalBytes;
 };
 
 
