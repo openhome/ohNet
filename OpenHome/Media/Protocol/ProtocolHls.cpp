@@ -72,7 +72,6 @@ private:
     static const TUint kConnectTimeoutMs = 3000;
 public:
     HlsM3uReader(Environment& aEnv, ITimer& aTimer);
-    // FIXME - take URI as constructor param?
     void SetUri(const Uri& aUri);
     TUint Version() const;
 private: // from ITimerHandler
@@ -88,6 +87,7 @@ private:
     TUint WriteRequest(TUint64 aOffset);
     void ReadNextLine();
     void ReloadVariantPlaylist();
+    void PreprocessM3u();
     void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
 private:
     // FIXME - could have some intelligent logic to limit retries
@@ -308,7 +308,7 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
                 ReadNextLine();
             }
             if (expectUri) {
-                segmentUri = iNextLine;    // FIXME - strip '\r' from line?
+                segmentUri = Ascii::Trim(iNextLine);
                 expectUri = false;
                 Log::Print("segmentUri: ");
                 Log::Print(segmentUri);
@@ -437,7 +437,7 @@ TUint HlsM3uReader::WriteRequest(TUint64 /*aOffset*/)
         iWriterRequest.WriteMethod(Http::kMethodGet, iUri.PathAndQuery(), Http::eHttp11);
         const TUint port = (iUri.Port() == -1? 80 : (TUint)iUri.Port());
         Http::WriteHeaderHostAndPort(iWriterRequest, iUri.Host(), port);
-        //iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA?
+        //iWriterRequest.WriteHeader(Http::kHeaderUserAgent, kUserAgentString); // FIXME - why are we sending a UA? - because it's recommended for various reasons!
         Http::WriteHeaderConnectionClose(iWriterRequest);
         iWriterRequest.WriteFlush();
     }
@@ -505,16 +505,43 @@ void HlsM3uReader::ReloadVariantPlaylist()
         iOffset = 0;
     }
 
+    try {
+        PreprocessM3u();
+    }
+    catch (AsciiError&) {
+        LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
+        //THROW
+    }
+    catch (HttpError&) {    // FIXME - throw these exceptions up?
+        LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
+        //THROW
+    }
+    catch (ReaderError&) {
+        LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
+        //THROW
+    }
 
-    // FIXME - move this block to helper method
+    if (iOffset >= iTotalBytes) {
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file\n");
+        // THROW exception here
+    }
+
+    if (iTargetDuration == 0) { // #EXT-X-TARGETDURATION is a required tag.
+        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist malformed file\n");
+        // THROW exception here
+    }
+
+    iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
+}
+
+void HlsM3uReader::PreprocessM3u()
+{
     TUint64 skipSegments = 0;
     try {
         while (iOffset < iTotalBytes) {
             ReadNextLine();
             Parser p(iNextLine);
             Brn tag = p.Next(':');
-
-            // FIXME - have HTTP style header processors?
 
             // FIXME - what about #EXT-X-ENDLIST
             if (tag == Brn("#EXT-X-VERSION")) {
@@ -551,29 +578,17 @@ void HlsM3uReader::ReloadVariantPlaylist()
         }
     }
     catch (AsciiError&) {
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
-        //THROW
+        LOG(kMedia, "HlsM3uReader::PreprocessM3u AsciiError\n");
+        throw;
     }
     catch (HttpError&) {    // FIXME - throw these exceptions up?
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri HttpError\n");
-        //THROW
+        LOG(kMedia, "HlsM3uReader::PreprocessM3u HttpError\n");
+        throw;
     }
     catch (ReaderError&) {
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri ReaderError\n");
-        //THROW
+        LOG(kMedia, "HlsM3uReader::PreprocessM3u ReaderError\n");
+        throw;
     }
-
-    if (iOffset >= iTotalBytes) {
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist exhausted file\n");
-        // THROW exception here
-    }
-
-    if (iTargetDuration == 0) { // #EXT-X-TARGETDURATION is a required tag.
-        LOG(kMedia, "HlsM3uReader::ReloadVariantPlaylist malformed file\n");
-        // THROW exception here
-    }
-
-    iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
 }
 
 void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
@@ -677,7 +692,6 @@ void SegmentStreamer::ReadInterrupt()
 
 Brn SegmentStreamer::ReadRemaining()
 {
-    //EnsureSegmentIsReady(); // FIXME - should next segment be getting fetched before reading remainder?
     Brn buf = iDechunker.ReadRemaining();
     iOffset += buf.Bytes();
     return buf;
@@ -799,7 +813,7 @@ void SegmentStreamer::GetNextSegment()
     Uri segment;
     TUint duration = iSegmentUriProvider->NextSegmentUri(segment);
     duration;
-    iUri.Replace(segment.AbsoluteUri());  // FIXME - don't really need iUri?
+    iUri.Replace(segment.AbsoluteUri());
 
     TUint code;
     for (;;) { // loop until we don't get a redirection response (i.e. normally don't loop at all!)
