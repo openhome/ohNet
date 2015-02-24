@@ -87,6 +87,7 @@ private:
     void Open();
     TUint WriteRequest(TUint64 aOffset);
     void ReloadVariantPlaylist();
+    void SetSegmentUri(Uri& aUri, const Brx& aSegmentUri);
 private:
     // FIXME - could have some intelligent logic to limit retries
     // e.g. in addition to waiting for, at the minimum, the target duration (or half target duration if playlist has not changed), could instead choose:
@@ -326,38 +327,16 @@ TUint HlsM3uReader::NextSegmentUri(Uri& aUri)
             iNextLine = Brx::Empty();
         }
 
-        // Segment URI MAY be relative.
-        // If it is relative, it is relative to URI of playlist that contains it.
-
-        // FIXME - Don't do this if URI is not relative.
-        Bws<Uri::kMaxUriBytes> uriBuf;
-        uriBuf.Replace(iUri.Scheme());
-        uriBuf.Append("://");
-        uriBuf.Append(iUri.Host());
-        TInt port = iUri.Port();
-        if (port > 0) {
-            uriBuf.Append(":");
-            Ascii::AppendDec(uriBuf, iUri.Port());
+        try {
+            SetSegmentUri(aUri, segmentUri);
         }
-
-        // Get URI path minus file.
-        Parser uriParser(iUri.Path());
-        while (!uriParser.Finished()) {
-            Brn fragment = uriParser.Next('/');
-            if (!uriParser.Finished()) {
-                uriBuf.Append(fragment);
-                uriBuf.Append("/");
-            }
+        catch (UriError&) {
+            LOG(kMedia, "HlsM3uReader::NextSegmentUri UriError\n");
+            return 0;
         }
-
-        aUri.Replace(uriBuf, segmentUri);
     }
     catch (AsciiError&) {   // FIXME - throw these exceptions up?
         LOG(kMedia, "HlsM3uReader::NextSegmentUri AsciiError\n");
-        return 0;
-    }
-    catch (UriError&) {
-        LOG(kMedia, "HlsM3uReader::NextSegmentUri UriError\n");
         return 0;
     }
     catch (HttpError&) {
@@ -590,6 +569,50 @@ void HlsM3uReader::ReloadVariantPlaylist()
     }
 
     iTimer.Start(iTargetDuration*kMillisecondsPerSecond, *this);
+}
+
+void HlsM3uReader::SetSegmentUri(Uri& aUri, const Brx& aSegmentUri)
+{
+    // Segment URI MAY be relative.
+    // If it is relative, it is relative to URI of playlist that contains it.
+    static const Brn kSchemeHttp("http");
+
+    Brn split(aSegmentUri.Ptr(), kSchemeHttp.Bytes());
+    split;
+
+
+    if (aSegmentUri.Bytes() > kSchemeHttp.Bytes()
+            && Brn(aSegmentUri.Ptr(), kSchemeHttp.Bytes()) == kSchemeHttp) {
+        // Segment URI is absolute.
+
+        // May throw UriError.
+        aUri.Replace(aSegmentUri);
+    }
+    else {
+        // Segment URI is relative.
+        Bws<Uri::kMaxUriBytes> uriBuf;
+        uriBuf.Replace(iUri.Scheme());
+        uriBuf.Append("://");
+        uriBuf.Append(iUri.Host());
+        TInt port = iUri.Port();
+        if (port > 0) {
+            uriBuf.Append(":");
+            Ascii::AppendDec(uriBuf, iUri.Port());
+        }
+
+        // Get URI path minus file.
+        Parser uriParser(iUri.Path());
+        while (!uriParser.Finished()) {
+            Brn fragment = uriParser.Next('/');
+            if (!uriParser.Finished()) {
+                uriBuf.Append(fragment);
+                uriBuf.Append("/");
+            }
+        }
+
+        // May throw UriError.
+        aUri.Replace(uriBuf, aSegmentUri);
+    }
 }
 
 
