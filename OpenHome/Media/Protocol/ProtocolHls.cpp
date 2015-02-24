@@ -141,6 +141,7 @@ private:
     void Close();
     TUint WriteRequest(TUint64 aOffset);
     void GetNextSegment();
+    void EnsureSegmentIsReady();
 private:
     Environment& iEnv;
     Srs<kReadBufferBytes> iReaderBuf;
@@ -650,28 +651,15 @@ void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 
 Brn SegmentStreamer::Read(TUint aBytes)
 {
-    //TUint bytesRemaining = aBytes;
-    //while (bytesRemaining > 0) {
-    //    TUint bytes = aBytes;
-    //    TUint segmentBytesRemaining = iTotalBytes-iOffset;
-    //    if (bytesRemaining > segmentBytesRemaining) {
-    //        bytes = segmentBytesRemaining;
-    //    }
-    if (iOffset == iTotalBytes) {
-        GetNextSegment();
-    }
-        Brn buf = iDechunker.Read(aBytes);
-        iOffset += buf.Bytes(); // if bytes remaining < aBytes, must request next segment
-    //}
-
+    EnsureSegmentIsReady();
+    Brn buf = iDechunker.Read(aBytes);
+    iOffset += buf.Bytes(); // if bytes remaining < aBytes, must request next segment
     return buf;
 }
 
 Brn SegmentStreamer::ReadUntil(TByte aSeparator)
 {
-    if (iOffset == iTotalBytes) {
-        GetNextSegment();
-    }
+    EnsureSegmentIsReady();
     Brn buf = iDechunker.ReadUntil(aSeparator);
     iOffset += buf.Bytes()+1;   // Separator has been trimmed.
     return buf;
@@ -689,12 +677,9 @@ void SegmentStreamer::ReadInterrupt()
 
 Brn SegmentStreamer::ReadRemaining()
 {
-    if (iOffset == iTotalBytes) {
-        GetNextSegment();
-    }
+    //EnsureSegmentIsReady(); // FIXME - should next segment be getting fetched before reading remainder?
     Brn buf = iDechunker.ReadRemaining();
     iOffset += buf.Bytes();
-    // FIXME - request next segment
     return buf;
 }
 
@@ -838,6 +823,13 @@ void SegmentStreamer::GetNextSegment()
     if (code != 0) {
         iTotalBytes = iHeaderContentLength.ContentLength();
         iOffset = 0;
+    }
+}
+
+void SegmentStreamer::EnsureSegmentIsReady()
+{
+    if (iOffset == iTotalBytes) {
+        GetNextSegment();
     }
 }
 
