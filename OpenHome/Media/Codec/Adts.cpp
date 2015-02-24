@@ -39,11 +39,12 @@ public:
     CodecAdts();
     ~CodecAdts();
 private: // from CodecBase
-    TBool Recognise(const EncodedStreamInfo& aStreamInfo);
-    void StreamInitialise();
-    void Process();
-    //TBool TrySeek(TUint aStreamId, TUint64 aSample);
-    //void StreamCompleted();
+    TBool SupportsMimeType(const Brx& aMimeType) override;
+    TBool Recognise(const EncodedStreamInfo& aStreamInfo) override;
+    void StreamInitialise() override;
+    void Process() override;
+    //TBool TrySeek(TUint aStreamId, TUint64 aSample) override;
+    //void StreamCompleted() override;
 private:
     void ProcessAdts(TBool aParseOnly);
 private:
@@ -67,21 +68,11 @@ CodecBase* CodecFactory::NewAdts()
 }
 
 
-// CodecAdts
-
-CodecAdts::CodecAdts()
-{
-    LOG(kCodec, "CodecAdts::CodecAdts\n");
-}
-
-CodecAdts::~CodecAdts()
-{
-    LOG(kCodec, "CodecAdts::~CodecAdts\n");
-}
+// Adts
 
 Adts::Adts(): iPayloadBytesAve(0)
-{ 
-} 
+{
+}
 
 // ref ISO-IEC-13818-7 p21
 TBool Adts::ReadHeader(Brn aHeader) 
@@ -172,6 +163,33 @@ TBool Adts::ReadHeader(Brn aHeader)
     //LOG(kCodec, "Adts::Header iPayloadBytes %d, iProfile %d, iSamplingFreq %d, iChannelConfig %d\n", iPayloadBytes, iProfile, iSamplingFreq, iChannelConfig);
 
     return true;
+}
+
+
+// CodecAdts
+
+CodecAdts::CodecAdts()
+{
+    LOG(kCodec, "CodecAdts::CodecAdts\n");
+}
+
+CodecAdts::~CodecAdts()
+{
+    LOG(kCodec, "CodecAdts::~CodecAdts\n");
+}
+
+TBool CodecAdts::SupportsMimeType(const Brx& aMimeType)
+{
+    if (CodecAacBase::SupportsMimeType(aMimeType)) {
+        return true;
+    }
+
+    // https://tools.ietf.org/html/draft-pantos-http-live-streaming-14#section-10
+    static const Brn kMimeHls("application/vnd.apple.mpegurl");
+    if (aMimeType == kMimeHls) {
+        return true;
+    }
+    return false;
 }
 
 TBool CodecAdts::Recognise(const EncodedStreamInfo& aStreamInfo)
