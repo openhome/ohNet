@@ -572,6 +572,8 @@ void HlsM3uReader::PreprocessM3u()
                 }
                 else {
                     // Found start/continuation of audio.
+                    // iNextLine will remain populated with this "#EXTINF" line
+                    // for starting parsing of outstanding segments elsewhere.
                     break;
                 }
             }
