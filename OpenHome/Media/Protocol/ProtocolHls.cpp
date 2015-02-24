@@ -127,7 +127,7 @@ private:
     static const TUint kConnectTimeoutMs = 3000;
 public:
     SegmentStreamer(Environment& aEnv);
-    ProtocolStreamResult Stream(ISegmentUriProvider& aSegmentUriProvider);
+    void Stream(ISegmentUriProvider& aSegmentUriProvider);
 public: // from IProtocolReader
     Brn Read(TUint aBytes) override;
     Brn ReadUntil(TByte aSeparator) override;
@@ -642,12 +642,10 @@ SegmentStreamer::SegmentStreamer(Environment& aEnv)
     iReaderResponse.AddHeader(iHeaderTransferEncoding);
 }
 
-ProtocolStreamResult SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
+void SegmentStreamer::Stream(ISegmentUriProvider& aSegmentUriProvider)
 {
     iSegmentUriProvider = &aSegmentUriProvider;
     GetNextSegment();
-
-    return EProtocolStreamErrorUnrecoverable;   // FIXME - shouldn't return anything
 }
 
 Brn SegmentStreamer::Read(TUint aBytes)
