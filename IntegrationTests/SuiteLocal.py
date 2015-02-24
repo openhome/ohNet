@@ -39,8 +39,8 @@ except:
     time.sleep( 2 )
     # noinspection PyProtectedMember
     os._exit( -1 )
-tunein    = config.Get( 'tunein.user.o2' )
-tuneinX   = config.Get( 'tunein.user.o4' )
+radio2    = config.Get( 'tunein.user.o2' )
+radio4    = config.Get( 'tunein.user.o4' )
 plEnc     = config.Get( 'playlist.asset.enc-free' )
 plMix     = config.Get( 'playlist.asset.mixed-free' )
 server    = config.Get( 'mediaserver.asset' )
@@ -65,8 +65,8 @@ tests = [
 
     # OH Radio Service
     [ 'TestRadioService',            'local', 'all'                                                                       ],
-#3021    [ 'TestRadioPlayChannels',       'local', 'local', tunein,  20,      'on',   1                                        ],
-    [ 'TestRadioPlayChannels',       'local', 'local', tuneinX, 20,      'on',   1                                        ],
+    [ 'TestRadioPlayChannels',       'local', 'local', radio2,  10,      'on',   1                                        ],
+    [ 'TestRadioPlayChannels',       'local', 'local', radio4,  10,      'on',   1                                        ],
 
     # Tidal
     [ 'TestTidalPlayTracks',         'local', 'local', 8,       'off',   'off',  100,      tidalId,   tidalUser, tidalPwd ],
